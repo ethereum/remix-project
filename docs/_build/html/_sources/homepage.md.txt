@@ -1,0 +1,7 @@
+Homepage
+==============
+
+Environment
+-----------
+
+Click the solidity button to load the modules related to solidity.

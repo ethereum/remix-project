@@ -1,0 +1,255 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Building Smart Contracts with Remix &mdash; Remix, Ethereum-IDE 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Remix, Ethereum-IDE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">New Layout Intro</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="layout.html">Remix-IDE Layout</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of default modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="file_explorer.html">File Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_manager.html">Plugin Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solidity_editor.html">Solidity Editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminal.html">Terminal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of typical solidity modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="compile.html">Compiler (Solidity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">Run &amp; Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="udapp.html">Run &amp; Deploy (part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugger.html">Debugger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="static_analysis.html">Analysis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Remix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contract_metadata.html">Build Artifact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create_deploy.html">Creating and Deploying a Contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_debug.html">Debugging transactions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_geth-remix.html">Debugging a Dapp using Remix &amp; Geth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="import.html">Importing Source Files in Solidity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remixd.html">Remixd: Get access your local filesystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unittesting.html">Unit Testing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Plugins</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_plugin.html">Remix Plugin</a></li>
+</ul>
+<p class="caption"><span class="caption-text">URLs &amp; Downloads</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="locations.html">Finding Remix</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Questions &amp; Terms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials and workshops slides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_tutorials_github.html">Remix Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_eattheblock.html">Eat the Block tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code_contribution_guide.html">Code contribution guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="community.html">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support chat</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Remix, Ethereum-IDE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Building Smart Contracts with Remix</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/workshop_Building_smart_contracts_with_Remix.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="building-smart-contracts-with-remix">
+<h1>Building Smart Contracts with Remix<a class="headerlink" href="#building-smart-contracts-with-remix" title="Permalink to this headline">¶</a></h1>
+<p>We prepared a tutorial that will help you build DApps with Remix. In this tutorial, you learn how to build smart contracts, how to deploy them and how to interact with them. Then we show you how to connect your frontend with the blockchain by using web3.js.</p>
+<div class="section" id="let-s-get-started">
+<h2>Let’s get started<a class="headerlink" href="#let-s-get-started" title="Permalink to this headline">¶</a></h2>
+<p>These tutorials were used in workshops at ethCC, Edcon, and DappCon. They are using the old interface.  We will be updating these slides in the near future.</p>
+<p>You can <a class="reference external" href="https://www.youtube.com/watch?v=nAI_Cr5Y8JY">watch the Edcon presentation talk</a> and here are the <a class="reference external" href="https://slides.com/ninabreznik/deck-11-13#/">workshop slides</a>.
+(May 3, 2018)</p>
+<p>Here are the <a class="reference external" href="http://30400.swarm-gateways.net/bzz:/49277e2a16baf5576c9f54204c70dc403a425c3df85424864fe04ad6dfc609bc/">latest slides (hosted on swarm)</a> and here are the <a class="reference external" href="https://www.updig.is/pdf/remix-chez-coinhouse.pdf">latest slides (not on swarm)</a>.
+(Oct 16, 2018)</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Remix
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

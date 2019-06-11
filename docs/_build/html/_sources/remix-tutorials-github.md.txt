@@ -1,0 +1,6 @@
+Remix Tutorials
+=======================
+
+There are a series of tutorials in our github repo [remix-workshops] (https://github.com/ethereum/remix-workshops).  We are in the process of upgrading these tutorials to use the new Remix layout.  
+
+There are beginner tutorials as well as advanced ones.

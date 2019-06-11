@@ -1,0 +1,480 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Debugging a Dapp using Remix &amp; Geth &mdash; Remix, Ethereum-IDE 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Remix, Ethereum-IDE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">New Layout Intro</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="layout.html">Remix-IDE Layout</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of default modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="file_explorer.html">File Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_manager.html">Plugin Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solidity_editor.html">Solidity Editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminal.html">Terminal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of typical solidity modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="compile.html">Compiler (Solidity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">Run &amp; Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="udapp.html">Run &amp; Deploy (part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugger.html">Debugger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="static_analysis.html">Analysis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Remix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contract_metadata.html">Build Artifact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create_deploy.html">Creating and Deploying a Contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="import.html">Importing Source Files in Solidity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remixd.html">Remixd: Get access your local filesystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unittesting.html">Unit Testing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Plugins</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_plugin.html">Remix Plugin</a></li>
+</ul>
+<p class="caption"><span class="caption-text">URLs &amp; Downloads</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="locations.html">Finding Remix</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials and workshops slides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_tutorials_github.html">Remix Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code_contribution_guide.html">Code contribution guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="community.html">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support chat</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Remix, Ethereum-IDE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Debugging a Dapp using Remix &amp; Geth</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/tutorial_geth-remix.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="debugging-a-dapp-using-remix-geth">
+<h1>Debugging a Dapp using Remix &amp; Geth<a class="headerlink" href="#debugging-a-dapp-using-remix-geth" title="Permalink to this headline">¶</a></h1>
+<p>The ultimate goal of this tutorial is to debug transactions that have
+been created by a dapp front end.</p>
+<p>It is easy in Remix to debug a transaction created from its own GUI.
+However, setting up an environment that allows you to debug transactions
+created outside of Remix, require a bit more of complexity.</p>
+<p>We will need four tools for that :</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Geth - this is the center piece and provides the blockchain
+environment. We will basically run geth in a dev mode.</p></li>
+<li><p>Remix - this is the Ethereum IDE. We will use it to develop our
+Solidity contract.</p></li>
+<li><p>Any code editor you want - in order to write your front end :)</p></li>
+</ul>
+</div></blockquote>
+<div class="section" id="install-the-environment">
+<h2>Install the environment<a class="headerlink" href="#install-the-environment" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-metamask">
+<h3>Install Metamask<a class="headerlink" href="#install-metamask" title="Permalink to this headline">¶</a></h3>
+<p>Basically we will run our front end in the Metamask Chrome plugin (<a class="reference external" href="http://metamask.io">Metamask</a>).</p>
+</div>
+<div class="section" id="install-geth">
+<h3>Install Geth<a class="headerlink" href="#install-geth" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://github.com/ethereum/go-ethereum/releases">Geth</a> is the official
+Ethereum client.</p>
+</div>
+</div>
+<div class="section" id="running-the-environment">
+<h2>Running the environment<a class="headerlink" href="#running-the-environment" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="run-geth">
+<h3>Run Geth<a class="headerlink" href="#run-geth" title="Permalink to this headline">¶</a></h3>
+<p>We will run a test node. This node will have a new empty state and will
+not be synced to the main or ropsten network.</p>
+<div class="highlight-JavaScript notranslate"><div class="highlight"><pre><span></span>geth --ipcpath &lt;test-chain-directory&gt;/geth.ipc --datadir &lt;test-chain-directory&gt; --dev console
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;test-chain-directory&gt;</span></code> is the folder where keys and chain data will be
+stored.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--ipcpath</span></code> defines the end point that other apps (like Metamask) use to
+talk to geth.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--datadir</span></code> specifies the data directory.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--dev</span></code> sets the node into private chain mode and adds some debugging
+flags.</p>
+<p>Then we need to create accounts and mine a bit to generate some Ether:</p>
+<div class="highlight-JavaScript notranslate"><div class="highlight"><pre><span></span><span class="c1">// from the geth console :</span>
+<span class="nx">personal</span><span class="p">.</span><span class="nx">newAccount</span><span class="p">()</span> <span class="c1">// You can execute this command several time if you need more than one account.</span>
+<span class="nx">miner</span><span class="p">.</span><span class="nx">start</span><span class="p">()</span>  <span class="c1">// generate some Ether.</span>
+<span class="nx">miner</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span> <span class="c1">// stop mining after 30s-60s - we could also keep mining.</span>
+</pre></div>
+</div>
+<p>Next time we run Geth, we will only need to mine transactions (no need
+to recreate account).</p>
+</div>
+<div class="section" id="starting-remix">
+<h3>Starting Remix<a class="headerlink" href="#starting-remix" title="Permalink to this headline">¶</a></h3>
+<p>In Mist click on <code class="docutils literal notranslate"><span class="pre">Develop</span></code> / <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Remix</span> <span class="pre">IDE</span></code></p>
+<p>Remix will open in a new window. If this is the first time it is run,
+the <code class="docutils literal notranslate"><span class="pre">Ballot</span></code> contract will be loaded.</p>
+<p>Now, we need to check if Remix is connected to Mist:</p>
+<p>Right panel / third tab from the left, <code class="docutils literal notranslate"><span class="pre">Injected</span> <span class="pre">Provider</span></code> should be
+checked.</p>
+<p><img alt="_images/remix4.png" src="_images/remix4.png" />image</p>
+<p>Right panel / second tab from the left, <code class="docutils literal notranslate"><span class="pre">Transaction</span> <span class="pre">Origin</span></code> should
+contain accounts we have previously created in Geth.</p>
+<p><img alt="_images/remix5.png" src="_images/remix5.png" />image</p>
+</div>
+</div>
+<div class="section" id="developing-contract-front-end">
+<h2>Developing contract / front end<a class="headerlink" href="#developing-contract-front-end" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="donation-contract-dapp-back-end">
+<h3>Donation contract - Dapp Back end<a class="headerlink" href="#donation-contract-dapp-back-end" title="Permalink to this headline">¶</a></h3>
+<p>Here is a sample solidity contract.</p>
+<p>Copy and paste the following inside remix:</p>
+<div class="highlight-JavaScript notranslate"><div class="highlight"><pre><span></span><span class="p">{.</span><span class="nx">sourceCode</span> <span class="p">.</span><span class="nx">none</span><span class="p">}</span>
+<span class="nx">contract</span> <span class="nx">Donation</span> <span class="p">{</span>
+    <span class="nx">address</span> <span class="nx">owner</span><span class="p">;</span>
+    <span class="nx">event</span> <span class="nx">fundMoved</span><span class="p">(</span><span class="nx">address</span> <span class="nx">_to</span><span class="p">,</span> <span class="nx">uint</span> <span class="nx">_amount</span><span class="p">);</span>
+    <span class="nx">modifier</span> <span class="nx">onlyowner</span> <span class="p">{</span> <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">sender</span> <span class="o">==</span> <span class="nx">owner</span><span class="p">)</span> <span class="nx">_</span><span class="p">;</span> <span class="p">}</span>
+    <span class="nx">address</span><span class="p">[]</span> <span class="nx">_giver</span><span class="p">;</span>
+    <span class="nx">uint</span><span class="p">[]</span> <span class="nx">_values</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">Donation</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">owner</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">sender</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">donate</span><span class="p">()</span> <span class="nx">payable</span> <span class="p">{</span>
+        <span class="nx">addGiver</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">moveFund</span><span class="p">(</span><span class="nx">address</span> <span class="nx">_to</span><span class="p">,</span> <span class="nx">uint</span> <span class="nx">_amount</span><span class="p">)</span> <span class="nx">onlyowner</span> <span class="p">{</span>
+        <span class="nx">uint</span> <span class="nx">balance</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">balance</span><span class="p">;</span>
+        <span class="nx">uint</span> <span class="nx">amount</span> <span class="o">=</span> <span class="nx">_amount</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">_amount</span> <span class="o">&lt;=</span> <span class="k">this</span><span class="p">.</span><span class="nx">balance</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">_to</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">balance</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">fundMoved</span><span class="p">(</span><span class="nx">_to</span><span class="p">,</span> <span class="nx">_amount</span><span class="p">);</span>    
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">throw</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">addGiver</span><span class="p">(</span><span class="nx">uint</span> <span class="nx">_amount</span><span class="p">)</span> <span class="nx">internal</span> <span class="p">{</span>
+        <span class="nx">_giver</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">sender</span><span class="p">);</span>
+        <span class="nx">_values</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">_amount</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dapp-front-end">
+<h3>Dapp Front end<a class="headerlink" href="#dapp-front-end" title="Permalink to this headline">¶</a></h3>
+<p>and here is the front end:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>    
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>Donation Contract<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;contractaddress&#39;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&#39;contract address&#39;</span> <span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;fromGive&#39;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&#39;from&#39;</span> <span class="p">/&gt;&lt;</span><span class="nt">input</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&#39;amount&#39;</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;valueGive&#39;</span> <span class="p">/&gt;&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;fallbackbtn&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;donate()&quot;</span><span class="p">&gt;</span>give<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;fromMoveFund&#39;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&#39;from&#39;</span> <span class="p">/&gt;&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;moveFundTo&#39;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&#39;move to&#39;</span> <span class="p">/&gt;&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;amountToMove&#39;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&#39;amount&#39;</span> <span class="p">/&gt;&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;movefundbtn&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;movefund()&quot;</span><span class="p">&gt;</span>moveFund<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;wait&#39;</span> <span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;log&#39;</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+<span class="kd">function</span> <span class="nx">donate</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">donation</span> <span class="o">=</span> <span class="nx">contractspec</span><span class="p">.</span><span class="nx">at</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;contractaddress&#39;</span><span class="p">).</span><span class="nx">value</span><span class="p">)</span>
+    <span class="nx">donation</span><span class="p">.</span><span class="nx">donate</span><span class="p">({</span>
+        <span class="nx">from</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;fromGive&#39;</span><span class="p">).</span><span class="nx">value</span><span class="p">,</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;valueGive&#39;</span><span class="p">).</span><span class="nx">value</span>
+    <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">txHash</span><span class="p">)</span> <span class="p">{</span>       
+        <span class="nx">tryTillResponse</span><span class="p">(</span><span class="nx">txHash</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">receipt</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;done &#39;</span> <span class="o">+</span> <span class="nx">txHash</span><span class="p">)</span>
+        <span class="p">})</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">movefund</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">donation</span> <span class="o">=</span> <span class="nx">contractspec</span><span class="p">.</span><span class="nx">at</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;contractaddress&#39;</span><span class="p">).</span><span class="nx">value</span><span class="p">)</span>
+    <span class="nx">donation</span><span class="p">.</span><span class="nx">moveFund</span><span class="p">(</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;moveFundTo&#39;</span><span class="p">).</span><span class="nx">value</span><span class="p">,</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;amountToMove&#39;</span><span class="p">).</span><span class="nx">value</span><span class="p">,</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">txHash</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">tryTillResponse</span><span class="p">(</span><span class="nx">txHash</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">receipt</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;done &#39;</span> <span class="o">+</span> <span class="nx">txHash</span><span class="p">)</span>
+            <span class="p">})</span>
+        <span class="p">})</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">contractspec</span> <span class="o">=</span> <span class="nx">web3</span><span class="p">.</span><span class="nx">eth</span><span class="p">.</span><span class="nx">contract</span><span class="p">([{</span><span class="s2">&quot;constant&quot;</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span><span class="s2">&quot;inputs&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;_to&quot;</span><span class="p">,</span><span class="s2">&quot;type&quot;</span><span class="o">:</span><span class="s2">&quot;address&quot;</span><span class="p">},{</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;_amount&quot;</span><span class="p">,</span><span class="s2">&quot;type&quot;</span><span class="o">:</span><span class="s2">&quot;uint256&quot;</span><span class="p">}],</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;moveFund&quot;</span><span class="p">,</span><span class="s2">&quot;outputs&quot;</span><span class="o">:</span><span class="p">[],</span><span class="s2">&quot;payable&quot;</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span><span class="s2">&quot;type&quot;</span><span class="o">:</span><span class="s2">&quot;function&quot;</span><span class="p">},{</span><span class="s2">&quot;constant&quot;</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span><span class="s2">&quot;inputs&quot;</span><span class="o">:</span><span class="p">[],</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;donate&quot;</span><span class="p">,</span><span class="s2">&quot;outputs&quot;</span><span class="o">:</span><span class="p">[],</span><span class="s2">&quot;payable&quot;</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span><span class="s2">&quot;type&quot;</span><span class="o">:</span><span class="s2">&quot;function&quot;</span><span class="p">},{</span><span class="s2">&quot;inputs&quot;</span><span class="o">:</span><span class="p">[],</span><span class="s2">&quot;payable&quot;</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span><span class="s2">&quot;type&quot;</span><span class="o">:</span><span class="s2">&quot;constructor&quot;</span><span class="p">},{</span><span class="s2">&quot;anonymous&quot;</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span><span class="s2">&quot;inputs&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;indexed&quot;</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;_to&quot;</span><span class="p">,</span><span class="s2">&quot;type&quot;</span><span class="o">:</span><span class="s2">&quot;address&quot;</span><span class="p">},{</span><span class="s2">&quot;indexed&quot;</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;_amount&quot;</span><span class="p">,</span><span class="s2">&quot;type&quot;</span><span class="o">:</span><span class="s2">&quot;uint256&quot;</span><span class="p">}],</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;fundMoved&quot;</span><span class="p">,</span><span class="s2">&quot;type&quot;</span><span class="o">:</span><span class="s2">&quot;event&quot;</span><span class="p">}]);</span>
+
+<span class="kd">function</span> <span class="nx">tryTillResponse</span> <span class="p">(</span><span class="nx">txhash</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;wait&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;waiting for the transaction to be mined ...&#39;</span>
+    <span class="nx">web3</span><span class="p">.</span><span class="nx">eth</span><span class="p">.</span><span class="nx">getTransactionReceipt</span><span class="p">(</span><span class="nx">txhash</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">err</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Try again with a bit of delay</span>
+            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="nx">tryTillResponse</span><span class="p">(</span><span class="nx">txhash</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;wait&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">)</span>
+            <span class="nx">log</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+            <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">log</span><span class="p">)</span>
+            <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="nx">result</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>I would suggest serving this file using <code class="docutils literal notranslate"><span class="pre">http-serve</span></code>, but you can use
+any web server you like.</p>
+<p>Example: Dapp Front End <a class="reference external" href="https://github.com/ltfschoen/dapp_front_end">https://github.com/ltfschoen/dapp_front_end</a></p>
+</div>
+<div class="section" id="important-notice">
+<h3>Important notice !<a class="headerlink" href="#important-notice" title="Permalink to this headline">¶</a></h3>
+<p>The variable <code class="docutils literal notranslate"><span class="pre">contractspec</span></code> contains the abi of the <code class="docutils literal notranslate"><span class="pre">donation</span></code> contract.
+This means that if you change something in the contract interface
+(function names, parameters, …) you need to copy the new abi from
+remix to the front end.</p>
+</div>
+</div>
+<div class="section" id="deploying">
+<h2>Deploying<a class="headerlink" href="#deploying" title="Permalink to this headline">¶</a></h2>
+<p>Right panel / Red button <code class="docutils literal notranslate"><span class="pre">Create</span></code></p>
+<p><img alt="_images/remix1.png" src="_images/remix1.png" />image</p>
+<p>This creates a new transaction that deploys the <code class="docutils literal notranslate"><span class="pre">Donation</span></code> contract
+(Mist will ask for the usual passphrase check).</p>
+<p>Wait for the transaction to be mined (don’t forget to activate mining
+<code class="docutils literal notranslate"><span class="pre">miner.start()</span></code>). Once this is done, you can use it by executing the
+<code class="docutils literal notranslate"><span class="pre">moveFund</span></code> and <code class="docutils literal notranslate"><span class="pre">donate</span></code> function. But this is not what we want to
+achieve. We want to run and debug those functions from the front end.</p>
+<p>Remix also display the address of the contract. Save it, we’ll need this
+address later.</p>
+<p><img alt="_images/remix2.png" src="_images/remix2.png" />image</p>
+</div>
+<div class="section" id="debugging">
+<h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h2>
+<p>From Mist, browse the above front end. In the first field, paste the
+address of the newly created contract. Now, let’s call the first
+function (label <code class="docutils literal notranslate"><span class="pre">give</span></code>).</p>
+<p>You will need an account and a value.</p>
+<p>The account could be any account that is declared in the Wallet section
+of Mist. This is the sender of the transaction that we are going to
+create. The value should be no more than the actual balance of the
+account - the unit is in wei, so just put <code class="docutils literal notranslate"><span class="pre">100</span></code> (100 wei), that should
+be fine.</p>
+<p>Click on <code class="docutils literal notranslate"><span class="pre">Give</span></code> and wait for the transaction to be mined.</p>
+<p>The HTML block with id <code class="docutils literal notranslate"><span class="pre">log</span></code> is filled by all the transactions created
+from the front end. It was easier for the purpose of this tutorial to
+just log transactions in a div but you can have your own logging
+mechanism.</p>
+<p>There is only one field that we need, this is the <code class="docutils literal notranslate"><span class="pre">transactionHash</span></code>.</p>
+<p>Copy it and switch to Remix. On the right side, the fifth panel shows a
+small “bug” icon, that is the debugger.</p>
+<p>Paste the hash into the transaction field and click on the <code class="docutils literal notranslate"><span class="pre">play</span></code>
+button.</p>
+<p><img alt="_images/remix3.png" src="_images/remix3.png" />image</p>
+<p>You are now entering a debug session for the call to <code class="docutils literal notranslate"><span class="pre">donate</span></code>.</p>
+<p>Debugging in Remix is easier than with common tools like gdb because you
+can freely move in time. Use the slider to change the current step and
+click on the panels below to expand them and explore the curret state,
+local variables, etc. There are also breakpoints to move between
+sections of the code quickly, but more on all that later.</p>
+<p>At the time of this writing, there is an issue that could break the
+contract creation. The a workaround for that at
+<a class="reference external" href="https://github.com/ethereum/go-ethereum/issues/3653">https://github.com/ethereum/go-ethereum/issues/3653</a> . Please follow
+the workaround or wait for this issue to be closed.</p>
+<p>Also, although retrieving a contract’s storage when Remix is using the
+JavaScript VM is working well, there is still work to be done when Remix
+is using eth or geth as backend.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Remix
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

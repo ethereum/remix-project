@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Importing Source Files in Solidity &mdash; Remix, Ethereum-IDE 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Remixd: Get access your local filesystem" href="remixd.html" />
+    <link rel="prev" title="Creating and Deploying a Contract" href="create_deploy.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Remix, Ethereum-IDE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">New Layout Intro</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="layout.html">Remix-IDE Layout</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of default modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="file_explorer.html">File Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_manager.html">Plugin Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solidity_editor.html">Solidity Editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminal.html">Terminal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of typical solidity modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="compile.html">Compiler (Solidity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">Run &amp; Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="udapp.html">Run &amp; Deploy (part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugger.html">Debugger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="static_analysis.html">Analysis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Remix</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="contract_metadata.html">Build Artifact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create_deploy.html">Creating and Deploying a Contract</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Importing Source Files in Solidity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#importing-a-file-from-the-browser-s-local-storage">Importing a file from the browser’s local storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importing-a-file-from-your-computer-s-filesystem">Importing a file from your computer’s filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importing-from-github">Importing from GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importing-from-swarm">Importing from Swarm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="remixd.html">Remixd: Get access your local filesystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unittesting.html">Unit Testing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Plugins</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_plugin.html">Remix Plugin</a></li>
+</ul>
+<p class="caption"><span class="caption-text">URLs &amp; Downloads</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="locations.html">Finding Remix</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials and workshops slides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_tutorials_github.html">Remix Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code_contribution_guide.html">Code contribution guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="community.html">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support chat</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Remix, Ethereum-IDE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Importing Source Files in Solidity</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/import.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="importing-source-files-in-solidity">
+<h1>Importing Source Files in Solidity<a class="headerlink" href="#importing-source-files-in-solidity" title="Permalink to this headline">¶</a></h1>
+<p>It is essential to know all many techniques for importing files.</p>
+<p>For a tutorial about importing files see this <a class="reference external" href="https://github.com/ethereum/remix-workshops/tree/master/loading_via_npm_github_plugin">tutorial</a>.</p>
+<p>For a detailed explanation of the <code class="docutils literal notranslate"><span class="pre">import</span></code> keyword see the
+<a class="reference external" href="https://solidity.readthedocs.io/en/develop/layout-of-source-files.html?highlight=import#importing-other-source-files">Solidity documentation</a></p>
+<p>Here are a some of the main methods of importing a file:</p>
+<div class="section" id="importing-a-file-from-the-browser-s-local-storage">
+<h2>Importing a file from the browser’s local storage<a class="headerlink" href="#importing-a-file-from-the-browser-s-local-storage" title="Permalink to this headline">¶</a></h2>
+<p>Files in Remix can be imported just by specifying their path. Please use ./ for relative paths to increase portability.
+<img alt="_images/a-old-tuto_basicimport.png" src="_images/a-old-tuto_basicimport.png" /></p>
+</div>
+<div class="section" id="importing-a-file-from-your-computer-s-filesystem">
+<h2>Importing a file from your computer’s filesystem<a class="headerlink" href="#importing-a-file-from-your-computer-s-filesystem" title="Permalink to this headline">¶</a></h2>
+<p>This method uses <strong>remixd</strong> - the remix daemon.  Please go to the <a class="reference external" href="remixd.html">remixd tutorial</a> for instructions about how to bridge the divide between the browser and your computers filesystem.</p>
+</div>
+<div class="section" id="importing-from-github">
+<h2>Importing from GitHub<a class="headerlink" href="#importing-from-github" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to import files directly from GitHub with URLs like
+<code class="docutils literal notranslate"><span class="pre">https://github.com/&lt;owner&gt;/&lt;repo&gt;/&lt;path</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">file&gt;</span></code>.</p>
+<p><img alt="_images/a-old-tuto_importgit.png" src="_images/a-old-tuto_importgit.png" /></p>
+</div>
+<div class="section" id="importing-from-swarm">
+<h2>Importing from Swarm<a class="headerlink" href="#importing-from-swarm" title="Permalink to this headline">¶</a></h2>
+<p>Files can be imported using all URLs supported by swarm. If you do not
+have a swarm node, then use swarm-gateways.net.</p>
+<p><img alt="_images/a-old-tuto_importswarm.png" src="_images/a-old-tuto_importswarm.png" /></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="remixd.html" class="btn btn-neutral float-right" title="Remixd: Get access your local filesystem" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="create_deploy.html" class="btn btn-neutral float-left" title="Creating and Deploying a Contract" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Remix
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

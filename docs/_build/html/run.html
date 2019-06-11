@@ -1,0 +1,510 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Run &amp; Deploy &mdash; Remix, Ethereum-IDE 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Run &amp; Deploy (part 2)" href="udapp.html" />
+    <link rel="prev" title="Compiler (Solidity)" href="compile.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Remix, Ethereum-IDE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">New Layout Intro</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="layout.html">Remix-IDE Layout</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of default modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="file_explorer.html">File Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_manager.html">Plugin Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solidity_editor.html">Solidity Editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminal.html">Terminal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of typical solidity modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="compile.html">Compiler (Solidity)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Run &amp; Deploy</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#run-setup">Run Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#initiate-instance">Initiate Instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pending-instances">Pending Instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-abi">Using the ABI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-recorder">Using the Recorder</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="udapp.html">Run &amp; Deploy (part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugger.html">Debugger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="static_analysis.html">Analysis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Remix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contract_metadata.html">Build Artifact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create_deploy.html">Creating and Deploying a Contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="import.html">Importing Source Files in Solidity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remixd.html">Remixd: Get access your local filesystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unittesting.html">Unit Testing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Plugins</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_plugin.html">Remix Plugin</a></li>
+</ul>
+<p class="caption"><span class="caption-text">URLs &amp; Downloads</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="locations.html">Finding Remix</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials and workshops slides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_tutorials_github.html">Remix Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code_contribution_guide.html">Code contribution guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="community.html">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support chat</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Remix, Ethereum-IDE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Run &amp; Deploy</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/run.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="run-deploy">
+<h1>Run &amp; Deploy<a class="headerlink" href="#run-deploy" title="Permalink to this headline">¶</a></h1>
+<p>The Run tab allows you to send transactions to the current environment.</p>
+<p>To get to the Run &amp; Deploy module - click the run icon in the icon panel.</p>
+<p>In order to use this module you need to have a contract compiled.  So if there is file name in the contract pulldown menu ( in the image below it’s the pulldown that says <strong>Ballot</strong>), then you can interact with this contract.  If nothing is there - then you need to select a contract - make it the active contract in the main panel, ( in the image below - on the right side of the page - in the main panel - you see the ballot.sol so it is the active contract) then go to the compiler module and compile it.</p>
+<p><img alt="_images/a-runtab1.png" src="_images/a-runtab1.png" /></p>
+<div class="section" id="run-setup">
+<h2>Run Setup<a class="headerlink" href="#run-setup" title="Permalink to this headline">¶</a></h2>
+<p>The following settings allow you to directly influence the transaction
+execution:</p>
+<p>Environment:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">JavaScript</span> <span class="pre">VM</span></code>: All the transactions will be executed in
+a sandbox blockchain in the browser. This means nothing
+will be persisted and a page reload will restart a new
+blockchain from scratch, the old one will not be saved.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Injected</span> <span class="pre">Provider</span></code>: Remix will connect to an injected
+web3 provider. <code class="docutils literal notranslate"><span class="pre">Metamask</span></code> is an example of
+providers that inject web3, thus can be used with this
+option.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Web3</span> <span class="pre">Provider</span></code>: Remix will connect to a remote node. You
+will need to provide the URL address to the selected
+provider: geth, parity or any Ethereum client.</p></li>
+<li><p>Account: the list of accounts associated with the current
+environment (and their associated balances).</p></li>
+<li><p>Gas Limit: the maximum amount of gas that can be set for all the
+transactions created in Remix.</p></li>
+<li><p>Value: the amount of value for the next created transaction (this
+value is always reset to 0 after each transaction execution).</p></li>
+</ul>
+<p><img alt="_images/a-Runtab-deploy-atAddress.png" src="_images/a-Runtab-deploy-atAddress.png" /></p>
+</div>
+<div class="section" id="initiate-instance">
+<h2>Initiate Instance<a class="headerlink" href="#initiate-instance" title="Permalink to this headline">¶</a></h2>
+<p>This section contains the list of compiled contracts and 2 actions:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">At</span> <span class="pre">Address</span></code> assumes the given address is an instance of the
+selected contract. It is then possible to interact with an already
+deployed contract. There’s no check at this point, so be careful
+when using this feature, and be sure you trust the contract at that
+address.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Deploy</span></code> send a transaction that deploys the selected contract. When
+the transaction is mined, the newly created instance will be added
+(this might take several seconds). Note that if the <code class="docutils literal notranslate"><span class="pre">constructor</span></code>
+has parameters, you need to specify them.</p></li>
+</ul>
+</div>
+<div class="section" id="pending-instances">
+<h2>Pending Instances<a class="headerlink" href="#pending-instances" title="Permalink to this headline">¶</a></h2>
+<p>Validating a transaction take several seconds. During this time, the GUI
+shows it in a pending mode. When transaction is mined the number of
+pending transactions is updated and the transaction is added to the log
+(see ../terminal)</p>
+</div>
+<div class="section" id="using-the-abi">
+<h2>Using the ABI<a class="headerlink" href="#using-the-abi" title="Permalink to this headline">¶</a></h2>
+<p>Using <code class="docutils literal notranslate"><span class="pre">Deploy</span></code> or <code class="docutils literal notranslate"><span class="pre">At</span> <span class="pre">Address</span></code> is a classic use case of Remix. It is
+possible though to interact with a contract by using its ABI. The ABI is
+a JSON array which describe its interface.</p>
+<p>To interact with a contract using the ABI, create a new file in Remix
+with extension <code class="docutils literal notranslate"><span class="pre">*.abi</span></code> and copy the ABI content to it. Then in the input
+next to <code class="docutils literal notranslate"><span class="pre">At</span> <span class="pre">Address</span></code>, put the Address of the contract you want to
+interact with. Click on <code class="docutils literal notranslate"><span class="pre">At</span> <span class="pre">Address</span></code>, a new “connection” with the
+contract will popup below.</p>
+</div>
+<div class="section" id="using-the-recorder">
+<h2>Using the Recorder<a class="headerlink" href="#using-the-recorder" title="Permalink to this headline">¶</a></h2>
+<p>The Recorder allows to save a bunch of transactions in a JSON file and
+rerun them later either in the same environment or in another.</p>
+<p>Saving to JSON allows to easily check the transaction list, tweak input
+parameters, change linked library, etc…</p>
+<p>We can find many use cases for the recorder, for instance:
+:   -   After having coded and tested contracts in a constrained
+environment (like the JavaScript VM), it could be interesting to
+redeploy them easily in a more persisted environment (like a
+Geth node) in order to check whether everything behaves normally
+in a classic environment.
+-   Deploying contract does often require more than creating one
+transaction.
+-   Working in a dev environment does often require to setup the
+state in a first place.</p>
+<p><img alt="_images/a-runtab-recorder.png" src="_images/a-runtab-recorder.png" /></p>
+<p>Saving a record ends up with the creation of this type of content (see
+below):</p>
+<p>In that specific record, 3 transactions are executed:</p>
+<p>The first corresponds to the deployment of the lib <code class="docutils literal notranslate"><span class="pre">testLib</span></code>.</p>
+<p>The second corresponds to the deployment of the contract <code class="docutils literal notranslate"><span class="pre">test</span></code>, the
+first parameter of the constructor is set to 11. That contract depends
+on a library. The linkage is done using the property <code class="docutils literal notranslate"><span class="pre">linkReferences</span></code>.
+In that case we use the addres of the previously created library :
+<code class="docutils literal notranslate"><span class="pre">created{1512830014773}</span></code>. the number is the id (timestamp) of the
+transaction that leads to the creation of the library.</p>
+<p>The third parameter corresponds to the call to the function <code class="docutils literal notranslate"><span class="pre">set</span></code> of the
+contract <code class="docutils literal notranslate"><span class="pre">test</span></code> (the property to is set to: <code class="docutils literal notranslate"><span class="pre">created{1512830015080}</span></code>) .
+Input parameters are <code class="docutils literal notranslate"><span class="pre">1</span></code> and
+<code class="docutils literal notranslate"><span class="pre">0xca35b7d915458ef540ade6068dfe2f44e8fa733c</span></code></p>
+<p>all these transactions are created using the value of the accounts
+<code class="docutils literal notranslate"><span class="pre">account{0}</span></code>.</p>
+<div class="highlight-JavaScript notranslate"><div class="highlight"><pre><span></span><span class="p">{.</span><span class="nx">sourceCode</span> <span class="p">.</span><span class="nx">none</span><span class="p">}</span>
+<span class="p">{</span>
+<span class="s2">&quot;accounts&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;account{0}&quot;</span><span class="o">:</span> <span class="s2">&quot;0xca35b7d915458ef540ade6068dfe2f44e8fa733c&quot;</span>
+<span class="p">},</span>
+<span class="s2">&quot;linkReferences&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;testLib&quot;</span><span class="o">:</span> <span class="s2">&quot;created{1512830014773}&quot;</span>
+<span class="p">},</span>
+<span class="s2">&quot;transactions&quot;</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+    <span class="s2">&quot;timestamp&quot;</span><span class="o">:</span> <span class="mi">1512830014773</span><span class="p">,</span>
+    <span class="s2">&quot;record&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;parameters&quot;</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;abi&quot;</span><span class="o">:</span> <span class="s2">&quot;0xbc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;contractName&quot;</span><span class="o">:</span> <span class="s2">&quot;testLib&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bytecode&quot;</span><span class="o">:</span> <span class="s2">&quot;60606040523415600e57600080fd5b60968061001c6000396000f300606060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680636d4ce63c146044575b600080fd5b604a6060565b6040518082815260200191505060405180910390f35b6000610d809050905600a165627a7a7230582022d123b15248b8176151f8d45c2dc132063bcc9bb8d5cd652aea7efae362c8050029&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;linkReferences&quot;</span><span class="o">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;constructor&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from&quot;</span><span class="o">:</span> <span class="s2">&quot;account{0}&quot;</span>
+    <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+    <span class="s2">&quot;timestamp&quot;</span><span class="o">:</span> <span class="mi">1512830015080</span><span class="p">,</span>
+    <span class="s2">&quot;record&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="s2">&quot;100&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;parameters&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="mi">11</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;abi&quot;</span><span class="o">:</span> <span class="s2">&quot;0xc41589e7559804ea4a2080dad19d876a024ccb05117835447d72ce08c1d020ec&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;contractName&quot;</span><span class="o">:</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bytecode&quot;</span><span class="o">:</span> <span class="s2">&quot;60606040526040516020806102b183398101604052808051906020019091905050806000819055505061027a806100376000396000f300606060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680632f30c6f61461006757806338cc48311461009e57806362738998146100f357806387cc10e11461011c575b600080fd5b61009c600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610145565b005b34156100a957600080fd5b6100b1610191565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156100fe57600080fd5b6101066101bb565b6040518082815260200191505060405180910390f35b341561012757600080fd5b61012f6101c4565b6040518082815260200191505060405180910390f35b8160008190555080600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505050565b6000600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60008054905090565b600073__browser/ballot.sol:testLib____________636d4ce63c6000604051602001526040518163ffffffff167c010000000000000000000000000000000000000000000000000000000002815260040160206040518083038186803b151561022e57600080fd5b6102c65a03f4151561023f57600080fd5b505050604051805190509050905600a165627a7a72305820e0b2510bb2890a0334bfe5613d96db3e72442e63b514cdeaee8fc2c6bbd19d3a0029&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;linkReferences&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;browser/ballot.sol&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;testLib&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;length&quot;</span><span class="o">:</span> <span class="mi">20</span><span class="p">,</span>
+                <span class="s2">&quot;start&quot;</span><span class="o">:</span> <span class="mi">511</span>
+            <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;constructor&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from&quot;</span><span class="o">:</span> <span class="s2">&quot;account{0}&quot;</span>
+    <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+    <span class="s2">&quot;timestamp&quot;</span><span class="o">:</span> <span class="mi">1512830034180</span><span class="p">,</span>
+    <span class="s2">&quot;record&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="s2">&quot;1000000000000000000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;parameters&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;0xca35b7d915458ef540ade6068dfe2f44e8fa733c&quot;</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;to&quot;</span><span class="o">:</span> <span class="s2">&quot;created{1512830015080}&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;abi&quot;</span><span class="o">:</span> <span class="s2">&quot;0xc41589e7559804ea4a2080dad19d876a024ccb05117835447d72ce08c1d020ec&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;set&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from&quot;</span><span class="o">:</span> <span class="s2">&quot;account{0}&quot;</span>
+    <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">],</span>
+<span class="s2">&quot;abis&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;0xbc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a&quot;</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;constant&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;inputs&quot;</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;get&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;outputs&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;uint256&quot;</span>
+        <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;payable&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;stateMutability&quot;</span><span class="o">:</span> <span class="s2">&quot;view&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;function&quot;</span>
+    <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;0xc41589e7559804ea4a2080dad19d876a024ccb05117835447d72ce08c1d020ec&quot;</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;constant&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;inputs&quot;</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;getInt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;outputs&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;uint256&quot;</span>
+        <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;payable&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;stateMutability&quot;</span><span class="o">:</span> <span class="s2">&quot;view&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;function&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;constant&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;inputs&quot;</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;getFromLib&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;outputs&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;uint256&quot;</span>
+        <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;payable&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;stateMutability&quot;</span><span class="o">:</span> <span class="s2">&quot;view&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;function&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;constant&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;inputs&quot;</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;getAddress&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;outputs&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;address&quot;</span>
+        <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;payable&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;stateMutability&quot;</span><span class="o">:</span> <span class="s2">&quot;view&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;function&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;constant&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;inputs&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;_t&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;uint256&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;_add&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;address&quot;</span>
+        <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;set&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;outputs&quot;</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;payable&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;stateMutability&quot;</span><span class="o">:</span> <span class="s2">&quot;payable&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;function&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;inputs&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;_r&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;uint256&quot;</span>
+        <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;payable&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;stateMutability&quot;</span><span class="o">:</span> <span class="s2">&quot;payable&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;constructor&quot;</span>
+    <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="udapp.html" class="btn btn-neutral float-right" title="Run &amp; Deploy (part 2)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="compile.html" class="btn btn-neutral float-left" title="Compiler (Solidity)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Remix
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

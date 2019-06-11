@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Remix Plugin API usage &mdash; Remix, Ethereum-IDE 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Remix, Ethereum-IDE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">New Layout Intro</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="layout.html">Remix-IDE Layout</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of default modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="file_explorer.html">File Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_manager.html">Plugin Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solidity_editor.html">Solidity Editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminal.html">Terminal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of typical solidity modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="compile.html">Compiler (Solidity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">Run &amp; Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="udapp.html">Run &amp; Deploy (part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugger.html">Debugger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="static_analysis.html">Analysis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Remix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contract_metadata.html">Build Artifact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create_deploy.html">Creating and Deploying a Contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="import.html">Importing Source Files in Solidity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remixd.html">Remixd: Get access your local filesystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unittesting.html">Unit Testing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Plugins</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_plugin.html">Remix Plugin</a></li>
+</ul>
+<p class="caption"><span class="caption-text">URLs &amp; Downloads</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="locations.html">Finding Remix</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials and workshops slides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_tutorials_github.html">Remix Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code_contribution_guide.html">Code contribution guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="community.html">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support chat</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Remix, Ethereum-IDE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Remix Plugin API usage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/remix_plugin_api.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="remix-plugin-api-usage">
+<h1>Remix Plugin API usage<a class="headerlink" href="#remix-plugin-api-usage" title="Permalink to this headline">¶</a></h1>
+<p>This section list all the available key and value pair which define this API:</p>
+<div class="section" id="notifications">
+<h2>1) notifications<a class="headerlink" href="#notifications" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="app-key-app">
+<h3>app (key: app)<a class="headerlink" href="#app-key-app" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>unfocus <code class="docutils literal notranslate"><span class="pre">[]</span></code></p></li>
+<li><p>focus <code class="docutils literal notranslate"><span class="pre">[]</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="compiler-key-compiler">
+<h3>compiler (key: compiler)<a class="headerlink" href="#compiler-key-compiler" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>compilationFinished <code class="docutils literal notranslate"><span class="pre">[success</span> <span class="pre">(bool),</span> <span class="pre">data</span> <span class="pre">(obj),</span> <span class="pre">source</span> <span class="pre">(obj)]</span></code></p></li>
+<li><p>compilationData <code class="docutils literal notranslate"><span class="pre">[compilationResult</span> <span class="pre">(obj)]</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="transaction-listener-key-txlistener">
+<h3>transaction listener (key: txlistener)<a class="headerlink" href="#transaction-listener-key-txlistener" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>newTransaction <code class="docutils literal notranslate"><span class="pre">[tx</span> <span class="pre">(obj)]</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="addendum">
+<h3>addendum<a class="headerlink" href="#addendum" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">newTransaction</span></code> is broadcasted to all loaded plugins.
+<code class="docutils literal notranslate"><span class="pre">compilationFinished</span></code> is sent to the plugin that currently has the focus.
+<code class="docutils literal notranslate"><span class="pre">focus</span> <span class="pre">/</span> <span class="pre">unfocus</span></code> is sent to the plugin which currently has the focus or is unfocused.
+<code class="docutils literal notranslate"><span class="pre">compilationData</span></code> is sent always just upon the <code class="docutils literal notranslate"><span class="pre">focus</span></code> event and gives the last compilation result.</p>
+</div>
+</div>
+<div class="section" id="requests">
+<h2>2) requests<a class="headerlink" href="#requests" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="app">
+<h3>app<a class="headerlink" href="#app" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>getExecutionContextProvider <code class="docutils literal notranslate"><span class="pre">&#64;return</span> <span class="pre">{String}</span> <span class="pre">provider</span> <span class="pre">(injected</span> <span class="pre">|</span> <span class="pre">web3</span> <span class="pre">|</span> <span class="pre">vm)</span></code></p></li>
+<li><p>getProviderEndpoint <code class="docutils literal notranslate"><span class="pre">&#64;return</span> <span class="pre">{String}</span> <span class="pre">provider</span> <span class="pre">endpoint</span> <span class="pre">url</span> <span class="pre">if</span> <span class="pre">web3,</span> <span class="pre">returns</span> <span class="pre">an</span> <span class="pre">error</span> <span class="pre">if</span> <span class="pre">injected</span> <span class="pre">or</span> <span class="pre">javascript</span> <span class="pre">VM</span></code></p></li>
+<li><p>updateTitle <code class="docutils literal notranslate"><span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">title</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="config">
+<h3>config<a class="headerlink" href="#config" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>setConfig <code class="docutils literal notranslate"><span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">path,</span> <span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">content</span></code></p></li>
+<li><p>getConfig <code class="docutils literal notranslate"><span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">path</span></code></p></li>
+<li><p>removeConfig <code class="docutils literal notranslate"><span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">path</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="compiler">
+<h3>compiler<a class="headerlink" href="#compiler" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>getCompilationResult <code class="docutils literal notranslate"><span class="pre">&#64;return</span> <span class="pre">{Object}</span> <span class="pre">compilation</span> <span class="pre">result</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="udapp-only-vm">
+<h3>udapp (only VM)<a class="headerlink" href="#udapp-only-vm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>runTx <code class="docutils literal notranslate"><span class="pre">&#64;param</span> <span class="pre">{Object}</span> <span class="pre">tx</span></code></p></li>
+<li><p>getAccounts <code class="docutils literal notranslate"><span class="pre">&#64;return</span> <span class="pre">{Array}</span> <span class="pre">acccounts</span></code></p></li>
+<li><p>createVMAccount <code class="docutils literal notranslate"><span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">privateKey,</span> <span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">balance</span> <span class="pre">(hex)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="editor">
+<h3>editor<a class="headerlink" href="#editor" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>getCurrentFile <code class="docutils literal notranslate"><span class="pre">&#64;return</span> <span class="pre">{String}</span> <span class="pre">current</span> <span class="pre">file</span> <span class="pre">path</span> <span class="pre">displayed</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">editor</span></code></p></li>
+<li><p>getFile <code class="docutils literal notranslate"><span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">path</span></code></p></li>
+<li><p>setFile <code class="docutils literal notranslate"><span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">path,</span> <span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">content</span></code></p></li>
+<li><p>highlight <code class="docutils literal notranslate"><span class="pre">&#64;param</span> <span class="pre">{Object}</span> <span class="pre">lineColumnPos,</span> <span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">filePath,</span> <span class="pre">&#64;param</span> <span class="pre">{String}</span> <span class="pre">hexColor</span></code></p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Remix
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
