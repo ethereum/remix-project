@@ -1,0 +1,300 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Remix-IDE Layout &mdash; Remix, Ethereum-IDE 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="File Explorer" href="file_explorer.html" />
+    <link rel="prev" title="Welcome to Remix documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Remix, Ethereum-IDE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">New Layout Intro</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Remix-IDE Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-new-structure">The new structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#icon-panel-at-page-load">Icon Panel at Page Load</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#homepage">Homepage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#environments">Environments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#plugin-manager">Plugin Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#themes">Themes</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of default modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="file_explorer.html">File Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_manager.html">Plugin Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solidity_editor.html">Solidity Editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminal.html">Terminal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tour of typical solidity modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="compile.html">Compiler (Solidity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">Run &amp; Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="udapp.html">Run &amp; Deploy (part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugger.html">Debugger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="static_analysis.html">Analysis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Remix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contract_metadata.html">Build Artifact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create_deploy.html">Creating and Deploying a Contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="import.html">Importing Source Files in Solidity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remixd.html">Remixd: Get access your local filesystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unittesting.html">Unit Testing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Plugins</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_plugin.html">Remix Plugin</a></li>
+</ul>
+<p class="caption"><span class="caption-text">URLs &amp; Downloads</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="locations.html">Finding Remix</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials and workshops slides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remix_tutorials_github.html">Remix Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code_contribution_guide.html">Code contribution guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="community.html">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support chat</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Remix, Ethereum-IDE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Remix-IDE Layout</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/layout.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="remix-ide-layout">
+<h1>Remix-IDE Layout<a class="headerlink" href="#remix-ide-layout" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-new-structure">
+<h2>The new structure<a class="headerlink" href="#the-new-structure" title="Permalink to this headline">¶</a></h2>
+<p><img alt="_images/a-layout1b.png" src="_images/a-layout1b.png" /></p>
+<ol class="simple">
+<li><p>Icon Panel - click to change which plugin appears in the Swap Panel</p></li>
+<li><p>Swap Panel - Most but not all plugins will have their GUI here.</p></li>
+<li><p>Main Panel - In the old layout this was just for editing files.  In the tabs can be plugins or files for the IDE to compile.</p></li>
+<li><p>Terminal - where you will see the results of your interactions with the GUI’s.  Also you can run scripts here.</p></li>
+</ol>
+</div>
+<div class="section" id="icon-panel-at-page-load">
+<h2>Icon Panel at Page Load<a class="headerlink" href="#icon-panel-at-page-load" title="Permalink to this headline">¶</a></h2>
+<p>When you load remix - the icon panel show these icons by default.</p>
+<p><img alt="_images/a-icons-at-load.png" src="_images/a-icons-at-load.png" /></p>
+<p>Everything in remix is now a plugin…  so the <strong><a class="reference external" href="#plugin-manager">Plugin Manager</a></strong> is very important.
+In the old layout, each basic task in remix was separated into the tabs.  Now these tabs are plugins.</p>
+<p>But to activate a half a dozen plugins - (or however many you are using) each time the page load is <strong>tedious</strong>.  So learn about the <strong><a class="reference external" href="#environments">Environments</a></strong>.</p>
+</div>
+<div class="section" id="homepage">
+<h2>Homepage<a class="headerlink" href="#homepage" title="Permalink to this headline">¶</a></h2>
+<p><img alt="_images/a-hometab.png" src="_images/a-hometab.png" /></p>
+<p>The homepage is located in a tab in the Main Panel.</p>
+<p>You can also get there by clicking the remix logo at the top of the icon panel.</p>
+<div class="section" id="environments">
+<h3>Environments<a class="headerlink" href="#environments" title="Permalink to this headline">¶</a></h3>
+<p>Clicking on one of the environment buttons loads up a collection of plugins.  We currently have a <strong>Solidity</strong> Button and a <strong>Vyper</strong> button.  In the future you will be able to save your own environment.</p>
+<p>To see all the plugins go to the <strong>plugin manager</strong> - by selecting the plug in the icon panel.
+<img alt="_images/a-plug.png" src="_images/a-plug.png" /></p>
+<p>The environment buttons are time &amp; sanity savers - so you don’t need to go to the plugin manager to get started everytime you load the page.</p>
+</div>
+</div>
+<div class="section" id="plugin-manager">
+<h2>Plugin Manager<a class="headerlink" href="#plugin-manager" title="Permalink to this headline">¶</a></h2>
+<p>In order to make Remix flexible for integrating changes into its functionality and for integrating remix into other projects (your’s for example), we’ve now made everything a plugin.  This means that you only load the functionality you need.  It also means that you need a place to turn off and on plugins - as your needs change.  This all happens in the plug manager.</p>
+<p>The Plugin Manager is also the place you go when you are creating your own plugin and you want to load your local plugin into Remix. In that case you’d click on the “Connect to a Local Plugin” link at the top of the Plugin Manager panel.</p>
+</div>
+<div class="section" id="themes">
+<h2>Themes<a class="headerlink" href="#themes" title="Permalink to this headline">¶</a></h2>
+<p>So you want to work on Remix with a dark theme or a gray theme or just a different theme that the one you are currently looking at?  Go to the settings tab and at the bottom is a choice of lots of bootstrap based themes.</p>
+<p><img alt="_images/a-themes.png" src="_images/a-themes.png" /></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="file_explorer.html" class="btn btn-neutral float-right" title="File Explorer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Remix documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Remix
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
