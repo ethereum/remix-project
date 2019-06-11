@@ -180,7 +180,7 @@ function testSignature (browser, callback) {
               .getAttribute(instanceSelector, 'id', (result) => {
                 // skip 'instance' part of e.g. 'instance0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
                 const address = result.value.slice('instance'.length)
-                browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`}).perform(
+                browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`}).pause(1000).perform(
                   () => {
                     contractHelper.verifyCallReturnValue(
                       browser,
