@@ -50,15 +50,15 @@ Misc.prototype.eth_getCompilers = function (payload, cb) {
 }
 
 Misc.prototype.eth_compileSolidity = function (payload, cb) {
-  cb(null, "unsupported")
+  cb(null, 'unsupported')
 }
 
 Misc.prototype.eth_compileLLL = function (payload, cb) {
-  cb(null, "unsupported")
+  cb(null, 'unsupported')
 }
 
 Misc.prototype.eth_compileSerpent = function (payload, cb) {
-  cb(null, "unsupported")
+  cb(null, 'unsupported')
 }
 
 module.exports = Misc
