@@ -13,7 +13,7 @@ class TxRunner {
     this.blockNumber = 0
     this.runAsync = true
     if (executionContext.isVM()) {
-      //this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
+      // this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
       this.blockNumber = 2 // The VM is running in Homestead mode, which started at this block.
       this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
     }
@@ -94,7 +94,7 @@ class TxRunner {
     }
   }
 
-  runInVm(from, to, data, value, gasLimit, useCall, timestamp, callback) {
+  runInVm (from, to, data, value, gasLimit, useCall, timestamp, callback) {
     const self = this
     var account = self.vmaccounts[from]
     if (!account) {
@@ -119,8 +119,7 @@ class TxRunner {
         number: self.blockNumber,
         coinbase: coinbases[self.blockNumber % coinbases.length],
         difficulty: difficulties[self.blockNumber % difficulties.length],
-        coinbase: coinbases[0],
-        gasLimit: new BN("5000000").imuln(1)
+        gasLimit: new BN('5000000').imuln(1)
       },
       transactions: [tx],
       uncleHeaders: []
@@ -144,7 +143,7 @@ class TxRunner {
         }
 
         executionContext.addBlock(block)
-        executionContext.trackTx("0x" + tx.hash().toString('hex'), block)
+        executionContext.trackTx('0x' + tx.hash().toString('hex'), block)
 
         callback(err, {
           result: result,
