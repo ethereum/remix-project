@@ -70,7 +70,7 @@ SourceMappingDecoder.prototype.decompressAll = function (mapping) {
   * Retrieve line/column position of each source char
   *
   * @param {String} source - contract source code
-  * @return {Arrray} returns an array containing offset of line breaks
+  * @return {Array} returns an array containing offset of line breaks
   */
 SourceMappingDecoder.prototype.getLinebreakPositions = function (source) {
   var ret = []
@@ -81,7 +81,7 @@ SourceMappingDecoder.prototype.getLinebreakPositions = function (source) {
 }
 
 /**
- * Retrieve the line/colum position for the given source mapping
+ * Retrieve the line/column position for the given source mapping
  *
  * @param {Object} sourceLocation - object containing attributes {source} and {length}
  * @param {Array} lineBreakPositions - array returned by the function 'getLinebreakPositions'

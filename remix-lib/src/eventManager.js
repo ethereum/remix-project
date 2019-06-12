@@ -6,12 +6,12 @@ function eventManager () {
 }
 
 /*
-   * Unregister a listenner.
+   * Unregister a listener.
    * Note that if obj is a function. the unregistration will be applied to the dummy obj {}.
    *
    * @param {String} eventName  - the event name
    * @param {Object or Func} obj - object that will listen on this event
-   * @param {Func} func         - function of the listenners that will be executed
+   * @param {Func} func         - function of the listeners that will be executed
 */
 eventManager.prototype.unregister = function (eventName, obj, func) {
   if (!this.registered[eventName]) {
@@ -29,12 +29,12 @@ eventManager.prototype.unregister = function (eventName, obj, func) {
 }
 
 /*
-   * Register a new listenner.
+   * Register a new listener.
    * Note that if obj is a function, the function registration will be associated with the dummy object {}
    *
    * @param {String} eventName  - the event name
    * @param {Object or Func} obj - object that will listen on this event
-   * @param {Func} func         - function of the listenners that will be executed
+   * @param {Func} func         - function of the listeners that will be executed
 */
 eventManager.prototype.register = function (eventName, obj, func) {
   if (!this.registered[eventName]) {
@@ -52,10 +52,10 @@ eventManager.prototype.register = function (eventName, obj, func) {
 
 /*
    * trigger event.
-   * Every listenner have their associated function executed
+   * Every listener have their associated function executed
    *
    * @param {String} eventName  - the event name
-   * @param {Array}j - argument that will be passed to the exectued function.
+   * @param {Array}j - argument that will be passed to the executed function.
 */
 eventManager.prototype.trigger = function (eventName, args) {
   if (!this.registered[eventName]) {
