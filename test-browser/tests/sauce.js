@@ -1,16 +1,13 @@
 
-const https = require('https')
+// const https = require('https')
 
 module.exports = function sauce (callback) {
+  return callback()
+  /*
   const currentTest = this.client.currentTest
   const username = this.client.options.username
   const sessionId = this.client.capabilities['webdriver.remote.sessionid']
   const accessKey = this.client.options.accessKey
-
-  if (!this.client.launch_url.match(/saucelabs/)) {
-    console.log('Not saucelabs ...')
-    return callback()
-  }
 
   if (!username || !accessKey || !sessionId) {
     console.log(this.client)
@@ -59,4 +56,5 @@ module.exports = function sauce (callback) {
     console.log('Error', error)
     callback()
   }
+  */
 }

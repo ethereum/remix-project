@@ -8,10 +8,9 @@ var css = csjs`
   .title {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     font-size: 11px;
     /* height: 30px; */
-    /* width: 97%; */
+    width: 100%;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
@@ -49,6 +48,7 @@ var css = csjs`
     padding: 5px 7px;
   }
   .nameNbuts {
+    display: contents;
     flex-wrap: nowrap;
     width: 100%;
   }

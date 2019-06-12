@@ -164,32 +164,30 @@ function checkDeployShouldSucceed (browser, address, callback) {
 
 function testSignature (browser, callback) {
   let hash, signature
-  browser.perform((client, done) => {
-    contractHelper.signMsg(browser, 'test message', (h, s) => {
-      hash = h
-      signature = s
-      browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
-      browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
-      contractHelper.addFile(browser, 'signMassage.sol', sources[6]['browser/signMassage.sol'], () => {
-        contractHelper.switchFile(browser, 'browser/signMassage.sol', () => {
-          contractHelper.selectContract(browser, 'ECVerify', () => { // deploy lib
-            contractHelper.createContract(browser, '', () => {
-              const instanceSelector = '.instance:nth-of-type(4)'
-              browser.waitForElementPresent(instanceSelector)
-              .click(instanceSelector + ' > div > button')
-              .getAttribute(instanceSelector, 'id', (result) => {
-                // skip 'instance' part of e.g. 'instance0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
-                const address = result.value.slice('instance'.length)
-                browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`}).perform(
-                  () => {
-                    contractHelper.verifyCallReturnValue(
-                      browser,
-                      address,
-                      ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'],
-                      () => { callback(null, browser) }
-                    )
-                  })
-              })
+  contractHelper.signMsg(browser, 'test message', (h, s) => {
+    hash = h
+    signature = s
+    browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
+    browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
+    contractHelper.addFile(browser, 'signMassage.sol', sources[6]['browser/signMassage.sol'], () => {
+      contractHelper.switchFile(browser, 'browser/signMassage.sol', () => {
+        contractHelper.selectContract(browser, 'ECVerify', () => { // deploy lib
+          contractHelper.createContract(browser, '', () => {
+            const instanceSelector = '.instance:nth-of-type(4)'
+            browser.waitForElementPresent(instanceSelector)
+            .click(instanceSelector + ' > div > button')
+            .getAttribute(instanceSelector, 'id', (result) => {
+              // skip 'instance' part of e.g. 'instance0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
+              const address = result.value.slice('instance'.length)
+              browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`}).perform(
+                () => {
+                  contractHelper.verifyCallReturnValue(
+                    browser,
+                    address,
+                    ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'],
+                    () => { callback(null, browser) }
+                  )
+                })
             })
           })
         })
