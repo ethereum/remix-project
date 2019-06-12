@@ -3,7 +3,7 @@ var ethutil = require('ethereumjs-util')
 
 /*
  contains misc util: @TODO should be splitted
-  - hex convertion
+  - hex conversion
   - binary search
   - CALL related look up
   - sha3 calculation
