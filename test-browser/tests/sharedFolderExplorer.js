@@ -65,13 +65,13 @@ function runTests (browser, testData) {
     return
   }
   browser
-    .waitForElementVisible('#icon-panel', 10000)
+    .waitForElementVisible('#icon-panel', 2000)
     .clickLaunchIcon('fileExplorers')
-    .click('.websocketconn')
-    .waitForElementVisible('#modal-footer-ok', 10000)
+    .clickLaunchIcon('pluginManager')
+    .click('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+    .waitForElementVisible('#modal-footer-ok', 2000)
     .click('#modal-footer-ok')
-    .waitForElementVisible('[data-path="localhost"]', 100000)
-    .click('[data-path="localhost"]')
+    .clickLaunchIcon('fileExplorers')
     .waitForElementVisible('[data-path="localhost/folder1"]')
     .click('[data-path="localhost/folder1"]')
     .waitForElementVisible('[data-path="localhost/contract1.sol"]')
@@ -137,7 +137,8 @@ function runTests (browser, testData) {
         .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // check if renamed (old) file is not present
         .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '_toremove.sol"]') // check if removed (old) file is not present
         .click('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]')
-        .click('.websocketconn')
+        .clickLaunchIcon('pluginManager')
+        .click('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
         .end()
     })
 }

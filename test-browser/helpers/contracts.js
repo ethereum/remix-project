@@ -116,6 +116,7 @@ function clickFunction (fnFullName, expectedInput) {
 }
 
 function verifyCallReturnValue (browser, address, checks, done) {
+  console.log('verifyCallReturnValue address', address)
   browser.execute(function (address) {
     var nodes = document.querySelectorAll('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
     var ret = []
