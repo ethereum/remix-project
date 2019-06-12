@@ -14,7 +14,7 @@ class TxRunner {
     this.runAsync = true
     if (executionContext.isVM()) {
       //this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
-      this.blockNumber = 1 // The VM is running in Homestead mode, which started at this block.
+      this.blockNumber = 2 // The VM is running in Homestead mode, which started at this block.
       this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
     }
     this.pendingTxs = {}
