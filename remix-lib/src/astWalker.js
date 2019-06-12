@@ -11,7 +11,7 @@ function AstWalker () {
  * @param {Object} ast  - AST node
  * @param {Object or Function} callback  - if (Function) the function will be called for every node.
  *                                       - if (Object) callback[<Node Type>] will be called for
- *                                         every node of type <Node Type>. callback["*"] will be called fo all other nodes.
+ *                                         every node of type <Node Type>. callback["*"] will be called for all other nodes.
  *                                         in each case, if the callback returns false it does not descend into children.
  *                                         If no callback for the current type, children are visited.
  */
