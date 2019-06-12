@@ -1,7 +1,5 @@
 'use strict'
 
-var buildId = process.env.CIRCLE_BUILD_NUM || process.env.TRAVIS_JOB_NUMBER
-
 module.exports = {
   'src_folders': ['test-browser/tests'],
   'output_folder': 'reports',
@@ -12,13 +10,8 @@ module.exports = {
 
   'test_settings': {
     'default': {
-      'launch_url': 'http://ondemand.saucelabs.com:80',
-      'selenium_host': 'ondemand.saucelabs.com',
-      'selenium_port': 80,
-      'silent': true,
-      'username': 'yanneth',
-      'access_key': '1f5a4560-b02b-41aa-b52b-f033aad30870',
-      'use_ssl': false,
+      'selenium_port': 4444,
+      'selenium_host': 'localhost',
       'globals': {
         'waitForConditionTimeout': 10000,
         'asyncHookTimeout': 100000
@@ -30,9 +23,7 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'firefox',
         'javascriptEnabled': true,
-        'acceptSslCerts': true,
-        'build': 'build-' + buildId,
-        'tunnel-identifier': 'browsersolidity_tests_' + buildId
+        'acceptSslCerts': true
       }
     },
 
@@ -41,8 +32,6 @@ module.exports = {
         'browserName': 'chrome',
         'javascriptEnabled': true,
         'acceptSslCerts': true,
-        'build': 'build-' + buildId,
-        'tunnel-identifier': 'browsersolidity_tests_' + buildId,
         'chromeOptions': {
           'args': ['window-size=2560,1440', 'start-fullscreen']
         }
@@ -53,11 +42,7 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'safari',
         'javascriptEnabled': true,
-        'platform': 'macOS 10.13',
-        'version': '11.0',
-        'acceptSslCerts': true,
-        'build': 'build-' + buildId,
-        'tunnel-identifier': 'browsersolidity_tests_' + buildId
+        'acceptSslCerts': true
       }
     },
 
@@ -65,18 +50,11 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'internet explorer',
         'javascriptEnabled': true,
-        'platform': 'Windows 10',
-        'acceptSslCerts': true,
-        'version': '11.103',
-        'build': 'build-' + buildId,
-        'tunnel-identifier': 'browsersolidity_tests_' + buildId
+        'acceptSslCerts': true
       }
     },
 
     'local': {
-      'launch_url': 'http://localhost:8080',
-      'selenium_port': 4444,
-      'selenium_host': 'localhost',
       'desiredCapabilities': {
         'browserName': 'chrome',
         'javascriptEnabled': true,

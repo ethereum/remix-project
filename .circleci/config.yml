@@ -7,7 +7,7 @@ jobs:
   remix-ide:
     docker:
       # specify the version you desire here
-      - image: circleci/node:9.11.2
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -32,7 +32,14 @@ jobs:
           key: dep-bundle-29-{{ checksum "package.json" }}
           paths:
             - ~/repo/node_modules
-      - run: npm run lint && npm run test && npm run make-mock-compiler && npm run build
+      - run: npm run lint && npm run test && npm run make-mock-compiler
+      - run:
+          name: Download Selenium
+          command: wget http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
+      - run:
+          name: Start Selenium
+          command: java -jar selenium-server-standalone-3.5.3.jar
+          background: true
       - run: ./ci/browser_tests.sh
 
 workflows:

@@ -33,7 +33,7 @@ class TestTabLogic {
     for (var file in files) {
       if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
     }
-    cb(null, tests)
+    cb(null, tests, path)
   }
 
   generateTestContractSample () {

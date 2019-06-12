@@ -42,7 +42,7 @@ function getCompiledContracts (browser, compiled, callback) {
     } else {
       var ret = []
       for (var c = 0; c < contracts.length; c++) {
-        ret.push(contracts[c].innerHTML)
+        ret.push(contracts[c].value)
       }
       return ret
     }
@@ -116,6 +116,7 @@ function clickFunction (fnFullName, expectedInput) {
 }
 
 function verifyCallReturnValue (browser, address, checks, done) {
+  console.log('verifyCallReturnValue address', address)
   browser.execute(function (address) {
     var nodes = document.querySelectorAll('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
     var ret = []
@@ -125,6 +126,7 @@ function verifyCallReturnValue (browser, address, checks, done) {
     }
     return ret
   }, [address], function (result) {
+    console.log('verifyCallReturnValue', result)
     for (var k in checks) {
       browser.assert.equal(result.value[k], checks[k])
     }

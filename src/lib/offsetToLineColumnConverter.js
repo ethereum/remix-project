@@ -1,10 +1,12 @@
 'use strict'
 var SourceMappingDecoder = require('remix-lib').SourceMappingDecoder
 
-function offsetToColumnConverter () {
+function offsetToColumnConverter (appManager) {
   this.lineBreakPositionsByContent = {}
   this.sourceMappingDecoder = new SourceMappingDecoder()
-  // we don't listen anymore on compilation result for clearing the cache
+  appManager.data.proxy.event.register('sendCompilationResult', () => {
+    this.clear()
+  })
 }
 
 offsetToColumnConverter.prototype.offsetToLineColumn = function (rawLocation, file, sources, asts) {
