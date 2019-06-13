@@ -4,6 +4,7 @@ const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
 import { Plugin, BaseApi } from 'remix-plugin'
 import { PluginManagerSettings } from './plugin-manager-settings'
+import * as packageJson from '../../../package.json'
 const addToolTip = require('../ui/tooltip')
 
 const css = csjs`
@@ -46,7 +47,8 @@ const profile = {
   description: 'Start/stop services, modules and plugins',
   kind: 'settings',
   location: 'sidePanel',
-  documentation: 'plugin_manager.html'
+  documentation: 'plugin_manager.html',
+  version: packageJson.version
 }
 
 class PluginManagerComponent extends BaseApi {
