@@ -58,7 +58,7 @@ const profile = {
   description: 'Start/stop services, modules and plugins',
   kind: 'settings',
   location: 'sidePanel',
-  documentation: 'plugin_manager.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/plugin_manager.html',
   version: packageJson.version
 }
 
