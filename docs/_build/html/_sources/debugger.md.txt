@@ -10,3 +10,5 @@ To get to the debugger - you can click the debug button in the terminal when a s
 
 
 ![](images/a-debugger.png)
+
+To learn more about how to use this tool go to the [debugger tutorial](tutorial_debug.html).

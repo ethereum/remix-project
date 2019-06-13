@@ -57,6 +57,7 @@ Useful links:
    
    contract_metadata
    create_deploy
+   tutorial_debug
    import
    remixd
    unittesting
