@@ -8,6 +8,7 @@ const css = csjs`
     overflow-y: hidden; 
   }
   .swapitTitle {
+    margin: 0;
     text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
@@ -21,12 +22,7 @@ const css = csjs`
     height: 35px;
     padding: 0 20px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    justify-content: flex-start;
-  }
-  .swapitHeader h6 {
-    margin: 0;
   }
   .icons i {
     height: 80%;
@@ -38,6 +34,14 @@ const css = csjs`
   }
   .titleInfo {
     padding-left: 10px;
+  }
+  .versionWarning {
+    background-color: var(--light);
+    padding: 0 7px;
+    font-weight: bolder;
+    margin-left: 5px;
+    text-transform: lowercase;
+    cursor: default;
   }
 `
 
@@ -66,17 +70,26 @@ export class SidePanel extends AbstractPanel {
   renderHeader () {
     let name = ' - '
     let docLink = ''
+    let versionWarning
     if (this.active) {
       const { profile } = this.store.getOne(this.active)
       name = profile.displayName ? profile.displayName : profile.name
       const docsRoot = 'https://remix.readthedocs.io/en/latest/'
       docLink = profile.documentation ? yo`<a href="${docsRoot}${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
+      if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
+        versionWarning = yo`<small title="Version Alpha" class="${css.versionWarning}">alpha</small>`
+      }
+      // Beta
+      if (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) {
+        versionWarning = yo`<small title="Version Beta" class="${css.versionWarning}">beta</small>`
+      }
     }
 
     return yo`
       <header class="${css.swapitHeader}">
-        <h6 class="${css.swapitTitle}">${name}</h6>
-        ${docLink}
+          <h6 class="${css.swapitTitle}">${name}</h6>
+          ${docLink}
+          ${versionWarning}
       </header>
     `
   }
