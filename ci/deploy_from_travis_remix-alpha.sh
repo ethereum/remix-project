@@ -17,18 +17,4 @@ zip -r remix-$SHA.zip $FILES_TO_PACKAGE
 git add -f $FILES_TO_PACKAGE remix-$SHA.zip
 git commit -m "Built website from {$SHA}."
 
-ENCRYPTED_KEY_VAR3="encrypted_${ENCRYPTION_LABEL3}_key"
-ENCRYPTED_IV_VAR3="encrypted_${ENCRYPTION_LABEL3}_iv"
-ENCRYPTED_KEY3=${!ENCRYPTED_KEY_VAR3}
-ENCRYPTED_IV3=${!ENCRYPTED_IV_VAR3}
-
-touch deploy_key_remix-live-alpha
-chmod 600 deploy_key_remix-live-alpha
-openssl aes-256-cbc -K $ENCRYPTED_KEY3 -iv $ENCRYPTED_IV3 -in ci/deploy_key_remix-live-alpha.enc -out deploy_key_remix-live-alpha -d
-eval `ssh-agent -s`
-
-
-
-
-ssh-add deploy_key_remix-live-alpha
 git push -f git@github.com:ethereum/remix-live-alpha.git gh-pages
