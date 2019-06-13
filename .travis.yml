@@ -2,7 +2,11 @@ language: node_js
 node_js:
   - "9"
 addons:
-  chrome: stable
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
 language: java
 branches:
   only:
