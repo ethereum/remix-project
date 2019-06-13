@@ -106,13 +106,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="contract_metadata.html">Build Artifact</a></li>
 <li class="toctree-l1"><a class="reference internal" href="create_deploy.html">Creating and Deploying a Contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_debug.html">Debugging transactions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="import.html">Importing Source Files in Solidity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="remixd.html">Remixd: Get access your local filesystem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unittesting.html">Unit Testing</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Building Plugins</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="remix_plugin.html">Remix Plugin</a></li>
 </ul>
 <p class="caption"><span class="caption-text">URLs &amp; Downloads</span></p>
 <ul>
@@ -254,10 +251,10 @@ the <code class="docutils literal notranslate"><span class="pre">Ballot</span></
 <p>Now, we need to check if Remix is connected to Mist:</p>
 <p>Right panel / third tab from the left, <code class="docutils literal notranslate"><span class="pre">Injected</span> <span class="pre">Provider</span></code> should be
 checked.</p>
-<p><img alt="_images/remix4.png" src="_images/remix4.png" />image</p>
+<p><img alt="remix4.png" src="remix4.png" />image</p>
 <p>Right panel / second tab from the left, <code class="docutils literal notranslate"><span class="pre">Transaction</span> <span class="pre">Origin</span></code> should
 contain accounts we have previously created in Geth.</p>
-<p><img alt="_images/remix5.png" src="_images/remix5.png" />image</p>
+<p><img alt="remix5.png" src="remix5.png" />image</p>
 </div>
 </div>
 <div class="section" id="developing-contract-front-end">
@@ -388,7 +385,7 @@ remix to the front end.</p>
 <div class="section" id="deploying">
 <h2>Deploying<a class="headerlink" href="#deploying" title="Permalink to this headline">¶</a></h2>
 <p>Right panel / Red button <code class="docutils literal notranslate"><span class="pre">Create</span></code></p>
-<p><img alt="_images/remix1.png" src="_images/remix1.png" />image</p>
+<p><img alt="remix1.png" src="remix1.png" />image</p>
 <p>This creates a new transaction that deploys the <code class="docutils literal notranslate"><span class="pre">Donation</span></code> contract
 (Mist will ask for the usual passphrase check).</p>
 <p>Wait for the transaction to be mined (don’t forget to activate mining
@@ -397,7 +394,7 @@ remix to the front end.</p>
 achieve. We want to run and debug those functions from the front end.</p>
 <p>Remix also display the address of the contract. Save it, we’ll need this
 address later.</p>
-<p><img alt="_images/remix2.png" src="_images/remix2.png" />image</p>
+<p><img alt="remix2.png" src="remix2.png" />image</p>
 </div>
 <div class="section" id="debugging">
 <h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h2>
@@ -420,7 +417,7 @@ mechanism.</p>
 small “bug” icon, that is the debugger.</p>
 <p>Paste the hash into the transaction field and click on the <code class="docutils literal notranslate"><span class="pre">play</span></code>
 button.</p>
-<p><img alt="_images/remix3.png" src="_images/remix3.png" />image</p>
+<p><img alt="remix3.png" src="remix3.png" />image</p>
 <p>You are now entering a debug session for the call to <code class="docutils literal notranslate"><span class="pre">donate</span></code>.</p>
 <p>Debugging in Remix is easier than with common tools like gdb because you
 can freely move in time. Use the slider to change the current step and
