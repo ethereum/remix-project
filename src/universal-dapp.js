@@ -9,12 +9,14 @@ var EventManager = remixLib.EventManager
 var executionContext = remixLib.execution.executionContext
 import { UdappApi } from 'remix-plugin'
 import { EventEmitter } from 'events'
+import * as packageJson from '../package.json'
 
 const profile = {
   name: 'udapp',
   displayName: 'universal dapp',
   description: 'service - run transaction and access account',
-  permission: true
+  permission: true,
+  version: packageJson.version
 }
 
 module.exports = class UniversalDApp extends UdappApi {
