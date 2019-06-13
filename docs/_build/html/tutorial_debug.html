@@ -195,20 +195,19 @@
 <h1>Debugging transactions<a class="headerlink" href="#debugging-transactions" title="Permalink to this headline">¶</a></h1>
 <p>There are two ways to start debugging, each one corresponds to a different use case.</p>
 <ul class="simple">
-<li><p>from the transaction log in the Terminal - use this when you are want to debug a “sucessful” transaction.</p></li>
-<li><p>from the Debugger - use this if you have a <em>transaction hash</em> or a <em>block number</em> with a <em>transaction index</em>.</p></li>
+<li><p>from the transaction log in the Terminal - use this when you want to debug a transaction.</p></li>
+<li><p>from the Debugger - use this if you have a <em>transaction hash</em>.</p></li>
 </ul>
-<div class="section" id="debug-from-the-transaction-gui">
-<h2>Debug from the Transaction GUI -<a class="headerlink" href="#debug-from-the-transaction-gui" title="Permalink to this headline">¶</a></h2>
-<p>Let’s start with a basic contract (or replace this one by your own):</p>
+<div class="section" id="initiate-debugging-from-the-transaction-log-in-the-terminal">
+<h2>Initiate Debugging from the transaction log in the Terminal<a class="headerlink" href="#initiate-debugging-from-the-transaction-log-in-the-terminal" title="Permalink to this headline">¶</a></h2>
+<p>Let’s start with a basic contract ( or replace this one by your own ) :</p>
 <ul class="simple">
 <li><p>create a blank file in the file explorer (by clicking the + icon) and give it a name.</p></li>
 <li><p>copy the code below.</p></li>
 <li><p>compile the code.</p></li>
 <li><p>click the Run &amp; Deploy icon in the icon panel.</p></li>
 </ul>
-<div class="highlight-JavaScript notranslate"><div class="highlight"><pre><span></span><span class="p">{.</span><span class="nx">sourceCode</span> <span class="p">.</span><span class="nx">none</span><span class="p">}</span>  <span class="o">-</span> <span class="nx">RS</span> <span class="nx">why</span> <span class="nx">is</span> <span class="k">this</span> <span class="nx">here</span><span class="o">?</span>
-<span class="nx">pragma</span> <span class="nx">solidity</span> <span class="o">&gt;=</span><span class="mf">0.5.1</span> <span class="o">&lt;</span><span class="mf">0.6.0</span><span class="p">;</span>
+<div class="highlight-JavaScript notranslate"><div class="highlight"><pre><span></span><span class="nx">pragma</span> <span class="nx">solidity</span> <span class="o">&gt;=</span><span class="mf">0.5.1</span> <span class="o">&lt;</span><span class="mf">0.6.0</span><span class="p">;</span>
 <span class="nx">contract</span> <span class="nx">Donation</span> <span class="p">{</span>
     <span class="nx">address</span> <span class="nx">owner</span><span class="p">;</span>
     <span class="nx">event</span> <span class="nx">fundMoved</span><span class="p">(</span><span class="nx">address</span> <span class="nx">_to</span><span class="p">,</span> <span class="nx">uint</span> <span class="nx">_amount</span><span class="p">);</span>
@@ -264,40 +263,41 @@ This simulates a custom blockchain. You could do the same using a proper backend
 <p>Check in the <strong>terminal</strong> where the transaction you just made is logged.</p>
 <p>Click the debug button to start debugging it.</p>
 <p><img alt="_images/a-debug5-term-debug-but.png" src="_images/a-debug5-term-debug-but.png" /></p>
+<p>Before we get to the actual debugging tool, the next section show how to start debugging session directly from the Debugger.</p>
 </div>
-<div class="section" id="from-the-debugger">
-<h2>From the Debugger<a class="headerlink" href="#from-the-debugger" title="Permalink to this headline">¶</a></h2>
-<p>Click the bug icon in the icon panel to get to the debugger in the side panel.  If you don’t see the bug icon go to the plugin manager and activate the debugger.</p>
-<p>You can start a debug session by providing either a <code class="docutils literal notranslate"><span class="pre">transaction</span> <span class="pre">hash</span></code>
-or a <code class="docutils literal notranslate"><span class="pre">block</span> <span class="pre">number</span></code> and <code class="docutils literal notranslate"><span class="pre">transaction</span> <span class="pre">index</span></code>.</p>
-<p>To find a transaction hash</p>
+<div class="section" id="initiate-debugging-from-the-from-the-debugger">
+<h2>Initiate Debugging from the from the Debugger<a class="headerlink" href="#initiate-debugging-from-the-from-the-debugger" title="Permalink to this headline">¶</a></h2>
+<p>Click the bug icon in the icon panel to get to the debugger in the side panel.</p>
+<p>If you don’t see the bug icon, go to the plugin manager and activate the debugger.</p>
+<p>You can start a debug session by providing a <code class="docutils literal notranslate"><span class="pre">transaction</span> <span class="pre">hash</span></code>.</p>
+<p>To find a transaction hash:</p>
 <ol class="simple">
-<li><p>go to a transaction in the terminal.</p></li>
+<li><p>Go to a transaction in the terminal.</p></li>
 <li><p>Click a line with a transaction - to exand the log.</p></li>
-<li><p>Copy the transaction has locate there.</p></li>
+<li><p>The transaction hash is there - copy it.</p></li>
 </ol>
-<p><img alt="_images/remix3.png" src="_images/remix3.png" />image</p>
-<p>Then click on the <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">debugging</span></code> button.</p>
+<p><img alt="_images/a-debug6-term-txn-hash.png" src="_images/a-debug6-term-txn-hash.png" /></p>
+<p>Then click in the debugger paste the hash and click on the <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">debugging</span></code> button.</p>
+<p><img alt="_images/a-debug7-debugger.png" src="_images/a-debug7-debugger.png" /></p>
 </div>
 <div class="section" id="using-the-debugger">
 <h2>Using the debugger<a class="headerlink" href="#using-the-debugger" title="Permalink to this headline">¶</a></h2>
+<p><img alt="_images/a-debug8-top3.png" src="_images/a-debug8-top3.png" /></p>
 <p>The debugger allows one to see detailed informations about the
 transaction’s execution. It uses the editor to display the
 location in the source code where the current execution is.</p>
-<p>The transaction panel displays basic information about the current
-transaction.</p>
-<p><img alt="_images/remix_debugtransactioninfo.png" src="_images/remix_debugtransactioninfo.png" />image</p>
 <p>The navigation part contains a slider and buttons that can be used to
 step through the transaction execution.</p>
-<p>From the left to the right:</p>
-<p>step over back, step into back, step into forward, step over forward,
-jump out (jump out of the current call), jump to the previous
-breakpoint, jump to the next breakpoint.</p>
-<p><img alt="_images/remix_navigation.png" src="_images/remix_navigation.png" />image</p>
+<div class="section" id="more-explaination-of-what-these-buttons-do">
+<h3>More explaination of what these buttons do.<a class="headerlink" href="#more-explaination-of-what-these-buttons-do" title="Permalink to this headline">¶</a></h3>
+<ol class="simple">
+<li><p>Step Into</p></li>
+<li><p>Step Over Into</p></li>
+</ol>
 <p>11 panels give detailed information about the execution:</p>
+</div>
 <div class="section" id="instructions">
 <h3>Instructions<a class="headerlink" href="#instructions" title="Permalink to this headline">¶</a></h3>
-<p><img alt="_images/remix_debuginstructions.png" src="_images/remix_debuginstructions.png" />image</p>
 <p>The Instructions panel displays the bytecode of the current executing
 contract- with the current step highlighted.</p>
 <p>Important note: When this panel is hidden, the slider will have a
@@ -308,13 +308,11 @@ those that refers to the same expression.</p>
 </div>
 <div class="section" id="solidity-locals">
 <h3>Solidity Locals<a class="headerlink" href="#solidity-locals" title="Permalink to this headline">¶</a></h3>
-<p><img alt="_images/remix_soliditylocals.png" src="_images/remix_soliditylocals.png" />image</p>
 <p>The Solidity Locals panel displays local variables associated with the
 current context.</p>
 </div>
 <div class="section" id="solidity-state">
 <h3>Solidity State<a class="headerlink" href="#solidity-state" title="Permalink to this headline">¶</a></h3>
-<p><img alt="_images/remix_soliditystate.png" src="_images/remix_soliditystate.png" />image</p>
 <p>The Solidity State panel displays state variables of the current
 executing contract.</p>
 </div>
@@ -336,30 +334,26 @@ every storage change of every modified contract)</p></li>
 </div>
 <div class="section" id="reverted-transaction">
 <h3>Reverted Transaction<a class="headerlink" href="#reverted-transaction" title="Permalink to this headline">¶</a></h3>
-<p>A transaction could be <code class="docutils literal notranslate"><span class="pre">reverted</span></code> (because of an <em>out of gas exception</em> or
+<p>A transaction can be <code class="docutils literal notranslate"><span class="pre">reverted</span></code> (because of an <em>out of gas exception</em> or
 Solidity <code class="docutils literal notranslate"><span class="pre">revert</span></code> statement or because of a low level exception).</p>
 <p>It is important to be aware of the exception and to locate
 where the exception is in the source code.</p>
 <p>Remix will warn you when the execution throws an exception. The
 <code class="docutils literal notranslate"><span class="pre">warning</span></code> button will jump to the last opcode before the exception
 happened.</p>
-<p><img alt="_images/remix_executionexception.png" src="_images/remix_executionexception.png" />image</p>
 </div>
 <div class="section" id="breakpoints">
 <h3>Breakpoints<a class="headerlink" href="#breakpoints" title="Permalink to this headline">¶</a></h3>
 <p>The two last buttons from the navigation area are used to jump either
 back to the previous breakpoint or forward to the next breakpoint.</p>
 <p>Breakpoints can be added and removed by clicking on the line number in the <em>Editor</em>.</p>
-<p><img alt="_images/remix_breakpoint.png" src="_images/remix_breakpoint.png" />image</p>
 <p>When using debug session with breakpoints, the execution will jump to the first
 encountered breakpoint.</p>
 <p><strong>Important note:</strong> If you add a breakpoint to a line that declares a
 variable, it might be triggered twice: Once for initializing the
 variable to zero and second time for assigning the actual value. As an
 example, assume you are debugging the following contract:</p>
-<p>(RS - what is the {.sourceCode .none} doing?)</p>
-<div class="highlight-JavaScript notranslate"><div class="highlight"><pre><span></span><span class="p">{.</span><span class="nx">sourceCode</span> <span class="p">.</span><span class="nx">none</span><span class="p">}</span>
-<span class="nx">pragma</span> <span class="nx">solidity</span> <span class="o">&gt;=</span><span class="mf">0.5.1</span> <span class="o">&lt;</span><span class="mf">0.6.0</span><span class="p">;</span>
+<div class="highlight-JavaScript notranslate"><div class="highlight"><pre><span></span><span class="nx">pragma</span> <span class="nx">solidity</span> <span class="o">&gt;=</span><span class="mf">0.5.1</span> <span class="o">&lt;</span><span class="mf">0.6.0</span><span class="p">;</span>
 
 <span class="nx">contract</span> <span class="nx">ctr</span> <span class="p">{</span>
     <span class="kd">function</span> <span class="nx">hid</span> <span class="p">()</span> <span class="kr">public</span> <span class="p">{</span>

@@ -3,10 +3,10 @@ Remix-IDE Layout
 
 The new structure
 --------------------
-![](images/a-layout1b.png)
+![](images/a-layout1c.png)
 
-1. Icon Panel - click to change which plugin appears in the Swap Panel
-2. Swap Panel - Most but not all plugins will have their GUI here.
+1. Icon Panel - click to change which plugin appears in the Side Panel
+2. Side Panel - Most but not all plugins will have their GUI here.
 3. Main Panel - In the old layout this was just for editing files.  In the tabs can be plugins or files for the IDE to compile.
 4. Terminal - where you will see the results of your interactions with the GUI's.  Also you can run scripts here.
 

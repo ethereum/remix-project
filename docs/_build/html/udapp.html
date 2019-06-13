@@ -102,7 +102,11 @@
 <li class="toctree-l1"><a class="reference internal" href="run.html">Run &amp; Deploy</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Run &amp; Deploy (part 2)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#deployed-contracts">Deployed contracts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#inputting-parameters">Inputting parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputting-parameters">Inputting parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#inputting-parameters-in-the-collapsed-view">Inputting parameters in the collapsed view</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inputting-parameters-in-the-expanded-view">Inputting parameters in the expanded view</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="debugger.html">Debugger</a></li>
@@ -217,19 +221,30 @@ But this transaction does not accept Ether.</p></li>
 <p>For more information see more about <a class="reference external" href="http://solidity.readthedocs.io/en/develop/miscellaneous.html?highlight=pure#modifiers">Solidity
 modifier</a>
 .</p>
-<p>If a function requires input parameters, well, you have to put them in.</p>
+<p>If a function requires input parameters, well.. you gotta put them in.</p>
 </div>
 <div class="section" id="inputting-parameters">
 <h2>Inputting parameters<a class="headerlink" href="#inputting-parameters" title="Permalink to this headline">¶</a></h2>
 <p><img alt="_images/a-udapp-inputs.png" src="_images/a-udapp-inputs.png" /></p>
-<p>The input box tells you what type each parameter needs to be.</p>
-<p>Numbers and addresses do not need to be wrapped in double quotes.  Strings need to be wrapped.</p>
-<p>When using the input box for parameters in its “up” display, the parameters need to be separated by a comma.  In the example above the “delegate” function has 3 parameters.</p>
-<p>Clicking the ‘down’ caret brings you to the <em>Multi-param Manager</em> - where you can input the parameters one at a time.</p>
+<div class="section" id="inputting-parameters-in-the-collapsed-view">
+<h3>Inputting parameters in the collapsed view<a class="headerlink" href="#inputting-parameters-in-the-collapsed-view" title="Permalink to this headline">¶</a></h3>
+<p>(Inputting all the parameters in a single input box)</p>
+<ul class="simple">
+<li><p>The input box tells you what type each parameter needs to be.</p></li>
+<li><p>Numbers and addresses do not need to be wrapped in double quotes.</p></li>
+<li><p>Strings need to be wrapped.</p></li>
+<li><p>Parameters are separated by commas.</p></li>
+</ul>
+<p>In the example above the “delegate” function has 3 parameters.</p>
+</div>
+<div class="section" id="inputting-parameters-in-the-expanded-view">
+<h3>Inputting parameters in the expanded view<a class="headerlink" href="#inputting-parameters-in-the-expanded-view" title="Permalink to this headline">¶</a></h3>
+<p>Clicking the ‘down’ caret brings you to the <em>Multi-param Manager</em> - where you can input the parameters one at a time. <strong>Much less confusing!</strong></p>
 <p><img alt="_images/a-udapp-multi-param-man.png" src="_images/a-udapp-multi-param-man.png" /></p>
-<p>In the <em>Multi-param Manager</em>, strings do not need to be wrapped.</p>
+<p>In the expanded view, strings do not need to be wrapped.</p>
 <p>Clicking the clipboard icon will encode the inputs and will copy them.  Only a valid set of inputs can be encoded.</p>
 <p>So if you made a mistake and put a uint8 where an address should have been, clicking the clipboard here will give you an error.</p>
+</div>
 </div>
 </div>
 

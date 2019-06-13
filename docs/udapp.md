@@ -29,23 +29,28 @@ For more information see more about [Solidity
 modifier](http://solidity.readthedocs.io/en/develop/miscellaneous.html?highlight=pure#modifiers)
 .
 
-If a function requires input parameters, well, you have to put them in.
+If a function requires input parameters, well.. you gotta put them in.
 
 ## Inputting parameters
 
 ![](images/a-udapp-inputs.png)
 
-The input box tells you what type each parameter needs to be.
+### Inputting parameters in the collapsed view
 
-Numbers and addresses do not need to be wrapped in double quotes.  Strings need to be wrapped.
+(Inputting all the parameters in a single input box)
++ The input box tells you what type each parameter needs to be.
++ Numbers and addresses do not need to be wrapped in double quotes.  
++ Strings need to be wrapped.
++ Parameters are separated by commas.
 
-When using the input box for parameters in its "up" display, the parameters need to be separated by a comma.  In the example above the "delegate" function has 3 parameters.
+In the example above the "delegate" function has 3 parameters.
 
+### Inputting parameters in the expanded view
 Clicking the 'down' caret brings you to the *Multi-param Manager* - where you can input the parameters one at a time. **Much less confusing!**
 
 ![](images/a-udapp-multi-param-man.png)
 
-In the *Multi-param Manager*, strings do not need to be wrapped.  
+In the expanded view, strings do not need to be wrapped.  
 
 Clicking the clipboard icon will encode the inputs and will copy them.  Only a valid set of inputs can be encoded.  
 

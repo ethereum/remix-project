@@ -10,13 +10,16 @@ The code of `remixd` is
 `remixd` can be globally installed using the following command:
 `npm install -g remixd`
 
-You can install it just in the directory of your choice using this command:
+Or just install it in the directory of your choice by removing the -g flag:
 `npm install remixd`
 
-Then `remixd -s <absolute-path-to-the-shared-folder> --remix-ide <your-remix-ide-URL-instance>` will start `remixd` and will share the given folder. 
+Then from the terminal, the command `remixd -s <absolute-path-to-the-shared-folder> --remix-ide <your-remix-ide-URL-instance>` will start `remixd` and will share the given folder with remix-ide. 
 
-For example, to sync your local folder to the official Remix IDE, 
+For example, to use remixd with Remix IDE ( and not the alpha version) use this command: 
 `remixd -s <absolute-path-to-the-shared-folder> --remix-ide https://remix.ethereum.org`
+
+Make sure that if you use https://remix.ethereum.org (secure http) in the remixd command (like in the example above), that you are also pointing your browser to https://remix.ethereum.org and not to http://remix.ethereum.org (plain old insecure http).  Or if you want to use http in the browser use http in the remixd command.
+
 
 The folder is shared using a websocket connection between `Remix IDE`
 and `remixd`.
