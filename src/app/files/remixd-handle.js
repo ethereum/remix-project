@@ -1,6 +1,6 @@
 let globalRegistry = require('../../global/registry')
 import { BaseApi } from 'remix-plugin'
-
+import * as packageJson from '../../../package.json'
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
@@ -23,7 +23,8 @@ const profile = {
   methods: [],
   events: [],
   description: 'using Remixd daemon, allow to access file system',
-  kind: 'other'
+  kind: 'other',
+  version: packageJson.version
 }
 
 export class RemixdHandle extends BaseApi {

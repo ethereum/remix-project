@@ -2,11 +2,13 @@
 const SourceHighlighter = require('./sourceHighlighter')
 
 import { EditorApi } from 'remix-plugin'
+import * as packageJson from '../../../package.json'
 
 const profile = {
   displayName: 'source highlighters',
   name: 'editor',
-  description: 'service - highlight source code'
+  description: 'service - highlight source code',
+  version: packageJson.version
 }
 
 // EditorApi:

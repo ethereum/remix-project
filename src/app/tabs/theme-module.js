@@ -1,5 +1,6 @@
 import { BaseApi } from 'remix-plugin'
 import { EventEmitter } from 'events'
+import * as packageJson from '../../../package.json'
 
 const themes = [
   {name: 'Cerulean', quality: 'light', url: 'https://bootswatch.com/4/cerulean/bootstrap.min.css'},
@@ -19,7 +20,8 @@ const themes = [
 const profile = {
   name: 'theme',
   events: ['themeChanged'],
-  methods: ['switchTheme', 'getThemes', 'currentTheme']
+  methods: ['switchTheme', 'getThemes', 'currentTheme'],
+  version: packageJson.version
 }
 
 export class ThemeModule extends BaseApi {
