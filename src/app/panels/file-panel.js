@@ -7,6 +7,7 @@ var globalRegistry = require('../../global/registry')
 var css = require('./styles/file-panel-styles')
 
 import { BaseApi } from 'remix-plugin'
+import * as packageJson from '../../../package.json'
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
@@ -36,7 +37,8 @@ const profile = {
   description: ' - ',
   kind: 'fileexplorer',
   location: 'sidePanel',
-  documentation: 'file_explorer.html'
+  documentation: 'file_explorer.html',
+  version: packageJson.version
 }
 
 module.exports = class Filepanel extends BaseApi {

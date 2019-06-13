@@ -5,6 +5,7 @@ var copyToClipboard = require('../ui/copy-to-clipboard')
 var EventManager = require('../../lib/events')
 var css = require('./styles/settings-tab-styles')
 import { BaseApi } from 'remix-plugin'
+import * as packageJson from '../../../package.json'
 
 const profile = {
   name: 'settings',
@@ -15,7 +16,8 @@ const profile = {
   description: 'Remix-IDE settings',
   kind: 'settings',
   location: 'sidePanel',
-  documentation: 'settings.html'
+  documentation: 'settings.html',
+  version: packageJson.version
 }
 
 module.exports = class SettingsTab extends BaseApi {
