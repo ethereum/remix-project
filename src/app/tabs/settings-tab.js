@@ -16,7 +16,7 @@ const profile = {
   description: 'Remix-IDE settings',
   kind: 'settings',
   location: 'sidePanel',
-  documentation: 'settings.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/settings.html',
   version: packageJson.version
 }
 

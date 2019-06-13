@@ -94,7 +94,7 @@ function remixdDialog () {
   return yo`
     <div class=${css.dialog}>
       <div class=${css.dialogParagraph}>Interact with your file system from Remix. Click connect and find shared folder in the Remix file explorer (under localhost).
-        Before you get started, check out the <a target="_blank" href="https://remix.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
+        Before you get started, check out the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
         to find out how to run Remixd.
       </div>
       <div class=${css.dialogParagraph}>If you have looked at that tutorial and are just looking for the remixd command, <br> here it is:
