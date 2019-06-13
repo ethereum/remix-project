@@ -27,8 +27,14 @@ function Compiler (handleImportCall) {
 
   var optimize = false
 
+  var evmVersion = null
+
   this.setOptimize = function (_optimize) {
     optimize = _optimize
+  }
+
+  this.setEvmVersion = function (_evmVersion) {
+    evmVersion = _evmVersion
   }
 
   var compilationStartTime = null
@@ -49,7 +55,7 @@ function Compiler (handleImportCall) {
         self.lastCompilationResult = null
         self.event.trigger('compilationFinished', [false, {'error': { formattedMessage: error, severity: 'error' }}, files])
       } else {
-        compileJSON(input, optimize ? 1 : 0)
+        compileJSON(input)
       }
     })
   }
@@ -73,14 +79,13 @@ function Compiler (handleImportCall) {
   function onInternalCompilerLoaded () {
     if (worker === null) {
       var compiler
-      var userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
       if (typeof (window) === 'undefined') {
         compiler = require('solc')
       } else {
         compiler = solc(window.Module)
       }
 
-      compileJSON = function (source, optimize, cb) {
+      compileJSON = function (source) {
         var missingInputs = []
         var missingInputsCallback = function (path) {
           missingInputs.push(path)
@@ -89,7 +94,7 @@ function Compiler (handleImportCall) {
 
         var result
         try {
-          var input = compilerInput(source.sources, {optimize: optimize, target: source.target})
+          var input = compilerInput(source.sources, {optimize: optimize, evmVersion: evmVersion, target: source.target})
           result = compiler.compile(input, missingInputsCallback)
           result = JSON.parse(result)
         } catch (exception) {
@@ -242,7 +247,7 @@ function Compiler (handleImportCall) {
     window.Module = undefined
 
     // Set a safe fallback until the new one is loaded
-    setCompileJSON(function (source, optimize) {
+    setCompileJSON(function (source) {
       compilationFinished({ error: { formattedMessage: 'Compiler not yet loaded.' } })
     })
 
@@ -293,9 +298,10 @@ function Compiler (handleImportCall) {
     worker.addEventListener('error', function (msg) {
       compilationFinished({ error: 'Worker error: ' + msg.data })
     })
-    compileJSON = function (source, optimize) {
+    compileJSON = function (source) {
       jobs.push({sources: source})
-      worker.postMessage({cmd: 'compile', job: jobs.length - 1, input: compilerInput(source.sources, {optimize: optimize, target: source.target})})
+      worker.postMessage({cmd: 'compile', job: jobs.length - 1, input: compilerInput(source.sources,
+        {optimize: optimize, evmVersion: evmVersion, target: source.target})})
     }
     worker.postMessage({cmd: 'loadVersion', data: url})
   }

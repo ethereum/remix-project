@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = (sources, opts) => {
-  return JSON.stringify({
+  const o = {
     language: 'Solidity',
     sources: sources,
     settings: {
@@ -17,5 +17,9 @@ module.exports = (sources, opts) => {
         }
       }
     }
-  })
+  }
+  if (opts.evmVersion) {
+    o.settings.evmVersion = opts.evmVersion
+  }
+  return JSON.stringify(o)
 }
