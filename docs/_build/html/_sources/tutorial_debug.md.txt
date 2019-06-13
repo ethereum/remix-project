@@ -2,19 +2,17 @@ Debugging transactions
 ======================
 
 There are two ways to start debugging, each one corresponds to a different use case.
-* from the transaction log in the Terminal - use this when you are want to debug a "sucessful" transaction.
-* from the Debugger - use this if you have a *transaction hash* or a *block number* with a *transaction index*.
+* from the transaction log in the Terminal - use this when you want to debug a transaction.
+* from the Debugger - use this if you have a *transaction hash*.
 
-### Debug from the Transaction GUI - 
-
-Let's start with a basic contract (or replace this one by your own):
+### Initiate Debugging from the transaction log in the Terminal
+Let's start with a basic contract ( or replace this one by your own ) :
 - create a blank file in the file explorer (by clicking the + icon) and give it a name.
 - copy the code below.
 - compile the code.
 - click the Run & Deploy icon in the icon panel.
 
 ``` 
-{.sourceCode .none}  - RS why is this here?
 pragma solidity >=0.5.1 <0.6.0;
 contract Donation {
     address owner;
@@ -90,50 +88,48 @@ Click the debug button to start debugging it.
 
 ![](images/a-debug5-term-debug-but.png)
 
-### From the Debugger
+Before we get to the actual debugging tool, the next section show how to start debugging session directly from the Debugger.
 
-Click the bug icon in the icon panel to get to the debugger in the side panel.  If you don't see the bug icon go to the plugin manager and activate the debugger.
+### Initiate Debugging from the from the Debugger
 
-You can start a debug session by providing either a `transaction hash`
-or a `block number` and `transaction index`.
+Click the bug icon in the icon panel to get to the debugger in the side panel.  
 
-To find a transaction hash 
-1. go to a transaction in the terminal.
+If you don't see the bug icon, go to the plugin manager and activate the debugger.
+
+You can start a debug session by providing a `transaction hash`.
+
+To find a transaction hash: 
+1. Go to a transaction in the terminal. 
 2. Click a line with a transaction - to exand the log.
-3. Copy the transaction has locate there.
+3. The transaction hash is there - copy it.
 
-![image](remix3.png)
+![](images/a-debug6-term-txn-hash.png)
 
-Then click on the `start debugging` button.
+Then click in the debugger paste the hash and click on the `Start debugging` button.
+
+![](images/a-debug7-debugger.png)
 
 Using the debugger
 ------------------
+
+![](images/a-debug8-top3.png)
 
 The debugger allows one to see detailed informations about the
 transaction's execution. It uses the editor to display the
 location in the source code where the current execution is.
 
-The transaction panel displays basic information about the current
-transaction.
-
-![image](remix_debugtransactioninfo.png)
-
 The navigation part contains a slider and buttons that can be used to
 step through the transaction execution.
 
-From the left to the right:
 
-step over back, step into back, step into forward, step over forward,
-jump out (jump out of the current call), jump to the previous
-breakpoint, jump to the next breakpoint.
+### More explaination of what these buttons do.
+1. Step Into
+2. Step Over Into
 
-![image](remix_navigation.png)
 
 11 panels give detailed information about the execution:
 
 ### Instructions
-
-![image](remix_debuginstructions.png)
 
 The Instructions panel displays the bytecode of the current executing
 contract- with the current step highlighted.
@@ -146,14 +142,10 @@ those that refers to the same expression.
 
 ### Solidity Locals
 
-![image](remix_soliditylocals.png)
-
 The Solidity Locals panel displays local variables associated with the
 current context.
 
 ### Solidity State
-
-![image](remix_soliditystate.png)
 
 The Solidity State panel displays state variables of the current
 executing contract.
@@ -173,7 +165,7 @@ These panels display low level informations about the execution:
 
 ### Reverted Transaction
 
-A transaction could be `reverted` (because of an *out of gas exception* or
+A transaction can be `reverted` (because of an *out of gas exception* or
 Solidity `revert` statement or because of a low level exception).
 
 It is important to be aware of the exception and to locate
@@ -183,16 +175,12 @@ Remix will warn you when the execution throws an exception. The
 `warning` button will jump to the last opcode before the exception
 happened.
 
-![image](remix_executionexception.png)
-
 ### Breakpoints
 
 The two last buttons from the navigation area are used to jump either
 back to the previous breakpoint or forward to the next breakpoint.
 
 Breakpoints can be added and removed by clicking on the line number in the *Editor*.
-
-![image](remix_breakpoint.png)
 
 When using debug session with breakpoints, the execution will jump to the first
 encountered breakpoint.
@@ -202,9 +190,7 @@ variable, it might be triggered twice: Once for initializing the
 variable to zero and second time for assigning the actual value. As an
 example, assume you are debugging the following contract:
 
-(RS - what is the {.sourceCode .none} doing?)
 ``` 
-{.sourceCode .none}
 pragma solidity >=0.5.1 <0.6.0;
 
 contract ctr {

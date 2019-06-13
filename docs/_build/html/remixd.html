@@ -201,11 +201,12 @@ application access to a folder on your local computer.</p>
 <a class="reference external" href="https://github.com/ethereum/remixd">here</a> .</p>
 <p><code class="docutils literal notranslate"><span class="pre">remixd</span></code> can be globally installed using the following command:
 <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">install</span> <span class="pre">-g</span> <span class="pre">remixd</span></code></p>
-<p>You can install it just in the directory of your choice using this command:
+<p>Or just install it in the directory of your choice by removing the -g flag:
 <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">install</span> <span class="pre">remixd</span></code></p>
-<p>Then <code class="docutils literal notranslate"><span class="pre">remixd</span> <span class="pre">-s</span> <span class="pre">&lt;absolute-path-to-the-shared-folder&gt;</span> <span class="pre">--remix-ide</span> <span class="pre">&lt;your-remix-ide-URL-instance&gt;</span></code> will start <code class="docutils literal notranslate"><span class="pre">remixd</span></code> and will share the given folder.</p>
-<p>For example, to sync your local folder to the official Remix IDE,
+<p>Then from the terminal, the command <code class="docutils literal notranslate"><span class="pre">remixd</span> <span class="pre">-s</span> <span class="pre">&lt;absolute-path-to-the-shared-folder&gt;</span> <span class="pre">--remix-ide</span> <span class="pre">&lt;your-remix-ide-URL-instance&gt;</span></code> will start <code class="docutils literal notranslate"><span class="pre">remixd</span></code> and will share the given folder with remix-ide.</p>
+<p>For example, to use remixd with Remix IDE ( and not the alpha version) use this command:
 <code class="docutils literal notranslate"><span class="pre">remixd</span> <span class="pre">-s</span> <span class="pre">&lt;absolute-path-to-the-shared-folder&gt;</span> <span class="pre">--remix-ide</span> <span class="pre">https://remix.ethereum.org</span></code></p>
+<p>Make sure that if you use https://remix.ethereum.org (secure http) in the remixd command (like in the example above), that you are also pointing your browser to https://remix.ethereum.org and not to http://remix.ethereum.org (plain old insecure http).  Or if you want to use http in the browser use http in the remixd command.</p>
 <p>The folder is shared using a websocket connection between <code class="docutils literal notranslate"><span class="pre">Remix</span> <span class="pre">IDE</span></code>
 and <code class="docutils literal notranslate"><span class="pre">remixd</span></code>.</p>
 <p>Be sure the user executing <code class="docutils literal notranslate"><span class="pre">remixd</span></code> has read/write permission on the
