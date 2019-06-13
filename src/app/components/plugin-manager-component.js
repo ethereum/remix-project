@@ -24,6 +24,9 @@ const css = csjs`
   }
   .displayName {
     text-transform: capitalize;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
   .description {
     text-transform: capitalize;
@@ -35,6 +38,14 @@ const css = csjs`
   .isStuck {
     background-color: var(--primary);
     color: 
+  }
+  .versionWarning {
+    background-color: var(--light);
+    padding: 0 7px;
+    font-weight: bolder;
+    margin-top: 5px;
+    text-transform: lowercase;
+    cursor: default;
   }
 `
 
@@ -82,6 +93,17 @@ class PluginManagerComponent extends BaseApi {
     const isActive = this.store.actives.includes(name)
     const displayName = (api.profile.displayName) ? api.profile.displayName : name
 
+    // Check version of the plugin
+    let versionWarning
+    // Alpha
+    if (api.profile.version && api.profile.version.match(/\b(\w*alpha\w*)\b/g)) {
+      versionWarning = yo`<small title="Version Alpha" class="${css.versionWarning}">alpha</small>`
+    }
+    // Beta
+    if (api.profile.version && api.profile.version.match(/\b(\w*beta\w*)\b/g)) {
+      versionWarning = yo`<small title="Version Beta" class="${css.versionWarning}">beta</small>`
+    }
+
     const activationButton = isActive
       ? yo`
       <button onclick="${_ => this.appManager.deactivateOne(name)}" class="btn btn-secondary btn-sm">
@@ -95,7 +117,10 @@ class PluginManagerComponent extends BaseApi {
     return yo`
       <article id="remixPluginManagerListItem_${name}" class="list-group-item py-1" title="${displayName}" >
         <div class="${css.row} justify-content-between align-items-center">
-          <h6 class="${css.displayName}">${displayName}</h6>
+          <h6 class="${css.displayName}">
+            ${displayName}
+            ${versionWarning}
+          </h6>
           ${activationButton}
         </div>
         <p class="${css.description}">${api.profile.description}</p>
