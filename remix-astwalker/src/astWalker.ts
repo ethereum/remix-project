@@ -98,6 +98,52 @@ export class AstWalker extends EventEmitter {
     }
   }
 
+  walkFullInternal(ast: AstNode, callback?: Function | Object) {
+    function isObject(obj: any): boolean {
+      return obj != null && obj.constructor.name === "Object"
+    }
+    function isAstNode(node: Object): boolean {
+      return (
+        isObject(node) &&
+        'id' in node &&
+        'nodeType' in node &&
+        'src' in node
+      );
+    }
+
+    if (isAstNode(ast) && this.manageCallback(ast, callback)) {
+      // console.log(`XXX id ${ast.id}, nodeType: ${ast.nodeType}, src: ${ast.src}`);
+      for (let k of Object.keys(ast)) {
+        const astItem = ast[k];
+        if (Array.isArray(astItem)) {
+          for (let child of astItem) {
+            if (child) {
+              this.walkFullInternal(child, callback);
+            }
+          }
+        } else {
+          this.walkFullInternal(astItem, callback);
+        }
+      }
+    }
+  }
+
+  // Normalizes parameter callback and calls walkFullInternal
+  walkFull(ast: AstNode, callback?: Function | Object) {
+    if (callback) {
+      if (callback instanceof Function) {
+        callback = Object({ "*": callback });
+      }
+      if (!("*" in callback)) {
+        callback["*"] = function() {
+          return true;
+        };
+      }
+    }
+    return this.walkFullInternal(ast, callback);
+  }
+
+
   walkAstList(sourcesList: Node, cb?: Function) {
     if (cb) {
       if (sourcesList.ast) {
