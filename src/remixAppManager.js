@@ -110,6 +110,21 @@ export class RemixAppManager extends AppManagerApi {
       icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSIxMDI0IiB3aWR0aD0iMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOTUwLjE1NCAxOTJINzMuODQ2QzMzLjEyNyAxOTIgMCAyMjUuMTI2OTk5OTk5OTk5OTUgMCAyNjUuODQ2djQ5Mi4zMDhDMCA3OTguODc1IDMzLjEyNyA4MzIgNzMuODQ2IDgzMmg4NzYuMzA4YzQwLjcyMSAwIDczLjg0Ni0zMy4xMjUgNzMuODQ2LTczLjg0NlYyNjUuODQ2QzEwMjQgMjI1LjEyNjk5OTk5OTk5OTk1IDk5MC44NzUgMTkyIDk1MC4xNTQgMTkyek01NzYgNzAzLjg3NUw0NDggNzA0VjUxMmwtOTYgMTIzLjA3N0wyNTYgNTEydjE5MkgxMjhWMzIwaDEyOGw5NiAxMjggOTYtMTI4IDEyOC0wLjEyNVY3MDMuODc1ek03NjcuMDkxIDczNS44NzVMNjA4IDUxMmg5NlYzMjBoMTI4djE5Mmg5Nkw3NjcuMDkxIDczNS44NzV6Ii8+PC9zdmc+',
       location: 'sidePanel'
     }
+    var mythx = {
+      name: 'remythx',
+      displayName: 'MythX Security Verification',
+      events: [],
+      methods: [],
+      notifications: {
+        'solidity': ['compilationFinished']
+      },
+      version: '0.1.0-beta',
+      url: 'https://remix-mythx-plugin.surge.sh',
+      description: 'Perform Static and Dynamic Security Analysis using the MythX Cloud Service',
+      icon: 'https://remix-mythx-plugin.surge.sh/logo.png',
+      location: 'sidePanel',
+      documentation: 'https://github.com/aquiladev/remix-mythx-plugin/blob/master/README.md'
+    }
     var provable = {
       name: 'provable',
       displayName: 'Provable - oracle service',
@@ -130,6 +145,7 @@ export class RemixAppManager extends AppManagerApi {
       new Plugin(vyper),
       new Plugin(etherscan),
       new Plugin(ethdoc),
+      new Plugin(mythx),
       new Plugin(provable)
     ]
   }
