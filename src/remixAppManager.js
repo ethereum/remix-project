@@ -112,15 +112,16 @@ export class RemixAppManager extends AppManagerApi {
     }
     var mythx = {
       name: 'remythx',
-      displayName: 'MythX Security Verification (Beta)',
+      displayName: 'MythX Security Verification',
       events: [],
       methods: [],
       notifications: {
         'solidity': ['compilationFinished']
       },
-      url: 'https://remythx.xyz',
+      version: '0.1.0-beta',
+      url: 'https://remix-mythx-plugin.surge.sh',
       description: 'Perform Static and Dynamic Security Analysis using the MythX Cloud Service',
-      icon: 'https://remythx.xyz/logo.png',
+      icon: 'https://remix-mythx-plugin.surge.sh/logo.png',
       location: 'sidePanel',
       documentation: 'https://github.com/aquiladev/remix-mythx-plugin/blob/master/README.md'
     }
