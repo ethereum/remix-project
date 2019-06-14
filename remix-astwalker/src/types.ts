@@ -30,10 +30,10 @@ export interface AstNode {
 }
 
 export interface AstNodeLegacy {
-  id: number;
-  name: string;  // This corresponds to nodeType in current AST
+  id: number;    // This is unique across all nodes in an AST tree
+  name: string;  // This corresponds to "nodeType" in ASTNode
   src: string;
-  children?: Array<AstNodeLegacy>;  // This corresponds to nodes in current AST
+  children?: Array<AstNodeLegacy>;  // This corresponds to "nodes" in ASTNode
   attributes?: AstNodeAtt;
 }
 
