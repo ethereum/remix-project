@@ -30,50 +30,40 @@ export class SourceMappings {
 
   constructor(source: string) {
     this.source = source;
-    this.lineBreaks = this.getLinebreakPositions();
+
+    // Create a list of line offsets which will be used to map between
+    // character offset and line/column positions.
+    let lineBreaks: Array<number> = [];
+    for (var pos = source.indexOf('\n'); pos >= 0; pos = source.indexOf('\n', pos + 1)) {
+      lineBreaks.push(pos)
+    }
+    this.lineBreaks = lineBreaks;
   };
 
   /**
-   * get a list of nodes that are at the given @arg offset
+   * get a list of nodes that are at the given @arg position
    *
    * @param {String} astNodeType - type of node to return or null
    * @param {Int} position     - character offset
    * @return {Object} ast object given by the compiler
    */
-  nodesAtPosition(astNodeType: string | null, position: number, ast: AstNode): Array<AstNode> {
+  nodesAtPosition(astNodeType: string | null, position: Location, ast: AstNode): Array<AstNode> {
     const astWalker = new AstWalker()
-    const callback = {}
     let found: Array<AstNode> = [];
 
-    /* FIXME: Looking at AST walker code,
-       I don't understand a need to return a boolean. */
-    callback['*'] = function(node: AstNode): boolean {
+    const callback = function(node: AstNode): boolean {
       let nodeLocation = sourceLocationFromAstNode(node);
       if (nodeLocation &&
-        nodeLocation.start <= position &&
-        nodeLocation.start + nodeLocation.length >= position) {
+        nodeLocation.start == position.start &&
+        nodeLocation.length == position.length) {
         if (!astNodeType || astNodeType === node.name) {
           found.push(node)
         }
       }
       return true;
     }
-    astWalker.walk(ast, callback);
+    astWalker.walkFull(ast, callback);
     return found;
-  }
-
-  /**
-   * Retrieve line/column position of each source char
-   *
-   * @param {String} source - contract source code
-   * @return {Array} returns an array containing offset of line breaks
-   */
-  getLinebreakPositions(source: string = this.source): Array<number> {
-    let ret: Array<number> = [];
-    for (var pos = source.indexOf('\n'); pos >= 0; pos = source.indexOf('\n', pos + 1)) {
-      ret.push(pos)
-    }
-    return ret;
   }
 
   findNodeAtSourceLocation(astNodeType: string, sourceLocation: Location, ast: AstNode | null) {

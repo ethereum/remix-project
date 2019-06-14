@@ -22,6 +22,10 @@ export class AstWalker extends EventEmitter {
     node: AstNodeLegacy | AstNode,
     callback: Object | Function
   ): any {
+    // FIXME: we shouldn't be doing this callback determination type on each AST node,
+    // since the callback function is set once per walk.
+    // Better would be to store the right one as a variable and
+    // return that.
     if (<AstNodeLegacy>node) {
       if ((<AstNodeLegacy>node).name in callback) {
         return callback[(<AstNodeLegacy>node).name](node);
@@ -98,22 +102,26 @@ export class AstWalker extends EventEmitter {
     }
   }
 
-  walkFullInternal(ast: AstNode, callback?: Function | Object) {
-    function isObject(obj: any): boolean {
-      return obj != null && obj.constructor.name === "Object"
-    }
-    function isAstNode(node: Object): boolean {
-      return (
-        isObject(node) &&
-        'id' in node &&
-        'nodeType' in node &&
-        'src' in node
-      );
-    }
+  isObject(obj: any): boolean {
+    return obj != null && obj.constructor.name === "Object"
+  }
 
-    if (isAstNode(ast) && this.manageCallback(ast, callback)) {
+  isAstNode(node: Object): boolean {
+    return (
+      this.isObject(node) &&
+      'id' in node &&
+      'nodeType' in node &&
+      'src' in node
+    )
+  }
+
+  walkFullInternal(ast: AstNode, callback: Function) {
+
+    if (this.isAstNode(ast)) {
       // console.log(`XXX id ${ast.id}, nodeType: ${ast.nodeType}, src: ${ast.src}`);
+      callback(ast);
       for (let k of Object.keys(ast)) {
+        if (k in ['id', 'src', 'nodeType']) continue;
         const astItem = ast[k];
         if (Array.isArray(astItem)) {
           for (let child of astItem) {
@@ -129,17 +137,8 @@ export class AstWalker extends EventEmitter {
   }
 
   // Normalizes parameter callback and calls walkFullInternal
-  walkFull(ast: AstNode, callback?: Function | Object) {
-    if (callback) {
-      if (callback instanceof Function) {
-        callback = Object({ "*": callback });
-      }
-      if (!("*" in callback)) {
-        callback["*"] = function() {
-          return true;
-        };
-      }
-    }
+  walkFull(ast: AstNode, callback: any) {
+    if (!this.isAstNode(ast)) throw new TypeError("first argument should an ast");
     return this.walkFullInternal(ast, callback);
   }
 
