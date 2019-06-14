@@ -1,9 +1,11 @@
 const executionContext = require('../../execution-context')
 import { NetworkApi } from 'remix-plugin'
+import * as packageJson from '../../../package.json'
 
 export const profile = {
   name: 'network',
-  description: 'Manage the network (mainnet, ropsten, goerli...) and the provider (web3, vm, injected)'
+  description: 'Manage the network (mainnet, ropsten, goerli...) and the provider (web3, vm, injected)',
+  version: packageJson.version
 }
 
 // Network API has :

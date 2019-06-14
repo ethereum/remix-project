@@ -1,6 +1,6 @@
 let globalRegistry = require('../../global/registry')
 import { BaseApi } from 'remix-plugin'
-
+import * as packageJson from '../../../package.json'
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
@@ -23,7 +23,8 @@ const profile = {
   methods: [],
   events: [],
   description: 'using Remixd daemon, allow to access file system',
-  kind: 'other'
+  kind: 'other',
+  version: packageJson.version
 }
 
 export class RemixdHandle extends BaseApi {
@@ -93,8 +94,11 @@ function remixdDialog () {
   return yo`
     <div class=${css.dialog}>
       <div class=${css.dialogParagraph}>Interact with your file system from Remix. Click connect and find shared folder in the Remix file explorer (under localhost).
-        Before you get started, check out the <a target="_blank" href="https://remix.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
+        Before you get started, check out the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
         to find out how to run Remixd.
+      </div>
+      <div class=${css.dialogParagraph}>If you have looked at that tutorial and are just looking for the remixd command, <br> here it is:
+        <br><b>remixd -s absolute-path-to-the-shared-folder --remix-ide your-remix-ide-URL-instance</b>
       </div>
       <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.href}</em> and your local file system <i>ws://127.0.0.1:65520</i>
         so please make sure your system is secured enough (port 65520 neither opened nor forwarded).

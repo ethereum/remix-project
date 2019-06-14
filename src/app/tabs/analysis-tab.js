@@ -5,6 +5,7 @@ var css = require('./styles/analysis-tab-styles')
 
 import { BaseApi } from 'remix-plugin'
 import { EventEmitter } from 'events'
+import * as packageJson from '../../../package.json'
 
 const profile = {
   name: 'solidityStaticAnalysis',
@@ -15,7 +16,8 @@ const profile = {
   description: 'Checks the contract code for security vulnerabilities and bad practices.',
   kind: 'analysis',
   location: 'sidePanel',
-  documentation: 'static_analysis.html'
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/static_analysis.html',
+  version: packageJson.version
 }
 
 class AnalysisTab extends BaseApi {

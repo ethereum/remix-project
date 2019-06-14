@@ -17,6 +17,7 @@ var csjs = require('csjs-inject')
 
 var css = require('./styles/terminal-styles')
 import { BaseApi } from 'remix-plugin'
+import * as packageJson from '../../../package.json'
 
 var packageV = require('../../../package.json')
 
@@ -32,7 +33,8 @@ const profile = {
   methods: [],
   events: [],
   description: ' - ',
-  required: false
+  required: false,
+  version: packageJson.version
 }
 
 class Terminal extends BaseApi {

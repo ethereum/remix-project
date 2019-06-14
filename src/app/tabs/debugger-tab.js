@@ -4,6 +4,7 @@ var css = require('./styles/debugger-tab-styles')
 var DebuggerUI = require('../debugger/debuggerUI')
 
 import { BaseApi } from 'remix-plugin'
+import * as packageJson from '../../../package.json'
 
 const profile = {
   name: 'debugger',
@@ -14,7 +15,8 @@ const profile = {
   description: 'Debug transactions',
   kind: 'debugging',
   location: 'sidePanel',
-  documentation: 'debugger.html'
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/debugger.html',
+  version: packageJson.version
 }
 
 class DebuggerTab extends BaseApi {
