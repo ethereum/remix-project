@@ -145,7 +145,7 @@ export class RemixAppManager extends AppManagerApi {
       new Plugin(vyper),
       new Plugin(etherscan),
       new Plugin(ethdoc),
-      new Plugin(mythx)
+      new Plugin(mythx),
       new Plugin(provable)
     ]
   }
