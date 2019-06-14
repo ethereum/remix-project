@@ -26,7 +26,7 @@ const profile = {
   description: 'execute and save transactions',
   kind: 'run',
   location: 'sidePanel',
-  documentation: 'run.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
   version: packageJson.version
 }
 

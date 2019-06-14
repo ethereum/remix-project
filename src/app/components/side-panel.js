@@ -74,8 +74,7 @@ export class SidePanel extends AbstractPanel {
     if (this.active) {
       const { profile } = this.store.getOne(this.active)
       name = profile.displayName ? profile.displayName : profile.name
-      const docsRoot = 'https://remix.readthedocs.io/en/latest/'
-      docLink = profile.documentation ? yo`<a href="${docsRoot}${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
+      docLink = profile.documentation ? yo`<a href="${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
       if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
         versionWarning = yo`<small title="Version Alpha" class="${css.versionWarning}">alpha</small>`
       }
