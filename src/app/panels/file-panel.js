@@ -37,7 +37,7 @@ const profile = {
   description: ' - ',
   kind: 'fileexplorer',
   location: 'sidePanel',
-  documentation: 'file_explorer.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/file_explorer.html',
   version: packageJson.version
 }
 
