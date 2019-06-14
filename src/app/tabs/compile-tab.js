@@ -18,6 +18,7 @@ const CompileTabLogic = require('./compileTab/compileTab.js')
 const CompilerContainer = require('./compileTab/compilerContainer.js')
 
 import { CompilerApi } from 'remix-plugin'
+import * as packageJson from '../../../package.json'
 
 const profile = {
   name: 'solidity',
@@ -27,7 +28,8 @@ const profile = {
   kind: 'compile',
   permission: true,
   location: 'sidePanel',
-  documentation: 'solidity_editor.html'
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
+  version: packageJson.version
 }
 
 // EditorApi:

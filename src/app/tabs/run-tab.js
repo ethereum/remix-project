@@ -15,6 +15,7 @@ var RecorderUI = require('./runTab/recorder.js')
 const executionContext = require('../../execution-context')
 
 import { BaseApi } from 'remix-plugin'
+import * as packageJson from '../../../package.json'
 
 const profile = {
   name: 'run',
@@ -25,7 +26,8 @@ const profile = {
   description: 'execute and save transactions',
   kind: 'run',
   location: 'sidePanel',
-  documentation: 'run.html'
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
+  version: packageJson.version
 }
 
 class RunTab extends BaseApi {
