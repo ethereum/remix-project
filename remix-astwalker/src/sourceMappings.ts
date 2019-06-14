@@ -66,18 +66,17 @@ export class SourceMappings {
     return found;
   }
 
-  findNodeAtSourceLocation(astNodeType: string, sourceLocation: Location, ast: AstNode | null) {
+  findNodeAtSourceLocation(astNodeType: string | undefined, sourceLocation: Location, ast: AstNode | null): AstNode | null {
     const astWalker = new AstWalker()
-    const callback = {};
     let found = null;
     /* FIXME: Looking at AST walker code,
        I don't understand a need to return a boolean. */
-    callback['*'] = function(node: AstNode) {
+    const callback = function(node: AstNode) {
       let nodeLocation = sourceLocationFromAstNode(node);
       if (nodeLocation &&
-        nodeLocation.start <= sourceLocation.start &&
-        nodeLocation.start + nodeLocation.length >= sourceLocation.start + sourceLocation.length) {
-        if (astNodeType === node.nodeType) {
+        nodeLocation.start == sourceLocation.start &&
+        nodeLocation.length == sourceLocation.length) {
+        if (astNodeType == undefined || astNodeType === node.nodeType) {
           found = node;
         }
       }
