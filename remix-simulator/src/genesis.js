@@ -24,7 +24,7 @@ function generateBlock () {
       number: 1,
       coinbase: '0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a',
       difficulty: (new BN('69762765929000', 10)),
-      gasLimit: new BN('5000000').imuln(1)
+      gasLimit: new BN('8000000').imuln(1)
     },
     transactions: [],
     uncleHeaders: []
