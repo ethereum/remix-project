@@ -104,7 +104,7 @@ class TxRunner {
       timestamp: timestamp,
       nonce: new BN(account.nonce++),
       gasPrice: new BN(1),
-      gasLimit: new BN(gasLimit, 10),
+      gasLimit: gasLimit,
       to: to,
       value: new BN(value, 10),
       data: Buffer.from(data.slice(2), 'hex')
@@ -119,7 +119,7 @@ class TxRunner {
         number: self.blockNumber,
         coinbase: coinbases[self.blockNumber % coinbases.length],
         difficulty: difficulties[self.blockNumber % difficulties.length],
-        gasLimit: new BN('5000000').imuln(1)
+        gasLimit: new BN('8000000').imuln(1)
       },
       transactions: [tx],
       uncleHeaders: []
@@ -132,12 +132,14 @@ class TxRunner {
 
     this.checkpointAndCommit(() => {
       executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }, function (err, results) {
+        err = err ? err.message : err
+        if (err) {
+          return callback(err)
+        }
         let result = results.results[0]
-        console.dir(result)
         if (useCall) {
           executionContext.vm().stateManager.revert(function () { })
         }
-        err = err ? err.message : err
         if (result) {
           result.status = '0x' + result.vm.exception.toString(16)
         }
@@ -154,7 +156,7 @@ class TxRunner {
   }
 
   checkpointAndCommit (cb) {
-    if (executionContext.vm().stateManager._checkpointCount > 0) {
+    if (executionContext.vm().stateManager._checkpointCount > 1) {
       return executionContext.vm().stateManager.commit(() => {
         cb()
       })

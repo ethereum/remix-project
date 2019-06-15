@@ -76,6 +76,7 @@ export function runTest (testName, testObject: any, contractDetails: any, opts: 
       value: testName,
       filename: testObject.filename
     }
+
     testCallback(undefined, resp)
     async.eachOfLimit(runList, 1, function (func, index, next) {
         let sender
