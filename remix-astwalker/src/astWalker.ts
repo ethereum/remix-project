@@ -4,6 +4,21 @@ import { AstNodeLegacy, Node, AstNode } from "./index";
 export declare interface AstWalker {
   new(): EventEmitter;
 }
+
+const isObject = function(obj: any): boolean {
+  return obj != null && obj.constructor.name === "Object"
+}
+
+export function isAstNode(node: Object): boolean {
+  return (
+    isObject(node) &&
+    'id' in node &&
+    'nodeType' in node &&
+    'src' in node
+  )
+}
+
+
 /**
  * Crawl the given AST through the function walk(ast, callback)
  */
@@ -102,26 +117,14 @@ export class AstWalker extends EventEmitter {
     }
   }
 
-  isObject(obj: any): boolean {
-    return obj != null && obj.constructor.name === "Object"
-  }
-
-  isAstNode(node: Object): boolean {
-    return (
-      this.isObject(node) &&
-      'id' in node &&
-      'nodeType' in node &&
-      'src' in node
-    )
-  }
-
   walkFullInternal(ast: AstNode, callback: Function) {
 
-    if (this.isAstNode(ast)) {
+    if (isAstNode(ast)) {
       // console.log(`XXX id ${ast.id}, nodeType: ${ast.nodeType}, src: ${ast.src}`);
       callback(ast);
       for (let k of Object.keys(ast)) {
-        if (k in ['id', 'src', 'nodeType']) continue;
+        // Possible optimization:
+        // if (k in ['id', 'src', 'nodeType']) continue;
         const astItem = ast[k];
         if (Array.isArray(astItem)) {
           for (let child of astItem) {
@@ -138,7 +141,7 @@ export class AstWalker extends EventEmitter {
 
   // Normalizes parameter callback and calls walkFullInternal
   walkFull(ast: AstNode, callback: any) {
-    if (!this.isAstNode(ast)) throw new TypeError("first argument should an ast");
+    if (!isAstNode(ast)) throw new TypeError("first argument should be an ast");
     return this.walkFullInternal(ast, callback);
   }
 

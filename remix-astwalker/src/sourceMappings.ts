@@ -1,5 +1,9 @@
-import { AstWalker } from './astWalker';
-import { AstNode, Location } from "./index";
+import { isAstNode, AstWalker } from './astWalker';
+import { AstNode, Location } from "./types";
+
+export declare interface SourceMappings {
+  new(): SourceMappings;
+}
 
 /**
  * Break out fields of an AST's "src" attribute string (s:l:f)
@@ -8,7 +12,7 @@ import { AstNode, Location } from "./index";
  * @param {AstNode} astNode  - the object to convert.
  */
 export function sourceLocationFromAstNode(astNode: AstNode): Location | null {
-  if (astNode.src) {
+  if (isAstNode(astNode) && astNode.src) {
     var split = astNode.src.split(':')
     return <Location>{
       start: parseInt(split[0], 10),
@@ -56,7 +60,7 @@ export class SourceMappings {
       if (nodeLocation &&
         nodeLocation.start == position.start &&
         nodeLocation.length == position.length) {
-        if (!astNodeType || astNodeType === node.name) {
+        if (!astNodeType || astNodeType === node.nodeType) {
           found.push(node)
         }
       }
@@ -87,8 +91,3 @@ export class SourceMappings {
     return found;
   }
 }
-
-module.exports = {
-  SourceMappings,
-  sourceLocationFromAstNode
-};
