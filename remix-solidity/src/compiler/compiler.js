@@ -29,12 +29,18 @@ function Compiler (handleImportCall) {
 
   var evmVersion = null
 
+  var language = 'Solidity'
+
   this.setOptimize = function (_optimize) {
     optimize = _optimize
   }
 
   this.setEvmVersion = function (_evmVersion) {
     evmVersion = _evmVersion
+  }
+
+  this.setLanguage = function (_language) {
+    language = _language
   }
 
   var compilationStartTime = null
@@ -94,7 +100,7 @@ function Compiler (handleImportCall) {
 
         var result
         try {
-          var input = compilerInput(source.sources, {optimize: optimize, evmVersion: evmVersion, target: source.target})
+          var input = compilerInput(source.sources, {optimize: optimize, evmVersion: evmVersion, language: language, target: source.target})
           result = compiler.compile(input, missingInputsCallback)
           result = JSON.parse(result)
         } catch (exception) {
@@ -301,7 +307,7 @@ function Compiler (handleImportCall) {
     compileJSON = function (source) {
       jobs.push({sources: source})
       worker.postMessage({cmd: 'compile', job: jobs.length - 1, input: compilerInput(source.sources,
-        {optimize: optimize, evmVersion: evmVersion, target: source.target})})
+        {optimize: optimize, evmVersion: evmVersion, language: language, target: source.target})})
     }
     worker.postMessage({cmd: 'loadVersion', data: url})
   }
