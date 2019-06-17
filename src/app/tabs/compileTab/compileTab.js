@@ -46,14 +46,16 @@ class CompileTab {
     this.compiler.setEvmVersion(this.evmVersion)
   }
 
+  setLanguage (lang) {
+    this.compiler.setLanguage(lang)
+  }
+
   /**
    * Compile a specific file of the file manager
    * @param {string} target the path to the file to compile
    */
   compileFile (target) {
     if (!target) throw new Error('No target provided for compiliation')
-    if (!/\.sol/.exec(target)) throw new Error(`${target} is not a solidity file. It cannot be compiled with solidity compiler`)
-    // only compile *.sol file.
     const provider = this.fileManager.fileProviderOf(target)
     if (!provider) throw new Error(`cannot compile ${target}. Does not belong to any explorer`)
     return new Promise((resolve, reject) => {
