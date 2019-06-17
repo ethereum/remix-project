@@ -1,6 +1,6 @@
 {
   "name": "remix-tests",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Tests for the Ethereum tool suite Remix",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -44,7 +44,7 @@
     "commander": "^2.13.0",
     "remix-lib": "0.4.6",
     "remix-simulator": "0.1.7",
-    "remix-solidity": "0.3.6",
+    "remix-solidity": "0.3.7",
     "signale": "^1.2.1",
     "web3": "1.0.0-beta.36",
     "winston": "^3.0.0"
