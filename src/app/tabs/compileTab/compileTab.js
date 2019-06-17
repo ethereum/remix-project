@@ -25,12 +25,25 @@ class CompileTab {
     this.optimize = this.optimize === 'true'
     this.queryParams.update({ optimize: this.optimize })
     this.compiler.setOptimize(this.optimize)
+
+    this.evmVersion = this.queryParams.get().evmVersion
+    if (this.evmVersion === 'undefined' || this.evmVersion === 'null' || !this.evmVersion) {
+      this.evmVersion = null
+    }
+    this.queryParams.update({ evmVersion: this.evmVersion })
+    this.compiler.setEvmVersion(this.evmVersion)
   }
 
   setOptimize (newOptimizeValue) {
     this.optimize = newOptimizeValue
     this.queryParams.update({ optimize: this.optimize })
     this.compiler.setOptimize(this.optimize)
+  }
+
+  setEvmVersion (newEvmVersion) {
+    this.evmVersion = newEvmVersion
+    this.queryParams.update({ evmVersion: this.evmVersion })
+    this.compiler.setEvmVersion(this.evmVersion)
   }
 
   /**
