@@ -38,6 +38,8 @@ let css = csjs`
   .jumboBtnContainer {
     float: left;
     padding-top: 15px;
+    display: flex;
+    white-space: nowrap;
   }
   .headlineContainer {
     float: left;
@@ -45,16 +47,15 @@ let css = csjs`
     margin: 0 50px 0 70px;
   }
   .hpSections {
+    min-width: 620px;
     margin: 0 60px;
-  }
-  .solidityBtn {
-    margin-right: 40px;
   }
   .labelIt {
     margin-bottom: 0;
   }
   .seeAll {
     margin-top: 7px;
+    white-space: nowrap;
   }
   .importFrom p {
     margin-right: 10px;
@@ -66,10 +67,9 @@ let css = csjs`
   .logoContainer img{
     height: 65px;
   }
-  .learnmore {
-    margin-right: 20px;
+  .enviroments {
+    display: flex;
   }
-
 }
 `
 
@@ -193,18 +193,18 @@ export class LandingPage extends BaseApi {
           <div class="${css.headlineContainer}">
             <h2 class="">The new layout has arrived</h2>
           </div>
-          <div class="${css.jumboBtnContainer}">
-            <button class="btn btn-primary btn-lg ${css.learnmore}" href="#" onclick=${() => { learnMore() }} role="button">Learn more</button>
+          <div class="${css.jumboBtnContainer} px-5">
+            <button class="btn btn-primary btn-lg mx-3" href="#" onclick=${() => { learnMore() }} role="button">Learn more</button>
             <button class="btn btn-secondary btn-lg" onclick=${() => { switchToPreviousVersion() }}>Use previous version</button>
           </div>
         </div><!-- end of jumbotron -->
       </div><!-- end of jumbotron container -->
       <div class="row ${css.hpSections}">
         <div id="col1" class="col-sm-6">
-          <div class="environment mb-5">
+          <div class="mb-5">
             <h4>Environments</h4>
-            <div>
-              <button class="btn btn-lg btn-secondary ${css.solidityBtn}" onclick=${() => { startSolidity() }}>Solidity</button>
+            <div class="${css.enviroments} pt-2">
+              <button class="btn btn-lg btn-secondary mr-3" onclick=${() => { startSolidity() }}>Solidity</button>
               <button class="btn btn-lg btn-secondary" onclick=${() => { startVyper() }}>Vyper</button>
             </div>
           </div>
@@ -240,7 +240,12 @@ export class LandingPage extends BaseApi {
             <h4>Featured Plugins</h4>
             <p class="mb-1 ${css.text}" onclick=${() => { startPipeline() }}>Pipeline</p>
             <p class="mb-1 ${css.text}" onclick=${() => { startDebugger() }}>Debugger</p>
-            <p class="mb-1"><button onclick=${() => { startPluginManager() }} class="btn btn-sm btn-secondary ${css.seeAll}">See all Plugins <i class="fas fa-plug" ></i></button></p>
+            <p class="mb-1">
+              <button onclick=${() => { startPluginManager() }} class="btn btn-sm btn-secondary ${css.seeAll}">
+                See all Plugins
+                <i class="fas fa-plug p-1" ></i>
+              </button>
+            </p>
           </div>
           <div class="resources">
             <h4>Resources</h4>
