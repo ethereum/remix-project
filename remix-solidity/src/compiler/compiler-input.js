@@ -21,5 +21,8 @@ module.exports = (sources, opts) => {
   if (opts.evmVersion) {
     o.settings.evmVersion = opts.evmVersion
   }
+  if (opts.language) {
+    o.language = opts.language
+  }
   return JSON.stringify(o)
 }
