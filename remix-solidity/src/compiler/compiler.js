@@ -373,6 +373,14 @@ function Compiler (handleImportCall) {
 
   function updateInterface (data) {
     txHelper.visitContracts(data.contracts, (contract) => {
+      if (!contract.object.abi) contract.object.abi = []
+      if (language === 'Yul' && contract.object.abi.length === 0) {
+        contract.object.abi.push({
+          'payablepayable': true,
+          'stateMutability': 'payable',
+          'type': 'fallback'
+        })
+      }
       data.contracts[contract.file][contract.name].abi = solcABI.update(truncateVersion(currentVersion), contract.object.abi)
     })
     return data
