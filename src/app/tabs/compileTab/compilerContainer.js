@@ -134,17 +134,55 @@ class CompilerContainer {
       </select>`
     this._view.version = yo`<span id="version"></span>`
 
+    this._view.evmVersionSelector = yo`
+      <select onchange="${this.onchangeEvmVersion.bind(this)}" class="custom-select" id="evmVersionSelector">
+        <option value="default">compiler default</option>
+        <option>petersburg</option>
+        <option>constantinople</option>
+        <option>byzantium</option>
+        <option>spuriousDragon</option>
+        <option>tangerineWhistle</option>
+        <option>homestead</option>
+      </select>`
+    if (this.compileTabLogic.evmVersion) {
+      let s = this._view.evmVersionSelector
+      let i
+      for (i = 0; i < s.options.length; i++) {
+        if (s.options[i].value === this.compileTabLogic.evmVersion) {
+          break
+        }
+      }
+      if (i === s.options.length) { // invalid evmVersion from queryParams
+        s.selectedIndex = 0 // compiler default
+        this.onchangeEvmVersion()
+      } else {
+        s.selectedIndex = i
+      }
+    }
+
     this._view.compilationButton = this.compilationButton()
 
     this._view.compileContainer = yo`
       <section>
         <!-- Select Compiler Version -->
         <article>
-          <header class="navbar navbar-light bg-light input-group mb-3">
-            <div class="input-group-prepend">
-              <label class="input-group-text border-0" for="versionSelector">Compiler</label>
+          <header class="navbar navbar-light bg-light">
+            <div class="row w-100 no-gutters mb-2">
+              <div class="col-sm-4">
+                <label class="input-group-text border-0" for="versionSelector">Compiler</label>
+              </div>
+              <div class="col-sm-8">
+                ${this._view.versionSelector}
+              </div>
             </div>
-            ${this._view.versionSelector}
+            <div class="row w-100 no-gutters">
+              <div class="col-sm-4">
+                <label class="input-group-text border-0" for="evmVersionSelector">EVM Version</label>
+              </div>
+              <div class="col-sm-8">
+                ${this._view.evmVersionSelector}
+              </div>
+            </div>
           </header>
           ${this._view.compilationButton}
         </article>
@@ -187,6 +225,16 @@ class CompilerContainer {
   onchangeOptimize () {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
     this.compileTabLogic.runCompiler()
+  }
+
+  onchangeEvmVersion (_) {
+    let s = this._view.evmVersionSelector
+    let v = s.value
+    if (v === 'default') {
+      v = null
+    }
+    this.compileTabLogic.setEvmVersion(v)
+    this.compile()
   }
 
   onchangeLoadVersion (event) {
