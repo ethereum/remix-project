@@ -84,36 +84,65 @@ TxBrowser.prototype.setState = function (state) {
 
 TxBrowser.prototype.render = function () {
   var self = this
-  let action = yo`<button class='btn btn-primary btn-sm ${css.txbutton}' id='load' title='${this.state.debugging ? 'Stop' : 'Start'} debugging' onclick=${function () { self.submit() }}>${this.state.debugging ? 'Stop' : 'Start'} debugging</button>`
-  var view = yo`<div class="${css.container}">
-        <div class="${css.txContainer}">
-          <div class="${css.txinputs} p-1 input-group">
-            <input
-              value="${this.state.txNumber || ''}"
-              class="form-control m-0 ${css.txinput}"
-              id='txinput'
-              onkeyup=${function () { self.updateTxN(arguments[0]) }}
-              type='text'
-              placeholder=${'Transaction hash'}
-            />
-          </div>
-          <div class="${css.txbuttons} btn-group p-1">
-           ${action}
-          </div>
+  this.state.txNumberInput = yo`
+    <input
+      value="${this.state.txNumber || ''}"
+      class="form-control m-0 ${css.txinput}"
+      id='txinput'
+      onkeyup=${function () { self.updateTxN(arguments[0]) }}
+      type='text'
+      oninput=${this.txInputChanged.bind(this)}
+      placeholder=${'Transaction hash, should start with 0x'}
+    />
+  `
+  let txButton = yo`
+    <button
+      class='btn btn-primary btn-sm ${css.txbutton}'
+      id='load'
+      title='${this.state.debugging ? 'Stop' : 'Start'} debugging'
+      onclick=${function () { self.submit() }}
+    >
+      ${this.state.debugging ? 'Stop' : 'Start'} debugging
+    </button>
+  `
+  var view = yo`
+    <div class="${css.container}">
+      <div class="${css.txContainer}">
+        <div class="${css.txinputs} p-1 input-group">
+          ${this.state.txNumberInput}
         </div>
-        <span id='error'></span>
-      </div>`
+        <div class="${css.txbuttons} btn-group p-1">
+          ${txButton}
+        </div>
+      </div>
+      <span id='error'></span>
+    </div>
+  `
   if (this.state.debugging) {
     view.querySelectorAll('input').forEach(element => { element.setAttribute('disabled', '') })
   }
   if (!this.state.txNumber) {
-    action.setAttribute('disabled', 'disabled')
+    view.querySelector("button[id='load']").setAttribute('disabled', '')
+  } else {
+    this.state.txNumberInput.removeAttribute('diabled', '')
   }
   if (!this.view) {
     this.view = view
   }
 
   return view
+}
+
+TxBrowser.prototype.txInputChanged = function (event) {
+
+  // todo check validation of txnumber
+  //required
+  //oninvalid="setCustomValidity('Please provide a valid transaction number, must start with 0x and have length of 22')"
+  //pattern="^0[x,X]+[0-9a-fA-F]{22}"
+  //this.state.txNumberInput.setCustomValidity('')
+
+  this.state.txNumber = event.target.value
+  yo.update(this.view, this.render())
 }
 
 module.exports = TxBrowser
