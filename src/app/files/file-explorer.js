@@ -157,7 +157,7 @@ function fileExplorer (localRegistry, files, menuItems) {
       var isRoot = data.path === self.files.type
       return yo`
         <div class="${css.items}">
-          <label
+          <span
             title="${data.path}"
             class="${css.label} ${!isRoot ? css.leaf : ''}"
             data-path="${data.path}"
@@ -165,7 +165,7 @@ function fileExplorer (localRegistry, files, menuItems) {
             onkeydown=${editModeOff}
             onblur=${editModeOff}
           >${key.split('/').pop()}
-          </label>
+          </span>
           ${isRoot ? self.renderMenuItems() : ''}
         </div>
       `
@@ -522,12 +522,12 @@ fileExplorer.prototype.renderMenuItems = function () {
     items = this.menuItems.map(({action, title, icon}) => {
       if (action === 'uploadFile') {
         return yo`
-          <span class="${icon} ${css.newFile}"  title="${title}">
+          <label class="${icon} ${css.newFile}"  title="${title}">
             <input type="file" onchange=${(event) => {
               event.stopPropagation()
               this.uploadFile(event)
             }} multiple />
-          </span>
+          </label>
         `
       } else {
         return yo`

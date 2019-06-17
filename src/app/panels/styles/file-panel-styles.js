@@ -16,6 +16,9 @@ var css = csjs`
     padding-left      : 6px;
     padding-top       : 6px;
   }
+  .fileExplorerTree   {
+    cursor            : default;
+  }
   .gist            {
     padding           : 10px;
   }
