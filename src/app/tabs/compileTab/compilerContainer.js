@@ -175,6 +175,17 @@ class CompilerContainer {
                 ${this._view.versionSelector}
               </div>
             </div>
+            <div class="row w-100 no-gutters mb-2">
+              <div class="col-sm-4">
+                <label class="input-group-text border-0" for="languageSelector">Language</label>
+              </div>
+              <div class="col-sm-8">
+              <select onchange="${this.onchangeLanguage.bind(this)}" class="custom-select" id="languageSelector">
+                <option>Solidity</option>
+                <option>Yul</option>
+              </select>
+              </div>
+            </div>
             <div class="row w-100 no-gutters">
               <div class="col-sm-4">
                 <label class="input-group-text border-0" for="evmVersionSelector">EVM Version</label>
@@ -225,6 +236,11 @@ class CompilerContainer {
   onchangeOptimize () {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
     this.compileTabLogic.runCompiler()
+  }
+
+  onchangeLanguage (event) {
+    this.compileTabLogic.setLanguage(event.target.value)
+    this.compile()
   }
 
   onchangeEvmVersion (_) {
