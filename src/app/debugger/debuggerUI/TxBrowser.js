@@ -134,12 +134,11 @@ TxBrowser.prototype.render = function () {
 }
 
 TxBrowser.prototype.txInputChanged = function (event) {
-
   // todo check validation of txnumber
-  //required
-  //oninvalid="setCustomValidity('Please provide a valid transaction number, must start with 0x and have length of 22')"
-  //pattern="^0[x,X]+[0-9a-fA-F]{22}"
-  //this.state.txNumberInput.setCustomValidity('')
+  // required
+  // oninvalid="setCustomValidity('Please provide a valid transaction number, must start with 0x and have length of 22')"
+  // pattern="^0[x,X]+[0-9a-fA-F]{22}"
+  // this.state.txNumberInput.setCustomValidity('')
 
   this.state.txNumber = event.target.value
   yo.update(this.view, this.render())

@@ -81,7 +81,7 @@ class ContractDropdownUI {
     return el
   }
 
-  atAddressChanged(event) {
+  atAddressChanged (event) {
     yo.update(this.el, this.render())
   }
 
