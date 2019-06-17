@@ -378,7 +378,7 @@ function Compiler (handleImportCall) {
         // yul compiler does not return any abi,
         // we default to accept the fallback function (which expect raw data as argument).
         contract.object.abi.push({
-          'payablepayable': true,
+          'payable': true,
           'stateMutability': 'payable',
           'type': 'fallback'
         })
