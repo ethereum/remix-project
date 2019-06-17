@@ -17,7 +17,7 @@ stringBytesLength.prototype.report = function (compilationResults) {
   if (this.stringToBytesConversions.length > 0 && this.bytesLengthChecks.length > 0) {
     return [{
       warning: 'Bytes and string length are not the same since strings are assumed to be UTF-8 encoded (according to the ABI defintion) therefore one character is not nessesarily encoded in one byte of data.',
-      location: this.bytesLengthChecks[0],
+      location: this.bytesLengthChecks[0].src,
       more: 'https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI#argument-encoding'
     }]
   } else {
