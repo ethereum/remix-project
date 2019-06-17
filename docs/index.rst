@@ -19,6 +19,8 @@ Useful links:
 
 - `Remix alpha <http://remix-alpha.ethereum.org>`__ - The version where we test new Remix release (not stable!).
 
+- `Remix on Medium <https://medium.com/remix-ide>`__
+
 - `Ethereum StackExchange for Remix <https://ethereum.stackexchange.com/questions/tagged/remix>`__
 
 - `Community support channel <https://gitter.im/ethereum/remix>`__
