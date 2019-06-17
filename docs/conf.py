@@ -48,10 +48,10 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Remix, Ethereum-IDE'
-copyright = u'2018, Remix'
+copyright = u'2019, Remix'
 author = u'Remix team'
 
-github_doc_root = 'https://github.com/ethereum/remix/tree/master/docs/'
+github_doc_root = 'https://github.com/ethereum/remix-ide/tree/master/docs/'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
