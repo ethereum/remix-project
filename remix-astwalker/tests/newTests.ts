@@ -1,12 +1,13 @@
 import tape from "tape";
-import { AstWalker, AstNode } from "../src";
+import { AstWalker, AstNode, isAstNode } from "../src";
 import node from "./resources/newAST";
+import legacyNode from "./resources/legacyAST";
 
 tape("New ASTWalker", (t: tape.Test) => {
-  t.test("ASTWalker.walk && .walkAST", (st: tape.Test) => {
+  // New Ast Object
+  const astWalker = new AstWalker();
+  t.test("ASTWalker.walk && .walkastList", (st: tape.Test) => {
     st.plan(24);
-    // New Ast Object
-    const astWalker = new AstWalker();
     // EventListener
     astWalker.on("node", node => {
       if (node.nodeType === "ContractDefinition") {
@@ -49,6 +50,30 @@ tape("New ASTWalker", (t: tape.Test) => {
     astWalker.walkAstList(node, node => {
       return true;
     });
+    st.end();
+  });
+  t.test("ASTWalkFull", (st: tape.Test) => {
+    const astNodeCount = 26;
+    st.plan(2 + astNodeCount);
+    let count: number = 0;
+    astWalker.walkFull(node.ast, (node: AstNode) => {
+      st.ok(isAstNode(node), "passed an ast node");
+      count += 1;
+    });
+    st.equal(count, astNodeCount, "traverses all AST nodes");
+    count = 0;
+    let badCall = function() {
+      /* Typescript will keep us from calling walkFull with a legacyAST.
+	 However, for non-typescript uses, we add this test which casts
+	 to an AST to check that there is a run-time check in walkFull.
+      */
+      astWalker.walkFull(<AstNode>legacyNode, (node: AstNode) => {
+        count += 1;
+      });
+    }
+    t.throws(badCall, /first argument should be an ast/,
+      "passing legacyAST fails");
+    st.equal(count, 0, "traverses no AST nodes");
     st.end();
   });
 });

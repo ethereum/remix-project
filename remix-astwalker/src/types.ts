@@ -1,3 +1,9 @@
+export interface Location {
+  start: number;
+  length: number;
+  file: number;  // Would it be clearer to call this a file index?
+}
+
 export interface Node {
   ast?: AstNode;
   legacyAST?: AstNodeLegacy;
@@ -6,12 +12,15 @@ export interface Node {
 }
 
 export interface AstNode {
+  /* The following fields are essential, and indicates an that object
+     is an AST node. */
+  id: number;  // This is unique across all nodes in an AST tree
+  nodeType: string;
+  src: string;
+
   absolutePath?: string;
   exportedSymbols?: Object;
-  id: number;
-  nodeType: string;
   nodes?: Array<AstNode>;
-  src: string;
   literals?: Array<string>;
   file?: string;
   scope?: number;
@@ -21,10 +30,10 @@ export interface AstNode {
 }
 
 export interface AstNodeLegacy {
-  id: number;
-  name: string;
+  id: number;    // This is unique across all nodes in an AST tree
+  name: string;  // This corresponds to "nodeType" in ASTNode
   src: string;
-  children?: Array<AstNodeLegacy>;
+  children?: Array<AstNodeLegacy>;  // This corresponds to "nodes" in ASTNode
   attributes?: AstNodeAtt;
 }
 
