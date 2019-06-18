@@ -23,11 +23,13 @@ program
   .option('-p, --port [port]', 'specify port')
   .option('-b, --ip [host]', 'specify host')
   .option('-c, --coinbase [coinbase]', 'specify host')
+  .option('--rpc', 'run rpc server only')
   .parse(process.argv)
 
 const Server = require('../src/server')
 const server = new Server({
-  coinbase: program.coinbase || "0x0000000000000000000000000000000000000000"
+  coinbase: program.coinbase || "0x0000000000000000000000000000000000000000",
+  rpc: program.rpc
 })
 server.start(program.host || '127.0.0.1', program.port || 8545)
 

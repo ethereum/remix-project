@@ -14,6 +14,7 @@ class Server {
     }).catch((error) => {
       log(error)
     })
+    this.rpcOnly = options.rpc;
   }
 
   start (host, port) {
@@ -24,28 +25,31 @@ class Server {
     app.use(bodyParser.json())
 
     app.get('/', (req, res) => {
+      console.dir("/ request")
       res.send('Welcome to remix-simulator')
     })
 
-    app.use((req, res) => {
-      this.provider.sendAsync(req.body, (err, jsonResponse) => {
-        if (err) {
-          return res.send(JSON.stringify({error: err}))
-        }
-        res.send(jsonResponse)
-      })
-    })
-
-    app.ws('/', (ws, req) => {
-      ws.on('message', function (msg) {
-        this.provider.sendAsync(JSON.parse(msg), (err, jsonResponse) => {
+    if (this.rpcOnly) {
+      app.use((req, res) => {
+        this.provider.sendAsync(req.body, (err, jsonResponse) => {
           if (err) {
-            return ws.send(JSON.stringify({error: err}))
+            return res.send(JSON.stringify({ error: err }))
           }
-          ws.send(JSON.stringify(jsonResponse))
+          res.send(jsonResponse)
         })
       })
-    })
+    } else {
+      app.ws('/', (ws, req) => {
+        ws.on('message', (msg) => {
+          this.provider.sendAsync(JSON.parse(msg), (err, jsonResponse) => {
+            if (err) {
+              return ws.send(JSON.stringify({ error: err }))
+            }
+            ws.send(JSON.stringify(jsonResponse))
+          })
+        })
+      })
+    }
 
     app.listen(port, host, () => log('Remix Simulator listening on port ' + host + ':' + port))
   }
