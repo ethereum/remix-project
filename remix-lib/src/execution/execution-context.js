@@ -298,6 +298,9 @@ function ExecutionContext () {
 
   this.addBlock = function (block) {
     let blockNumber = '0x' + block.header.number.toString('hex')
+    if (blockNumber === "0x") {
+      blockNumber = "0x0"
+    }
     blockNumber = web3.toHex(web3.toBigNumber(blockNumber))
 
     self.blocks['0x' + block.hash().toString('hex')] = block
