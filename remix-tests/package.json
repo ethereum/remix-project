@@ -60,7 +60,7 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.21",
     "@types/web3": "^1.0.18",
-    "babel-preset-es2017": "^6.24.1",
+    "@babel/preset-es2017": "latest",
     "mocha": "^5.1.0",
     "standard": "^10.0.3",
     "ts-node": "^8.0.2",
