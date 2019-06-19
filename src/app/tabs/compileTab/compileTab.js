@@ -45,7 +45,11 @@ class CompileTab {
     this.queryParams.update({ evmVersion: this.evmVersion })
     this.compiler.setEvmVersion(this.evmVersion)
   }
-
+  
+  /**
+   * Set the compiler to using Solidity or Yul (default to Solidity)
+   * @params lang {'Solidity' | 'Yul'} ...
+   */
   setLanguage (lang) {
     this.compiler.setLanguage(lang)
   }
