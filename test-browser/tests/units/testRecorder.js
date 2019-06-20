@@ -7,7 +7,6 @@ module.exports = {
     return sources
   },
   test: function (browser, callback) {
-    browser.clickLaunchIcon = contractHelper.clickLaunchIcon
     contractHelper.addFile(browser, 'scenario.json', {content: records}, () => {
       browser
         .clickLaunchIcon('run')
