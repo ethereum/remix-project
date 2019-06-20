@@ -10,110 +10,97 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Simple Contract': function (browser) {
-    runTests(browser)
+  'Test Simple Contract': function (browser) {
+    console.log('testSimpleContract')
+    browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['test1', 'test2'])
   },
-  tearDown: sauce
-}
+  'Test Success Import': function (browser) {
+    console.log('testSuccessImport')
+    browser.addFile('Untitled1.sol', sources[1]['browser/Untitled1.sol'])
+          .addFile('Untitled2.sol', sources[1]['browser/Untitled2.sol'])
+          .switchFile('browser/Untitled1.sol')
+          .verifyContracts(['test6', 'test4', 'test5'])
+  },
 
-function runTests (browser) {
-  browser
-    .waitForElementVisible('#icon-panel', 10000)
-    .clickLaunchIcon('solidity')
-    .clickLaunchIcon('fileExplorers')
-    .perform(() => {
-      // the first fn is used to pass browser to the other ones.
-      async.waterfall([function (callback) { callback(null, browser) },
-        testSimpleContract,
-        testSuccessImport,
-        testFailedImport, /* testGitHubImport, */
-        addDeployLibTestFile,
-        testAutoDeployLib,
-        testManualDeployLib,
-        testSignature
-      ],
-      function () {
-        browser.end()
-      })
-    })
-}
-
-function testSimpleContract (browser, callback) {
-  console.log('testSimpleContract')
-  browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['test1', 'test2'])
-  .perform(() => {
-    callback(null, browser)
-  })
-}
-
-function testSuccessImport (browser, callback) {
-  console.log('testSuccessImport')
-  browser.addFile('Untitled1.sol', sources[1]['browser/Untitled1.sol'])
-        .addFile('Untitled2.sol', sources[1]['browser/Untitled2.sol'])
-        .switchFile('browser/Untitled1.sol')
-        .verifyContracts(['test6', 'test4', 'test5'])
-        .perform(() => {
-          callback(null, browser)
-        })
-}
-
-function testFailedImport (browser, callback) {
-  console.log('testFailedImport')
-  browser.addFile('Untitled3.sol', sources[2]['browser/Untitled3.sol'])
-        .clickLaunchIcon('solidity')
-        .assert.containsText('#compileTabView .error pre', 'Unable to import "browser/Untitled11.sol": File not found')
-        .perform(function () {
-          callback(null, browser)
-        })
-}
-
-function addDeployLibTestFile (browser, callback) {
-  browser.addFile('Untitled5.sol', sources[5]['browser/Untitled5.sol'])
-        .perform(() => {
-          callback(null, browser)
-        })
-}
-
-function testAutoDeployLib (browser, callback) {
-  console.log('testAutoDeployLib')
-  let addressRef
-  browser.verifyContracts(['test'])
-        .selectContract('test')
-        .createContract('')
-        .getAddressAtPosition(0, (address) => {
-          console.log('testAutoDeployLib ' + address)
-          addressRef = address
-        })
-        .waitForElementPresent('.instance:nth-of-type(2)')
-        .click('.instance:nth-of-type(2) > div > button')
-        .perform(() => {
-          browser
-          .testConstantFunction(addressRef, 'get - call', '', '0: uint256: 45')
-          .perform(() => {
-            callback(null, browser)
+  'Test Failed Import': function (browser) {
+    console.log('testFailedImport')
+    browser.addFile('Untitled3.sol', sources[2]['browser/Untitled3.sol'])
+          .clickLaunchIcon('solidity')
+          .assert.containsText('#compileTabView .error pre', 'Unable to import "browser/Untitled11.sol": File not found')
+  },
+  'Add Lib Test File': function (browser) {
+    browser.addFile('Untitled5.sol', sources[5]['browser/Untitled5.sol'])
+  },
+  'Test Auto Deploy Lib': function (browser) {
+    console.log('testAutoDeployLib')
+    let addressRef
+    browser.verifyContracts(['test'])
+          .selectContract('test')
+          .createContract('')
+          .getAddressAtPosition(0, (address) => {
+            console.log('testAutoDeployLib ' + address)
+            addressRef = address
           })
-        })
-}
-
-function testManualDeployLib (browser, callback) {
-  console.log('testManualDeployLib')
-  browser.click('i[class^="clearinstance"]')
-        .pause(5000)
-        .clickLaunchIcon('settings')
-        .click('#generatecontractmetadata')
-        .clickLaunchIcon('solidity')
-        .click('#compileTabView button[title="Compile"]') // that should generate the JSON artefact
-        .verifyContracts(['test'])
-        .selectContract('lib') // deploy lib
-        .createContract('')
-        .getAddressAtPosition(0, (address) => {
-          console.log(address)
-          checkDeployShouldFail(browser, () => {
-            checkDeployShouldSucceed(browser, address, () => {
-              callback(null, browser)
+          .waitForElementPresent('.instance:nth-of-type(2)')
+          .click('.instance:nth-of-type(2) > div > button')
+          .perform((done) => {
+            browser.testConstantFunction(addressRef, 'get - call', '', '0: uint256: 45').perform(() => {
+              done()
             })
           })
+  },
+  'Test Manual Deploy Lib': function (browser) {
+    console.log('testManualDeployLib')
+    browser.click('i[class^="clearinstance"]')
+          .pause(5000)
+          .clickLaunchIcon('settings')
+          .click('#generatecontractmetadata')
+          .clickLaunchIcon('solidity')
+          .click('#compileTabView button[title="Compile"]') // that should generate the JSON artefact
+          .verifyContracts(['test'])
+          .selectContract('lib') // deploy lib
+          .createContract('')
+          .perform((done) => {
+            browser.getAddressAtPosition(0, (address) => {
+              console.log(address)
+              checkDeployShouldFail(browser, () => {
+                checkDeployShouldSucceed(browser, address, () => {
+                  done()
+                })
+              })
+            })
+          })
+          
+  },
+  'Test Signature': function (browser) {
+    let hash, signature
+    browser.signMessage('test message', (h, s) => {
+      hash = h
+      signature = s
+      browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
+      browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
+    })
+      .addFile('signMassage.sol', sources[6]['browser/signMassage.sol'])
+      .switchFile('browser/signMassage.sol')
+      .selectContract('ECVerify')
+      .createContract('')
+      .waitForElementPresent('.instance:nth-of-type(4)')
+      .click('.instance:nth-of-type(4) > div > button')
+      .perform((done) => {
+        browser.getAttribute('.instance:nth-of-type(4)', 'id', (result) => {
+          // skip 'instance' part of e.g. 'instance0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
+          const address = result.value.slice('instance'.length)
+          browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`})
+              .verifyCallReturnValue(
+                address,
+                ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'])
+              .perform(() => {
+                done()
+              })
         })
+      })
+  },
+  tearDown: sauce
 }
 
 function checkDeployShouldFail (browser, callback) {
@@ -158,33 +145,6 @@ function checkDeployShouldSucceed (browser, address, callback) {
             .testConstantFunction(addressRef, 'get - call', '', '0: uint256: 45')
             .perform(() => { callback() })
         })
-}
-
-function testSignature (browser, callback) {
-  let hash, signature
-  browser.signMessage('test message', (h, s) => {
-    hash = h
-    signature = s
-    browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
-    browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
-  })
-      .addFile('signMassage.sol', sources[6]['browser/signMassage.sol'])
-      .switchFile('browser/signMassage.sol')
-      .selectContract('ECVerify')
-      .createContract('')
-      .waitForElementPresent('.instance:nth-of-type(4)')
-      .click('.instance:nth-of-type(4) > div > button')
-      .getAttribute('.instance:nth-of-type(4)', 'id', (result) => {
-        // skip 'instance' part of e.g. 'instance0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
-        const address = result.value.slice('instance'.length)
-        browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`})
-            .verifyCallReturnValue(
-              address,
-              ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'])
-            .perform(() => {
-              callback(null, browser)
-            })
-      })
 }
 
 /*
