@@ -2,6 +2,7 @@ const EventEmitter = require('events')
 
 class TestConstantFunction extends EventEmitter {
   command (address, fnFullName, expectedInput, expectedOutput) {
+    console.log('TestConstantFunction ' + address + ' fnFullName')
     this.api.perform((done) => {
       testConstantFunction(this.api, address, fnFullName, expectedInput, expectedOutput, () => {
         done()

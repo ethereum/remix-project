@@ -13,7 +13,7 @@ class RemoveFile extends EventEmitter {
 }
 
 function removeFile (browser, path, done) {
-  browser.execute(function (path, value) {
+  browser.execute(function (path) {
     function contextMenuClick (element) {
       var evt = element.ownerDocument.createEvent('MouseEvents')
       var RIGHT_CLICK_BUTTON_CODE = 2 // the same for FF and IE
@@ -31,8 +31,10 @@ function removeFile (browser, path, done) {
     contextMenuClick(document.querySelector('[data-path="' + path + '"]'))
   }, [path], function (result) {
     browser
+      .waitForElementVisible('#menuitemdelete', 2000)
       .click('#menuitemdelete')
       .pause(500)
+      .waitForElementVisible('#modal-footer-ok', 2000)
       .click('#modal-footer-ok')
       .waitForElementNotPresent('[data-path="' + path + '"]')
       .perform(() => {
