@@ -1,8 +1,6 @@
 'use strict'
-var contractHelper = require('../helpers/contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
-var dom = require('../helpers/dom')
 
 var sources = [
   {
@@ -36,19 +34,35 @@ function runTests (browser) {
   browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
-  contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['TooMuchGas', 'test1', 'test2'], function () {
-    browser
-      .clickLaunchIcon('solidityStaticAnalysis')
-      .click('#staticanalysisView button')
-      .waitForElementPresent('#staticanalysisresult .staticAnalysisWarning', 2000, true, function () {
-        dom.listSelectorContains(['browser/Untitled.sol:2:33:Use of tx.origin',
-          'Fallback function of contract TooMuchGas requires too much gas',
-          'TooMuchGas.() : Variables have very similar names test and test1.'],
-          '#staticanalysisresult .staticAnalysisWarning',
-          browser, function () {
-            browser.end()
-          }
-        )
-      })
+    .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TooMuchGas', 'test1', 'test2'])
+    .clickLaunchIcon('solidityStaticAnalysis')
+    .click('#staticanalysisView button')
+    .waitForElementPresent('#staticanalysisresult .staticAnalysisWarning', 2000, true, function () {
+      listSelectorContains(['browser/Untitled.sol:2:33:Use of tx.origin',
+        'Fallback function of contract TooMuchGas requires too much gas',
+        'TooMuchGas.() : Variables have very similar names test and test1.'],
+        '#staticanalysisresult .staticAnalysisWarning',
+        browser, function () {
+          browser.end()
+        }
+      )
+    })
+}
+
+function listSelectorContains (textsToFind, selector, browser, callback) {
+  browser.execute(function (selector) {
+    var items = document.querySelectorAll(selector)
+    var ret = []
+    for (var k = 0; k < items.length; k++) {
+      ret.push(items[k].innerText)
+    }
+    return ret
+  }, [selector], function (result) {
+    console.log(result.value)
+    for (var k in textsToFind) {
+      console.log('testing ' + result.value[k] + ' against ' + textsToFind[k])
+      browser.assert.equal(result.value[k].indexOf(textsToFind[k]) !== -1, true)
+    }
+    callback()
   })
 }

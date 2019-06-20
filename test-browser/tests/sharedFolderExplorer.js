@@ -1,5 +1,4 @@
 'use strict'
-var contractHelper = require('../helpers/contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 
@@ -52,11 +51,6 @@ function runTests (browser, testData) {
     browser.end()
     return
   }
-  if (browserName === 'chrome') {
-    console.log('do not run remixd test for ' + browserName + ': TODO to reenable later')
-    browser.end()
-    return
-  }
   if (browserName === 'firefox') {
     console.log('do not run remixd test for ' + browserName + ': TODO to reenable later')
     browser.end()
@@ -68,6 +62,8 @@ function runTests (browser, testData) {
     .clickLaunchIcon('pluginManager')
     .click('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
     .waitForElementVisible('#modal-footer-ok', 2000)
+    .click('#modal-footer-ok')
+    .pause(2000)
     .click('#modal-footer-ok')
     .clickLaunchIcon('fileExplorers')
     .waitForElementVisible('[data-path="localhost/folder1"]')
@@ -81,64 +77,31 @@ function runTests (browser, testData) {
     .click('[data-path="localhost/folder1/contract2.sol"]')
     .click('[data-path="localhost/folder1/contract1.sol"]') // open localhost/folder1/contract1.sol
     .pause(1000)
-    .perform(function (done) { // check the content and replace by another
-      browser.testEditorValue('contract test1 { function get () returns (uint) { return 10; }}', () => {
-        console.log('testEditorValue')
-        done()
-      })
-    })
-    .perform(function (done) {
-      browser.setEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}', () => {
-        console.log('setEditorValue')
-        done()
-      })
-    })
-    .perform(function (done) {
-      browser.testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}', () => {
-        console.log('testEditorValue')
-        done()
-      })
-    })
-    .perform(function (done) {
-      browser.setEditorValue('contract test1 { function get () returns (uint) { return 10; }}', () => {
-        console.log('setEditorValue')
-        done()
-      })
-    })
+    .testEditorValue('contract test1 { function get () returns (uint) { return 10; }}') // check the content and replace by another
+    .setEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
+    .testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
+    .setEditorValue('contract test1 { function get () returns (uint) { return 10; }}')
     .click('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // rename a file and check
     .pause(1000)
-    .perform(function (done) {
-      contractHelper.renameFile(browser, 'localhost/folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol',
-      'localhost/folder1/renamed_contract_' + browserName + '.sol', () => {
-        console.log('tested file renaming')
-        done()
-      })
-    })
+    .renameFile('localhost/folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol', 'localhost/folder1/renamed_contract_' + browserName + '.sol')
     .pause(1000)
-    .perform(function (done) { // remove a file and check
-      contractHelper.removeFile(browser, 'localhost/folder1/contract_' + browserName + '_toremove.sol', () => {
-        console.log('tested file removing')
-        done()
-      })
-    })
+    .removeFile('localhost/folder1/contract_' + browserName + '_toremove.sol')
     .perform(function (done) {
       testImportFromRemixd(browser, () => { done() })
     })
-    .perform(function () {
-      browser.clickLaunchIcon('fileExplorers').click('[data-path="localhost"]') // collapse and expand
-        .waitForElementNotVisible('[data-path="localhost/folder1"]')
-        .click('[data-path="localhost"]')
-        .waitForElementVisible('[data-path="localhost/folder1"]')
-        .click('[data-path="localhost/folder1"]')
-        .waitForElementVisible('[data-path="localhost/folder1/contract1.sol"]')
-        .waitForElementVisible('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]') // check if renamed file is preset
-        .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // check if renamed (old) file is not present
-        .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '_toremove.sol"]') // check if removed (old) file is not present
-        .click('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]')
-        .clickLaunchIcon('pluginManager')
-        .click('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
-        .end()
-    })
+    .clickLaunchIcon('fileExplorers').click('[data-path="localhost"]') // collapse and expand
+    .waitForElementNotVisible('[data-path="localhost/folder1"]')
+    .click('[data-path="localhost"]')
+    .waitForElementVisible('[data-path="localhost/folder1"]')
+    .click('[data-path="localhost/folder1"]')
+    .waitForElementVisible('[data-path="localhost/folder1/contract1.sol"]')
+    .waitForElementVisible('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]') // check if renamed file is preset
+    .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // check if renamed (old) file is not present
+    .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '_toremove.sol"]') // check if removed (old) file is not present
+    .click('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]')
+    .clickLaunchIcon('pluginManager')
+    .click('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+    .end()
 }
 
 function testImportFromRemixd (browser, callback) {
@@ -150,9 +113,6 @@ function testImportFromRemixd (browser, callback) {
     .waitForElementVisible('[data-path="localhost/src/gmbh/company.sol"]', 100000)
     .click('[data-path="localhost/src/gmbh/company.sol"]')
     .pause(1000)
-    .perform(() => {
-      contractHelper.verifyContract(browser, ['Assets', 'gmbh'], function () {
-        callback()
-      })
-    })
+    .verifyContracts(['Assets', 'gmbh'])
+    .perform(() => { callback() })
 }
