@@ -93,7 +93,6 @@ function testAutoDeployLib (browser, callback) {
             callback(null, browser)
           })
         })
-        
 }
 
 function testManualDeployLib (browser, callback) {

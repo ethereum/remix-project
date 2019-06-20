@@ -42,7 +42,7 @@ function runTests (browser, testData) {
     .goToVMTraceStep(59)
     .pause(1000)
     .checkVariableDebug('soliditystate', stateCheck)
-    .checkVariableDebug('soliditylocals', localsCheck)  
+    .checkVariableDebug('soliditylocals', localsCheck)
     .clickLaunchIcon('run')
     .click('button[class^="udappClose"]')
     .addFile('ballot.abi', { content: ballotABI })
