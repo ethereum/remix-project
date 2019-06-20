@@ -21,7 +21,7 @@ remix-alpha.ethereum.org is automaticaly updated every time commits are pushed t
  - git fetch origin master
  - git checkout origin/master
  - git checkout -b bumpVersion
- - update package.json version and version in terminal.js
+ - update package.json version
  - create a PR and wait for test
  - merge PR
  - git fetch origin master
@@ -35,3 +35,4 @@ remix-alpha.ethereum.org is automaticaly updated every time commits are pushed t
  - remove all soljson.js files in root folder
  - npm run build
  - npm publish
+ - after remix_live is updated, drop the zip (from the root folder of remix-live repo) to the release.
