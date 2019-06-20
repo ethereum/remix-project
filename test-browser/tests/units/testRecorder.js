@@ -1,5 +1,4 @@
 'use strict'
-var contractHelper = require('../../helpers/contracts')
 
 module.exports = {
   '@disabled': true, // run by compiling.j
@@ -7,8 +6,7 @@ module.exports = {
     return sources
   },
   test: function (browser, callback) {
-    contractHelper.addFile(browser, 'scenario.json', {content: records}, () => {
-      browser
+    browser.addFile('scenario.json', {content: records})
         .clickLaunchIcon('run')
         .click('div[class^="cardContainer"] i[class^="arrow"]')
         .click('#runTabView .runtransaction')
@@ -20,44 +18,32 @@ module.exports = {
         .clickFunction('getAddress - call')
         .clickFunction('getFromLib - call')
         .waitForElementPresent('div[class^="contractActionsContainer"] div[class^="value"] ul')
-        .perform((client, done) => {
-          contractHelper.verifyCallReturnValue(browser, '0x35ef07393b57464e93deb59175ff72e6499450cf', ['0: uint256: 1', '0: uint256: 3456', '0: address: 0x35eF07393b57464e93dEB59175fF72E6499450cF'], () => {
-            done()
-          })
-        })
+        .verifyCallReturnValue('0x35ef07393b57464e93deb59175ff72e6499450cf', ['0: uint256: 1', '0: uint256: 3456', '0: address: 0x35eF07393b57464e93dEB59175fF72E6499450cF'])
+
         .click('i[class^="clearinstance"]')
-        .perform((client, done) => {
-          contractHelper.testContracts(browser, 'testRecorder.sol', sources[0]['browser/testRecorder.sol'], ['testRecorder'], function () {
-            done()
-          })
-        })
-        .perform((client, done) => {
-          contractHelper.createContract(browser, '12', function () {
-            done()
-          })
-        })
+        .testContracts('testRecorder.sol', sources[0]['browser/testRecorder.sol'], ['testRecorder'])
+        .createContract('12')
         .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2) > div > button')
-        .perform((client, done) => {
-          browser.clickFunction('set - transact (not payable)', {types: 'uint256 _p', values: '34'})
-              .click('i.savetransaction').modalFooterOKClick().getEditorValue(function (result) {
-                var parsed = JSON.parse(result)
-                browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
-                browser.assert.equal(JSON.stringify(parsed.transactions[0].record.name), JSON.stringify(scenario.transactions[0].record.name))
-                browser.assert.equal(JSON.stringify(parsed.transactions[0].record.type), JSON.stringify(scenario.transactions[0].record.type))
-                browser.assert.equal(JSON.stringify(parsed.transactions[0].record.from), JSON.stringify(scenario.transactions[0].record.from))
-                browser.assert.equal(JSON.stringify(parsed.transactions[0].record.contractName), JSON.stringify(scenario.transactions[0].record.contractName))
+        .clickFunction('set - transact (not payable)', {types: 'uint256 _p', values: '34'})
+        .click('i.savetransaction')
+        .modalFooterOKClick()
+        .getEditorValue(function (result) {
+          var parsed = JSON.parse(result)
+          browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
+          browser.assert.equal(JSON.stringify(parsed.transactions[0].record.name), JSON.stringify(scenario.transactions[0].record.name))
+          browser.assert.equal(JSON.stringify(parsed.transactions[0].record.type), JSON.stringify(scenario.transactions[0].record.type))
+          browser.assert.equal(JSON.stringify(parsed.transactions[0].record.from), JSON.stringify(scenario.transactions[0].record.from))
+          browser.assert.equal(JSON.stringify(parsed.transactions[0].record.contractName), JSON.stringify(scenario.transactions[0].record.contractName))
 
-                browser.assert.equal(JSON.stringify(parsed.transactions[1].record.parameters), JSON.stringify(scenario.transactions[1].record.parameters))
-                browser.assert.equal(JSON.stringify(parsed.transactions[1].record.name), JSON.stringify(scenario.transactions[1].record.name))
-                browser.assert.equal(JSON.stringify(parsed.transactions[1].record.type), JSON.stringify(scenario.transactions[1].record.type))
-                browser.assert.equal(JSON.stringify(parsed.transactions[1].record.from), JSON.stringify(scenario.transactions[1].record.from))
-                done()
-              })
-        }).perform(() => {
+          browser.assert.equal(JSON.stringify(parsed.transactions[1].record.parameters), JSON.stringify(scenario.transactions[1].record.parameters))
+          browser.assert.equal(JSON.stringify(parsed.transactions[1].record.name), JSON.stringify(scenario.transactions[1].record.name))
+          browser.assert.equal(JSON.stringify(parsed.transactions[1].record.type), JSON.stringify(scenario.transactions[1].record.type))
+          browser.assert.equal(JSON.stringify(parsed.transactions[1].record.from), JSON.stringify(scenario.transactions[1].record.from))
+        })
+        .perform(() => {
           callback()
         })
-    })
   }
 }
 
