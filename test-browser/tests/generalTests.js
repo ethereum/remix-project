@@ -1,7 +1,6 @@
 'use strict'
 var init = require('../helpers/init')
 var sauce = require('./sauce')
-var async = require('async')
 
 module.exports = {
   before: function (browser, done) {
