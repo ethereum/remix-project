@@ -1,5 +1,4 @@
 'use strict'
-var contractHelper = require('../helpers/contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 var async = require('async')
@@ -31,39 +30,36 @@ function runTests (browser) {
 }
 
 function testSimpleContract (browser, callback) {
-  contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'], function () {
-    browser.clickLaunchIcon('run')
-      .click('#runTabView button[class^="instanceButton"]')
-      .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2) > div > button')
-      .click('#runTabView .instance div[class^="title"]')
-      .click('#runTabView .instance div[class^="title"]')
-      .testFunction('f - transact (not payable)',
-        '0xa178c603400a184ce5fedbcfab392d9b77822f6ffa7facdec693aded214523bc',
-        `[vm]\nfrom:0xca3...a733c\nto:TestContract.f() 0x692...77b3a\nvalue:0 wei\ndata:0x261...21ff0\nlogs:0\nhash:0xa17...523bc`, null,
-        `{
- "0": "uint256: 8"
-}`)
-      .pause(500)
-      .perform((client, done) => {
-        contractHelper.useFilter(browser, '0x12332162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92782', '', () => {
-          done()
-        })
-      })
-      .testFunction('g - transact (not payable)',
-        '0xb1532162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92781',
-        `[vm]\nfrom:0xca3...a733c\nto:TestContract.g() 0x692...77b3a\nvalue:0 wei\ndata:0xe21...79b8e\nlogs:0\nhash:0xb15...92781`, null, `{
- "0": "uint256: 345",
- "1": "string: comment_comment_",
- "2": "bool: true",
- "3": "uint256: 4"
-}`).click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
-  })
+  browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'])
+        .clickLaunchIcon('run')
+        .click('#runTabView button[class^="instanceButton"]')
+        .waitForElementPresent('.instance:nth-of-type(2)')
+        .click('.instance:nth-of-type(2) > div > button')
+        .click('#runTabView .instance div[class^="title"]')
+        .click('#runTabView .instance div[class^="title"]')
+        .testFunction('f - transact (not payable)',
+          '0xa178c603400a184ce5fedbcfab392d9b77822f6ffa7facdec693aded214523bc',
+          `[vm]\nfrom:0xca3...a733c\nto:TestContract.f() 0x692...77b3a\nvalue:0 wei\ndata:0x261...21ff0\nlogs:0\nhash:0xa17...523bc`, null,
+          `{
+  "0": "uint256: 8"
+  }`)
+        .pause(500)
+        .checkTerminalFilter('0x12332162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92782', '')
+        .testFunction('g - transact (not payable)',
+          '0xb1532162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92781',
+          `[vm]\nfrom:0xca3...a733c\nto:TestContract.g() 0x692...77b3a\nvalue:0 wei\ndata:0xe21...79b8e\nlogs:0\nhash:0xb15...92781`, null, `{
+  "0": "uint256: 345",
+  "1": "string: comment_comment_",
+  "2": "bool: true",
+  "3": "uint256: 4"
+  }`)
+        .click('i[class^="clearinstance"]')
+        .perform(() => { callback(null, browser) })
 }
 
 function testReturnValues (browser, callback) {
-  contractHelper.testContracts(browser, 'returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'], function () {
-    browser.clickLaunchIcon('run')
+  browser.testContracts('returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'])
+      .clickLaunchIcon('run')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
       .click('.instance:nth-of-type(2) > div > button')
@@ -96,16 +92,15 @@ function testReturnValues (browser, callback) {
  "0": "uint8: _en 2",
  "1": "int256[5][]: _a1 1,-45,-78,56,60,-1,42,334,-45455,-446,1,10,-5435,45,-7"
 }`).click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
-  })
 }
 
 function testInputValues (browser, callback) {
-  contractHelper.testContracts(browser, 'inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'], function () {
-    browser.clickLaunchIcon('run')
+  browser.testContracts('inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'])
+        .clickLaunchIcon('run')
         .click('#runTabView button[class^="instanceButton"]')
         .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2) > div > button')
-     .testFunction('inputValue1 - transact (not payable)',
+        .testFunction('inputValue1 - transact (not payable)',
         '0xf3265e3d9cd9299958bf81bed3cdfdd537942f85b9e0b95c5468c691d9396505',
         `[vm]\nfrom:0xca3...a733c\nto:test.inputValue1(uint256,int256,string) 0x8c1...401f5\nvalue:0 wei\ndata:0xd69...00000\nlogs:0\nhash:0xf32...96505`,
         {types: 'uint256 _u, int256 _i, string _str', values: '"2343242", "-4324324", "string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"'},
@@ -113,7 +108,9 @@ function testInputValues (browser, callback) {
  "0": "uint256: _uret 2343242",
  "1": "int256: _iret -4324324",
  "2": "string: _strret string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"
-}`).pause(500).testFunction('inputValue2 - transact (not payable)',
+}`)
+        .pause(500)
+        .testFunction('inputValue2 - transact (not payable)',
         '0xd9ec6d8aa73d81755447190f52939ee3084e105b988d445a11e7ac718392ff5a',
         `[vm]\nfrom:0xca3...a733c\nto:test.inputValue2(uint256[3],bytes8[4]) 0x8c1...401f5\nvalue:0 wei\ndata:0x1b7...00000\nlogs:1\nhash:0xd9e...2ff5a`,
         {types: 'uint256[3] _n, bytes8[4] _b8', values: '[1,2,3], ["0x1234000000000000", "0x1234000000000000","0x1234000000000000","0x1234000000000000"]'},
@@ -146,8 +143,8 @@ function testInputValues (browser, callback) {
    }
   }
  ]`)
-      .click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
-  })
+      .click('i[class^="clearinstance"]')
+      .perform(() => { callback(null, browser) })
 }
 
 // @TODO test: bytes8[3][] type as input

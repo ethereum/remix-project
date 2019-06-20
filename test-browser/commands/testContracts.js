@@ -1,6 +1,6 @@
 const EventEmitter = require('events')
 
-class TestContract extends EventEmitter {
+class TestContracts extends EventEmitter {
   command (fileName, contractCode, compiledContractNames) {
     this.api.perform((done) => {
       testContracts(this.api, fileName, contractCode, compiledContractNames, () => {
@@ -18,10 +18,10 @@ function testContracts (browser, fileName, contractCode, compiledContractNames, 
       .clearValue('#input textarea')
       .addFile(fileName, contractCode)
       .pause(1000)
-      .verifyContract(compiledContractNames)
+      .verifyContracts(compiledContractNames)
       .perform(() => {
         callback()
       })
 }
 
-module.exports = TestContract
+module.exports = TestContracts

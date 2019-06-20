@@ -1,9 +1,9 @@
 const EventEmitter = require('events')
 
-class VerifyContract extends EventEmitter {
+class VerifyContracts extends EventEmitter {
   command (compiledContractNames) {
     this.api.perform((done) => {
-      verifyContract(this.api, compiledContractNames, () => {
+      verifyContracts(this.api, compiledContractNames, () => {
         done()
         this.emit('complete')
       })
@@ -29,7 +29,7 @@ function getCompiledContracts (browser, callback) {
   })
 }
 
-function verifyContract (browser, compiledContractNames, callback) {
+function verifyContracts (browser, compiledContractNames, callback) {
   getCompiledContracts(browser, (result) => {
     if (result.value) {
       for (var contract in compiledContractNames) {
@@ -49,4 +49,4 @@ function verifyContract (browser, compiledContractNames, callback) {
   })
 }
 
-module.exports = VerifyContract
+module.exports = VerifyContracts

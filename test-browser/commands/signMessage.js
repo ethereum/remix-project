@@ -1,9 +1,10 @@
 const EventEmitter = require('events')
 
 class SelectContract extends EventEmitter {
-  command (msg) {
+  command (msg, callback) {
     this.api.perform((done) => {
       signMsg(this.api, msg, (hash, signature) => {
+        callback(hash, signature)
         done()
         this.emit('complete')
       })

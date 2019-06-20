@@ -1,5 +1,4 @@
 'use strict'
-var contractHelper = require('../helpers/contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 var async = require('async')
@@ -41,155 +40,152 @@ function runTests (browser) {
 
 function testSimpleContract (browser, callback) {
   console.log('testSimpleContract')
-  contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['test1', 'test2'], function () {
+  browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['test1', 'test2'])
+  .perform(() => {
     callback(null, browser)
   })
 }
 
 function testSuccessImport (browser, callback) {
   console.log('testSuccessImport')
-  contractHelper.addFile(browser, 'Untitled1.sol', sources[1]['browser/Untitled1.sol'], () => {
-    contractHelper.addFile(browser, 'Untitled2.sol', sources[1]['browser/Untitled2.sol'], () => {
-      contractHelper.switchFile(browser, 'browser/Untitled1.sol', function () {
-        contractHelper.verifyContract(browser, ['test6', 'test4', 'test5'], function () {
+  browser.addFile('Untitled1.sol', sources[1]['browser/Untitled1.sol'])
+        .addFile('Untitled2.sol', sources[1]['browser/Untitled2.sol'])
+        .switchFile('browser/Untitled1.sol')
+        .verifyContracts(['test6', 'test4', 'test5'])
+        .perform(() => {
           callback(null, browser)
         })
-      })
-    })
-  })
 }
 
 function testFailedImport (browser, callback) {
   console.log('testFailedImport')
-  contractHelper.addFile(browser, 'Untitled3.sol', sources[2]['browser/Untitled3.sol'], () => {
-    browser.clickLaunchIcon('solidity').assert.containsText('#compileTabView .error pre', 'Unable to import "browser/Untitled11.sol": File not found')
-    .perform(function () {
-      callback(null, browser)
-    })
-  })
+  browser.addFile('Untitled3.sol', sources[2]['browser/Untitled3.sol'])
+        .clickLaunchIcon('solidity')
+        .assert.containsText('#compileTabView .error pre', 'Unable to import "browser/Untitled11.sol": File not found')
+        .perform(function () {
+          callback(null, browser)
+        })
 }
 
 function addDeployLibTestFile (browser, callback) {
-  contractHelper.addFile(browser, 'Untitled5.sol', sources[5]['browser/Untitled5.sol'], () => {
-    callback(null, browser)
-  })
+  browser.addFile('Untitled5.sol', sources[5]['browser/Untitled5.sol'])
+        .perform(() => {
+          callback(null, browser)
+        })
 }
 
 function testAutoDeployLib (browser, callback) {
   console.log('testAutoDeployLib')
-  contractHelper.verifyContract(browser, ['test'], () => {
-    contractHelper.selectContract(browser, 'test', () => {
-      contractHelper.createContract(browser, '', () => {
-        contractHelper.getAddressAtPosition(browser, 0, (address) => {
-          console.log(address)
-          browser.waitForElementPresent('.instance:nth-of-type(2)').click('.instance:nth-of-type(2) > div > button').perform(() => {
-            contractHelper.testConstantFunction(browser, address, 'get - call', '', '0: uint256: 45', () => { callback(null, browser) })
+  let addressRef
+  browser.verifyContracts(['test'])
+        .selectContract('test')
+        .createContract('')
+        .getAddressAtPosition(0, (address) => {
+          console.log('testAutoDeployLib ' + address)
+          addressRef = address
+        })
+        .waitForElementPresent('.instance:nth-of-type(2)')
+        .click('.instance:nth-of-type(2) > div > button')
+        .perform(() => {
+          browser
+          .testConstantFunction(addressRef, 'get - call', '', '0: uint256: 45')
+          .perform(() => {
+            callback(null, browser)
           })
         })
-      })
-    })
-  })
+        
 }
 
 function testManualDeployLib (browser, callback) {
   console.log('testManualDeployLib')
-  browser.click('i[class^="clearinstance"]').pause(5000).clickLaunchIcon('settings').click('#generatecontractmetadata').perform(() => {
-    browser.clickLaunchIcon('solidity').click('#compileTabView button[title="Compile"]').perform(() => { // that should generate the JSON artefact
-      contractHelper.verifyContract(browser, ['test'], () => {
-        contractHelper.selectContract(browser, 'lib', () => { // deploy lib
-          contractHelper.createContract(browser, '', () => {
-            contractHelper.getAddressAtPosition(browser, 0, (address) => {
-              console.log('address:', address)
-              checkDeployShouldFail(browser, () => {
-                checkDeployShouldSucceed(browser, address, () => {
-                  callback(null, browser)
-                })
-              })
+  browser.click('i[class^="clearinstance"]')
+        .pause(5000)
+        .clickLaunchIcon('settings')
+        .click('#generatecontractmetadata')
+        .clickLaunchIcon('solidity')
+        .click('#compileTabView button[title="Compile"]') // that should generate the JSON artefact
+        .verifyContracts(['test'])
+        .selectContract('lib') // deploy lib
+        .createContract('')
+        .getAddressAtPosition(0, (address) => {
+          console.log(address)
+          checkDeployShouldFail(browser, () => {
+            checkDeployShouldSucceed(browser, address, () => {
+              callback(null, browser)
             })
           })
         })
-      })
-    })
-  })
 }
 
 function checkDeployShouldFail (browser, callback) {
-  contractHelper.switchFile(browser, 'browser/test.json', () => {
-    browser.getEditorValue((content) => {
-      var config = JSON.parse(content)
-      config.deploy['VM:-'].autoDeployLib = false
-      browser.setEditorValue(JSON.stringify(config), () => {
-        contractHelper.switchFile(browser, 'browser/Untitled5.sol', () => {
-          contractHelper.selectContract(browser, 'test', () => { // deploy lib
-            contractHelper.createContract(browser, '', () => {
-              browser.assert.containsText('div[class^="terminal"]', '<address> is not a valid address').perform(() => { callback() })
-            })
-          })
+  let config
+  browser.switchFile('browser/test.json')
+        .getEditorValue((content) => {
+          config = JSON.parse(content)
+          config.deploy['VM:-'].autoDeployLib = false
         })
-      })
-    })
-  })
+        .perform(() => {
+          browser.setEditorValue(JSON.stringify(config))
+        })
+        .switchFile('browser/Untitled5.sol')
+        .selectContract('test') // deploy lib
+        .createContract('')
+        .assert.containsText('div[class^="terminal"]', '<address> is not a valid address')
+        .perform(() => { callback() })
 }
 
 function checkDeployShouldSucceed (browser, address, callback) {
-  contractHelper.switchFile(browser, 'browser/test.json', () => {
-    browser.getEditorValue((content) => {
-      var config = JSON.parse(content)
-      config.deploy['VM:-'].autoDeployLib = false
-      config.deploy['VM:-']['linkReferences']['browser/Untitled5.sol'].lib = address
-      browser.setEditorValue(JSON.stringify(config), () => {
-        contractHelper.switchFile(browser, 'browser/Untitled5.sol', () => {
-          contractHelper.selectContract(browser, 'test', () => { // deploy lib
-            contractHelper.createContract(browser, '', () => {
-              contractHelper.getAddressAtPosition(browser, 1, (address) => {
-                browser.waitForElementPresent('.instance:nth-of-type(3)')
-                .click('.instance:nth-of-type(3) > div > button').perform(() => {
-                  contractHelper.testConstantFunction(browser, address, 'get - call', '', '0: uint256: 45', () => { callback(null, browser) })
-                })
-              })
-            })
-          })
+  let addressRef
+  let config
+  browser.switchFile('browser/test.json')
+        .getEditorValue((content) => {
+          config = JSON.parse(content)
+          config.deploy['VM:-'].autoDeployLib = false
+          config.deploy['VM:-']['linkReferences']['browser/Untitled5.sol'].lib = address
         })
-      })
-    })
-  })
+        .perform(() => {
+          browser.setEditorValue(JSON.stringify(config))
+        })
+        .switchFile('browser/Untitled5.sol')
+        .selectContract('test') // deploy lib
+        .createContract('')
+        .getAddressAtPosition(1, (address) => {
+          addressRef = address
+        })
+        .waitForElementPresent('.instance:nth-of-type(3)')
+        .click('.instance:nth-of-type(3) > div > button')
+        .perform(() => {
+          browser
+            .testConstantFunction(addressRef, 'get - call', '', '0: uint256: 45')
+            .perform(() => { callback() })
+        })
 }
 
 function testSignature (browser, callback) {
   let hash, signature
-  contractHelper.signMsg(browser, 'test message', (h, s) => {
+  browser.signMessage('test message', (h, s) => {
     hash = h
     signature = s
     browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
     browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
-    contractHelper.addFile(browser, 'signMassage.sol', sources[6]['browser/signMassage.sol'], () => {
-      contractHelper.switchFile(browser, 'browser/signMassage.sol', () => {
-        contractHelper.selectContract(browser, 'ECVerify', () => { // deploy lib
-          contractHelper.createContract(browser, '', () => {
-            const instanceSelector = '.instance:nth-of-type(4)'
-            browser.waitForElementPresent(instanceSelector)
-            .click(instanceSelector + ' > div > button')
-            .getAttribute(instanceSelector, 'id', (result) => {
-              // skip 'instance' part of e.g. 'instance0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
-              // const address = result.value.slice('instance'.length)
-              browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`}).perform(
-                () => {
-                  callback(null, browser)
-                  /*
-                  contractHelper.verifyCallReturnValue(
-                    browser,
-                    address,
-                    ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'],
-                    () => { callback(null, browser) }
-                  )
-                  */
-                })
-            })
-          })
-        })
-      })
-    })
   })
+      .addFile('signMassage.sol', sources[6]['browser/signMassage.sol'])
+      .switchFile('browser/signMassage.sol')
+      .selectContract('ECVerify')
+      .createContract('')
+      .waitForElementPresent('.instance:nth-of-type(4)')
+      .click('.instance:nth-of-type(4) > div > button')
+      .getAttribute('.instance:nth-of-type(4)', 'id', (result) => {
+        // skip 'instance' part of e.g. 'instance0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
+        const address = result.value.slice('instance'.length)
+        browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`})
+            .verifyCallReturnValue(
+              address,
+              ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'])
+            .perform(() => {
+              callback(null, browser)
+            })
+      })
 }
 
 /*
