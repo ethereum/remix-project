@@ -22,11 +22,6 @@ module.exports = {
 }
 
 function runTests (browser, testData) {
-  browser.testFunction = contractHelper.testFunction
-  browser.clickFunction = contractHelper.clickFunction
-  browser.modalFooterOKClick = contractHelper.modalFooterOKClick
-  browser.setEditorValue = contractHelper.setEditorValue
-  browser.clickLaunchIcon = contractHelper.clickLaunchIcon
   browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
