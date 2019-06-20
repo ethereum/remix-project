@@ -70,7 +70,6 @@ module.exports = {
               })
             })
           })
-          
   },
   'Test Signature': function (browser) {
     let hash, signature
@@ -99,6 +98,7 @@ module.exports = {
               })
         })
       })
+      .end()
   },
   tearDown: sauce
 }
