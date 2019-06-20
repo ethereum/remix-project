@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  '@disabled': true, // run by compiling.j
+  '@disabled': true, // run by compiling.
   '@sources': function () {
     return sources
   },
