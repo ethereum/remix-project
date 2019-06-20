@@ -63,6 +63,8 @@ function runTests (browser, testData) {
     .click('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
     .waitForElementVisible('#modal-footer-ok', 2000)
     .click('#modal-footer-ok')
+    .pause(2000)
+    .click('#modal-footer-ok')
     .clickLaunchIcon('fileExplorers')
     .waitForElementVisible('[data-path="localhost/folder1"]')
     .click('[data-path="localhost/folder1"]')
