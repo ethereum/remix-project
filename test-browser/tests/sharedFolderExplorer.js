@@ -38,7 +38,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'SharedFolderExplorer': function (browser) {
+  'Test Shared Folder Explorer': function (browser) {
     runTests(browser)
   },
   tearDown: sauce
