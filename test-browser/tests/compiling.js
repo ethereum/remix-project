@@ -11,26 +11,9 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Compiling': function (browser) {
-    runTests(browser)
-  },
-  tearDown: sauce
-}
 
-function runTests (browser) {
-  browser
-    .waitForElementVisible('#icon-panel', 10000)
-    .clickLaunchIcon('solidity')
-    .perform(() => {
-      // the first fn is used to pass browser to the other ones.
-      async.waterfall([function (callback) { callback(null, browser) }, testSimpleContract, testReturnValues, testInputValues, testRecorder.test], function () {
-        browser.end()
-      })
-    })
-}
-
-function testSimpleContract (browser, callback) {
-  browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'])
+  'Test Simple Contract': function (browser) {
+    browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'])
         .clickLaunchIcon('run')
         .click('#runTabView button[class^="instanceButton"]')
         .waitForElementPresent('.instance:nth-of-type(2)')
@@ -54,11 +37,10 @@ function testSimpleContract (browser, callback) {
   "3": "uint256: 4"
   }`)
         .click('i[class^="clearinstance"]')
-        .perform(() => { callback(null, browser) })
-}
+  },
 
-function testReturnValues (browser, callback) {
-  browser.testContracts('returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'])
+  'Test Return Values': function (browser) {
+    browser.testContracts('returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'])
       .clickLaunchIcon('run')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
@@ -91,11 +73,11 @@ function testReturnValues (browser, callback) {
         '[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues3() 0x5e7...26e9f\nvalue:0 wei\ndata:0x033...e0a7d\nlogs:0\nhash:0x94c...9d28a', null, `{
  "0": "uint8: _en 2",
  "1": "int256[5][]: _a1 1,-45,-78,56,60,-1,42,334,-45455,-446,1,10,-5435,45,-7"
-}`).click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
-}
+}`).click('i[class^="clearinstance"]')
+  },
 
-function testInputValues (browser, callback) {
-  browser.testContracts('inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'])
+  'Test Input Values': function (browser) {
+    browser.testContracts('inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'])
         .clickLaunchIcon('run')
         .click('#runTabView button[class^="instanceButton"]')
         .waitForElementPresent('.instance:nth-of-type(2)')
@@ -144,7 +126,16 @@ function testInputValues (browser, callback) {
   }
  ]`)
       .click('i[class^="clearinstance"]')
-      .perform(() => { callback(null, browser) })
+      .end()
+  },
+
+  'Test Recorder': function (browser) {
+    testRecorder.test(browser, () => {
+      browser.end()
+    })
+  },
+
+  tearDown: sauce
 }
 
 // @TODO test: bytes8[3][] type as input
