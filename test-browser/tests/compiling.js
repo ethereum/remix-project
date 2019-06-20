@@ -126,7 +126,6 @@ module.exports = {
   }
  ]`)
       .click('i[class^="clearinstance"]')
-      .end()
   },
 
   'Test Recorder': function (browser) {
