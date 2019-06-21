@@ -166,10 +166,10 @@ class CompilerContainer {
       <section>
         <!-- Select Compiler Version -->
         <article>
-          <header class="navbar navbar-light bg-light">
+          <header class="navbar navbar-light p-2 bg-light">
             <div class="row w-100 no-gutters mb-2">
               <div class="col-sm-4">
-                <label class="input-group-text border-0" for="versionSelector">Compiler</label>
+                <label class="${css.compilerLabel} input-group-text pl-0 border-0" for="versionSelector">Compiler</label>
               </div>
               <div class="col-sm-8">
                 ${this._view.versionSelector}
@@ -177,7 +177,7 @@ class CompilerContainer {
             </div>
             <div class="row w-100 no-gutters mb-2">
               <div class="col-sm-4">
-                <label class="input-group-text border-0" for="languageSelector">Language</label>
+                <label class="${css.compilerLabel} input-group-text pl-0 border-0" for="languageSelector">Language</label>
               </div>
               <div class="col-sm-8">
               <select onchange="${this.onchangeLanguage.bind(this)}" class="custom-select" id="languageSelector">
@@ -188,7 +188,7 @@ class CompilerContainer {
             </div>
             <div class="row w-100 no-gutters">
               <div class="col-sm-4">
-                <label class="input-group-text border-0" for="evmVersionSelector">EVM Version</label>
+                <label class="${css.compilerLabel} input-group-text pl-0 border-0" for="evmVersionSelector">EVM Version</label>
               </div>
               <div class="col-sm-8">
                 ${this._view.evmVersionSelector}
