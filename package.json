@@ -175,6 +175,6 @@
     "test-browser": "npm-run-all -lpr selenium downloadsolc_root make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js --exclude solc",
     "reinstall": "rm ./node-modules/ -rf; rm package-lock.json; rm ./build/ -rf; npm install; npm run build",
-    "postinstall": "cd .. && if [ ! -d \"remix\" ] ; then git clone https://github.com/ethereum/remix; fi && cd remix && git checkout 517db1adce48feac758aff7465241c0dd385b906 && npm install && npm run bootstrap && cd .. && cd repo && npm run setupremix"
+    "postinstall": "cd .. && if [ ! -d \"remix\" ] ; then git clone https://github.com/ethereum/remix; fi && cd remix && git checkout 517db1adce48feac758aff7465241c0dd385b906 && npm install && npm run bootstrap && cd .. && cd remix-ide && npm run setupremix"
   }
 }
