@@ -68,11 +68,6 @@ class ContractDropdownUI {
         </div>
       </div>
     `
-    if (!this.atAddressButtonInput.value) {
-      this.atAddress.setAttribute('disabled', 'true')
-    } else {
-      this.atAddress.removeAttribute('disabled')
-    }
     this.selectContractNames.addEventListener('change', this.setInputParamsPlaceHolder.bind(this))
     this.setInputParamsPlaceHolder()
     if (!this.el) {
@@ -82,7 +77,11 @@ class ContractDropdownUI {
   }
 
   atAddressChanged (event) {
-    yo.update(this.el, this.render())
+    if (!this.atAddressButtonInput.value) {
+      this.atAddress.setAttribute('disabled', 'true')
+    } else {
+      this.atAddress.removeAttribute('disabled')
+    }
   }
 
   changeCurrentFile (currentFile) {
