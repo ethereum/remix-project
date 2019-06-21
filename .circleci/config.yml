@@ -17,7 +17,7 @@ jobs:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
       - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
-    working_directory: ~/repo
+    working_directory: ~/remix-ide
 
     steps:
       - checkout
