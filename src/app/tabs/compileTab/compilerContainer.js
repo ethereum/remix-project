@@ -110,9 +110,9 @@ class CompilerContainer {
     return el
   }
 
-  _retriveVersion() {
+  _retriveVersion () {
     let version = this._view.versionSelector.value
-    return version.substring(9,14)
+    return version.substring(9, 14)
   }
 
   render () {
