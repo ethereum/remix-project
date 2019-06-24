@@ -164,7 +164,8 @@ function fileExplorer (localRegistry, files, menuItems) {
             style="${isRoot ? 'font-weight:bold;' : ''}"
             onkeydown=${editModeOff}
             onblur=${editModeOff}
-          >${key.split('/').pop()}
+          >
+            ${key.split('/').pop()}
           </span>
           ${isRoot ? self.renderMenuItems() : ''}
         </div>
