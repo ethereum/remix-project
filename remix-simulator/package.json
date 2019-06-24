@@ -1,6 +1,6 @@
 {
   "name": "remix-simulator",
-  "version": "0.1.8-alpha",
+  "version": "0.1.8-alpha.1",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -30,10 +30,14 @@
     "web3": "1.0.0-beta.27"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.5",
     "babel-eslint": "^7.1.1",
-    "babel-plugin-transform-object-assign": "^6.22.0",
-    "babel-preset-es2017": "^6.24.1",
-    "babelify": "^7.3.0",
+    "@babel/plugin-transform-object-assign": "^7.2.0",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-es2015": "latest",
+    "@babel/preset-es2017": "latest",
+    "@babel/preset-stage-0": "^7.0.0",
+    "babelify": "^10.0.0",
     "mocha": "^5.2.0",
     "standard": "^10.0.3"
   },
@@ -78,7 +82,7 @@
                 }
               }
             ],
-            "transform-object-assign"
+            "module:@babel/plugin-transform-object-assign"
           ]
         }
       ],
@@ -86,7 +90,7 @@
         "babelify",
         {
           "presets": [
-            "es2017"
+            "@babel/preset-env"
           ]
         }
       ]
