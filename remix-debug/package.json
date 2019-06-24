@@ -1,6 +1,6 @@
 {
   "name": "remix-debug",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -22,17 +22,17 @@
     "ethereumjs-util": "^4.5.0",
     "ethereumjs-vm": "3.0.0",
     "fast-async": "^6.1.2",
-    "remix-lib": "0.4.6",
+    "remix-lib": "0.4.7",
     "web3": "0.20.6"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
-    "babel-eslint": "^10.0.0",
     "@babel/plugin-transform-object-assign": "^7.2.0",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-es2015": "latest",
     "@babel/preset-es2017": "latest",
     "@babel/preset-stage-0": "^7.0.0",
+    "babel-eslint": "^10.0.0",
     "babelify": "^10.0.0",
     "notify-error": "^1.2.0",
     "solc": "^0.5.0",
