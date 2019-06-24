@@ -88,6 +88,7 @@ module.exports = {
         browser.getAttribute('.instance:nth-of-type(4)', 'id', (result) => {
           // skip 'instance' part of e.g. 'instance0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
           const address = result.value.slice('instance'.length)
+          console.log('Test Signature', result)
           browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`})
               .verifyCallReturnValue(
                 address,
