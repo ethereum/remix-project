@@ -7,7 +7,8 @@ module.exports = (sources, opts) => {
     settings: {
       optimizer: {
         enabled: opts.optimize === true || opts.optimize === 1,
-        runs: 200
+        runs: 200,
+        details: {}
       },
       libraries: opts.libraries,
       outputSelection: {
@@ -23,6 +24,10 @@ module.exports = (sources, opts) => {
   }
   if (opts.language) {
     o.language = opts.language
+  }
+  if (opts.language === 'Yul' && o.settings.optimizer.enabled)
+  {
+    o.settings.optimizer.details['yul'] = true
   }
   return JSON.stringify(o)
 }
