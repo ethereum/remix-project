@@ -7,7 +7,8 @@ module.exports = (sources, opts) => {
     settings: {
       optimizer: {
         enabled: opts.optimize === true || opts.optimize === 1,
-        runs: 200
+        runs: 200,
+        details: {}
       },
       libraries: opts.libraries,
       outputSelection: {
