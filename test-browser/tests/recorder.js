@@ -1,11 +1,16 @@
 'use strict'
+var sauce = require('./sauce')
+var init = require('../helpers/init')
 
 module.exports = {
-  '@disabled': true, // run by compiling.
+  before: function (browser, done) {
+    init(browser, done)
+  },
   '@sources': function () {
     return sources
   },
-  test: function (browser, callback) {
+  'Test Recorder': function (browser) {
+    var addressRef
     browser.addFile('scenario.json', {content: records})
         .clickLaunchIcon('run')
         .click('div[class^="cardContainer"] i[class^="arrow"]')
@@ -18,8 +23,14 @@ module.exports = {
         .clickFunction('getAddress - call')
         .clickFunction('getFromLib - call')
         .waitForElementPresent('div[class^="contractActionsContainer"] div[class^="value"] ul')
-        .verifyCallReturnValue('0x35ef07393b57464e93deb59175ff72e6499450cf', ['0: uint256: 1', '0: uint256: 3456', '0: address: 0x35eF07393b57464e93dEB59175fF72E6499450cF'])
-
+        .getAddressAtPosition(1, (address) => {
+          console.log('Test Recorder ' + address)
+          addressRef = address
+        })
+        .perform((done) => {
+          browser.verifyCallReturnValue(addressRef, ['0: uint256: 1', '0: uint256: 3456', '0: address: 0xbBF289D846208c16EDc8474705C748aff07732dB'])
+          .perform(() => done())
+        })
         .click('i[class^="clearinstance"]')
         .testContracts('testRecorder.sol', sources[0]['browser/testRecorder.sol'], ['testRecorder'])
         .createContract('12')
@@ -41,10 +52,9 @@ module.exports = {
           browser.assert.equal(JSON.stringify(parsed.transactions[1].record.type), JSON.stringify(scenario.transactions[1].record.type))
           browser.assert.equal(JSON.stringify(parsed.transactions[1].record.from), JSON.stringify(scenario.transactions[1].record.from))
         })
-        .perform(() => {
-          callback()
-        })
-  }
+        .end()
+  },
+  tearDown: sauce
 }
 
 var sources = [{'browser/testRecorder.sol': {content: `contract testRecorder {
