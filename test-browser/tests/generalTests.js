@@ -75,6 +75,8 @@ module.exports = {
     browser.signMessage('test message', (h, s) => {
       hash = h
       signature = s
+      console.log('hash', hash)
+      console.log('signature', signature)
       browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
       browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
     })
@@ -89,7 +91,10 @@ module.exports = {
           // skip 'instance' part of e.g. 'instance0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
           const address = result.value.slice('instance'.length)
           console.log('Test Signature', result)
-          browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`})
+          var inputs = `"${hash.value}","${signature.value}"`
+          console.log('Test Signature Input', inputs)
+          browser.clickFunction('ecrecovery - call', { types: 'bytes32 hash, bytes sig', values: inputs })
+              .pause(5000)
               .verifyCallReturnValue(
                 address,
                 ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'])
