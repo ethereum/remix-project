@@ -22,12 +22,12 @@ function signMsg (browser, msg, cb) {
       .setValue('textarea[id="prompt_text"]', msg, () => {
         browser.modalFooterOKClick().perform(
           (client, done) => {
-            browser.getText('span[id="remixRunSignMsgHash"]', (v) => { hash = v; done() })
+            browser.waitForElementPresent('span[id="remixRunSignMsgHash"]').getText('span[id="remixRunSignMsgHash"]', (v) => { hash = v; done() })
           }
         )
         .perform(
           (client, done) => {
-            browser.getText('span[id="remixRunSignMsgSignature"]', (v) => { signature = v; done() })
+            browser.waitForElementPresent('span[id="remixRunSignMsgSignature"]').getText('span[id="remixRunSignMsgSignature"]', (v) => { signature = v; done() })
           }
         )
         .modalFooterOKClick()
