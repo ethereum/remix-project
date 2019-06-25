@@ -55,9 +55,9 @@ module.exports = {
       }
     },
 
-    'local': {
+    'firefox': {
       'desiredCapabilities': {
-        'browserName': 'chrome',
+        'browserName': 'firefox',
         'javascriptEnabled': true,
         'acceptSslCerts': true
       }
