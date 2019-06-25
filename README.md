@@ -94,14 +94,23 @@ To run the Selenium tests via Nightwatch:
  - Run a selenium server `npm run selenium-install`
  - Run all the tests `npm run nightwatch_local_firefox` or `npm run nightwatch_local_chrome`
  - Or run a specific test case: 
+ 
 		- npm run nightwatch_local_ballot
+		
 		- npm run nightwatch_local_libraryDeployment
+		
 		- npm run nightwatch_local_solidityImport
+		
 		- npm run nightwatch_local_recorder
+		
 		- npm run nightwatch_local_transactionExecution
+		
 		- npm run nightwatch_local_staticAnalysis
+		
 		- npm run nightwatch_local_signingMessage
+		
 		- npm run nightwatch_local_remixd # remixd needs to be run
+		
 
 
 ## Usage as a Chrome Extension
