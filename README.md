@@ -13,7 +13,7 @@ https://github.com/ethereum/remix-ide/releases also gives others ways to use Rem
 
 Remix consists of many modules and in this repository you will find the Remix IDE (aka. Browser-Solidity).
 
-![Remix screenshot](https://i.imgur.com/clfc7US.png)
+![Remix screenshot](https://github.com/ethereum/remix-ide/raw/master/remix_screenshot.png)
 
 ## Offline Usage
 
