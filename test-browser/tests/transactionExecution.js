@@ -1,7 +1,6 @@
 'use strict'
 var init = require('../helpers/init')
 var sauce = require('./sauce')
-var testRecorder = require('./units/testRecorder')
 
 module.exports = {
   before: function (browser, done) {
@@ -11,7 +10,7 @@ module.exports = {
     return sources
   },
 
-  'Test Simple Contract': function (browser) {
+  'Execute Simple Contract and Test Terminal': function (browser) {
     browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'])
         .clickLaunchIcon('run')
         .click('#runTabView button[class^="instanceButton"]')
@@ -38,7 +37,7 @@ module.exports = {
         .click('i[class^="clearinstance"]')
   },
 
-  'Test Return Values': function (browser) {
+  'Test Complex Return Values': function (browser) {
     browser.testContracts('returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'])
       .clickLaunchIcon('run')
       .click('#runTabView button[class^="instanceButton"]')
@@ -75,7 +74,7 @@ module.exports = {
 }`).click('i[class^="clearinstance"]')
   },
 
-  'Test Input Values': function (browser) {
+  'Test Complex Input Values': function (browser) {
     browser.testContracts('inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'])
         .clickLaunchIcon('run')
         .click('#runTabView button[class^="instanceButton"]')
@@ -125,12 +124,7 @@ module.exports = {
   }
  ]`)
       .click('i[class^="clearinstance"]')
-  },
-
-  'Test Recorder': function (browser) {
-    testRecorder.test(browser, () => {
-      browser.end()
-    })
+      .end()
   },
 
   tearDown: sauce
