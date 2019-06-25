@@ -9,7 +9,6 @@ compiler.loadRemoteVersion(defaultVersion, (error, solcSnapshot) => {
   if (error) console.log(error)
   var compilationResult = {}
   gatherCompilationResults('./test-browser/tests/', compilationResult, solcSnapshot)
-  gatherCompilationResults('./test-browser/tests/units/', compilationResult, solcSnapshot)
   replaceSolCompiler(compilationResult, solcSnapshot)
 })
 
