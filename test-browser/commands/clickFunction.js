@@ -14,7 +14,7 @@ class ClickFunction extends EventEmitter {
       })
     })
     .click('.instance button[title="' + fnFullName + '"]')
-    .pause(500)
+    .pause(2000)
     .perform(() => {
       this.emit('complete')
     })
