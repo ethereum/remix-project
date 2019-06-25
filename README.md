@@ -87,18 +87,22 @@ Running unit tests via `npm test` requires at least node v7.0.0
 
 ## Browser Testing
 
-To run the Selenium tests via Nightwatch serve the app through a local web server:
+To run the Selenium tests via Nightwatch:
 
-`npm run serve` # starts web server at localhost:8080
+ - Build Remix IDE and serve it: `npm run build && npm run serve` # starts web server at localhost:8080
+ - Make sure Selenium is installed `npm run selenium-install` # don't need to repeat
+ - Run a selenium server `npm run selenium-install`
+ - Run all the tests `npm run nightwatch_local_firefox` or `npm run nightwatch_local_chrome`
+ - Or run a specific test case: 
+		- npm run nightwatch_local_ballot
+		- npm run nightwatch_local_libraryDeployment
+		- npm run nightwatch_local_solidityImport
+		- npm run nightwatch_local_recorder
+		- npm run nightwatch_local_transactionExecution
+		- npm run nightwatch_local_staticAnalysis
+		- npm run nightwatch_local_signingMessage
+		- npm run nightwatch_local_remixd # remixd needs to be run
 
-Then you will need to either:
-
-1. Have a Selenium server running locally on port 4444.
-	- Run: `npm run test-browser`
-
-2. Or, install and run SauceConnect.
-	- Run: `sc -u <USERNAME> -k <ACCESS_KEY>` (see `.travis.yml` for values)
-	- Run: `npm run browser-test-sc`
 
 ## Usage as a Chrome Extension
 

@@ -38,7 +38,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Test Shared Folder Explorer': function (browser) {
+  'Remixd': function (browser) {
     runTests(browser)
   },
   tearDown: sauce
