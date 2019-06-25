@@ -41,6 +41,7 @@ function renameFile (browser, path, newFileName, renamedPath, done) {
       })
       .click('body') // blur
       .waitForElementVisible('#modal-footer-ok', 2000)
+      .pause(2000)
       .click('#modal-footer-ok')
       .waitForElementNotPresent('[data-path="' + path + '"]')
       .waitForElementPresent('[data-path="' + renamedPath + '"]')
