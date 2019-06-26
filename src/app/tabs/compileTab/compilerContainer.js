@@ -137,7 +137,7 @@ class CompilerContainer {
 
     this._view.versionSelector = yo`
       <select onchange="${this.onchangeLoadVersion.bind(this)}" class="custom-select" id="versionSelector" disabled>
-        <option disabled selected>Select new compiler version</option>
+        <option disabled selected>${this.data.defaultVersion}</option>
       </select>`
     this._view.languageSelector = yo`
       <select onchange="${this.onchangeLanguage.bind(this)}" class="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
@@ -234,22 +234,30 @@ class CompilerContainer {
   }
 
   compile (event) {
-    this.compileTabLogic.runCompiler()
+    if (this.config.get('currentFile')) {
+      this.compileTabLogic.runCompiler()
+    }
+  }
+
+  autoCompile () {
+    if (this.config.get('autoCompile')) {
+      this.compile()
+    }
   }
 
   hideWarnings (event) {
     this.config.set('hideWarnings', this._view.hideWarningsBox.checked)
-    this.compile()
+    this.autoCompile()
   }
 
   onchangeOptimize () {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
-    this.compileTabLogic.runCompiler()
+    this.autoCompile()
   }
 
   onchangeLanguage (event) {
     this.compileTabLogic.setLanguage(event.target.value)
-    this.compile()
+    this.autoCompile()
   }
 
   onchangeEvmVersion (_) {
@@ -259,7 +267,7 @@ class CompilerContainer {
       v = null
     }
     this.compileTabLogic.setEvmVersion(v)
-    this.compile()
+    this.autoCompile()
   }
 
   onchangeLoadVersion (event) {
@@ -343,7 +351,7 @@ class CompilerContainer {
   scheduleCompilation () {
     if (!this.config.get('autoCompile')) return
     if (this.data.compileTimeout) window.clearTimeout(this.data.compileTimeout)
-    this.data.compileTimeout = window.setTimeout(() => this.compileTabLogic.runCompiler(), this.data.timeout)
+    this.data.compileTimeout = window.setTimeout(() => this.autoCompile(), this.data.timeout)
   }
 
 }
