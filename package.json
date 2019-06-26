@@ -68,13 +68,13 @@
     "web3": "1.0.0-beta.27",
     "webworkify": "^1.2.1",
     "yo-yo": "^1.2.2",
-    "yo-yoify": "^3.7.3"
+    "yo-yoify": "^3.7.3",
+    "semver": "^6.1.2"
   },
   "dependencies": {
     "http-server": "^0.11.1",
     "remix-plugin": "0.0.2-alpha.10",
-    "remixd": "0.1.8-alpha.6",
-    "semver": "^6.1.2"
+    "remixd": "0.1.8-alpha.6"
   },
   "repository": {
     "type": "git",
