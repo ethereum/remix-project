@@ -239,7 +239,7 @@ class CompilerContainer {
     }
   }
 
-  autoCompile () {
+  compileIfAutoCompileOn () {
     if (this.config.get('autoCompile')) {
       this.compile()
     }
@@ -247,17 +247,17 @@ class CompilerContainer {
 
   hideWarnings (event) {
     this.config.set('hideWarnings', this._view.hideWarningsBox.checked)
-    this.autoCompile()
+    this.compileIfAutoCompileOn()
   }
 
   onchangeOptimize () {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
-    this.autoCompile()
+    this.compileIfAutoCompileOn()
   }
 
   onchangeLanguage (event) {
     this.compileTabLogic.setLanguage(event.target.value)
-    this.autoCompile()
+    this.compileIfAutoCompileOn()
   }
 
   onchangeEvmVersion (_) {
@@ -267,7 +267,7 @@ class CompilerContainer {
       v = null
     }
     this.compileTabLogic.setEvmVersion(v)
-    this.autoCompile()
+    this.compileIfAutoCompileOn()
   }
 
   onchangeLoadVersion (event) {
@@ -351,7 +351,7 @@ class CompilerContainer {
   scheduleCompilation () {
     if (!this.config.get('autoCompile')) return
     if (this.data.compileTimeout) window.clearTimeout(this.data.compileTimeout)
-    this.data.compileTimeout = window.setTimeout(() => this.autoCompile(), this.data.timeout)
+    this.data.compileTimeout = window.setTimeout(() => this.compileIfAutoCompileOn(), this.data.timeout)
   }
 
 }
