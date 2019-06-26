@@ -3,6 +3,7 @@ const yo = require('yo-yo')
 var minixhr = require('minixhr')
 var helper = require('../../../lib/helper')
 const addTooltip = require('../../ui/tooltip')
+const semver = require('semver')
 
 var css = require('../styles/compile-tab-styles')
 
@@ -76,6 +77,7 @@ class CompilerContainer {
       this._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
       this._view.compileIcon.classList.add(`${css.spinningIcon}`)
       this._view.warnCompilationSlow.style.visibility = 'hidden'
+      this._updateLanguageSelector()
     })
 
     this.compileTabLogic.compiler.event.register('compilerLoaded', () => {
@@ -224,7 +226,6 @@ class CompilerContainer {
         </article>
       </section>`
 
-    this._updateLanguageSelector()
     return this._view.compileContainer
   }
 
@@ -304,7 +305,7 @@ class CompilerContainer {
   }
 
   _updateLanguageSelector () {
-    if (this._retrieveVersion() < '0.5.7') {
+    if (semver.lt(this._retrieveVersion(), '0.5.7')) {
       this._view.languageSelector.setAttribute('disabled', '')
       this._view.languageSelector.value = 'Solidity'
       this.compileTabLogic.setLanguage('Solidity')

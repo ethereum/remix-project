@@ -73,7 +73,8 @@
   "dependencies": {
     "http-server": "^0.11.1",
     "remix-plugin": "0.0.2-alpha.10",
-    "remixd": "0.1.8-alpha.6"
+    "remixd": "0.1.8-alpha.6",
+    "semver": "^6.1.2"
   },
   "repository": {
     "type": "git",
