@@ -32,6 +32,7 @@
     ]
   },
   "dependencies": {
+    "remix-lib": "^0.4.6",
     "@types/tape": "^4.2.33",
     "nyc": "^13.3.0",
     "tape": "^4.10.1",
