@@ -248,9 +248,7 @@ class CompilerContainer {
 
   onchangeLanguage (event) {
     this.compileTabLogic.setLanguage(event.target.value)
-    if (this.config.get('currentFile') && this.config.get('autoCompile')) {
-      this.compile()
-    }
+    this.compile()
   }
 
   onchangeEvmVersion (_) {
