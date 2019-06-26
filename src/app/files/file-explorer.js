@@ -180,7 +180,7 @@ function fileExplorer (localRegistry, files, menuItems) {
     MENU_HANDLE = contextMenu(event, {
       'Rename': () => {
         if (self.files.readonly) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
-        var name = label.querySelector('label[data-path="' + key + '"]')
+        var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
       },
       'Delete': () => {
@@ -197,7 +197,7 @@ function fileExplorer (localRegistry, files, menuItems) {
     if (!self.files.readonly) {
       actions['Rename'] = () => {
         if (self.files.readonly) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
-        var name = label.querySelector('label[data-path="' + key + '"]')
+        var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
       }
       actions['Delete'] = () => {
