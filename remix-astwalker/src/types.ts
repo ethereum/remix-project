@@ -1,7 +1,25 @@
+// FIXME: should this be renamed to indicate its offset/length orientation?
+// Add "reaadonly property"?
 export interface Location {
   start: number;
   length: number;
   file: number;  // Would it be clearer to call this a file index?
+}
+
+// This is intended to be compatibile with VScode's Position.
+// However it is pretty common with other things too.
+// Note: File index is missing here
+export interface LineColPosition {
+  readonly line: number;
+  readonly character: number;
+}
+
+// This is intended to be compatibile with vscode's Range
+// However it is pretty common with other things too.
+// Note: File index is missing here
+export interface LineColRange {
+  readonly start: LineColPosition;
+  readonly end: LineColPosition;
 }
 
 export interface Node {
