@@ -47,7 +47,7 @@ let css = csjs`
     margin: 0 50px 0 70px;
   }
   .hpSections {
-    min-width: 620px;
+    min-width: 640px;
     margin: 0 60px;
   }
   .labelIt {
