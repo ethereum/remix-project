@@ -69,21 +69,36 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
     <div class="${css.title} alert alert-secondary p-2">
-      <button class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}"><i class="fas fa-angle-right" aria-hidden="true"></i></button>
+      <button class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}">
+        <i class="fas fa-angle-right" aria-hidden="true"></i>
+      </button>
       <div class="input-group ${css.nameNbuts}">
-        <div class="${css.titleText} input-group-prepend"><span class="input-group-text ${css.spanTitleText}"> ${contractName} at ${shortAddress} (${context})</span></div>
+        <div class="${css.titleText} input-group-prepend">
+          <span class="input-group-text ${css.spanTitleText}">
+            ${contractName} at ${shortAddress} (${context})
+          </span>
+        </div>
         <div class="btn-group">
           <button class="btn p-1 btn-secondary">${copyToClipboard(() => address)}</button>
         </div>
       </div>
-  </div>`
+    </div>
+  `
 
-  var close = yo`<button class="${css.udappClose} p-1 btn btn-secondary" onclick=${remove} title="Remove from the list"><i class="${css.closeIcon} fas fa-times" aria-hidden="true"></i></button>`
+  var close = yo`
+    <button
+      class="${css.udappClose} p-1 btn btn-secondary"
+      onclick=${remove}
+      title="Remove from the list"
+    >
+      <i class="${css.closeIcon} fas fa-times" aria-hidden="true"></i>
+    </button>`
   title.querySelector('.btn-group').appendChild(close)
 
   var contractActionsWrapper = yo`
-  <div class="${css.cActionsWrapper}">
-  </div>`
+    <div class="${css.cActionsWrapper}">
+    </div>
+  `
 
   function remove () {
     instance.remove()
