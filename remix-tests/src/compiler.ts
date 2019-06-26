@@ -116,7 +116,9 @@ export function compileContractSources(sources: SrcIfc, importFileCb: any, opts:
             compiler.compile(sources, filepath)
         }
     ], function (err: Error | null | undefined , result: any) {
-        let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
+        let error = []
+        if (result.error) error.push(result.error)
+        let errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
         if (errors.length > 0) {
             if (!isBrowser) require('signale').fatal(errors)
             return cb(new Error('errors compiling'))
