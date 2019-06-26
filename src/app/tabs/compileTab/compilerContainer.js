@@ -3,6 +3,7 @@ const yo = require('yo-yo')
 var minixhr = require('minixhr')
 var helper = require('../../../lib/helper')
 const addTooltip = require('../../ui/tooltip')
+const semver = require('semver')
 
 var css = require('../styles/compile-tab-styles')
 
@@ -76,6 +77,7 @@ class CompilerContainer {
       this._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
       this._view.compileIcon.classList.add(`${css.spinningIcon}`)
       this._view.warnCompilationSlow.style.visibility = 'hidden'
+      this._updateLanguageSelector()
     })
 
     this.compileTabLogic.compiler.event.register('compilerLoaded', () => {
@@ -110,6 +112,11 @@ class CompilerContainer {
     return el
   }
 
+  _retrieveVersion () {
+    let version = this._view.versionSelector.value
+    return version.substring(9, 14)
+  }
+
   render () {
     this.compileTabLogic.compiler.event.register('compilerLoaded', (version) => this.setVersionText(version))
     this.fetchAllVersion((allversions, selectedVersion) => {
@@ -131,6 +138,11 @@ class CompilerContainer {
     this._view.versionSelector = yo`
       <select onchange="${this.onchangeLoadVersion.bind(this)}" class="custom-select" id="versionSelector" disabled>
         <option disabled selected>Select new compiler version</option>
+      </select>`
+    this._view.languageSelector = yo`
+      <select onchange="${this.onchangeLanguage.bind(this)}" class="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
+        <option>Solidity</option>
+        <option>Yul</option>
       </select>`
     this._view.version = yo`<span id="version"></span>`
 
@@ -166,10 +178,10 @@ class CompilerContainer {
       <section>
         <!-- Select Compiler Version -->
         <article>
-          <header class="navbar navbar-light bg-light">
+          <header class="navbar navbar-light p-2 bg-light">
             <div class="row w-100 no-gutters mb-2">
               <div class="col-sm-4">
-                <label class="input-group-text border-0" for="versionSelector">Compiler</label>
+                <label class="${css.compilerLabel} input-group-text pl-0 border-0" for="versionSelector">Compiler</label>
               </div>
               <div class="col-sm-8">
                 ${this._view.versionSelector}
@@ -177,18 +189,15 @@ class CompilerContainer {
             </div>
             <div class="row w-100 no-gutters mb-2">
               <div class="col-sm-4">
-                <label class="input-group-text border-0" for="languageSelector">Language</label>
+                <label class="${css.compilerLabel} input-group-text pl-0 border-0" for="compilierLanguageSelector">Language</label>
               </div>
               <div class="col-sm-8">
-              <select onchange="${this.onchangeLanguage.bind(this)}" class="custom-select" id="languageSelector">
-                <option>Solidity</option>
-                <option>Yul</option>
-              </select>
+                ${this._view.languageSelector}
               </div>
             </div>
             <div class="row w-100 no-gutters">
               <div class="col-sm-4">
-                <label class="input-group-text border-0" for="evmVersionSelector">EVM Version</label>
+                <label class="${css.compilerLabel} input-group-text pl-0 border-0" for="evmVersionSelector">EVM Version</label>
               </div>
               <div class="col-sm-8">
                 ${this._view.evmVersionSelector}
@@ -256,6 +265,7 @@ class CompilerContainer {
   onchangeLoadVersion (event) {
     this.data.selectedVersion = this._view.versionSelector.value
     this._updateVersionSelector()
+    this._updateLanguageSelector()
   }
 
   _updateVersionSelector () {
@@ -291,6 +301,16 @@ class CompilerContainer {
     } else {
       this.compileTabLogic.compiler.loadVersion(false, url)
       this.setVersionText('(loading)')
+    }
+  }
+
+  _updateLanguageSelector () {
+    if (semver.lt(this._retrieveVersion(), '0.5.7')) {
+      this._view.languageSelector.setAttribute('disabled', '')
+      this._view.languageSelector.value = 'Solidity'
+      this.compileTabLogic.setLanguage('Solidity')
+    } else {
+      this._view.languageSelector.removeAttribute('disabled')
     }
   }
 

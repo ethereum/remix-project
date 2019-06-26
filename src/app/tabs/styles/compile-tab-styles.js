@@ -70,6 +70,9 @@ const css = csjs`
   .compilerSm {
     padding-left: 1.25rem;
   }
+  .compilerLabel {
+    direction: rtl;
+  }
   .name {
     display: flex;
   }
