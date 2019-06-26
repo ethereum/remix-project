@@ -116,7 +116,7 @@ export function compileContractSources(sources: SrcIfc, importFileCb: any, opts:
             compiler.compile(sources, filepath)
         }
     ], function (err: Error | null | undefined , result: any) {
-        let error = []
+        let error: Error[] = []
         if (result.error) error.push(result.error)
         let errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
         if (errors.length > 0) {
