@@ -157,15 +157,16 @@ function fileExplorer (localRegistry, files, menuItems) {
       var isRoot = data.path === self.files.type
       return yo`
         <div class="${css.items}">
-          <label
+          <span
             title="${data.path}"
             class="${css.label} ${!isRoot ? css.leaf : ''}"
             data-path="${data.path}"
             style="${isRoot ? 'font-weight:bold;' : ''}"
             onkeydown=${editModeOff}
             onblur=${editModeOff}
-          >${key.split('/').pop()}
-          </label>
+          >
+            ${key.split('/').pop()}
+          </span>
           ${isRoot ? self.renderMenuItems() : ''}
         </div>
       `
@@ -179,7 +180,7 @@ function fileExplorer (localRegistry, files, menuItems) {
     MENU_HANDLE = contextMenu(event, {
       'Rename': () => {
         if (self.files.readonly) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
-        var name = label.querySelector('label[data-path="' + key + '"]')
+        var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
       },
       'Delete': () => {
@@ -196,7 +197,7 @@ function fileExplorer (localRegistry, files, menuItems) {
     if (!self.files.readonly) {
       actions['Rename'] = () => {
         if (self.files.readonly) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
-        var name = label.querySelector('label[data-path="' + key + '"]')
+        var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
       }
       actions['Delete'] = () => {
@@ -522,12 +523,12 @@ fileExplorer.prototype.renderMenuItems = function () {
     items = this.menuItems.map(({action, title, icon}) => {
       if (action === 'uploadFile') {
         return yo`
-          <span class="${icon} ${css.newFile}"  title="${title}">
+          <label class="${icon} ${css.newFile}"  title="${title}">
             <input type="file" onchange=${(event) => {
               event.stopPropagation()
               this.uploadFile(event)
             }} multiple />
-          </span>
+          </label>
         `
       } else {
         return yo`
