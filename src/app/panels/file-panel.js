@@ -83,7 +83,7 @@ module.exports = class Filepanel extends BaseApi {
       return yo`
         <div class=${css.container}>
           <div class="${css.fileexplorer}">           
-            <div>
+            <div class="${css.fileExplorerTree}">
               <div class=${css.treeview}>${fileExplorer.init()}</div>
               <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
               <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
