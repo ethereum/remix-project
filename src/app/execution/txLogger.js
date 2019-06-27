@@ -513,7 +513,7 @@ function createTable (opts) {
     <tr class="${css.tr}">
       <td class="${css.td}"> decoded input </td>
       <td class="${css.td}">${opts['decoded input']}
-        ${copyToClipboard(opts['decoded input'])}
+        ${copyToClipboard(() => opts['decoded input'])}
       </td>
     </tr>`
     table.appendChild(inputDecoded)
@@ -524,7 +524,7 @@ function createTable (opts) {
     <tr class="${css.tr}">
       <td class="${css.td}"> decoded output </td>
       <td class="${css.td}" id="decodedoutput" >${opts['decoded output']}
-        ${copyToClipboard(opts['decoded output'])}
+        ${copyToClipboard(() => opts['decoded output'])}
       </td>
     </tr>`
     table.appendChild(outputDecoded)
