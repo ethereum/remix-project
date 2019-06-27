@@ -88,7 +88,7 @@ To run the Selenium tests via Nightwatch:
 
  - Build Remix IDE and serve it: `npm run build && npm run serve` # starts web server at localhost:8080
  - Make sure Selenium is installed `npm run selenium-install` # don't need to repeat
- - Run a selenium server `npm run selenium-install`
+ - Run a selenium server `npm run selenium`
  - Run all the tests `npm run nightwatch_local_firefox` or `npm run nightwatch_local_chrome`
  - Or run a specific test case: 
  
