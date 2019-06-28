@@ -1,3 +1,4 @@
+/* global localStorage */
 'use strict'
 
 var $ = require('jquery')
