@@ -24,7 +24,7 @@ class Toaster {
     animation(this.tooltip, css.animateTop.className)
   }
 
- forceResolve () {
+  forceResolve () {
     if (this.id) clearTimeout(this.id)
     if (this.resolveFn) this.resolveFn()
   }
