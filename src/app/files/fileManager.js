@@ -138,43 +138,62 @@ class FileManager extends FileSystemApi {
     if (this.currentRequest) {
       let reject = false
       let savedAsCopy = false
+      let accept = false
       let actions = (toaster) => {
-        return yo`<div class="container ml-1">
-        <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-          reject = true;
-          e.target.innerHTML = 'Canceled';
-          toaster.hide()
-        }}>
-          Cancel
-        </button>
-        <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-          if (savedAsCopy) return
-          savedAsCopy = true
-          const fileProvider = this.fileProviderOf(path)
-          if (!fileProvider) return
-          helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, newFile) => {
-            if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-            if (!fileProvider.set(newFile, content)) return modalDialogCustom.alert('Failed to create a file ' + newFile)
-            this.switchFile(newFile)
-          })
-          e.target.innerHTML = 'Saved'
-          toaster.hide()
-        }}>
-          Save As Copy
-        </button>
-        </div>`
+        return yo`
+          <div class="container ml-1">
+            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
+              accept = true;
+              e.target.innerHTML = 'Accepted';
+              const fileProvider = this.fileProviderOf(path)
+              if (!fileProvider) return
+              if (!fileProvider.set(path, content)) {
+                return modalDialogCustom.alert('Failed to create a file ' + path)
+              }
+              this.syncEditor(path)
+              this.switchFile(path)
+              toaster.hide()
+            }}>
+              Accept
+            </button>
+            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
+              reject = true;
+              e.target.innerHTML = 'Canceled';
+              toaster.hide()
+            }}>
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
+              if (savedAsCopy) return
+              savedAsCopy = true
+              const fileProvider = this.fileProviderOf(path)
+              if (!fileProvider) return
+              helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, newFile) => {
+                if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
+                if (!fileProvider.set(newFile, content)) return modalDialogCustom.alert('Failed to create a file ' + newFile)
+                this.switchFile(newFile)
+                this.syncEditor(path)
+              })
+              e.target.innerHTML = 'Saved'
+              toaster.hide()
+            }}>
+              Save As Copy
+            </button>
+          </div>
+        `
       }
       await toaster(yo`
         <div>
           <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
           <span>
-            ${this.currentRequest.from}<span class="text-danger"> is modyfing </span>${path}
+            ${this.currentRequest.from}<span class="text-danger"> is trying to modify </span>${path}
           </span>
-        </div>`, actions, { time: 4000 })
+        </div>
+      `, actions, { time: 4000 })
       if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
-      if (savedAsCopy) return
+      if (accept || savedAsCopy) return
+        else this._setFileInternal(path, content)
     }
-    this._setFileInternal(path, content)
   }
 
   _setFileInternal (path, content) {
