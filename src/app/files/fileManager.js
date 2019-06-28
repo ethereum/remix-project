@@ -137,63 +137,57 @@ class FileManager extends FileSystemApi {
   async setFile (path, content) {
     if (this.currentRequest) {
       let reject = false
-      let savedAsCopy = false
-      let accept = false
-      let actions = (toaster) => {
-        return yo`
-          <div class="container ml-1">
-            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-              accept = true;
-              e.target.innerHTML = 'Accepted';
-              const fileProvider = this.fileProviderOf(path)
-              if (!fileProvider) return
-              if (!fileProvider.set(path, content)) {
-                return modalDialogCustom.alert('Failed to create a file ' + path)
-              }
-              this.syncEditor(path)
-              this.switchFile(path)
-              toaster.hide()
-            }}>
-              Accept
-            </button>
-            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-              reject = true;
-              e.target.innerHTML = 'Canceled';
-              toaster.hide()
-            }}>
-              Cancel
-            </button>
-            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-              if (savedAsCopy) return
-              savedAsCopy = true
-              const fileProvider = this.fileProviderOf(path)
-              if (!fileProvider) return
-              helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, newFile) => {
-                if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-                if (!fileProvider.set(newFile, content)) return modalDialogCustom.alert('Failed to create a file ' + newFile)
-                this.switchFile(newFile)
-                this.syncEditor(path)
+      let saveAsCopy = false
+      let actions = (toaster) => { return yo`
+        <div class="container ml-1">
+          <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
+            reject = false;
+            e.target.innerHTML = 'Accepted';
+            toaster.hide();
+            toaster.forceResolve()
+          }}>
+            Accept
+          </button>
+          <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
+            reject = true;
+            e.target.innerHTML = 'Canceled';
+            toaster.hide()
+          }}>
+            Cancel
+          </button>
+          <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
+            if (saveAsCopy) return
+            const fileProvider = this.fileProviderOf(path)
+            if (fileProvider) {
+              helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, copyName) => {
+                if (error) {
+                  console.log('createNonClashingNameWithPrefix', error)
+                  copyName = path + '.' + this.currentRequest.from
+                }
+                this._setFileInternal(copyName, content)
+                this.switchFile(copyName)
               })
-              e.target.innerHTML = 'Saved'
-              toaster.hide()
-            }}>
-              Save As Copy
-            </button>
-          </div>
-        `
-      }
+            }
+            e.target.innerHTML = 'Saved'
+            saveAsCopy = true
+            toaster.hide()
+          }}>
+            Save As Copy
+          </button>
+        </div>
+      `}
       await toaster(yo`
         <div>
           <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
           <span>
-            ${this.currentRequest.from}<span class="text-danger"> is trying to modify </span>${path}
+            ${this.currentRequest.from}<span class="text-danger font-weight-bold"> is trying to modify </span>${path}
           </span>
         </div>
-      `, actions, { time: 4000 })
+      `, actions, { time: 5000 })
       if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
-      if (accept || savedAsCopy) return
-        else this._setFileInternal(path, content)
+      if (saveAsCopy) return
     }
+    this._setFileInternal(path, content)
   }
 
   _setFileInternal (path, content) {
