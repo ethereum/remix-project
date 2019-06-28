@@ -1,3 +1,4 @@
+/* global localStorage */
 import { AppManagerApi, Plugin } from 'remix-plugin'
 import { EventEmitter } from 'events'
 import PluginManagerProxy from './app/components/plugin-manager-proxy'
