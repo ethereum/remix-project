@@ -194,6 +194,7 @@ export class EntityStore extends Store {
    * @param {((string|number))} ids An id or a list of id to activate
    */
   activate (id) {
+    if (this.actives.includes(id)) return
     this.state.actives.push(id)
     this.event.emit('activate', id)
   }
@@ -203,6 +204,7 @@ export class EntityStore extends Store {
    * @param {(string|number))} ids An id or a list of id to deactivate
    */
   deactivate (id) {
+    if (!this.actives.includes(id)) return
     this.state.actives.splice(this.state.actives.indexOf(id), 1)
     this.event.emit('deactivate', id)
   }
