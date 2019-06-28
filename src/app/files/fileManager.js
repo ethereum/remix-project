@@ -138,44 +138,46 @@ class FileManager extends FileSystemApi {
     if (this.currentRequest) {
       let reject = false
       let saveAsCopy = false
-      let actions = (toaster) => { return yo`
-        <div class="container ml-1">
-          <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-            reject = false;
-            e.target.innerHTML = 'Accepted';
-            toaster.hide();
-            toaster.forceResolve()
-          }}>
-            Accept
-          </button>
-          <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-            reject = true;
-            e.target.innerHTML = 'Canceled';
-            toaster.hide()
-          }}>
-            Cancel
-          </button>
-          <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-            if (saveAsCopy) return
-            const fileProvider = this.fileProviderOf(path)
-            if (fileProvider) {
-              helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, copyName) => {
-                if (error) {
-                  console.log('createNonClashingNameWithPrefix', error)
-                  copyName = path + '.' + this.currentRequest.from
-                }
-                this._setFileInternal(copyName, content)
-                this.switchFile(copyName)
-              })
-            }
-            e.target.innerHTML = 'Saved'
-            saveAsCopy = true
-            toaster.hide()
-          }}>
-            Save As Copy
-          </button>
-        </div>
-      `}
+      let actions = (toaster) => {
+        return yo`
+          <div class="container ml-1">
+            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
+              reject = false
+              e.target.innerHTML = 'Accepted'
+              toaster.hide()
+              toaster.forceResolve()
+            }}>
+              Accept
+            </button>
+            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
+              reject = true
+              e.target.innerHTML = 'Canceled'
+              toaster.hide()
+            }}>
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
+              if (saveAsCopy) return
+              const fileProvider = this.fileProviderOf(path)
+              if (fileProvider) {
+                helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, copyName) => {
+                  if (error) {
+                    console.log('createNonClashingNameWithPrefix', error)
+                    copyName = path + '.' + this.currentRequest.from
+                  }
+                  this._setFileInternal(copyName, content)
+                  this.switchFile(copyName)
+                })
+              }
+              e.target.innerHTML = 'Saved'
+              saveAsCopy = true
+              toaster.hide()
+            }}>
+              Save As Copy
+            </button>
+          </div>
+        `
+      }
       await toaster(yo`
         <div>
           <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
