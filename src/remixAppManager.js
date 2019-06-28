@@ -41,6 +41,7 @@ export class RemixAppManager extends AppManagerApi {
     if (!isActive) {
       this.removeHiddenServices(api)
     }
+    localStorage.setItem('workspace', JSON.stringify(this.store.actives))
   }
 
   getEntity (apiName) {
