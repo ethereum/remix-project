@@ -444,7 +444,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // Set workspace after initial activation
   if (Array.isArray(workspace)) {
-    console.log(workspace)
     appManager.activateMany(workspace)
   }
 
