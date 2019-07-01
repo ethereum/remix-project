@@ -23,6 +23,16 @@ class Toaster {
     }, 2000)
     animation(this.tooltip, css.animateTop.className)
   }
+
+ /**
+  * Force resolve the promise to close
+  * the toaster ignoring timeout
+  */
+  forceResolve () {
+    if (this.id) clearTimeout(this.id)
+    if (this.resolveFn) this.resolveFn()
+  }
+
   render (tooltipText, actionElement, opts) {
     opts = defaultOptions(opts)
     let canShorten = true
@@ -43,6 +53,7 @@ class Toaster {
 
     return new Promise((resolve, reject) => {
       const shortTooltipText = (canShorten && tooltipText.length > 201) ? tooltipText.substring(0, 200) + '...' : tooltipText
+      this.resolveFn = resolve
 
       let button = tooltipText.length > 201 ? yo`
       <button class="btn btn-secondary btn-sm mx-3" style="white-space: nowrap;" onclick=${() => { modal.alert(tooltipText) }}>Show full message</button>
