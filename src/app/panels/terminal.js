@@ -109,16 +109,17 @@ class Terminal extends BaseApi {
   render () {
     var self = this
     if (self._view.el) return self._view.el
-    self._view.journal = yo`<div class=${css.journal}></div>`
+    self._view.journal = yo`<div id="journal" class=${css.journal}></div>`
     self._view.input = yo`
       <span class=${css.input} onload=${() => { this.focus() }} onpaste=${paste} onkeydown=${change}></span>
     `
     self._view.input.setAttribute('spellcheck', 'false')
     self._view.input.setAttribute('contenteditable', 'true')
+    self._view.input.setAttribute('id', 'terminalCliInput')
 
     self._view.input.innerText = '\n'
     self._view.cli = yo`
-      <div class="${css.cli}">
+      <div id="terminalCli" class="${css.cli}">
         <span class=${css.prompt}>${'>'}</span>
         ${self._view.input}
       </div>
