@@ -50,10 +50,10 @@
     "winston": "^3.0.0"
   },
   "peerDependencies": {
-    "yo-yoify": "latest"
+    "yo-yoify": "^4.3.0"
   },
   "devDependencies": {
-    "@babel/preset-es2017": "latest",
+    "@babel/preset-env": "^7.4.5",
     "@types/async": "^2.4.0",
     "@types/color-support": "^1.1.0",
     "@types/colors": "^1.2.1",
