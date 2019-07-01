@@ -948,6 +948,17 @@ function isBytesLengthCheck (node) {
 }
 
 /**
+ * True if it is a loop
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isLoop (node) {
+  return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
+          nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
+          nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))
+}
+
+/**
  * True if it is a 'for' loop
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -1117,6 +1128,7 @@ module.exports = {
   isIntDivision: isIntDivision,
   isStringToBytesConversion: isStringToBytesConversion,
   isBytesLengthCheck: isBytesLengthCheck,
+  isLoop: isLoop,
   isForLoop: isForLoop,
 
   // #################### Trivial Node Identification
