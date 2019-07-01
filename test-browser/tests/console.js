@@ -9,8 +9,7 @@ module.exports = {
   'SimpleExecutionConsole': function (browser) {
     browser
     .waitForElementVisible('#terminalCli', 10000)
-    .executeScript(['\uE01B','\uE025','\uE01B','\uE006','\uE006','\uE006'])
-    .waitForElementVisible('#journal div:last-child span.text-info', 10000)
+    .executeScript('1+1')
     .journalLastChild('2')
     .end()
   },

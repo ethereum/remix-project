@@ -5,6 +5,7 @@ class ExecuteScript extends EventEmitter {
     this.api
       .click('#terminalCli')
       .keys(script)
+      .keys(this.api.Keys.ENTER)
       .perform(() => {
         this.emit('complete')
       })
