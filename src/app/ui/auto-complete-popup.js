@@ -140,7 +140,6 @@ class AutoCompletePopup {
     let autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
     if (inputString.length >= 2) {
       // more than 2 letters, start completion
-      this.isOpen = true
       this.data._options = []
       Commands.allPrograms.forEach(item => {
         const program = getKeyOf(item)
@@ -171,7 +170,7 @@ class AutoCompletePopup {
         this.removeAutoComplete()
         return
       }
-
+      if (this.data._options.length) this.isOpen = true
       yo.update(this._view, this.render())
       return true
     }
