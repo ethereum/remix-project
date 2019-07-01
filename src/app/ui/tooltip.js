@@ -24,6 +24,10 @@ class Toaster {
     animation(this.tooltip, css.animateTop.className)
   }
 
+ /**
+  * Force resolve the promise to close
+  * the toaster ignoring timeout
+  */
   forceResolve () {
     if (this.id) clearTimeout(this.id)
     if (this.resolveFn) this.resolveFn()
