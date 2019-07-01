@@ -138,41 +138,35 @@ class FileManager extends FileSystemApi {
     if (this.currentRequest) {
       let reject = false
       let saveAsCopy = false
+    function acceptFileRewriting (e, toaster) {
+        reject = false
+        e.target.innerHTML = 'Accepted'
+        toaster.hide()
+        toaster.forceResolve()
+      }
+      function cancelFileRewriting (e, toaster) {
+        reject = true
+        e.target.innerHTML = 'Canceled'
+        toaster.hide()
+      }
+      const saveFileAsCopy = (e, toaster) => {
+        if (saveAsCopy) return
+        this._saveAsCopy(path, content)
+
+        saveAsCopy = true
+        e.target.innerHTML = 'Saved'
+        toaster.hide()
+      }
       let actions = (toaster) => {
         return yo`
           <div class="container ml-1">
-            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-              reject = false
-              e.target.innerHTML = 'Accepted'
-              toaster.hide()
-              toaster.forceResolve()
-            }}>
+            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => acceptFileRewriting(e, toaster)}>
               Accept
             </button>
-            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-              reject = true
-              e.target.innerHTML = 'Canceled'
-              toaster.hide()
-            }}>
+            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => cancelFileRewriting(e, toaster)}>
               Cancel
             </button>
-            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
-              if (saveAsCopy) return
-              const fileProvider = this.fileProviderOf(path)
-              if (fileProvider) {
-                helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, copyName) => {
-                  if (error) {
-                    console.log('createNonClashingNameWithPrefix', error)
-                    copyName = path + '.' + this.currentRequest.from
-                  }
-                  this._setFileInternal(copyName, content)
-                  this.switchFile(copyName)
-                })
-              }
-              e.target.innerHTML = 'Saved'
-              saveAsCopy = true
-              toaster.hide()
-            }}>
+            <button class="btn btn-primary btn-sm m-1" onclick="${(e) => saveFileAsCopy(e, toaster)}">
               Save As Copy
             </button>
           </div>
@@ -185,7 +179,7 @@ class FileManager extends FileSystemApi {
             ${this.currentRequest.from}<span class="text-danger font-weight-bold"> is trying to modify </span>${path}
           </span>
         </div>
-      `, actions, { time: 5000 })
+      `, actions, { time: 15000 })
       if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
       if (saveAsCopy) return
     }
@@ -204,6 +198,20 @@ class FileManager extends FileSystemApi {
         resolve(true)
       })
     })
+  }
+
+  _saveAsCopy(path, content) {
+    const fileProvider = this.fileProviderOf(path)
+    if (fileProvider) {
+      helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, copyName) => {
+        if (error) {
+          console.log('createNonClashingNameWithPrefix', error)
+          copyName = path + '.' + this.currentRequest.from
+        }
+        this._setFileInternal(copyName, content)
+        this.switchFile(copyName)
+      })
+    }
   }
 
   removeTabsOf (provider) {
