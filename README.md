@@ -105,6 +105,8 @@ To run the Selenium tests via Nightwatch:
 		- npm run nightwatch_local_staticAnalysis
 		
 		- npm run nightwatch_local_signingMessage
+
+		- npm run nightwatch_local_console
 		
 		- npm run nightwatch_local_remixd # remixd needs to be run
 		
