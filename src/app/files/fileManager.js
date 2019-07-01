@@ -2,10 +2,10 @@
 
 import yo from 'yo-yo'
 const EventEmitter = require('events')
-var globalRegistry = require('../../global/registry')
-var CompilerImport = require('../compiler/compiler-imports')
-var toaster = require('../ui/tooltip')
-var helper = require('../../lib/helper.js')
+const globalRegistry = require('../../global/registry')
+const CompilerImport = require('../compiler/compiler-imports')
+const toaster = require('../ui/tooltip')
+const helper = require('../../lib/helper.js')
 import { FileSystemApi } from 'remix-plugin'
 import * as packageJson from '../../../package.json'
 
