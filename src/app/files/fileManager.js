@@ -180,7 +180,7 @@ class FileManager extends FileSystemApi {
             ${this.currentRequest.from}<span class="text-danger font-weight-bold"> is trying to modify </span>${path}
           </span>
         </div>
-      `, actions, { time: 15000 })
+      `, actions, { time: 5000 })
       if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
       if (saveAsCopy) return
     }
