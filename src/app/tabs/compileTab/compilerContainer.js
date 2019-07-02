@@ -14,7 +14,7 @@ class CompilerContainer {
     this.compileTabLogic = compileTabLogic
     this.editor = editor
     this.config = config
-    this.queryParams = queryParamse
+    this.queryParams = queryParams
 
     this.data = {
       hideWarnings: config.get('hideWarnings') || false,
