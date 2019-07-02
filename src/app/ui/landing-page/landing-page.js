@@ -22,13 +22,9 @@ let css = csjs`
     user-select:none;
   }
   .jumbotronContainer {
-    /* margin: 50px 60px 0; */
-    /* width: 80%; */
   }
   .thisJumboton {
     padding: 2.5rem 0rem;
-    /* display: flex;*/
-    /* justify-content: space-between;*/
     margin-bottom: 4rem;
   }
   .hpLogoContainer {
@@ -127,13 +123,7 @@ export class LandingPage extends BaseApi {
 
     let learnMore = () => { window.open('https://remix.readthedocs.io/en/latest/layout.html', '_blank') }
 
-    let closeAll = () => {
-      this.appStore.getActives()
-      .filter(({profile}) => !profile.required)
-      .forEach((profile) => { this.appManager.deactivateOne(profile.name) })
-    }
     let startSolidity = () => {
-      closeAll()
       this.appManager.ensureActivated('solidity')
       this.appManager.ensureActivated('run')
       this.appManager.ensureActivated('solidityStaticAnalysis')
@@ -141,7 +131,6 @@ export class LandingPage extends BaseApi {
       globalRegistry.get('verticalicon').api.select('solidity')
     }
     let startVyper = () => {
-      closeAll()
       this.appManager.ensureActivated('vyper')
       this.appManager.ensureActivated('run')
       globalRegistry.get('verticalicon').api.select('vyper')
