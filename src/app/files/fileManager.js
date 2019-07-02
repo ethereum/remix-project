@@ -135,28 +135,29 @@ class FileManager extends FileSystemApi {
   }
 
   async setFile (path, content) {
-    if (this.currentRequest) {
-      let reject = false
-      let saveAsCopy = false
-      function acceptFileRewriting (e, toaster) {
-        reject = false
-        e.target.innerHTML = 'Accepted'
-        toaster.hide()
-        toaster.forceResolve()
-      }
-      function cancelFileRewriting (e, toaster) {
-        reject = true
-        e.target.innerHTML = 'Canceled'
-        toaster.hide()
-      }
-      const saveFileAsCopy = (e, toaster) => {
-        if (saveAsCopy) return
-        this._saveAsCopy(path, content)
+    let reject = false
+    let saveAsCopy = false
 
-        saveAsCopy = true
-        e.target.innerHTML = 'Saved'
-        toaster.hide()
-      }
+    function acceptFileRewriting (e, toaster) {
+      reject = false
+      e.target.innerHTML = 'Accepted'
+      toaster.hide()
+      toaster.forceResolve()
+    }
+    function cancelFileRewriting (e, toaster) {
+      reject = true
+      e.target.innerHTML = 'Canceled'
+      toaster.hide()
+    }
+    const saveFileAsCopy = (e, toaster) => {
+      if (saveAsCopy) return
+      this._saveAsCopy(path, content)
+
+      saveAsCopy = true
+      e.target.innerHTML = 'Saved'
+      toaster.hide()
+    }
+    if (this.currentRequest) {
       let actions = (toaster) => {
         return yo`
           <div class="container ml-1">
