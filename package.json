@@ -36,6 +36,7 @@
     "fast-async": "^7.0.6",
     "fast-levenshtein": "^2.0.6",
     "gists": "^1.0.1",
+    "is-electron": "^2.2.0",
     "javascript-serialize": "^1.6.1",
     "jquery": "^3.3.1",
     "js-base64": "^2.1.9",
@@ -58,6 +59,7 @@
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.0.1",
+    "semver": "^6.1.2",
     "solc": "^0.5.0",
     "standard": "^8.5.0",
     "swarmgw": "^0.3.1",
@@ -68,8 +70,7 @@
     "web3": "1.0.0-beta.27",
     "webworkify": "^1.2.1",
     "yo-yo": "^1.2.2",
-    "yo-yoify": "^3.7.3",
-    "semver": "^6.1.2"
+    "yo-yoify": "^3.7.3"
   },
   "dependencies": {
     "http-server": "^0.11.1",
