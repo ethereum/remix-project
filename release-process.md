@@ -10,7 +10,8 @@ This is not strictly speaking a release. Updating the remix site is done through
  - switch to the remix_live
  - git reset --hard -master-commit-hash-
  - git push -f origin remix_live
- Travis will build automaticaly and update remix.ethereum.org
+
+ CircleCI will build automaticaly and remix.ethereum.org will be updated
 
 # remix-alpha.ethereum.org update
 
