@@ -138,7 +138,7 @@ class FileManager extends FileSystemApi {
     if (this.currentRequest) {
       let reject = false
       let saveAsCopy = false
-    function acceptFileRewriting (e, toaster) {
+      function acceptFileRewriting (e, toaster) {
         reject = false
         e.target.innerHTML = 'Accepted'
         toaster.hide()
@@ -200,7 +200,7 @@ class FileManager extends FileSystemApi {
     })
   }
 
-  _saveAsCopy(path, content) {
+  _saveAsCopy (path, content) {
     const fileProvider = this.fileProviderOf(path)
     if (fileProvider) {
       helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, copyName) => {
