@@ -58,7 +58,7 @@ class Toaster {
       function showFullMessage () {
         modal.alert(tooltipText)
       }
-      
+
       function closeTheToaster (self) {
         self.hide()
         over()
