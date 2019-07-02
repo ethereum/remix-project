@@ -55,10 +55,11 @@ class Toaster {
       const shortTooltipText = (canShorten && tooltipText.length > 201) ? tooltipText.substring(0, 200) + '...' : tooltipText
       this.resolveFn = resolve
 
-      function showFullMessage() {
+      function showFullMessage () {
         modal.alert(tooltipText)
       }
-      function closeTheToaster(self) {
+      
+      function closeTheToaster (self) {
         self.hide()
         over()
         resolve()
