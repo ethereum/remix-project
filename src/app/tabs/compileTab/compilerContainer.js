@@ -114,7 +114,7 @@ class CompilerContainer {
 
   _retrieveVersion () {
     let version = this._view.versionSelector.value
-    return version.substring(9, 14)
+    return version.substring(9, version.length)
   }
 
   render () {
@@ -313,7 +313,7 @@ class CompilerContainer {
   }
 
   _updateLanguageSelector () {
-    if (semver.lt(this._retrieveVersion(), '0.5.7')) {
+    if (semver.lt(this._retrieveVersion(), 'v0.5.7+commit.6da8b019.js')) {
       this._view.languageSelector.setAttribute('disabled', '')
       this._view.languageSelector.value = 'Solidity'
       this.compileTabLogic.setLanguage('Solidity')
