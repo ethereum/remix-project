@@ -314,6 +314,7 @@ class CompilerContainer {
 
   _updateLanguageSelector () {
     if (semver.lt(this._retrieveVersion(), 'v0.5.7+commit.6da8b019.js')) {
+      this._view.languageSelector.setAttribute('disabled', '')
       this._view.languageSelector.value = 'Solidity'
       this.compileTabLogic.setLanguage('Solidity')
     } else {
