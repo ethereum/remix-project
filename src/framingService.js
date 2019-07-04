@@ -1,26 +1,34 @@
-export default {
-  start: (appStore, sidePanel, verticalIcon, mainPanel, resizeFeature) => {
-    sidePanel.events.on('toggle', () => {
-      resizeFeature.panel1.clientWidth !== 0 ? resizeFeature.minimize() : resizeFeature.maximise()
+export class FramingService {
+
+  constructor (sidePanel, verticalIcon, mainView, resizeFeature) {
+    this.sidePanel = sidePanel
+    this.verticalIcon = verticalIcon
+    this.mainPanel = mainView.getAppPanel()
+    this.mainView = mainView
+    this.resizeFeature = resizeFeature
+  }
+
+  start () {
+    this.sidePanel.events.on('toggle', () => {
+      this.resizeFeature.panel1.clientWidth !== 0 ? this.resizeFeature.minimize() : this.resizeFeature.maximise()
     })
-    sidePanel.events.on('showing', () => {
-      resizeFeature.panel1.clientWidth === 0 ? resizeFeature.maximise() : ''
+    this.sidePanel.events.on('showing', () => {
+      this.resizeFeature.panel1.clientWidth === 0 ? this.resizeFeature.maximise() : ''
     })
-    mainPanel.events.on('toggle', () => {
-      resizeFeature.maximise()
+    this.mainPanel.events.on('toggle', () => {
+      this.resizeFeature.maximise()
     })
 
-    verticalIcon.select('fileExplorers')
-    verticalIcon.showHome()
+    this.verticalIcon.select('fileExplorers')
 
     document.addEventListener('keypress', (e) => {
       if (e.shiftKey && e.ctrlKey) {
         if (e.code === 'KeyF') { // Ctrl+Shift+F
-          verticalIcon.select('fileExplorers')
+          this.verticalIcon.select('fileExplorers')
         } else if (e.code === 'KeyA') { // Ctrl+Shift+A
-          verticalIcon.select('pluginManager')
+          this.verticalIcon.select('pluginManager')
         } else if (e.code === 'KeyS') { //  Ctrl+Shift+S
-          verticalIcon.select('settings')
+          this.verticalIcon.select('settings')
         }
         e.preventDefault()
       }

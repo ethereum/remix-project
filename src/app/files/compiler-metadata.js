@@ -1,21 +1,33 @@
 'use strict'
 var executionContext = require('../../execution-context')
 var CompilerAbstract = require('../compiler/compiler-abstract')
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../package.json'
 
-class CompilerMetadata {
-  constructor (opts) {
+const profile = {
+  name: 'compilerMetadata',
+  methods: ['deployMetadataOf'],
+  events: [],
+  version: packageJson.version,
+  required: true
+}
+
+class CompilerMetadata extends Plugin {
+  constructor (fileManager, config) {
+    super(profile)
     var self = this
-    self._opts = opts
+    self.fileManager = fileManager
+    self.config = config
     self.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'görli:5', 'Custom']
   }
 
-  syncContractMetadata () {
+  onActivation () {
     var self = this
-    self._opts.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
-      if (!self._opts.config.get('settings/generate-contract-metadata')) return
+    this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
+      if (!self.config.get('settings/generate-contract-metadata')) return
       let compiler = new CompilerAbstract(languageVersion, data, source)
-      var provider = self._opts.fileManager.currentFileProvider()
-      var path = self._opts.fileManager.currentPath()
+      var provider = self.fileManager.currentFileProvider()
+      var path = self.fileManager.currentPath()
       if (provider && path) {
         compiler.visitContracts((contract) => {
           if (contract.file !== source.target) return
@@ -75,30 +87,32 @@ class CompilerMetadata {
   }
 
   // TODO: is only called by dropdownLogic and can be moved there
-  deployMetadataOf (contractName, callback) {
-    var self = this
-    var provider = self._opts.fileManager.currentFileProvider()
-    var path = self._opts.fileManager.currentPath()
-    if (provider && path) {
-      executionContext.detectNetwork((err, { id, name } = {}) => {
-        if (err) {
-          console.log(err)
-        } else {
-          var fileName = path + '/' + contractName + '.json'
-          provider.get(fileName, (error, content) => {
-            if (error) return callback(error)
-            if (!content) return callback()
-            try {
-              var metadata = JSON.parse(content)
-              metadata = metadata.deploy || {}
-              return callback(null, metadata[name + ':' + id] || metadata[name] || metadata[id] || metadata[name.toLowerCase() + ':' + id] || metadata[name.toLowerCase()])
-            } catch (e) {
-              callback(e.message)
-            }
-          })
-        }
-      })
-    }
+  deployMetadataOf (contractName) {
+    return new Promise((resolve, reject) => {
+      var self = this
+      var provider = self.fileManager.currentFileProvider()
+      var path = self.fileManager.currentPath()
+      if (provider && path) {
+        executionContext.detectNetwork((err, { id, name } = {}) => {
+          if (err) {
+            console.log(err)
+          } else {
+            var fileName = path + '/' + contractName + '.json'
+            provider.get(fileName, (error, content) => {
+              if (error) return reject(error)
+              if (!content) return resolve()
+              try {
+                var metadata = JSON.parse(content)
+                metadata = metadata.deploy || {}
+                return resolve(metadata[name + ':' + id] || metadata[name] || metadata[id] || metadata[name.toLowerCase() + ':' + id] || metadata[name.toLowerCase()])
+              } catch (e) {
+                reject(e.message)
+              }
+            })
+          }
+        })
+      }
+    })
   }
 }
 

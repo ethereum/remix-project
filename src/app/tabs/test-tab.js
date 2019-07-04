@@ -3,7 +3,7 @@ var async = require('async')
 var tooltip = require('../ui/tooltip')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
-import { BaseApi } from 'remix-plugin'
+import { ViewPlugin } from '@remixproject/engine'
 
 const TestTabLogic = require('./testTab/testTab')
 
@@ -18,30 +18,27 @@ const profile = {
   documentation: 'https://remix-ide.readthedocs.io/en/latest/unittesting.html'
 }
 
-module.exports = class TestTab extends BaseApi {
-  constructor (fileManager, filePanel, compileTab, appStore) {
+module.exports = class TestTab extends ViewPlugin {
+  constructor (fileManager, filePanel, compileTab, appManager) {
     super(profile)
     this.compileTab = compileTab
     this._view = { el: null }
     this.compileTab = compileTab
     this.fileManager = fileManager
     this.filePanel = filePanel
-    this.appStore = appStore
-    this.testTabLogic = new TestTabLogic(fileManager)
     this.data = {}
-    this.appStore.event.on('activate', (name) => {
+    this.appManager = appManager
+    appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
     })
-    this.appStore.event.on('deactivate', (name) => {
+    appManager.event.on('deactivate', (name) => {
       if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
     })
   }
 
-  activate () {
+  onActivationInternal () {
+    this.testTabLogic = new TestTabLogic(this.fileManager)
     this.listenToEvents()
-  }
-
-  deactivate () {
   }
 
   listenToEvents () {
@@ -144,8 +141,7 @@ module.exports = class TestTab extends BaseApi {
 
   runTest (testFilePath, callback) {
     this.loading.hidden = false
-    this.fileManager.fileProviderOf(testFilePath).get(testFilePath, (error, content) => {
-      if (error) return
+    this.fileManager.getFile(testFilePath).then((content) => {
       var runningTest = {}
       runningTest[testFilePath] = { content }
       remixTests.runTestSources(runningTest, (result) => { this.testCallback(result) }, (_err, result, cb) => { this.resultsCallback(_err, result, cb) }, (error, result) => {
@@ -155,6 +151,8 @@ module.exports = class TestTab extends BaseApi {
       }, (url, cb) => {
         return this.compileTab.compileTabLogic.importFileCb(url, cb)
       })
+    }).catch((error) => {
+      if (error) return
     })
   }
 
@@ -183,7 +181,7 @@ module.exports = class TestTab extends BaseApi {
 
   updateRunAction (currentFile) {
     let el = yo`<button class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</button>`
-    const isSolidityActive = this.appStore.isActive('solidity')
+    const isSolidityActive = this.appManager.isActive('solidity')
     if (!currentFile || !isSolidityActive) {
       el.setAttribute('disabled', 'disabled')
       if (!currentFile) el.setAttribute('title', 'No file selected')
@@ -209,6 +207,7 @@ module.exports = class TestTab extends BaseApi {
     return this.testFilesListElement
   }
   render () {
+    this.onActivationInternal()
     this.testsOutput = yo`<div class="${css.container} m-3 border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="tests"></div>`
     this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="tests"></div>`
     this.loading = yo`<span class='text-info ml-1'>Running tests...</span>`

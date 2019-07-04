@@ -1,5 +1,5 @@
 'use strict'
-var executionContext = require('./execution-context')
+var executionContext = require('../execution-context')
 
 module.exports = class TransactionReceiptResolver {
   constructor () {

@@ -1,29 +1,43 @@
 'use strict'
 var SourceMappingDecoder = require('remix-lib').SourceMappingDecoder
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../package.json'
 
-function offsetToColumnConverter (appManager) {
-  this.lineBreakPositionsByContent = {}
-  this.sourceMappingDecoder = new SourceMappingDecoder()
-  appManager.data.proxy.event.register('sendCompilationResult', () => {
-    this.clear()
-  })
+const profile = {
+  name: 'offsetToLineColumnConverter',
+  methods: [],
+  events: [],
+  version: packageJson.version,
+  required: true
 }
 
-offsetToColumnConverter.prototype.offsetToLineColumn = function (rawLocation, file, sources, asts) {
-  if (!this.lineBreakPositionsByContent[file]) {
-    for (var filename in asts) {
-      var source = asts[filename]
-      if (source.id === file) {
-        this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[filename].content)
-        break
+export class OffsetToLineColumnConverter extends Plugin {
+  constructor () {
+    super(profile)
+    this.lineBreakPositionsByContent = {}
+    this.sourceMappingDecoder = new SourceMappingDecoder()
+  }
+
+  offsetToLineColumn (rawLocation, file, sources, asts) {
+    if (!this.lineBreakPositionsByContent[file]) {
+      for (var filename in asts) {
+        var source = asts[filename]
+        if (source.id === file) {
+          this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[filename].content)
+          break
+        }
       }
     }
+    return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
   }
-  return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
-}
 
-offsetToColumnConverter.prototype.clear = function () {
-  this.lineBreakPositionsByContent = {}
-}
+  clear () {
+    this.lineBreakPositionsByContent = {}
+  }
 
-module.exports = offsetToColumnConverter
+  activate () {
+    this.on('solidity', 'compilationFinished', () => {
+      this.clear()
+    })
+  }
+}

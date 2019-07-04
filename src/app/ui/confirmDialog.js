@@ -1,6 +1,6 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-const copyToClipboard = require('../ui/copy-to-clipboard')
+const copyToClipboard = require('./copy-to-clipboard')
 
 var css = csjs`
   .txInfoBox {

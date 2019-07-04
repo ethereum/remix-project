@@ -1,3 +1,4 @@
+var $ = require('jquery')
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 var Card = require('../ui/card')
@@ -8,13 +9,14 @@ var SettingsUI = require('./runTab/settings.js')
 
 var DropdownLogic = require('./runTab/model/dropdownlogic.js')
 var ContractDropdownUI = require('./runTab/contractDropdown.js')
+var UniversalDAppUI = require('../ui/universal-dapp-ui')
 
 var Recorder = require('./runTab/model/recorder.js')
 var RecorderUI = require('./runTab/recorder.js')
 
 const executionContext = require('../../execution-context')
 
-import { BaseApi } from 'remix-plugin'
+import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
 const profile = {
@@ -30,20 +32,46 @@ const profile = {
   version: packageJson.version
 }
 
-class RunTab extends BaseApi {
+class RunTab extends ViewPlugin {
 
-  constructor (udapp, udappUI, config, fileManager, editor, logCallback, filePanel, pluginManager, compilersArtefacts) {
+  constructor (udapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
     super(profile)
     this.event = new EventManager()
     this.config = config
     this.udapp = udapp
-    this.udappUI = udappUI
     this.fileManager = fileManager
     this.editor = editor
-    this.logCallback = logCallback
+    this.logCallback = (msg) => { mainView.getTerminal().logHtml(msg) }
     this.filePanel = filePanel
-    this.pluginManager = pluginManager
     this.compilersArtefacts = compilersArtefacts
+    this.networkModule = networkModule
+  }
+
+  onActivationInternal () {
+    this.udappUI = new UniversalDAppUI(this.udapp, this.logCallback)
+    this.udapp.resetAPI({
+      getAddress: (cb) => {
+        cb(null, $('#txorigin').val())
+      },
+      getValue: (cb) => {
+        try {
+          var number = document.querySelector('#value').value
+          var select = document.getElementById('unit')
+          var index = select.selectedIndex
+          var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+          var unit = 'ether' // default
+          if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
+            unit = selectedUnit
+          }
+          cb(null, executionContext.web3().toWei(number, unit))
+        } catch (e) {
+          cb(e)
+        }
+      },
+      getGasLimit: (cb) => {
+        cb(null, $('#gasLimit').val())
+      }
+    })
   }
 
   renderContainer () {
@@ -90,15 +118,15 @@ class RunTab extends BaseApi {
 
   renderSettings (udapp) {
     var settings = new Settings(udapp)
-    this.settingsUI = new SettingsUI(settings)
+    this.settingsUI = new SettingsUI(settings, this.networkModule)
 
     this.settingsUI.event.register('clearInstance', () => {
       this.event.trigger('clearInstance', [])
     })
   }
 
-  renderDropdown (udappUI, fileManager, pluginManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
-    var dropdownLogic = new DropdownLogic(fileManager, pluginManager, compilersArtefacts, config, editor, udapp, filePanel)
+  renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
+    var dropdownLogic = new DropdownLogic(fileManager, compilersArtefacts, config, editor, udapp, filePanel, this)
     this.contractDropdownUI = new ContractDropdownUI(dropdownLogic, logCallback)
 
     this.contractDropdownUI.event.register('clearInstance', () => {
@@ -166,13 +194,14 @@ class RunTab extends BaseApi {
   }
 
   render () {
+    this.onActivationInternal()
     executionContext.init(this.config)
     executionContext.stopListenOnLastBlock()
     executionContext.listenOnLastBlock()
     this.udapp.resetEnvironment()
     this.renderInstanceContainer()
     this.renderSettings(this.udapp)
-    this.renderDropdown(this.udappUI, this.fileManager, this.pluginManager, this.compilersArtefacts, this.config, this.editor, this.udapp, this.filePanel, this.logCallback)
+    this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.udapp, this.filePanel, this.logCallback)
     this.renderRecorder(this.udapp, this.udappUI, this.fileManager, this.config, this.logCallback)
     this.renderRecorderCard()
     return this.renderContainer()

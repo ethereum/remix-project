@@ -1,12 +1,14 @@
 'use strict'
 
 import yo from 'yo-yo'
+import async from 'async'
 const EventEmitter = require('events')
 const globalRegistry = require('../../global/registry')
 const CompilerImport = require('../compiler/compiler-imports')
 const toaster = require('../ui/tooltip')
+const modalDialogCustom = require('../ui/modal-dialog-custom')
 const helper = require('../../lib/helper.js')
-import { FileSystemApi } from 'remix-plugin'
+import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
 /*
@@ -20,26 +22,28 @@ const profile = {
   description: 'Service - read/write to any files or folders, require giving permissions',
   icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNjk2IDM4NHE0MCAwIDY4IDI4dDI4IDY4djEyMTZxMCA0MC0yOCA2OHQtNjggMjhoLTk2MHEtNDAgMC02OC0yOHQtMjgtNjh2LTI4OGgtNTQ0cS00MCAwLTY4LTI4dC0yOC02OHYtNjcycTAtNDAgMjAtODh0NDgtNzZsNDA4LTQwOHEyOC0yOCA3Ni00OHQ4OC0yMGg0MTZxNDAgMCA2OCAyOHQyOCA2OHYzMjhxNjgtNDAgMTI4LTQwaDQxNnptLTU0NCAyMTNsLTI5OSAyOTloMjk5di0yOTl6bS02NDAtMzg0bC0yOTkgMjk5aDI5OXYtMjk5em0xOTYgNjQ3bDMxNi0zMTZ2LTQxNmgtMzg0djQxNnEwIDQwLTI4IDY4dC02OCAyOGgtNDE2djY0MGg1MTJ2LTI1NnEwLTQwIDIwLTg4dDQ4LTc2em05NTYgODA0di0xMTUyaC0zODR2NDE2cTAgNDAtMjggNjh0LTY4IDI4aC00MTZ2NjQwaDg5NnoiLz48L3N2Zz4=',
   permission: true,
-  version: packageJson.version
+  version: packageJson.version,
+  methods: ['getFolder', 'getCurrentFile', 'getFile', 'setFile', 'switchFile'],
+  required: true
 }
 
 // File System profile
-// - events: ['currentFileChanged']
 // - methods: ['getFolder', 'getCurrentFile', 'getFile', 'setFile', 'switchFile']
 
-class FileManager extends FileSystemApi {
-  constructor (localRegistry) {
+class FileManager extends Plugin {
+  constructor (editor) {
     super(profile)
     this.openedFiles = {} // list all opened files
     this.events = new EventEmitter()
+    this.editor = editor
     this._components = {}
     this._components.compilerImport = new CompilerImport()
-    this._components.registry = localRegistry || globalRegistry
+    this._components.registry = globalRegistry
+    this.init()
   }
 
   init () {
     this._deps = {
-      editor: this._components.registry.get('editor').api,
       config: this._components.registry.get('config').api,
       browserExplorer: this._components.registry.get('fileproviders/browser').api,
       localhostExplorer: this._components.registry.get('fileproviders/localhost').api,
@@ -60,7 +64,7 @@ class FileManager extends FileSystemApi {
   fileRenamedEvent (oldName, newName, isFolder) {
     if (!isFolder) {
       this._deps.config.set('currentFile', '')
-      this._deps.editor.discard(oldName)
+      this.editor.discard(oldName)
       if (this.openedFiles[oldName]) {
         delete this.openedFiles[oldName]
         this.openedFiles[newName] = newName
@@ -102,7 +106,7 @@ class FileManager extends FileSystemApi {
     if (Object.keys(this.openedFiles).length) {
       this.switchFile(Object.keys(this.openedFiles)[0])
     } else {
-      this._deps.editor.displayEmptyReadOnlySession()
+      this.editor.displayEmptyReadOnlySession()
       this._deps.config.set('currentFile', '')
       this.events.emit('noFileSelected')
     }
@@ -127,6 +131,7 @@ class FileManager extends FileSystemApi {
     if (!provider) throw new Error(`${path} not available`)
     // TODO: change provider to Promise
     return new Promise((resolve, reject) => {
+      if (this.currentFile() === path) return resolve(this.editor.currentContent())
       provider.get(path, (err, content) => {
         if (err) reject(err)
         resolve(content)
@@ -219,7 +224,7 @@ class FileManager extends FileSystemApi {
     if (path === this._deps.config.get('currentFile')) {
       this._deps.config.set('currentFile', '')
     }
-    this._deps.editor.discard(path)
+    this.editor.discard(path)
     delete this.openedFiles[path]
     this.events.emit('fileRemoved', path)
     this.switchFile()
@@ -241,9 +246,9 @@ class FileManager extends FileSystemApi {
           console.log(error)
         } else {
           if (this.fileProviderOf(file).isReadOnly(file)) {
-            this._deps.editor.openReadOnly(file, content)
+            this.editor.openReadOnly(file, content)
           } else {
-            this._deps.editor.open(file, content)
+            this.editor.open(file, content)
           }
           this.events.emit('currentFileChanged', file)
         }
@@ -258,7 +263,7 @@ class FileManager extends FileSystemApi {
         if (fileList.length) {
           _switchFile(browserProvider.type + '/' + fileList[0])
         } else {
-          this._deps.editor.displayEmptyReadOnlySession()
+          this.editor.displayEmptyReadOnlySession()
           this.events.emit('noFileSelected')
         }
       })
@@ -294,8 +299,8 @@ class FileManager extends FileSystemApi {
 
   saveCurrentFile () {
     var currentFile = this._deps.config.get('currentFile')
-    if (currentFile && this._deps.editor.current()) {
-      var input = this._deps.editor.get(currentFile)
+    if (currentFile && this.editor.current()) {
+      var input = this.editor.get(currentFile)
       if (input) {
         var provider = this.fileProviderOf(currentFile)
         if (provider) {
@@ -315,11 +320,33 @@ class FileManager extends FileSystemApi {
     if (provider) {
       provider.get(currentFile, (error, content) => {
         if (error) console.log(error)
-        this._deps.editor.setText(content)
+        this.editor.setText(content)
       })
     } else {
       console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
     }
+  }
+
+  setBatchFiles (filesSet, fileProvider, callback) {
+    const self = this
+    if (!fileProvider) fileProvider = 'browser'
+
+    async.each(Object.keys(filesSet), (file, callback) => {
+      helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
+      (error, name) => {
+        if (error) {
+          modalDialogCustom.alert('Unexpected error loading the file ' + error)
+        } else if (helper.checkSpecialChars(name)) {
+          modalDialogCustom.alert('Special characters are not allowed')
+        } else {
+          self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+        }
+        callback()
+      })
+    }, (error) => {
+      if (!error) self.switchFile()
+      if (callback) callback(error)
+    })
   }
 }
 

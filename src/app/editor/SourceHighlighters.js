@@ -1,20 +1,22 @@
 'use strict'
 const SourceHighlighter = require('./sourceHighlighter')
 
-import { EditorApi } from 'remix-plugin'
+import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
 const profile = {
   displayName: 'source highlighters',
-  name: 'editor',
+  name: 'sourceHighlighters',
   description: 'service - highlight source code',
-  version: packageJson.version
+  version: packageJson.version,
+  methods: ['highlight', 'discardHighlight'],
+  required: true
 }
 
 // EditorApi:
 // - methods: ['highlight', 'discardHighlight'],
 
-class SourceHighlighters extends EditorApi {
+class SourceHighlighters extends Plugin {
 
   constructor () {
     super(profile)

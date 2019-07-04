@@ -1,4 +1,4 @@
-import { BaseApi } from 'remix-plugin'
+import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import * as packageJson from '../../../package.json'
 
@@ -21,10 +21,11 @@ const profile = {
   name: 'theme',
   events: ['themeChanged'],
   methods: ['switchTheme', 'getThemes', 'currentTheme'],
-  version: packageJson.version
+  version: packageJson.version,
+  required: true
 }
 
-export class ThemeModule extends BaseApi {
+export class ThemeModule extends Plugin {
 
   constructor (registry) {
     super(profile)
