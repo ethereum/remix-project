@@ -2,38 +2,32 @@
 'use strict'
 
 var isElectron = require('is-electron')
-var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
-var async = require('async')
-var request = require('request')
 var remixLib = require('remix-lib')
 var registry = require('./global/registry')
-var UniversalDApp = require('./universal-dapp.js')
-var UniversalDAppUI = require('./universal-dapp-ui.js')
 var Remixd = require('./lib/remixd')
-var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
+var loadFileFromParent = require('./loadFilesFromParent')
+var { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
-var helper = require('./lib/helper')
+var makeUdapp = require('./makeUdapp')
 var Storage = remixLib.Storage
 var Browserfiles = require('./app/files/browser-files')
 var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
-var executionContext = require('./execution-context')
 var examples = require('./app/editor/example-contracts')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
-var TxLogger = require('./app/execution/txLogger')
-var Txlistener = remixLib.execution.txListener
-var EventsDecoder = remixLib.execution.EventsDecoder
 var FileManager = require('./app/files/fileManager')
 var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
-var TransactionReceiptResolver = require('./transactionReceiptResolver')
+var CompilerMetadata = require('./app/files/compiler-metadata')
+var CompilerImport = require('./app/compiler/compiler-imports')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
+const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
 
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
@@ -42,19 +36,19 @@ const DebuggerTab = require('./app/tabs/debugger-tab')
 const TestTab = require('./app/tabs/test-tab')
 const RunTab = require('./app/tabs/run-tab')
 const FilePanel = require('./app/panels/file-panel')
+const Editor = require('./app/editor/editor')
 
 import PanelsResize from './lib/panels-resize'
-import { EntityStore } from './lib/store'
 import { RemixAppManager } from './remixAppManager'
-import { LandingPage } from './app/ui/landing-page/landing-page'
-import framingService from './framingService'
+import { FramingService } from './framingService'
 import { MainView } from './app/panels/main-view'
 import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
 import { SidePanel } from './app/components/side-panel'
-import { MainPanel } from './app/components/main-panel'
 import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
+import { LandingPage } from './app/ui/landing-page/landing-page'
+import { MainPanel } from './app/components/main-panel'
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -119,19 +113,15 @@ class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
     self._components = {}
-    registry.put({api: self, name: 'app'})
-
+    // setup storage
     var fileStorage = new Storage('sol:')
-    registry.put({api: fileStorage, name: 'fileStorage'})
-
     var configStorage = new Storage('config-v0.8:')
-    registry.put({api: configStorage, name: 'configStorage'})
 
-    self._components.config = new Config(configStorage)
-    registry.put({api: self._components.config, name: 'config'})
+    // load app config
+    const config = new Config(configStorage)
+    registry.put({api: config, name: 'config'})
 
-    self._components.gistHandler = new GistHandler()
-
+    // load file system
     self._components.filesProviders = {}
     self._components.filesProviders['browser'] = new Browserfiles(fileStorage)
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
@@ -198,44 +188,6 @@ class App {
     `
     return self._view.el
   }
-  loadFromGist (params) {
-    const self = this
-    return self._components.gistHandler.handleLoad(params, function (gistId) {
-      request.get({
-        url: `https://api.github.com/gists/${gistId}`,
-        json: true
-      }, (error, response, data = {}) => {
-        if (error || !data.files) {
-          modalDialogCustom.alert(`Gist load error: ${error || data.message}`)
-          return
-        }
-        self.loadFiles(data.files, 'gist', (errorLoadingFile) => {
-          if (!errorLoadingFile) self._components.filesProviders['gist'].id = gistId
-        })
-      })
-    })
-  }
-  loadFiles (filesSet, fileProvider, callback) {
-    const self = this
-    if (!fileProvider) fileProvider = 'browser'
-
-    async.each(Object.keys(filesSet), (file, callback) => {
-      helper.createNonClashingName(file, self._components.filesProviders[fileProvider],
-      (error, name) => {
-        if (error) {
-          modalDialogCustom.alert('Unexpected error loading the file ' + error)
-        } else if (helper.checkSpecialChars(name)) {
-          modalDialogCustom.alert('Special characters are not allowed')
-        } else {
-          self._components.filesProviders[fileProvider].set(name, filesSet[file].content)
-        }
-        callback()
-      })
-    }, (error) => {
-      if (!error) self._components.fileManager.switchFile()
-      if (callback) callback(error)
-    })
-  }
 }
 
 module.exports = App
@@ -243,6 +195,7 @@ module.exports = App
 function run () {
   var self = this
 
+  // check the origin and warn message
   if (window.location.hostname === 'yann300.github.io') {
     modalDialogCustom.alert('This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.')
   } else if (window.location.hostname === 'remix-alpha.ethereum.org' ||
@@ -256,10 +209,11 @@ function run () {
 This instance of Remix you are visiting WILL NOT BE UPDATED.\n
 Please make a backup of your contracts and start using http://remix.ethereum.org`)
   }
-
   if (window.location.protocol.indexOf('https') === 0) {
     toolTip('You are using an `https` connection. Please switch to `http` if you are using Remix against an `http Web3 provider` or allow Mixed Content in your browser.')
   }
+
+  // workaround for Electron support
   if (!isElectron()) {
     // Oops! Accidentally trigger refresh or bookmark.
     window.onbeforeunload = function () {
@@ -267,248 +221,142 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   }
 
-  let appStore = new EntityStore('module', 'name')
-  // Get workspace before creating the App Manager
+  // APP_MANAGER
+  const appManager = new RemixAppManager([])
   const workspace = JSON.parse(localStorage.getItem('workspace'))
-  const appManager = new RemixAppManager(appStore)
-  registry.put({api: appManager, name: 'appmanager'})
 
-  registry.put({api: msg => self._components.mainview.logHtmlMessage(msg), name: 'logCallback'})
-
-  // helper for converting offset to line/column
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(appManager)
-  registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
-
-  // json structure for hosting the last compilattion result
-  self._components.compilersArtefacts = {} // store all the possible compilation data (key represent a compiler name)
-  registry.put({api: self._components.compilersArtefacts, name: 'compilersartefacts'})
-
-  // ----------------- UniversalDApp -----------------
-  const udapp = new UniversalDApp(registry)
-  // TODO: to remove when possible
-  registry.put({api: udapp, name: 'udapp'})
-  udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
-    var txLink = executionContext.txDetailsLink(networkName, txhash)
-    if (txLink) registry.get('logCallback').api(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
-  })
-
-  const udappUI = new UniversalDAppUI(udapp, registry)
-  // TODO: to remove when possible
-  registry.put({api: udappUI, name: 'udappUI'})
-
-  // ----------------- Tx listener -----------------
-  const transactionReceiptResolver = new TransactionReceiptResolver()
-
-  const txlistener = new Txlistener({
-    api: {
-      contracts: function () {
-        if (self._components.compilersArtefacts['__last']) return self._components.compilersArtefacts['__last'].getContracts()
-        return null
-      },
-      resolveReceipt: function (tx, cb) {
-        transactionReceiptResolver.resolve(tx, cb)
-      }
-    },
-    event: {
-      udapp: udapp.event
-    }})
-  registry.put({api: txlistener, name: 'txlistener'})
-  udapp.startListening(txlistener)
-
-  const eventsDecoder = new EventsDecoder({
-    api: {
-      resolveReceipt: function (tx, cb) {
-        transactionReceiptResolver.resolve(tx, cb)
-      }
-    }
-  })
-  registry.put({api: eventsDecoder, name: 'eventsdecoder'})
-
-  txlistener.startListening()
-
-  // TODO: There are still a lot of dep between mainview and filemanager
-
-  // ----------------- file manager ----------------------------
-  self._components.fileManager = new FileManager()
-  const fileManager = self._components.fileManager
-  registry.put({api: fileManager, name: 'filemanager'})
-
-  // ----------------- Network ----------------------------
-  const networkModule = new NetworkModule()
-  registry.put({api: networkModule, name: 'network'})
-
-  // ----------------- theme module ----------------------------
+  // SERVICES
+  // ----------------- import content servive ----------------------------
+  const contentImport = new CompilerImport()
+  // ----------------- theme servive ----------------------------
   const themeModule = new ThemeModule(registry)
   registry.put({api: themeModule, name: 'themeModule'})
+  // ----------------- editor servive ----------------------------
+  const editor = new Editor({}, themeModule) // wrapper around ace editor
+  registry.put({api: editor, name: 'editor'})
+  editor.event.register('requiringToSaveCurrentfile', () => fileManager.saveCurrentFile())
+  // ----------------- fileManager servive ----------------------------
+  const fileManager = new FileManager(editor)
+  registry.put({api: fileManager, name: 'filemanager'})
+  // ----------------- compilation metadata generation servive ----------------------------
+  const compilerMetadataGenerator = new CompilerMetadata(fileManager, registry.get('config').api)
+  // ----------------- compilation result service (can keep track of compilation results) ----------------------------
+  const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
+  registry.put({api: compilersArtefacts, name: 'compilersartefacts'})
+  // ----------------- universal dapp: run transaction, listen on transactions, decode events
+  const {udapp, eventsDecoder, txlistener} = makeUdapp(compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
+  // ----------------- network service (resolve network id / name) ----------------------------
+  const networkModule = new NetworkModule()
+  // ----------------- convert offset to line/column service ----------------------------
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
+  registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
 
-  // ----------------- landing page ----------------------------
-  // Need to have Home initialized before VerticalIconComponent render to access profile of it for icon
-  const landingPage = new LandingPage(appManager, appStore)
+  appManager.register([
+    contentImport,
+    themeModule,
+    editor.sourceHighlighters,
+    fileManager,
+    compilerMetadataGenerator,
+    compilersArtefacts,
+    udapp,
+    networkModule,
+    offsetToLineColumnConverter
+  ])
+  appManager.activate(['contentImport', 'theme', 'sourceHighlighters', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'udapp', 'network', 'offsetToLineColumnConverter'])
 
-  // ----------------- Vertical Icon ----------------------------
-  const verticalIcons = new VerticalIcons('sidePanel', appStore, landingPage)
-  registry.put({api: verticalIcons, name: 'verticalicon'})
+  // LAYOUT & SYSTEM VIEWS
+  const appPanel = new MainPanel()
+  const mainview = new MainView(editor, appPanel, fileManager, appManager, txlistener, eventsDecoder)
+  registry.put({ api: mainview, name: 'mainview' })
 
-  const sidePanel = new SidePanel(appStore)
-  const mainPanel = new MainPanel(appStore)
-  const hiddenPanel = new HiddenPanel(appStore)
+  appManager.register([
+    appPanel
+  ])
+  appManager.activate(['mainPanel'])
 
-  // ----------------- main view ----------------------
-  self._components.mainview = new MainView(appStore, appManager, mainPanel)
-  registry.put({ api: self._components.mainview, name: 'mainview' })
+  // those views depend on app_manager
+  const menuicons = new VerticalIcons(appManager)
+  const landingPage = new LandingPage(appManager, menuicons)
+  const sidePanel = new SidePanel(appManager, menuicons)
+  const hiddenPanel = new HiddenPanel()
+  const pluginManagerComponent = new PluginManagerComponent(appManager)
+  const filePanel = new FilePanel(appManager)
+  let settings = new SettingsTab(
+    registry.get('config').api,
+    editor,
+    appManager
+  )
 
-  // ----------------- Renderer -----------------
-  const renderer = new Renderer()
-  registry.put({api: renderer, name: 'renderer'})
-
-  // ----------------- app manager ----------------------------
-
-  /*
-    TODOs:
-      - for each activated plugin,
-        an internal module (associated only with the plugin) should be created for accessing specific part of the UI. detail to be discussed
-      - the current API is not optimal. For instance methods of `app` only refers to `executionContext`, wich does not make really sense.
-  */
-
-  // TODOs those are instanciated before hand. should be instanciated on demand
-
-  const pluginManagerComponent = new PluginManagerComponent()
-  registry.put({api: appManager.proxy(), name: 'pluginmanager'})
-
-  pluginManagerComponent.setApp(appManager)
-  pluginManagerComponent.setStore(appStore)
-
-  self._components.mainview.init()
-
-  self._components.fileManager.init()
-  self._view.mainpanel.appendChild(self._components.mainview.render())
-  self._view.iconpanel.appendChild(verticalIcons.render())
+  // adding Views to the DOM
+  self._view.mainpanel.appendChild(mainview.render())
+  self._view.iconpanel.appendChild(menuicons.render())
   self._view.sidepanel.appendChild(sidePanel.render())
   document.body.appendChild(hiddenPanel.render()) // Hidden Panel is display none, it can be directly on body
 
-  let filePanel = new FilePanel()
-  registry.put({api: filePanel, name: 'filepanel'})
+  appManager.register([
+    menuicons,
+    landingPage,
+    sidePanel,
+    pluginManagerComponent,
+    filePanel,
+    settings
+  ])
+
+  appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
+
+  // CONTENT VIEWS & DEFAULT PLUGINS
   let compileTab = new CompileTab(
-    registry.get('editor').api,
+    editor,
     registry.get('config').api,
-    registry.get('renderer').api,
+    new Renderer(),
     registry.get('fileproviders/swarm').api,
     registry.get('filemanager').api,
     registry.get('fileproviders').api,
-    registry.get('pluginmanager').api
   )
   let run = new RunTab(
-    registry.get('udapp').api,
-    registry.get('udappUI').api,
+    udapp,
     registry.get('config').api,
     registry.get('filemanager').api,
     registry.get('editor').api,
-    registry.get('logCallback').api,
-    registry.get('filepanel').api,
-    registry.get('pluginmanager').api,
-    registry.get('compilersartefacts').api
-  )
-  let settings = new SettingsTab(
-      registry.get('config').api,
-      registry.get('editor').api,
-      appManager
+    filePanel,
+    registry.get('compilersartefacts').api,
+    networkModule,
+    mainview
   )
   let analysis = new AnalysisTab(registry)
   let debug = new DebuggerTab()
   let test = new TestTab(
     registry.get('filemanager').api,
-    registry.get('filepanel').api,
+    filePanel,
     compileTab,
-    appStore
+    appManager
   )
-  let sourceHighlighters = registry.get('editor').api.sourceHighlighters
 
-  appManager.init([
-    landingPage.api(),
-    udapp.api(),
-    fileManager.api(),
-    sourceHighlighters.api(),
-    filePanel.api(),
-    settings.api(),
-    pluginManagerComponent.api(),
-    networkModule.api(),
-    themeModule.api()
-  ])
-
-  appManager.registerMany([
-    compileTab.api(),
-    run.api(),
-    debug.api(),
-    analysis.api(),
-    test.api(),
-    filePanel.remixdHandle.api(),
-    ...appManager.plugins()
+  appManager.register([
+    compileTab,
+    run,
+    debug,
+    analysis,
+    test,
+    filePanel.remixdHandle,
+    ...appManager.registeredPlugins()
   ])
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) {
-    appManager.activateMany(workspace)
-  }
+  if (Array.isArray(workspace)) appManager.activate(workspace)
 
-  framingService.start(appStore, sidePanel, verticalIcons, mainPanel, this._components.resizeFeature)
+  // Load and start the service who manager layout and frame
+  const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
+  framingService.start()
 
-  // The event listener needs to be registered as early as possible, because the
-  // parent will send the message upon the "load" event.
-  let filesToLoad = null
-  let loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
+  // get the file list from the parent iframe
+  loadFileFromParent(fileManager)
 
-  window.addEventListener('message', function (ev) {
-    if (typeof ev.data === typeof [] && ev.data[0] === 'loadFiles') {
-      loadFilesCallback(ev.data[1])
-    }
-  }, false)
-
-  // Replace early callback with instant response
-  loadFilesCallback = function (files) {
-    self.loadFiles(files)
-  }
-
-  // Run if we did receive an event from remote instance while starting up
-  if (filesToLoad !== null) {
-    self.loadFiles(filesToLoad)
-  }
-
-  const txLogger = new TxLogger() // eslint-disable-line
-  txLogger.event.register('debuggingRequested', (hash) => {
-    if (!appStore.isActive('debugger')) appManager.activateOne('debugger')
-    debug.debugger().debug(hash)
-    verticalIcons.select('debugger')
-  })
-
-  let transactionContextAPI = {
-    getAddress: (cb) => {
-      cb(null, $('#txorigin').val())
-    },
-    getValue: (cb) => {
-      try {
-        var number = document.querySelector('#value').value
-        var select = document.getElementById('unit')
-        var index = select.selectedIndex
-        var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
-        var unit = 'ether' // default
-        if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
-          unit = selectedUnit
-        }
-        cb(null, executionContext.web3().toWei(number, unit))
-      } catch (e) {
-        cb(e)
-      }
-    },
-    getGasLimit: (cb) => {
-      cb(null, $('#gasLimit').val())
-    }
-  }
-  udapp.resetAPI(transactionContextAPI)
-
+  // get the file from gist
+  const gistHandler = new GistHandler()
   const queryParams = new QueryParams()
-
-  const loadingFromGist = self.loadFromGist(queryParams.get())
-  if (!loadingFromGist) {
+  const loadedFromGist = gistHandler.loadFromGist(queryParams.get(), fileManager)
+  if (!loadedFromGist) {
     // insert ballot contract if there are no files to show
     self._components.filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
       if (error) console.error(error)

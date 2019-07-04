@@ -38,13 +38,11 @@ document.head.appendChild(yo`
 
 class Editor {
 
-  constructor (opts = {}, localRegistry) {
+  constructor (opts = {}, themeModule) {
     // Dependancies
     this._components = {}
-    this._components.registry = localRegistry || globalRegistry
+    this._components.registry = globalRegistry
     this._deps = {
-      themeModule: this._components.registry.get('themeModule').api,
-      fileManager: this._components.registry.get('filemanager').api,
       config: this._components.registry.get('config').api
     }
 
@@ -52,7 +50,7 @@ class Editor {
       'light': 'chrome',
       'dark': 'chaos'
     }
-    this._deps.themeModule.events.on('themeChanged', (theme) => {
+    themeModule.events.on('themeChanged', (theme) => {
       this.setTheme(theme.quality)
     })
 
@@ -202,7 +200,7 @@ class Editor {
       window.clearTimeout(this.saveTimeout)
     }
     this.saveTimeout = window.setTimeout(() => {
-      this._deps.fileManager.saveCurrentFile()
+      this.event.trigger('requiringToSaveCurrentfile', [])
     }, 5000)
   }
 

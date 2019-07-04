@@ -4,7 +4,7 @@ var tooltip = require('../ui/tooltip')
 var copyToClipboard = require('../ui/copy-to-clipboard')
 var EventManager = require('../../lib/events')
 var css = require('./styles/settings-tab-styles')
-import { BaseApi } from 'remix-plugin'
+import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
 const profile = {
@@ -20,7 +20,7 @@ const profile = {
   version: packageJson.version
 }
 
-module.exports = class SettingsTab extends BaseApi {
+module.exports = class SettingsTab extends ViewPlugin {
   constructor (config, editor, appManager) {
     super(profile)
     this.config = config

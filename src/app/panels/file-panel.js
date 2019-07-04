@@ -1,12 +1,11 @@
 var yo = require('yo-yo')
-var CompilerMetadata = require('../files/compiler-metadata')
 var EventManager = require('../../lib/events')
 var FileExplorer = require('../files/file-explorer')
 var { RemixdHandle } = require('../files/remixd-handle.js')
 var globalRegistry = require('../../global/registry')
 var css = require('./styles/file-panel-styles')
+import { ViewPlugin } from '@remixproject/engine'
 
-import { BaseApi } from 'remix-plugin'
 import * as packageJson from '../../../package.json'
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
@@ -38,21 +37,21 @@ const profile = {
   kind: 'fileexplorer',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/file_explorer.html',
-  version: packageJson.version
+  version: packageJson.version,
+  required: true
 }
 
-module.exports = class Filepanel extends BaseApi {
+module.exports = class Filepanel extends ViewPlugin {
 
-  constructor (localRegistry) {
+  constructor (appManager) {
     super(profile)
     var self = this
     self._components = {}
-    self._components.registry = localRegistry || globalRegistry
+    self._components.registry = globalRegistry
     self._deps = {
       fileProviders: self._components.registry.get('fileproviders').api,
       fileManager: self._components.registry.get('filemanager').api,
-      config: self._components.registry.get('config').api,
-      pluginManager: self._components.registry.get('pluginmanager').api
+      config: self._components.registry.get('config').api
     }
     var fileExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['browser'],
       ['createNewFile', 'publishToGist', 'copyFiles', canUpload ? 'uploadFile' : '']
@@ -64,20 +63,7 @@ module.exports = class Filepanel extends BaseApi {
     var httpExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['http'])
     var httpsExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['https'])
 
-    self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'],
-      self._deps.fileProviders['localhost'].isReadOnly ? ['createNewFile'] : [])
-
-    // ----------------- editor panel ----------------------
-    self._compilerMetadata = new CompilerMetadata(
-      {
-        fileManager: self._deps.fileManager,
-        pluginManager: self._deps.pluginManager,
-        config: self._deps.config
-      }
-    )
-    self._compilerMetadata.syncContractMetadata()
-
-    self.compilerMetadata = () => { return self._compilerMetadata }
+    self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'], appManager)
 
     function template () {
       return yo`

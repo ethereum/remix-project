@@ -9,12 +9,12 @@ var CompilerAbstract = require('../../../compiler/compiler-abstract')
 var EventManager = remixLib.EventManager
 
 class DropdownLogic {
-  constructor (fileManager, pluginManager, compilersArtefacts, config, editor, udapp, filePanel) {
-    this.pluginManager = pluginManager
+  constructor (fileManager, compilersArtefacts, config, editor, udapp, filePanel, runView) {
     this.compilersArtefacts = compilersArtefacts
     this.config = config
     this.editor = editor
     this.udapp = udapp
+    this.runView = runView
     this.filePanel = filePanel
 
     this.event = new EventManager()
@@ -28,7 +28,7 @@ class DropdownLogic {
 
   // TODO: can be moved up; the event in contractDropdown will have to refactored a method instead
   listenToCompilationEvents () {
-    this.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
+    this.runView.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
       // TODO check whether the tab is configured
       let compiler = new CompilerAbstract(languageVersion, data, source)
       this.compilersArtefacts[languageVersion] = compiler
@@ -264,29 +264,32 @@ class DropdownLogic {
     this.udapp.runTx(data, confirmationCb, continueCb, promptCb, finalCb)
   }
 
-  forceSend (selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, cb) {
+  async forceSend (selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, cb) {
     var constructor = selectedContract.getConstructorInterface()
     // TODO: deployMetadataOf can be moved here
-    this.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
-      if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
-      if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-        return txFormat.buildData(selectedContract.name, selectedContract.object, this.compilersArtefacts['__last'].getData().contracts, true, constructor, args, (error, data) => {
-          if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
-
-          statusCb(`creation of ${selectedContract.name} pending...`)
-          this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
-        }, statusCb, (data, runTxCallback) => {
-          // called for libraries deployment
-          this.runTransaction(data, continueCb, promptCb, modalDialog, confirmDialog, runTxCallback)
-        })
-      }
-      if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
-      txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
+    let contractMetadata
+    try {
+      contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name)
+    } catch (error) {
+      return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+    }
+    if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
+      return txFormat.buildData(selectedContract.name, selectedContract.object, this.compilersArtefacts['__last'].getData().contracts, true, constructor, args, (error, data) => {
         if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
         statusCb(`creation of ${selectedContract.name} pending...`)
         this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
+      }, statusCb, (data, runTxCallback) => {
+        // called for libraries deployment
+        this.runTransaction(data, continueCb, promptCb, modalDialog, confirmDialog, runTxCallback)
       })
+    }
+    if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+    txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
+      if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+
+      statusCb(`creation of ${selectedContract.name} pending...`)
+      this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
     })
   }
 

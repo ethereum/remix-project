@@ -1,5 +1,4 @@
-let globalRegistry = require('../../global/registry')
-import { BaseApi } from 'remix-plugin'
+import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
@@ -27,11 +26,12 @@ const profile = {
   version: packageJson.version
 }
 
-export class RemixdHandle extends BaseApi {
-  constructor (fileSystemExplorer, locahostProvider) {
+export class RemixdHandle extends Plugin {
+  constructor (fileSystemExplorer, locahostProvider, appManager) {
     super(profile)
     this.fileSystemExplorer = fileSystemExplorer
     this.locahostProvider = locahostProvider
+    this.appManager = appManager
   }
 
   deactivate () {
@@ -45,8 +45,7 @@ export class RemixdHandle extends BaseApi {
   }
 
   canceled () {
-    let appManager = globalRegistry.get('appmanager').api
-    appManager.ensureDeactivated('remixd')
+    this.appManager.ensureDeactivated('remixd')
   }
 
   /**

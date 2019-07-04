@@ -5,11 +5,11 @@ var $ = require('jquery')
 var remixLib = require('remix-lib')
 var utils = remixLib.util
 var css = require('./styles/staticAnalysisView-styles')
-var globlalRegistry = require('../../global/registry')
+var Renderer = require('../../ui/renderer')
 
-var EventManager = require('../../lib/events')
+var EventManager = require('../../../lib/events')
 
-function staticAnalysisView (localRegistry) {
+function staticAnalysisView (localRegistry, analysisModule) {
   var self = this
   this.event = new EventManager()
   this.view = null
@@ -17,16 +17,16 @@ function staticAnalysisView (localRegistry) {
   this.modulesView = this.renderModules()
   this.lastCompilationResult = null
   this.lastCompilationSource = null
-  self._components = {}
-  self._components.registry = localRegistry || globlalRegistry
+  self._components = {
+    renderer: new Renderer()
+  }
+  self._components.registry = localRegistry
   // dependencies
   self._deps = {
-    pluginManager: self._components.registry.get('pluginmanager').api,
-    renderer: self._components.registry.get('renderer').api,
     offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
   }
 
-  self._deps.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
+  analysisModule.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
     self.lastCompilationResult = null
     self.lastCompilationSource = null
     $('#staticanalysisresult').empty()
@@ -119,7 +119,7 @@ staticAnalysisView.prototype.run = function () {
           }
           warningCount++
           var msg = yo`<span>${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
-          self._deps.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning alert alert-warning', useSpan: true})
+          self._components.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning alert alert-warning', useSpan: true})
         })
       })
       self.event.trigger('staticAnaysisWarning', [warningCount])

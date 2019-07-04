@@ -2,16 +2,8 @@
 
 var EventManager = require('../../lib/events')
 
-import { BaseApi } from 'remix-plugin'
-
-class FilesTree extends BaseApi {
+class FilesTree {
   constructor (name, storage) {
-    super({
-      name: name,
-      methods: ['get', 'set', 'remove'],
-      description:
-        'service - read/write file to the `config` explorer without need of additionnal permission.'
-    })
     this.event = new EventManager()
     this.storage = storage
     this.type = name

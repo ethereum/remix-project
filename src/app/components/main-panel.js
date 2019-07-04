@@ -1,4 +1,5 @@
 import { AbstractPanel } from './panel'
+import * as packageJson from '../../../package.json'
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 
@@ -10,9 +11,18 @@ const css = csjs`
   }
 `
 
+const profile = {
+  name: 'mainPanel',
+  displayName: 'Main Panel',
+  description: '',
+  version: packageJson.version,
+  methods: ['addView', 'removeView'],
+  required: true
+}
+
 export class MainPanel extends AbstractPanel {
-  constructor (appStore, options) {
-    super('mainPanel', appStore, options)
+  constructor (options) {
+    super(profile, options)
   }
 
   render () {

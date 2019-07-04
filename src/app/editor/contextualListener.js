@@ -5,15 +5,26 @@ const SourceMappingDecoder = remixLib.SourceMappingDecoder
 const AstWalker = remixLib.AstWalker
 const EventManager = require('../../lib/events')
 const globalRegistry = require('../../global/registry')
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../package.json'
+
+const profile = {
+  name: 'contextualListener',
+  methods: [],
+  events: [],
+  version: packageJson.version,
+  required: true
+}
 
 /*
   trigger contextChanged(nodes)
 */
-class ContextualListener {
-  constructor (opts, localRegistry) {
+class ContextualListener extends Plugin {
+  constructor (opts) {
+    super(profile)
     this.event = new EventManager()
     this._components = {}
-    this._components.registry = localRegistry || globalRegistry
+    this._components.registry = globalRegistry
     this.editor = opts.editor
     this.pluginManager = opts.pluginManager
     this._deps = {
@@ -26,8 +37,14 @@ class ContextualListener {
       FlatReferences: {}
     }
     this._activeHighlights = []
+    this.editor.event.register('contentChanged', () => { this._stopHighlighting() })
 
-    this.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
+    this.sourceMappingDecoder = new SourceMappingDecoder()
+    this.astWalker = new AstWalker()
+  }
+
+  onActivation () {
+    this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
       if (languageVersion.indexOf('soljson') !== 0) return
       this._stopHighlighting()
       this._index = {
@@ -37,10 +54,6 @@ class ContextualListener {
       this._buildIndex(data, source)
     })
 
-    this.editor.event.register('contentChanged', () => { this._stopHighlighting() })
-
-    this.sourceMappingDecoder = new SourceMappingDecoder()
-    this.astWalker = new AstWalker()
     setInterval(() => {
       if (this._deps.compilersArtefacts['__last'] && this._deps.compilersArtefacts['__last'].languageversion.indexOf('soljson') === 0) {
         this._highlightItems(this.editor.getCursorPosition(), this._deps.compilersArtefacts['__last'], this._deps.config.get('currentFile'))

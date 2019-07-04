@@ -1,4 +1,5 @@
 import { AbstractPanel } from './panel'
+import * as packageJson from '../../../package.json'
 const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 
@@ -8,10 +9,18 @@ const css = csjs`
   }
 `
 
+const profile = {
+  name: 'hiddenPanel',
+  displayName: 'Hidden Panel',
+  description: '',
+  version: packageJson.version,
+  required: true
+}
+
 export class HiddenPanel extends AbstractPanel {
 
-  constructor (appStore) {
-    super('hiddenPanel', appStore)
+  constructor () {
+    super(profile)
   }
 
   render () {

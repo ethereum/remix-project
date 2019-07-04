@@ -8,8 +8,8 @@ const TreeView = require('../ui/TreeView')
 const modalDialog = require('../ui/modaldialog')
 const copyToClipboard = require('../ui/copy-to-clipboard')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
-const parseContracts = require('../contract/contractParser')
-const publishOnSwarm = require('../contract/publishOnSwarm')
+const parseContracts = require('./compileTab/contractParser')
+const publishOnSwarm = require('../../lib/publishOnSwarm')
 const addTooltip = require('../ui/tooltip')
 
 var css = require('./styles/compile-tab-styles')
@@ -17,7 +17,7 @@ var css = require('./styles/compile-tab-styles')
 const CompileTabLogic = require('./compileTab/compileTab.js')
 const CompilerContainer = require('./compileTab/compilerContainer.js')
 
-import { CompilerApi } from 'remix-plugin'
+import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
 const profile = {
@@ -29,16 +29,18 @@ const profile = {
   permission: true,
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
-  version: packageJson.version
+  version: packageJson.version,
+  methods: ['getCompilationResult']
+
 }
 
 // EditorApi:
 // - events: ['compilationFinished'],
 // - methods: ['getCompilationResult']
 
-class CompileTab extends CompilerApi {
+class CompileTab extends ViewPlugin {
 
-  constructor (editor, config, renderer, swarmfileProvider, fileManager, fileProviders, pluginManager) {
+  constructor (editor, config, renderer, swarmfileProvider, fileManager, fileProviders) {
     super(profile)
     this.events = new EventEmitter()
     this._view = {
@@ -56,12 +58,13 @@ class CompileTab extends CompilerApi {
     this.swarmfileProvider = swarmfileProvider
     this.fileManager = fileManager
     this.fileProviders = fileProviders
-    this.pluginManager = pluginManager
 
     this.data = {
       contractsDetails: {}
     }
+  }
 
+  onActivationInternal () {
     this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProviders)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
@@ -80,23 +83,23 @@ class CompileTab extends CompilerApi {
 
   listenToEvents () {
     let onContentChanged = () => {
-      this.events.emit('statusChanged', {key: 'edited', title: 'the content has changed, needs recompilation', type: 'info'})
+      this.emit('statusChanged', {key: 'edited', title: 'the content has changed, needs recompilation', type: 'info'})
     }
     this.editor.event.register('contentChanged', onContentChanged)
 
     this.compiler.event.register('loadingCompiler', () => {
-      this.events.emit('statusChanged', {key: 'loading', title: 'loading compiler...', type: 'info'})
+      this.emit('statusChanged', {key: 'loading', title: 'loading compiler...', type: 'info'})
     })
 
     this.compiler.event.register('compilerLoaded', () => {
-      this.events.emit('statusChanged', {key: 'none'})
+      this.emit('statusChanged', {key: 'none'})
     })
 
     this.compileTabLogic.event.on('startingCompilation', () => {
       if (this._view.errorContainer) {
         this._view.errorContainer.innerHTML = ''
       }
-      this.events.emit('statusChanged', {key: 'loading', title: 'compiling...', type: 'info'})
+      this.emit('statusChanged', {key: 'loading', title: 'compiling...', type: 'info'})
     })
 
     this.fileManager.events.on('currentFileChanged', (name) => {
@@ -110,14 +113,14 @@ class CompileTab extends CompilerApi {
     this.compiler.event.register('compilationFinished', (success, data, source) => {
       if (success) {
         // forwarding the event to the appManager infra
-        this.events.emit('compilationFinished', source.target, source, 'soljson', data)
+        this.emit('compilationFinished', source.target, source, 'soljson', data)
         if (data.errors) {
-          this.events.emit('statusChanged', {
+          this.emit('statusChanged', {
             key: data.errors.length,
             title: `compilation finished successful with warning${data.errors.length > 1 ? 's' : ''}`,
             type: 'warning'
           })
-        } else this.events.emit('statusChanged', {key: 'succeed', title: 'compilation successful', type: 'success'})
+        } else this.emit('statusChanged', {key: 'succeed', title: 'compilation successful', type: 'success'})
         // Store the contracts
         this.data.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
@@ -129,7 +132,7 @@ class CompileTab extends CompilerApi {
         })
       } else {
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + data.error ? 1 : 0)
-        this.events.emit('statusChanged', {key: count, title: 'compilation failed', type: 'error'})
+        this.emit('statusChanged', {key: count, title: 'compilation failed', type: 'error'})
       }
       // Update contract Selection
       let contractMap = {}
@@ -395,6 +398,7 @@ class CompileTab extends CompilerApi {
 
   render () {
     if (this._view.el) return this._view.el
+    this.onActivationInternal()
     this.listenToEvents()
     this._view.errorContainer = yo`<div class="${css.errorBlobs} p-2"></div>`
     this._view.contractSelection = this.contractSelection()

@@ -3,9 +3,9 @@ var css = require('../styles/run-tab-styles')
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var confirmDialog = require('../../execution/confirmDialog')
+var confirmDialog = require('../../ui/confirmDialog')
 var modalDialog = require('../../ui/modaldialog')
-var MultiParamManager = require('../../../multiParamManager')
+var MultiParamManager = require('../../ui/multiParamManager')
 
 class ContractDropdownUI {
   constructor (dropdownLogic, logCallback) {

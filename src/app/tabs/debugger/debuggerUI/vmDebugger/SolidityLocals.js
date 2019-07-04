@@ -1,5 +1,5 @@
 'use strict'
-var EventManager = require('../../../../lib/events')
+var EventManager = require('../../../../../lib/events')
 var DropdownPanel = require('./DropdownPanel')
 var solidityTypeFormatter = require('./utils/SolidityTypeFormatter')
 var yo = require('yo-yo')

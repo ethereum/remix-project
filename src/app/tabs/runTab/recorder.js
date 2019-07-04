@@ -6,7 +6,7 @@ var css = require('../styles/run-tab-styles')
 
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var modalDialog = require('../../ui/modaldialog')
-var confirmDialog = require('../../execution/confirmDialog')
+var confirmDialog = require('../../ui/confirmDialog')
 
 class RecorderUI {
 
