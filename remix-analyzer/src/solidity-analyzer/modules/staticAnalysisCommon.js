@@ -410,6 +410,16 @@ function getUnAssignedTopLevelBinOps (subScope) {
   return subScope.children.filter(isBinaryOpInExpression)
 }
 
+function getLoopBlockStartIndex (node) {
+  if (isLoop(node)) {
+    if (nodeType(node, exactMatch(nodeTypes.FORSTATEMENT))) {
+      return 3 // For 'for' loop
+    } else {
+      return 1 // For 'while' and 'do-while' loop
+    }
+  }
+}
+
 // #################### Trivial Node Identification
 
 function isFunctionDefinition (node) {
@@ -1084,6 +1094,7 @@ module.exports = {
   getFunctionOrModifierDefinitionParameterPart: getFunctionOrModifierDefinitionParameterPart,
   getFunctionOrModifierDefinitionReturnParameterPart: getFunctionOrModifierDefinitionReturnParameterPart,
   getUnAssignedTopLevelBinOps: getUnAssignedTopLevelBinOps,
+  getLoopBlockStartIndex: getLoopBlockStartIndex,
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray: isDeleteOfDynamicArray,
