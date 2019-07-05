@@ -8,8 +8,12 @@ function etherTransferInLoop () {
 }
 
 etherTransferInLoop.prototype.visit = function (node) {
-  if (common.isLoop(node) && common.isTransfer(node)) {
-    this.relevantNodes.push(node)
+  if (common.isLoop(node)) {
+    var loopBlockStartIndex = common.getLoopBlockStartIndex()
+    var transferNodes = node.children[loopBlockStartIndex].children.filter(node => (common.isExpressionStatement(node) && common.isTransfer(node)))
+    if (transferNodes.length > 0) {
+      this.relevantNodes.push(...transferNodes)
+    }
   }
 }
 
