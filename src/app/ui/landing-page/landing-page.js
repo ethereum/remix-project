@@ -21,8 +21,6 @@ let css = csjs`
   .homeContainer {
     user-select:none;
   }
-  .jumbotronContainer {
-  }
   .thisJumboton {
     padding: 2.5rem 0rem;
     margin-bottom: 4rem;
@@ -177,7 +175,7 @@ export class LandingPage extends BaseApi {
       document.location.reload()
     }
     let container = yo`<div class="${css.homeContainer} bg-light">
-      <div class="${css.jumbotronContainer}">
+      <div>
         <div class="alert alert-info clearfix ${css.thisJumboton}">
           <div class="${css.headlineContainer}">
             <h2 class="">The new layout has arrived</h2>
