@@ -177,7 +177,10 @@ class FileManager extends FileSystemApi {
         <div>
           <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
           <span>
-            ${this.currentRequest.from}<span class="text-danger font-weight-bold"> is trying to modify </span>${path}
+            ${this.currentRequest.from}
+            <span class="font-weight-bold border-bottom border-danger">
+              is trying to create or modify 
+            </span>${path}
           </span>
         </div>
       `, actions, { time: 5000 })
