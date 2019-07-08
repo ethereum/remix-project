@@ -16,7 +16,7 @@ const profile = {
   required: true
 }
 
-// Component
+// TODO merge with side-panel.js. VerticalIcons should not be a plugin
 export class VerticalIcons extends Plugin {
 
   constructor (appManager) {

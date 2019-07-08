@@ -59,6 +59,7 @@ const sidePanel = {
   required: true
 }
 
+// TODO merge with vertical-icons.js
 export class SidePanel extends AbstractPanel {
 
   constructor (appManager, verticalIcons) {
