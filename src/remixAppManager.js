@@ -42,11 +42,13 @@ export class RemixAppManager extends PluginEngine {
     this.event.emit('added', plugin.name)
   }
 
+  // TODO check whether this can be removed
   ensureActivated (apiName) {
     if (!this.isActive(apiName)) this.activateOne(apiName)
     this.event.emit('ensureActivated', apiName)
   }
 
+  // TODO check whether this can be removed
   ensureDeactivated (apiName) {
     if (this.isActive(apiName)) this.deactivateOne(apiName)
     this.event.emit('ensureDeactivated', apiName)

@@ -96,7 +96,8 @@ class Terminal extends Plugin {
     self._jsSandboxContext = {}
     self._jsSandboxRegistered = {}
 
-    // TODO move this to the application start
+    // TODO move this to the application start. Put it in mainView.
+    // We should have a HostPlugin which add the terminal.
     opts.appManager.register(this)
     opts.appManager.activate('terminal')
 

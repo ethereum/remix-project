@@ -222,7 +222,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // APP_MANAGER
-  const appManager = new RemixAppManager([])
+  const appManager = new RemixAppManager({})
   const workspace = JSON.parse(localStorage.getItem('workspace'))
 
   // SERVICES
@@ -262,7 +262,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     networkModule,
     offsetToLineColumnConverter
   ])
-  appManager.activate(['contentImport', 'theme', 'sourceHighlighters', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'udapp', 'network', 'offsetToLineColumnConverter'])
 
   // LAYOUT & SYSTEM VIEWS
   const appPanel = new MainPanel()
@@ -272,7 +271,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   appManager.register([
     appPanel
   ])
-  appManager.activate(['mainPanel'])
 
   // those views depend on app_manager
   const menuicons = new VerticalIcons(appManager)
@@ -301,8 +299,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel,
     settings
   ])
-
-  appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
 
   // CONTENT VIEWS & DEFAULT PLUGINS
   let compileTab = new CompileTab(
@@ -341,6 +337,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel.remixdHandle,
     ...appManager.registeredPlugins()
   ])
+
+  appManager.activate(['contentImport', 'theme', 'sourceHighlighters', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'udapp', 'network', 'offsetToLineColumnConverter'])
+  appManager.activate(['mainPanel'])
+  appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
 
   // Set workspace after initial activation
   if (Array.isArray(workspace)) appManager.activate(workspace)
