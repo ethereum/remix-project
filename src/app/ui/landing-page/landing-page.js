@@ -23,14 +23,8 @@ let css = csjs`
   .homeContainer {
     user-select:none;
   }
-  .jumbotronContainer {
-    /* margin: 50px 60px 0; */
-    /* width: 80%; */
-  }
   .thisJumboton {
     padding: 2.5rem 0rem;
-    /* display: flex;*/
-    /* justify-content: space-between;*/
     margin-bottom: 4rem;
   }
   .hpLogoContainer {
@@ -183,7 +177,7 @@ export class LandingPage extends ViewPlugin {
       document.location.reload()
     }
     let container = yo`<div class="${css.homeContainer} bg-light">
-      <div class="${css.jumbotronContainer}">
+      <div>
         <div class="alert alert-info clearfix ${css.thisJumboton}">
           <div class="${css.headlineContainer}">
             <h2 class="">The new layout has arrived</h2>
