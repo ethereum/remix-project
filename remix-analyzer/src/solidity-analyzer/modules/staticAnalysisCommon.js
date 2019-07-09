@@ -1159,6 +1159,7 @@ module.exports = {
   isNewExpression: isNewExpression,
   isReturn: isReturn,
   isStatement: isStatement,
+  isExpressionStatement: isExpressionStatement,
   isBlock: isBlock,
 
   // #################### Constants

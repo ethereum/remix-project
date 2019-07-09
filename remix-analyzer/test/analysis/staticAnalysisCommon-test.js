@@ -1119,6 +1119,686 @@ test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
   t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent({ name: 'FunctionCall' }, funDef, ['uint256', 'bool']), undefined, 'throws on wrong nodes')
 })
 
+test('staticAnalysisCommon.getLoopBlockStartIndex', function (t) {
+  t.plan(3)
+  var node1 = {
+    'children':
+    [
+      {
+        'attributes':
+        {
+          'assignments':
+          [
+            21
+          ]
+        },
+        'children':
+        [
+          {
+            'attributes':
+            {
+              'constant': false,
+              'name': 'i',
+              'scope': 39,
+              'stateVariable': false,
+              'storageLocation': 'default',
+              'type': 'uint256',
+              'value': null,
+              'visibility': 'internal'
+            },
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'name': 'uint',
+                  'type': 'uint256'
+                },
+                'id': 20,
+                'name': 'ElementaryTypeName',
+                'src': '207:4:0'
+              }
+            ],
+            'id': 21,
+            'name': 'VariableDeclaration',
+            'src': '207:6:0'
+          },
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'overloadedDeclarations':
+              [
+                null
+              ],
+              'referencedDeclaration': 17,
+              'type': 'uint256',
+              'value': 'index'
+            },
+            'id': 22,
+            'name': 'Identifier',
+            'src': '216:5:0'
+          }
+        ],
+        'id': 23,
+        'name': 'VariableDeclarationStatement',
+        'src': '207:14:0'
+      },
+      {
+        'attributes':
+        {
+          'argumentTypes': null,
+          'commonType':
+          {
+            'typeIdentifier': 't_uint256',
+            'typeString': 'uint256'
+          },
+          'isConstant': false,
+          'isLValue': false,
+          'isPure': false,
+          'lValueRequested': false,
+          'operator': '<',
+          'type': 'bool'
+        },
+        'children':
+        [
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'overloadedDeclarations':
+              [
+                null
+              ],
+              'referencedDeclaration': 21,
+              'type': 'uint256',
+              'value': 'i'
+            },
+            'id': 24,
+            'name': 'Identifier',
+            'src': '223:1:0'
+          },
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'hexvalue': '3130',
+              'isConstant': false,
+              'isLValue': false,
+              'isPure': true,
+              'lValueRequested': false,
+              'subdenomination': null,
+              'token': 'number',
+              'type': 'int_const 10',
+              'value': '10'
+            },
+            'id': 25,
+            'name': 'Literal',
+            'src': '227:2:0'
+          }
+        ],
+        'id': 26,
+        'name': 'BinaryOperation',
+        'src': '223:6:0'
+      },
+      {
+        'children':
+        [
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'isConstant': false,
+              'isLValue': false,
+              'isPure': false,
+              'lValueRequested': false,
+              'operator': '++',
+              'prefix': false,
+              'type': 'uint256'
+            },
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'overloadedDeclarations':
+                  [
+                    null
+                  ],
+                  'referencedDeclaration': 21,
+                  'type': 'uint256',
+                  'value': 'i'
+                },
+                'id': 27,
+                'name': 'Identifier',
+                'src': '231:1:0'
+              }
+            ],
+            'id': 28,
+            'name': 'UnaryOperation',
+            'src': '231:3:0'
+          }
+        ],
+        'id': 29,
+        'name': 'ExpressionStatement',
+        'src': '231:3:0'
+      },
+      {
+        'children':
+        [
+          {
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'isConstant': false,
+                  'isLValue': false,
+                  'isPure': false,
+                  'isStructConstructorCall': false,
+                  'lValueRequested': false,
+                  'names':
+                  [
+                    null
+                  ],
+                  'type': 'uint256',
+                  'type_conversion': false
+                },
+                'children':
+                [
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes':
+                      [
+                        {
+                          'typeIdentifier': 't_uint256',
+                          'typeString': 'uint256'
+                        }
+                      ],
+                      'isConstant': false,
+                      'isLValue': false,
+                      'isPure': false,
+                      'lValueRequested': false,
+                      'member_name': 'push',
+                      'referencedDeclaration': null,
+                      'type': 'function (uint256) returns (uint256)'
+                    },
+                    'children':
+                    [
+                      {
+                        'attributes':
+                        {
+                          'argumentTypes': null,
+                          'overloadedDeclarations':
+                          [
+                            null
+                          ],
+                          'referencedDeclaration': 4,
+                          'type': 'uint256[] storage ref',
+                          'value': 'array'
+                        },
+                        'id': 30,
+                        'name': 'Identifier',
+                        'src': '250:5:0'
+                      }
+                    ],
+                    'id': 32,
+                    'name': 'MemberAccess',
+                    'src': '250:10:0'
+                  },
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes': null,
+                      'overloadedDeclarations':
+                      [
+                        null
+                      ],
+                      'referencedDeclaration': 21,
+                      'type': 'uint256',
+                      'value': 'i'
+                    },
+                    'id': 33,
+                    'name': 'Identifier',
+                    'src': '261:1:0'
+                  }
+                ],
+                'id': 34,
+                'name': 'FunctionCall',
+                'src': '250:13:0'
+              }
+            ],
+            'id': 35,
+            'name': 'ExpressionStatement',
+            'src': '250:13:0'
+          }
+        ],
+        'id': 36,
+        'name': 'Block',
+        'src': '236:38:0'
+      }
+    ],
+    'id': 37,
+    'name': 'ForStatement',
+    'src': '202:72:0'
+  }
+  var node2 = {
+    'children':
+    [
+      {
+        'attributes':
+        {
+          'argumentTypes': null,
+          'commonType':
+          {
+            'typeIdentifier': 't_uint256',
+            'typeString': 'uint256'
+          },
+          'isConstant': false,
+          'isLValue': false,
+          'isPure': false,
+          'lValueRequested': false,
+          'operator': '<',
+          'type': 'bool'
+        },
+        'children':
+        [
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'overloadedDeclarations':
+              [
+                null
+              ],
+              'referencedDeclaration': 69,
+              'type': 'uint256',
+              'value': 'i'
+            },
+            'id': 82,
+            'name': 'Identifier',
+            'src': '592:1:0'
+          },
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'hexvalue': '3130',
+              'isConstant': false,
+              'isLValue': false,
+              'isPure': true,
+              'lValueRequested': false,
+              'subdenomination': null,
+              'token': 'number',
+              'type': 'int_const 10',
+              'value': '10'
+            },
+            'id': 83,
+            'name': 'Literal',
+            'src': '596:2:0'
+          }
+        ],
+        'id': 84,
+        'name': 'BinaryOperation',
+        'src': '592:6:0'
+      },
+      {
+        'children':
+        [
+          {
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'isConstant': false,
+                  'isLValue': false,
+                  'isPure': false,
+                  'isStructConstructorCall': false,
+                  'lValueRequested': false,
+                  'names':
+                  [
+                    null
+                  ],
+                  'type': 'uint256',
+                  'type_conversion': false
+                },
+                'children':
+                [
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes':
+                      [
+                        {
+                          'typeIdentifier': 't_uint256',
+                          'typeString': 'uint256'
+                        }
+                      ],
+                      'isConstant': false,
+                      'isLValue': false,
+                      'isPure': false,
+                      'lValueRequested': false,
+                      'member_name': 'push',
+                      'referencedDeclaration': null,
+                      'type': 'function (uint256) returns (uint256)'
+                    },
+                    'children':
+                    [
+                      {
+                        'attributes':
+                        {
+                          'argumentTypes': null,
+                          'overloadedDeclarations':
+                          [
+                            null
+                          ],
+                          'referencedDeclaration': 4,
+                          'type': 'uint256[] storage ref',
+                          'value': 'array'
+                        },
+                        'id': 72,
+                        'name': 'Identifier',
+                        'src': '544:5:0'
+                      }
+                    ],
+                    'id': 74,
+                    'name': 'MemberAccess',
+                    'src': '544:10:0'
+                  },
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes': null,
+                      'overloadedDeclarations':
+                      [
+                        null
+                      ],
+                      'referencedDeclaration': 69,
+                      'type': 'uint256',
+                      'value': 'i'
+                    },
+                    'id': 75,
+                    'name': 'Identifier',
+                    'src': '555:1:0'
+                  }
+                ],
+                'id': 76,
+                'name': 'FunctionCall',
+                'src': '544:13:0'
+              }
+            ],
+            'id': 77,
+            'name': 'ExpressionStatement',
+            'src': '544:13:0'
+          },
+          {
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'isConstant': false,
+                  'isLValue': false,
+                  'isPure': false,
+                  'lValueRequested': false,
+                  'operator': '++',
+                  'prefix': false,
+                  'type': 'uint256'
+                },
+                'children':
+                [
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes': null,
+                      'overloadedDeclarations':
+                      [
+                        null
+                      ],
+                      'referencedDeclaration': 69,
+                      'type': 'uint256',
+                      'value': 'i'
+                    },
+                    'id': 78,
+                    'name': 'Identifier',
+                    'src': '571:1:0'
+                  }
+                ],
+                'id': 79,
+                'name': 'UnaryOperation',
+                'src': '571:3:0'
+              }
+            ],
+            'id': 80,
+            'name': 'ExpressionStatement',
+            'src': '571:3:0'
+          }
+        ],
+        'id': 81,
+        'name': 'Block',
+        'src': '530:55:0'
+      }
+    ],
+    'id': 85,
+    'name': 'DoWhileStatement',
+    'src': '528:72:0'
+  }
+  var node3 = {
+    'children':
+    [
+      {
+        'attributes':
+        {
+          'argumentTypes': null,
+          'commonType':
+          {
+            'typeIdentifier': 't_uint256',
+            'typeString': 'uint256'
+          },
+          'isConstant': false,
+          'isLValue': false,
+          'isPure': false,
+          'lValueRequested': false,
+          'operator': '<',
+          'type': 'bool'
+        },
+        'children':
+        [
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'overloadedDeclarations':
+              [
+                null
+              ],
+              'referencedDeclaration': 45,
+              'type': 'uint256',
+              'value': 'i'
+            },
+            'id': 48,
+            'name': 'Identifier',
+            'src': '372:1:0'
+          },
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'hexvalue': '3130',
+              'isConstant': false,
+              'isLValue': false,
+              'isPure': true,
+              'lValueRequested': false,
+              'subdenomination': null,
+              'token': 'number',
+              'type': 'int_const 10',
+              'value': '10'
+            },
+            'id': 49,
+            'name': 'Literal',
+            'src': '376:2:0'
+          }
+        ],
+        'id': 50,
+        'name': 'BinaryOperation',
+        'src': '372:6:0'
+      },
+      {
+        'children':
+        [
+          {
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'isConstant': false,
+                  'isLValue': false,
+                  'isPure': false,
+                  'isStructConstructorCall': false,
+                  'lValueRequested': false,
+                  'names':
+                  [
+                    null
+                  ],
+                  'type': 'uint256',
+                  'type_conversion': false
+                },
+                'children':
+                [
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes':
+                      [
+                        {
+                          'typeIdentifier': 't_uint256',
+                          'typeString': 'uint256'
+                        }
+                      ],
+                      'isConstant': false,
+                      'isLValue': false,
+                      'isPure': false,
+                      'lValueRequested': false,
+                      'member_name': 'push',
+                      'referencedDeclaration': null,
+                      'type': 'function (uint256) returns (uint256)'
+                    },
+                    'children':
+                    [
+                      {
+                        'attributes':
+                        {
+                          'argumentTypes': null,
+                          'overloadedDeclarations':
+                          [
+                            null
+                          ],
+                          'referencedDeclaration': 4,
+                          'type': 'uint256[] storage ref',
+                          'value': 'array'
+                        },
+                        'id': 51,
+                        'name': 'Identifier',
+                        'src': '394:5:0'
+                      }
+                    ],
+                    'id': 53,
+                    'name': 'MemberAccess',
+                    'src': '394:10:0'
+                  },
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes': null,
+                      'overloadedDeclarations':
+                      [
+                        null
+                      ],
+                      'referencedDeclaration': 45,
+                      'type': 'uint256',
+                      'value': 'i'
+                    },
+                    'id': 54,
+                    'name': 'Identifier',
+                    'src': '405:1:0'
+                  }
+                ],
+                'id': 55,
+                'name': 'FunctionCall',
+                'src': '394:13:0'
+              }
+            ],
+            'id': 56,
+            'name': 'ExpressionStatement',
+            'src': '394:13:0'
+          },
+          {
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'isConstant': false,
+                  'isLValue': false,
+                  'isPure': false,
+                  'lValueRequested': false,
+                  'operator': '++',
+                  'prefix': false,
+                  'type': 'uint256'
+                },
+                'children':
+                [
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes': null,
+                      'overloadedDeclarations':
+                      [
+                        null
+                      ],
+                      'referencedDeclaration': 45,
+                      'type': 'uint256',
+                      'value': 'i'
+                    },
+                    'id': 57,
+                    'name': 'Identifier',
+                    'src': '421:1:0'
+                  }
+                ],
+                'id': 58,
+                'name': 'UnaryOperation',
+                'src': '421:3:0'
+              }
+            ],
+            'id': 59,
+            'name': 'ExpressionStatement',
+            'src': '421:3:0'
+          }
+        ],
+        'id': 60,
+        'name': 'Block',
+        'src': '380:55:0'
+      }
+    ],
+    'id': 61,
+    'name': 'WhileStatement',
+    'src': '365:70:0'
+  }
+
+  t.equal(common.getLoopBlockStartIndex(node1), 3) // 'for' loop
+  t.equal(common.getLoopBlockStartIndex(node2), 1) // 'do-while' loop
+  t.equal(common.getLoopBlockStartIndex(node3), 1) // 'while' loop
+})
+
 // #################### Trivial Node Identification
 
 test('staticAnalysisCommon.isFunctionDefinition', function (t) {
@@ -1207,6 +1887,686 @@ test('staticAnalysisCommon.isInlineAssembly', function (t) {
   t.ok(common.isInlineAssembly(node1), 'is exact match should work')
   t.notOk(common.isInlineAssembly(node2), 'different node should not work')
   t.notOk(common.isInlineAssembly(node3), 'substring should not work')
+})
+
+test('staticAnalysisCommon.isLoop', function (t) {
+  t.plan(3)
+  var node1 = {
+    'children':
+    [
+      {
+        'attributes':
+        {
+          'assignments':
+          [
+            21
+          ]
+        },
+        'children':
+        [
+          {
+            'attributes':
+            {
+              'constant': false,
+              'name': 'i',
+              'scope': 39,
+              'stateVariable': false,
+              'storageLocation': 'default',
+              'type': 'uint256',
+              'value': null,
+              'visibility': 'internal'
+            },
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'name': 'uint',
+                  'type': 'uint256'
+                },
+                'id': 20,
+                'name': 'ElementaryTypeName',
+                'src': '207:4:0'
+              }
+            ],
+            'id': 21,
+            'name': 'VariableDeclaration',
+            'src': '207:6:0'
+          },
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'overloadedDeclarations':
+              [
+                null
+              ],
+              'referencedDeclaration': 17,
+              'type': 'uint256',
+              'value': 'index'
+            },
+            'id': 22,
+            'name': 'Identifier',
+            'src': '216:5:0'
+          }
+        ],
+        'id': 23,
+        'name': 'VariableDeclarationStatement',
+        'src': '207:14:0'
+      },
+      {
+        'attributes':
+        {
+          'argumentTypes': null,
+          'commonType':
+          {
+            'typeIdentifier': 't_uint256',
+            'typeString': 'uint256'
+          },
+          'isConstant': false,
+          'isLValue': false,
+          'isPure': false,
+          'lValueRequested': false,
+          'operator': '<',
+          'type': 'bool'
+        },
+        'children':
+        [
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'overloadedDeclarations':
+              [
+                null
+              ],
+              'referencedDeclaration': 21,
+              'type': 'uint256',
+              'value': 'i'
+            },
+            'id': 24,
+            'name': 'Identifier',
+            'src': '223:1:0'
+          },
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'hexvalue': '3130',
+              'isConstant': false,
+              'isLValue': false,
+              'isPure': true,
+              'lValueRequested': false,
+              'subdenomination': null,
+              'token': 'number',
+              'type': 'int_const 10',
+              'value': '10'
+            },
+            'id': 25,
+            'name': 'Literal',
+            'src': '227:2:0'
+          }
+        ],
+        'id': 26,
+        'name': 'BinaryOperation',
+        'src': '223:6:0'
+      },
+      {
+        'children':
+        [
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'isConstant': false,
+              'isLValue': false,
+              'isPure': false,
+              'lValueRequested': false,
+              'operator': '++',
+              'prefix': false,
+              'type': 'uint256'
+            },
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'overloadedDeclarations':
+                  [
+                    null
+                  ],
+                  'referencedDeclaration': 21,
+                  'type': 'uint256',
+                  'value': 'i'
+                },
+                'id': 27,
+                'name': 'Identifier',
+                'src': '231:1:0'
+              }
+            ],
+            'id': 28,
+            'name': 'UnaryOperation',
+            'src': '231:3:0'
+          }
+        ],
+        'id': 29,
+        'name': 'ExpressionStatement',
+        'src': '231:3:0'
+      },
+      {
+        'children':
+        [
+          {
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'isConstant': false,
+                  'isLValue': false,
+                  'isPure': false,
+                  'isStructConstructorCall': false,
+                  'lValueRequested': false,
+                  'names':
+                  [
+                    null
+                  ],
+                  'type': 'uint256',
+                  'type_conversion': false
+                },
+                'children':
+                [
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes':
+                      [
+                        {
+                          'typeIdentifier': 't_uint256',
+                          'typeString': 'uint256'
+                        }
+                      ],
+                      'isConstant': false,
+                      'isLValue': false,
+                      'isPure': false,
+                      'lValueRequested': false,
+                      'member_name': 'push',
+                      'referencedDeclaration': null,
+                      'type': 'function (uint256) returns (uint256)'
+                    },
+                    'children':
+                    [
+                      {
+                        'attributes':
+                        {
+                          'argumentTypes': null,
+                          'overloadedDeclarations':
+                          [
+                            null
+                          ],
+                          'referencedDeclaration': 4,
+                          'type': 'uint256[] storage ref',
+                          'value': 'array'
+                        },
+                        'id': 30,
+                        'name': 'Identifier',
+                        'src': '250:5:0'
+                      }
+                    ],
+                    'id': 32,
+                    'name': 'MemberAccess',
+                    'src': '250:10:0'
+                  },
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes': null,
+                      'overloadedDeclarations':
+                      [
+                        null
+                      ],
+                      'referencedDeclaration': 21,
+                      'type': 'uint256',
+                      'value': 'i'
+                    },
+                    'id': 33,
+                    'name': 'Identifier',
+                    'src': '261:1:0'
+                  }
+                ],
+                'id': 34,
+                'name': 'FunctionCall',
+                'src': '250:13:0'
+              }
+            ],
+            'id': 35,
+            'name': 'ExpressionStatement',
+            'src': '250:13:0'
+          }
+        ],
+        'id': 36,
+        'name': 'Block',
+        'src': '236:38:0'
+      }
+    ],
+    'id': 37,
+    'name': 'ForStatement',
+    'src': '202:72:0'
+  }
+  var node2 = {
+    'children':
+    [
+      {
+        'attributes':
+        {
+          'argumentTypes': null,
+          'commonType':
+          {
+            'typeIdentifier': 't_uint256',
+            'typeString': 'uint256'
+          },
+          'isConstant': false,
+          'isLValue': false,
+          'isPure': false,
+          'lValueRequested': false,
+          'operator': '<',
+          'type': 'bool'
+        },
+        'children':
+        [
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'overloadedDeclarations':
+              [
+                null
+              ],
+              'referencedDeclaration': 69,
+              'type': 'uint256',
+              'value': 'i'
+            },
+            'id': 82,
+            'name': 'Identifier',
+            'src': '592:1:0'
+          },
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'hexvalue': '3130',
+              'isConstant': false,
+              'isLValue': false,
+              'isPure': true,
+              'lValueRequested': false,
+              'subdenomination': null,
+              'token': 'number',
+              'type': 'int_const 10',
+              'value': '10'
+            },
+            'id': 83,
+            'name': 'Literal',
+            'src': '596:2:0'
+          }
+        ],
+        'id': 84,
+        'name': 'BinaryOperation',
+        'src': '592:6:0'
+      },
+      {
+        'children':
+        [
+          {
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'isConstant': false,
+                  'isLValue': false,
+                  'isPure': false,
+                  'isStructConstructorCall': false,
+                  'lValueRequested': false,
+                  'names':
+                  [
+                    null
+                  ],
+                  'type': 'uint256',
+                  'type_conversion': false
+                },
+                'children':
+                [
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes':
+                      [
+                        {
+                          'typeIdentifier': 't_uint256',
+                          'typeString': 'uint256'
+                        }
+                      ],
+                      'isConstant': false,
+                      'isLValue': false,
+                      'isPure': false,
+                      'lValueRequested': false,
+                      'member_name': 'push',
+                      'referencedDeclaration': null,
+                      'type': 'function (uint256) returns (uint256)'
+                    },
+                    'children':
+                    [
+                      {
+                        'attributes':
+                        {
+                          'argumentTypes': null,
+                          'overloadedDeclarations':
+                          [
+                            null
+                          ],
+                          'referencedDeclaration': 4,
+                          'type': 'uint256[] storage ref',
+                          'value': 'array'
+                        },
+                        'id': 72,
+                        'name': 'Identifier',
+                        'src': '544:5:0'
+                      }
+                    ],
+                    'id': 74,
+                    'name': 'MemberAccess',
+                    'src': '544:10:0'
+                  },
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes': null,
+                      'overloadedDeclarations':
+                      [
+                        null
+                      ],
+                      'referencedDeclaration': 69,
+                      'type': 'uint256',
+                      'value': 'i'
+                    },
+                    'id': 75,
+                    'name': 'Identifier',
+                    'src': '555:1:0'
+                  }
+                ],
+                'id': 76,
+                'name': 'FunctionCall',
+                'src': '544:13:0'
+              }
+            ],
+            'id': 77,
+            'name': 'ExpressionStatement',
+            'src': '544:13:0'
+          },
+          {
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'isConstant': false,
+                  'isLValue': false,
+                  'isPure': false,
+                  'lValueRequested': false,
+                  'operator': '++',
+                  'prefix': false,
+                  'type': 'uint256'
+                },
+                'children':
+                [
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes': null,
+                      'overloadedDeclarations':
+                      [
+                        null
+                      ],
+                      'referencedDeclaration': 69,
+                      'type': 'uint256',
+                      'value': 'i'
+                    },
+                    'id': 78,
+                    'name': 'Identifier',
+                    'src': '571:1:0'
+                  }
+                ],
+                'id': 79,
+                'name': 'UnaryOperation',
+                'src': '571:3:0'
+              }
+            ],
+            'id': 80,
+            'name': 'ExpressionStatement',
+            'src': '571:3:0'
+          }
+        ],
+        'id': 81,
+        'name': 'Block',
+        'src': '530:55:0'
+      }
+    ],
+    'id': 85,
+    'name': 'DoWhileStatement',
+    'src': '528:72:0'
+  }
+  var node3 = {
+    'children':
+    [
+      {
+        'attributes':
+        {
+          'argumentTypes': null,
+          'commonType':
+          {
+            'typeIdentifier': 't_uint256',
+            'typeString': 'uint256'
+          },
+          'isConstant': false,
+          'isLValue': false,
+          'isPure': false,
+          'lValueRequested': false,
+          'operator': '<',
+          'type': 'bool'
+        },
+        'children':
+        [
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'overloadedDeclarations':
+              [
+                null
+              ],
+              'referencedDeclaration': 45,
+              'type': 'uint256',
+              'value': 'i'
+            },
+            'id': 48,
+            'name': 'Identifier',
+            'src': '372:1:0'
+          },
+          {
+            'attributes':
+            {
+              'argumentTypes': null,
+              'hexvalue': '3130',
+              'isConstant': false,
+              'isLValue': false,
+              'isPure': true,
+              'lValueRequested': false,
+              'subdenomination': null,
+              'token': 'number',
+              'type': 'int_const 10',
+              'value': '10'
+            },
+            'id': 49,
+            'name': 'Literal',
+            'src': '376:2:0'
+          }
+        ],
+        'id': 50,
+        'name': 'BinaryOperation',
+        'src': '372:6:0'
+      },
+      {
+        'children':
+        [
+          {
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'isConstant': false,
+                  'isLValue': false,
+                  'isPure': false,
+                  'isStructConstructorCall': false,
+                  'lValueRequested': false,
+                  'names':
+                  [
+                    null
+                  ],
+                  'type': 'uint256',
+                  'type_conversion': false
+                },
+                'children':
+                [
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes':
+                      [
+                        {
+                          'typeIdentifier': 't_uint256',
+                          'typeString': 'uint256'
+                        }
+                      ],
+                      'isConstant': false,
+                      'isLValue': false,
+                      'isPure': false,
+                      'lValueRequested': false,
+                      'member_name': 'push',
+                      'referencedDeclaration': null,
+                      'type': 'function (uint256) returns (uint256)'
+                    },
+                    'children':
+                    [
+                      {
+                        'attributes':
+                        {
+                          'argumentTypes': null,
+                          'overloadedDeclarations':
+                          [
+                            null
+                          ],
+                          'referencedDeclaration': 4,
+                          'type': 'uint256[] storage ref',
+                          'value': 'array'
+                        },
+                        'id': 51,
+                        'name': 'Identifier',
+                        'src': '394:5:0'
+                      }
+                    ],
+                    'id': 53,
+                    'name': 'MemberAccess',
+                    'src': '394:10:0'
+                  },
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes': null,
+                      'overloadedDeclarations':
+                      [
+                        null
+                      ],
+                      'referencedDeclaration': 45,
+                      'type': 'uint256',
+                      'value': 'i'
+                    },
+                    'id': 54,
+                    'name': 'Identifier',
+                    'src': '405:1:0'
+                  }
+                ],
+                'id': 55,
+                'name': 'FunctionCall',
+                'src': '394:13:0'
+              }
+            ],
+            'id': 56,
+            'name': 'ExpressionStatement',
+            'src': '394:13:0'
+          },
+          {
+            'children':
+            [
+              {
+                'attributes':
+                {
+                  'argumentTypes': null,
+                  'isConstant': false,
+                  'isLValue': false,
+                  'isPure': false,
+                  'lValueRequested': false,
+                  'operator': '++',
+                  'prefix': false,
+                  'type': 'uint256'
+                },
+                'children':
+                [
+                  {
+                    'attributes':
+                    {
+                      'argumentTypes': null,
+                      'overloadedDeclarations':
+                      [
+                        null
+                      ],
+                      'referencedDeclaration': 45,
+                      'type': 'uint256',
+                      'value': 'i'
+                    },
+                    'id': 57,
+                    'name': 'Identifier',
+                    'src': '421:1:0'
+                  }
+                ],
+                'id': 58,
+                'name': 'UnaryOperation',
+                'src': '421:3:0'
+              }
+            ],
+            'id': 59,
+            'name': 'ExpressionStatement',
+            'src': '421:3:0'
+          }
+        ],
+        'id': 60,
+        'name': 'Block',
+        'src': '380:55:0'
+      }
+    ],
+    'id': 61,
+    'name': 'WhileStatement',
+    'src': '365:70:0'
+  }
+
+  t.equal(common.isLoop(node1), true)
+  t.equal(common.isLoop(node2), true)
+  t.equal(common.isLoop(node3), true)
 })
 
 // #################### Complex Node Identification
