@@ -1,4 +1,5 @@
 import { AbstractPanel } from './panel'
+import * as packageJson from '../../../package.json'
 const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 
@@ -49,12 +50,50 @@ const options = {
   default: true
 }
 
+const sidePanel = {
+  name: 'sidePanel',
+  displayName: 'Side Panel',
+  description: '',
+  version: packageJson.version,
+  methods: ['addView', 'removeView'],
+  required: true
+}
+
+// TODO merge with vertical-icons.js
 export class SidePanel extends AbstractPanel {
 
-  constructor (appStore) {
-    super('sidePanel', appStore, options)
+  constructor (appManager, verticalIcons) {
+    super(sidePanel, options)
+    this.appManager = appManager
     this.header = this.renderHeader()
-    this.store = appStore
+    this.verticalIcons = verticalIcons
+
+    // Toggle content
+    verticalIcons.events.on('toggleContent', (name) => {
+      if (!this.contents[name]) return
+      if (this.active === name) {
+        this.events.emit('toggle', name)
+        return
+      }
+      this.showContent(name)
+      this.events.emit('showing', name)
+    })
+    // Force opening
+    verticalIcons.events.on('showContent', (name) => {
+      if (!this.contents[name]) return
+      this.showContent(name)
+      this.events.emit('showing', name)
+    })
+  }
+
+  removeView (profile) {
+    super.removeView(profile)
+    this.verticalIcons.unlinkContent(profile)
+  }
+
+  addView (profile, view) {
+    super.addView(profile, view)
+    this.verticalIcons.linkContent(profile)
   }
 
   /**
@@ -72,7 +111,7 @@ export class SidePanel extends AbstractPanel {
     let docLink = ''
     let versionWarning
     if (this.active) {
-      const { profile } = this.store.getOne(this.active)
+      const { profile } = this.appManager.getOne(this.active)
       name = profile.displayName ? profile.displayName : profile.name
       docLink = profile.documentation ? yo`<a href="${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
       if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {

@@ -2,38 +2,30 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var helper = require('../../lib/helper')
 let globalRegistry = require('../../global/registry')
+const { Plugin } = require('@remixproject/engine')
+import * as packageJson from '../../../package.json'
 
 const EventEmitter = require('events')
 
-// Component
-export class VerticalIcons {
+const profile = {
+  name: 'menuicons',
+  displayName: 'Vertical Icons',
+  description: '',
+  version: packageJson.version,
+  methods: ['select'],
+  required: true
+}
 
-  constructor (name, appStore, homeProfile) {
-    this.store = appStore
-    this.homeProfile = homeProfile.profile
+// TODO merge with side-panel.js. VerticalIcons should not be a plugin
+export class VerticalIcons extends Plugin {
+
+  constructor (appManager) {
+    super(profile)
     this.events = new EventEmitter()
+    this.appManager = appManager
     this.icons = {}
     this.iconKind = {}
     this.iconStatus = {}
-    this.name = name
-
-    this.store.event.on('activate', (name) => {
-      const api = this.store.getOne(name)
-      if (!api.profile.icon) return
-      if (api.profile.location === this.name) {
-        this.addIcon(api.profile)
-        this.listenOnStatus(api)
-      }
-    })
-    this.store.event.on('deactivate', (name) => {
-      const api = this.store.getOne(name)
-      if (api && this.icons[name]) {
-        this.removeIcon(api.profile)
-        this.stopListenOnStatus(api)
-      }
-    })
-    this.store.event.on('add', (api) => { })
-    this.store.event.on('remove', (api) => { })
 
     let themeModule = globalRegistry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme) => {
@@ -41,18 +33,17 @@ export class VerticalIcons {
     })
   }
 
-  stopListenOnStatus (api) {
-    if (!api.events) return
-    let fn = this.iconStatus[api.profile.name]
-    if (fn) {
-      api.events.removeListener('statusChanged', fn)
-      delete this.iconStatus[api.profile.name]
-    }
+  linkContent (profile) {
+    if (!profile.icon) return
+    this.addIcon(profile)
+    this.listenOnStatus(profile)
   }
 
-  listenOnStatus (api) {
-    if (!api.events) return
+  unlinkContent (profile) {
+    this.removeIcon(profile)
+  }
 
+  listenOnStatus (profile) {
     // the list of supported keys. 'none' will remove the status
     const keys = ['edited', 'succeed', 'none', 'loading', 'failed']
     const types = ['error', 'warning', 'success', 'info', '']
@@ -63,10 +54,10 @@ export class VerticalIcons {
       if (typeof status.key === 'string' && (!keys.includes(status.key))) {
         throw new Error('key should contain either number or ' + keys.join())
       }
-      this.setIconStatus(api.profile.name, status)
+      this.setIconStatus(profile.name, status)
     }
-    this.iconStatus[api.profile.name] = fn
-    api.events.on('statusChanged', this.iconStatus[api.profile.name])
+    this.iconStatus[profile.name] = fn
+    this.on(profile.name, 'statusChanged', this.iconStatus[profile.name])
   }
 
   /**
@@ -223,21 +214,14 @@ export class VerticalIcons {
     }
   }
 
-  /**
-   * Show the home page
-   */
-  showHome () {
-    globalRegistry.get('appmanager').api.ensureActivated('home')
-  }
-
   render () {
     let home = yo`
     <div
       class="${css.homeIcon}"
       onclick="${(e) => {
-        this.showHome()
+        this.appManager.ensureActivated('home')
       }}"
-      plugin="${this.homeProfile.name}" title="${this.homeProfile.displayName}"
+      plugin="home" title="Home"
     >
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
     width="42px" height="42px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">

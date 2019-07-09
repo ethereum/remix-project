@@ -7,7 +7,7 @@ var TxRunner = remixLib.execution.txRunner
 var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
 var executionContext = remixLib.execution.executionContext
-import { UdappApi } from 'remix-plugin'
+import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import * as packageJson from '../package.json'
 
@@ -16,10 +16,11 @@ const profile = {
   displayName: 'universal dapp',
   description: 'service - run transaction and access account',
   permission: true,
-  version: packageJson.version
+  version: packageJson.version,
+  methods: ['createVMAccount', 'newTransaction', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount']
 }
 
-module.exports = class UniversalDApp extends UdappApi {
+module.exports = class UniversalDApp extends Plugin {
 
   constructor (registry) {
     super(profile)

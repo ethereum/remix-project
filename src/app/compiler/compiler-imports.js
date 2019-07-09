@@ -3,9 +3,19 @@ var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')()
 var resolver = require('@resolver-engine/imports').ImportsEngine()
 var request = require('request')
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../package.json'
 
-module.exports = class CompilerImports {
+const profile = {
+  name: 'contentImport',
+  displayName: 'content import',
+  version: packageJson.version,
+  methods: ['resolve']
+}
+
+module.exports = class CompilerImports extends Plugin {
   constructor (githubAccessToken) {
+    super(profile)
     this.githubAccessToken = githubAccessToken || (() => {})
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
@@ -90,7 +100,18 @@ module.exports = class CompilerImports {
     return /^([^/]+)/.exec(url)
   }
 
+  resolve (url) {
+    return new Promise((resolve, reject) => {
+      this.import(url, null, (error, content, cleanUrl, type, url) => {
+        if (error) return reject(error)
+        resolve({ content, cleanUrl, type, url })
+      })
+    })
+  }
+
   import (url, loadingCb, cb) {
+    if (!loadingCb) loadingCb = () => {}
+
     var self = this
     var imported = this.previouslyHandled[url]
     if (imported) {

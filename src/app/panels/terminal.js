@@ -12,11 +12,12 @@ var swarmgw = require('swarmgw')()
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var executionContext = require('../../execution-context')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
+var TxLogger = require('../../app/ui/txLogger')
 
 var csjs = require('csjs-inject')
 
 var css = require('./styles/terminal-styles')
-import { BaseApi } from 'remix-plugin'
+import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
 var packageV = require('../../../package.json')
@@ -33,11 +34,11 @@ const profile = {
   methods: [],
   events: [],
   description: ' - ',
-  required: false,
+  required: true,
   version: packageJson.version
 }
 
-class Terminal extends BaseApi {
+class Terminal extends Plugin {
   constructor (opts, api) {
     super(profile)
     var self = this
@@ -95,13 +96,17 @@ class Terminal extends BaseApi {
     self._jsSandboxContext = {}
     self._jsSandboxRegistered = {}
 
-    self.externalApi = this.api()
-    self.externalApi.notifs = {'theme': ['switchTheme']}
-    opts.appManager.init([self.externalApi])
-    opts.appManager.activateRequestAndNotification(self.externalApi)
+    // TODO move this to the application start. Put it in mainView.
+    // We should have a HostPlugin which add the terminal.
+    opts.appManager.register(this)
+    opts.appManager.activate('terminal')
 
     if (opts.shell) self._shell = opts.shell
     register(self)
+  }
+  logHtml (html) {
+    var command = this.commands['html']
+    if (typeof command === 'function') command(html)
   }
   focus () {
     if (this._view.input) this._view.input.focus()
@@ -194,8 +199,8 @@ class Terminal extends BaseApi {
         ${self._view.term}
       </div>
     `
-    setInterval(() => {
-      self._view.pendingTxCount.innerHTML = self._opts.udapp.pendingTransactionsCount()
+    setInterval(async () => {
+      self._view.pendingTxCount.innerHTML = await self.call('udapp', 'pendingTransactionsCount')
     }, 1000)
 
     function listenOnNetwork (ev) {
@@ -430,6 +435,15 @@ class Terminal extends BaseApi {
 
     self._shell('remix.help()', self.commands, () => {})
     self.commands.html(intro)
+
+    self._components.txLogger = new TxLogger(self._opts.eventsDecoder, self._opts.txListener, this)
+    self._components.txLogger.event.register('debuggingRequested', (hash) => {
+      // TODO should probably be in the run module
+      if (!self._opts.appManager.isActive('debugger')) self._opts.appManager.activateOne('debugger')
+      this.call('debugger', 'debug', hash)
+      this.call('menuicons', 'select', 'debugger')
+    })
+
     return self._view.el
 
     function change (event) {

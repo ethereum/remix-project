@@ -1,8 +1,8 @@
 'use strict'
 var yo = require('yo-yo')
 const copy = require('copy-text-to-clipboard')
-var EventManager = require('../../../../lib/events')
-var TreeView = require('../../../ui/TreeView') // TODO setup a direct reference to the UI components
+var EventManager = require('../../../../../lib/events')
+var TreeView = require('../../../../ui/TreeView') // TODO setup a direct reference to the UI components
 
 var csjs = require('csjs-inject')
 

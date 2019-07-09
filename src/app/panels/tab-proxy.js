@@ -5,7 +5,7 @@ const EventEmitter = require('events')
 require('remix-tabs')
 
 export class TabProxy {
-  constructor (fileManager, editor, appStore, appManager) {
+  constructor (fileManager, editor, appManager) {
     this.event = new EventEmitter()
     this.fileManager = fileManager
     this.appManager = appManager
@@ -49,8 +49,8 @@ export class TabProxy {
       })
     })
 
-    appStore.event.on('activate', (name) => {
-      const { profile } = appStore.getOne(name)
+    appManager.event.on('activate', (name) => {
+      const { profile } = appManager.getOne(name)
       if (profile.location === 'mainPanel') {
         this.addTab(
           name,
@@ -66,7 +66,7 @@ export class TabProxy {
       }
     })
 
-    appStore.event.on('deactivate', (name) => {
+    appManager.event.on('deactivate', (name) => {
       this.removeTab(name)
     })
   }

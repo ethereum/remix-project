@@ -2,7 +2,7 @@
 var style = require('../styles/basicStyles')
 var yo = require('yo-yo')
 var DropdownPanel = require('./DropdownPanel')
-var EventManager = require('../../../../lib/events')
+var EventManager = require('../../../../../lib/events')
 var csjs = require('csjs-inject')
 
 var css = csjs`

@@ -2,7 +2,6 @@ var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 
 var Terminal = require('./terminal')
-var Editor = require('../editor/editor')
 var globalRegistry = require('../../global/registry')
 var { TabProxy } = require('./tab-proxy.js')
 
@@ -28,46 +27,43 @@ var css = csjs`
 `
 
 export class MainView {
-  constructor (appStore, appManager, mainPanel) {
+  constructor (editor, mainPanel, fileManager, appManager, txListener, eventsDecoder) {
     var self = this
     self.event = new EventManager()
     self._view = {}
     self._components = {}
     self._components.registry = globalRegistry
-    self._components.editor = new Editor({})
-    self._components.registry.put({api: self._components.editor, name: 'editor'})
-    self.appStore = appStore
-    self.appManager = appManager
+    self.editor = editor
+    self.fileManager = fileManager
     self.mainPanel = mainPanel
+    self.txListener = txListener
+    self.eventsDecoder = eventsDecoder
+    this.appManager = appManager
+    this.init()
+  }
+  showApp (name) {
+    this.fileManager.unselectCurrentFile()
+    this.mainPanel.showContent(name)
+    this._view.editor.style.display = 'none'
+    this._components.contextView.hide()
+    this._view.mainPanel.style.display = 'block'
+  }
+  getAppPanel () {
+    return this.mainPanel
   }
   init () {
     var self = this
     self._deps = {
       config: self._components.registry.get('config').api,
-      txListener: self._components.registry.get('txlistener').api,
-      fileManager: self._components.registry.get('filemanager').api,
-      udapp: self._components.registry.get('udapp').api,
-      pluginManager: self._components.registry.get('pluginmanager').api
+      fileManager: self._components.registry.get('filemanager').api
     }
-    self.tabProxy = new TabProxy(self._deps.fileManager, self._components.editor, self.appStore, self.appManager)
-    let showApp = function (name) {
-      self._deps.fileManager.unselectCurrentFile()
-      self.mainPanel.showContent(name)
-      self._view.editor.style.display = 'none'
-      self._components.contextView.hide()
-      self._view.mainPanel.style.display = 'block'
-    }
-    self.appManager.event.on('ensureActivated', (name) => {
-      if (name === 'home') {
-        showApp(name)
-        self.tabProxy.showTab('home')
-      }
-    })
+
+    self.tabProxy = new TabProxy(self.fileManager, self.editor, self.appManager)
     /*
       We listen here on event from the tab component to display / hide the editor and mainpanel
       depending on the content that should be displayed
     */
-    self._deps.fileManager.events.on('currentFileChanged', (file) => {
+    self.fileManager.events.on('currentFileChanged', (file) => {
       // we check upstream for "fileChanged"
       self._view.editor.style.display = 'block'
       self._view.mainPanel.style.display = 'none'
@@ -80,7 +76,7 @@ export class MainView {
     })
     self.tabProxy.event.on('closeFile', (file) => {
     })
-    self.tabProxy.event.on('switchApp', showApp)
+    self.tabProxy.event.on('switchApp', self.showApp.bind(self))
     self.tabProxy.event.on('closeApp', (name) => {
       self._view.editor.style.display = 'block'
       self._components.contextView.show()
@@ -95,15 +91,19 @@ export class MainView {
       }
     }
 
-    var contextualListener = new ContextualListener({editor: self._components.editor, pluginManager: self._deps.pluginManager})
-    var contextView = new ContextView({contextualListener, editor: self._components.editor})
+    var contextualListener = new ContextualListener({editor: self.editor})
+    this.appManager.registerOne(contextualListener)
+    this.appManager.activate('contextualListener')
+
+    var contextView = new ContextView({contextualListener, editor: self.editor})
 
     self._components.contextualListener = contextualListener
     self._components.contextView = contextView
+
     self._components.terminal = new Terminal({
-      udapp: self._deps.udapp,
-      appStore: self.appStore,
-      appManager: self.appManager
+      appManager: this.appManager,
+      eventsDecoder: this.eventsDecoder,
+      txListener: this.txListener
     },
       {
         getPosition: (event) => {
@@ -117,9 +117,9 @@ export class MainView {
       })
 
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
-    if (self._deps.txListener) {
+    if (self.txListener) {
       self._components.terminal.event.register('listenOnNetWork', (listenOnNetWork) => {
-        self._deps.txListener.setListenOnNetwork(listenOnNetWork)
+        self.txListener.setListenOnNetwork(listenOnNetWork)
       })
     }
   }
@@ -148,13 +148,16 @@ export class MainView {
       self._view.editor.style.height = `${mainPanelHeight}px`
       self._view.mainPanel.style.height = `${mainPanelHeight}px`
       self._view.terminal.style.height = `${delta}px` // - menu bar height
-      self._components.editor.resize((document.querySelector('#editorWrap') || {}).checked)
+      self.editor.resize((document.querySelector('#editorWrap') || {}).checked)
       self._components.terminal.scroll2bottom()
     }
   }
+  getTerminal () {
+    return this._components.terminal
+  }
   getEditor () {
     var self = this
-    return self._components.editor
+    return self.editor
   }
   refresh () {
     var self = this
@@ -176,7 +179,7 @@ export class MainView {
   render () {
     var self = this
     if (self._view.el) return self._view.el
-    self._view.editor = self._components.editor.render()
+    self._view.editor = self.editor.render()
     self._view.editor.style.display = 'none'
     self._view.mainPanel = self.mainPanel.render()
     self._view.terminal = self._components.terminal.render()
