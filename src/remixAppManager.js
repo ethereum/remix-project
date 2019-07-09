@@ -28,7 +28,7 @@ export class RemixAppManager extends PluginEngine {
   }
 
   getIds () {
-    return this.registered.map(el => el.name)
+    return Object.keys(this.registered)
   }
 
   onDeactivation (plugin) {
