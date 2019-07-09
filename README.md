@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/ethereum/remix](https://badges.gitter.im/ethereum/remix.svg)](https://gitter.im/ethereum/remix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![CircleCI](https://circleci.com/gh/ethereum/remix/tree/master.svg?style=svg)](https://circleci.com/gh/ethereum/remix/tree/master)
-[![Documentation Status](https://readthedocs.org/projects/docs/badge/?version=latest)](https://remix.readthedocs.io/en/latest/)
+[![Documentation Status](https://readthedocs.org/projects/docs/badge/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
 
 Ethereum tools for the web.
 
@@ -19,7 +19,7 @@ Ethereum tools for the web.
 
 The **Remix IDE** is an IDE for Solidity dApp developers, powered by Remix. The Remix IDE repository **is available [here](https://github.com/ethereum/remix-ide)**, and an online version is available at https://remix.ethereum.org.
 
-For more, check out the [Remix documentation on ReadTheDocs](https://remix.readthedocs.io/en/latest/).
+For more, check out the [Remix documentation on ReadTheDocs](https://remix-ide.readthedocs.io/en/latest/index.html).
 
 ## <a name="how-to-use"></a>How to use Remix
 
@@ -52,7 +52,7 @@ Remix is built out of several different modules:
 + [`remix-tests`](remix-tests/README.md) provides unit testing for solidity.
 + [`remix-astwalker`](remix-tests/README.md) provides a tool for parsing solidity AST.
 + [`remix-url-resolver`](remix-url-resolver/README.md) provides helpers for resolving external content (github, swarm, ipfs, ...).
-+ [`remixd`](https://github.com/ethereum/remixd/tree/master) CLI which allow accessing local element from Remix IDE (see https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html)
++ [`remixd`](https://github.com/ethereum/remixd/tree/master) CLI which allow accessing local element from Remix IDE (see https://remix-ide.readthedocs.io/en/latest/remixd.html)
 
 Each generally has their own npm package and test suite, as well as basic documentation.
 
