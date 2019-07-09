@@ -9,10 +9,16 @@ function etherTransferInLoop () {
 
 etherTransferInLoop.prototype.visit = function (node) {
   if (common.isLoop(node)) {
-    var loopBlockStartIndex = common.getLoopBlockStartIndex()
-    var transferNodes = node.children[loopBlockStartIndex].children.filter(node => (common.isExpressionStatement(node) && common.isTransfer(node)))
-    if (transferNodes.length > 0) {
-      this.relevantNodes.push(...transferNodes)
+    var transferNodes = []
+    var loopBlockStartIndex = common.getLoopBlockStartIndex(node)
+    if (common.isBlock(node.children[loopBlockStartIndex])) {
+      transferNodes = node.children[loopBlockStartIndex].children
+      .filter(child => (common.isExpressionStatement(child) &&
+                    child.children[0].name === 'FunctionCall' &&
+                    common.isTransfer(child.children[0].children[0])))
+      if (transferNodes.length > 0) {
+        this.relevantNodes.push(...transferNodes)
+      }
     }
   }
 }
