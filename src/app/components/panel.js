@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
-const registry = require('../../global/registry')
 const csjs = require('csjs-inject')
 const yo = require('yo-yo')
+const { HostPlugin } = require('@remixproject/engine')
 
 const css = csjs`
   .plugins        {
@@ -25,50 +25,17 @@ const css = csjs`
   }
 `
 
-// Events are : 'toggle' | 'showing'
-
 /** Abstract class used for hosting the view of a plugin */
-export class AbstractPanel {
+export class AbstractPanel extends HostPlugin {
 
-  constructor (panelName, appStore, opts) {
+  constructor (profile, opts) {
+    super(profile)
     this.events = new EventEmitter()
     this.contents = {}
     this.active = undefined
 
     // View where the plugin HTMLElement leaves
     this.view = yo`<div id="plugins" class="${css.plugins}"></div>`
-
-    appStore.event.on('activate', (name) => {
-      const api = appStore.getOne(name)
-      const profile = api.profile
-      if (profile.location !== panelName) return
-      if (!profile.location && !opts.default) return
-      if (profile.icon && api.render && typeof api.render === 'function') {
-        this.add(name, api.render())
-      }
-    })
-
-    appStore.event.on('deactivate', (name) => {
-      if (this.contents[name]) this.remove(name)
-    })
-
-    const verticalIcon = registry.get('verticalicon').api
-    // Toggle content
-    verticalIcon.events.on('toggleContent', (name) => {
-      if (!this.contents[name]) return
-      if (this.active === name) {
-        this.events.emit('toggle', name)
-        return
-      }
-      this.showContent(name)
-      this.events.emit('showing', name)
-    })
-    // Force opening
-    verticalIcon.events.on('showContent', (name) => {
-      if (!this.contents[name]) return
-      this.showContent(name)
-      this.events.emit('showing', name)
-    })
   }
 
   /**
@@ -76,13 +43,23 @@ export class AbstractPanel {
    * @param {String} name the name of the plugin
    * @param {HTMLElement} content the HTMLContent of the plugin
    */
-  add (name, content) {
+  add (view, name) {
+    console.log('panel', name, view)
     if (this.contents[name]) throw new Error(`Plugin ${name} already rendered`)
-    content.style.height = '100%'
-    content.style.width = '100%'
-    content.style.border = '0'
-    this.contents[name] = yo`<div class="${css.plugItIn}" >${content}</div>`
+    view.style.height = '100%'
+    view.style.width = '100%'
+    view.style.border = '0'
+    this.contents[name] = yo`<div class="${css.plugItIn}" >${view}</div>`
+    this.contents[name].style.display = 'none'
     this.view.appendChild(this.contents[name])
+  }
+
+  addView (profile, view) {
+    this.add(view, profile.name)
+  }
+
+  removeView (profile) {
+    this.remove(profile.name)
   }
 
   /**
@@ -101,6 +78,7 @@ export class AbstractPanel {
    * @param {String} name The name of the plugin to display the content
    */
   showContent (name) {
+    console.log('showContent', name, this.active)
     if (!this.contents[name]) throw new Error(`Plugin ${name} is not yet activated`)
     // hiding the current view and display the `moduleName`
     if (this.active) {
@@ -108,6 +86,10 @@ export class AbstractPanel {
     }
     this.contents[name].style.display = 'block'
     this.active = name
+  }
+
+  focus (name) {
+    this.showContent(name)
   }
 }
 

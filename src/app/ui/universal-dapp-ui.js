@@ -5,30 +5,26 @@ var $ = require('jquery')
 var yo = require('yo-yo')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
-var helper = require('./lib/helper')
-var copyToClipboard = require('./app/ui/copy-to-clipboard')
-var css = require('./universal-dapp-styles')
+var helper = require('../../lib/helper')
+var copyToClipboard = require('./copy-to-clipboard')
+var css = require('../../universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 var remixLib = require('remix-lib')
 var typeConversion = remixLib.execution.typeConversion
 var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 
-var executionContext = require('./execution-context')
+var executionContext = require('../../execution-context')
 
-var confirmDialog = require('./app/execution/confirmDialog')
-var modalCustom = require('./app/ui/modal-dialog-custom')
-var modalDialog = require('./app/ui/modaldialog')
-var TreeView = require('./app/ui/TreeView')
+var confirmDialog = require('./confirmDialog')
+var modalCustom = require('./modal-dialog-custom')
+var modalDialog = require('./modaldialog')
+var TreeView = require('./TreeView')
 
-function UniversalDAppUI (udapp, registry) {
+function UniversalDAppUI (udapp, logCallback) {
   this.udapp = udapp
-  this.registry = registry
-
+  this.logCallback = logCallback
   this.compilerData = {contractsDetails: {}}
-  this._deps = {
-    compilersartefacts: registry.get('compilersartefacts').api
-  }
 }
 
 function decodeResponseToTreeView (response, fnabi) {
@@ -251,9 +247,9 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     txFormat.buildData(args.contractName, args.contractAbi, {}, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
       if (!error) {
         if (!args.funABI.constant) {
-          self.registry.get('logCallback').api(`${logMsg} pending ... `)
+          self.logCallback(`${logMsg} pending ... `)
         } else {
-          self.registry.get('logCallback').api(`${logMsg}`)
+          self.logCallback(`${logMsg}`)
         }
         if (args.funABI.type === 'fallback') data.dataHex = value
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
@@ -262,7 +258,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
-                self.registry.get('logCallback').api(`${logMsg} errored: ${vmError.message} `)
+                self.logCallback(`${logMsg} errored: ${vmError.message} `)
                 return
               }
             }
@@ -271,14 +267,14 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
               outputCb(decoded)
             }
           } else {
-            self.registry.get('logCallback').api(`${logMsg} errored: ${error} `)
+            self.logCallback(`${logMsg} errored: ${error} `)
           }
         })
       } else {
-        self.registry.get('logCallback').api(`${logMsg} errored: ${error} `)
+        self.logCallback(`${logMsg} errored: ${error} `)
       }
     }, (msg) => {
-      self.registry.get('logCallback').api(msg)
+      self.logCallback(msg)
     }, (data, runTxCallback) => {
       // called for libraries deployment
       self.udapp.runTx(data, confirmationCb, runTxCallback)

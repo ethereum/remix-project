@@ -1,16 +1,16 @@
 var TxBrowser = require('./debuggerUI/TxBrowser')
 var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
-var toaster = require('../ui/tooltip')
+var toaster = require('../../ui/tooltip')
 
 var Debugger = require('remix-debug').TransactionDebugger
 
-var SourceHighlighter = require('../editor/sourceHighlighter')
+var SourceHighlighter = require('../../editor/sourceHighlighter')
 
-var EventManager = require('../../lib/events')
+var EventManager = require('../../../lib/events')
 
-var executionContext = require('../../execution-context')
-var globalRegistry = require('../../global/registry')
+var executionContext = require('../../../execution-context')
+var globalRegistry = require('../../../global/registry')
 
 var remixLib = require('remix-lib')
 

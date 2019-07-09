@@ -1,4 +1,4 @@
-var EventManager = require('../../../lib/events')
+var EventManager = require('../../../../lib/events')
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 

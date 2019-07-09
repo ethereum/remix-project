@@ -1,6 +1,6 @@
 'use strict'
 var yo = require('yo-yo')
-var copyToClipboard = require('../ui/copy-to-clipboard')
+var copyToClipboard = require('./copy-to-clipboard')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -9,7 +9,7 @@ var remixLib = require('remix-lib')
 var EventManager = require('../../lib/events')
 var helper = require('../../lib/helper')
 var executionContext = require('../../execution-context')
-var modalDialog = require('../ui/modal-dialog-custom')
+var modalDialog = require('./modal-dialog-custom')
 var typeConversion = remixLib.execution.typeConversion
 var globlalRegistry = require('../../global/registry')
 
@@ -117,7 +117,7 @@ var css = csjs`
   *
   */
 class TxLogger {
-  constructor (localRegistry) {
+  constructor (eventsDecoder, txListener, terminal) {
     this.event = new EventManager()
     this.seen = {}
     function filterTx (value, query) {
@@ -126,18 +126,15 @@ class TxLogger {
       }
       return false
     }
-
-    this._components = {}
-    this._components.registry = localRegistry || globlalRegistry
+    this.eventsDecoder = eventsDecoder
+    this.txListener = txListener
+    this.terminal = terminal
     // dependencies
     this._deps = {
-      mainView: this._components.registry.get('mainview').api,
-      txListener: this._components.registry.get('txlistener').api,
-      eventsDecoder: this._components.registry.get('eventsdecoder').api,
-      compilersArtefacts: this._components.registry.get('compilersartefacts').api
+      compilersArtefacts: globlalRegistry.get('compilersartefacts').api
     }
 
-    this.logKnownTX = this._deps.mainView.registerCommand('knownTransaction', (args, cmds, append) => {
+    this.logKnownTX = this.terminal.registerCommand('knownTransaction', (args, cmds, append) => {
       var data = args[0]
       var el
       if (data.tx.isCall) {
@@ -149,35 +146,35 @@ class TxLogger {
       append(el)
     }, { activate: true, filterFn: filterTx })
 
-    this.logUnknownTX = this._deps.mainView.registerCommand('unknownTransaction', (args, cmds, append) => {
+    this.logUnknownTX = this.terminal.registerCommand('unknownTransaction', (args, cmds, append) => {
       // triggered for transaction AND call
       var data = args[0]
       var el = renderUnknownTransaction(this, data)
       append(el)
     }, { activate: false, filterFn: filterTx })
 
-    this.logEmptyBlock = this._deps.mainView.registerCommand('emptyBlock', (args, cmds, append) => {
+    this.logEmptyBlock = this.terminal.registerCommand('emptyBlock', (args, cmds, append) => {
       var data = args[0]
       var el = renderEmptyBlock(this, data)
       append(el)
     }, { activate: true })
 
-    this._deps.txListener.event.register('newBlock', (block) => {
+    this.txListener.event.register('newBlock', (block) => {
       if (!block.transactions || block.transactions && !block.transactions.length) {
         this.logEmptyBlock({ block: block })
       }
     })
 
-    this._deps.txListener.event.register('newTransaction', (tx, receipt) => {
+    this.txListener.event.register('newTransaction', (tx, receipt) => {
       log(this, tx, receipt)
     })
 
-    this._deps.txListener.event.register('newCall', (tx) => {
+    this.txListener.event.register('newCall', (tx) => {
       log(this, tx, null)
     })
 
-    this._deps.mainView.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
-    this._deps.mainView.updateTerminalFilter({ type: 'select', value: 'knownTransaction' })
+    this.terminal.updateJournal({ type: 'select', value: 'unknownTransaction' })
+    this.terminal.updateJournal({ type: 'select', value: 'knownTransaction' })
   }
 }
 
@@ -191,13 +188,13 @@ function debug (e, data, self) {
 }
 
 function log (self, tx, receipt) {
-  var resolvedTransaction = self._deps.txListener.resolvedTransaction(tx.hash)
+  var resolvedTransaction = self.txListener.resolvedTransaction(tx.hash)
   if (resolvedTransaction) {
     var compiledContracts = null
     if (self._deps.compilersArtefacts['__last']) {
       compiledContracts = self._deps.compilersArtefacts['__last'].getContracts()
     }
-    self._deps.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
+    self.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
       if (!error) {
         self.logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
       }

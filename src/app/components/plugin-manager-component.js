@@ -2,7 +2,7 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
-import { Plugin, BaseApi } from 'remix-plugin'
+import { ViewPlugin, IframePlugin } from '@remixproject/engine'
 import { PluginManagerSettings } from './plugin-manager-settings'
 import * as packageJson from '../../../package.json'
 const addToolTip = require('../ui/tooltip')
@@ -59,38 +59,31 @@ const profile = {
   kind: 'settings',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/plugin_manager.html',
-  version: packageJson.version
+  version: packageJson.version,
+  required: true
 }
 
-class PluginManagerComponent extends BaseApi {
+class PluginManagerComponent extends ViewPlugin {
 
-  constructor () {
+  constructor (appManager) {
     super(profile)
     this.event = new EventEmitter()
+    this.appManager = appManager
     this.views = {
       root: null,
       items: {}
     }
     this.localPlugin = new LocalPlugin()
     this.filter = ''
-  }
-
-  setApp (appManager) {
-    this.appManager = appManager
-  }
-
-  setStore (store) {
-    this.store = store
-    this.store.event.on('activate', (name) => { this.reRender() })
-    this.store.event.on('deactivate', (name) => { this.reRender() })
-    this.store.event.on('add', (api) => { this.reRender() })
-    this.store.event.on('remove', (api) => { this.reRender() })
+    this.appManager.event.on('activate', () => { this.reRender() })
+    this.appManager.event.on('deactivate', () => { this.reRender() })
+    this.appManager.event.on('added', () => { this.reRender() })
   }
 
   renderItem (name) {
-    const api = this.store.getOne(name)
+    const api = this.appManager.getOne(name)
     if (!api) return
-    const isActive = this.store.actives.includes(name)
+    const isActive = this.appManager.isActive(name)
     const displayName = (api.profile.displayName) ? api.profile.displayName : name
 
     // Check version of the plugin
@@ -136,12 +129,12 @@ class PluginManagerComponent extends BaseApi {
    */
   async openLocalPlugin () {
     try {
-      const profile = await this.localPlugin.open(this.store.getAll())
+      const profile = await this.localPlugin.open(this.appManager.getAll())
       if (!profile) return
-      if (this.store.ids.includes(profile.name)) {
+      if (this.appManager.getIds().includes(profile.name)) {
         throw new Error('This name has already been used')
       }
-      this.appManager.registerOne(new Plugin(profile))
+      this.appManager.registerOne(new IframePlugin(profile))
       this.appManager.activateOne(profile.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
@@ -161,12 +154,12 @@ class PluginManagerComponent extends BaseApi {
     }
 
     // Filter all active and inactive modules that are not required
-    const { actives, inactives } = this.store.getAll()
+    const { actives, inactives } = this.appManager.getAll()
       .filter(isFiltered)
       .filter(isNotRequired)
       .sort(sortByName)
       .reduce(({actives, inactives}, api) => {
-        return this.store.actives.includes(api.name)
+        return this.appManager.isActive(api.name)
           ? { actives: [...actives, api.name], inactives }
           : { inactives: [...inactives, api.name], actives }
       }, { actives: [], inactives: [] })

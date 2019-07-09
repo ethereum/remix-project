@@ -1,8 +1,8 @@
 'use strict'
 
 var yo = require('yo-yo')
-var css = require('./universal-dapp-styles')
-var copyToClipboard = require('./app/ui/copy-to-clipboard')
+var css = require('../../universal-dapp-styles')
+var copyToClipboard = require('./copy-to-clipboard')
 var remixLib = require('remix-lib')
 var txFormat = remixLib.execution.txFormat
 

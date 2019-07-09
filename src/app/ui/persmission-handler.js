@@ -1,8 +1,8 @@
 /* global localStorage */
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
-const addTooltip = require('./app/ui/tooltip')
-const modalDialog = require('./app/ui/modaldialog')
+const addTooltip = require('./tooltip')
+const modalDialog = require('./modaldialog')
 
 const css = csjs`
 .permission h4 {

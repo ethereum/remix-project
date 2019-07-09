@@ -1,7 +1,7 @@
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var Commands = require('../constants/commands')
+var Commands = require('../../lib/commands')
 
 // -------------- styling ----------------------
 var css = require('./styles/auto-complete-popup-styles')
@@ -189,8 +189,8 @@ class AutoCompletePopup {
 
   extendAutocompletion () {
     // TODO: this is not using the appManager interface. Terminal should be put as module
-    this.opts.appStore.event.on('activate', (id) => {
-      const profile = this.opts.appStore.getOne(id).profile
+    this.opts.appManager.event.on('activate', (id) => {
+      const profile = this.opts.appManager.getOne(id).profile
       if (!profile.methods) return
       profile.methods.forEach((method) => {
         const key = `remix.call({name: '${id}', key:'${method}', payload: []}).then((result) => { console.log(result) }).catch((error) => { console.log(error) })`

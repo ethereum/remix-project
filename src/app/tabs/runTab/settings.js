@@ -11,7 +11,7 @@ const globalRegistry = require('../../../global/registry')
 
 class SettingsUI {
 
-  constructor (settings) {
+  constructor (settings, networkModule) {
     this.settings = settings
     this.event = new EventManager()
     this._components = {}
@@ -21,10 +21,12 @@ class SettingsUI {
       if (!lookupOnly) this.el.querySelector('#value').value = '0'
       this.updateAccountBalances()
     })
-
+    this._components = {
+      registry: globalRegistry,
+      networkModule: networkModule
+    }
     this._components.registry = globalRegistry
     this._deps = {
-      networkModule: this._components.registry.get('network').api,
       config: this._components.registry.get('config').api
     }
 
@@ -307,7 +309,7 @@ class SettingsUI {
         this.netUI.innerHTML = 'can\'t detect network '
         return
       }
-      let network = this._deps.networkModule.getNetworkProvider
+      let network = this._components.networkModule.getNetworkProvider
       this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
     })
     this.fillAccountsList()

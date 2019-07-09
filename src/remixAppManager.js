@@ -1,64 +1,60 @@
 /* global localStorage */
-import { AppManagerApi, Plugin } from 'remix-plugin'
+import { PluginEngine, IframePlugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
-import PluginManagerProxy from './app/components/plugin-manager-proxy'
-import { PermissionHandler } from './persmission-handler'
+import { PermissionHandler } from './app/ui/persmission-handler'
 
-export class RemixAppManager extends AppManagerApi {
+export class RemixAppManager extends PluginEngine {
 
-  constructor (store) {
-    super(null)
+  constructor (plugins) {
+    super(plugins)
     this.permissionHandler = new PermissionHandler()
-    this.store = store
-    this.hiddenServices = {}
     this.event = new EventEmitter()
-    this.data = {
-      proxy: new PluginManagerProxy()
-    }
+    this.registered = {}
   }
 
+  onActivated (plugin) {
+    localStorage.setItem('workspace', JSON.stringify(this.actives))
+    this.event.emit('activate', plugin.name)
+  }
+
+  getAll () {
+    return Object.keys(this.registered).map((p) => {
+      return this.registered[p]
+    })
+  }
+
+  getOne (name) {
+    return this.registered[name]
+  }
+
+  getIds () {
+    return this.registered.map(el => el.name)
+  }
+
+  onDeactivation (plugin) {
+    localStorage.setItem('workspace', JSON.stringify(this.actives))
+    this.event.emit('deactivate', plugin.name)
+  }
+
+  onRegistration (plugin) {
+    if (!this.registered) this.registered = {}
+    this.registered[plugin.name] = plugin
+    this.event.emit('added', plugin.name)
+  }
+
+  // TODO check whether this can be removed
   ensureActivated (apiName) {
-    if (!this.store.isActive(apiName)) this.activateOne(apiName)
+    if (!this.isActive(apiName)) this.activateOne(apiName)
     this.event.emit('ensureActivated', apiName)
   }
 
+  // TODO check whether this can be removed
   ensureDeactivated (apiName) {
-    if (this.store.isActive(apiName)) this.deactivateOne(apiName)
+    if (this.isActive(apiName)) this.deactivateOne(apiName)
     this.event.emit('ensureDeactivated', apiName)
   }
 
-  proxy () {
-    // that's temporary. should be removed when we can have proper notification registration
-    return this.data.proxy
-  }
-
-  setActive (name, isActive) {
-    const api = this.getEntity(name)
-    // temp
-    if (api && (name === 'solidity' || name === 'vyper')) {
-      isActive ? this.data.proxy.register(name, api) : this.data.proxy.unregister(name, api)
-    }
-    isActive ? this.store.activate(name) : this.store.deactivate(name)
-    if (!isActive) {
-      this.removeHiddenServices(api)
-    }
-    localStorage.setItem('workspace', JSON.stringify(this.store.actives))
-  }
-
-  getEntity (apiName) {
-    return this.store.getOne(apiName)
-  }
-
-  addEntity (api) {
-    this.store.add(api)
-  }
-
-  removeHiddenServices (profile) {
-    let hiddenServices = this.hiddenServices[profile.name]
-    if (hiddenServices) document.body.removeChild(hiddenServices)
-  }
-
-  plugins () {
+  registeredPlugins () {
     let vyper = {
       name: 'vyper',
       displayName: 'Vyper',
@@ -143,12 +139,12 @@ export class RemixAppManager extends AppManagerApi {
       location: 'sidePanel'
     }
     return [
-      new Plugin(pipeline),
-      new Plugin(vyper),
-      new Plugin(etherscan),
-      new Plugin(ethdoc),
-      new Plugin(mythx),
-      new Plugin(provable)
+      new IframePlugin(pipeline),
+      new IframePlugin(vyper),
+      new IframePlugin(etherscan),
+      new IframePlugin(ethdoc),
+      new IframePlugin(mythx),
+      new IframePlugin(provable)
     ]
   }
 }

@@ -11,7 +11,8 @@ var globalRegistry = require('../global/registry')
 var SourceHighlighter = require('../app/editor/sourceHighlighter')
 var RemixDebug = require('remix-debug').EthDebugger
 var TreeView = require('../app/ui/TreeView') // TODO setup a direct reference to the UI components
-var solidityTypeFormatter = require('../app/debugger/debuggerUI/vmDebugger/utils/SolidityTypeFormatter')
+var solidityTypeFormatter = require('../app/tabs/debugger/debuggerUI/vmDebugger/utils/SolidityTypeFormatter')
+var GistHandler = require('./gist-handler')
 
 class CmdInterpreterAPI {
   constructor (terminal, localRegistry) {
@@ -22,8 +23,8 @@ class CmdInterpreterAPI {
     self._components.terminal = terminal
     self._components.sourceHighlighter = new SourceHighlighter()
     self._components.fileImport = new CompilerImport()
+    self._components.gistHandler = new GistHandler()
     self._deps = {
-      app: self._components.registry.get('app').api,
       fileManager: self._components.registry.get('filemanager').api,
       editor: self._components.registry.get('editor').api,
       compilersArtefacts: self._components.registry.get('compilersartefacts').api,
@@ -138,7 +139,7 @@ class CmdInterpreterAPI {
   }
   loadgist (id, cb) {
     const self = this
-    self._deps.app.loadFromGist({gist: id})
+    self._components.gistHandler.loadFromGist({gist: id}, this._deps.fileManager)
     if (cb) cb()
   }
   loadurl (url, cb) {

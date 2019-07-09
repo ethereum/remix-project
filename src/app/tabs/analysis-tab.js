@@ -1,9 +1,9 @@
 var yo = require('yo-yo')
-var StaticAnalysis = require('../staticanalysis/staticAnalysisView')
+var StaticAnalysis = require('./staticanalysis/staticAnalysisView')
 var EventManager = require('../../lib/events')
 var css = require('./styles/analysis-tab-styles')
 
-import { BaseApi } from 'remix-plugin'
+import { ViewPlugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import * as packageJson from '../../../package.json'
 
@@ -20,7 +20,7 @@ const profile = {
   version: packageJson.version
 }
 
-class AnalysisTab extends BaseApi {
+class AnalysisTab extends ViewPlugin {
 
   constructor (registry) {
     super(profile)
@@ -30,15 +30,15 @@ class AnalysisTab extends BaseApi {
   }
 
   render () {
-    if (!this.staticanalysis) this.staticanalysis = new StaticAnalysis()
+    if (!this.staticanalysis) this.staticanalysis = new StaticAnalysis(this.registry, this)
     this.staticanalysis.event.register('staticAnaysisWarning', (count) => {
       if (count > 0) {
-        this.events.emit('statusChanged', {key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning'})
+        this.emit('statusChanged', {key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning'})
       } else if (count === 0) {
-        this.events.emit('statusChanged', {key: 'succeed', title: 'no warning', type: 'success'})
+        this.emit('statusChanged', {key: 'succeed', title: 'no warning', type: 'success'})
       } else {
         // count ==-1 no compilation result
-        this.events.emit('statusChanged', {key: 'none'})
+        this.emit('statusChanged', {key: 'none'})
       }
     })
     this.registry.put({api: this.staticanalysis, name: 'staticanalysis'})

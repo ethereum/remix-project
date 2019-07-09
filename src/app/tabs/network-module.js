@@ -1,18 +1,20 @@
 const executionContext = require('../../execution-context')
-import { NetworkApi } from 'remix-plugin'
+import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
 export const profile = {
   name: 'network',
   description: 'Manage the network (mainnet, ropsten, goerli...) and the provider (web3, vm, injected)',
-  version: packageJson.version
+  methods: [],
+  version: packageJson.version,
+  required: true
 }
 
 // Network API has :
 // - events: ['providerChanged']
 // - methods: ['getNetworkProvider', 'getEndpoint', 'detectNetwork', 'addNetwork', 'removeNetwork']
 
-export class NetworkModule extends NetworkApi {
+export class NetworkModule extends Plugin {
   constructor () {
     super(profile)
     // TODO: See with remix-lib to make sementic coherent
