@@ -192,7 +192,7 @@ class App {
 
 module.exports = App
 
-function run () {
+async function run () {
   var self = this
 
   // check the origin and warn message
@@ -338,12 +338,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     ...appManager.registeredPlugins()
   ])
 
-  appManager.activate(['contentImport', 'theme', 'sourceHighlighters', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'udapp', 'network', 'offsetToLineColumnConverter'])
-  appManager.activate(['mainPanel'])
-  appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
+  await appManager.activate(['contentImport', 'theme', 'sourceHighlighters', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'udapp', 'network', 'offsetToLineColumnConverter'])
+  await appManager.activate(['mainPanel'])
+  await appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) appManager.activate(workspace)
+  if (Array.isArray(workspace)) await appManager.activate(workspace)
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
