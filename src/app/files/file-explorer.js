@@ -75,14 +75,14 @@ function fileExplorer (localRegistry, files, menuItems) {
 
       modalDialog(path + ' changed', remixdDialog(),
         {
-          label: 'Keep the content displayed in Remix',
-          fn: () => {}
-        },
-        {
           label: 'Replace by the new content',
           fn: () => {
             self._deps.editor.setText(file.content)
           }
+        },
+        {
+          label: 'Keep the content displayed in Remix',
+          fn: () => {}
         }
       )
     }
