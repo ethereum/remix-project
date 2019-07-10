@@ -3,6 +3,11 @@ import { PluginEngine, IframePlugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { PermissionHandler } from './app/ui/persmission-handler'
 
+const requiredModules = [ // services + layout views + system views
+  'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'sourceHighlighters', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport', 'udapp',
+  'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
+  'terminal', 'home', 'settings', 'pluginManager']
+
 export class RemixAppManager extends PluginEngine {
 
   constructor (plugins) {
@@ -52,6 +57,15 @@ export class RemixAppManager extends PluginEngine {
   ensureDeactivated (apiName) {
     if (this.isActive(apiName)) this.deactivateOne(apiName)
     this.event.emit('ensureDeactivated', apiName)
+  }
+
+  deactivateOne (name) {
+    if (requiredModules.includes(name)) return
+    super.deactivateOne(name)
+  }
+
+  isRequired (name) {
+    return requiredModules.includes(name)
   }
 
   registeredPlugins () {

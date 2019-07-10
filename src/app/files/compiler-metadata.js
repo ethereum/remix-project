@@ -8,8 +8,7 @@ const profile = {
   name: 'compilerMetadata',
   methods: ['deployMetadataOf'],
   events: [],
-  version: packageJson.version,
-  required: true
+  version: packageJson.version
 }
 
 class CompilerMetadata extends Plugin {

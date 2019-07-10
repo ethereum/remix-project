@@ -55,8 +55,7 @@ const sidePanel = {
   displayName: 'Side Panel',
   description: '',
   version: packageJson.version,
-  methods: ['addView', 'removeView'],
-  required: true
+  methods: ['addView', 'removeView']
 }
 
 // TODO merge with vertical-icons.js

@@ -6,8 +6,7 @@ export const profile = {
   name: 'network',
   description: 'Manage the network (mainnet, ropsten, goerli...) and the provider (web3, vm, injected)',
   methods: [],
-  version: packageJson.version,
-  required: true
+  version: packageJson.version
 }
 
 // Network API has :
