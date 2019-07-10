@@ -34,7 +34,6 @@ const profile = {
   methods: [],
   events: [],
   description: ' - ',
-  required: true,
   version: packageJson.version
 }
 

@@ -7,8 +7,7 @@ const profile = {
   name: 'offsetToLineColumnConverter',
   methods: [],
   events: [],
-  version: packageJson.version,
-  required: true
+  version: packageJson.version
 }
 
 export class OffsetToLineColumnConverter extends Plugin {

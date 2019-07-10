@@ -16,8 +16,7 @@ const profile = {
   displayName: 'Main Panel',
   description: '',
   version: packageJson.version,
-  methods: ['addView', 'removeView'],
-  required: true
+  methods: ['addView', 'removeView']
 }
 
 export class MainPanel extends AbstractPanel {
