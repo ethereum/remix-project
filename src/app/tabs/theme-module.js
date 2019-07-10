@@ -21,8 +21,7 @@ const profile = {
   name: 'theme',
   events: ['themeChanged'],
   methods: ['switchTheme', 'getThemes', 'currentTheme'],
-  version: packageJson.version,
-  required: true
+  version: packageJson.version
 }
 
 export class ThemeModule extends Plugin {

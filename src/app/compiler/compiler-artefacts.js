@@ -7,8 +7,7 @@ const profile = {
   name: 'compilerArtefacts',
   methods: [],
   events: [],
-  version: packageJson.version,
-  required: true
+  version: packageJson.version
 }
 
 module.exports = class CompilerArtefacts extends Plugin {

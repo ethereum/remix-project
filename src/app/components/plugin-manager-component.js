@@ -59,8 +59,7 @@ const profile = {
   kind: 'settings',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/plugin_manager.html',
-  version: packageJson.version,
-  required: true
+  version: packageJson.version
 }
 
 class PluginManagerComponent extends ViewPlugin {
@@ -146,7 +145,7 @@ class PluginManagerComponent extends ViewPlugin {
   render () {
     // Filtering helpers
     const isFiltered = (api) => api.name.toLowerCase().includes(this.filter)
-    const isNotRequired = ({profile}) => !profile.required
+    const isNotRequired = ({profile}) => !this.appManager.isRequired(profile.name)
     const sortByName = (a, b) => {
       const nameA = a.name.toUpperCase()
       const nameB = b.name.toUpperCase()

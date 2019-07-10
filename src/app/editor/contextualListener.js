@@ -12,8 +12,7 @@ const profile = {
   name: 'contextualListener',
   methods: [],
   events: [],
-  version: packageJson.version,
-  required: true
+  version: packageJson.version
 }
 
 /*

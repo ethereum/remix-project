@@ -9,8 +9,7 @@ const profile = {
   name: 'sourceHighlighters',
   description: 'service - highlight source code',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight'],
-  required: true
+  methods: ['highlight', 'discardHighlight']
 }
 
 // EditorApi:
