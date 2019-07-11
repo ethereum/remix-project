@@ -54,7 +54,10 @@ function GistHandler (_window) {
           return
         }
         fileManager.setBatchFiles(data.files, 'gist', (errorLoadingFile) => {
-          if (!errorLoadingFile) gistProvider.id = gistId
+          if (!errorLoadingFile) {
+            gistProvider.id = gistId
+            gistProvider.files = data.files
+          }
         })
       })
     })
