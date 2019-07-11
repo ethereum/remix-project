@@ -49,18 +49,14 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
 
   function okListener () {
     removeEventListener()
-    hide()
     if (ok && ok.fn && agreed) ok.fn()
+    hide()
   }
 
   function cancelListener () {
     removeEventListener()
-    hide()
     if (cancel && cancel.fn) cancel.fn()
-    if (container) {
-      container.class = `modal`
-      container = null
-    }
+    hide()
   }
 
   function modalKeyEvent (e) {
@@ -83,6 +79,7 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   function hide () {
     if (container) container.style.display = 'none'
     if (container.parentElement) container.parentElement.removeChild(container)
+    container = null
   }
 
   function show () {

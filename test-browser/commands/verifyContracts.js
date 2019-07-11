@@ -14,7 +14,7 @@ class VerifyContracts extends EventEmitter {
 
 function getCompiledContracts (browser, callback) {
   browser.clickLaunchIcon('solidity').execute(function () {
-    var contracts = document.querySelectorAll('#compileTabView select option')
+    var contracts = document.querySelectorAll('#compileTabView select#compiledContracts option')
     if (!contracts) {
       return null
     } else {
@@ -33,7 +33,7 @@ function verifyContracts (browser, compiledContractNames, callback) {
   getCompiledContracts(browser, (result) => {
     if (result.value) {
       for (var contract in compiledContractNames) {
-        console.log(' - ' + compiledContractNames[contract])
+        console.log(' - ' + compiledContractNames[contract], result.value)
         if (result.value.indexOf(compiledContractNames[contract]) === -1) {
           browser.assert.fail('compiled contract ' + compiledContractNames + ' not found', 'info about error', '')
           browser.end()
