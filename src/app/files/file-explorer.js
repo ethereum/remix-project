@@ -491,10 +491,40 @@ fileExplorer.prototype.copyFiles = function () {
 
 // ------------------ gist publish --------------
 fileExplorer.prototype.updateGist = function () {
+  let self = this
   var gistId = this.files.id
+  var fileList = Object.keys(this.files.files)
+  // fileList is an array of files in the github gist - not the updated one
+  var updatedFileList
+
+  // loop through fileList and check if each element is in updatedFileList
+
+  // if one is not there in updated file list add it and make its content null
+
+
+  self.packageFiles(self.files, (error, packaged) => {
+      if (error) {
+        console.log(error)
+      } else {
+        updatedFileList = Object.keys(packaged)
+      }
+    })
+
   if (!gistId) {
     tooltip('no gist content is currently loaded.')
   } else {
+    // check that the file list is still the same
+    // console.log('RS ' , this.files)
+    // make an array with just the names of the files
+    
+    // self.packageFiles(self.files, (error, packaged) => {
+    //   if (error) {
+    //     console.log(error)
+    //   } else {
+    //     console.log('file list is: ', packaged)
+    //   }
+    // })
+
     this.toGist(gistId)
   }
 }
