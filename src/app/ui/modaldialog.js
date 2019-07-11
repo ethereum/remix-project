@@ -82,6 +82,7 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
 
   function hide () {
     if (container) container.style.display = 'none'
+    if (container.parentElement) container.parentElement.removeChild(container)
   }
 
   function show () {
