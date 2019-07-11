@@ -26,6 +26,9 @@ var css = csjs`
   .label_tv {
     align-items: center;
   }
+  .label_tv>span {
+    word-break: break-all;
+  }
 `
 
 var EventManager = require('../../lib/events')
