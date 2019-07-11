@@ -4,13 +4,13 @@ var css = require('./styles/modal-dialog-custom-styles')
 
 module.exports = {
   alert: function (text) {
-    modal('', yo`<div>${text}</div>`, null, { label: null })
+    return modal('', yo`<div>${text}</div>`, null, { label: null })
   },
   prompt: function (title, text, inputValue, ok, cancel, focus) {
-    prompt(title, text, false, inputValue, ok, cancel, focus)
+    return prompt(title, text, false, inputValue, ok, cancel, focus)
   },
   promptPassphrase: function (title, text, inputValue, ok, cancel) {
-    prompt(title, text, true, inputValue, ok, cancel)
+    return prompt(title, text, true, inputValue, ok, cancel)
   },
   promptPassphraseCreation: function (ok, cancel) {
     var text = 'Please provide a Passphrase for the account creation'
@@ -20,7 +20,7 @@ module.exports = {
       <br>
       <input id="prompt2" type="password" name='prompt_text' class="${css['prompt_text']}" >
     </div>`
-    modal(null, yo`<div>${text}<div>${input}</div></div>`,
+    return modal(null, yo`<div>${text}<div>${input}</div></div>`,
       {
         fn: () => {
           if (typeof ok === 'function') {
@@ -42,7 +42,7 @@ module.exports = {
   promptMulti: function ({ title, text, inputValue }, ok, cancel) {
     if (!inputValue) inputValue = ''
     var input = yo`<textarea id="prompt_text" class=${css.prompt_text} rows="4" cols="50"></textarea>`
-    modal(title, yo`<div>${text}<div>${input}</div></div>`,
+    return modal(title, yo`<div>${text}<div>${input}</div></div>`,
       {
         fn: () => { if (typeof ok === 'function') ok(document.getElementById('prompt_text').value) }
       },
@@ -52,7 +52,7 @@ module.exports = {
     )
   },
   confirm: function (title, text, ok, cancel) {
-    modal(title, yo`<div>${text}</div>`,
+    return modal(title, yo`<div>${text}</div>`,
       {
         fn: () => { if (typeof ok === 'function') ok() }
       },
