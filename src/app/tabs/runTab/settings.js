@@ -273,11 +273,12 @@ class SettingsUI {
       var account = $txOrigin.selectedOptions[0].value
 
       var promptCb = (passphrase) => {
-        modalDialogCustom.promptMulti(signMessageDialog, (message) => {
+        const modal = modalDialogCustom.promptMulti(signMessageDialog, (message) => {
           this.settings.signMessage(message, account, passphrase, (err, msgHash, signedData) => {
             if (err) {
               return addTooltip(err)
             }
+            modal.hide()
             modalDialogCustom.alert(yo`
               <div>
                 <b>hash:</b><br>
