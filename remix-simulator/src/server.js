@@ -48,6 +48,12 @@ class Server {
             ws.send(JSON.stringify(jsonResponse))
           })
         })
+
+        this.provider.on('data', (result) => {
+          console.dir("-----> sending")
+          console.dir(JSON.stringify(result))
+          ws.send(JSON.stringify(result));
+        })
       })
     }
 
