@@ -93,8 +93,6 @@ var css = csjs`
     top                : 0;
     left               : 50px;
     bottom             : 0;
-    overflow           : hidden;
-    overflow-y         : auto;
   }
   .highlightcode {
     position:absolute;

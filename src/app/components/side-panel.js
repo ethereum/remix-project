@@ -6,7 +6,6 @@ const yo = require('yo-yo')
 const css = csjs`
   .panel {
     height: 100%;
-    overflow-y: hidden;
     display: flex;
     flex-direction: column;
   }
