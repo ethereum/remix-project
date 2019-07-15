@@ -19,7 +19,7 @@ function initModules (browser, callback) {
     document.querySelector('div[id="pluginManager"]').scrollTop = document.querySelector('div[id="pluginManager"]').scrollHeight
   }, [], function () {
     browser.click('#pluginManager article[id="remixPluginManagerListItem_solidity"] button')
-    .click('#pluginManager article[id="remixPluginManagerListItem_run"] button')
+    .click('#pluginManager article[id="remixPluginManagerListItem_udapp"] button')
     .click('#pluginManager article[id="remixPluginManagerListItem_solidityStaticAnalysis"] button')
     .click('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
     .click('#icon-panel div[plugin="fileExplorers"]')
