@@ -19,7 +19,7 @@ module.exports = {
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
     .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
-    .clickLaunchIcon('run')
+    .clickLaunchIcon('udapp')
     .setValue('input[placeholder="uint8 _numProposals"]', '1')
     .click('#runTabView button[class^="instanceButton"]')
     .waitForElementPresent('.instance:nth-of-type(2)')
@@ -43,7 +43,7 @@ module.exports = {
   },
 
   'Access Ballot via at address': function (browser) {
-    browser.clickLaunchIcon('run')
+    browser.clickLaunchIcon('udapp')
     .click('button[class^="udappClose"]')
     .addFile('ballot.abi', { content: ballotABI })
     .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)

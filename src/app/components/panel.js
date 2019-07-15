@@ -44,7 +44,6 @@ export class AbstractPanel extends HostPlugin {
    * @param {HTMLElement} content the HTMLContent of the plugin
    */
   add (view, name) {
-    console.log('panel', name, view)
     if (this.contents[name]) throw new Error(`Plugin ${name} already rendered`)
     view.style.height = '100%'
     view.style.width = '100%'

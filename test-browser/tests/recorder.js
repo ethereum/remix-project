@@ -12,7 +12,7 @@ module.exports = {
   'Test Recorder': function (browser) {
     var addressRef
     browser.addFile('scenario.json', {content: records})
-        .clickLaunchIcon('run')
+        .clickLaunchIcon('udapp')
         .click('div[class^="cardContainer"] i[class^="arrow"]')
         .click('#runTabView .runtransaction')
         .waitForElementPresent('.instance:nth-of-type(2)')

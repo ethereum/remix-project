@@ -1,15 +1,13 @@
-var UniversalDApp = require('./universal-dapp.js')
-var registry = require('./global/registry')
+var registry = require('../../global/registry')
 var remixLib = require('remix-lib')
 var yo = require('yo-yo')
 var executionContext = remixLib.execution.executionContext
 var Txlistener = remixLib.execution.txListener
 var EventsDecoder = remixLib.execution.EventsDecoder
-var TransactionReceiptResolver = require('./lib/transactionReceiptResolver')
+var TransactionReceiptResolver = require('../../lib/transactionReceiptResolver')
 
-module.exports = (compilersArtefacts, logHtmlCallback) => {
+export function makeUdapp(udapp, compilersArtefacts, logHtmlCallback) {
   // ----------------- UniversalDApp -----------------
-  const udapp = new UniversalDApp(registry)
   // TODO: to remove when possible
   udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
     var txLink = executionContext.txDetailsLink(networkName, txhash)

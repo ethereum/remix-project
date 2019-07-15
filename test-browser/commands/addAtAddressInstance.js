@@ -13,7 +13,7 @@ class addAtAddressInstance extends EventEmitter {
 }
 
 function addInstance (browser, address, isValidFormat, isValidChecksum, callback) {
-  browser.clickLaunchIcon('run').clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
+  browser.clickLaunchIcon('udapp').clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
     browser.click('button[id^="runAndDeployAtAdressButton"]')
         .execute(function () {
           var ret = document.querySelector('div[class^="modal-body"] div').innerHTML

@@ -1,41 +1,40 @@
-var $ = require('jquery')
-var yo = require('yo-yo')
-var EventManager = require('../../lib/events')
-var Card = require('../ui/card')
-var css = require('./styles/run-tab-styles')
-
-var Settings = require('./runTab/model/settings.js')
-var SettingsUI = require('./runTab/settings.js')
-
-var DropdownLogic = require('./runTab/model/dropdownlogic.js')
-var ContractDropdownUI = require('./runTab/contractDropdown.js')
-var UniversalDAppUI = require('../ui/universal-dapp-ui')
-
-var Recorder = require('./runTab/model/recorder.js')
-var RecorderUI = require('./runTab/recorder.js')
-
-const executionContext = require('../../execution-context')
-
-import { ViewPlugin } from '@remixproject/engine'
+import { LibraryPlugin } from '@remixproject/engine';
 import * as packageJson from '../../../package.json'
 
+const $ = require('jquery')
+const yo = require('yo-yo')
+const EventManager = require('../../lib/events')
+const Card = require('../ui/card')
+
+const css = require('../tabs/styles/run-tab-styles')
+const Settings = require('../tabs/runTab/model/settings.js')
+const SettingsUI = require('../tabs/runTab/settings.js')
+const Recorder = require('../tabs/runTab/model/recorder.js')
+const RecorderUI = require('../tabs/runTab/recorder.js')
+const DropdownLogic = require('../tabs/runTab/model/dropdownlogic.js')
+const ContractDropdownUI = require('../tabs/runTab/contractDropdown.js')
+
+const UniversalDAppUI = require('../ui/universal-dapp-ui')
+const executionContext = require('../../execution-context')
+
 const profile = {
-  name: 'run',
+  name: 'udapp',
   displayName: 'Deploy & run transactions',
-  methods: [],
-  events: [],
   icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzFfY29weSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4Ig0KCSB5PSIwcHgiIHdpZHRoPSI3NDIuNTQ1cHgiIGhlaWdodD0iNjc2Ljg4NnB4IiB2aWV3Qm94PSIwIC0wLjIwNCA3NDIuNTQ1IDY3Ni44ODYiDQoJIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAtMC4yMDQgNzQyLjU0NSA2NzYuODg2IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxwb2x5Z29uIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBwb2ludHM9IjI5NS45MTEsMC43MTEgNDg4LjkxMSwzMDQuMTg2IDQ4OC45MTEsMzk3LjE4MSAyOTMuOTExLDY3Ni41NTYgDQoJCTc0MS43ODYsMzQ5Ljk0MyAJIi8+DQoJPHBvbHlnb24gc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHBvaW50cz0iNDE3LjA4Myw0MDYuNTg5IDIwOS43OTEsNTE5LjQ5NCAxLjg0Niw0MDYuMjM0IDIwOS43OTEsNjc1Ljg2MyAJIi8+DQoJPHBvbHlnb24gc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHBvaW50cz0iNDE3LjA4MywzMTguNzA3IDIwOS43OTEsMC43MTEgMS44NDYsMzE4LjQyOCAyMDkuNzkxLDQzMS42ODkgCSIvPg0KPC9nPg0KPC9zdmc+DQo=',
   description: 'execute and save transactions',
-  kind: 'run',
+  kind: 'udapp',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
-  version: packageJson.version
+  version: packageJson.version,
+  permission: true,
+  events: ['newTransaction'],
+  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount']
 }
 
-class RunTab extends ViewPlugin {
+export class RunTab extends LibraryPlugin {
 
   constructor (udapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
-    super(profile)
+    super(udapp, profile)
     this.event = new EventManager()
     this.config = config
     this.udapp = udapp
@@ -55,11 +54,11 @@ class RunTab extends ViewPlugin {
       },
       getValue: (cb) => {
         try {
-          var number = document.querySelector('#value').value
-          var select = document.getElementById('unit')
-          var index = select.selectedIndex
-          var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
-          var unit = 'ether' // default
+          const number = document.querySelector('#value').value
+          const select = document.getElementById('unit')
+          const index = select.selectedIndex
+          const selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+          let unit = 'ether' // default
           if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
             unit = selectedUnit
           }
@@ -126,11 +125,11 @@ class RunTab extends ViewPlugin {
   }
 
   renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
-    var dropdownLogic = new DropdownLogic(fileManager, compilersArtefacts, config, editor, udapp, filePanel, this)
+    const dropdownLogic = new DropdownLogic(fileManager, compilersArtefacts, config, editor, udapp, filePanel, this)
     this.contractDropdownUI = new ContractDropdownUI(dropdownLogic, logCallback)
 
     this.contractDropdownUI.event.register('clearInstance', () => {
-      var noInstancesText = this.noInstancesText
+      const noInstancesText = this.noInstancesText
       if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
     })
     this.contractDropdownUI.event.register('newContractABIAdded', (abi, address) => {
@@ -144,7 +143,7 @@ class RunTab extends ViewPlugin {
   renderRecorder (udapp, udappUI, fileManager, config, logCallback) {
     this.recorderCount = yo`<span>0</span>`
 
-    var recorder = new Recorder(udapp, fileManager, config)
+    const recorder = new Recorder(udapp, fileManager, config)
     recorder.event.register('recorderCountChange', (count) => {
       this.recorderCount.innerText = count
     })
@@ -206,7 +205,4 @@ class RunTab extends ViewPlugin {
     this.renderRecorderCard()
     return this.renderContainer()
   }
-
 }
-
-module.exports = RunTab

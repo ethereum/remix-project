@@ -30,7 +30,7 @@ const profile = {
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
   version: packageJson.version,
-  methods: ['getCompilationResult']
+  methods: ['getCompilationResult', 'compile']
 
 }
 
