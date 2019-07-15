@@ -6,7 +6,7 @@ var Txlistener = remixLib.execution.txListener
 var EventsDecoder = remixLib.execution.EventsDecoder
 var TransactionReceiptResolver = require('../../lib/transactionReceiptResolver')
 
-export function makeUdapp(udapp, compilersArtefacts, logHtmlCallback) {
+export function makeUdapp (udapp, compilersArtefacts, logHtmlCallback) {
   // ----------------- UniversalDApp -----------------
   // TODO: to remove when possible
   udapp.event.register('transactionBroadcasted', (txhash, networkName) => {

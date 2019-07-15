@@ -201,7 +201,7 @@ class Terminal extends Plugin {
     setInterval(async () => {
       try {
         self._view.pendingTxCount.innerHTML = await self.call('udapp', 'pendingTransactionsCount')
-      } catch {
+      } catch (err) {
         console.log('Terminal try to call "udapp".')
       }
     }, 1000)

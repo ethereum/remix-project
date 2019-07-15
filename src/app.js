@@ -36,7 +36,7 @@ const TestTab = require('./app/tabs/test-tab')
 const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 
-import { RunTab, makeUdapp } from './app/udapp';
+import { RunTab, makeUdapp } from './app/udapp'
 
 import PanelsResize from './lib/panels-resize'
 import { RemixAppManager } from './remixAppManager'
