@@ -1,7 +1,7 @@
 const async = require('async')
 const { BN, privateToAddress, isValidPrivate, stripHexPrefix } = require('ethereumjs-util')
 const crypto = require('crypto')
-const { EventEmitter } = require('events');
+const { EventEmitter } = require('events')
 
 const TxRunner = require('./execution/txRunner')
 const txHelper = require('./execution/txHelper')
@@ -345,7 +345,7 @@ module.exports = class UniversalDApp {
       function runTransaction (fromAddress, value, gasLimit, next) {
         const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit, timestamp: args.data.timestamp }
         const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
-        const timestamp = Date.now()
+        let timestamp = Date.now()
         if (tx.timestamp) {
           timestamp = tx.timestamp
         }
