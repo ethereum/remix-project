@@ -22,7 +22,7 @@ const css = csjs`
   }
   .swapitHeader {
     height: 35px;
-    padding: 20px 20px;
+    padding: 15px 20px;
     display: flex;
     align-items: center;
   }
