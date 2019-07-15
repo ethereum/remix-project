@@ -51,7 +51,7 @@
     "onchange": "^3.2.1",
     "remix-analyzer": "0.3.8",
     "remix-debug": "0.3.9",
-    "remix-lib": "0.4.7",
+    "remix-lib": "^0.4.8",
     "remix-solidity": "0.3.10",
     "remix-tabs": "1.0.48",
     "remix-tests": "0.1.13",
@@ -61,7 +61,6 @@
     "selenium-standalone": "^6.0.1",
     "semver": "^6.1.2",
     "solc": "^0.5.0",
-    "standard": "^8.5.0",
     "swarmgw": "^0.3.1",
     "tape": "^4.5.1",
     "uglify-js": "^2.8.16",
@@ -73,9 +72,10 @@
     "yo-yoify": "^3.7.3"
   },
   "dependencies": {
+    "@remixproject/engine": "^0.1.5",
     "http-server": "^0.11.1",
-    "@remixproject/engine": "^0.1.2-7",
-    "remixd": "0.1.8-alpha.6"
+    "remixd": "0.1.8-alpha.6",
+    "standard": "^8.5.0"
   },
   "repository": {
     "type": "git",

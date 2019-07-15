@@ -125,21 +125,21 @@ export class LandingPage extends ViewPlugin {
 
     let startSolidity = () => {
       this.appManager.ensureActivated('solidity')
-      this.appManager.ensureActivated('run')
+      this.appManager.ensureActivated('udapp')
       this.appManager.ensureActivated('solidityStaticAnalysis')
       this.appManager.ensureActivated('solidityUnitTesting')
       this.verticalIcons.select('solidity')
     }
     let startVyper = () => {
       this.appManager.ensureActivated('vyper')
-      this.appManager.ensureActivated('run')
+      this.appManager.ensureActivated('udapp')
       this.verticalIcons.select('vyper')
     }
 
     let startPipeline = () => {
       this.appManager.ensureActivated('solidity')
       this.appManager.ensureActivated('pipeline')
-      this.appManager.ensureActivated('run')
+      this.appManager.ensureActivated('udapp')
     }
     let startDebugger = () => {
       this.appManager.ensureActivated('debugger')

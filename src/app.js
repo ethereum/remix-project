@@ -11,7 +11,6 @@ var loadFileFromParent = require('./loadFilesFromParent')
 var { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
-var makeUdapp = require('./makeUdapp')
 var Storage = remixLib.Storage
 var Browserfiles = require('./app/files/browser-files')
 var SharedFolder = require('./app/files/shared-folder')
@@ -34,9 +33,10 @@ const SettingsTab = require('./app/tabs/settings-tab')
 const AnalysisTab = require('./app/tabs/analysis-tab')
 const DebuggerTab = require('./app/tabs/debugger-tab')
 const TestTab = require('./app/tabs/test-tab')
-const RunTab = require('./app/tabs/run-tab')
 const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
+
+import { RunTab, makeUdapp } from './app/udapp';
 
 import PanelsResize from './lib/panels-resize'
 import { RemixAppManager } from './remixAppManager'
@@ -49,6 +49,7 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
+import { UniversalDApp } from 'remix-lib'
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -244,7 +245,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
   registry.put({api: compilersArtefacts, name: 'compilersartefacts'})
   // ----------------- universal dapp: run transaction, listen on transactions, decode events
-  const {udapp, eventsDecoder, txlistener} = makeUdapp(compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
+  const udapp = new UniversalDApp(registry.get('config').api)
+  const {eventsDecoder, txlistener} = makeUdapp(udapp, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
   // ----------------- network service (resolve network id / name) ----------------------------
   const networkModule = new NetworkModule()
   // ----------------- convert offset to line/column service ----------------------------
@@ -258,7 +260,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     fileManager,
     compilerMetadataGenerator,
     compilersArtefacts,
-    udapp,
     networkModule,
     offsetToLineColumnConverter
   ])
@@ -301,7 +302,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   ])
 
   // CONTENT VIEWS & DEFAULT PLUGINS
-  let compileTab = new CompileTab(
+  const compileTab = new CompileTab(
     editor,
     registry.get('config').api,
     new Renderer(),
@@ -309,7 +310,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     registry.get('filemanager').api,
     registry.get('fileproviders').api,
   )
-  let run = new RunTab(
+  const run = new RunTab(
     udapp,
     registry.get('config').api,
     registry.get('filemanager').api,
@@ -319,9 +320,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     networkModule,
     mainview
   )
-  let analysis = new AnalysisTab(registry)
-  let debug = new DebuggerTab()
-  let test = new TestTab(
+  const analysis = new AnalysisTab(registry)
+  const debug = new DebuggerTab()
+  const test = new TestTab(
     registry.get('filemanager').api,
     filePanel,
     compileTab,
@@ -338,7 +339,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     ...appManager.registeredPlugins()
   ])
 
-  await appManager.activate(['contentImport', 'theme', 'sourceHighlighters', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'udapp', 'network', 'offsetToLineColumnConverter'])
+  await appManager.activate(['contentImport', 'theme', 'sourceHighlighters', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'offsetToLineColumnConverter'])
   await appManager.activate(['mainPanel'])
   await appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
 

@@ -13,7 +13,7 @@ class CreateContract extends EventEmitter {
 }
 
 function createContract (browser, inputParams, callback) {
-  browser.clickLaunchIcon('settings').clickLaunchIcon('run')
+  browser.clickLaunchIcon('settings').clickLaunchIcon('udapp')
     .setValue('div[class^="contractActionsContainerSingle"] input', inputParams, function () {
       browser.click('#runTabView button[class^="instanceButton"]').pause(500).perform(function () { callback() })
     })

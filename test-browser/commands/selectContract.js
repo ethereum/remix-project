@@ -13,7 +13,7 @@ class SelectContract extends EventEmitter {
 }
 
 function selectContract (browser, contractName, callback) {
-  browser.clickLaunchIcon('settings').clickLaunchIcon('run')
+  browser.clickLaunchIcon('settings').clickLaunchIcon('udapp')
   .setValue('#runTabView select[class^="contractNames"]', contractName).perform(() => {
     callback()
   })

@@ -13,7 +13,7 @@ class AddFile extends EventEmitter {
 }
 
 function addFile (browser, name, content, done) {
-  browser.clickLaunchIcon('run').clickLaunchIcon('fileExplorers').click('.newFile')
+  browser.clickLaunchIcon('udapp').clickLaunchIcon('fileExplorers').click('.newFile')
       .perform((client, done) => {
         browser.execute(function (fileName) {
           if (fileName !== 'Untitled.sol') {

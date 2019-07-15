@@ -16,7 +16,7 @@ export const defaultWorkspaces = (appManager) => {
       true,
       () => {
         appManager.ensureActivated('solidity')
-        appManager.ensureActivated('run')
+        appManager.ensureActivated('udapp')
         appManager.ensureActivated('solidityStaticAnalysis')
         appManager.ensureActivated('solidityUnitTesting')
       }, () => {}),
@@ -26,7 +26,7 @@ export const defaultWorkspaces = (appManager) => {
       true,
       () => {
         appManager.ensureActivated('vyper')
-        appManager.ensureActivated('run')
+        appManager.ensureActivated('udapp')
       }, () => {}),
     new Workspace('Debugger', 'Debug transactions with remix', false, () => {
       appManager.ensureActivated('debugger')
@@ -34,7 +34,7 @@ export const defaultWorkspaces = (appManager) => {
     new Workspace('Pipeline', '', false, () => {
       appManager.ensureActivated('solidity')
       appManager.ensureActivated('pipeline')
-      appManager.ensureActivated('run')
+      appManager.ensureActivated('udapp')
     })
   ]
 }

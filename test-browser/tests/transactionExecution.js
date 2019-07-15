@@ -12,7 +12,7 @@ module.exports = {
 
   'Execute Simple Contract and Test Terminal': function (browser) {
     browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'])
-        .clickLaunchIcon('run')
+        .clickLaunchIcon('udapp')
         .click('#runTabView button[class^="instanceButton"]')
         .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2) > div > button')
@@ -39,7 +39,7 @@ module.exports = {
 
   'Test Complex Return Values': function (browser) {
     browser.testContracts('returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'])
-      .clickLaunchIcon('run')
+      .clickLaunchIcon('udapp')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
       .click('.instance:nth-of-type(2) > div > button')
@@ -76,7 +76,7 @@ module.exports = {
 
   'Test Complex Input Values': function (browser) {
     browser.testContracts('inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'])
-        .clickLaunchIcon('run')
+        .clickLaunchIcon('udapp')
         .click('#runTabView button[class^="instanceButton"]')
         .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2) > div > button')
