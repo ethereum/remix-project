@@ -1,8 +1,7 @@
 const async = require('async')
-const ethJSUtil = require('ethereumjs-util')
-const { BN, privateToAddress, isValidPrivate, stripHexPrefix } = ethJSUtil
+const { BN, privateToAddress, isValidPrivate, stripHexPrefix } = require('ethereumjs-util')
 const crypto = require('crypto')
-import { EventEmitter } from 'events';
+const { EventEmitter } = require('events');
 
 const TxRunner = require('./execution/txRunner')
 const txHelper = require('./execution/txHelper')
@@ -81,7 +80,7 @@ module.exports = class UniversalDApp {
     }
     this._addAccount(privateKey, balance)
     const privKey = Buffer.from(privateKey, 'hex')
-    return '0x' + ethJSUtil.privateToAddress(privKey).toString('hex')
+    return '0x' + privateToAddress(privKey).toString('hex')
   }
 
   newAccount (password, passwordPromptCb, cb) {
@@ -96,9 +95,9 @@ module.exports = class UniversalDApp {
       let privateKey
       do {
         privateKey = crypto.randomBytes(32)
-      } while (!ethJSUtil.isValidPrivate(privateKey))
+      } while (!isValidPrivate(privateKey))
       this._addAccount(privateKey, '0x56BC75E2D63100000')
-      cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
+      cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
     }
   }
 
@@ -110,7 +109,7 @@ module.exports = class UniversalDApp {
 
     if (this.accounts) {
       privateKey = Buffer.from(privateKey, 'hex')
-      const address = ethJSUtil.privateToAddress(privateKey)
+      const address = privateToAddress(privateKey)
 
       // FIXME: we don't care about the callback, but we should still make this proper
       let stateManager = executionContext.vm().stateManager
@@ -170,7 +169,7 @@ module.exports = class UniversalDApp {
 
   /** Get the balance of an address */
   getBalance (address, cb) {
-    address = ethJSUtil.stripHexPrefix(address)
+    address = stripHexPrefix(address)
 
     if (!executionContext.isVM()) {
       executionContext.web3().eth.getBalance(address, (err, res) => {
