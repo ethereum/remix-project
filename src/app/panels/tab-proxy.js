@@ -140,7 +140,7 @@ export class TabProxy {
   removeTab (name) {
     this._view.filetabs.removeTab(name)
     delete this._handlers[name]
-    this.switchToActiveTab ()
+    this.switchToActiveTab()
   }
 
   addHandler (type, fn) {
