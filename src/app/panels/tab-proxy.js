@@ -20,7 +20,6 @@ export class TabProxy {
 
     fileManager.events.on('fileClosed', (name) => {
       this.removeTab(name)
-      this.switchPreviousTab()
     })
 
     fileManager.events.on('currentFileChanged', (file) => {
@@ -105,8 +104,16 @@ export class TabProxy {
       const handlers = Object.keys(this._handlers)
       let i = handlers.indexOf(active)
       if (i >= 0) {
+        i = handlers[i - 1] ? i - 1 : handlers.length - 1
         this.switchTab(handlers[i])
       }
+    }
+  }
+
+  switchToActiveTab () {
+    const active = this._view.filetabs.active
+    if (active && this._handlers[active]) {
+      this.switchTab(active)
     }
   }
 
@@ -133,6 +140,7 @@ export class TabProxy {
   removeTab (name) {
     this._view.filetabs.removeTab(name)
     delete this._handlers[name]
+    this.switchToActiveTab ()
   }
 
   addHandler (type, fn) {
