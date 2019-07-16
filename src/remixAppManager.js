@@ -6,7 +6,7 @@ import { PermissionHandler } from './app/ui/persmission-handler'
 const requiredModules = [ // services + layout views + system views
   'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'sourceHighlighters', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport',
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
-  'terminal', 'home', 'settings', 'pluginManager']
+  'terminal', 'settings', 'pluginManager']
 
 export class RemixAppManager extends PluginEngine {
 
