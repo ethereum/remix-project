@@ -272,7 +272,6 @@ class FileManager extends Plugin {
         if (fileList.length) {
           _switchFile(browserProvider.type + '/' + fileList[0])
         } else {
-          this.editor.displayEmptyReadOnlySession()
           this.events.emit('noFileSelected')
         }
       })

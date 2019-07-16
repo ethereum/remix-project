@@ -151,9 +151,11 @@ export class TabProxy {
     this._view.filetabs = yo`<remix-tabs></remix-tabs>`
     this._view.filetabs.addEventListener('tabClosed', (event) => {
       if (this._handlers[event.detail]) this._handlers[event.detail].close()
+      this.event.emit('tabCountChanged', this._view.filetabs.tabs.length)
     })
     this._view.filetabs.addEventListener('tabActivated', (event) => {
       if (this._handlers[event.detail]) this._handlers[event.detail].switchTo()
+      this.event.emit('tabCountChanged', this._view.filetabs.tabs.length)
     })
 
     this._view.filetabs.canAdd = false
