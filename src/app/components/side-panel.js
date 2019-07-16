@@ -6,7 +6,8 @@ const yo = require('yo-yo')
 const css = csjs`
   .panel {
     height: 100%;
-    overflow-y: hidden; 
+    display: flex;
+    flex-direction: column;
   }
   .swapitTitle {
     margin: 0;
@@ -21,7 +22,7 @@ const css = csjs`
   }
   .swapitHeader {
     height: 35px;
-    padding: 0 20px;
+    padding: 15px 20px;
     display: flex;
     align-items: center;
   }
@@ -30,8 +31,9 @@ const css = csjs`
     cursor: pointer;
   }
   .pluginsContainer {
-    height: calc(100% - 35px);
-    overflow: auto;
+    height: 100%;
+    flex: 1;
+    padding-bottom: 40px;
   }
   .titleInfo {
     padding-left: 10px;

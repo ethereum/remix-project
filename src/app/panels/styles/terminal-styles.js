@@ -7,7 +7,6 @@ var css = csjs`
     flex-direction    : column;
     font-size         : 12px;
     min-height        : 3em;
-    overflow          : hidden;
   }
   .bar                {
     display           : flex;
