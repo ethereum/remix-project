@@ -8,11 +8,12 @@ var css = csjs`
   }
   .instanceContainerTitle {
     font-weight: bold;
-    margin-bottom: 5%;
+    margin-bottom: 25px;
     font-size: 12px;
     display: flex;
     justify-content: space-between;
     padding-left: 15px;
+    height: 0px;
   }
   .settings {
     margin-bottom: 2%;
