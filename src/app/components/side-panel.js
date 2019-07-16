@@ -34,6 +34,7 @@ const css = csjs`
     height: 100%;
     flex: 1;
     padding-bottom: 40px;
+    overflow-y: auto;
   }
   .titleInfo {
     padding-left: 10px;
