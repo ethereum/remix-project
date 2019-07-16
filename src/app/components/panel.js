@@ -77,7 +77,6 @@ export class AbstractPanel extends HostPlugin {
    * @param {String} name The name of the plugin to display the content
    */
   showContent (name) {
-    console.log('showContent', name, this.active)
     if (!this.contents[name]) throw new Error(`Plugin ${name} is not yet activated`)
     // hiding the current view and display the `moduleName`
     if (this.active) {
