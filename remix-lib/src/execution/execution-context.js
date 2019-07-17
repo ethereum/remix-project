@@ -186,6 +186,9 @@ function ExecutionContext () {
 
     if (context === 'vm') {
       executionContext = context
+      vms.constantinople.stateManager.revert(() => {
+        vms.constantinople.stateManager.checkpoint(() => {})
+      })
       self.event.trigger('contextChanged', ['vm'])
       return cb()
     }
