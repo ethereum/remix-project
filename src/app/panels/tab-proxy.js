@@ -110,6 +110,13 @@ export class TabProxy {
     }
   }
 
+  switchToActiveTab () {
+    const active = this._view.filetabs.active
+    if (active && this._handlers[active]) {
+      this.switchTab(active)
+    }
+  }
+
   showTab (name) {
     this._view.filetabs.activateTab(name)
   }
@@ -133,6 +140,7 @@ export class TabProxy {
   removeTab (name) {
     this._view.filetabs.removeTab(name)
     delete this._handlers[name]
+    this.switchToActiveTab()
   }
 
   addHandler (type, fn) {
@@ -143,9 +151,11 @@ export class TabProxy {
     this._view.filetabs = yo`<remix-tabs></remix-tabs>`
     this._view.filetabs.addEventListener('tabClosed', (event) => {
       if (this._handlers[event.detail]) this._handlers[event.detail].close()
+      this.event.emit('tabCountChanged', this._view.filetabs.tabs.length)
     })
     this._view.filetabs.addEventListener('tabActivated', (event) => {
       if (this._handlers[event.detail]) this._handlers[event.detail].switchTo()
+      this.event.emit('tabCountChanged', this._view.filetabs.tabs.length)
     })
 
     this._view.filetabs.canAdd = false

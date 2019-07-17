@@ -82,6 +82,9 @@ export class MainView {
       self._components.contextView.show()
       self._view.mainPanel.style.display = 'none'
     })
+    self.tabProxy.event.on('tabCountChanged', (count) => {
+      if (!count) this.editor.displayEmptyReadOnlySession()
+    })
     self.data = {
       _layout: {
         top: {
