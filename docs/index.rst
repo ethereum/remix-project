@@ -61,6 +61,7 @@ Useful links:
    create_deploy
    tutorial_debug
    import
+   remix_commands
    remixd
    unittesting
    
