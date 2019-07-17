@@ -90,7 +90,7 @@ Click the debug button to start debugging it.
 
 Before we get to the actual debugging tool, the next section show how to start debugging session directly from the Debugger.
 
-### Initiate Debugging from the from the Debugger
+### Initiate Debugging from the Debugger
 
 Click the bug icon in the icon panel to get to the debugger in the side panel.  
 
