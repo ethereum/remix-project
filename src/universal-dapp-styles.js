@@ -97,6 +97,7 @@ var css = csjs`
   }
   .instanceButton {
     border-radius: 3px;
+    flex: 3;
   }
   .closeIcon {
     font-size: 12px;

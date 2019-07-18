@@ -119,6 +119,7 @@ class MultiParamManager {
     this.basicInputField = yo`<input></input>`
     this.basicInputField.setAttribute('placeholder', this.inputs)
     this.basicInputField.setAttribute('title', this.inputs)
+    this.basicInputField.setAttribute('style', "flex: 4")
 
     var onClick = (domEl) => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
@@ -127,9 +128,14 @@ class MultiParamManager {
 // otherwise it needs to have btn-warning injected
 // or do we need to only do this in 1 place - I have a feeling that this will happen in multiple places
 
-    this.contractActionsContainerSingle = yo`<div class="${css.contractActionsContainerSingle}" >
-      <button onclick=${() => { onClick() }} class="${css.instanceButton} btn btn-sm">${title}</button>${this.basicInputField}<i class="fas fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
-      </div>`
+    this.contractActionsContainerSingle = yo`
+    <div class="${css.contractActionsContainerSingle}" >
+      <button onclick=${() => { onClick() }} class="${css.instanceButton} btn btn-sm">
+        ${title}
+      </button>
+      ${this.basicInputField}
+      <i class="fas fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
+    </div>`
 
     this.multiFields = this.createMultiFields()
 
@@ -195,7 +201,7 @@ class MultiParamManager {
       this.contractActionsContainerSingle.querySelector('i').style.visibility = 'hidden'
     } else {
       this.contractActionsContainerSingle.querySelector('i').style.visibility = 'hidden'
-      this.basicInputField.style.display = 'none'
+      this.basicInputField.style.visibility = 'hidden'
     }
 
     if (this.funABI.payable === true) {
