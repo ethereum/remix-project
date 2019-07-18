@@ -119,7 +119,7 @@ class MultiParamManager {
     this.basicInputField = yo`<input></input>`
     this.basicInputField.setAttribute('placeholder', this.inputs)
     this.basicInputField.setAttribute('title', this.inputs)
-    this.basicInputField.setAttribute('style', "flex: 4")
+    this.basicInputField.setAttribute('style', 'flex: 4')
 
     var onClick = (domEl) => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)

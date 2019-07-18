@@ -110,7 +110,6 @@ var css = csjs`
     justify-content: flex-end;
   }
   .contractProperty {
-    overflow: auto;
     margin-bottom: 0.4em;
     margin-top: 1em;
     width:100%;
