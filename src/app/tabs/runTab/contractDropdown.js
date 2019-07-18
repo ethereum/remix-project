@@ -108,9 +108,16 @@ class ContractDropdownUI {
     }
 
     var selectedContract = this.getSelectedContract()
-    var createConstructorInstance = new MultiParamManager(0, selectedContract.getConstructorInterface(), (valArray, inputsValues) => {
-      this.createInstance(inputsValues)
-    }, selectedContract.getConstructorInputs(), 'Deploy', selectedContract.bytecodeObject)
+    var createConstructorInstance = new MultiParamManager(
+      0,
+      selectedContract.getConstructorInterface(),
+      (valArray, inputsValues) => {
+        this.createInstance(inputsValues)
+      },
+      selectedContract.getConstructorInputs(),
+      'Deploy',
+      selectedContract.bytecodeObject
+    )
     this.createPanel.appendChild(createConstructorInstance.render())
   }
 
