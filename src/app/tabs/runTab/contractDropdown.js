@@ -107,8 +107,8 @@ class ContractDropdownUI {
       return
     }
 
-    var selectedContract = this.getSelectedContract()
-    var createConstructorInstance = new MultiParamManager(
+    const selectedContract = this.getSelectedContract()
+    const createConstructorInstance = new MultiParamManager(
       0,
       selectedContract.getConstructorInterface(),
       (valArray, inputsValues) => {
