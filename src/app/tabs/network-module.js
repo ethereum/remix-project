@@ -18,7 +18,7 @@ export class NetworkModule extends Plugin {
     super(profile)
     // TODO: See with remix-lib to make sementic coherent
     executionContext.event.register('contextChanged', (provider) => {
-      this.events.emit('providerChanged', provider)
+      this.emit('providerChanged', provider)
     })
     /*
     // Events that could be implemented later
