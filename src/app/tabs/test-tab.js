@@ -217,7 +217,7 @@ module.exports = class TestTab extends ViewPlugin {
         <div class="${css.infoBox}">
           Test your smart contract by creating a foo_test.sol file (open ballot_test.sol to see the example).
           <br/>
-          You will find more informations in the <a href="https://remix.readthedocs.io/en/latest/unittesting_tab.html">documentation</a>
+          You will find more informations in the <a href="https://remix-ide.readthedocs.io/en/latest/unittesting.html">documentation</a>
           Then use the stand alone NPM module remix-tests to run unit tests in your Continuous Integration
           <a href="https://www.npmjs.com/package/remix-tests">https://www.npmjs.com/package/remix-tests</a>.
           <br/>
