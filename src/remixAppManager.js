@@ -8,11 +8,16 @@ const requiredModules = [ // services + layout views + system views
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
   'terminal', 'settings', 'pluginManager']
 
+const settings = {
+  permissionHandler: new PermissionHandler(),
+  autoActivate: false,
+  natives: ['vyper'] // Force iframe plugin to be seen as native
+}
+
 export class RemixAppManager extends PluginEngine {
 
   constructor (plugins) {
-    super(plugins)
-    this.permissionHandler = new PermissionHandler()
+    super(plugins, settings)
     this.event = new EventEmitter()
     this.registered = {}
   }
