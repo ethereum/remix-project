@@ -109,8 +109,8 @@ class ContractDropdownUI {
 
     const selectedContract = this.getSelectedContract()
     const clickCallback = (valArray, inputsValues) => {
-        this.createInstance(inputsValues)
-      }
+      this.createInstance(inputsValues)
+    }
     const createConstructorInstance = new MultiParamManager(
       0,
       selectedContract.getConstructorInterface(),
