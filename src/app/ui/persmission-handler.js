@@ -78,7 +78,7 @@ export class PermissionHandler {
               }
               this.persistPermissions()
             }
-            resolve()
+            resolve(true)
           }
         },
         {
@@ -105,19 +105,23 @@ export class PermissionHandler {
    * @returns {Promise<boolean>}
    */
   async askPermission (from, to) {
-    this.permissions = this._getFromLocal()
-    if (!this.permissions[to.name]) this.permissions[to.name] = {}
-    if (!this.permissions[to.name][from.name]) return this.openPermission(from, to)
+    try {
+      this.permissions = this._getFromLocal()
+      if (!this.permissions[to.name]) this.permissions[to.name] = {}
+      if (!this.permissions[to.name][from.name]) return this.openPermission(from, to)
 
-    const { allow, hash } = this.permissions[to.name][from.name]
-    if (!allow) {
-      const warning = notAllowWarning(from, to)
-      addTooltip(warning)
-      throw new Error(warning)
+      const { allow, hash } = this.permissions[to.name][from.name]
+      if (!allow) {
+        const warning = notAllowWarning(from, to)
+        addTooltip(warning)
+        return false
+      }
+      return hash === from.hash
+        ? true  // Allow
+        : this.openPermission(from, to)  // New version of a plugin
+    } catch (err) {
+      throw new Error(err)
     }
-    return hash === from.hash
-      ? true  // Allow
-      : this.openPermission(from, to)  // New version of a plugin
   }
 
   /**
