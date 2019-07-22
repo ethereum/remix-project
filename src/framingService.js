@@ -10,7 +10,6 @@ export class FramingService {
 
   start () {
     this.sidePanel.events.on('toggle', () => {
-      console.log('Toggled')
       this.resizeFeature.panel1.clientWidth !== 0 ? this.resizeFeature.minimize() : this.resizeFeature.maximise()
     })
     this.sidePanel.events.on('showing', () => {
