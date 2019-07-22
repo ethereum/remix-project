@@ -187,6 +187,8 @@ export class VerticalIcons extends Plugin {
    */
   select (name) {
     this.updateActivations(name)
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('showContent', name)
     this.events.emit('showContent', name)
   }
 
@@ -196,6 +198,8 @@ export class VerticalIcons extends Plugin {
    */
   toggle (name) {
     this.updateActivations(name)
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('toggleContent', name)
     this.events.emit('toggleContent', name)
   }
 

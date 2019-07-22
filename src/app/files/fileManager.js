@@ -85,6 +85,8 @@ class FileManager extends Plugin {
         this.switchFile(newFocus)
       }
     }
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('fileRenamed', oldName, newName)
     this.events.emit('fileRenamed', oldName, newName)
   }
 
@@ -104,8 +106,12 @@ class FileManager extends Plugin {
     delete this.openedFiles[name]
     if (!Object.keys(this.openedFiles).length) {
       this._deps.config.set('currentFile', '')
+      // TODO: Only keep `this.emit` (issue#2210)
+      this.emit('noFileSelected')
       this.events.emit('noFileSelected')
     }
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('fileClosed', name)
     this.events.emit('fileClosed', name)
   }
 
@@ -234,6 +240,8 @@ class FileManager extends Plugin {
     }
     this.editor.discard(path)
     delete this.openedFiles[path]
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('fileRemoved', path)
     this.events.emit('fileRemoved', path)
     this.switchFile()
   }
@@ -241,6 +249,8 @@ class FileManager extends Plugin {
   unselectCurrentFile () {
     this.saveCurrentFile()
     this._deps.config.set('currentFile', '')
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('noFileSelected')
     this.events.emit('noFileSelected')
   }
 
@@ -258,6 +268,8 @@ class FileManager extends Plugin {
           } else {
             this.editor.open(file, content)
           }
+          // TODO: Only keep `this.emit` (issue#2210)
+          this.emit('currentFileChanged', file)
           this.events.emit('currentFileChanged', file)
         }
       })
@@ -271,6 +283,8 @@ class FileManager extends Plugin {
         if (fileList.length) {
           _switchFile(browserProvider.type + '/' + fileList[0])
         } else {
+          // TODO: Only keep `this.emit` (issue#2210)
+          this.emit('noFileSelected')
           this.events.emit('noFileSelected')
         }
       })
