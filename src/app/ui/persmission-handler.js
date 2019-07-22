@@ -109,7 +109,7 @@ export class PermissionHandler {
       this.permissions = this._getFromLocal()
       if (!this.permissions[to.name]) this.permissions[to.name] = {}
       if (!this.permissions[to.name][from.name]) return this.openPermission(from, to)
-  
+
       const { allow, hash } = this.permissions[to.name][from.name]
       if (!allow) {
         const warning = notAllowWarning(from, to)
