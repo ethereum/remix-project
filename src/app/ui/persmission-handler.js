@@ -114,13 +114,13 @@ export class PermissionHandler {
       if (!allow) {
         const warning = notAllowWarning(from, to)
         addTooltip(warning)
-        throw new Error(warning)
+        return false
       }
       return hash === from.hash
         ? true  // Allow
         : this.openPermission(from, to)  // New version of a plugin
     } catch (err) {
-      return false
+      throw new Error(err)
     }
   }
 
