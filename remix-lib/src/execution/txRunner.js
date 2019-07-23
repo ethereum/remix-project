@@ -135,7 +135,7 @@ class TxRunner {
       executionContext.vm().stateManager.checkpoint(() => { })
     }
 
-    this.checkpointAndCommit(() => {
+    executionContext.checkpointAndCommit(() => {
       executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }, function (err, results) {
         err = err ? err.message : err
         if (err) {
@@ -157,20 +157,7 @@ class TxRunner {
           transactionHash: ethJSUtil.bufferToHex(Buffer.from(tx.hash()))
         })
       })
-    })
-  }
-
-  checkpointAndCommit (cb) {
-    if (executionContext.vm().stateManager._checkpointCount > 1) {
-      return executionContext.vm().stateManager.commit(() => {
-        cb()
-      })
-    }
-    executionContext.vm().stateManager.checkpoint(() => {
-      executionContext.vm().stateManager.commit(() => {
-        cb()
-      })
-    })
+    }, 1)
   }
 
   runInNode (from, to, data, value, gasLimit, useCall, confirmCb, gasEstimationForceSend, promptCb, callback) {

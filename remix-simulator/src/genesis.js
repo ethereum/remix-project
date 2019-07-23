@@ -4,19 +4,6 @@ var executionContext = RemixLib.execution.executionContext
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 
-function checkpointAndCommit (cb) {
-  if (executionContext.vm().stateManager._checkpointCount > 0) {
-    return executionContext.vm().stateManager.commit(() => {
-      cb()
-    })
-  }
-  executionContext.vm().stateManager.checkpoint(() => {
-    executionContext.vm().stateManager.commit(() => {
-      cb()
-    })
-  })
-}
-
 function generateBlock () {
   var block = new EthJSBlock({
     header: {
@@ -30,7 +17,7 @@ function generateBlock () {
     uncleHeaders: []
   })
 
-  checkpointAndCommit(() => {
+  executionContext.checkpointAndCommit(() => {
     executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }, function () {
       executionContext.addBlock(block)
     })
