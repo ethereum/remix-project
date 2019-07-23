@@ -220,6 +220,19 @@ function ExecutionContext () {
     }
   }
 
+  this.checkpointAndCommit = function (cb, checkpointCount) {
+    if (this.vm().stateManager._checkpointCount > (checkpointCount || 0)) {
+      return this.vm().stateManager.commit(() => {
+        cb()
+      })
+    }
+    this.vm().stateManager.checkpoint(() => {
+      this.vm().stateManager.commit(() => {
+        cb()
+      })
+    })
+  }
+
   this.currentblockGasLimit = function () {
     return this.blockGasLimit
   }
