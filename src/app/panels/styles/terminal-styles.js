@@ -10,7 +10,7 @@ var css = csjs`
   }
   .bar                {
     display           : flex;
-    z-index           : 3;
+    z-index           : 2;
   }
   .menu               {
     position             : relative;
