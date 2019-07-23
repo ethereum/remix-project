@@ -94,12 +94,17 @@ class TxRunner {
     }
   }
 
-  runInVm (from, to, data, value, gasLimit, useCall, timestamp, callback) {
+  runInVm (from, to, data, value, _gasLimit, useCall, timestamp, callback) {
     const self = this
     var account = self.vmaccounts[from]
     if (!account) {
       return callback('Invalid account selected')
     }
+    let gasLimit = _gasLimit
+    if (!BN.isBN(_gasLimit)) {
+      gasLimit = new BN(_gasLimit)
+    }
+
     var tx = new EthJSTX({
       timestamp: timestamp,
       nonce: new BN(account.nonce++),
