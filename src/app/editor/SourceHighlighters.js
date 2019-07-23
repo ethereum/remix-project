@@ -5,8 +5,8 @@ import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
 const profile = {
-  displayName: 'source highlighters',
-  name: 'sourceHighlighters',
+  displayName: 'Editor',
+  name: 'editor',
   description: 'service - highlight source code',
   version: packageJson.version,
   methods: ['highlight', 'discardHighlight']
