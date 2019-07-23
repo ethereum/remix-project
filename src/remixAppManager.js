@@ -4,7 +4,7 @@ import { EventEmitter } from 'events'
 import { PermissionHandler } from './app/ui/persmission-handler'
 
 const requiredModules = [ // services + layout views + system views
-  'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'sourceHighlighters', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport',
+  'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport',
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
   'terminal', 'settings', 'pluginManager']
 
