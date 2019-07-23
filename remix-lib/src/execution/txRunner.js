@@ -94,15 +94,11 @@ class TxRunner {
     }
   }
 
-  runInVm (from, to, data, value, _gasLimit, useCall, timestamp, callback) {
+  runInVm (from, to, data, value, gasLimit, useCall, timestamp, callback) {
     const self = this
     var account = self.vmaccounts[from]
     if (!account) {
       return callback('Invalid account selected')
-    }
-    let gasLimit = _gasLimit
-    if (!BN.isBN(_gasLimit)) {
-      gasLimit = new BN(_gasLimit)
     }
 
     var tx = new EthJSTX({
@@ -124,7 +120,7 @@ class TxRunner {
         number: self.blockNumber,
         coinbase: coinbases[self.blockNumber % coinbases.length],
         difficulty: difficulties[self.blockNumber % difficulties.length],
-        gasLimit: new BN('8000000').imuln(1)
+        gasLimit: new BN(gasLimit, 10).imuln(2)
       },
       transactions: [tx],
       uncleHeaders: []
