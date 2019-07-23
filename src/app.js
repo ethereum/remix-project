@@ -337,7 +337,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     ...appManager.registeredPlugins()
   ])
 
-  await appManager.activate(['contentImport', 'theme', 'sourceHighlighters', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'offsetToLineColumnConverter'])
+  await appManager.activate(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'offsetToLineColumnConverter'])
   await appManager.activate(['mainPanel'])
   await appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
 
