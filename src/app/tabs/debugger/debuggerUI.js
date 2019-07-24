@@ -103,7 +103,23 @@ class DebuggerUI {
     return this.isActive
   }
 
-  startDebugging (blockNumber, txNumber, tx) {
+  async getDebugWeb3 () {
+    return new Promise((resolve, reject) => {
+      executionContext.detectNetwork((error, network) => {
+        let web3
+        if (error || !network) {
+          web3 = init.web3DebugNode(executionContext.web3())
+        } else {
+          var webDebugNode = init.web3DebugNode(network.name)
+          web3 = (!webDebugNode ? executionContext.web3() : webDebugNode)
+        }
+        init.extendWeb3(web3)
+        resolve(web3)
+      })
+    })
+  }
+
+  async startDebugging (blockNumber, txNumber, tx) {
     const self = this
     if (this.debugger) this.unLoad()
 
@@ -111,30 +127,41 @@ class DebuggerUI {
     let lastCompilationResult
     if (compilers['__last']) lastCompilationResult = compilers['__last']
 
-    executionContext.detectNetwork((error, network) => {
-      let web3
-      if (error || !network) {
-        web3 = init.web3DebugNode(executionContext.web3())
-      } else {
-        var webDebugNode = init.web3DebugNode(network.name)
-        web3 = (!webDebugNode ? executionContext.web3() : webDebugNode)
-      }
-      init.extendWeb3(web3)
-      this.debugger = new Debugger({
+    let web3 = await this.getDebugWeb3()
+    this.debugger = new Debugger({
+      web3,
+      offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
+      compiler: { lastCompilationResult }
+    })
+
+    this.listenToEvents()
+    this.debugger.debug(blockNumber, txNumber, tx, () => {
+      self.stepManager = new StepManagerUI(this.debugger.step_manager)
+      self.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
+      self.txBrowser.setState({ blockNumber, txNumber, debugging: true })
+      self.renderDebugger()
+    }).catch((error) => {
+      toaster(error)
+      this.unLoad()
+    })
+  }
+
+  async retrieveTrace (hash) {
+    return new Promise(async (resolve, reject) => {
+      let compilers = this.registry.get('compilersartefacts').api
+      let lastCompilationResult
+      if (compilers['__last']) lastCompilationResult = compilers['__last']
+
+      let web3 = await this.getDebugWeb3()
+
+      let debug = new Debugger({
         web3,
         offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
         compiler: { lastCompilationResult }
       })
-
-      this.listenToEvents()
-      this.debugger.debug(blockNumber, txNumber, tx, () => {
-        self.stepManager = new StepManagerUI(this.debugger.step_manager)
-        self.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
-        self.txBrowser.setState({ blockNumber, txNumber, debugging: true })
-        self.renderDebugger()
-      }).catch((error) => {
-        toaster(error)
-        this.unLoad()
+      debug.debugger.traceManager.traceRetriever.getTrace(hash, (error, trace) => {
+        if (error) return reject(error)
+        resolve(trace)
       })
     })
   }
