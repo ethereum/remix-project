@@ -146,6 +146,7 @@ class PluginManagerComponent extends ViewPlugin {
     // Filtering helpers
     const isFiltered = (api) => api.name.toLowerCase().includes(this.filter)
     const isNotRequired = ({profile}) => !this.appManager.isRequired(profile.name)
+    const isNotHome = ({profile}) => profile.name !== 'home'
     const sortByName = (a, b) => {
       const nameA = a.name.toUpperCase()
       const nameB = b.name.toUpperCase()
@@ -156,6 +157,7 @@ class PluginManagerComponent extends ViewPlugin {
     const { actives, inactives } = this.appManager.getAll()
       .filter(isFiltered)
       .filter(isNotRequired)
+      .filter(isNotHome)
       .sort(sortByName)
       .reduce(({actives, inactives}, api) => {
         return this.appManager.isActive(api.name)
