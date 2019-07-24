@@ -121,7 +121,7 @@ export class LandingPage extends ViewPlugin {
       })
     }
 
-    let learnMore = () => { window.open('https://remix.readthedocs.io/en/latest/layout.html', '_blank') }
+    let learnMore = () => { window.open('https://remix-ide.readthedocs.io/en/latest/layout.html', '_blank') }
 
     let startSolidity = () => {
       this.appManager.ensureActivated('solidity')
