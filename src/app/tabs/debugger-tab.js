@@ -41,8 +41,8 @@ class DebuggerTab extends ViewPlugin {
     if (this.debuggerUI) this.debuggerUI.debug(hash)
   }
 
-  async getTrace (hash) {
-    return await this.debuggerUI.getTrace(hash)
+  getTrace (hash) {
+    return this.debuggerUI.getTrace(hash)
   }
 
   debugger () {
