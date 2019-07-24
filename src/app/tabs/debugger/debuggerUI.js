@@ -146,7 +146,7 @@ class DebuggerUI {
     })
   }
 
-  async retrieveTrace (hash) {
+  async getTrace (hash) {
     return new Promise(async (resolve, reject) => {
       let compilers = this.registry.get('compilersartefacts').api
       let lastCompilationResult
