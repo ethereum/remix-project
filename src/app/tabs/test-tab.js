@@ -10,7 +10,7 @@ const TestTabLogic = require('./testTab/testTab')
 const profile = {
   name: 'solidityUnitTesting',
   displayName: 'Solidity unit testing',
-  methods: [],
+  methods: ['startTestFromPath', 'startTestFromSourceCode'],
   events: [],
   icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4wUDEhQZ0zbrmQAAAfNJREFUWMPF17lrFVEUx/EPaIKovfAScSndjUtULFQSYhHF0r/Dwsa/RywUiTaWgvaChWsiKkSMZte4o7G5A49x7r0zLy/PA6eZOef3PXebuYfu2xCmcQ9b9NgOYw6rwR9ia6/gR7HQBi/8PjavN/w4FivghV9bT/gwlhLwHzjTVPQ8rqAvE3ciA/+O8abwy/gVBG4lijiJ5czIL64FXvhNbCzFnaoBv9AUPo7fEcEb2BDiTuNTAv4NYxX6u/EIM7GZuZoQXcX1sJk+J2K+YrRCexfetsX9xKVyUB9uZ4r4k3j3BSMR+JvIMv2zQfsxkSkiBj9XAd8ZgRf+vmop+nGnAXwlcs534HUm93FsQ9YtIjby7XiVyZ3BntSpyBWxgrMR+FQG/gF76xzNftxtMO1rgo+G5AdBqLBN4d9eCCyHD1En8Oi0j4UPSBE4hcFSERN4Fz7BZRvEZKcjHynBC5/EQI1lGqgJ3xcTmE4kvswUMRBiUvCPKTg8zQi8QKsirxXe5eD7c1N4ALMZoeelIlrhWSpnNmjXsoM1iihmYhueZGIXcKTp7/hQ6UZb5c+Cp2LmglZHVqeIlC+G2/GarNMiFnGsWzfdpkV0Fd7e5czXgC+FvmDdWq35/wVvbzbnI/DhXvV9Q6W+r6fw9hZsKnjX4H8B0Aamri7CrBsAAAAASUVORK5CYII=',
   description: 'Fast tool to generate unit tests for your contracts',
@@ -136,6 +136,27 @@ module.exports = class TestTab extends ViewPlugin {
       this.testsSummary.appendChild(yo`<div class="text-danger" >${error.context} - ${error.value} </div>`)
       this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${error.message}</div>`)
       this.testsSummary.appendChild(yo`<br>`)
+    })
+  }
+
+  async startTestFromPath (path) {
+    const fileContent = await this.fileManager.getFile(path)
+    return this.startTestFromSourceCode(fileContent, path)
+  }
+
+  /*
+    Test are not associated with the UI
+  */
+  startTestFromSourceCode (content, path = 'unit-test.sol') {
+    return new Promise((resolve, reject) => {
+      let runningTest = {}
+      runningTest[path] = { content }
+      remixTests.runTestSources(runningTest, () => {}, () => {}, (error, result) => {
+        if (error) return reject(error)
+        resolve(result)
+      }, (url, cb) => {
+        return this.compileTab.compileTabLogic.importFileCb(url, cb)
+      })
     })
   }
 
