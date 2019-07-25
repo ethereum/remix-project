@@ -5,7 +5,7 @@ import * as packageJson from '../../../package.json'
 export const profile = {
   name: 'network',
   description: 'Manage the network (mainnet, ropsten, goerli...) and the provider (web3, vm, injected)',
-  methods: [],
+  methods: ['getNetworkProvider', 'getEndpoint', 'detectNetwork', 'addNetwork', 'removeNetwork'],
   version: packageJson.version
 }
 
