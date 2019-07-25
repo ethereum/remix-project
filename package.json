@@ -47,6 +47,7 @@
     "nightwatch": "^0.9.20",
     "notify-error": "^1.2.0",
     "npm-link-local": "^1.1.0",
+    "npm-merge-driver": "^2.3.5",
     "npm-run-all": "^4.0.2",
     "onchange": "^3.2.1",
     "remix-analyzer": "0.3.8",
