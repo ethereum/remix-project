@@ -159,12 +159,24 @@ export class RemixAppManager extends PluginEngine {
     }
     const threeBox = {
       name: '3box',
-      displayName: '3Box Spaces Plugin',
+      displayName: '3Box Spaces',
+      description: 'A decentralized storage for everything that happen on Remix',
       methods: ['isEnabled', 'openSpace', 'getValue', 'setValue'],
       events: [],
       version: '0.1.0-beta',
       url: 'https://remix-3box.surge.sh',
       icon: 'https://raw.githubusercontent.com/3box/3box-dapp/master/public/3Box3.png',
+      location: 'sidePanel'
+    }
+    const remixWorkshop = {
+      name: 'workshop',
+      displayName: 'Remix Workshop',
+      description: 'Learn Solidity with Remix !',
+      methods: [],
+      events: [],
+      version: '0.1.0-alpha',
+      url: 'https://remix-plugin-workshops.surge.sh',
+      icon: 'https://image.flaticon.com/icons/svg/1570/1570493.svg',
       location: 'sidePanel'
     }
     return [
@@ -174,7 +186,8 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(ethdoc),
       new IframePlugin(mythx),
       new IframePlugin(provable),
-      new IframePlugin(threeBox)
+      new IframePlugin(threeBox),
+      new IframePlugin(remixWorkshop)
     ]
   }
 }
