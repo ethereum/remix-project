@@ -147,7 +147,7 @@ module.exports = class TestTab extends ViewPlugin {
   /*
     Test are not associated with the UI
   */
-  testFromSource (content, path = 'unit-test.sol') {
+  testFromSource (content, path = 'browser/unit-test.sol') {
     return new Promise((resolve, reject) => {
       let runningTest = {}
       runningTest[path] = { content }
