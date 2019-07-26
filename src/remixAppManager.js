@@ -163,7 +163,7 @@ export class RemixAppManager extends PluginEngine {
       methods: ['isEnabled', 'openSpace', 'getValue', 'setValue'],
       events: [],
       version: '0.1.0-beta',
-      url: 'http://remix-3box.surge.sh',
+      url: 'https://remix-3box.surge.sh',
       icon: 'https://raw.githubusercontent.com/3box/3box-dapp/master/public/3Box3.png',
       location: 'sidePanel'
     }
