@@ -158,12 +158,12 @@ export class RemixAppManager extends PluginEngine {
       location: 'sidePanel'
     }
     const threeBox = {
-      name: "3box",
-      displayName: "3Box Spaces Plugin",
-      methods: ["isEnabled", "openSpace", "getValue", "setValue"],
+      name: '3box',
+      displayName: '3Box Spaces Plugin',
+      methods: ['isEnabled', 'openSpace', 'getValue', 'setValue'],
       events: [],
-      url: "http://remix-3box.surge.sh",
-      icon: "https://raw.githubusercontent.com/3box/3box-dapp/master/public/3Box3.png",
+      url: 'http://remix-3box.surge.sh',
+      icon: 'https://raw.githubusercontent.com/3box/3box-dapp/master/public/3Box3.png',
       location: 'sidePanel'
     }
     return [
@@ -173,7 +173,7 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(ethdoc),
       new IframePlugin(mythx),
       new IframePlugin(provable),
-      new IframePlugin(threeBox),
+      new IframePlugin(threeBox)
     ]
   }
 }
