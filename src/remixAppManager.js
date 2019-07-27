@@ -179,6 +179,17 @@ export class RemixAppManager extends PluginEngine {
       icon: 'https://image.flaticon.com/icons/svg/1570/1570493.svg',
       location: 'sidePanel'
     }
+    const debugPlugin = {
+      name: 'debugPlugin',
+      displayName: 'Debug Tools for Remix plugins',
+      description: 'Easily test and debug your plugins !',
+      methods: ['sayHello', 'sayMyName', 'sayOurNames'], // test calls with 0, 1, and 2 args
+      events: [],
+      version: '0.1.0-alpha',
+      url: 'https://remix-debug-a.surge.sh',
+      icon: 'https://remix-debug-a.surge.sh/icon.png',
+      location: 'sidePanel'
+    }
     return [
       new IframePlugin(pipeline),
       new IframePlugin(vyper),
