@@ -199,7 +199,7 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(provable),
       new IframePlugin(threeBox),
       new IframePlugin(remixWorkshop),
-      new IframePlugin(debugPlugin),
+      new IframePlugin(debugPlugin)
     ]
   }
 }
