@@ -198,7 +198,8 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(mythx),
       new IframePlugin(provable),
       new IframePlugin(threeBox),
-      new IframePlugin(remixWorkshop)
+      new IframePlugin(remixWorkshop),
+      new IframePlugin(debugPlugin),
     ]
   }
 }
