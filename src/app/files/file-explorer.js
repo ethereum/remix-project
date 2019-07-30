@@ -421,7 +421,9 @@ fileExplorer.prototype.toGist = function (id) {
               [deleteFileName]: null
             }), this.files.origGistFiles)
           // adding new files
-          updatedFileList.forEach(file => allItems[file] = packaged[file])
+          updatedFileList.forEach((file) => {
+            allItems[file] = packaged[file]
+          })
 
           tooltip('Saving gist (' + id + ') ...')
           gists.edit({
