@@ -13,6 +13,7 @@
     "@babel/register": "^7.4.4",
     "@fortawesome/fontawesome-free": "^5.8.1",
     "@resolver-engine/imports": "^0.3.0",
+    "ace-mode-move": "0.0.1",
     "ace-mode-solidity": "^0.1.0",
     "async": "^2.1.2",
     "babel-eslint": "^10.0.0",
