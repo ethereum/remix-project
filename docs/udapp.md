@@ -17,8 +17,7 @@ You will see the functions in the contract.  The functions buttons can have diff
 
 -   Functions that are `constant` or `pure` functions in Solidity have a blue buttons. Clicking one of this type does not create a new transaction. So clicking will not cause state changes - it will only return a value stored in the contract - so it won't cost you anything in gas fees.
 
--   Functions that changes the state of the contract are orange, clicking this type of function will cost gas and they do change the state of the contract and so they do create a new transaction.
-But this transaction does not accept Ether.
+-   Functions that change the state of the contract are orange. Clicking on them will create a transaction and thus cost gas. Yet it is not possible to send Ether along with it.
 
 -   Functions that have red buttons are `payable` functions in Solidity. Clicking one of these will create a new transaction and this transaction can accept a **value**.  The **value** is put in in the Value field which is under the Gas Limit field.
 

@@ -61,10 +61,10 @@ This section contains the list of compiled contracts and 2 actions:
 Pending Instances
 -----------------
 
-Validating a transaction take several seconds. During this time, the GUI
-shows it in a pending mode. When transaction is mined the number of
+Validating a transaction takes several seconds. During this time, the GUI
+shows it in a pending mode. When the transaction is mined the number of
 pending transactions is updated and the transaction is added to the log
-(see ../terminal)
+([see terminal](terminal.html)).
 
 Using the ABI
 ------------
@@ -89,15 +89,15 @@ Saving to JSON allows to easily check the transaction list, tweak input
 parameters, change linked library, etc...
 
 We can find many use cases for the recorder, for instance:
-:   -   After having coded and tested contracts in a constrained
-        environment (like the JavaScript VM), it could be interesting to
-        redeploy them easily in a more persisted environment (like a
-        Geth node) in order to check whether everything behaves normally
-        in a classic environment.
-    -   Deploying contract does often require more than creating one
-        transaction.
-    -   Working in a dev environment does often require to setup the
-        state in a first place.
+-   After having coded and tested contracts in a constrained
+    environment (like the JavaScript VM), it could be interesting to
+    redeploy them easily in a more persisted environment (like a
+    Geth node) in order to check whether everything behaves normally
+    in a classic environment.
+-   Deploying contract does often require more than creating one
+    transaction.
+-   Working in a dev environment does often require to setup the
+    state in a first place.
 
 ![](images/a-runtab-recorder.png)
 
@@ -108,19 +108,19 @@ In that specific record, 3 transactions are executed:
 
 The first corresponds to the deployment of the lib `testLib`.
 
-The second corresponds to the deployment of the contract `test`, the
-first parameter of the constructor is set to 11. That contract depends
+The second corresponds to the deployment of the contract `test` with the
+first parameter of the constructor set to 11. That contract depends
 on a library. The linkage is done using the property `linkReferences`.
-In that case we use the addres of the previously created library :
+In that case we use the address of the previously created library :
 `created{1512830014773}`. the number is the id (timestamp) of the
-transaction that leads to the creation of the library.
+transaction that led to the creation of the library.
 
-The third parameter corresponds to the call to the function `set` of the
+The third record corresponds to the call to the function `set` of the
 contract `test` (the property to is set to: `created{1512830015080}`) .
 Input parameters are `1` and
 `0xca35b7d915458ef540ade6068dfe2f44e8fa733c`
 
-all these transactions are created using the value of the accounts
+All these transactions are created using the value of the accounts
 `account{0}`.
 
 ``` 
