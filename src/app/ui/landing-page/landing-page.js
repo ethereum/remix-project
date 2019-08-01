@@ -121,43 +121,49 @@ export class LandingPage extends ViewPlugin {
       })
     }
 
-    let learnMore = () => { window.open('https://remix-ide.readthedocs.io/en/latest/layout.html', '_blank') }
+    const learnMore = () => { window.open('https://remix-ide.readthedocs.io/en/latest/layout.html', '_blank') }
 
-    let startSolidity = () => {
+    const startSolidity = () => {
       this.appManager.ensureActivated('solidity')
       this.appManager.ensureActivated('udapp')
       this.appManager.ensureActivated('solidityStaticAnalysis')
       this.appManager.ensureActivated('solidityUnitTesting')
       this.verticalIcons.select('solidity')
     }
-    let startVyper = () => {
+    const startVyper = () => {
       this.appManager.ensureActivated('vyper')
       this.appManager.ensureActivated('udapp')
       this.verticalIcons.select('vyper')
     }
+    const startWorkshop = () => {
+      this.appManager.ensureActivated('solidity')
+      this.appManager.ensureActivated('solidityUnitTesting')
+      this.appManager.ensureActivated('workshop')
+      this.verticalIcons.select('workshop')
+    }
 
-    let startPipeline = () => {
+    const startPipeline = () => {
       this.appManager.ensureActivated('solidity')
       this.appManager.ensureActivated('pipeline')
       this.appManager.ensureActivated('udapp')
     }
-    let startDebugger = () => {
+    const startDebugger = () => {
       this.appManager.ensureActivated('debugger')
       this.verticalIcons.select('debugger')
     }
-    let startPluginManager = () => {
+    const startPluginManager = () => {
       this.appManager.ensureActivated('pluginManager')
       this.verticalIcons.select('pluginManager')
     }
 
-    let createNewFile = () => {
+    const createNewFile = () => {
       let fileExplorer = globalRegistry.get('fileexplorer/browser').api
       fileExplorer.createNewFile()
     }
-    let connectToLocalhost = () => {
+    const connectToLocalhost = () => {
       this.appManager.ensureActivated('remixd')
     }
-    let importFromGist = () => {
+    const importFromGist = () => {
       this.gistHandler.loadFromGist({gist: ''}, globalRegistry.get('filemanager').api)
       this.verticalIcons.select('fileExplorers')
     }
@@ -182,8 +188,8 @@ export class LandingPage extends ViewPlugin {
             <h2 class="">The new layout has arrived</h2>
           </div>
           <div class="${css.jumboBtnContainer} px-5">
-            <button class="btn btn-primary btn-lg mx-3" href="#" onclick=${() => { learnMore() }} role="button">Learn more</button>
-            <button class="btn btn-secondary btn-lg" onclick=${() => { switchToPreviousVersion() }}>Use previous version</button>
+            <button class="btn btn-primary btn-lg mx-3" href="#" onclick=${() => learnMore()} role="button">Learn more</button>
+            <button class="btn btn-secondary btn-lg" onclick=${() => switchToPreviousVersion()}>Use previous version</button>
           </div>
         </div><!-- end of jumbotron -->
       </div><!-- end of jumbotron container -->
@@ -192,13 +198,14 @@ export class LandingPage extends ViewPlugin {
           <div class="mb-5">
             <h4>Environments</h4>
             <div class="${css.enviroments} pt-2">
-              <button class="btn btn-lg btn-secondary mr-3" onclick=${() => { startSolidity() }}>Solidity</button>
-              <button class="btn btn-lg btn-secondary" onclick=${() => { startVyper() }}>Vyper</button>
+              <button class="btn btn-lg btn-secondary mr-3" onclick=${() => startSolidity()}>Solidity</button>
+              <button class="btn btn-lg btn-secondary mr-3" onclick=${() => startVyper()}>Vyper</button>
+              <button class="btn btn-lg btn-secondary mr-3" onclick=${() => startWorkshop()}>Workshop</button>
             </div>
           </div>
           <div class="file">
             <h4>File</h4>
-            <p class="mb-1 ${css.text}" onclick=${() => { createNewFile() }}>New File</p>
+            <p class="mb-1 ${css.text}" onclick=${() => createNewFile()}>New File</p>
             <p class="mb-1">
               <label class="${css.labelIt} ${css.text}">
                 Open Files
@@ -211,15 +218,15 @@ export class LandingPage extends ViewPlugin {
                 }" multiple />
               </label>
             </p>
-            <p class="mb-1 ${css.text}" onclick=${() => { connectToLocalhost() }}>Connect to Localhost</p>
+            <p class="mb-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</p>
             <p class="mb-1">Import From:</p>
             <div class="btn-group">
-              <button class="btn btn-sm btn-secondary" onclick=${() => { importFromGist() }}>Gist</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2']) }}>GitHub</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>']) }}>Swarm</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>']) }}>Ipfs</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-solidity/master/contracts/crowdsale/validation/IndividuallyCappedCrowdsale.sol']) }}>https</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`) }}>Resolver-engine</button>
+              <button class="btn btn-sm btn-secondary" onclick="${() => importFromGist()}">Gist</button>
+              <button class="btn btn-sm btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'])}">GitHub</button>
+              <button class="btn btn-sm btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
+              <button class="btn btn-sm btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
+              <button class="btn btn-sm btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-solidity/master/contracts/crowdsale/validation/IndividuallyCappedCrowdsale.sol'])}">https</button>
+              <button class="btn btn-sm btn-secondary" onclick="${() => load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`)}">Resolver-engine</button>
             </div><!-- end of btn-group -->
           </div><!-- end of div.file -->
         </div><!-- end of #col1 -->
