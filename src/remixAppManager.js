@@ -161,7 +161,7 @@ export class RemixAppManager extends PluginEngine {
       name: '3box',
       displayName: '3Box Spaces',
       description: 'A decentralized storage for everything that happen on Remix',
-      methods = [ 'login', 'isEnabled', 'getUserAddress', 'openSpace', 'closeSpace', 'isSpaceOpened', 'getSpacePrivateValue', 'setSpacePrivateValue', 'getSpacePublicValue', 'setSpacePublicValue', 'getSpacePublicData'],
+      methods: ['login', 'isEnabled', 'getUserAddress', 'openSpace', 'closeSpace', 'isSpaceOpened', 'getSpacePrivateValue', 'setSpacePrivateValue', 'getSpacePublicValue', 'setSpacePublicValue', 'getSpacePublicData'],
       events: [],
       version: '0.1.0-beta',
       url: 'https://remix-3box.surge.sh',
