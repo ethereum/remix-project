@@ -194,7 +194,7 @@ export class LandingPage extends ViewPlugin {
         </div><!-- end of jumbotron -->
       </div><!-- end of jumbotron container -->
       <div class="row ${css.hpSections}">
-        <div id="col1" class="col-sm-6">
+        <div id="col1" class="col-sm-7">
           <div class="mb-5">
             <h4>Environments</h4>
             <div class="${css.enviroments} pt-2">
@@ -230,7 +230,7 @@ export class LandingPage extends ViewPlugin {
             </div><!-- end of btn-group -->
           </div><!-- end of div.file -->
         </div><!-- end of #col1 -->
-        <div id="col2" class="col-sm-6">
+        <div id="col2" class="col-sm-5">
           <div class="plugins mb-5">
             <h4>Featured Plugins</h4>
             <p class="mb-1 ${css.text}" onclick=${() => { startPipeline() }}>Pipeline</p>

@@ -177,7 +177,7 @@ export class VerticalIcons extends Plugin {
     if (nextActive) {
       let image = nextActive.querySelector('.image')
       nextActive.classList.add(css.active)
-      image.style.setProperty('filter', `invert(${invert})`)
+      image.style.setProperty('filter', `invert(${invert}) grayscale(1) brightness(0%)`)
     }
   }
 
