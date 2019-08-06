@@ -411,14 +411,34 @@ fileExplorer.prototype.toGist = function (id) {
           token: tokenAccess
         })
         if (id) {
+          const fileList = Object.keys(this.files.origGistFiles)
+          const updatedFileList = Object.keys(packaged)
+          // Telling the GIST API to remove files
+          const allItems = fileList
+            .filter(fileName => updatedFileList.indexOf(fileName) === -1)
+            .reduce((acc, deleteFileName) => ({
+              ...acc,
+              [deleteFileName]: null
+            }), this.files.origGistFiles)
+          // adding new files
+          updatedFileList.forEach((file) => {
+            allItems[file] = packaged[file]
+          })
+
           tooltip('Saving gist (' + id + ') ...')
           gists.edit({
             description: description,
             public: true,
-            files: packaged,
+            files: allItems,
             id: id
           }, (error, result) => {
             proccedResult(error, result)
+            if (!error) {
+              for (const key in allItems) {
+                if (allItems[key] === null) delete allItems[key]
+              }
+              this.files.origGistFiles = allItems
+            }
           })
         } else {
           tooltip('Creating a new gist ...')
@@ -491,7 +511,7 @@ fileExplorer.prototype.copyFiles = function () {
 
 // ------------------ gist publish --------------
 fileExplorer.prototype.updateGist = function () {
-  var gistId = this.files.id
+  const gistId = this.files.id
   if (!gistId) {
     tooltip('no gist content is currently loaded.')
   } else {
