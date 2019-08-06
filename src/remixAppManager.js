@@ -189,7 +189,7 @@ export class RemixAppManager extends PluginEngine {
       url: 'https://remix-debug-a.surge.sh',
       icon: 'https://remix-debug-a.surge.sh/icon.png',
       location: 'sidePanel'
-     }
+    }
     const libraTools = {
       name: 'libratools',
       displayName: 'Libra and Move Tools',
