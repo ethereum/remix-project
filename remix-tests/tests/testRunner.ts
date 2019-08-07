@@ -9,15 +9,18 @@ import { deployAll } from '../dist/deployer'
 import { runTest } from '../dist/index'
 import { ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/index'
 
+var provider = new Provider()
+
 function compileAndDeploy(filename: string, callback: Function) {
   let web3: Web3 = new Web3()
-  web3.setProvider(new Provider())
+  web3.setProvider(provider)
   let compilationData: object
   let accounts: string[]
   async.waterfall([
     function getAccountList(next: Function): void {
       web3.eth.getAccounts((_err: Error | null | undefined, _accounts: string[]) => {
         accounts = _accounts
+        web3.eth.defaultAccount = accounts[0]
         next(_err)
       })
     },
@@ -93,6 +96,7 @@ describe('testRunner', () => {
             results = _results
             done()
           }
+
           runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback)
         })
       })
