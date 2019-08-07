@@ -221,6 +221,7 @@ function ExecutionContext () {
   }
 
   this.checkpointAndCommit = function (cb, checkpointCount) {
+    // due to issue https://github.com/ethereumjs/ethereumjs-vm/issues/567
     if (this.vm().stateManager._checkpointCount > (checkpointCount || 0)) {
       return this.vm().stateManager.commit(() => {
         cb()
