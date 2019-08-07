@@ -17,29 +17,29 @@ Implemented:
 * [X] eth_blockNumber
 * [X] eth_getBalance
 * [_] eth_getStorageAt
-* [~] eth_getTransactionCount
-* [_] eth_getBlockTransactionCountByHash
-* [_] eth_getBlockTransactionCountByNumber
-* [_] eth_getUncleCountByBlockHash
-* [_] eth_getUncleCountByBlockNumber
+* [X] eth_getTransactionCount
+* [X] eth_getBlockTransactionCountByHash
+* [X] eth_getBlockTransactionCountByNumber
+* [~] eth_getUncleCountByBlockHash
+* [~] eth_getUncleCountByBlockNumber
 * [X] eth_getCode
 * [~] eth_sign
 * [X] eth_sendTransaction
 * [_] eth_sendRawTransaction
 * [X] eth_call
 * [~] eth_estimateGas
-* [~] eth_getBlockByHash
-* [~] eth_getBlockByNumber
-* [~] eth_getTransactionByHash
-* [_] eth_getTransactionByBlockHashAndIndex
-* [_] eth_getTransactionByBlockNumberAndIndex
-* [~] eth_getTransactionReceipt
+* [X] eth_getBlockByHash
+* [X] eth_getBlockByNumber
+* [X] eth_getTransactionByHash
+* [X] eth_getTransactionByBlockHashAndIndex
+* [X] eth_getTransactionByBlockNumberAndIndex
+* [X] eth_getTransactionReceipt
 * [_] eth_getUncleByBlockHashAndIndex
 * [_] eth_getUncleByBlockNumberAndIndex
 * [X] eth_getCompilers (DEPRECATED)
-* [_] eth_compileSolidity (DEPRECATED)
-* [_] eth_compileLLL (DEPRECATED)
-* [_] eth_compileSerpent (DEPRECATED)
+* [X] eth_compileSolidity (DEPRECATED)
+* [X] eth_compileLLL (DEPRECATED)
+* [X] eth_compileSerpent (DEPRECATED)
 * [_] eth_newFilter
 * [_] eth_newBlockFilter
 * [_] eth_newPendingTransactionFilter
@@ -81,4 +81,3 @@ Implemented:
 * [_] rpc_modules
 * [_] web3_clientVersion
 * [_] web3_sha3
-

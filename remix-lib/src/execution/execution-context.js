@@ -67,6 +67,7 @@ function createVm (hardfork) {
     stateManager: stateManager,
     hardfork: hardfork
   })
+  vm.blockchain.validate = false
   var web3vm = new Web3VMProvider()
   web3vm.setVM(vm)
   return { vm, web3vm, stateManager }
@@ -91,6 +92,8 @@ function ExecutionContext () {
   this.blockGasLimitDefault = 4300000
   this.blockGasLimit = this.blockGasLimitDefault
   this.customNetWorks = {}
+  this.blocks = {}
+  this.txs = {}
 
   this.init = function (config) {
     if (config.get('settings/always-use-vm')) {
@@ -217,6 +220,20 @@ function ExecutionContext () {
     }
   }
 
+  this.checkpointAndCommit = function (cb, checkpointCount) {
+    // due to issue https://github.com/ethereumjs/ethereumjs-vm/issues/567
+    if (this.vm().stateManager._checkpointCount > (checkpointCount || 0)) {
+      return this.vm().stateManager.commit(() => {
+        cb()
+      })
+    }
+    this.vm().stateManager.checkpoint(() => {
+      this.vm().stateManager.commit(() => {
+        cb()
+      })
+    })
+  }
+
   this.currentblockGasLimit = function () {
     return this.blockGasLimit
   }
@@ -273,6 +290,18 @@ function ExecutionContext () {
     if (transactionDetailsLinks[network]) {
       return transactionDetailsLinks[network] + hash
     }
+  }
+
+  this.addBlock = function (block) {
+    let blockNumber = '0x' + block.header.number.toString('hex')
+    blockNumber = web3.toHex(web3.toBigNumber(blockNumber))
+
+    self.blocks['0x' + block.hash().toString('hex')] = block
+    self.blocks[blockNumber] = block
+  }
+
+  this.trackTx = function (tx, block) {
+    self.txs[tx] = block
   }
 }
 

@@ -1,4 +1,5 @@
-var Web3 = require('web3')
+var RemixLib = require('remix-lib')
+var executionContext = RemixLib.execution.executionContext
 
 var Blocks = function (_options) {
   const options = _options || {}
@@ -12,59 +13,75 @@ Blocks.prototype.methods = function () {
     eth_gasPrice: this.eth_gasPrice.bind(this),
     eth_coinbase: this.eth_coinbase.bind(this),
     eth_blockNumber: this.eth_blockNumber.bind(this),
-    eth_getBlockByHash: this.eth_getBlockByHash.bind(this)
+    eth_getBlockByHash: this.eth_getBlockByHash.bind(this),
+    eth_getBlockTransactionCountByHash: this.eth_getBlockTransactionCountByHash.bind(this),
+    eth_getBlockTransactionCountByNumber: this.eth_getBlockTransactionCountByNumber.bind(this),
+    eth_getUncleCountByBlockHash: this.eth_getUncleCountByBlockHash.bind(this),
+    eth_getUncleCountByBlockNumber: this.eth_getUncleCountByBlockNumber.bind(this)
   }
 }
 
 Blocks.prototype.eth_getBlockByNumber = function (payload, cb) {
+  var block = executionContext.blocks[payload.params[0]]
+
+  if (!block) {
+    return cb(new Error('block not found'))
+  }
+
   let b = {
-    'difficulty': '0x0',
-    'extraData': '0x',
-    'gasLimit': '0x7a1200',
-    'gasUsed': '0x0',
-    'hash': '0xdb731f3622ef37b4da8db36903de029220dba74c41185f8429f916058b86559f',
-    'logsBloom': '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-    'miner': this.coinbase,
-    'mixHash': '0x0000000000000000000000000000000000000000000000000000000000000000',
-    'nonce': '0x0000000000000042',
-    'number': Web3.utils.toHex(this.blockNumber),
-    'parentHash': '0x0000000000000000000000000000000000000000000000000000000000000000',
-    'receiptsRoot': '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
+    'number': toHex(block.header.number),
+    'hash': toHex(block.hash()),
+    'parentHash': toHex(block.header.parentHash),
+    'nonce': toHex(block.header.nonce),
     'sha3Uncles': '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
-    'size': '0x1f8',
-    'stateRoot': '0xb7917653f92e62394d2207d0f39a1320ff1cb93d1cee80d3c492627e00b219ff',
-    'timestamp': '0x0',
-    'totalDifficulty': '0x0',
-    'transactions': [],
+    'logsBloom': '0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331',
     'transactionsRoot': '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
+    'stateRoot': toHex(block.header.stateRoot),
+    'miner': this.coinbase,
+    'difficulty': toHex(block.header.difficulty),
+    'totalDifficulty': toHex(block.header.totalDifficulty),
+    'extraData': toHex(block.header.extraData),
+    'size': '0x027f07', // 163591
+    'gasLimit': toHex(block.header.gasLimit),
+    'gasUsed': toHex(block.header.gasUsed),
+    'timestamp': toHex(block.header.timestamp),
+    'transactions': block.transactions.map((t) => '0x' + t.hash().toString('hex')),
     'uncles': []
   }
+
   cb(null, b)
 }
 
+function toHex (value) {
+  if (!value) return '0x0'
+  let v = value.toString('hex')
+  return ((v === '0x' || v === '') ? '0x0' : ('0x' + v))
+}
+
 Blocks.prototype.eth_getBlockByHash = function (payload, cb) {
+  var block = executionContext.blocks[payload.params[0]]
+
   let b = {
-    'difficulty': '0x0',
-    'extraData': '0x',
-    'gasLimit': '0x7a1200',
-    'gasUsed': '0x0',
-    'hash': '0xdb731f3622ef37b4da8db36903de029220dba74c41185f8429f916058b86559f',
-    'logsBloom': '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-    'miner': this.coinbase,
-    'mixHash': '0x0000000000000000000000000000000000000000000000000000000000000000',
-    'nonce': '0x0000000000000042',
-    'number': Web3.utils.toHex(this.blockNumber),
-    'parentHash': '0x0000000000000000000000000000000000000000000000000000000000000000',
-    'receiptsRoot': '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
+    'number': toHex(block.header.number),
+    'hash': toHex(block.hash()),
+    'parentHash': toHex(block.header.parentHash),
+    'nonce': toHex(block.header.nonce),
     'sha3Uncles': '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
-    'size': '0x1f8',
-    'stateRoot': '0xb7917653f92e62394d2207d0f39a1320ff1cb93d1cee80d3c492627e00b219ff',
-    'timestamp': '0x0',
-    'totalDifficulty': '0x0',
-    'transactions': [],
+    'logsBloom': '0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331',
     'transactionsRoot': '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
+    'stateRoot': toHex(block.header.stateRoot),
+    'miner': this.coinbase,
+    'difficulty': toHex(block.header.difficulty),
+    'totalDifficulty': toHex(block.header.totalDifficulty),
+    'extraData': toHex(block.header.extraData),
+    'size': '0x027f07', // 163591
+    'gasLimit': toHex(block.header.gasLimit),
+    'gasUsed': toHex(block.header.gasUsed),
+    'timestamp': toHex(block.header.timestamp),
+    'transactions': block.transactions.map((t) => '0x' + t.hash().toString('hex')),
     'uncles': []
   }
+
   cb(null, b)
 }
 
@@ -78,6 +95,26 @@ Blocks.prototype.eth_coinbase = function (payload, cb) {
 
 Blocks.prototype.eth_blockNumber = function (payload, cb) {
   cb(null, this.blockNumber)
+}
+
+Blocks.prototype.eth_getBlockTransactionCountByHash = function (payload, cb) {
+  var block = executionContext.blocks[payload.params[0]]
+
+  cb(null, block.transactions.length)
+}
+
+Blocks.prototype.eth_getBlockTransactionCountByNumber = function (payload, cb) {
+  var block = executionContext.blocks[payload.params[0]]
+
+  cb(null, block.transactions.length)
+}
+
+Blocks.prototype.eth_getUncleCountByBlockHash = function (payload, cb) {
+  cb(null, 0)
+}
+
+Blocks.prototype.eth_getUncleCountByBlockNumber = function (payload, cb) {
+  cb(null, 0)
 }
 
 module.exports = Blocks

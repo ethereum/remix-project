@@ -8,6 +8,8 @@ const Net = require('./methods/net.js')
 const Transactions = require('./methods/transactions.js')
 const Whisper = require('./methods/whisper.js')
 
+const generateBlock = require('./genesis.js')
+
 var Provider = function (options) {
   this.Accounts = new Accounts()
 
@@ -18,6 +20,8 @@ var Provider = function (options) {
   this.methods = merge(this.methods, (new Net()).methods())
   this.methods = merge(this.methods, (new Transactions(this.Accounts.accounts)).methods())
   this.methods = merge(this.methods, (new Whisper()).methods())
+
+  generateBlock()
 }
 
 Provider.prototype.sendAsync = function (payload, callback) {
