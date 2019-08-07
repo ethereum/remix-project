@@ -8,6 +8,7 @@ const css = csjs`
     height: 100%;
     display: flex;
     flex-direction: column;
+    flex: auto;
   }
   .swapitTitle {
     margin: 0;

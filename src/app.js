@@ -62,38 +62,27 @@ var css = csjs`
     overflow-x: auto;
   }
   .browsersolidity     {
-    position           : relative;
     width              : 100vw;
     height             : 100vh;
     overflow           : hidden;
+    flex-direction     : row;
+    display            : flex;
   }
   .mainpanel         {
     display            : flex;
     flex-direction     : column;
-    position           : absolute;
-    top                : 0;
-    bottom             : 0;
     overflow           : hidden;
   }
   .iconpanel           {
     display            : flex;
     flex-direction     : column;
-    position           : absolute;
-    top                : 0;
-    bottom             : 0;
-    left               : 0;
     overflow           : hidden;
     width              : 50px;
     user-select        : none;
-    /* border-right       : 1px solid var(--primary); */
   }
   .sidepanel          {
     display            : flex;
-    flex-direction     : column;
-    position           : absolute;
-    top                : 0;
-    left               : 50px;
-    bottom             : 0;
+    flex-direction     : row-reverse;
   }
   .highlightcode {
     position:absolute;
