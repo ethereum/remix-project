@@ -13,12 +13,14 @@ class TxRunner {
     this.blockNumber = 0
     this.runAsync = true
     if (executionContext.isVM()) {
-      this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
+      // this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
+      this.blockNumber = 2 // The VM is running in Homestead mode, which started at this block.
       this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
     }
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
     this.queusTxs = []
+    this.blocks = []
   }
 
   rawRun (args, confirmationCb, gasEstimationForceSend, promptCb, cb) {
@@ -98,19 +100,20 @@ class TxRunner {
     if (!account) {
       return callback('Invalid account selected')
     }
+
     var tx = new EthJSTX({
       timestamp: timestamp,
       nonce: new BN(account.nonce++),
       gasPrice: new BN(1),
-      gasLimit: new BN(gasLimit, 10),
+      gasLimit: gasLimit,
       to: to,
       value: new BN(value, 10),
       data: Buffer.from(data.slice(2), 'hex')
     })
     tx.sign(account.privateKey)
 
-    const coinbases = [ '0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e' ]
-    const difficulties = [ new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10) ]
+    const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
+    const difficulties = [new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10)]
     var block = new EthJSBlock({
       header: {
         timestamp: timestamp || (new Date().getTime() / 1000 | 0),
@@ -119,28 +122,38 @@ class TxRunner {
         difficulty: difficulties[self.blockNumber % difficulties.length],
         gasLimit: new BN(gasLimit, 10).imuln(2)
       },
-      transactions: [],
+      transactions: [tx],
       uncleHeaders: []
     })
     if (!useCall) {
       ++self.blockNumber
     } else {
-      executionContext.vm().stateManager.checkpoint(() => {})
+      executionContext.vm().stateManager.checkpoint(() => { })
     }
 
-    executionContext.vm().runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
-      if (useCall) {
-        executionContext.vm().stateManager.revert(function () {})
-      }
-      err = err ? err.message : err
-      if (result) {
-        result.status = '0x' + result.vm.exception.toString(16)
-      }
-      callback(err, {
-        result: result,
-        transactionHash: ethJSUtil.bufferToHex(Buffer.from(tx.hash()))
+    executionContext.checkpointAndCommit(() => {
+      executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }, function (err, results) {
+        err = err ? err.message : err
+        if (err) {
+          return callback(err)
+        }
+        let result = results.results[0]
+        if (useCall) {
+          executionContext.vm().stateManager.revert(function () { })
+        }
+        if (result) {
+          result.status = '0x' + result.vm.exception.toString(16)
+        }
+
+        executionContext.addBlock(block)
+        executionContext.trackTx('0x' + tx.hash().toString('hex'), block)
+
+        callback(err, {
+          result: result,
+          transactionHash: ethJSUtil.bufferToHex(Buffer.from(tx.hash()))
+        })
       })
-    })
+    }, 1)
   }
 
   runInNode (from, to, data, value, gasLimit, useCall, confirmCb, gasEstimationForceSend, promptCb, callback) {
