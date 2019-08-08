@@ -160,9 +160,9 @@ export class VerticalIcons extends Plugin {
     })
 
     // remove active
-    const currentActive = this.view.querySelector(`.${css.active}`)
+    const currentActive = this.view.querySelector(`.active`)
     if (currentActive) {
-      currentActive.classList.remove(css.active)
+      currentActive.classList.remove(`active`)
     }
   }
 
@@ -176,7 +176,7 @@ export class VerticalIcons extends Plugin {
     const nextActive = this.view.querySelector(`[plugin="${name}"]`)
     if (nextActive) {
       let image = nextActive.querySelector('.image')
-      nextActive.classList.add(css.active)
+      nextActive.classList.add(`active`)
       image.style.setProperty('filter', `invert(${invert}) grayscale(1) brightness(0%)`)
     }
   }
@@ -210,7 +210,7 @@ export class VerticalIcons extends Plugin {
 
   onThemeChanged (themeType) {
     const invert = themeType === 'dark' ? 1 : 0
-    const active = this.view.querySelector(`.${css.active}`)
+    const active = this.view.querySelector(`.active`)
     if (active) {
       let image = active.querySelector('.image')
       image.style.setProperty('filter', `invert(${invert})`)
