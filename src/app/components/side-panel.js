@@ -23,7 +23,6 @@ const css = csjs`
   }
   .swapitHeader {
     height: 35px;
-    padding: 15px 20px;
     display: flex;
     align-items: center;
   }
@@ -33,7 +32,6 @@ const css = csjs`
   }
   .pluginsContainer {
     height: 100%;
-    flex: 1;
     overflow-y: auto;
   }
   .titleInfo {
@@ -132,10 +130,10 @@ export class SidePanel extends AbstractPanel {
     }
 
     return yo`
-      <header class="${css.swapitHeader}">
-          <h6 class="${css.swapitTitle}">${name}</h6>
-          ${docLink}
-          ${versionWarning}
+      <header class="${css.swapitHeader} px-3">
+        <h6 class="${css.swapitTitle}">${name}</h6>
+        ${docLink}
+        ${versionWarning}
       </header>
     `
   }
@@ -144,7 +142,7 @@ export class SidePanel extends AbstractPanel {
     return yo`
       <section class="${css.panel}">
         ${this.header}
-        <div class="${css.pluginsContainer}">
+        <div class="${css.pluginsContainer} py-1">
           ${this.view}
         </div>
       </section>`

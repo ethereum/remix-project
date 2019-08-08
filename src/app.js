@@ -72,6 +72,7 @@ var css = csjs`
     display            : flex;
     flex-direction     : column;
     overflow           : hidden;
+    flex               : 1;
   }
   .iconpanel           {
     display            : flex;
@@ -83,6 +84,7 @@ var css = csjs`
   .sidepanel          {
     display            : flex;
     flex-direction     : row-reverse;
+    width              : 320px;
   }
   .highlightcode {
     position:absolute;

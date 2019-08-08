@@ -74,7 +74,7 @@ export class RunTab extends LibraryPlugin {
   }
 
   renderContainer () {
-    this.container = yo`<div class="${css.runTabView} p-3" id="runTabView" ></div>`
+    this.container = yo`<div class="${css.runTabView} py-0 px-3" id="runTabView" ></div>`
 
     var el = yo`
     <div class="list-group list-group-flush">
