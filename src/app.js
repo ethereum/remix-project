@@ -141,7 +141,7 @@ class App {
 
   init () {
     var self = this
-    self._components.resizeFeature = new PanelsResize('#side-panel', '#editor-container', { 'minWidth': 300, x: 450 })
+    self._components.resizeFeature = new PanelsResize('#side-panel', '#editor-container', { 'minWidth': 330, x: 450 })
     run.apply(self)
   }
 

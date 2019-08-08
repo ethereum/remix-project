@@ -99,20 +99,10 @@ export default class PanelsResize {
   }
 
   minimize () {
-    let panel1Width = 0
-    let panel2left = this.panel1.offsetLeft + panel1Width
-    let panel2Width = this.panel2.parentElement.clientWidth - this.panel1.offsetLeft - panel1Width
-    this.panel1.style.width = panel1Width + 'px'
-    this.panel2.style.left = panel2left + 'px'
-    this.panel2.style.width = panel2Width + 'px'
+    this.panel1.style.display = 'none'
   }
 
   maximise () {
-    let panel1Width = this.opt.minWidth
-    let panel2left = this.panel1.offsetLeft + panel1Width
-    let panel2Width = this.panel2.parentElement.clientWidth - this.panel1.offsetLeft - panel1Width
-    this.panel1.style.width = panel1Width + 'px'
-    this.panel2.style.left = panel2left + 'px'
-    this.panel2.style.width = panel2Width + 'px'
+    this.panel1.style.display = 'flex'
   }
 }
