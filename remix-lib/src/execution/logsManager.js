@@ -90,6 +90,11 @@ class LogsManager {
     return subscriptionId
   }
 
+  unsubscribe(subscriptionId) {
+    let subscriptionId = "0x" + crypto.randomBytes(16).toString('hex')
+    delete this.subscriptions[subscriptionId]
+  }
+
   getLogsFor(params) {
     let results = [{
       "logIndex": "0x1", // 1

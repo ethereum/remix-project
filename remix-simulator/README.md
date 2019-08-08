@@ -68,8 +68,8 @@ Implemented:
 * [_] bzz_hive (stub)
 * [_] bzz_info (stub)
 * [_] debug_traceTransaction
-* [_] eth_subscribe
-* [_] eth_unsubscribe
+* [X] eth_subscribe
+* [X] eth_unsubscribe
 * [_] miner_start
 * [_] miner_stop
 * [_] personal_listAccounts
