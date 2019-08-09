@@ -56,7 +56,7 @@ module.exports = {
   },
 
   getConstructorInterface: function (abi) {
-    var funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'outputs': [] }
+    var funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'payable': 'false', 'outputs': [] }
     if (typeof abi === 'string') {
       try {
         abi = JSON.parse(abi)
@@ -69,6 +69,7 @@ module.exports = {
     for (var i = 0; i < abi.length; i++) {
       if (abi[i].type === 'constructor') {
         funABI.inputs = abi[i].inputs || []
+        funABI.payable = abi[i].payable
         break
       }
     }
