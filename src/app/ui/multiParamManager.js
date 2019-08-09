@@ -210,6 +210,7 @@ class MultiParamManager {
       let funButton = this.contractActionsContainerSingle.querySelector('button')
       funButton.setAttribute('title', (title + ' - transact (payable)'))
       funButton.classList.add('btn-danger')
+      button.classList.add('btn-danger')
     }
 
     if (!this.lookupOnly && this.funABI.payable === false) {
