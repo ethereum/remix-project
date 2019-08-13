@@ -133,7 +133,7 @@ export class RunTab extends LibraryPlugin {
       if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
     })
     this.contractDropdownUI.event.register('newContractABIAdded', (abi, address) => {
-      this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, address))
+      this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, '<at address>'))
     })
     this.contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value) => {
       this.instanceContainer.appendChild(udappUI.renderInstance(contractObject, address, value))
