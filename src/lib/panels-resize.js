@@ -3,11 +3,8 @@ const csjs = require('csjs-inject')
 
 const css = csjs`
   .dragbar            {
-    position          : absolute;
-    top               : 0px;
-    width             : 0.5em;
-    right             : 0;
-    bottom            : 0;
+    width             : 4px;
+    height            : 100%;
     cursor            : col-resize;
     z-index           : 999;
     /* border-right      : 2px solid var(--primary); */
@@ -102,20 +99,10 @@ export default class PanelsResize {
   }
 
   minimize () {
-    let panel1Width = 0
-    let panel2left = this.panel1.offsetLeft + panel1Width
-    let panel2Width = this.panel2.parentElement.clientWidth - this.panel1.offsetLeft - panel1Width
-    this.panel1.style.width = panel1Width + 'px'
-    this.panel2.style.left = panel2left + 'px'
-    this.panel2.style.width = panel2Width + 'px'
+    this.panel1.style.display = 'none'
   }
 
   maximise () {
-    let panel1Width = this.opt.minWidth
-    let panel2left = this.panel1.offsetLeft + panel1Width
-    let panel2Width = this.panel2.parentElement.clientWidth - this.panel1.offsetLeft - panel1Width
-    this.panel1.style.width = panel1Width + 'px'
-    this.panel2.style.left = panel2left + 'px'
-    this.panel2.style.width = panel2Width + 'px'
+    this.panel1.style.display = 'flex'
   }
 }

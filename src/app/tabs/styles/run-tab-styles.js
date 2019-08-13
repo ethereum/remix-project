@@ -2,7 +2,6 @@ var csjs = require('csjs-inject')
 
 var css = csjs`
   .runTabView {
-    padding: 2%;
     display: flex;
     flex-direction: column;
   }
