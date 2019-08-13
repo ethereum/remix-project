@@ -182,15 +182,13 @@ class SettingsUI {
           modal.hide()
           modalDialogCustom.prompt('External node request', 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
             this.settings.setProviderFromEndpoint(target, context, (alertMsg) => {
-              if (alertMsg) {
-                modalDialogCustom.alert(alertMsg)
-              }
+              if (alertMsg) addTooltip(alertMsg)
               this.setFinalContext()
             })
           }, this.setFinalContext.bind(this))
         }, this.setFinalContext.bind(this))
       }, (alertMsg) => {
-        modalDialogCustom.alert(alertMsg)
+        addTooltip(alertMsg)
       }, this.setFinalContext.bind(this))
     })
 
