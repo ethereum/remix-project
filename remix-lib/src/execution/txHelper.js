@@ -70,6 +70,7 @@ module.exports = {
       if (abi[i].type === 'constructor') {
         funABI.inputs = abi[i].inputs || []
         funABI.payable = abi[i].payable
+        funABI.stateMutability = abi[i].stateMutability
         break
       }
     }
