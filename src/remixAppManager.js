@@ -158,7 +158,7 @@ export class RemixAppManager extends PluginEngine {
       location: 'sidePanel'
     }
     const threeBox = {
-      name: '3box',
+      name: 'box',
       displayName: '3Box Spaces',
       description: 'A decentralized storage for everything that happen on Remix',
       methods: ['login', 'isEnabled', 'getUserAddress', 'openSpace', 'closeSpace', 'isSpaceOpened', 'getSpacePrivateValue', 'setSpacePrivateValue', 'getSpacePublicValue', 'setSpacePublicValue', 'getSpacePublicData'],
