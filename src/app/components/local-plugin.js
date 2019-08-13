@@ -69,7 +69,6 @@ module.exports = class LocalPlugin {
     const name = this.profile.name || ''
     const url = this.profile.url || ''
     const displayName = this.profile.displayName || ''
-    
     const radioLocations = (label, displayN) => {
       const radioButton = (this.profile.location === label)
        ? yo`<div class="radio">
