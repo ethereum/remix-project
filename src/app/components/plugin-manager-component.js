@@ -19,9 +19,6 @@ const css = csjs`
     z-index: 2;
     margin-bottom: 0px;
   }
-  .localPluginBtn {
-    margin-top: 15px;
-  }
   .displayName {
     text-transform: capitalize;
     display: flex;
@@ -186,7 +183,7 @@ class PluginManagerComponent extends ViewPlugin {
       <div id='pluginManager'>
         <header class="form-group ${css.pluginSearch}">
           <input onkeyup="${e => this.filterPlugins(e)}" class="form-control" placeholder="Search">
-          <button onclick="${_ => this.openLocalPlugin()}" class="btn btn-sm text-info ${css.localPluginBtn}">
+          <button onclick="${_ => this.openLocalPlugin()}" class="btn btn-sm text-dark border-0 font-weight-bold mt-2">
             Connect to a Local Plugin
           </button>
         </header>
