@@ -158,18 +158,6 @@ var css = csjs`
     display: flex;
     align-items: center;
   }
-  .transact {
-    color: var(--warning);
-    margin-right: .3em;
-  }
-  .payable {
-    color: var(--warning);
-    margin-right: .3em;
-  }
-  .call {
-    color: var(--info);
-    margin-right: .3em;
-  }
   .pendingContainer {
     display: flex;
     align-items: baseline;
