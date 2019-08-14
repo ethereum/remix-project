@@ -2,8 +2,6 @@
 const yo = require('yo-yo')
 const modalDialog = require('../ui/modaldialog')
 
-const unexposedEvents = ['statusChanged']
-
 module.exports = class LocalPlugin {
 
   /**
@@ -40,30 +38,11 @@ module.exports = class LocalPlugin {
       ...this.profile,
       hash: `local-${this.profile.name}`
     }
-    profile.events = (profile.events || []).filter(item => item !== '')
-
     if (!profile.location) throw new Error('Plugin should have a location')
     if (!profile.name) throw new Error('Plugin should have a name')
     if (!profile.url) throw new Error('Plugin should have an URL')
     localStorage.setItem('plugins/local', JSON.stringify(profile))
     return profile
-  }
-
-  /**
-   * Add or remove a notification to/from the profile
-   * @param {Event} e The event when checkbox changes
-   * @param {string} pluginName The name of the plugin
-   * @param {string} eventName The name of the event to listen on
-   */
-  toggleNotification (e, pluginName, eventName) {
-    const {checked} = e.target
-    if (checked) {
-      if (!this.profile.notifications[pluginName]) this.profile.notifications[pluginName] = []
-      this.profile.notifications[pluginName].push(eventName)
-    } else {
-      this.profile.notifications[pluginName].splice(this.profile.notifications[pluginName].indexOf(eventName), 1)
-      if (this.profile.notifications[pluginName].length === 0) delete this.profile.notifications[pluginName]
-    }
   }
 
   updateName ({target}) {
@@ -78,30 +57,8 @@ module.exports = class LocalPlugin {
     this.profile.displayName = target.value
   }
 
-  updateEvents ({target}, index) {
-    if (this.profile.events[index] !== undefined) {
-      this.profile.events[index] = target.value
-    }
-  }
-
   updateLoc ({target}) {
     this.profile.location = target.value
-  }
-
-  /**
-   * The checkbox for a couple module / event
-   * @param {string} plugin The name of the plugin
-   * @param {string} event The name of the event exposed by the plugin
-   */
-  notificationCheckbox (plugin, event) {
-    const notifications = this.profile.notifications || {}
-    const checkbox = notifications[plugin] && notifications[plugin].includes(event)
-      ? yo`<input id="${plugin}${event}" type="checkbox" checked onchange="${e => this.toggleNotification(e, plugin, event)}">`
-      : yo`<input id="${plugin}${event}" type="checkbox" onchange="${e => this.toggleNotification(e, plugin, event)}">`
-    return yo`<div>
-      ${checkbox}
-      <label for="${plugin}${event}">${plugin} - ${event}</label>
-    </div>`
   }
 
   /**
@@ -112,15 +69,6 @@ module.exports = class LocalPlugin {
     const name = this.profile.name || ''
     const url = this.profile.url || ''
     const displayName = this.profile.displayName || ''
-    const profiles = plugins
-      .filter(({profile}) => profile.events && profile.events.length > 0)
-      .map(({profile}) => profile)
-
-    const eventsForm = (events) => {
-      return yo`<div>${events.map((event, i) => {
-        return yo`<input class="form-control" onchange="${e => this.updateEvents(e, i)}" value="${event}" />`
-      })}</div>`
-    }
     const radioLocations = (label, displayN) => {
       const radioButton = (this.profile.location === label)
        ? yo`<div class="radio">
@@ -135,14 +83,6 @@ module.exports = class LocalPlugin {
         ${radioButton}
       </div>`
     }
-    const eventsEl = eventsForm(this.profile.events || [])
-    const pushEvent = () => {
-      if (!this.profile.events) this.profile.events = []
-      this.profile.events.push('')
-      yo.update(eventsEl, eventsForm(this.profile.events))
-    }
-    const addEvent = yo`<button type="button" class="btn btn-sm btn-light" onclick="${() => pushEvent()}">Add an event</button>`
-
     return yo`
     <form id="local-plugin-form">
       <div class="form-group">
@@ -156,18 +96,6 @@ module.exports = class LocalPlugin {
       <div class="form-group">
         <label for="plugin-url">Url <small>(required)</small></label>
         <input class="form-control" onchange="${e => this.updateUrl(e)}" value="${url}" id="plugin-url" placeholder="ex: https://localhost:8000">
-      </div>
-      <div class="form-group">
-        <label>Events</label>
-        ${eventsEl}${addEvent}
-      </div>
-      <div class="form-group">
-        <label>Notifications</label>
-        ${profiles.map(({name, events}) => {
-          return events
-            .filter(event => !unexposedEvents.includes(event))
-            .map(event => this.notificationCheckbox(name, event))
-        })}
       </div>
       <div class="form-group">
       <h6>Location in remix <small>(required)</small></h6>
