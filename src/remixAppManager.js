@@ -169,9 +169,9 @@ export class RemixAppManager extends PluginEngine {
       location: 'sidePanel'
     }
     const remixWorkshop = {
-      name: 'workshop',
-      displayName: 'Remix Workshop',
-      description: 'Learn Solidity with Remix !',
+      name: 'workshops',
+      displayName: 'Remix Workshops',
+      description: 'Learn Ethereum with Remix !',
       methods: [],
       events: [],
       version: '0.1.0-alpha',
