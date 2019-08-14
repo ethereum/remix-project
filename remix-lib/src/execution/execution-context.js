@@ -310,7 +310,7 @@ function ExecutionContext () {
     self.blocks['0x' + block.hash().toString('hex')] = block
     self.blocks[blockNumber] = block
 
-    this.logsManager.checkBlock(blockNumber, block)
+    this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
   this.trackTx = function (tx, block) {

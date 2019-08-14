@@ -1,4 +1,5 @@
-var crypto = require('crypto')
+const async = require('async')
+const crypto = require('crypto')
 
 class LogsManager {
 
@@ -7,34 +8,53 @@ class LogsManager {
     this.subscriptions = {}
   }
 
-  checkBlock(blockNumber, block) {
-    for (let i = 0; i < block.transactions.length; i++) {
-      let tx = block.transactions[i]
+  checkBlock(blockNumber, block, web3) {
+    async.eachOf(block.transactions, (tx, i, next) => {
+      let txHash = "0x" + tx.hash().toString('hex')
 
       let subscriptions = this.getSubscriptionsFor({ type: 'block', block: block, tx: tx })
-      for (let subscriptionId of subscriptions) {
-        let result = {
-          "logIndex": "0x1", // 1
-          // "blockNumber": ("0x" + blockNumber),
-          "blockNumber": blockNumber,
-          "blockHash": ('0x' + block.hash().toString('hex')),
-          "transactionHash": ('0x' + tx.hash().toString('hex')),
-          "transactionIndex": "0x" + i.toString(16),
-          // TODO: if it's a contract deploy, it should be that address instead
-          "address": ('0x' + tx.to.toString('hex')),
-          "data": "0x0000000000000000000000000000000000000000000000000000000000000000",
-          // "topics": ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"]
-          "topics": []
-        }
 
-        if (result.address === "0x") {
-          delete result.address
-        }
+      // console.dir("====================================================")
+      // console.dir(block)
+      // console.dir("====================================================")
 
-        let response = { 'jsonrpc': '2.0', "method": "eth_subscription", params: { 'result': result, 'subscription': subscriptionId } };
-        this.transmit(response);
-      }
-    }
+      web3.eth.getTransactionReceipt(txHash, (error, receipt) => {
+        console.dir("====================================================")
+        console.dir("====================================================")
+        console.dir("====================================================")
+        console.dir(receipt)
+        // web3.eth.abi.decodeLog(inputs_abi, receipt.logs[0].data, receipt.logs[0].topics)
+        // console.dir(process.exit(0))
+        //     // web3.eth.abi.decodeLog(inputs_abi, receipt.logs[0].data, receipt.logs[0].topics)
+
+        for (let log of receipt.logs) {
+          for (let subscriptionId of subscriptions) {
+            let result = {
+              "logIndex": "0x1", // 1
+              // "blockNumber": ("0x" + blockNumber),
+              "blockNumber": blockNumber,
+              "blockHash": ('0x' + block.hash().toString('hex')),
+              "transactionHash": ('0x' + tx.hash().toString('hex')),
+              "transactionIndex": "0x" + i.toString(16),
+              // TODO: if it's a contract deploy, it should be that address instead
+              // "address": ('0x' + tx.to.toString('hex')),
+              "address": log.address,
+              // "data": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "data": log.data,
+              "topics": log.topics,
+            }
+
+            if (result.address === "0x") {
+              delete result.address
+            }
+
+            let response = { 'jsonrpc': '2.0', "method": "eth_subscription", params: { 'result': result, 'subscription': subscriptionId } };
+            this.transmit(response);
+          }
+        }
+      })
+    }, (err) => {
+    });
   }
 
   // TODO:
@@ -91,7 +111,6 @@ class LogsManager {
   }
 
   unsubscribe(subscriptionId) {
-    let subscriptionId = "0x" + crypto.randomBytes(16).toString('hex')
     delete this.subscriptions[subscriptionId]
   }
 
