@@ -12,34 +12,19 @@ class LogsManager {
     async.eachOf(block.transactions, (tx, i, next) => {
       let txHash = "0x" + tx.hash().toString('hex')
 
-      let subscriptions = this.getSubscriptionsFor({ type: 'block', block: block, tx: tx })
-
-      // console.dir("====================================================")
-      // console.dir(block)
-      // console.dir("====================================================")
-
-      web3.eth.getTransactionReceipt(txHash, (error, receipt) => {
-        console.dir("====================================================")
-        console.dir("====================================================")
-        console.dir("====================================================")
-        console.dir(receipt)
-        // web3.eth.abi.decodeLog(inputs_abi, receipt.logs[0].data, receipt.logs[0].topics)
-        // console.dir(process.exit(0))
-        //     // web3.eth.abi.decodeLog(inputs_abi, receipt.logs[0].data, receipt.logs[0].topics)
-
+      web3.eth.getTransactionReceipt(txHash, (_error, receipt) => {
         for (let log of receipt.logs) {
+          let subscriptions = this.getSubscriptionsFor({ type: 'block', blockNumber, block, tx, log })
+
           for (let subscriptionId of subscriptions) {
             let result = {
               "logIndex": "0x1", // 1
-              // "blockNumber": ("0x" + blockNumber),
               "blockNumber": blockNumber,
               "blockHash": ('0x' + block.hash().toString('hex')),
               "transactionHash": ('0x' + tx.hash().toString('hex')),
               "transactionIndex": "0x" + i.toString(16),
               // TODO: if it's a contract deploy, it should be that address instead
-              // "address": ('0x' + tx.to.toString('hex')),
               "address": log.address,
-              // "data": "0x0000000000000000000000000000000000000000000000000000000000000000",
               "data": log.data,
               "topics": log.topics,
             }
@@ -65,18 +50,21 @@ class LogsManager {
       const subscriptionParams = this.subscriptions[subscriptionId]
       const [queryType, queryFilter] = subscriptionParams
       if (queryType === 'logs') {
-        if (queryFilter.address === changeEvent.tx.toJSON().to) {
-          matchedSubscriptions.push(subscriptionId)
+        if (queryFilter.address === ("0x" + changeEvent.tx.to.toString('hex'))) {
+          if (!queryFilter.toBlock) {
+            matchedSubscriptions.push(subscriptionId)
+          } else if (parseInt(queryFilter.toBlock) > parseInt(changeEvent.blockNumber)) {
+            matchedSubscriptions.push(subscriptionId)
+          }
         }
         if (queryFilter.address === ('0x' + changeEvent.tx.from.toString('hex'))) {
-          matchedSubscriptions.push(subscriptionId)
+          if (!queryFilter.toBlock) {
+            matchedSubscriptions.push(subscriptionId)
+          } else if (parseInt(queryFilter.toBlock) > parseInt(changeEvent.blockNumber)) {
+            matchedSubscriptions.push(subscriptionId)
+          }
         }
       }
-
-      console.dir("-----------------------> ")
-      console.dir(subscriptionParams)
-
-      matchedSubscriptions.push(subscriptionId)
     }
     return matchedSubscriptions;
   }
