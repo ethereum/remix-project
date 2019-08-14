@@ -23,13 +23,6 @@ Filters.prototype.eth_getLogs = function (payload, cb) {
   //   address: '0xdb2eb1480cb3ac3a5c0ee957045d1ad9dcd34f01',
   //   topics: [] } ]
 
-  // console.dir(executionContext.vm().stateManager)
-  // console.dir(executionContext.vm().blockchain)
-
-  // var block = executionContext.blocks[payload.params[0]]
-
-  // executionContext.vm().stateManager.getLogs(address, (err, account) => {
-
   let results = executionContext.logsManager.getLogsFor(payload.params);
 
   cb(null, results)
