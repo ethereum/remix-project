@@ -138,8 +138,8 @@ export class LandingPage extends ViewPlugin {
     const startWorkshop = () => {
       this.appManager.ensureActivated('solidity')
       this.appManager.ensureActivated('solidityUnitTesting')
-      this.appManager.ensureActivated('workshop')
-      this.verticalIcons.select('workshop')
+      this.appManager.ensureActivated('workshops')
+      this.verticalIcons.select('workshops')
     }
 
     const startPipeline = () => {
