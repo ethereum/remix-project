@@ -163,7 +163,7 @@ class App {
 
     // handle the editor + terminal
     self._view.mainpanel = yo`
-      <div id="editor-container" class=${css.mainpanel}>
+      <div id="main-panel" class=${css.mainpanel}>
         ${''}
       </div>
     `

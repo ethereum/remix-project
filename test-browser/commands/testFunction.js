@@ -16,12 +16,12 @@ class TestFunction extends EventEmitter {
     })
     .click('.instance button[title="' + fnFullName + '"]')
     .pause(500)
-    .waitForElementPresent('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"]')
-    .assert.containsText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] span', log)
-    .click('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] div[class^="log"]')
+    .waitForElementPresent('#main-panel div[class^="terminal"] span[id="tx' + txHash + '"]')
+    .assert.containsText('#main-panel div[class^="terminal"] span[id="tx' + txHash + '"] span', log)
+    .click('#main-panel div[class^="terminal"] span[id="tx' + txHash + '"] div[class^="log"]')
     .perform(function (client, done) {
       if (expectedReturn) {
-        client.getText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #decodedoutput', (result) => {
+        client.getText('#main-panel div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #decodedoutput', (result) => {
           console.log(result)
           var equal = deepequal(JSON.parse(result.value), JSON.parse(expectedReturn))
           if (!equal) {
@@ -33,7 +33,7 @@ class TestFunction extends EventEmitter {
     })
     .perform((client, done) => {
       if (expectedEvent) {
-        client.getText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #logs', (result) => {
+        client.getText('#main-panel div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #logs', (result) => {
           console.log(result)
           var equal = deepequal(JSON.parse(result.value), JSON.parse(expectedEvent))
           if (!equal) {
