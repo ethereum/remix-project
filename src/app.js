@@ -81,7 +81,7 @@ var css = csjs`
     width              : 50px;
     user-select        : none;
   }
-  .sidepanel          {
+  .sidepanel           {
     display            : flex;
     flex-direction     : row-reverse;
     width              : 320px;
@@ -141,7 +141,6 @@ class App {
 
   init () {
     var self = this
-    self._components.resizeFeature = new PanelsResize('#side-panel', '#editor-container', { 'minWidth': 330, x: 450 })
     run.apply(self)
   }
 
@@ -157,22 +156,25 @@ class App {
 
     // center panel, resizable
     self._view.sidepanel = yo`
-      <div id="side-panel" class=${css.sidepanel}>
+      <div id="side-panel" style="min-width: 320px;" class=${css.sidepanel}>
         ${''}
       </div>
     `
 
     // handle the editor + terminal
     self._view.mainpanel = yo`
-      <div id="editor-container" class=${css.mainpanel}>
+      <div id="main-panel" class=${css.mainpanel}>
         ${''}
       </div>
     `
+
+    self._components.resizeFeature = new PanelsResize(self._view.sidepanel)
 
     self._view.el = yo`
       <div class=${css.browsersolidity}>
         ${self._view.iconpanel}
         ${self._view.sidepanel}
+        ${self._components.resizeFeature.render()}
         ${self._view.mainpanel}
       </div>
     `
