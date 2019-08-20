@@ -10,13 +10,13 @@ export class FramingService {
 
   start () {
     this.sidePanel.events.on('toggle', () => {
-      this.resizeFeature.panel1.clientWidth !== 0 ? this.resizeFeature.minimize() : this.resizeFeature.maximise()
+      this.resizeFeature.panel.clientWidth !== 0 ? this.resizeFeature.hidePanel() : this.resizeFeature.showPanel()
     })
     this.sidePanel.events.on('showing', () => {
-      this.resizeFeature.panel1.clientWidth === 0 ? this.resizeFeature.maximise() : ''
+      this.resizeFeature.panel.clientWidth === 0 ? this.resizeFeature.showPanel() : ''
     })
     this.mainPanel.events.on('toggle', () => {
-      this.resizeFeature.maximise()
+      this.resizeFeature.showPanel()
     })
 
     this.verticalIcon.select('fileExplorers')
