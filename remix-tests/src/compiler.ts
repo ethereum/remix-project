@@ -73,10 +73,12 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
                 compiler.compile(sources, filepath)
             }
         ], function (err: Error | null | undefined, result: any) {
-            let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
+            let error: Error[] = []
+            if (result.error) error.push(result.error)
+            let errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
             if (errors.length > 0) {
                 if (!isBrowser) require('signale').fatal(errors)
-                return cb(new Error('errors compiling'))
+                return cb(errors)
             }
             cb(err, result.contracts)
         })
@@ -121,7 +123,7 @@ export function compileContractSources(sources: SrcIfc, importFileCb: any, opts:
         let errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
         if (errors.length > 0) {
             if (!isBrowser) require('signale').fatal(errors)
-            return cb(new Error('errors compiling'))
+            return cb(errors)
         }
         cb(err, result.contracts)
     })
