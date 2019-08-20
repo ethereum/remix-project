@@ -23,18 +23,14 @@ const css = csjs`
 export default class PanelsResize {
   constructor (panel) {
     this.panel = panel
-    let self = this
     const string = panel.style.minWidth
     this.minWidth = string.length > 2 ? parseInt(string.substring(0, string.length - 2)) : 0
-    window.addEventListener('resize', function (event) {
-      self.setPosition(event)
-    })
   }
 
   render () {
     this.ghostbar = yo`<div class=${css.ghostbar}></div>`
 
-    let mousedown = (event) => {
+    const mousedown = (event) => {
       event.preventDefault()
       if (event.which === 1) {
         moveGhostbar(event)
@@ -45,7 +41,7 @@ export default class PanelsResize {
       }
     }
 
-    let cancelGhostbar = (event) => {
+    const cancelGhostbar = (event) => {
       if (event.keyCode === 27) {
         document.body.removeChild(this.ghostbar)
         document.removeEventListener('mousemove', moveGhostbar)
@@ -54,11 +50,11 @@ export default class PanelsResize {
       }
     }
 
-    let moveGhostbar = (event) => {
+    const moveGhostbar = (event) => {
       this.ghostbar.style.left = event.x + 'px'
     }
 
-    let removeGhostbar = (event) => {
+    const removeGhostbar = (event) => {
       document.body.removeChild(this.ghostbar)
       document.removeEventListener('mousemove', moveGhostbar)
       document.removeEventListener('mouseup', removeGhostbar)
@@ -74,7 +70,7 @@ export default class PanelsResize {
   }
 
   setPosition (event) {
-    let panelWidth = this.calculatePanelWidth(event)
+    const panelWidth = this.calculatePanelWidth(event)
     // close the panel if the width is less than a minWidth
     if (panelWidth > this.minWidth - 10 || this.panel.style.display === 'none') {
       this.panel.style.width = panelWidth + 'px'
