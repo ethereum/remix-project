@@ -292,7 +292,6 @@ module.exports = class UniversalDApp {
    * @param {Function} callback    - callback.
    */
   silentRunTx (tx, cb) {
-    if (!executionContext.isVM()) return cb('Cannot silently send transaction through a web3 provider')
     this.txRunner.rawRun(
       tx,
       (network, tx, gasEstimation, continueTxExecution, cancelCb) => { continueTxExecution() },
