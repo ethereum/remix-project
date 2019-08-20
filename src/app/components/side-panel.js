@@ -5,6 +5,7 @@ const yo = require('yo-yo')
 
 const css = csjs`
   .panel {
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
