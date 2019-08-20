@@ -17,7 +17,7 @@ function checkFilter (browser, filter, test, done) {
     done()
     return
   }
-  var filterClass = '#main-panel div[class^="search"] input[class^="filter"]'
+  const filterClass = '#main-panel div[class^="search"] input[class^="filter"]'
   browser.setValue(filterClass, filter, function () {
     browser.execute(function () {
       return document.querySelector('#main-panel div[class^="journal"]').innerHTML === test
