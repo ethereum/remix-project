@@ -136,6 +136,7 @@ export class LandingPage extends ViewPlugin {
       this.verticalIcons.select('vyper')
     }
     const startWorkshop = () => {
+      this.appManager.ensureActivated('box')
       this.appManager.ensureActivated('solidity')
       this.appManager.ensureActivated('solidityUnitTesting')
       this.appManager.ensureActivated('workshops')
