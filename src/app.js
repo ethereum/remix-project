@@ -62,38 +62,29 @@ var css = csjs`
     overflow-x: auto;
   }
   .browsersolidity     {
-    position           : relative;
     width              : 100vw;
     height             : 100vh;
     overflow           : hidden;
+    flex-direction     : row;
+    display            : flex;
   }
   .mainpanel         {
     display            : flex;
     flex-direction     : column;
-    position           : absolute;
-    top                : 0;
-    bottom             : 0;
     overflow           : hidden;
+    flex               : 1;
   }
   .iconpanel           {
     display            : flex;
     flex-direction     : column;
-    position           : absolute;
-    top                : 0;
-    bottom             : 0;
-    left               : 0;
     overflow           : hidden;
     width              : 50px;
     user-select        : none;
-    /* border-right       : 1px solid var(--primary); */
   }
-  .sidepanel          {
+  .sidepanel           {
     display            : flex;
-    flex-direction     : column;
-    position           : absolute;
-    top                : 0;
-    left               : 50px;
-    bottom             : 0;
+    flex-direction     : row-reverse;
+    width              : 320px;
   }
   .highlightcode {
     position:absolute;
@@ -150,7 +141,6 @@ class App {
 
   init () {
     var self = this
-    self._components.resizeFeature = new PanelsResize('#side-panel', '#editor-container', { 'minWidth': 300, x: 450 })
     run.apply(self)
   }
 
@@ -166,22 +156,25 @@ class App {
 
     // center panel, resizable
     self._view.sidepanel = yo`
-      <div id="side-panel" class=${css.sidepanel}>
+      <div id="side-panel" style="min-width: 320px;" class=${css.sidepanel}>
         ${''}
       </div>
     `
 
     // handle the editor + terminal
     self._view.mainpanel = yo`
-      <div id="editor-container" class=${css.mainpanel}>
+      <div id="main-panel" class=${css.mainpanel}>
         ${''}
       </div>
     `
+
+    self._components.resizeFeature = new PanelsResize(self._view.sidepanel)
 
     self._view.el = yo`
       <div class=${css.browsersolidity}>
         ${self._view.iconpanel}
         ${self._view.sidepanel}
+        ${self._components.resizeFeature.render()}
         ${self._view.mainpanel}
       </div>
     `

@@ -74,7 +74,7 @@ export class RunTab extends LibraryPlugin {
   }
 
   renderContainer () {
-    this.container = yo`<div class="${css.runTabView} p-3" id="runTabView" ></div>`
+    this.container = yo`<div class="${css.runTabView} py-0 pr-2" id="runTabView" ></div>`
 
     var el = yo`
     <div class="list-group list-group-flush">
@@ -133,7 +133,7 @@ export class RunTab extends LibraryPlugin {
       if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
     })
     this.contractDropdownUI.event.register('newContractABIAdded', (abi, address) => {
-      this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, address))
+      this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, '<at address>'))
     })
     this.contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value) => {
       this.instanceContainer.appendChild(udappUI.renderInstance(contractObject, address, value))
