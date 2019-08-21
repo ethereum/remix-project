@@ -136,10 +136,11 @@ export class LandingPage extends ViewPlugin {
       this.verticalIcons.select('vyper')
     }
     const startWorkshop = () => {
+      this.appManager.ensureActivated('box')
       this.appManager.ensureActivated('solidity')
       this.appManager.ensureActivated('solidityUnitTesting')
-      this.appManager.ensureActivated('workshop')
-      this.verticalIcons.select('workshop')
+      this.appManager.ensureActivated('workshops')
+      this.verticalIcons.select('workshops')
     }
 
     const startPipeline = () => {
@@ -200,7 +201,7 @@ export class LandingPage extends ViewPlugin {
             <div class="${css.enviroments} pt-2">
               <button class="btn btn-lg btn-secondary mr-3" onclick=${() => startSolidity()}>Solidity</button>
               <button class="btn btn-lg btn-secondary mr-3" onclick=${() => startVyper()}>Vyper</button>
-              <button class="btn btn-lg btn-secondary mr-3" onclick=${() => startWorkshop()}>Workshop</button>
+              <button class="btn btn-lg btn-secondary mr-3" onclick=${() => startWorkshop()}>Workshops</button>
             </div>
           </div>
           <div class="file">

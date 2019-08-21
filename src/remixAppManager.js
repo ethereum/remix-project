@@ -136,7 +136,7 @@ export class RemixAppManager extends PluginEngine {
         'solidity': ['compilationFinished']
       },
       version: '0.1.0-beta',
-      url: 'https://remix-mythx-plugin.surge.sh',
+      url: 'https://remythx.xyz',
       description: 'Perform Static and Dynamic Security Analysis using the MythX Cloud Service',
       icon: 'https://remix-mythx-plugin.surge.sh/logo.png',
       location: 'sidePanel',
@@ -158,7 +158,7 @@ export class RemixAppManager extends PluginEngine {
       location: 'sidePanel'
     }
     const threeBox = {
-      name: '3box',
+      name: 'box',
       displayName: '3Box Spaces',
       description: 'A decentralized storage for everything that happen on Remix',
       methods: ['login', 'isEnabled', 'getUserAddress', 'openSpace', 'closeSpace', 'isSpaceOpened', 'getSpacePrivateValue', 'setSpacePrivateValue', 'getSpacePublicValue', 'setSpacePublicValue', 'getSpacePublicData'],
@@ -169,9 +169,9 @@ export class RemixAppManager extends PluginEngine {
       location: 'sidePanel'
     }
     const remixWorkshop = {
-      name: 'workshop',
-      displayName: 'Remix Workshop',
-      description: 'Learn Solidity with Remix !',
+      name: 'workshops',
+      displayName: 'Remix Workshops',
+      description: 'Learn Ethereum with Remix !',
       methods: [],
       events: [],
       version: '0.1.0-alpha',
@@ -212,6 +212,15 @@ export class RemixAppManager extends PluginEngine {
       description: 'A free tool to generate smart contract interfaces.',
       documentation: 'https://github.com/pi0neerpat/remix-plugin-one-click-dapp',
       icon: 'https://remix-one-click-dapp.surge.sh/icon.png',
+    const gasProfiler = {
+      name: 'gasProfiler',
+      displayName: 'Gas Profiler',
+      events: [],
+      methods: [],
+      version: '0.1.0-alpha',
+      url: 'https://remix-gas-profiler.surge.sh',
+      description: 'Profile gas costs',
+      icon: 'https://res.cloudinary.com/key-solutions/image/upload/v1565781702/gas-profiler_nxmsal.png',
       location: 'sidePanel'
     }
     return [
@@ -226,6 +235,7 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(debugPlugin),
       new IframePlugin(libraTools),
       new IframePlugin(oneClickDapp)
+      new IframePlugin(gasProfiler)
     ]
   }
 }

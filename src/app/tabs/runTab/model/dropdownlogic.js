@@ -54,8 +54,9 @@ class DropdownLogic {
         }
         cb(null, 'abi', abi)
       })
+    } else {
+      cb(null, 'instance')
     }
-    cb(null, 'instance')
   }
 
   getCompiledContracts (compiler, compilerFullName) {

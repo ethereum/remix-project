@@ -147,6 +147,7 @@ const css = csjs`
   .errorBlobs {
     padding-left: 5px;
     padding-right: 5px;
+    word-break: break-all;
   }
 
   .spinningIcon {
