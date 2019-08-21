@@ -205,6 +205,7 @@ export class RemixAppManager extends PluginEngine {
       displayName: 'One Click Dapp',
       events: [],
       methods: [],
+      version: '0.1.0',
       notifications: {
         solidity: ['compilationFinished']
       },
@@ -212,6 +213,8 @@ export class RemixAppManager extends PluginEngine {
       description: 'A free tool to generate smart contract interfaces.',
       documentation: 'https://github.com/pi0neerpat/remix-plugin-one-click-dapp',
       icon: 'https://remix-one-click-dapp.surge.sh/icon.png',
+      location: 'sidePanel'
+    }
     const gasProfiler = {
       name: 'gasProfiler',
       displayName: 'Gas Profiler',
