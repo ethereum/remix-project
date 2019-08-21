@@ -234,7 +234,7 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(remixWorkshop),
       new IframePlugin(debugPlugin),
       new IframePlugin(libraTools),
-      new IframePlugin(oneClickDapp)
+      new IframePlugin(oneClickDapp),
       new IframePlugin(gasProfiler)
     ]
   }
