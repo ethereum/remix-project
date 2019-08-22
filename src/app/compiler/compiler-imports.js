@@ -1,4 +1,5 @@
 'use strict'
+const globalRegistry = require('../../global/registry')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')()
 var resolver = require('@resolver-engine/imports').ImportsEngine()
@@ -14,22 +15,22 @@ const profile = {
 }
 
 module.exports = class CompilerImports extends Plugin {
-  constructor (githubAccessToken) {
+  constructor () {
     super(profile)
-    this.githubAccessToken = githubAccessToken || (() => {})
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
   handleGithubCall (root, path, cb) {
     let param = '?'
-
-    param += this.githubAccessToken() ? 'access_token=' + this.githubAccessToken() : ''
+    // const token = await this.call('settings', 'getGithubAccessToken')
+    const token = globalRegistry.get('config').api.get('settings/gist-access-token') // TODO replace with the plugin call above https://github.com/ethereum/remix-ide/issues/2288
+    param += token ? 'access_token=' + token : ''
     const regex = path.match(/blob\/([^/]+)\/(.*)/)
     if (regex) {
       // if we have /blob/master/+path we extract the branch name "master" and add it as a parameter to the github api
       // the ref can be branch name, tag, commit id
       const reference = regex[1]
-      param += 'ref=' + reference
+      param += '&ref=' + reference
       path = path.replace(`blob/${reference}/`, '')
     }
     return request.get(
