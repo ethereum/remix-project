@@ -28,13 +28,19 @@ class DropdownLogic {
 
   // TODO: can be moved up; the event in contractDropdown will have to refactored a method instead
   listenToCompilationEvents () {
-    this.runView.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
+    let broadcastCompilationResult = (file, source, languageVersion, data) => {
       // TODO check whether the tab is configured
       let compiler = new CompilerAbstract(languageVersion, data, source)
       this.compilersArtefacts[languageVersion] = compiler
       this.compilersArtefacts['__last'] = compiler
-      this.event.trigger('newlyCompiled', [true, data, source, compiler, languageVersion])
-    })
+      this.event.trigger('newlyCompiled', [true, data, source, compiler, languageVersion, file])
+    }
+    this.runView.on('solidity', 'compilationFinished', (file, source, languageVersion, data) =>
+      broadcastCompilationResult(file, source, languageVersion, data)
+    )
+    this.runView.on('vyper', 'compilationFinished', (file, source, languageVersion, data) =>
+      broadcastCompilationResult(file, source, languageVersion, data)
+    )
   }
 
   loadContractFromAddress (address, confirmCb, cb) {
