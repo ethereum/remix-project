@@ -18,12 +18,13 @@ Filters.prototype.eth_getLogs = function (payload, cb) {
   console.dir("===============================")
   console.dir("===============================")
   console.dir("=== eth_getLogs")
+  // payload.params[0].topics = payload.params[0].topics.filter((x) => x)
   console.dir(payload.params)
-  // [ { fromBlock: '0x0',
-  //   address: '0xdb2eb1480cb3ac3a5c0ee957045d1ad9dcd34f01',
-  //   topics: [] } ]
 
-  let results = executionContext.logsManager.getLogsFor(payload.params);
+  let results = executionContext.logsManager.getLogsFor(payload.params[0]);
+
+  console.dir("results are ---")
+  console.dir(results)
 
   cb(null, results)
 }
