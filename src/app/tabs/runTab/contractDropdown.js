@@ -17,14 +17,14 @@ class ContractDropdownUI {
   }
 
   listenToEvents () {
-    this.dropdownLogic.event.register('newlyCompiled', (success, data, source, compiler, compilerFullName) => {
+    this.dropdownLogic.event.register('newlyCompiled', (success, data, source, compiler, compilerFullName, file) => {
       if (!document.querySelector(`.${css.contractNames.classNames[0]}`)) return
       var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
       contractNames.innerHTML = ''
       if (success) {
         this.selectContractNames.removeAttribute('disabled')
         this.dropdownLogic.getCompiledContracts(compiler, compilerFullName).forEach((contract) => {
-          contractNames.appendChild(yo`<option compiler="${compilerFullName}">${contract.name}</option>`)
+          contractNames.appendChild(yo`<option compiler="${compilerFullName}">${contract.name} - ${file}</option>`)
         })
       } else {
         this.selectContractNames.setAttribute('disabled', true)
