@@ -29,9 +29,9 @@ var Provider = function (options) {
 
   generateBlock()
 
-  setTimeout(() => {
-    console.dir("hello!")
-  }, 10 * 1000)
+  // setTimeout(() => {
+    // console.dir("hello!")
+  // }, 10 * 1000)
 }
 
 Provider.prototype.init = async function () {
@@ -69,6 +69,8 @@ Provider.prototype.isConnected = function () {
 }
 
 Provider.prototype.on = function (type, cb) {
+  console.dir("on")
+  console.dir(arguments)
   executionContext.logsManager.addListener(type, cb)
 }
 
