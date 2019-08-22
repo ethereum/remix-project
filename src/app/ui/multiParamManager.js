@@ -124,15 +124,10 @@ class MultiParamManager {
     var onClick = (domEl) => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
     }
-// TODO: if this is a lookup only make this button btn-info
-// otherwise it needs to have btn-warning injected
-// or do we need to only do this in 1 place - I have a feeling that this will happen in multiple places
-
+    let funcButton = yo`<button onclick=${() => onClick()} class="${css.instanceButton} btn btn-sm">${title}</button>`
     this.contractActionsContainerSingle = yo`
     <div class="${css.contractActionsContainerSingle}" >
-      <button onclick=${() => onClick()} class="${css.instanceButton} btn btn-sm">
-        ${title}
-      </button>
+      ${funcButton}
       ${this.basicInputField}
       <i class="fas fa-angle-down ${css.methCaret}" onclick=${() => this.switchMethodViewOn()} title=${title} ></i>
     </div>`
@@ -148,7 +143,7 @@ class MultiParamManager {
       }
     }
 
-    var button = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
+    var expandedButton = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
 
     this.contractActionsContainerMulti = yo`<div class="${css.contractActionsContainerMulti}" >
       <div class="${css.contractActionsContainerMultiInner} text-dark" >
@@ -158,7 +153,7 @@ class MultiParamManager {
         </div>
         ${this.multiFields}
         <div class="${css.group} ${css.multiArg}" >
-          ${button}
+          ${expandedButton}
           ${copyToClipboard(
             () => {
               var multiString = this.getMultiValsString()
@@ -179,19 +174,32 @@ class MultiParamManager {
       </div>
     </div>`
 
-    var contractProperty = yo`<div class="${css.contractProperty}">${this.contractActionsContainerSingle} ${this.contractActionsContainerMulti}</div>`
-// TODO: add class for btn-info to the button and remove stuff from the class
+    var contractProperty = yo`
+      <div class="${css.contractProperty}">
+        ${this.contractActionsContainerSingle} ${this.contractActionsContainerMulti}
+      </div>
+    `
     if (this.lookupOnly) {
-      contractProperty.classList.add(css.constant)
-      button.setAttribute('title', (title + ' - call'))
-      button.innerHTML = 'call'
-      this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).setAttribute('title', (title + ' - call'))
-      this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).classList.add('btn-info')
-      button.classList.add('btn-info')
+      // call. stateMutability is either pure or view
+      expandedButton.setAttribute('title', (title + ' - call'))
+      expandedButton.innerHTML = 'call'
+      expandedButton.classList.add('btn-info')
+      funcButton.setAttribute('title', (title + ' - call'))
+      funcButton.classList.add('btn-info')
+    } else if (this.funABI.stateMutability === 'payable' || this.funABI.payable === true) {
+      // transact. stateMutability = payable
+      expandedButton.setAttribute('title', (title + ' - transact (payable)'))
+      expandedButton.innerHTML = 'transact'
+      expandedButton.classList.add('btn-danger')
+      funcButton.setAttribute('title', (title + ' - transact (payable)'))
+      funcButton.classList.add('btn-danger')
     } else {
-      this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).classList.add('btn-warning')
-      button.innerHTML = 'transact'
-      button.classList.add('btn-warning')
+      // transact. stateMutability = not payable
+      expandedButton.setAttribute('title', (title + ' - transact (not payable)'))
+      expandedButton.innerHTML = 'transact'
+      expandedButton.classList.add('btn-warning')
+      funcButton.classList.add('btn-warning')
+      funcButton.setAttribute('title', (title + ' - transact (not payable)'))
     }
 
     if (this.funABI.inputs && this.funABI.inputs.length > 0) {
@@ -202,17 +210,6 @@ class MultiParamManager {
     } else {
       this.contractActionsContainerSingle.querySelector('i').style.visibility = 'hidden'
       this.basicInputField.style.visibility = 'hidden'
-    }
-
-    if (this.funABI.payable === true) {
-      contractProperty.classList.add(css.payable)
-      button.setAttribute('title', (title + ' - transact (payable)'))
-      this.contractActionsContainerSingle.querySelector('button').setAttribute('title', (title + ' - transact (payable)'))
-    }
-
-    if (!this.lookupOnly && this.funABI.payable === false) {
-      button.setAttribute('title', (title + ' - transact (not payable)'))
-      this.contractActionsContainerSingle.querySelector('button').setAttribute('title', (title + ' - transact (not payable)'))
     }
 
     return contractProperty
