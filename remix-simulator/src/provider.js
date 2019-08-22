@@ -28,10 +28,6 @@ var Provider = function (options) {
   this.methods = merge(this.methods, (new Whisper()).methods())
 
   generateBlock()
-
-  // setTimeout(() => {
-    // console.dir("hello!")
-  // }, 10 * 1000)
 }
 
 Provider.prototype.init = async function () {
@@ -41,19 +37,14 @@ Provider.prototype.init = async function () {
 
 Provider.prototype.sendAsync = function (payload, callback) {
   log.info('payload method is ', payload.method)
-  console.dir(payload)
 
   let method = this.methods[payload.method]
   if (method) {
     return method.call(method, payload, (err, result) => {
       if (err) {
-        console.dir("====== error")
-        console.dir(err)
         return callback(err)
       }
       let response = {'id': payload.id, 'jsonrpc': '2.0', 'result': result}
-      console.dir("response")
-      console.dir(response)
       callback(null, response)
     })
   }
@@ -69,8 +60,6 @@ Provider.prototype.isConnected = function () {
 }
 
 Provider.prototype.on = function (type, cb) {
-  console.dir("on")
-  console.dir(arguments)
   executionContext.logsManager.addListener(type, cb)
 }
 
