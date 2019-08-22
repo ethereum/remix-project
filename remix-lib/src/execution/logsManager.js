@@ -73,6 +73,13 @@ class LogsManager {
     return matchedSubscriptions
   }
 
+  getLogsForSubscription(subscriptionId) {
+    const subscriptionParams = this.subscriptions[subscriptionId]
+    const [_queryType, queryFilter] = subscriptionParams
+
+    return this.getLogsFor(queryFilter);
+  }
+
   transmit (result) {
     this.notificationCallbacks.forEach((callback) => {
       if (result.params.result.raw) {

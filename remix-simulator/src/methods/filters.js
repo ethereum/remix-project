@@ -13,7 +13,12 @@ Filters.prototype.methods = function () {
   }
 }
 
-// https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getlogs
+Filters.prototype.eth_getFilterLogs = function (payload, cb) {
+  let subscriptionId = payload.params[0];
+  let results = executionContext.logsManager.getLogsForSubscription(subscriptionId)
+  cb(null, results)
+}
+
 Filters.prototype.eth_getLogs = function (payload, cb) {
   let results = executionContext.logsManager.getLogsFor(payload.params[0])
   cb(null, results)
