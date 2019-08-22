@@ -45,7 +45,7 @@ Implemented:
 * [_] eth_newPendingTransactionFilter
 * [_] eth_uninstallFilter
 * [_] eth_getFilterChanges
-* [_] eth_getFilterLogs
+* [X] eth_getFilterLogs
 * [X] eth_getLogs
 * [_] eth_getWork
 * [_] eth_submitWork
