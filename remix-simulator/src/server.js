@@ -14,7 +14,7 @@ class Server {
     }).catch((error) => {
       log(error)
     })
-    this.rpcOnly = options.rpc;
+    this.rpcOnly = options.rpc
   }
 
   start (host, port) {
@@ -25,7 +25,6 @@ class Server {
     app.use(bodyParser.json())
 
     app.get('/', (req, res) => {
-      console.dir("/ request")
       res.send('Welcome to remix-simulator')
     })
 
@@ -50,9 +49,7 @@ class Server {
         })
 
         this.provider.on('data', (result) => {
-          console.dir("-----> sending")
-          console.dir(JSON.stringify(result))
-          ws.send(JSON.stringify(result));
+          ws.send(JSON.stringify(result))
         })
       })
     }
