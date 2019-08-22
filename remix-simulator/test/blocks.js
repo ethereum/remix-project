@@ -13,7 +13,7 @@ describe('blocks', function () {
   })
 
   it('should get block given its number', async function () {
-    let block = await web3.eth.getBlock(1)
+    let block = await web3.eth.getBlock(0)
 
     let expectedBlock = {
       difficulty: '69762765929000',
@@ -24,7 +24,7 @@ describe('blocks', function () {
       logsBloom: '0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331',
       miner: '0x0000000000000000000000000000000000000001',
       nonce: '0x0000000000000000',
-      number: 1,
+      number: 0,
       parentHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
       sha3Uncles: '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
       size: 163591,
