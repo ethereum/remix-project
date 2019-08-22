@@ -46,7 +46,7 @@ Implemented:
 * [_] eth_uninstallFilter
 * [_] eth_getFilterChanges
 * [_] eth_getFilterLogs
-* [_] eth_getLogs
+* [X] eth_getLogs
 * [_] eth_getWork
 * [_] eth_submitWork
 * [_] eth_submitHashrate

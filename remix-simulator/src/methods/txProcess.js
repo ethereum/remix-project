@@ -41,7 +41,7 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
   TxExecution.createContract(from, data, value, gasLimit, txRunner, callbacks, finalCallback)
 }
 
-let txRunner_instance;
+let txRunnerInstance
 
 function processTx (accounts, payload, isCall, callback) {
   let api = {
@@ -68,10 +68,10 @@ function processTx (accounts, payload, isCall, callback) {
   executionContext.init(api.config)
 
   // let txRunner = new TxRunner(accounts, api)
-  if (!txRunner_instance) {
-    txRunner_instance = new TxRunner(accounts, api)
+  if (!txRunnerInstance) {
+    txRunnerInstance = new TxRunner(accounts, api)
   }
-  txRunner_instance.vmaccounts = accounts;
+  txRunnerInstance.vmaccounts = accounts
   let { from, to, data, value, gas } = payload.params[0]
   gas = gas || 3000000
 
@@ -91,11 +91,11 @@ function processTx (accounts, payload, isCall, callback) {
   }
 
   if (isCall) {
-    runCall(payload, from, to, data, value, gas, txRunner_instance, callbacks, callback)
+    runCall(payload, from, to, data, value, gas, txRunnerInstance, callbacks, callback)
   } else if (to) {
-    runTx(payload, from, to, data, value, gas, txRunner_instance, callbacks, callback)
+    runTx(payload, from, to, data, value, gas, txRunnerInstance, callbacks, callback)
   } else {
-    createContract(payload, from, data, value, gas, txRunner_instance, callbacks, callback)
+    createContract(payload, from, data, value, gas, txRunnerInstance, callbacks, callback)
   }
 }
 

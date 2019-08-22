@@ -7,7 +7,7 @@ var ethUtil = require('ethereumjs-util')
 var StateManager = require('ethereumjs-vm/dist/stateManager')
 var Web3VMProvider = require('../web3Provider/web3VmProvider')
 
-var LogsManager = require('./logsManager.js');
+var LogsManager = require('./logsManager.js')
 
 var rlp = ethUtil.rlp
 
@@ -302,8 +302,8 @@ function ExecutionContext () {
 
   this.addBlock = function (block) {
     let blockNumber = '0x' + block.header.number.toString('hex')
-    if (blockNumber === "0x") {
-      blockNumber = "0x0"
+    if (blockNumber === '0x') {
+      blockNumber = '0x0'
     }
     blockNumber = web3.toHex(web3.toBigNumber(blockNumber))
 

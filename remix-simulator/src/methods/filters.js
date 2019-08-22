@@ -2,7 +2,7 @@ var RemixLib = require('remix-lib')
 var executionContext = RemixLib.execution.executionContext
 
 var Filters = function (_options) {
-  const options = _options || {}
+  // const options = _options || {}
 }
 
 Filters.prototype.methods = function () {
@@ -15,39 +15,17 @@ Filters.prototype.methods = function () {
 
 // https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getlogs
 Filters.prototype.eth_getLogs = function (payload, cb) {
-  console.dir("===============================")
-  console.dir("===============================")
-  console.dir("=== eth_getLogs")
-  // payload.params[0].topics = payload.params[0].topics.filter((x) => x)
-  console.dir(payload.params)
-
-  let results = executionContext.logsManager.getLogsFor(payload.params[0]);
-
-  console.dir("results are ---")
-  console.dir(results)
-
+  let results = executionContext.logsManager.getLogsFor(payload.params[0])
   cb(null, results)
 }
 
 Filters.prototype.eth_subscribe = function (payload, cb) {
-  console.dir("===============================")
-  console.dir("===============================")
-  console.dir("=== eth_subscribe")
-  console.dir(payload.params)
-
-  let subscriptionId = executionContext.logsManager.subscribe(payload.params);
-
+  let subscriptionId = executionContext.logsManager.subscribe(payload.params)
   cb(null, subscriptionId)
 }
 
 Filters.prototype.eth_unsubscribe = function (payload, cb) {
-  console.dir("===============================")
-  console.dir("===============================")
-  console.dir("=== eth_unsubscribe")
-  console.dir(payload.params)
-
   executionContext.logsManager.unsubscribe(payload.params[0])
-
   cb(null, true)
 }
 
