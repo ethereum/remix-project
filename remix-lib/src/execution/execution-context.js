@@ -216,7 +216,7 @@ function ExecutionContext () {
 
     if (this.customNetWorks[context]) {
       var provider = this.customNetWorks[context]
-      setProviderFromEndpoint(provider.url, provider.name, () => { cb() })
+      setProviderFromEndpoint(provider.url, 'web3', () => { cb() })
     }
   }
 
