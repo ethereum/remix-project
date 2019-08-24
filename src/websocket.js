@@ -22,7 +22,9 @@ class WebSocket {
 
     this.wsServer = new WebSocketServer({
       httpServer: this.server,
-      autoAcceptConnections: false
+      autoAcceptConnections: false,
+      maxReceivedFrameSize: 131072,
+      maxReceivedMessageSize: 10 * 1024 * 1024,
     })
 
     this.wsServer.on('request', (request) => {
