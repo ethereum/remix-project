@@ -40,12 +40,12 @@ Implemented:
 * [X] eth_compileSolidity (DEPRECATED)
 * [X] eth_compileLLL (DEPRECATED)
 * [X] eth_compileSerpent (DEPRECATED)
-* [_] eth_newFilter
-* [_] eth_newBlockFilter
-* [_] eth_newPendingTransactionFilter
-* [_] eth_uninstallFilter
-* [_] eth_getFilterChanges
-* [X] eth_getFilterLogs
+* [X] eth_newFilter
+* [X] eth_newBlockFilter
+* [X] eth_newPendingTransactionFilter
+* [X] eth_uninstallFilter
+* [~] eth_getFilterChanges
+* [~] eth_getFilterLogs
 * [X] eth_getLogs
 * [_] eth_getWork
 * [_] eth_submitWork
@@ -79,5 +79,3 @@ Implemented:
 * [_] personal_unlockAccount
 * [_] personal_sendTransaction
 * [_] rpc_modules
-* [_] web3_clientVersion
-* [_] web3_sha3

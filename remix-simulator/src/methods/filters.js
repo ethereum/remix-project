@@ -13,12 +13,6 @@ Filters.prototype.methods = function () {
   }
 }
 
-Filters.prototype.eth_getFilterLogs = function (payload, cb) {
-  let subscriptionId = payload.params[0];
-  let results = executionContext.logsManager.getLogsForSubscription(subscriptionId)
-  cb(null, results)
-}
-
 Filters.prototype.eth_getLogs = function (payload, cb) {
   let results = executionContext.logsManager.getLogsFor(payload.params[0])
   cb(null, results)
@@ -32,6 +26,38 @@ Filters.prototype.eth_subscribe = function (payload, cb) {
 Filters.prototype.eth_unsubscribe = function (payload, cb) {
   executionContext.logsManager.unsubscribe(payload.params[0])
   cb(null, true)
+}
+
+Filters.prototype.eth_newFilter = function (payload, cb) {
+  const filterId = executionContext.logsManager.newFilter('filter', payload.params[0])
+  cb(null, filterId)
+}
+
+Filters.prototype.eth_newBlockFilter = function (payload, cb) {
+  const filterId = executionContext.logsManager.newFilter('block')
+  cb(null, filterId)
+}
+
+Filters.prototype.eth_newPendingTransactionFilter = function (payload, cb) {
+  const filterId = executionContext.logsManager.newFilter('pendingTransactions')
+  cb(null, filterId)
+}
+
+Filters.prototype.eth_uninstallfilter = function (payload, cb) {
+  const result = executionContext.logsManager.uninstallFilter(payload.params[0])
+  cb(null, result)
+}
+
+Filters.prototype.eth_getFilterChanges = function (payload, cb) {
+  const filterId = payload.params[0]
+  let results = executionContext.logsManager.getLogsForFilter(filterId)
+  cb(null, results)
+}
+
+Filters.prototype.eth_getFilterLogs = function (payload, cb) {
+  const filterId = payload.params[0]
+  let results = executionContext.logsManager.getLogsForFilter(filterId, true)
+  cb(null, results)
 }
 
 module.exports = Filters
