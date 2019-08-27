@@ -10,7 +10,6 @@ const Filters = require('./methods/filters.js')
 const Misc = require('./methods/misc.js')
 const Net = require('./methods/net.js')
 const Transactions = require('./methods/transactions.js')
-const Whisper = require('./methods/whisper.js')
 
 const generateBlock = require('./genesis.js')
 
@@ -24,8 +23,8 @@ var Provider = function (options) {
   this.methods = merge(this.methods, (new Misc()).methods())
   this.methods = merge(this.methods, (new Filters()).methods())
   this.methods = merge(this.methods, (new Net()).methods())
-  this.methods = merge(this.methods, (this.Transactions.methods()))
   this.methods = merge(this.methods, (new Whisper()).methods())
+  this.methods = merge(this.methods, (new Transactions(this.Accounts.accounts)).methods())
 
   generateBlock()
 }
