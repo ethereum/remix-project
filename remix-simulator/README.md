@@ -55,18 +55,6 @@ Implemented:
 * [_] db_getString
 * [_] db_putHex
 * [_] db_getHex
-* [X] shh_version
-* [_] shh_post
-* [_] shh_newIdentity
-* [_] shh_hasIdentity
-* [_] shh_newGroup
-* [_] shh_addToGroup
-* [_] shh_newFilter
-* [_] shh_uninstallFilter
-* [_] shh_getFilterChanges
-* [_] shh_getMessages
-* [_] bzz_hive (stub)
-* [_] bzz_info (stub)
 * [_] debug_traceTransaction
 * [X] eth_subscribe
 * [X] eth_unsubscribe
