@@ -65,7 +65,7 @@ Accounts.prototype.eth_sign = function (payload, cb) {
   let message = payload.params[1]
 
   let privateKey = this.accountsKeys[address]
-  let account = Web3.eth.accounts.privateKeyToAccount(privateKey)
+  let account = this.web3.eth.accounts.privateKeyToAccount(privateKey)
 
   let data = account.sign(message)
 
