@@ -32,7 +32,7 @@
     "@babel/preset-es2015": "latest",
     "@babel/preset-es2017": "latest",
     "@babel/preset-stage-0": "^7.0.0",
-    "babel-eslint": "^10.0.0",
+    "babel-eslint": "^7.1.1",
     "babelify": "^10.0.0",
     "standard": "^7.0.1",
     "tape": "^4.6.0"
