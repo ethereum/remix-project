@@ -187,6 +187,7 @@ module.exports = {
   extractSwarmHash: function (value) {
     value = value.replace(this.swarmHashExtraction(), '')
     value = value.replace(this.swarmHashExtractionPOC3(), '')
+    return value
   },
 
   /**
