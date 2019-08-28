@@ -48,7 +48,7 @@ export class VerticalIcons extends Plugin {
     const types = ['error', 'warning', 'success', 'info', '']
     const fn = (status) => {
       if (!types.includes(status.type) && status.type) throw new Error(`type should be ${keys.join()}`)
-      if (!status.key) throw new Error(`status key should be defined`)
+      if (status.key === undefined) throw new Error(`status key should be defined`)
 
       if (typeof status.key === 'string' && (!keys.includes(status.key))) {
         throw new Error('key should contain either number or ' + keys.join())
