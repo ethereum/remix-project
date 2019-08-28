@@ -17,7 +17,8 @@ Blocks.prototype.methods = function () {
     eth_getBlockTransactionCountByHash: this.eth_getBlockTransactionCountByHash.bind(this),
     eth_getBlockTransactionCountByNumber: this.eth_getBlockTransactionCountByNumber.bind(this),
     eth_getUncleCountByBlockHash: this.eth_getUncleCountByBlockHash.bind(this),
-    eth_getUncleCountByBlockNumber: this.eth_getUncleCountByBlockNumber.bind(this)
+    eth_getUncleCountByBlockNumber: this.eth_getUncleCountByBlockNumber.bind(this),
+    eth_getStorageAt: this.eth_getStorageAt.bind(this)
   }
 }
 
@@ -115,6 +116,19 @@ Blocks.prototype.eth_getUncleCountByBlockHash = function (payload, cb) {
 
 Blocks.prototype.eth_getUncleCountByBlockNumber = function (payload, cb) {
   cb(null, 0)
+}
+
+Blocks.prototype.eth_getStorageAt = function (payload, cb) {
+  const [address, position, blockNumber] = payload.params
+
+  executionContext.web3().debug.storageRangeAt(blockNumber, 'latest', address.toLowerCase(), position, 1, (err, result) => {
+    if (err || (result.storage && Object.values(result.storage).length === 0)) {
+      return cb(err, '')
+    }
+
+    let value = Object.values(result.storage)[0].value
+    cb(err, value)
+  })
 }
 
 module.exports = Blocks
