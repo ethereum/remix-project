@@ -54,7 +54,7 @@ module.exports = class UniversalDApp {
         executionContext.detectNetwork(cb)
       },
       personalMode: () => {
-        return executionContext.getProvider() === 'web3' ? this._deps.config.get('settings/personal-mode') : false
+        return executionContext.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
     })
     this.txRunner.event.register('transactionBroadcasted', (txhash) => {
