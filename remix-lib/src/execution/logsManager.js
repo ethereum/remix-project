@@ -75,11 +75,11 @@ class LogsManager {
     return matchedSubscriptions
   }
 
-  getLogsForSubscription(subscriptionId) {
+  getLogsForSubscription (subscriptionId) {
     const subscriptionParams = this.subscriptions[subscriptionId]
-    const [_queryType, queryFilter] = subscriptionParams
+    const [_queryType, queryFilter] = subscriptionParams // eslint-disable-line
 
-    return this.getLogsFor(queryFilter);
+    return this.getLogsFor(queryFilter)
   }
 
   transmit (result) {
@@ -122,7 +122,7 @@ class LogsManager {
     delete this.filters[filterId]
   }
 
-  getLogsForFilter(filterId, logsOnly) {
+  getLogsForFilter (filterId, logsOnly) {
     const {filterType, params} = this.filter[filterId]
     const tracking = this.filterTracking[filterId]
 
@@ -130,7 +130,7 @@ class LogsManager {
       return this.getLogsFor(params || {topics: []})
     }
     if (filterType === 'block') {
-      let blocks = oldLogs.filter(x => x.type === 'block').filter(x => tracking.block === undefined || x.blockNumber >= tracking.block)
+      let blocks = this.oldLogs.filter(x => x.type === 'block').filter(x => tracking.block === undefined || x.blockNumber >= tracking.block)
       tracking.block = blocks[blocks.length - 1]
       return blocks.map(block => ('0x' + block.hash().toString('hex')))
     }
