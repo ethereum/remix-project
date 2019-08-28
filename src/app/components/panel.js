@@ -20,8 +20,13 @@ const css = csjs`
     display        : block;
   }
   .pluginsContainer {
-    height: 100%;
-    overflow-y: hidden;
+    height         : 100%;
+    overflow-y     : hidden;
+  }
+  .loading {
+    height         : 40px !important;
+    width          : 40px !important;
+    margin         : auto !important;
   }
 `
 
@@ -48,7 +53,18 @@ export class AbstractPanel extends HostPlugin {
     view.style.height = '100%'
     view.style.width = '100%'
     view.style.border = '0'
-    this.contents[name] = yo`<div class="${css.plugItIn}" >${view}</div>`
+
+    const isIframe = view.tagName === 'IFRAME'
+    view.style.display = isIframe ? 'none' : 'block'
+    const loading = isIframe ? yo`<div class="spinner-border ${css.loading} text-primary" role="status"><div class="sr-only">Loading...</div></div>` : ''
+    this.contents[name] = yo`<div class="${css.plugItIn}" >${view}${loading}</div>`
+
+    if (view.tagName === 'IFRAME') {
+      view.addEventListener('load', () => {
+        this.contents[name].removeChild(loading)
+        view.style.display = 'block'
+      })
+    }
     this.contents[name].style.display = 'none'
     this.view.appendChild(this.contents[name])
   }
@@ -82,7 +98,7 @@ export class AbstractPanel extends HostPlugin {
     if (this.active) {
       this.contents[this.active].style.display = 'none'
     }
-    this.contents[name].style.display = 'block'
+    this.contents[name].style.display = 'flex'
     this.active = name
   }
 
