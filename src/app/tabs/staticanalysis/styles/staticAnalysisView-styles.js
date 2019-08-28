@@ -8,6 +8,7 @@ var css = csjs`
   .result {
     margin-top: 1%;
     max-height: 300px;
+    word-break: break-all;
   }
   .resultTitle {
     padding-top: 20px;
