@@ -1,6 +1,6 @@
 module.exports = function (browser, callback) {
   browser
-    .url('http://127.0.0.1:8080/#version=builtin')
+    .url('http://127.0.0.1:8080')
     .injectScript('test-browser/helpers/applytestmode.js', function () {
       browser.resizeWindow(2560, 1440, () => {
         initModules(browser, () => {
@@ -19,6 +19,7 @@ function initModules (browser, callback) {
     document.querySelector('div[id="pluginManager"]').scrollTop = document.querySelector('div[id="pluginManager"]').scrollHeight
   }, [], function () {
     browser.click('#pluginManager article[id="remixPluginManagerListItem_solidity"] button')
+    .pause(5000)
     .click('#pluginManager article[id="remixPluginManagerListItem_udapp"] button')
     .click('#pluginManager article[id="remixPluginManagerListItem_solidityStaticAnalysis"] button')
     .click('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')

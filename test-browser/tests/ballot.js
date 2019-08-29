@@ -36,7 +36,7 @@ module.exports = {
     .clickLaunchIcon('debugger')
     .click('#jumppreviousbreakpoint')
     .pause(2000)
-    .goToVMTraceStep(59)
+    .goToVMTraceStep(58)
     .pause(1000)
     .checkVariableDebug('soliditystate', stateCheck)
     .checkVariableDebug('soliditylocals', localsCheck)
