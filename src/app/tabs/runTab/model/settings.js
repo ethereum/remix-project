@@ -10,6 +10,13 @@ class Settings {
   constructor (udapp) {
     this.udapp = udapp
     this.event = new EventManager()
+    this.commits = 0
+
+    this.udapp.event.register('initiatingTransaction', (error, from, to, data, lookupOnly, txResult) => {
+      if (error) console.log(error)
+      executionContext.checkpointAndCommit(() => console.log('checkpoint on VM', this.commits), this.commits)
+      this.commits++
+    })
 
     this.udapp.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       this.event.trigger('transactionExecuted', [error, from, to, data, lookupOnly, txResult])

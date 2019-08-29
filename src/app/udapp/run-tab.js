@@ -202,6 +202,7 @@ export class RunTab extends LibraryPlugin {
     executionContext.init(this.config)
     executionContext.stopListenOnLastBlock()
     executionContext.listenOnLastBlock()
+    executionContext.checkpointAndCommit(() => console.log('checkpoint on VM'), 0)
     this.udapp.resetEnvironment()
     this.renderInstanceContainer()
     this.renderSettings(this.udapp)
