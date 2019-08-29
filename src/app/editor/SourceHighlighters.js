@@ -4,26 +4,16 @@ const SourceHighlighter = require('./sourceHighlighter')
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
-const profile = {
-  displayName: 'Editor',
-  name: 'editor',
-  description: 'service - highlight source code',
-  version: packageJson.version,
-  methods: ['highlight', 'discardHighlight']
-}
-
 // EditorApi:
 // - methods: ['highlight', 'discardHighlight'],
 
-class SourceHighlighters extends Plugin {
+class SourceHighlighters {
 
   constructor () {
-    super(profile)
     this.highlighters = {}
   }
 
-  highlight (position, filePath, hexColor) {
-    const { from } = this.currentRequest
+  highlight (position, filePath, hexColor, from) {
     try {
       if (!this.highlighters[from]) this.highlighters[from] = new SourceHighlighter()
       this.highlighters[from].currentSourceLocation(null)
@@ -33,8 +23,7 @@ class SourceHighlighters extends Plugin {
     }
   }
 
-  discardHighlight () {
-    const { from } = this.currentRequest
+  discardHighlight (from) {
     if (this.highlighters[from]) this.highlighters[from].currentSourceLocation(null)
   }
 }

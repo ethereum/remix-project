@@ -3,6 +3,8 @@ const EventManager = require('../../lib/events')
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const ace = require('brace')
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../package.json'
 
 const globalRegistry = require('../../global/registry')
 const SourceHighlighters = require('./SourceHighlighters')
@@ -37,9 +39,18 @@ document.head.appendChild(yo`
   </style>
 `)
 
-class Editor {
+const profile = {
+  displayName: 'Editor',
+  name: 'editor',
+  description: 'service - editor',
+  version: packageJson.version,
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation']
+}
+
+class Editor extends Plugin {
 
   constructor (opts = {}, themeModule) {
+    super(profile)
     // Dependancies
     this._components = {}
     this._components.registry = globalRegistry
@@ -175,6 +186,16 @@ class Editor {
         this.event.trigger('contentChanged', [])
       })
     })
+  }
+
+  highlight (position, filePath, hexColor) {
+    const { from } = this.currentRequest
+    this.sourceHighlighters.highlight(position, filePath, hexColor, from)
+  }
+
+  discardHighlight () {
+    const { from } = this.currentRequest
+    this.sourceHighlighters.discardHighlight(from)
   }
 
   setTheme (type) {
