@@ -1,6 +1,6 @@
 module.exports = function (browser, callback) {
   browser
-    .url('http://127.0.0.1:8080/#version=builtin')
+    .url('http://127.0.0.1:8080')
     .injectScript('test-browser/helpers/applytestmode.js', function () {
       browser.resizeWindow(2560, 1440, () => {
         initModules(browser, () => {
