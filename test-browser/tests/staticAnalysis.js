@@ -5,6 +5,7 @@ var sauce = require('./sauce')
 var sources = [
   {
     'browser/Untitled.sol': {content: `
+pragma solidity >=0.4.22 <0.6.0;
 contract test1 { address test = tx.origin; }
 contract test2 {}
 contract TooMuchGas {
@@ -38,7 +39,7 @@ function runTests (browser) {
     .clickLaunchIcon('solidityStaticAnalysis')
     .click('#staticanalysisView button')
     .waitForElementPresent('#staticanalysisresult .staticAnalysisWarning', 2000, true, function () {
-      listSelectorContains(['browser/Untitled.sol:2:33:Use of tx.origin',
+      listSelectorContains(['browser/Untitled.sol:3:33:Use of tx.origin',
         'Fallback function of contract TooMuchGas requires too much gas',
         'TooMuchGas.() : Variables have very similar names test and test1.'],
         '#staticanalysisresult .staticAnalysisWarning',

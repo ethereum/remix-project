@@ -1,3 +1,4 @@
+pragma solidity ^0.5.10;
 import "./contract.sol";
 contract Assets {
     uint[] proposals;
