@@ -16,6 +16,8 @@ offsetToColumnConverter.prototype.offsetToLineColumn = function (rawLocation, fi
   if (!this.lineBreakPositionsByContent[file]) {
     for (var filename in asts) {
       var source = asts[filename]
+      // source id was string before. in newer versions it has been changed to an integer so we need to check the type here
+      if (typeof source.id === 'string') source.id = parseInt(source.id, 10)
       if (source.id === file) {
         this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[filename].content)
         break
