@@ -186,6 +186,16 @@ class CompilerContainer {
               </div>
               <div class="col-sm-8">
                 ${this._view.versionSelector}
+                <div style="
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;
+                align-content: center;
+                align-content: center;
+                align-items: center;">
+                <input id="nightlies" type="checkbox">
+                <label for="nightlies" class="p-0 m-0">Show Nightly builds</label>
+                </div>
               </div>
             </div>
             <div class="row w-100 no-gutters mb-2">
