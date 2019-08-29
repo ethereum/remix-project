@@ -190,8 +190,8 @@ class CompilerContainer {
               <div class="col-sm-8">
                 ${this._view.versionSelector}
                 <div class="pt-0 ${css.nightlyBuilds}">
-                <label for="nightlies" class="text-dark p-0 m-0">Include nightly builds</label>
-                ${this._view.includeNightlies}
+                  <label for="nightlies" class="text-dark p-0 m-0">Include nightly builds</label>
+                  ${this._view.includeNightlies}
                 </div>
               </div>
             </div>
