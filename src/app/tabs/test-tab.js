@@ -19,7 +19,7 @@ const profile = {
 }
 
 module.exports = class TestTab extends ViewPlugin {
-  constructor (fileManager, filePanel, compileTab, appManager, renderer, editor) {
+  constructor (fileManager, filePanel, compileTab, appManager, renderer) {
     super(profile)
     this.compileTab = compileTab
     this._view = { el: null }
@@ -120,7 +120,7 @@ module.exports = class TestTab extends ViewPlugin {
   updateFinalResult (_errors, result, filename) {
     this.testsSummary.hidden = false
     if (_errors) {
-      _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsSummary, {type: err.severity}) )
+      _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsSummary, {type: err.severity}))
       return
     }
     this.testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)

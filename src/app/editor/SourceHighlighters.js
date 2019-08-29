@@ -1,9 +1,6 @@
 'use strict'
 const SourceHighlighter = require('./sourceHighlighter')
 
-import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../package.json'
-
 // EditorApi:
 // - methods: ['highlight', 'discardHighlight'],
 
