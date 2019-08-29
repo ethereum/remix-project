@@ -114,7 +114,7 @@ class CompileTab extends ViewPlugin {
       if (success) {
         // forwarding the event to the appManager infra
         this.emit('compilationFinished', source.target, source, 'soljson', data)
-        if (data.errors) {
+        if (data.errors && data.errors.length > 0) {
           this.emit('statusChanged', {
             key: data.errors.length,
             title: `compilation finished successful with warning${data.errors.length > 1 ? 's' : ''}`,
