@@ -37,6 +37,13 @@ const css = csjs`
     display: block;
     margin: 3% 0;
   }
+  .nightlyBuilds {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-content: center;
+    align-items: center;
+  }
   .autocompileContainer {
     display: flex;
     align-items: center;
