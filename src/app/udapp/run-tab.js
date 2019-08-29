@@ -3,6 +3,7 @@ import * as packageJson from '../../../package.json'
 
 const $ = require('jquery')
 const yo = require('yo-yo')
+const ethJSUtil = require('ethereumjs-util')
 const EventManager = require('../../lib/events')
 const Card = require('../ui/card')
 
@@ -68,7 +69,11 @@ export class RunTab extends LibraryPlugin {
         }
       },
       getGasLimit: (cb) => {
-        cb(null, $('#gasLimit').val())
+        try {
+          cb(null, new ethJSUtil.BN($('#gasLimit').val(), 10))
+        } catch (e) {
+          cb(e.message)
+        }
       }
     })
   }
