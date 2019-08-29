@@ -178,6 +178,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   runTests () {
+    this.call('editor', 'clearAnnotations')
     this.testsOutput.innerHTML = ''
     this.testsSummary.innerHTML = ''
     var tests = this.data.selectedTests
