@@ -62,15 +62,13 @@ export function runTest (testName, testObject: any, contractDetails: any, opts: 
     let timePassed: number = 0
     let web3 = new Web3()
 
-    const userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
-    const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
-    if (!isBrowser) {
-        let signale = require('signale')
-        signale.warn('DO NOT TRY TO ACCESS (IN YOUR SOLIDITY TEST) AN ACCOUNT GREATER THAN THE LENGTH OF THE FOLLOWING ARRAY (' + opts.accounts.length + ') :')
-        signale.warn(opts.accounts)
-        signale.warn('e.g: the following code won\'t work in the current context:')
-        signale.warn('TestsAccounts.getAccount(' + opts.accounts.length + ')')
+    const accts: TestResultInterface = {
+      type: 'accountList',
+      value: opts.accounts
     }
+
+    testCallback(undefined, accts);
+
     const resp: TestResultInterface = {
       type: 'contract',
       value: testName,
@@ -93,7 +91,7 @@ export function runTest (testName, testObject: any, contractDetails: any, opts: 
         let startTime = Date.now()
         if (func.constant) {
             method.call(sendParams).then((result) => {
-                let time = Math.ceil((Date.now() - startTime) / 1000.0)
+                let time = (Date.now() - startTime) / 1000.0
                 if (result) {
                     const resp: TestResultInterface = {
                       type: 'testPass',
@@ -120,7 +118,7 @@ export function runTest (testName, testObject: any, contractDetails: any, opts: 
         } else {
             method.send(sendParams).on('receipt', (receipt) => {
                 try {
-                    let time: number = Math.ceil((Date.now() - startTime) / 1000.0)
+                    let time: number = (Date.now() - startTime) / 1000.0
                     let topic = Web3.utils.sha3('AssertionEvent(bool,string)')
                     let testPassed: boolean = false
 
