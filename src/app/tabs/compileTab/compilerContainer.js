@@ -291,9 +291,9 @@ class CompilerContainer {
         ? yo`<option value="${build.path}" selected>${build.longVersion}</option>`
         : yo`<option value="${build.path}">${build.longVersion}</option>`
 
-      if (!option.innerText.includes("nightly") ||
-        (option.innerText.includes("nightly") && this._view.includeNightlies.checked)) {
-          this._view.versionSelector.appendChild(option)
+      if (!option.innerText.includes('nightly') ||
+        (option.innerText.includes('nightly') && this._view.includeNightlies.checked)) {
+        this._view.versionSelector.appendChild(option)
       }
     })
     this._view.versionSelector.removeAttribute('disabled')
