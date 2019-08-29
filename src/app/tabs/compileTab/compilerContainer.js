@@ -84,6 +84,7 @@ class CompilerContainer {
       if (!this._view.compileIcon) return
       this._view.compileIcon.setAttribute('title', '')
       this._view.compileIcon.classList.remove(`${css.spinningIcon}`)
+      if (this.data.autoCompile) this.compileIfAutoCompileOn()
     })
 
     this.compileTabLogic.compiler.event.register('compilationFinished', (success, data, source) => {
