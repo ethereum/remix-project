@@ -2,7 +2,7 @@ Creating and Deploying a Contract
 ================================
 
 There are 3 type of environments Remix can be plugged to:
-`Javascript VM`, `Injected provider`, or `Web3 provider`. (for details see [Running transactions](http://remix.readthedocs.io/en/latest/run_tab.html))
+`Javascript VM`, `Injected provider`, or `Web3 provider`. (for details see [Running transactions](https://remix-ide.readthedocs.io/en/latest/run.html))
 
 Both `Web3 provider` and `Injected provider` require the use of an
 external tool.
