@@ -23,11 +23,6 @@ const css = csjs`
     height         : 100%;
     overflow-y     : hidden;
   }
-  .loading {
-    height         : 40px !important;
-    width          : 40px !important;
-    margin         : auto !important;
-  }
 `
 
 /** Abstract class used for hosting the view of a plugin */
