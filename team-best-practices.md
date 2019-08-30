@@ -19,7 +19,7 @@ Related links:
  - Remix-lib NPM module: https://www.npmjs.com/package/remix-lib
  - Remix-solidity NPM module: https://www.npmjs.com/package/remix-solidity
  - Remix-debug NPM module: https://www.npmjs.com/package/remix-debug
- - Remix documentation: http://remix.readthedocs.io/en/latest/
+ - Remix documentation: http://remix-ide.readthedocs.io/en/latest/
  - General gitter channel: https://gitter.im/ethereum/remix
  - Dev gitter channel: https://gitter.im/ethereum/remix-dev
  - Huboard (task management tool): https://huboard.com/ethereum/remix-ide
