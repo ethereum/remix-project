@@ -56,7 +56,13 @@ export class AbstractPanel extends HostPlugin {
 
     const isIframe = view.tagName === 'IFRAME'
     view.style.display = isIframe ? 'none' : 'block'
-    const loading = isIframe ? yo`<div class="spinner-border ${css.loading} text-primary" role="status"><div class="sr-only">Loading...</div></div>` : ''
+    const loading = isIframe ? yo`
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>  
+    ` : ''
     this.contents[name] = yo`<div class="${css.plugItIn}" >${view}${loading}</div>`
 
     if (view.tagName === 'IFRAME') {
