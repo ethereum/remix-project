@@ -71,13 +71,15 @@ module.exports = class Filepanel extends ViewPlugin {
     self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'], appManager)
 
     const explorers = yo`
-      <div class=${css.treeview}>${fileExplorer.init()}</div>
-      <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
-      <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
-      <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
-      <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
-      <div class="httpexplorer ${css.treeview}">${httpExplorer.init()}</div>
-      <div class="httpsexplorer ${css.treeview}">${httpsExplorer.init()}</div>
+      <div>
+        <div class=${css.treeview}>${fileExplorer.init()}</div>
+        <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
+        <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
+        <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
+        <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
+        <div class="httpexplorer ${css.treeview}">${httpExplorer.init()}</div>
+        <div class="httpsexplorer ${css.treeview}">${httpsExplorer.init()}</div>
+      </div>
     `
 
     function template () {
