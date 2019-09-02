@@ -112,7 +112,7 @@ The second corresponds to the deployment of the contract `test` with the
 first parameter of the constructor set to 11. That contract depends
 on a library. The linkage is done using the property `linkReferences`.
 In that case we use the address of the previously created library :
-`created{1512830014773}`. the number is the id (timestamp) of the
+`created{1512830014773}`. The number is the id (timestamp) of the
 transaction that led to the creation of the library.
 
 The third record corresponds to the call to the function `set` of the

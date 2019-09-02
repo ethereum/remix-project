@@ -61,7 +61,7 @@ Deploying an instance
 ---------------------
 
 The `Compile tab` displays information related to the current contract
-(note that there can be more than one) ([(see compile](compile.html)).
+(note that there can be more than one) ([see compile](compile.html)).
 
 Moving on, in the `Run tab` select, `JavaScript VM` to specify that you
 are going to deploy an instance of the contract in the `JavaScript VM`
