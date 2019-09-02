@@ -1,7 +1,7 @@
 'use strict'
 var EventManager = require('../../lib/events')
 
-class BasicReadOnlyExplorer {
+class ReadonlyProvider {
   constructor (type) {
     this.event = new EventManager()
     this.files = {}
@@ -99,4 +99,4 @@ class BasicReadOnlyExplorer {
   }
 }
 
-module.exports = BasicReadOnlyExplorer
+module.exports = ReadonlyProvider

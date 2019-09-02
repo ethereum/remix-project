@@ -2,7 +2,7 @@
 
 var EventManager = require('../../lib/events')
 
-function Files (storage) {
+function LocalStorageProvider (storage) {
   var event = new EventManager()
   this.event = event
   var readonly = {}
@@ -145,4 +145,4 @@ function Files (storage) {
   }
 }
 
-module.exports = Files
+module.exports = LocalStorageProvider
