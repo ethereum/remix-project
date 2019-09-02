@@ -45,6 +45,8 @@ export class RunTab extends LibraryPlugin {
     this.filePanel = filePanel
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule
+
+    executionContext.checkpointAndCommit(() => { console.log('initial checkpoint and commit of JavaScript VM') })
   }
 
   onActivationInternal () {
@@ -70,7 +72,7 @@ export class RunTab extends LibraryPlugin {
       },
       getGasLimit: (cb) => {
         try {
-          cb(null, new ethJSUtil.BN($('#gasLimit').val(), 10))
+          cb(null, '0x' + new ethJSUtil.BN($('#gasLimit').val(), 10).toString(16))
         } catch (e) {
           cb(e.message)
         }
@@ -202,7 +204,6 @@ export class RunTab extends LibraryPlugin {
     executionContext.init(this.config)
     executionContext.stopListenOnLastBlock()
     executionContext.listenOnLastBlock()
-    executionContext.checkpointAndCommit(() => console.log('checkpoint on VM'), 0)
     this.udapp.resetEnvironment()
     this.renderInstanceContainer()
     this.renderSettings(this.udapp)
