@@ -12,14 +12,14 @@ var { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
 var Storage = remixLib.Storage
-var Browserfiles = require('./app/files/browser-files')
-var SharedFolder = require('./app/files/shared-folder')
+var LocalStorageProvider = require('./app/files/localStorageProvider')
+var RemixdProvider = require('./app/files/remixdProvider')
 var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
 var examples = require('./app/editor/example-contracts')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var FileManager = require('./app/files/fileManager')
-var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
+var ReadonlyProvider = require('./app/files/readonlyProvider')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var CompilerMetadata = require('./app/files/compiler-metadata')
@@ -113,7 +113,7 @@ class App {
 
     // load file system
     self._components.filesProviders = {}
-    self._components.filesProviders['browser'] = new Browserfiles(fileStorage)
+    self._components.filesProviders['browser'] = new LocalStorageProvider(fileStorage)
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
 
     var remixd = new Remixd(65520)
@@ -122,13 +122,13 @@ class App {
       if (message.error) toolTip(message.error)
     })
 
-    self._components.filesProviders['localhost'] = new SharedFolder(remixd)
-    self._components.filesProviders['swarm'] = new BasicReadOnlyExplorer('swarm')
-    self._components.filesProviders['github'] = new BasicReadOnlyExplorer('github')
+    self._components.filesProviders['localhost'] = new RemixdProvider(remixd)
+    self._components.filesProviders['swarm'] = new ReadonlyProvider('swarm')
+    self._components.filesProviders['github'] = new ReadonlyProvider('github')
     self._components.filesProviders['gist'] = new NotPersistedExplorer('gist')
-    self._components.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
-    self._components.filesProviders['https'] = new BasicReadOnlyExplorer('https')
-    self._components.filesProviders['http'] = new BasicReadOnlyExplorer('http')
+    self._components.filesProviders['ipfs'] = new ReadonlyProvider('ipfs')
+    self._components.filesProviders['https'] = new ReadonlyProvider('https')
+    self._components.filesProviders['http'] = new ReadonlyProvider('http')
     registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
     registry.put({api: self._components.filesProviders['swarm'], name: 'fileproviders/swarm'})
     registry.put({api: self._components.filesProviders['github'], name: 'fileproviders/github'})

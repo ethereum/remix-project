@@ -2,7 +2,7 @@
 
 var EventManager = require('../../lib/events')
 
-class FilesTree {
+class FileProvider {
   constructor (name, storage) {
     this.event = new EventManager()
     this.storage = storage
@@ -136,4 +136,4 @@ class FilesTree {
   }
 }
 
-module.exports = FilesTree
+module.exports = FileProvider

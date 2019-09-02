@@ -1,5 +1,5 @@
 'use strict'
-var ReadOnlyExplorer = require('./basicReadOnlyExplorer')
+var ReadOnlyExplorer = require('./readonlyProvider')
 var toolTip = require('../ui/tooltip')
 
 class NotPersistedExplorer extends ReadOnlyExplorer {
