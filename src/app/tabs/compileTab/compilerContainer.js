@@ -175,6 +175,9 @@ class CompilerContainer {
 
     this._view.compilationButton = this.compilationButton()
 
+    this._view.includeNightlies = yo`
+      <input class="mr-0 ml-1" id="nightlies" type="checkbox" onchange=${this._updateVersionSelector.bind(this)}>
+    `
     this._view.compileContainer = yo`
       <section>
         <!-- Select Compiler Version -->
@@ -186,6 +189,10 @@ class CompilerContainer {
               </div>
               <div class="col-sm-8">
                 ${this._view.versionSelector}
+                <div class="pt-0 ${css.nightlyBuilds}">
+                  <label for="nightlies" class="text-dark p-0 m-0">Include nightly builds</label>
+                  ${this._view.includeNightlies}
+                </div>
               </div>
             </div>
             <div class="row w-100 no-gutters mb-2">
@@ -217,7 +224,7 @@ class CompilerContainer {
             </li>
             <li class="list-group-item form-group ${css.compilerConfig}">
               ${this._view.optimize}
-              <label for="optimize">Enable Optimization</label>
+              <label for="optimize">Enable optimization</label>
             </li>
             <li class="list-group-item form-group ${css.compilerConfig}">
               ${this._view.hideWarningsBox}
@@ -283,7 +290,11 @@ class CompilerContainer {
       const option = build.path === this.data.selectedVersion
         ? yo`<option value="${build.path}" selected>${build.longVersion}</option>`
         : yo`<option value="${build.path}">${build.longVersion}</option>`
-      this._view.versionSelector.appendChild(option)
+
+      if (!option.innerText.includes('nightly') ||
+        (option.innerText.includes('nightly') && this._view.includeNightlies.checked)) {
+        this._view.versionSelector.appendChild(option)
+      }
     })
     this._view.versionSelector.removeAttribute('disabled')
     this.queryParams.update({ version: this.data.selectedVersion })
