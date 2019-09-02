@@ -23,11 +23,6 @@ const css = csjs`
     height         : 100%;
     overflow-y     : hidden;
   }
-  .loading {
-    height         : 40px !important;
-    width          : 40px !important;
-    margin         : auto !important;
-  }
 `
 
 /** Abstract class used for hosting the view of a plugin */
@@ -56,7 +51,13 @@ export class AbstractPanel extends HostPlugin {
 
     const isIframe = view.tagName === 'IFRAME'
     view.style.display = isIframe ? 'none' : 'block'
-    const loading = isIframe ? yo`<div class="spinner-border ${css.loading} text-primary" role="status"><div class="sr-only">Loading...</div></div>` : ''
+    const loading = isIframe ? yo`
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>  
+    ` : ''
     this.contents[name] = yo`<div class="${css.plugItIn}" >${view}${loading}</div>`
 
     if (view.tagName === 'IFRAME') {
