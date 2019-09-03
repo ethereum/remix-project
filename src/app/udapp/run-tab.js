@@ -45,8 +45,6 @@ export class RunTab extends LibraryPlugin {
     this.filePanel = filePanel
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule
-
-    executionContext.checkpointAndCommit(() => { console.log('initial checkpoint and commit of JavaScript VM') })
   }
 
   onActivationInternal () {
