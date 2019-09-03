@@ -19,15 +19,15 @@ const profile = {
 }
 
 module.exports = class TestTab extends ViewPlugin {
-  constructor (fileManager, filePanel, compileTab, appManager) {
+  constructor (fileManager, filePanel, compileTab, appManager, renderer) {
     super(profile)
     this.compileTab = compileTab
     this._view = { el: null }
-    this.compileTab = compileTab
     this.fileManager = fileManager
     this.filePanel = filePanel
     this.data = {}
     this.appManager = appManager
+    this.renderer = renderer
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
     })
@@ -117,10 +117,10 @@ module.exports = class TestTab extends ViewPlugin {
     cb()
   }
 
-  updateFinalResult (_err, result, filename) {
+  updateFinalResult (_errors, result, filename) {
     this.testsSummary.hidden = false
-    if (_err) {
-      this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${_err.message}</div>`)
+    if (_errors) {
+      _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsSummary, {type: err.severity}))
       return
     }
     this.testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
@@ -178,6 +178,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   runTests () {
+    this.call('editor', 'clearAnnotations')
     this.testsOutput.innerHTML = ''
     this.testsSummary.innerHTML = ''
     var tests = this.data.selectedTests

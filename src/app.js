@@ -247,7 +247,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   appManager.register([
     contentImport,
     themeModule,
-    editor.sourceHighlighters,
+    editor,
     fileManager,
     compilerMetadataGenerator,
     compilersArtefacts,
@@ -317,7 +317,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     registry.get('filemanager').api,
     filePanel,
     compileTab,
-    appManager
+    appManager,
+    new Renderer()
   )
 
   appManager.register([
