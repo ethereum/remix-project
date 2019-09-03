@@ -173,11 +173,12 @@ export class VerticalIcons extends Plugin {
   addActive (name) {
     const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
     const invert = themeType === 'dark' ? 1 : 0
+    const brightness = themeType === 'dark' ? '150' : '0' // should be >100 for icons with color
     const nextActive = this.view.querySelector(`[plugin="${name}"]`)
     if (nextActive) {
       let image = nextActive.querySelector('.image')
       nextActive.classList.add(`active`)
-      image.style.setProperty('filter', `invert(${invert}) grayscale(1) brightness(0%)`)
+      image.style.setProperty('filter', `invert(${invert}) grayscale(1) brightness(${brightness}%)`)
     }
   }
 
