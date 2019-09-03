@@ -5,7 +5,9 @@ var ethJSUtil = require('ethereumjs-util')
 var processTx = require('./txProcess.js')
 var BN = ethJSUtil.BN
 
-var Transactions = function (accounts) {
+var Transactions = function () {}
+
+Transactions.prototype.init = function (accounts) {
   this.accounts = accounts
 }
 

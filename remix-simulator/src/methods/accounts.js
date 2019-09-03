@@ -12,18 +12,27 @@ var Accounts = function () {
   this.accountsKeys = {}
 
   executionContext.init({get: () => { return true }})
+}
+
+Accounts.prototype.init = async function () {
+  let setBalance = (account) => {
+    return new Promise((resolve, reject) => {
+      this.accountsKeys[ethJSUtil.toChecksumAddress(account.address)] = account.privateKey
+      this.accounts[ethJSUtil.toChecksumAddress(account.address)] = { privateKey: Buffer.from(account.privateKey.replace('0x', ''), 'hex'), nonce: 0 }
+
+      executionContext.vm().stateManager.getAccount(Buffer.from(account.address.toLowerCase().replace('0x', ''), 'hex'), (err, account) => {
+        if (err) {
+          throw new Error(err)
+        }
+        var balance = '0x56BC75E2D63100000'
+        account.balance = balance || '0xf00000000000000001'
+        resolve()
+      })
+    })
+  }
 
   for (let _account of this.accountsList) {
-    this.accountsKeys[_account.address.toLowerCase()] = _account.privateKey
-    this.accounts[_account.address.toLowerCase()] = { privateKey: Buffer.from(_account.privateKey.replace('0x', ''), 'hex'), nonce: 0 }
-
-    executionContext.vm().stateManager.getAccount(Buffer.from(_account.address.toLowerCase().replace('0x', ''), 'hex'), (err, account) => {
-      if (err) {
-        throw new Error(err)
-      }
-      var balance = '0x56BC75E2D63100000'
-      account.balance = balance || '0xf00000000000000001'
-    })
+    await setBalance(_account)
   }
 }
 
