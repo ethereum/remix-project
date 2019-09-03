@@ -56,6 +56,24 @@ class StateManagerCommonStorageDump extends StateManager {
       })
     })
   }
+
+  getStateRoot (cb) {
+    let checkpoint = this._checkpointCount
+    this._checkpointCount = 0
+    super.getStateRoot((err, stateRoot) => {
+      this._checkpointCount = checkpoint
+      cb(err, stateRoot)
+    })
+  }
+
+  setStateRoot (stateRoot, cb) {
+    let checkpoint = this._checkpointCount
+    this._checkpointCount = 0
+    super.setStateRoot(stateRoot, (err) => {
+      this._checkpointCount = checkpoint
+      cb(err)
+    })
+  }
 }
 
 function createVm (hardfork) {
