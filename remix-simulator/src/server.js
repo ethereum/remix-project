@@ -8,6 +8,7 @@ const log = require('./utils/logs.js')
 class Server {
   constructor (options) {
     this.provider = new Provider(options)
+    this.provider.init()
   }
 
   start (host, port) {

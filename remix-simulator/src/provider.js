@@ -12,16 +12,22 @@ const generateBlock = require('./genesis.js')
 
 var Provider = function (options) {
   this.Accounts = new Accounts()
+  this.Transactions = new Transactions()
 
   this.methods = {}
   this.methods = merge(this.methods, this.Accounts.methods())
   this.methods = merge(this.methods, (new Blocks(options)).methods())
   this.methods = merge(this.methods, (new Misc()).methods())
   this.methods = merge(this.methods, (new Net()).methods())
-  this.methods = merge(this.methods, (new Transactions(this.Accounts.accounts)).methods())
+  this.methods = merge(this.methods, (this.Transactions.methods()))
   this.methods = merge(this.methods, (new Whisper()).methods())
 
   generateBlock()
+}
+
+Provider.prototype.init = async function () {
+  await this.Accounts.init()
+  this.Transactions.init(this.Accounts.accounts)
 }
 
 Provider.prototype.sendAsync = function (payload, callback) {
