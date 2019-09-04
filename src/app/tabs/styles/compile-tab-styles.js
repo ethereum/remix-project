@@ -156,7 +156,10 @@ const css = csjs`
     padding-right: 5px;
     word-break: break-all;
   }
-
+  .swarmLogo {
+    width: 20px;
+    height: 20px;
+  }
   .spinningIcon {
     display: inline-block;
     position: relative;
