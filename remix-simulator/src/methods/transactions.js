@@ -5,7 +5,9 @@ var ethJSUtil = require('ethereumjs-util')
 var processTx = require('./txProcess.js')
 var BN = ethJSUtil.BN
 
-var Transactions = function (accounts) {
+var Transactions = function () {}
+
+Transactions.prototype.init = function (accounts) {
   this.accounts = accounts
 }
 
@@ -24,6 +26,10 @@ Transactions.prototype.methods = function () {
 }
 
 Transactions.prototype.eth_sendTransaction = function (payload, cb) {
+  // from might be lowercased address (web3)
+  if (payload.params && payload.params.length > 0 && payload.params[0].from) {
+    payload.params[0].from = ethJSUtil.toChecksumAddress(payload.params[0].from)
+  }
   processTx(this.accounts, payload, false, cb)
 }
 
@@ -68,6 +74,10 @@ Transactions.prototype.eth_getCode = function (payload, cb) {
 }
 
 Transactions.prototype.eth_call = function (payload, cb) {
+  // from might be lowercased address (web3)
+  if (payload.params && payload.params.length > 0 && payload.params[0].from) {
+    payload.params[0].from = ethJSUtil.toChecksumAddress(payload.params[0].from)
+  }
   processTx(this.accounts, payload, true, cb)
 }
 
