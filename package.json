@@ -161,7 +161,7 @@
     "nightwatch_local_ballot": "nightwatch ./test-browser/tests/ballot.js --config nightwatch.js --env chrome ",
     "nightwatch_local_libraryDeployment": "nightwatch ./test-browser/tests/libraryDeployment.js --config nightwatch.js --env chrome ",
     "nightwatch_local_solidityImport": "nightwatch ./test-browser/tests/solidityImport.js --config nightwatch.js --env chrome ",
-    "nightwatch_local_recorder": "nightwatch ./test-browser/tests/recorder.js --config nightwatch.js --env local ",
+    "nightwatch_local_recorder": "nightwatch ./test-browser/tests/recorder.js --config nightwatch.js --env chrome ",
     "nightwatch_local_transactionExecution": "nightwatch ./test-browser/tests/transactionExecution.js --config nightwatch.js --env chrome ",
     "nightwatch_local_staticAnalysis": "nightwatch ./test-browser/tests/staticAnalysis.js --config nightwatch.js --env chrome ",
     "nightwatch_local_signingMessage": "nightwatch ./test-browser/tests/signingMessage.js --config nightwatch.js --env chrome ",
