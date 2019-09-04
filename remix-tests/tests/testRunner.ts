@@ -11,8 +11,9 @@ import { ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/in
 
 var provider = new Provider()
 
-function compileAndDeploy(filename: string, callback: Function) {
+async function compileAndDeploy(filename: string, callback: Function) {
   let web3: Web3 = new Web3()
+  await provider.init()
   web3.setProvider(provider)
   let compilationData: object
   let accounts: string[]
