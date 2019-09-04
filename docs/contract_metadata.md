@@ -1,13 +1,13 @@
 Build Artifact
 ==============
 
-As compilation succeed Remix create a JSON file for each compiled contract.
+As compilation succeeds Remix creates a JSON file for each compiled contract.
 These JSON files contains several metadata
 
 Library Deployment
 ------------------
 
-By default Remix automatically deploy needed libraries.
+By default Remix automatically deploys needed libraries.
 
 `linkReferences` contains a map representing libraries which depend on the current contract. 
 Values are addresses of libraries used for linking the contract.

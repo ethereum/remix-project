@@ -14,7 +14,9 @@ This file contains the minimun you need for running unit testing.
 Run Tests
 ---------
 
-This execute tests. The execution is run in a separate environment and the result is displayed below.
+This executes all tests whose box has been checked below (by default all). The execution is run in a separate environment and the result is displayed below.
+
+Here is a list of functions and their supported types that you can use to write your testcases:
 
 | Available functions  | Supported types |
 

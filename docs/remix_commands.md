@@ -1,7 +1,7 @@
 Remix Commands
 ==============
 
-In the console, you can run the commands listed below.  Once you start to type a command, there is *auto completion*.  These commands are using the following programs:
+In the console, you can run the commands listed below.  Once you start to type a command, there is *auto completion*.  These commands are using the following libraries:
 
 + *ethers*: The [ethers.js](https://docs.ethers.io/ethers.js/html/getting-started.html) library is a compact and complete JavaScript library for Ethereum. 
 
