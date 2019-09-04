@@ -9,7 +9,11 @@ const log = require('./utils/logs.js')
 class Server {
   constructor (options) {
     this.provider = new Provider(options)
-    this.provider.init()
+    this.provider.init().then(() => {
+      log('Provider initiated')
+    }).catch((error) => {
+      log(error)
+    })
   }
 
   start (host, port) {
