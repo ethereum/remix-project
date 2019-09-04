@@ -1,8 +1,8 @@
 Build Artifact
 ==============
 
-As compilation succeeds Remix creates a JSON file for each compiled contract.
-These JSON files contains several metadata
+When a compilation succeeds, Remix creates a JSON file for each compiled contract.
+The JSON file contains the compilation's artifact.
 
 Library Deployment
 ------------------
