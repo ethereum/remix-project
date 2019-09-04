@@ -304,7 +304,6 @@ class CompilerContainer {
         this._view.versionSelector.appendChild(option)
       }
     })
-    
     this._view.versionSelector.removeAttribute('disabled')
     this.queryParams.update({ version: this.data.selectedVersion })
     let url
