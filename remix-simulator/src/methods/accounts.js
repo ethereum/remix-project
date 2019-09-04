@@ -45,7 +45,7 @@ Accounts.prototype.methods = function () {
 }
 
 Accounts.prototype.eth_accounts = function (payload, cb) {
-  return cb(null, this.accountsList.map((x) => x.address))
+  return cb(null, this.accountsList.map((x) => ethJSUtil.toChecksumAddress(x.address)))
 }
 
 Accounts.prototype.eth_getBalance = function (payload, cb) {
