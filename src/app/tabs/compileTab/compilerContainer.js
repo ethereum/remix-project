@@ -284,7 +284,7 @@ class CompilerContainer {
     this._updateLanguageSelector()
   }
 
-  _shouldBeAdded(version) {
+  _shouldBeAdded (version) {
     return !version.includes('nightly') ||
            (version.includes('nightly') && this._view.includeNightlies.checked)
   }
@@ -299,7 +299,7 @@ class CompilerContainer {
       const option = build.path === this.data.selectedVersion
         ? yo`<option value="${build.path}" selected>${build.longVersion}</option>`
         : yo`<option value="${build.path}">${build.longVersion}</option>`
-      
+
       if (this._shouldBeAdded(option.innerText)) {
         this._view.versionSelector.appendChild(option)
       }
