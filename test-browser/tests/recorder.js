@@ -68,7 +68,7 @@ var sources = [{'browser/testRecorder.sol': {content: `contract testRecorder {
 
 var records = `{
   "accounts": {
-    "account{0}": "0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
+    "account{0}": "0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c"
   },
   "linkReferences": {
     "testLib": "created{1512830014773}"
@@ -226,7 +226,7 @@ var records = `{
 
 var scenario = {
   'accounts': {
-    'account{0}': '0xca35b7d915458ef540ade6068dfe2f44e8fa733c'
+    'account{0}': '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'
   },
   'linkReferences': {},
   'transactions': [
