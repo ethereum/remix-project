@@ -1,5 +1,5 @@
 const async = require('async')
-const { BN, privateToAddress, isValidPrivate, stripHexPrefix } = require('ethereumjs-util')
+const { BN, privateToAddress, isValidPrivate, stripHexPrefix, toChecksumAddress } = require('ethereumjs-util')
 const crypto = require('crypto')
 const { EventEmitter } = require('events')
 
@@ -121,7 +121,7 @@ module.exports = class UniversalDApp {
         })
       })
 
-      this.accounts['0x' + address.toString('hex')] = { privateKey, nonce: 0 }
+      this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
     }
   }
 
