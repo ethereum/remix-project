@@ -284,15 +284,23 @@ class CompilerContainer {
     this._updateLanguageSelector()
   }
 
+  _shouldBeAdded (version) {
+    return !version.includes('nightly') ||
+           (version.includes('nightly') && this._view.includeNightlies.checked)
+  }
+
   _updateVersionSelector () {
+    // update selectedversion of previous one got filtered out
+    if (!this._shouldBeAdded(this.data.selectedVersion)) {
+      this.data.selectedVersion = this.data.defaultVersion
+    }
     this._view.versionSelector.innerHTML = ''
     this.data.allversions.forEach(build => {
       const option = build.path === this.data.selectedVersion
         ? yo`<option value="${build.path}" selected>${build.longVersion}</option>`
         : yo`<option value="${build.path}">${build.longVersion}</option>`
 
-      if (!option.innerText.includes('nightly') ||
-        (option.innerText.includes('nightly') && this._view.includeNightlies.checked)) {
+      if (this._shouldBeAdded(option.innerText)) {
         this._view.versionSelector.appendChild(option)
       }
     })
