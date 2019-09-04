@@ -180,13 +180,23 @@ module.exports = {
     *
     * @return {RegEx}
     */
-  swarmHashExtractionPOC3: function () {
+  swarmHashExtractionPOC31: function () {
     return /a265627a7a72315820([0-9a-f]{64})64736f6c6343([0-9a-f]{6})0032$/
+  },
+
+  /**
+    * return a regex which extract the swarmhash from the bytecode, from POC 0.3
+    *
+    * @return {RegEx}
+    */
+  swarmHashExtractionPOC32: function () {
+    return /a265627a7a72305820([0-9a-f]{64})64736f6c6343([0-9a-f]{6})0032$/
   },
 
   extractSwarmHash: function (value) {
     value = value.replace(this.swarmHashExtraction(), '')
-    value = value.replace(this.swarmHashExtractionPOC3(), '')
+    value = value.replace(this.swarmHashExtractionPOC31(), '')
+    value = value.replace(this.swarmHashExtractionPOC32(), '')
     return value
   },
 
