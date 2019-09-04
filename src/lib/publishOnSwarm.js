@@ -22,7 +22,7 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
     // find hash
     var hash
     try {
-      hash = metadata.sources[fileName].urls[0].match('bzzr://(.+)')[1]
+      hash = metadata.sources[fileName].urls[0].match('(bzzr|bzz-raw)://(.+)')[1]
     } catch (e) {
       return cb('Metadata inconsistency')
     }
