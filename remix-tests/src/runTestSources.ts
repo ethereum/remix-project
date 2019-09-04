@@ -10,15 +10,17 @@ import Web3 = require('web3')
 import { Provider } from 'remix-simulator'
 import { FinalResult } from './types'
 
-const createWeb3Provider = function () {
+const createWeb3Provider = async function () {
     let web3 = new Web3()
-    web3.setProvider(new Provider())
+    let provider = new Provider()
+    await provider.init()
+    web3.setProvider(provider)
     return web3
 }
 
-export function runTestSources(contractSources, testCallback, resultCallback, finalCallback, importFileCb, opts) {
+export async function runTestSources(contractSources, testCallback, resultCallback, finalCallback, importFileCb, opts) {
     opts = opts || {}
-    let web3 = opts.web3 || createWeb3Provider()
+    let web3 = opts.web3 || await createWeb3Provider()
     let accounts = opts.accounts || null
     async.waterfall([
         function getAccountList (next) {
