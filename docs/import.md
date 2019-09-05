@@ -3,7 +3,7 @@ Importing Source Files in Solidity
 
 It is essential to know many techniques for importing files.
 
-For a tutorial about importing files click [here](https://github.com/ethereum/remix-workshops/tree/master/loading_via_npm_github_plugin).
+For a tutorial about importing files click [here](https://github.com/ethereum/remix-workshops/tree/master/LoadingContent).
 
 For a detailed explanation of the `import` keyword see the
 [Solidity documentation](https://solidity.readthedocs.io/en/develop/layout-of-source-files.html?highlight=import#importing-other-source-files)
