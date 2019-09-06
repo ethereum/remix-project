@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const bodyParser = require('body-parser')
 const app = express()
 const expressWs = require('express-ws')
@@ -8,11 +9,17 @@ const log = require('./utils/logs.js')
 class Server {
   constructor (options) {
     this.provider = new Provider(options)
+    this.provider.init().then(() => {
+      log('Provider initiated')
+    }).catch((error) => {
+      log(error)
+    })
   }
 
   start (host, port) {
     expressWs(app)
 
+    app.use(cors())
     app.use(bodyParser.urlencoded({extended: true}))
     app.use(bodyParser.json())
 

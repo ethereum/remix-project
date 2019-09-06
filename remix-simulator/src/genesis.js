@@ -17,10 +17,8 @@ function generateBlock () {
     uncleHeaders: []
   })
 
-  executionContext.checkpointAndCommit(() => {
-    executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }, function () {
-      executionContext.addBlock(block)
-    })
+  executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }, function () {
+    executionContext.addBlock(block)
   })
 }
 

@@ -44,8 +44,9 @@ function deepEqualExcluding(a: any, b: any, excludedKeys: string[]) {
 let accounts: string[]
 let provider = new Provider()
 
-function compileAndDeploy(filename: string, callback: Function) {
+async function compileAndDeploy(filename: string, callback: Function) {
   let web3: Web3 = new Web3()
+  await provider.init()
   web3.setProvider(provider)
   let compilationData: object
   async.waterfall([
