@@ -9,14 +9,46 @@ import { deployAll } from '../dist/deployer'
 import { runTest } from '../dist/index'
 import { ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/index'
 
-var provider = new Provider()
+// deepEqualExcluding allows us to exclude specific keys whose values vary.
+// In this specific test, we'll use this helper to exclude `time` keys.
+// Assertions for the existance of these will be made at the correct places.
+function deepEqualExcluding(a: any, b: any, excludedKeys: string[]) {
+  function removeKeysFromObject(obj: any, excludedKeys: string[]) {
+    if (obj !== Object(obj)) {
+      return obj
+    }
+
+    if(Object.prototype.toString.call(obj) !== '[object Array]') {
+      obj = Object.assign({}, obj)
+      for (const key of excludedKeys) {
+        delete obj[key]
+      }
+
+      return obj
+    }
+
+    let newObj = []
+    for (const idx in obj) {
+      newObj[idx] = removeKeysFromObject(obj[idx], excludedKeys);
+    }
+
+    return newObj
+  }
+
+  let aStripped: any = removeKeysFromObject(a, excludedKeys);
+  let bStripped: any = removeKeysFromObject(b, excludedKeys);
+
+  assert.deepEqual(aStripped, bStripped)
+}
+
+let accounts: string[]
+let provider = new Provider()
 
 async function compileAndDeploy(filename: string, callback: Function) {
   let web3: Web3 = new Web3()
   await provider.init()
   web3.setProvider(provider)
   let compilationData: object
-  let accounts: string[]
   async.waterfall([
     function getAccountList(next: Function): void {
       web3.eth.getAccounts((_err: Error | null | undefined, _accounts: string[]) => {
@@ -43,25 +75,38 @@ async function compileAndDeploy(filename: string, callback: Function) {
 
 
 describe('testRunner', () => {
-  describe('#runTest', () => {
+    let tests: any[] = [], results: ResultsInterface;
+
+    const testCallback: TestCbInterface = (err, test) => {
+      if (err) { throw err }
+
+      if (test.type === 'testPass' || test.type === 'testFailure') {
+        assert.ok(test.time, 'test time not reported')
+        assert.ok(!Number.isInteger(test.time || 0), 'test time should not be an integer')
+      }
+
+      tests.push(test)
+    }
+
+    const resultsCallback: Function = (done) => {
+      return (err, _results) => {
+        if (err) { throw err }
+        results = _results
+        done()
+      }
+    }
+
+    describe('#runTest', () => {
     describe('test with beforeAll', () => {
       let filename: string = 'tests/examples_1/simple_storage_test.sol'
-      let tests: any[] = [], results: ResultsInterface;
 
       before((done) => {
-        compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, accounts: object) => {
-          const testCallback: TestCbInterface = (err, test) => {
-            if (err) { throw err }
-            tests.push(test)
-          }
-          const resultsCallback: ResultCbInterface = (err, _results) => {
-            if (err) { throw err }
-            results = _results
-            done()
-          }
-          runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback)
+        compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, accounts: string[]) => {
+          runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback(done))
         })
       })
+
+      after(() => { tests = [] })
 
       it('should 1 passing test', function () {
         assert.equal(results.passingNum, 2)
@@ -71,36 +116,28 @@ describe('testRunner', () => {
         assert.equal(results.failureNum, 2)
       })
 
-      it('should returns 5 messages', function () {
-        assert.deepEqual(tests, [
+      it('should return 6 messages', function () {
+        deepEqualExcluding(tests, [
+          { type: 'accountList', value: accounts },
           { type: 'contract', value: 'MyTest', filename: 'tests/examples_1/simple_storage_test.sol' },
-          { type: 'testFailure', value: 'Should trigger one fail', time: 1, context: 'MyTest', errMsg: 'the test 1 fails' },
-          { type: 'testPass', value: 'Should trigger one pass', time: 1, context: 'MyTest' },
-          { type: 'testPass', value: 'Initial value should be100', time: 1, context: 'MyTest' },
-          { type: 'testFailure', value: 'Initial value should be200', time: 1, context: 'MyTest', errMsg: 'function returned false' }
-        ])
+          { type: 'testFailure', value: 'Should trigger one fail', context: 'MyTest', errMsg: 'the test 1 fails' },
+          { type: 'testPass', value: 'Should trigger one pass', context: 'MyTest' },
+          { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' },
+          { type: 'testFailure', value: 'Initial value should be200', context: 'MyTest', errMsg: 'function returned false' }
+        ], ['time'])
       })
     })
 
     describe('test with beforeEach', function () {
       let filename = 'tests/examples_2/simple_storage_test.sol'
-      let tests: any[] = [], results: ResultsInterface;
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, accounts: object) {
-          const testCallback: TestCbInterface = (err, test) => {
-            if (err) { throw err }
-            tests.push(test)
-          }
-          const resultsCallback: ResultCbInterface = (err, _results) => {
-            if (err) { throw err }
-            results = _results
-            done()
-          }
-
-          runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback)
+        compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, accounts: string[]) {
+          runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback(done))
         })
       })
+
+      after(() => { tests = [] })
 
       it('should 2 passing tests', function () {
         assert.equal(results.passingNum, 2)
@@ -110,34 +147,27 @@ describe('testRunner', () => {
         assert.equal(results.failureNum, 0)
       })
 
-      it('should returns 3 messages', function () {
-        assert.deepEqual(tests, [
+      it('should return 4 messages', function () {
+        deepEqualExcluding(tests, [
+          { type: 'accountList', value: accounts },
           { type: 'contract', value: 'MyTest', filename: 'tests/examples_2/simple_storage_test.sol' },
-          { type: 'testPass', value: 'Initial value should be100', time: 1, context: 'MyTest' },
-          { type: 'testPass', value: 'Initial value should be200', time: 1, context: 'MyTest' }
-        ])
+          { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' },
+          { type: 'testPass', value: 'Initial value should be200', context: 'MyTest' }
+        ], ['time'])
       })
     })
 
     // Test string equality
     describe('test string equality', function () {
       let filename = 'tests/examples_3/simple_string_test.sol'
-      let tests: any[] = [], results: ResultsInterface;
 
       before(function (done) {
         compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
-          const testCallback: TestCbInterface = (err, test) => {
-            if (err) { throw err }
-            tests.push(test)
-          }
-          const resultsCallback: ResultCbInterface = (err, _results) => {
-            if (err) { throw err }
-            results = _results
-            done()
-          }
-          runTest('StringTest', contracts.StringTest, compilationData[filename]['StringTest'], { accounts }, testCallback, resultsCallback)
+          runTest('StringTest', contracts.StringTest, compilationData[filename]['StringTest'], { accounts }, testCallback, resultsCallback(done))
         })
       })
+
+      after(() => { tests = [] })
 
       it('should 2 passing tests', function () {
         assert.equal(results.passingNum, 2)
@@ -147,35 +177,28 @@ describe('testRunner', () => {
         assert.equal(results.failureNum, 1)
       })
 
-      it('should returns 3 messages', function () {
-        assert.deepEqual(tests, [
+      it('should return 4 messages', function () {
+        deepEqualExcluding(tests, [
+          { type: 'accountList', value: accounts },
           { type: 'contract', value: 'StringTest', filename: 'tests/examples_3/simple_string_test.sol' },
-          { type: 'testFailure', value: 'Value should be hello world', time: 1, context: 'StringTest', "errMsg": "initial value is not correct" },
-          { type: 'testPass', value: 'Value should not be hello wordl', time: 1, context: 'StringTest' },
-          { type: 'testPass', value: 'Initial value should be hello', time: 1, context: 'StringTest' },
-        ])
+          { type: 'testFailure', value: 'Value should be hello world', context: 'StringTest', "errMsg": "initial value is not correct" },
+          { type: 'testPass', value: 'Value should not be hello wordl', context: 'StringTest' },
+          { type: 'testPass', value: 'Initial value should be hello', context: 'StringTest' },
+        ], ['time'])
       })
     })
 
     //Test signed/unsigned integer weight
     describe('test number weight', function () {
       let filename = 'tests/number/number_test.sol'
-      let tests: any[] = [], results: ResultsInterface;
 
       before(function (done) {
         compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
-          const testCallback: TestCbInterface = (err, test) => {
-            if (err) { throw err }
-            tests.push(test)
-          }
-          const resultsCallback: ResultCbInterface = (err, _results) => {
-            if (err) { throw err }
-            results = _results
-            done()
-          }
-          runTest('IntegerTest', contracts.IntegerTest, compilationData[filename]['IntegerTest'], { accounts }, testCallback, resultsCallback)
+          runTest('IntegerTest', contracts.IntegerTest, compilationData[filename]['IntegerTest'], { accounts }, testCallback, resultsCallback(done))
         })
       })
+
+      after(() => { tests = [] })
 
       it('should have 6 passing tests', function () {
         assert.equal(results.passingNum, 6)
@@ -188,24 +211,14 @@ describe('testRunner', () => {
     // Test Transaction with different sender
     describe('various sender', function () {
       let filename = 'tests/various_sender/sender_test.sol'
-      let tests: any[] = [], results: ResultsInterface;
 
       before(function (done) {
         compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
-          const testCallback: TestCbInterface = (err, test) => {
-            if (err) { throw err }
-            tests.push(test)
-          }
-          const resultsCallback: ResultCbInterface = (err, _results) => {
-            if (err) { throw err }
-            results = _results
-            done()
-          }
-
-          runTest('SenderTest', contracts.SenderTest, compilationData[filename]['SenderTest'], { accounts }, testCallback, resultsCallback)
-
+          runTest('SenderTest', contracts.SenderTest, compilationData[filename]['SenderTest'], { accounts }, testCallback, resultsCallback(done))
         })
       })
+
+      after(() => { tests = [] })
 
       it('should have 4 passing tests', function () {
         assert.equal(results.passingNum, 4)
