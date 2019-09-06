@@ -7,6 +7,8 @@ var ethUtil = require('ethereumjs-util')
 var StateManager = require('ethereumjs-vm/dist/stateManager')
 var Web3VMProvider = require('../web3Provider/web3VmProvider')
 
+var LogsManager = require('./logsManager.js')
+
 var rlp = ethUtil.rlp
 
 var injectedProvider
@@ -104,6 +106,8 @@ var mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec
 function ExecutionContext () {
   var self = this
   this.event = new EventManager()
+
+  this.logsManager = new LogsManager()
 
   var executionContext = null
 
@@ -298,10 +302,15 @@ function ExecutionContext () {
 
   this.addBlock = function (block) {
     let blockNumber = '0x' + block.header.number.toString('hex')
+    if (blockNumber === '0x') {
+      blockNumber = '0x0'
+    }
     blockNumber = web3.toHex(web3.toBigNumber(blockNumber))
 
     self.blocks['0x' + block.hash().toString('hex')] = block
     self.blocks[blockNumber] = block
+
+    this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
   this.trackTx = function (tx, block) {
