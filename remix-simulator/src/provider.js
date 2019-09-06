@@ -1,8 +1,12 @@
+var RemixLib = require('remix-lib')
+var executionContext = RemixLib.execution.executionContext
+
 const log = require('./utils/logs.js')
 const merge = require('merge')
 
 const Accounts = require('./methods/accounts.js')
 const Blocks = require('./methods/blocks.js')
+const Filters = require('./methods/filters.js')
 const Misc = require('./methods/misc.js')
 const Net = require('./methods/net.js')
 const Transactions = require('./methods/transactions.js')
@@ -18,6 +22,7 @@ var Provider = function (options) {
   this.methods = merge(this.methods, this.Accounts.methods())
   this.methods = merge(this.methods, (new Blocks(options)).methods())
   this.methods = merge(this.methods, (new Misc()).methods())
+  this.methods = merge(this.methods, (new Filters()).methods())
   this.methods = merge(this.methods, (new Net()).methods())
   this.methods = merge(this.methods, (this.Transactions.methods()))
   this.methods = merge(this.methods, (new Whisper()).methods())
@@ -52,6 +57,10 @@ Provider.prototype.send = function (payload, callback) {
 
 Provider.prototype.isConnected = function () {
   return true
+}
+
+Provider.prototype.on = function (type, cb) {
+  executionContext.logsManager.addListener(type, cb)
 }
 
 module.exports = Provider

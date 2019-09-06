@@ -15,6 +15,7 @@
   "main": "./index.js",
   "dependencies": {
     "ansi-gray": "^0.1.1",
+    "async": "^3.1.0",
     "body-parser": "^1.18.2",
     "color-support": "^1.1.3",
     "commander": "^2.19.0",
@@ -28,7 +29,7 @@
     "remix-lib": "0.4.12",
     "standard": "^10.0.3",
     "time-stamp": "^2.0.0",
-    "web3": "1.0.0-beta.27"
+    "web3": "^1.0.0-beta.37"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
