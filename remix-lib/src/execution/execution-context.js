@@ -56,6 +56,24 @@ class StateManagerCommonStorageDump extends StateManager {
       })
     })
   }
+
+  getStateRoot (cb) {
+    let checkpoint = this._checkpointCount
+    this._checkpointCount = 0
+    super.getStateRoot((err, stateRoot) => {
+      this._checkpointCount = checkpoint
+      cb(err, stateRoot)
+    })
+  }
+
+  setStateRoot (stateRoot, cb) {
+    let checkpoint = this._checkpointCount
+    this._checkpointCount = 0
+    super.setStateRoot(stateRoot, (err) => {
+      this._checkpointCount = checkpoint
+      cb(err)
+    })
+  }
 }
 
 function createVm (hardfork) {
@@ -218,20 +236,6 @@ function ExecutionContext () {
       var provider = this.customNetWorks[context]
       setProviderFromEndpoint(provider.url, 'web3', () => { cb() })
     }
-  }
-
-  this.checkpointAndCommit = function (cb, checkpointCount) {
-    // due to issue https://github.com/ethereumjs/ethereumjs-vm/issues/567
-    if (this.vm().stateManager._checkpointCount > (checkpointCount || 0)) {
-      return this.vm().stateManager.commit(() => {
-        cb()
-      })
-    }
-    this.vm().stateManager.checkpoint(() => {
-      this.vm().stateManager.commit(() => {
-        cb()
-      })
-    })
   }
 
   this.currentblockGasLimit = function () {
