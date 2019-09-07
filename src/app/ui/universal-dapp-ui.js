@@ -197,7 +197,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
       modalDialog('Confirm transaction', content,
         { label: 'Confirm',
           fn: () => {
-            self.udapp._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+            self.udapp.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
             // TODO: check if this is check is still valid given the refactor
             if (!content.gasPriceStatus) {
               cancelCb('Given gas price is not correct')
