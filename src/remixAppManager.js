@@ -226,6 +226,17 @@ export class RemixAppManager extends PluginEngine {
       icon: 'https://res.cloudinary.com/key-solutions/image/upload/v1565781702/gas-profiler_nxmsal.png',
       location: 'sidePanel'
     }
+    const flattener = {
+      name: 'flattener',
+      displayName: 'Flattener',
+      events: [],
+      methods: [],
+      version: '0.1.0',
+      url: 'https://remix-flattener.netlify.com',
+      description: 'Flattens compiled smart contracts',
+      icon: 'https://remix-flattener.netlify.com/logo.svg',
+      location: 'sidePanel'
+    }
     return [
       new IframePlugin(pipeline),
       new IframePlugin(vyper),
@@ -238,7 +249,8 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(debugPlugin),
       new IframePlugin(libraTools),
       new IframePlugin(oneClickDapp),
-      new IframePlugin(gasProfiler)
+      new IframePlugin(gasProfiler),
+      new IframePlugin(flattener)
     ]
   }
 }
