@@ -1,6 +1,6 @@
 const EventEmitter = require('events')
 
-class ScrollAndClick extends EventEmitter {
+class scrollAndClick extends EventEmitter {
   command (target) {
     this.api
     .scrollInto(target)
@@ -12,4 +12,4 @@ class ScrollAndClick extends EventEmitter {
   }
 }
 
-module.exports = ScrollAndClick
+module.exports = scrollAndClick
