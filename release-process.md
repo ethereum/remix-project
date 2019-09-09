@@ -23,7 +23,7 @@ remix-alpha.ethereum.org is automaticaly updated every time commits are pushed t
  - git checkout origin/master
  - git checkout -b bumpVersion
  - update package.json version
- - create a PR and wait for test
+ - remove package-lock/json version and generate a new one with `npm install`
  - merge PR
  - git fetch origin master
  - git checkout origin/master
