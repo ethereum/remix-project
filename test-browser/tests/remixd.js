@@ -60,7 +60,7 @@ function runTests (browser, testData) {
     .waitForElementVisible('#icon-panel', 2000)
     .clickLaunchIcon('fileExplorers')
     .clickLaunchIcon('pluginManager')
-    .click('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
     .waitForElementVisible('#modal-footer-ok', 2000)
     .pause(2000)
     .click('#modal-footer-ok')
@@ -99,7 +99,7 @@ function runTests (browser, testData) {
     .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '_toremove.sol"]') // check if removed (old) file is not present
     .click('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]')
     .clickLaunchIcon('pluginManager')
-    .click('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
     .end()
 }
 
