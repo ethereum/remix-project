@@ -110,6 +110,8 @@ class CompilerMetadata extends Plugin {
             })
           }
         })
+      } else {
+        reject(`Please select the folder in the file explorer where the metadata of ${contractName} can be found`)
       }
     })
   }
