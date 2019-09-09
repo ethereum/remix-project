@@ -298,6 +298,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     registry.get('config').api,
     new Renderer(),
     registry.get('fileproviders/swarm').api,
+    registry.get('fileproviders/ipfs').api,
     registry.get('filemanager').api,
     registry.get('fileproviders').api,
   )
