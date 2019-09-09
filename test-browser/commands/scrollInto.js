@@ -14,7 +14,7 @@ class ScrollInto extends EventEmitter {
 
 function _scrollInto (browser, target, cb) {
   browser.execute(function (target) {
-    document.querySelector(target).scrollIntoView()
+    document.querySelector(target).scrollIntoView(({block: 'center'}))
   }, [target], function () {
     cb()
   })
