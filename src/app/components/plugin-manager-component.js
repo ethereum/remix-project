@@ -145,8 +145,8 @@ class PluginManagerComponent extends ViewPlugin {
     const isNotRequired = ({profile}) => !this.appManager.isRequired(profile.name)
     const isNotHome = ({profile}) => profile.name !== 'home'
     const sortByName = (a, b) => {
-      const nameA = a.name.toUpperCase()
-      const nameB = b.name.toUpperCase()
+      const nameA = ((a.profile.displayName) ? a.profile.displayName : a.profile.name).toUpperCase()
+      const nameB = ((b.profile.displayName) ? b.profile.displayName : b.profile.name).toUpperCase()
       return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
     }
 
