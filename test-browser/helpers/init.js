@@ -14,16 +14,13 @@ module.exports = function (browser, callback) {
 }
 
 function initModules (browser, callback) {
-  browser.pause(3000).click('#icon-panel div[plugin="pluginManager"]')
-  .execute(function () {
-    document.querySelector('div[id="pluginManager"]').scrollTop = document.querySelector('div[id="pluginManager"]').scrollHeight
-  }, [], function () {
-    browser.click('#pluginManager article[id="remixPluginManagerListItem_solidity"] button')
+  browser.pause(3000)
+    .click('#icon-panel div[plugin="pluginManager"]')
+    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_solidity"] button')
     .pause(5000)
-    .click('#pluginManager article[id="remixPluginManagerListItem_udapp"] button')
-    .click('#pluginManager article[id="remixPluginManagerListItem_solidityStaticAnalysis"] button')
-    .click('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
-    .click('#icon-panel div[plugin="fileExplorers"]')
+    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_udapp"] button')
+    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_solidityStaticAnalysis"] button')
+    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
+    .scrollAndClick('#icon-panel div[plugin="fileExplorers"]')
     .perform(() => { callback() })
-  })
 }
