@@ -55,29 +55,37 @@ module.exports = class Filepanel extends ViewPlugin {
     var fileExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['browser'],
       ['createNewFile', 'publishToGist', 'copyFiles', canUpload ? 'uploadFile' : '']
     )
-    var fileSystemExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['localhost'])
-    var swarmExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['swarm'])
-    var githubExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['github'])
-    var gistExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['gist'], ['updateGist'])
-    var httpExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['http'])
-    var httpsExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['https'])
-    var ipfsExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['ipfs'])
+
+    function createProvider(key) {
+      return new FileExplorer(self._components.registry, self._deps.fileProviders[key])
+    }
+
+    var fileSystemExplorer = createProvider('localhost')
+    var swarmExplorer = createProvider('swarm')
+    var githubExplorer = createProvider('github')
+    var gistExplorer = createProvider('updateGist')
+    var httpExplorer = createProvider('http')
+    var httpsExplorer = createProvider('https')
+    var httpsExplorer = createProvider('ipfs')
 
     self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'], appManager)
+
+    const explorers = yo`
+      <div class=${css.treeview}>${fileExplorer.init()}</div>
+      <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
+      <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
+      <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
+      <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
+      <div class="httpexplorer ${css.treeview}">${httpExplorer.init()}</div>
+      <div class="httpsexplorer ${css.treeview}">${httpsExplorer.init()}</div>
+    `
 
     function template () {
       return yo`
         <div class=${css.container}>
           <div class="${css.fileexplorer}">           
             <div class="${css.fileExplorerTree}">
-              <div class=${css.treeview}>${fileExplorer.init()}</div>
-              <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
-              <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
-              <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
-              <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
-              <div class="httpexplorer ${css.treeview}">${httpExplorer.init()}</div>
-              <div class="httpsexplorer ${css.treeview}">${httpsExplorer.init()}</div>
-              <div class="httpsexplorer ${css.treeview}">${ipfsExplorer.init()}</div>
+              ${explorers}
             </div>
           </div>
         </div>
