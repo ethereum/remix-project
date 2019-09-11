@@ -56,14 +56,14 @@ module.exports = class Filepanel extends ViewPlugin {
       ['createNewFile', 'publishToGist', 'copyFiles', canUpload ? 'uploadFile' : '']
     )
 
-    function createProvider (key) {
-      return new FileExplorer(self._components.registry, self._deps.fileProviders[key])
+    function createProvider (key, menuItems) {
+      return new FileExplorer(self._components.registry, self._deps.fileProviders[key], menuItems)
     }
 
     var fileSystemExplorer = createProvider('localhost')
     var swarmExplorer = createProvider('swarm')
     var githubExplorer = createProvider('github')
-    var gistExplorer = createProvider('updateGist')
+    var gistExplorer = createProvider('gist', ['updateGist'])
     var httpExplorer = createProvider('http')
     var httpsExplorer = createProvider('https')
     var httpsExplorer = createProvider('ipfs')
