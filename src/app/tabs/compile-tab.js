@@ -234,7 +234,15 @@ class CompileTab extends ViewPlugin {
       </div>
         
       <article class="${css.compilerArticle}">
+<<<<<<< HEAD
         <button class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish('swarm') }}">
+=======
+        <button class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish() }}">
+<<<<<<< HEAD
+=======
+          <i class="${css.copyIcon} fas fa-upload" aria-hidden="true"></i>
+>>>>>>> c353b990... standard
+>>>>>>> c049685c... standard
           <span>Publish on Swarm</span>
           <img id="swarmLogo" class="${css.storageLogo} ml-2" src="${swarmImg}">
         </button>
