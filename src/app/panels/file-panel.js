@@ -61,6 +61,7 @@ module.exports = class Filepanel extends ViewPlugin {
     var gistExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['gist'], ['updateGist'])
     var httpExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['http'])
     var httpsExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['https'])
+    var ipfsExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['ipfs'])
 
     self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'], appManager)
 
@@ -76,6 +77,7 @@ module.exports = class Filepanel extends ViewPlugin {
               <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
               <div class="httpexplorer ${css.treeview}">${httpExplorer.init()}</div>
               <div class="httpsexplorer ${css.treeview}">${httpsExplorer.init()}</div>
+              <div class="httpsexplorer ${css.treeview}">${ipfsExplorer.init()}</div>
             </div>
           </div>
         </div>
@@ -126,6 +128,10 @@ module.exports = class Filepanel extends ViewPlugin {
     })
 
     httpsExplorer.events.register('focus', function (path) {
+      self._deps.fileManager.switchFile(path)
+    })
+
+    ipfsExplorer.events.register('focus', function (path) {
       self._deps.fileManager.switchFile(path)
     })
 
