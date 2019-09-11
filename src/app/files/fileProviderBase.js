@@ -1,23 +1,34 @@
-/*
-this.exists = function (path, cb) {}
+'use strict'
+import * as packageJson from '../../../package.json'
 
-this.init = function (cb) {}
+class FileProvider {
+  constructor () {
+    super(profile)
+  }
 
-this.get = function (path, cb) {}
 
-this.set = function (path, content, cb) {}
+exists (path, cb) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
 
-this.addReadOnly = function (path, content) {}
+init (cb) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
 
-this.isReadOnly = function (path) {}
+get (path, cb) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
 
-this.remove = function (path) {}
+set (path, content, cb) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
 
-this.rename = function (oldPath, newPath, isFolder) {}
+addReadOnly (path, content) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
 
-this.resolveDirectory = function (path, callback) {}
+isReadOnly (path) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
 
-this.removePrefix = function (path) {}
+remove (path) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
 
-updateRefs (path, type) {}
-*/
+rename (oldPath, newPath, isFolder) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
+
+resolveDirectory (path, callback) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
+
+removePrefix (path) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
+
+updateRefs (path, type) { throw new Error(this.name + ' function is not implemented for ' + this.constructor.name + ' class'); }
+
+}
+
+module.exports = FileProvider

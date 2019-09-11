@@ -232,17 +232,19 @@ class CompileTab extends ViewPlugin {
         <label class="border-0 input-group-text" for="compiledContracts">Contract</label>
         ${selectEl}
       </div>
-        
       <article class="${css.compilerArticle}">
 <<<<<<< HEAD
         <button class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish('swarm') }}">
 =======
         <button class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish() }}">
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
           <i class="${css.copyIcon} fas fa-upload" aria-hidden="true"></i>
 >>>>>>> c353b990... standard
 >>>>>>> c049685c... standard
+=======
+>>>>>>> 1eeb61d4... added dummy functions to interface
           <span>Publish on Swarm</span>
           <img id="swarmLogo" class="${css.storageLogo} ml-2" src="${swarmImg}">
         </button>
