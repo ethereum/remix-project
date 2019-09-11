@@ -154,7 +154,7 @@ async function buildTree (tree, step, scopeId, isExternalCall) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
     var isCallInstruction = traceHelper.isCallInstruction(tree.traceManager.trace[step])
-    // we are checking if we jumping in a new CALL or in an internal function
+    // we are checking if we are jumping in a new CALL or in an internal function
     if (isCallInstruction || sourceLocation.jump === 'i') {
       try {
         var externalCallResult = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, isCallInstruction)
@@ -196,7 +196,7 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
   // that way we know that there is a new local variable from here.
   if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.attributes.name]) {
     tree.traceManager.getStackAt(step, (error, stack) => {
-      // the stack length at this point is where the value of the new local will be stored.
+      // the stack length at this point is where the value of the new local variable will be stored.
       // so, either this is the direct value, or the offset in memory. That depends on the type.
       if (!error) {
         tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
