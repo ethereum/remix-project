@@ -23,7 +23,6 @@ var Provider = function (options) {
   this.methods = merge(this.methods, (new Misc()).methods())
   this.methods = merge(this.methods, (new Filters()).methods())
   this.methods = merge(this.methods, (new Net()).methods())
-  this.methods = merge(this.methods, (new Whisper()).methods())
   this.methods = merge(this.methods, (new Transactions(this.Accounts.accounts)).methods())
 
   generateBlock()
