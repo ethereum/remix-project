@@ -56,7 +56,7 @@ module.exports = class Filepanel extends ViewPlugin {
       ['createNewFile', 'publishToGist', 'copyFiles', canUpload ? 'uploadFile' : '']
     )
 
-    function createProvider(key) {
+    function createProvider (key) {
       return new FileExplorer(self._components.registry, self._deps.fileProviders[key])
     }
 
@@ -111,38 +111,6 @@ module.exports = class Filepanel extends ViewPlugin {
 
     self._deps.fileProviders['localhost'].event.register('closed', (event) => {
       fileSystemExplorer.hide()
-    })
-
-    fileExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    fileSystemExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    swarmExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    githubExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    gistExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    httpExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    httpsExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    ipfsExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
     })
 
     self.render = function render () { return element }
