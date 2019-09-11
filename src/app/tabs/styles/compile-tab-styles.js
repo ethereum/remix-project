@@ -156,7 +156,7 @@ const css = csjs`
     padding-right: 5px;
     word-break: break-all;
   }
-  .swarmLogo {
+  .storageLogo {
     width: 20px;
     height: 20px;
   }
