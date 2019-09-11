@@ -55,29 +55,40 @@ module.exports = class Filepanel extends ViewPlugin {
     var fileExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['browser'],
       ['createNewFile', 'publishToGist', 'copyFiles', canUpload ? 'uploadFile' : '']
     )
-    var fileSystemExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['localhost'])
-    var swarmExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['swarm'])
-    var githubExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['github'])
-    var gistExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['gist'], ['updateGist'])
-    var httpExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['http'])
-    var httpsExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['https'])
-    var ipfsExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['ipfs'])
+
+    function createProvider (key, menuItems) {
+      return new FileExplorer(self._components.registry, self._deps.fileProviders[key], menuItems)
+    }
+
+    var fileSystemExplorer = createProvider('localhost')
+    var swarmExplorer = createProvider('swarm')
+    var githubExplorer = createProvider('github')
+    var gistExplorer = createProvider('gist', ['updateGist'])
+    var httpExplorer = createProvider('http')
+    var httpsExplorer = createProvider('https')
+    var ipfsExplorer = createProvider('ipfs')
 
     self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'], appManager)
+
+    const explorers = yo`
+      <div>
+        <div class=${css.treeview}>${fileExplorer.init()}</div>
+        <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
+        <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
+        <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
+        <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
+        <div class="httpexplorer ${css.treeview}">${httpExplorer.init()}</div>
+        <div class="httpsexplorer ${css.treeview}">${httpsExplorer.init()}</div>
+        <div class="ipfsexplorer ${css.treeview}">${ipfsExplorer.init()}</div>
+      </div>
+    `
 
     function template () {
       return yo`
         <div class=${css.container}>
           <div class="${css.fileexplorer}">           
             <div class="${css.fileExplorerTree}">
-              <div class=${css.treeview}>${fileExplorer.init()}</div>
-              <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
-              <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
-              <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
-              <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
-              <div class="httpexplorer ${css.treeview}">${httpExplorer.init()}</div>
-              <div class="httpsexplorer ${css.treeview}">${httpsExplorer.init()}</div>
-              <div class="httpsexplorer ${css.treeview}">${ipfsExplorer.init()}</div>
+              ${explorers}
             </div>
           </div>
         </div>
@@ -101,38 +112,6 @@ module.exports = class Filepanel extends ViewPlugin {
 
     self._deps.fileProviders['localhost'].event.register('closed', (event) => {
       fileSystemExplorer.hide()
-    })
-
-    fileExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    fileSystemExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    swarmExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    githubExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    gistExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    httpExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    httpsExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    ipfsExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
     })
 
     self.render = function render () { return element }

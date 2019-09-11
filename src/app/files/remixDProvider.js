@@ -2,7 +2,7 @@
 var EventManager = require('../../lib/events')
 var pathtool = require('path')
 
-module.exports = class SharedFolder {
+module.exports = class RemixDProvider {
   constructor (remixd) {
     this.event = new EventManager()
     this._remixd = remixd

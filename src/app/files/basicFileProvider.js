@@ -1,7 +1,8 @@
 'use strict'
-var EventManager = require('../../lib/events')
+const EventManager = require('../../lib/events')
+const toolTip = require('../ui/tooltip')
 
-class BasicReadOnlyExplorer {
+class BasicFileProvider {
   constructor (type) {
     this.event = new EventManager()
     this.files = {}
@@ -71,15 +72,31 @@ class BasicReadOnlyExplorer {
     return true
   }
 
-  isReadOnly (path) {
-    return true
-  }
-
   remove (path) {
+    var unprefixedPath = this.removePrefix(path)
+    var folderPath = path.substring(0, path.lastIndexOf('/'))
+    if (this.paths[folderPath]) {
+      delete this.paths[folderPath][unprefixedPath]
+      delete this.files[path]
+    }
+    this.event.trigger('fileRemoved', [this.type + '/' + unprefixedPath])
+    return true
   }
 
   rename (oldPath, newPath, isFolder) {
-    return true
+    if (isFolder) { return toolTip('folder renaming is not handled by this explorer') }
+    var unprefixedoldPath = this.removePrefix(oldPath)
+    var unprefixednewPath = this.removePrefix(newPath)
+    this.get(oldPath, (error, content) => {
+      if (error) return console.log(error)
+      this.remove(oldPath)
+      this.set(newPath, content)
+      this.event.trigger('fileRenamed', [this.type + '/' + unprefixedoldPath, this.type + '/' + unprefixednewPath, isFolder])
+    })
+  }
+
+  isReadOnly (path) {
+    return false
   }
 
   list () {
@@ -99,4 +116,4 @@ class BasicReadOnlyExplorer {
   }
 }
 
-module.exports = BasicReadOnlyExplorer
+module.exports = BasicFileProvider

@@ -277,9 +277,9 @@ class FileManager extends Plugin {
     if (file) return _switchFile(file)
     else {
       var browserProvider = this._deps.filesProviders['browser']
-      browserProvider.resolveDirectory('browser', (error, filesTree) => {
+      browserProvider.resolveDirectory('browser', (error, filesProvider) => {
         if (error) console.error(error)
-        var fileList = Object.keys(filesTree)
+        var fileList = Object.keys(filesProvider)
         if (fileList.length) {
           _switchFile(browserProvider.type + '/' + fileList[0])
         } else {
@@ -296,9 +296,9 @@ class FileManager extends Plugin {
     return new Promise((resolve, reject) => {
       const provider = this.fileProviderOf(path)
       if (!provider) return reject(`provider for path ${path} not found`)
-      provider.resolveDirectory(path, (error, filesTree) => {
+      provider.resolveDirectory(path, (error, filesProvider) => {
         if (error) reject(error)
-        resolve(filesTree)
+        resolve(filesProvider)
       })
     })
   }
