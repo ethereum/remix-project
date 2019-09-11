@@ -62,6 +62,10 @@ function fileExplorer (localRegistry, files, menuItems) {
     fileManager: self._components.registry.get('filemanager').api
   }
 
+  self.events.register('focus', function (path) {
+    self._deps.fileManager.switchFile(path)
+  })
+
   self._components.registry.put({ api: self, name: `fileexplorer/${self.files.type}` })
 
   // warn if file changed outside of Remix

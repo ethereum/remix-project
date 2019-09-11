@@ -21,7 +21,7 @@ const profile = {
   name: 'remixd',
   methods: [],
   events: [],
-  description: 'using Remixd daemon, allow to access file system',
+  description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',
   version: packageJson.version
 }

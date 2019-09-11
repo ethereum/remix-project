@@ -232,7 +232,6 @@ class CompileTab extends ViewPlugin {
         <label class="border-0 input-group-text" for="compiledContracts">Contract</label>
         ${selectEl}
       </div>
-        
       <article class="${css.compilerArticle}">
         <button class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish('swarm') }}">
           <span>Publish on Swarm</span>
