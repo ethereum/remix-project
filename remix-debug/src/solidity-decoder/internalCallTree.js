@@ -34,6 +34,7 @@ class InternalCallTree {
       if (!this.solidityProxy.loaded()) {
         this.event.trigger('callTreeBuildFailed', ['compilation result not loaded. Cannot build internal call tree'])
       } else {
+        // each recursive call to buildTree represent a new context (either call, delegatecall, internal function)
         buildTree(this, 0, '', true).then((result) => {
           if (result.error) {
             this.event.trigger('callTreeBuildFailed', [result.error])
@@ -55,7 +56,9 @@ class InternalCallTree {
     */
   reset () {
     /*
-      scopes: map of scopes defined by range in the vmtrace {firstStep, lastStep, locals}. Keys represent the level of deepness (scopeId)
+      scopes: map of scopes defined by range in the vmtrace {firstStep, lastStep, locals}.
+      Keys represent the level of deepness (scopeId)
+      scopeId : <currentscope_id>.<sub_scope_id>.<sub_sub_scope_id>
     */
     this.scopes = {}
     /*
@@ -151,6 +154,7 @@ async function buildTree (tree, step, scopeId, isExternalCall) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
     var isCallInstruction = traceHelper.isCallInstruction(tree.traceManager.trace[step])
+    // we are checking if we jumping in a new CALL or in an internal function
     if (isCallInstruction || sourceLocation.jump === 'i') {
       try {
         var externalCallResult = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, isCallInstruction)
@@ -164,9 +168,12 @@ async function buildTree (tree, step, scopeId, isExternalCall) {
         return { outStep: step, error: 'InternalCallTree - ' + e.message }
       }
     } else if ((isExternalCall && callDepthChange(step, tree.traceManager.trace)) || (!isExternalCall && sourceLocation.jump === 'o')) {
+      // if not, we might be returning from a CALL or internal function. This is what is checked here.
       tree.scopes[scopeId].lastStep = step
       return { outStep: step + 1 }
     } else {
+      // if not, we are in the current scope.
+      // We check in `includeVariableDeclaration` if there is a new local variable in scope for this specific `step`
       if (tree.includeLocalVariables) {
         includeVariableDeclaration(tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation)
       }
@@ -177,20 +184,27 @@ async function buildTree (tree, step, scopeId, isExternalCall) {
   return { outStep: step }
 }
 
+// the reduced trace contain an entry only if that correspond to a new source location
 function createReducedTrace (tree, index) {
   tree.reducedTrace.push(index)
 }
 
 function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation) {
   var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
+  // using the vm trace step, the current source location and the ast,
+  // we check if the current vm trace step target a new ast node of type VariableDeclaration
+  // that way we know that there is a new local variable from here.
   if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.attributes.name]) {
     tree.traceManager.getStackAt(step, (error, stack) => {
+      // the stack length at this point is where the value of the new local will be stored.
+      // so, either this is the direct value, or the offset in memory. That depends on the type.
       if (!error) {
         tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
           if (!error) {
             var states = tree.solidityProxy.extractStatesDefinitions()
             var location = typesUtil.extractLocationFromAstVariable(variableDeclaration)
             location = location === 'default' ? 'storage' : location
+            // we push the new local variable in our tree
             tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
               name: variableDeclaration.attributes.name,
               type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName, location),
@@ -202,6 +216,8 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
       }
     })
   }
+  // we check here if we are at the beginning inside a new function.
+  // if that is the case, we have to add to locals tree the inputs and output params
   var functionDefinition = resolveFunctionDefinition(tree, step, previousSourceLocation)
   if (functionDefinition && (newLocation && traceHelper.isJumpDestInstruction(tree.traceManager.trace[step - 1]) || functionDefinition.attributes.isConstructor)) {
     tree.functionCallStack.push(step)
@@ -223,6 +239,8 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
   }
 }
 
+// this extract all the variable declaration for a given ast and file
+// and keep this in a cache
 function resolveVariableDeclaration (tree, step, sourceLocation) {
   if (!tree.variableDeclarationByFile[sourceLocation.file]) {
     var ast = tree.solidityProxy.ast(sourceLocation)
@@ -236,6 +254,8 @@ function resolveVariableDeclaration (tree, step, sourceLocation) {
   return tree.variableDeclarationByFile[sourceLocation.file][sourceLocation.start + ':' + sourceLocation.length + ':' + sourceLocation.file]
 }
 
+// this extract all the function definition for a given ast and file
+// and keep this in a cache
 function resolveFunctionDefinition (tree, step, sourceLocation) {
   if (!tree.functionDefinitionByFile[sourceLocation.file]) {
     var ast = tree.solidityProxy.ast(sourceLocation)
