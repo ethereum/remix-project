@@ -66,7 +66,7 @@ module.exports = class Filepanel extends ViewPlugin {
     var gistExplorer = createProvider('gist', ['updateGist'])
     var httpExplorer = createProvider('http')
     var httpsExplorer = createProvider('https')
-    var httpsExplorer = createProvider('ipfs')
+    var ipfsExplorer = createProvider('ipfs')
 
     self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'], appManager)
 
@@ -79,6 +79,7 @@ module.exports = class Filepanel extends ViewPlugin {
         <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
         <div class="httpexplorer ${css.treeview}">${httpExplorer.init()}</div>
         <div class="httpsexplorer ${css.treeview}">${httpsExplorer.init()}</div>
+        <div class="ipfsexplorer ${css.treeview}">${ipfsExplorer.init()}</div>
       </div>
     `
 
