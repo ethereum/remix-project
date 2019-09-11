@@ -2,7 +2,8 @@
 
 const async = require('async')
 const IpfsClient = require('ipfs-mini')
-const ipfs = new IpfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+const host = 'ipfs.komputing.org'
+const ipfs = new IpfsClient({ host, port: 443, protocol: 'https' })
 
 module.exports = (contract, fileManager, cb, ipfsVerifiedPublishCallBack) => {
   // gather list of files to publish
