@@ -1,8 +1,8 @@
 'use strict'
-var ReadOnlyExplorer = require('./readonlyProvider')
+var ReadonlyProvider = require('./readonlyProvider')
 var toolTip = require('../ui/tooltip')
 
-class NotPersistedExplorer extends ReadOnlyExplorer {
+class NotPersistedExplorer extends ReadonlyProvider {
   constructor (type) {
     super(type)
     this.readonly = false
