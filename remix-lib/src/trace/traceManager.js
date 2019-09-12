@@ -14,7 +14,7 @@ function TraceManager (options) {
   this.traceCache = new TraceCache()
   this.traceAnalyser = new TraceAnalyser(this.traceCache)
   this.traceRetriever = new TraceRetriever({web3: this.web3})
-  this.traceStepManager = new TraceStepManager(this.traceAnalyser)
+  this.traceStepManager = new TraceStepManager(this.traceAnalyser, {web3: this.web3})
   this.tx
 }
 
