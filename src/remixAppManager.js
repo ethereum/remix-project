@@ -135,7 +135,7 @@ export class RemixAppManager extends PluginEngine {
       notifications: {
         'solidity': ['compilationFinished']
       },
-      version: '0.1.0-beta',
+      version: '0.1.0',
       url: 'https://remix-mythx-plugin.surge.sh',
       description: 'Perform Static and Dynamic Security Analysis using the MythX Cloud Service',
       icon: 'https://remix-mythx-plugin.surge.sh/logo.png',
