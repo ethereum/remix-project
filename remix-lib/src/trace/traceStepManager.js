@@ -1,10 +1,12 @@
 'use strict'
 
 var traceHelper = require('../helpers/traceHelper')
+var Debugger = require('../../../remix-debug').EthDebugger
 var util = require('../util')
 
-function TraceStepManager (_traceAnalyser) {
+function TraceStepManager (_traceAnalyser, opts) {
   this.traceAnalyser = _traceAnalyser
+  this.debugger = new Debugger({web3: opts.web3})
 }
 
 TraceStepManager.prototype.isCallInstruction = function (index) {
@@ -27,7 +29,7 @@ TraceStepManager.prototype.findStepOverBack = function (currentStep) {
 }
 
 TraceStepManager.prototype.findStepOverForward = function (currentStep) {
-  if (this.isCallInstruction(currentStep)) {
+  if (this.isCallInstruction(currentStep) || this.debugger.callTree.internalFunctionCalls.includes(currentStep)) {
     var call = util.findCall(currentStep + 1, this.traceAnalyser.traceCache.callsTree.call)
     return call.return + 1 < this.traceAnalyser.trace.length ? call.return + 1 : this.traceAnalyser.trace.length - 1
   } else {
