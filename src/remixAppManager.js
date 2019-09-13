@@ -11,7 +11,7 @@ const requiredModules = [ // services + layout views + system views
 const settings = {
   permissionHandler: new PermissionHandler(),
   autoActivate: false,
-  natives: ['vyper'] // Force iframe plugin to be seen as native
+  natives: ['vyper', 'workshops', 'ethdoc', 'etherscan'] // Force iframe plugin to be seen as native
 }
 
 export class RemixAppManager extends PluginEngine {
