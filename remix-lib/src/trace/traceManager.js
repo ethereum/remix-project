@@ -239,8 +239,8 @@ TraceManager.prototype.findStepOverBack = function (currentStep) {
   return this.traceStepManager.findStepOverBack(currentStep)
 }
 
-TraceManager.prototype.findStepOverForward = function (currentStep) {
-  return this.traceStepManager.findStepOverForward(currentStep)
+TraceManager.prototype.findStepOverForward = function (currentStep, isInternalCall = false) {
+  return this.traceStepManager.findStepOverForward(currentStep, isInternalCall)
 }
 
 TraceManager.prototype.findNextCall = function (currentStep) {
