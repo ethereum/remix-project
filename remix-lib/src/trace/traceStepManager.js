@@ -26,8 +26,8 @@ TraceStepManager.prototype.findStepOverBack = function (currentStep) {
   }
 }
 
-TraceStepManager.prototype.findStepOverForward = function (currentStep, isInternalCall) {
-  if (this.isCallInstruction(currentStep) || isInternalCall) {
+TraceStepManager.prototype.findStepOverForward = function (currentStep) {
+  if (this.isCallInstruction(currentStep)) {
     var call = util.findCall(currentStep + 1, this.traceAnalyser.traceCache.callsTree.call)
     return call.return + 1 < this.traceAnalyser.trace.length ? call.return + 1 : this.traceAnalyser.trace.length - 1
   } else {

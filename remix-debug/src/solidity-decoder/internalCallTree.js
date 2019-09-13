@@ -29,7 +29,6 @@ class InternalCallTree {
     this.solidityProxy = solidityProxy
     this.traceManager = traceManager
     this.sourceLocationTracker = new SourceLocationTracker(codeManager)
-    this.internalFunctionCalls = []
     debuggerEvent.register('newTraceLoaded', (trace) => {
       this.reset()
       if (!this.solidityProxy.loaded()) {
@@ -158,9 +157,6 @@ async function buildTree (tree, step, scopeId, isExternalCall) {
     // we are checking if we are jumping in a new CALL or in an internal function
     if (isCallInstruction || sourceLocation.jump === 'i') {
       try {
-        if (sourceLocation.jump === 'i') {
-          this.internalFunctionCalls.push(step)
-        }
         var externalCallResult = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, isCallInstruction)
         if (externalCallResult.error) {
           return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
