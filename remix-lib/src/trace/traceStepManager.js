@@ -3,7 +3,7 @@
 var traceHelper = require('../helpers/traceHelper')
 var util = require('../util')
 
-function TraceStepManager (_traceAnalyser, opts) {
+function TraceStepManager (_traceAnalyser) {
   this.traceAnalyser = _traceAnalyser
 }
 
