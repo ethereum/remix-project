@@ -165,6 +165,10 @@ class FileManager extends Plugin {
       toaster.hide()
     }
     if (this.currentRequest) {
+      if (this.currentRequest.fromNative) {
+        this._setFileInternal(path, content)
+        return
+      }
       let actions = (toaster) => {
         return yo`
           <div class="container ml-1">
