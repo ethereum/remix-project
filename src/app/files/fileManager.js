@@ -165,7 +165,7 @@ class FileManager extends Plugin {
       toaster.hide()
     }
     if (this.currentRequest) {
-      if (this.currentRequest.fromNative) {
+      if (this.currentRequest.isFromNative) {
         this._setFileInternal(path, content)
         return
       }
