@@ -27,7 +27,7 @@ const profile = {
   displayName: 'Solidity compiler',
   icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAASdAAAEnQF8NGuhAAAAB3RJTUUH4wQMDx84DVYryQAAAjBJREFUSMe1102ITmEUB/DfO4aZRuM7otQgqSlCFmIhSRaSJClWs9BY2RAba1tLZTGxmbJWImFsWBhhZONzpJSEaJhhPl6bM/V2ux/vnTtz6untPvc857z/8/E/z61pXnZjHeoFejcwUWSs1qTTFjzHOP7l2PqCAVxuxmAzcgbLsSQH8SQ+YxM6igzOa8LpMvSH4dYI43iK3nDs17AND6oiPt+Qs3qgTso4fjU8r0Z3Fcfd6E0505nYe52olyn0VAn1FaxM2W/HSETgN76l6HREet6URbwPe3LeLw5k73OK7UDZdmrBIJYWROse3hak8gluJ1+0ZhyYwlNsLyCMHjOUvFCfij+Q19vmwjFcy9D5gUdVHDdDmY8xP3HmULDUnCGGswmnL3Oc7sBxsygDUeVDaMvR68fDnKItPSROBNo+/M3QOYwtwWq9s4n6ajBWltyJqAziVQbjlZpO03IzZ8CfDpab7vmJGKP3q14E8mQR7qaAaMdJvKiS4zw5lxG5MVyoWlxZshFHI8RpazP2lgl1DRdjAmVxdR070VVAUIM4Uqa4PuFg6LSlrFVRQJ3hIG2NY1fZUH/Asxy0a+L3a07H9M20nYZjmE8mnK5omNWTWJgCYhTHZup4BAuwPjHDNyT0/iTuYbXo7XdVqvpWA/fWI7dpF4exhufvwWSVmGv66ro10HdlVPpokEkd+/FzNobEQKBY23AuuWpx4xzCxyKDrSXI4nrkPO+DrA2XmjH2H8KUd4MWwdIJAAAAAElFTkSuQmCC',
   description: 'Compile solidity contracts',
-  kind: 'compile',
+  kind: 'compiler',
   permission: true,
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
