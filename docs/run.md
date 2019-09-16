@@ -1,11 +1,11 @@
-Run & Deploy
+Deploy & Run
 ============
 
-The Run tab allows you to send transactions to the current environment.
+The Deploy & Run module allows you to send transactions to the current environment.
 
 To get to the Run & Deploy module - click the run icon in the icon panel.
 
-In order to use this module you need to have a contract compiled.  So if there is file name in the contract pulldown menu ( in the image below it's the pulldown that says **Ballot**), then you can interact with this contract.  If nothing is there - then you need to select a contract - make it the active contract in the main panel, ( in the image below - on the right side of the page - in the main panel - you see the ballot.sol so it is the active contract) then go to the compiler module and compile it.
+In order to use this module you need to have a contract compiled.  So, if there is a contract name in the contract select box (in the image below it's the pulldown that says **Ballot**), then you can interact with this contract.  If nothing is there - then you need to select a contract. And you do that by clicking the file in the editor panel to make it the active tab ( in the image below - on the right side of the page - in the main panel - you see the ballot.sol so it is the active contract).  Once its active, then go to the compiler module and compile it. Then come back to Deploy & Run.
 
 ![](images/a-runtab1.png)
 
@@ -15,48 +15,43 @@ Run Setup
 The following settings allow you to directly influence the transaction
 execution:
 
-Environment:
+**Environment:**
 
 -   `JavaScript VM`: All the transactions will be executed in
     a sandbox blockchain in the browser. This means nothing
-    will be persisted and a page reload will restart a new
-    blockchain from scratch, the old one will not be saved.
+    will be persisted when you reload the page. The JsVM is its own blockchain and on each reload it will start a new blockchain, the old one will not be saved.
 
 -   `Injected Provider`: Remix will connect to an injected
-    web3 provider. `Metamask` is an example of
-    providers that inject web3, thus can be used with this
-    option.
+    web3 provider. `Metamask` is an example of a 
+    provider that inject web3.
 
--   `Web3 Provider`: Remix will connect to a remote node. You
-    will need to provide the URL address to the selected
-    provider: geth, parity or any Ethereum client.
+-   `Web3 Provider`: Remix will connect to a remote node. You will need to provide the URL to the selected provider: geth, parity or any Ethereum client.
 
+**Account:**
 -   Account: the list of accounts associated with the current
-     environment (and their associated balances).
+     environment (and their associated balances).  On the JsVM, you have a choice of 5 accounts.  If using Injected Web3 with MetaMask, you need to change the account in MetaMask.
 
--   Gas Limit: the maximum amount of gas that can be set for all the
+**Gas Limit:**
+-   This sets the maximum amount of gas that will be allowed for all the
      transactions created in Remix.
 
--   Value: the amount of value for the next created transaction (this
-     value is always reset to 0 after each transaction execution).
+**Value:**
+-   This sets the amount of ETH, WEI, GWEI etc that is sent to a contract or a payable function.  ( Note: payable functions have a red button). The value is always reset to 0 after each transaction execution).
 
  ![](images/a-Runtab-deploy-atAddress.png)
 
 Initiate Instance
 -----------------
 
-This section contains the list of compiled contracts and 2 actions:
-
--   `At Address` assumes the given address is an instance of the
-    selected contract. It is then possible to interact with an already
-    deployed contract. There's no check at this point, so be careful
-    when using this feature, and be sure you trust the contract at that
-    address.
+-   In the image above the select box is set to Ballot.  This select box will contain the list of compiled contracts.
 
 -   `Deploy` send a transaction that deploys the selected contract. When
     the transaction is mined, the newly created instance will be added
     (this might take several seconds). Note that if the `constructor`
     has parameters, you need to specify them.
+
+-   `At Address` this is used at access a contract that has already been deployed. It assumes that the given address is an instance of the selected contract.  **Note:** There's no check at this point, so be careful when using this feature, and be sure you trust the contract at that address.
+
 
 Pending Instances
 -----------------
@@ -69,12 +64,12 @@ pending transactions is updated and the transaction is added to the log
 Using the ABI
 ------------
 
-Using `Deploy` or `At Address` is a classic use case of Remix. It is
-possible though to interact with a contract by using its ABI. The ABI is
+Using `Deploy` or `At Address` is a classic use case of Remix. However, it is
+possible to interact with a contract by using its ABI. The ABI is
 a JSON array which describe its interface.
 
 To interact with a contract using the ABI, create a new file in Remix
-with extension `*.abi` and copy the ABI content to it. Then in the input
+with extension `*.abi` and copy the ABI content to it. Then, in the input
 next to `At Address`, put the Address of the contract you want to
 interact with. Click on `At Address`, a new "connection" with the
 contract will popup below.
@@ -82,29 +77,28 @@ contract will popup below.
 Using the Recorder
 ------------------
 
-The Recorder allows to save a bunch of transactions in a JSON file and
+The Recorder allows to you to save a bunch of transactions in a JSON file and
 rerun them later either in the same environment or in another.
 
-Saving to JSON allows to easily check the transaction list, tweak input
+You can also update the file adjust the transaction list, tweak input
 parameters, change linked library, etc...
 
-We can find many use cases for the recorder, for instance:
+There are many use cases for the recorder, for instance:
 -   After having coded and tested contracts in a constrained
-    environment (like the JavaScript VM), it could be interesting to
-    redeploy them easily in a more persisted environment (like a
+    environment (like the JavaScript VM), you can easily
+    redeploy them in a more persisted environment (like a
     Geth node) in order to check whether everything behaves normally
     in a classic environment.
 -   Deploying contract does often require more than creating one
-    transaction.
--   Working in a dev environment does often require to setup the
-    state in a first place.
+    transaction. ( **note: is this point needed?**)
+-   Working in a dev environment often requires setting up the
+    state in a first place. ( **note: is this saying - After testing in on the JsVM, quickly deploying another environment in a controlled fashion. **)
 
 ![](images/a-runtab-recorder.png)
 
-Saving a record ends up with the creation of this type of content (see
-below):
+To save some transactions click on the floppy disc icon.  A file called senario.json will be written and saved in the file explorer.  
 
-In that specific record, 3 transactions are executed:
+Below is an example of this file where 3 transactions are executed:
 
 The first corresponds to the deployment of the lib `testLib`.
 
