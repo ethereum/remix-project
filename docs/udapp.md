@@ -54,3 +54,23 @@ In the expanded view, strings do not need to be wrapped.
 Clicking the clipboard icon will encode the inputs and will copy them.  Only a valid set of inputs can be encoded.  
 
 So if you made a mistake and put a uint8 where an address should have been, clicking the clipboard here will give you an error.
+
+
+### Inputting structs in the expanded view
+For inputting a struct, the easiest way is to use array []
+
+If the struct members have names, using js object should work {name: value, name1: value}
+
+For example, if the struct is:
+
+```
+struct r 
+{
+   string t,
+   uint r
+}
+```
+
+You can use:
+
+["this is a string", 23]
