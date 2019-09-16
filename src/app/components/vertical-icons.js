@@ -310,7 +310,7 @@ export class VerticalIcons extends Plugin {
     </div>
     `
 
-    this.iconKind['compile'] = yo`
+    this.iconKind['compiler'] = yo`
     <div id='compileIcons'>
     </div>
     `
@@ -349,7 +349,7 @@ export class VerticalIcons extends Plugin {
       <div class=${css.icons}>
         ${home}
         ${this.iconKind['fileexplorer']}
-        ${this.iconKind['compile']}
+        ${this.iconKind['compiler']}
         ${this.iconKind['udapp']}
         ${this.iconKind['testing']}
         ${this.iconKind['analysis']}
