@@ -122,9 +122,10 @@ class DebuggerStepManager {
 
   stepOverForward (solidityMode) {
     if (!this.traceManager.isLoaded()) return
+    var step = this.currentStepIndex + 1
     let scope = this.debugger.callTree.findScope(this.currentStepIndex)
     if (scope && scope.firstStep === this.currentStepIndex) {
-      var step = scope.lastStep
+      step = scope.lastStep
     }
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, 1)
