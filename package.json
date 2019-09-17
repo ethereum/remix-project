@@ -58,5 +58,8 @@
     "directories": {
       "output": "release"
     }
+  },
+  "dependencies": {
+    "@philipplgh/electron-app-manager": "^0.53.0"
   }
 }
