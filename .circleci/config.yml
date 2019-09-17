@@ -1,4 +1,53 @@
 version: 2
+aliases:
+
+  #- &node_installation
+  #  run:
+  #    name: "Update Node.js and npm if on MacOS"
+  #    command: .circleci/install_node.sh
+
+  #- &upgrade_yarn
+  #  run:
+  #    name: "Updates yarn"
+  #    command: .circleci/upgrade_yarn.sh
+
+  # Custom task removes unnecessary build files before uploading release directory
+  - &before_store_artifacts
+    run:
+      name: Preparing for artifact upload
+      command: rm -rf release/*-unpacked release/mac
+
+  - &upload_artifacts
+    store_artifacts:
+      path: release/
+
+  #- &install
+  #  run: node --version && yarn install
+
+  - &test_e2e
+    run: yarn test:e2e -s
+
+  - &run_script
+    run: 
+      name: "Building app (deploy if on master)"
+      command: | 
+        if [[ "${CIRCLE_BRANCH}" == 'master' ]]; then
+          npm run release --$GRID_ENV;
+        else
+          npm run pack --$GRID_ENV;
+        fi;
+  - &run_steps
+    steps:
+      - checkout
+      - run: node -v
+      # - *restore_modules_cache
+      # - *install
+      # - *test_e2e
+      - *run_script
+      # - *save_modules_cache
+      - *before_store_artifacts
+      - *upload_artifacts
+
 jobs:
   build:
     docker:
