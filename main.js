@@ -1,4 +1,5 @@
 const remixd = require('remixd')
+const os = require('os');
 
 const { app, BrowserWindow } = require('electron')
 const { AppManager, registerPackageProtocol } = require('@philipplgh/electron-app-manager')
@@ -28,7 +29,7 @@ function createWindow () {
 
 app.on('ready', createWindow)
 
-var folder = process.argv.length > 2 ? process.argv[2] : process.cwd()
+var folder = process.argv.length > 2 ? process.argv[2] : os.homedir()
 
 var router = new remixd.Router(65520, remixd.services.sharedFolder, { remixIdeUrl: 'package://cd339faeeb58f4c96b9b5ff62556c364.mod' }, (webSocket) => {
   remixd.services.sharedFolder.setWebSocket(webSocket)
@@ -36,4 +37,6 @@ var router = new remixd.Router(65520, remixd.services.sharedFolder, { remixIdeUr
   remixd.services.sharedFolder.sharedFolder(folder, false)
 })
 
-router.start()
+const stopIt = router.start()
+
+app.on('quit', () => stopIt())
