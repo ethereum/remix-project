@@ -237,6 +237,20 @@ export class RemixAppManager extends PluginEngine {
       icon: 'https://remix-flattener.netlify.com/logo.svg',
       location: 'sidePanel'
     }
+    const ethpm = {
+      name: 'ethPM',
+      displayName: 'ethPM',
+      events: [],
+      methods: [],
+      notifications: {
+        solidity: ['compilationFinished']
+      },
+      url: 'https://ethpm.surge.sh',
+      description: 'Generate and import ethPM packages.',
+      documentation: 'https://docs.ethpm.com/ethpm-developer-guide/ethpm-and-remix-ide',
+      icon: 'https://ethpm.surge.sh/ethpmlogo.png',
+      location: 'mainPanel'
+    }
     return [
       new IframePlugin(pipeline),
       new IframePlugin(vyper),
@@ -250,7 +264,8 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(libraTools),
       new IframePlugin(oneClickDapp),
       new IframePlugin(gasProfiler),
-      new IframePlugin(flattener)
+      new IframePlugin(flattener),
+      new IframePlugin(ethpm)
     ]
   }
 }
