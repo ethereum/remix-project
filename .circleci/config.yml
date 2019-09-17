@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: electronuserland/builder:10
+    environment:
+      GRID_ENV: linux
+    working_directory: ~/repo
+    <<: *run_steps
+
+  build-win:
+    docker:
+      - image: electronuserland/builder:wine
+    environment:
+      GRID_ENV: win
+    working_directory: ~/repo
+    <<: *run_steps
+
+  build-mac:
+    macos:
+      xcode: '10.0'
+    environment:
+      GRID_ENV: mac
+    working_directory: ~/repo
+    <<: *run_steps
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
+      - build-mac
+      - build-win
