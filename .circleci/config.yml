@@ -24,6 +24,9 @@ aliases:
   #- &install
   #  run: node --version && yarn install
 
+  - &install
+    run: node --version && npm install
+
   - &test_e2e
     run: yarn test:e2e -s
 
@@ -41,7 +44,7 @@ aliases:
       - checkout
       - run: node -v
       # - *restore_modules_cache
-      # - *install
+      - *install
       # - *test_e2e
       - *run_script
       # - *save_modules_cache
