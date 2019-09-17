@@ -1,6 +1,13 @@
 const { app, BrowserWindow } = require('electron')
-const { registerPackageProtocol } = require('@philipplgh/electron-app-manager')
+const { AppManager, registerPackageProtocol } = require('@philipplgh/electron-app-manager')
 registerPackageProtocol(__dirname + '/cache')
+
+
+const updater = new AppManager({
+  repository: 'https://github.com/ethereum/remix-desktop',
+  auto: true,
+  electron: true
+})
 
 function createWindow () {
   // Create the browser window.
