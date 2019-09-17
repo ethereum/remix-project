@@ -4,7 +4,7 @@ registerPackageProtocol(__dirname + '/cache')
 
 
 const updater = new AppManager({
-  repository: 'https://github.com/ethereum/remix-desktop',
+  repository: 'https://github.com/yann300/remix-desktop',
   auto: true,
   electron: true
 })
