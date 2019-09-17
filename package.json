@@ -1,6 +1,6 @@
 {
   "name": "remix-desktop",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -59,6 +59,7 @@
     }
   },
   "dependencies": {
-    "@philipplgh/electron-app-manager": "^0.53.0"
+    "@philipplgh/electron-app-manager": "^0.53.0",
+    "remixd": "^0.1.8-alpha.7"
   }
 }
