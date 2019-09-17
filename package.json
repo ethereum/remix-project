@@ -1,0 +1,62 @@
+{
+  "name": "remix-desktop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yann300/remix-desktop.git"
+  },
+  "author": {
+    "name": "Remix",
+    "email": "remix@ethereum.org"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yann300/remix-desktop/issues"
+  },
+  "homepage": "https://github.com/yann300/remix-desktop#readme",
+  "devDependencies": {
+    "electron": "^6.0.9",
+    "electron-builder": "^21.2.0"
+  },
+  "build": {
+    "productName": "Remix Desktop",
+    "appId": "org.ethereum.remix-desktop",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        "zip",
+        "dmg"
+      ],
+      "darkModeSupport": true
+    },
+    "nsis": {
+      "createDesktopShortcut": "always"
+    },
+    "win": {
+      "target": [
+        "zip",
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm",
+        "snap",
+        "AppImage"
+      ],
+      "category": "WebBrowser"
+    },
+    "directories": {
+      "output": "release"
+    }
+  }
+}
