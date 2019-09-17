@@ -35,8 +35,12 @@ tape('ContractParameters - (TxFormat.buildData) - format input parameters', func
 })
 
 function testWithInput (st, params, expected) {
+  console.log('params-----', params)
   txFormat.buildData('uintContractTest', context.contract, context.output.contracts, true, context.contract.abi[0], params, (error, data) => {
-    if (error) { return st.fails(error) }
+    if (error) {
+      console.log('------', error)
+      return st.fails(error)
+    }
     console.log(data)
     if (!data.dataHex.endsWith(expected)) {
       st.fail(`result of buildData ${data.dataHex} should end with ${expected} . `)
