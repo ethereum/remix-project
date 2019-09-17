@@ -169,7 +169,7 @@ module.exports = {
   * @param {Function} callbackDeployLibrary  - callbackDeployLibrary
   */
   buildData: function (contractName, contract, contracts, isConstructor, funAbi, params, callback, callbackStep, callbackDeployLibrary) {
-    var funArgs = ''
+    var funArgs = []
     var data = ''
     var dataHex = ''
 
@@ -179,9 +179,32 @@ module.exports = {
       data = Buffer.from(dataHex, 'hex')
     } else {
       try {
-        params = params.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
-        params = params.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
-        funArgs = JSON.parse('[' + params + ']')
+        if (params.length > 0) {
+          params = params.split(',')
+          for (let i = 0; i < params.length; i++) {
+            let param = params[i].trim()
+            if (param.charAt(0) === '"') {
+              if (param.charAt(param.length - 1) === '"') {
+                funArgs.push(param.slice(1, param.length - 1))
+              } else {
+                let lastIndex = false
+                let paramStr = param.slice(1, param.length)
+                for (let j = i + 1; !lastIndex; j++) {
+                  if (params[j].charAt(params[j].length - 1) === '"') {
+                    paramStr += ',' + params[j].slice(0, params[j].length - 1)
+                    i = j
+                    funArgs.push(paramStr)
+                    lastIndex = true
+                  } else {
+                    paramStr += ',' + params[j]
+                  }
+                }
+              }
+            } else {
+              funArgs.push(param)
+            }
+          }
+        }
       } catch (e) {
         callback('Error encoding arguments: ' + e)
         return
