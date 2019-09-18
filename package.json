@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/yann300/remix-desktop#readme",
   "devDependencies": {
-    "electron": "^6.0.9",
-    "electron-builder": "21.1.6"
+    "electron": "6.0.9",
+    "electron-builder": "21.2.0"
   },
   "build": {
     "productName": "Remix Desktop",
