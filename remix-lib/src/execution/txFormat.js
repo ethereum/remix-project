@@ -169,7 +169,7 @@ module.exports = {
   * @param {Function} callbackDeployLibrary  - callbackDeployLibrary
   */
   buildData: function (contractName, contract, contracts, isConstructor, funAbi, params, callback, callbackStep, callbackDeployLibrary) {
-    var funArgs = ''
+    var funArgs = []
     var data = ''
     var dataHex = ''
 
@@ -179,9 +179,9 @@ module.exports = {
       data = Buffer.from(dataHex, 'hex')
     } else {
       try {
-        params = params.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
-        params = params.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
-        funArgs = JSON.parse('[' + params + ']')
+        if (params.length > 0) {
+          funArgs = this.parseFunctionParams(params)
+        }
       } catch (e) {
         callback('Error encoding arguments: ' + e)
         return
@@ -384,6 +384,40 @@ module.exports = {
       }
     }
     return {}
+  },
+
+  parseFunctionParams: function (params) {
+    let args = []
+    // Segregate params textbox string with respect to comma (,)
+    params = params.split(',')
+    for (let i = 0; i < params.length; i++) {
+      let param = params[i].trim()
+      // Check if param starts with " , it may be string, address etc.
+      if (param.charAt(0) === '"') {
+        // Check if param completes in one location by looking for end quote (case: address data type)
+        if (param.charAt(param.length - 1) === '"') {
+          args.push(param.slice(1, param.length - 1))
+        } else {
+          let lastIndex = false
+          let paramStr = param.slice(1, param.length)
+          // For a paramter got divided in multiple location(case: string data type containing comma(,))
+          for (let j = i + 1; !lastIndex; j++) {
+            // Check if end quote is reached
+            if (params[j].charAt(params[j].length - 1) === '"') {
+              paramStr += ',' + params[j].slice(0, params[j].length - 1)
+              i = j
+              args.push(paramStr)
+              lastIndex = true
+            } else {
+              paramStr += ',' + params[j]
+            }
+          }
+        }
+      } else {
+        args.push(param)
+      }
+    }
+    return args
   }
 }
 
