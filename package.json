@@ -5,8 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "pack": "electron-builder --dir",
-    "release": "npm run prepare-release && electron-builder",
+    "dist": "yarn run prepare-release && electron-builder",
+    "release": "yarn run dist",
     "prepare-release": "node ./scripts/copyApp.js"
   },
   "repository": {
@@ -24,7 +24,8 @@
   "homepage": "https://github.com/yann300/remix-desktop#readme",
   "devDependencies": {
     "electron": "6.0.9",
-    "electron-builder": "21.2.0"
+    "electron-builder": "21.2.0",
+    "env-cmd": "^10.0.1"
   },
   "build": {
     "productName": "Remix Desktop",
@@ -49,7 +50,6 @@
     "linux": {
       "target": [
         "deb",
-        "rpm",
         "snap",
         "AppImage"
       ],

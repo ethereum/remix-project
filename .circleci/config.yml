@@ -6,10 +6,10 @@ aliases:
   #    name: "Update Node.js and npm if on MacOS"
   #    command: .circleci/install_node.sh
 
-  #- &upgrade_yarn
-  #  run:
-  #    name: "Updates yarn"
-  #    command: .circleci/upgrade_yarn.sh
+  - &upgrade_yarn
+    run:
+      name: "Updates yarn"
+      command: .circleci/upgrade_yarn.sh
 
   # Custom task removes unnecessary build files before uploading release directory
   - &before_store_artifacts
@@ -35,9 +35,9 @@ aliases:
       name: "Building app (deploy if on master)"
       command: | 
         if [[ "${CIRCLE_BRANCH}" == 'master' ]]; then
-          npm run release --$GRID_ENV;
+          yarn release --$GRID_ENV;
         else
-          npm run pack --$GRID_ENV;
+          yarn dist --$GRID_ENV;
         fi;
   - &run_steps
     steps:

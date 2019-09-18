@@ -1,15 +1,12 @@
 /**
  *
  */
-const { getShippedGridUiPath } = require('../utils/main/util')
 const { AppManager } = require('@philipplgh/electron-app-manager')
 
-const GRID_UI_CACHE = getShippedGridUiPath()
-
 const updater = new AppManager({
-  repository: 'https://github.com/ethereum/grid-ui',
+  repository: 'https://github.com/yann300/remix-desktop',
   auto: false,
-  cacheDir: GRID_UI_CACHE
+  cacheDir: __dirname + '/cache'
 })
 
 ;(async function() {
