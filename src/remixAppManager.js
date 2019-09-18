@@ -251,6 +251,17 @@ export class RemixAppManager extends PluginEngine {
       icon: 'https://ethpm.surge.sh/ethpmlogo.png',
       location: 'mainPanel'
     }
+    const zokrates = {
+      name: 'Zokrates',
+      displayName: 'ZoKrates',
+      description: 'ZoKrates will compile your program to an intermediate representation and run a trusted setup protocol to generate proving and verifying keys.',
+      methods: [],
+      events: [],
+      version: '0.1.0-alpha',
+      url: 'https://zokrates.blockchain-it.hr',
+      icon: 'https://zokrates.blockchain-it.hr/zokrates.svg',
+      location: 'sidePanel'
+    }
     return [
       new IframePlugin(pipeline),
       new IframePlugin(vyper),
@@ -265,7 +276,8 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(oneClickDapp),
       new IframePlugin(gasProfiler),
       new IframePlugin(flattener),
-      new IframePlugin(ethpm)
+      new IframePlugin(ethpm),
+      new IframePlugin(zokrates)
     ]
   }
 }
