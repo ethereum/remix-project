@@ -1,4 +1,4 @@
-/* global localStorage */
+/* global localStorage, fetch */
 import { PluginEngine, IframePlugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { PermissionHandler } from './app/ui/persmission-handler'
@@ -20,6 +20,7 @@ export class RemixAppManager extends PluginEngine {
     super(plugins, settings)
     this.event = new EventEmitter()
     this.registered = {}
+    this.pluginsDirectory = 'https://github.com/ethereum/remix-plugins-directory'
   }
 
   onActivated (plugin) {
@@ -73,7 +74,7 @@ export class RemixAppManager extends PluginEngine {
     return requiredModules.includes(name)
   }
 
-  registeredPlugins () {
+  async registeredPlugins () {
     const vyper = {
       name: 'vyper',
       displayName: 'Vyper',
@@ -262,6 +263,7 @@ export class RemixAppManager extends PluginEngine {
       icon: 'https://zokrates.blockchain-it.hr/zokrates.svg',
       location: 'sidePanel'
     }
+    const plugins = JSON.parse(await fetch(this.pluginsDirectory))
     return [
       new IframePlugin(pipeline),
       new IframePlugin(vyper),
@@ -277,7 +279,8 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(gasProfiler),
       new IframePlugin(flattener),
       new IframePlugin(ethpm),
-      new IframePlugin(zokrates)
+      new IframePlugin(zokrates),
+      ...plugins
     ]
   }
 }
