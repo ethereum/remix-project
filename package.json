@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
-    "release": "electron-builder"
+    "release": "npm run prepare-release && electron-builder",
+    "prepare-release": "node ./scripts/copyApp.js"
   },
   "repository": {
     "type": "git",
