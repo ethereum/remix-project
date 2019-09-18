@@ -18,6 +18,11 @@ class CompilerMetadata extends Plugin {
     self.fileManager = fileManager
     self.config = config
     self.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'görli:5', 'Custom']
+    self.innerPath = 'artifacts'
+  }
+
+  _JSONFileName (path, contractName) {
+    return path + '/' + this.innerPath + '/' + contractName + '.json'
   }
 
   onActivation () {
@@ -31,7 +36,7 @@ class CompilerMetadata extends Plugin {
         compiler.visitContracts((contract) => {
           if (contract.file !== source.target) return
 
-          var fileName = path + '/' + contract.name + '.json'
+          var fileName = self._JSONFileName(path, contract.name)
           provider.get(fileName, (error, content) => {
             if (!error) {
               content = content || '{}'
@@ -96,7 +101,7 @@ class CompilerMetadata extends Plugin {
           if (err) {
             console.log(err)
           } else {
-            var fileName = path + '/' + contractName + '.json'
+            var fileName = self._JSONFileName(path, contractName)
             provider.get(fileName, (error, content) => {
               if (error) return reject(error)
               if (!content) return resolve()

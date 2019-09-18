@@ -1,9 +1,9 @@
 const EventEmitter = require('events')
 
 class SwitchFile extends EventEmitter {
-  command (contractName) {
+  command (name) {
     this.api.perform((done) => {
-      switchFile(this.api, contractName, () => {
+      switchFile(this.api, name, () => {
         done()
         this.emit('complete')
       })

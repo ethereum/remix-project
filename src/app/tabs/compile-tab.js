@@ -42,7 +42,7 @@ const profile = {
 
 class CompileTab extends ViewPlugin {
 
-  constructor (editor, config, renderer, swarmfileProvider, ipfsfileProvider, fileManager, fileProviders) {
+  constructor (editor, config, renderer, fileProvider, fileManager) {
     super(profile)
     this.events = new EventEmitter()
     this._view = {
@@ -52,15 +52,12 @@ class CompileTab extends ViewPlugin {
       contractEl: null
     }
     this.queryParams = new QueryParams()
-
+    this.fileProvider = fileProvider
     // dependencies
     this.editor = editor
     this.config = config
     this.renderer = renderer
-    this.swarmfileProvider = swarmfileProvider
-    this.ipfsfileProvider = ipfsfileProvider
     this.fileManager = fileManager
-    this.fileProviders = fileProviders
 
     this.data = {
       contractsDetails: {}
@@ -68,7 +65,7 @@ class CompileTab extends ViewPlugin {
   }
 
   onActivationInternal () {
-    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProviders)
+    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProvider)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
 
@@ -311,7 +308,7 @@ class CompileTab extends ViewPlugin {
               modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
             }
           }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-            this.swarmfileProvider.addReadOnly('swarm/' + item.hash, item.content)
+            this.fileProvider.addReadOnly('swarm/' + item.hash, item.content)
           })
         } else {
           publishOnIpfs(contract, this.fileManager, function (err, uploaded) {
@@ -328,7 +325,7 @@ class CompileTab extends ViewPlugin {
               modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
             }
           }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-            this.ipfsfileProvider.addReadOnly('ipfs/' + item.hash, item.content)
+            this.fileProvider.addReadOnly('ipfs/' + item.hash, item.content)
           })
         }
       }
