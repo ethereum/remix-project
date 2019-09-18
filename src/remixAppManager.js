@@ -84,7 +84,7 @@ export class RemixAppManager extends PluginEngine {
       },
       url: 'https://remix-vyper-plugin.surge.sh',
       description: 'Compile vyper contracts',
-      kind: 'compile',
+      kind: 'compiler',
       icon: 'data:image/svg+xml;base64,PHN2ZyBpZD0iRmxhdF9Mb2dvIiBkYXRhLW5hbWU9IkZsYXQgTG9nbyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMjA0OCAxNzczLjYyIj4gIDx0aXRsZT52eXBlci1sb2dvLWZsYXQ8L3RpdGxlPiAgPHBvbHlsaW5lIHBvaW50cz0iMTAyNCA4ODYuODEgNzY4IDEzMzAuMjIgMTAyNCAxNzczLjYyIDEyODAgMTMzMC4yMiAxMDI0IDg4Ni44MSIgc3R5bGU9ImZpbGw6IzMzMyIvPiAgPHBvbHlsaW5lIHBvaW50cz0iMTI4MCA0NDMuNDEgMTAyNCA4ODYuODEgMTI4MCAxMzMwLjIyIDE1MzYgODg2LjgxIDEyODAgNDQzLjQxIiBzdHlsZT0iZmlsbDojNjY2Ii8+ICA8cG9seWxpbmUgcG9pbnRzPSI3NjggNDQzLjQxIDUxMiA4ODYuODEgNzY4IDEzMzAuMjIgMTAyNCA4ODYuODEgNzY4IDQ0My40MSIgc3R5bGU9ImZpbGw6IzY2NiIvPiAgPHBvbHlsaW5lIHBvaW50cz0iMTUzNiAwIDEyODAgNDQzLjQxIDE1MzYgODg2LjgxIDE3OTIgNDQzLjQxIDE1MzYgMCIgc3R5bGU9ImZpbGw6IzhjOGM4YyIvPiAgPHBvbHlsaW5lIHBvaW50cz0iMTE1MiAyMjEuNyA4OTYgMjIxLjcgNzY4IDQ0My40MSAxMDI0IDg4Ni44MSAxMjgwIDQ0My40MSAxMTUyIDIyMS43IiBzdHlsZT0iZmlsbDojOGM4YzhjIi8+ICA8cG9seWxpbmUgcG9pbnRzPSI1MTIgMCAyNTYgNDQzLjQxIDUxMiA4ODYuODEgNzY4IDQ0My40MSA1MTIgMCIgc3R5bGU9ImZpbGw6IzhjOGM4YyIvPiAgPHBvbHlsaW5lIHBvaW50cz0iMjA0OCAwIDE1MzYgMCAxNzkyIDQ0My40IDIwNDggMCIgc3R5bGU9ImZpbGw6I2IyYjJiMiIvPiAgPHBvbHlsaW5lIHBvaW50cz0iNTEyIDAgMCAwIDI1NiA0NDMuNCA1MTIgMCIgc3R5bGU9ImZpbGw6I2IyYjJiMiIvPjwvc3ZnPg==',
       location: 'sidePanel'
     }
@@ -135,7 +135,7 @@ export class RemixAppManager extends PluginEngine {
       notifications: {
         'solidity': ['compilationFinished']
       },
-      version: '0.1.0-beta',
+      version: '0.1.0',
       url: 'https://remix-mythx-plugin.surge.sh',
       description: 'Perform Static and Dynamic Security Analysis using the MythX Cloud Service',
       icon: 'https://remix-mythx-plugin.surge.sh/logo.png',
@@ -237,6 +237,31 @@ export class RemixAppManager extends PluginEngine {
       icon: 'https://remix-flattener.netlify.com/logo.svg',
       location: 'sidePanel'
     }
+    const ethpm = {
+      name: 'ethPM',
+      displayName: 'ethPM',
+      events: [],
+      methods: [],
+      notifications: {
+        solidity: ['compilationFinished']
+      },
+      url: 'https://ethpm.surge.sh',
+      description: 'Generate and import ethPM packages.',
+      documentation: 'https://docs.ethpm.com/ethpm-developer-guide/ethpm-and-remix-ide',
+      icon: 'https://ethpm.surge.sh/ethpmlogo.png',
+      location: 'mainPanel'
+    }
+    const zokrates = {
+      name: 'Zokrates',
+      displayName: 'ZoKrates',
+      description: 'ZoKrates will compile your program to an intermediate representation and run a trusted setup protocol to generate proving and verifying keys.',
+      methods: [],
+      events: [],
+      version: '0.1.0-alpha',
+      url: 'https://zokrates.blockchain-it.hr',
+      icon: 'https://zokrates.blockchain-it.hr/zokrates.svg',
+      location: 'sidePanel'
+    }
     return [
       new IframePlugin(pipeline),
       new IframePlugin(vyper),
@@ -250,7 +275,9 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(libraTools),
       new IframePlugin(oneClickDapp),
       new IframePlugin(gasProfiler),
-      new IframePlugin(flattener)
+      new IframePlugin(flattener),
+      new IframePlugin(ethpm),
+      new IframePlugin(zokrates)
     ]
   }
 }

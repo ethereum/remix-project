@@ -6,7 +6,8 @@ export const profile = {
   name: 'network',
   description: 'Manage the network (mainnet, ropsten, goerli...) and the provider (web3, vm, injected)',
   methods: ['getNetworkProvider', 'getEndpoint', 'detectNetwork', 'addNetwork', 'removeNetwork'],
-  version: packageJson.version
+  version: packageJson.version,
+  kind: 'network'
 }
 
 // Network API has :
