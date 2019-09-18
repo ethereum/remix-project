@@ -60,6 +60,7 @@ Useful links:
    contract_metadata
    create_deploy
    tutorial_debug
+   FAQ
    import
    remix_commands
    remixd
@@ -79,7 +80,7 @@ Useful links:
 
 .. toctree::
    :maxdepth: 2
-   :caption: Tutorials and workshops slides
+   :caption: Tutorials and workshops
 
    remix_tutorials_github
 

@@ -55,22 +55,10 @@ Clicking the clipboard icon will encode the inputs and will copy them.  Only a v
 
 So if you made a mistake and put a uint8 where an address should have been, clicking the clipboard here will give you an error.
 
+### Passing in a tuple or a struct to a function
+To pass a tuple in, you need to put in an an array [].
 
-### Inputting structs in the expanded view
-For inputting a struct, the easiest way is to use array []
+Similarly, to pass in a struct as a parameter of a function, it needs to be put in as an array [].  Also note that the line
+`pragma experimental ABIEncoderV2;`
+needs to put in at the top of the solidity file.
 
-If the struct members have names, using js object should work {name: value, name1: value}
-
-For example, if the struct is:
-
-```
-struct r 
-{
-   string t,
-   uint r
-}
-```
-
-You can use:
-
-["this is a string", 23]
