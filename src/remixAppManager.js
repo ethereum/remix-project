@@ -234,6 +234,7 @@ export class RemixAppManager extends PluginEngine {
       version: '0.1.0',
       url: 'https://remix-flattener.netlify.com',
       description: 'Flattens compiled smart contracts',
+      documentation: 'https://github.com/Destiner/remix-flattener',
       icon: 'https://remix-flattener.netlify.com/logo.svg',
       location: 'sidePanel'
     }
