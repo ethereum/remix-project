@@ -77,28 +77,34 @@ contract will popup below.
 Using the Recorder
 ------------------
 
-The Recorder allows to you to save a bunch of transactions in a JSON file and
+The Recorder is a tool used to save a bunch of transactions in a JSON file and
 rerun them later either in the same environment or in another.
 
-You can also update the file adjust the transaction list, tweak input
-parameters, change linked library, etc...
+Saving to the JSON file ( by default its called senario.json) allows one to easily check the transaction list, tweak input parameters, change linked library, etc...
 
-There are many use cases for the recorder, for instance:
+There are many use cases for the recorder.  
+
+For instance:
+
 -   After having coded and tested contracts in a constrained
-    environment (like the JavaScript VM), you can easily
-    redeploy them in a more persisted environment (like a
-    Geth node) in order to check whether everything behaves normally
-    in a classic environment.
+    environment (like the JavaScript VM), you could then change the environment and redeploy it to a more realistic environment like a test net with an **injected web3** or to a Geth node. By using the generated **senario.json** file, you will be using all the same settings that you used in the Javascript VM.  And this mean that you won't need to click the interface 100 times or whatever to get the state that you achieved originally.  So the recorder could be a tool to protect your sanity.
+    
+    You can also change the settings in the senario.json file to customize the playback.
+
 -   Deploying contract does often require more than creating one
-    transaction. ( **note: is this point needed?**)
--   Working in a dev environment often requires setting up the
-    state in a first place. ( **note: is this saying - After testing in on the JsVM, quickly deploying another environment in a controlled fashion. **)
+    transaction and so the recorder will automate this deployment.
+
+-   Working in a dev environment often requires to setup the
+    state in a first place.  
 
 ![](images/a-runtab-recorder.png)
 
-To save some transactions click on the floppy disc icon.  A file called senario.json will be written and saved in the file explorer.  
+### senario.json
+To create this file in the recorder, you first of course need to have run some transactions.  In the image above - it has a `0` next to **Transactions Recorded**.  So this isn't the right moment to save transactions because - well because there aren't any.  Each time you make a transaction, that number will increment.  Then when you are ready, click the floppy disk icon and the senario.json file will be created.
 
-Below is an example of this file where 3 transactions are executed:
+The JSON file below is an example of the senario.json file.
+
+In it, 3 transactions are executed:
 
 The first corresponds to the deployment of the lib `testLib`.
 
@@ -118,7 +124,6 @@ All these transactions are created using the value of the accounts
 `account{0}`.
 
 ``` 
-{.sourceCode .none}
 {
 "accounts": {
     "account{0}": "0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
