@@ -46,6 +46,35 @@ function testWithInput (st, params, expected) {
   }, () => {}, () => {})
 }
 
+
+tape('ContractStringParameters - (TxFormat.buildData) - format string input parameters', function (t) {
+  var output = compiler.compile(compilerInput(stringContract))
+  output = JSON.parse(output)
+  console.log('-----------------------------', output)
+  var contract = output.contracts['test.sol']['stringContractTest']
+  context = { output, contract }
+
+  t.test('(TxFormat.buildData)', function (st) {
+    st.plan(3)
+    testWithStringInput(st, '"1,2,3,4qwerty,5", 0xf7a10e525d4b168f45f74db1b61f63d3e7619ea8, "1,a,5,34"', '0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000f7a10e525d4b168f45f74db1b61f63d3e7619ea800000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000f312c322c332c347177657274792c3500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008312c612c352c3334000000000000000000000000000000000000000000000000')
+    testWithStringInput(st, '"1,2,3,4qwerty,5", "0xf7a10e525d4b168f45f74db1b61f63d3e7619ea8", "1,a,5,34"', '0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000f7a10e525d4b168f45f74db1b61f63d3e7619ea800000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000f312c322c332c347177657274792c3500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008312c612c352c3334000000000000000000000000000000000000000000000000')
+    // string with space
+    testWithStringInput(st, '"1,2,3,,4qw  erty,5", "0xf7a10e525d4b168f45f74db1b61f63d3e7619ea8", "abcdefghijkl"', '0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000f7a10e525d4b168f45f74db1b61f63d3e7619ea800000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000012312c322c332c2c3471772020657274792c350000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c6162636465666768696a6b6c0000000000000000000000000000000000000000')
+  })
+})
+
+function testWithStringInput (st, params, expected) {
+  txFormat.buildData('stringContractTest', context.contract, context.output.contracts, true, context.contract.abi[0], params, (error, data) => {
+    if (error) { return st.fails(error) }
+    console.log(data)
+    if (!data.dataHex.endsWith(expected)) {
+      st.fail(`result of buildData ${data.dataHex} should end with ${expected} . `)
+    } else {
+      st.pass(`testWithStringInput. result of buildData ${data.dataHex} ends with correct data`)
+    }
+  }, () => {}, () => {})
+}
+
 /* tape *********************************************************** */
 
 tape('ContractParameters - (TxFormat.buildData) - link Libraries', function (t) {
@@ -234,6 +263,15 @@ var uintContract = `contract uintContractTest {
         _tp = _t;
         _ap = _a;
     }
+}`
+
+var stringContract = `contract stringContractTest {
+  string _tp;
+  address _ap;
+  function test(string memory _t, address _a, string memory _i) public {
+      _tp = _t;
+      _ap = _a;
+  }
 }`
 
 var deploySimpleLib = `pragma solidity ^0.5.0;
