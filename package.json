@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yann300/remix-desktop.git"
+    "url": "git+https://github.com/ethereum/remix-desktop.git"
   },
   "author": {
     "name": "Remix",
@@ -19,9 +19,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/yann300/remix-desktop/issues"
+    "url": "https://github.com/ethereum/remix-desktop/issues"
   },
-  "homepage": "https://github.com/yann300/remix-desktop#readme",
+  "homepage": "https://github.com/ethereum/remix-desktop#readme",
   "devDependencies": {
     "electron": "6.0.9",
     "electron-builder": "21.2.0",

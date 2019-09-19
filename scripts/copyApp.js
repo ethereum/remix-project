@@ -4,7 +4,7 @@
 const { AppManager } = require('@philipplgh/electron-app-manager')
 
 const updater = new AppManager({
-  repository: 'https://github.com/yann300/remix-desktop',
+  repository: 'https://github.com/ethereum/remix-desktop',
   auto: false,
   cacheDir: __dirname + '/cache'
 })
