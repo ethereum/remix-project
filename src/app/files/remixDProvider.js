@@ -42,6 +42,9 @@ module.exports = class RemixDProvider {
               this.event.trigger('fileExternallyChanged', [path, content])
             }
           })
+        } else if (data.name === 'rootFolderChanged') {
+          // new path has been set, we should reset
+          this.event.trigger('folderAdded', [this.type + '/'])
         }
       }
     })
