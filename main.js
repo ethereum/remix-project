@@ -3,7 +3,7 @@ const os = require('os');
 
 const { app, BrowserWindow } = require('electron')
 const { AppManager, registerPackageProtocol } = require('@philipplgh/electron-app-manager')
-registerPackageProtocol(__dirname + '/cache')
+registerPackageProtocol()
 
 
 const updater = new AppManager({
