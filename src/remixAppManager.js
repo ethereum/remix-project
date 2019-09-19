@@ -19,11 +19,14 @@ export class RemixAppManager extends PluginEngine {
   constructor (plugins) {
     super(plugins, settings)
     this.event = new EventEmitter()
+    this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
     this.registered = {}
   }
 
   onActivated (plugin) {
-    localStorage.setItem('workspace', JSON.stringify(this.actives))
+    if (!this.donotAutoReload.includes(plugin.name)) {
+      localStorage.setItem('workspace', JSON.stringify(this.actives))
+    }
     this.event.emit('activate', plugin.name)
   }
 
