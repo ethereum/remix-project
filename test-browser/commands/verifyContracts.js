@@ -13,7 +13,10 @@ class VerifyContracts extends EventEmitter {
 }
 
 function getCompiledContracts (browser, callback) {
-  browser.clickLaunchIcon('solidity').execute(function () {
+  browser
+  .clickLaunchIcon('solidity')
+  .waitForElementPresent('#compileTabView select#compiledContracts option')
+  .execute(function () {
     var contracts = document.querySelectorAll('#compileTabView select#compiledContracts option')
     if (!contracts) {
       return null
