@@ -3,20 +3,6 @@ This document includes:
  - how to update remix-alpha.ethereum.org.
  - how to release remix IDE.
 
-# remix.ethereum.org update
-
-This is not strictly speaking a release. Updating the remix site is done through the Travis build:
-
- - switch to the remix_live
- - git reset --hard -master-commit-hash-
- - git push -f origin remix_live
-
- CircleCI will build automaticaly and remix.ethereum.org will be updated
-
-# remix-alpha.ethereum.org update
-
-remix-alpha.ethereum.org is automaticaly updated every time commits are pushed to master
- 
 # remix IDE release
 
  - git fetch origin master
@@ -37,3 +23,18 @@ remix-alpha.ethereum.org is automaticaly updated every time commits are pushed t
  - npm run build
  - npm publish
  - after remix_live is updated, drop the zip (from the root folder of remix-live repo) to the release.
+
+# remix.ethereum.org update
+
+This is not strictly speaking a release. Updating the remix site is done through the Travis build:
+
+ - switch to the remix_live
+ - git reset --hard -master-commit-hash-
+ - git push -f origin remix_live
+
+ CircleCI will build automaticaly and remix.ethereum.org will be updated
+
+# remix-alpha.ethereum.org update
+
+remix-alpha.ethereum.org is automaticaly updated every time commits are pushed to master
+ 
