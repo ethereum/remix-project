@@ -319,8 +319,8 @@ class CompilerContainer {
       }
       url = `${this.data.baseurl}/${this.data.selectedVersion}`
     }
-    const isFirefox = typeof InstallTrigger !== 'undefined'
-    if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
+    // Check if browser is compatible with web worker
+    if (document.location.protocol !== 'file:' && Worker !== undefined) {
       // Workers cannot load js on "file:"-URLs and we get a
       // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
       // resort to non-worker version in that case.
