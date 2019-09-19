@@ -81,5 +81,5 @@ workflows:
   build:
     jobs:
       - build
-      # - build-mac
+      - build-mac
       - build-win
