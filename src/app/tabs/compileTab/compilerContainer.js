@@ -319,8 +319,8 @@ class CompilerContainer {
       }
       url = `${this.data.baseurl}/${this.data.selectedVersion}`
     }
-    const isFirefox = typeof InstallTrigger !== 'undefined'
-    if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
+    // Check if browser is compatible with web worker
+    if (this.browserSupportWorker) {
       // Workers cannot load js on "file:"-URLs and we get a
       // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
       // resort to non-worker version in that case.
@@ -372,6 +372,10 @@ class CompilerContainer {
     if (!this.config.get('autoCompile')) return
     if (this.data.compileTimeout) window.clearTimeout(this.data.compileTimeout)
     this.data.compileTimeout = window.setTimeout(() => this.compileIfAutoCompileOn(), this.data.timeout)
+  }
+
+  browserSupportWorker () {
+    return document.location.protocol !== 'file:' && Worker !== undefined
   }
 
 }
