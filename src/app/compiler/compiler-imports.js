@@ -64,7 +64,7 @@ module.exports = class CompilerImports extends Plugin {
 
     return request.get(
       {
-        url: 'https://gateway.ipfs.io/' + url
+        url: 'https://ipfsgw.komputing.org/' + url
       },
       (err, r, data) => {
         if (err) {
