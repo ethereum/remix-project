@@ -1,3 +1,24 @@
+<a name="v0.1.20"></a>
+# [v0.1.20](https://github.com/ethereum/remix/releases/tag/v0.1.20) - 20 Sep 2019
+
+## Change Log
+
+### v0.1.20 (2019/09/20 13:38 +00:00)
+- [#1297](https://github.com/ethereum/remix/pull/1297) Release 0.1.20 (@Aniket-Engg)
+- [#1296](https://github.com/ethereum/remix/pull/1296) changelog added (@Aniket-Engg)
+- [#1294](https://github.com/ethereum/remix/pull/1294) string with comma handled (@Aniket-Engg)
+- [#1292](https://github.com/ethereum/remix/pull/1292) internal function call handling (@Aniket-Engg)
+- [#1204](https://github.com/ethereum/remix/pull/1204) Bump solidity version used for testing remix-lib (@Aniket-Engg, @yann300)
+- [#1291](https://github.com/ethereum/remix/pull/1291) updated package-lock.json (@Aniket-Engg)
+- [#1244](https://github.com/ethereum/remix/pull/1244) Added package-lock.json files to all the subprojects (@edisinovcic)
+- [#1290](https://github.com/ethereum/remix/pull/1290) Added comments in Internal call tree (@Aniket-Engg, @yann300)
+- [#1285](https://github.com/ethereum/remix/pull/1285) https for debug node (@yann300)
+- [#1267](https://github.com/ethereum/remix/pull/1267) working websocket support; implement eth_subscribe; eth_unsubscribe; eth_getLogs (@iurimatias)
+- [#1277](https://github.com/ethereum/remix/pull/1277) Update test runner to report accounts via callback (@andremedeiros)
+
+[Changes][v0.1.20]
+
+
 <a name="v0.1.19"></a>
 # [v0.1.19](https://github.com/ethereum/remix/releases/tag/v0.1.19) - 04 Sep 2019
 
@@ -477,6 +498,7 @@ https://github.com/ethereum/remix/compare/remix-tests@0.0.13...v0.1.0
 [Changes][remix-lib@0.2.5]
 
 
+[v0.1.20]: https://github.com/ethereum/remix/compare/v0.1.19...v0.1.20
 [v0.1.19]: https://github.com/ethereum/remix/compare/v0.1.18...v0.1.19
 [v0.1.18]: https://github.com/ethereum/remix/compare/v0.1.17...v0.1.18
 [v0.1.17]: https://github.com/ethereum/remix/compare/v0.1.16...v0.1.17
