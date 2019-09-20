@@ -27,6 +27,9 @@ var codes = {
   0x18: ['XOR', 3, 2, 1, false],
   0x19: ['NOT', 3, 1, 1, false],
   0x1a: ['BYTE', 3, 2, 1, false],
+  0x1b: ['SHL', 3, 2, 1, false],
+  0x1c: ['SHR', 3, 2, 1, false],
+  0x1d: ['SAR', 3, 2, 1, false],
 
   // 0x20 range - crypto
   0x20: ['SHA3', 30, 2, 1, false],
@@ -150,6 +153,7 @@ var codes = {
   0xf2: ['CALLCODE', 700, 7, 1, true, true],
   0xf3: ['RETURN', 0, 2, 0, false],
   0xf4: ['DELEGATECALL', 700, 6, 1, true, true],
+  0xf5: ['CREATE2', 32000, 4, 1, true, true],
   0xfa: ['STATICCALL', 700, 6, 1, true, true],
   0xfd: ['REVERT', 0, 2, 0, false],
 
