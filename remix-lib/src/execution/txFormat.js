@@ -413,6 +413,26 @@ module.exports = {
             }
           }
         }
+      } else if (param.charAt(0) === '[') {   // Check if param starts with [ , it will be an array.
+        // Check if array completes in one location by looking for end bracket
+        if (param.charAt(param.length - 1) === ']') {
+          args.push(param)
+        } else {
+          let lastIndex = false
+          let paramStr = param
+          // For an array got divided in multiple location
+          for (let j = i + 1; !lastIndex; j++) {
+            // Check if end bracket is reached
+            if (params[j].charAt(params[j].length - 1) === ']') {
+              paramStr += ',' + params[j]
+              i = j
+              args.push(JSON.parse(paramStr))
+              lastIndex = true
+            } else {
+              paramStr += ',' + params[j]
+            }
+          }
+        }
       } else {
         args.push(param)
       }
