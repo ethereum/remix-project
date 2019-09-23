@@ -110,8 +110,10 @@ export class LandingPage extends ViewPlugin {
               if (error) {
                 modalDialogCustom.alert(error)
               } else {
-                fileProviders['browser'].addReadOnly(type + '/' + cleanUrl, content, url)
-                globalRegistry.get('verticalicon').api.select('fileExplorers')
+                if (fileProviders[type]) {
+                  fileProviders[type].addReadOnly(cleanUrl, content, url)
+                  globalRegistry.get('verticalicon').api.select('fileExplorers')
+                }
               }
             }
           )
