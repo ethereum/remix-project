@@ -6,6 +6,11 @@ class FileProvider {
   constructor (name) {
     this.event = new EventManager()
     this.type = name
+<<<<<<< HEAD
+=======
+    this.normalizedNames = {} // contains the raw url associated with the displayed path
+    this.readonlyItems = ['browser']
+>>>>>>> 2fe4db91... - fixes import with github, http,reslver-engine
   }
 
   exists (path, cb) {
@@ -23,6 +28,10 @@ class FileProvider {
 
   get (path, cb) {
     cb = cb || function () {}
+<<<<<<< HEAD
+=======
+    if (this.normalizedNames[path]) path = this.normalizedNames[path] // ensure we actually use the normalized path from here
+>>>>>>> 2fe4db91... - fixes import with github, http,reslver-engine
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (!exists) return cb(null, null)
@@ -63,15 +72,34 @@ class FileProvider {
     return true
   }
 
+<<<<<<< HEAD
   addReadOnly (path, content) {
+=======
+  addReadOnly (path, content, url) {
+    this.readonlyItems.push(path)
+    if (url !== undefined) this.normalizedNames[url] = path
+>>>>>>> 2fe4db91... - fixes import with github, http,reslver-engine
     return this.set(path, content)
   }
 
   isReadOnly (path) {
+<<<<<<< HEAD
     return false
   }
 
   remove (path) {
+=======
+    return !this.readonlyItems.includes(path)
+  }
+
+  remove (path) {
+    // remove from readonly list
+    const indexToRemove = this.readonlyItems.indexOf(path)
+    if (indexToRemove !== -1) {
+      this.readonlyItems.splice(indexToRemove, 1)
+    }
+
+>>>>>>> 2fe4db91... - fixes import with github, http,reslver-engine
     var unprefixedpath = this.removePrefix(path)
     if (!this._exists(unprefixedpath)) {
       return false
