@@ -7,6 +7,7 @@ const TxRunner = require('./execution/txRunner')
 const txHelper = require('./execution/txHelper')
 const EventManager = require('./eventManager')
 const executionContext = require('./execution/execution-context')
+const { resultToRemixTx } = require('./helpers/txResultHelper')
 
 module.exports = class UniversalDApp {
 
@@ -271,14 +272,11 @@ module.exports = class UniversalDApp {
         }
         this.silentRunTx(tx, (error, result) => {
           if (error) return reject(error)
-          resolve({
-            transactionHash: result.transactionHash,
-            status: result.result.status,
-            gasUsed: '0x' + result.result.gasUsed.toString('hex'),
-            error: result.result.vm.exceptionError,
-            return: result.result.vm.return ? '0x' + result.result.vm.return.toString('hex') : '0x',
-            createdAddress: result.result.createdAddress ? '0x' + result.result.createdAddress.toString('hex') : undefined
-          })
+          try {
+            resolve(resultToRemixTx(result))
+          } catch (e) {
+            reject(e)
+          }
         })
       })
     })
