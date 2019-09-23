@@ -54,3 +54,11 @@ In the expanded view, strings do not need to be wrapped.
 Clicking the clipboard icon will encode the inputs and will copy them.  Only a valid set of inputs can be encoded.  
 
 So if you made a mistake and put a uint8 where an address should have been, clicking the clipboard here will give you an error.
+
+### Passing in a tuple or a struct to a function
+To pass a tuple in, you need to put in an an array [].
+
+Similarly, to pass in a struct as a parameter of a function, it needs to be put in as an array [].  Also note that the line
+`pragma experimental ABIEncoderV2;`
+needs to put in at the top of the solidity file.
+
