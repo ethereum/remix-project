@@ -52,21 +52,13 @@ module.exports = class Filepanel extends ViewPlugin {
       fileManager: self._components.registry.get('filemanager').api,
       config: self._components.registry.get('config').api
     }
-    var fileExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['browser'],
-      ['createNewFile', 'publishToGist', 'copyFiles', canUpload ? 'uploadFile' : '']
-    )
 
     function createProvider (key, menuItems) {
       return new FileExplorer(self._components.registry, self._deps.fileProviders[key], menuItems)
     }
 
+    var fileExplorer = createProvider('browser', ['createNewFile', 'publishToGist', 'copyFiles', canUpload ? 'uploadFile' : ''])
     var fileSystemExplorer = createProvider('localhost')
-    var swarmExplorer = createProvider('swarm')
-    var githubExplorer = createProvider('github')
-    var gistExplorer = createProvider('gist', ['updateGist'])
-    var httpExplorer = createProvider('http')
-    var httpsExplorer = createProvider('https')
-    var ipfsExplorer = createProvider('ipfs')
 
     self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'], appManager)
 
@@ -74,12 +66,6 @@ module.exports = class Filepanel extends ViewPlugin {
       <div>
         <div class=${css.treeview}>${fileExplorer.init()}</div>
         <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
-        <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
-        <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
-        <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
-        <div class="httpexplorer ${css.treeview}">${httpExplorer.init()}</div>
-        <div class="httpsexplorer ${css.treeview}">${httpsExplorer.init()}</div>
-        <div class="ipfsexplorer ${css.treeview}">${ipfsExplorer.init()}</div>
       </div>
     `
 

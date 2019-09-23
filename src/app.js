@@ -12,15 +12,13 @@ var { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
 var Storage = remixLib.Storage
-var LocalStorageProvider = require('./app/files/localStorageProvider')
 var RemixDProvider = require('./app/files/remixDProvider')
 var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
 var examples = require('./app/editor/example-contracts')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var FileManager = require('./app/files/fileManager')
-var ReadonlyProvider = require('./app/files/readonlyProvider')
-var BasicFileProvider = require('./app/files/basicFileProvider')
+var FileProvider = require('./app/files/fileProvider')
 var toolTip = require('./app/ui/tooltip')
 var CompilerMetadata = require('./app/files/compiler-metadata')
 var CompilerImport = require('./app/compiler/compiler-imports')
@@ -113,7 +111,7 @@ class App {
 
     // load file system
     self._components.filesProviders = {}
-    self._components.filesProviders['browser'] = new LocalStorageProvider(fileStorage)
+    self._components.filesProviders['browser'] = new FileProvider('browser', fileStorage)
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
 
     var remixd = new Remixd(65520)
@@ -123,17 +121,7 @@ class App {
     })
 
     self._components.filesProviders['localhost'] = new RemixDProvider(remixd)
-    self._components.filesProviders['swarm'] = new ReadonlyProvider('swarm')
-    self._components.filesProviders['github'] = new ReadonlyProvider('github')
-    self._components.filesProviders['gist'] = new BasicFileProvider('gist')
-    self._components.filesProviders['ipfs'] = new ReadonlyProvider('ipfs')
-    self._components.filesProviders['https'] = new ReadonlyProvider('https')
-    self._components.filesProviders['http'] = new ReadonlyProvider('http')
     registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
-    registry.put({api: self._components.filesProviders['swarm'], name: 'fileproviders/swarm'})
-    registry.put({api: self._components.filesProviders['github'], name: 'fileproviders/github'})
-    registry.put({api: self._components.filesProviders['gist'], name: 'fileproviders/gist'})
-    registry.put({api: self._components.filesProviders['ipfs'], name: 'fileproviders/ipfs'})
     registry.put({api: self._components.filesProviders, name: 'fileproviders'})
 
     self._view = {}
@@ -297,10 +285,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     editor,
     registry.get('config').api,
     new Renderer(),
-    registry.get('fileproviders/swarm').api,
-    registry.get('fileproviders/ipfs').api,
-    registry.get('filemanager').api,
-    registry.get('fileproviders').api,
+    registry.get('fileproviders/browser').api,
+    registry.get('filemanager').api
   )
   const run = new RunTab(
     udapp,
@@ -352,14 +338,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const loadedFromGist = gistHandler.loadFromGist(queryParams.get(), fileManager)
   if (!loadedFromGist) {
     // insert ballot contract if there are no files to show
-    self._components.filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
+    self._components.filesProviders['browser'].resolveDirectory('/', (error, filesList) => {
       if (error) console.error(error)
       if (Object.keys(filesList).length === 0) {
-        if (!self._components.filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
-          modalDialogCustom.alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
-        } else {
-          self._components.filesProviders['browser'].set(examples.ballot_test.name, examples.ballot_test.content)
-        }
+        fileManager.setFile(examples.ballot.name, examples.ballot.content)
+        fileManager.setFile(examples.ballot_test.name, examples.ballot_test.content)
       }
     })
   }

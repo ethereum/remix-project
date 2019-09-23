@@ -31,6 +31,7 @@
 		<link rel="stylesheet" id="theme-link"/>
 		<link rel="stylesheet" href="assets/css/pygment_trac.css">
 		<link rel="icon" type="x-icon" href="icon.png">
+		<script src="assets/js/browserfs.min.js"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	</head>
 	<body>
@@ -76,9 +77,16 @@
           document.head.appendChild(app)
         }
 				window.onload = () => {
-					let app = document.createElement('script')
-					app.setAttribute('src', versions[versionToLoad])
-					document.body.appendChild(app)
+					BrowserFS.install(window)
+					BrowserFS.configure({
+						fs: "LocalStorage"
+					}, function(e) {
+						if (e) console.log(e)
+						let app = document.createElement('script')
+						app.setAttribute('src', versions[versionToLoad])
+						document.body.appendChild(app)
+						window.remixFileSystem = require('fs')
+					})
 				}				
 		</script>
 	</body>

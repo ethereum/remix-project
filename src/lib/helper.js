@@ -41,7 +41,7 @@ module.exports = {
     this.createNonClashingNameWithPrefix(name, fileProvider, '', cb)
   },
   checkSpecialChars (name) {
-    return name.match(/[/:*?"<>\\'|]/) != null
+    return name.match(/[:*?"<>\\'|]/) != null
   },
   find: find
 }

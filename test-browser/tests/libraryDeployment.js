@@ -56,7 +56,7 @@ module.exports = {
 
 function checkDeployShouldFail (browser, callback) {
   let config
-  browser.switchFile('browser/test.json')
+  browser.switchFile('browser/artifacts').switchFile('browser/artifacts/test.json')
         .getEditorValue((content) => {
           config = JSON.parse(content)
           config.deploy['VM:-'].autoDeployLib = false
@@ -74,7 +74,7 @@ function checkDeployShouldFail (browser, callback) {
 function checkDeployShouldSucceed (browser, address, callback) {
   let addressRef
   let config
-  browser.switchFile('browser/test.json')
+  browser.switchFile('browser/artifacts').switchFile('browser/artifacts/test.json')
         .getEditorValue((content) => {
           config = JSON.parse(content)
           config.deploy['VM:-'].autoDeployLib = false

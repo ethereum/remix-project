@@ -47,16 +47,13 @@ class FileManager extends Plugin {
       config: this._components.registry.get('config').api,
       browserExplorer: this._components.registry.get('fileproviders/browser').api,
       localhostExplorer: this._components.registry.get('fileproviders/localhost').api,
-      gistExplorer: this._components.registry.get('fileproviders/gist').api,
       filesProviders: this._components.registry.get('fileproviders').api
     }
 
     this._deps.browserExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.localhostExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.gistExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.browserExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.localhostExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.gistExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
     this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
   }
@@ -309,18 +306,10 @@ class FileManager extends Plugin {
   }
 
   fileProviderOf (file) {
-    if (!file) return null
-    var provider = file.match(/[^/]*/)
-    if (provider !== null && this._deps.filesProviders[provider[0]]) {
-      return this._deps.filesProviders[provider[0]]
-    } else {
-      for (var handler of this._components.compilerImport.handlers()) {
-        if (handler.match.exec(file)) {
-          return this._deps.filesProviders[handler.type]
-        }
-      }
+    if (file.indexOf('localhost') === 0) {
+      return this._deps.filesProviders['localhost']
     }
-    return null
+    return this._deps.filesProviders['browser']
   }
 
   saveCurrentFile () {
