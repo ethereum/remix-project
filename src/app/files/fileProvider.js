@@ -36,6 +36,10 @@ class FileProvider {
 
   set (path, content, cb) {
     cb = cb || function () {}
+    if (this.isReadOnly(path)) {
+      cb(new Error('It is not possible to modify a readonly item'))
+      return false
+    }
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (!exists && unprefixedpath.indexOf('/') !== -1) {
@@ -67,13 +71,13 @@ class FileProvider {
   }
 
   addReadOnly (path, content, url) {
-    this.readonlyItems.push(path)
-    if (url !== undefined) this.normalizedNames[url] = path
+    this.readonlyItems.push('browser/' + path)
+    if (!url) this.normalizedNames[url] = path
     return this.set(path, content)
   }
 
   isReadOnly (path) {
-    return !this.readonlyItems.includes(path)
+    return this.readonlyItems.includes(path)
   }
 
   remove (path) {
