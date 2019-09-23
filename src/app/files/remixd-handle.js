@@ -1,3 +1,4 @@
+import isElectron from 'is-electron'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 var yo = require('yo-yo')
@@ -55,28 +56,30 @@ export class RemixdHandle extends Plugin {
     * @param {String} txHash    - hash of the transaction
     */
   connectToLocalhost () {
+    let connection = (error) => {
+      if (error) {
+        console.log(error)
+        modalDialogCustom.alert(
+          'Cannot connect to the remixd daemon.' +
+          'Please make sure you have the remixd running in the background.'
+        )
+        this.canceled()
+      } else {
+        this.fileSystemExplorer.ensureRoot()
+      }
+    }
     if (this.locahostProvider.isConnected()) {
       this.locahostProvider.close((error) => {
         if (error) console.log(error)
       })
-    } else {
+    } else if (!isElectron()) {
+      // warn the user only if he/she is in the browser context
       modalDialog(
         'Connect to localhost',
         remixdDialog(),
         { label: 'Connect',
           fn: () => {
-            this.locahostProvider.init((error) => {
-              if (error) {
-                console.log(error)
-                modalDialogCustom.alert(
-                  'Cannot connect to the remixd daemon.' +
-                  'Please make sure you have the remixd running in the background.'
-                )
-                this.canceled()
-              } else {
-                this.fileSystemExplorer.ensureRoot()
-              }
-            })
+            this.locahostProvider.init((error) => connection(error))
           }
         },
         { label: 'Cancel',
@@ -85,6 +88,8 @@ export class RemixdHandle extends Plugin {
           }
         }
       )
+    } else {
+      this.locahostProvider.init((error) => connection(error))
     }
   }
 }
