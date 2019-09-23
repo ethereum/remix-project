@@ -15,7 +15,7 @@ module.exports = {
   sharedFolder: function (sharedFolder, readOnly) {
     this.sharedFolder = sharedFolder
     this.readOnly = readOnly
-    if (this.websocket) this.websocket.send(message('rootFolderChanged', {}))
+    if (this.websocket.connection) this.websocket.send(message('rootFolderChanged', {}))
   },
 
   list: function (args, cb) {
