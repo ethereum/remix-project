@@ -42,7 +42,7 @@ function GistHandler (_window) {
   }
 
   this.loadFromGist = (params, fileManager) => {
-    const gistProvider = fileManager.fileProviderOf('gist')
+    const gistProvider = fileManager.fileProviderOf('browser')
     const self = this
     return self.handleLoad(params, function (gistId) {
       request.get({
@@ -53,7 +53,11 @@ function GistHandler (_window) {
           modalDialogCustom.alert(`Gist load error: ${error || data.message}`)
           return
         }
-        fileManager.setBatchFiles(data.files, 'gist', (errorLoadingFile) => {
+        let obj = {}
+        Object.keys(data.files).forEach((element) => {
+          obj['/gists/' + gistId + '/' + element] = data.files[element]
+        })
+        fileManager.setBatchFiles(obj, 'browser', (errorLoadingFile) => {
           if (!errorLoadingFile) {
             gistProvider.id = gistId
             gistProvider.origGistFiles = data.files

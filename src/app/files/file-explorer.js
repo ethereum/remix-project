@@ -97,6 +97,7 @@ function fileExplorer (localRegistry, files, menuItems) {
   files.event.register('fileRenamed', fileRenamed)
   files.event.register('fileRenamedError', fileRenamedError)
   files.event.register('fileAdded', fileAdded)
+  files.event.register('folderAdded', folderAdded)
 
   function fileRenamedError (error) {
     modalDialogCustom.alert(error)
@@ -121,6 +122,18 @@ function fileExplorer (localRegistry, files, menuItems) {
           }
         })
       }
+    })
+  }
+
+  function folderAdded (folderpath) {
+    self.ensureRoot(() => {
+      folderpath = folderpath.split('/').slice(0, -1).join('/')
+      self.files.resolveDirectory(folderpath, (error, fileTree) => {
+        if (error) console.error(error)
+        if (!fileTree) return
+        fileTree = normalize(folderpath, fileTree)
+        self.treeView.updateNodeFromJSON(folderpath, fileTree, true)
+      })
     })
   }
 
@@ -462,7 +475,7 @@ fileExplorer.prototype.toGist = function (id) {
 // return all the files, except the temporary/readonly ones..
 fileExplorer.prototype.packageFiles = function (filesProvider, callback) {
   var ret = {}
-  filesProvider.resolveDirectory(filesProvider.type, (error, files) => {
+  filesProvider.resolveDirectory('/', (error, files) => {
     if (error) callback(error)
     else {
       async.eachSeries(Object.keys(files), (path, cb) => {
@@ -525,7 +538,7 @@ fileExplorer.prototype.updateGist = function () {
 
 fileExplorer.prototype.createNewFile = function () {
   let self = this
-  modalDialogCustom.prompt('Create new file', 'File Name', 'Untitled.sol', (input) => {
+  modalDialogCustom.prompt('Create new file', 'File Path (Untitled.sol, Folder1/Untitled.sol)', 'Untitled.sol', (input) => {
     helper.createNonClashingName(input, self.files, (error, newName) => {
       if (error) return modalDialogCustom.alert('Failed to create file ' + newName + ' ' + error)
       if (!self.files.set(newName, '')) {
@@ -568,18 +581,16 @@ fileExplorer.prototype.ensureRoot = function (cb) {
   cb = cb || (() => {})
   var self = this
   if (self.element) return cb()
-
-  self.files.resolveDirectory('/', (error, files) => {
-    if (error) console.error(error)
-    var element = self.treeView.render(files, false)
-    element.classList.add(css.fileexplorer)
-    element.events = self.events
-    element.api = self.api
-    self.container.appendChild(element)
-    self.element = element
-    if (cb) cb()
-    self.treeView.expand(self.files.type)
-  })
+  const root = {}
+  root[this.files.type] = {}
+  var element = self.treeView.render(root, false)
+  element.classList.add(css.fileexplorer)
+  element.events = self.events
+  element.api = self.api
+  self.container.appendChild(element)
+  self.element = element
+  if (cb) cb()
+  self.treeView.expand(self.files.type)
 }
 
 function normalize (path, filesList) {

@@ -9,7 +9,7 @@ const addTooltip = require('../../ui/tooltip')
 
 class CompileTab {
 
-  constructor (queryParams, fileManager, editor, config, fileProviders) {
+  constructor (queryParams, fileManager, editor, config, fileProvider) {
     this.event = new EventEmitter()
     this.queryParams = queryParams
     this.compilerImport = new CompilerImport()
@@ -17,7 +17,7 @@ class CompileTab {
     this.fileManager = fileManager
     this.editor = editor
     this.config = config
-    this.fileProviders = fileProviders
+    this.fileProvider = fileProvider
   }
 
   init () {
@@ -92,8 +92,8 @@ class CompileTab {
       (error, content, cleanUrl, type, url) => {
         if (error) return cb(error)
 
-        if (this.fileProviders[type]) {
-          this.fileProviders[type].addReadOnly(cleanUrl, content, url)
+        if (this.fileProvider) {
+          this.fileProvider.addReadOnly(cleanUrl, content, url)
         }
         cb(null, content)
       })
