@@ -2,8 +2,11 @@
 
 const async = require('async')
 const IpfsClient = require('ipfs-mini')
-const host = 'ipfs.komputing.org'
-const ipfs = new IpfsClient({ host, port: 443, protocol: 'https' })
+
+const ipfsNodes = [
+  new IpfsClient({ host: 'ipfs.komputing.org', port: 443, protocol: 'https' }),
+  new IpfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+]
 
 module.exports = (contract, fileManager, cb, ipfsVerifiedPublishCallBack) => {
   // gather list of files to publish
@@ -89,7 +92,7 @@ module.exports = (contract, fileManager, cb, ipfsVerifiedPublishCallBack) => {
 
 async function ipfsVerifiedPublish (content, expectedHash, cb) {
   try {
-    const results = await ipfs.add(content)
+    const results = await severalGatewaysPush(content)
     if (results !== expectedHash) {
       cb(null, { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'dweb:/ipfs/' + results, hash: results })
     } else {
@@ -98,4 +101,10 @@ async function ipfsVerifiedPublish (content, expectedHash, cb) {
   } catch (error) {
     cb(error)
   }
+}
+
+function severalGatewaysPush (content) {
+  const invert = p => new Promise((resolve, reject) => p.then(reject).catch(resolve)) // Invert res and rej
+  const promises = ipfsNodes.map((node) => invert(node.add(content)))
+  return invert(Promise.all(promises))
 }
