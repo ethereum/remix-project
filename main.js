@@ -32,7 +32,7 @@ app.on('ready', createWindow)
 
 var folder = process.argv.length > 2 ? process.argv[2] : os.homedir()
 
-var router = new remixd.Router(65520, remixd.services.sharedFolder, { remixIdeUrl: 'package://cd339faeeb58f4c96b9b5ff62556c364.mod' }, (webSocket) => {
+var router = new remixd.Router(65520, remixd.services.sharedFolder, { remixIdeUrl: 'package://a7df6d3c223593f3550b35e90d7b0b1f.mod' }, (webSocket) => {
   remixd.services.sharedFolder.setWebSocket(webSocket)
   remixd.services.sharedFolder.setupNotifications(folder)
   remixd.services.sharedFolder.sharedFolder(folder, false)
