@@ -388,56 +388,60 @@ module.exports = {
 
   parseFunctionParams: function (params) {
     let args = []
-    // Segregate params textbox string with respect to comma (,)
-    params = params.split(',')
+    // Check if parameter string starts with array or string
+    let startIndex = this.isArrayOrStringStart(params, 0) ? -1 : 0
     for (let i = 0; i < params.length; i++) {
-      let param = params[i].trim()
-      // Check if param starts with " , it may be string, address etc.
-      if (param.charAt(0) === '"') {
-        // Check if param completes in one location by looking for end quote (case: address data type)
-        if (param.charAt(param.length - 1) === '"') {
-          args.push(param.slice(1, param.length - 1))
-        } else {
-          let lastIndex = false
-          let paramStr = param.slice(1, param.length)
-          // For a paramter got divided in multiple location(case: string data type containing comma(,))
-          for (let j = i + 1; !lastIndex; j++) {
-            // Check if end quote is reached
-            if (params[j].charAt(params[j].length - 1) === '"') {
-              paramStr += ',' + params[j].slice(0, params[j].length - 1)
-              i = j
-              args.push(paramStr)
-              lastIndex = true
-            } else {
-              paramStr += ',' + params[j]
-            }
+      // If a quote is received
+      if (params.charAt(i) === '"') {
+        startIndex = -1
+        let endQuoteIndex = false
+        // look for closing quote. On success, push the complete string in arguments list
+        for (let j = i + 1; !endQuoteIndex; j++) {
+          if (params.charAt(j) === '"') {
+            args.push(params.substring(i + 1, j))
+            endQuoteIndex = true
+            i = j
           }
         }
-      } else if (param.charAt(0) === '[') {   // Check if param starts with [ , it will be an array.
-        // Check if array completes in one location by looking for end bracket
-        if (param.charAt(param.length - 1) === ']') {
-          args.push(param)
-        } else {
-          let lastIndex = false
-          let paramStr = param
-          // For an array got divided in multiple location
-          for (let j = i + 1; !lastIndex; j++) {
-            // Check if end bracket is reached
-            if (params[j].charAt(params[j].length - 1) === ']') {
-              paramStr += ',' + params[j]
-              i = j
-              args.push(JSON.parse(paramStr))
-              lastIndex = true
-            } else {
-              paramStr += ',' + params[j]
-            }
+      } else if (params.charAt(i) === '[') {  // If a array opening bracket is received
+        startIndex = -1
+        let bracketCount = 1
+        let j
+        for (j = i + 1; bracketCount !== 0; j++) {
+          // Increase count if another array opening bracket is received (To handle nested array)
+          if (params.charAt(j) === '[') {
+            bracketCount++
+          } else if (params.charAt(j) === ']') {  // // Decrease count if an array closing bracket is received (To handle nested array)
+            bracketCount--
           }
         }
-      } else {
-        args.push(param)
+        // If bracketCount = 0, it means complete array/nested array parsed, push it to the arguments list
+        args.push(JSON.parse(params.substring(i, j)))
+        i = j - 1
+      } else if (params.charAt(i) === ',') {
+        // if startIndex >= 0, it means a parameter was being parsed, it can be first or other parameter
+        if (startIndex >= 0) {
+          args.push(params.substring(startIndex, i))
+        }
+        // Register start index of a parameter to parse
+        startIndex = this.isArrayOrStringStart(params, i + 1) ? -1 : i + 1
+      } else if (startIndex >= 0 && i === params.length - 1) {
+        // If start index is registered and string is completed (To handle last parameter)
+        args.push(params.substring(startIndex, params.length))
       }
     }
+    args = args.map(e => {
+      if (!Array.isArray(e)) {
+        return e.trim()
+      } else {
+        return e
+      }
+    })
     return args
+  },
+
+  isArrayOrStringStart: function (str, index) {
+    return str.charAt(index) === '"' || str.charAt(index) === '['
   }
 }
 
