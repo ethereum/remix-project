@@ -1,5 +1,5 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3-beta.1",
   "name": "remix-desktop",
   "description": "",
   "main": "main.js",
@@ -14,7 +14,7 @@
     "url": "git+https://github.com/ethereum/remix-desktop.git"
   },
   "author": {
-    "name": "Remix",
+    "name": "Remix Team",
     "email": "remix@ethereum.org"
   },
   "license": "MIT",
@@ -28,8 +28,9 @@
     "env-cmd": "^10.0.1"
   },
   "build": {
-    "productName": "Remix Desktop",
+    "productName": "Remix IDE",
     "appId": "org.ethereum.remix-desktop",
+    "asar": false,
     "mac": {
       "category": "public.app-category.productivity",
       "target": [
@@ -61,6 +62,6 @@
   },
   "dependencies": {
     "@philipplgh/electron-app-manager": "^0.55.0",
-    "remixd": "^0.1.8-alpha.7"
+    "remixd": "^0.1.8-alpha.10"
   }
 }
