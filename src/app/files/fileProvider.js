@@ -6,6 +6,8 @@ class FileProvider {
   constructor (name) {
     this.event = new EventManager()
     this.type = name
+    this.normalizedNames = {} // contains the raw url associated with the displayed path
+    this.readonlyItems = ['browser']
   }
 
   exists (path, cb) {
@@ -23,6 +25,7 @@ class FileProvider {
 
   get (path, cb) {
     cb = cb || function () {}
+    if (this.normalizedNames[path]) path = this.normalizedNames[path] // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (!exists) return cb(null, null)
@@ -33,6 +36,10 @@ class FileProvider {
 
   set (path, content, cb) {
     cb = cb || function () {}
+    if (this.isReadOnly(path)) {
+      cb(new Error('It is not possible to modify a readonly item'))
+      return false
+    }
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (!exists && unprefixedpath.indexOf('/') !== -1) {
@@ -63,15 +70,26 @@ class FileProvider {
     return true
   }
 
-  addReadOnly (path, content) {
+  addReadOnly (path, content, url) {
+    this.readonlyItems.push(this.type + '/' + path)
+    if (!url) this.normalizedNames[url] = path
     return this.set(path, content)
   }
 
   isReadOnly (path) {
-    return false
+    return this.readonlyItems.includes(path)
+  }
+
+  _removeFromReadonlyList (path) {
+    const indexToRemove = this.readonlyItems.indexOf(path)
+    if (indexToRemove !== -1) {
+      this.readonlyItems.splice(indexToRemove, 1)
+    }
   }
 
   remove (path) {
+    this._removeFromReadonlyList(path)
+
     var unprefixedpath = this.removePrefix(path)
     if (!this._exists(unprefixedpath)) {
       return false

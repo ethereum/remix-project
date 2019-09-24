@@ -211,7 +211,8 @@ function fileExplorer (localRegistry, files, menuItems) {
     if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
     let actions = {}
-    if (!self.files.readonly) {
+    const provider = self._deps.fileManager.fileProviderOf(key)
+    if (!provider.isReadOnly(key)) {
       actions['Rename'] = () => {
         if (self.files.readonly) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
@@ -219,15 +220,20 @@ function fileExplorer (localRegistry, files, menuItems) {
       }
       actions['Delete'] = () => {
         if (self.files.readonly) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
-        modalDialogCustom.confirm('Delete a file', 'Are you sure you want to delete this file?', () => { files.remove(key) }, () => {})
+        modalDialogCustom.confirm(
+          'Delete a file', 'Are you sure you want to delete this file?',
+          () => { files.remove(key) },
+          () => {}
+        )
       }
-    }
-    if (self.files.type !== 'browser') {
-      actions['Copy to Browser explorer'] = () => {
-        files.get(key, (error, content) => {
-          if (error) return tooltip(error)
-          self._deps.fileManager.setFile(`browser/${label.innerText}`, content)
-        })
+    } else {
+      actions['Delete from remix'] = () => {
+        modalDialogCustom.confirm(
+          'Delete from remix',
+          'Are you sure you want to delete this file from remix?',
+          () => { files.remove(key) },
+          () => {}
+        )
       }
     }
     MENU_HANDLE = contextMenu(event, actions)
@@ -245,13 +251,13 @@ function fileExplorer (localRegistry, files, menuItems) {
 
   // register to main app, trigger when the current file in the editor changed
   self._deps.fileManager.events.on('currentFileChanged', (newFile) => {
-    const explorer = self._deps.fileManager.fileProviderOf(newFile)
+    const provider = self._deps.fileManager.fileProviderOf(newFile)
     if (self.focusElement && self.focusPath !== newFile) {
       self.focusElement.classList.remove('bg-secondary')
       self.focusElement = null
       self.focusPath = null
     }
-    if (explorer && (explorer.type === files.type)) {
+    if (provider && (provider.type === files.type)) {
       self.focusElement = self.treeView.labelAt(newFile)
       if (self.focusElement) {
         self.focusElement.classList.add('bg-secondary')
@@ -350,7 +356,7 @@ fileExplorer.prototype.init = function () {
 fileExplorer.prototype.publishToGist = function () {
   modalDialogCustom.confirm(
     'Create a public gist',
-    'Are you sure you want to publish all your files anonymously as a public gist on github.com?',
+    'Are you sure you want to publish all your files in browser directory anonymously as a public gist on github.com? Note: this will not include directories.',
     () => { this.toGist() }
   )
 }
