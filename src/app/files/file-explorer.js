@@ -220,14 +220,20 @@ function fileExplorer (localRegistry, files, menuItems) {
       }
       actions['Delete'] = () => {
         if (self.files.readonly) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
-        modalDialogCustom.confirm('Delete a file', 'Are you sure you want to delete this file?', () => { files.remove(key) }, () => {})
+        modalDialogCustom.confirm(
+          'Delete a file', 'Are you sure you want to delete this file?',
+          () => { files.remove(key) },
+          () => {}
+        )
       }
     } else {
-      actions['Copy to Browser explorer'] = () => {
-        files.get(key, (error, content) => {
-          if (error) return tooltip(error)
-          self._deps.fileManager.setFile(`browser/${label.innerText}`, content)
-        })
+      actions['Delete from remix'] = () => {
+        modalDialogCustom.confirm(
+          'Delete from remix',
+          'Are you sure you want to delete this file from remix?',
+          () => { files.remove(key) },
+          () => {}
+        )
       }
     }
     MENU_HANDLE = contextMenu(event, actions)
