@@ -71,7 +71,7 @@ class FileProvider {
   }
 
   addReadOnly (path, content, url) {
-    this.readonlyItems.push('browser/' + path)
+    this.readonlyItems.push(this.type + '/' + path)
     if (!url) this.normalizedNames[url] = path
     return this.set(path, content)
   }
@@ -80,12 +80,15 @@ class FileProvider {
     return this.readonlyItems.includes(path)
   }
 
-  remove (path) {
-    // remove from readonly list
+  _removeFromReadonlyList (path) {
     const indexToRemove = this.readonlyItems.indexOf(path)
     if (indexToRemove !== -1) {
       this.readonlyItems.splice(indexToRemove, 1)
     }
+  }
+
+  remove (path) {
+    this._removeFromReadonlyList(path)
 
     var unprefixedpath = this.removePrefix(path)
     if (!this._exists(unprefixedpath)) {
