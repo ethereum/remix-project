@@ -60,7 +60,7 @@
     }
   },
   "dependencies": {
-    "@philipplgh/electron-app-manager": "^0.53.0",
+    "@philipplgh/electron-app-manager": "^0.55.0",
     "remixd": "^0.1.8-alpha.7"
   }
 }
