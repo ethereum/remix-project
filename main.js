@@ -1,11 +1,12 @@
 const remixd = require('remixd')
 const os = require('os');
 
+const { version } = require('./package.json')
 const { app, BrowserWindow } = require('electron')
 const { AppManager, registerPackageProtocol } = require('@philipplgh/electron-app-manager')
 registerPackageProtocol()
 
-
+console.log('running', version)
 const updater = new AppManager({
   repository: 'https://github.com/ethereum/remix-desktop',
   auto: true,
