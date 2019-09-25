@@ -256,13 +256,14 @@ export class RemixAppManager extends PluginEngine {
       location: 'mainPanel'
     }
     const zokrates = {
-      name: 'Zokrates',
+      name: 'ZoKrates',
       displayName: 'ZoKrates',
-      description: 'ZoKrates will compile your program to an intermediate representation and run a trusted setup protocol to generate proving and verifying keys.',
+      description: 'ZoKrates toolbox for zkSNARKs on Ethereum',
+      documentation: 'https://zokrates.github.io/',
       methods: [],
       events: [],
       version: '0.1.0-alpha',
-      url: 'https://zokrates.blockchain-it.hr',
+      url: 'https://zokrates.blockchain-it.hr/',
       icon: 'https://zokrates.blockchain-it.hr/zokrates.svg',
       location: 'sidePanel'
     }
