@@ -50,8 +50,8 @@ Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
       'cumulativeGasUsed': Web3.utils.toHex(receipt.gas),
       'contractAddress': receipt.contractAddress,
       'logs': receipt.logs,
-      // 'status': receipt.status
-      'status': "0x01"
+      'status': receipt.status
+      // 'status': "0x01"
     }
 
     if (r.blockNumber === '0x') {
@@ -82,6 +82,9 @@ Transactions.prototype.eth_call = function (payload, cb) {
   // from might be lowercased address (web3)
   if (payload.params && payload.params.length > 0 && payload.params[0].from) {
     payload.params[0].from = ethJSUtil.toChecksumAddress(payload.params[0].from)
+  }
+  if (payload.params && payload.params.length > 0 && payload.params[0].to) {
+    payload.params[0].to = ethJSUtil.toChecksumAddress(payload.params[0].to)
   }
   processTx(this.accounts, payload, true, cb)
 }

@@ -9,6 +9,9 @@ function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks,
       return callback(err)
     }
 
+    console.dir(result.result.vm)
+    console.dir(result.result.vm.error)
+    console.dir(result.result)
     let toReturn = '0x' + result.result.vm.return.toString('hex')
     if (toReturn === '0x') {
       toReturn = '0x0'
@@ -16,7 +19,7 @@ function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks,
     return callback(null, toReturn)
   }
 
-  TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback, true)
+  TxExecution.callFunction(from, to, data, value, gasLimit, {constant: true}, txRunner, callbacks, finalCallback, true)
 }
 
 function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
@@ -27,7 +30,7 @@ function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, c
     callback(null, result.transactionHash)
   }
 
-  TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback, false)
+  TxExecution.callFunction(from, to, data, value, gasLimit, {constant: false}, txRunner, callbacks, finalCallback, false)
 }
 
 function createContract (payload, from, data, value, gasLimit, txRunner, callbacks, callback) {
