@@ -51,7 +51,6 @@ Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
       'contractAddress': receipt.contractAddress,
       'logs': receipt.logs,
       'status': receipt.status
-      // 'status': "0x01"
     }
 
     if (r.blockNumber === '0x') {
@@ -86,6 +85,9 @@ Transactions.prototype.eth_call = function (payload, cb) {
   if (payload.params && payload.params.length > 0 && payload.params[0].to) {
     payload.params[0].to = ethJSUtil.toChecksumAddress(payload.params[0].to)
   }
+
+  payload.params[0].value = undefined
+
   processTx(this.accounts, payload, true, cb)
 }
 

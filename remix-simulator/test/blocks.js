@@ -29,7 +29,7 @@ describe('blocks', function () {
         parentHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
         sha3Uncles: '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
         size: 163591,
-        stateRoot: '0x63e1738ea12d4e7d12b71f0f4604706417921eb6a62c407ca5f1d66b9e67f579',
+        stateRoot: '0xa633ca0e8f0ae4e86d4d572b048ea93d84eb4b11e2c988b48cb3a5f6f10b3c68',
         timestamp: block.timestamp,
         totalDifficulty: '0',
         transactions: [],
@@ -202,25 +202,120 @@ describe('blocks', function () {
 
       const contract = new web3.eth.Contract(abi)
       const accounts = await web3.eth.getAccounts()
-      console.dir('--------')
-      console.dir(accounts)
-      console.dir('--------')
 
       const contractInstance = await contract.deploy({ data: code, arguments: [100] }).send({ from: accounts[0], gas: 400000 })
       contractInstance.currentProvider = web3.eth.currentProvider
       contractInstance.givenProvider = web3.eth.currentProvider
 
-      // await contractInstance.methods.set(100).send({ from: accounts[0].toLowerCase(), gas: 400000 })
-      // let storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
-      // assert.deepEqual(storage, '0x64')
+      await contractInstance.methods.set(100).send({ from: accounts[0].toLowerCase(), gas: 400000 })
+      let storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
+      assert.deepEqual(storage, '0x64')
 
-      // await contractInstance.methods.set(200).send({ from: accounts[0], gas: 400000 })
-      // storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
-      // assert.deepEqual(storage, '0x64')
+      await contractInstance.methods.set(200).send({ from: accounts[0], gas: 400000 })
+      storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
+      assert.deepEqual(storage, '0x64')
 
-      // await contractInstance.methods.set(200).send({ from: accounts[0], gas: 400000 })
-      // storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
-      // assert.deepEqual(storage, '0xc8')
+      await contractInstance.methods.set(200).send({ from: accounts[0], gas: 400000 })
+      storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
+      assert.deepEqual(storage, '0xc8')
+    })
+  })
+
+  describe('eth_call', () => {
+    it('should get a value', async function () {
+      let abi = [
+        {
+          'constant': false,
+          'inputs': [
+            {
+              'name': 'x',
+              'type': 'uint256'
+            }
+          ],
+          'name': 'set',
+          'outputs': [],
+          'payable': false,
+          'stateMutability': 'nonpayable',
+          'type': 'function'
+        },
+        {
+          'constant': false,
+          'inputs': [
+            {
+              'name': 'x',
+              'type': 'uint256'
+            }
+          ],
+          'name': 'set2',
+          'outputs': [],
+          'payable': false,
+          'stateMutability': 'nonpayable',
+          'type': 'function'
+        },
+        {
+          'inputs': [
+            {
+              'name': 'initialValue',
+              'type': 'uint256'
+            }
+          ],
+          'payable': false,
+          'stateMutability': 'nonpayable',
+          'type': 'constructor'
+        },
+        {
+          'anonymous': false,
+          'inputs': [
+            {
+              'indexed': true,
+              'name': 'value',
+              'type': 'uint256'
+            }
+          ],
+          'name': 'Test',
+          'type': 'event'
+        },
+        {
+          'constant': true,
+          'inputs': [],
+          'name': 'get',
+          'outputs': [
+            {
+              'name': 'retVal',
+              'type': 'uint256'
+            }
+          ],
+          'payable': false,
+          'stateMutability': 'view',
+          'type': 'function'
+        },
+        {
+          'constant': true,
+          'inputs': [],
+          'name': 'storedData',
+          'outputs': [
+            {
+              'name': '',
+              'type': 'uint256'
+            }
+          ],
+          'payable': false,
+          'stateMutability': 'view',
+          'type': 'function'
+        }
+      ]
+
+      let code = '0x608060405234801561001057600080fd5b506040516020806102018339810180604052602081101561003057600080fd5b810190808051906020019092919050505080600081905550506101a9806100586000396000f3fe60806040526004361061005c576000357c0100000000000000000000000000000000000000000000000000000000900480632a1afcd91461006157806360fe47b11461008c5780636d4ce63c146100c7578063ce01e1ec146100f2575b600080fd5b34801561006d57600080fd5b5061007661012d565b6040518082815260200191505060405180910390f35b34801561009857600080fd5b506100c5600480360360208110156100af57600080fd5b8101908080359060200190929190505050610133565b005b3480156100d357600080fd5b506100dc61013d565b6040518082815260200191505060405180910390f35b3480156100fe57600080fd5b5061012b6004803603602081101561011557600080fd5b8101908080359060200190929190505050610146565b005b60005481565b8060008190555050565b60008054905090565b80600081905550807f63a242a632efe33c0e210e04e4173612a17efa4f16aa4890bc7e46caece80de060405160405180910390a25056fea165627a7a7230582063160eb16dc361092a85ced1a773eed0b63738b83bea1e1c51cf066fa90e135d0029'
+
+      const contract = new web3.eth.Contract(abi)
+      const accounts = await web3.eth.getAccounts()
+
+      const contractInstance = await contract.deploy({ data: code, arguments: [100] }).send({ from: accounts[0], gas: 400000 })
+      contractInstance.currentProvider = web3.eth.currentProvider
+      contractInstance.givenProvider = web3.eth.currentProvider
+
+      let value = await contractInstance.methods.get().call({ from: accounts[0] })
+      assert.deepEqual(value, 100)
     })
   })
 })
