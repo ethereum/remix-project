@@ -17,6 +17,12 @@ Please change the compiler version in Solidity Plugin to the newer one or use an
 
 **A:**  Try a different browser or a newer solidity compiler version.
 
+**Q:** How to verify a contract that imports other contracts?
+
+**A:**  The verification tool does not recursively go through the import statments in a contract.  So can only verify a 'flattened' contract.  
+
+There is a plugin called `Flattener` which will stuff all the original code and the imported code into a single file.
+
 ### Deploy & Run
 
 **Q:** I am using an Infura endpoint in my app, but when I try to deploy against that endpoint in remix IDE selecting "web3 provider" and putting my endpoint in, it's telling me that it can't connect
@@ -74,7 +80,8 @@ The input of initPeepToPeeps takes a struct.  If you input
 `[1,2]` the transaction will go through.
 
 
+### General
 
+**Q:** Where do plugin developers go with their questions?
 
-
-
+**A:** The Gitter Remix plugin developers room https://gitter.im/ethereum/remix-dev-plugin
