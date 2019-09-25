@@ -54,7 +54,12 @@ class Server {
       })
     }
 
-    app.listen(port, host, () => log('Remix Simulator listening on port ' + host + ':' + port))
+    app.listen(port, host, () => {
+      log('Remix Simulator listening on ws://' + host + ':' + port)
+      if (!this.rpcOnly) {
+        log('http json-rpc is deprecated and disabled by default. To enable it use --rpc')
+      }
+    })
   }
 }
 

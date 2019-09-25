@@ -115,7 +115,7 @@ function ExecutionContext () {
   this.blockGasLimit = this.blockGasLimitDefault
   this.customNetWorks = {}
   this.blocks = {}
-  this.latestBlockNumber = 0;
+  this.latestBlockNumber = 0
   this.txs = {}
 
   this.init = function (config) {
