@@ -5,9 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "yarn run prepare-release && electron-builder",
-    "release": "yarn run dist",
-    "prepare-release": "node ./scripts/copyApp.js"
+    "dist": "electron-builder",
+    "release": "yarn run dist"
   },
   "repository": {
     "type": "git",
