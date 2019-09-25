@@ -50,7 +50,12 @@ Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
       'cumulativeGasUsed': Web3.utils.toHex(receipt.gas),
       'contractAddress': receipt.contractAddress,
       'logs': receipt.logs,
-      'status': receipt.status
+      // 'status': receipt.status
+      'status': "0x01"
+    }
+
+    if (r.blockNumber === '0x') {
+      r.blockNumber = '0x0'
     }
 
     cb(null, r)
@@ -128,6 +133,10 @@ Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
 
     if (r.value === '0x') {
       r.value = '0x0'
+    }
+
+    if (r.blockNumber === '0x') {
+      r.blockNumber = '0x0'
     }
 
     cb(null, r)
