@@ -23,7 +23,6 @@ var Provider = function (options) {
   this.methods = merge(this.methods, (new Misc()).methods())
   this.methods = merge(this.methods, (new Filters()).methods())
   this.methods = merge(this.methods, (new Net()).methods())
-  // this.methods = merge(this.methods, (new Transactions(this.Accounts.accounts)).methods())
   this.methods = merge(this.methods, this.Transactions.methods())
 
   generateBlock()
@@ -39,11 +38,8 @@ Provider.prototype.sendAsync = function (payload, callback) {
   log.info('payload method is ', payload.method)
 
   let method = this.methods[payload.method]
-  console.dir(payload)
   if (method) {
     return method.call(method, payload, (err, result) => {
-      console.dir(err)
-      console.dir(result)
       if (err) {
         return callback(err)
       }

@@ -115,6 +115,7 @@ function ExecutionContext () {
   this.blockGasLimit = this.blockGasLimitDefault
   this.customNetWorks = {}
   this.blocks = {}
+  this.latestBlockNumber = 0;
   this.txs = {}
 
   this.init = function (config) {
@@ -309,6 +310,7 @@ function ExecutionContext () {
 
     self.blocks['0x' + block.hash().toString('hex')] = block
     self.blocks[blockNumber] = block
+    self.latestBlockNumber = blockNumber
 
     this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
