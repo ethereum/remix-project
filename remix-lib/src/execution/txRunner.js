@@ -133,9 +133,6 @@ class TxRunner {
           ++self.blockNumber
           this.runBlockInVm(tx, block, callback)
         } else {
-          console.dir("============")
-          console.dir("========= useCall")
-          console.dir("============")
           executionContext.vm().stateManager.checkpoint(() => {
             this.runBlockInVm(tx, block, (err, result) => {
               executionContext.vm().stateManager.revert(() => {
