@@ -14,6 +14,7 @@ const Transactions = require('./methods/transactions.js')
 const generateBlock = require('./genesis.js')
 
 var Provider = function (options) {
+  this.options = options || {}
   this.Accounts = new Accounts()
   this.Transactions = new Transactions()
 
@@ -38,8 +39,15 @@ Provider.prototype.sendAsync = function (payload, callback) {
   log.info('payload method is ', payload.method)
 
   let method = this.methods[payload.method]
+  if (this.options.logDetails) {
+    log.info(payload)
+  }
   if (method) {
     return method.call(method, payload, (err, result) => {
+      if (this.options.logDetails) {
+        log.info(err)
+        log.info(result)
+      }
       if (err) {
         return callback(err)
       }

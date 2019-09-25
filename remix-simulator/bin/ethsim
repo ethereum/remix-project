@@ -24,12 +24,14 @@ program
   .option('-b, --ip [host]', 'specify host')
   .option('-c, --coinbase [coinbase]', 'specify host')
   .option('--rpc', 'run rpc server only')
+  .option('--details', 'display payloads for every requests and their responses')
   .parse(process.argv)
 
 const Server = require('../src/server')
 const server = new Server({
   coinbase: program.coinbase || "0x0000000000000000000000000000000000000000",
-  rpc: program.rpc
+  rpc: program.rpc,
+  logDetails: program.details
 })
 server.start(program.host || '127.0.0.1', program.port || 8545)
 
