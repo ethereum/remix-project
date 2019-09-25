@@ -2,6 +2,7 @@ const remixd = require('remixd')
 const os = require('os');
 
 const { version } = require('./package.json')
+const selectFolder = require('./selectFolder')
 const { app, BrowserWindow } = require('electron')
 const { AppManager, registerPackageProtocol } = require('@philipplgh/electron-app-manager')
 registerPackageProtocol()
@@ -14,30 +15,44 @@ const updater = new AppManager({
 })
 
 function createWindow () {
-  // Create the browser window.
   let win = new BrowserWindow({
-    width: 1024,
-    height: 768,
+    width: 800,
+    height: 600,
     webPreferences: {
       nodeIntegration: false
     }
   })
-
-  // and load the index.html of the app.
-  // win.loadFile('index.html')
   win.loadURL('package://github.com/ethereum/remix-ide')
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+  remixdStart()
+  createWindow()
 
-var folder = process.argv.length > 2 ? process.argv[2] : os.homedir()
-
-var router = new remixd.Router(65520, remixd.services.sharedFolder, { remixIdeUrl: 'package://a7df6d3c223593f3550b35e90d7b0b1f.mod' }, (webSocket) => {
-  remixd.services.sharedFolder.setWebSocket(webSocket)
-  remixd.services.sharedFolder.setupNotifications(folder)
-  remixd.services.sharedFolder.sharedFolder(folder, false)
+  if (process.argv.length > 2) {
+    remixdInit(process.argv[2])
+  } else {
+    selectFolder().then((folder) => {
+      console.log('set folder', folder)
+      remixdInit(folder)
+    }).catch((error) => {
+      console.log(error, 'defaulting to home directory')
+      remixdInit(os.homedir())
+    })
+  }
 })
 
-const stopIt = router.start()
+let remixdStart = () => {
+  const remixIdeUrl = 'package://a7df6d3c223593f3550b35e90d7b0b1f.mod'
+  console.log('start shared folder service')
+  let router = new remixd.Router(65520, remixd.services.sharedFolder, { remixIdeUrl }, (webSocket) => {
+    console.log('set websocket')
+    remixd.services.sharedFolder.setWebSocket(webSocket)
+  })
+  router.start()
+}
 
-app.on('quit', () => stopIt())
+let remixdInit = (folder) => {
+  remixd.services.sharedFolder.sharedFolder(folder, false)
+  remixd.services.sharedFolder.setupNotifications(folder)
+}
