@@ -166,6 +166,7 @@
     "nightwatch_local_transactionExecution": "nightwatch ./test-browser/tests/transactionExecution.js --config nightwatch.js --env chrome ",
     "nightwatch_local_staticAnalysis": "nightwatch ./test-browser/tests/staticAnalysis.js --config nightwatch.js --env chrome ",
     "nightwatch_local_signingMessage": "nightwatch ./test-browser/tests/signingMessage.js --config nightwatch.js --env chrome ",
+    "nightwatch_local_solidityUnittests": "nightwatch ./test-browser/tests/solidityUnittests.js --config nightwatch.js --env chrome ",
     "nightwatch_local_remixd": "nightwatch ./test-browser/tests/remix.js --config nightwatch.js --env chrome ",
     "nightwatch_local_console": "nightwatch ./test-browser/tests/console.js --config nightwatch.js --env chrome ",
     "onchange": "onchange build/app.js -- npm-run-all lint",
