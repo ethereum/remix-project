@@ -49,6 +49,8 @@ import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import { UniversalDApp } from 'remix-lib'
 
+import migrateFileSystem from './migrateFileSystem'
+
 var css = csjs`
   html { box-sizing: border-box; }
   *, *:before, *:after { box-sizing: inherit; }
@@ -102,7 +104,6 @@ class App {
     var self = this
     self._components = {}
     // setup storage
-    var fileStorage = new Storage('sol:')
     var configStorage = new Storage('config-v0.8:')
 
     // load app config
@@ -111,7 +112,7 @@ class App {
 
     // load file system
     self._components.filesProviders = {}
-    self._components.filesProviders['browser'] = new FileProvider('browser', fileStorage)
+    self._components.filesProviders['browser'] = new FileProvider('browser')
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
 
     var remixd = new Remixd(65520)
@@ -125,6 +126,8 @@ class App {
     registry.put({api: self._components.filesProviders, name: 'fileproviders'})
 
     self._view = {}
+
+    migrateFileSystem(self._components.filesProviders['browser'])
   }
 
   init () {
