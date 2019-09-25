@@ -23,7 +23,16 @@ Blocks.prototype.methods = function () {
 }
 
 Blocks.prototype.eth_getBlockByNumber = function (payload, cb) {
-  var block = executionContext.blocks[payload.params[0]]
+  let blockIndex = payload.params[0]
+  if (blockIndex === 'latest') {
+    blockIndex = (Object.keys(executionContext.blocks).length / 2) - 1
+  }
+
+  // =======
+  // TODO: FIX ME
+  // var block = executionContext.blocks[blockIndex]
+  var block = Object.values(executionContext.blocks)[0]
+  // =======
 
   if (!block) {
     return cb(new Error('block not found'))
