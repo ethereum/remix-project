@@ -1,7 +1,7 @@
 {
   "version": "1.0.3-beta.4",
-  "name": "remix-desktop",
-  "description": "",
+  "name": "remix-ide",
+  "description": "Remix - Ethereum IDE",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -32,6 +32,8 @@
     "files": [
       "main.js",
       "selectFolder.js",
+      "applicationMenu.js",
+      "build/icon.png",
       "*.asar",
       "*.zip"
     ],
