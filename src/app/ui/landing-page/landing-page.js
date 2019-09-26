@@ -111,7 +111,7 @@ export class LandingPage extends ViewPlugin {
                 modalDialogCustom.alert(error)
               } else {
                 fileProviders['browser'].addReadOnly(type + '/' + cleanUrl, content, url)
-                globalRegistry.get('verticalicon').api.select('fileExplorers')
+                this.verticalIcons.select('fileExplorers')
               }
             }
           )
