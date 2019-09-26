@@ -26,20 +26,16 @@ let css = csjs`
   .thisJumboton {
     padding: 2.5rem 0rem;
     margin-bottom: 4rem;
+    display: flex;
+    align-items: center;
   }
   .hpLogoContainer {
     margin:30px;
     padding-right: 90px;
   }
   .jumboBtnContainer {
-    float: left;
-    padding-top: 15px;
-    display: flex;
-    white-space: nowrap;
   }
   .headlineContainer {
-    float: left;
-    padding-top: 17px;
     margin: 0 50px 0 70px;
   }
   .hpSections {
@@ -57,11 +53,11 @@ let css = csjs`
     margin-right: 10px;
   }
   .logoContainer {
-    margin-top: 7px;
     float: left;
   }
   .logoContainer img{
-    height: 65px;
+    height: 150px;
+    opacity: 0.5;
   }
   .enviroments {
     display: flex;
@@ -91,7 +87,7 @@ export class LandingPage extends ViewPlugin {
   }
 
   render () {
-    let load = function (service, item, examples, info) {
+    let load = (service, item, examples, info) => {
       let compilerImport = new CompilerImport()
       let fileProviders = globalRegistry.get('fileproviders').api
       const msg = yo`
@@ -180,11 +176,12 @@ export class LandingPage extends ViewPlugin {
       query.update({appVersion: '0.7.7'})
       document.location.reload()
     }
+    const img = yo`<img src="assets/img/hexagon-remix-greengrey-texture.png"></img>`
     let container = yo`<div class="${css.homeContainer} bg-light">
       <div>
         <div class="alert alert-info clearfix ${css.thisJumboton}">
           <div class="${css.headlineContainer}">
-            <h2 class="">The new layout has arrived</h2>
+            <div class="${css.logoContainer}">${img}</div>
           </div>
           <div class="${css.jumboBtnContainer} px-5">
             <button class="btn btn-primary btn-lg mx-3" href="#" onclick=${() => learnMore()} role="button">Learn more</button>
