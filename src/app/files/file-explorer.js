@@ -194,17 +194,29 @@ function fileExplorer (localRegistry, files, menuItems) {
     if (self.files.readonly) return
     if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
-    MENU_HANDLE = contextMenu(event, {
-      'Rename': () => {
+    let actions = {}
+    const provider = self._deps.fileManager.fileProviderOf(key)
+    if (provider.isExternalFolder(key)) {
+      actions['Discard changes'] = () => {
+        modalDialogCustom.confirm(
+          'Discard changes',
+          'Are you sure you want to discard all your changes?',
+          () => { files.discardChanges(key) },
+          () => {}
+        )
+      }
+    } else {
+      actions['Rename'] = () => {
         if (self.files.readonly) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
-      },
-      'Delete': () => {
-        if (self.files.readonly) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
-        modalDialogCustom.confirm('Confirm to delete a folder', 'Are you sure you want to delete this folder?', () => { files.remove(key) }, () => {})
       }
-    })
+    }
+    actions['Delete'] = () => {
+      if (self.files.readonly) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
+      modalDialogCustom.confirm('Confirm to delete a folder', 'Are you sure you want to delete this folder?', () => { files.remove(key) }, () => {})
+    }
+    MENU_HANDLE = contextMenu(event, actions)
   })
 
   self.treeView.event.register('leafRightClick', function (key, data, label, event) {
@@ -212,7 +224,7 @@ function fileExplorer (localRegistry, files, menuItems) {
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
     let actions = {}
     const provider = self._deps.fileManager.fileProviderOf(key)
-    if (!provider.isReadOnly(key)) {
+    if (!provider.isExternalFolder(key)) {
       actions['Rename'] = () => {
         if (self.files.readonly) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
@@ -222,15 +234,6 @@ function fileExplorer (localRegistry, files, menuItems) {
         if (self.files.readonly) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
         modalDialogCustom.confirm(
           'Delete a file', 'Are you sure you want to delete this file?',
-          () => { files.remove(key) },
-          () => {}
-        )
-      }
-    } else {
-      actions['Delete from remix'] = () => {
-        modalDialogCustom.confirm(
-          'Delete from remix',
-          'Are you sure you want to delete this file from remix?',
           () => { files.remove(key) },
           () => {}
         )
