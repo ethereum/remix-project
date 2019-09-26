@@ -1,5 +1,6 @@
 const remixd = require('remixd')
 const os = require('os');
+const path = require('path')
 
 const { version } = require('./package.json')
 const selectFolder = require('./selectFolder')
@@ -21,7 +22,8 @@ function createWindow () {
     height: 600,
     webPreferences: {
       nodeIntegration: false
-    }
+    },
+    icon: path.join(__dirname, 'build/icon.png')
   })
   applicationMenu()
   win.webContents.on('new-window', function(e, url) {
