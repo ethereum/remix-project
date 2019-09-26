@@ -22,6 +22,10 @@ function createWindow () {
       nodeIntegration: false
     }
   })
+  win.webContents.on('new-window', function(e, url) {
+    e.preventDefault();
+    shell.openExternal(url);
+  })
   win.loadURL('package://github.com/ethereum/remix-ide')
 }
 
