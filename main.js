@@ -3,7 +3,8 @@ const os = require('os');
 
 const { version } = require('./package.json')
 const selectFolder = require('./selectFolder')
-const { app, BrowserWindow } = require('electron')
+const applicationMenu = require('./applicationMenu')
+const { app, BrowserWindow, shell } = require('electron')
 const { AppManager, registerPackageProtocol } = require('@philipplgh/electron-app-manager')
 registerPackageProtocol()
 
@@ -22,6 +23,7 @@ function createWindow () {
       nodeIntegration: false
     }
   })
+  applicationMenu()
   win.webContents.on('new-window', function(e, url) {
     e.preventDefault();
     shell.openExternal(url);
