@@ -206,10 +206,14 @@ function fileExplorer (localRegistry, files, menuItems) {
         )
       }
     } else {
-      actions['Rename'] = () => {
-        if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
-        var name = label.querySelector('span[data-path="' + key + '"]')
-        if (name) editModeOn(name)
+      // extracts first two folders
+      const firstTwoFolders = key.substring(0, key.indexOf('/', key.indexOf('/', 1) + 1))
+      if (!provider.isExternalFolder(firstTwoFolders)) {
+        actions['Rename'] = () => {
+          if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
+          var name = label.querySelector('span[data-path="' + key + '"]')
+          if (name) editModeOn(name)
+        }
       }
     }
     actions['Delete'] = () => {
