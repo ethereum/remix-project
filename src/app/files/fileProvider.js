@@ -98,6 +98,7 @@ class FileProvider {
       })
     }
     try {
+      if (window.remixFileSystem.readFileSync(unprefixedpath, 'utf8') === content) return true
       window.remixFileSystem.writeFileSync(unprefixedpath, content)
     } catch (e) {
       cb(e)
