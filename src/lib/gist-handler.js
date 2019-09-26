@@ -57,7 +57,7 @@ function GistHandler (_window) {
         Object.keys(data.files).forEach((element) => {
           obj['/gists/' + gistId + '/' + element] = data.files[element]
         })
-        fileManager.setBatchFiles(obj, 'browser', (errorLoadingFile) => {
+        fileManager.setBatchFiles(obj, 'browser', true, (errorLoadingFile) => {
           if (!errorLoadingFile) {
             gistProvider.id = gistId
             gistProvider.origGistFiles = data.files
