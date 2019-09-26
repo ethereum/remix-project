@@ -106,7 +106,7 @@ export class LandingPage extends ViewPlugin {
               if (error) {
                 modalDialogCustom.alert(error)
               } else {
-                fileProviders['browser'].addReadOnly(type + '/' + cleanUrl, content, url)
+                fileProviders['browser'].addExternal(type + '/' + cleanUrl, content, url)
                 this.verticalIcons.select('fileExplorers')
               }
             }

@@ -110,10 +110,18 @@ module.exports = class CompilerImports extends Plugin {
     })
   }
 
-  import (url, loadingCb, cb) {
+  import (url, force, loadingCb, cb) {
+    if (typeof force !== 'boolean') {
+      let temp = loadingCb
+      loadingCb = force
+      cb = temp
+      force = false
+    }
     if (!loadingCb) loadingCb = () => {}
+    if (!cb) cb = () => {}
 
     var self = this
+    if (force) delete this.previouslyHandled[url]
     var imported = this.previouslyHandled[url]
     if (imported) {
       return cb(null, imported.content, imported.cleanUrl, imported.type, url)

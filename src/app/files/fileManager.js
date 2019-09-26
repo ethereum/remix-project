@@ -49,13 +49,17 @@ class FileManager extends Plugin {
       localhostExplorer: this._components.registry.get('fileproviders/localhost').api,
       filesProviders: this._components.registry.get('fileproviders').api
     }
-
+    this._deps.browserExplorer.event.register('fileChanged', (path) => { this.fileChangedEvent(path) })
     this._deps.browserExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.localhostExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.browserExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.localhostExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
     this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
+  }
+
+  fileChangedEvent (path) {
+    this.syncEditor(path)
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {
