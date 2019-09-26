@@ -62,8 +62,6 @@ const template = [
     submenu: [
       // { role: 'reload' },
       // { role: 'forcereload' },
-      { role: 'toggledevtools' },
-      { type: 'separator' },
       { role: 'resetzoom' },
       { role: 'zoomin' },
       { role: 'zoomout' },
@@ -107,10 +105,25 @@ const template = [
         click: async () => {
           shell.openExternal('https://gitter.im/ethereum/remix')
         }
-      }
+      },
+      {
+        label: 'Remix in StackExchange.com',
+        click: async () => {
+          shell.openExternal('https://ethereum.stackexchange.com/?tags=remix')
+        }
+      },
+      {
+        label: 'Check Releases',
+        click: async () => {
+          shell.openExternal('https://github.com/ethereum/remix-desktop/releases')
+        }
+      },
+      { role: 'toggledevtools' },
     ]
   }
 ]
+
 const menu = Menu.buildFromTemplate(template)
 Menu.setApplicationMenu(menu) 
+
 }
