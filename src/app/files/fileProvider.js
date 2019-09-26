@@ -1,13 +1,59 @@
 'use strict'
 
-var EventManager = require('../../lib/events')
+const CompilerImport = require('../compiler/compiler-imports')
+const EventManager = require('../../lib/events')
+const modalDialogCustom = require('../ui/modal-dialog-custom')
+const tooltip = require('../ui/tooltip')
+const remixLib = require('remix-lib')
+const Storage = remixLib.Storage
 
 class FileProvider {
   constructor (name) {
     this.event = new EventManager()
     this.type = name
-    this.normalizedNames = {} // contains the raw url associated with the displayed path
-    this.readonlyItems = ['browser']
+    this.providerExternalsStorage = new Storage('providerExternals:')
+    this.externalFolders = [this.type + '/swarm', this.type + '/ipfs', this.type + '/github', this.type + '/gist', this.type + '/https']
+  }
+
+  addNormalizedName (path, url) {
+    this.providerExternalsStorage.set(this.type + '/' + path, url)
+  }
+
+  removeNormalizedName (path) {
+    this.providerExternalsStorage.remove(path)
+  }
+
+  normalizedNameExists (path) {
+    return this.providerExternalsStorage.exists(path)
+  }
+
+  getNormalizedName (path) {
+    return this.providerExternalsStorage.get(path)
+  }
+
+  isExternalFolder (path) {
+    return this.externalFolders.includes(path)
+  }
+
+  discardChanges (path) {
+    this.remove(path)
+    const compilerImport = new CompilerImport()
+    this.providerExternalsStorage.keys().map(value => {
+      if (value.indexOf(path) === 0) {
+        compilerImport.import(
+          this.getNormalizedName(value),
+          true,
+          (loadingMsg) => { tooltip(loadingMsg) },
+          (error, content, cleanUrl, type, url) => {
+            if (error) {
+              modalDialogCustom.alert(error)
+            } else {
+              this.addExternal(type + '/' + cleanUrl, content, url)
+            }
+          }
+        )
+      }
+    })
   }
 
   exists (path, cb) {
@@ -25,7 +71,7 @@ class FileProvider {
 
   get (path, cb) {
     cb = cb || function () {}
-    if (this.normalizedNames[path]) path = this.normalizedNames[path] // ensure we actually use the normalized path from here
+    if (this.normalizedNameExists[path]) path = this.getNormalizedName(path) // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (!exists) return cb(null, null)
@@ -36,10 +82,6 @@ class FileProvider {
 
   set (path, content, cb) {
     cb = cb || function () {}
-    if (this.isReadOnly(path)) {
-      cb(new Error('It is not possible to modify a readonly item'))
-      return false
-    }
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (!exists && unprefixedpath.indexOf('/') !== -1) {
@@ -70,26 +112,17 @@ class FileProvider {
     return true
   }
 
-  addReadOnly (path, content, url) {
-    this.readonlyItems.push(this.type + '/' + path)
-    if (!url) this.normalizedNames[url] = path
+  // this will not add a folder as readonly but keep the original url to be able to restore it later
+  addExternal (path, content, url) {
+    if (url) this.addNormalizedName(path, url)
     return this.set(path, content)
   }
 
   isReadOnly (path) {
-    return this.readonlyItems.includes(path)
-  }
-
-  _removeFromReadonlyList (path) {
-    const indexToRemove = this.readonlyItems.indexOf(path)
-    if (indexToRemove !== -1) {
-      this.readonlyItems.splice(indexToRemove, 1)
-    }
+    return false
   }
 
   remove (path) {
-    this._removeFromReadonlyList(path)
-
     var unprefixedpath = this.removePrefix(path)
     if (!this._exists(unprefixedpath)) {
       return false
