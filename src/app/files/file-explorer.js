@@ -190,6 +190,16 @@ function fileExplorer (localRegistry, files, menuItems) {
     }
   })
 
+  /**
+   * Extracts furst two folders as a subpath from the path.
+   **/
+  function extractExternalFolder (path) {
+    const firstSlIndex = path.indexOf('/', 1)
+    if (firstSlIndex === -1) return ''
+    const secondSlIndex = path.indexOf('/', firstSlIndex + 1)
+    if (secondSlIndex === -1) return ''
+    return path.substring(0, secondSlIndex)
+  }
   self.treeView.event.register('nodeRightClick', function (key, data, label, event) {
     if (self.files.readonly) return
     if (key === self.files.type) return
@@ -206,9 +216,19 @@ function fileExplorer (localRegistry, files, menuItems) {
         )
       }
     } else {
-      // extracts first two folders
-      const firstTwoFolders = key.substring(0, key.indexOf('/', key.indexOf('/', 1) + 1))
-      if (!provider.isExternalFolder(firstTwoFolders)) {
+      const folderPath = extractExternalFolder(key)
+      if (folderPath === 'browser/gists') {
+        const id = key.substr(key.lastIndexOf('/'), key.length - 1)
+        actions['Push changes to gist'] = () => {
+          modalDialogCustom.confirm(
+            'Push back to Gist',
+            'Are you sure you want to push all your changes back to Gist?',
+            () => { this.toGist(id) },
+            () => {}
+          )
+        }
+      }
+      if (!provider.isExternalFolder(key)) {
         actions['Rename'] = () => {
           if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
           var name = label.querySelector('span[data-path="' + key + '"]')
