@@ -207,13 +207,13 @@ function fileExplorer (localRegistry, files, menuItems) {
       }
     } else {
       actions['Rename'] = () => {
-        if (self.files.readonly) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
       }
     }
     actions['Delete'] = () => {
-      if (self.files.readonly) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
+      if (self.files.isReadOnly(key)) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
       modalDialogCustom.confirm('Confirm to delete a folder', 'Are you sure you want to delete this folder?', () => { files.remove(key) }, () => {})
     }
     MENU_HANDLE = contextMenu(event, actions)
@@ -226,12 +226,12 @@ function fileExplorer (localRegistry, files, menuItems) {
     const provider = self._deps.fileManager.fileProviderOf(key)
     if (!provider.isExternalFolder(key)) {
       actions['Rename'] = () => {
-        if (self.files.readonly) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.isReadOnly(key)) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
       }
       actions['Delete'] = () => {
-        if (self.files.readonly) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
         modalDialogCustom.confirm(
           'Delete a file', 'Are you sure you want to delete this file?',
           () => { files.remove(key) },
