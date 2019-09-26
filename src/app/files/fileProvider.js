@@ -71,7 +71,7 @@ class FileProvider {
 
   get (path, cb) {
     cb = cb || function () {}
-    if (this.normalizedNameExists[path]) path = this.getNormalizedName(path) // ensure we actually use the normalized path from here
+    if (this.normalizedNameExists(path)) path = this.getNormalizedName(path) // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (!exists) return cb(null, null)
