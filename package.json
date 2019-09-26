@@ -46,7 +46,8 @@
       "darkModeSupport": true
     },
     "nsis": {
-      "createDesktopShortcut": "always"
+      "createDesktopShortcut": "always",
+      "allowToChangeInstallationDirectory": true
     },
     "win": {
       "target": [
