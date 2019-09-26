@@ -342,11 +342,18 @@ class FileManager extends Plugin {
     }
   }
 
-  setBatchFiles (filesSet, fileProvider, callback) {
+  setBatchFiles (filesSet, fileProvider, override, callback) {
     const self = this
     if (!fileProvider) fileProvider = 'browser'
+    if (override === undefined) override = false
 
     async.each(Object.keys(filesSet), (file, callback) => {
+      if (override) {
+        self._deps.filesProviders[fileProvider].set(file, filesSet[file].content)
+        self.syncEditor(fileProvider + file)
+        return callback()
+      }
+
       helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
       (error, name) => {
         if (error) {
@@ -355,11 +362,11 @@ class FileManager extends Plugin {
           modalDialogCustom.alert('Special characters are not allowed')
         } else {
           self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+          self.syncEditor(fileProvider + name)
         }
         callback()
       })
     }, (error) => {
-      if (!error) self.switchFile()
       if (callback) callback(error)
     })
   }
