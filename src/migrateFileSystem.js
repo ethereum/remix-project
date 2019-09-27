@@ -13,6 +13,7 @@ export default (fileProvider) => {
     if (path !== '.remix.config') {
       const content = fileStorage.get(path)
       fileProvider.set(path, content)
+      // TODO https://github.com/ethereum/remix-ide/issues/2377
       // fileStorage.remove(path) we don't want to remove it as we are still supporting the old version
       console.log('file migrated', path)
     }
