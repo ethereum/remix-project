@@ -18,7 +18,7 @@ const createWeb3Provider = async function () {
     return web3
 }
 
-export async function runTestSources(contractSources, testCallback, resultCallback, finalCallback, importFileCb, opts) {
+export async function runTestSources(contractSources, versionUrl, usingWorker, testCallback, resultCallback, finalCallback, importFileCb, opts) {
     opts = opts || {}
     let web3 = opts.web3 || await createWeb3Provider()
     let accounts = opts.accounts || null
@@ -31,7 +31,7 @@ export async function runTestSources(contractSources, testCallback, resultCallba
             })
         },
         function compile (next) {
-            compileContractSources(contractSources, importFileCb, { accounts }, next)
+            compileContractSources(contractSources, versionUrl, usingWorker, importFileCb, { accounts }, next)
         },
         function deployAllContracts (compilationResult, next) {
             deployAll(compilationResult, web3, (err, contracts) => {
