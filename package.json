@@ -48,6 +48,7 @@
     "nsis": {
       "createDesktopShortcut": "always",
       "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
       "shortcutName": "Remix IDE"
     },
     "win": {
