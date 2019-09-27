@@ -85,7 +85,7 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
     }
 }
 
-export function compileContractSources(sources: SrcIfc, importFileCb: any, opts: any, cb: Function) {
+export function compileContractSources(sources: SrcIfc, versionUrl: any, usingWorker: any, importFileCb: any, opts: any, cb: Function) {
     let compiler, filepath: string
     let accounts = opts.accounts || []
     // Iterate over sources keys. Inject test libraries. Inject test library import statements.
@@ -105,7 +105,7 @@ export function compileContractSources(sources: SrcIfc, importFileCb: any, opts:
     async.waterfall([
         function loadCompiler (next: Function) {
             compiler = new RemixCompiler(importFileCb)
-            compiler.onInternalCompilerLoaded()
+            compiler.loadVersion(usingWorker, versionUrl)
             // compiler.event.register('compilerLoaded', this, function (version) {
             next()
             // });
