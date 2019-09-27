@@ -106,9 +106,10 @@ export function compileContractSources(sources: SrcIfc, versionUrl: any, usingWo
         function loadCompiler (next: Function) {
             compiler = new RemixCompiler(importFileCb)
             compiler.loadVersion(usingWorker, versionUrl)
-            compiler.event.register('compilerLoaded', this, function (version) {
+            // @ts-ignore
+            compiler.event.register('compilerLoaded', this, (version) => {
                 next()
-            });
+            })
         },
         function doCompilation (next: Function) {
             // @ts-ignore
