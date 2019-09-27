@@ -410,6 +410,16 @@ function getUnAssignedTopLevelBinOps (subScope) {
   return subScope.children.filter(isBinaryOpInExpression)
 }
 
+function getLoopBlockStartIndex (node) {
+  if (isLoop(node)) {
+    if (nodeType(node, exactMatch(nodeTypes.FORSTATEMENT))) {
+      return 3 // For 'for' loop
+    } else {
+      return 1 // For 'while' and 'do-while' loop
+    }
+  }
+}
+
 // #################### Trivial Node Identification
 
 function isFunctionDefinition (node) {
@@ -948,6 +958,17 @@ function isBytesLengthCheck (node) {
 }
 
 /**
+ * True if it is a loop
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isLoop (node) {
+  return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
+          nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
+          nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))
+}
+
+/**
  * True if it is a 'for' loop
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -1073,6 +1094,7 @@ module.exports = {
   getFunctionOrModifierDefinitionParameterPart: getFunctionOrModifierDefinitionParameterPart,
   getFunctionOrModifierDefinitionReturnParameterPart: getFunctionOrModifierDefinitionReturnParameterPart,
   getUnAssignedTopLevelBinOps: getUnAssignedTopLevelBinOps,
+  getLoopBlockStartIndex: getLoopBlockStartIndex,
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray: isDeleteOfDynamicArray,
@@ -1117,6 +1139,7 @@ module.exports = {
   isIntDivision: isIntDivision,
   isStringToBytesConversion: isStringToBytesConversion,
   isBytesLengthCheck: isBytesLengthCheck,
+  isLoop: isLoop,
   isForLoop: isForLoop,
 
   // #################### Trivial Node Identification
@@ -1136,6 +1159,7 @@ module.exports = {
   isNewExpression: isNewExpression,
   isReturn: isReturn,
   isStatement: isStatement,
+  isExpressionStatement: isExpressionStatement,
   isBlock: isBlock,
 
   // #################### Constants
