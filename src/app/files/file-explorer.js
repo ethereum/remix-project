@@ -218,12 +218,12 @@ function fileExplorer (localRegistry, files, menuItems) {
     } else {
       const folderPath = extractExternalFolder(key)
       if (folderPath === 'browser/gists') {
-        const id = key.substr(key.lastIndexOf('/'), key.length - 1)
         actions['Push changes to gist'] = () => {
+          const id = key.substr(key.lastIndexOf('/') + 1, key.length - 1)
           modalDialogCustom.confirm(
             'Push back to Gist',
             'Are you sure you want to push all your changes back to Gist?',
-            () => { this.toGist(id) },
+            () => { self.toGist(id) },
             () => {}
           )
         }
@@ -430,6 +430,7 @@ fileExplorer.prototype.toGist = function (id) {
   let proccedResult = function (error, data) {
     if (error) {
       modalDialogCustom.alert('Failed to manage gist: ' + error)
+      console.log('Failed to manage gist: ' + error)
     } else {
       if (data.html_url) {
         modalDialogCustom.confirm('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, () => {
@@ -513,13 +514,13 @@ fileExplorer.prototype.packageFiles = function (filesProvider, callback) {
     else {
       async.eachSeries(Object.keys(files), (path, cb) => {
         filesProvider.get(path, (error, content) => {
-          if (/^\s+$/.test(content) || !content.length) {
-            content = '// this line is added to create a gist. Empty file is not allowed.'
-          }
           if (error) cb(error)
-          else {
-            ret[path] = { content }
-            cb()
+          else if (/^\s+$/.test(content) || !content.length) {
+            content = '// this line is added to create a gist. Empty file is not allowed.'
+            if (!error) {
+              ret[path] = { content }
+              cb()
+            }
           }
         })
       }, (error) => {
@@ -556,16 +557,6 @@ fileExplorer.prototype.copyFiles = function () {
         document.querySelector('body').appendChild(iframe)
       }
     })
-  }
-}
-
-// ------------------ gist publish --------------
-fileExplorer.prototype.updateGist = function () {
-  const gistId = this.files.id
-  if (!gistId) {
-    tooltip('no gist content is currently loaded.')
-  } else {
-    this.toGist(gistId)
   }
 }
 
