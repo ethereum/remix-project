@@ -104,7 +104,7 @@ staticAnalysisView.prototype.run = function () {
       results.map(function (result, i) {
         result.report.map(function (item, i) {
           var location = ''
-          if (!item.location) {
+          if (item.location) {
             var split = item.location.split(':')
             var file = split[2]
             location = {
