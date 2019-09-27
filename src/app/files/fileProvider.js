@@ -84,6 +84,8 @@ class FileProvider {
     cb = cb || function () {}
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
+    if (exists && window.remixFileSystem.readFileSync(unprefixedpath, 'utf8') === content) return true
+
     if (!exists && unprefixedpath.indexOf('/') !== -1) {
       const paths = unprefixedpath.split('/')
       paths.pop() // last element should the filename
@@ -98,7 +100,6 @@ class FileProvider {
       })
     }
     try {
-      if (window.remixFileSystem.readFileSync(unprefixedpath, 'utf8') === content) return true
       window.remixFileSystem.writeFileSync(unprefixedpath, content)
     } catch (e) {
       cb(e)
