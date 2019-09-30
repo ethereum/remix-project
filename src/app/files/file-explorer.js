@@ -442,7 +442,7 @@ fileExplorer.prototype.toGist = function (id) {
     }
   }
 
-  this.packageFiles(this.files, (error, packaged) => {
+  this.packageFiles(this.files, 'browser/gists/' + id, (error, packaged) => {
     if (error) {
       console.log(error)
       modalDialogCustom.alert('Failed to create gist: ' + error)
@@ -473,7 +473,9 @@ fileExplorer.prototype.toGist = function (id) {
             }), this.files.origGistFiles)
           // adding new files
           updatedFileList.forEach((file) => {
-            allItems[file] = packaged[file]
+            const _items = file.split('/')
+            const _fileName = _items[_items.length - 1]
+            allItems[_fileName] = packaged[file]
           })
 
           tooltip('Saving gist (' + id + ') ...')
@@ -507,21 +509,19 @@ fileExplorer.prototype.toGist = function (id) {
 }
 
 // return all the files, except the temporary/readonly ones..
-fileExplorer.prototype.packageFiles = function (filesProvider, callback) {
+fileExplorer.prototype.packageFiles = function (filesProvider, directory, callback) {
   var ret = {}
-  filesProvider.resolveDirectory('/', (error, files) => {
+  filesProvider.resolveDirectory(directory, (error, files) => {
     if (error) callback(error)
     else {
       async.eachSeries(Object.keys(files), (path, cb) => {
         filesProvider.get(path, (error, content) => {
-          if (error) cb(error)
-          else if (/^\s+$/.test(content) || !content.length) {
+          if (error) return cb(error)
+          if (/^\s+$/.test(content) || !content.length) {
             content = '// this line is added to create a gist. Empty file is not allowed.'
-            if (!error) {
-              ret[path] = { content }
-              cb()
-            }
           }
+          ret[path] = { content }
+          cb()
         })
       }, (error) => {
         callback(error, ret)
@@ -543,7 +543,7 @@ fileExplorer.prototype.copyFiles = function () {
   )
   function doCopy (target) {
     // package only files from the browser storage.
-    self.packageFiles(self.files, (error, packaged) => {
+    self.packageFiles(self.files, '/', (error, packaged) => {
       if (error) {
         console.log(error)
       } else {
