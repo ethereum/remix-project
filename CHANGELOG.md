@@ -1,3 +1,20 @@
+<a name="v0.1.21"></a>
+# [v0.1.21](https://github.com/ethereum/remix/releases/tag/v0.1.21) - 30 Sep 2019
+
+## Change Log
+
+### v0.1.21 (2019/09/30 07:37 +00:00)
+- [#1305](https://github.com/ethereum/remix/pull/1305) Release v0.1.21 (@Aniket-Engg)
+- [#1303](https://github.com/ethereum/remix/pull/1303) remix tests worked with compiler loaded using web-worker (@Aniket-Engg)
+- [#1242](https://github.com/ethereum/remix/pull/1242) [Static analysis] Interaction with different addresses inside the loop handled (@Aniket-Engg)
+- [#1301](https://github.com/ethereum/remix/pull/1301) Makes plugin sendTransaction work with non-vm providers, add tests (@bmcd87)
+- [#1300](https://github.com/ethereum/remix/pull/1300) function params parsing improved (@Aniket-Engg)
+- [#1299](https://github.com/ethereum/remix/pull/1299) opcodes added (@Aniket-Engg)
+- [#1298](https://github.com/ethereum/remix/pull/1298) changelog updated (@Aniket-Engg)
+
+[Changes][v0.1.21]
+
+
 <a name="v0.1.20"></a>
 # [v0.1.20](https://github.com/ethereum/remix/releases/tag/v0.1.20) - 20 Sep 2019
 
@@ -498,6 +515,7 @@ https://github.com/ethereum/remix/compare/remix-tests@0.0.13...v0.1.0
 [Changes][remix-lib@0.2.5]
 
 
+[v0.1.21]: https://github.com/ethereum/remix/compare/v0.1.20...v0.1.21
 [v0.1.20]: https://github.com/ethereum/remix/compare/v0.1.19...v0.1.20
 [v0.1.19]: https://github.com/ethereum/remix/compare/v0.1.18...v0.1.19
 [v0.1.18]: https://github.com/ethereum/remix/compare/v0.1.17...v0.1.18
