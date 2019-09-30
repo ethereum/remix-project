@@ -27,7 +27,7 @@ function fileExplorer (localRegistry, files, menuItems) {
   let allItems =
     [
       { action: 'createNewFile',
-        title: 'Create New File in the Browser Storage Explorer',
+        title: 'Create New File',
         icon: 'fas fa-plus-circle'
       },
       { action: 'publishToGist',
@@ -229,6 +229,9 @@ function fileExplorer (localRegistry, files, menuItems) {
           )
         }
       }
+      actions['Create File'] = () => self.createNewFile(key)
+      actions['Create Folder'] = () => self.createNewFolder(key)
+
       actions['Rename'] = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
@@ -251,6 +254,7 @@ function fileExplorer (localRegistry, files, menuItems) {
     let actions = {}
     const provider = self._deps.fileManager.fileProviderOf(key)
     if (!provider.isExternalFolder(key)) {
+      actions['Create Folder'] = () => self.createNewFolder(self._deps.fileManager.extractPathOf(key))
       actions['Rename'] = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
@@ -562,21 +566,36 @@ fileExplorer.prototype.copyFiles = function () {
   }
 }
 
-fileExplorer.prototype.createNewFile = function () {
+fileExplorer.prototype.createNewFile = function (parentFolder) {
   let self = this
-  modalDialogCustom.prompt('Create new file', 'File Path (Untitled.sol, Folder1/Untitled.sol)', 'Untitled.sol', (input) => {
+  modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
     helper.createNonClashingName(input, self.files, (error, newName) => {
       if (error) return modalDialogCustom.alert('Failed to create file ' + newName + ' ' + error)
+      const currentPath = !parentFolder ? self._deps.fileManager.currentPath() : parentFolder
+      newName = currentPath ? currentPath + '/' + newName : self.files.type + '/' + newName
+
       if (!self.files.set(newName, '')) {
         modalDialogCustom.alert('Failed to create file ' + newName)
       } else {
-        var file = self.files.type + '/' + newName
-        self._deps.fileManager.switchFile(file)
-        if (file.includes('_test.sol')) {
-          self.event.trigger('newTestFileCreated', [file])
+        self._deps.fileManager.switchFile(newName)
+        if (newName.includes('_test.sol')) {
+          self.event.trigger('newTestFileCreated', [newName])
         }
       }
     })
+  }, null, true)
+}
+
+fileExplorer.prototype.createNewFolder = function (parentFolder) {
+  let self = this
+  modalDialogCustom.prompt('Create new folder', '', '', (input) => {
+    const currentPath = !parentFolder ? self._deps.fileManager.currentPath() : parentFolder
+    let newName = currentPath ? currentPath + '/' + input : self.files.type + '/' + input
+
+    newName = newName + '/'
+    if (!self.files.set(newName, '')) {
+      modalDialogCustom.alert('Failed to create folder ' + newName)
+    }
   }, null, true)
 }
 
