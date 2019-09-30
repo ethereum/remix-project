@@ -28,6 +28,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.data = {}
     this.appManager = appManager
     this.renderer = renderer
+    this.baseurl = 'https://solc-bin.ethereum.org/bin'
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
     })
@@ -151,7 +152,9 @@ module.exports = class TestTab extends ViewPlugin {
     return new Promise((resolve, reject) => {
       let runningTest = {}
       runningTest[path] = { content }
-      remixTests.runTestSources(runningTest, () => {}, () => {}, (error, result) => {
+      let currentCompilerUrl = this.baseurl + '/' + this.compileTab.getCurrentVersion()
+      let usingWorker = this.compileTab.compilerContainer.browserSupportWorker()
+      remixTests.runTestSources(runningTest, currentCompilerUrl, usingWorker, () => {}, () => {}, (error, result) => {
         if (error) return reject(error)
         resolve(result)
       }, (url, cb) => {
@@ -165,7 +168,9 @@ module.exports = class TestTab extends ViewPlugin {
     this.fileManager.getFile(testFilePath).then((content) => {
       var runningTest = {}
       runningTest[testFilePath] = { content }
-      remixTests.runTestSources(runningTest, (result) => { this.testCallback(result) }, (_err, result, cb) => { this.resultsCallback(_err, result, cb) }, (error, result) => {
+      let currentCompilerUrl = this.baseurl + '/' + this.compileTab.getCurrentVersion()
+      let usingWorker = this.compileTab.compilerContainer.browserSupportWorker()
+      remixTests.runTestSources(runningTest, currentCompilerUrl, usingWorker, (result) => { this.testCallback(result) }, (_err, result, cb) => { this.resultsCallback(_err, result, cb) }, (error, result) => {
         this.updateFinalResult(error, result, testFilePath)
         this.loading.hidden = true
         callback(error)

@@ -191,6 +191,11 @@ class CompileTab extends ViewPlugin {
     return this.compileTabLogic.compileFile(fileName)
   }
 
+  // This function is used for passing the compiler remix-tests
+  getCurrentVersion () {
+    return this.compilerContainer.data.selectedVersion
+  }
+
   /*********
    * SUB-COMPONENTS
    */
