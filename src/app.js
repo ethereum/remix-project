@@ -317,9 +317,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     debug,
     analysis,
     test,
-    filePanel.remixdHandle,
-    ...appManager.registeredPlugins()
+    filePanel.remixdHandle
   ])
+
+  try {
+    appManager.register(await appManager.registeredPlugins())
+  } catch (e) {
+    console.log('couldn\'t register iframe plugins', e.message)
+  }
 
   await appManager.activate(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'offsetToLineColumnConverter'])
   await appManager.activate(['mainPanel'])
