@@ -190,21 +190,56 @@ function fileExplorer (localRegistry, files, menuItems) {
     }
   })
 
+  /**
+   * Extracts first two folders as a subpath from the path.
+   **/
+  function extractExternalFolder (path) {
+    const firstSlIndex = path.indexOf('/', 1)
+    if (firstSlIndex === -1) return ''
+    const secondSlIndex = path.indexOf('/', firstSlIndex + 1)
+    if (secondSlIndex === -1) return ''
+    return path.substring(0, secondSlIndex)
+  }
+
   self.treeView.event.register('nodeRightClick', function (key, data, label, event) {
     if (self.files.readonly) return
     if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
-    MENU_HANDLE = contextMenu(event, {
-      'Rename': () => {
-        if (self.files.readonly) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
+    let actions = {}
+    const provider = self._deps.fileManager.fileProviderOf(key)
+    if (provider.isExternalFolder(key)) {
+      actions['Discard changes'] = () => {
+        modalDialogCustom.confirm(
+          'Discard changes',
+          'Are you sure you want to discard all your changes?',
+          () => { files.discardChanges(key) },
+          () => {}
+        )
+      }
+    } else {
+      const folderPath = extractExternalFolder(key)
+      if (folderPath === 'browser/gists') {
+        actions['Push changes to gist'] = () => {
+          const id = key.substr(key.lastIndexOf('/') + 1, key.length - 1)
+          modalDialogCustom.confirm(
+            'Push back to Gist',
+            'Are you sure you want to push all your changes back to Gist?',
+            () => { self.toGist(id) },
+            () => {}
+          )
+        }
+      }
+      actions['Rename'] = () => {
+        if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
-      },
-      'Delete': () => {
-        if (self.files.readonly) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
-        modalDialogCustom.confirm('Confirm to delete a folder', 'Are you sure you want to delete this folder?', () => { files.remove(key) }, () => {})
       }
-    })
+    }
+    actions['Delete'] = () => {
+      if (self.files.isReadOnly(key)) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
+      modalDialogCustom.confirm('Confirm to delete a folder', 'Are you sure you want to delete this folder?', () => { files.remove(key) }, () => {})
+    }
+    MENU_HANDLE = contextMenu(event, actions)
   })
 
   self.treeView.event.register('leafRightClick', function (key, data, label, event) {
@@ -212,25 +247,16 @@ function fileExplorer (localRegistry, files, menuItems) {
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
     let actions = {}
     const provider = self._deps.fileManager.fileProviderOf(key)
-    if (!provider.isReadOnly(key)) {
+    if (!provider.isExternalFolder(key)) {
       actions['Rename'] = () => {
-        if (self.files.readonly) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.isReadOnly(key)) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
       }
       actions['Delete'] = () => {
-        if (self.files.readonly) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
         modalDialogCustom.confirm(
           'Delete a file', 'Are you sure you want to delete this file?',
-          () => { files.remove(key) },
-          () => {}
-        )
-      }
-    } else {
-      actions['Delete from remix'] = () => {
-        modalDialogCustom.confirm(
-          'Delete from remix',
-          'Are you sure you want to delete this file from remix?',
           () => { files.remove(key) },
           () => {}
         )
@@ -403,6 +429,7 @@ fileExplorer.prototype.toGist = function (id) {
   let proccedResult = function (error, data) {
     if (error) {
       modalDialogCustom.alert('Failed to manage gist: ' + error)
+      console.log('Failed to manage gist: ' + error)
     } else {
       if (data.html_url) {
         modalDialogCustom.confirm('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, () => {
@@ -414,7 +441,7 @@ fileExplorer.prototype.toGist = function (id) {
     }
   }
 
-  this.packageFiles(this.files, (error, packaged) => {
+  this.packageFiles(this.files, 'browser/gists/' + id, (error, packaged) => {
     if (error) {
       console.log(error)
       modalDialogCustom.alert('Failed to create gist: ' + error)
@@ -445,7 +472,9 @@ fileExplorer.prototype.toGist = function (id) {
             }), this.files.origGistFiles)
           // adding new files
           updatedFileList.forEach((file) => {
-            allItems[file] = packaged[file]
+            const _items = file.split('/')
+            const _fileName = _items[_items.length - 1]
+            allItems[_fileName] = packaged[file]
           })
 
           tooltip('Saving gist (' + id + ') ...')
@@ -479,21 +508,19 @@ fileExplorer.prototype.toGist = function (id) {
 }
 
 // return all the files, except the temporary/readonly ones..
-fileExplorer.prototype.packageFiles = function (filesProvider, callback) {
+fileExplorer.prototype.packageFiles = function (filesProvider, directory, callback) {
   var ret = {}
-  filesProvider.resolveDirectory('/', (error, files) => {
+  filesProvider.resolveDirectory(directory, (error, files) => {
     if (error) callback(error)
     else {
       async.eachSeries(Object.keys(files), (path, cb) => {
         filesProvider.get(path, (error, content) => {
+          if (error) return cb(error)
           if (/^\s+$/.test(content) || !content.length) {
             content = '// this line is added to create a gist. Empty file is not allowed.'
           }
-          if (error) cb(error)
-          else {
-            ret[path] = { content }
-            cb()
-          }
+          ret[path] = { content }
+          cb()
         })
       }, (error) => {
         callback(error, ret)
@@ -515,7 +542,7 @@ fileExplorer.prototype.copyFiles = function () {
   )
   function doCopy (target) {
     // package only files from the browser storage.
-    self.packageFiles(self.files, (error, packaged) => {
+    self.packageFiles(self.files, '/', (error, packaged) => {
       if (error) {
         console.log(error)
       } else {
@@ -529,16 +556,6 @@ fileExplorer.prototype.copyFiles = function () {
         document.querySelector('body').appendChild(iframe)
       }
     })
-  }
-}
-
-// ------------------ gist publish --------------
-fileExplorer.prototype.updateGist = function () {
-  const gistId = this.files.id
-  if (!gistId) {
-    tooltip('no gist content is currently loaded.')
-  } else {
-    this.toGist(gistId)
   }
 }
 
