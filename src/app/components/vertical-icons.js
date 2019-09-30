@@ -73,7 +73,7 @@ export class VerticalIcons extends Plugin {
         title="${title}">
         <img class="image" src="${icon}" alt="${name}" />
       </div>`
-    this.iconKind[kind || 'other'].appendChild(this.icons[name])
+    this.iconKind[kind || 'none'].appendChild(this.icons[name])
   }
 
   /**
@@ -146,7 +146,7 @@ export class VerticalIcons extends Plugin {
    * @param {ModuleProfile} profile The profile of the module
    */
   removeIcon ({kind, name}) {
-    if (this.icons[name]) this.iconKind[kind || 'other'].removeChild(this.icons[name])
+    if (this.icons[name]) this.iconKind[kind || 'none'].removeChild(this.icons[name])
   }
 
   /**
@@ -266,7 +266,7 @@ export class VerticalIcons extends Plugin {
     </div>
     `
 
-    this.iconKind['other'] = yo`
+    this.iconKind['none'] = yo`
     <div id='otherIcons'>
     </div>
     `
@@ -285,7 +285,7 @@ export class VerticalIcons extends Plugin {
         ${this.iconKind['testing']}
         ${this.iconKind['analysis']}
         ${this.iconKind['debugging']}
-        ${this.iconKind['other']}
+        ${this.iconKind['none']}
         ${this.iconKind['settings']}
       </div>
     `
