@@ -191,7 +191,7 @@ function fileExplorer (localRegistry, files, menuItems) {
   })
 
   /**
-   * Extracts furst two folders as a subpath from the path.
+   * Extracts first two folders as a subpath from the path.
    **/
   function extractExternalFolder (path) {
     const firstSlIndex = path.indexOf('/', 1)
@@ -200,6 +200,7 @@ function fileExplorer (localRegistry, files, menuItems) {
     if (secondSlIndex === -1) return ''
     return path.substring(0, secondSlIndex)
   }
+
   self.treeView.event.register('nodeRightClick', function (key, data, label, event) {
     if (self.files.readonly) return
     if (key === self.files.type) return
@@ -228,12 +229,10 @@ function fileExplorer (localRegistry, files, menuItems) {
           )
         }
       }
-      if (!provider.isExternalFolder(key)) {
-        actions['Rename'] = () => {
-          if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
-          var name = label.querySelector('span[data-path="' + key + '"]')
-          if (name) editModeOn(name)
-        }
+      actions['Rename'] = () => {
+        if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
+        var name = label.querySelector('span[data-path="' + key + '"]')
+        if (name) editModeOn(name)
       }
     }
     actions['Delete'] = () => {
