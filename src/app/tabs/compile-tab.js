@@ -313,7 +313,7 @@ class CompileTab extends ViewPlugin {
               modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
             }
           }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-            this.fileProvider.addReadOnly('swarm/' + item.hash, item.content)
+            this.fileProvider.addExternal('swarm/' + item.hash, item.content)
           })
         } else {
           publishOnIpfs(contract, this.fileManager, function (err, uploaded) {
@@ -330,7 +330,7 @@ class CompileTab extends ViewPlugin {
               modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
             }
           }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-            this.fileProvider.addReadOnly('ipfs/' + item.hash, item.content)
+            this.fileProvider.addExternal('ipfs/' + item.hash, item.content)
           })
         }
       }
