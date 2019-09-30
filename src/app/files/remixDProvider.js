@@ -113,10 +113,6 @@ module.exports = class RemixDProvider {
     return true
   }
 
-  addReadOnly (path, content) {
-    return false
-  }
-
   isReadOnly (path) {
     return this._readOnlyMode || this._readOnlyFiles[path] === 1
   }
@@ -152,6 +148,10 @@ module.exports = class RemixDProvider {
       }
     })
     return true
+  }
+
+  isExternalFolder (path) {
+    return false
   }
 
   removePrefix (path) {
