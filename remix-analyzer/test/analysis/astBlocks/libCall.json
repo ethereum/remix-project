@@ -1,0 +1,16 @@
+{
+  "attributes": {
+    "member_name": "insert",
+    "type": "function (struct Set.Data storage pointer,uint256) returns (bool)"
+  },
+  "children": [
+    {
+      "attributes": {
+        "type": "type(library Set)",
+        "value": "Set"
+      },
+      "name": "Identifier"
+    }
+  ],
+  "name": "MemberAccess"
+}
