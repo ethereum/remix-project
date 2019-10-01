@@ -13,7 +13,6 @@ const contextMenu = require('../ui/contextMenu')
 const css = require('./styles/file-explorer-styles')
 const globalRegistry = require('../../global/registry')
 const queryParams = new QueryParams()
-//
 let MENU_HANDLE
 
 function fileExplorer (localRegistry, files, menuItems) {
@@ -464,7 +463,6 @@ fileExplorer.prototype.toGist = function (id) {
           'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.'
         )
       } else {
-        // get existing gist files
         const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
           queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
         const gists = new Gists({ token: tokenAccess })
