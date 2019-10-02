@@ -207,7 +207,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateRunAction (currentFile) {
-    let el = yo`<button class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</button>`
+    let el = yo`<button id="runTestsTabRunAction" class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</button>`
     const isSolidityActive = this.appManager.isActive('solidity')
     if (!currentFile || !isSolidityActive) {
       el.setAttribute('disabled', 'disabled')
@@ -235,8 +235,8 @@ module.exports = class TestTab extends ViewPlugin {
   }
   render () {
     this.onActivationInternal()
-    this.testsOutput = yo`<div class="${css.container} m-3 border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="tests"></div>`
-    this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="tests"></div>`
+    this.testsOutput = yo`<div class="${css.container} m-3 border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="solidityUnittestsOutput"></div>`
+    this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="solidityUnittestsSummary"></div>`
     this.loading = yo`<span class='text-info ml-1'>Running tests...</span>`
     this.loading.hidden = true
     var el = yo`
