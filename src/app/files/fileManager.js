@@ -119,8 +119,12 @@ class FileManager extends Plugin {
 
   currentPath () {
     var currentFile = this._deps.config.get('currentFile')
+    return this.extractPathOf(currentFile)
+  }
+
+  extractPathOf (file) {
     var reg = /(.*)(\/).*/
-    var path = reg.exec(currentFile)
+    var path = reg.exec(file)
     return path ? path[1] : null
   }
 
