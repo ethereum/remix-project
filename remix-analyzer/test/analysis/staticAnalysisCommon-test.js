@@ -1,7 +1,9 @@
 var test = require('tape')
 var common = require('../../src/solidity-analyzer/modules/staticAnalysisCommon')
 var { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignment,
-    inlineAssembly, forLoopNode, whileLoopNode, doWhileLoopNode } = require('./astBlocks')
+    inlineAssembly, forLoopNode, whileLoopNode, doWhileLoopNode, stateVariableContractNode,
+    functionDefinition, fullyQualifiedFunctionDefinition, selfdestruct, storageVariableNodes,
+    lowlevelCall } = require('./astBlocks')
 
 function escapeRegExp (str) {
   return str.replace(/[-[\]/{}()+?.\\^$|]/g, '\\$&')
@@ -252,142 +254,15 @@ test('staticAnalysisCommon.getInheritsFromName', function (t) {
 
 test('staticAnalysisCommon.getDeclaredVariableName', function (t) {
   t.plan(2)
-  var node1 = {
-    'attributes': {
-      'name': 'x',
-      'type': 'struct Ballot.Voter storage pointer'
-    },
-    'children': [
-      {
-        'attributes': {
-          'name': 'Voter'
-        },
-        'id': 43,
-        'name': 'UserDefinedTypeName',
-        'src': '604:5:0'
-      }
-    ],
-    'id': 44,
-    'name': 'VariableDeclaration',
-    'src': '604:15:0'
-  }
-  t.ok(common.getDeclaredVariableName(node1) === 'x', 'extract right variable name')
-  node1.name = 'FunctionCall'
+  t.ok(common.getDeclaredVariableName(storageVariableNodes.node1) === 'x', 'extract right variable name')
+  let node1 = JSON.parse(JSON.stringify(storageVariableNodes))
+  node1.node1.name = 'FunctionCall'
   t.throws(() => common.getDeclaredVariableName(node1) === 'x', undefined, 'throw if wrong node')
 })
 
 test('staticAnalysisCommon.getStateVariableDeclarationsFormContractNode', function (t) {
   t.plan(4)
-  var contract = {
-    'attributes': {
-      'fullyImplemented': true,
-      'isLibrary': false,
-      'linearizedBaseContracts': [
-        274
-      ],
-      'name': 'Ballot'
-    },
-    'children': [
-      {
-        'attributes': {
-          'name': 'Voter'
-        },
-        'children': [],
-        'name': 'StructDefinition'
-      },
-      {
-        'attributes': {
-          'name': 'Proposal'
-        },
-        'children': [],
-        'name': 'StructDefinition'
-      },
-      {
-        'attributes': {
-          'name': 'chairperson',
-          'type': 'address'
-        },
-        'children': [
-          {
-            'attributes': {
-              'name': 'address'
-            },
-            'name': 'ElementaryTypeName'
-          }
-        ],
-        'name': 'VariableDeclaration'
-      },
-      {
-        'attributes': {
-          'name': 'voters',
-          'type': 'mapping(address => struct Ballot.Voter storage ref)'
-        },
-        'children': [
-          {
-            'children': [
-              {
-                'attributes': {
-                  'name': 'address'
-                },
-                'name': 'ElementaryTypeName'
-              },
-              {
-                'attributes': {
-                  'name': 'Voter'
-                },
-                'name': 'UserDefinedTypeName'
-              }
-            ],
-            'name': 'Mapping'
-          }
-        ],
-        'name': 'VariableDeclaration'
-      },
-      {
-        'attributes': {
-          'name': 'proposals',
-          'type': 'struct Ballot.Proposal storage ref[] storage ref'
-        },
-        'children': [
-          {
-            'children': [
-              {
-                'attributes': {
-                  'name': 'Proposal'
-                },
-                'name': 'UserDefinedTypeName'
-              }
-            ],
-            'name': 'ArrayTypeName'
-          }
-        ],
-        'name': 'VariableDeclaration'
-      },
-      {
-        'attributes': {
-          'constant': false,
-          'name': 'Ballot',
-          'payable': false,
-          'visibility': 'public'
-        },
-        'children': [],
-        'name': 'FunctionDefinition'
-      },
-      {
-        'attributes': {
-          'constant': false,
-          'name': 'giveRightToVote',
-          'payable': false,
-          'visibility': 'public'
-        },
-        'children': [],
-        'name': 'FunctionDefinition'
-      }
-    ],
-    'name': 'ContractDefinition'
-  }
-  var res = common.getStateVariableDeclarationsFormContractNode(contract).map(common.getDeclaredVariableName)
-
+  var res = common.getStateVariableDeclarationsFormContractNode(stateVariableContractNode).map(common.getDeclaredVariableName)
   t.ok(res[0] === 'chairperson', 'var 1 should be ')
   t.ok(res[1] === 'voters', 'var 2 should be ')
   t.ok(res[2] === 'proposals', 'var 3 should be ')
@@ -396,31 +271,7 @@ test('staticAnalysisCommon.getStateVariableDeclarationsFormContractNode', functi
 
 test('staticAnalysisCommon.getFunctionOrModifierDefinitionParameterPart', function (t) {
   t.plan(2)
-  var funDef = {
-    'attributes': {
-      'constant': true,
-      'name': 'winnerName',
-      'payable': false,
-      'visibility': 'public'
-    },
-    'children': [
-      {
-        'children': [
-        ],
-        'name': 'ParameterList'
-      },
-      {
-        'children': [],
-        'name': 'ParameterList'
-      },
-      {
-        'children': [],
-        'name': 'Block'
-      }
-    ],
-    'name': 'FunctionDefinition'
-  }
-  t.ok(common.helpers.nodeType(common.getFunctionOrModifierDefinitionParameterPart(funDef), 'ParameterList'), 'should return a parameterList')
+  t.ok(common.helpers.nodeType(common.getFunctionOrModifierDefinitionParameterPart(functionDefinition), 'ParameterList'), 'should return a parameterList')
   t.throws(() => common.getFunctionOrModifierDefinitionParameterPart({ name: 'SourceUnit' }), undefined, 'throws on other nodes')
 })
 
@@ -434,45 +285,13 @@ test('staticAnalysisCommon.getFunctionCallTypeParameterType', function (t) {
 
 test('staticAnalysisCommon.getLibraryCallContractName', function (t) {
   t.plan(2)
-  var node = {
-    'attributes': {
-      'member_name': 'insert',
-      'type': 'function (struct Set.Data storage pointer,uint256) returns (bool)'
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'type(library Set)',
-          'value': 'Set'
-        },
-        'name': 'Identifier'
-      }
-    ],
-    'name': 'MemberAccess'
-  }
-  t.equal(common.getLibraryCallContractName(node), 'Set', 'should return correct contract name')
+  t.equal(common.getLibraryCallContractName(libCall), 'Set', 'should return correct contract name')
   t.throws(() => common.getLibraryCallContractName({ name: 'Identifier' }), undefined, 'should throw on wrong node')
 })
 
 test('staticAnalysisCommon.getLibraryCallMemberName', function (t) {
   t.plan(2)
-  var node = {
-    'attributes': {
-      'member_name': 'insert',
-      'type': 'function (struct Set.Data storage pointer,uint256) returns (bool)'
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'type(library Set)',
-          'value': 'Set'
-        },
-        'name': 'Identifier'
-      }
-    ],
-    'name': 'MemberAccess'
-  }
-  t.equal(common.getLibraryCallMemberName(node), 'insert', 'should return correct member name')
+  t.equal(common.getLibraryCallMemberName(libCall), 'insert', 'should return correct member name')
   t.throws(() => common.getLibraryCallMemberName({ name: 'Identifier' }), undefined, 'should throw on wrong node')
 })
 
@@ -488,83 +307,9 @@ test('staticAnalysisCommon.getFullQualifiedFunctionCallIdent', function (t) {
 test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
   t.plan(3)
   var contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
-  var funDef = {
-    'attributes': {
-      'constant': false,
-      'name': 'getY',
-      'payable': false,
-      'visibility': 'public'
-    },
-    'children': [
-      {
-        'children': [
-          {
-            'attributes': {
-              'name': 'z',
-              'type': 'uint256'
-            },
-            'children': [
-              {
-                'attributes': {
-                  'name': 'uint'
-                },
-                'name': 'ElementaryTypeName'
-              }
-            ],
-            'name': 'VariableDeclaration'
-          },
-          {
-            'attributes': {
-              'name': 'r',
-              'type': 'bool'
-            },
-            'children': [
-              {
-                'attributes': {
-                  'name': 'bool'
-                },
-                'name': 'ElementaryTypeName'
-              }
-            ],
-            'name': 'VariableDeclaration'
-          }
-        ],
-        'name': 'ParameterList'
-      },
-      {
-        'children': [
-          {
-            'attributes': {
-              'name': '',
-              'type': 'uint256'
-            },
-            'children': [
-              {
-                'attributes': {
-                  'name': 'uint'
-                },
-                'id': 34,
-                'name': 'ElementaryTypeName',
-                'src': '285:4:0'
-              }
-            ],
-            'id': 35,
-            'name': 'VariableDeclaration',
-            'src': '285:4:0'
-          }
-        ],
-        'name': 'ParameterList'
-      },
-      {
-        'children': [],
-        'name': 'Block'
-      }
-    ],
-    'name': 'FunctionDefinition'
-  }
-  t.ok(common.getFullQuallyfiedFuncDefinitionIdent(contract, funDef, ['uint256', 'bool']) === 'baz.getY(uint256,bool)', 'creates right signature')
+  t.ok(common.getFullQuallyfiedFuncDefinitionIdent(contract, fullyQualifiedFunctionDefinition, ['uint256', 'bool']) === 'baz.getY(uint256,bool)', 'creates right signature')
   t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(contract, { name: 'MemberAccess' }, ['uint256', 'bool']), undefined, 'throws on wrong nodes')
-  t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent({ name: 'FunctionCall' }, funDef, ['uint256', 'bool']), undefined, 'throws on wrong nodes')
+  t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent({ name: 'FunctionCall' }, fullyQualifiedFunctionDefinition, ['uint256', 'bool']), undefined, 'throws on wrong nodes')
 })
 
 test('staticAnalysisCommon.getLoopBlockStartIndex', function (t) {
@@ -675,53 +420,6 @@ test('staticAnalysisCommon.isLoop', function (t) {
 
 test('staticAnalysisCommon.isBuiltinFunctionCall', function (t) {
   t.plan(2)
-  var selfdestruct = {
-    'attributes': {
-      'type': 'tuple()',
-      'type_conversion': false
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'function (address)',
-          'value': 'selfdestruct'
-        },
-        'name': 'Identifier'
-      },
-      {
-        'attributes': {
-          'type': 'address',
-          'value': 'a'
-        },
-        'name': 'Identifier'
-      }
-    ],
-    'name': 'FunctionCall'
-  }
-  var localCall = {
-    'attributes': {
-      'type': 'tuple()',
-      'type_conversion': false
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'function (struct Ballot.Voter storage pointer)',
-          'value': 'bli'
-        },
-        'name': 'Identifier'
-      },
-      {
-        'attributes': {
-          'type': 'struct Ballot.Voter storage pointer',
-          'value': 'x'
-        },
-        'name': 'Identifier'
-      }
-    ],
-    'name': 'FunctionCall'
-  }
-
   t.ok(common.isBuiltinFunctionCall(selfdestruct), 'selfdestruct is builtin')
   t.notOk(common.isBuiltinFunctionCall(localCall), 'local call is not builtin')
 })
@@ -800,7 +498,6 @@ test('staticAnalysisCommon.isStorageVariableDeclaration', function (t) {
     'name': 'VariableDeclaration',
     'src': '227:32:0'
   }
-
   t.ok(common.isStorageVariableDeclaration(node1), 'struct storage pointer param is storage')
   t.ok(common.isStorageVariableDeclaration(node2), 'struct storage pointer mapping param is storage')
   t.notOk(common.isStorageVariableDeclaration(node3), 'bytes is not storage')
@@ -808,139 +505,16 @@ test('staticAnalysisCommon.isStorageVariableDeclaration', function (t) {
 
 test('staticAnalysisCommon.isInteraction', function (t) {
   t.plan(6)
-  var sendAst = { name: 'MemberAccess', children: [{attributes: { value: 'd', type: 'address' }}], attributes: { value: 'send', type: 'function (uint256) returns (bool)' } }
-  var callAst = { name: 'MemberAccess', children: [{attributes: { value: 'f', type: 'address' }}], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
-  var callcodeAst = { name: 'MemberAccess', children: [{attributes: { value: 'f', type: 'address' }}], attributes: { member_name: 'callcode', type: 'function () payable returns (bool)' } }
-  var delegatecallAst = { name: 'MemberAccess', children: [{attributes: { value: 'g', type: 'address' }}], attributes: { member_name: 'delegatecall', type: 'function () returns (bool)' } }
-  var nodeExtDir = {
-    attributes: {
-      member_name: 'info',
-      type: 'function () payable external returns (uint256)'
-    },
-    children: [
-      {
-        attributes: {
-          type: 'contract InfoFeed',
-          value: 'f'
-        },
-        id: 30,
-        name: 'Identifier',
-        src: '405:1:0'
-      }
-    ],
-    id: 32,
-    name: 'MemberAccess',
-    src: '405:6:0'
-  }
-  var nodeNot = {
-    'attributes': {
-      'type': 'tuple()',
-      'type_conversion': false
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'function (struct Ballot.Voter storage pointer)',
-          'value': 'bli'
-        },
-        'id': 37,
-        'name': 'Identifier',
-        'src': '540:3:0'
-      },
-      {
-        'attributes': {
-          'type': 'struct Ballot.Voter storage pointer',
-          'value': 'x'
-        },
-        'id': 38,
-        'name': 'Identifier',
-        'src': '544:1:0'
-      }
-    ],
-    'id': 39,
-    'name': 'FunctionCall',
-    'src': '540:6:0'
-  }
-
-  t.ok(common.isInteraction(sendAst), 'send is interaction')
-  t.ok(common.isInteraction(callAst), 'call is interaction')
-  t.ok(common.isInteraction(nodeExtDir), 'ExternalDirecCall is interaction')
-  t.notOk(common.isInteraction(callcodeAst), 'callcode is not interaction')
-  t.notOk(common.isInteraction(delegatecallAst), 'callcode is not interaction')
-  t.notOk(common.isInteraction(nodeNot), 'local call is not interaction')
+  t.ok(common.isInteraction(lowlevelCall.sendAst), 'send is interaction')
+  t.ok(common.isInteraction(lowlevelCall.callAst), 'call is interaction')
+  t.ok(common.isInteraction(externalDirect), 'ExternalDirecCall is interaction')
+  t.notOk(common.isInteraction(lowlevelCall.callcodeAst), 'callcode is not interaction')
+  t.notOk(common.isInteraction(lowlevelCall.delegatecallAst), 'callcode is not interaction')
+  t.notOk(common.isInteraction(localCall), 'local call is not interaction')
 })
 
 test('staticAnalysisCommon.isEffect', function (t) {
   t.plan(5)
-  var inlineAssembly = {
-    'children': [
-    ],
-    'id': 21,
-    'name': 'InlineAssembly',
-    'src': '809:41:0'
-  }
-  var assignment = {
-    'attributes': {
-      'operator': '=',
-      'type': 'uint256'
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'uint256'
-        },
-        'children': [
-          {
-            'attributes': {
-              'type': 'mapping(address => uint256)',
-              'value': 'c'
-            },
-            'id': 61,
-            'name': 'Identifier',
-            'src': '873:1:0'
-          },
-          {
-            'attributes': {
-              'member_name': 'sender',
-              'type': 'address'
-            },
-            'children': [
-              {
-                'attributes': {
-                  'type': 'msg',
-                  'value': 'msg'
-                },
-                'id': 62,
-                'name': 'Identifier',
-                'src': '875:3:0'
-              }
-            ],
-            'id': 63,
-            'name': 'MemberAccess',
-            'src': '875:10:0'
-          }
-        ],
-        'id': 64,
-        'name': 'IndexAccess',
-        'src': '873:13:0'
-      },
-      {
-        'attributes': {
-          'hexvalue': '30',
-          'subdenomination': null,
-          'token': null,
-          'type': 'int_const 0',
-          'value': '0'
-        },
-        'id': 65,
-        'name': 'Literal',
-        'src': '889:1:0'
-      }
-    ],
-    'id': 66,
-    'name': 'Assignment',
-    'src': '873:17:0'
-  }
   var unaryOp = { name: 'UnaryOperation', attributes: { operator: '++' } }
   t.ok(common.isEffect(inlineAssembly), 'inline assembly is treated as effect')
   t.ok(common.isEffect(assignment), 'assignment is treated as effect')
@@ -952,75 +526,6 @@ test('staticAnalysisCommon.isEffect', function (t) {
 
 test('staticAnalysisCommon.isWriteOnStateVariable', function (t) {
   t.plan(3)
-  var inlineAssembly = {
-    'children': [
-    ],
-    'id': 21,
-    'name': 'InlineAssembly',
-    'src': '809:41:0'
-  }
-  var assignment = {
-    'attributes': {
-      'operator': '=',
-      'type': 'uint256'
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'uint256'
-        },
-        'children': [
-          {
-            'attributes': {
-              'type': 'mapping(address => uint256)',
-              'value': 'c'
-            },
-            'id': 61,
-            'name': 'Identifier',
-            'src': '873:1:0'
-          },
-          {
-            'attributes': {
-              'member_name': 'sender',
-              'type': 'address'
-            },
-            'children': [
-              {
-                'attributes': {
-                  'type': 'msg',
-                  'value': 'msg'
-                },
-                'id': 62,
-                'name': 'Identifier',
-                'src': '875:3:0'
-              }
-            ],
-            'id': 63,
-            'name': 'MemberAccess',
-            'src': '875:10:0'
-          }
-        ],
-        'id': 64,
-        'name': 'IndexAccess',
-        'src': '873:13:0'
-      },
-      {
-        'attributes': {
-          'hexvalue': '30',
-          'subdenomination': null,
-          'token': null,
-          'type': 'int_const 0',
-          'value': '0'
-        },
-        'id': 65,
-        'name': 'Literal',
-        'src': '889:1:0'
-      }
-    ],
-    'id': 66,
-    'name': 'Assignment',
-    'src': '873:17:0'
-  }
   var node1 = {
     'attributes': {
       'name': 'x',
@@ -1074,55 +579,9 @@ test('staticAnalysisCommon.isWriteOnStateVariable', function (t) {
 
 test('staticAnalysisCommon.isStateVariable', function (t) {
   t.plan(3)
-  var node1 = {
-    'attributes': {
-      'name': 'x',
-      'type': 'struct Ballot.Voter storage pointer'
-    },
-    'children': [
-      {
-        'attributes': {
-          'name': 'Voter'
-        },
-        'name': 'UserDefinedTypeName'
-      }
-    ],
-    'name': 'VariableDeclaration'
-  }
-  var node2 = {
-    'attributes': {
-      'name': 'y',
-      'type': 'uint'
-    },
-    'children': [
-      {
-        'attributes': {
-          'name': 'Voter'
-        },
-        'name': 'UserDefinedTypeName'
-      }
-    ],
-    'name': 'VariableDeclaration'
-  }
-  var node3 = {
-    'attributes': {
-      'name': 'xx',
-      'type': 'uint'
-    },
-    'children': [
-      {
-        'attributes': {
-          'name': 'Voter'
-        },
-        'name': 'UserDefinedTypeName'
-      }
-    ],
-    'name': 'VariableDeclaration'
-  }
-
-  t.ok(common.isStateVariable('x', [node1, node2]), 'is contained')
-  t.ok(common.isStateVariable('x', [node2, node1, node1]), 'is contained twice')
-  t.notOk(common.isStateVariable('x', [node2, node3]), 'not contained')
+  t.ok(common.isStateVariable('x', [storageVariableNodes.node1, storageVariableNodes.node2]), 'is contained')
+  t.ok(common.isStateVariable('x', [storageVariableNodes.node2, storageVariableNodes.node1, storageVariableNodes.node1]), 'is contained twice')
+  t.notOk(common.isStateVariable('x', [storageVariableNodes.node2, storageVariableNodes.node3]), 'not contained')
 })
 
 test('staticAnalysisCommon.isConstantFunction', function (t) {
@@ -1171,63 +630,18 @@ test('staticAnalysisCommon.isFullyImplementedContract', function (t) {
 
 test('staticAnalysisCommon.isCallToNonConstLocalFunction', function (t) {
   t.plan(2)
-  var node1 = {
-    'attributes': {
-      'type': 'tuple()',
-      'type_conversion': false
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'function (struct Ballot.Voter storage pointer)',
-          'value': 'bli'
-        },
-        'name': 'Identifier'
-      },
-      {
-        'attributes': {
-          'type': 'struct Ballot.Voter storage pointer',
-          'value': 'x'
-        },
-        'name': 'Identifier'
-      }
-    ],
-    'name': 'FunctionCall'
-  }
-
-  t.ok(common.isCallToNonConstLocalFunction(node1), 'should be call to non const Local func')
-  node1.children[0].attributes.type = 'function (struct Ballot.Voter storage pointer) constant payable (uint256)'
-  t.notok(common.isCallToNonConstLocalFunction(node1), 'should no longer be call to non const Local func')
+  t.ok(common.isCallToNonConstLocalFunction(localCall), 'should be call to non const Local func')
+  localCall.children[0].attributes.type = 'function (struct Ballot.Voter storage pointer) constant payable (uint256)'
+  t.notok(common.isCallToNonConstLocalFunction(localCall), 'should no longer be call to non const Local func')
 })
 
 test('staticAnalysisCommon.isExternalDirectCall', function (t) {
   t.plan(5)
-  var node = {
-    attributes: {
-      member_name: 'info',
-      type: 'function () payable external returns (uint256)'
-    },
-    children: [
-      {
-        attributes: {
-          type: 'contract InfoFeed',
-          value: 'f'
-        },
-        id: 30,
-        name: 'Identifier',
-        src: '405:1:0'
-      }
-    ],
-    id: 32,
-    name: 'MemberAccess',
-    src: '405:6:0'
-  }
-
   var node2 = { name: 'MemberAccess', children: [{attributes: { value: 'this', type: 'contract test' }}], attributes: { value: 'b', type: 'function (bytes32,address) returns (bool)' } }
-  t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
-  t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
-  t.notOk(common.isNowAccess(node), 'is now used should not work')
-  t.ok(common.isExternalDirectCall(node), 'f.info() should be external direct call')
+  t.notOk(common.isThisLocalCall(externalDirect), 'is this.local_method() used should not work')
+  t.notOk(common.isBlockTimestampAccess(externalDirect), 'is block.timestamp used should not work')
+  t.notOk(common.isNowAccess(externalDirect), 'is now used should not work')
+  t.ok(common.isExternalDirectCall(externalDirect), 'f.info() should be external direct call')
   t.notOk(common.isExternalDirectCall(node2), 'local call is not an exernal call')
 })
 
@@ -1274,113 +688,45 @@ test('staticAnalysisCommon.isBlockBlockhashAccess', function (t) {
 
 test('staticAnalysisCommon.isThisLocalCall', function (t) {
   t.plan(3)
-  var node = { name: 'MemberAccess', children: [{attributes: { value: 'this', type: 'contract test' }}], attributes: { value: 'b', type: 'function (bytes32,address) returns (bool)' } }
-  t.ok(common.isThisLocalCall(node), 'is this.local_method() used should work')
-  t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
-  t.notOk(common.isNowAccess(node), 'is now used should not work')
+  t.ok(common.isThisLocalCall(thisLocalCall), 'is this.local_method() used should work')
+  t.notOk(common.isBlockTimestampAccess(thisLocalCall), 'is block.timestamp used should not work')
+  t.notOk(common.isNowAccess(thisLocalCall), 'is now used should not work')
 })
 
 test('staticAnalysisCommon.isSuperLocalCall', function (t) {
   t.plan(4)
-  var node = {
-    'attributes': {
-      'member_name': 'duper',
-      'type': 'function ()'
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'contract super a',
-          'value': 'super'
-        },
-        'name': 'Identifier'
-      }
-    ],
-    'name': 'MemberAccess'
-  }
-  t.ok(common.isSuperLocalCall(node), 'is super.local_method() used should work')
-  t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
-  t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
-  t.notOk(common.isNowAccess(node), 'is now used should not work')
+  t.ok(common.isSuperLocalCall(superLocal), 'is super.local_method() used should work')
+  t.notOk(common.isThisLocalCall(superLocal), 'is this.local_method() used should not work')
+  t.notOk(common.isBlockTimestampAccess(superLocal), 'is block.timestamp used should not work')
+  t.notOk(common.isNowAccess(superLocal), 'is now used should not work')
 })
 
 test('staticAnalysisCommon.isLibraryCall', function (t) {
   t.plan(5)
-  var node = {
-    'attributes': {
-      'member_name': 'insert',
-      'type': 'function (struct Set.Data storage pointer,uint256) returns (bool)'
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'type(library Set)',
-          'value': 'Set'
-        },
-        'name': 'Identifier'
-      }
-    ],
-    'name': 'MemberAccess'
-  }
-  t.ok(common.isLibraryCall(node), 'is lib call should not work')
-  t.notOk(common.isSuperLocalCall(node), 'is super.local_method() used should not work')
-  t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
-  t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
-  t.notOk(common.isNowAccess(node), 'is now used should not work')
+  t.ok(common.isLibraryCall(libCall), 'is lib call should not work')
+  t.notOk(common.isSuperLocalCall(libCall), 'is super.local_method() used should not work')
+  t.notOk(common.isThisLocalCall(libCall), 'is this.local_method() used should not work')
+  t.notOk(common.isBlockTimestampAccess(libCall), 'is block.timestamp used should not work')
+  t.notOk(common.isNowAccess(libCall), 'is now used should not work')
 })
 
 test('staticAnalysisCommon.isLocalCall', function (t) {
   t.plan(5)
-  var node1 = {
-    'attributes': {
-      'type': 'tuple()',
-      'type_conversion': false
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'function (struct Ballot.Voter storage pointer)',
-          'value': 'bli'
-        },
-        'id': 37,
-        'name': 'Identifier',
-        'src': '540:3:0'
-      },
-      {
-        'attributes': {
-          'type': 'struct Ballot.Voter storage pointer',
-          'value': 'x'
-        },
-        'id': 38,
-        'name': 'Identifier',
-        'src': '544:1:0'
-      }
-    ],
-    'id': 39,
-    'name': 'FunctionCall',
-    'src': '540:6:0'
-  }
-
-  t.ok(common.isLocalCall(node1), 'isLocalCall')
-  t.notOk(common.isLowLevelCall(node1), 'is not low level call')
-  t.notOk(common.isExternalDirectCall(node1), 'is not external direct call')
-  t.notOk(common.isEffect(node1), 'is not effect')
-  t.notOk(common.isInteraction(node1), 'is not interaction')
+  t.ok(common.isLocalCall(localCall), 'isLocalCall')
+  t.notOk(common.isLowLevelCall(localCall), 'is not low level call')
+  t.notOk(common.isExternalDirectCall(localCall), 'is not external direct call')
+  t.notOk(common.isEffect(localCall), 'is not effect')
+  t.notOk(common.isInteraction(localCall), 'is not interaction')
 })
 
 test('staticAnalysisCommon.isLowLevelCall', function (t) {
   t.plan(6)
-  var sendAst = { name: 'MemberAccess', children: [{attributes: { value: 'd', type: 'address' }}], attributes: { value: 'send', type: 'function (uint256) returns (bool)' } }
-  var callAst = { name: 'MemberAccess', children: [{attributes: { value: 'f', type: 'address' }}], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
-  var callcodeAst = { name: 'MemberAccess', children: [{attributes: { value: 'f', type: 'address' }}], attributes: { member_name: 'callcode', type: 'function () payable returns (bool)' } }
-  var delegatecallAst = { name: 'MemberAccess', children: [{attributes: { value: 'g', type: 'address' }}], attributes: { member_name: 'delegatecall', type: 'function () returns (bool)' } }
-
-  t.ok(common.isLowLevelSendInst(sendAst) && common.isLowLevelCall(sendAst), 'send is llc should work')
-  t.ok(common.isLowLevelCallInst(callAst) && common.isLowLevelCall(callAst), 'call is llc should work')
-  t.notOk(common.isLowLevelCallInst(callcodeAst), 'callcode is not call')
-  t.ok(common.isLowLevelCallcodeInst(callcodeAst) && common.isLowLevelCall(callcodeAst), 'callcode is llc should work')
-  t.notOk(common.isLowLevelCallcodeInst(callAst), 'call is not callcode')
-  t.ok(common.isLowLevelDelegatecallInst(delegatecallAst) && common.isLowLevelCall(delegatecallAst), 'delegatecall is llc should work')
+  t.ok(common.isLowLevelSendInst(lowlevelCall.sendAst) && common.isLowLevelCall(lowlevelCall.sendAst), 'send is llc should work')
+  t.ok(common.isLowLevelCallInst(lowlevelCall.callAst) && common.isLowLevelCall(lowlevelCall.callAst), 'call is llc should work')
+  t.notOk(common.isLowLevelCallInst(lowlevelCall.callcodeAst), 'callcode is not call')
+  t.ok(common.isLowLevelCallcodeInst(lowlevelCall.callcodeAst) && common.isLowLevelCall(lowlevelCall.callcodeAst), 'callcode is llc should work')
+  t.notOk(common.isLowLevelCallcodeInst(lowlevelCall.callAst), 'call is not callcode')
+  t.ok(common.isLowLevelDelegatecallInst(lowlevelCall.delegatecallAst) && common.isLowLevelCall(lowlevelCall.delegatecallAst), 'delegatecall is llc should work')
 })
 
 test('staticAnalysisCommon: Call of parameter function', function (t) {
