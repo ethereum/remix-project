@@ -1,18 +1,19 @@
 /* global FileReader */
-var async = require('async')
-var Gists = require('gists')
-var modalDialogCustom = require('../ui/modal-dialog-custom')
-var tooltip = require('../ui/tooltip')
-var QueryParams = require('../../lib/query-params')
-var helper = require('../../lib/helper')
-var yo = require('yo-yo')
-var Treeview = require('../ui/TreeView')
-var modalDialog = require('../ui/modaldialog')
-var EventManager = require('../../lib/events')
-var contextMenu = require('../ui/contextMenu')
-var css = require('./styles/file-explorer-styles')
-var globalRegistry = require('../../global/registry')
-var queryParams = new QueryParams()
+/* global fetch */
+const async = require('async')
+const Gists = require('gists')
+const modalDialogCustom = require('../ui/modal-dialog-custom')
+const tooltip = require('../ui/tooltip')
+const QueryParams = require('../../lib/query-params')
+const helper = require('../../lib/helper')
+const yo = require('yo-yo')
+const Treeview = require('../ui/TreeView')
+const modalDialog = require('../ui/modaldialog')
+const EventManager = require('../../lib/events')
+const contextMenu = require('../ui/contextMenu')
+const css = require('./styles/file-explorer-styles')
+const globalRegistry = require('../../global/registry')
+const queryParams = new QueryParams()
 let MENU_HANDLE
 
 function fileExplorer (localRegistry, files, menuItems) {
@@ -441,35 +442,47 @@ fileExplorer.prototype.toGist = function (id) {
     }
   }
 
+  /**
+   * This function is to get the original content of given gist
+   * @params id is the gist id to fetch
+   */
+  async function getOriginalFiles (id) {
+    if (!id) {
+      return []
+    }
+
+    const url = `https://api.github.com/gists/${id}`
+    const res = await fetch(url)
+    const data = await res.json()
+    return data.files || []
+  }
+
   this.packageFiles(this.files, 'browser/gists/' + id, (error, packaged) => {
     if (error) {
       console.log(error)
       modalDialogCustom.alert('Failed to create gist: ' + error)
     } else {
+      // check for token
       var tokenAccess = this._deps.config.get('settings/gist-access-token')
       if (!tokenAccess) {
         modalDialogCustom.alert(
           'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.'
         )
       } else {
-        var description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
-          queryParams.get().version +
-          '&optimize=' +
-          queryParams.get().optimize +
-          '&gist='
-        var gists = new Gists({
-          token: tokenAccess
-        })
+        const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
+          queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
+        const gists = new Gists({ token: tokenAccess })
+
         if (id) {
-          const fileList = Object.keys(this.files.origGistFiles)
-          const updatedFileList = Object.keys(packaged)
+          const originalFileList = getOriginalFiles(id)
           // Telling the GIST API to remove files
-          const allItems = fileList
+          const updatedFileList = Object.keys(packaged)
+          const allItems = Object.keys(originalFileList)
             .filter(fileName => updatedFileList.indexOf(fileName) === -1)
             .reduce((acc, deleteFileName) => ({
               ...acc,
               [deleteFileName]: null
-            }), this.files.origGistFiles)
+            }), originalFileList)
           // adding new files
           updatedFileList.forEach((file) => {
             const _items = file.split('/')
@@ -489,10 +502,10 @@ fileExplorer.prototype.toGist = function (id) {
               for (const key in allItems) {
                 if (allItems[key] === null) delete allItems[key]
               }
-              this.files.origGistFiles = allItems
             }
           })
         } else {
+          // id is not existing, need to create a new gist
           tooltip('Creating a new gist ...')
           gists.create({
             description: description,
