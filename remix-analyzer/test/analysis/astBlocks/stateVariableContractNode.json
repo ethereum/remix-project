@@ -1,0 +1,108 @@
+{
+    "attributes": {
+      "fullyImplemented": true,
+      "isLibrary": false,
+      "linearizedBaseContracts": [
+        274
+      ],
+      "name": "Ballot"
+    },
+    "children": [
+      {
+        "attributes": {
+          "name": "Voter"
+        },
+        "children": [],
+        "name": "StructDefinition"
+      },
+      {
+        "attributes": {
+          "name": "Proposal"
+        },
+        "children": [],
+        "name": "StructDefinition"
+      },
+      {
+        "attributes": {
+          "name": "chairperson",
+          "type": "address"
+        },
+        "children": [
+          {
+            "attributes": {
+              "name": "address"
+            },
+            "name": "ElementaryTypeName"
+          }
+        ],
+        "name": "VariableDeclaration"
+      },
+      {
+        "attributes": {
+          "name": "voters",
+          "type": "mapping(address => struct Ballot.Voter storage ref)"
+        },
+        "children": [
+          {
+            "children": [
+              {
+                "attributes": {
+                  "name": "address"
+                },
+                "name": "ElementaryTypeName"
+              },
+              {
+                "attributes": {
+                  "name": "Voter"
+                },
+                "name": "UserDefinedTypeName"
+              }
+            ],
+            "name": "Mapping"
+          }
+        ],
+        "name": "VariableDeclaration"
+      },
+      {
+        "attributes": {
+          "name": "proposals",
+          "type": "struct Ballot.Proposal storage ref[] storage ref"
+        },
+        "children": [
+          {
+            "children": [
+              {
+                "attributes": {
+                  "name": "Proposal"
+                },
+                "name": "UserDefinedTypeName"
+              }
+            ],
+            "name": "ArrayTypeName"
+          }
+        ],
+        "name": "VariableDeclaration"
+      },
+      {
+        "attributes": {
+          "constant": false,
+          "name": "Ballot",
+          "payable": false,
+          "visibility": "public"
+        },
+        "children": [],
+        "name": "FunctionDefinition"
+      },
+      {
+        "attributes": {
+          "constant": false,
+          "name": "giveRightToVote",
+          "payable": false,
+          "visibility": "public"
+        },
+        "children": [],
+        "name": "FunctionDefinition"
+      }
+    ],
+    "name": "ContractDefinition"
+  }

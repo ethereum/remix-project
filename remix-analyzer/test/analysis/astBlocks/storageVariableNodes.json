@@ -1,0 +1,74 @@
+{
+  "node1": {
+    "attributes": {
+      "name": "x",
+      "type": "struct Ballot.Voter storage pointer"
+    },
+    "children": [
+      {
+        "attributes": {
+          "name": "Voter"
+        },
+        "id": 43,
+        "name": "UserDefinedTypeName",
+        "src": "604:5:0"
+      }
+    ],
+    "id": 44,
+    "name": "VariableDeclaration",
+    "src": "604:15:0"
+  },
+  "node2": {
+    "attributes": {
+      "name": "voters",
+      "type": "mapping(address => struct Ballot.Voter storage ref)"
+    },
+    "children": [
+      {
+        "children": [
+          {
+            "attributes": {
+              "name": "address"
+            },
+            "id": 16,
+            "name": "ElementaryTypeName",
+            "src": "235:7:0"
+          },
+          {
+            "attributes": {
+              "name": "Voter"
+            },
+            "id": 17,
+            "name": "UserDefinedTypeName",
+            "src": "246:5:0"
+          }
+        ],
+        "id": 18,
+        "name": "Mapping",
+        "src": "227:25:0"
+      }
+    ],
+    "id": 19,
+    "name": "VariableDeclaration",
+    "src": "227:32:0"
+  },
+  "node3": {
+    "attributes": {
+      "name": "voters",
+      "type": "bytes32"
+    },
+    "children": [
+      {
+        "attributes": {
+          "name": "bytes"
+        },
+        "id": 16,
+        "name": "ElementaryTypeName",
+        "src": "235:7:0"
+      }
+    ],
+    "id": 19,
+    "name": "VariableDeclaration",
+    "src": "227:32:0"
+  }
+}

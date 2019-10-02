@@ -1,0 +1,74 @@
+{
+      "attributes": {
+        "constant": false,
+        "name": "getY",
+        "payable": false,
+        "visibility": "public"
+      },
+      "children": [
+        {
+          "children": [
+            {
+              "attributes": {
+                "name": "z",
+                "type": "uint256"
+              },
+              "children": [
+                {
+                  "attributes": {
+                    "name": "uint"
+                  },
+                  "name": "ElementaryTypeName"
+                }
+              ],
+              "name": "VariableDeclaration"
+            },
+            {
+              "attributes": {
+                "name": "r",
+                "type": "bool"
+              },
+              "children": [
+                {
+                  "attributes": {
+                    "name": "bool"
+                  },
+                  "name": "ElementaryTypeName"
+                }
+              ],
+              "name": "VariableDeclaration"
+            }
+          ],
+          "name": "ParameterList"
+        },
+        {
+          "children": [
+            {
+              "attributes": {
+                "name": "",
+                "type": "uint256"
+              },
+              "children": [
+                {
+                  "attributes": {
+                    "name": "uint"
+                  },
+                  "id": 34,
+                  "name": "ElementaryTypeName",
+                  "src": "285:4:0"
+                }
+              ],
+              "id": 35,
+              "name": "VariableDeclaration",
+              "src": "285:4:0"
+            }
+          ],
+          "name": "ParameterList"
+        },
+        {
+          "children": [],
+          "name": "Block"
+        }
+      ],
+      "name": "FunctionDefinition"
+    }

@@ -8,5 +8,11 @@ module.exports = {
   inlineAssembly: require('./inlineAssembly.json'),
   forLoopNode: require('./forLoopNode.json'),
   whileLoopNode: require('./whileLoopNode.json'),
-  doWhileLoopNode: require('./doWhileLoopNode.json')
+  doWhileLoopNode: require('./doWhileLoopNode.json'),
+  stateVariableContractNode: require('./stateVariableContractNode.json'),
+  functionDefinition: require('./functionDefinition.json'),
+  fullyQualifiedFunctionDefinition: require('./fullyQualifiedFunctionDefinition.json'),
+  selfdestruct: require('./selfdestruct.json'),
+  storageVariableNodes: require('./storageVariableNodes.json'),
+  lowlevelCall: require('./lowlevelCall.json')
 }

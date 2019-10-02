@@ -1,0 +1,24 @@
+{
+      "attributes": {
+        "constant": true,
+        "name": "winnerName",
+        "payable": false,
+        "visibility": "public"
+      },
+      "children": [
+        {
+          "children": [
+          ],
+          "name": "ParameterList"
+        },
+        {
+          "children": [],
+          "name": "ParameterList"
+        },
+        {
+          "children": [],
+          "name": "Block"
+        }
+      ],
+      "name": "FunctionDefinition"
+    }
