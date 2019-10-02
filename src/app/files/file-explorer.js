@@ -1,4 +1,5 @@
 /* global FileReader */
+/* global fetch */
 const async = require('async')
 const Gists = require('gists')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
