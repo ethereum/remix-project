@@ -1,0 +1,42 @@
+{
+    "sendAst": { "name": "MemberAccess", 
+        "children": [
+            {
+                "attributes": { 
+                    "value": "d", 
+                    "type": "address" 
+                    }
+            }], 
+            "attributes": { 
+                "value": "send", 
+                "type": "function (uint256) returns (bool)" } 
+            },
+    "callAst": { "name": "MemberAccess", "children": [{
+        "attributes": { 
+            "value": "f", 
+            "type": "address" 
+            }}], 
+            "attributes": { 
+                "member_name": "call", 
+                "type": "function () payable returns (bool)" } },
+   "callcodeAst": { 
+       "name": "MemberAccess", 
+       "children": [{
+           "attributes": { 
+               "value": "f", 
+               "type": "address" 
+               }}], 
+               "attributes": { 
+                   "member_name": "callcode", 
+                   "type": "function () payable returns (bool)" } },
+   "delegatecallAst": { 
+       "name": "MemberAccess", 
+       "children": [{
+           "attributes": { 
+               "value": "g", 
+               "type": "address"
+            }}], 
+            "attributes": { 
+                "member_name": "delegatecall", 
+                "type": "function () returns (bool)" } }
+}
