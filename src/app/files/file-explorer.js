@@ -442,10 +442,15 @@ fileExplorer.prototype.toGist = function (id) {
     }
   }
 
+  /**
+   * This function is to get the original content of given gist
+   * @params id is the gist id to fetch
+   */
   async function getOriginalFiles (id) {
     if (!id) {
       return []
     }
+
     const url = `https://api.github.com/gists/${id}`
     const res = await fetch(url)
     const data = await res.json()
@@ -469,7 +474,7 @@ fileExplorer.prototype.toGist = function (id) {
         const gists = new Gists({ token: tokenAccess })
 
         if (id) {
-          let originalFileList = getOriginalFiles(id)
+          const originalFileList = getOriginalFiles(id)
           // Telling the GIST API to remove files
           const updatedFileList = Object.keys(packaged)
           const allItems = Object.keys(originalFileList)
