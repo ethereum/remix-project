@@ -1,0 +1,16 @@
+{
+  "attributes": {
+    "member_name": "blockhash",
+    "type": "function (uint256) returns (bytes32)"
+  },
+  "children": [
+    {
+      "attributes": {
+        "type": "block",
+        "value": "block"
+      },
+      "name": "Identifier"
+    }
+  ],
+  "name": "MemberAccess"
+}

@@ -1,0 +1,15 @@
+{
+  "children": [
+    {
+      "attributes": {
+        "name": "r"
+      },
+      "id": 7,
+      "name": "UserDefinedTypeName",
+      "src": "84:1:0"
+    }
+  ],
+  "id": 8,
+  "name": "InheritanceSpecifier",
+  "src": "84:1:0"
+}
