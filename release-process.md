@@ -37,11 +37,6 @@ This document includes:
  - git push --tags
  - github-changes -o ethereum -r remix-ide -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
  - publish a beta release in github using the changelog
- - rm -rf node_modules
- - npm install
- - remove all soljson.js files in root folder
- - npm run build
- - npm publish
  - drop zip file to the beta release
  
 # remix.ethereum.org update
