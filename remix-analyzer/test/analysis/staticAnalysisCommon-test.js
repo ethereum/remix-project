@@ -3,7 +3,7 @@ var common = require('../../src/solidity-analyzer/modules/staticAnalysisCommon')
 var { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignment,
     inlineAssembly, forLoopNode, whileLoopNode, doWhileLoopNode, stateVariableContractNode,
     functionDefinition, fullyQualifiedFunctionDefinition, selfdestruct, storageVariableNodes,
-    lowlevelCall } = require('./astBlocks')
+    lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess } = require('./astBlocks')
 
 function escapeRegExp (str) {
   return str.replace(/[-[\]/{}()+?.\\^$|]/g, '\\$&')
@@ -233,22 +233,7 @@ test('staticAnalysisCommon.getFunctionDefinitionName', function (t) {
 
 test('staticAnalysisCommon.getInheritsFromName', function (t) {
   t.plan(2)
-  var inh = {
-    'children': [
-      {
-        'attributes': {
-          'name': 'r'
-        },
-        'id': 7,
-        'name': 'UserDefinedTypeName',
-        'src': '84:1:0'
-      }
-    ],
-    'id': 8,
-    'name': 'InheritanceSpecifier',
-    'src': '84:1:0'
-  }
-  t.ok(common.getInheritsFromName(inh) === 'r', 'returns right contract name')
+  t.ok(common.getInheritsFromName(inheritance) === 'r', 'returns right contract name')
   t.throws(() => common.getInheritsFromName({ name: 'ElementaryTypeName' }), undefined, 'throws on other nodes')
 })
 
@@ -426,81 +411,9 @@ test('staticAnalysisCommon.isBuiltinFunctionCall', function (t) {
 
 test('staticAnalysisCommon.isStorageVariableDeclaration', function (t) {
   t.plan(3)
-  var node1 = {
-    'attributes': {
-      'name': 'x',
-      'type': 'struct Ballot.Voter storage pointer'
-    },
-    'children': [
-      {
-        'attributes': {
-          'name': 'Voter'
-        },
-        'id': 43,
-        'name': 'UserDefinedTypeName',
-        'src': '604:5:0'
-      }
-    ],
-    'id': 44,
-    'name': 'VariableDeclaration',
-    'src': '604:15:0'
-  }
-  var node2 = {
-    'attributes': {
-      'name': 'voters',
-      'type': 'mapping(address => struct Ballot.Voter storage ref)'
-    },
-    'children': [
-      {
-        'children': [
-          {
-            'attributes': {
-              'name': 'address'
-            },
-            'id': 16,
-            'name': 'ElementaryTypeName',
-            'src': '235:7:0'
-          },
-          {
-            'attributes': {
-              'name': 'Voter'
-            },
-            'id': 17,
-            'name': 'UserDefinedTypeName',
-            'src': '246:5:0'
-          }
-        ],
-        'id': 18,
-        'name': 'Mapping',
-        'src': '227:25:0'
-      }
-    ],
-    'id': 19,
-    'name': 'VariableDeclaration',
-    'src': '227:32:0'
-  }
-  var node3 = {
-    'attributes': {
-      'name': 'voters',
-      'type': 'bytes32'
-    },
-    'children': [
-      {
-        'attributes': {
-          'name': 'bytes'
-        },
-        'id': 16,
-        'name': 'ElementaryTypeName',
-        'src': '235:7:0'
-      }
-    ],
-    'id': 19,
-    'name': 'VariableDeclaration',
-    'src': '227:32:0'
-  }
-  t.ok(common.isStorageVariableDeclaration(node1), 'struct storage pointer param is storage')
-  t.ok(common.isStorageVariableDeclaration(node2), 'struct storage pointer mapping param is storage')
-  t.notOk(common.isStorageVariableDeclaration(node3), 'bytes is not storage')
+  t.ok(common.isStorageVariableDeclaration(storageVariableNodes.node1), 'struct storage pointer param is storage')
+  t.ok(common.isStorageVariableDeclaration(storageVariableNodes.node2), 'struct storage pointer mapping param is storage')
+  t.notOk(common.isStorageVariableDeclaration(storageVariableNodes.node3), 'bytes is not storage')
 })
 
 test('staticAnalysisCommon.isInteraction', function (t) {
@@ -526,51 +439,11 @@ test('staticAnalysisCommon.isEffect', function (t) {
 
 test('staticAnalysisCommon.isWriteOnStateVariable', function (t) {
   t.plan(3)
-  var node1 = {
-    'attributes': {
-      'name': 'x',
-      'type': 'struct Ballot.Voter storage pointer'
-    },
-    'children': [
-      {
-        'attributes': {
-          'name': 'Voter'
-        },
-        'name': 'UserDefinedTypeName'
-      }
-    ],
-    'name': 'VariableDeclaration'
-  }
-  var node2 = {
-    'attributes': {
-      'name': 'y',
-      'type': 'uint'
-    },
-    'children': [
-      {
-        'attributes': {
-          'name': 'Voter'
-        },
-        'name': 'UserDefinedTypeName'
-      }
-    ],
-    'name': 'VariableDeclaration'
-  }
-  var node3 = {
-    'attributes': {
-      'name': 'xx',
-      'type': 'uint'
-    },
-    'children': [
-      {
-        'attributes': {
-          'name': 'Voter'
-        },
-        'name': 'UserDefinedTypeName'
-      }
-    ],
-    'name': 'VariableDeclaration'
-  }
+  let node1 = JSON.parse(JSON.stringify(storageVariableNodes.node1))
+  let node2 = node1
+  let node3 = node1
+  node2.attributes.name = 'y'
+  node3.attributes.name = 'xx'
   t.ok(common.isWriteOnStateVariable(inlineAssembly, [node1, node2, node3]), 'inline Assembly is write on state')
   t.notOk(common.isWriteOnStateVariable(assignment, [node1, node2, node3]), 'assignment on non state is not write on state')
   node3.attributes.name = 'c'
@@ -663,27 +536,10 @@ test('staticAnalysisCommon.isBlockTimestampAccess', function (t) {
 
 test('staticAnalysisCommon.isBlockBlockhashAccess', function (t) {
   t.plan(4)
-  var node = {
-    'attributes': {
-      'member_name': 'blockhash',
-      'type': 'function (uint256) returns (bytes32)'
-    },
-    'children': [
-      {
-        'attributes': {
-          'type': 'block',
-          'value': 'block'
-        },
-        'name': 'Identifier'
-      }
-    ],
-    'name': 'MemberAccess'
-  }
-
-  t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
-  t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
-  t.ok(common.isBlockBlockHashAccess(node), 'blockhash should work') // todo:
-  t.notOk(common.isNowAccess(node), 'is now used should not work')
+  t.notOk(common.isThisLocalCall(blockHashAccess), 'is this.local_method() used should not work')
+  t.notOk(common.isBlockTimestampAccess(blockHashAccess), 'is block.timestamp used should not work')
+  t.ok(common.isBlockBlockHashAccess(blockHashAccess), 'blockhash should work') // todo:
+  t.notOk(common.isNowAccess(blockHashAccess), 'is now used should not work')
 })
 
 test('staticAnalysisCommon.isThisLocalCall', function (t) {
@@ -731,184 +587,20 @@ test('staticAnalysisCommon.isLowLevelCall', function (t) {
 
 test('staticAnalysisCommon: Call of parameter function', function (t) {
   t.plan(7)
-  var node1 = {
-    'attributes': {
-      'argumentTypes': null,
-      'isConstant': false,
-      'isLValue': false,
-      'isPure': false,
-      'isStructConstructorCall': false,
-      'lValueRequested': false,
-      'names': [
-        null
-      ],
-      'type': 'uint256',
-      'type_conversion': false
-    },
-    'children': [
-      {
-        'attributes': {
-          'argumentTypes': [
-            {
-              'typeIdentifier': 't_uint256',
-              'typeString': 'uint256'
-            },
-            {
-              'typeIdentifier': 't_uint256',
-              'typeString': 'uint256'
-            }
-          ],
-          'overloadedDeclarations': [
-            null
-          ],
-          'referencedDeclaration': 25,
-          'type': 'function (uint256,uint256) pure returns (uint256)',
-          'value': 'f'
-        },
-        'id': 34,
-        'name': 'Identifier',
-        'src': '267:1:0'
-      },
-      {
-        'attributes': {
-          'argumentTypes': null,
-          'overloadedDeclarations': [
-            null
-          ],
-          'referencedDeclaration': 27,
-          'type': 'uint256',
-          'value': 'x'
-        },
-        'id': 35,
-        'name': 'Identifier',
-        'src': '269:1:0'
-      },
-      {
-        'attributes': {
-          'argumentTypes': null,
-          'overloadedDeclarations': [
-            null
-          ],
-          'referencedDeclaration': 29,
-          'type': 'uint256',
-          'value': 'y'
-        },
-        'id': 36,
-        'name': 'Identifier',
-        'src': '272:1:0'
-      }
-    ],
-    'id': 37,
-    'name': 'FunctionCall',
-    'src': '267:7:0'
-  }
+  t.ok(common.isLocalCall(parameterFunction), 'is not LocalCall')
+  t.notOk(common.isThisLocalCall(parameterFunction), 'is not this local call')
+  t.notOk(common.isSuperLocalCall(parameterFunction), 'is not super local call')
+  t.notOk(common.isExternalDirectCall(parameterFunction), 'is not ExternalDirectCall')
+  t.notOk(common.isLibraryCall(parameterFunction), 'is not LibraryCall')
 
-  t.ok(common.isLocalCall(node1), 'is not LocalCall')
-  t.notOk(common.isThisLocalCall(node1), 'is not this local call')
-  t.notOk(common.isSuperLocalCall(node1), 'is not super local call')
-  t.notOk(common.isExternalDirectCall(node1), 'is not ExternalDirectCall')
-  t.notOk(common.isLibraryCall(node1), 'is not LibraryCall')
-
-  t.equals(common.getFunctionCallType(node1), 'function (uint256,uint256) pure returns (uint256)', 'Extracts right type')
-
-  t.equals(common.getFunctionCallTypeParameterType(node1), 'uint256,uint256', 'Extracts param right type')
+  t.equals(common.getFunctionCallType(parameterFunction), 'function (uint256,uint256) pure returns (uint256)', 'Extracts right type')
+  t.equals(common.getFunctionCallTypeParameterType(parameterFunction), 'uint256,uint256', 'Extracts param right type')
 })
 
 test('staticAnalysisCommon: function call with of function with function parameter', function (t) {
   t.plan(2)
-  var node1 = {
-    'attributes': {
-      'argumentTypes': null,
-      'isConstant': false,
-      'isLValue': false,
-      'isPure': false,
-      'isStructConstructorCall': false,
-      'lValueRequested': false,
-      'names': [
-        null
-      ],
-      'type': 'uint256',
-      'type_conversion': false
-    },
-    'children': [
-      {
-        'attributes': {
-          'argumentTypes': [
-            {
-              'typeIdentifier': 't_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$',
-              'typeString': 'function (uint256,uint256) pure returns (uint256)'
-            },
-            {
-              'typeIdentifier': 't_uint256',
-              'typeString': 'uint256'
-            },
-            {
-              'typeIdentifier': 't_uint256',
-              'typeString': 'uint256'
-            }
-          ],
-          'overloadedDeclarations': [
-            null
-          ],
-          'referencedDeclaration': 40,
-          'type': 'function (function (uint256,uint256) pure returns (uint256),uint256,uint256) pure returns (uint256)',
-          'value': 'eval'
-        },
-        'id': 49,
-        'name': 'Identifier',
-        'src': '361:4:0'
-      },
-      {
-        'attributes': {
-          'argumentTypes': null,
-          'overloadedDeclarations': [
-            null
-          ],
-          'referencedDeclaration': 15,
-          'type': 'function (uint256,uint256) pure returns (uint256)',
-          'value': 'plus'
-        },
-        'id': 50,
-        'name': 'Identifier',
-        'src': '366:4:0'
-      },
-      {
-        'attributes': {
-          'argumentTypes': null,
-          'overloadedDeclarations': [
-            null
-          ],
-          'referencedDeclaration': 42,
-          'type': 'uint256',
-          'value': 'x'
-        },
-        'id': 51,
-        'name': 'Identifier',
-        'src': '372:1:0'
-      },
-      {
-        'attributes': {
-          'argumentTypes': null,
-          'overloadedDeclarations': [
-            null
-          ],
-          'referencedDeclaration': 44,
-          'type': 'uint256',
-          'value': 'y'
-        },
-        'id': 52,
-        'name': 'Identifier',
-        'src': '375:1:0'
-      }
-    ],
-    'id': 53,
-    'name': 'FunctionCall',
-    'src': '361:16:0'
-  }
-
-  t.equals(common.getFunctionCallType(node1), 'function (function (uint256,uint256) pure returns (uint256),uint256,uint256) pure returns (uint256)', 'Extracts right type')
-
-  t.equals(common.getFunctionCallTypeParameterType(node1), 'function (uint256,uint256) pure returns (uint256),uint256,uint256', 'Extracts param right type')
+  t.equals(common.getFunctionCallType(parameterFunctionCall), 'function (function (uint256,uint256) pure returns (uint256),uint256,uint256) pure returns (uint256)', 'Extracts right type')
+  t.equals(common.getFunctionCallTypeParameterType(parameterFunctionCall), 'function (uint256,uint256) pure returns (uint256),uint256,uint256', 'Extracts param right type')
 })
 
 test('staticAnalysisCommon: require call', function (t) {
