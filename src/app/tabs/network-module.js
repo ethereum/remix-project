@@ -55,7 +55,7 @@ export class NetworkModule extends Plugin {
     if (provider !== 'web3') {
       throw new Error('no endpoint: current provider is either injected or vm')
     }
-    return provider.web3().currentProvider.host
+    return executionContext.web3().currentProvider.host
   }
 
   /** Add a custom network to the list of available networks */
