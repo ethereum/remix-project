@@ -1,0 +1,71 @@
+{
+    "attributes": {
+      "argumentTypes": null,
+      "isConstant": false,
+      "isLValue": false,
+      "isPure": false,
+      "isStructConstructorCall": false,
+      "lValueRequested": false,
+      "names": [
+        null
+      ],
+      "type": "uint256",
+      "type_conversion": false
+    },
+    "children": [
+      {
+        "attributes": {
+          "argumentTypes": [
+            {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            }
+          ],
+          "overloadedDeclarations": [
+            null
+          ],
+          "referencedDeclaration": 25,
+          "type": "function (uint256,uint256) pure returns (uint256)",
+          "value": "f"
+        },
+        "id": 34,
+        "name": "Identifier",
+        "src": "267:1:0"
+      },
+      {
+        "attributes": {
+          "argumentTypes": null,
+          "overloadedDeclarations": [
+            null
+          ],
+          "referencedDeclaration": 27,
+          "type": "uint256",
+          "value": "x"
+        },
+        "id": 35,
+        "name": "Identifier",
+        "src": "269:1:0"
+      },
+      {
+        "attributes": {
+          "argumentTypes": null,
+          "overloadedDeclarations": [
+            null
+          ],
+          "referencedDeclaration": 29,
+          "type": "uint256",
+          "value": "y"
+        },
+        "id": 36,
+        "name": "Identifier",
+        "src": "272:1:0"
+      }
+    ],
+    "id": 37,
+    "name": "FunctionCall",
+    "src": "267:7:0"
+  }

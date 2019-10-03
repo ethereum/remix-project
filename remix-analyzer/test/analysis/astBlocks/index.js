@@ -14,5 +14,9 @@ module.exports = {
   fullyQualifiedFunctionDefinition: require('./fullyQualifiedFunctionDefinition.json'),
   selfdestruct: require('./selfdestruct.json'),
   storageVariableNodes: require('./storageVariableNodes.json'),
-  lowlevelCall: require('./lowlevelCall.json')
+  lowlevelCall: require('./lowlevelCall.json'),
+  parameterFunction: require('./parameterFunction.json'),
+  parameterFunctionCall: require('./parameterFunctionCall.json'),
+  inheritance: require('./inheritance.json'),
+  blockHashAccess: require('./blockHashAccess.json')
 }
