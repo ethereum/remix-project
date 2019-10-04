@@ -1,0 +1,16 @@
+{
+  "attributes": {
+    "member_name": "duper",
+    "type": "function ()"
+  },
+  "children": [
+    {
+      "attributes": {
+        "type": "contract super a",
+        "value": "super"
+      },
+      "name": "Identifier"
+    }
+  ],
+  "name": "MemberAccess"
+}
