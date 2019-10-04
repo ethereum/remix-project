@@ -308,7 +308,10 @@ module.exports = {
     if (bytecode.indexOf('_') >= 0) {
       this.linkBytecode(library, contracts, (err, bytecode) => {
         if (err) callback(err)
-        else this.deployLibrary(libraryName, libraryShortName, library, contracts, callback, callbackStep, callbackDeployLibrary)
+        else {
+          library.evm.bytecode.object = bytecode
+          this.deployLibrary(libraryName, libraryShortName, library, contracts, callback, callbackStep, callbackDeployLibrary)
+        }
       }, callbackStep, callbackDeployLibrary)
     } else {
       callbackStep(`creation of library ${libraryName} pending...`)
