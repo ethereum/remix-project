@@ -118,6 +118,12 @@ const template = [
           shell.openExternal('https://github.com/ethereum/remix-desktop/releases')
         }
       },
+      {
+        label: 'Report Bugs / Issues',
+        click: async () => {
+          shell.openExternal('https://github.com/ethereum/remix-ide/issues')
+        }
+      },
       { role: 'toggledevtools' },
     ]
   }
