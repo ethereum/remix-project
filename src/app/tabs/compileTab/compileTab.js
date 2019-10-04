@@ -93,7 +93,7 @@ class CompileTab {
         if (error) return cb(error)
 
         if (this.fileProvider) {
-          this.fileProvider.addExternal(cleanUrl, content, url)
+          this.fileProvider.addExternal(type + '/' + cleanUrl, content, url)
         }
         cb(null, content)
       })
