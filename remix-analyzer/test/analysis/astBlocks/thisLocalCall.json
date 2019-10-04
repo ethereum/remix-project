@@ -1,0 +1,10 @@
+{ 
+  "name": "MemberAccess", 
+  "children": [ { 
+    "attributes": { 
+    "value": "this", 
+    "type": "contract test" }, 
+    "name": "Identifier" } ], 
+    "attributes": { 
+      "value": "b", 
+      "type": "function (bytes32,address) returns (bool)" } }

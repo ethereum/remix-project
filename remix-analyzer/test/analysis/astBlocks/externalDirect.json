@@ -1,0 +1,20 @@
+{
+  "attributes": {
+    "member_name": "info",
+    "type": "function () payable external returns (uint256)"
+  },
+  "children": [
+    {
+      "attributes": {
+        "type": "contract InfoFeed",
+        "value": "f"
+      },
+      "id": 30,
+      "name": "Identifier",
+      "src": "405:1:0"
+    }
+  ],
+  "id": 32,
+  "name": "MemberAccess",
+  "src": "405:6:0"
+}

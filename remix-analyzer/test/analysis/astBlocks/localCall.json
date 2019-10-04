@@ -1,0 +1,29 @@
+{
+    "attributes": {
+      "type": "tuple()",
+      "type_conversion": false
+    },
+    "children": [
+      {
+        "attributes": {
+          "type": "function (struct Ballot.Voter storage pointer)",
+          "value": "bli"
+        },
+        "id": 37,
+        "name": "Identifier",
+        "src": "540:3:0"
+      },
+      {
+        "attributes": {
+          "type": "struct Ballot.Voter storage pointer",
+          "value": "x"
+        },
+        "id": 38,
+        "name": "Identifier",
+        "src": "544:1:0"
+      }
+    ],
+    "id": 39,
+    "name": "FunctionCall",
+    "src": "540:6:0"
+  }

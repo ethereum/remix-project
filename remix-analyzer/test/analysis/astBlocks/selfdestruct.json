@@ -1,0 +1,23 @@
+{
+        "attributes": {
+          "type": "tuple()",
+          "type_conversion": false
+        },
+        "children": [
+          {
+            "attributes": {
+              "type": "function (address)",
+              "value": "selfdestruct"
+            },
+            "name": "Identifier"
+          },
+          {
+            "attributes": {
+              "type": "address",
+              "value": "a"
+            },
+            "name": "Identifier"
+          }
+        ],
+        "name": "FunctionCall"
+      }
