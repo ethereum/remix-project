@@ -69,6 +69,7 @@ module.exports = {
 
   set: function (args, cb) {
     if (this.readOnly) return cb('Cannot write file: read-only mode selected')
+    const isFolder = args.path.endsWith('/')
     var path = utils.absolutePath(args.path, this.sharedFolder)
     if (fs.existsSync(path) && !isRealPath(path, cb)) return
     if (args.content === 'undefined') { // no !!!!!
@@ -76,10 +77,16 @@ module.exports = {
       return
     }
     this.trackDownStreamUpdate[path] = path
-    fs.writeFile(path, args.content, 'utf8', (error, data) => {
-      if (error) console.log(error)
-      cb(error, data)
-    })
+    if (isFolder) {
+      fs.mkdirp(path).then(_ => cb()).catch(e => cb(e))
+    } else {
+      fs.ensureFile(path).then(() => {
+        fs.writeFile(path, args.content, 'utf8', (error, data) => {
+          if (error) console.log(error)
+          cb(error, data)
+        })
+      }).catch(e => cb(e))
+    }
   },
 
   rename: function (args, cb) {
