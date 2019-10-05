@@ -17,10 +17,13 @@ class FileProvider {
 
   addNormalizedName (path, url) {
     this.providerExternalsStorage.set(this.type + '/' + path, url)
+    this.providerExternalsStorage.set('reverse-' + url, this.type + '/' + path)
   }
 
   removeNormalizedName (path) {
+    const value = this.providerExternalsStorage.get(path)
     this.providerExternalsStorage.remove(path)
+    this.providerExternalsStorage.remove('reverse-' + value)
   }
 
   normalizedNameExists (path) {
@@ -29,6 +32,10 @@ class FileProvider {
 
   getNormalizedName (path) {
     return this.providerExternalsStorage.get(path)
+  }
+
+  getPathFromUrl (url) {
+    return this.providerExternalsStorage.get('reverse-' + url)
   }
 
   isExternalFolder (path) {
@@ -71,7 +78,7 @@ class FileProvider {
 
   get (path, cb) {
     cb = cb || function () {}
-    if (this.normalizedNameExists(path)) path = this.getNormalizedName(path) // ensure we actually use the normalized path from here
+    path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (!exists) return cb(null, null)
