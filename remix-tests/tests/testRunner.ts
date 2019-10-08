@@ -108,22 +108,22 @@ describe('testRunner', () => {
 
       after(() => { tests = [] })
 
-      it('should 1 passing test', function () {
-        assert.equal(results.passingNum, 2)
+      it('should have 3 passing test', function () {
+        assert.equal(results.passingNum, 3)
       })
 
-      it('should 1 failing test', function () {
-        assert.equal(results.failureNum, 2)
+      it('should have 1 failing test', function () {
+        assert.equal(results.failureNum, 1)
       })
 
       it('should return 6 messages', function () {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'MyTest', filename: 'tests/examples_1/simple_storage_test.sol' },
-          { type: 'testFailure', value: 'Should trigger one fail', context: 'MyTest', errMsg: 'the test 1 fails' },
           { type: 'testPass', value: 'Should trigger one pass', context: 'MyTest' },
-          { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' },
-          { type: 'testFailure', value: 'Initial value should be200', context: 'MyTest', errMsg: 'function returned false' }
+          { type: 'testFailure', value: 'Should trigger one fail', errMsg: 'uint test 1 fails', context: 'MyTest' },
+          { type: 'testPass', value: 'Initial value should not be200', context: 'MyTest' },
+          { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' }
         ], ['time'])
       })
     })
@@ -139,7 +139,7 @@ describe('testRunner', () => {
 
       after(() => { tests = [] })
 
-      it('should 2 passing tests', function () {
+      it('should have 2 passing tests', function () {
         assert.equal(results.passingNum, 2)
       })
 
@@ -151,7 +151,7 @@ describe('testRunner', () => {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'MyTest', filename: 'tests/examples_2/simple_storage_test.sol' },
-          { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' },
+          { type: 'testPass', value: 'Value should be100', context: 'MyTest' },
           { type: 'testPass', value: 'Initial value should be200', context: 'MyTest' }
         ], ['time'])
       })
@@ -173,17 +173,12 @@ describe('testRunner', () => {
         assert.equal(results.passingNum, 2)
       })
 
-      it('should 1 failing tests', function () {
-        assert.equal(results.failureNum, 1)
-      })
-
       it('should return 4 messages', function () {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'StringTest', filename: 'tests/examples_3/simple_string_test.sol' },
-          { type: 'testFailure', value: 'Value should be hello world', context: 'StringTest', "errMsg": "initial value is not correct" },
           { type: 'testPass', value: 'Value should not be hello wordl', context: 'StringTest' },
-          { type: 'testPass', value: 'Initial value should be hello', context: 'StringTest' },
+          { type: 'testPass', value: 'Initial value should be hello world', context: 'StringTest' }
         ], ['time'])
       })
     })
