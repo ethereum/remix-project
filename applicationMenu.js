@@ -1,6 +1,9 @@
 const {Menu, shell, app} = require('electron')
+const os = require('os')
+const selectFolder = require('./selectFolder')
+const setFolder = require('./setFolder')
 
-module.exports = () => {
+module.exports = (remixd) => {
 
 const isMac = process.platform === 'darwin'
 
@@ -24,7 +27,15 @@ const template = [
   {
     label: 'File',
     submenu: [
-      isMac ? { role: 'close' } : { role: 'quit' }
+      {
+        label: 'Open Folder',
+        click: async () => {
+          selectFolder().then((folder) => {
+            setFolder(remixd, folder)
+          }).catch(console.log)
+        }
+      },
+      isMac ? { role: 'close' } : { role: 'quit' },
     ]
   },
   // { role: 'editMenu' }

@@ -1,5 +1,4 @@
 const remixd = require('remixd')
-const os = require('os');
 const path = require('path')
 
 const { version } = require('./package.json')
@@ -24,7 +23,7 @@ function createWindow () {
     },
     icon: path.join(__dirname, 'build/icon.png')
   })
-  applicationMenu()
+  applicationMenu(remixd)
   win.webContents.on('new-window', function(e, url) {
     e.preventDefault();
     shell.openExternal(url);
@@ -34,19 +33,7 @@ function createWindow () {
 
 app.on('ready', () => {
   remixdStart()
-  createWindow()
-
-  if (process.argv.length > 2) {
-    remixdInit(process.argv[2])
-  } else {
-    selectFolder().then((folder) => {
-      console.log('set folder', folder)
-      remixdInit(folder)
-    }).catch((error) => {
-      console.log(error, 'defaulting to home directory')
-      remixdInit(os.homedir())
-    })
-  }
+  createWindow()  
 })
 
 let remixdStart = () => {
@@ -57,9 +44,4 @@ let remixdStart = () => {
     remixd.services.sharedFolder.setWebSocket(webSocket)
   })
   router.start()
-}
-
-let remixdInit = (folder) => {
-  remixd.services.sharedFolder.sharedFolder(folder, false)
-  remixd.services.sharedFolder.setupNotifications(folder)
 }
