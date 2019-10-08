@@ -1,12 +1,14 @@
 const remixd = require('remixd')
 const path = require('path')
+const os = require('os')
 
 const { version } = require('./package.json')
 const applicationMenu = require('./applicationMenu')
 const { app, BrowserWindow, shell } = require('electron')
 const { AppManager, registerPackageProtocol } = require('@philipplgh/electron-app-manager')
 
-registerPackageProtocol()
+const cacheDir = path.join(os.homedir(), '.cache_remix_ide')
+registerPackageProtocol(cacheDir)
 
 console.log('running', version)
 const updater = new AppManager({
