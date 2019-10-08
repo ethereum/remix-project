@@ -5,7 +5,7 @@ const { version } = require('./package.json')
 const applicationMenu = require('./applicationMenu')
 const { app, BrowserWindow, shell } = require('electron')
 const { AppManager, registerPackageProtocol } = require('@philipplgh/electron-app-manager')
-registerPackageProtocol(__dirname + '/cache')
+registerPackageProtocol(__dirname)
 
 console.log('running', version)
 const updater = new AppManager({
