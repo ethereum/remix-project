@@ -3,11 +3,10 @@ const os = require('os');
 const path = require('path')
 
 const { version } = require('./package.json')
-const selectFolder = require('./selectFolder')
 const applicationMenu = require('./applicationMenu')
 const { app, BrowserWindow, shell } = require('electron')
 const { AppManager, registerPackageProtocol } = require('@philipplgh/electron-app-manager')
-registerPackageProtocol()
+registerPackageProtocol(__dirname + '/cache')
 
 console.log('running', version)
 const updater = new AppManager({
