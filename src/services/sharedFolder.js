@@ -12,15 +12,15 @@ module.exports = {
     this.websocket = websocket
   },
 
-  sharedFolder: function (sharedFolder, readOnly) {
-    this.sharedFolder = sharedFolder
+  sharedFolder: function (currentSharedFolder, readOnly) {
+    this.currentSharedFolder = currentSharedFolder
     this.readOnly = readOnly
     if (this.websocket.connection) this.websocket.send(message('rootFolderChanged', {}))
   },
 
   list: function (args, cb) {
     try {
-      cb(null, utils.walkSync(this.sharedFolder, {}, this.sharedFolder))
+      cb(null, utils.walkSync(this.currentSharedFolder, {}, this.currentSharedFolder))
     } catch (e) {
       cb(e.message)
     }
@@ -28,12 +28,12 @@ module.exports = {
 
   resolveDirectory: function (args, cb) {
     try {
-      var path = utils.absolutePath(args.path, this.sharedFolder)
+      var path = utils.absolutePath(args.path, this.currentSharedFolder)
       if (this.websocket && !this.alreadyNotified[path]) {
         this.alreadyNotified[path] = 1
         this.setupNotifications(path)
       }
-      cb(null, utils.resolveDirectory(path, this.sharedFolder))
+      cb(null, utils.resolveDirectory(path, this.currentSharedFolder))
     } catch (e) {
       cb(e.message)
     }
@@ -44,7 +44,7 @@ module.exports = {
   },
 
   get: function (args, cb) {
-    var path = utils.absolutePath(args.path, this.sharedFolder)
+    var path = utils.absolutePath(args.path, this.currentSharedFolder)
     if (!fs.existsSync(path)) {
       return cb('File not found ' + path)
     }
@@ -63,14 +63,14 @@ module.exports = {
   },
 
   exists: function (args, cb) {
-    var path = utils.absolutePath(args.path, this.sharedFolder)
+    var path = utils.absolutePath(args.path, this.currentSharedFolder)
     cb(null, fs.existsSync(path))
   },
 
   set: function (args, cb) {
     if (this.readOnly) return cb('Cannot write file: read-only mode selected')
     const isFolder = args.path.endsWith('/')
-    var path = utils.absolutePath(args.path, this.sharedFolder)
+    var path = utils.absolutePath(args.path, this.currentSharedFolder)
     if (fs.existsSync(path) && !isRealPath(path, cb)) return
     if (args.content === 'undefined') { // no !!!!!
       console.log('trying to write "undefined" ! stopping.')
@@ -91,11 +91,11 @@ module.exports = {
 
   rename: function (args, cb) {
     if (this.readOnly) return cb('Cannot rename file: read-only mode selected')
-    var oldpath = utils.absolutePath(args.oldPath, this.sharedFolder)
+    var oldpath = utils.absolutePath(args.oldPath, this.currentSharedFolder)
     if (!fs.existsSync(oldpath)) {
       return cb('File not found ' + oldpath)
     }
-    var newpath = utils.absolutePath(args.newPath, this.sharedFolder)
+    var newpath = utils.absolutePath(args.newPath, this.currentSharedFolder)
     if (!isRealPath(oldpath, cb)) return
     fs.move(oldpath, newpath, (error, data) => {
       if (error) console.log(error)
@@ -105,7 +105,7 @@ module.exports = {
 
   remove: function (args, cb) {
     if (this.readOnly) return cb('Cannot remove file: read-only mode selected')
-    var path = utils.absolutePath(args.path, this.sharedFolder)
+    var path = utils.absolutePath(args.path, this.currentSharedFolder)
     if (!fs.existsSync(path)) {
       return cb('File not found ' + path)
     }
@@ -125,11 +125,11 @@ module.exports = {
       isbinaryfile(f, (error, isBinary) => {
         if (error) console.log(error)
         console.log('add', f)
-        if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.sharedFolder), isReadOnly: isBinary, isFolder: false }))
+        if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: isBinary, isFolder: false }))
       })
     })
     watcher.on('addDir', (f, stat) => {
-      if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.sharedFolder), isReadOnly: false, isFolder: true }))
+      if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: false, isFolder: true }))
     })
     */
     watcher.on('change', (f, curr, prev) => {
@@ -137,13 +137,13 @@ module.exports = {
         delete this.trackDownStreamUpdate[f]
         return
       }
-      if (this.websocket.connection) this.websocket.send(message('changed', utils.relativePath(f, this.sharedFolder)))
+      if (this.websocket.connection) this.websocket.send(message('changed', utils.relativePath(f, this.currentSharedFolder)))
     })
     watcher.on('unlink', (f) => {
-      if (this.websocket.connection) this.websocket.send(message('removed', { path: utils.relativePath(f, this.sharedFolder), isFolder: false }))
+      if (this.websocket.connection) this.websocket.send(message('removed', { path: utils.relativePath(f, this.currentSharedFolder), isFolder: false }))
     })
     watcher.on('unlinkDir', (f) => {
-      if (this.websocket.connection) this.websocket.send(message('removed', { path: utils.relativePath(f, this.sharedFolder), isFolder: true }))
+      if (this.websocket.connection) this.websocket.send(message('removed', { path: utils.relativePath(f, this.currentSharedFolder), isFolder: true }))
     })
   }
 }
