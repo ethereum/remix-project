@@ -32,6 +32,7 @@
     "files": [
       "main.js",
       "selectFolder.js",
+      "setFolder.js",
       "applicationMenu.js",
       "build/icon.png",
       "*.asar",
