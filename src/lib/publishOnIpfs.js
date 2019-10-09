@@ -5,7 +5,8 @@ const IpfsClient = require('ipfs-mini')
 
 const ipfsNodes = [
   new IpfsClient({ host: 'ipfs.komputing.org', port: 443, protocol: 'https' }),
-  new IpfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+  new IpfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }),
+  new IpfsClient({ host: '127.0.0.1', port: 5001, protocol: 'http' })
 ]
 
 module.exports = (contract, fileManager, cb, ipfsVerifiedPublishCallBack) => {
