@@ -8,7 +8,7 @@ function deleteFromDynamicArray () {
 }
 
 deleteFromDynamicArray.prototype.visit = function (node) {
-  if (common.isDeleteFromDynamicArray(node)) this.relevantNodes.push(node)
+  if (common.isDeleteFromDynamicArray(node) && !common.isMappingIndexAccess(node.children[0])) this.relevantNodes.push(node)
 }
 
 deleteFromDynamicArray.prototype.report = function (compilationResults) {
