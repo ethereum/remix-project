@@ -158,9 +158,19 @@ export function runTest (testName, testObject: any, contractDetails: any, opts: 
                     console.error(err)
                     return next(err)
                 }
-            }).on('error', function (err: Error | null | undefined) {
+            }).on('error', function (err: any) {
                 console.error(err)
-                next(err)
+                let time: number = (Date.now() - startTime) / 1000.0
+                const resp: TestResultInterface = {
+                    type: 'testFailure',
+                    value: changeCase.sentenceCase(func.name),
+                    time: time,
+                    errMsg: err.message,
+                    context: testName
+                  };
+                  testCallback(undefined, resp)
+                  failureNum += 1
+                return next()
             })
         }
     }, function(error) {
