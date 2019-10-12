@@ -536,6 +536,15 @@ function isIndexAccess (node) {
 }
 
 /**
+ * True if node is the access of a mapping index
+ * @node {ASTNode} node to check for
+ * @return {bool}
+ */
+function isMappingIndexAccess (node) {
+  return isIndexAccess(node) && node.children && node.children[0].attributes.type.startsWith('mapping')
+}
+
+/**
  * True if call to code within the current contracts context including (delegate) library call
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -1103,6 +1112,7 @@ module.exports = {
   isSpecialVariableAccess: isSpecialVariableAccess,
   isDynamicArrayAccess: isDynamicArrayAccess,
   isIndexAccess: isIndexAccess,
+  isMappingIndexAccess: isMappingIndexAccess,
   isSubScopeWithTopLevelUnAssignedBinOp: isSubScopeWithTopLevelUnAssignedBinOp,
   hasFunctionBody: hasFunctionBody,
   isInteraction: isInteraction,
