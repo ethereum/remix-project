@@ -8,7 +8,7 @@ function forLoopIteratesOverDynamicArray () {
 }
 
 forLoopIteratesOverDynamicArray.prototype.visit = function (node) {
-  if (common.isForLoop(node) && (common.isDynamicArrayLengthAccess(node.children[1].children[1]) || 
+  if (common.isForLoop(node) && (common.isDynamicArrayLengthAccess(node.children[1].children[1]) ||
   (node.children[1].children[1].children && common.isDynamicArrayLengthAccess(node.children[1].children[1].children[0])))) {
     this.relevantNodes.push(node)
   }
