@@ -523,7 +523,10 @@ function isDynamicArrayAccess (node) {
  * @return {bool}
  */
 function isDynamicArrayLengthAccess (node) {
-  return node && nodeType(node, exactMatch(nodeTypes.MEMBERACCESS)) && (node.attributes.member_name === 'length') && node.children[0].attributes.type.indexOf('[]') !== -1
+  return node && // if node exists
+  nodeType(node, exactMatch(nodeTypes.MEMBERACCESS)) && // is memberAccess Node
+  (node.attributes.member_name === 'length') && // accessing 'length' member
+  node.children[0].attributes.type.indexOf('[]') !== -1 // member is accessed from array
 }
 
 /**
