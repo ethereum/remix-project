@@ -34,7 +34,7 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   putContractStorage (address, key, value, cb) {
-    this.keyHashes[ethUtil.sha3(key).toString('hex')] = ethUtil.bufferToHex(key)
+    this.keyHashes[ethUtil.keccak(key).toString('hex')] = ethUtil.bufferToHex(key)
     super.putContractStorage(address, key, value, cb)
   }
 
