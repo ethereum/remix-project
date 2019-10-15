@@ -8,8 +8,10 @@ function forLoopIteratesOverDynamicArray () {
 }
 
 forLoopIteratesOverDynamicArray.prototype.visit = function (node) {
-  if (common.isForLoop(node) && (common.isDynamicArrayLengthAccess(node.children[1].children[1]) ||
-  (node.children[1].children[1].children && common.isDynamicArrayLengthAccess(node.children[1].children[1].children[0])))) {
+  if (common.isForLoop(node) &&
+  (common.isDynamicArrayLengthAccess(node.children[1].children[1]) || // condition uses dynamic array length like `i < array.length`
+  (node.children[1].children[1].children && common.isDynamicArrayLengthAccess(node.children[1].children[1].children[0]))) // or like `i < array.length (operator like -,+,*,/) number` e.g; i < array.length -1
+  ) {
     this.relevantNodes.push(node)
   }
 }
