@@ -162,7 +162,7 @@ module.exports = {
       value = '0x' + value
     }
     var ret = ethutil.bufferToHex(ethutil.setLengthLeft(value, 32))
-    ret = ethutil.sha3(ret)
+    ret = ethutil.keccak(ret)
     return ethutil.bufferToHex(ret)
   },
 
