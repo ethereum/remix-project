@@ -1,17 +1,24 @@
 var name = 'For loop iterates over dynamic array: '
 var desc = 'The number of \'for\' loop iterations depends on dynamic array\'s size'
 var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
+var { isForLoop, isDynamicArrayLengthAccess, isBinaryOperation } = require('./staticAnalysisCommon')
 
 function forLoopIteratesOverDynamicArray () {
   this.relevantNodes = []
 }
 
 forLoopIteratesOverDynamicArray.prototype.visit = function (node) {
-  if (common.isForLoop(node) &&
-    node.children[1].children[1].attributes.member_name === 'length' &&
-    node.children[1].children[1].children[0].attributes.type.indexOf('[]') !== -1) {
-    this.relevantNodes.push(node)
+  if (isForLoop(node)) {
+    // Access 'condition' node of 'for' loop statement
+    let forLoopConditionNode = node.children[1]
+    // Access right side of condition as its children
+    let conditionChildrenNode = forLoopConditionNode.children[1]
+    // Check if it is a binary operation. if yes, check if its children node access length of dynamic array
+    if (isBinaryOperation(conditionChildrenNode) && isDynamicArrayLengthAccess(conditionChildrenNode.children[0])) {
+      this.relevantNodes.push(node)
+    } else if (isDynamicArrayLengthAccess(conditionChildrenNode)) { // else check if condition node itself access length of dynamic array
+      this.relevantNodes.push(node)
+    }
   }
 }
 
