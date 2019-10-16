@@ -518,7 +518,7 @@ function isDynamicArrayAccess (node) {
 }
 
 /**
- * True if node accesses 'length' member of array
+ * True if node accesses 'length' member of dynamic array
  * @node {ASTNode} node to check for
  * @return {bool}
  */
@@ -526,7 +526,7 @@ function isDynamicArrayLengthAccess (node) {
   return node && // if node exists
   nodeType(node, exactMatch(nodeTypes.MEMBERACCESS)) && // is memberAccess Node
   (node.attributes.member_name === 'length') && // accessing 'length' member
-  node.children[0].attributes.type.indexOf('[]') !== -1 // member is accessed from array
+  node.children[0].attributes.type.indexOf('[]') !== -1 // member is accessed from dynamic array, notice [] without any number
 }
 
 /**
@@ -1184,6 +1184,7 @@ module.exports = {
   isStatement: isStatement,
   isExpressionStatement: isExpressionStatement,
   isBlock: isBlock,
+  isBinaryOperation: isBinaryOperation,
 
   // #################### Constants
   nodeTypes: nodeTypes,
