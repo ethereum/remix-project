@@ -518,6 +518,18 @@ function isDynamicArrayAccess (node) {
 }
 
 /**
+ * True if node accesses 'length' member of dynamic array
+ * @node {ASTNode} node to check for
+ * @return {bool}
+ */
+function isDynamicArrayLengthAccess (node) {
+  return node && // if node exists
+  nodeType(node, exactMatch(nodeTypes.MEMBERACCESS)) && // is memberAccess Node
+  (node.attributes.member_name === 'length') && // accessing 'length' member
+  node.children[0].attributes.type.indexOf('[]') !== -1 // member is accessed from dynamic array, notice [] without any number
+}
+
+/**
  * True if node is a delete instruction for an element from a dynamic array
  * @node {ASTNode} node to check for
  * @return {bool}
@@ -1111,6 +1123,7 @@ module.exports = {
   isAbiNamespaceCall: isAbiNamespaceCall,
   isSpecialVariableAccess: isSpecialVariableAccess,
   isDynamicArrayAccess: isDynamicArrayAccess,
+  isDynamicArrayLengthAccess: isDynamicArrayLengthAccess,
   isIndexAccess: isIndexAccess,
   isMappingIndexAccess: isMappingIndexAccess,
   isSubScopeWithTopLevelUnAssignedBinOp: isSubScopeWithTopLevelUnAssignedBinOp,
@@ -1171,6 +1184,7 @@ module.exports = {
   isStatement: isStatement,
   isExpressionStatement: isExpressionStatement,
   isBlock: isBlock,
+  isBinaryOperation: isBinaryOperation,
 
   // #################### Constants
   nodeTypes: nodeTypes,
