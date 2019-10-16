@@ -6,8 +6,14 @@ contract forLoopArr {
     }
 
     function shiftArrItem(uint index) public returns(uint[] memory) {
-        // TODO: for (uint i = index; i < array.length-1; i++) should also generate warning
         for (uint i = index; i < array.length; i++) {
+            array[i] = array[i+1];
+        }
+        return array;
+    }
+
+    function shiftArrItem2(uint index) public returns(uint[] memory) {
+        for (uint i = index; i < array.length - 1; i++) {
             array[i] = array[i+1];
         }
         return array;
