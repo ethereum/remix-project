@@ -274,7 +274,7 @@ test('Integration test gasCosts.js', function (t) {
     'ERC20.sol': 2,
     'stringBytesLength.sol': 1,
     'etherTransferInLoop.sol': 3,
-    'forLoopIteratesOverDynamicArray.sol': 1
+    'forLoopIteratesOverDynamicArray.sol': 2
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -902,7 +902,7 @@ test('Integration test forLoopIteratesOverDynamicArray.js', function (t) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 1
+    'forLoopIteratesOverDynamicArray.sol': 2
   }
 
   runModuleOnFiles(module, t, (file, report) => {
