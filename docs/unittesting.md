@@ -1,38 +1,46 @@
 Unit Testing
 ============
 
-Click the "double check" icon to get to the unit testing plugin.  If you don't see this icon, go to the plugin manager and load up the unit testing plugin.
+Click the
+![double check](images/a-user-testing-icon.png)
+ icon to get to the "Solidity Unit Testing" plugin. If you don't see this icon, go to the plugin manager (by click the ![plug](images/a-plug.png) icon) and load up the unit testing plugin.
 
-![](images/a-unit-testing1.png)
+![](images/a-unit-testing-from-pm.png)
 
-Generate test File
+![](images/a-unit-testing-feature.png)
+
+Generating Test File
+------------------
+Click the button "Generate test file" to create a new solidity file in the current folder.
+This create a new solidity file suffixed with `_test`.
+This file contains the minimum you need for running unit testing.
+
+Running Tests
 ------------------
 
-This create a new solidity file in the current folder suffixed with `_test`.
-This file contains the minimun you need for running unit testing.
+Click the button "Run tests" to executes all tests whose box has been checked below (by default all). The execution is run in a separate environment and the result is displayed below.
 
-Run Tests
----------
-
-This executes all tests whose box has been checked below (by default all). The execution is run in a separate environment and the result is displayed below.
+![](images/a-unit-testing-run-result.png)
 
 Here is a list of functions and their supported types that you can use to write your testcases:
 
-| Available functions  | Supported types |
+```eval_rst
++ -----------------------+--------------------------------------------------------+
+| Available functions    | Supported types                                        |
++========================+========================================================+
+| `Assert.ok()`          | `bool`                                                 |
++------------------------+--------------------------------------------------------+
+| `Assert.equal()`       | `uint`, `int`, `bool`, `address`, `bytes32`, `string`  |
++------------------------+--------------------------------------------------------+
+| `Assert.notEqual()`    | `uint`, `int`, `bool`, `address`, `bytes32`, `string`  |
++------------------------+--------------------------------------------------------+
+| `Assert.greaterThan()` | `uint`, `int`                                          |
++------------------------+--------------------------------------------------------+
+| `Assert.lesserThan()`  | `uint`, `int`                                          |
++------------------------+--------------------------------------------------------+
+```
 
-| ------------- | ------------- |
-
-| `Assert.ok()`  | `bool`  |
-
-| `Assert.equal()`  | `uint`, `int`, `bool`, `address`, `bytes32`, `string`  |
-
-| `Assert.notEqual()` | `uint`, `int`, `bool`, `address`, `bytes32`, `string`  |
-
-| `Assert.greaterThan()` | `uint`, `int` |
-
-| `Assert.lesserThan()` | `uint`, `int` |
-
-see [https://github.com/ethereum/remix/blob/master/remix-tests/tests/examples_4/SafeMath_test.sol](https://github.com/ethereum/remix/blob/master/remix-tests/tests/examples_4/SafeMath_test.sol) for some code sample
+Click [here](https://github.com/ethereum/remix/blob/master/remix-tests/tests/examples_4/SafeMath_test.sol) for a test file example
 
 Continuous integration
 ----------------------
