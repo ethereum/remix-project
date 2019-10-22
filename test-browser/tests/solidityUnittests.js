@@ -27,6 +27,7 @@ function runTests (browser) {
     .clickLaunchIcon('solidityUnitTesting')
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]')
+    .pause(10000)
     .assert.containsText('#solidityUnittestsOutput', 'browser/ballot_test.sol (test3)')
     .assert.containsText('#solidityUnittestsOutput', '✓ (Check winning proposal)')
     .assert.containsText('#solidityUnittestsOutput', '✓ (Check winnin proposal with return value)')
