@@ -37,7 +37,7 @@ This document includes:
  - git push --tags
  - github-changes -o ethereum -r remix-ide -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
  - publish a beta release in github using the changelog
- - drop zip file to the beta release
+ - drop zip file to the beta release (from https://github.com/ethereum/remix-live-alpha)
  
 # remix.ethereum.org update
 
