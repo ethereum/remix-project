@@ -143,7 +143,7 @@ export class SidePanel extends AbstractPanel {
     return yo`
       <section class="${css.panel}">
         ${this.header}
-        <div class="${css.pluginsContainer} py-1">
+        <div class="${css.pluginsContainer}">
           ${this.view}
         </div>
       </section>`
