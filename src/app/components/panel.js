@@ -62,7 +62,9 @@ export class AbstractPanel extends HostPlugin {
 
     if (view.tagName === 'IFRAME') {
       view.addEventListener('load', () => {
-        this.contents[name].removeChild(loading)
+        if (this.contents[name].contains(loading)) {
+          this.contents[name].removeChild(loading)
+        }
         view.style.display = 'block'
       })
     }
