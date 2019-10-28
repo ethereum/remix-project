@@ -1,6 +1,9 @@
 var yo = require('yo-yo')
 var BN = require('ethereumjs-util').BN
 
+/* jslint eqeqeq: false */
+/* jslint eqeq: false */
+
 module.exports = {
   formatSelf: formatSelf,
   extractData: extractData
@@ -8,11 +11,11 @@ module.exports = {
 
 function formatSelf (key, data) {
   var style = fontColor(data)
-  var keyStyle = data.isProperty ? 'color:#847979' : ''
+  var keyStyle = data.isProperty ? 'color: var(--info)' : ''
   if (data.type === 'string') {
     data.self = JSON.stringify(data.self)
   }
-  return yo`<label style=${keyStyle}>${key}: <label style=${style}>${data.self}</label><label style='font-style:italic'> ${data.isProperty || !data.type ? '' : ' ' + data.type}</label></label>`
+  return yo `<label style='${keyStyle};white-space:pre-wrap;'> ${' ' + key}:<label style=${style}>${' ' + data.self}</label><label style='font-style:italic'> ${data.isProperty || !data.type ? '' : ' ' + data.type}</label></label>`
 }
 
 function extractData (item, parent, key) {
@@ -55,16 +58,20 @@ function extractData (item, parent, key) {
 }
 
 function fontColor (data) {
-  var color = '#124B46'
+  var color = 'var(--primary)'
   if (data.isArray || data.isStruct || data.isMapping) {
-    color = '#847979'
-  } else if (data.type.indexOf('uint') === 0 ||
-              data.type.indexOf('int') === 0 ||
-              data.type.indexOf('bool') === 0 ||
-              data.type.indexOf('enum') === 0) {
-    color = '#0F0CE9'
+    color = 'var(--info)'
+  } else if (
+    data.type.indexOf('uint') === 0 ||
+    data.type.indexOf('int') === 0 ||
+    data.type.indexOf('bool') === 0 ||
+    data.type.indexOf('enum') === 0
+  ) {
+    color = 'var(--green)'
   } else if (data.type === 'string') {
-    color = '#E91E0C'
+    color = 'var(--teal)'
+  } else if (data.self == 0x0) {
+    color = 'var(--gray)'
   }
   return 'color:' + color
 }
