@@ -13,6 +13,7 @@ const css = csjs`
   }
   .swapitTitle {
     margin: 0;
+    text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
