@@ -1,9 +1,6 @@
 var yo = require('yo-yo')
 var BN = require('ethereumjs-util').BN
 
-/* jslint eqeqeq: false */
-/* jslint eqeq: false */
-
 module.exports = {
   formatSelf: formatSelf,
   extractData: extractData
@@ -70,7 +67,7 @@ function fontColor (data) {
     color = 'var(--green)'
   } else if (data.type === 'string') {
     color = 'var(--teal)'
-  } else if (data.self == 0x0) {
+  } else if (data.self == 0x0) { // eslint-disable-line
     color = 'var(--gray)'
   }
   return 'color:' + color
