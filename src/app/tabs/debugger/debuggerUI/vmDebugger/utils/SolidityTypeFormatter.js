@@ -7,12 +7,12 @@ module.exports = {
 }
 
 function formatSelf (key, data) {
-  var style = fontColor(data)
-  var keyStyle = data.isProperty ? 'color: var(--info)' : ''
+  const style = fontColor(data)
+  const keyStyle = data.isProperty ? 'color: var(--info)' : ''
   if (data.type === 'string') {
     data.self = JSON.stringify(data.self)
   }
-  return yo `<label style='${keyStyle};white-space:pre-wrap;'> ${' ' + key}:<label style=${style}>${' ' + data.self}</label><label style='font-style:italic'> ${data.isProperty || !data.type ? '' : ' ' + data.type}</label></label>`
+  return yo`<label style=${keyStyle}>${key}: <label style=${style}>${data.self}</label><label style='font-style:italic'> ${data.isProperty || !data.type ? '' : ' ' + data.type}</label></label>`
 }
 
 function extractData (item, parent, key) {
@@ -55,7 +55,7 @@ function extractData (item, parent, key) {
 }
 
 function fontColor (data) {
-  var color = 'var(--primary)'
+  let color = 'var(--primary)'
   if (data.isArray || data.isStruct || data.isMapping) {
     color = 'var(--info)'
   } else if (

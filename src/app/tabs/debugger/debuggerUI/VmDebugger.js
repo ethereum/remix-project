@@ -123,8 +123,8 @@ function VmDebugger (vmDebuggerLogic) {
 }
 
 VmDebugger.prototype.renderHead = function () {
-  var headView = yo`
-    <div id='vmheadView' class="${css.vmheadView} container">
+  const headView = yo`
+    <div id="vmheadView" class="${css.vmheadView} container">
       <div class="row" >
         <div class="${css.asmCode} column">${this.asmCode.render()}</div>
         <div class="${css.stepDetail} column">${this.stepDetail.render()}</div>
@@ -143,8 +143,8 @@ VmDebugger.prototype.remove = function () {
 }
 
 VmDebugger.prototype.render = function () {
-  var view = yo`
-    <div id='vmdebugger'>
+  const view = yo`
+    <div id="vmdebugger">
       <div>
         ${this.solidityLocals.render()}
         ${this.solidityState.render()}
