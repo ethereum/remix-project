@@ -2,7 +2,7 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
-import { ViewPlugin, IframePlugin } from '@remixproject/engine'
+import { ViewPlugin, IframePlugin, WebsocketPlugin } from '@remixproject/engine'
 import { PluginManagerSettings } from './plugin-manager-settings'
 import * as packageJson from '../../../package.json'
 const addToolTip = require('../ui/tooltip')
@@ -130,7 +130,9 @@ class PluginManagerComponent extends ViewPlugin {
       if (this.appManager.getIds().includes(profile.name)) {
         throw new Error('This name has already been used')
       }
-      this.appManager.registerOne(new IframePlugin(profile))
+
+      const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
+      this.appManager.registerOne(plugin)
       this.appManager.activateOne(profile.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
