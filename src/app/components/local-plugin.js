@@ -84,20 +84,6 @@ module.exports = class LocalPlugin {
           <label class="form-check-label" for="${label}">${message}</label>
         </div>`
     }
-    // const radioLocations = (label, displayN) => {
-    //   const radioButton = (this.profile.location === label)
-    //    ? yo`<div class="radio">
-    //       <label for="${label}">
-    //         <input type="radio" name="location" onclick="${e => this.updateLoc(e)}" value="${label}" id="${label}" checked="checked" />${displayN}</label>
-    //     </div>`
-    //   : yo`<div class="radio">
-    //       <label for="${label}">
-    //         <input type="radio" name="location" onclick="${e => this.updateLoc(e)}" value="${label}" id="${label}" />${displayN}</label>
-    //     </div>`
-    //   return yo`<div>
-    //     ${radioButton}
-    //   </div>`
-    // }
 
     return yo`
     <form id="local-plugin-form">
