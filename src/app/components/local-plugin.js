@@ -5,7 +5,7 @@ const modalDialog = require('../ui/modaldialog')
 const defaultProfile = {
   methods: [],
   location: 'sidePanel',
-  type: 'iframe',
+  type: 'iframe'
 }
 
 module.exports = class LocalPlugin {
@@ -64,7 +64,7 @@ module.exports = class LocalPlugin {
     this.profile.displayName = target.value
   }
 
-  updateProfile(key, e) {
+  updateProfile (key, e) {
     this.profile[key] = e.target.value
   }
 
