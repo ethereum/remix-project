@@ -3,7 +3,7 @@ import { EventEmitter } from 'events'
 import * as packageJson from '../../../package.json'
 
 const themes = [
-  {name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/dvtmp0niu/raw/upload/v1571151519/custom-dark-theme.css'},
+  {name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/dvtmp0niu/raw/upload/v1572868094/remix-custom-dark.css'},
   {name: 'Light', quality: 'light', url: 'https://res.cloudinary.com/dvtmp0niu/raw/upload/v1572342742/light-theme.css'},
 
   // switching to the url Todo: remove when the theme is ready
