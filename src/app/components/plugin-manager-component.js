@@ -31,11 +31,13 @@ const css = csjs`
     align-items: center;
     justify-content: space-between;
     margin: 0;
-    font-size: 11px;
-    line-height: 12px;
+    font-size: 13px;
+    line-height: 16px;
     text-transform: uppercase;
   }
   .description {
+    font-size: 13px;
+    line-height: 18px;
     text-transform: capitalize;
   }
   .row {
@@ -103,7 +105,7 @@ class PluginManagerComponent extends ViewPlugin {
     }
     // Beta
     if (api.profile.version && api.profile.version.match(/\b(\w*beta\w*)\b/g)) {
-      versionWarning = yo`<small title="Version Beta" class="${css.versionWarning}">beta</small>`
+      versionWarning = yo`<small title="Version Beta" class="${css.versionWarning} plugin-version">beta</small>`
     }
 
     const activationButton = isActive
@@ -119,13 +121,13 @@ class PluginManagerComponent extends ViewPlugin {
     return yo`
     <article id="remixPluginManagerListItem_${name}" class="list-group-item px-2 pt-2 pb-0 plugins-list-group-item" title="${displayName}" >
       <div class="${css.row} justify-content-between align-items-center mb-2">
-        <h6 class="${css.displayName} form-control-label">
+        <h6 class="${css.displayName}">
           ${displayName}
           ${versionWarning}
         </h6>
         ${activationButton}
       </div>
-      <p class="${css.description} text-body">${api.profile.description}</p>
+      <p class="${css.description} text-body plugin-text">${api.profile.description}</p>
     </article>
     `
   }
