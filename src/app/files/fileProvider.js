@@ -12,7 +12,7 @@ class FileProvider {
     this.event = new EventManager()
     this.type = name
     this.providerExternalsStorage = new Storage('providerExternals:')
-    this.externalFolders = [this.type + '/swarm', this.type + '/ipfs', this.type + '/github', this.type + '/gist', this.type + '/https']
+    this.externalFolders = [this.type + '/swarm', this.type + '/ipfs', this.type + '/github', this.type + '/gists', this.type + '/https']
   }
 
   addNormalizedName (path, url) {
