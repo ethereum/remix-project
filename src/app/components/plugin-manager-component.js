@@ -119,16 +119,16 @@ class PluginManagerComponent extends ViewPlugin {
       </button>`
 
     return yo`
-    <article id="remixPluginManagerListItem_${name}" class="list-group-item px-2 pt-2 pb-0 plugins-list-group-item" title="${displayName}" >
-      <div class="${css.row} justify-content-between align-items-center mb-2">
-        <h6 class="${css.displayName}">
-          ${displayName}
-          ${versionWarning}
-        </h6>
-        ${activationButton}
-      </div>
-      <p class="${css.description} text-body plugin-text">${api.profile.description}</p>
-    </article>
+      <article id="remixPluginManagerListItem_${name}" class="list-group-item px-2 pt-2 pb-0 plugins-list-group-item" title="${displayName}" >
+        <div class="${css.row} justify-content-between align-items-center mb-2">
+          <h6 class="${css.displayName}">
+            ${displayName}
+            ${versionWarning}
+          </h6>
+          ${activationButton}
+        </div>
+        <p class="${css.description} text-body plugin-text">${api.profile.description}</p>
+      </article>
     `
   }
 
