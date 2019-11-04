@@ -30,10 +30,6 @@ const css = csjs`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0;
-    font-size: 13px;
-    line-height: 16px;
-    text-transform: uppercase;
   }
   .description {
     font-size: 13px;
@@ -121,7 +117,7 @@ class PluginManagerComponent extends ViewPlugin {
     return yo`
       <article id="remixPluginManagerListItem_${name}" class="list-group-item px-2 pt-2 pb-0 plugins-list-group-item" title="${displayName}" >
         <div class="${css.row} justify-content-between align-items-center mb-2">
-          <h6 class="${css.displayName}">
+          <h6 class="${css.displayName} plugin-name">
             ${displayName}
             ${versionWarning}
           </h6>
@@ -179,16 +175,16 @@ class PluginManagerComponent extends ViewPlugin {
 
     const activeTile = actives.length !== 0
       ? yo`
-      <nav class="plugins-list-header justify-content-start navbar navbar-expand-lg bg-light navbar-light align-items-center px-4 py-3">
-        <span class="h6 mb-0 mr-2">Active Modules</span>
-        <span class="badge badge-pill badge-warning">${actives.length}</span>
+      <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
+        <span class="navbar-brand plugins-list-title">Active Modules</span>
+        <span class="badge badge-primary">${actives.length}</span>
       </nav>`
       : ''
     const inactiveTile = inactives.length !== 0
       ? yo`
-      <nav class="plugins-list-header justify-content-start navbar navbar-expand-lg bg-light navbar-light align-items-center px-4 py-3">
-        <span class="h6 mb-0 mr-2">Inactive Modules</span>
-        <span class="badge badge-pill badge-warning" style = "cursor: default;">${inactives.length}</span>
+      <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
+        <span class="navbar-brand plugins-list-title h6 mb-0 mr-2">Inactive Modules</span>
+        <span class="badge badge-primary" style = "cursor: default;">${inactives.length}</span>
       </nav>`
       : ''
 
