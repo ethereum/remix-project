@@ -115,7 +115,7 @@ class PluginManagerComponent extends ViewPlugin {
       </button>`
 
     return yo`
-      <article id="remixPluginManagerListItem_${name}" class="list-group-item px-2 pt-2 pb-0 plugins-list-group-item" title="${displayName}" >
+      <article id="remixPluginManagerListItem_${name}" class="list-group-item py-1 plugins-list-group-item" title="${displayName}" >
         <div class="${css.row} justify-content-between align-items-center mb-2">
           <h6 class="${css.displayName} plugin-name">
             ${displayName}
