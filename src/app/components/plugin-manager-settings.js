@@ -126,8 +126,8 @@ export class PluginManagerSettings {
 
   render () {
     return yo`
-    <footer class="navbar navbar-light bg-light ${css.permissions}">
-      <button onclick="${() => this.openDialog()}" class="btn btn-info">Settings</button>
+    <footer class="bg-light ${css.permissions} remix-bg-opacity">
+      <button onclick="${() => this.openDialog()}" class="btn btn-primary settings-button">Settings</button>
     </footer>`
   }
 
