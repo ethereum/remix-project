@@ -19,13 +19,21 @@ const css = csjs`
     z-index: 2;
     margin-bottom: 0px;
   }
+  .pluginSearchInput {
+    height: 38px;
+  }
+  .pluginSearchButton {
+    font-size: 13px;
+  }
   .displayName {
-    text-transform: capitalize;
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: space-between;
   }
   .description {
+    font-size: 13px;
+    line-height: 18px;
     text-transform: capitalize;
   }
   .row {
@@ -37,12 +45,15 @@ const css = csjs`
     color: 
   }
   .versionWarning {
-    background-color: var(--light);
-    padding: 0 7px;
-    font-weight: bolder;
-    margin-top: 5px;
-    text-transform: lowercase;
+    padding: 4px;
+    margin: 0 8px;
+    font-weight: 700;
+    font-size: 9px;
+    line-height: 12px;
+    text-transform: uppercase;
     cursor: default;
+    border: 1px solid;
+    border-radius: 2px;
   }
 `
 
@@ -90,7 +101,7 @@ class PluginManagerComponent extends ViewPlugin {
     }
     // Beta
     if (api.profile.version && api.profile.version.match(/\b(\w*beta\w*)\b/g)) {
-      versionWarning = yo`<small title="Version Beta" class="${css.versionWarning}">beta</small>`
+      versionWarning = yo`<small title="Version Beta" class="${css.versionWarning} plugin-version">beta</small>`
     }
 
     const activationButton = isActive
@@ -104,15 +115,15 @@ class PluginManagerComponent extends ViewPlugin {
       </button>`
 
     return yo`
-      <article id="remixPluginManagerListItem_${name}" class="list-group-item py-1" title="${displayName}" >
-        <div class="${css.row} justify-content-between align-items-center">
-          <h6 class="${css.displayName}">
+      <article id="remixPluginManagerListItem_${name}" class="list-group-item py-1 plugins-list-group-item" title="${displayName}" >
+        <div class="${css.row} justify-content-between align-items-center mb-2">
+          <h6 class="${css.displayName} plugin-name">
             ${displayName}
             ${versionWarning}
           </h6>
           ${activationButton}
         </div>
-        <p class="${css.description}">${api.profile.description}</p>
+        <p class="${css.description} text-body plugin-text">${api.profile.description}</p>
       </article>
     `
   }
@@ -166,16 +177,16 @@ class PluginManagerComponent extends ViewPlugin {
 
     const activeTile = actives.length !== 0
       ? yo`
-      <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between align-items-center">
-        <span class="navbar-brand">Active Modules</span>
-        <span class="badge badge-pill badge-primary">${actives.length}</span>
+      <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
+        <span class="navbar-brand plugins-list-title">Active Modules</span>
+        <span class="badge badge-primary">${actives.length}</span>
       </nav>`
       : ''
     const inactiveTile = inactives.length !== 0
       ? yo`
-      <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between align-items-center">
-        <span class="navbar-brand">Inactive Modules</span>
-        <span class="badge badge-pill badge-primary" style = "cursor: default;">${inactives.length}</span>
+      <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
+        <span class="navbar-brand plugins-list-title h6 mb-0 mr-2">Inactive Modules</span>
+        <span class="badge badge-primary" style = "cursor: default;">${inactives.length}</span>
       </nav>`
       : ''
 
@@ -183,19 +194,19 @@ class PluginManagerComponent extends ViewPlugin {
 
     const rootView = yo`
       <div id='pluginManager'>
-        <header class="form-group ${css.pluginSearch}">
-          <input onkeyup="${e => this.filterPlugins(e)}" class="form-control" placeholder="Search">
-          <button onclick="${_ => this.openLocalPlugin()}" class="btn btn-sm text-dark border-0 font-weight-bold mt-2">
+        <header class="form-group ${css.pluginSearch} plugins-header py-3 px-4 border-bottom">
+          <input onkeyup="${e => this.filterPlugins(e)}" class="${css.pluginSearchInput} form-control" placeholder="Search">
+          <button onclick="${_ => this.openLocalPlugin()}" class="${css.pluginSearchButton} btn bg-transparent text-dark border-0 mt-2 text-underline">
             Connect to a Local Plugin
           </button>
         </header>
         <section>
           ${activeTile}
-          <div class="list-group list-group-flush">
+          <div class="list-group list-group-flush plugins-list-group">
             ${actives.map(name => this.renderItem(name))}
           </div>
           ${inactiveTile}
-          <div class="list-group list-group-flush">
+          <div class="list-group list-group-flush plugins-list-group">
             ${inactives.map(name => this.renderItem(name))}
           </div>
         </section>
