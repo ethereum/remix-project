@@ -11,12 +11,8 @@ const css = csjs`
   align-items: center;
   padding: 5px 20px;
 }
-.permissionsButton {
-  height: 32px;
-  padding: 0 12px;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 16px;
+.permissions button {
+  padding: 2px 5px;
   cursor: pointer;
 }
 .permissionForm h4 {
@@ -131,7 +127,7 @@ export class PluginManagerSettings {
   render () {
     return yo`
     <footer class="bg-light ${css.permissions} remix-bg-opacity">
-      <button onclick="${() => this.openDialog()}" class="btn btn-primary btn-sm ${css.permissionsButton}">Settings</button>
+      <button onclick="${() => this.openDialog()}" class="btn btn-primary settings-button">Settings</button>
     </footer>`
   }
 
