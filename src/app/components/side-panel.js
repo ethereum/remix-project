@@ -38,7 +38,7 @@ const css = csjs`
   .titleInfo {
     padding-left: 10px;
   }
-  .versionWarning {
+  .versionBadge {
     background-color: var(--light);
     padding: 0 7px;
     font-weight: bolder;
@@ -122,11 +122,11 @@ export class SidePanel extends AbstractPanel {
       name = profile.displayName ? profile.displayName : profile.name
       docLink = profile.documentation ? yo`<a href="${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
       if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
-        versionWarning = yo`<small title="Version Alpha" class="${css.versionWarning}">alpha</small>`
+        versionWarning = yo`<small title="Version Alpha" class="badge-light ${css.versionBadge}">alpha</small>`
       }
       // Beta
       if (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) {
-        versionWarning = yo`<small title="Version Beta" class="${css.versionWarning}">beta</small>`
+        versionWarning = yo`<small title="Version Beta" class="badge-light ${css.versionBadge}">beta</small>`
       }
     }
 
