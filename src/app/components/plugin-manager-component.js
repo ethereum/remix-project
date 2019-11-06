@@ -196,7 +196,7 @@ class PluginManagerComponent extends ViewPlugin {
       <div id='pluginManager'>
         <header class="form-group ${css.pluginSearch} plugins-header py-3 px-4 border-bottom">
           <input onkeyup="${e => this.filterPlugins(e)}" class="${css.pluginSearchInput} form-control" placeholder="Search">
-          <button onclick="${_ => this.openLocalPlugin()}" class="${css.pluginSearchButton} btn bg-transparent text-dark border-0 mt-2 text-underline">
+          <button onclick="${_ => this.openLocalPlugin()}" class="${css.pluginSearchButton} btn bg-transparent text-dark border-0 mt-2 text-underline plugins-connect-btn">
             Connect to a Local Plugin
           </button>
         </header>
