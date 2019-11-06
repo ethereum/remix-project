@@ -28,7 +28,7 @@ Blocks.prototype.eth_getBlockByNumber = function (payload, cb) {
     blockIndex = executionContext.latestBlockNumber
   }
 
-  var block = executionContext.blocks[blockIndex]
+  const block = executionContext.blocks[blockIndex]
 
   if (!block) {
     return cb(new Error('block not found'))

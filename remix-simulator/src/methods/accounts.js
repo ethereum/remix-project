@@ -61,16 +61,16 @@ Accounts.prototype.eth_getBalance = function (payload, cb) {
 }
 
 Accounts.prototype.eth_sign = function (payload, cb) {
-  let address = payload.params[0]
-  let message = payload.params[1]
+  const address = payload.params[0]
+  const message = payload.params[1]
 
-  let privateKey = this.accountsKeys[ethJSUtil.toChecksumAddress(address)]
+  const privateKey = this.accountsKeys[ethJSUtil.toChecksumAddress(address)]
   if (!privateKey) {
     return cb(new Error('unknown account'))
   }
-  let account = this.web3.eth.accounts.privateKeyToAccount(privateKey)
+  const account = this.web3.eth.accounts.privateKeyToAccount(privateKey)
 
-  let data = account.sign(message)
+  const data = account.sign(message)
 
   cb(null, data.signature)
 }
