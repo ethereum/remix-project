@@ -107,7 +107,7 @@ class LogsManager {
   }
 
   newFilter (filterType, params) {
-    let filterId = '0x' + crypto.randomBytes(16).toString('hex')
+    const filterId = '0x' + crypto.randomBytes(16).toString('hex')
     if (filterType === 'block' || filterType === 'pendingTransactions') {
       this.filters[filterId] = { filterType }
     }
@@ -135,7 +135,6 @@ class LogsManager {
       return blocks.map(block => ('0x' + block.hash().toString('hex')))
     }
     if (filterType === 'pendingTransactions') {
-      // TODO: pending transaction hashes
       return []
     }
   }
