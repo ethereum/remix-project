@@ -120,7 +120,7 @@ var css = csjs`
     margin: 0;
     min-width: 100px;
     width: 100px;
-    /* font-size: 10px; */
+    height: 100%;
     word-break: inherit;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -128,10 +128,12 @@ var css = csjs`
   }
   .atAddressSect {
     margin-top: 6px;
+    height: 32px;
   }
   .atAddressSect input {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+    height: 100%;
   }
   .ataddressinput {
     padding: .25rem;
