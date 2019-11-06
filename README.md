@@ -54,7 +54,7 @@ Remix is built out of several different modules:
 + [`remix-url-resolver`](remix-url-resolver/README.md) provides helpers for resolving external content (github, swarm, ipfs, ...).
 + [`remixd`](https://github.com/ethereum/remixd/tree/master) CLI which allow accessing local element from Remix IDE (see https://remix-ide.readthedocs.io/en/latest/remixd.html)
 
-Each generally has their own npm package and test suite, as well as basic documentation.
+Each module generally has their own npm package and test suite, as well as basic documentation.
 
 ## Contributing
 
