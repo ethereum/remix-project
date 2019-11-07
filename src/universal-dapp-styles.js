@@ -98,6 +98,9 @@ var css = csjs`
   .instanceButton {
     border-radius: 3px;
     flex: 3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .closeIcon {
     font-size: 12px;
