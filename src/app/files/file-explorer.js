@@ -579,13 +579,11 @@ fileExplorer.prototype.copyFiles = function () {
   }
 }
 
-fileExplorer.prototype.createNewFile = function (parentFolder) {
+fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
   let self = this
   modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
-    helper.createNonClashingName(input, self.files, (error, newName) => {
+    helper.createNonClashingName(parentFolder + '/' + input, self.files, (error, newName) => {
       if (error) return modalDialogCustom.alert('Failed to create file ' + newName + ' ' + error)
-      const currentPath = !parentFolder ? self._deps.fileManager.currentPath() : parentFolder
-      newName = currentPath ? currentPath + '/' + newName : self.files.type + '/' + newName
 
       if (!self.files.set(newName, '')) {
         modalDialogCustom.alert('Failed to create file ' + newName)

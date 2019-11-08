@@ -131,23 +131,28 @@ class FileProvider {
     return false
   }
 
+  /**
+   * Removes the folder recursively
+   * @param {*} path is the folder to be removed
+   */
   remove (path) {
-    var unprefixedpath = this.removePrefix(path)
-    if (!this._exists(unprefixedpath)) {
-      return false
-    }
-    const stat = window.remixFileSystem.statSync(unprefixedpath)
-    try {
-      if (stat.isDirectory()) {
-        window.remixFileSystem.rmdirSync(unprefixedpath, console.log)
-      } else {
-        window.remixFileSystem.unlinkSync(unprefixedpath, console.log)
-      }
-      this.event.trigger('fileRemoved', [this._normalizePath(unprefixedpath)])
-      return true
-    } catch (e) {
-      console.log(e)
-      return false
+    path = this.removePrefix(path)
+    if (window.remixFileSystem.existsSync(path)) {
+      window.remixFileSystem.readdirSync(path).forEach((file, index) => {
+        let curPath = path + '/' + file
+        let stat = window.remixFileSystem.statSync(curPath)
+        try {
+          if (stat.isDirectory()) {
+            this.remove(curPath)
+            window.remixFileSystem.rmdirSync(curPath, console.log)
+          } else { // delete file
+            window.remixFileSystem.unlinkSync(curPath, console.log)
+          }
+        } catch (e) {
+          console.log(e)
+          return false
+        }
+      })
     }
   }
 
