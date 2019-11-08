@@ -202,6 +202,22 @@ export class RemixAppManager extends PluginEngine {
       icon: 'https://zokrates.blockchain-it.hr/zokrates.svg',
       location: 'sidePanel'
     }
+    const quorum = {
+      name: 'quorum',
+      displayName: 'Quorum Support',
+      description: 'Enables support for deploying and interacting with private contracts on a Quorum network.',
+      events: [],
+      methods: [],
+      notifications: {
+        solidity: ['compilationFinished'],
+        network: ['providerChanged']
+      },
+      url: 'https://jpmorganchase.github.io/qr/',
+      icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAiCAYAAAA6RwvCAAAAAXNSR0IArs4c6QAAAIRlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAACKgAwAEAAAAAQAAACIAAAAA8UDMVwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAPFJREFUWAntkwEOgzAIRXXZ9TzT2Jk8oIOs1WfVVutclgwS4pdfKP2BpnFzBVyBP1VA9N1DcMPV1lZnvhOtCVp1vRurbGDR+OFX930v6kNwq5G1PY08UIHYwk9wxBbmWWKkTPA+wSokmmV+2vYowpcSly7nWeJS3m/xou0MwQ2nJhrY5EsDmuPb5Ca7hHaItw1hctd1s/wcv2dGWPsynDbCoSKODTBG/Ck+1vHvqIAo2tqGHDcWSEFuQ9a4NhSYTbvGYtzoHBfSl5/chqxx6bAuK34pEhvhBhBbG/wnLrXIs8RnapbudN4VcAVcAVdgVOAFAyFuBlbBo14AAAAASUVORK5CYII=',
+      documentation: 'https://docs.goquorum.com/',
+      version: '0.1.0-beta',
+      location: 'sidePanel'
+    }
     const res = await fetch(this.pluginsDirectory)
     const plugins = await res.json()
     return [
@@ -215,6 +231,7 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(flattener),
       new IframePlugin(ethpm),
       new IframePlugin(zokrates),
+      new IframePlugin(quorum),
       ...plugins.map(plugin => new IframePlugin(plugin))
     ]
   }
