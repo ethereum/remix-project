@@ -183,6 +183,33 @@ describe('testRunner', () => {
       })
     })
 
+    // Test multiple directory import in test contract
+    describe('test multiple directory import in test contract', function () {
+      let filename = 'tests/examples_5/test/simple_storage_test.sol'
+
+      before(function (done) {
+        compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
+          runTest('StorageResolveTest', contracts.StorageResolveTest, compilationData[filename]['StorageResolveTest'], { accounts }, testCallback, resultsCallback(done))
+        })
+      })
+
+      after(() => { tests = [] })
+
+      it('should 3 passing tests', function () {
+        assert.equal(results.passingNum, 3)
+      })
+
+      it('should return 4 messages', function () {
+        deepEqualExcluding(tests, [
+          { type: 'accountList', value: accounts },
+          { type: 'contract', value: 'StorageResolveTest', filename: 'tests/examples_5/test/simple_storage_test.sol' },
+          { type: 'testPass', value: 'Initial value should be100', context: 'StorageResolveTest' },
+          { type: 'testPass', value: 'Check if odd', context: 'StorageResolveTest' },
+          { type: 'testPass', value: 'Check if even', context: 'StorageResolveTest' }
+        ], ['time'])
+      })
+    })
+
     //Test signed/unsigned integer weight
     describe('test number weight', function () {
       let filename = 'tests/number/number_test.sol'
