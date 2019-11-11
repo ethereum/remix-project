@@ -21,6 +21,32 @@ function writeTestAccountsContract (accounts: string[]) {
     return testAccountContract.replace('>accounts<', body)
 }
 
+function processFile(filePath: string, sources: any, isRoot: boolean = false) {
+    try{
+        const importRegEx = /import ['"](.+?)['"];/g;
+        let group: any ='';
+        if(filePath.includes('tests.sol') || filePath.includes('remix_tests.sol') || filePath.includes('remix_accounts.sol') || Object.keys(sources).includes(filePath))
+            return
+
+        let content = fs.readFileSync(filePath, { encoding: 'utf-8' });
+        const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+        if (isRoot && filePath.indexOf('_test.sol') > 0 && regexIndexOf(content, s) < 0) {
+            const includeTestLibs = '\nimport \'remix_tests.sol\';\n'
+            content = includeTestLibs.concat(content)
+        }
+        sources[filePath] = {content};
+        importRegEx.exec(''); // Resetting state of RegEx
+        while (group = importRegEx.exec(content)) {
+            const importedFile = group[1];
+            const importedFilePath = path.join(path.dirname(filePath), importedFile);
+            processFile(importedFilePath, sources)
+        }
+    }
+    catch(error){
+      throw error;
+    }
+  };
+
 const userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
 const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
 
@@ -34,26 +60,23 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
         'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
     }
     const filepath = (isDirectory ? filename : path.dirname(filename))
-    // TODO: for now assumes filepath dir contains all tests, later all this
-    // should be replaced with remix's & browser solidity compiler code
-
-    // This logic is wrong
-    // We should only look into current file if a full file name with path is given
-    // We should only walk through directory if a directory name is passed
     try {
-        // walkSync only if it is a directory
-        fs.walkSync(filepath, (foundpath: string) => {
-            // only process .sol files
-            if (foundpath.split('.').pop() === 'sol') {
-                let c = fs.readFileSync(foundpath).toString()
-                const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
-                let includeTestLibs = '\nimport \'remix_tests.sol\';\n'
-                if (foundpath.indexOf('_test.sol') > 0 && regexIndexOf(c, s) < 0) {
-                    c = includeTestLibs.concat(c)
-                }
-                sources[foundpath] = { content: c }
+        if(!isDirectory && fs.existsSync(filename)) {
+            if (filename.split('.').pop() === 'sol') {
+                processFile(filename, sources, true)
+            } else {
+                throw new Error('Not a solidity file')
             }
-        })
+        } else {
+            // walkSync only if it is a directory
+            fs.walkSync(filepath, (foundpath: string) => {
+                // only process .sol files
+                if (foundpath.split('.').pop() === 'sol') {
+                    processFile(foundpath, sources, true)
+                }
+            })
+        }
+        
     } catch (e) {
         throw e
     } finally {
