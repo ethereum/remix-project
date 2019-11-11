@@ -64,6 +64,8 @@ class FileProvider {
   }
 
   exists (path, cb) {
+    // todo check the type (directory/file) as well #2386
+    // currently it is not possible to have a file and folder with same path
     cb(null, this._exists(path))
   }
 
@@ -138,22 +140,36 @@ class FileProvider {
   remove (path) {
     path = this.removePrefix(path)
     if (window.remixFileSystem.existsSync(path)) {
-      window.remixFileSystem.readdirSync(path).forEach((file, index) => {
-        let curPath = path + '/' + file
-        let stat = window.remixFileSystem.statSync(curPath)
-        try {
-          if (stat.isDirectory()) {
-            this.remove(curPath)
-            window.remixFileSystem.rmdirSync(curPath, console.log)
-          } else { // delete file
-            window.remixFileSystem.unlinkSync(curPath, console.log)
+      const stat = window.remixFileSystem.statSync(path)
+      try {
+        if (!stat.isDirectory()) {
+          window.remixFileSystem.unlinkSync(path, console.log)
+          this.event.trigger('fileRemoved', [this._normalizePath(path)])
+          return true
+        } else {
+          let items = window.remixFileSystem.readdirSync(path)
+          if (items.length !== 0) {
+            items.forEach((item, index) => {
+              let curPath = path + '/' + item
+              if (window.remixFileSystem.statSync(curPath).isDirectory()) { // delete folder
+                this.remove(curPath)
+              } else { // delete file
+                window.remixFileSystem.unlinkSync(curPath, console.log)
+                this.event.trigger('fileRemoved', [this._normalizePath(path)])
+              }
+            })
+            if (window.remixFileSystem.readdirSync(path).length === 0) window.remixFileSystem.rmdirSync(path, console.log)
+          } else {
+            // folder is empty
+            window.remixFileSystem.rmdirSync(path, console.log)
           }
-        } catch (e) {
-          console.log(e)
-          return false
         }
-      })
+      } catch (e) {
+        console.log(e)
+        return false
+      }
     }
+    return true
   }
 
   rename (oldPath, newPath, isFolder) {

@@ -213,7 +213,7 @@ function fileExplorer (localRegistry, files, menuItems) {
         modalDialogCustom.confirm(
           'Discard changes',
           'Are you sure you want to discard all your changes?',
-          () => { files.discardChanges(key) },
+          () => { self.files.discardChanges(key) },
           () => {}
         )
       }
@@ -244,6 +244,9 @@ function fileExplorer (localRegistry, files, menuItems) {
       modalDialogCustom.confirm('Confirm to delete a folder', 'Are you sure you want to delete this folder?',
         () => {
           if (!files.remove(key)) tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
+          else {
+            self.updatePath('browser')
+          }
         }, () => {})
     }
     MENU_HANDLE = contextMenu(event, actions)
@@ -265,7 +268,10 @@ function fileExplorer (localRegistry, files, menuItems) {
         if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
         modalDialogCustom.confirm(
           'Delete a file', 'Are you sure you want to delete this file?',
-          () => { files.remove(key) },
+          () => {
+            files.remove(key)
+            self.updatePath('browser')
+          },
           () => {}
         )
       }
@@ -599,14 +605,24 @@ fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
 
 fileExplorer.prototype.createNewFolder = function (parentFolder) {
   let self = this
-  modalDialogCustom.prompt('Create new folder', '', '', (input) => {
+  modalDialogCustom.prompt('Create new folder', '', 'New folder', (input) => {
+    if (input === '') {
+      modalDialogCustom.alert('Failed to create folder. The name can not be empty')
+      return false
+    }
+
     const currentPath = !parentFolder ? self._deps.fileManager.currentPath() : parentFolder
     let newName = currentPath ? currentPath + '/' + input : self.files.type + '/' + input
 
     newName = newName + '/'
-    if (!self.files.set(newName, '')) {
-      modalDialogCustom.alert('Failed to create folder ' + newName)
-    }
+    self.files.exists(newName, (error, exist) => {
+      if (error) return modalDialogCustom.alert('Unexpected error while creating folder: ' + error)
+      if (!exist) {
+        self.files.set(newName, '')
+      } else {
+        modalDialogCustom.alert('Folder already exists.', () => {})
+      }
+    })
   }, null, true)
 }
 
