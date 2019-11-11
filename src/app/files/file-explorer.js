@@ -208,6 +208,8 @@ function fileExplorer (localRegistry, files, menuItems) {
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
     let actions = {}
     const provider = self._deps.fileManager.fileProviderOf(key)
+    actions['Create File'] = () => self.createNewFile(key)
+    actions['Create Folder'] = () => self.createNewFolder(key)
     if (provider.isExternalFolder(key)) {
       actions['Discard changes'] = () => {
         modalDialogCustom.confirm(
@@ -219,6 +221,21 @@ function fileExplorer (localRegistry, files, menuItems) {
       }
     } else {
       const folderPath = extractExternalFolder(key)
+      actions['Rename'] = () => {
+        if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
+        var name = label.querySelector('span[data-path="' + key + '"]')
+        if (name) editModeOn(name)
+      }
+      actions['Delete'] = () => {
+        if (self.files.isReadOnly(key)) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
+        modalDialogCustom.confirm('Confirm to delete a folder', 'Are you sure you want to delete this folder?',
+          () => {
+            if (!files.remove(key)) tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
+            else {
+              self.updatePath('browser')
+            }
+          }, () => {})
+      }
       if (folderPath === 'browser/gists') {
         actions['Push changes to gist'] = () => {
           const id = key.substr(key.lastIndexOf('/') + 1, key.length - 1)
@@ -230,24 +247,6 @@ function fileExplorer (localRegistry, files, menuItems) {
           )
         }
       }
-      actions['Create File'] = () => self.createNewFile(key)
-      actions['Create Folder'] = () => self.createNewFolder(key)
-
-      actions['Rename'] = () => {
-        if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
-        var name = label.querySelector('span[data-path="' + key + '"]')
-        if (name) editModeOn(name)
-      }
-    }
-    actions['Delete'] = () => {
-      if (self.files.isReadOnly(key)) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
-      modalDialogCustom.confirm('Confirm to delete a folder', 'Are you sure you want to delete this folder?',
-        () => {
-          if (!files.remove(key)) tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
-          else {
-            self.updatePath('browser')
-          }
-        }, () => {})
     }
     MENU_HANDLE = contextMenu(event, actions)
   })
