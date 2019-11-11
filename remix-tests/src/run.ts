@@ -44,11 +44,9 @@ commander
             log.info('verbosity level set to ' + commander.verbose.blue)
         }
         let web3 = new Web3()
-        let provider = new Provider()
+        const provider = new Provider()
         await provider.init()
         web3.setProvider(provider)
-        // web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'))
-        // web3.setProvider(new web3.providers.WebsocketProvider('ws://localhost:8546'))
 
         if (!fs.existsSync(filename)) {
             console.error(filename + ' not found')
