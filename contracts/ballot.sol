@@ -13,8 +13,7 @@ contract Ballot {
     }
 
     // This is a type for a single proposal.
-    struct Proposal
-    {
+    struct Proposal {
         bytes32 name;   // short name (up to 32 bytes)
         uint voteCount; // number of accumulated votes
     }
