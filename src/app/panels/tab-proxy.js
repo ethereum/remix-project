@@ -132,7 +132,7 @@ export class TabProxy {
       id: name,
       title,
       icon,
-      tooltip: title
+      tooltip: name
     })
     this._handlers[name] = { switchTo, close }
   }
