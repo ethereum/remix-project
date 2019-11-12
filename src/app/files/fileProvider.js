@@ -64,6 +64,8 @@ class FileProvider {
   }
 
   exists (path, cb) {
+    // todo check the type (directory/file) as well #2386
+    // currently it is not possible to have a file and folder with same path
     cb(null, this._exists(path))
   }
 
@@ -131,24 +133,43 @@ class FileProvider {
     return false
   }
 
+  /**
+   * Removes the folder recursively
+   * @param {*} path is the folder to be removed
+   */
   remove (path) {
-    var unprefixedpath = this.removePrefix(path)
-    if (!this._exists(unprefixedpath)) {
-      return false
-    }
-    const stat = window.remixFileSystem.statSync(unprefixedpath)
-    try {
-      if (stat.isDirectory()) {
-        window.remixFileSystem.rmdirSync(unprefixedpath, console.log)
-      } else {
-        window.remixFileSystem.unlinkSync(unprefixedpath, console.log)
+    path = this.removePrefix(path)
+    if (window.remixFileSystem.existsSync(path)) {
+      const stat = window.remixFileSystem.statSync(path)
+      try {
+        if (!stat.isDirectory()) {
+          window.remixFileSystem.unlinkSync(path, console.log)
+          this.event.trigger('fileRemoved', [this._normalizePath(path)])
+          return true
+        } else {
+          const items = window.remixFileSystem.readdirSync(path)
+          if (items.length !== 0) {
+            items.forEach((item, index) => {
+              const curPath = `${path}/${item}`
+              if (window.remixFileSystem.statSync(curPath).isDirectory()) { // delete folder
+                this.remove(curPath)
+              } else { // delete file
+                window.remixFileSystem.unlinkSync(curPath, console.log)
+                this.event.trigger('fileRemoved', [this._normalizePath(path)])
+              }
+            })
+            if (window.remixFileSystem.readdirSync(path).length === 0) window.remixFileSystem.rmdirSync(path, console.log)
+          } else {
+            // folder is empty
+            window.remixFileSystem.rmdirSync(path, console.log)
+          }
+        }
+      } catch (e) {
+        console.log(e)
+        return false
       }
-      this.event.trigger('fileRemoved', [this._normalizePath(unprefixedpath)])
-      return true
-    } catch (e) {
-      console.log(e)
-      return false
     }
+    return true
   }
 
   rename (oldPath, newPath, isFolder) {

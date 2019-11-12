@@ -12,6 +12,7 @@ module.exports = {
     return data.slice(0, 5) + '...' + data.slice(len - 5, len)
   },
   createNonClashingNameWithPrefix (name, fileProvider, prefix, cb) {
+    if (!name) name = 'Undefined'
     var counter = ''
     var ext = 'sol'
     var reg = /(.*)\.([^.]+)/g
