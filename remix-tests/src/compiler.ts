@@ -22,7 +22,7 @@ function writeTestAccountsContract (accounts: string[]) {
 }
 
 /**
- * Check if path includes name of a remix test file
+ * @dev Check if path includes name of a remix test file
  * @param path file path to check
  */
 
