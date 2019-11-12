@@ -97,7 +97,7 @@ class PluginManagerComponent extends ViewPlugin {
     let versionWarning
     // Alpha
     if (api.profile.version && api.profile.version.match(/\b(\w*alpha\w*)\b/g)) {
-      versionWarning = yo`<small title="Version Alpha" class="${css.versionWarning}">alpha</small>`
+      versionWarning = yo`<small title="Version Alpha" class="${css.versionWarning} plugin-version">alpha</small>`
     }
     // Beta
     if (api.profile.version && api.profile.version.match(/\b(\w*beta\w*)\b/g)) {
