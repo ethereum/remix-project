@@ -75,7 +75,7 @@ const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' elect
 // TODO: replace this with remix's own compiler code
 export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb: Function) {
     let compiler: any
-    let accounts: any[] = opts.accounts || []
+    const accounts: any[] = opts.accounts || []
     const sources: SrcIfc = {
         'tests.sol': { content: require('../sol/tests.sol.js') },
         'remix_tests.sol': { content: require('../sol/tests.sol.js') },
@@ -130,19 +130,20 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
     }
 }
 
-export function compileContractSources(sources: SrcIfc, versionUrl: any, usingWorker: any, importFileCb: any, opts: any, cb: Function) {
+export function compileContractSources(sources: SrcIfc, versionUrl: any, usingWorker: boolean, importFileCb: any, opts: any, cb: Function) {
     let compiler, filepath: string
-    let accounts = opts.accounts || []
+    const accounts = opts.accounts || []
     // Iterate over sources keys. Inject test libraries. Inject test library import statements.
     if (!('remix_tests.sol' in sources) && !('tests.sol' in sources)) {
         sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
         sources['remix_accounts.sol'] = { content: writeTestAccountsContract(accounts) }
     }
-    const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
-    let includeTestLibs = '\nimport \'remix_tests.sol\';\n'
+    const testFileImportRegEx: RegExp = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+
+    let includeTestLibs: string = '\nimport \'remix_tests.sol\';\n'
     for (let file in sources) {
-        const c = sources[file].content
-        if (file.indexOf('_test.sol') > 0 && c && regexIndexOf(c, s) < 0) {
+        const c: string = sources[file].content
+        if (file.includes('_test.sol') && c && regexIndexOf(c, testFileImportRegEx) < 0) {
             sources[file].content = includeTestLibs.concat(c)
         }
     }
