@@ -41,7 +41,7 @@ function isRemixTestFile(path: string) {
  * @param isRoot True, If file is a root test contract file which is getting processed, not an imported file
  */
 
-function processFile(filePath: string, sources: any, isRoot: boolean = false) {
+function processFile(filePath: string, sources: SrcIfc, isRoot: boolean = false) {
     const importRegEx: RegExp = /import ['"](.+?)['"];/g;
     let group: RegExpExecArray| null = null;
     const isFileAlreadyInSources: boolean = Object.keys(sources).includes(filePath)
@@ -76,7 +76,7 @@ const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' elect
 export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb: Function) {
     let compiler: any
     let accounts: any[] = opts.accounts || []
-    const sources: any = {
+    const sources: SrcIfc = {
         'tests.sol': { content: require('../sol/tests.sol.js') },
         'remix_tests.sol': { content: require('../sol/tests.sol.js') },
         'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
