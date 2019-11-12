@@ -16,7 +16,7 @@ Implemented:
 * [~] eth_accounts
 * [X] eth_blockNumber
 * [X] eth_getBalance
-* [_] eth_getStorageAt
+* [~] eth_getStorageAt
 * [X] eth_getTransactionCount
 * [X] eth_getBlockTransactionCountByHash
 * [X] eth_getBlockTransactionCountByNumber
@@ -40,12 +40,12 @@ Implemented:
 * [X] eth_compileSolidity (DEPRECATED)
 * [X] eth_compileLLL (DEPRECATED)
 * [X] eth_compileSerpent (DEPRECATED)
-* [_] eth_newFilter
-* [_] eth_newBlockFilter
-* [_] eth_newPendingTransactionFilter
-* [_] eth_uninstallFilter
-* [_] eth_getFilterChanges
-* [_] eth_getFilterLogs
+* [X] eth_newFilter
+* [X] eth_newBlockFilter
+* [X] eth_newPendingTransactionFilter
+* [X] eth_uninstallFilter
+* [~] eth_getFilterChanges
+* [~] eth_getFilterLogs
 * [X] eth_getLogs
 * [_] eth_getWork
 * [_] eth_submitWork
@@ -55,18 +55,6 @@ Implemented:
 * [_] db_getString
 * [_] db_putHex
 * [_] db_getHex
-* [X] shh_version
-* [_] shh_post
-* [_] shh_newIdentity
-* [_] shh_hasIdentity
-* [_] shh_newGroup
-* [_] shh_addToGroup
-* [_] shh_newFilter
-* [_] shh_uninstallFilter
-* [_] shh_getFilterChanges
-* [_] shh_getMessages
-* [_] bzz_hive (stub)
-* [_] bzz_info (stub)
 * [_] debug_traceTransaction
 * [X] eth_subscribe
 * [X] eth_unsubscribe
@@ -79,5 +67,3 @@ Implemented:
 * [_] personal_unlockAccount
 * [_] personal_sendTransaction
 * [_] rpc_modules
-* [_] web3_clientVersion
-* [_] web3_sha3
