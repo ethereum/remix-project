@@ -53,6 +53,10 @@ Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
       'status': receipt.status
     }
 
+    if (r.blockNumber === '0x') {
+      r.blockNumber = '0x0'
+    }
+
     cb(null, r)
   })
 }
@@ -78,6 +82,12 @@ Transactions.prototype.eth_call = function (payload, cb) {
   if (payload.params && payload.params.length > 0 && payload.params[0].from) {
     payload.params[0].from = ethJSUtil.toChecksumAddress(payload.params[0].from)
   }
+  if (payload.params && payload.params.length > 0 && payload.params[0].to) {
+    payload.params[0].to = ethJSUtil.toChecksumAddress(payload.params[0].to)
+  }
+
+  payload.params[0].value = undefined
+
   processTx(this.accounts, payload, true, cb)
 }
 
@@ -128,6 +138,10 @@ Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
 
     if (r.value === '0x') {
       r.value = '0x0'
+    }
+
+    if (r.blockNumber === '0x') {
+      r.blockNumber = '0x0'
     }
 
     cb(null, r)

@@ -20,7 +20,7 @@ Accounts.prototype.init = async function () {
       this.accountsKeys[ethJSUtil.toChecksumAddress(account.address)] = account.privateKey
       this.accounts[ethJSUtil.toChecksumAddress(account.address)] = { privateKey: Buffer.from(account.privateKey.replace('0x', ''), 'hex'), nonce: 0 }
 
-      executionContext.vm().stateManager.getAccount(Buffer.from(account.address.toLowerCase().replace('0x', ''), 'hex'), (err, account) => {
+      executionContext.vm().stateManager.getAccount(Buffer.from(account.address.replace('0x', ''), 'hex'), (err, account) => {
         if (err) {
           throw new Error(err)
         }
@@ -61,13 +61,16 @@ Accounts.prototype.eth_getBalance = function (payload, cb) {
 }
 
 Accounts.prototype.eth_sign = function (payload, cb) {
-  let address = payload.params[0]
-  let message = payload.params[1]
+  const address = payload.params[0]
+  const message = payload.params[1]
 
-  let privateKey = this.accountsKeys[address]
-  let account = Web3.eth.accounts.privateKeyToAccount(privateKey)
+  const privateKey = this.accountsKeys[ethJSUtil.toChecksumAddress(address)]
+  if (!privateKey) {
+    return cb(new Error('unknown account'))
+  }
+  const account = this.web3.eth.accounts.privateKeyToAccount(privateKey)
 
-  let data = account.sign(message)
+  const data = account.sign(message)
 
   cb(null, data.signature)
 }
