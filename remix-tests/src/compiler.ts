@@ -21,31 +21,53 @@ function writeTestAccountsContract (accounts: string[]) {
     return testAccountContract.replace('>accounts<', body)
 }
 
-function processFile(filePath: string, sources: any, isRoot: boolean = false) {
-    try{
-        const importRegEx = /import ['"](.+?)['"];/g;
-        let group: any ='';
-        if(filePath.includes('tests.sol') || filePath.includes('remix_tests.sol') || filePath.includes('remix_accounts.sol') || Object.keys(sources).includes(filePath))
-            return
+/**
+ * Check if path includes name of a remix test file
+ * @param path file path to check
+ */
 
-        let content = fs.readFileSync(filePath, { encoding: 'utf-8' });
-        const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
-        if (isRoot && filePath.indexOf('_test.sol') > 0 && regexIndexOf(content, s) < 0) {
-            const includeTestLibs = '\nimport \'remix_tests.sol\';\n'
-            content = includeTestLibs.concat(content)
-        }
-        sources[filePath] = {content};
-        importRegEx.exec(''); // Resetting state of RegEx
-        while (group = importRegEx.exec(content)) {
-            const importedFile = group[1];
-            const importedFilePath = path.join(path.dirname(filePath), importedFile);
-            processFile(importedFilePath, sources)
-        }
+function isRemixTestFile(path: string) {
+    return ['tests.sol', 'remix_tests.sol', 'remix_accounts.sol'].some(name => path.includes(name))
+}
+
+/**
+ * @dev Process file to prepare sources object to be passed in solc compiler input
+ * 
+ * See: https://solidity.readthedocs.io/en/latest/using-the-compiler.html#input-description
+ * 
+ * @param filePath path of file to process
+ * @param sources existing 'sources' object in which keys are the "global" names of the source files and 
+ *                value is object containing content of corresponding file with under key 'content'
+ * @param isRoot True, If file is a root test contract file which is getting processed, not an imported file
+ */
+
+function processFile(filePath: string, sources: any, isRoot: boolean = false) {
+    const importRegEx: RegExp = /import ['"](.+?)['"];/g;
+    let group: RegExpExecArray| null = null;
+    const isFileAlreadyInSources: boolean = Object.keys(sources).includes(filePath)
+
+    // Return if file is a remix test file or already processed
+    if(isRemixTestFile(filePath) || isFileAlreadyInSources)
+        return
+
+    let content: string = fs.readFileSync(filePath, { encoding: 'utf-8' });
+    const testFileImportRegEx: RegExp = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+
+    // import 'remix_tests.sol', if file is a root test contract file and doesn't already have it 
+    if (isRoot && filePath.includes('_test.sol') && regexIndexOf(content, testFileImportRegEx) < 0) {
+        const includeTestLibs: string = '\nimport \'remix_tests.sol\';\n'
+        content = includeTestLibs.concat(content)
     }
-    catch(error){
-      throw error;
+    sources[filePath] = {content};
+    importRegEx.exec(''); // Resetting state of RegEx
+
+    // Process each 'import' in file content
+    while (group = importRegEx.exec(content)) {
+        const importedFile: string = group[1];
+        const importedFilePath: string = path.join(path.dirname(filePath), importedFile);
+        processFile(importedFilePath, sources)
     }
-  };
+}
 
 const userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
 const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
@@ -53,13 +75,13 @@ const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' elect
 // TODO: replace this with remix's own compiler code
 export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb: Function) {
     let compiler: any
-    let accounts = opts.accounts || []
-    const sources = {
+    let accounts: any[] = opts.accounts || []
+    const sources: any = {
         'tests.sol': { content: require('../sol/tests.sol.js') },
         'remix_tests.sol': { content: require('../sol/tests.sol.js') },
         'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
     }
-    const filepath = (isDirectory ? filename : path.dirname(filename))
+    const filepath: string = (isDirectory ? filename : path.dirname(filename))
     try {
         if(!isDirectory && fs.existsSync(filename)) {
             if (filename.split('.').pop() === 'sol') {
