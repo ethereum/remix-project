@@ -75,7 +75,7 @@ const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' elect
 // TODO: replace this with remix's own compiler code
 export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb: Function) {
     let compiler: any
-    const accounts: any[] = opts.accounts || []
+    const accounts: string[] = opts.accounts || []
     const sources: SrcIfc = {
         'tests.sol': { content: require('../sol/tests.sol.js') },
         'remix_tests.sol': { content: require('../sol/tests.sol.js') },
@@ -132,7 +132,7 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
 
 export function compileContractSources(sources: SrcIfc, versionUrl: any, usingWorker: boolean, importFileCb: any, opts: any, cb: Function) {
     let compiler, filepath: string
-    const accounts = opts.accounts || []
+    const accounts: string[] = opts.accounts || []
     // Iterate over sources keys. Inject test libraries. Inject test library import statements.
     if (!('remix_tests.sol' in sources) && !('tests.sol' in sources)) {
         sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
