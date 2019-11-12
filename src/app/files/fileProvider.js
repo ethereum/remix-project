@@ -147,10 +147,10 @@ class FileProvider {
           this.event.trigger('fileRemoved', [this._normalizePath(path)])
           return true
         } else {
-          let items = window.remixFileSystem.readdirSync(path)
+          const items = window.remixFileSystem.readdirSync(path)
           if (items.length !== 0) {
             items.forEach((item, index) => {
-              let curPath = path + '/' + item
+              const curPath = `${path}/${item}`
               if (window.remixFileSystem.statSync(curPath).isDirectory()) { // delete folder
                 this.remove(curPath)
               } else { // delete file

@@ -587,7 +587,7 @@ fileExplorer.prototype.copyFiles = function () {
 fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
   let self = this
   modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
-    if (input === '') input = 'New file'
+    if (!input) input = 'New file'
     helper.createNonClashingName(parentFolder + '/' + input, self.files, (error, newName) => {
       if (error) return tooltip('Failed to create file ' + newName + ' ' + error)
 
@@ -606,9 +606,8 @@ fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
 fileExplorer.prototype.createNewFolder = function (parentFolder) {
   let self = this
   modalDialogCustom.prompt('Create new folder', '', 'New folder', (input) => {
-    if (input === '') {
-      tooltip('Failed to create folder. The name can not be empty')
-      return false
+    if (!input) {
+      return tooltip('Failed to create folder. The name can not be empty')
     }
 
     const currentPath = !parentFolder ? self._deps.fileManager.currentPath() : parentFolder
