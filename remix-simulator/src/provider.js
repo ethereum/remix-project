@@ -10,11 +10,11 @@ const Filters = require('./methods/filters.js')
 const Misc = require('./methods/misc.js')
 const Net = require('./methods/net.js')
 const Transactions = require('./methods/transactions.js')
-const Whisper = require('./methods/whisper.js')
 
 const generateBlock = require('./genesis.js')
 
 var Provider = function (options) {
+  this.options = options || {}
   this.Accounts = new Accounts()
   this.Transactions = new Transactions()
 
@@ -24,10 +24,10 @@ var Provider = function (options) {
   this.methods = merge(this.methods, (new Misc()).methods())
   this.methods = merge(this.methods, (new Filters()).methods())
   this.methods = merge(this.methods, (new Net()).methods())
-  this.methods = merge(this.methods, (this.Transactions.methods()))
-  this.methods = merge(this.methods, (new Whisper()).methods())
+  this.methods = merge(this.methods, this.Transactions.methods())
 
   generateBlock()
+  this.init()
 }
 
 Provider.prototype.init = async function () {
@@ -39,8 +39,15 @@ Provider.prototype.sendAsync = function (payload, callback) {
   log.info('payload method is ', payload.method)
 
   let method = this.methods[payload.method]
+  if (this.options.logDetails) {
+    log.info(payload)
+  }
   if (method) {
     return method.call(method, payload, (err, result) => {
+      if (this.options.logDetails) {
+        log.info(err)
+        log.info(result)
+      }
       if (err) {
         return callback(err)
       }

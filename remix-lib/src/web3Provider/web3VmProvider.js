@@ -29,6 +29,7 @@ function web3VmProvider () {
   this.providers = { 'HttpProvider': function (url) {} }
   this.currentProvider = {'host': 'vm provider'}
   this.storageCache = {}
+  this.lastProcessedStorageTxHash = {}
   this.sha3Preimages = {}
   // util
   this.sha3 = function () { return self.web3.sha3.apply(self.web3, arguments) }
@@ -92,6 +93,7 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
     const account = ethutil.toBuffer(tx.to)
     self.vm.stateManager.dumpStorage(account, function (storage) {
       self.storageCache[self.processingHash][tx.to] = storage
+      self.lastProcessedStorageTxHash[tx.to] = self.processingHash
     })
   }
   this.processingIndex = 0
@@ -171,12 +173,14 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     if (step.op === 'CREATE') {
       this.processingAddress = traceHelper.contractCreationToken(this.processingIndex)
       this.storageCache[this.processingHash][this.processingAddress] = {}
+      this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
     } else {
       this.processingAddress = uiutil.normalizeHexAddress(step.stack[step.stack.length - 2])
       if (!self.storageCache[self.processingHash][this.processingAddress]) {
         const account = ethutil.toBuffer(this.processingAddress)
         self.vm.stateManager.dumpStorage(account, function (storage) {
           self.storageCache[self.processingHash][self.processingAddress] = storage
+          self.lastProcessedStorageTxHash[self.processingAddress] = self.processingHash
         })
       }
     }
@@ -217,6 +221,11 @@ web3VmProvider.prototype.traceTransaction = function (txHash, options, cb) {
 
 web3VmProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, maxLength, cb) { // txIndex is the hash in the case of the VM
   // we don't use the range params here
+
+  if (txIndex === 'latest') {
+    txIndex = this.lastProcessedStorageTxHash[address]
+  }
+
   if (this.storageCache[txIndex] && this.storageCache[txIndex][address]) {
     var storage = this.storageCache[txIndex][address]
     return cb(null, {

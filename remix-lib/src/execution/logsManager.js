@@ -6,6 +6,8 @@ class LogsManager {
   constructor () {
     this.notificationCallbacks = []
     this.subscriptions = {}
+    this.filters = {}
+    this.filterTracking = {}
     this.oldLogs = []
   }
 
@@ -66,11 +68,18 @@ class LogsManager {
       const subscriptionParams = this.subscriptions[subscriptionId]
       const [queryType, queryFilter] = subscriptionParams
 
-      if (this.eventMatchesFilter(changeEvent, queryType, queryFilter)) {
+      if (this.eventMatchesFilter(changeEvent, queryType, queryFilter || {topics: []})) {
         matchedSubscriptions.push(subscriptionId)
       }
     }
     return matchedSubscriptions
+  }
+
+  getLogsForSubscription (subscriptionId) {
+    const subscriptionParams = this.subscriptions[subscriptionId]
+    const [_queryType, queryFilter] = subscriptionParams // eslint-disable-line
+
+    return this.getLogsFor(queryFilter)
   }
 
   transmit (result) {
@@ -95,6 +104,39 @@ class LogsManager {
 
   unsubscribe (subscriptionId) {
     delete this.subscriptions[subscriptionId]
+  }
+
+  newFilter (filterType, params) {
+    const filterId = '0x' + crypto.randomBytes(16).toString('hex')
+    if (filterType === 'block' || filterType === 'pendingTransactions') {
+      this.filters[filterId] = { filterType }
+    }
+    if (filterType === 'filter') {
+      this.filters[filterId] = { filterType, params }
+    }
+    this.filterTracking[filterId] = {}
+    return filterId
+  }
+
+  uninstallFilter (filterId) {
+    delete this.filters[filterId]
+  }
+
+  getLogsForFilter (filterId, logsOnly) {
+    const {filterType, params} = this.filter[filterId]
+    const tracking = this.filterTracking[filterId]
+
+    if (logsOnly || filterType === 'filter') {
+      return this.getLogsFor(params || {topics: []})
+    }
+    if (filterType === 'block') {
+      let blocks = this.oldLogs.filter(x => x.type === 'block').filter(x => tracking.block === undefined || x.blockNumber >= tracking.block)
+      tracking.block = blocks[blocks.length - 1]
+      return blocks.map(block => ('0x' + block.hash().toString('hex')))
+    }
+    if (filterType === 'pendingTransactions') {
+      return []
+    }
   }
 
   getLogsFor (params) {
