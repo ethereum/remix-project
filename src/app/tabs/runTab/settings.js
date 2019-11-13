@@ -178,14 +178,11 @@ class SettingsUI {
     selectExEnv.addEventListener('change', (event) => {
       let context = selectExEnv.options[selectExEnv.selectedIndex].value
       this.settings.changeExecutionContext(context, () => {
-        const modal = modalDialogCustom.confirm('External node request', 'Are you sure you want to connect to an ethereum node?', () => {
-          modal.hide()
-          modalDialogCustom.prompt('External node request', 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
-            this.settings.setProviderFromEndpoint(target, context, (alertMsg) => {
-              if (alertMsg) addTooltip(alertMsg)
-              this.setFinalContext()
-            })
-          }, this.setFinalContext.bind(this))
+        modalDialogCustom.prompt('External node request', this.web3ProviderDialogBody(), 'http://localhost:8545', (target) => {
+          this.settings.setProviderFromEndpoint(target, context, (alertMsg) => {
+            if (alertMsg) addTooltip(alertMsg)
+            this.setFinalContext()
+          })
         }, this.setFinalContext.bind(this))
       }, (alertMsg) => {
         addTooltip(alertMsg)
@@ -193,6 +190,20 @@ class SettingsUI {
     })
 
     selectExEnv.value = this.settings.getProvider()
+  }
+
+  web3ProviderDialogBody () {
+    return yo`
+      <div class="">
+        <span>Note: If you are using </span>
+        <a href="https://geth.ethereum.org/docs/rpc/server" target="blank">Geth</a>
+        <span>, please configure it to allow requests from Remix:</span>
+        <br>
+        <b>geth --rpc --rpccorsdomain https://remix.ethereum.org</b>
+        <br><br>
+        <span>Web3 Provider Endpoint</span>
+      </div>
+    `
   }
 
   setFinalContext () {
