@@ -1,11 +1,11 @@
 /* global Worker */
 const yo = require('yo-yo')
-var minixhr = require('minixhr')
-var helper = require('../../../lib/helper')
+const minixhr = require('minixhr')
+const helper = require('../../../lib/helper')
 const addTooltip = require('../../ui/tooltip')
 const semver = require('semver')
-
-var css = require('../styles/compile-tab-styles')
+const modalDialogCustom = require('../../ui/modal-dialog-custom')
+const css = require('../styles/compile-tab-styles')
 
 class CompilerContainer {
 
@@ -208,7 +208,10 @@ class CompilerContainer {
           <header class="navbar navbar-light p-2 bg-light">
             <div class="row w-100 no-gutters mb-2">
               <div class="col-sm-4">
-                <label class="${css.compilerLabel} input-group-text pl-0 border-0" for="versionSelector">Compiler</label>
+                <div class="d-flex flex-row">
+                  <label class="${css.compilerLabel} input-group-text pl-0 border-0" for="versionSelector">Compiler</label>
+                  <button class="far fa-plus-square border-0 bg-light btn-sm" onclick=${this.loadCompiler.bind(this)} title="Add a custom compiler with URL"></button>
+                </div>
               </div>
               <div class="col-sm-8">
                 ${this._view.versionSelector}
@@ -258,6 +261,22 @@ class CompilerContainer {
       </section>`
 
     return this._view.compileContainer
+  }
+
+  loadCompiler() {
+    modalDialogCustom.prompt(
+      'Add a custom compiler',
+      "URL",
+      'https://203137-40892817-gh.circle-artifacts.com/0/soljson.js',
+      (url) => {
+        this.addCustomCompiler(url)
+      }
+    )
+  }
+
+  addCustomCompiler (url) {
+    this.data.selectedVersion = this._view.versionSelector.value
+    this._updateVersionSelector(url)
   }
 
   updateAutoCompile (event) {
@@ -315,9 +334,9 @@ class CompilerContainer {
            (version.includes('nightly') && this._view.includeNightlies.checked)
   }
 
-  _updateVersionSelector () {
+  _updateVersionSelector (customUrl = '') {
     // update selectedversion of previous one got filtered out
-    if (!this._shouldBeAdded(this.data.selectedVersion)) {
+    if (!this.data.selectedVersion || !this._shouldBeAdded(this.data.selectedVersion)) {
       this.data.selectedVersion = this.data.defaultVersion
     }
     this._view.versionSelector.innerHTML = ''
@@ -333,7 +352,11 @@ class CompilerContainer {
     this._view.versionSelector.removeAttribute('disabled')
     this.queryParams.update({ version: this.data.selectedVersion })
     let url
-    if (this.data.selectedVersion === 'builtin') {
+    if (customUrl) {
+      this.data.selectedVersion = customUrl
+      this._view.versionSelector.appendChild(yo`<option value="${customUrl}" selected>custom</option>`)
+      url = customUrl
+    } else if (this.data.selectedVersion === 'builtin') {
       let location = window.document.location
       location = `${location.protocol}//${location.host}/${location.pathname}`
       if (location.endsWith('index.html')) location = location.substring(0, location.length - 10)
@@ -359,8 +382,12 @@ class CompilerContainer {
   }
 
   _updateLanguageSelector () {
+<<<<<<< HEAD
     // This is the first version when Yul is available
-    if (semver.lt(this._retrieveVersion(), 'v0.5.7+commit.6da8b019.js')) {
+    if (this._retrieveVersion() !== 'custom' || semver.lt(this._retrieveVersion(), 'v0.5.7+commit.6da8b019.js')) {
+=======
+    if (!semver.valid(this._retrieveVersion()) || semver.lt(this._retrieveVersion(), 'v0.5.7+commit.6da8b019.js')) {
+>>>>>>> 4d2e414d... added default to test
       this._view.languageSelector.setAttribute('disabled', '')
       this._view.languageSelector.value = 'Solidity'
       this.compileTabLogic.setLanguage('Solidity')
