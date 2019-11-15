@@ -32,9 +32,6 @@ class CompilerContainer {
    * Update the compilation button with the name of the current file
    */
   set currentFile (name = '') {
-    if (name && name !== '') {
-      this._setCompilerVersionFromPragma(name)
-    }
     if (!this._view.compilationButton) return
     const button = this.compilationButton(name.split('/').pop())
     yo.update(this._view.compilationButton, button)
@@ -114,23 +111,6 @@ class CompilerContainer {
       el.setAttribute('disabled', 'true')
     }
     return el
-  }
-
-  _setCompilerVersionFromPragma (filename) {
-    this.compileTabLogic.fileManager.getFile(filename).then(data => {
-      const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
-      if (pragmaArr && pragmaArr.length === 1) {
-        const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
-        const pragma = pragmaStr.substring(0, pragmaStr.length - 1)
-        const fixedVersions = this.data.allversions.filter(obj => !obj.prerelease).map(obj => obj.version)
-        const compilerToLoad = semver.maxSatisfying(fixedVersions, pragma)
-        const compilerPath = this.data.allversions.filter(obj => !obj.prerelease && obj.version === compilerToLoad)[0].path
-        if (this.data.selectedVersion !== compilerPath) {
-          this.data.selectedVersion = compilerPath
-          this._updateVersionSelector()
-        }
-      }
-    })
   }
 
   _retrieveVersion () {
@@ -263,9 +243,6 @@ class CompilerContainer {
 
   compile (event) {
     if (this.config.get('currentFile')) {
-      if (!this.data.selectedVersion.includes('nightly')) {
-        this._setCompilerVersionFromPragma(this.config.get('currentFile'))
-      }
       this.compileTabLogic.runCompiler()
     }
   }
