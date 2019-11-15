@@ -39,11 +39,13 @@ function getAvailableFunctions (fileAST: any, testContractName: string) {
  */
 
 function getTestFunctionsInterface (jsonInterface: any, funcList: string[]) {
-    let functionsInterface: any[] = []
+    const functionsInterface: any[] = []
     const specialFunctions = ['beforeAll', 'beforeEach', 'afterAll', 'afterEach']
     for(const func of funcList){
-        if(!specialFunctions.includes(func))
-            functionsInterface.push(jsonInterface.find(node => node.type === 'function' && node.name === func))
+        if(!specialFunctions.includes(func)) {
+            const funcInterface= jsonInterface.find(node => node.type === 'function' && node.name === func)
+            functionsInterface.push(funcInterface)
+        }
     }
     return functionsInterface
 }
