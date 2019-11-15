@@ -103,7 +103,7 @@ describe('testRunner', () => {
 
     describe('#runTest', () => {
     describe('test with beforeAll', () => {
-      let filename: string = 'tests/examples_1/simple_storage_test.sol'
+      const filename: string = 'tests/examples_1/simple_storage_test.sol'
 
       before((done) => {
         compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) => {
@@ -134,7 +134,7 @@ describe('testRunner', () => {
     })
 
     describe('test with beforeEach', function () {
-      let filename = 'tests/examples_2/simple_storage_test.sol'
+      const filename: string = 'tests/examples_2/simple_storage_test.sol'
 
       before(function (done) {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
@@ -164,7 +164,7 @@ describe('testRunner', () => {
 
     // Test string equality
     describe('test string equality', function () {
-      let filename = 'tests/examples_3/simple_string_test.sol'
+      const filename: string = 'tests/examples_3/simple_string_test.sol'
 
       before(function (done) {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
@@ -190,7 +190,7 @@ describe('testRunner', () => {
 
     // Test multiple directory import in test contract
     describe('test multiple directory import in test contract', function () {
-      let filename = 'tests/examples_5/test/simple_storage_test.sol'
+      const filename: string = 'tests/examples_5/test/simple_storage_test.sol'
 
       before(function (done) {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
@@ -217,7 +217,7 @@ describe('testRunner', () => {
 
     //Test signed/unsigned integer weight
     describe('test number weight', function () {
-      let filename = 'tests/number/number_test.sol'
+      const filename: string = 'tests/number/number_test.sol'
 
       before(function (done) {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
@@ -237,7 +237,7 @@ describe('testRunner', () => {
 
     // Test Transaction with different sender
     describe('various sender', function () {
-      let filename = 'tests/various_sender/sender_test.sol'
+      const filename: string = 'tests/various_sender/sender_test.sol'
 
       before(function (done) {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {

@@ -4,7 +4,7 @@ require('colors')
 import { compileContractSources } from './compiler'
 import { deployAll } from './deployer'
 import { runTest } from './testRunner'
-import { TestResultInterface, ResultsInterface } from './types'
+import { TestResultInterface } from './types'
 
 import Web3 = require('web3')
 import { Provider } from 'remix-simulator'
@@ -18,6 +18,17 @@ const createWeb3Provider = async function () {
     return web3
 }
 
+/**
+ * @dev Run tests from source of a test contract file (used for IDE)
+ * @param contractSources Sources of contract
+ * @param versionUrl url of selected compiler version to load
+ * @param usingWorker if true, load compiler using web worker
+ * @param testCallback Test callback
+ * @param resultCallback Result Callback
+ * @param finalCallback Final Callback
+ * @param importFileCb Import file callback
+ * @param opts Options
+ */
 export async function runTestSources(contractSources, versionUrl, usingWorker, testCallback, resultCallback, finalCallback, importFileCb, opts) {
     opts = opts || {}
     let sourceASTs: any = {}
