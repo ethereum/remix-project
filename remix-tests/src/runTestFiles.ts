@@ -8,6 +8,14 @@ import Web3 = require('web3')
 import { compileFileOrFiles } from './compiler'
 import { deployAll } from './deployer'
 
+/**
+ * @dev run test contract files (used for CLI)
+ * @param filepath Path of file
+ * @param isDirectory True, if path is a directory
+ * @param web3 Web3
+ * @param opts Options
+ */
+
 export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, opts?: object) {
     opts = opts || {}
     let sourceASTs: any = {}
@@ -46,6 +54,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
             compileFileOrFiles(filepath, isDirectory, { accounts }, next)
         },
         function deployAllContracts (compilationResult, asts, next: Function) {
+            // Extract AST of test contract file source
             for(const filename in asts)
             {
                 if(filename.includes('_test.sol'))
