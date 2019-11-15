@@ -20,6 +20,7 @@ const createWeb3Provider = async function () {
 
 export async function runTestSources(contractSources, versionUrl, usingWorker, testCallback, resultCallback, finalCallback, importFileCb, opts) {
     opts = opts || {}
+    let sourceASTs: any = {}
     let web3 = opts.web3 || await createWeb3Provider()
     let accounts = opts.accounts || null
     async.waterfall([
@@ -33,7 +34,12 @@ export async function runTestSources(contractSources, versionUrl, usingWorker, t
         function compile (next) {
             compileContractSources(contractSources, versionUrl, usingWorker, importFileCb, { accounts }, next)
         },
-        function deployAllContracts (compilationResult, next) {
+        function deployAllContracts (compilationResult, asts, next) {
+            for(const filename in asts)
+            {
+                if(filename.includes('_test.sol'))
+                    sourceASTs[filename] = asts[filename].ast
+            }
             deployAll(compilationResult, web3, (err, contracts) => {
                 if (err) {
                     next(err)
@@ -79,8 +85,7 @@ export async function runTestSources(contractSources, versionUrl, usingWorker, t
             }
 
             async.eachOfLimit(contractsToTest, 1, (contractName: string, index: string | number, cb: ErrorCallback) => {
-                // todo: pass AST
-                runTest(contractName, contracts[contractName], contractsToTestDetails[index], [], { accounts }, _testCallback, (err, result) => {
+                runTest(contractName, contracts[contractName], contractsToTestDetails[index], sourceASTs[contracts[contractName]['filename']], { accounts }, _testCallback, (err, result) => {
                     if (err) {
                         return cb(err)
                     }
