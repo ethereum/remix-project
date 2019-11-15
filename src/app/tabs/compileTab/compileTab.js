@@ -100,7 +100,7 @@ class CompileTab {
   }
 
   importFileCb (url, filecb) {
-    if (url.indexOf('/remix_tests.sol') !== -1) return filecb(null, remixTests.assertLibCode)
+    if (url.indexOf('remix_tests.sol') !== -1) return filecb(null, remixTests.assertLibCode)
 
     var provider = this.fileManager.fileProviderOf(url)
     if (provider) {
