@@ -61,8 +61,7 @@ async function compileAndDeploy(filename: string, callback: Function) {
       compileFileOrFiles(filename, false, { accounts }, next)
     },
     function deployAllContracts(compilationResult: object, asts, next: Function): void {
-      for(const filename in asts)
-      {
+      for(const filename in asts) {
         if(filename.includes('_test.sol'))
           sourceASTs[filename] = asts[filename].ast
       }
