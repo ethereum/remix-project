@@ -79,7 +79,8 @@ export async function runTestSources(contractSources, versionUrl, usingWorker, t
             }
 
             async.eachOfLimit(contractsToTest, 1, (contractName: string, index: string | number, cb: ErrorCallback) => {
-                runTest(contractName, contracts[contractName], contractsToTestDetails[index], { accounts }, _testCallback, (err, result) => {
+                // todo: pass AST
+                runTest(contractName, contracts[contractName], contractsToTestDetails[index], [], { accounts }, _testCallback, (err, result) => {
                     if (err) {
                         return cb(err)
                     }
