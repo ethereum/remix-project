@@ -19,25 +19,34 @@ function getOverridedSender (userdoc, signature: string, methodIdentifiers) {
     return fullName && accountIndex ? accountIndex[1] : null
 }
 
-function getAvailableFunctions (jsonInterface) {
-    return jsonInterface.reverse().filter((x) => x.type === 'function').map((x) => x.name)
+function getAvailableFunctions (fileAST, testContractName) {
+    let contractAST: any[] = fileAST.nodes.filter(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
+    let funcNodes: any[] = contractAST[0].nodes.filter(node => node.kind === 'function' && node.nodeType === "FunctionDefinition")
+    let funcList: string[] = funcNodes.map(node => node.name)
+    return funcList;
 }
 
-function getTestFunctions (jsonInterface) {
+function getTestFunctionsInterface (jsonInterface, funcList: string[]) {
+    let resutantInterface: any[] = []
     let specialFunctions = ['beforeAll', 'beforeEach', 'afterAll', 'afterEach']
-    return jsonInterface.filter((x) => specialFunctions.indexOf(x.name) < 0 && x.type === 'function')
+    for(const func of funcList){
+        if(!specialFunctions.includes(func))
+            resutantInterface.push(jsonInterface.find(node => node.type === 'function' && node.name === func))
+    }
+    return resutantInterface
 }
 
-function createRunList (jsonInterface): RunListInterface[] {
-    let availableFunctions = getAvailableFunctions(jsonInterface)
-    let testFunctions = getTestFunctions(jsonInterface)
+function createRunList (jsonInterface, fileAST, testContractName): RunListInterface[] {
+    let availableFunctions = getAvailableFunctions(fileAST, testContractName)
+    let testFunctionsInterface = getTestFunctionsInterface(jsonInterface, availableFunctions)
+
     let runList: RunListInterface[] = []
 
     if (availableFunctions.indexOf('beforeAll') >= 0) {
         runList.push({ name: 'beforeAll', type: 'internal', constant: false })
     }
 
-    for (let func of testFunctions) {
+    for (let func of testFunctionsInterface) {
         if (availableFunctions.indexOf('beforeEach') >= 0) {
             runList.push({ name: 'beforeEach', type: 'internal', constant: false })
         }
@@ -54,9 +63,8 @@ function createRunList (jsonInterface): RunListInterface[] {
     return runList
 }
 
-export function runTest (testName, testObject: any, contractDetails: any, opts: any, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
-    let runList = createRunList(testObject._jsonInterface)
-
+export function runTest (testName, testObject: any, contractDetails: any, fileAST: any, opts: any, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
+    let runList = createRunList(testObject._jsonInterface, fileAST, testName)
     let passingNum: number = 0
     let failureNum: number = 0
     let timePassed: number = 0

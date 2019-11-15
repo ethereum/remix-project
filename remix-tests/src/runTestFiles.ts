@@ -10,6 +10,7 @@ import { deployAll } from './deployer'
 
 export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, opts?: object) {
     opts = opts || {}
+    let sourceASTs: any = {}
     const { Signale } = require('signale')
     // signale configuration
     const options = {
@@ -44,7 +45,12 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
         function compile(next: Function) {
             compileFileOrFiles(filepath, isDirectory, { accounts }, next)
         },
-        function deployAllContracts (compilationResult, next: Function) {
+        function deployAllContracts (compilationResult, asts, next: Function) {
+            for(const filename in asts)
+            {
+                if(filename.includes('_test.sol'))
+                    sourceASTs[filename] = asts[filename].ast
+            }
             deployAll(compilationResult, web3, (err, contracts) => {
                 if (err) {
                     next(err)
@@ -60,10 +66,10 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
                     return
                 }
                 try {
-                  Object.keys(compilationResult[filename]).forEach(contractName => {
-                      contractsToTest.push(contractName)
-                      contractsToTestDetails.push(compilationResult[filename][contractName])
-                  })
+                    Object.keys(compilationResult[filename]).forEach(contractName => {
+                        contractsToTest.push(contractName)
+                        contractsToTestDetails.push(compilationResult[filename][contractName])
+                    })
                 } catch (e) {
                   console.error(e)
                 }
@@ -103,7 +109,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
 
             async.eachOfLimit(contractsToTest, 1, (contractName: string, index, cb) => {
               try {
-                runTest(contractName, contracts[contractName], contractsToTestDetails[index], { accounts }, _testCallback, (err, result) => {
+                runTest(contractName, contracts[contractName], contractsToTestDetails[index], sourceASTs[contracts[contractName]['filename']], { accounts }, _testCallback, (err, result) => {
                     if (err) {
                       console.log(err)
                         return cb(err)

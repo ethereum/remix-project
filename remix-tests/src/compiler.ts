@@ -125,7 +125,7 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
                 if (!isBrowser) require('signale').fatal(errors)
                 return cb(errors)
             }
-            cb(err, result.contracts)
+            cb(err, result.contracts, result.sources)
         })
     }
 }
