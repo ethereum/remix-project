@@ -1,51 +1,21 @@
-Remix-Tests
----
-
-> Tests for the Ethereum tool suite [Remix](https://github.com/ethereum/remix)
+## Remix-Tests
+`remix-tests` is a tool to test Solidity smart contracts. It works underneath Remix IDE plugin "Solidity Unit Testing" which is used to write and run test cases for a contract. Tests are written in Solidity itself. `remix-tests` can be used as CLI and a library too.
 
 ### Installation
+As a dependency inside file:
+
+`npm install --save remix-tests`
+
+As a dev dependency:
+
+`npm install --save-dev remix-tests`
+
+As a global NPM module to use as CLI:
 
 `npm -g install remix-tests`
 
 ### Test structure
-
-Example test file:
-```Javascript
-pragma solidity ^0.4.7;
-import "remix_tests.sol"; // injected by remix-tests
-import "./simple_storage.sol";
-
-contract MyTest {
-  SimpleStorage foo;
-  uint i = 0;
-
-  function beforeAll() {
-    foo = new SimpleStorage();
-  }
-
-  function beforeEach() {
-    if (i == 1) {
-      foo.set(200);
-    }
-    i += 1;
-  }
-
-  function initialValueShouldBe100() public {
-    Assert.equal(foo.get(), 100, "initial value is not correct");
-  }
-
-  function initialValueShouldBe200() public constant returns {
-    return Assert.equal(foo.get(), 200, "initial value is not correct");
-  }
-
-}
-```
-
-See also: example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [https://travis-ci.org/su-squares/ethereum-contract/builds/446186067](Travis build) that uses remix-tests for continuous integration testing.
-
-Available special functions:
-* `beforeEach()` - runs before each test
-* `beforeAll()` - runs before all tests
+remix-tests provides and injects a built-in assert library for testing purpose.
 
 #### Assert library
 
@@ -57,23 +27,122 @@ Available special functions:
 | `Assert.greaterThan()` | `uint`, `int` |
 | `Assert.lesserThan()` | `uint`, `int` |
 
+#### Available special functions:
+Apart from above, library provides some special functions as:
+
+* `beforeEach()` - runs before each test
+* `beforeAll()` - runs before all tests
+* `afterEach()` - runs after each test
+* `afterAll()` - runs after all tests
+
+
 #### Use a different sender `msg.sender`
 
 It is quite common that a contract need to be tested in different situation.
 Especially being able to set before hand the sender account (`msg.sender`) used for a specific tests suite enable quite a lot a new test use cases.
-please checkout https://github.com/ethereum/remix/blob/master/remix-tests/tests/various_sender/sender_test.sol for an example.
-note that `TestsAccounts` is filled with all the accounts available in `web3.eth.accounts()`.
+please checkout this [test contract](https://github.com/ethereum/remix/blob/master/remix-tests/tests/various_sender/sender_test.sol) for an example.
+Note that `TestsAccounts` is filled with all the accounts available in `web3.eth.accounts()`.
 
-### Command Line
+### How to use
 
-Remix-Tests will assume the tests will files whose name end with `"_test.sol"`. e.g `simple_storage_test.sol`
+#### Command Line
 
-Usage:
+* To run all files inside `examples` directory
+```
+$ remix-tests examples/
+``` 
+* To run single test file named `simple_storage_test.sol` inside `examples` directory
+```
+$ remix-tests examples/simple_storage_test.sol
+```
+**NOTE:** remix-tests will assume that name of tests file ends with `"_test.sol"`. e.g `simple_storage_test.sol`
 
-* A directory with tests files `remix-tests examples/`
-* A test file `remix-tests examples/simple_storage_test.sol`
 
-### Library
+**Example:**
+Consider for a simple storage contract named `simple_storage.sol`:
+
+```Javascript
+pragma solidity >=0.4.22 <0.7.0;
+
+contract SimpleStorage {
+  uint public storedData;
+
+  constructor() public {
+    storedData = 100;
+  }
+
+  function set(uint x) public {
+    storedData = x;
+  }
+
+  function get() public view returns (uint retVal) {
+    return storedData;
+  }
+}
+```
+
+test file `simple_storage_test.sol` can be as:
+
+
+```Javascript
+pragma solidity >=0.4.22 <0.7.0;
+import "remix_tests.sol"; // injected by remix-tests
+import "./simple_storage.sol";
+
+contract MyTest {
+  SimpleStorage foo;
+
+  function beforeEach() public {
+    foo = new SimpleStorage();
+  }
+
+  function initialValueShouldBe100() public returns (bool) {
+    return Assert.equal(foo.get(), 100, "initial value is not correct");
+  }
+
+  function valueIsSet200() public returns (bool) {
+    foo.set(200);
+    return Assert.equal(foo.get(), 200, "value is not 200");
+  }
+
+  function valueIsNotSet200() public returns (bool) {
+    return Assert.notEqual(foo.get(), 200, "value is 200");
+  }
+}
+```
+
+Running `simple_storage_test.sol` file will output as:
+
+```
+	◼  MyTest
+[19:15:02] payload method is  eth_gasPrice
+[19:15:02] payload method is  eth_sendTransaction
+[19:15:02] payload method is  eth_getTransactionReceipt
+[19:15:02] payload method is  eth_gasPrice
+[19:15:02] payload method is  eth_sendTransaction
+[19:15:02] payload method is  eth_getTransactionReceipt
+	✓  Initial value should be100
+[19:15:02] payload method is  eth_gasPrice
+[19:15:02] payload method is  eth_sendTransaction
+[19:15:02] payload method is  eth_getTransactionReceipt
+[19:15:02] payload method is  eth_gasPrice
+[19:15:02] payload method is  eth_sendTransaction
+[19:15:02] payload method is  eth_getTransactionReceipt
+	✓  Value is set200
+[19:15:02] payload method is  eth_gasPrice
+[19:15:02] payload method is  eth_sendTransaction
+[19:15:02] payload method is  eth_getTransactionReceipt
+[19:15:02] payload method is  eth_gasPrice
+[19:15:02] payload method is  eth_sendTransaction
+[19:15:02] payload method is  eth_getTransactionReceipt
+	✓  Value is not set200
+```
+
+:point_right: remix-test can also be used for continuous integration testing. See example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [Travis build](https://travis-ci.org/su-squares/ethereum-contract/builds/446186067) 
+
+///// TODO
+
+#### Library
 
 Importing the library:
 ```Javascript
@@ -82,12 +151,12 @@ const RemixTests = require('remix-tests');
 
 Running a single test object:
 ```Javascript
-remixTests.runTest(contractName, contractObj, testCallback, resultsCallback)
+remixTests.runTest(testName, testObj, testCallback, resultsCallback)
 ```
-params:
-`testName` - `string` name of the test
-`testObj` -  web3.js 1.0 contract instance of the test
-`testCallback(object)` -  called each time there is a test event. 3 possible type of objects:
+**Params:**
+* `testName` - `string` name of the test
+* `testObj` -  web3.js 1.0 contract instance of the test
+* `testCallback(object)` -  called each time there is a test event. 3 possible type of objects:
 * `{ type: 'contract', value: '<TestName>', filename: '<test_filename.sol>' }`
 * `{ type: 'testPass', value: '<name of testing function>', time: <time taken>, context: '<TestName>'}`
 * `{ type: 'testFailure', value: '<name of testing function>', time: <time taken>, context: '<TestName>', errMsg: '<message in the Assert>' }`
