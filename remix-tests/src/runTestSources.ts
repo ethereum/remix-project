@@ -4,11 +4,11 @@ require('colors')
 import { compileContractSources } from './compiler'
 import { deployAll } from './deployer'
 import { runTest } from './testRunner'
-import { TestResultInterface, ResultsInterface } from './types'
+import { TestResultInterface } from './types'
 
 import Web3 = require('web3')
 import { Provider } from 'remix-simulator'
-import { FinalResult } from './types'
+import { FinalResult, SrcIfc, compilationInterface, ASTInterface } from './types'
 
 const createWeb3Provider = async function () {
     let web3 = new Web3()
@@ -18,8 +18,20 @@ const createWeb3Provider = async function () {
     return web3
 }
 
-export async function runTestSources(contractSources, versionUrl, usingWorker, testCallback, resultCallback, finalCallback, importFileCb, opts) {
+/**
+ * @dev Run tests from source of a test contract file (used for IDE)
+ * @param contractSources Sources of contract
+ * @param versionUrl url of selected compiler version to load
+ * @param usingWorker if true, load compiler using web worker
+ * @param testCallback Test callback
+ * @param resultCallback Result Callback
+ * @param finalCallback Final Callback
+ * @param importFileCb Import file callback
+ * @param opts Options
+ */
+export async function runTestSources(contractSources: SrcIfc, versionUrl: string, usingWorker: boolean, testCallback: Function, resultCallback: Function, finalCallback: any, importFileCb: Function, opts: any) {
     opts = opts || {}
+    const sourceASTs: any = {}
     let web3 = opts.web3 || await createWeb3Provider()
     let accounts = opts.accounts || null
     async.waterfall([
@@ -33,7 +45,11 @@ export async function runTestSources(contractSources, versionUrl, usingWorker, t
         function compile (next) {
             compileContractSources(contractSources, versionUrl, usingWorker, importFileCb, { accounts }, next)
         },
-        function deployAllContracts (compilationResult, next) {
+        function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next) {
+            for(const filename in asts) {
+                if(filename.includes('_test.sol'))
+                    sourceASTs[filename] = asts[filename].ast
+            }
             deployAll(compilationResult, web3, (err, contracts) => {
                 if (err) {
                     next(err)
@@ -42,8 +58,8 @@ export async function runTestSources(contractSources, versionUrl, usingWorker, t
                 next(null, compilationResult, contracts)
             })
         },
-        function determineTestContractsToRun (compilationResult, contracts, next) {
-            let contractsToTest: any[] = []
+        function determineTestContractsToRun (compilationResult: compilationInterface, contracts: any, next) {
+            let contractsToTest: string[] = []
             let contractsToTestDetails: any[] = []
 
             for (let filename in compilationResult) {
@@ -57,7 +73,7 @@ export async function runTestSources(contractSources, versionUrl, usingWorker, t
             }
             next(null, contractsToTest, contractsToTestDetails, contracts)
         },
-        function runTests(contractsToTest, contractsToTestDetails, contracts, next) {
+        function runTests(contractsToTest: string[], contractsToTestDetails: any[], contracts: any, next) {
             let totalPassing = 0
             let totalFailing = 0
             let totalTime = 0
@@ -79,7 +95,8 @@ export async function runTestSources(contractSources, versionUrl, usingWorker, t
             }
 
             async.eachOfLimit(contractsToTest, 1, (contractName: string, index: string | number, cb: ErrorCallback) => {
-                runTest(contractName, contracts[contractName], contractsToTestDetails[index], { accounts }, _testCallback, (err, result) => {
+                const fileAST = sourceASTs[contracts[contractName]['filename']]
+                runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts }, _testCallback, (err, result) => {
                     if (err) {
                         return cb(err)
                     }

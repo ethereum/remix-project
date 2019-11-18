@@ -19,25 +19,55 @@ function getOverridedSender (userdoc, signature: string, methodIdentifiers) {
     return fullName && accountIndex ? accountIndex[1] : null
 }
 
-function getAvailableFunctions (jsonInterface) {
-    return jsonInterface.reverse().filter((x) => x.type === 'function').map((x) => x.name)
+/**
+ * @dev returns functions of a test contract file in same sequence they appear in file (using passed AST)
+ * @param fileAST AST of test contract file source
+ * @param testContractName Name of test contract
+ */
+
+function getAvailableFunctions (fileAST: any, testContractName: string) {
+    const contractAST: any[] = fileAST.nodes.filter(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
+    const funcNodes: any[] = contractAST[0].nodes.filter(node => node.kind === 'function' && node.nodeType === "FunctionDefinition")
+    const funcList: string[] = funcNodes.map(node => node.name)
+    return funcList;
 }
 
-function getTestFunctions (jsonInterface) {
-    let specialFunctions = ['beforeAll', 'beforeEach', 'afterAll', 'afterEach']
-    return jsonInterface.filter((x) => specialFunctions.indexOf(x.name) < 0 && x.type === 'function')
+/**
+ * @dev returns ABI of passed method list from passed interface
+ * @param jsonInterface Json Interface
+ * @param funcList Methods to extract the interface of
+ */
+
+function getTestFunctionsInterface (jsonInterface: any, funcList: string[]) {
+    const functionsInterface: any[] = []
+    const specialFunctions = ['beforeAll', 'beforeEach', 'afterAll', 'afterEach']
+    for(const func of funcList){
+        if(!specialFunctions.includes(func)) {
+            const funcInterface= jsonInterface.find(node => node.type === 'function' && node.name === func)
+            functionsInterface.push(funcInterface)
+        }
+    }
+    return functionsInterface
 }
 
-function createRunList (jsonInterface): RunListInterface[] {
-    let availableFunctions = getAvailableFunctions(jsonInterface)
-    let testFunctions = getTestFunctions(jsonInterface)
+/**
+ * @dev Prepare a list of tests to run using test contract file ABI, AST & contract name
+ * @param jsonInterface File JSON interface
+ * @param fileAST File AST
+ * @param testContractName Test contract name
+ */
+
+function createRunList (jsonInterface: any, fileAST: any, testContractName: string): RunListInterface[] {
+    const availableFunctions: string[] = getAvailableFunctions(fileAST, testContractName)
+    const testFunctionsInterface: any[] = getTestFunctionsInterface(jsonInterface, availableFunctions)
+
     let runList: RunListInterface[] = []
 
     if (availableFunctions.indexOf('beforeAll') >= 0) {
         runList.push({ name: 'beforeAll', type: 'internal', constant: false })
     }
 
-    for (let func of testFunctions) {
+    for (const func of testFunctionsInterface) {
         if (availableFunctions.indexOf('beforeEach') >= 0) {
             runList.push({ name: 'beforeEach', type: 'internal', constant: false })
         }
@@ -54,13 +84,12 @@ function createRunList (jsonInterface): RunListInterface[] {
     return runList
 }
 
-export function runTest (testName, testObject: any, contractDetails: any, opts: any, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
-    let runList = createRunList(testObject._jsonInterface)
-
+export function runTest (testName, testObject: any, contractDetails: any, fileAST: any, opts: any, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
+    const runList: RunListInterface[] = createRunList(testObject._jsonInterface, fileAST, testName)
     let passingNum: number = 0
     let failureNum: number = 0
     let timePassed: number = 0
-    let web3 = new Web3()
+    const web3 = new Web3()
 
     const accts: TestResultInterface = {
       type: 'accountList',
@@ -87,11 +116,11 @@ export function runTest (testName, testObject: any, contractDetails: any, opts: 
         let sendParams
         if (sender) sendParams = { from: sender }
 
-        let method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
-        let startTime = Date.now()
+        const method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
+        const startTime = Date.now()
         if (func.constant) {
             method.call(sendParams).then((result) => {
-                let time = (Date.now() - startTime) / 1000.0
+                const time = (Date.now() - startTime) / 1000.0
                 if (result) {
                     const resp: TestResultInterface = {
                       type: 'testPass',
@@ -118,12 +147,12 @@ export function runTest (testName, testObject: any, contractDetails: any, opts: 
         } else {
             method.send(sendParams).on('receipt', (receipt) => {
                 try {
-                    let time: number = (Date.now() - startTime) / 1000.0
-                    let topic = Web3.utils.sha3('AssertionEvent(bool,string)')
+                    const time: number = (Date.now() - startTime) / 1000.0
+                    const topic = Web3.utils.sha3('AssertionEvent(bool,string)')
                     let testPassed: boolean = false
 
-                    for (let i in receipt.events) {
-                        let event = receipt.events[i]
+                    for (const i in receipt.events) {
+                        const event = receipt.events[i]
                         if (event.raw.topics.indexOf(topic) >= 0) {
                             const testEvent = web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data)
                             if (!testEvent[0]) {
@@ -160,7 +189,7 @@ export function runTest (testName, testObject: any, contractDetails: any, opts: 
                 }
             }).on('error', function (err: any) {
                 console.error(err)
-                let time: number = (Date.now() - startTime) / 1000.0
+                const time: number = (Date.now() - startTime) / 1000.0
                 const resp: TestResultInterface = {
                     type: 'testFailure',
                     value: changeCase.sentenceCase(func.name),
