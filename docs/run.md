@@ -7,7 +7,7 @@ To get to the Run & Deploy module - click the run icon in the icon panel.
 
 In order to use this module you need to have a contract compiled.  So, if there is a contract name in the contract select box (in the image below it's the pulldown that says **Ballot**), then you can interact with this contract.  If nothing is there - then you need to select a contract. And you do that by clicking the file in the editor panel to make it the active tab ( in the image below - on the right side of the page - in the main panel - you see the ballot.sol so it is the active contract).  Once its active, then go to the compiler module and compile it. Then come back to Deploy & Run.
 
-![](images/a-runtab1.png)
+![](images/a-runtab2.png)
 
 Run Setup
 ---------
