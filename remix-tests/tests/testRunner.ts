@@ -37,7 +37,6 @@ function deepEqualExcluding(a: any, b: any, excludedKeys: string[]) {
 
   let aStripped: any = removeKeysFromObject(a, excludedKeys);
   let bStripped: any = removeKeysFromObject(b, excludedKeys);
-
   assert.deepEqual(aStripped, bStripped)
 }
 
@@ -46,6 +45,7 @@ let provider = new Provider()
 
 async function compileAndDeploy(filename: string, callback: Function) {
   let web3: Web3 = new Web3()
+  let sourceASTs: any = {}
   await provider.init()
   web3.setProvider(provider)
   let compilationData: object
@@ -60,7 +60,11 @@ async function compileAndDeploy(filename: string, callback: Function) {
     function compile(next: Function): void {
       compileFileOrFiles(filename, false, { accounts }, next)
     },
-    function deployAllContracts(compilationResult: object, next: Function): void {
+    function deployAllContracts(compilationResult: object, asts, next: Function): void {
+      for(const filename in asts) {
+        if(filename.includes('_test.sol'))
+          sourceASTs[filename] = asts[filename].ast
+      }
       try {
         compilationData = compilationResult
         deployAll(compilationResult, web3, next)
@@ -69,7 +73,7 @@ async function compileAndDeploy(filename: string, callback: Function) {
       }
     }
   ], function (_err: Error | null | undefined, contracts: any): void {
-    callback(null, compilationData, contracts, accounts)
+    callback(null, compilationData, contracts, sourceASTs, accounts)
   })
 }
 
@@ -98,11 +102,11 @@ describe('testRunner', () => {
 
     describe('#runTest', () => {
     describe('test with beforeAll', () => {
-      let filename: string = 'tests/examples_1/simple_storage_test.sol'
+      const filename: string = 'tests/examples_1/simple_storage_test.sol'
 
       before((done) => {
-        compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, accounts: string[]) => {
-          runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback(done))
+        compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) => {
+          runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
         })
       })
 
@@ -120,20 +124,20 @@ describe('testRunner', () => {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'MyTest', filename: 'tests/examples_1/simple_storage_test.sol' },
+          { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' },
           { type: 'testPass', value: 'Initial value should not be200', context: 'MyTest' },
           { type: 'testFailure', value: 'Should trigger one fail', errMsg: 'uint test 1 fails', context: 'MyTest' },
-          { type: 'testPass', value: 'Should trigger one pass', context: 'MyTest' },
-          { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' }
-        ], ['time', 'value'])
+          { type: 'testPass', value: 'Should trigger one pass', context: 'MyTest' }
+        ], ['time'])
       })
     })
 
     describe('test with beforeEach', function () {
-      let filename = 'tests/examples_2/simple_storage_test.sol'
+      const filename: string = 'tests/examples_2/simple_storage_test.sol'
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, accounts: string[]) {
-          runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback(done))
+        compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
+          runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
         })
       })
 
@@ -151,19 +155,19 @@ describe('testRunner', () => {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'MyTest', filename: 'tests/examples_2/simple_storage_test.sol' },
-          { type: 'testPass', value: 'Value should be100', context: 'MyTest' },
-          { type: 'testPass', value: 'Initial value should be200', context: 'MyTest' }
+          { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' },
+          { type: 'testPass', value: 'Value is set200', context: 'MyTest' }
         ], ['time'])
       })
     })
 
     // Test string equality
     describe('test string equality', function () {
-      let filename = 'tests/examples_3/simple_string_test.sol'
+      const filename: string = 'tests/examples_3/simple_string_test.sol'
 
       before(function (done) {
-        compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
-          runTest('StringTest', contracts.StringTest, compilationData[filename]['StringTest'], { accounts }, testCallback, resultsCallback(done))
+        compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
+          runTest('StringTest', contracts.StringTest, compilationData[filename]['StringTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
         })
       })
 
@@ -177,19 +181,19 @@ describe('testRunner', () => {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'StringTest', filename: 'tests/examples_3/simple_string_test.sol' },
-          { type: 'testPass', value: 'Value should not be hello wordl', context: 'StringTest' },
-          { type: 'testPass', value: 'Initial value should be hello world', context: 'StringTest' }
+          { type: 'testPass', value: 'Initial value should be hello world', context: 'StringTest' },
+          { type: 'testPass', value: 'Value should not be hello wordl', context: 'StringTest' }
         ], ['time'])
       })
     })
 
     // Test multiple directory import in test contract
     describe('test multiple directory import in test contract', function () {
-      let filename = 'tests/examples_5/test/simple_storage_test.sol'
+      const filename: string = 'tests/examples_5/test/simple_storage_test.sol'
 
       before(function (done) {
-        compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
-          runTest('StorageResolveTest', contracts.StorageResolveTest, compilationData[filename]['StorageResolveTest'], { accounts }, testCallback, resultsCallback(done))
+        compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
+          runTest('StorageResolveTest', contracts.StorageResolveTest, compilationData[filename]['StorageResolveTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
         })
       })
 
@@ -204,19 +208,19 @@ describe('testRunner', () => {
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'StorageResolveTest', filename: 'tests/examples_5/test/simple_storage_test.sol' },
           { type: 'testPass', value: 'Initial value should be100', context: 'StorageResolveTest' },
-          { type: 'testPass', value: 'Check if odd', context: 'StorageResolveTest' },
-          { type: 'testPass', value: 'Check if even', context: 'StorageResolveTest' }
+          { type: 'testPass', value: 'Check if even', context: 'StorageResolveTest' },
+          { type: 'testPass', value: 'Check if odd', context: 'StorageResolveTest' }
         ], ['time'])
       })
     })
 
     //Test signed/unsigned integer weight
     describe('test number weight', function () {
-      let filename = 'tests/number/number_test.sol'
+      const filename: string = 'tests/number/number_test.sol'
 
       before(function (done) {
-        compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
-          runTest('IntegerTest', contracts.IntegerTest, compilationData[filename]['IntegerTest'], { accounts }, testCallback, resultsCallback(done))
+        compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
+          runTest('IntegerTest', contracts.IntegerTest, compilationData[filename]['IntegerTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
         })
       })
 
@@ -232,11 +236,11 @@ describe('testRunner', () => {
 
     // Test Transaction with different sender
     describe('various sender', function () {
-      let filename = 'tests/various_sender/sender_test.sol'
+      const filename: string = 'tests/various_sender/sender_test.sol'
 
       before(function (done) {
-        compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
-          runTest('SenderTest', contracts.SenderTest, compilationData[filename]['SenderTest'], { accounts }, testCallback, resultsCallback(done))
+        compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
+          runTest('SenderTest', contracts.SenderTest, compilationData[filename]['SenderTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
         })
       })
 

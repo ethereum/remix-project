@@ -72,7 +72,16 @@ function processFile(filePath: string, sources: SrcIfc, isRoot: boolean = false)
 const userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
 const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
 
-// TODO: replace this with remix's own compiler code
+/**
+ * @dev Compile file or files before running tests (used for CLI execution)
+ * @param filename Name of file
+ * @param isDirectory True, if path is a directory
+ * @param opts Options
+ * @param cb Callback
+ * 
+ * TODO: replace this with remix's own compiler code
+ */
+
 export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb: Function) {
     let compiler: any
     const accounts: string[] = opts.accounts || []
@@ -125,11 +134,20 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
                 if (!isBrowser) require('signale').fatal(errors)
                 return cb(errors)
             }
-            cb(err, result.contracts)
+            cb(err, result.contracts, result.sources) //return callback with contract details & ASTs
         })
     }
 }
 
+/**
+ * @dev Compile contract source before running tests (used for IDE tests execution)
+ * @param sources sources
+ * @param versionUrl url of selected compiler version to load
+ * @param usingWorker if true, load compiler using web worker
+ * @param importFileCb Import file callback
+ * @param opts Options
+ * @param cb Callback
+ */
 export function compileContractSources(sources: SrcIfc, versionUrl: any, usingWorker: boolean, importFileCb: any, opts: any, cb: Function) {
     let compiler, filepath: string
     const accounts: string[] = opts.accounts || []
@@ -172,6 +190,6 @@ export function compileContractSources(sources: SrcIfc, versionUrl: any, usingWo
             if (!isBrowser) require('signale').fatal(errors)
             return cb(errors)
         }
-        cb(err, result.contracts)
+        cb(err, result.contracts, result.sources) // return callback with contract details & ASTs
     })
 }

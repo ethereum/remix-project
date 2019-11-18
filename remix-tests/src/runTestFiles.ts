@@ -1,15 +1,24 @@
 import async from 'async'
 import fs from './fileSystem'
 import { runTest } from './testRunner'
-import { TestResultInterface, ResultsInterface } from './types'
+import { TestResultInterface, ResultsInterface, compilationInterface, ASTInterface } from './types'
 import colors from 'colors'
 import Web3 = require('web3')
 
 import { compileFileOrFiles } from './compiler'
 import { deployAll } from './deployer'
 
+/**
+ * @dev run test contract files (used for CLI)
+ * @param filepath Path of file
+ * @param isDirectory True, if path is a directory
+ * @param web3 Web3
+ * @param opts Options
+ */
+
 export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, opts?: object) {
     opts = opts || {}
+    const sourceASTs: any = {}
     const { Signale } = require('signale')
     // signale configuration
     const options = {
@@ -44,7 +53,12 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
         function compile(next: Function) {
             compileFileOrFiles(filepath, isDirectory, { accounts }, next)
         },
-        function deployAllContracts (compilationResult, next: Function) {
+        function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next: Function) {
+            // Extract AST of test contract file source
+            for(const filename in asts) {
+                if(filename.includes('_test.sol'))
+                    sourceASTs[filename] = asts[filename].ast
+            }
             deployAll(compilationResult, web3, (err, contracts) => {
                 if (err) {
                     next(err)
@@ -52,18 +66,18 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
                 next(null, compilationResult, contracts)
             })
         },
-        function determineTestContractsToRun (compilationResult, contracts, next: Function) {
-            let contractsToTest: any[] = []
+        function determineTestContractsToRun (compilationResult: compilationInterface, contracts: any, next: Function) {
+            let contractsToTest: string[] = []
             let contractsToTestDetails: any[] = []
             const gatherContractsFrom = function(filename: string) {
                 if (filename.indexOf('_test.sol') < 0) {
                     return
                 }
                 try {
-                  Object.keys(compilationResult[filename]).forEach(contractName => {
-                      contractsToTest.push(contractName)
-                      contractsToTestDetails.push(compilationResult[filename][contractName])
-                  })
+                    Object.keys(compilationResult[filename]).forEach(contractName => {
+                        contractsToTest.push(contractName)
+                        contractsToTestDetails.push(compilationResult[filename][contractName])
+                    })
                 } catch (e) {
                   console.error(e)
                 }
@@ -77,7 +91,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
             }
             next(null, contractsToTest, contractsToTestDetails, contracts)
         },
-        function runTests(contractsToTest, contractsToTestDetails, contracts, next: Function) {
+        function runTests(contractsToTest: string[], contractsToTestDetails: any[], contracts: any, next: Function) {
             let totalPassing: number = 0
             let totalFailing: number = 0
             let totalTime: number = 0
@@ -103,7 +117,8 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
 
             async.eachOfLimit(contractsToTest, 1, (contractName: string, index, cb) => {
               try {
-                runTest(contractName, contracts[contractName], contractsToTestDetails[index], { accounts }, _testCallback, (err, result) => {
+                const fileAST = sourceASTs[contracts[contractName]['filename']]
+                runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts }, _testCallback, (err, result) => {
                     if (err) {
                       console.log(err)
                         return cb(err)
