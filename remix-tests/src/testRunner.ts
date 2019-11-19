@@ -1,9 +1,10 @@
 import async from 'async'
 import * as changeCase from 'change-case'
 import Web3 = require('web3')
-import { RunListInterface, TestCbInterface, TestResultInterface, ResultCbInterface } from './types'
+import { RunListInterface, TestCbInterface, TestResultInterface, ResultCbInterface,
+    CompiledContract, AstNode, Options, FunctionDescription, UserDocumentation } from './types'
 
-function getFunctionFullName (signature: string, methodIdentifiers) {
+function getFunctionFullName (signature: string, methodIdentifiers: any) {
     for (const method in methodIdentifiers) {
         if (signature.replace('0x', '') === methodIdentifiers[method].replace('0x', '')) {
             return method
@@ -12,10 +13,10 @@ function getFunctionFullName (signature: string, methodIdentifiers) {
     return null
 }
 
-function getOverridedSender (userdoc, signature: string, methodIdentifiers) {
+function getOverridedSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: any) {
     let fullName: any = getFunctionFullName(signature, methodIdentifiers)
-    let match = /sender: account-+(\d)/g
-    let accountIndex = userdoc.methods[fullName] ? match.exec(userdoc.methods[fullName].notice) : null
+    let match: RegExp = /sender: account-+(\d)/g
+    let accountIndex: any = userdoc.methods[fullName] ? match.exec(userdoc.methods[fullName].notice) : null
     return fullName && accountIndex ? accountIndex[1] : null
 }
 
@@ -25,10 +26,13 @@ function getOverridedSender (userdoc, signature: string, methodIdentifiers) {
  * @param testContractName Name of test contract
  */
 
-function getAvailableFunctions (fileAST: any, testContractName: string) {
-    const contractAST: any[] = fileAST.nodes.filter(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
-    const funcNodes: any[] = contractAST[0].nodes.filter(node => node.kind === 'function' && node.nodeType === "FunctionDefinition")
-    const funcList: string[] = funcNodes.map(node => node.name)
+function getAvailableFunctions (fileAST: AstNode, testContractName: string) {
+    var funcList: string[] = []
+    if(fileAST.nodes && fileAST.nodes.length > 0) {
+        const contractAST: any[] = fileAST.nodes.filter(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
+        const funcNodes: any[] = contractAST[0].nodes.filter(node => node.kind === 'function' && node.nodeType === "FunctionDefinition")
+        funcList = funcNodes.map(node => node.name)
+    }
     return funcList;
 }
 
@@ -38,7 +42,7 @@ function getAvailableFunctions (fileAST: any, testContractName: string) {
  * @param funcList Methods to extract the interface of
  */
 
-function getTestFunctionsInterface (jsonInterface: any, funcList: string[]) {
+function getTestFunctionsInterface (jsonInterface: FunctionDescription[], funcList: string[]) {
     const functionsInterface: any[] = []
     const specialFunctions = ['beforeAll', 'beforeEach', 'afterAll', 'afterEach']
     for(const func of funcList){
@@ -57,7 +61,7 @@ function getTestFunctionsInterface (jsonInterface: any, funcList: string[]) {
  * @param testContractName Test contract name
  */
 
-function createRunList (jsonInterface: any, fileAST: any, testContractName: string): RunListInterface[] {
+function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, testContractName: string): RunListInterface[] {
     const availableFunctions: string[] = getAvailableFunctions(fileAST, testContractName)
     const testFunctionsInterface: any[] = getTestFunctionsInterface(jsonInterface, availableFunctions)
 
@@ -84,7 +88,7 @@ function createRunList (jsonInterface: any, fileAST: any, testContractName: stri
     return runList
 }
 
-export function runTest (testName, testObject: any, contractDetails: any, fileAST: any, opts: any, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
+export function runTest (testName: string, testObject: any, contractDetails: CompiledContract, fileAST: AstNode, opts: Options, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
     const runList: RunListInterface[] = createRunList(testObject._jsonInterface, fileAST, testName)
     let passingNum: number = 0
     let failureNum: number = 0

@@ -38,6 +38,11 @@ export interface ResultCbInterface {
   (error: Error | null | undefined, result: ResultsInterface) : void;
 }
 
+export interface Options {
+  accounts?: string[] | null,
+  web3?: any
+}
+
 /** sources object with name of the file and content **/
 
 ////////////

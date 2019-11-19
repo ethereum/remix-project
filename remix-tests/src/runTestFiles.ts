@@ -1,7 +1,7 @@
 import async from 'async'
 import fs from './fileSystem'
 import { runTest } from './testRunner'
-import { TestResultInterface, ResultsInterface, compilationInterface, ASTInterface } from './types'
+import { TestResultInterface, ResultsInterface, compilationInterface, ASTInterface, Options, AstNode } from './types'
 import colors from 'colors'
 import Web3 = require('web3')
 
@@ -16,7 +16,7 @@ import { deployAll } from './deployer'
  * @param opts Options
  */
 
-export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, opts?: object) {
+export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, opts?: Options) {
     opts = opts || {}
     const sourceASTs: any = {}
     const { Signale } = require('signale')
@@ -117,7 +117,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
 
             async.eachOfLimit(contractsToTest, 1, (contractName: string, index, cb) => {
               try {
-                const fileAST = sourceASTs[contracts[contractName]['filename']]
+                const fileAST: AstNode = sourceASTs[contracts[contractName]['filename']]
                 runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts }, _testCallback, (err, result) => {
                     if (err) {
                       console.log(err)
