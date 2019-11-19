@@ -141,7 +141,11 @@ class CompileTab extends ViewPlugin {
       yo.update(this._view.contractSelection, contractSelection)
 
       if (data['error']) {
-        this.renderer.error(data['error'].formattedMessage, this._view.errorContainer, {type: data['error'].severity || 'error'})
+        this.renderer.error(
+          data['error'].formattedMessage || data['error'],
+          this._view.errorContainer,
+          {type: data['error'].severity || 'error'}
+        )
         if (data['error'].mode === 'panic') {
           return modalDialogCustom.alert(yo`
             <div><i class="fas fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
