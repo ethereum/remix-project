@@ -4,11 +4,10 @@ require('colors')
 import { compileContractSources } from './compiler'
 import { deployAll } from './deployer'
 import { runTest } from './testRunner'
-import { TestResultInterface, AstNode } from './types'
 
 import Web3 = require('web3')
 import { Provider } from 'remix-simulator'
-import { FinalResult, SrcIfc, compilationInterface, ASTInterface, Options } from './types'
+import { FinalResult, SrcIfc, compilationInterface, ASTInterface, Options, TestResultInterface, AstNode } from './types'
 
 const createWeb3Provider = async function () {
     let web3 = new Web3()

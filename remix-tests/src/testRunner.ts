@@ -4,7 +4,7 @@ import Web3 = require('web3')
 import { RunListInterface, TestCbInterface, TestResultInterface, ResultCbInterface,
     CompiledContract, AstNode, Options, FunctionDescription, UserDocumentation } from './types'
 
-function getFunctionFullName (signature: string, methodIdentifiers: any) {
+function getFunctionFullName (signature: string, methodIdentifiers: Record <string, string>) {
     for (const method in methodIdentifiers) {
         if (signature.replace('0x', '') === methodIdentifiers[method].replace('0x', '')) {
             return method
@@ -13,7 +13,7 @@ function getFunctionFullName (signature: string, methodIdentifiers: any) {
     return null
 }
 
-function getOverridedSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: any) {
+function getOverridedSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>) {
     let fullName: any = getFunctionFullName(signature, methodIdentifiers)
     let match: RegExp = /sender: account-+(\d)/g
     let accountIndex: any = userdoc.methods[fullName] ? match.exec(userdoc.methods[fullName].notice) : null
@@ -27,11 +27,13 @@ function getOverridedSender (userdoc: UserDocumentation, signature: string, meth
  */
 
 function getAvailableFunctions (fileAST: AstNode, testContractName: string) {
-    var funcList: string[] = []
+    let funcList: string[] = []
     if(fileAST.nodes && fileAST.nodes.length > 0) {
-        const contractAST: any[] = fileAST.nodes.filter(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
-        const funcNodes: any[] = contractAST[0].nodes.filter(node => node.kind === 'function' && node.nodeType === "FunctionDefinition")
-        funcList = funcNodes.map(node => node.name)
+        const contractAST: AstNode[] = fileAST.nodes.filter(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
+        if(contractAST.length > 0 && contractAST[0].nodes) {
+            const funcNodes: AstNode[] = contractAST[0].nodes.filter(node => node.kind === 'function' && node.nodeType === "FunctionDefinition")
+            funcList = funcNodes.map(node => node.name)
+        }
     }
     return funcList;
 }
