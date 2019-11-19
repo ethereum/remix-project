@@ -9,10 +9,6 @@
 `remix-tests` is a tool to test Solidity smart contracts. It works underneath Remix IDE plugin "Solidity Unit Testing" which is used to write and run test cases for a contract. Tests are written in Solidity itself. `remix-tests` can be used as CLI and a library too.
 
 ### Installation
-As a dependency inside file:
-
-`npm install --save remix-tests`
-
 As a dev dependency:
 
 `npm install --save-dev remix-tests`
