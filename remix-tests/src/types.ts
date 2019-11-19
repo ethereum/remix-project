@@ -163,6 +163,7 @@ export interface FunctionDescription {
   payable?: boolean
   /** true if function is either pure or view, false otherwise. Default is false  */
   constant?: boolean
+  signature?: string
 }
 
 export interface EventDescription {
