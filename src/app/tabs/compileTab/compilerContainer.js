@@ -124,7 +124,7 @@ class CompilerContainer {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
         const pragma = pragmaStr.substring(0, pragmaStr.length - 1)
         const fixedVersions = this.data.allversions.filter(obj => !obj.prerelease).map(obj => obj.version)
-        if (!semver.satisfies(this._retrieveVersion(), pragma)) {
+        if (fixedVersions.includes(this.data.selectedVersion) && !semver.satisfies(this._retrieveVersion(), pragma)) {
           const compilerToLoad = semver.maxSatisfying(fixedVersions, pragma)
           const compilerPath = this.data.allversions.filter(obj => !obj.prerelease && obj.version === compilerToLoad)[0].path
           if (this.data.selectedVersion !== compilerPath) {
@@ -208,9 +208,11 @@ class CompilerContainer {
           <header class="navbar navbar-light p-2 bg-light">
             <div class="row w-100 no-gutters mb-2">
               <div class="col-sm-4">
-                <div class="d-flex flex-row">
-                  <label class="${css.compilerLabel} input-group-text pl-0 border-0" for="versionSelector">Compiler</label>
-                  <button class="far fa-plus-square border-0 bg-light btn-sm" onclick=${this.loadCompiler.bind(this)} title="Add a custom compiler with URL"></button>
+                <div class="d-flex flex-row justify-content-end">
+                  <label class="${css.compilerLabel} input-group-text pr-0 border-0" for="versionSelector">
+                    <button class="far fa-plus-square border-0 bg-light text-dark btn-sm" onclick=${this.loadCompiler.bind(this)} title="Add a custom compiler with URL"></button>
+                    Compiler
+                  </label>
                 </div>
               </div>
               <div class="col-sm-8">
@@ -263,11 +265,11 @@ class CompilerContainer {
     return this._view.compileContainer
   }
 
-  loadCompiler() {
+  loadCompiler () {
     modalDialogCustom.prompt(
       'Add a custom compiler',
-      "URL",
-      'https://203137-40892817-gh.circle-artifacts.com/0/soljson.js',
+      'URL',
+      'https://203137-40892817-gh.circle-artifacts.com/0/soljson.js', // removed me before merge
       (url) => {
         this.addCustomCompiler(url)
       }
@@ -276,6 +278,7 @@ class CompilerContainer {
 
   addCustomCompiler (url) {
     this.data.selectedVersion = this._view.versionSelector.value
+    this.data.customVersion = this._view.versionSelector.value // todo remove
     this._updateVersionSelector(url)
   }
 
@@ -354,6 +357,7 @@ class CompilerContainer {
     let url
     if (customUrl) {
       this.data.selectedVersion = customUrl
+      this.data.version = 'custom' // TODO REMOVE
       this._view.versionSelector.appendChild(yo`<option value="${customUrl}" selected>custom</option>`)
       url = customUrl
     } else if (this.data.selectedVersion === 'builtin') {
@@ -382,12 +386,8 @@ class CompilerContainer {
   }
 
   _updateLanguageSelector () {
-<<<<<<< HEAD
     // This is the first version when Yul is available
-    if (this._retrieveVersion() !== 'custom' || semver.lt(this._retrieveVersion(), 'v0.5.7+commit.6da8b019.js')) {
-=======
     if (!semver.valid(this._retrieveVersion()) || semver.lt(this._retrieveVersion(), 'v0.5.7+commit.6da8b019.js')) {
->>>>>>> 4d2e414d... added default to test
       this._view.languageSelector.setAttribute('disabled', '')
       this._view.languageSelector.value = 'Solidity'
       this.compileTabLogic.setLanguage('Solidity')
@@ -397,7 +397,7 @@ class CompilerContainer {
   }
 
   setVersionText (text) {
-    this.data.version = text
+    this.data.version = text // todo remove
     if (this._view.version) this._view.version.innerText = text
   }
 

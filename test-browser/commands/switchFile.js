@@ -12,6 +12,7 @@ class SwitchFile extends EventEmitter {
   }
 }
 
+// click on fileExplorer can toggle it. We go through settings to be sure FE is open
 function switchFile (browser, name, done) {
   browser.clickLaunchIcon('settings').clickLaunchIcon('fileExplorers')
       .click('li[key="' + name + '"]')
