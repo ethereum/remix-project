@@ -116,7 +116,7 @@ class CompilerContainer {
     return el
   }
 
-  // Load solc compiler version according to pragma in contract file
+   // Load solc compiler version according to pragma in contract file
   _setCompilerVersionFromPragma (filename) {
     this.compileTabLogic.fileManager.getFile(filename).then(data => {
       const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
@@ -124,11 +124,13 @@ class CompilerContainer {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
         const pragma = pragmaStr.substring(0, pragmaStr.length - 1)
         const fixedVersions = this.data.allversions.filter(obj => !obj.prerelease).map(obj => obj.version)
-        const compilerToLoad = semver.maxSatisfying(fixedVersions, pragma)
-        const compilerPath = this.data.allversions.filter(obj => !obj.prerelease && obj.version === compilerToLoad)[0].path
-        if (this.data.selectedVersion !== compilerPath) {
-          this.data.selectedVersion = compilerPath
-          this._updateVersionSelector()
+        if (!semver.satisfies( this._retrieveVersion(), pragma)) {
+          const compilerToLoad = semver.maxSatisfying(fixedVersions, pragma)
+          const compilerPath = this.data.allversions.filter(obj => !obj.prerelease && obj.version === compilerToLoad)[0].path
+          if (this.data.selectedVersion !== compilerPath) {
+            this.data.selectedVersion = compilerPath
+            this._updateVersionSelector()
+          }
         }
       }
     })
@@ -357,6 +359,7 @@ class CompilerContainer {
   }
 
   _updateLanguageSelector () {
+  /// This is the first version when Yul is available
     if (semver.lt(this._retrieveVersion(), 'v0.5.7+commit.6da8b019.js')) {
       this._view.languageSelector.setAttribute('disabled', '')
       this._view.languageSelector.value = 'Solidity'
