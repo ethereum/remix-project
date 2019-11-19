@@ -4,11 +4,11 @@ require('colors')
 import { compileContractSources } from './compiler'
 import { deployAll } from './deployer'
 import { runTest } from './testRunner'
-import { TestResultInterface } from './types'
+import { TestResultInterface, AstNode } from './types'
 
 import Web3 = require('web3')
 import { Provider } from 'remix-simulator'
-import { FinalResult, SrcIfc, compilationInterface, ASTInterface } from './types'
+import { FinalResult, SrcIfc, compilationInterface, ASTInterface, Options } from './types'
 
 const createWeb3Provider = async function () {
     let web3 = new Web3()
@@ -29,11 +29,11 @@ const createWeb3Provider = async function () {
  * @param importFileCb Import file callback
  * @param opts Options
  */
-export async function runTestSources(contractSources: SrcIfc, versionUrl: string, usingWorker: boolean, testCallback: Function, resultCallback: Function, finalCallback: any, importFileCb: Function, opts: any) {
+export async function runTestSources(contractSources: SrcIfc, versionUrl: string, usingWorker: boolean, testCallback: Function, resultCallback: Function, finalCallback: any, importFileCb: Function, opts: Options) {
     opts = opts || {}
     const sourceASTs: any = {}
     let web3 = opts.web3 || await createWeb3Provider()
-    let accounts = opts.accounts || null
+    let accounts: string[] | null = opts.accounts || null
     async.waterfall([
         function getAccountList (next) {
             if (accounts) return next()
@@ -95,7 +95,7 @@ export async function runTestSources(contractSources: SrcIfc, versionUrl: string
             }
 
             async.eachOfLimit(contractsToTest, 1, (contractName: string, index: string | number, cb: ErrorCallback) => {
-                const fileAST = sourceASTs[contracts[contractName]['filename']]
+                const fileAST: AstNode = sourceASTs[contracts[contractName]['filename']]
                 runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts }, _testCallback, (err, result) => {
                     if (err) {
                         return cb(err)
