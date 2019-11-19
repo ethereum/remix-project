@@ -1,4 +1,11 @@
 ## Remix-Tests
+[![npm version](https://badge.fury.io/js/remix-tests.svg)](https://www.npmjs.com/package/remix-tests)
+[![npm](https://img.shields.io/npm/dt/remix-tests.svg?label=Total%20Downloads)](https://www.npmjs.com/package/remix-tests)
+[![npm](https://img.shields.io/npm/dw/remix-tests.svg)](https://www.npmjs.com/package/remix-tests)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethereum/remix/tree/master/remix-tests)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ethereum/remix/issues)
+
+
 `remix-tests` is a tool to test Solidity smart contracts. It works underneath Remix IDE plugin "Solidity Unit Testing" which is used to write and run test cases for a contract. Tests are written in Solidity itself. `remix-tests` can be used as CLI and a library too.
 
 ### Installation
@@ -45,7 +52,7 @@ Note that `TestsAccounts` is filled with all the accounts available in `web3.eth
 
 ### How to use
 
-#### Command Line
+#### As command line interface
 
 * To run all files inside `examples` directory
 ```
@@ -140,55 +147,62 @@ Running `simple_storage_test.sol` file will output as:
 
 :point_right: remix-test can also be used for continuous integration testing. See example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [Travis build](https://travis-ci.org/su-squares/ethereum-contract/builds/446186067) 
 
-///// TODO
+#### As a Library for development 
 
-#### Library
-
-Importing the library:
+Import library:
 ```Javascript
 const RemixTests = require('remix-tests');
 ```
 
-Running a single test object:
+Run a single test object:
 ```Javascript
-remixTests.runTest(testName, testObj, testCallback, resultsCallback)
+remixTests.runTest (testName: string, testObject: any, contractDetails: CompiledContract, fileAST: AstNode, opts: Options, testCallback: TestCbInterface, resultsCallback: ResultCbInterface)
 ```
-**Params:**
-* `testName` - `string` name of the test
-* `testObj` -  web3.js 1.0 contract instance of the test
-* `testCallback(object)` -  called each time there is a test event. 3 possible type of objects:
+<em>Params:-</em>
+1. `testName` - Name of the test
+2. `testObject` -  Web3 1.0 contract instance of the test
+3. `contractDetails` - Contract details
+4. `fileAST` - AST of test file
+5. `opts` - Custom options
+6. `testCallback(object)` -  Called each time there is a test event. 3 possible type of objects:
 * `{ type: 'contract', value: '<TestName>', filename: '<test_filename.sol>' }`
 * `{ type: 'testPass', value: '<name of testing function>', time: <time taken>, context: '<TestName>'}`
 * `{ type: 'testFailure', value: '<name of testing function>', time: <time taken>, context: '<TestName>', errMsg: '<message in the Assert>' }`
 
-`resultsCallback(object)`
+7. `resultsCallback(object)` - Callback with test results
 * `passingNum` - number of passing tests
 * `failureNum` - number of failing tests
 * `timePassed` - time it took for all the tests to run (in seconds)
-
 
 Running a set of tests given the sourcecode:
 ```Javascript
-remixTests.runTestSources(contractSources, testCallback, resultCallback, finalCallback, importFileCb);
+remixTests.runTestSources(contractSources: SrcIfc, versionUrl: string, usingWorker: boolean, testCallback: Function, resultCallback: Function, finalCallback: any, importFileCb: Function, opts: Options);
 ```
-params:
-`contractSources` - `object` -> `filename => { content: source }`
-`testCallback(object)` - called each time there is a test event. 3 possible type of objects:
+<em>Params:-</em>
+1. `contractSources` - Contract sources
+2. `versionUrl` - URL of solc compiler to load
+3. `usingWorker` - Set `true` if compiler should be loaded using web-worker
+4. `testCallback(object)` - Called each time there is a test event. 3 possible type of objects:
 * `{ type: 'contract', value: '<TestName>', filename: '<test_filename.sol>' }`
 * `{ type: 'testPass', value: '<name of testing function>', time: <time taken>, context: '<TestName>'}`
 * `{ type: 'testFailure', value: '<name of testing function>', time: <time taken>, context: '<TestName>', errMsg: '<message in the Assert>' }`
 
-`resultCallback(err, object)`
+5. `resultCallback(err, object)` -  Callback with test results
 * `passingNum` - number of passing tests
 * `failureNum` - number of failing tests
 * `timePassed` - time it took for all the tests to run (in seconds)
 
-`finalCallback(err)` - called when all tests finish running.
-`importCb(url, cb)`
+6. `finalCallback(err)` - called when all tests finish running.
+7. `importCb(url, cb)` - Callback to resolve imported files
+8. `opts` - Custom options
+
+For more details, see parameters' type definitions [here](https://github.com/ethereum/remix/blob/master/remix-tests/src/types.ts).
 
 ## Contribute
 
-Please feel free! Open an issue or a pull request. Please conform to [`standard`](https://standardjs.com/) for code styles, and make sure that you add any relevant tests.
+Please feel free to open an issue or a pull request. 
+
+In case you want to add a code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix/blob/master/CONTRIBUTING.md). Reach us in [Gitter](https://gitter.im/ethereum/remix) in case of any queries.
 
 ## License
 
