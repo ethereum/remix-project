@@ -116,7 +116,7 @@ class CompilerContainer {
     return el
   }
 
-   // Load solc compiler version according to pragma in contract file
+  // Load solc compiler version according to pragma in contract file
   _setCompilerVersionFromPragma (filename) {
     this.compileTabLogic.fileManager.getFile(filename).then(data => {
       const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
