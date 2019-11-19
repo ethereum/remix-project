@@ -132,7 +132,7 @@ class CompileTab extends ViewPlugin {
         })
       } else {
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + data.error ? 1 : 0)
-        this.emit('statusChanged', {key: count, title: 'compilation failed', type: 'error'})
+        this.emit('statusChanged', {key: count, title: `compilation failed with ${count} error${count.length > 1 ? 's' : ''}`, type: 'error'})
       }
       // Update contract Selection
       let contractMap = {}
