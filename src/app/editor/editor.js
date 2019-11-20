@@ -15,6 +15,7 @@ require('brace/ext/searchbox')
 const langTools = ace.acequire('ace/ext/language_tools')
 require('ace-mode-solidity/build/remix-ide/mode-solidity')
 require('ace-mode-move/build/remix-ide/mode-move')
+require('ace-mode-zokrates')
 require('brace/mode/javascript')
 require('brace/mode/python')
 require('brace/mode/json')
@@ -81,6 +82,7 @@ class Editor extends Plugin {
       js: 'ace/mode/javascript',
       py: 'ace/mode/python',
       vy: 'ace/mode/python',
+      zok: 'ace/mode/zokrates',
       txt: 'ace/mode/text',
       json: 'ace/mode/json',
       abi: 'ace/mode/json'

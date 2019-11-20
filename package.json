@@ -15,6 +15,7 @@
     "@resolver-engine/imports": "^0.3.0",
     "ace-mode-move": "0.0.1",
     "ace-mode-solidity": "^0.1.0",
+    "ace-mode-zokrates": "^1.0.0",
     "async": "^2.1.2",
     "babel-eslint": "^10.0.0",
     "babel-plugin-fast-async": "^6.1.2",
