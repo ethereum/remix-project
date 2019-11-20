@@ -141,7 +141,7 @@ export class SidePanel extends AbstractPanel {
 
   render () {
     return yo`
-      <section class="${css.panel}">
+      <section class="${css.panel} plugin-manager">
         ${this.header}
         <div class="${css.pluginsContainer}">
           ${this.view}
