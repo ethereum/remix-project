@@ -1,7 +1,7 @@
 {
   "name": "remix-tests",
   "version": "0.1.20",
-  "description": "Tests for the Ethereum tool suite Remix",
+  "description": "Tool to test Solidity smart contracts",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "contributors": [
@@ -24,19 +24,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix-tests.git"
+    "url": "git+https://github.com/ethereum/remix/tree/master/remix-tests"
   },
   "author": "Remix Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/remix-tests/issues"
+    "url": "https://github.com/ethereum/remix/issues"
   },
   "standard": {
     "ignore": [
       "tests/"
     ]
   },
-  "homepage": "https://github.com/ethereum/remix-tests#readme",
+  "homepage": "https://github.com/ethereum/remix/tree/master/remix-tests#readme",
   "dependencies": {
     "async": "^2.6.0",
     "change-case": "^3.0.1",
