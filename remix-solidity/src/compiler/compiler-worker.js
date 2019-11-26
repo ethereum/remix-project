@@ -16,11 +16,7 @@ module.exports = function (self) {
 
         compileJSON = null
 
-        try {
-          self.importScripts(data.data)
-        } catch (exception) {
-          return JSON.stringify({ error: 'Uncaught JavaScript exception:\n' + exception })
-        }
+        self.importScripts(data.data)
         
         var compiler = solc(self.Module)
 
