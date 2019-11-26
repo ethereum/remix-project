@@ -298,9 +298,6 @@ function Compiler (handleImportCall) {
           break
       }
     })
-    worker.onerror = function (msg) {
-      compilationFinished({ error: 'Worker error: ' + msg.data })
-    }
     worker.addEventListener('error', function (msg) {
       compilationFinished({ error: 'Worker error: ' + msg.data })
     })
