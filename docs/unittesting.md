@@ -5,13 +5,13 @@ Click the
 ![double check](images/a-user-testing-icon.png)
  icon to get to the "Solidity Unit Testing" plugin. 
  
- If you haven't used this plugin before and not seeing `double check` icon, you have to activate it from Remix plugin manager.
+ If you haven't used this plugin before and are not seeing `double check` icon, you have to activate it from Remix plugin manager.
  
 Go to the plugin manager (by click the ![plug](images/a-plug.png) icon) and load up the unit testing plugin.
 
 ![](images/a-unit-testing-from-pm.png)
 
-Now `double check` icon will appear on the left side icon bar. Clicking on icon will show UI related to unit testing.
+Now `double check` icon will appear on the left side icon bar. Clicking on icon will load the unit testing module in the side panel.
 
 ![](images/a-unit-testing-feature.png)
 
@@ -42,7 +42,7 @@ Click the button "Run tests" to executes all tests whose box has been checked be
 Continuous integration
 ----------------------
 
-remix-tests is also a CLI, it can be used in a continuous integration environement which support node.js.
-Please find more information in the [remix-test repository](https://github.com/ethereum/remix/tree/master/remix-tests)
+remix-tests is also a CLI, it can be used in a continuous integration environment which support node.js.
+Please find more information in the [remix-tests repository](https://github.com/ethereum/remix/tree/master/remix-tests)
 
 See also: example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [Travis build](https://travis-ci.org/su-squares/ethereum-contract/builds/446186067) that uses remix-tests for continuous integration testing.
