@@ -65,6 +65,7 @@ Useful links:
    remix_commands
    remixd
    unittesting
+   assert_library
    
 .. toctree::
    :maxdepth: 2
