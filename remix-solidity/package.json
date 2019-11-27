@@ -14,9 +14,6 @@
   ],
   "main": "./index.js",
   "dependencies": {
-    "ethereumjs-util": "^6.1.0",
-    "ethereumjs-vm": "3.0.0",
-    "fast-async": "^6.1.2",
     "remix-lib": "0.4.14",
     "solc": "^0.5.0",
     "webworkify": "^1.2.1"
@@ -44,14 +41,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix.git"
+    "url": "git+https://github.com/ethereum/remix/tree/master/remix-solidity"
   },
   "author": "cpp-ethereum team",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ethereum/remix/issues"
   },
-  "homepage": "https://github.com/ethereum/remix#readme",
+  "homepage": "https://github.com/ethereum/remix/tree/master/remix-solidity#readme",
   "browserify": {
     "transform": [
       [

@@ -3,9 +3,6 @@
 Provides:
 
     {
-        InternalCallTree: InternalCallTree,
-        SolidityProxy: SolidityProxy,
-        localDecoder: localDecoder,
-        stateDecoder: stateDecoder,
-        CodeAnalysis: CodeAnalysis
+        Compiler: Compiler,
+        CompilerInput: CompilerInput
     }
