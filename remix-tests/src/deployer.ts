@@ -32,7 +32,7 @@ export function deployAll(compileResult: object, web3: Web3, callback) {
                     compiledObject[className].className = className
                     compiledObject[className].raw = contract
 
-                    if (contractFile.indexOf('_test.sol') >= 0) {
+                    if (contractFile.endsWith('_test.sol')) {
                         compiledObject[className].isTest = true
                     }
                 }

@@ -56,7 +56,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
         function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next: Function) {
             // Extract AST of test contract file source
             for(const filename in asts) {
-                if(filename.includes('_test.sol'))
+                if(filename.endsWith('_test.sol'))
                     sourceASTs[filename] = asts[filename].ast
             }
             deployAll(compilationResult, web3, (err, contracts) => {
@@ -70,7 +70,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
             let contractsToTest: string[] = []
             let contractsToTestDetails: any[] = []
             const gatherContractsFrom = function(filename: string) {
-                if (filename.indexOf('_test.sol') < 0) {
+                if (!filename.endsWith('_test.sol')) {
                     return
                 }
                 try {

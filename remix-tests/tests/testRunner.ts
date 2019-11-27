@@ -62,7 +62,7 @@ async function compileAndDeploy(filename: string, callback: Function) {
     },
     function deployAllContracts(compilationResult: object, asts, next: Function): void {
       for(const filename in asts) {
-        if(filename.includes('_test.sol'))
+        if(filename.endsWith('_test.sol'))
           sourceASTs[filename] = asts[filename].ast
       }
       try {
