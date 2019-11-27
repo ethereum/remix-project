@@ -248,8 +248,8 @@ module.exports = class TestTab extends ViewPlugin {
             <li> To write tests, visit our <a href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#write-tests" target="_blank"> documentation </a></li>
             <li> To run tests, select file(s) and click on "Run Tests" button</li>
           </ol>
-          To run unit tests in your Continuous Integration & as CLI, use the stand alone NPM module <a href="https://www.npmjs.com/package/remix-tests" target="_blank">remix-tests</a>.<br/>
-          To get support, join our  <a href="https://gitter.im/ethereum/remix" target="_blank">Gitter</a> channel.
+          To run unit tests in your Continuous Integration and as CLI, use the stand alone NPM module <a href="https://www.npmjs.com/package/remix-tests" target="_blank">remix-tests</a>.
+          <p>To get support, join our  <a href="https://gitter.im/ethereum/remix" target="_blank">Gitter</a> channel. </p>
           ${this.updateGenerateFileAction()}
         </div>
         <div class="${css.tests}">          
