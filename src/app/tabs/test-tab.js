@@ -242,15 +242,14 @@ module.exports = class TestTab extends ViewPlugin {
     var el = yo`
       <div class="${css.testTabView} card" id="testView">
         <div class="${css.infoBox}">
-          Test your smart contract by creating a foo_test.sol file (open ballot_test.sol to see the example).
-          <br/>
-          You will find more informations in the <a href="https://remix-ide.readthedocs.io/en/latest/unittesting.html">documentation</a>
-          Then use the stand alone NPM module remix-tests to run unit tests in your Continuous Integration
-          <a href="https://www.npmjs.com/package/remix-tests">https://www.npmjs.com/package/remix-tests</a>.
-          <br/>
-          For more details, see
-          How to test smart contracts guide in our documentation.
-          <br/>
+          Test your smart contract in Solidity.<br/><br/>
+          <ol>
+            <li> To get started, click on "Generate test file" button</li>
+            <li> To write tests, visit our <a href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#write-tests" target="_blank"> documentation </a></li>
+            <li> To run tests, select file(s) and click on "Run Tests" button</li>
+          </ol>
+          To run unit tests in your Continuous Integration and as CLI, use the stand alone NPM module <a href="https://www.npmjs.com/package/remix-tests" target="_blank">remix-tests</a>.
+          <p>To get support, join our  <a href="https://gitter.im/ethereum/remix" target="_blank">Gitter</a> channel. </p>
           ${this.updateGenerateFileAction()}
         </div>
         <div class="${css.tests}">          
