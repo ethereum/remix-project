@@ -3,44 +3,41 @@ Unit Testing
 
 Click the
 ![double check](images/a-user-testing-icon.png)
- icon to get to the "Solidity Unit Testing" plugin. If you don't see this icon, go to the plugin manager (by click the ![plug](images/a-plug.png) icon) and load up the unit testing plugin.
+ icon to get to the "Solidity Unit Testing" plugin. 
+ 
+ If you haven't used this plugin before and not seeing `double check` icon, you have to activate it from Remix plugin manager.
+ 
+Go to the plugin manager (by click the ![plug](images/a-plug.png) icon) and load up the unit testing plugin.
 
 ![](images/a-unit-testing-from-pm.png)
 
+Now `double check` icon will appear on the left side icon bar. Clicking on icon will show UI related to unit testing.
+
 ![](images/a-unit-testing-feature.png)
 
-Generating Test File
+Generate Test File
 ------------------
-Click the button "Generate test file" to create a new solidity file in the current folder.
-This create a new solidity file suffixed with `_test`.
-This file contains the minimum you need for running unit testing.
+Click the button `Generate test file` to create a new solidity file in the current folder suffixed with `_test`. This file contains the minimum you need for running unit testing.
 
-Running Tests
+Write Tests
+-----------
+Write tests to check the functionality of your contract. Remix injects a built-in `assert` library which can be used for testing. Visit the library documentation [here](./assert_library).
+
+Apart from this, Remix allows usage of some special functions to make testing more structural. They are:
+
+* `beforeEach()` - Runs before each test
+* `beforeAll()` - Runs before all tests
+* `afterEach()` - Runs after each test
+* `afterAll()` - Runs after all tests
+
+To get started, see [this](https://github.com/ethereum/remix/blob/master/remix-tests/tests/examples_4/SafeMath_test.sol) for sample implementation.
+
+Run Tests
 ------------------
 
 Click the button "Run tests" to executes all tests whose box has been checked below (by default all). The execution is run in a separate environment and the result is displayed below.
 
 ![](images/a-unit-testing-run-result.png)
-
-Here is a list of functions and their supported types that you can use to write your testcases:
-
-```eval_rst
-+ -----------------------+--------------------------------------------------------+
-| Available functions    | Supported types                                        |
-+========================+========================================================+
-| `Assert.ok()`          | `bool`                                                 |
-+------------------------+--------------------------------------------------------+
-| `Assert.equal()`       | `uint`, `int`, `bool`, `address`, `bytes32`, `string`  |
-+------------------------+--------------------------------------------------------+
-| `Assert.notEqual()`    | `uint`, `int`, `bool`, `address`, `bytes32`, `string`  |
-+------------------------+--------------------------------------------------------+
-| `Assert.greaterThan()` | `uint`, `int`                                          |
-+------------------------+--------------------------------------------------------+
-| `Assert.lesserThan()`  | `uint`, `int`                                          |
-+------------------------+--------------------------------------------------------+
-```
-
-Click [here](https://github.com/ethereum/remix/blob/master/remix-tests/tests/examples_4/SafeMath_test.sol) for a test file example
 
 Continuous integration
 ----------------------
