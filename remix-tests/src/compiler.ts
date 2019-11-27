@@ -54,7 +54,7 @@ function processFile(filePath: string, sources: SrcIfc, isRoot: boolean = false)
     const testFileImportRegEx: RegExp = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
     // import 'remix_tests.sol', if file is a root test contract file and doesn't already have it 
-    if (isRoot && filePath.includes('_test.sol') && regexIndexOf(content, testFileImportRegEx) < 0) {
+    if (isRoot && filePath.endsWith('_test.sol') && regexIndexOf(content, testFileImportRegEx) < 0) {
         const includeTestLibs: string = '\nimport \'remix_tests.sol\';\n'
         content = includeTestLibs.concat(content)
     }
@@ -161,7 +161,7 @@ export function compileContractSources(sources: SrcIfc, versionUrl: any, usingWo
     let includeTestLibs: string = '\nimport \'remix_tests.sol\';\n'
     for (let file in sources) {
         const c: string = sources[file].content
-        if (file.includes('_test.sol') && c && regexIndexOf(c, testFileImportRegEx) < 0) {
+        if (file.endsWith('_test.sol') && c && regexIndexOf(c, testFileImportRegEx) < 0) {
             sources[file].content = includeTestLibs.concat(c)
         }
     }

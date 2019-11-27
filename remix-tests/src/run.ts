@@ -36,6 +36,10 @@ commander.command('help').description('output usage information').action(functio
 commander
     .option('-v, --verbose <level>', 'run with verbosity', mapVerbosity)
     .action(async (filename) => {
+        if(!filename.endsWith('_test.sol')){
+            log.error('Test filename should end with "_test.sol"')
+            process.exit()
+        }
         // Console message
         console.log(colors.white('\n\t👁\t:: Running remix-tests - Unit testing for solidity ::\t👁\n'))
         // set logger verbosity

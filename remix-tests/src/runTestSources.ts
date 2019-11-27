@@ -46,7 +46,7 @@ export async function runTestSources(contractSources: SrcIfc, versionUrl: string
         },
         function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next) {
             for(const filename in asts) {
-                if(filename.includes('_test.sol'))
+                if(filename.endsWith('_test.sol'))
                     sourceASTs[filename] = asts[filename].ast
             }
             deployAll(compilationResult, web3, (err, contracts) => {
@@ -62,7 +62,7 @@ export async function runTestSources(contractSources: SrcIfc, versionUrl: string
             let contractsToTestDetails: any[] = []
 
             for (let filename in compilationResult) {
-                if (filename.indexOf('_test.sol') < 0) {
+                if (!filename.endsWith('_test.sol')) {
                     continue
                 }
                 Object.keys(compilationResult[filename]).forEach(contractName => {
