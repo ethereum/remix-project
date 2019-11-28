@@ -1,9 +1,6 @@
 const csjs = require('csjs-inject')
 
 const css = csjs`
-  .compilerArticle {
-    padding: 10px;
-  }
   .title {
     font-size: 1.1em;
     font-weight: bold;

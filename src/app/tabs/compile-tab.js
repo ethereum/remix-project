@@ -234,11 +234,11 @@ class CompileTab extends ViewPlugin {
     let result = contractList.length
     ? yo`<section class="${css.container} clearfix">
       <!-- Select Compiler Version -->
-      <div class="navbar navbar-light bg-light input-group mb-3">
+      <div class="navbar navbar-light bg-light input-group p-2 mb-3">
         <label class="border-0 input-group-text" for="compiledContracts">Contract</label>
         ${selectEl}
       </div>
-      <article class="${css.compilerArticle}">
+      <article class="px-2 mt-2 pb-0">
         <button class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish('swarm') }}">
           <span>Publish on Swarm</span>
           <img id="swarmLogo" class="${css.storageLogo} ml-2" src="${swarmImg}">
@@ -267,8 +267,8 @@ class CompileTab extends ViewPlugin {
         </div>
       </article>
     </section>`
-    : yo`<section class="${css.container} clearfix"><article class="${css.compilerArticle}">
-      <span class="alert alert-warning" role="alert">No Contract Compiled Yet</span>
+    : yo`<section class="${css.container} clearfix"><article class="px-2 mt-2 pb-0 d-flex">
+      <span class="m-0 w-100 alert alert-warning" role="alert">No Contract Compiled Yet</span>
     </article></section>`
 
     if (contractList.length) {
