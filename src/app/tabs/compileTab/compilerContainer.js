@@ -124,8 +124,17 @@ class CompilerContainer {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
         const pragma = pragmaStr.substring(0, pragmaStr.length - 1)
         const releasedVersions = this.data.allversions.filter(obj => !obj.prerelease).map(obj => obj.version)
-        const currentCompilerName = semver.clean(this._view.versionSelector.selectedOptions[0].label)
-        if (releasedVersions.includes(currentCompilerName) && !semver.satisfies(this._retrieveVersion(), pragma)) {
+        const allVersions = this.data.allversions.map(obj => this._retrieveVersion(obj.version))
+        const currentCompilerName = this._retrieveVersion(this._view.versionSelector.selectedOptions[0].label)
+        // contains only numbers part, for example '0.4.22'
+        const pureVersion = this._retrieveVersion()
+        // is nightly build newer than the last release
+        const isNewestNightly = currentCompilerName.includes('nightly') && semver.gt(pureVersion, releasedVersions[0])
+        // checking if the selected version is in the pragma range
+        const isInRange = semver.satisfies(pureVersion, pragma)
+        // checking if the selected version is from official compilers list(excluding custom versions) and in range or greater
+        const isOfficial = allVersions.includes(currentCompilerName)
+        if (isOfficial && (!isInRange && !isNewestNightly)) {
           const compilerToLoad = semver.maxSatisfying(releasedVersions, pragma)
           const compilerPath = this.data.allversions.filter(obj => !obj.prerelease && obj.version === compilerToLoad)[0].path
           if (this.data.selectedVersion !== compilerPath) {
@@ -137,9 +146,9 @@ class CompilerContainer {
     })
   }
 
-  _retrieveVersion () {
-    let version = this._view.versionSelector.value
-    return version.substring(9, version.length)
+  _retrieveVersion (version) {
+    if (!version) version = this._view.versionSelector.value
+    return semver.coerce(version) ? semver.coerce(version).version : ''
   }
 
   render () {
@@ -200,7 +209,7 @@ class CompilerContainer {
     this._view.compilationButton = this.compilationButton()
 
     this._view.includeNightlies = yo`
-      <input class="mr-0 ml-1" id="nightlies" type="checkbox" onchange=${this._updateVersionSelector.bind(this)}>
+      <input class="mr-0 ml-1" id="nightlies" type="checkbox" onchange=${() => this._updateVersionSelector()}>
     `
     this._view.compileContainer = yo`
       <section>
@@ -286,9 +295,7 @@ class CompilerContainer {
 
   compile (event) {
     if (this.config.get('currentFile')) {
-      if (!this.data.selectedVersion.includes('nightly')) {
-        this._setCompilerVersionFromPragma(this.config.get('currentFile'))
-      }
+      this._setCompilerVersionFromPragma(this.config.get('currentFile'))
       this.compileTabLogic.runCompiler()
     }
   }
@@ -353,7 +360,7 @@ class CompilerContainer {
     this._view.versionSelector.removeAttribute('disabled')
     this.queryParams.update({ version: this.data.selectedVersion })
     let url
-    if (customUrl) {
+    if (customUrl !== '') {
       this.data.selectedVersion = customUrl
       this._view.versionSelector.appendChild(yo`<option value="${customUrl}" selected>custom</option>`)
       url = customUrl
