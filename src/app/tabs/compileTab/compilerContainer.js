@@ -209,8 +209,8 @@ class CompilerContainer {
             <div class="row w-100 no-gutters mb-2">
               <div class="col-sm-4">
                 <div class="d-flex flex-row justify-content-end">
-                  <label class="${css.compilerLabel} input-group-text pr-0 border-0" for="versionSelector">
-                    <button class="far fa-plus-square border-0 bg-light text-dark btn-sm" onclick=${this.loadCompiler.bind(this)} title="Add a custom compiler with URL"></button>
+                  <label class="${css.compilerLabel} input-group-text pr-0 border-0 w-100" for="versionSelector">
+                    <button class="far fa-plus-square border-0 p-0 m-2 text-dark btn-sm" onclick=${this.loadCompiler.bind(this)} title="Add a custom compiler with URL"></button>
                     Compiler
                   </label>
                 </div>
@@ -269,7 +269,7 @@ class CompilerContainer {
     modalDialogCustom.prompt(
       'Add a custom compiler',
       'URL',
-      'https://203137-40892817-gh.circle-artifacts.com/0/soljson.js', // removed me before merge
+      '',
       (url) => {
         this.addCustomCompiler(url)
       }
@@ -278,7 +278,6 @@ class CompilerContainer {
 
   addCustomCompiler (url) {
     this.data.selectedVersion = this._view.versionSelector.value
-    this.data.customVersion = this._view.versionSelector.value // todo remove
     this._updateVersionSelector(url)
   }
 
@@ -357,7 +356,6 @@ class CompilerContainer {
     let url
     if (customUrl) {
       this.data.selectedVersion = customUrl
-      this.data.version = 'custom' // TODO REMOVE
       this._view.versionSelector.appendChild(yo`<option value="${customUrl}" selected>custom</option>`)
       url = customUrl
     } else if (this.data.selectedVersion === 'builtin') {
@@ -397,13 +395,12 @@ class CompilerContainer {
   }
 
   setVersionText (text) {
-    this.data.version = text // todo remove
     if (this._view.version) this._view.version.innerText = text
   }
 
   fetchAllVersion (callback) {
     minixhr(`${this.data.baseurl}/list.json`, (json, event) => {
-      // @TODO: optimise and cache results to improve app loading times
+      // @TODO: optimise and cache results to improve app loading times #2461
       var allversions, selectedVersion
       if (event.type !== 'error') {
         try {
