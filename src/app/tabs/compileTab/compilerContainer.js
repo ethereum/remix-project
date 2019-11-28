@@ -123,9 +123,10 @@ class CompilerContainer {
       if (pragmaArr && pragmaArr.length === 1) {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
         const pragma = pragmaStr.substring(0, pragmaStr.length - 1)
-        const fixedVersions = this.data.allversions.filter(obj => !obj.prerelease).map(obj => obj.version)
-        if (fixedVersions.includes(this.data.selectedVersion) && !semver.satisfies(this._retrieveVersion(), pragma)) {
-          const compilerToLoad = semver.maxSatisfying(fixedVersions, pragma)
+        const releasedVersions = this.data.allversions.filter(obj => !obj.prerelease).map(obj => obj.version)
+        const currentCompilerName = semver.clean(this._view.versionSelector.selectedOptions[0].label)
+        if (releasedVersions.includes(currentCompilerName) && !semver.satisfies(this._retrieveVersion(), pragma)) {
+          const compilerToLoad = semver.maxSatisfying(releasedVersions, pragma)
           const compilerPath = this.data.allversions.filter(obj => !obj.prerelease && obj.version === compilerToLoad)[0].path
           if (this.data.selectedVersion !== compilerPath) {
             this.data.selectedVersion = compilerPath
@@ -210,7 +211,7 @@ class CompilerContainer {
               <div class="col-sm-4">
                 <div class="d-flex flex-row justify-content-end">
                   <label class="${css.compilerLabel} input-group-text pr-0 border-0 w-100" for="versionSelector">
-                    <button class="far fa-plus-square border-0 p-0 m-2 text-dark btn-sm" onclick="${(e)=>this.loadCompiler(e)}" title="Add a custom compiler with URL"></button>
+                    <button class="far fa-plus-square border-0 p-0 m-2 text-dark btn-sm" onclick="${(e) => this.promtCompiler(e)}" title="Add a custom compiler with URL"></button>
                     Compiler
                   </label>
                 </div>
@@ -265,7 +266,7 @@ class CompilerContainer {
     return this._view.compileContainer
   }
 
-  loadCompiler () {
+  promtCompiler () {
     modalDialogCustom.prompt(
       'Add a custom compiler',
       'URL',
