@@ -2,9 +2,9 @@
 'use strict'
 var Web3 = require('web3')
 var EventManager = require('../eventManager')
-var EthJSVM = require('ethereumjs-vm')
+var EthJSVM = require('ethereumjs-vm').default
 var ethUtil = require('ethereumjs-util')
-var StateManager = require('ethereumjs-vm/dist/stateManager')
+var StateManager = require('ethereumjs-vm/dist/state/stateManager').default
 var Web3VMProvider = require('../web3Provider/web3VmProvider')
 
 var LogsManager = require('./logsManager.js')
