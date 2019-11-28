@@ -105,7 +105,7 @@ class CompilerContainer {
     if (!name) name = ''
     var displayed = name === '' ? '<no file selected>' : name
     var el = yo`
-    <div class="${css.compilerArticle}">
+    <div class="px-2 mt-2 pb-0 d-flex">
       <button class="btn btn-primary btn-block ${name === '' ? 'disabled' : ''}" title="Compile" onclick="${this.compile.bind(this)}">
         <span>${this._view.compileIcon} Compile ${displayed}</span>
       </button>
@@ -210,7 +210,7 @@ class CompilerContainer {
               <div class="col-sm-4">
                 <div class="d-flex flex-row justify-content-end">
                   <label class="${css.compilerLabel} input-group-text pr-0 border-0 w-100" for="versionSelector">
-                    <button class="far fa-plus-square border-0 p-0 m-2 text-dark btn-sm" onclick=${this.loadCompiler.bind(this)} title="Add a custom compiler with URL"></button>
+                    <button class="far fa-plus-square border-0 p-0 m-2 text-dark btn-sm" onclick="${(e)=>this.loadCompiler(e)}" title="Add a custom compiler with URL"></button>
                     Compiler
                   </label>
                 </div>
@@ -243,7 +243,7 @@ class CompilerContainer {
           ${this._view.compilationButton}
         </article>
         <!-- Config -->
-        <article>
+        <article class="p-2">
           <small class="${css.compilerSm}">Compiler Configuration</small>
           <ul class="list-group list-group-flush">
             <li class="list-group-item form-group ${css.compilerConfig}">
@@ -270,9 +270,7 @@ class CompilerContainer {
       'Add a custom compiler',
       'URL',
       '',
-      (url) => {
-        this.addCustomCompiler(url)
-      }
+      (url) => this.addCustomCompiler(url)
     )
   }
 
