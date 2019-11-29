@@ -4,60 +4,32 @@
 [![CircleCI](https://circleci.com/gh/ethereum/remix/tree/master.svg?style=svg)](https://circleci.com/gh/ethereum/remix/tree/master)
 [![Documentation Status](https://readthedocs.org/projects/docs/badge/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
 
-Ethereum tools for the web.
 
-*Are you looking for the Remix IDE? Follow [this link](https://github.com/ethereum/remix-ide)!*
+**Remix** is a suite of tools which helps in smart contract development, compilation, testing & deployment. These tools also works as a core of native plugins of Remix IDE.
 
-+ [What is Remix?](#what-is-remix)
-+ [How to use Remix?](#how-to-use)
-+ [Modules](#modules)
-+ [Contributing guidelines](#contributing)
+**Remix IDE** is an IDE for Solidity dApp developers, powered by Remix. The Remix IDE repository is available **[here](https://github.com/ethereum/remix-ide)**, and an online version is available at https://remix.ethereum.org.
 
-## <a name="what-is-remix"></a>What is Remix?
+For more, check out the [Remix IDE documentation](https://remix-ide.readthedocs.io/en/latest/index.html).
 
-**Remix** is a suite of tools to interact with the Ethereum blockchain in order to debug transactions, stored in this Git repository. A Remix transaction Web debugger is available [here](http://remix.ethereum.org), and its source code is part of this repository.
+## Remix Modules
 
-The **Remix IDE** is an IDE for Solidity dApp developers, powered by Remix. The Remix IDE repository **is available [here](https://github.com/ethereum/remix-ide)**, and an online version is available at https://remix.ethereum.org.
+Remix is built out of several different modules. Here is the brief description.
 
-For more, check out the [Remix documentation on ReadTheDocs](https://remix-ide.readthedocs.io/en/latest/index.html).
++ [`remix-analyzer`](remix-analyzer/README.md): Tool to perform static analysis on Solidity smart contracts to check security vulnerabilities and bad development practices
++ [`remix-astwalker`](remix-tests/README.md): Tool to parse solidity AST (Abstract Syntax Tree)
++ [`remix-debug`](remix-debug/README.md): Tool to debug Ethereum transactions. It provides several controls that allow stepping over the trace and seeing the current state of a selected step.
++ [`remix-solidity`](remix-solidity/README.md): Tool to load a Solidity compiler from provided URL and compile the contract using loaded compiler and return the compilation details
++ [`remix-lib`](remix-lib/README.md): A common place for libraries being used across multiple modules
++ [`remix-tests`](remix-tests/README.md): Tool to unit test Solidity smart contracts. It works as a plugin & as CLI both
++ [`remix-url-resolver`](remix-url-resolver/README.md): Tool to provide helpers for resolving the content from external URL ( including github, swarm, ipfs etc.).
++ [`remixd`](https://github.com/ethereum/remixd/tree/master): Tool to allow accessing local filesystem from Remix IDE by running a daemon
 
-## <a name="how-to-use"></a>How to use Remix
-
-### Prerequisites
-
-To use Remix tools, you'll need to connect to an Ethereum node. You can do that using [the Mist browser](https://github.com/ethereum/mist), or by connecting to your local Ethereum node (`geth`, or `eth`). *Note: connecting to `geth` does not work through https.*
-
-+ Using `geth`: `geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'`.
-
-+ Using `eth`: `eth -j --rpccorsdomain '*'`
-
-**DO NOT DO EXECUTE THESE COMMANDS IF `geth`/`eth` STORES YOUR PRIVATE KEYS**, as any external system might be able to access your node's RPC server!
-
-Those commands will run the RPC server on `localhost:8545`, which is the default URL that Remix will connect to. This instance should **only** be used for debugging purposes. Never use features that could have an impact on your keys: do not unlock any keys, do not use this instance together with the wallet, do not activate the admin `web3` API.
-
-### Run the debugger
-
-See [here](remix-debugger/README.md) how to install, run and use the debugger locally.
-
-The debugger itself contains several controls that allow stepping over the trace and seeing the current state of a selected step.
-
-## <a name="modules"></a>Remix Modules
-
-Remix is built out of several different modules:
-
-+ [`remix-analyzer`](remix-analyzer/README.md)
-+ [`remix-solidity`](remix-solidity/README.md) provides Solidity analysis and decoding functions.
-+ [`remix-lib`](remix-lib/README.md)
-+ [`remix-debug`](remix-debug/README.md) allo debuggin transaction.
-+ [`remix-tests`](remix-tests/README.md) provides unit testing for solidity.
-+ [`remix-astwalker`](remix-tests/README.md) provides a tool for parsing solidity AST.
-+ [`remix-url-resolver`](remix-url-resolver/README.md) provides helpers for resolving external content (github, swarm, ipfs, ...).
-+ [`remixd`](https://github.com/ethereum/remixd/tree/master) CLI which allow accessing local element from Remix IDE (see https://remix-ide.readthedocs.io/en/latest/remixd.html)
-
-Each module generally has their own npm package and test suite, as well as basic documentation.
+Each module generally has their own npm package and test suite, as well as basic documentation in their respective `README`s. Usage of modules as plugin is well documented **[here](https://remix-ide.readthedocs.io/en/latest/index.html)**.
 
 ## Contributing
 
-Everyone is very welcome to contribute on the codebase of Remix. Please reach us in [Gitter](https://gitter.im/ethereum/remix).
+Everyone is very welcome to contribute on the codebase of Remix. Please reach us in [Gitter](https://gitter.im/ethereum/remix) in case of any query/feedback/suggestion.
 
-For more information on the contributing procedure, see [CONTRIBUTING.md](CONTRIBUTING.md). For more information on running and developing the Remix debugger, see [the debugger README.md](remix-debugging/README.md).
+For more information on the contributing procedure, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+
