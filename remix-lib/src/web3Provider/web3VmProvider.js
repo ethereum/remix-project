@@ -107,8 +107,8 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
   self.vmTraces[self.processingHash].gas = '0x' + data.gasUsed.toString(16)
 
   var logs = []
-  for (var l in data.vm.logs) {
-    var log = data.vm.logs[l]
+  for (var l in data.execResult.logs) {
+    var log = data.execResult.logs[l]
     var topics = []
     if (log[1].length > 0) {
       for (var k in log[1]) {
@@ -126,14 +126,14 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
   }
   self.txsReceipt[self.processingHash].logs = logs
   self.txsReceipt[self.processingHash].transactionHash = self.processingHash
-  self.txsReceipt[self.processingHash].status = '0x' + data.vm.exception.toString(16)
+  self.txsReceipt[self.processingHash].status = '0x' + (data.execResult.exceptionError ? 0 : 1)
 
   if (data.createdAddress) {
     var address = util.hexConvert(data.createdAddress)
     self.vmTraces[self.processingHash].return = address
     self.txsReceipt[self.processingHash].contractAddress = address
-  } else if (data.vm.return) {
-    self.vmTraces[self.processingHash].return = util.hexConvert(data.vm.return)
+  } else if (data.execResult.returnValue) {
+    self.vmTraces[self.processingHash].return = util.hexConvert(data.execResult.returnValue)
   } else {
     self.vmTraces[self.processingHash].return = '0x'
   }

@@ -17,7 +17,7 @@ function generateBlock () {
     uncleHeaders: []
   })
 
-  executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }, function () {
+  executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then(function () {
     executionContext.addBlock(block)
   })
 }
