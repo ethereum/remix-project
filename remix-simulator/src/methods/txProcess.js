@@ -9,7 +9,7 @@ function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks,
       return callback(err)
     }
 
-    let toReturn = '0x' + result.result.vm.return.toString('hex')
+    let toReturn = '0x' + result.result.execResult.returnValue.toString('hex')
     if (toReturn === '0x') {
       toReturn = '0x0'
     }
