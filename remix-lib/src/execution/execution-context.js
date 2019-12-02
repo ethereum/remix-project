@@ -1,28 +1,25 @@
 /* global ethereum */
 'use strict'
-var Web3 = require('web3')
-var EventManager = require('../eventManager')
-var EthJSVM = require('ethereumjs-vm').default
-var ethUtil = require('ethereumjs-util')
-var StateManager = require('ethereumjs-vm/dist/state/stateManager').default
-var Web3VMProvider = require('../web3Provider/web3VmProvider')
+const Web3 = require('web3')
+const EventManager = require('../eventManager')
+const EthJSVM = require('ethereumjs-vm').default
+const ethUtil = require('ethereumjs-util')
+const StateManager = require('ethereumjs-vm/dist/state/stateManager').default
+const Web3VMProvider = require('../web3Provider/web3VmProvider')
 
-var LogsManager = require('./logsManager.js')
+const LogsManager = require('./logsManager.js')
 
-var rlp = ethUtil.rlp
+const rlp = ethUtil.rlp
 
-var injectedProvider
-
-var web3
 if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
-  injectedProvider = window.web3.currentProvider
-  web3 = new Web3(injectedProvider)
+  var injectedProvider = window.web3.currentProvider
+  var web3 = new Web3(injectedProvider)
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 }
 
-var blankWeb3 = new Web3()
-
+const blankWeb3 = new Web3()
+const currentFork = 'istanbul'
 /*
   extend vm state manager and instanciate VM
 */
@@ -143,7 +140,7 @@ function ExecutionContext () {
   }
 
   this.web3 = function () {
-    return this.isVM() ? vms.istanbul.web3vm : web3
+    return this.isVM() ? vms[currentFork].web3vm : web3
   }
 
   this.detectNetwork = function (callback) {
@@ -198,7 +195,7 @@ function ExecutionContext () {
   }
 
   this.vm = function () {
-    return vms.istanbul.vm
+    return vms[currentFork].vm
   }
 
   this.setContext = function (context, endPointUrl, confirmCb, infoCb) {
@@ -211,8 +208,8 @@ function ExecutionContext () {
 
     if (context === 'vm') {
       executionContext = context
-      vms.istanbul.stateManager.revert(() => {
-        vms.istanbul.stateManager.checkpoint(() => {})
+      vms[currentFork].stateManager.revert(() => {
+        vms[currentFork].stateManager.checkpoint(() => {})
       })
       self.event.trigger('contextChanged', ['vm'])
       return cb()

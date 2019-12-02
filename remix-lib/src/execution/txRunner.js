@@ -148,7 +148,8 @@ class TxRunner {
     executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then(function (results) {
       let result = results.results[0]
       if (result) {
-        result.status = '0x' + (result.execResult.exceptionError ? 0 : 1)
+        const status = result.execResult.exceptionError ? 0 : 1
+        result.status = `0x${status}`
       }
       executionContext.addBlock(block)
       executionContext.trackTx('0x' + tx.hash().toString('hex'), block)
@@ -157,7 +158,6 @@ class TxRunner {
         transactionHash: ethJSUtil.bufferToHex(Buffer.from(tx.hash()))
       })
     }).catch(function (err) {
-      err = err ? err.message : err
       callback(err)
     })
   }
