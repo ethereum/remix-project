@@ -115,7 +115,6 @@ class TxRunner {
           data: Buffer.from(data.slice(2), 'hex')
         })
         tx.sign(account.privateKey)
-
         const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
         const difficulties = [new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10)]
         var block = new EthJSBlock({
@@ -146,24 +145,20 @@ class TxRunner {
   }
 
   runBlockInVm (tx, block, callback) {
-    executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }, function (err, results) {
-      err = err ? err.message : err
-      if (err) {
-        return callback(err)
-      }
+    executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then(function (results) {
       let result = results.results[0]
-
       if (result) {
-        result.status = '0x' + result.vm.exception.toString(16)
+        result.status = '0x' + (result.execResult.exceptionError ? 0 : 1)
       }
-
       executionContext.addBlock(block)
       executionContext.trackTx('0x' + tx.hash().toString('hex'), block)
-
-      callback(err, {
+      callback(null, {
         result: result,
         transactionHash: ethJSUtil.bufferToHex(Buffer.from(tx.hash()))
       })
+    }).catch(function (err) {
+      err = err ? err.message : err
+      callback(err)
     })
   }
 
