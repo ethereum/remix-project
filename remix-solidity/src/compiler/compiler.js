@@ -240,6 +240,10 @@ function Compiler (handleImportCall) {
     console.log('Loading ' + url + ' ' + (usingWorker ? 'with worker' : 'without worker'))
     self.event.trigger('loadingCompiler', [url, usingWorker])
 
+    if (worker !== null) {
+      worker.terminate()
+      worker = null
+    }
     if (usingWorker) {
       loadWorker(url)
     } else {
@@ -271,9 +275,6 @@ function Compiler (handleImportCall) {
   }
 
   function loadWorker (url) {
-    if (worker !== null) {
-      worker.terminate()
-    }
     worker = webworkify(require('./compiler-worker.js'))
     var jobs = []
     worker.addEventListener('message', function (msg) {
