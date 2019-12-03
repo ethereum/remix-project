@@ -1,6 +1,6 @@
 {
   "name": "remix-debug",
-  "version": "0.3.16",
+  "version": "0.3.17",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -22,7 +22,7 @@
     "ethereumjs-util": "^6.1.0",
     "ethereumjs-vm": "3.0.0",
     "fast-async": "^6.1.2",
-    "remix-lib": "0.4.14",
+    "remix-lib": "0.4.15",
     "web3": "0.20.6"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "remix-analyzer",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "description": "Remix Analyzer",
   "main": "./index.js",
   "contributors": [
@@ -18,7 +18,7 @@
     }
   ],
   "dependencies": {
-    "remix-lib": "0.4.14"
+    "remix-lib": "0.4.15"
   },
   "scripts": {
     "lint": "standard",
