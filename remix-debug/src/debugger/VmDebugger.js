@@ -180,7 +180,7 @@ class VmDebuggerLogic {
         storageViewer.storageRange(function (error, result) {
           if (!error) {
             storageJSON[address] = result
-            self.event.trigger('traceLengthUpdate', [storageJSON])
+            self.event.trigger('traceStorageUpdate', [storageJSON])
           }
         })
       }
