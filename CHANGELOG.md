@@ -1,3 +1,34 @@
+## Change Log
+
+### v0.1.22 (2019/12/03 06:03 +00:00)
+- [#1345](https://github.com/ethereum/remix/pull/1345) Bump version 0.1.22 (@Aniket-Engg )
+- [#1344](https://github.com/ethereum/remix/pull/1344) null worker before next load (@LianaHus )
+- [#1343](https://github.com/ethereum/remix/pull/1343) libs description updated (@Aniket-Engg )
+- [#1339](https://github.com/ethereum/remix/pull/1339) remix-solidity dependencies & readme updated (@Aniket-Engg )
+- [#1338](https://github.com/ethereum/remix/pull/1338) test file suffix checks improved (@Aniket-Engg )
+- [#1337](https://github.com/ethereum/remix/pull/1337) twice error catching improved (@Aniket-Engg )
+- [#1336](https://github.com/ethereum/remix/pull/1336) contribution file updated (@Aniket-Engg )
+- [#1335](https://github.com/ethereum/remix/pull/1335) package.json updated (@Aniket-Engg )
+- [#1334](https://github.com/ethereum/remix/pull/1334) more types added in remix-tests (@Aniket-Engg )
+- [#1333](https://github.com/ethereum/remix/pull/1333) added an exception catch (@LianaHus )
+- [#1332](https://github.com/ethereum/remix/pull/1332) remix-tests readme update (@Aniket-Engg )
+- [#1323](https://github.com/ethereum/remix/pull/1323) Bump lodash.mergewith from 4.6.1 to 4.6.2 in /remix-debugger (@dependabot[bot])
+- [#1324](https://github.com/ethereum/remix/pull/1324) Bump lodash from 4.17.11 to 4.17.15 in /remix-debugger (@dependabot[bot])
+- [#1329](https://github.com/ethereum/remix/pull/1329) sequence for tests (@Aniket-Engg)
+- [#1327](https://github.com/ethereum/remix/pull/1327) import supported in test contract (@Aniket-Engg)
+- [#1325](https://github.com/ethereum/remix/pull/1325) initiate provider (@Aniket-Engg)
+- [#1272](https://github.com/ethereum/remix/pull/1272) Implement filters; add more tests; eth_getStorageAt (@Aniket-Engg, @iurimatias)
+- [#1317](https://github.com/ethereum/remix/pull/1317) tests for #1314 (@Aniket-Engg)
+- [#1314](https://github.com/ethereum/remix/pull/1314) loop over dynamic array length will show warning (@Aniket-Engg)
+- [#1315](https://github.com/ethereum/remix/pull/1315) ethereumjs-util version updated to latest in all modules (@Aniket-Engg)
+- [#1311](https://github.com/ethereum/remix/pull/1311) transaction execution error recorded (@Aniket-Engg)
+- [#1313](https://github.com/ethereum/remix/pull/1313) delete from mapping will not show warning (@Aniket-Engg)
+- [#1312](https://github.com/ethereum/remix/pull/1312) update remix-tests unit tests (@0mkara)
+- [#1310](https://github.com/ethereum/remix/pull/1310) bytecode updated after library linking (@Aniket-Engg)
+- [#1307](https://github.com/ethereum/remix/pull/1307) changelog auto update (@Aniket-Engg)
+- [#1308](https://github.com/ethereum/remix/pull/1308) Separate AST blocks in remix-analyzer tests (@Aniket-Engg)
+- [#1306](https://github.com/ethereum/remix/pull/1306) changelog updated (@Aniket-Engg)
+
 <a name="v0.1.21"></a>
 # [v0.1.21](https://github.com/ethereum/remix/releases/tag/v0.1.21) - 30 Sep 2019
 
