@@ -73,7 +73,7 @@ function getMappingLocation (key, position) {
   mappingP = ethutil.setLengthLeft(mappingP, 32)
   var mappingKeyBuf = concatTypedArrays(mappingK, mappingP)
   var mappingKeyPreimage = '0x' + mappingKeyBuf.toString('hex')
-  var mappingStorageLocation = ethutil.sha3(mappingKeyPreimage)
+  var mappingStorageLocation = ethutil.keccak(mappingKeyPreimage)
   mappingStorageLocation = new ethutil.BN(mappingStorageLocation, 16)
   return mappingStorageLocation
 }
