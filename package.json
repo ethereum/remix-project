@@ -54,7 +54,7 @@
     "npm-run-all": "^4.0.2",
     "onchange": "^3.2.1",
     "remix-analyzer": "0.3.16",
-    "remix-debug": "0.3.17",
+    "remix-debug": "0.3.18",
     "remix-lib": "0.4.15",
     "remix-solidity": "0.3.18",
     "remix-tabs": "1.0.48",
