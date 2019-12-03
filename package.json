@@ -55,7 +55,7 @@
     "onchange": "^3.2.1",
     "remix-analyzer": "0.3.15",
     "remix-debug": "0.3.16",
-    "remix-lib": "0.4.14",
+    "remix-lib": "0.4.15",
     "remix-solidity": "0.3.17",
     "remix-tabs": "1.0.48",
     "remix-tests": "0.1.20",
