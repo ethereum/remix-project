@@ -171,7 +171,7 @@ class VmDebuggerLogic {
       if (!self.storageResolver) return
 
       if (index !== self.traceLength - 1) {
-        return self.event.trigger('traceLengthUpdate', [{}])
+        return self.event.trigger('traceStorageUpdate', [{}])
       }
       var storageJSON = {}
       for (var k in self.addresses) {
