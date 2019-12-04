@@ -169,8 +169,8 @@ class VmDebuggerLogic {
       if (index < 0) return
       if (self.stepManager.currentStepIndex !== index) return
       if (!self.storageResolver) return
-
-      if (index !== self.traceLength - 1) {
+      // Clean up storage update
+      if (index === self.traceLength - 1) {
         return self.event.trigger('traceStorageUpdate', [{}])
       }
       var storageJSON = {}
