@@ -128,6 +128,7 @@ Debugger.prototype.debugTx = function (tx, loadingCb) {
     self.debugger.codeManager.resolveStep(stepIndex, tx)
     self.step_manager.event.trigger('indexChanged', [stepIndex])
     self.vmDebuggerLogic.event.trigger('indexChanged', [stepIndex])
+    self.vmDebuggerLogic.debugger.event.trigger('indexChanged', [stepIndex])
     self.registerAndHighlightCodeItem(stepIndex)
   })
 
