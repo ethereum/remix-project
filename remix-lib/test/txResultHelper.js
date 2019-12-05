@@ -46,12 +46,11 @@ const VM_RESULT = {
     gasRefund: new BN(0),
     gasUsed: new BN(GAS_USED_INT),
     status: STATUS_OK,
-    vm: {
-      exception: 1,
+    execResult: {
       exceptionError: null,
       gasRefund: new BN(0),
       gasUsed: new BN(GAS_USED_INT),
-      return: RETURN_VALUE_BUFFER
+      returnValue: RETURN_VALUE_BUFFER
     }
   },
   transactionHash: TRANSACTION_HASH
@@ -103,8 +102,7 @@ tape('converts VM result to RemixTx', function (t) {
   t.equal(remixTx.return, RETURN_VALUE_HEX)
   t.equal(remixTx.error, null)
 
-  txResult.result.vm.exception = 0
-  txResult.result.vm.exceptionError = 'this is an error'
+  txResult.result.execResult.exceptionError = 'this is an error'
   remixTx = resultToRemixTx(txResult)
   t.equal(remixTx.error, 'this is an error')
 
