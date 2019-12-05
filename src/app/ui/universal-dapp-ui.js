@@ -54,12 +54,12 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   let self = this
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   address = ethJSUtil.toChecksumAddress(address)
-  var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
+  var instance = yo`<div class="instance run-instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
   const context = this.blockchain.context()
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
-    <div class="${css.title} alert alert-secondary p-2">
+    <div class="${css.title} alert alert-secondary run-instance-header">
       <button class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}">
         <i class="fas fa-angle-right" aria-hidden="true"></i>
       </button>
@@ -87,7 +87,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   title.querySelector('.btn-group').appendChild(close)
 
   var contractActionsWrapper = yo`
-    <div class="${css.cActionsWrapper}">
+    <div class="${css.cActionsWrapper} run-instance-content">
     </div>
   `
 
@@ -97,7 +97,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   }
 
   function toggleClass (e) {
-    $(instance).toggleClass(`${css.hidesub}`)
+    $(instance).toggleClass(`${css.hidesub} expanded`)
     // e.currentTarget.querySelector('i')
     e.currentTarget.querySelector('i').classList.toggle(`fa-angle-right`)
     e.currentTarget.querySelector('i').classList.toggle(`fa-angle-down`)
@@ -223,7 +223,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     self.blockchain.getInputs(args.funABI)
   )
 
-  const contractActionsContainer = yo`<div class="${css.contractActionsContainer}" >${multiParamManager.render()}</div>`
+  const contractActionsContainer = yo`<div class="${css.contractActionsContainer} run-instance-container" >${multiParamManager.render()}</div>`
   contractActionsContainer.appendChild(outputOverride)
 
   return contractActionsContainer
