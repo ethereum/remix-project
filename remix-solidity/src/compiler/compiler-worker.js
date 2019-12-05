@@ -17,15 +17,16 @@ module.exports = function (self) {
         compileJSON = null
 
         self.importScripts(data.data)
-        
+
         var compiler = solc(self.Module)
 
         compileJSON = function (input) {
           try {
-            return compiler.compile(input, function (path) {
+            let missingInputsCallback = function (path) {
               missingInputs.push(path)
               return { 'error': 'Deferred import' }
-            })
+            }
+            return compiler.compile(input, { import: missingInputsCallback })
           } catch (exception) {
             return JSON.stringify({ error: 'Uncaught JavaScript exception:\n' + exception })
           }

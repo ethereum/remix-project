@@ -41,7 +41,7 @@
     "remix-lib": "^0.2.9",
     "remix-solidity": "^0.1.11",
     "selenium-standalone": "^6.0.1",
-    "solc": "^0.4.13",
+    "solc": "^0.5.13",
     "standard": "^7.0.1",
     "standard-reporter": "^1.0.5",
     "tape": "^4.6.0",
