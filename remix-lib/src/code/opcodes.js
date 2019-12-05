@@ -2,6 +2,8 @@
 var codes = {
   // 0x0 range - arithmetic ops
   // name, baseCost, off stack, on stack, dynamic, async
+  // @todo can be improved while refactoring
+  
   0x00: ['STOP', 0, 0, 0, false],
   0x01: ['ADD', 3, 2, 1, false],
   0x02: ['MUL', 5, 2, 1, false],
@@ -36,7 +38,7 @@ var codes = {
 
   // 0x30 range - closure state
   0x30: ['ADDRESS', 2, 0, 1, true],
-  0x31: ['BALANCE', 400, 1, 1, true, true],
+  0x31: ['BALANCE', 700, 1, 1, true, true],
   0x32: ['ORIGIN', 2, 0, 1, true],
   0x33: ['CALLER', 2, 0, 1, true],
   0x34: ['CALLVALUE', 2, 0, 1, true],
@@ -50,6 +52,7 @@ var codes = {
   0x3c: ['EXTCODECOPY', 700, 4, 0, true, true],
   0x3d: ['RETURNDATASIZE', 2, 0, 1, true],
   0x3e: ['RETURNDATACOPY', 3, 3, 0, true],
+  0x3f: ['EXTCODEHASH', 400, 3, 0, true],
 
   // '0x40' range - block operations
   0x40: ['BLOCKHASH', 20, 1, 1, true, true],
@@ -58,13 +61,15 @@ var codes = {
   0x43: ['NUMBER', 2, 0, 1, true],
   0x44: ['DIFFICULTY', 2, 0, 1, true],
   0x45: ['GASLIMIT', 2, 0, 1, true],
+  0x46: ['CHAINID', 2, 0, 1, false],
+  0x47: ['SELFBALANCE', 5, 0, 1, false],
 
   // 0x50 range - 'storage' and execution
   0x50: ['POP', 2, 1, 0, false],
   0x51: ['MLOAD', 3, 1, 1, false],
   0x52: ['MSTORE', 3, 2, 0, false],
   0x53: ['MSTORE8', 3, 2, 0, false],
-  0x54: ['SLOAD', 200, 1, 1, true, true],
+  0x54: ['SLOAD', 800, 1, 1, true, true],
   0x55: ['SSTORE', 0, 2, 0, true, true],
   0x56: ['JUMP', 8, 1, 0, false],
   0x57: ['JUMPI', 10, 2, 0, false],
