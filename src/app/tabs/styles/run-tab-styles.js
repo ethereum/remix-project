@@ -6,17 +6,16 @@ var css = csjs`
     flex-direction: column;
   }
   .instanceContainerTitle {
-    font-weight: bold;
-    margin-bottom: 25px;
-    font-size: 12px;
     display: flex;
     justify-content: space-between;
-    padding-left: 15px;
-    height: 0px;
+    align-items: center;
+    padding-left: 10px;
+    margin: 0 0 16px;
+    font-size: 14px;
+    line-height: 19px;
   }
   .settings {
-    margin-bottom: 2%;
-    padding: 10px 0px 15px 15px;
+    padding: 16px 24px;
   }
   .recorderCount {
     /* margin-right: 30px; */
@@ -27,33 +26,34 @@ var css = csjs`
     /* font-size: 10px; */
   }
   .crow {
-    margin-top: .5em;
-    display: flex;
-    align-items: center;
-    /*width: 500px;*/
+    display: block;
+    margin-top: 8px;
   }
   .col1 {
     width: 30%;
     float: left;
     align-self: center;
   }
-  .col1_1 {
-    font-size: 12px;
-    min-width: 75px;
-    float: left;
-    align-self: center;
+  .settingsLabel {
+    font-size: 11px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
   }
   .environment {
     display: flex;
     align-items: center;
     position: relative;
     width: 100%;
-    padding-right: 25px;
+  }
+  .environment a {
+    margin-left: 7px;
   }
   .account {
     display: flex;
     align-items: center;
-    width: 90%;
+  }
+  .account i {
+    margin-left: 12px;
   }
   .col2 {
     border-radius: 3px;
@@ -74,7 +74,7 @@ var css = csjs`
     margin-bottom: 2%;
     border: none;
     text-align: center;
-    padding: 10px 0px 15px 0px;
+    padding: 16px 14px;
   }
   .pendingTxsContainer  {
     display: flex;
@@ -84,8 +84,7 @@ var css = csjs`
     text-align: center;
   }
   .container {
-    margin-bottom: 4%;
-    padding-left: 15px;
+    padding: 16px 24px;
   }
   .recorderCollapsedView,
   .recorderExpandedView {
@@ -104,7 +103,14 @@ var css = csjs`
   .subcontainer {
     display: flex;
     flex-direction: row;
-    align-items: baseline;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .subcontainer i {
+    width: 16px;
+    display: flex;
+    justify-content: center;
+    margin-left: 1px;
   }
   .button button{
     flex: none;
@@ -127,13 +133,13 @@ var css = csjs`
     border-right: 0;
   }
   .atAddressSect {
-    margin-top: 6px;
+    margin-top: 8px;
     height: 32px;
   }
   .atAddressSect input {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    height: 100%;
+    height: 32px;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
   }
   .ataddressinput {
     padding: .25rem;
@@ -141,7 +147,7 @@ var css = csjs`
   .create {
   }
   .input {
-    font-size: 10px;
+    font-size: 10px !important;
   }
   .noInstancesText {
     font-style: italic;
@@ -209,10 +215,11 @@ var css = csjs`
     width: 145px;
   }
   .orLabel {
-    margin-left: 44px;
+    text-align: center;
+    text-transform: uppercase;
   }
   .infoDeployAction {
-    margin-left: 5px;
+    margin-left: 1px;
     font-size: 13px;
     color: var(--info);
   }
@@ -221,18 +228,17 @@ var css = csjs`
     display: flex;
   }
   .gasNval {
-    /* transform: scale(0.7); */
-    /* transform-origin: left; */
-    margin-right: 10px;
-    width: 100px;
+    width: 55%;
     font-size: 0.8rem;
   }
   .gasNvalUnit {
-    /* transform: scale(0.7); */
-    /* transform-origin: left; */
-    margin-right: 10px;
+    width: 41%;
+    margin-left: 10px;
     font-size: 0.8rem;
-    width: 70px;
+  }
+  .deployDropdown {
+    text-align: center;
+    text-transform: uppercase;
   }
 `
 

@@ -13,6 +13,9 @@ var css = csjs`
   }
   .ul_tv {
     list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border: none;
     -webkit-margin-before: 0px;
     -webkit-margin-after: 0px;
     -webkit-margin-start: 0px;
@@ -74,7 +77,7 @@ class TreeView {
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
     })
-    return yo`<ul key=${key} class="${css.ul_tv}">${children}</ul>`
+    return yo`<ul key=${key} class="${css.ul_tv} run-instance-list">${children}</ul>`
   }
 
   formatData (key, data, children, expand, keyPath) {
