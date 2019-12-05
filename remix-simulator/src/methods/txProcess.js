@@ -8,11 +8,8 @@ function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks,
     if (err) {
       return callback(err)
     }
-
-    let toReturn = '0x' + result.result.execResult.returnValue.toString('hex')
-    if (toReturn === '0x') {
-      toReturn = '0x0'
-    }
+    const returnValue = result.result.execResult.returnValue.toString('hex')
+    const toReturn = `0x${returnValue || '0'}`
     return callback(null, toReturn)
   }
 

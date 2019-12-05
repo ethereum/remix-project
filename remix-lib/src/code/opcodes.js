@@ -2,7 +2,7 @@
 var codes = {
   // 0x0 range - arithmetic ops
   // name, baseCost, off stack, on stack, dynamic, async
-  // @todo can be improved while refactoring
+  // @todo can be improved on basis of this: https://github.com/ethereumjs/ethereumjs-vm/blob/master/lib/evm/opcodes.ts
 
   0x00: ['STOP', 0, 0, 0, false],
   0x01: ['ADD', 3, 2, 1, false],
