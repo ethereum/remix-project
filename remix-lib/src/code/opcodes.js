@@ -3,7 +3,7 @@ var codes = {
   // 0x0 range - arithmetic ops
   // name, baseCost, off stack, on stack, dynamic, async
   // @todo can be improved while refactoring
-  
+
   0x00: ['STOP', 0, 0, 0, false],
   0x01: ['ADD', 3, 2, 1, false],
   0x02: ['MUL', 5, 2, 1, false],
