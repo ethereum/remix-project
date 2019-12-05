@@ -27,7 +27,7 @@ function resultToRemixTx (txResult) {
   if (isHexString(result)) {
     returnValue = result
   } else if (execResult !== undefined) {
-    returnValue = execResult.return
+    returnValue = execResult.returnValue
     errorMessage = execResult.exceptionError
   }
 
