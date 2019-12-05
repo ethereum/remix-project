@@ -1,6 +1,6 @@
 'use strict'
 var utileth = require('ethereumjs-util')
-var Tx = require('ethereumjs-tx')
+var Tx = require('ethereumjs-tx').Transaction
 var Block = require('ethereumjs-block')
 var BN = require('ethereumjs-util').BN
 var remixLib = require('remix-lib')
@@ -34,8 +34,7 @@ function sendTx (vm, from, to, value, data, cb) {
   Init VM / Send Transaction
 */
 function initVM (st, privateKey) {
-  var utileth = require('ethereumjs-util')
-  var VM = require('ethereumjs-vm')
+  var VM = require('ethereumjs-vm').default
   var Web3Providers = remixLib.vm.Web3Providers
   var address = utileth.privateToAddress(privateKey)
   var vm = new VM({
