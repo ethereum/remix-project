@@ -37,6 +37,7 @@ class CompilerContainer {
     }
     if (!this._view.compilationButton) return
     const button = this.compilationButton(name.split('/').pop())
+    this._disableCompileBtn(!name || name === '')
     yo.update(this._view.compilationButton, button)
   }
 
@@ -77,6 +78,7 @@ class CompilerContainer {
 
     this.compileTabLogic.compiler.event.register('loadingCompiler', () => {
       if (!this._view.compileIcon) return
+      this._disableCompileBtn(true)
       this._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
       this._view.compileIcon.classList.add(`${css.spinningIcon}`)
       this._view.warnCompilationSlow.style.visibility = 'hidden'
@@ -85,6 +87,7 @@ class CompilerContainer {
 
     this.compileTabLogic.compiler.event.register('compilerLoaded', () => {
       if (!this._view.compileIcon) return
+      this._disableCompileBtn(false)
       this._view.compileIcon.setAttribute('title', '')
       this._view.compileIcon.classList.remove(`${css.spinningIcon}`)
       if (this.data.autoCompile) this.compileIfAutoCompileOn()
@@ -103,17 +106,29 @@ class CompilerContainer {
    */
   compilationButton (name) {
     if (!name) name = ''
-    var displayed = name === '' ? '<no file selected>' : name
-    var el = yo`
-    <div class="px-2 mt-2 pb-0 d-flex">
-      <button class="btn btn-primary btn-block ${name === '' ? 'disabled' : ''}" title="Compile" onclick="${this.compile.bind(this)}">
+    const displayed = name === '' ? '<no file selected>' : name
+    const disabled = name === '' ? 'disabled' : ''
+    const compileBtn = yo`
+      <button id="compileBtn" class="btn btn-primary btn-block ${disabled}" title="Compile" onclick="${this.compile.bind(this)}">
         <span>${this._view.compileIcon} Compile ${displayed}</span>
       </button>
-    </div>`
-    if (name === '') {
-      el.setAttribute('disabled', 'true')
-    }
+    `
+    let el = yo`
+      <div class="px-2 mt-2 pb-0 d-flex">
+        ${compileBtn}
+      </div>
+    `
     return el
+  }
+
+  _disableCompileBtn (disable) {
+    let btn = document.querySelector("button[id='compileBtn']")
+    if (!btn) return
+    if (disable) {
+      btn.classList.add('disabled')
+    } else if (this.config.get('currentFile')) {
+      btn.classList.remove('disabled')
+    }
   }
 
   // Load solc compiler version according to pragma in contract file
@@ -220,7 +235,7 @@ class CompilerContainer {
               <div class="col-sm-4">
                 <div class="d-flex flex-row justify-content-end">
                   <label class="${css.compilerLabel} input-group-text pr-0 border-0 w-100" for="versionSelector">
-                    <button class="far fa-plus-square border-0 p-0 m-2 text-dark btn-sm" onclick="${(e) => this.promtCompiler(e)}" title="Add a custom compiler with URL"></button>
+                    <button class="far fa-plus-square border-0 p-0 mx-2 text-dark btn-sm" onclick="${(e) => this.promtCompiler(e)}" title="Add a custom compiler with URL"></button>
                     Compiler
                   </label>
                 </div>
