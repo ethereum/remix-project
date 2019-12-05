@@ -1,5 +1,5 @@
 'use strict'
-var EthJSTX = require('ethereumjs-tx')
+var EthJSTX = require('ethereumjs-tx').Transaction
 var EthJSBlock = require('ethereumjs-block')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
