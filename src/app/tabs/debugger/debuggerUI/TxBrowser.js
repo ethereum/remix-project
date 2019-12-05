@@ -123,8 +123,8 @@ TxBrowser.prototype.render = function () {
   }
   if (!this.state.txNumber) {
     view.querySelector("button[id='load']").setAttribute('disabled', '')
-  } else {
-    this.state.txNumberInput.removeAttribute('diabled', '')
+  } else if (!this.state.debugging) {
+    this.state.txNumberInput.removeAttribute('disabled')
   }
   if (!this.view) {
     this.view = view
