@@ -68,7 +68,7 @@ module.exports = {
       INTERNAL_ERROR: 'internal error',
       CREATE_COLLISION: 'create collision',
       STOP: 'stop',
-      REFUND_EXHAUSTED: 'refund exhausted',
+      REFUND_EXHAUSTED: 'refund exhausted'
     }
     var ret = {
       error: false,
