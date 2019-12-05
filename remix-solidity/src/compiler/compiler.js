@@ -101,7 +101,7 @@ function Compiler (handleImportCall) {
         var result
         try {
           var input = compilerInput(source.sources, {optimize: optimize, evmVersion: evmVersion, language: language, target: source.target})
-          result = compiler.compile(input, missingInputsCallback)
+          result = compiler.compile(input, { import: missingInputsCallback })
           result = JSON.parse(result)
         } catch (exception) {
           result = { error: { formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' } }
