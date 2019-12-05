@@ -21,14 +21,14 @@ function convertToPrefixedHex (input) {
 */
 function resultToRemixTx (txResult) {
   const { result, transactionHash } = txResult
-  const { status, vm, gasUsed, createdAddress, contractAddress } = result
+  const { status, execResult, gasUsed, createdAddress, contractAddress } = result
   let returnValue, errorMessage
 
   if (isHexString(result)) {
     returnValue = result
-  } else if (vm !== undefined) {
-    returnValue = vm.return
-    errorMessage = vm.exceptionError
+  } else if (execResult !== undefined) {
+    returnValue = execResult.return
+    errorMessage = execResult.exceptionError
   }
 
   return {

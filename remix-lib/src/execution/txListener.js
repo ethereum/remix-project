@@ -40,14 +40,13 @@ class TxListener {
       // in web3 mode && listen remix txs only
       if (!this._isListening) return // we don't listen
       if (this._loopId && executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
-
       var call = {
         from: from,
         to: to,
         input: data,
         hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
         isCall: true,
-        returnValue: executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result),
+        returnValue: executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result),
         envMode: executionContext.getProvider()
       }
 
@@ -80,9 +79,9 @@ class TxListener {
 
     function addExecutionCosts (txResult, tx) {
       if (txResult && txResult.result) {
-        if (txResult.result.vm) {
-          tx.returnValue = txResult.result.vm.return
-          if (txResult.result.vm.gasUsed) tx.executionCost = txResult.result.vm.gasUsed.toString(10)
+        if (txResult.result.execResult) {
+          tx.returnValue = txResult.result.execResult.returnValue
+          if (txResult.result.execResult.gasUsed) tx.executionCost = txResult.result.execResult.gasUsed.toString(10)
         }
         if (txResult.result.gasUsed) tx.transactionCost = txResult.result.gasUsed.toString(10)
       }
