@@ -64,7 +64,11 @@ module.exports = {
       INVALID_JUMP: 'invalid JUMP',
       INVALID_OPCODE: 'invalid opcode',
       REVERT: 'revert',
-      STATIC_STATE_CHANGE: 'static state change'
+      STATIC_STATE_CHANGE: 'static state change',
+      INTERNAL_ERROR: 'internal error',
+      CREATE_COLLISION: 'create collision',
+      STOP: 'stop',
+      REFUND_EXHAUSTED: 'refund exhausted',
     }
     var ret = {
       error: false,
