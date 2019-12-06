@@ -252,6 +252,7 @@ var css = csjs`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: 11px;
   }
   .hasArgs .contractActionsContainerMulti button {
     border-radius: 3px;
