@@ -6,7 +6,7 @@ var util = require('../src/util')
 var compiler = require('solc')
 var compilerInput = require('../src/helpers/compilerHelper').compilerInput
 var executionContext = require('../src/execution/execution-context')
-var solidityVersion = 'v0.5.11+commit.c082d0b4'
+var solidityVersion = 'v0.5.13+commit.5b0b510c'
 
 /* tape *********************************************************** */
 tape('load compiler ' + solidityVersion, function (t) {
@@ -112,8 +112,10 @@ tape('ContractNestedArrayParameters - (TxFormat.buildData) - format nested array
 })
 
 function testWithNestedArrayInput (st, params, expected) {
-  txFormat.buildData('nestedArrayContractTest', context.contract, context.output.contracts, true, context.contract.abi[1], params, (error, data) => {
-    if (error) { return st.fails(error) }
+  txFormat.buildData('nestedArrayContractTest', context.contract, context.output.contracts, true, context.contract.abi[4], params, (error, data) => {
+    if (error) {
+      return st.fails(error)
+    }
     console.log(data)
     if (!data.dataHex.endsWith(expected)) {
       st.fail(`result of buildData ${data.dataHex} should end with ${expected} . `)
@@ -187,7 +189,7 @@ function testLinkLibrary2 (st, callbackDeployLibraries) {
     }
   }
 
-  var data = '608060405234801561001057600080fd5b506101e1806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c80636d4ce63c14610030575b600080fd5b61003861003a565b005b73f7a10e525d4b168f45f74db1b61f63d3e7619e116344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b15801561007e57600080fd5b505af4158015610092573d6000803e3d6000fd5b5050505073f7a10e525d4b168f45f74db1b61f63d3e7619e336344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b1580156100da57600080fd5b505af41580156100ee573d6000803e3d6000fd5b5050505073f7a10e525d4b168f45f74db1b61f63d3e7619e336344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b15801561013657600080fd5b505af415801561014a573d6000803e3d6000fd5b5050505073f7a10e525d4b168f45f74db1b61f63d3e7619e116344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b15801561019257600080fd5b505af41580156101a6573d6000803e3d6000fd5b5050505056fea265627a7a72315820dd9fcfc020e6f69aedda5976b9a882d7955d9b71df3b292a57adddb96d0f7a2064736f6c634300050b0032'
+  var data = '608060405234801561001057600080fd5b506101e1806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c80636d4ce63c14610030575b600080fd5b61003861003a565b005b73f7a10e525d4b168f45f74db1b61f63d3e7619e116344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b15801561007e57600080fd5b505af4158015610092573d6000803e3d6000fd5b5050505073f7a10e525d4b168f45f74db1b61f63d3e7619e336344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b1580156100da57600080fd5b505af41580156100ee573d6000803e3d6000fd5b5050505073f7a10e525d4b168f45f74db1b61f63d3e7619e336344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b15801561013657600080fd5b505af415801561014a573d6000803e3d6000fd5b5050505073f7a10e525d4b168f45f74db1b61f63d3e7619e116344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b15801561019257600080fd5b505af41580156101a6573d6000803e3d6000fd5b5050505056fea265627a7a723158203a6c52f87a5f6686d86ee093880a398214dccf1c90f755f6628d2827b6f4a66264736f6c634300050d0032'
 
   var deployMsg = ['creation of library test.sol:lib1 pending...',
   'creation of library test.sol:lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2 pending...']
@@ -198,7 +200,6 @@ function testLinkLibrary2 (st, callbackDeployLibraries) {
     var libReference = context.contract.evm.bytecode.linkReferences['test.sol']['lib1']
     st.equal(linkedbyteCode.substr(2 * libReference[0].start, 40), librariesReference['test.sol']['lib1'].replace('0x', ''))
     st.equal(linkedbyteCode.substr(2 * libReference[1].start, 40), librariesReference['test.sol']['lib1'].replace('0x', ''))
-
     libReference = context.contract.evm.bytecode.linkReferences['test.sol']['lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2']
     st.equal(linkedbyteCode.substr(2 * libReference[0].start, 40), librariesReference['test.sol']['lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2'].replace('0x', ''))
     st.equal(linkedbyteCode.substr(2 * libReference[1].start, 40), librariesReference['test.sol']['lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2'].replace('0x', ''))
@@ -248,8 +249,8 @@ tape('test fallback function', function (t) {
     var output = compiler.compile(compilerInput(fallbackFunction))
     output = JSON.parse(output)
     var contract = output.contracts['test.sol']['fallbackFunctionContract']
-    st.equal(txHelper.encodeFunctionId(contract.abi[0]), '0x805da4ad')
-    st.equal(txHelper.encodeFunctionId(contract.abi[1]), '0x')
+    st.equal(txHelper.encodeFunctionId(contract.abi[1]), '0x805da4ad')
+    st.equal(txHelper.encodeFunctionId(contract.abi[0]), '0x')
   })
 })
 
@@ -288,16 +289,16 @@ tape('test abiEncoderV2 array of tuple', function (t) {
     var output = compiler.compile(compilerInput(abiEncoderV2ArrayOfTuple))
     output = JSON.parse(output)
     var contract = output.contracts['test.sol']['test']
-    txFormat.encodeParams('[34, "test"]', contract.abi[0], (error, encoded) => {
+    txFormat.encodeParams('[34, "test"]', contract.abi[1], (error, encoded) => {
       console.log(error)
-      var decoded = txFormat.decodeResponse(util.hexToIntArray(encoded.dataHex), contract.abi[0])
+      var decoded = txFormat.decodeResponse(util.hexToIntArray(encoded.dataHex), contract.abi[1])
       console.log(decoded)
       st.equal(decoded[0], 'tuple(uint256,string): _strucmts 34,test')
     })
 
-    txFormat.encodeParams('[[34, "test"], [123, "test2"]]', contract.abi[1], (error, encoded) => {
+    txFormat.encodeParams('[[34, "test"], [123, "test2"]]', contract.abi[2], (error, encoded) => {
       console.log(error)
-      var decoded = txFormat.decodeResponse(util.hexToIntArray(encoded.dataHex), contract.abi[1])
+      var decoded = txFormat.decodeResponse(util.hexToIntArray(encoded.dataHex), contract.abi[2])
       console.log(decoded)
       st.equal(decoded[0], 'tuple(uint256,string)[]: strucmts 34,test,123,test2')
     })
