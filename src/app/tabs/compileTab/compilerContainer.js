@@ -37,7 +37,7 @@ class CompilerContainer {
     }
     if (!this._view.compilationButton) return
     const button = this.compilationButton(name.split('/').pop())
-    this._disableCompileBtn(!name || name === '')
+    this._disableCompileBtn(!name)
     yo.update(this._view.compilationButton, button)
   }
 
@@ -104,27 +104,25 @@ class CompilerContainer {
   /**************
    * SUBCOMPONENT
    */
-  compilationButton (name) {
-    if (!name) name = ''
-    const displayed = name === '' ? '<no file selected>' : name
-    const disabled = name === '' ? 'disabled' : ''
+  compilationButton (name = '') {
+    const displayed = name || '<no file selected>'
+    const disabled = name ? '' : 'disabled'
     const compileBtn = yo`
       <button id="compileBtn" class="btn btn-primary btn-block ${disabled}" title="Compile" onclick="${this.compile.bind(this)}">
         <span>${this._view.compileIcon} Compile ${displayed}</span>
       </button>
     `
-    let el = yo`
+    return yo`
       <div class="px-2 mt-2 pb-0 d-flex">
         ${compileBtn}
       </div>
     `
-    return el
   }
 
-  _disableCompileBtn (disable) {
-    let btn = document.querySelector("button[id='compileBtn']")
+  _disableCompileBtn (shouldDisable) {
+    let btn = document.getElementById('compileBtn')
     if (!btn) return
-    if (disable) {
+    if (shouldDisable) {
       btn.classList.add('disabled')
     } else if (this.config.get('currentFile')) {
       btn.classList.remove('disabled')
