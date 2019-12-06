@@ -264,7 +264,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
               }
             }
             if (lookupOnly) {
-              var decoded = decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
+              var decoded = decodeResponseToTreeView(executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result), args.funABI)
               outputCb(decoded)
             }
           } else {
