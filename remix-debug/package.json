@@ -19,9 +19,8 @@
   "main": "./index.js",
   "dependencies": {
     "commander": "^2.19.0",
-    "ethereumjs-util": "^6.1.0",
-    "ethereumjs-vm": "3.0.0",
-    "fast-async": "^6.1.2",
+    "ethereumjs-util": "^6.2.0",
+    "ethereumjs-vm": "4.1.1",
     "remix-lib": "0.4.15",
     "web3": "0.20.6"
   },

@@ -64,16 +64,20 @@ module.exports = {
       INVALID_JUMP: 'invalid JUMP',
       INVALID_OPCODE: 'invalid opcode',
       REVERT: 'revert',
-      STATIC_STATE_CHANGE: 'static state change'
+      STATIC_STATE_CHANGE: 'static state change',
+      INTERNAL_ERROR: 'internal error',
+      CREATE_COLLISION: 'create collision',
+      STOP: 'stop',
+      REFUND_EXHAUSTED: 'refund exhausted'
     }
     var ret = {
       error: false,
       message: ''
     }
-    if (!txResult.result.vm.exceptionError) {
+    if (!txResult.result.execResult.exceptionError) {
       return ret
     }
-    var exceptionError = txResult.result.vm.exceptionError.error || ''
+    var exceptionError = txResult.result.execResult.exceptionError.error || ''
     var error = `VM error: ${exceptionError}.\n`
     var msg
     if (exceptionError === errorCode.INVALID_OPCODE) {
@@ -83,7 +87,7 @@ module.exports = {
       msg = `\tThe transaction ran out of gas. Please increase the Gas Limit.\n`
       ret.error = true
     } else if (exceptionError === errorCode.REVERT) {
-      var returnData = txResult.result.vm.return
+      var returnData = txResult.result.execResult.returnValue
       // It is the hash of Error(string)
       if (returnData && (returnData.slice(0, 4).toString('hex') === '08c379a0')) {
         var abiCoder = new ethers.utils.AbiCoder()
