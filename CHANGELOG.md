@@ -1,12 +1,12 @@
 ## Change Log
 
 ### v0.1.23 (2019/12/06 18:29 +00:00)
-- [#1353](https://github.com/ethereum/remix/pull/1351) Release 0.1.23 (@Aniket-Engg )
+- [#1353](https://github.com/ethereum/remix/pull/1353) Release 0.1.23 (@Aniket-Engg )
 - [#1352](https://github.com/ethereum/remix/pull/1352) solc version updated for remix-lib tests (@Aniket-Engg )
 - [#1351](https://github.com/ethereum/remix/pull/1351) use new solc version. Update the interface (@LianaHus)
 - [#1349](https://github.com/ethereum/remix/pull/1349) event triggered to get full storage (@Aniket-Engg )
 - [#1347](https://github.com/ethereum/remix/pull/1347) Fixed a bug with the wrong event name (@EthanWan )
-- [#1346](https://github.com/ethereum/remix/pull/1349) changelog & gulpfile updated (@Aniket-Engg )
+- [#1346](https://github.com/ethereum/remix/pull/1346) changelog & gulpfile updated (@Aniket-Engg )
 - [#1341](https://github.com/ethereum/remix/pull/1341) ethereumjs-vm version update with istanbul support (@Aniket-Engg )
 
 ## Change Log
