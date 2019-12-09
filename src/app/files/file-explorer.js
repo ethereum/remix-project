@@ -209,7 +209,9 @@ function fileExplorer (localRegistry, files, menuItems) {
     const provider = self._deps.fileManager.fileProviderOf(key)
     actions['Create File'] = () => self.createNewFile(key)
     actions['Create Folder'] = () => self.createNewFolder(key)
-    if (provider.isExternalFolder(key)) {
+    // todo not fully implemented. Readd later when fixed
+    // https://github.com/ethereum/remix-ide/issues/2386
+    /* if (provider.isExternalFolder(key)) {
       actions['Discard changes'] = () => {
         modalDialogCustom.confirm(
           'Discard changes',
@@ -218,7 +220,8 @@ function fileExplorer (localRegistry, files, menuItems) {
           () => {}
         )
       }
-    } else {
+    } else { */
+     if (! provider.isExternalFolder(key)) {
       const folderPath = extractExternalFolder(key)
       actions['Rename'] = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
