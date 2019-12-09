@@ -457,6 +457,17 @@ class CompileTab extends ViewPlugin {
     return this._view.el
   }
 
+  onDeactivation () {
+    this.compilerContainer.deactivate()
+    this.editor.event.unregister('contentChanged')
+    this.compiler.event.unregister('loadingCompiler')
+    this.compiler.event.unregister('compilerLoaded')
+    this.compileTabLogic.event.off('startingCompilation')
+    this.fileManager.events.off('currentFileChanged')
+    this.fileManager.events.off('noFileSelected')
+    this.compiler.event.unregister('compilationFinished')
+    globalRegistry.get('themeModule').api.events.off('themeChanged')
+  }
 }
 
 module.exports = CompileTab
