@@ -1,6 +1,8 @@
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 
+var executionContext = require('../../execution-context')
+
 var Terminal = require('./terminal')
 var globalRegistry = require('../../global/registry')
 var { TabProxy } = require('./tab-proxy.js')
@@ -99,7 +101,8 @@ export class MainView {
     self._components.terminal = new Terminal({
       appManager: this.appManager,
       eventsDecoder: this.eventsDecoder,
-      txListener: this.txListener
+      txListener: this.txListener,
+      executionContext: executionContext
     },
       {
         getPosition: (event) => {

@@ -1,5 +1,4 @@
 'use strict'
-var executionContext = require('../../execution-context')
 var CompilerAbstract = require('../compiler/compiler-abstract')
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
@@ -12,9 +11,10 @@ const profile = {
 }
 
 class CompilerMetadata extends Plugin {
-  constructor (fileManager, config) {
+  constructor (executionContext, fileManager, config) {
     super(profile)
     var self = this
+    self.executionContext = executionContext
     self.fileManager = fileManager
     self.config = config
     self.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'görli:5', 'Custom']
@@ -97,7 +97,7 @@ class CompilerMetadata extends Plugin {
       var provider = self.fileManager.currentFileProvider()
       var path = self.fileManager.currentPath()
       if (provider && path) {
-        executionContext.detectNetwork((err, { id, name } = {}) => {
+        self.executionContext.detectNetwork((err, { id, name } = {}) => {
           if (err) {
             console.log(err)
           } else {

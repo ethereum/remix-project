@@ -9,7 +9,6 @@ var SourceHighlighter = require('../../editor/sourceHighlighter')
 
 var EventManager = require('../../../lib/events')
 
-var executionContext = require('../../../execution-context')
 var globalRegistry = require('../../../global/registry')
 
 var remixLib = require('remix-lib')
@@ -31,8 +30,9 @@ var css = csjs`
 
 class DebuggerUI {
 
-  constructor (container) {
+  constructor (container, executionContext) {
     this.registry = globalRegistry
+    this.executionContext = executionContext
     this.event = new EventManager()
 
     this.isActive = false
@@ -105,13 +105,13 @@ class DebuggerUI {
 
   getDebugWeb3 () {
     return new Promise((resolve, reject) => {
-      executionContext.detectNetwork((error, network) => {
+      this.executionContext.detectNetwork((error, network) => {
         let web3
         if (error || !network) {
-          web3 = init.web3DebugNode(executionContext.web3())
+          web3 = init.web3DebugNode(this.executionContext.web3())
         } else {
           const webDebugNode = init.web3DebugNode(network.name)
-          web3 = !webDebugNode ? executionContext.web3() : webDebugNode
+          web3 = !webDebugNode ? this.executionContext.web3() : webDebugNode
         }
         init.extendWeb3(web3)
         resolve(web3)

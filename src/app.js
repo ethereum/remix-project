@@ -23,6 +23,8 @@ var toolTip = require('./app/ui/tooltip')
 var CompilerMetadata = require('./app/files/compiler-metadata')
 var CompilerImport = require('./app/compiler/compiler-imports')
 
+var executionContext = require('./execution-context')
+
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
 
@@ -222,13 +224,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const fileManager = new FileManager(editor)
   registry.put({api: fileManager, name: 'filemanager'})
   // ----------------- compilation metadata generation servive ----------------------------
-  const compilerMetadataGenerator = new CompilerMetadata(fileManager, registry.get('config').api)
+  const compilerMetadataGenerator = new CompilerMetadata(executionContext, fileManager, registry.get('config').api)
   // ----------------- compilation result service (can keep track of compilation results) ----------------------------
   const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
   registry.put({api: compilersArtefacts, name: 'compilersartefacts'})
   // ----------------- universal dapp: run transaction, listen on transactions, decode events
   const udapp = new UniversalDApp(registry.get('config').api)
-  const {eventsDecoder, txlistener} = makeUdapp(udapp, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
+  const {eventsDecoder, txlistener} = makeUdapp(udapp, executionContext, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
   // ----------------- network service (resolve network id / name) ----------------------------
   const networkModule = new NetworkModule()
   // ----------------- convert offset to line/column service ----------------------------
@@ -293,6 +295,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   )
   const run = new RunTab(
     udapp,
+    executionContext,
     registry.get('config').api,
     registry.get('filemanager').api,
     registry.get('editor').api,
