@@ -2,6 +2,7 @@ var yo = require('yo-yo')
 var css = require('./styles/debugger-tab-styles')
 
 var DebuggerUI = require('./debugger/debuggerUI')
+var executionContext = require('../../execution-context')
 
 import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
