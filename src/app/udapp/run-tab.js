@@ -17,7 +17,6 @@ const DropdownLogic = require('../tabs/runTab/model/dropdownlogic.js')
 const ContractDropdownUI = require('../tabs/runTab/contractDropdown.js')
 
 const UniversalDAppUI = require('../ui/universal-dapp-ui')
-const executionContext = require('../../execution-context')
 
 const profile = {
   name: 'udapp',
@@ -35,11 +34,12 @@ const profile = {
 
 export class RunTab extends LibraryPlugin {
 
-  constructor (udapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
+  constructor (udapp, executionContext, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
     super(udapp, profile)
     this.event = new EventManager()
     this.config = config
     this.udapp = udapp
+    this.executionContext = executionContext
     this.fileManager = fileManager
     this.editor = editor
     this.logCallback = (msg) => { mainView.getTerminal().logHtml(msg) }
@@ -200,9 +200,9 @@ export class RunTab extends LibraryPlugin {
 
   render () {
     this.onActivationInternal()
-    executionContext.init(this.config)
-    executionContext.stopListenOnLastBlock()
-    executionContext.listenOnLastBlock()
+    this.executionContext.init(this.config)
+    this.executionContext.stopListenOnLastBlock()
+    this.executionContext.listenOnLastBlock()
     this.udapp.resetEnvironment()
     this.renderInstanceContainer()
     this.renderSettings(this.udapp)

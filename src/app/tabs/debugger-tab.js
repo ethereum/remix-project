@@ -2,6 +2,7 @@ var yo = require('yo-yo')
 var css = require('./styles/debugger-tab-styles')
 
 var DebuggerUI = require('./debugger/debuggerUI')
+var executionContext = require('../../execution-context')
 
 import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
@@ -33,7 +34,7 @@ class DebuggerTab extends ViewPlugin {
       <div class="${css.debuggerTabView}" id="debugView">
         <div id="debugger" class="${css.debugger}"></div>
       </div>`
-    this.debuggerUI = new DebuggerUI(this.el.querySelector('#debugger'))
+    this.debuggerUI = new DebuggerUI(this.el.querySelector('#debugger'), executionContext)
     return this.el
   }
 
