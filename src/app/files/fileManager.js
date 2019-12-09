@@ -59,7 +59,8 @@ class FileManager extends Plugin {
   }
 
   fileChangedEvent (path) {
-    this.syncEditor(path)
+    // todo. use only for discard changes function.
+    //this.syncEditor(path)
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {

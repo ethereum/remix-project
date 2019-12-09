@@ -136,7 +136,7 @@ class CompilerContainer {
       if (pragmaArr && pragmaArr.length === 1) {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
         const pragma = pragmaStr.substring(0, pragmaStr.length - 1)
-        const releasedVersions = this.data.allversions.filter(obj => !obj.prerelease).map(obj => obj.version)
+        const releasedVersions = (this.data.allversions) ? this.data.allversions.filter(obj => !obj.prerelease).map(obj => obj.version) : []
         const allVersions = this.data.allversions.map(obj => this._retrieveVersion(obj.version))
         const currentCompilerName = this._retrieveVersion(this._view.versionSelector.selectedOptions[0].label)
         // contains only numbers part, for example '0.4.22'

@@ -45,7 +45,7 @@ module.exports = (event, items) => {
     current.onclick = () => { hide(null, true); items[item]() }
     return current
   })
-  var container = yo`<div class="p-1 ${css.container} bg-light"><ul id='menuitems'>${menu}</ul></div>`
+  var container = yo`<div class="p-1 ${css.container} bg-light shadow border"><ul id='menuitems'>${menu}</ul></div>`
   container.style.left = event.pageX + 'px'
   container.style.top = event.pageY + 'px'
   container.style.display = 'block'
