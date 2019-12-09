@@ -40,12 +40,12 @@ module.exports = (event, items) => {
     window.removeEventListener('click', hide)
   }
 
-  var menu = Object.keys(items).map((item, index) => {
-    var current = yo`<li id="menuitem${item.toLowerCase()}" class=${css.liitem}>${item}</li>`
+  const menu = Object.keys(items).map((item, index) => {
+    const current = yo`<li id="menuitem${item.toLowerCase()}" class=${css.liitem}>${item}</li>`
     current.onclick = () => { hide(null, true); items[item]() }
     return current
   })
-  var container = yo`<div class="p-1 ${css.container} bg-light shadow border"><ul id='menuitems'>${menu}</ul></div>`
+  const container = yo`<div class="p-1 ${css.container} bg-light shadow border"><ul id='menuitems'>${menu}</ul></div>`
   container.style.left = event.pageX + 'px'
   container.style.top = event.pageY + 'px'
   container.style.display = 'block'
