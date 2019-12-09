@@ -19,16 +19,16 @@ module.exports = {
         .click('#runTabView .instance div[class^="title"]')
         .click('#runTabView .instance div[class^="title"]')
         .testFunction('f - transact (not payable)',
-          '0xa178c603400a184ce5fedbcfab392d9b77822f6ffa7facdec693aded214523bc',
-          `[vm]\nfrom:0xca3...a733c\nto:TestContract.f() 0x692...77b3a\nvalue:0 wei\ndata:0x261...21ff0\nlogs:0\nhash:0xa17...523bc`, null,
+          '0x38bb944fa4709ed9e163d6c670259f97284b4defd916d512a2fcc3f35bb53e03',
+          `[vm]\nfrom:0xca3...a733c\nto:TestContract.f() 0x692...77b3a\nvalue:0 wei\ndata:0x261...21ff0\nlogs:0\nhash:0x38b...53e03`, null,
           `{
   "0": "uint256: 8"
   }`)
         .pause(500)
         .checkTerminalFilter('0x12332162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92782', '')
         .testFunction('g - transact (not payable)',
-          '0xb1532162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92781',
-          `[vm]\nfrom:0xca3...a733c\nto:TestContract.g() 0x692...77b3a\nvalue:0 wei\ndata:0xe21...79b8e\nlogs:0\nhash:0xb15...92781`, null, `{
+          '0xab4f794ca0b531f27fc6eace623666b440facbf20e77615a057d728c67b500f0',
+          `[vm]\nfrom:0xca3...a733c\nto:TestContract.g() 0x692...77b3a\nvalue:0 wei\ndata:0xe21...79b8e\nlogs:0\nhash:0xab4...500f0`, null, `{
   "0": "uint256: 345",
   "1": "string: comment_comment_",
   "2": "bool: true",
@@ -44,8 +44,8 @@ module.exports = {
       .waitForElementPresent('.instance:nth-of-type(2)')
       .click('.instance:nth-of-type(2) > div > button')
       .testFunction('retunValues1 - transact (not payable)',
-        '0xc3660c7ab6899f196e77d3ab3749169e22c00ae7f1b8fe3af0ce54df49504019',
-        `[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues1() 0x5e7...26e9f\nvalue:0 wei\ndata:0x9ed...59eb7\nlogs:0\nhash:0xc36...04019`,
+        '0x09c6716a67f0f8c7a0ca2b3ddf59c25982da856a95aefd640b767f9b9feee39d',
+        `[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues1() 0x5e7...26e9f\nvalue:0 wei\ndata:0x9ed...59eb7\nlogs:0\nhash:0x09c...ee39d`,
         null,
         `{
  "0": "bool: _b true",
@@ -54,8 +54,8 @@ module.exports = {
  "3": "address: _a 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c"
 }`)
       .testFunction('retunValues2 - transact (not payable)',
-        '0xc8cc8150fcb0b09cdf51e7357341272118888fe8c4efe32881b56e891377aad9',
-        `[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues2() 0x5e7...26e9f\nvalue:0 wei\ndata:0xf57...4036c\nlogs:0\nhash:0xc8c...7aad9`, null, `{
+        '0xe884953e0695399d60914af3e1ea2dad59fe41f3c0c20665c130fa40dd0fb6bf',
+        `[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues2() 0x5e7...26e9f\nvalue:0 wei\ndata:0xf57...4036c\nlogs:0\nhash:0xe88...fb6bf`, null, `{
  "0": "bytes1: _b 0x12",
  "1": "bytes2: _b2 0x1223",
  "2": "bytes3: _b3 0x000000",
@@ -67,8 +67,8 @@ module.exports = {
  "8": "bytes22: _b22 0x32523523532532532523532500000000000000000000",
  "9": "bytes32: _b32 0x0325235325325235325235325235320000000000000000000000000000000000"
 }`).pause(500).testFunction('retunValues3 - transact (not payable)',
-        '0x94c4b4324bad773dec29af3ffe26a698c32b5caf8a1eedf8889563158639d28a',
-        '[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues3() 0x5e7...26e9f\nvalue:0 wei\ndata:0x033...e0a7d\nlogs:0\nhash:0x94c...9d28a', null, `{
+        '0xb4108649d5e65a4a0776d6ac98c2c356540a7e99d641705a82352a845d467eb5',
+        '[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues3() 0x5e7...26e9f\nvalue:0 wei\ndata:0x033...e0a7d\nlogs:0\nhash:0xb41...67eb5', null, `{
  "0": "uint8: _en 2",
  "1": "int256[5][]: _a1 1,-45,-78,56,60,-1,42,334,-45455,-446,1,10,-5435,45,-7"
 }`).click('i[class^="clearinstance"]')
@@ -81,8 +81,8 @@ module.exports = {
         .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2) > div > button')
         .testFunction('inputValue1 - transact (not payable)',
-        '0xf3265e3d9cd9299958bf81bed3cdfdd537942f85b9e0b95c5468c691d9396505',
-        `[vm]\nfrom:0xca3...a733c\nto:test.inputValue1(uint256,int256,string) 0x8c1...401f5\nvalue:0 wei\ndata:0xd69...00000\nlogs:0\nhash:0xf32...96505`,
+        '0xe9678b5486674a0425301a1d7e925c22cfb9f7f7ec6242697d742009f7ef5b97',
+        `[vm]\nfrom:0xca3...a733c\nto:test.inputValue1(uint256,int256,string) 0x8c1...401f5\nvalue:0 wei\ndata:0xd69...00000\nlogs:0\nhash:0xe96...f5b97`,
         {types: 'uint256 _u, int256 _i, string _str', values: '"2343242", "-4324324", "string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"'},
         `{
  "0": "uint256: _uret 2343242",
@@ -91,8 +91,8 @@ module.exports = {
 }`)
         .pause(500)
         .testFunction('inputValue2 - transact (not payable)',
-        '0xd9ec6d8aa73d81755447190f52939ee3084e105b988d445a11e7ac718392ff5a',
-        `[vm]\nfrom:0xca3...a733c\nto:test.inputValue2(uint256[3],bytes8[4]) 0x8c1...401f5\nvalue:0 wei\ndata:0x1b7...00000\nlogs:1\nhash:0xd9e...2ff5a`,
+        '0x21724b08c3699bda8375803f8dc842194aea370f2aac284e55144b452dca321f',
+        `[vm]\nfrom:0xca3...a733c\nto:test.inputValue2(uint256[3],bytes8[4]) 0x8c1...401f5\nvalue:0 wei\ndata:0x1b7...00000\nlogs:1\nhash:0x217...a321f`,
         {types: 'uint256[3] _n, bytes8[4] _b8', values: '[1,2,3], ["0x1234000000000000", "0x1234000000000000","0x1234000000000000","0x1234000000000000"]'},
         `{
  "0": "uint256[3]: _nret 1,2,3",
