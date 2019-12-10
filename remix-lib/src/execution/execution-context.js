@@ -147,7 +147,7 @@ function ExecutionContext () {
     if (this.isVM()) {
       callback(null, { id: '-', name: 'VM' })
     } else {
-      this.web3().version.getNetwork((err, id) => {
+      web3.eth.net.getId((err, id) => {
         var name = null
         if (err) name = 'Unknown'
         // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
@@ -160,7 +160,7 @@ function ExecutionContext () {
         else name = 'Custom'
 
         if (id === '1') {
-          this.web3().eth.getBlock(0, (error, block) => {
+          web3.eth.getBlock(0, (error, block) => {
             if (error) console.log('cant query first block')
             if (block && block.hash !== mainNetGenesisHash) name = 'Custom'
             callback(err, { id, name })
@@ -279,6 +279,7 @@ function ExecutionContext () {
     } else {
       web3.setProvider(new web3.providers.HttpProvider(endpoint))
     }
+    // fixed
     if (web3.isConnected()) {
       executionContext = context
       self._updateBlockGasLimit()
@@ -305,7 +306,7 @@ function ExecutionContext () {
     if (blockNumber === '0x') {
       blockNumber = '0x0'
     }
-    blockNumber = web3.toHex(web3.toBigNumber(blockNumber))
+    blockNumber = web3.utils.toHex(web3.utils.toBN(blockNumber))
 
     self.blocks['0x' + block.hash().toString('hex')] = block
     self.blocks[blockNumber] = block
