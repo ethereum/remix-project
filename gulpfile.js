@@ -25,13 +25,13 @@ task('updateChangelog', async function () {
 
     // Create changes.md with latest release changelog temporarily
     await promisifyExec("github-changes -o ethereum -r remix -a --file changes.md --only-pulls --use-commit-body --only-merges --between-tags " + previous_version + "..." + next_version);
-    // Concat new changelog content to the top of old changelog file content
+    // Concatenate new changelog content to the top of old changelog file content
     const data = fs.readFileSync(__dirname + '/changes.md', 'utf8') + '\n\n' + fs.readFileSync(__dirname + '/CHANGELOG.md', 'utf8')
     // Delete current changelog file CHANGELOG.md
     fs.unlinkSync(__dirname + '/CHANGELOG.md');
     // Delete changes.md
     fs.unlinkSync(__dirname + '/changes.md');
-    // Write the concated content to CHANGELOG.md (We delete and create file to place the new data on top)
+    // Write the concatenated content to CHANGELOG.md (We delete and create file to place the new data on top)
     fs.writeFileSync(__dirname + '/CHANGELOG.md', data); 
     await Promise.resolve();
 });
