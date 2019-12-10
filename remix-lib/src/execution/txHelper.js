@@ -15,6 +15,8 @@ module.exports = {
     if (funABI.inputs && funABI.inputs.length) {
       for (var i = 0; i < funABI.inputs.length; i++) {
         var type = funABI.inputs[i].type
+        // "false" will be converting to `false` and "true" will be working 
+        // fine as abiCoder assume anything in quotes as `true`
         if (type === 'bool' && args[i] === 'false') {
           args[i] = false
         }
