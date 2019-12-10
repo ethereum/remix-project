@@ -15,6 +15,9 @@ module.exports = {
     if (funABI.inputs && funABI.inputs.length) {
       for (var i = 0; i < funABI.inputs.length; i++) {
         var type = funABI.inputs[i].type
+        if (type === 'bool' && args[i] === 'false') {
+          args[i] = false
+        }
         types.push(type.indexOf('tuple') === 0 ? this.makeFullTypeDefinition(funABI.inputs[i]) : type)
         if (args.length < types.length) {
           args.push('')
