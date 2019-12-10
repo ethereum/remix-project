@@ -1,5 +1,12 @@
 ## Change Log
 
+### v0.1.24 (2019/12/10)
+- [#1356](https://github.com/ethereum/remix/pull/1356) Publish 0.1.24 (@Aniket-Engg )
+- [#1355](https://github.com/ethereum/remix/pull/1355) bool type encoding handled  (@Aniket-Engg )
+- [#1354](https://github.com/ethereum/remix/pull/1354) changelog added (@Aniket-Engg)
+
+## Change Log
+
 ### v0.1.23 (2019/12/06 18:29 +00:00)
 - [#1353](https://github.com/ethereum/remix/pull/1353) Release 0.1.23 (@Aniket-Engg )
 - [#1352](https://github.com/ethereum/remix/pull/1352) solc version updated for remix-lib tests (@Aniket-Engg )
