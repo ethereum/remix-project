@@ -19,10 +19,10 @@
     "ethereumjs-tx": "^2.1.1",
     "ethereumjs-util": "^6.2.0",
     "ethereumjs-vm": "4.1.1",
-    "ethers": "^4.0.27",
+    "ethers": "^4.0.40",
     "events": "^3.0.0",
     "solc": "^0.5.13",
-    "web3": "0.20.6"
+    "web3": "^1.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
