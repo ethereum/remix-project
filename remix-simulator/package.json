@@ -1,6 +1,6 @@
 {
   "name": "remix-simulator",
-  "version": "0.1.9-alpha.9",
+  "version": "0.1.9-alpha.10",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -25,7 +25,7 @@
     "express": "^4.16.3",
     "express-ws": "^4.0.0",
     "merge": "^1.2.0",
-    "remix-lib": "0.4.16",
+    "remix-lib": "0.4.17",
     "standard": "^10.0.3",
     "time-stamp": "^2.0.0",
     "web3": "1.0.0-beta.37"
