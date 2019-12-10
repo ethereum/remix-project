@@ -279,19 +279,20 @@ function ExecutionContext () {
     } else {
       web3.setProvider(new web3.providers.HttpProvider(endpoint))
     }
-    // fixed
-    if (web3.isConnected()) {
-      executionContext = context
-      self._updateBlockGasLimit()
-      self.event.trigger('contextChanged', ['web3'])
-      self.event.trigger('web3EndpointChanged')
-      cb()
-    } else {
-      web3.setProvider(oldProvider)
-      var alertMsg = 'Not possible to connect to the Web3 provider. '
-      alertMsg += 'Make sure the provider is running and a connection is open (via IPC or RPC).'
-      cb(alertMsg)
-    }
+    web3.eth.net.isListening((err, isConnected) => {
+      if (!err && isConnected) {
+        executionContext = context
+        self._updateBlockGasLimit()
+        self.event.trigger('contextChanged', ['web3'])
+        self.event.trigger('web3EndpointChanged')
+        cb()
+      } else {
+        web3.setProvider(oldProvider)
+        var alertMsg = 'Not possible to connect to the Web3 provider. '
+        alertMsg += 'Make sure the provider is running and a connection is open (via IPC or RPC).'
+        cb(alertMsg)
+      }
+    })
   }
   this.setProviderFromEndpoint = setProviderFromEndpoint
 
