@@ -22,7 +22,7 @@
     "ethereumjs-util": "^6.2.0",
     "ethereumjs-vm": "4.1.1",
     "remix-lib": "0.4.17",
-    "web3": "0.20.6"
+    "web3": "^1.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
