@@ -1,5 +1,5 @@
 import commander from 'commander'
-import Web3 = require('web3')
+import Web3 from 'web3';
 import { runTestFiles } from './runTestFiles'
 import fs from './fileSystem'
 import { Provider } from 'remix-simulator'

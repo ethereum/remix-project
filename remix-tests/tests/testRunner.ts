@@ -1,6 +1,6 @@
 import 'mocha'
 import * as async from 'async'
-import Web3 = require('web3')
+import Web3 from 'web3';
 import * as assert from 'assert'
 import { Provider } from 'remix-simulator'
 
