@@ -208,10 +208,10 @@ export class RemixAppManager extends PluginEngine {
       description: 'Deploy and interact with private contracts on a Quorum network.',
       events: [],
       methods: [],
-      url: 'https://jpmorganchase.github.io/qr/',
-      icon: 'https://jpmorganchase.github.io/qr/tab_icon.png',
-      documentation: 'https://docs.goquorum.com/',
-      version: '0.1.0-beta',
+      url: '//remix-plugin.goquorum.com/',
+      icon: '//remix-plugin.goquorum.com/tab_icon.png',
+      documentation: 'https://docs.goquorum.com/en/latest/RemixPlugin/Overview/',
+      version: '0.1.4-beta',
       location: 'sidePanel'
     }
     const res = await fetch(this.pluginsDirectory)
