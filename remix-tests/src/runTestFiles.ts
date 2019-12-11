@@ -3,7 +3,7 @@ import fs from './fileSystem'
 import { runTest } from './testRunner'
 import { TestResultInterface, ResultsInterface, compilationInterface, ASTInterface, Options, AstNode } from './types'
 import colors from 'colors'
-import Web3 = require('web3')
+import Web3 from 'web3';
 
 import { compileFileOrFiles } from './compiler'
 import { deployAll } from './deployer'

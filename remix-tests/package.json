@@ -46,7 +46,7 @@
     "remix-simulator": "0.1.9-alpha.10",
     "remix-solidity": "0.3.20",
     "signale": "^1.4.0",
-    "web3": "1.0.0-beta.36",
+    "web3": "^1.2.4",
     "winston": "^3.0.0"
   },
   "peerDependencies": {
