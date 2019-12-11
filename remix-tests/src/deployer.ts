@@ -1,6 +1,6 @@
 import async from 'async'
 var remixLib = require('remix-lib')
-import Web3 = require('web3')
+import Web3 from 'web3';
 
 export function deployAll(compileResult: object, web3: Web3, callback) {
     let compiledObject = {}
