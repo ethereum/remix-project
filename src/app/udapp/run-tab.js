@@ -142,7 +142,7 @@ export class RunTab extends LibraryPlugin {
 
     const expandedView = yo`
       <div class=${css.recorderExpandedView}>
-        <div class=${css.recorderDescription}>
+        <div class="${css.recorderDescription} mt-2">
           All transactions (deployed contracts and function executions) in this environment can be saved and replayed in
           another environment. e.g Transactions created in Javascript VM can be replayed in the Injected Web3.
         </div>

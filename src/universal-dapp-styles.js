@@ -14,7 +14,6 @@ var css = csjs`
     word-break: break-word;
     line-height: initial;
     overflow: visible;
-    margin-bottom: 8px;
     padding: 8px 10px;
   }
   .titleLine {
@@ -49,7 +48,8 @@ var css = csjs`
   .instance {
     display: block;
     flex-direction: column;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    padding: 0 4px;
   }
   .instance.hidesub .title {
       display: flex;
@@ -75,7 +75,7 @@ var css = csjs`
     border-bottom-left-radius: 0.25rem;
     border-top-rightt-radius: 0;
     border-bottom-right-radius: 0.25rem;
-    padding: 0 10px 7px;
+    padding: 8px 10px 7px;
   }
   .group:after {
     content: "";
