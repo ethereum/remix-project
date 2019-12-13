@@ -78,7 +78,7 @@ class CompilerContainer {
 
     this.editor.event.register('contentChanged', () => {
       if (!this._view.compileIcon) return
-      this.scheduleCompilation.bind(this)
+      this.scheduleCompilation()
       this._view.compileIcon.classList.add(`${css.bouncingIcon}`) // @TODO: compileView tab
     })
 
