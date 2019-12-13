@@ -173,8 +173,8 @@ module.exports = class TestTab extends ViewPlugin {
         runningTest,
         currentCompilerUrl,
         canUseWorker(this.compileTab.getCurrentVersion()),
-        (result) => { this.testCallback(result) },
-        (_err, result, cb) => { this.resultsCallback(_err, result, cb) },
+        (result) => this.testCallback(result),
+        (_err, result, cb) => this.resultsCallback(_err, result, cb),
         (error, result) => {
           this.updateFinalResult(error, result, testFilePath)
           this.loading.hidden = true
