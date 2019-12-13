@@ -217,10 +217,7 @@ function ExecutionContext () {
 
     if (context === 'injected') {
       if (injectedProvider === undefined) {
-        var alertMsg = 'No injected Web3 provider found. '
-        alertMsg += 'Make sure your provider (e.g. MetaMask) is active and running '
-        alertMsg += '(when recently activated you may have to reload the page).'
-        infoCb(alertMsg)
+        infoCb('No injected Web3 provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).')
         return cb()
       } else {
         self.askPermission()
@@ -288,9 +285,7 @@ function ExecutionContext () {
         cb()
       } else {
         web3.setProvider(oldProvider)
-        var alertMsg = 'Not possible to connect to the Web3 provider. '
-        alertMsg += 'Make sure the provider is running and a connection is open (via IPC or RPC).'
-        cb(alertMsg)
+        cb('Not possible to connect to the Web3 provider. Make sure the provider is running and a connection is open (via IPC or RPC).')
       }
     })
   }

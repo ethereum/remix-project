@@ -18,29 +18,29 @@ function web3VmProvider () {
   this.incr = 0
   this.eth = {}
   this.debug = {}
-  this.eth.getCode = function (address, cb) { return self.getCode(address, cb) }
-  this.eth.getTransaction = function (hash, cb) { return self.getTransaction(hash, cb) }
-  this.eth.getTransactionReceipt = function (hash, cb) { return self.getTransactionReceipt(hash, cb) }
-  this.eth.getTransactionFromBlock = function (blockNumber, txIndex, cb) { return self.getTransactionFromBlock(blockNumber, txIndex, cb) }
-  this.eth.getBlockNumber = function (cb) { return self.getBlockNumber(cb) }
-  this.debug.traceTransaction = function (hash, options, cb) { return self.traceTransaction(hash, options, cb) }
-  this.debug.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxLength, cb) { return self.storageRangeAt(blockNumber, txIndex, address, start, end, maxLength, cb) }
-  this.debug.preimage = function (hashedKey, cb) { return self.preimage(hashedKey, cb) }
+  this.eth.getCode = (...args) => self.getCode(...args)
+  this.eth.getTransaction = (...args) => self.getTransaction(...args)
+  this.eth.getTransactionReceipt = (...args) => self.getTransactionReceipt(...args)
+  this.eth.getTransactionFromBlock = (...args) => self.getTransactionFromBlock(...args)
+  this.eth.getBlockNumber = (...args) => self.getBlockNumber(...args)
+  this.debug.traceTransaction = (...args) => self.traceTransaction(...args)
+  this.debug.storageRangeAt = (...args) => self.storageRangeAt(...args)
+  this.debug.preimage = (...args) => self.preimage(...args)
   this.providers = { 'HttpProvider': function (url) {} }
   this.currentProvider = {'host': 'vm provider'}
   this.storageCache = {}
   this.lastProcessedStorageTxHash = {}
   this.sha3Preimages = {}
   // util
-  this.sha3 = function () { return self.web3.utils.sha3.apply(self.web3, arguments) }
-  this.toHex = function () { return self.web3.utils.toHex.apply(self.web3, arguments) }
-  this.toAscii = function () { return self.web3.utils.hexToAscii.apply(self.web3, arguments) }
-  this.fromAscii = function () { return self.web3.utils.asciiToHex.apply(self.web3, arguments) }
-  this.fromDecimal = function () { return self.web3.utils.numberToHex.apply(self.web3, arguments) }
-  this.fromWei = function () { return self.web3.utils.fromWei.apply(self.web3, arguments) }
-  this.toWei = function () { return self.web3.utils.toWei.apply(self.web3, arguments) }
-  this.toBigNumber = function () { return self.web3.utils.toBN.apply(self.web3, arguments) }
-  this.isAddress = function () { return self.web3.utils.isAddress.apply(self.web3, arguments) }
+  this.sha3 = (...args) => self.web3.utils.sha3(...args)
+  this.toHex = (...args) => self.web3.utils.toHex(...args)
+  this.toAscii = (...args) => self.web3.utils.hexToAscii(...args)
+  this.fromAscii = (...args) => self.web3.utils.asciiToHex(...args)
+  this.fromDecimal = (...args) => self.web3.utils.numberToHex(...args)
+  this.fromWei = (...args) => self.web3.utils.fromWei(...args)
+  this.toWei = (...args) => self.web3.utils.toWei(...args)
+  this.toBigNumber = (...args) => self.web3.utils.toBN(...args)
+  this.isAddress = (...args) => self.web3.utils.isAddress(...args)
   this.utils = Web3.utils || []
 }
 
