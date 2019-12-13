@@ -1,4 +1,4 @@
-/* global Worker */
+
 const yo = require('yo-yo')
 const minixhr = require('minixhr')
 const helper = require('../../../lib/helper')
@@ -6,6 +6,7 @@ const addTooltip = require('../../ui/tooltip')
 const semver = require('semver')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const css = require('../styles/compile-tab-styles')
+import { canUseWorker } from '../../compiler/compiler-utils'
 
 class CompilerContainer {
 
@@ -397,46 +398,16 @@ class CompilerContainer {
       url = `${this.data.baseurl}/${this.data.selectedVersion}`
     }
 
-    // Following restrictions should be deleted when Solidity will release fixed versions of compilers.
-    // See https://github.com/ethereum/remix-ide/issues/2461
-    const isChrome = !!window.chrome
-    const os = this._retrieveOS()
-    // define a whitelist for Linux
-    const linuxWL = ['0.4.26', '0.5.3', '0.5.4', '0.5.5']
-    const version = semver.coerce(this.data.selectedVersion)
-    // defining whitelist for chrome
-    let isFromWhiteList = false
-    switch (os) {
-      case 'Windows':
-        isFromWhiteList = semver.gt(version, '0.5.2') || version === '0.4.26'
-        break
-      case 'Linux':
-        isFromWhiteList = semver.gt(version, '0.5.13') || linuxWL.includes(version)
-        break
-      default :
-        isFromWhiteList = true
-    }
-
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
-    if (this.browserSupportWorker() && (!isChrome || (isChrome && isFromWhiteList))) {
+    if (canUseWorker(this.data.selectedVersion)) {
       this.compileTabLogic.compiler.loadVersion(true, url)
       this.setVersionText('(loading using worker)')
     } else {
       this.compileTabLogic.compiler.loadVersion(false, url)
       this.setVersionText('(loading)')
     }
-  }
-
-  _retrieveOS () {
-    let osName = 'Unknown OS'
-    if (navigator.platform.indexOf('Win') !== -1) {
-      osName = 'Windows'
-    } else if (navigator.platform.indexOf('Linux') !== -1) {
-      osName = 'Linux'
-    }
-    return osName
   }
 
   _updateLanguageSelector () {
@@ -479,10 +450,6 @@ class CompilerContainer {
     if (!this.config.get('autoCompile')) return
     if (this.data.compileTimeout) window.clearTimeout(this.data.compileTimeout)
     this.data.compileTimeout = window.setTimeout(() => this.compileIfAutoCompileOn(), this.data.timeout)
-  }
-
-  browserSupportWorker () {
-    return document.location.protocol !== 'file:' && Worker !== undefined
   }
 
 }

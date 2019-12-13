@@ -4,6 +4,7 @@ var tooltip = require('../ui/tooltip')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
 import { ViewPlugin } from '@remixproject/engine'
+import { canUseWorker } from '../compiler/compiler-utils'
 
 const TestTabLogic = require('./testTab/testTab')
 
@@ -153,8 +154,7 @@ module.exports = class TestTab extends ViewPlugin {
       let runningTest = {}
       runningTest[path] = { content }
       let currentCompilerUrl = this.baseurl + '/' + this.compileTab.getCurrentVersion()
-      let usingWorker = this.compileTab.compilerContainer.browserSupportWorker()
-      remixTests.runTestSources(runningTest, currentCompilerUrl, usingWorker, () => {}, () => {}, (error, result) => {
+      remixTests.runTestSources(runningTest, currentCompilerUrl, canUseWorker(this.compileTab.getCurrentVersion()), () => {}, () => {}, (error, result) => {
         if (error) return reject(error)
         resolve(result)
       }, (url, cb) => {
@@ -169,14 +169,20 @@ module.exports = class TestTab extends ViewPlugin {
       var runningTest = {}
       runningTest[testFilePath] = { content }
       let currentCompilerUrl = this.baseurl + '/' + this.compileTab.getCurrentVersion()
-      let usingWorker = this.compileTab.compilerContainer.browserSupportWorker()
-      remixTests.runTestSources(runningTest, currentCompilerUrl, usingWorker, (result) => { this.testCallback(result) }, (_err, result, cb) => { this.resultsCallback(_err, result, cb) }, (error, result) => {
-        this.updateFinalResult(error, result, testFilePath)
-        this.loading.hidden = true
-        callback(error)
-      }, (url, cb) => {
-        return this.compileTab.compileTabLogic.importFileCb(url, cb)
-      })
+      remixTests.runTestSources(
+        runningTest,
+        currentCompilerUrl,
+        canUseWorker(this.compileTab.getCurrentVersion()),
+        (result) => { this.testCallback(result) },
+        (_err, result, cb) => { this.resultsCallback(_err, result, cb) },
+        (error, result) => {
+          this.updateFinalResult(error, result, testFilePath)
+          this.loading.hidden = true
+          callback(error)
+        }, (url, cb) => {
+          return this.compileTab.compileTabLogic.importFileCb(url, cb)
+        }
+      )
     }).catch((error) => {
       if (error) return
     })
