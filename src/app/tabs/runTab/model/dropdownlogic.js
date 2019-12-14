@@ -2,7 +2,6 @@ var ethJSUtil = require('ethereumjs-util')
 var remixLib = require('remix-lib')
 var txHelper = remixLib.execution.txHelper
 var txFormat = remixLib.execution.txFormat
-var executionContext = remixLib.execution.executionContext
 var typeConversion = remixLib.execution.typeConversion
 var txExecution = remixLib.execution.txExecution
 var CompilerAbstract = require('../../../compiler/compiler-abstract')
@@ -10,8 +9,9 @@ var EventManager = remixLib.EventManager
 var Web3 = require('web3')
 
 class DropdownLogic {
-  constructor (fileManager, compilersArtefacts, config, editor, udapp, filePanel, runView) {
+  constructor (executionContext, fileManager, compilersArtefacts, config, editor, udapp, filePanel, runView) {
     this.compilersArtefacts = compilersArtefacts
+    this.executionContext = executionContext
     this.config = config
     this.editor = editor
     this.udapp = udapp
@@ -121,11 +121,11 @@ class DropdownLogic {
   }
 
   getGasPrice (cb) {
-    return executionContext.web3().eth.getGasPrice(cb)
+    return this.executionContext.web3().eth.getGasPrice(cb)
   }
 
   isVM () {
-    return executionContext.isVM()
+    return this.executionContext.isVM()
   }
 
   // TODO: check if selectedContract and data can be joined
@@ -159,7 +159,7 @@ class DropdownLogic {
           cb(txFeeText, priceStatus)
         },
         (cb) => {
-          executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+          this.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
             var warnMessage = ' Please fix this issue before sending any transaction. '
             if (error) {
               return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
@@ -197,7 +197,7 @@ class DropdownLogic {
         if (error) {
           return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
         }
-        var isVM = executionContext.isVM()
+        var isVM = this.executionContext.isVM()
         if (isVM) {
           var vmError = txExecution.checkVMError(txResult)
           if (vmError.error) {
