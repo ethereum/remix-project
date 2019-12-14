@@ -232,7 +232,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const udapp = new UniversalDApp(registry.get('config').api)
   const {eventsDecoder, txlistener} = makeUdapp(udapp, executionContext, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
   // ----------------- network service (resolve network id / name) ----------------------------
-  const networkModule = new NetworkModule()
+  const networkModule = new NetworkModule(executionContext)
   // ----------------- convert offset to line/column service ----------------------------
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
@@ -305,7 +305,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     mainview
   )
   const analysis = new AnalysisTab(registry)
-  const debug = new DebuggerTab()
+  const debug = new DebuggerTab(executionContext)
   const test = new TestTab(
     registry.get('filemanager').api,
     filePanel,
