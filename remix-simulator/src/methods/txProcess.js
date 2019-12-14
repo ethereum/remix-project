@@ -65,7 +65,7 @@ function processTx (executionContext, accounts, payload, isCall, callback) {
 
   // let txRunner = new TxRunner(accounts, api)
   if (!txRunnerInstance) {
-    txRunnerInstance = new TxRunner(accounts, api)
+    txRunnerInstance = new TxRunner(accounts, api, executionContext)
   }
   txRunnerInstance.vmaccounts = accounts
   let { from, to, data, value, gas } = payload.params[0]
