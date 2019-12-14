@@ -1,8 +1,6 @@
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 
-var executionContext = require('../../execution-context')
-
 var Terminal = require('./terminal')
 var globalRegistry = require('../../global/registry')
 var { TabProxy } = require('./tab-proxy.js')
@@ -22,7 +20,7 @@ var css = csjs`
 `
 
 export class MainView {
-  constructor (editor, mainPanel, fileManager, appManager, txListener, eventsDecoder) {
+  constructor (editor, mainPanel, fileManager, appManager, txListener, eventsDecoder, executionContext) {
     var self = this
     self.event = new EventManager()
     self._view = {}
@@ -33,6 +31,7 @@ export class MainView {
     self.mainPanel = mainPanel
     self.txListener = txListener
     self.eventsDecoder = eventsDecoder
+    self.executionContext = executionContext
     this.appManager = appManager
     this.init()
   }
@@ -102,7 +101,7 @@ export class MainView {
       appManager: this.appManager,
       eventsDecoder: this.eventsDecoder,
       txListener: this.txListener,
-      executionContext: executionContext
+      executionContext: this.executionContext
     },
       {
         getPosition: (event) => {
