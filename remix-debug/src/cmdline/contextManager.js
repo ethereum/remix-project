@@ -1,13 +1,12 @@
 var remixLib = require('remix-lib')
 
 var EventManager = remixLib.EventManager
-var executionContext = remixLib.execution.executionContext
 var Web3Providers = remixLib.vm.Web3Providers
 var DummyProvider = remixLib.vm.DummyProvider
 var init = remixLib.init
 
 class ContextManager {
-  constructor () {
+  constructor (executionContext) {
     this.executionContext = executionContext
     this.web3 = this.executionContext.web3()
     this.event = new EventManager()
