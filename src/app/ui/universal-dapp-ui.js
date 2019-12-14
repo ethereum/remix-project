@@ -15,17 +15,16 @@ var typeConversion = remixLib.execution.typeConversion
 var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 
-var executionContext = require('../../execution-context')
-
 var confirmDialog = require('./confirmDialog')
 var modalCustom = require('./modal-dialog-custom')
 var modalDialog = require('./modaldialog')
 var TreeView = require('./TreeView')
 
-function UniversalDAppUI (udapp, logCallback) {
+function UniversalDAppUI (udapp, logCallback, executionContext) {
   this.udapp = udapp
   this.logCallback = logCallback
   this.compilerData = {contractsDetails: {}}
+  this.executionContext = executionContext
 }
 
 function decodeResponseToTreeView (response, fnabi) {
@@ -181,7 +180,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
           cb(txFeeText, priceStatus)
         },
         (cb) => {
-          executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+          self.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
             const warnMessage = ' Please fix this issue before sending any transaction. '
             if (error) {
               return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
@@ -263,7 +262,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
         if (args.funABI.type === 'fallback') data.dataHex = value
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
           if (!error) {
-            var isVM = executionContext.isVM()
+            var isVM = self.executionContext.isVM()
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
@@ -272,7 +271,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
               }
             }
             if (lookupOnly) {
-              const decoded = decodeResponseToTreeView(executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result), args.funABI)
+              const decoded = decodeResponseToTreeView(self.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result), args.funABI)
               outputCb(decoded)
             }
           } else {
