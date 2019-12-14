@@ -28,7 +28,7 @@ export function makeUdapp (udapp, executionContext, compilersArtefacts, logHtmlC
     },
     event: {
       udapp: udapp.event
-    }})
+    }}, executionContext)
   registry.put({api: txlistener, name: 'txlistener'})
   udapp.startListening(txlistener)
 

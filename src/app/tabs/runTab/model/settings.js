@@ -4,11 +4,11 @@ var remixLib = require('remix-lib')
 var Web3 = require('web3')
 const addTooltip = require('../../../ui/tooltip')
 var EventManager = remixLib.EventManager
-var executionContext = remixLib.execution.executionContext
 
 class Settings {
 
-  constructor (udapp) {
+  constructor (executionContext, udapp) {
+    this.executionContext = executionContext
     this.udapp = udapp
     this.event = new EventManager()
 
@@ -16,15 +16,15 @@ class Settings {
       this.event.trigger('transactionExecuted', [error, from, to, data, lookupOnly, txResult])
     })
 
-    executionContext.event.register('contextChanged', (context, silent) => {
+    this.executionContext.event.register('contextChanged', (context, silent) => {
       this.event.trigger('contextChanged', [context, silent])
     })
 
-    executionContext.event.register('addProvider', (network) => {
+    this.executionContext.event.register('addProvider', (network) => {
       this.event.trigger('addProvider', [network])
     })
 
-    executionContext.event.register('removeProvider', (name) => {
+    this.executionContext.event.register('removeProvider', (name) => {
       this.event.trigger('removeProvider', [name])
     })
 
@@ -32,15 +32,15 @@ class Settings {
   }
 
   changeExecutionContext (context, confirmCb, infoCb, cb) {
-    return executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
+    return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
 
   setProviderFromEndpoint (target, context, cb) {
-    return executionContext.setProviderFromEndpoint(target, context, cb)
+    return this.executionContext.setProviderFromEndpoint(target, context, cb)
   }
 
   getProvider () {
-    return executionContext.getProvider()
+    return this.executionContext.getProvider()
   }
 
   getAccountBalanceForAddress (address, cb) {
@@ -50,7 +50,7 @@ class Settings {
   updateNetwork (cb) {
     this.networkcallid++
     ((callid) => {
-      executionContext.detectNetwork((err, { id, name } = {}) => {
+      this.executionContext.detectNetwork((err, { id, name } = {}) => {
         if (this.networkcallid > callid) return
         this.networkcallid++
         if (err) {
@@ -70,18 +70,18 @@ class Settings {
   }
 
   isWeb3Provider () {
-    var isVM = executionContext.isVM()
-    var isInjected = executionContext.getProvider() === 'injected'
+    var isVM = this.executionContext.isVM()
+    var isInjected = this.executionContext.getProvider() === 'injected'
     return (!isVM && !isInjected)
   }
 
   isInjectedWeb3 () {
-    return executionContext.getProvider() === 'injected'
+    return this.executionContext.getProvider() === 'injected'
   }
 
   signMessage (message, account, passphrase, cb) {
-    var isVM = executionContext.isVM()
-    var isInjected = executionContext.getProvider() === 'injected'
+    var isVM = this.executionContext.isVM()
+    var isInjected = this.executionContext.getProvider() === 'injected'
 
     if (isVM) {
       const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
@@ -99,7 +99,7 @@ class Settings {
       const hashedMsg = Web3.utils.sha3(message)
       try {
         addTooltip('Please check your provider to approve')
-        executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
+        this.executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
           cb(error.message, hashedMsg, signedData)
         })
       } catch (e) {
@@ -110,7 +110,7 @@ class Settings {
 
     const hashedMsg = Web3.utils.sha3(message)
     try {
-      var personal = new Personal(executionContext.web3().currentProvider)
+      var personal = new Personal(this.executionContext.web3().currentProvider)
       personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
         cb(error.message, hashedMsg, signedData)
       })
