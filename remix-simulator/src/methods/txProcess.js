@@ -1,7 +1,6 @@
 var RemixLib = require('remix-lib')
 var TxExecution = RemixLib.execution.txExecution
 var TxRunner = RemixLib.execution.txRunner
-var executionContext = RemixLib.execution.executionContext
 
 function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
   let finalCallback = function (err, result) {
@@ -40,7 +39,7 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
 
 let txRunnerInstance
 
-function processTx (accounts, payload, isCall, callback) {
+function processTx (executionContext, accounts, payload, isCall, callback) {
   let api = {
     logMessage: (msg) => {
     },

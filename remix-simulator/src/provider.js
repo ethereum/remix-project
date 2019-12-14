@@ -15,18 +15,20 @@ const generateBlock = require('./genesis.js')
 
 var Provider = function (options) {
   this.options = options || {}
+  // TODO: init executionContext here
+  this.executionContext = executionContext
   this.Accounts = new Accounts()
-  this.Transactions = new Transactions()
+  this.Transactions = new Transactions(this.executionContext)
 
   this.methods = {}
   this.methods = merge(this.methods, this.Accounts.methods())
-  this.methods = merge(this.methods, (new Blocks(options)).methods())
+  this.methods = merge(this.methods, (new Blocks(this.executionContext, options)).methods())
   this.methods = merge(this.methods, (new Misc()).methods())
-  this.methods = merge(this.methods, (new Filters()).methods())
+  this.methods = merge(this.methods, (new Filters(this.executionContext)).methods())
   this.methods = merge(this.methods, (new Net()).methods())
   this.methods = merge(this.methods, this.Transactions.methods())
 
-  generateBlock()
+  generateBlock(this.executionContext)
   this.init()
 }
 
@@ -67,7 +69,7 @@ Provider.prototype.isConnected = function () {
 }
 
 Provider.prototype.on = function (type, cb) {
-  executionContext.logsManager.addListener(type, cb)
+  this.executionContext.logsManager.addListener(type, cb)
 }
 
 module.exports = Provider

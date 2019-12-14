@@ -1,17 +1,16 @@
-var RemixLib = require('remix-lib')
-var executionContext = RemixLib.execution.executionContext
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var Web3 = require('web3')
 
-var Accounts = function () {
+var Accounts = function (executionContext) {
   this.web3 = new Web3()
+  this.executionContext = executionContext
   // TODO: make it random and/or use remix-libs
   this.accountsList = [this.web3.eth.accounts.create(['abcd']), this.web3.eth.accounts.create(['ef12']), this.web3.eth.accounts.create(['ef34'])]
   this.accounts = {}
   this.accountsKeys = {}
 
-  executionContext.init({get: () => { return true }})
+  this.executionContext.init({get: () => { return true }})
 }
 
 Accounts.prototype.init = async function () {
@@ -20,7 +19,7 @@ Accounts.prototype.init = async function () {
       this.accountsKeys[ethJSUtil.toChecksumAddress(account.address)] = account.privateKey
       this.accounts[ethJSUtil.toChecksumAddress(account.address)] = { privateKey: Buffer.from(account.privateKey.replace('0x', ''), 'hex'), nonce: 0 }
 
-      executionContext.vm().stateManager.getAccount(Buffer.from(account.address.replace('0x', ''), 'hex'), (err, account) => {
+      this.executionContext.vm().stateManager.getAccount(Buffer.from(account.address.replace('0x', ''), 'hex'), (err, account) => {
         if (err) {
           throw new Error(err)
         }
@@ -52,7 +51,7 @@ Accounts.prototype.eth_getBalance = function (payload, cb) {
   let address = payload.params[0]
   address = ethJSUtil.stripHexPrefix(address)
 
-  executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, account) => {
+  this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, account) => {
     if (err) {
       return cb(err)
     }
