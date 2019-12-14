@@ -122,7 +122,7 @@ export class RunTab extends LibraryPlugin {
   }
 
   renderSettings (udapp) {
-    var settings = new Settings(udapp)
+    var settings = new Settings(this.executionContext, udapp)
     this.settingsUI = new SettingsUI(settings, this.networkModule)
 
     this.settingsUI.event.register('clearInstance', () => {
@@ -131,7 +131,7 @@ export class RunTab extends LibraryPlugin {
   }
 
   renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
-    const dropdownLogic = new DropdownLogic(fileManager, compilersArtefacts, config, editor, udapp, filePanel, this)
+    const dropdownLogic = new DropdownLogic(this.executionContext, fileManager, compilersArtefacts, config, editor, udapp, filePanel, this)
     this.contractDropdownUI = new ContractDropdownUI(dropdownLogic, logCallback)
 
     this.contractDropdownUI.event.register('clearInstance', () => {
@@ -149,7 +149,7 @@ export class RunTab extends LibraryPlugin {
   renderRecorder (udapp, udappUI, fileManager, config, logCallback) {
     this.recorderCount = yo`<span>0</span>`
 
-    const recorder = new Recorder(udapp, fileManager, config)
+    const recorder = new Recorder(this.executionContext, udapp, fileManager, config)
     recorder.event.register('recorderCountChange', (count) => {
       this.recorderCount.innerText = count
     })
