@@ -261,7 +261,7 @@ class Recorder {
             console.error(err)
             logCallBack(err + '. Execution failed at ' + index)
           } else {
-            const rawAddress = this.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+            const rawAddress = self.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
             if (rawAddress) {
               const stringAddress = self.addressToString(rawAddress)
               const address = ethutil.toChecksumAddress(stringAddress)
