@@ -1,8 +1,6 @@
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 
-var executionContext = require('../../execution-context')
-
 var Terminal = require('./terminal')
 var globalRegistry = require('../../global/registry')
 var { TabProxy } = require('./tab-proxy.js')
