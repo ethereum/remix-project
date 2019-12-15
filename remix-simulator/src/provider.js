@@ -17,7 +17,7 @@ var Provider = function (options) {
   this.options = options || {}
   // TODO: init executionContext here
   this.executionContext = executionContext
-  this.Accounts = new Accounts()
+  this.Accounts = new Accounts(this.executionContext)
   this.Transactions = new Transactions(this.executionContext)
 
   this.methods = {}
