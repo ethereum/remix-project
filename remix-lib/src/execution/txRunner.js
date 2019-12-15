@@ -147,7 +147,7 @@ class TxRunner {
   }
 
   runBlockInVm (tx, block, callback) {
-    this.executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then(function (results) {
+    this.executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then((results) => {
       let result = results.results[0]
       if (result) {
         const status = result.execResult.exceptionError ? 0 : 1
