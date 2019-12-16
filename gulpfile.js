@@ -13,7 +13,7 @@ var packageJSON = require('./package.json');
  */
 task('publishTag', async function () {
     const tag = "v" + packageJSON.version
-    await promisifyExec("git tag "+ tag +"; git push origin "+ tag);
+    await promisifyExec(`git tag ${tag}; git push origin ${tag}`);
 });
 
 /**
@@ -24,9 +24,11 @@ task('updateChangelog', async function () {
     const next_version = "v" + packageJSON.version;
 
     // Create changes.md with latest release changelog temporarily
-    await promisifyExec("github-changes -o ethereum -r remix -a --file changes.md --only-pulls --use-commit-body --only-merges --between-tags " + previous_version + "..." + next_version);
-    // Concatenate new changelog content to the top of old changelog file content
-    const data = fs.readFileSync(__dirname + '/changes.md', 'utf8') + '\n\n' + fs.readFileSync(__dirname + '/CHANGELOG.md', 'utf8')
+    await promisifyExec(`github-changes -o ethereum -r remix -a --file changes.md --only-pulls --use-commit-body --only-merges --between-tags ${previous_version} ... ${next_version}`);
+    const latestChangelog = fs.readFileSync(__dirname + '/changes.md', 'utf8')
+    const oldChangelog = fs.readFileSync(__dirname + '/CHANGELOG.md', 'utf8')
+    // Concatenate latest changelog content to the top of old changelog file content
+    const data = latestChangelog + '\n\n' + oldChangelog
     // Delete current changelog file CHANGELOG.md
     fs.unlinkSync(__dirname + '/CHANGELOG.md');
     // Delete changes.md
