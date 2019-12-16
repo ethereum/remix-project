@@ -14,7 +14,14 @@ var css = csjs`
     word-break: break-word;
     line-height: initial;
     overflow: visible;
-    padding: 8px 10px;
+    padding: 8px 0;
+    margin: 0;
+    background: none;
+    border: none;
+  }
+  .title button {
+    background: none;
+    border: none;
   }
   .titleLine {
     display: flex;
@@ -22,14 +29,15 @@ var css = csjs`
   }
   .titleText {
     word-break: break-word;
-    min-width: 170px;
     width: 100%;
+    border: none;
   }
   .spanTitleText {
     line-height: 12px;
     padding: 0;
     font-size: 11px;
     width:100%;
+    border: none;
   }
   .inputGroupText {
     width: 100%;
