@@ -73,10 +73,10 @@ class Recorder {
       if (error) return console.log(error)
       if (call) return
 
-      var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+      const  rawAddress = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
       if (!address) return // not a contract creation
-      address = this.addressToString(address)
-      address = ethutil.toChecksumAddress(address)
+      const stringAddress = this.addressToString(rawAddress)
+      const address = ethutil.toChecksumAddress(stringAddress)
       // save back created addresses for the convertion from tokens to real adresses
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address
@@ -260,10 +260,10 @@ class Recorder {
             console.error(err)
             logCallBack(err + '. Execution failed at ' + index)
           } else {
-            var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
-            if (address) {
-              address = self.addressToString(address)
-              address = ethutil.toChecksumAddress(address)
+            const rawAddress = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+            if (rawAddress) {
+              const stringAddress = self.addressToString(rawAddress)
+              const address = ethutil.toChecksumAddress(stringAddress)
               // save back created addresses for the convertion from tokens to real adresses
               self.data._createdContracts[address] = tx.timestamp
               self.data._createdContractsReverse[tx.timestamp] = address
