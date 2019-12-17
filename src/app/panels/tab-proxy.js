@@ -166,8 +166,8 @@ export class TabProxy {
 
     const zoomBtns = yo`
       <div class="d-flex flex-row justify-content-center align-items-center">
-        <span class="btn btn-sm fas fa-search-minus text-dark" onclick=${() => this.onZoomOut()}></span>
-        <span class="btn btn-sm fas fa-search-plus text-dark" onclick=${() => this.onZoomIn()}></span>
+        <span class="btn btn-sm px-1 fas fa-search-minus text-dark" onclick=${() => this.onZoomOut()}></span>
+        <span class="btn btn-sm px-1 fas fa-search-plus text-dark" onclick=${() => this.onZoomIn()}></span>
       </div>
     `
 
