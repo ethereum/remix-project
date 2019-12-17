@@ -1,5 +1,5 @@
 
-var Filters = function (executionContext) {
+const Filters = function (executionContext) {
   this.executionContext = executionContext
 }
 

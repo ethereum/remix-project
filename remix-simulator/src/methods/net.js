@@ -1,5 +1,5 @@
 
-var Net = function () {
+const Net = function () {
 }
 
 Net.prototype.methods = function () {
