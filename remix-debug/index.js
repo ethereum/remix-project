@@ -1,15 +1,15 @@
 'use strict'
-var EthDebugger = require('./src/Ethdebugger')
-var TransactionDebugger = require('./src/debugger/debugger')
-var CmdLine = require('./src/cmdline')
+const EthDebugger = require('./src/Ethdebugger')
+const TransactionDebugger = require('./src/debugger/debugger')
+const CmdLine = require('./src/cmdline')
 
-var StorageViewer = require('./src/storage/storageViewer')
-var StorageResolver = require('./src/storage/storageResolver')
+const StorageViewer = require('./src/storage/storageViewer')
+const StorageResolver = require('./src/storage/storageResolver')
 
-var SolidityDecoder = require('./src/solidity-decoder')
+const SolidityDecoder = require('./src/solidity-decoder')
 
-var remixLib = require('remix-lib')
-var BreakpointManager = remixLib.code.BreakpointManager
+const remixLib = require('remix-lib')
+const BreakpointManager = remixLib.code.BreakpointManager
 
 /*
   Use of breakPointManager :

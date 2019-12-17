@@ -1,34 +1,34 @@
 'use strict'
-var util = require('./util')
-var remixLib = require('remix-lib')
-var sha3256 = remixLib.util.sha3_256
-var BN = require('ethereumjs-util').BN
-var RefType = require('./RefType')
+const util = require('./util')
+const remixLib = require('remix-lib')
+const sha3256 = remixLib.util.sha3_256
+const BN = require('ethereumjs-util').BN
+const RefType = require('./RefType')
 
 class ArrayType extends RefType {
 
   constructor (underlyingType, arraySize, location) {
-    var storageSlots = null
+    let storageSlots = null
     if (arraySize === 'dynamic') {
       storageSlots = 1
     } else {
       if (underlyingType.storageBytes < 32) {
-        var itemPerSlot = Math.floor(32 / underlyingType.storageBytes)
+        const itemPerSlot = Math.floor(32 / underlyingType.storageBytes)
         storageSlots = Math.ceil(arraySize / itemPerSlot)
       } else {
         storageSlots = arraySize * underlyingType.storageSlots
       }
     }
-    var size = arraySize !== 'dynamic' ? arraySize : ''
+    const size = arraySize !== 'dynamic' ? arraySize : ''
     super(storageSlots, 32, underlyingType.typeName + '[' + size + ']', location)
     this.underlyingType = underlyingType
     this.arraySize = arraySize
   }
 
   async decodeFromStorage (location, storageResolver) {
-    var ret = []
-    var size = null
-    var slotValue
+    const ret = []
+    let size = null
+    let slotValue
     try {
       slotValue = await util.extractHexValue(location, storageResolver, this.storageBytes)
     } catch (e) {
@@ -38,7 +38,7 @@ class ArrayType extends RefType {
         type: this.typeName
       }
     }
-    var currentLocation = {
+    const currentLocation = {
       offset: 0,
       slot: location.slot
     }
@@ -77,8 +77,8 @@ class ArrayType extends RefType {
   }
 
   decodeFromMemoryInternal (offset, memory) {
-    var ret = []
-    var length = this.arraySize
+    const ret = []
+    let length = this.arraySize
     if (this.arraySize === 'dynamic') {
       length = memory.substr(2 * offset, 64)
       length = parseInt(length, 16)

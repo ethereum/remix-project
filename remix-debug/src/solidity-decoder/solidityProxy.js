@@ -1,9 +1,9 @@
 'use strict'
-var remixLib = require('remix-lib')
-var traceHelper = remixLib.helpers.trace
-var stateDecoder = require('./stateDecoder')
-var astHelper = require('./astHelper')
-var util = remixLib.util
+const remixLib = require('remix-lib')
+const traceHelper = remixLib.helpers.trace
+const stateDecoder = require('./stateDecoder')
+const astHelper = require('./astHelper')
+const util = remixLib.util
 
 class SolidityProxy {
   constructor (traceManager, codeManager) {
@@ -51,7 +51,7 @@ class SolidityProxy {
             if (error) {
               cb(error)
             } else {
-              var contractName = contractNameFromCode(this.contracts, code.bytecode, address)
+              const contractName = contractNameFromCode(this.contracts, code.bytecode, address)
               this.cache.contractNameByAddress[address] = contractName
               cb(null, contractName)
             }
@@ -113,7 +113,7 @@ class SolidityProxy {
     * @return {Object} - AST of the current file
     */
   ast (sourceLocation) {
-    var file = this.fileNameFromIndex(sourceLocation.file)
+    const file = this.fileNameFromIndex(sourceLocation.file)
     if (this.sources[file]) {
       return this.sources[file].legacyAST
     } else {
@@ -134,10 +134,10 @@ class SolidityProxy {
 }
 
 function contractNameFromCode (contracts, code, address) {
-  var isCreation = traceHelper.isContractCreation(address)
-  for (var file in contracts) {
-    for (var contract in contracts[file]) {
-      var bytecode = isCreation ? contracts[file][contract].evm.bytecode.object : contracts[file][contract].evm.deployedBytecode.object
+  const isCreation = traceHelper.isContractCreation(address)
+  for (let file in contracts) {
+    for (let contract in contracts[file]) {
+      const bytecode = isCreation ? contracts[file][contract].evm.bytecode.object : contracts[file][contract].evm.deployedBytecode.object
       if (util.compareByteCode(code, '0x' + bytecode)) {
         return contract
       }

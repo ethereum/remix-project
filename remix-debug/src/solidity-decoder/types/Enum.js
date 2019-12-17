@@ -1,10 +1,10 @@
 'use strict'
-var ValueType = require('./ValueType')
+const ValueType = require('./ValueType')
 
 class Enum extends ValueType {
   constructor (enumDef) {
-    var storageBytes = 0
-    var length = enumDef.children.length
+    let storageBytes = 0
+    let length = enumDef.children.length
     while (length > 1) {
       length = length / 256
       storageBytes++

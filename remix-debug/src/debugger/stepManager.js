@@ -1,6 +1,6 @@
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
-var util = remixLib.util
+const remixLib = require('remix-lib')
+const EventManager = remixLib.EventManager
+const util = remixLib.util
 
 class DebuggerStepManager {
 
@@ -17,57 +17,54 @@ class DebuggerStepManager {
   }
 
   listenToEvents () {
-    const self = this
-
-    this.debugger.event.register('newTraceLoaded', this, function () {
-      self.traceManager.getLength(function (error, newLength) {
+    this.debugger.event.register('newTraceLoaded', this, () => {
+      this.traceManager.getLength((error, newLength) => {
         if (error) {
           return console.log(error)
         }
-        if (self.traceLength !== newLength) {
-          self.event.trigger('traceLengthChanged', [newLength])
-          self.traceLength = newLength
-          self.codeTraceLength = self.calculateCodeLength()
+        if (this.traceLength !== newLength) {
+          this.event.trigger('traceLengthChanged', [newLength])
+          this.traceLength = newLength
+          this.codeTraceLength = this.calculateCodeLength()
         }
-        self.jumpTo(0)
+        this.jumpTo(0)
       })
     })
 
     this.debugger.callTree.event.register('callTreeReady', () => {
-      if (self.debugger.callTree.functionCallStack.length) {
-        self.jumpTo(self.debugger.callTree.functionCallStack[0])
+      if (this.debugger.callTree.functionCallStack.length) {
+        this.jumpTo(this.debugger.callTree.functionCallStack[0])
       }
     })
 
     this.event.register('indexChanged', this, (index) => {
       if (index < 0) return
-      if (self.currentStepIndex !== index) return
+      if (this.currentStepIndex !== index) return
 
-      self.traceManager.buildCallPath(index, (error, callsPath) => {
+      this.traceManager.buildCallPath(index, (error, callsPath) => {
         if (error) {
           console.log(error)
-          return self.event.trigger('revertWarning', [''])
+          return this.event.trigger('revertWarning', [''])
         }
-        self.currentCall = callsPath[callsPath.length - 1]
-        if (self.currentCall.reverted) {
-          let revertedReason = self.currentCall.outofgas ? 'outofgas' : ''
-          self.revertionPoint = self.currentCall.return
-          return self.event.trigger('revertWarning', [revertedReason])
+        this.currentCall = callsPath[callsPath.length - 1]
+        if (this.currentCall.reverted) {
+          let revertedReason = this.currentCall.outofgas ? 'outofgas' : ''
+          this.revertionPoint = this.currentCall.return
+          return this.event.trigger('revertWarning', [revertedReason])
         }
         for (var k = callsPath.length - 2; k >= 0; k--) {
           var parent = callsPath[k]
           if (!parent.reverted) continue
-          self.revertionPoint = parent.return
-          self.event.trigger('revertWarning', ['parenthasthrown'])
+          this.revertionPoint = parent.return
+          this.event.trigger('revertWarning', ['parenthasthrown'])
         }
-        self.event.trigger('revertWarning', [''])
+        this.event.trigger('revertWarning', [''])
       })
     })
   }
 
   triggerStepChanged (step) {
-    const self = this
-    this.traceManager.getLength(function (error, length) {
+    this.traceManager.getLength((error, length) => {
       let stepState = 'valid'
 
       if (error) {
@@ -78,15 +75,15 @@ class DebuggerStepManager {
         stepState = 'end'
       }
 
-      let jumpOutDisabled = (step === self.traceManager.findStepOut(step))
+      let jumpOutDisabled = (step === this.traceManager.findStepOut(step))
 
-      self.event.trigger('stepChanged', [step, stepState, jumpOutDisabled])
+      this.event.trigger('stepChanged', [step, stepState, jumpOutDisabled])
     })
   }
 
   stepIntoBack (solidityMode) {
     if (!this.traceManager.isLoaded()) return
-    var step = this.currentStepIndex - 1
+    let step = this.currentStepIndex - 1
     this.currentStepIndex = step
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, -1)
@@ -99,7 +96,7 @@ class DebuggerStepManager {
 
   stepIntoForward (solidityMode) {
     if (!this.traceManager.isLoaded()) return
-    var step = this.currentStepIndex + 1
+    let step = this.currentStepIndex + 1
     this.currentStepIndex = step
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, 1)
@@ -112,7 +109,7 @@ class DebuggerStepManager {
 
   stepOverBack (solidityMode) {
     if (!this.traceManager.isLoaded()) return
-    var step = this.traceManager.findStepOverBack(this.currentStepIndex)
+    let step = this.traceManager.findStepOverBack(this.currentStepIndex)
     if (solidityMode) {
       step = this.resolveToReducedTrace(step, -1)
     }
@@ -122,7 +119,7 @@ class DebuggerStepManager {
 
   stepOverForward (solidityMode) {
     if (!this.traceManager.isLoaded()) return
-    var step = this.currentStepIndex + 1
+    let step = this.currentStepIndex + 1
     let scope = this.debugger.callTree.findScope(step)
     if (scope && scope.firstStep === step) {
       step = scope.lastStep + 1

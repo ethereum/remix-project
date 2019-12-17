@@ -1,17 +1,17 @@
 'use strict'
 
-var AddressType = require('./types/Address')
-var ArrayType = require('./types/ArrayType')
-var BoolType = require('./types/Bool')
-var BytesType = require('./types/DynamicByteArray')
-var BytesXType = require('./types/FixedByteArray')
-var EnumType = require('./types/Enum')
-var StringType = require('./types/StringType')
-var StructType = require('./types/Struct')
-var IntType = require('./types/Int')
-var UintType = require('./types/Uint')
-var MappingType = require('./types/Mapping')
-var util = require('./types/util')
+const AddressType = require('./types/Address')
+const ArrayType = require('./types/ArrayType')
+const BoolType = require('./types/Bool')
+const BytesType = require('./types/DynamicByteArray')
+const BytesXType = require('./types/FixedByteArray')
+const EnumType = require('./types/Enum')
+const StringType = require('./types/StringType')
+const StructType = require('./types/Struct')
+const IntType = require('./types/Int')
+const UintType = require('./types/Uint')
+const MappingType = require('./types/Mapping')
+const util = require('./types/util')
 
 /**
   * mapping decode the given @arg type
@@ -20,12 +20,12 @@ var util = require('./types/util')
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function mapping (type, stateDefinitions, contractName) {
-  var match = type.match(/mapping\((.*?)=>(.*)\)$/)
-  var keyTypeName = match[1].trim()
-  var valueTypeName = match[2].trim()
+  const match = type.match(/mapping\((.*?)=>(.*)\)$/)
+  const keyTypeName = match[1].trim()
+  const valueTypeName = match[2].trim()
 
-  var keyType = parseType(keyTypeName, stateDefinitions, contractName, 'storage')
-  var valueType = parseType(valueTypeName, stateDefinitions, contractName, 'storage')
+  const keyType = parseType(keyTypeName, stateDefinitions, contractName, 'storage')
+  const valueType = parseType(valueTypeName, stateDefinitions, contractName, 'storage')
 
   var underlyingTypes = {
     'keyType': keyType,
@@ -42,7 +42,7 @@ function mapping (type, stateDefinitions, contractName) {
   */
 function uint (type) {
   type === 'uint' ? 'uint256' : type
-  var storageBytes = parseInt(type.replace('uint', '')) / 8
+  const storageBytes = parseInt(type.replace('uint', '')) / 8
   return new UintType(storageBytes)
 }
 
@@ -54,7 +54,7 @@ function uint (type) {
   */
 function int (type) {
   type === 'int' ? 'int256' : type
-  var storageBytes = parseInt(type.replace('int', '')) / 8
+  const storageBytes = parseInt(type.replace('int', '')) / 8
   return new IntType(storageBytes)
 }
 
@@ -105,7 +105,7 @@ function dynamicByteArray (type, stateDefinitions, contractName, location) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function fixedByteArray (type) {
-  var storageBytes = parseInt(type.replace('bytes', ''))
+  const storageBytes = parseInt(type.replace('bytes', ''))
   return new BytesXType(storageBytes)
 }
 
@@ -139,8 +139,8 @@ function stringType (type, stateDefinitions, contractName, location) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, arraySize, subArray}
   */
 function array (type, stateDefinitions, contractName, location) {
-  var arraySize
-  var match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
+  let arraySize
+  const match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
   if (!match) {
     console.log('unable to parse type ' + type)
     return null
@@ -149,7 +149,7 @@ function array (type, stateDefinitions, contractName, location) {
     location = match[3].trim()
   }
   arraySize = match[2] === '' ? 'dynamic' : parseInt(match[2])
-  var underlyingType = parseType(match[1], stateDefinitions, contractName, location)
+  const underlyingType = parseType(match[1], stateDefinitions, contractName, location)
   if (underlyingType === null) {
     console.log('unable to parse type ' + type)
     return null
@@ -166,8 +166,8 @@ function array (type, stateDefinitions, contractName, location) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, enum}
   */
 function enumType (type, stateDefinitions, contractName) {
-  var match = type.match(/enum (.*)/)
-  var enumDef = getEnum(match[1], stateDefinitions, contractName)
+  const match = type.match(/enum (.*)/)
+  const enumDef = getEnum(match[1], stateDefinitions, contractName)
   if (enumDef === null) {
     console.log('unable to retrieve decode info of ' + type)
     return null
@@ -185,12 +185,12 @@ function enumType (type, stateDefinitions, contractName) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, members}
   */
 function struct (type, stateDefinitions, contractName, location) {
-  var match = type.match(/struct (\S*?)( storage ref| storage pointer| memory| calldata)?$/)
+  const match = type.match(/struct (\S*?)( storage ref| storage pointer| memory| calldata)?$/)
   if (match) {
     if (!location) {
       location = match[2].trim()
     }
-    var memberDetails = getStructMembers(match[1], stateDefinitions, contractName, location) // type is used to extract the ast struct definition
+    const memberDetails = getStructMembers(match[1], stateDefinitions, contractName, location) // type is used to extract the ast struct definition
     if (!memberDetails) return null
     return new StructType(memberDetails, location, match[1])
   } else {
@@ -207,15 +207,15 @@ function struct (type, stateDefinitions, contractName, location) {
   * @return {Array} - containing all value declaration of the current enum type
   */
 function getEnum (type, stateDefinitions, contractName) {
-  var split = type.split('.')
+  const split = type.split('.')
   if (!split.length) {
     type = contractName + '.' + type
   } else {
     contractName = split[0]
   }
-  var state = stateDefinitions[contractName]
+  const state = stateDefinitions[contractName]
   if (state) {
-    for (var dec of state.stateDefinitions) {
+    for (let dec of state.stateDefinitions) {
       if (dec.attributes && dec.attributes.name && type === contractName + '.' + dec.attributes.name) {
         return dec
       }
@@ -234,17 +234,17 @@ function getEnum (type, stateDefinitions, contractName) {
   * @return {Array} containing all members of the current struct type
   */
 function getStructMembers (type, stateDefinitions, contractName, location) {
-  var split = type.split('.')
+  const split = type.split('.')
   if (!split.length) {
     type = contractName + '.' + type
   } else {
     contractName = split[0]
   }
-  var state = stateDefinitions[contractName]
+  const state = stateDefinitions[contractName]
   if (state) {
-    for (var dec of state.stateDefinitions) {
+    for (let dec of state.stateDefinitions) {
       if (dec.name === 'StructDefinition' && type === contractName + '.' + dec.attributes.name) {
-        var offsets = computeOffsets(dec.children, stateDefinitions, contractName, location)
+        const offsets = computeOffsets(dec.children, stateDefinitions, contractName, location)
         if (!offsets) {
           return null
         }
@@ -275,7 +275,7 @@ function typeClass (fullType) {
   if (fullType.indexOf(' ') !== -1) {
     fullType = fullType.split(' ')[0]
   }
-  var char = fullType.indexOf('bytes') === 0 ? 'X' : ''
+  const char = fullType.indexOf('bytes') === 0 ? 'X' : ''
   return fullType.replace(/[0-9]+/g, char)
 }
 
@@ -289,7 +289,7 @@ function typeClass (fullType) {
   * @return {Object} - return the corresponding decoder or null on error
   */
 function parseType (type, stateDefinitions, contractName, location) {
-  var decodeInfos = {
+  const decodeInfos = {
     'contract': address,
     'address': address,
     'array': array,
@@ -303,7 +303,7 @@ function parseType (type, stateDefinitions, contractName, location) {
     'uint': uint,
     'mapping': mapping
   }
-  var currentType = typeClass(type)
+  const currentType = typeClass(type)
   if (currentType === null) {
     console.log('unable to retrieve decode info of ' + type)
     return null
@@ -325,8 +325,8 @@ function parseType (type, stateDefinitions, contractName, location) {
   * @return {Array} - return an array of types item: {name, type, location}. location defines the byte offset and slot offset
   */
 function computeOffsets (types, stateDefinitions, contractName, location) {
-  var ret = []
-  var storagelocation = {
+  const ret = []
+  const storagelocation = {
     offset: 0,
     slot: 0
   }
