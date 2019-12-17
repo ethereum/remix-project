@@ -1,9 +1,9 @@
-var EthJSBlock = require('ethereumjs-block')
-var ethJSUtil = require('ethereumjs-util')
-var BN = ethJSUtil.BN
+const EthJSBlock = require('ethereumjs-block')
+const ethJSUtil = require('ethereumjs-util')
+const BN = ethJSUtil.BN
 
 function generateBlock (executionContext) {
-  var block = new EthJSBlock({
+  const block = new EthJSBlock({
     header: {
       timestamp: (new Date().getTime() / 1000 | 0),
       number: 0,
@@ -15,7 +15,7 @@ function generateBlock (executionContext) {
     uncleHeaders: []
   })
 
-  executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then(function () {
+  executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then(() => {
     executionContext.addBlock(block)
   })
 }

@@ -1,9 +1,9 @@
-var Web3 = require('web3')
-var ethJSUtil = require('ethereumjs-util')
-var processTx = require('./txProcess.js')
-var BN = ethJSUtil.BN
+const Web3 = require('web3')
+const ethJSUtil = require('ethereumjs-util')
+const processTx = require('./txProcess.js')
+const BN = ethJSUtil.BN
 
-var Transactions = function (executionContext) {
+const Transactions = function (executionContext) {
   this.executionContext = executionContext
 }
 
@@ -39,9 +39,9 @@ Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
       return cb(error)
     }
 
-    var txBlock = this.executionContext.txs[receipt.hash]
+    const txBlock = this.executionContext.txs[receipt.hash]
 
-    var r = {
+    const r = {
       'transactionHash': receipt.hash,
       'transactionIndex': '0x00',
       'blockHash': '0x' + txBlock.hash().toString('hex'),
@@ -111,10 +111,10 @@ Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
       return cb(error)
     }
 
-    var txBlock = this.executionContext.txs[receipt.transactionHash]
+    const txBlock = this.executionContext.txs[receipt.transactionHash]
 
     // TODO: params to add later
-    let r = {
+    const r = {
       'blockHash': '0x' + txBlock.hash().toString('hex'),
       'blockNumber': '0x' + txBlock.header.number.toString('hex'),
       'from': receipt.from,
@@ -151,7 +151,7 @@ Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
 Transactions.prototype.eth_getTransactionByBlockHashAndIndex = function (payload, cb) {
   const txIndex = payload.params[1]
 
-  var txBlock = this.executionContext.blocks[payload.params[0]]
+  const txBlock = this.executionContext.blocks[payload.params[0]]
   const txHash = '0x' + txBlock.transactions[Web3.utils.toDecimal(txIndex)].hash().toString('hex')
 
   this.executionContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
@@ -193,7 +193,7 @@ Transactions.prototype.eth_getTransactionByBlockHashAndIndex = function (payload
 Transactions.prototype.eth_getTransactionByBlockNumberAndIndex = function (payload, cb) {
   const txIndex = payload.params[1]
 
-  var txBlock = this.executionContext.blocks[payload.params[0]]
+  const txBlock = this.executionContext.blocks[payload.params[0]]
   const txHash = '0x' + txBlock.transactions[Web3.utils.toDecimal(txIndex)].hash().toString('hex')
 
   this.executionContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
@@ -202,7 +202,7 @@ Transactions.prototype.eth_getTransactionByBlockNumberAndIndex = function (paylo
     }
 
     // TODO: params to add later
-    let r = {
+    const r = {
       'blockHash': '0x' + txBlock.hash().toString('hex'),
       'blockNumber': '0x' + txBlock.header.number.toString('hex'),
       'from': receipt.from,
