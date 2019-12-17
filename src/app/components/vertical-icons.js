@@ -171,6 +171,7 @@ export class VerticalIcons extends Plugin {
    * @param {string} name Name of profile of the module to activate
    */
   addActive (name) {
+    if (name === 'home') return
     const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
     const invert = themeType === 'dark' ? 1 : 0
     const brightness = themeType === 'dark' ? '150' : '0' // should be >100 for icons with color

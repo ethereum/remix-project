@@ -117,10 +117,6 @@ export class TabProxy {
     }
   }
 
-  showTab (name) {
-    this._view.filetabs.activateTab(name)
-  }
-
   addTab (name, title, switchTo, close, icon) {
     if (this._handlers[name]) return
 
@@ -147,6 +143,14 @@ export class TabProxy {
     this.handlers[type] = fn
   }
 
+  onZoomOut () {
+    this.editor.editorFontSize(-1)
+  }
+
+  onZoomIn () {
+    this.editor.editorFontSize(1)
+  }
+
   renderTabsbar () {
     this._view.filetabs = yo`<remix-tabs></remix-tabs>`
     this._view.filetabs.addEventListener('tabClosed', (event) => {
@@ -160,14 +164,18 @@ export class TabProxy {
 
     this._view.filetabs.canAdd = false
 
-    this._view.tabs = yo`
-      <div style="width: 100%; height: 100%;">
-        ${this._view.filetabs}
+    const zoomBtns = yo`
+      <div class="d-flex flex-row justify-content-center align-items-center">
+        <span class="btn btn-sm fas fa-search-minus text-dark" onclick=${() => this.onZoomOut()}></span>
+        <span class="btn btn-sm fas fa-search-plus text-dark" onclick=${() => this.onZoomIn()}></span>
       </div>
     `
-    let tabsbar = yo`
-      <div class="d-flex align-items-center" style="max-height: 35px; height: 100%">
-        ${this._view.tabs}
+
+    // @todo(#2492) remove style after the mainPanel layout fix.
+    this._view.tabs = yo`
+      <div  style="display: -webkit-box; min-height: 35px">
+        ${zoomBtns}
+        ${this._view.filetabs}
       </div>
     `
 
@@ -191,6 +199,6 @@ export class TabProxy {
       return false
     })
 
-    return tabsbar
+    return this._view.tabs
   }
 }
