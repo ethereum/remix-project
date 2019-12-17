@@ -76,6 +76,7 @@ class Recorder {
       var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
       if (!address) return // not a contract creation
       address = this.addressToString(address)
+      address = ethutil.toChecksumAddress(address)
       // save back created addresses for the convertion from tokens to real adresses
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address
@@ -262,6 +263,7 @@ class Recorder {
             var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
             if (address) {
               address = self.addressToString(address)
+              address = ethutil.toChecksumAddress(address)
               // save back created addresses for the convertion from tokens to real adresses
               self.data._createdContracts[address] = tx.timestamp
               self.data._createdContractsReverse[tx.timestamp] = address
