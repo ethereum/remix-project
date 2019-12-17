@@ -1,6 +1,6 @@
 'use strict'
-var util = require('./util')
-var RefType = require('./RefType')
+const util = require('./util')
+const RefType = require('./RefType')
 
 class Struct extends RefType {
   constructor (memberDetails, location, fullType) {
@@ -9,10 +9,10 @@ class Struct extends RefType {
   }
 
   async decodeFromStorage (location, storageResolver) {
-    var ret = {}
+    const ret = {}
     for (var k in this.members) {
-      var item = this.members[k]
-      var globalLocation = {
+      const item = this.members[k]
+      const globalLocation = {
         offset: location.offset + item.storagelocation.offset,
         slot: util.add(location.slot, item.storagelocation.slot)
       }
@@ -30,7 +30,7 @@ class Struct extends RefType {
   }
 
   decodeFromMemoryInternal (offset, memory) {
-    var ret = {}
+    const ret = {}
     this.members.map((item, i) => {
       var contentOffset = offset
       var member = item.type.decodeFromMemory(contentOffset, memory)

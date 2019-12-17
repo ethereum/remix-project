@@ -1,5 +1,5 @@
 'use strict'
-var DynamicBytes = require('./DynamicByteArray')
+const DynamicBytes = require('./DynamicByteArray')
 
 class StringType extends DynamicBytes {
   constructor (location) {
@@ -8,7 +8,7 @@ class StringType extends DynamicBytes {
   }
 
   async decodeFromStorage (location, storageResolver) {
-    var decoded = '0x'
+    let decoded = '0x'
     try {
       decoded = await super.decodeFromStorage(location, storageResolver)
     } catch (e) {
@@ -28,7 +28,7 @@ class StringType extends DynamicBytes {
   }
 
   decodeFromMemoryInternal (offset, memory) {
-    var decoded = super.decodeFromMemoryInternal(offset, memory)
+    const decoded = super.decodeFromMemoryInternal(offset, memory)
     return format(decoded)
   }
 }
@@ -37,9 +37,9 @@ function format (decoded) {
   if (decoded.error) {
     return decoded
   }
-  var value = decoded.value
+  let value = decoded.value
   value = value.replace('0x', '').replace(/(..)/g, '%$1')
-  var ret = {
+  const ret = {
     length: decoded.length,
     raw: decoded.value,
     type: 'string'
