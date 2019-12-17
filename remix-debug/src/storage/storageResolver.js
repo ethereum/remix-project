@@ -1,7 +1,7 @@
 'use strict'
-var remixLib = require('remix-lib')
-var traceHelper = remixLib.helpers.trace
-var mappingPreimages = require('./mappingPreimages')
+const remixLib = require('remix-lib')
+const traceHelper = remixLib.helpers.trace
+const mappingPreimages = require('./mappingPreimages')
 
 /**
   * Basically one instance is created for one debugging session.
@@ -40,7 +40,6 @@ class StorageResolver {
    * @return {Function} - callback
    */
   initialPreimagesMappings (tx, stepIndex, address, corrections, callback) {
-    const self = this
     if (this.preimagesMappingByAddress[address]) {
       return callback(null, this.preimagesMappingByAddress[address])
     }
@@ -48,7 +47,7 @@ class StorageResolver {
       if (error) {
         return callback(error)
       }
-      mappingPreimages.decodeMappingsKeys(self.web3, storage, corrections, (error, mappings) => {
+      mappingPreimages.decodeMappingsKeys(this.web3, storage, corrections, (error, mappings) => {
         if (error) {
           callback(error)
         } else {
@@ -69,7 +68,7 @@ class StorageResolver {
    * @param {Function} - callback - {key, hashedKey, value} -
    */
   storageSlot (slot, tx, stepIndex, address, callback) {
-    this.storageRangeInternal(this, slot, tx, stepIndex, address, function (error, storage) {
+    this.storageRangeInternal(this, slot, tx, stepIndex, address, (error, storage) => {
       if (error) {
         callback(error)
       } else {

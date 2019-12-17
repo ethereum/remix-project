@@ -1,7 +1,7 @@
 'use strict'
-var RefType = require('./RefType')
-var util = require('./util')
-var ethutil = require('ethereumjs-util')
+const RefType = require('./RefType')
+const util = require('./util')
+const ethutil = require('ethereumjs-util')
 
 class Mapping extends RefType {
   constructor (underlyingTypes, location, fullType) {
@@ -12,9 +12,9 @@ class Mapping extends RefType {
   }
 
   async decodeFromStorage (location, storageResolver) {
-    var corrections = this.valueType.members ? this.valueType.members.map((value) => { return value.storagelocation }) : []
+    const corrections = this.valueType.members ? this.valueType.members.map((value) => { return value.storagelocation }) : []
     if (!this.initialDecodedState) { // cache the decoded initial storage
-      var mappingsInitialPreimages
+      let mappingsInitialPreimages
       try {
         mappingsInitialPreimages = await storageResolver.initialMappingsLocation(corrections)
         this.initialDecodedState = await this.decodeMappingsLocation(mappingsInitialPreimages, location, storageResolver)
@@ -25,8 +25,8 @@ class Mapping extends RefType {
         }
       }
     }
-    var mappingPreimages = await storageResolver.mappingsLocation(corrections)
-    var ret = await this.decodeMappingsLocation(mappingPreimages, location, storageResolver) // fetch mapping storage changes
+    const mappingPreimages = await storageResolver.mappingsLocation(corrections)
+    let ret = await this.decodeMappingsLocation(mappingPreimages, location, storageResolver) // fetch mapping storage changes
     ret = Object.assign({}, this.initialDecodedState, ret) // merge changes
     return {
       value: ret,
@@ -45,14 +45,14 @@ class Mapping extends RefType {
   }
 
   async decodeMappingsLocation (preimages, location, storageResolver) {
-    var mapSlot = util.normalizeHex(ethutil.bufferToHex(location.slot))
+    const mapSlot = util.normalizeHex(ethutil.bufferToHex(location.slot))
     if (!preimages[mapSlot]) {
       return {}
     }
-    var ret = {}
-    for (var i in preimages[mapSlot]) {
-      var mapLocation = getMappingLocation(i, location.slot)
-      var globalLocation = {
+    const ret = {}
+    for (let i in preimages[mapSlot]) {
+      const mapLocation = getMappingLocation(i, location.slot)
+      const globalLocation = {
         offset: location.offset,
         slot: mapLocation
       }
@@ -68,12 +68,12 @@ function getMappingLocation (key, position) {
   // > the value corresponding to a mapping key k is located at keccak256(k . p) where . is concatenation.
 
   // key should be a hex string, and position an int
-  var mappingK = ethutil.toBuffer('0x' + key)
-  var mappingP = ethutil.intToBuffer(position)
+  const mappingK = ethutil.toBuffer('0x' + key)
+  let mappingP = ethutil.intToBuffer(position)
   mappingP = ethutil.setLengthLeft(mappingP, 32)
-  var mappingKeyBuf = concatTypedArrays(mappingK, mappingP)
-  var mappingKeyPreimage = '0x' + mappingKeyBuf.toString('hex')
-  var mappingStorageLocation = ethutil.keccak(mappingKeyPreimage)
+  const mappingKeyBuf = concatTypedArrays(mappingK, mappingP)
+  const mappingKeyPreimage = '0x' + mappingKeyBuf.toString('hex')
+  let mappingStorageLocation = ethutil.keccak(mappingKeyPreimage)
   mappingStorageLocation = new ethutil.BN(mappingStorageLocation, 16)
   return mappingStorageLocation
 }

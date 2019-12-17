@@ -1,8 +1,8 @@
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+const remixLib = require('remix-lib')
+const EventManager = remixLib.EventManager
 
-var localDecoder = require('../solidity-decoder/localDecoder')
-var StorageViewer = require('../storage/storageViewer')
+const localDecoder = require('../solidity-decoder/localDecoder')
+const StorageViewer = require('../storage/storageViewer')
 
 class DebuggerSolidityLocals {
 
@@ -16,28 +16,26 @@ class DebuggerSolidityLocals {
   }
 
   init (sourceLocation) {
-    const self = this
     var decodeTimeout = null
     if (!this.storageResolver) {
-      return self.event.trigger('solidityLocalsMessage', ['storage not ready'])
+      return this.event.trigger('solidityLocalsMessage', ['storage not ready'])
     }
     if (decodeTimeout) {
       window.clearTimeout(decodeTimeout)
     }
-    self.event.trigger('solidityLocalsUpdating')
-    decodeTimeout = setTimeout(function () {
-      self.decode(sourceLocation)
+    this.event.trigger('solidityLocalsUpdating')
+    decodeTimeout = setTimeout(() => {
+      this.decode(sourceLocation)
     }, 500)
   }
 
   decode (sourceLocation) {
-    const self = this
-    self.event.trigger('solidityLocalsMessage', [''])
-    self.traceManager.waterfall([
-      self.traceManager.getStackAt,
-      self.traceManager.getMemoryAt,
-      self.traceManager.getCurrentCalledAddressAt],
-      self.stepManager.currentStepIndex,
+    this.event.trigger('solidityLocalsMessage', [''])
+    this.traceManager.waterfall([
+      this.traceManager.getStackAt,
+      this.traceManager.getMemoryAt,
+      this.traceManager.getCurrentCalledAddressAt],
+      this.stepManager.currentStepIndex,
       (error, result) => {
         if (error) {
           return error
@@ -45,17 +43,17 @@ class DebuggerSolidityLocals {
         var stack = result[0].value
         var memory = result[1].value
         try {
-          var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.tx, address: result[2].value }, self.storageResolver, self.traceManager)
-          localDecoder.solidityLocals(self.stepManager.currentStepIndex, self.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
+          var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
+          localDecoder.solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
             if (!locals.error) {
-              self.event.trigger('solidityLocals', [locals])
+              this.event.trigger('solidityLocals', [locals])
             }
             if (!Object.keys(locals).length) {
-              self.event.trigger('solidityLocalsMessage', ['no locals'])
+              this.event.trigger('solidityLocalsMessage', ['no locals'])
             }
           })
         } catch (e) {
-          self.event.trigger('solidityLocalsMessage', [e.message])
+          this.event.trigger('solidityLocalsMessage', [e.message])
         }
       })
   }

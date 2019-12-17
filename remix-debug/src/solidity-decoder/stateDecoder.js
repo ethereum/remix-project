@@ -1,5 +1,5 @@
-var astHelper = require('./astHelper')
-var decodeInfo = require('./decodeInfo')
+const astHelper = require('./astHelper')
+const decodeInfo = require('./decodeInfo')
 
 /**
   * decode the contract state storage
@@ -9,11 +9,11 @@ var decodeInfo = require('./decodeInfo')
   * @return {Map} - decoded state variable
   */
 async function decodeState (stateVars, storageResolver) {
-  var ret = {}
+  const ret = {}
   for (var k in stateVars) {
-    var stateVar = stateVars[k]
+    const stateVar = stateVars[k]
     try {
-      var decoded = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
+      const decoded = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
       decoded.constant = stateVar.constant
       if (decoded.constant) {
         decoded.value = '<constant>'
@@ -35,12 +35,12 @@ async function decodeState (stateVars, storageResolver) {
   * @return {Object} - return the location of all contract variables in the storage
   */
 function extractStateVariables (contractName, sourcesList) {
-  var states = astHelper.extractStatesDefinitions(sourcesList)
+  const states = astHelper.extractStatesDefinitions(sourcesList)
   if (!states[contractName]) {
     return []
   }
-  var types = states[contractName].stateVariables
-  var offsets = decodeInfo.computeOffsets(types, states, contractName, 'storage')
+  const types = states[contractName].stateVariables
+  const offsets = decodeInfo.computeOffsets(types, states, contractName, 'storage')
   if (!offsets) {
     return [] // TODO should maybe return an error
   }
@@ -56,7 +56,7 @@ function extractStateVariables (contractName, sourcesList) {
   * @return {Map} - return the state of the contract
   */
 async function solidityState (storageResolver, astList, contractName) {
-  var stateVars = extractStateVariables(contractName, astList)
+  const stateVars = extractStateVariables(contractName, astList)
   try {
     return await decodeState(stateVars, storageResolver)
   } catch (e) {

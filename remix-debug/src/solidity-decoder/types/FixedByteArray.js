@@ -1,5 +1,5 @@
 'use strict'
-var ValueType = require('./ValueType')
+const ValueType = require('./ValueType')
 
 class FixedByteArray extends ValueType {
   constructor (storageBytes) {

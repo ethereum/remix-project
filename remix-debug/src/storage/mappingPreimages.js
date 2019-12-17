@@ -1,4 +1,4 @@
-var util = require('../solidity-decoder/types/util')
+const util = require('../solidity-decoder/types/util')
 
 module.exports = {
   decodeMappingsKeys: decodeMappingsKeys
@@ -14,14 +14,14 @@ module.exports = {
   * @return {Map} - solidity mapping location (e.g { "<mapping_slot>" : { "<mapping-key1>": preimageOf1 }, { "<mapping-key2>": preimageOf2 }, ... })
   */
 async function decodeMappingsKeys (web3, storage, corrections, callback) {
-  var ret = {}
+  const ret = {}
   if (!corrections.length) corrections.push({offset: 0, slot: 0})
-  for (var hashedLoc in storage) {
-    var preimage
+  for (let hashedLoc in storage) {
+    let preimage
     try {
-      var key = storage[hashedLoc].key
-      for (var k in corrections) {
-        var corrected = util.sub(key, corrections[k].slot).toString(16)
+      const key = storage[hashedLoc].key
+      for (let k in corrections) {
+        const corrected = util.sub(key, corrections[k].slot).toString(16)
         preimage = await getPreimage(web3, '0x' + corrected)
         if (preimage) break
       }
@@ -30,9 +30,9 @@ async function decodeMappingsKeys (web3, storage, corrections, callback) {
     if (preimage) {
       // got preimage!
       // get mapping position (i.e. storage slot), its the last 32 bytes
-      var slotByteOffset = preimage.length - 64
-      var mappingSlot = preimage.substr(slotByteOffset)
-      var mappingKey = preimage.substr(0, slotByteOffset)
+      const slotByteOffset = preimage.length - 64
+      const mappingSlot = preimage.substr(slotByteOffset)
+      const mappingKey = preimage.substr(0, slotByteOffset)
       if (!ret[mappingSlot]) {
         ret[mappingSlot] = {}
       }
@@ -50,7 +50,7 @@ async function decodeMappingsKeys (web3, storage, corrections, callback) {
   */
 function getPreimage (web3, key) {
   return new Promise((resolve, reject) => {
-    web3.debug.preimage(key.indexOf('0x') === 0 ? key : '0x' + key, function (error, preimage) {
+    web3.debug.preimage(key.indexOf('0x') === 0 ? key : '0x' + key, (error, preimage) => {
       if (error) {
         resolve(null)
       } else {

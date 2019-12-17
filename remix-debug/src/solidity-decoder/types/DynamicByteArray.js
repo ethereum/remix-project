@@ -1,9 +1,9 @@
 'use strict'
-var util = require('./util')
-var remixLib = require('remix-lib')
-var sha3256 = remixLib.util.sha3_256
-var BN = require('ethereumjs-util').BN
-var RefType = require('./RefType')
+const util = require('./util')
+const remixLib = require('remix-lib')
+const sha3256 = remixLib.util.sha3_256
+const BN = require('ethereumjs-util').BN
+const RefType = require('./RefType')
 
 class DynamicByteArray extends RefType {
   constructor (location) {
@@ -11,7 +11,7 @@ class DynamicByteArray extends RefType {
   }
 
   async decodeFromStorage (location, storageResolver) {
-    var value = '0x0'
+    let value = '0x0'
     try {
       value = await util.extractHexValue(location, storageResolver, this.storageBytes)
     } catch (e) {
@@ -21,12 +21,12 @@ class DynamicByteArray extends RefType {
         type: this.typeName
       }
     }
-    var bn = new BN(value, 16)
+    const bn = new BN(value, 16)
     if (bn.testn(0)) {
-      var length = bn.div(new BN(2))
-      var dataPos = new BN(sha3256(location.slot).replace('0x', ''), 16)
-      var ret = ''
-      var currentSlot = '0x'
+      const length = bn.div(new BN(2))
+      let dataPos = new BN(sha3256(location.slot).replace('0x', ''), 16)
+      let ret = ''
+      let currentSlot = '0x'
       try {
         currentSlot = await util.readFromStorage(dataPos, storageResolver)
       } catch (e) {
@@ -67,7 +67,7 @@ class DynamicByteArray extends RefType {
 
   decodeFromMemoryInternal (offset, memory) {
     offset = 2 * offset
-    var length = memory.substr(offset, 64)
+    let length = memory.substr(offset, 64)
     length = 2 * parseInt(length, 16)
     return {
       length: '0x' + length.toString(16),

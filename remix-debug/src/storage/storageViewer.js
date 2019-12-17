@@ -1,7 +1,7 @@
 'use strict'
-var remixLib = require('remix-lib')
-var util = remixLib.util
-var mappingPreimages = require('./mappingPreimages')
+const remixLib = require('remix-lib')
+const util = remixLib.util
+const mappingPreimages = require('./mappingPreimages')
 
  /**
    * easier access to the storage resolver
@@ -46,7 +46,7 @@ class StorageViewer {
     * @param {Function} - callback - {key, hashedKey, value} -
     */
   storageSlot (slot, callback) {
-    var hashed = util.sha3_256(slot)
+    const hashed = util.sha3_256(slot)
     if (this.storageChanges[hashed]) {
       return callback(null, this.storageChanges[hashed])
     }

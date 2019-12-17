@@ -1,9 +1,9 @@
-var remixLib = require('remix-lib')
+const remixLib = require('remix-lib')
 
-var EventManager = remixLib.EventManager
-var Web3Providers = remixLib.vm.Web3Providers
-var DummyProvider = remixLib.vm.DummyProvider
-var init = remixLib.init
+const EventManager = remixLib.EventManager
+const Web3Providers = remixLib.vm.Web3Providers
+const DummyProvider = remixLib.vm.DummyProvider
+const init = remixLib.init
 
 class ContextManager {
   constructor (executionContext) {
@@ -33,23 +33,22 @@ class ContextManager {
   }
 
   switchProvider (type, cb) {
-    var self = this
-    this.web3Providers.get(type, function (error, obj) {
+    this.web3Providers.get(type, (error, obj) => {
       if (error) {
         // console.log('provider ' + type + ' not defined')
       } else {
-        self.web3 = obj
-        self.executionContext.detectNetwork((error, network) => {
+        this.web3 = obj
+        this.executionContext.detectNetwork((error, network) => {
           if (error || !network) {
-            self.web3 = obj
+            this.web3 = obj
           } else {
             var webDebugNode = init.web3DebugNode(network.name)
-            self.web3 = (!webDebugNode ? obj : webDebugNode)
+            this.web3 = (!webDebugNode ? obj : webDebugNode)
           }
-          self.event.trigger('providerChanged', [type, self.web3])
+          this.event.trigger('providerChanged', [type, this.web3])
           if (cb) return cb()
         })
-        self.event.trigger('providerChanged', [type, self.web3])
+        this.event.trigger('providerChanged', [type, this.web3])
       }
     })
   }

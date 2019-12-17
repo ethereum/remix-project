@@ -1,7 +1,7 @@
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
-var stateDecoder = require('../solidity-decoder/stateDecoder')
-var StorageViewer = require('../storage/storageViewer')
+const remixLib = require('remix-lib')
+const EventManager = remixLib.EventManager
+const stateDecoder = require('../solidity-decoder/stateDecoder')
+const StorageViewer = require('../storage/storageViewer')
 
 class DebuggerSolidityState {
 
@@ -17,28 +17,27 @@ class DebuggerSolidityState {
   }
 
   init (index) {
-    var self = this
-    var decodeTimeout = null
+    let decodeTimeout = null
     if (index < 0) {
-      return self.event.trigger('solidityStateMessage', ['invalid step index'])
+      return this.event.trigger('solidityStateMessage', ['invalid step index'])
     }
 
-    if (self.stepManager.currentStepIndex !== index) return
-    if (!self.solidityProxy.loaded()) {
-      return self.event.trigger('solidityStateMessage', ['invalid step index'])
+    if (this.stepManager.currentStepIndex !== index) return
+    if (!this.solidityProxy.loaded()) {
+      return this.event.trigger('solidityStateMessage', ['invalid step index'])
     }
 
-    if (!self.storageResolver) {
+    if (!this.storageResolver) {
       return
     }
     if (decodeTimeout) {
       window.clearTimeout(decodeTimeout)
     }
-    self.event.trigger('solidityStateUpdating')
-    decodeTimeout = setTimeout(function () {
+    this.event.trigger('solidityStateUpdating')
+    decodeTimeout = setTimeout(() => {
       // necessary due to some states that can crash the debugger
       try {
-        self.decode(index)
+        this.decode(index)
       } catch (err) {
         console.dir('====> error')
         console.dir(err)
@@ -51,33 +50,31 @@ class DebuggerSolidityState {
   }
 
   decode (index) {
-    const self = this
-    self.traceManager.getCurrentCalledAddressAt(self.stepManager.currentStepIndex, function (error, address) {
+    this.traceManager.getCurrentCalledAddressAt(this.stepManager.currentStepIndex, (error, address) => {
       if (error) {
-        return self.event.trigger('solidityState', [{}])
+        return this.event.trigger('solidityState', [{}])
       }
-      if (self.stateVariablesByAddresses[address]) {
-        return self.extractStateVariables(self.stateVariablesByAddresses[address], address)
+      if (this.stateVariablesByAddresses[address]) {
+        return this.extractStateVariables(this.stateVariablesByAddresses[address], address)
       }
-      self.solidityProxy.extractStateVariablesAt(index, function (error, stateVars) {
+      this.solidityProxy.extractStateVariablesAt(index, (error, stateVars) => {
         if (error) {
-          return self.event.trigger('solidityState', [{}])
+          return this.event.trigger('solidityState', [{}])
         }
-        self.stateVariablesByAddresses[address] = stateVars
-        self.extractStateVariables(stateVars, address)
+        this.stateVariablesByAddresses[address] = stateVars
+        this.extractStateVariables(stateVars, address)
       })
     })
   }
 
   extractStateVariables (stateVars, address) {
-    const self = this
-    var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.tx, address: address }, self.storageResolver, self.traceManager)
+    var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
     stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
-      self.event.trigger('solidityStateMessage', [''])
+      this.event.trigger('solidityStateMessage', [''])
       if (result.error) {
-        return self.event.trigger('solidityStateMessage', [result.error])
+        return this.event.trigger('solidityStateMessage', [result.error])
       }
-      self.event.trigger('solidityState', [result])
+      this.event.trigger('solidityState', [result])
     })
   }
 

@@ -1,19 +1,19 @@
 'use strict'
 
-var StorageViewer = require('./storage/storageViewer')
-var StorageResolver = require('./storage/storageResolver')
+const StorageViewer = require('./storage/storageViewer')
+const StorageResolver = require('./storage/storageResolver')
 
-var SolidityDecoder = require('./solidity-decoder')
-var SolidityProxy = SolidityDecoder.SolidityProxy
-var stateDecoder = SolidityDecoder.stateDecoder
-var localDecoder = SolidityDecoder.localDecoder
-var InternalCallTree = SolidityDecoder.InternalCallTree
+const SolidityDecoder = require('./solidity-decoder')
+const SolidityProxy = SolidityDecoder.SolidityProxy
+const stateDecoder = SolidityDecoder.stateDecoder
+const localDecoder = SolidityDecoder.localDecoder
+const InternalCallTree = SolidityDecoder.InternalCallTree
 
-var remixLib = require('remix-lib')
-var TraceManager = remixLib.trace.TraceManager
-var CodeManager = remixLib.code.CodeManager
-var traceHelper = remixLib.helpers.trace
-var EventManager = remixLib.EventManager
+const remixLib = require('remix-lib')
+const TraceManager = remixLib.trace.TraceManager
+const CodeManager = remixLib.code.CodeManager
+const traceHelper = remixLib.helpers.trace
+const EventManager = remixLib.EventManager
 
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
@@ -75,7 +75,7 @@ Ethdebugger.prototype.sourceLocationFromVMTraceIndex = function (address, stepIn
 }
 
 Ethdebugger.prototype.sourceLocationFromInstructionIndex = function (address, instIndex, callback) {
-  this.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, instIndex, this.solidityProxy.contracts, function (error, rawLocation) {
+  this.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, instIndex, this.solidityProxy.contracts, (error, rawLocation) => {
     callback(error, rawLocation)
   })
 }
@@ -98,10 +98,10 @@ Ethdebugger.prototype.decodeLocalsAt = function (step, sourceLocation, callback)
     step,
     (error, result) => {
       if (!error) {
-        var stack = result[0].value
-        var memory = result[1].value
+        const stack = result[0].value
+        const memory = result[1].value
         try {
-          var storageViewer = new StorageViewer({
+          const storageViewer = new StorageViewer({
             stepIndex: step,
             tx: this.tx,
             address: result[2].value
@@ -124,7 +124,7 @@ Ethdebugger.prototype.decodeLocalsAt = function (step, sourceLocation, callback)
 
 /* decode state */
 Ethdebugger.prototype.extractStateAt = function (step, callback) {
-  this.solidityProxy.extractStateVariablesAt(step, function (error, stateVars) {
+  this.solidityProxy.extractStateVariablesAt(step, (error, stateVars) => {
     callback(error, stateVars)
   })
 }
@@ -132,7 +132,7 @@ Ethdebugger.prototype.extractStateAt = function (step, callback) {
 Ethdebugger.prototype.decodeStateAt = function (step, stateVars, callback) {
   this.traceManager.getCurrentCalledAddressAt(step, (error, address) => {
     if (error) return callback(error)
-    var storageViewer = new StorageViewer({
+    const storageViewer = new StorageViewer({
       stepIndex: step,
       tx: this.tx,
       address: address
@@ -175,16 +175,15 @@ Ethdebugger.prototype.debug = function (tx) {
   }
   this.setCompilationResult(this.opts.compilationResult())
   this.tx = tx
-  var self = this
-  this.traceManager.resolveTrace(tx, function (error, result) {
+  this.traceManager.resolveTrace(tx, (error, result) => {
     if (result) {
-      self.event.trigger('newTraceLoaded', [self.traceManager.trace])
-      if (self.breakpointManager && self.breakpointManager.hasBreakpoint()) {
-        self.breakpointManager.jumpNextBreakpoint(false)
+      this.event.trigger('newTraceLoaded', [this.traceManager.trace])
+      if (this.breakpointManager && this.breakpointManager.hasBreakpoint()) {
+        this.breakpointManager.jumpNextBreakpoint(false)
       }
-      self.storageResolver = new StorageResolver({web3: self.traceManager.web3})
+      this.storageResolver = new StorageResolver({web3: this.traceManager.web3})
     } else {
-      self.statusMessage = error ? error.message : 'Trace not loaded'
+      this.statusMessage = error ? error.message : 'Trace not loaded'
     }
   })
 }
