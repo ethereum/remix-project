@@ -11,19 +11,12 @@ var ContextView = require('../editor/contextView')
 var csjs = require('csjs-inject')
 
 var css = csjs`
-  .mainview         {
-    display            : flex;
-    flex-direction     : column;
-    height             : 100%;
-  }
-  .content            {
-    position          : relative;
+  .mainview            {
     display           : flex;
     flex-direction    : column;
     height            : 100%;
     width             : 100%;
   }
-  
 `
 
 export class MainView {
@@ -181,23 +174,18 @@ export class MainView {
   }
   render () {
     var self = this
-    if (self._view.el) return self._view.el
+    if (self._view.mainview) return self._view.mainview
     self._view.editor = self.editor.render()
     self._view.editor.style.display = 'none'
     self._view.mainPanel = self.mainPanel.render()
     self._view.terminal = self._components.terminal.render()
-    self._view.content = yo`
-      <div class=${css.content}>
+    self._view.mainview = yo`
+      <div class=${css.mainview}>
         ${self.tabProxy.renderTabsbar()}
         ${self._view.editor}
         ${self._view.mainPanel}
         ${self._components.contextView.render()}
         ${self._view.terminal}
-      </div>
-    `
-    self._view.el = yo`
-      <div class=${css.mainview}>
-        ${self._view.content}
       </div>
     `
     // INIT
@@ -207,7 +195,7 @@ export class MainView {
       if (e.altKey && e.keyCode === 84) self.tabProxy.switchNextTab() // alt + t
     })
 
-    return self._view.el
+    return self._view.mainview
   }
   registerCommand (name, command, opts) {
     var self = this

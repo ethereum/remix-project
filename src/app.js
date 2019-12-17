@@ -61,14 +61,14 @@ var css = csjs`
   pre {
     overflow-x: auto;
   }
-  .browsersolidity     {
+  .remixIDE            {
     width              : 100vw;
     height             : 100vh;
     overflow           : hidden;
     flex-direction     : row;
     display            : flex;
   }
-  .mainpanel         {
+  .mainpanel           {
     display            : flex;
     flex-direction     : column;
     overflow           : hidden;
@@ -86,16 +86,16 @@ var css = csjs`
     flex-direction     : row-reverse;
     width              : 320px;
   }
-  .highlightcode {
-    position:absolute;
-    z-index:20;
-    background-color: var(--info);
+  .highlightcode       {
+    position           : absolute;
+    z-index            : 20;
+    background-color   : var(--info);
   }
   .highlightcode_fullLine {
-    position:absolute;
-    z-index:20;
-    background-color: var(--info);
-    opacity: 0.5;
+    position           : absolute;
+    z-index            : 20;
+    background-color   : var(--info);
+    opacity            : 0.5;
   }
 `
 
@@ -162,7 +162,7 @@ class App {
     self._components.resizeFeature = new PanelsResize(self._view.sidepanel)
 
     self._view.el = yo`
-      <div class=${css.browsersolidity}>
+      <div class=${css.remixIDE}>
         ${self._view.iconpanel}
         ${self._view.sidepanel}
         ${self._components.resizeFeature.render()}
