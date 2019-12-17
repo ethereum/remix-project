@@ -74,7 +74,7 @@ class Recorder {
       if (call) return
 
       const rawAddress = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
-      if (!address) return // not a contract creation
+      if (!rawAddress) return // not a contract creation
       const stringAddress = this.addressToString(rawAddress)
       const address = ethutil.toChecksumAddress(stringAddress)
       // save back created addresses for the convertion from tokens to real adresses
