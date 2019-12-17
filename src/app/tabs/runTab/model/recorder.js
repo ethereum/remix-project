@@ -73,7 +73,7 @@ class Recorder {
       if (error) return console.log(error)
       if (call) return
 
-      const  rawAddress = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+      const rawAddress = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
       if (!address) return // not a contract creation
       const stringAddress = this.addressToString(rawAddress)
       const address = ethutil.toChecksumAddress(stringAddress)
