@@ -232,7 +232,8 @@ module.exports = class UniversalDApp {
     * @param {Function} callback    - callback.
     */
   callFunction (to, data, funAbi, confirmationCb, continueCb, promptCb, callback) {
-    this.runTx({to: to, data: data, useCall: funAbi.constant}, confirmationCb, continueCb, promptCb, (error, txResult) => {
+    const isCall = funAbi.stateMutability === 'view' || funAbi.stateMutability === 'pure'
+    this.runTx({to: to, data: data, useCall: isCall}, confirmationCb, continueCb, promptCb, (error, txResult) => {
       // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
       callback(error, txResult)
     })

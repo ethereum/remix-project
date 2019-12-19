@@ -13,6 +13,10 @@ function getFunctionFullName (signature: string, methodIdentifiers: Record <stri
     return null
 }
 
+function isConstant(funcABI: FunctionDescription): boolean {
+    return (funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure')
+}
+
 function getOverridedSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>) {
     let fullName: any = getFunctionFullName(signature, methodIdentifiers)
     let match: RegExp = /sender: account-+(\d)/g
@@ -77,7 +81,7 @@ function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, 
         if (availableFunctions.indexOf('beforeEach') >= 0) {
             runList.push({ name: 'beforeEach', type: 'internal', constant: false })
         }
-        runList.push({ name: func.name, signature: func.signature, type: 'test', constant: func.constant })
+        runList.push({ name: func.name, signature: func.signature, type: 'test', constant: isConstant(func) })
         if (availableFunctions.indexOf('afterEach') >= 0) {
             runList.push({ name: 'afterEach', type: 'internal', constant: false })
         }

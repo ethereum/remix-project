@@ -44,10 +44,15 @@ module.exports = {
     // Sorts the list of ABI entries. Constant functions will appear first,
     // followed by non-constant functions. Within those t wo groupings, functions
     // will be sorted by their names.
+
+    function isConstant (funcABI) {
+      return (funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure')
+    }
+
     return contractabi.sort(function (a, b) {
-      if (a.constant === true && b.constant !== true) {
+      if (isConstant(a) && !isConstant(b)) {
         return 1
-      } else if (b.constant === true && a.constant !== true) {
+      } else if (isConstant(b) && !isConstant(a)) {
         return -1
       }
       // If we reach here, either a and b are both constant or both not; sort by name then
