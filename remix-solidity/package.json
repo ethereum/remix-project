@@ -15,7 +15,7 @@
   "main": "./index.js",
   "dependencies": {
     "remix-lib": "0.4.17",
-    "solc": "^0.5.13",
+    "solc": "^0.6.0",
     "webworkify": "^1.2.1"
   },
   "devDependencies": {
