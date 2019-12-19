@@ -142,35 +142,35 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 // TODO this is used by renderInstance when a new instance is displayed.
 // this returns a DOM element.
 UniversalDAppUI.prototype.getCallButton = function (args) {
-  var self = this
+  let self = this
   // args.funABI, args.address [fun only]
   // args.contractName [constr only]
-  var lookupOnly = args.funABI.constant
+  const lookupOnly = args.funABI.stateMutability === 'view' || args.funABI.stateMutability === 'pure' || args.funABI.constant
 
   var outputOverride = yo`<div class=${css.value}></div>` // show return value
 
   function clickButton (valArr, inputsValues) {
-    var logMsg
-    if (!args.funABI.constant) {
-      logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
-    } else {
+    let logMsg
+    if (lookupOnly) {
       logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+    } else {
+      logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
     }
 
     var value = inputsValues
 
-    var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
       }
-      var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
-      var content = confirmDialog(tx, amount, gasEstimation, self.udapp,
+      const amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+      const content = confirmDialog(tx, amount, gasEstimation, self.udapp,
         (gasPrice, cb) => {
           let txFeeText, priceStatus
           // TODO: this try catch feels like an anti pattern, can/should be
           // removed, but for now keeping the original logic
           try {
-            var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
+            const fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
             txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
             priceStatus = true
           } catch (e) {
@@ -181,12 +181,12 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
         },
         (cb) => {
           executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-            var warnMessage = ' Please fix this issue before sending any transaction. '
+            const warnMessage = ' Please fix this issue before sending any transaction. '
             if (error) {
               return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
             }
             try {
-              var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+              const gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
               cb(null, gasPriceValue)
             } catch (e) {
               cb(warnMessage + e.message, null, false)
@@ -194,10 +194,15 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
           })
         }
       )
-      modalDialog('Confirm transaction', content,
+      modalDialog(
+        'Confirm transaction',
+        content,
         { label: 'Confirm',
           fn: () => {
-            self.udapp.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+            self.udapp.config.setUnpersistedProperty(
+              'doNotShowTransactionConfirmationAgain',
+              content.querySelector('input#confirmsetting').checked
+            )
             // TODO: check if this is check is still valid given the refactor
             if (!content.gasPriceStatus) {
               cancelCb('Given gas price is not correct')
@@ -210,44 +215,46 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
             fn: () => {
               return cancelCb('Transaction canceled by user.')
             }
-          })
+          }
+        )
     }
 
-    var continueCb = (error, continueTxExecution, cancelCb) => {
+    const continueCb = (error, continueTxExecution, cancelCb) => {
       if (error) {
-        var msg = typeof error !== 'string' ? error.message : error
-        modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
-        The transaction execution will likely fail. Do you want to force sending? <br>
-        ${msg}
-        </div>`,
+        const msg = typeof error !== 'string' ? error.message : error
+        modalDialog(
+          'Gas estimation failed',
+          yo`
+            <div>Gas estimation errored with the following message (see below).
+            The transaction execution will likely fail. Do you want to force sending? <br>${msg}</div>
+          `,
           {
             label: 'Send Transaction',
-            fn: () => {
-              continueTxExecution()
-            }}, {
-              label: 'Cancel Transaction',
-              fn: () => {
-                cancelCb()
-              }
-            })
+            fn: () => continueTxExecution()
+          },
+          {
+            label: 'Cancel Transaction',
+            fn: () => cancelCb()
+          }
+        )
       } else {
         continueTxExecution()
       }
     }
 
-    var outputCb = (decoded) => {
+    const outputCb = (decoded) => {
       outputOverride.innerHTML = ''
       outputOverride.appendChild(decoded)
     }
 
-    var promptCb = (okCb, cancelCb) => {
+    const promptCb = (okCb, cancelCb) => {
       modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
 
     // contractsDetails is used to resolve libraries
     txFormat.buildData(args.contractName, args.contractAbi, {}, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
       if (!error) {
-        if (!args.funABI.constant) {
+        if (args.funABI.stateMutability !== 'constant' || args.funABI.constant) {
           self.logCallback(`${logMsg} pending ... `)
         } else {
           self.logCallback(`${logMsg}`)
@@ -264,7 +271,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
               }
             }
             if (lookupOnly) {
-              var decoded = decodeResponseToTreeView(executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result), args.funABI)
+              const decoded = decodeResponseToTreeView(executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result), args.funABI)
               outputCb(decoded)
             }
           } else {
@@ -282,11 +289,11 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     })
   }
 
-  var multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
+  const multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
     clickButton(valArray, inputsValues, domEl)
   }, self.udapp.getInputs(args.funABI))
 
-  var contractActionsContainer = yo`<div class="${css.contractActionsContainer}" >${multiParamManager.render()}</div>`
+  const contractActionsContainer = yo`<div class="${css.contractActionsContainer}" >${multiParamManager.render()}</div>`
   contractActionsContainer.appendChild(outputOverride)
 
   return contractActionsContainer
