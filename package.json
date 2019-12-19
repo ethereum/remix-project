@@ -64,7 +64,7 @@
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.0.1",
     "semver": "^6.1.2",
-    "solc": "^0.5.13",
+    "solc": "^0.6.0",
     "swarmgw": "^0.3.1",
     "tape": "^4.5.1",
     "uglify-js": "^2.8.16",
