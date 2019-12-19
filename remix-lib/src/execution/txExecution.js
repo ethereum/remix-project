@@ -43,7 +43,8 @@ module.exports = {
     * @param {Function} finalCallback    - last callback.
     */
   callFunction: function (from, to, data, value, gasLimit, funAbi, txRunner, callbacks, finalCallback) {
-    var tx = { from: from, to: to, data: data, useCall: funAbi.constant, value: value, gasLimit: gasLimit }
+    const isCall = funAbi.stateMutability === 'view' || funAbi.stateMutability === 'pure'
+    var tx = { from: from, to: to, data: data, useCall: isCall, value: value, gasLimit: gasLimit }
     txRunner.rawRun(tx, callbacks.confirmationCb, callbacks.gasEstimationForceSend, callbacks.promptCb, (error, txResult) => {
       // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
       finalCallback(error, txResult)
