@@ -186,7 +186,7 @@ class MultiParamManager {
       expandedButton.classList.add('btn-info')
       funcButton.setAttribute('title', (title + ' - call'))
       funcButton.classList.add('btn-info')
-    } else if (this.funABI.stateMutability === 'payable' || this.funABI.payable === true) {
+    } else if (this.funABI.stateMutability === 'payable' || this.funABI.payable) {
       // transact. stateMutability = payable
       expandedButton.setAttribute('title', (title + ' - transact (payable)'))
       expandedButton.innerHTML = 'transact'
@@ -194,7 +194,7 @@ class MultiParamManager {
       funcButton.setAttribute('title', (title + ' - transact (payable)'))
       funcButton.classList.add('btn-danger')
     } else {
-      // transact. stateMutability = not payable
+      // transact. stateMutability = nonpayable
       expandedButton.setAttribute('title', (title + ' - transact (not payable)'))
       expandedButton.innerHTML = 'transact'
       expandedButton.classList.add('btn-warning')

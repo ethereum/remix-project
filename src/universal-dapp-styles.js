@@ -160,8 +160,8 @@ var css = csjs`
   }
   .value ul {
     margin-bottom: 10px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid var(--info);
+    padding-top: 5px;
+    border-bottom: 4px solid var(--light);
   }
   .contractActionsContainer {
     width: 98%;
