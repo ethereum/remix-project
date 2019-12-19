@@ -34,7 +34,7 @@
     "babel-eslint": "^7.1.1",
     "babelify": "^10.0.0",
     "notify-error": "^1.2.0",
-    "solc": "^0.5.13",
+    "solc": "^0.6.0",
     "standard": "^7.0.1",
     "standard-reporter": "^1.0.5",
     "tape": "^4.6.0"
