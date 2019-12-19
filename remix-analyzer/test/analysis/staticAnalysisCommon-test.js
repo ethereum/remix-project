@@ -459,9 +459,9 @@ test('staticAnalysisCommon.isStateVariable', function (t) {
 
 test('staticAnalysisCommon.isConstantFunction', function (t) {
   t.plan(3)
-  var node1 = { name: 'FunctionDefinition', attributes: { constant: true } }
-  var node2 = { name: 'FunctionDefinition', attributes: { constant: false } }
-  var node3 = { name: 'MemberAccess', attributes: { constant: true } }
+  var node1 = { name: 'FunctionDefinition', attributes: { constant: true, stateMutability: 'view' } }
+  var node2 = { name: 'FunctionDefinition', attributes: { constant: false, stateMutability: 'nonpayable' } }
+  var node3 = { name: 'MemberAccess', attributes: { constant: true, stateMutability: 'view' } }
 
   t.ok(common.isConstantFunction(node1), 'should be const func definition')
   t.notOk(common.isConstantFunction(node2), 'should not be const func definition')
@@ -504,7 +504,7 @@ test('staticAnalysisCommon.isFullyImplementedContract', function (t) {
 test('staticAnalysisCommon.isCallToNonConstLocalFunction', function (t) {
   t.plan(2)
   t.ok(common.isCallToNonConstLocalFunction(localCall), 'should be call to non const Local func')
-  localCall.children[0].attributes.type = 'function (struct Ballot.Voter storage pointer) constant payable (uint256)'
+  localCall.children[0].attributes.type = 'function (struct Ballot.Voter storage pointer) view payable (uint256)'
   t.notok(common.isCallToNonConstLocalFunction(localCall), 'should no longer be call to non const Local func')
 })
 
