@@ -163,14 +163,14 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
       }
-      const amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
-      const content = confirmDialog(tx, amount, gasEstimation, self.udapp,
+      var amount = executionContext.web3().utils.fromWei(typeConversion.toInt(tx.value), 'ether')
+      var content = confirmDialog(tx, amount, gasEstimation, self.udapp,
         (gasPrice, cb) => {
           let txFeeText, priceStatus
           // TODO: this try catch feels like an anti pattern, can/should be
           // removed, but for now keeping the original logic
           try {
-            const fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
+            var fee = executionContext.web3().utils.toBN(tx.gas).mul(executionContext.web3().utils.toBN(executionContext.web3().utils.toWei(gasPrice.toString(10), 'gwei')))
             txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
             priceStatus = true
           } catch (e) {
@@ -186,7 +186,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
               return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
             }
             try {
-              const gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+              var gasPriceValue = executionContext.web3().utils.fromWei(gasPrice.toString(10), 'gwei')
               cb(null, gasPriceValue)
             } catch (e) {
               cb(warnMessage + e.message, null, false)
@@ -207,7 +207,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
             if (!content.gasPriceStatus) {
               cancelCb('Given gas price is not correct')
             } else {
-              var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+              var gasPrice = executionContext.web3().utils.toWei(content.querySelector('#gasprice').value, 'gwei')
               continueTxExecution(gasPrice)
             }
           }}, {

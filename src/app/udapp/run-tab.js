@@ -63,7 +63,7 @@ export class RunTab extends LibraryPlugin {
           if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
             unit = selectedUnit
           }
-          cb(null, executionContext.web3().toWei(number, unit))
+          cb(null, executionContext.web3().utils.toWei(number, unit))
         } catch (e) {
           cb(e)
         }
