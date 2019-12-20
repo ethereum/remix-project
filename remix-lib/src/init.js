@@ -26,13 +26,13 @@ module.exports = {
   },
 
   extend: function (web3) {
-    if (!web3._extend) {
+    if (!web3.extend) {
       return
     }
     // DEBUG
     var methods = []
     if (!(web3.debug && web3.debug.preimage)) {
-      methods.push(new web3._extend.Method({
+      methods.push(new web3.extend.Method({
         name: 'preimage',
         call: 'debug_preimage',
         inputFormatter: [null],
@@ -41,7 +41,7 @@ module.exports = {
     }
 
     if (!(web3.debug && web3.debug.traceTransaction)) {
-      methods.push(new web3._extend.Method({
+      methods.push(new web3.extend.Method({
         name: 'traceTransaction',
         call: 'debug_traceTransaction',
         inputFormatter: [null, null],
@@ -50,7 +50,7 @@ module.exports = {
     }
 
     if (!(web3.debug && web3.debug.storageRangeAt)) {
-      methods.push(new web3._extend.Method({
+      methods.push(new web3.extend.Method({
         name: 'storageRangeAt',
         call: 'debug_storageRangeAt',
         inputFormatter: [null, null, null, null, null],
@@ -58,7 +58,7 @@ module.exports = {
       }))
     }
     if (methods.length > 0) {
-      web3._extend({
+      web3.extend({
         property: 'debug',
         methods: methods,
         properties: []
