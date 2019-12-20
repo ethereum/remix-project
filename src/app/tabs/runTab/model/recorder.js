@@ -315,7 +315,7 @@ class Recorder {
         if (network.name !== 'Main') {
           return continueTxExecution(null)
         }
-        var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+        var amount = executionContext.web3().utils.fromWei(typeConversion.toInt(tx.value), 'ether')
 
         // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
         var content = confirmDialog(tx, amount, gasEstimation, this.recorder,
@@ -324,8 +324,8 @@ class Recorder {
             // TODO: this try catch feels like an anti pattern, can/should be
             // removed, but for now keeping the original logic
             try {
-              var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
-              txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+              var fee = executionContext.web3().utils.toBN(tx.gas).mul(executionContext.web3().utils.toBN(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
+              txFeeText = ' ' + executionContext.web3().utils.fromWei(fee.toString(10), 'ether') + ' Ether'
               priceStatus = true
             } catch (e) {
               txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
@@ -340,7 +340,7 @@ class Recorder {
                 return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
               }
               try {
-                var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+                var gasPriceValue = executionContext.web3().utils.fromWei(gasPrice.toString(10), 'gwei')
                 cb(null, gasPriceValue)
               } catch (e) {
                 cb(warnMessage + e.message, null, false)
@@ -356,7 +356,7 @@ class Recorder {
               if (!content.gasPriceStatus) {
                 cancelCb('Given gas price is not correct')
               } else {
-                var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+                var gasPrice = executionContext.web3().utils.toWei(content.querySelector('#gasprice').value, 'gwei')
                 continueTxExecution(gasPrice)
               }
             }}, {
