@@ -5,6 +5,9 @@ var css = csjs`
     display: flex;
     flex-direction: column;
   }
+  .runTabView::-webkit-scrollbar {
+    display: none;
+  }
   .instanceContainerTitle {
     display: flex;
     justify-content: space-between;
@@ -16,14 +19,6 @@ var css = csjs`
   }
   .settings {
     padding: 16px 24px;
-  }
-  .recorderCount {
-    /* margin-right: 30px; */
-    /* min-width: 13px; */
-    /* display: flex; */
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* font-size: 10px; */
   }
   .crow {
     display: block;
