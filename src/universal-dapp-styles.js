@@ -38,6 +38,8 @@ var css = csjs`
     font-size: 11px;
     width:100%;
     border: none;
+    background: none;
+    text-transform: uppercase;
   }
   .inputGroupText {
     width: 100%;
@@ -57,7 +59,8 @@ var css = csjs`
     display: block;
     flex-direction: column;
     margin-bottom: 12px;
-    padding: 0 4px;
+    background: none;
+    border-radius: 2px;
   }
   .instance.hidesub .title {
       display: flex;
@@ -149,11 +152,6 @@ var css = csjs`
     float: left;
     align-self: center;
     margin-left: 4px;
-  }
-  .value ul {
-    margin-bottom: 10px;
-    padding-top: 5px;
-    border-bottom: 4px solid var(--light);
   }
   .contractActionsContainer {
     width: 100%;
