@@ -32,15 +32,6 @@ function web3VmProvider () {
   this.lastProcessedStorageTxHash = {}
   this.sha3Preimages = {}
   // util
-  this.sha3 = (...args) => self.web3.utils.sha3(...args)
-  this.toHex = (...args) => self.web3.utils.toHex(...args)
-  this.toAscii = (...args) => self.web3.utils.hexToAscii(...args)
-  this.fromAscii = (...args) => self.web3.utils.asciiToHex(...args)
-  this.fromDecimal = (...args) => self.web3.utils.numberToHex(...args)
-  this.fromWei = (...args) => self.web3.utils.fromWei(...args)
-  this.toWei = (...args) => self.web3.utils.toWei(...args)
-  this.toBigNumber = (...args) => self.web3.utils.toBN(...args)
-  this.isAddress = (...args) => self.web3.utils.isAddress(...args)
   this.utils = Web3.utils || []
 }
 
