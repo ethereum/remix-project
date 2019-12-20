@@ -32,7 +32,7 @@ class TxRunner {
   }
 
   _executeTx (tx, gasPrice, api, promptCb, callback) {
-    if (gasPrice) tx.gasPrice = executionContext.web3().toHex(gasPrice)
+    if (gasPrice) tx.gasPrice = executionContext.web3().utils.toHex(gasPrice)
     if (api.personalMode()) {
       promptCb(
         (value) => {
