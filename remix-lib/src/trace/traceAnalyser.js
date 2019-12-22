@@ -1,5 +1,5 @@
 'use strict'
-var traceHelper = require('../helpers/traceHelper')
+const traceHelper = require('../helpers/traceHelper')
 
 function TraceAnalyser (_cache) {
   this.traceCache = _cache
@@ -9,19 +9,19 @@ function TraceAnalyser (_cache) {
 TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
   this.trace = trace
   this.traceCache.pushStoreChanges(0, tx.to)
-  var context = {
+  let context = {
     storageContext: [tx.to],
     currentCallIndex: 0,
     lastCallIndex: 0
   }
-  var callStack = [tx.to]
+  const callStack = [tx.to]
   this.traceCache.pushCall(trace[0], 0, callStack[0], callStack.slice(0))
   if (traceHelper.isContractCreation(tx.to)) {
     this.traceCache.pushContractCreation(tx.to, tx.input)
   }
   this.buildCalldata(0, this.trace[0], tx, true)
-  for (var k = 0; k < this.trace.length; k++) {
-    var step = this.trace[k]
+  for (let k = 0; k < this.trace.length; k++) {
+    const step = this.trace[k]
     this.buildMemory(k, step)
     context = this.buildDepth(k, step, tx, callStack, context)
     context = this.buildStorage(k, step, context)
@@ -32,27 +32,27 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
 
 TraceAnalyser.prototype.buildReturnValues = function (index, step) {
   if (traceHelper.isReturnInstruction(step)) {
-    var offset = 2 * parseInt(step.stack[step.stack.length - 1], 16)
-    var size = 2 * parseInt(step.stack[step.stack.length - 2], 16)
-    var memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
+    const offset = 2 * parseInt(step.stack[step.stack.length - 1], 16)
+    const size = 2 * parseInt(step.stack[step.stack.length - 2], 16)
+    const memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
     this.traceCache.pushReturnValue(index, '0x' + memory.join('').substr(offset, size))
   }
 }
 
 TraceAnalyser.prototype.buildCalldata = function (index, step, tx, newContext) {
-  var calldata = ''
+  let calldata = ''
   if (index === 0) {
     calldata = tx.input
     this.traceCache.pushCallDataChanges(index, calldata)
   } else if (!newContext) {
-    var lastCall = this.traceCache.callsData[this.traceCache.callDataChanges[this.traceCache.callDataChanges.length - 2]]
+    const lastCall = this.traceCache.callsData[this.traceCache.callDataChanges[this.traceCache.callDataChanges.length - 2]]
     this.traceCache.pushCallDataChanges(index + 1, lastCall)
   } else {
-    var memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
-    var callStep = this.trace[index]
-    var stack = callStep.stack
-    var offset = ''
-    var size = ''
+    const memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
+    const callStep = this.trace[index]
+    const stack = callStep.stack
+    let offset = ''
+    let size = ''
     if (callStep.op === 'DELEGATECALL') {
       offset = 2 * parseInt(stack[stack.length - 3], 16)
       size = 2 * parseInt(stack[stack.length - 4], 16)
@@ -73,7 +73,7 @@ TraceAnalyser.prototype.buildMemory = function (index, step) {
 
 TraceAnalyser.prototype.buildStorage = function (index, step, context) {
   if (traceHelper.newContextStorage(step) && !traceHelper.isCallToPrecompiledContract(index, this.trace)) {
-    var calledAddress = traceHelper.resolveCalledAddress(index, this.trace)
+    const calledAddress = traceHelper.resolveCalledAddress(index, this.trace)
     if (calledAddress) {
       context.storageContext.push(calledAddress)
     } else {
@@ -94,11 +94,11 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
 
 TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack, context) {
   if (traceHelper.isCallInstruction(step) && !traceHelper.isCallToPrecompiledContract(index, this.trace)) {
-    var newAddress
+    let newAddress
     if (traceHelper.isCreateInstruction(step)) {
       newAddress = traceHelper.contractCreationToken(index)
       callStack.push(newAddress)
-      var lastMemoryChange = this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]
+      const lastMemoryChange = this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]
       this.traceCache.pushContractCreationFromMemory(index, newAddress, this.trace, lastMemoryChange)
     } else {
       newAddress = traceHelper.resolveCalledAddress(index, this.trace)

@@ -1,13 +1,13 @@
 'use strict'
-var async = require('async')
-var ethers = require('ethers')
-var ethJSUtil = require('ethereumjs-util')
-var EventManager = require('../eventManager')
-var codeUtil = require('../util')
+const async = require('async')
+const ethers = require('ethers')
+const ethJSUtil = require('ethereumjs-util')
+const EventManager = require('../eventManager')
+const codeUtil = require('../util')
 
-var defaultExecutionContext = require('./execution-context')
-var txFormat = require('./txFormat')
-var txHelper = require('./txHelper')
+const defaultExecutionContext = require('./execution-context')
+const txFormat = require('./txFormat')
+const txHelper = require('./txHelper')
 
 /**
   * poll web3 each 2s if web3
@@ -17,6 +17,7 @@ var txHelper = require('./txHelper')
   *
   */
 class TxListener {
+
   constructor (opt, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
@@ -43,7 +44,7 @@ class TxListener {
       if (!this._isListening) return // we don't listen
       if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
 
-      var call = {
+      const call = {
         from: from,
         to: to,
         input: data,
@@ -144,13 +145,13 @@ class TxListener {
 
   _startListenOnNetwork () {
     this._loopId = setInterval(() => {
-      var currentLoopId = this._loopId
+      const currentLoopId = this._loopId
       this.executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
         if (this._loopId === null) return
         if (error) return console.log(error)
         if (currentLoopId === this._loopId && (!this.lastBlock || blockNumber > this.lastBlock)) {
           if (!this.lastBlock) this.lastBlock = blockNumber - 1
-          var current = this.lastBlock + 1
+          let current = this.lastBlock + 1
           this.lastBlock = blockNumber
           while (blockNumber >= current) {
             try {
@@ -219,18 +220,18 @@ class TxListener {
   }
 
   _resolveTx (tx, receipt, cb) {
-    var contracts = this._api.contracts()
+    const contracts = this._api.contracts()
     if (!contracts) return cb()
-    var contractName
-    var fun
+    let contractName
+    let fun
     if (!tx.to || tx.to === '0x0') { // testrpc returns 0x0 in that case
       // contract creation / resolve using the creation bytes code
       // if web3: we have to call getTransactionReceipt to get the created address
       // if VM: created address already included
-      var code = tx.input
+      const code = tx.input
       contractName = this._tryResolveContract(code, contracts, true)
       if (contractName) {
-        var address = receipt.contractAddress
+        let address = receipt.contractAddress
         this._resolvedContracts[address] = contractName
         fun = this._resolveFunction(contractName, contracts, tx, true)
         if (this._resolvedTransactions[tx.hash]) {
@@ -246,10 +247,10 @@ class TxListener {
         this.executionContext.web3().eth.getCode(tx.to, (error, code) => {
           if (error) return cb(error)
           if (code) {
-            var contractName = this._tryResolveContract(code, contracts, false)
+            const contractName = this._tryResolveContract(code, contracts, false)
             if (contractName) {
               this._resolvedContracts[tx.to] = contractName
-              var fun = this._resolveFunction(contractName, contracts, tx, false)
+              const fun = this._resolveFunction(contractName, contracts, tx, false)
               return cb(null, {to: tx.to, contractName: contractName, function: fun})
             }
           }
@@ -266,18 +267,18 @@ class TxListener {
   }
 
   _resolveFunction (contractName, compiledContracts, tx, isCtor) {
-    var contract = txHelper.getContract(contractName, compiledContracts)
+    const contract = txHelper.getContract(contractName, compiledContracts)
     if (!contract) {
       console.log('txListener: cannot resolve ' + contractName)
       return
     }
-    var abi = contract.object.abi
-    var inputData = tx.input.replace('0x', '')
+    const abi = contract.object.abi
+    const inputData = tx.input.replace('0x', '')
     if (!isCtor) {
-      var methodIdentifiers = contract.object.evm.methodIdentifiers
-      for (var fn in methodIdentifiers) {
+      const methodIdentifiers = contract.object.evm.methodIdentifiers
+      for (let fn in methodIdentifiers) {
         if (methodIdentifiers[fn] === inputData.substring(0, 8)) {
-          var fnabi = txHelper.getFunction(abi, fn)
+          const fnabi = txHelper.getFunction(abi, fn)
           this._resolvedTransactions[tx.hash] = {
             contractName: contractName,
             to: tx.to,
@@ -298,8 +299,8 @@ class TxListener {
         params: null
       }
     } else {
-      var bytecode = contract.object.evm.bytecode.object
-      var params = null
+      const bytecode = contract.object.evm.bytecode.object
+      let params = null
       if (bytecode && bytecode.length) {
         params = this._decodeInputParams(inputData.substring(bytecode.length), txHelper.getConstructorInterface(abi))
       }
@@ -314,9 +315,9 @@ class TxListener {
   }
 
   _tryResolveContract (codeToResolve, compiledContracts, isCreation) {
-    var found = null
+    let found = null
     txHelper.visitContracts(compiledContracts, (contract) => {
-      var bytes = isCreation ? contract.object.evm.bytecode.object : contract.object.evm.deployedBytecode.object
+      const bytes = isCreation ? contract.object.evm.bytecode.object : contract.object.evm.deployedBytecode.object
       if (codeUtil.compareByteCode(codeToResolve, '0x' + bytes)) {
         found = contract.name
         return true
@@ -329,14 +330,14 @@ class TxListener {
     data = ethJSUtil.toBuffer('0x' + data)
     if (!data.length) data = new Uint8Array(32 * abi.inputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
 
-    var inputTypes = []
-    for (var i = 0; i < abi.inputs.length; i++) {
-      var type = abi.inputs[i].type
+    const inputTypes = []
+    for (let i = 0; i < abi.inputs.length; i++) {
+      const type = abi.inputs[i].type
       inputTypes.push(type.indexOf('tuple') === 0 ? txHelper.makeFullTypeDefinition(abi.inputs[i]) : type)
     }
-    var abiCoder = new ethers.utils.AbiCoder()
-    var decoded = abiCoder.decode(inputTypes, data)
-    var ret = {}
+    const abiCoder = new ethers.utils.AbiCoder()
+    const decoded = abiCoder.decode(inputTypes, data)
+    const ret = {}
     for (var k in abi.inputs) {
       ret[abi.inputs[k].type + ' ' + abi.inputs[k].name] = decoded[k]
     }

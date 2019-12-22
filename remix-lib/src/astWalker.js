@@ -23,8 +23,8 @@ AstWalker.prototype.walk = function (ast, callback) {
     callback['*'] = function () { return true }
   }
   if (manageCallBack(ast, callback) && ast.children && ast.children.length > 0) {
-    for (var k in ast.children) {
-      var child = ast.children[k]
+    for (let k in ast.children) {
+      const child = ast.children[k]
       this.walk(child, callback)
     }
   }
@@ -37,8 +37,8 @@ AstWalker.prototype.walk = function (ast, callback) {
  * @param {Function} - callback used by AstWalker to compute response
  */
 AstWalker.prototype.walkAstList = function (sourcesList, callback) {
-  var walker = new AstWalker()
-  for (var k in sourcesList) {
+  const walker = new AstWalker()
+  for (let k in sourcesList) {
     walker.walk(sourcesList[k].legacyAST, callback)
   }
 }

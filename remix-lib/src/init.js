@@ -1,10 +1,10 @@
 'use strict'
-var Web3 = require('web3')
+const Web3 = require('web3')
 
 module.exports = {
   loadWeb3: function (url) {
     if (!url) url = 'http://localhost:8545'
-    var web3 = new Web3()
+    const web3 = new Web3()
     web3.setProvider(new web3.providers.HttpProvider(url))
     this.extend(web3)
     return web3
@@ -30,7 +30,7 @@ module.exports = {
       return
     }
     // DEBUG
-    var methods = []
+    const methods = []
     if (!(web3.debug && web3.debug.preimage)) {
       methods.push(new web3.extend.Method({
         name: 'preimage',
@@ -67,7 +67,7 @@ module.exports = {
   }
 }
 
-var web3DebugNodes = {
+const web3DebugNodes = {
   'Main': 'https://mainnet.infura.io/remix',
   'Rinkeby': 'https://remix-rinkeby.ethdevops.io',
   'Ropsten': 'https://remix-ropsten.ethdevops.io',

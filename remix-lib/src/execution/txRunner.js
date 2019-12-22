@@ -1,10 +1,10 @@
 'use strict'
-var EthJSTX = require('ethereumjs-tx').Transaction
-var EthJSBlock = require('ethereumjs-block')
-var ethJSUtil = require('ethereumjs-util')
-var BN = ethJSUtil.BN
-var defaultExecutionContext = require('./execution-context')
-var EventManager = require('../eventManager')
+const EthJSTX = require('ethereumjs-tx').Transaction
+const EthJSBlock = require('ethereumjs-block')
+const ethJSUtil = require('ethereumjs-util')
+const BN = ethJSUtil.BN
+const defaultExecutionContext = require('./execution-context')
+const EventManager = require('../eventManager')
 
 class TxRunner {
   constructor (vmaccounts, api, executionContext) {
@@ -26,7 +26,7 @@ class TxRunner {
   }
 
   rawRun (args, confirmationCb, gasEstimationForceSend, promptCb, cb) {
-    var timestamp = Date.now()
+    let timestamp = Date.now()
     if (args.timestamp) {
       timestamp = args.timestamp
     }
@@ -50,15 +50,14 @@ class TxRunner {
   }
 
   _sendTransaction (sendTx, tx, pass, callback) {
-    var self = this
-    var cb = function (err, resp) {
+    const cb = (err, resp) => {
       if (err) {
         return callback(err, resp)
       }
-      self.event.trigger('transactionBroadcasted', [resp])
+      this.event.trigger('transactionBroadcasted', [resp])
       var listenOnResponse = () => {
         return new Promise(async (resolve, reject) => {
-          var result = await tryTillReceiptAvailable(resp)
+          const result = await tryTillReceiptAvailable(resp)
           tx = await tryTillTxAvailable(resp)
           resolve({
             result,
@@ -69,7 +68,7 @@ class TxRunner {
       }
       listenOnResponse().then((txData) => { callback(null, txData) }).catch((error) => { callback(error) })
     }
-    var args = pass !== null ? [tx, pass, cb] : [tx, cb]
+    const args = pass !== null ? [tx, pass, cb] : [tx, cb]
     try {
       sendTx.apply({}, args)
     } catch (e) {
@@ -78,18 +77,16 @@ class TxRunner {
   }
 
   execute (args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
-    var self = this
-
-    var data = args.data
+    let data = args.data
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data
     }
 
     if (!this.executionContext.isVM()) {
-      self.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, gasEstimationForceSend, promptCb, callback)
+      this.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, gasEstimationForceSend, promptCb, callback)
     } else {
       try {
-        self.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, callback)
+        this.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, callback)
       } catch (e) {
         callback(e, null)
       }
@@ -165,8 +162,7 @@ class TxRunner {
   }
 
   runInNode (from, to, data, value, gasLimit, useCall, confirmCb, gasEstimationForceSend, promptCb, callback) {
-    const self = this
-    var tx = { from: from, to: to, data: data, value: value }
+    const tx = { from: from, to: to, data: data, value: value }
 
     if (useCall) {
       tx.gas = gasLimit
@@ -177,34 +173,34 @@ class TxRunner {
         })
       })
     }
-    this.executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
+    this.executionContext.web3().eth.estimateGas(tx, (err, gasEstimation) => {
       gasEstimationForceSend(err, () => {
         // callback is called whenever no error
         tx.gas = !gasEstimation ? gasLimit : gasEstimation
 
-        if (self._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
-          return self._executeTx(tx, null, self._api, promptCb, callback)
+        if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
+          return this._executeTx(tx, null, this._api, promptCb, callback)
         }
 
-        self._api.detectNetwork((err, network) => {
+        this._api.detectNetwork((err, network) => {
           if (err) {
             console.log(err)
             return
           }
 
           confirmCb(network, tx, tx.gas, (gasPrice) => {
-            return self._executeTx(tx, gasPrice, self._api, promptCb, callback)
+            return this._executeTx(tx, gasPrice, this._api, promptCb, callback)
           }, (error) => {
             callback(error)
           })
         })
       }, () => {
-        var blockGasLimit = self.executionContext.currentblockGasLimit()
+        const blockGasLimit = this.executionContext.currentblockGasLimit()
         // NOTE: estimateGas very likely will return a large limit if execution of the code failed
         //       we want to be able to run the code in order to debug and find the cause for the failure
         if (err) return callback(err)
 
-        var warnEstimation = ' An important gas estimation might also be the sign of a problem in the contract code. Please check loops and be sure you did not sent value to a non payable function (that\'s also the reason of strong gas estimation). '
+        let warnEstimation = ' An important gas estimation might also be the sign of a problem in the contract code. Please check loops and be sure you did not sent value to a non payable function (that\'s also the reason of strong gas estimation). '
         warnEstimation += ' ' + err
 
         if (gasEstimation > gasLimit) {
@@ -257,7 +253,7 @@ function run (self, tx, stamp, confirmationCb, gasEstimationForceSend, promptCb,
       delete self.pendingTxs[stamp]
       callback(error, result)
       if (self.queusTxs.length) {
-        var next = self.queusTxs.pop()
+        const next = self.queusTxs.pop()
         run(self, next.tx, next.stamp, next.callback)
       }
     })
