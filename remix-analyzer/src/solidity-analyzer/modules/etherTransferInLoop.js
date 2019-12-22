@@ -1,7 +1,7 @@
-var name = 'Ether transfer in a loop: '
-var desc = 'Avoid transferring Ether to multiple addresses in a loop'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
+const name = 'Ether transfer in a loop: '
+const desc = 'Avoid transferring Ether to multiple addresses in a loop'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
 
 function etherTransferInLoop () {
   this.relevantNodes = []
@@ -9,8 +9,8 @@ function etherTransferInLoop () {
 
 etherTransferInLoop.prototype.visit = function (node) {
   if (common.isLoop(node)) {
-    var transferNodes = []
-    var loopBlockStartIndex = common.getLoopBlockStartIndex(node)
+    let transferNodes = []
+    const loopBlockStartIndex = common.getLoopBlockStartIndex(node)
     if (common.isBlock(node.children[loopBlockStartIndex])) {
       transferNodes = node.children[loopBlockStartIndex].children
       .filter(child => (common.isExpressionStatement(child) &&

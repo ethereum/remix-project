@@ -1,10 +1,10 @@
-var name = 'Constant functions: '
-var desc = 'Check for potentially constant functions'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var fcallGraph = require('./functionCallGraph')
-var AbstractAst = require('./abstractAstView')
-var algo = require('./algorithmCategories')
+const name = 'Constant functions: '
+const desc = 'Check for potentially constant functions'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const fcallGraph = require('./functionCallGraph')
+const AbstractAst = require('./abstractAstView')
+const algo = require('./algorithmCategories')
 
 function constantFunctions () {
   this.abstractAst = new AbstractAst()
@@ -29,10 +29,10 @@ constantFunctions.prototype.visit = function () { throw new Error('constantFunct
 constantFunctions.prototype.report = function () { throw new Error('constantFunctions.js no report function set upon construction') }
 
 function report (contracts, multipleContractsWithSameName) {
-  var warnings = []
-  var hasModifiers = contracts.some((item) => item.modifiers.length > 0)
+  const warnings = []
+  const hasModifiers = contracts.some((item) => item.modifiers.length > 0)
 
-  var callGraph = fcallGraph.buildGlobalFuncCallGraph(contracts)
+  const callGraph = fcallGraph.buildGlobalFuncCallGraph(contracts)
 
   contracts.forEach((contract) => {
     contract.functions.forEach((func) => {
@@ -46,8 +46,8 @@ function report (contracts, multipleContractsWithSameName) {
 
     contract.functions.filter((func) => common.hasFunctionBody(func.node)).forEach((func) => {
       if (common.isConstantFunction(func.node) !== func.potentiallyshouldBeConst) {
-        var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
-        var comments = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''
+        const funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+        let comments = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''
         comments += (multipleContractsWithSameName) ? 'Note: Import aliases are currently not supported by this static analysis.' : ''
         if (func.potentiallyshouldBeConst) {
           warnings.push({
@@ -95,7 +95,7 @@ function isConstBreaker (node, context) {
 
 function isCallOnNonConstExternalInterfaceFunction (node, context) {
   if (common.isExternalDirectCall(node)) {
-    var func = fcallGraph.resolveCallGraphSymbol(context.callGraph, common.getFullQualifiedFunctionCallIdent(context.currentContract, node))
+    const func = fcallGraph.resolveCallGraphSymbol(context.callGraph, common.getFullQualifiedFunctionCallIdent(context.currentContract, node))
     return !func || (func && !common.isConstantFunction(func.node.node))
   }
   return false

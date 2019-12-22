@@ -1,9 +1,9 @@
-var name = 'Selfdestruct: '
-var desc = 'Be aware of caller contracts.'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var AbstractAst = require('./abstractAstView')
-var algo = require('./algorithmCategories')
+const name = 'Selfdestruct: '
+const desc = 'Be aware of caller contracts.'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const AbstractAst = require('./abstractAstView')
+const algo = require('./algorithmCategories')
 
 function selfdestruct () {
   this.abstractAst = new AbstractAst()
@@ -21,7 +21,7 @@ selfdestruct.prototype.visit = function () { throw new Error('selfdestruct.js no
 selfdestruct.prototype.report = function () { throw new Error('selfdestruct.js no report function set upon construction') }
 
 function report (contracts, multipleContractsWithSameName) {
-  var warnings = []
+  const warnings = []
 
   contracts.forEach((contract) => {
     contract.functions.forEach((func) => {

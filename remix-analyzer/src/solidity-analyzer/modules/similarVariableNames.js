@@ -1,12 +1,12 @@
-var name = 'Similar variable names: '
-var desc = 'Check if variable names are too similar'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var AbstractAst = require('./abstractAstView')
-var levenshtein = require('fast-levenshtein')
-var remixLib = require('remix-lib')
-var util = remixLib.util
-var algo = require('./algorithmCategories')
+const name = 'Similar variable names: '
+const desc = 'Check if variable names are too similar'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const AbstractAst = require('./abstractAstView')
+const levenshtein = require('fast-levenshtein')
+const remixLib = require('remix-lib')
+const util = remixLib.util
+const algo = require('./algorithmCategories')
 
 function similarVariableNames () {
   this.abstractAst = new AbstractAst()
@@ -23,22 +23,22 @@ similarVariableNames.prototype.visit = function () { throw new Error('similarVar
 similarVariableNames.prototype.report = function () { throw new Error('similarVariableNames.js no report function set upon construction') }
 
 function report (contracts, multipleContractsWithSameName) {
-  var warnings = []
-  var hasModifiers = contracts.some((item) => item.modifiers.length > 0)
+  const warnings = []
+  const hasModifiers = contracts.some((item) => item.modifiers.length > 0)
 
   contracts.forEach((contract) => {
     contract.functions.forEach((func) => {
-      var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
-      var hasModifiersComments = ''
+      const funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+      let hasModifiersComments = ''
       if (hasModifiers) {
         hasModifiersComments = 'Note: Modifiers are currently not considered by this static analysis.'
       }
-      var multipleContractsWithSameNameComments = ''
+      let multipleContractsWithSameNameComments = ''
       if (multipleContractsWithSameName) {
         multipleContractsWithSameNameComments = 'Note: Import aliases are currently not supported by this static analysis.'
       }
 
-      var vars = getFunctionVariables(contract, func).map(common.getDeclaredVariableName)
+      const vars = getFunctionVariables(contract, func).map(common.getDeclaredVariableName)
 
       findSimilarVarNames(vars).map((sim) => {
         warnings.push({
@@ -53,12 +53,12 @@ function report (contracts, multipleContractsWithSameName) {
 }
 
 function findSimilarVarNames (vars) {
-  var similar = []
-  var comb = {}
+  const similar = []
+  const comb = {}
   vars.map((varName1) => vars.map((varName2) => {
     if (varName1.length > 1 && varName2.length > 1 && varName2 !== varName1 && !isCommonPrefixedVersion(varName1, varName2) && !isCommonNrSuffixVersion(varName1, varName2) && !(comb[varName1 + ';' + varName2] || comb[varName2 + ';' + varName1])) {
       comb[varName1 + ';' + varName2] = true
-      var distance = levenshtein.get(varName1, varName2)
+      const distance = levenshtein.get(varName1, varName2)
       if (distance <= 2) similar.push({ var1: varName1, var2: varName2, distance: distance })
     }
   }))
@@ -70,8 +70,7 @@ function isCommonPrefixedVersion (varName1, varName2) {
 }
 
 function isCommonNrSuffixVersion (varName1, varName2) {
-  var ref = '^' + util.escapeRegExp(varName1.slice(0, -1)) + '[0-9]*$'
-
+  const ref = '^' + util.escapeRegExp(varName1.slice(0, -1)) + '[0-9]*$'
   return varName2.match(ref) != null
 }
 
