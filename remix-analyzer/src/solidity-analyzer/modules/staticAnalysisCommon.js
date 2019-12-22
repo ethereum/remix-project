@@ -1,9 +1,9 @@
 'use strict'
 
-var remixLib = require('remix-lib')
-var util = remixLib.util
+const remixLib = require('remix-lib')
+const util = remixLib.util
 
-var nodeTypes = {
+const nodeTypes = {
   IDENTIFIER: 'Identifier',
   MEMBERACCESS: 'MemberAccess',
   FUNCTIONCALL: 'FunctionCall',
@@ -29,7 +29,7 @@ var nodeTypes = {
   ELEMENTARYTYPENAMEEXPRESSION: 'ElementaryTypeNameExpression'
 }
 
-var basicTypes = {
+const basicTypes = {
   UINT: 'uint256',
   BOOL: 'bool',
   ADDRESS: 'address',
@@ -40,7 +40,7 @@ var basicTypes = {
   BYTES4: 'bytes4'
 }
 
-var basicRegex = {
+const basicRegex = {
   CONTRACTTYPE: '^contract ',
   FUNCTIONTYPE: '^function \\(',
   EXTERNALFUNCTIONTYPE: '^function \\(.*\\).* external',
@@ -50,7 +50,7 @@ var basicRegex = {
   LIBRARYTYPE: '^type\\(library (.*)\\)'
 }
 
-var basicFunctionTypes = {
+const basicFunctionTypes = {
   SEND: buildFunctionSignature([basicTypes.UINT], [basicTypes.BOOL], false),
   CALL: buildFunctionSignature([], [basicTypes.BOOL], true),
   'CALL-v0.5': buildFunctionSignature([basicTypes.BYTES_MEM], [basicTypes.BOOL, basicTypes.BYTES_MEM], true),
@@ -59,7 +59,7 @@ var basicFunctionTypes = {
   TRANSFER: buildFunctionSignature([basicTypes.UINT], [], false)
 }
 
-var builtinFunctions = {
+const builtinFunctions = {
   'keccak256()': true,
   'sha3()': true,
   'sha256()': true,
@@ -79,7 +79,7 @@ var builtinFunctions = {
   'address(address)': true
 }
 
-var lowLevelCallTypes = {
+const lowLevelCallTypes = {
   CALL: { ident: 'call', type: basicFunctionTypes.CALL },
   'CALL-v0.5': { ident: 'call', type: basicFunctionTypes['CALL-v0.5'] },
   CALLCODE: { ident: 'callcode', type: basicFunctionTypes.CALL },
@@ -89,7 +89,7 @@ var lowLevelCallTypes = {
   TRANSFER: { ident: 'transfer', type: basicFunctionTypes.TRANSFER }
 }
 
-var specialVariables = {
+const specialVariables = {
   BLOCKTIMESTAMP: { obj: 'block', member: 'timestamp', type: basicTypes.UINT },
   BLOCKHASH: {
     obj: 'block',
@@ -98,7 +98,7 @@ var specialVariables = {
   }
 }
 
-var abiNamespace = {
+const abiNamespace = {
   ENCODE: {
     obj: 'abi',
     member: 'encode',
@@ -333,12 +333,12 @@ function getFunctionOrModifierDefinitionReturnParameterPart (funcNode) {
  * @return {string} parameter signature
  */
 function getFunctionCallTypeParameterType (func) {
-  var type = getFunctionCallType(func)
+  const type = getFunctionCallType(func)
   if (type.startsWith('function (')) {
-    var paramTypes = ''
-    var openPar = 1
-    for (var x = 10; x < type.length; x++) {
-      var c = type.charAt(x)
+    let paramTypes = ''
+    let openPar = 1
+    for (let x = 10; x < type.length; x++) {
+      const c = type.charAt(x)
       if (c === '(') openPar++
       else if (c === ')') openPar--
 
@@ -1031,7 +1031,7 @@ function nodeType (node, typeRegex) {
 }
 
 function name (node, nameRegex) {
-  var regex = new RegExp(nameRegex)
+  const regex = new RegExp(nameRegex)
   return (node && !nameRegex) || (node && node.attributes && (regex.test(node.attributes.value) || regex.test(node.attributes.member_name)))
 }
 
@@ -1046,8 +1046,8 @@ function exactMatch (regexStr) {
 }
 
 function matches () {
-  var args = []
-  for (var k = 0; k < arguments.length; k++) {
+  const args = []
+  for (let k = 0; k < arguments.length; k++) {
     args.push(arguments[k])
   }
   return '(' + args.join('|') + ')'
@@ -1078,10 +1078,10 @@ function buildAbiSignature (funName, paramTypes) {
 function findFirstSubNodeLTR (node, type) {
   if (!node || !node.children) return null
   for (let i = 0; i < node.children.length; ++i) {
-    var item = node.children[i]
+    const item = node.children[i]
     if (nodeType(item, type)) return item
     else {
-      var res = findFirstSubNodeLTR(item, type)
+      const res = findFirstSubNodeLTR(item, type)
       if (res) return res
     }
   }

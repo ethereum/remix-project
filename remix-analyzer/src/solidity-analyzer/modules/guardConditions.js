@@ -1,8 +1,8 @@
-var name = 'Guard Conditions: '
-var desc = 'Use require and appropriately'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var algo = require('./algorithmCategories')
+const name = 'Guard Conditions: '
+const desc = 'Use require and appropriately'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const algo = require('./algorithmCategories')
 
 function guardConditions () {
   this.guards = []

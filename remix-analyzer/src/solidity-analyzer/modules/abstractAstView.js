@@ -1,5 +1,5 @@
-var common = require('./staticAnalysisCommon')
-var AstWalker = require('remix-lib').AstWalker
+const common = require('./staticAnalysisCommon')
+const AstWalker = require('remix-lib').AstWalker
 
 function abstractAstView () {
   this.contracts = []
@@ -56,8 +56,8 @@ abstractAstView.prototype.build_visit = function (relevantNodeFilter) {
         stateVariables: common.getStateVariableDeclarationsFormContractNode(node)
       })
     } else if (common.isInheritanceSpecifier(node)) {
-      var currentContract = getCurrentContract(that)
-      var inheritsFromName = common.getInheritsFromName(node)
+      const currentContract = getCurrentContract(that)
+      const inheritsFromName = common.getInheritsFromName(node)
       currentContract.inheritsFrom.push(inheritsFromName)
     } else if (common.isFunctionDefinition(node)) {
       setCurrentFunction(that, {
@@ -85,7 +85,7 @@ abstractAstView.prototype.build_visit = function (relevantNodeFilter) {
       if (!that.isFunctionNotModifier) throw new Error('abstractAstView.js: Found modifier invocation outside of function scope.')
       getCurrentFunction(that).modifierInvocations.push(node)
     } else if (relevantNodeFilter(node)) {
-      var scope = (that.isFunctionNotModifier) ? getCurrentFunction(that) : getCurrentModifier(that)
+      let scope = (that.isFunctionNotModifier) ? getCurrentFunction(that) : getCurrentModifier(that)
       if (scope) {
         scope.relevantNodes.push(node)
       } else {
@@ -111,10 +111,11 @@ function resolveStateVariablesInHierarchy (contracts) {
     resolveStateVariablesInHierarchyForContract(c, contracts)
   })
 }
+
 function resolveStateVariablesInHierarchyForContract (currentContract, contracts) {
   currentContract.inheritsFrom.map((inheritsFromName) => {
     // add variables from inherited contracts
-    var inheritsFrom = contracts.find((contract) => common.getContractName(contract.node) === inheritsFromName)
+    const inheritsFrom = contracts.find((contract) => common.getContractName(contract.node) === inheritsFromName)
     if (inheritsFrom) {
       currentContract.stateVariables = currentContract.stateVariables.concat(inheritsFrom.stateVariables)
     } else {
@@ -122,8 +123,9 @@ function resolveStateVariablesInHierarchyForContract (currentContract, contracts
     }
   })
 }
+
 function setCurrentContract (that, contract) {
-  var name = common.getContractName(contract.node)
+  const name = common.getContractName(contract.node)
   if (that.contracts.map((c) => common.getContractName(c.node)).filter((n) => n === name).length > 0) {
     console.log('abstractAstView.js: two or more contracts with the same name dectected, import aliases not supported at the moment')
     that.multipleContractsWithSameName = true
@@ -167,7 +169,7 @@ function getReturnParameters (funcNode) {
 }
 
 function getLocalVariables (funcNode) {
-  var locals = []
+  const locals = []
   new AstWalker().walk(funcNode, {'*': function (node) {
     if (common.isVariableDeclaration(node)) locals.push(node)
     return true
