@@ -1,6 +1,6 @@
 'use strict'
-var util = require('./util')
-var AstWalker = require('./astWalker')
+const util = require('./util')
+const AstWalker = require('./astWalker')
 
 /**
  * Decompress the source mapping given by solc-bin.js
@@ -51,11 +51,11 @@ SourceMappingDecoder.prototype.decode = function (value) {
  * @return {Array} returns the decompressed source mapping. Array of {start, length, file, jump}
  */
 SourceMappingDecoder.prototype.decompressAll = function (mapping) {
-  var map = mapping.split(';')
-  var ret = []
-  for (var k in map) {
-    var compressed = map[k].split(':')
-    var sourceMap = {
+  const map = mapping.split(';')
+  const ret = []
+  for (let k in map) {
+    const compressed = map[k].split(':')
+    const sourceMap = {
       start: compressed[0] ? parseInt(compressed[0]) : ret[ret.length - 1].start,
       length: compressed[1] ? parseInt(compressed[1]) : ret[ret.length - 1].length,
       file: compressed[2] ? parseInt(compressed[2]) : ret[ret.length - 1].file,
@@ -73,8 +73,8 @@ SourceMappingDecoder.prototype.decompressAll = function (mapping) {
   * @return {Array} returns an array containing offset of line breaks
   */
 SourceMappingDecoder.prototype.getLinebreakPositions = function (source) {
-  var ret = []
-  for (var pos = source.indexOf('\n'); pos >= 0; pos = source.indexOf('\n', pos + 1)) {
+  const ret = []
+  for (let pos = source.indexOf('\n'); pos >= 0; pos = source.indexOf('\n', pos + 1)) {
     ret.push(pos)
   }
   return ret
@@ -112,12 +112,12 @@ SourceMappingDecoder.prototype.convertOffsetToLineColumn = function (sourceLocat
 SourceMappingDecoder.prototype.findNodeAtInstructionIndex = findNodeAtInstructionIndex
 
 function convertFromCharPosition (pos, lineBreakPositions) {
-  var line = util.findLowerBound(pos, lineBreakPositions)
+  let line = util.findLowerBound(pos, lineBreakPositions)
   if (lineBreakPositions[line] !== pos) {
     line = line + 1
   }
-  var beginColumn = line === 0 ? 0 : (lineBreakPositions[line - 1] + 1)
-  var column = pos - beginColumn
+  const beginColumn = line === 0 ? 0 : (lineBreakPositions[line - 1] + 1)
+  const column = pos - beginColumn
   return {
     line: line,
     column: column
@@ -126,7 +126,7 @@ function convertFromCharPosition (pos, lineBreakPositions) {
 
 function sourceLocationFromAstNode (astNode) {
   if (astNode.src) {
-    var split = astNode.src.split(':')
+    const split = astNode.src.split(':')
     return {
       start: parseInt(split[0]),
       length: parseInt(split[1]),
@@ -137,16 +137,16 @@ function sourceLocationFromAstNode (astNode) {
 }
 
 function findNodeAtInstructionIndex (astNodeType, instIndex, sourceMap, ast) {
-  var sourceLocation = atIndex(instIndex, sourceMap)
+  const sourceLocation = atIndex(instIndex, sourceMap)
   return findNodeAtSourceLocation(astNodeType, sourceLocation, ast)
 }
 
 function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
-  var astWalker = new AstWalker()
-  var callback = {}
-  var found = null
+  const astWalker = new AstWalker()
+  const callback = {}
+  let found = null
   callback['*'] = function (node) {
-    var nodeLocation = sourceLocationFromAstNode(node)
+    const nodeLocation = sourceLocationFromAstNode(node)
     if (!nodeLocation) {
       return true
     }
@@ -166,9 +166,9 @@ function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
 }
 
 function nodesAtPosition (astNodeType, position, ast) {
-  var astWalker = new AstWalker()
-  var callback = {}
-  var found = []
+  const astWalker = new AstWalker()
+  const callback = {}
+  const found = []
   callback['*'] = function (node) {
     var nodeLocation = sourceLocationFromAstNode(node)
     if (!nodeLocation) {
@@ -189,13 +189,13 @@ function nodesAtPosition (astNodeType, position, ast) {
 }
 
 function atIndex (index, mapping) {
-  var ret = {}
-  var map = mapping.split(';')
+  const ret = {}
+  const map = mapping.split(';')
   if (index >= map.length) {
     index = map.length - 1
   }
-  for (var k = index; k >= 0; k--) {
-    var current = map[k]
+  for (let k = index; k >= 0; k--) {
+    let current = map[k]
     if (!current.length) {
       continue
     }

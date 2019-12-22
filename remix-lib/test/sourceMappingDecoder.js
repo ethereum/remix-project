@@ -1,16 +1,16 @@
 'use strict'
-var tape = require('tape')
-var sourceMapping = require('./resources/sourceMapping')
-var SourceMappingDecoder = require('../src/sourceMappingDecoder')
-var compiler = require('solc')
-var compilerInput = require('../src/helpers/compilerHelper').compilerInput
+const tape = require('tape')
+const sourceMapping = require('./resources/sourceMapping')
+const SourceMappingDecoder = require('../src/sourceMappingDecoder')
+const compiler = require('solc')
+const compilerInput = require('../src/helpers/compilerHelper').compilerInput
 
 tape('SourceMappingDecoder', function (t) {
   t.test('SourceMappingDecoder.findNodeAtInstructionIndex', function (st) {
-    var output = compiler.compile(compilerInput(contracts))
+    let output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
-    var sourceMappingDecoder = new SourceMappingDecoder()
-    var node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
+    const sourceMappingDecoder = new SourceMappingDecoder()
+    let node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
     st.equal(node, null)
     node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 80, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
     st.notEqual(node, null)
@@ -20,12 +20,12 @@ tape('SourceMappingDecoder', function (t) {
     st.end()
   })
 
-  var testSourceMapping = {}
+  const testSourceMapping = {}
   t.test('sourceMappingDecoder', function (st) {
     st.plan(28)
-    var sourceMappingDecoder = new SourceMappingDecoder()
+    const sourceMappingDecoder = new SourceMappingDecoder()
     console.log('test decompressAll')
-    var result = sourceMappingDecoder.decompressAll(sourceMapping.mapping)
+    let result = sourceMappingDecoder.decompressAll(sourceMapping.mapping)
     st.equal(result[0].start, 0)
     st.equal(result[0].length, 205)
     st.equal(result[0].file, 4)
@@ -42,7 +42,7 @@ tape('SourceMappingDecoder', function (t) {
     st.equal(result[22].file, 4)
     st.equal(result[22].jump, '-')
 
-    var last = result.length - 1
+    const last = result.length - 1
     st.equal(result[last].start, 142)
     st.equal(result[last].length, 61)
     st.equal(result[last].file, 4)
@@ -77,11 +77,11 @@ tape('SourceMappingDecoder', function (t) {
 
   t.test('sourceMappingLineColumnConverter', function (st) {
     st.plan(14)
-    var sourceMappingDecoder = new SourceMappingDecoder()
-    var linesbreak = sourceMappingDecoder.getLinebreakPositions(sourceMapping.source)
+    const sourceMappingDecoder = new SourceMappingDecoder()
+    const linesbreak = sourceMappingDecoder.getLinebreakPositions(sourceMapping.source)
     st.equal(linesbreak[0], 16)
     st.equal(linesbreak[5], 84)
-    var result = sourceMappingDecoder.convertOffsetToLineColumn(testSourceMapping[21], linesbreak)
+    let result = sourceMappingDecoder.convertOffsetToLineColumn(testSourceMapping[21], linesbreak)
     st.equal(result.start.line, 0)
     st.equal(result.start.column, 0)
     st.equal(result.end.line, 15)
@@ -92,7 +92,7 @@ tape('SourceMappingDecoder', function (t) {
     st.equal(result.end.line, 7)
     st.equal(result.end.column, 14)
 
-    var res = { // point to \n
+    const res = { // point to \n
       start: 103,
       length: 4,
       file: 4,
@@ -106,7 +106,7 @@ tape('SourceMappingDecoder', function (t) {
   })
 })
 
-var contracts = `contract test {
+const contracts = `contract test {
     function f1() public returns (uint) {
         uint t = 4;
         return t;

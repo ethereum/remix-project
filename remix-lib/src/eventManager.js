@@ -21,7 +21,7 @@ eventManager.prototype.unregister = function (eventName, obj, func) {
     func = obj
     obj = this.anonymous
   }
-  for (var reg in this.registered[eventName]) {
+  for (let reg in this.registered[eventName]) {
     if (this.registered[eventName][reg].obj === obj && this.registered[eventName][reg].func === func) {
       this.registered[eventName].splice(reg, 1)
     }
@@ -61,8 +61,8 @@ eventManager.prototype.trigger = function (eventName, args) {
   if (!this.registered[eventName]) {
     return
   }
-  for (var listener in this.registered[eventName]) {
-    var l = this.registered[eventName][listener]
+  for (let listener in this.registered[eventName]) {
+    const l = this.registered[eventName][listener]
     l.func.apply(l.obj === this.anonymous ? {} : l.obj, args)
   }
 }
