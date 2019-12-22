@@ -71,7 +71,7 @@ module.exports = {
       STOP: 'stop',
       REFUND_EXHAUSTED: 'refund exhausted'
     }
-    let ret = {
+    const ret = {
       error: false,
       message: ''
     }

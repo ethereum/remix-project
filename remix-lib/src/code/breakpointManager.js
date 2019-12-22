@@ -1,7 +1,7 @@
 'use strict'
 
-var EventManager = require('../eventManager')
-var helper = require('../helpers/traceHelper')
+const EventManager = require('../eventManager')
+const helper = require('../helpers/traceHelper')
 
 /**
   * allow to manage breakpoint
@@ -74,10 +74,10 @@ class BreakpointManager {
       }
     }
 
-    var sourceLocation
-    var previousSourceLocation
-    var currentStep = fromStep + direction
-    var lineHadBreakpoint = false
+    let sourceLocation
+    let previousSourceLocation
+    let currentStep = fromStep + direction
+    let lineHadBreakpoint = false
     while (currentStep > 0 && currentStep < this.debugger.traceManager.trace.length) {
       try {
         previousSourceLocation = sourceLocation
@@ -86,7 +86,7 @@ class BreakpointManager {
         console.log('cannot jump to breakpoint ' + e)
         return
       }
-      var lineColumn = this.locationToRowConverter(sourceLocation)
+      let lineColumn = this.locationToRowConverter(sourceLocation)
       if (this.previousLine !== lineColumn.start.line) {
         if (direction === -1 && lineHadBreakpoint) { // TODO : improve this when we will build the correct structure before hand
           lineHadBreakpoint = false
@@ -124,11 +124,11 @@ class BreakpointManager {
     * @return {Bool} return true if the given @arg fileIndex @arg line refers to a breakpoint
     */
   hasBreakpointAtLine (fileIndex, line) {
-    var filename = this.debugger.solidityProxy.fileNameFromIndex(fileIndex)
+    const filename = this.debugger.solidityProxy.fileNameFromIndex(fileIndex)
     if (filename && this.breakpoints[filename]) {
-      var sources = this.breakpoints[filename]
-      for (var k in sources) {
-        var source = sources[k]
+      const sources = this.breakpoints[filename]
+      for (let k in sources) {
+        const source = sources[k]
         if (line === source.row) {
           return true
         }
@@ -143,7 +143,7 @@ class BreakpointManager {
     * @return {Bool} true if breapoint registered
     */
   hasBreakpoint () {
-    for (var k in this.breakpoints) {
+    for (let k in this.breakpoints) {
       if (this.breakpoints[k].length) {
         return true
       }
@@ -172,8 +172,8 @@ class BreakpointManager {
   remove (sourceLocation) {
     if (this.breakpoints[sourceLocation.fileName]) {
       var sources = this.breakpoints[sourceLocation.fileName]
-      for (var k in sources) {
-        var source = sources[k]
+      for (let k in sources) {
+        const source = sources[k]
         if (sourceLocation.row === source.row) {
           sources.splice(k, 1)
           this.event.trigger('breakpointRemoved', [sourceLocation])

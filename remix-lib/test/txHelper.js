@@ -1,10 +1,10 @@
 'use strict'
-var tape = require('tape')
-var txHelper = require('../src/execution/txHelper')
+const tape = require('tape')
+const txHelper = require('../src/execution/txHelper')
 
 tape('getFunction', function (st) {
   st.plan(5)
-  var fn = txHelper.getFunction(JSON.parse(abi), 'o((address,uint256))')
+  let fn = txHelper.getFunction(JSON.parse(abi), 'o((address,uint256))')
   st.equal(fn.name, 'o')
 
   fn = txHelper.getFunction(JSON.parse(abi), 'i(bytes32)')
@@ -20,7 +20,7 @@ tape('getFunction', function (st) {
   st.equal(fn.type, 'fallback')
 })
 
-var abi = `[
+const abi = `[
 	{
 		"constant": false,
 		"inputs": [

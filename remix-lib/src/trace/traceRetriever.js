@@ -5,7 +5,7 @@ function TraceRetriever (options) {
 }
 
 TraceRetriever.prototype.getTrace = function (txHash, callback) {
-  var options = {
+  const options = {
     disableStorage: true,
     disableMemory: false,
     disableStack: false,

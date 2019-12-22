@@ -11,9 +11,10 @@ const LogsManager = require('./logsManager.js')
 
 const rlp = ethUtil.rlp
 
+let web3
 if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
   var injectedProvider = window.web3.currentProvider
-  var web3 = new Web3(injectedProvider)
+  web3 = new Web3(injectedProvider)
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 }
@@ -36,17 +37,16 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   dumpStorage (address, cb) {
-    var self = this
-    this._getStorageTrie(address, function (err, trie) {
+    this._getStorageTrie(address, (err, trie) => {
       if (err) {
         return cb(err)
       }
-      var storage = {}
-      var stream = trie.createReadStream()
-      stream.on('data', function (val) {
-        var value = rlp.decode(val.value)
+      const storage = {}
+      const stream = trie.createReadStream()
+      stream.on('data', (val) => {
+        const value = rlp.decode(val.value)
         storage['0x' + val.key.toString('hex')] = {
-          key: self.keyHashes[val.key.toString('hex')],
+          key: this.keyHashes[val.key.toString('hex')],
           value: '0x' + value.toString('hex')
         }
       })
@@ -57,7 +57,7 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   getStateRoot (cb) {
-    let checkpoint = this._checkpointCount
+    const checkpoint = this._checkpointCount
     this._checkpointCount = 0
     super.getStateRoot((err, stateRoot) => {
       this._checkpointCount = checkpoint
@@ -76,39 +76,38 @@ class StateManagerCommonStorageDump extends StateManager {
 }
 
 function createVm (hardfork) {
-  var stateManager = new StateManagerCommonStorageDump({})
+  const stateManager = new StateManagerCommonStorageDump({})
   stateManager.checkpoint(() => {})
-  var vm = new EthJSVM({
+  const vm = new EthJSVM({
     activatePrecompiles: true,
     blockchain: stateManager.blockchain,
     stateManager: stateManager,
     hardfork: hardfork
   })
   vm.blockchain.validate = false
-  var web3vm = new Web3VMProvider()
+  const web3vm = new Web3VMProvider()
   web3vm.setVM(vm)
   return { vm, web3vm, stateManager }
 }
 
-var vms = {
+const vms = {
   byzantium: createVm('byzantium'),
   constantinople: createVm('constantinople'),
   petersburg: createVm('petersburg'),
   istanbul: createVm('istanbul')
 }
 
-var mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
+const mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
 
 /*
   trigger contextChanged, web3EndpointChanged
 */
 function ExecutionContext () {
-  var self = this
   this.event = new EventManager()
 
   this.logsManager = new LogsManager()
 
-  var executionContext = null
+  let executionContext = null
 
   this.blockGasLimitDefault = 4300000
   this.blockGasLimit = this.blockGasLimitDefault
@@ -148,7 +147,7 @@ function ExecutionContext () {
       callback(null, { id: '-', name: 'VM' })
     } else {
       web3.eth.net.getId((err, id) => {
-        var name = null
+        let name = null
         if (err) name = 'Unknown'
         // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
         else if (id === 1) name = 'Main'
@@ -172,38 +171,38 @@ function ExecutionContext () {
     }
   }
 
-  this.removeProvider = function (name) {
+  this.removeProvider = (name) => {
     if (name && this.customNetWorks[name]) {
       delete this.customNetWorks[name]
-      self.event.trigger('removeProvider', [name])
+      this.event.trigger('removeProvider', [name])
     }
   }
 
-  this.addProvider = function (network) {
+  this.addProvider = (network) => {
     if (network && network.name && network.url) {
       this.customNetWorks[network.name] = network
-      self.event.trigger('addProvider', [network])
+      this.event.trigger('addProvider', [network])
     }
   }
 
-  this.internalWeb3 = function () {
+  this.internalWeb3 = () => {
     return web3
   }
 
-  this.blankWeb3 = function () {
+  this.blankWeb3 = () => {
     return blankWeb3
   }
 
-  this.vm = function () {
+  this.vm = () => {
     return vms[currentFork].vm
   }
 
-  this.setContext = function (context, endPointUrl, confirmCb, infoCb) {
+  this.setContext = (context, endPointUrl, confirmCb, infoCb) => {
     executionContext = context
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb)
   }
 
-  this.executionContextChange = function (context, endPointUrl, confirmCb, infoCb, cb) {
+  this.executionContextChange = (context, endPointUrl, confirmCb, infoCb, cb) => {
     if (!cb) cb = () => {}
 
     if (context === 'vm') {
@@ -211,7 +210,7 @@ function ExecutionContext () {
       vms[currentFork].stateManager.revert(() => {
         vms[currentFork].stateManager.checkpoint(() => {})
       })
-      self.event.trigger('contextChanged', ['vm'])
+      this.event.trigger('contextChanged', ['vm'])
       return cb()
     }
 
@@ -220,11 +219,11 @@ function ExecutionContext () {
         infoCb('No injected Web3 provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).')
         return cb()
       } else {
-        self.askPermission()
+        this.askPermission()
         executionContext = context
         web3.setProvider(injectedProvider)
-        self._updateBlockGasLimit()
-        self.event.trigger('contextChanged', ['injected'])
+        this._updateBlockGasLimit()
+        this.event.trigger('contextChanged', ['injected'])
         return cb()
       }
     }
@@ -239,16 +238,16 @@ function ExecutionContext () {
     }
   }
 
-  this.currentblockGasLimit = function () {
+  this.currentblockGasLimit = () => {
     return this.blockGasLimit
   }
 
-  this.stopListenOnLastBlock = function () {
+  this.stopListenOnLastBlock = () => {
     if (this.listenOnLastBlockId) clearInterval(this.listenOnLastBlockId)
     this.listenOnLastBlockId = null
   }
 
-  this._updateBlockGasLimit = function () {
+  this._updateBlockGasLimit = () => {
     if (this.getProvider() !== 'vm') {
       web3.eth.getBlock('latest', (err, block) => {
         if (!err) {
@@ -261,15 +260,17 @@ function ExecutionContext () {
     }
   }
 
-  this.listenOnLastBlock = function () {
+  this.listenOnLastBlock = () => {
     this.listenOnLastBlockId = setInterval(() => {
       this._updateBlockGasLimit()
     }, 15000)
   }
 
+  // TODO: remove this when this function is moved
+  const self = this
   // TODO: not used here anymore and needs to be moved
   function setProviderFromEndpoint (endpoint, context, cb) {
-    var oldProvider = web3.currentProvider
+    const oldProvider = web3.currentProvider
 
     if (endpoint === 'ipc') {
       web3.setProvider(new web3.providers.IpcProvider())
@@ -291,32 +292,32 @@ function ExecutionContext () {
   }
   this.setProviderFromEndpoint = setProviderFromEndpoint
 
-  this.txDetailsLink = function (network, hash) {
+  this.txDetailsLink = (network, hash) => {
     if (transactionDetailsLinks[network]) {
       return transactionDetailsLinks[network] + hash
     }
   }
 
-  this.addBlock = function (block) {
+  this.addBlock = (block) => {
     let blockNumber = '0x' + block.header.number.toString('hex')
     if (blockNumber === '0x') {
       blockNumber = '0x0'
     }
     blockNumber = web3.utils.toHex(web3.utils.toBN(blockNumber))
 
-    self.blocks['0x' + block.hash().toString('hex')] = block
-    self.blocks[blockNumber] = block
-    self.latestBlockNumber = blockNumber
+    this.blocks['0x' + block.hash().toString('hex')] = block
+    this.blocks[blockNumber] = block
+    this.latestBlockNumber = blockNumber
 
     this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
-  this.trackTx = function (tx, block) {
-    self.txs[tx] = block
+  this.trackTx = (tx, block) => {
+    this.txs[tx] = block
   }
 }
 
-var transactionDetailsLinks = {
+const transactionDetailsLinks = {
   'Main': 'https://www.etherscan.io/tx/',
   'Rinkeby': 'https://rinkeby.etherscan.io/tx/',
   'Ropsten': 'https://ropsten.etherscan.io/tx/',

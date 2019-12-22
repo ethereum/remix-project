@@ -1,13 +1,14 @@
 'use strict'
-var ui = require('./uiHelper')
+const ui = require('./uiHelper')
+
 module.exports = {
   // vmTraceIndex has to point to a CALL, CODECALL, ...
   resolveCalledAddress: function (vmTraceIndex, trace) {
-    var step = trace[vmTraceIndex]
+    const step = trace[vmTraceIndex]
     if (this.isCreateInstruction(step)) {
       return this.contractCreationToken(vmTraceIndex)
     } else if (this.isCallInstruction(step)) {
-      var stack = step.stack // callcode, delegatecall, ...
+      const stack = step.stack // callcode, delegatecall, ...
       return ui.normalizeHexAddress(stack[stack.length - 2])
     }
     return undefined
@@ -51,7 +52,7 @@ module.exports = {
 
   isCallToPrecompiledContract: function (index, trace) {
     // if stack empty => this is not a precompiled contract
-    var step = trace[index]
+    const step = trace[index]
     if (this.isCallInstruction(step)) {
       return index + 1 < trace.length && trace[index + 1].stack.length !== 0
     } else {

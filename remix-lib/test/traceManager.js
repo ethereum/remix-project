@@ -1,20 +1,20 @@
 'use strict'
-var TraceManager = require('../src/trace/traceManager')
-var tape = require('tape')
-var Web3Providers = require('../src/web3Provider/web3Providers')
-var web3Test = require('./resources/testWeb3')
+const TraceManager = require('../src/trace/traceManager')
+const tape = require('tape')
+const Web3Providers = require('../src/web3Provider/web3Providers')
+const web3Test = require('./resources/testWeb3')
 
 let web3 = null
 
 tape('TraceManager', function (t) {
-  var traceManager
+  let traceManager
 
   t.test('TraceManager.init', function (st) {
-    var web3Providers = new Web3Providers()
+    const web3Providers = new Web3Providers()
     web3Providers.addProvider('TEST', web3Test)
     web3Providers.get('TEST', function (error, obj) {
       if (error) {
-        var mes = 'provider TEST not defined'
+        const mes = 'provider TEST not defined'
         console.log(mes)
         st.fail(mes)
       } else {
@@ -26,7 +26,7 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.resolveTrace', function (st) {
-    var tx = web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+    const tx = web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     traceManager.resolveTrace(tx, function (error, result) {
       if (error) {
         st.fail(' - traceManager.resolveTrace - failed ' + result)
@@ -275,21 +275,21 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.findStepOverBack', function (st) {
-    var result = traceManager.findStepOverBack(116)
+    const result = traceManager.findStepOverBack(116)
     console.log(result)
     st.ok(result === 115)
     st.end()
   })
 
   t.test('TraceManager.findStepOverForward', function (st) {
-    var result = traceManager.findStepOverForward(66)
+    const result = traceManager.findStepOverForward(66)
     console.log(result)
     st.ok(result === 67)
     st.end()
   })
 
   t.test('TraceManager.findNextCall', function (st) {
-    var result = traceManager.findNextCall(10)
+    const result = traceManager.findNextCall(10)
     console.log(result)
     st.ok(result === 63)
     st.end()

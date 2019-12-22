@@ -1,5 +1,5 @@
 'use strict'
-var codeUtils = require('./codeUtils')
+const codeUtils = require('./codeUtils')
 
 function CodeResolver (options) {
   this.web3 = options.web3
@@ -16,20 +16,18 @@ CodeResolver.prototype.clear = function () {
 }
 
 CodeResolver.prototype.resolveCode = function (address, callBack) {
-  var cache = this.getExecutingCodeFromCache(address)
+  const cache = this.getExecutingCodeFromCache(address)
   if (cache) {
-    callBack(address, cache)
-    return
+    return callBack(address, cache)
   }
 
-  var self = this
-  this.loadCode(address, function (code) {
-    callBack(address, self.cacheExecutingCode(address, code))
+  this.loadCode(address, (code) => {
+    callBack(address, this.cacheExecutingCode(address, code))
   })
 }
 
 CodeResolver.prototype.loadCode = function (address, callback) {
-  this.web3.eth.getCode(address, function (error, result) {
+  this.web3.eth.getCode(address, (error, result) => {
     if (error) {
       console.log(error)
     } else {
@@ -39,7 +37,7 @@ CodeResolver.prototype.loadCode = function (address, callback) {
 }
 
 CodeResolver.prototype.cacheExecutingCode = function (address, hexCode) {
-  var codes = this.formatCode(hexCode)
+  const codes = this.formatCode(hexCode)
   this.bytecodeByAddress[address] = hexCode
   this.instructionsByAddress[address] = codes.code
   this.instructionsIndexByBytesOffset[address] = codes.instructionsIndexByBytesOffset
@@ -47,7 +45,7 @@ CodeResolver.prototype.cacheExecutingCode = function (address, hexCode) {
 }
 
 CodeResolver.prototype.formatCode = function (hexCode) {
-  var code = codeUtils.nameOpCodes(Buffer.from(hexCode.substring(2), 'hex'))
+  const code = codeUtils.nameOpCodes(Buffer.from(hexCode.substring(2), 'hex'))
   return {
     code: code[0],
     instructionsIndexByBytesOffset: code[1]
@@ -61,9 +59,8 @@ CodeResolver.prototype.getExecutingCodeFromCache = function (address) {
       instructionsIndexByBytesOffset: this.instructionsIndexByBytesOffset[address],
       bytecode: this.bytecodeByAddress[address]
     }
-  } else {
-    return null
   }
+  return null
 }
 
 CodeResolver.prototype.getInstructionIndex = function (address, pc) {

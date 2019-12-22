@@ -1,20 +1,20 @@
 'use strict'
-var ethers = require('ethers')
+const ethers = require('ethers')
 
 module.exports = {
   makeFullTypeDefinition: function (typeDef) {
     if (typeDef && typeDef.type.indexOf('tuple') === 0 && typeDef.components) {
-      var innerTypes = typeDef.components.map((innerType) => { return this.makeFullTypeDefinition(innerType) })
+      const innerTypes = typeDef.components.map((innerType) => { return this.makeFullTypeDefinition(innerType) })
       return `tuple(${innerTypes.join(',')})${this.extractSize(typeDef.type)}`
     }
     return typeDef.type
   },
 
   encodeParams: function (funABI, args) {
-    var types = []
+    const types = []
     if (funABI.inputs && funABI.inputs.length) {
-      for (var i = 0; i < funABI.inputs.length; i++) {
-        var type = funABI.inputs[i].type
+      for (let i = 0; i < funABI.inputs.length; i++) {
+        const type = funABI.inputs[i].type
         // "false" will be converting to `false` and "true" will be working
         // fine as abiCoder assume anything in quotes as `true`
         if (type === 'bool' && args[i] === 'false') {
@@ -29,13 +29,13 @@ module.exports = {
 
     // NOTE: the caller will concatenate the bytecode and this
     //       it could be done here too for consistency
-    var abiCoder = new ethers.utils.AbiCoder()
+    const abiCoder = new ethers.utils.AbiCoder()
     return abiCoder.encode(types, args)
   },
 
   encodeFunctionId: function (funABI) {
     if (funABI.type === 'fallback') return '0x'
-    var abi = new ethers.utils.Interface([funABI])
+    let abi = new ethers.utils.Interface([funABI])
     abi = abi.functions[funABI.name]
     return abi.sighash
   },
@@ -63,7 +63,7 @@ module.exports = {
   },
 
   getConstructorInterface: function (abi) {
-    var funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'payable': 'false', 'outputs': [] }
+    const funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'payable': 'false', 'outputs': [] }
     if (typeof abi === 'string') {
       try {
         abi = JSON.parse(abi)
@@ -73,7 +73,7 @@ module.exports = {
       }
     }
 
-    for (var i = 0; i < abi.length; i++) {
+    for (let i = 0; i < abi.length; i++) {
       if (abi[i].type === 'constructor') {
         funABI.inputs = abi[i].inputs || []
         funABI.payable = abi[i].payable
@@ -86,7 +86,7 @@ module.exports = {
   },
 
   serializeInputs: function (fnAbi) {
-    var serialized = '('
+    let serialized = '('
     if (fnAbi.inputs && fnAbi.inputs.length) {
       serialized += fnAbi.inputs.map((input) => { return input.type }).join(',')
     }
@@ -95,13 +95,13 @@ module.exports = {
   },
 
   extractSize: function (type) {
-    var size = type.match(/([a-zA-Z0-9])(\[.*\])/)
+    const size = type.match(/([a-zA-Z0-9])(\[.*\])/)
     return size ? size[2] : ''
   },
 
   getFunction: function (abi, fnName) {
-    for (var i = 0; i < abi.length; i++) {
-      var fn = abi[i]
+    for (let i = 0; i < abi.length; i++) {
+      const fn = abi[i]
       if (fn.type === 'function' && fnName === fn.name + '(' + fn.inputs.map((value) => {
         if (value.components) {
           let fullType = this.makeFullTypeDefinition(value)
@@ -117,7 +117,7 @@ module.exports = {
   },
 
   getFallbackInterface: function (abi) {
-    for (var i = 0; i < abi.length; i++) {
+    for (let i = 0; i < abi.length; i++) {
       if (abi[i].type === 'fallback') {
         return abi[i]
       }
@@ -131,7 +131,7 @@ module.exports = {
     * @returns contract obj and associated file: { contract, file } or null
     */
   getContract: (contractName, contracts) => {
-    for (var file in contracts) {
+    for (let file in contracts) {
       if (contracts[file][contractName]) {
         return { object: contracts[file][contractName], file: file }
       }
@@ -145,17 +145,16 @@ module.exports = {
     * @param {Function} cb    - callback
     */
   visitContracts: (contracts, cb) => {
-    for (var file in contracts) {
-      for (var name in contracts[file]) {
+    for (let file in contracts) {
+      for (let name in contracts[file]) {
         if (cb({ name: name, object: contracts[file][name], file: file })) return
       }
     }
   },
 
   inputParametersDeclarationToString: function (abiinputs) {
-    var inputs = (abiinputs || []).map((inp) => inp.type + ' ' + inp.name)
+    const inputs = (abiinputs || []).map((inp) => inp.type + ' ' + inp.name)
     return inputs.join(', ')
   }
 
 }
-
