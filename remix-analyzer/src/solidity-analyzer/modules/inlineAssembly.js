@@ -1,8 +1,8 @@
-var name = 'Inline assembly: '
-var desc = 'Use of Inline Assembly'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var algo = require('./algorithmCategories')
+const name = 'Inline assembly: '
+const desc = 'Use of Inline Assembly'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const algo = require('./algorithmCategories')
 
 function inlineAssembly () {
   this.inlineAssNodes = []

@@ -1,8 +1,8 @@
-var name = 'Low level calls: '
-var desc = 'Semantics maybe unclear'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var algo = require('./algorithmCategories')
+const name = 'Low level calls: '
+const desc = 'Semantics maybe unclear'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const algo = require('./algorithmCategories')
 
 function lowLevelCalls () {
   this.llcNodes = []
@@ -27,9 +27,9 @@ lowLevelCalls.prototype.visit = function (node) {
 }
 
 lowLevelCalls.prototype.report = function (compilationResults) {
-  return this.llcNodes.map(function (item, i) {
-    var text = ''
-    var morehref = null
+  return this.llcNodes.map((item, i) => {
+    let text = ''
+    let morehref = null
     switch (item.type) {
       case common.lowLevelCallTypes.CALL:
         text = `use of "call":  the use of low level "call" should be avoided whenever possible. 

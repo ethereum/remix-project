@@ -1,8 +1,8 @@
-var name = 'This on local calls: '
-var desc = 'Invocation of local functions via this'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var algo = require('./algorithmCategories')
+const name = 'This on local calls: '
+const desc = 'Invocation of local functions via this'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const algo = require('./algorithmCategories')
 
 function thisLocal () {
   this.warningNodes = []

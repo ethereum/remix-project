@@ -1,8 +1,8 @@
-var name = 'Result not used: '
-var desc = 'The result of an operation was not used.'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var algo = require('./algorithmCategories')
+const name = 'Result not used: '
+const desc = 'The result of an operation was not used.'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const algo = require('./algorithmCategories')
 
 function assignAndCompare () {
   this.warningNodes = []
@@ -13,7 +13,7 @@ assignAndCompare.prototype.visit = function (node) {
 }
 
 assignAndCompare.prototype.report = function (compilationResults) {
-  return this.warningNodes.map(function (item, i) {
+  return this.warningNodes.map((item, i) => {
     return {
       warning: 'A binary operation yields a value that is not used in the following. This is often caused by confusing assignment (=) and comparison (==).',
       location: item.src

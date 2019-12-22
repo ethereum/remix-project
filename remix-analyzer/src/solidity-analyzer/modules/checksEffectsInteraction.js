@@ -1,10 +1,10 @@
-var name = 'Check effects: '
-var desc = 'Avoid potential reentrancy bugs'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var fcallGraph = require('./functionCallGraph')
-var AbstractAst = require('./abstractAstView')
-var algo = require('./algorithmCategories')
+const name = 'Check effects: '
+const desc = 'Avoid potential reentrancy bugs'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const fcallGraph = require('./functionCallGraph')
+const AbstractAst = require('./abstractAstView')
+const algo = require('./algorithmCategories')
 
 function checksEffectsInteraction () {
   this.abstractAst = new AbstractAst()
@@ -20,10 +20,10 @@ checksEffectsInteraction.prototype.visit = function () { throw new Error('checks
 checksEffectsInteraction.prototype.report = function () { throw new Error('checksEffectsInteraction.js no report function set upon construction') }
 
 function report (contracts, multipleContractsWithSameName) {
-  var warnings = []
-  var hasModifiers = contracts.some((item) => item.modifiers.length > 0)
+  const warnings = []
+  const hasModifiers = contracts.some((item) => item.modifiers.length > 0)
 
-  var callGraph = fcallGraph.buildGlobalFuncCallGraph(contracts)
+  const callGraph = fcallGraph.buildGlobalFuncCallGraph(contracts)
 
   contracts.forEach((contract) => {
     contract.functions.forEach((func) => {
@@ -33,8 +33,8 @@ function report (contracts, multipleContractsWithSameName) {
 
     contract.functions.forEach((func) => {
       if (isPotentialVulnerableFunction(func, getContext(callGraph, contract, func))) {
-        var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
-        var comments = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''
+        const funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+        let comments = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''
         comments += (multipleContractsWithSameName) ? 'Note: Import aliases are currently not supported by this static analysis.' : ''
         warnings.push({
           warning: `Potential Violation of Checks-Effects-Interaction pattern in ${funcName}: Could potentially lead to re-entrancy vulnerability. ${comments}`,
@@ -57,8 +57,8 @@ function getStateVariables (contract, func) {
 }
 
 function isPotentialVulnerableFunction (func, context) {
-  var isPotentialVulnerable = false
-  var interaction = false
+  let isPotentialVulnerable = false
+  let interaction = false
   func.relevantNodes.forEach((node) => {
     if (common.isInteraction(node)) {
       interaction = true
@@ -71,7 +71,7 @@ function isPotentialVulnerableFunction (func, context) {
 
 function isLocalCallWithStateChange (node, context) {
   if (common.isLocalCallGraphRelevantNode(node)) {
-    var func = fcallGraph.resolveCallGraphSymbol(context.callGraph, common.getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
+    const func = fcallGraph.resolveCallGraphSymbol(context.callGraph, common.getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
     return !func || (func && func.node.changesState)
   }
   return false
