@@ -1,5 +1,16 @@
 ## Change Log
 
+### v0.1.25 (2019/12/23)
+- [#1373](https://github.com/ethereum/remix/pull/1373) Release 0.1.25 (@Aniket-Engg )
+- [#1371](https://github.com/ethereum/remix/pull/1371) use web3 utils (@Aniket-Engg )
+- [#1369](https://github.com/ethereum/remix/pull/1369) network id fixed (@Aniket-Engg )
+- [#1368](https://github.com/ethereum/remix/pull/1368) solc 0.6.0 compatibility (@Aniket-Engg )
+- [#1359](https://github.com/ethereum/remix/pull/1359) web3 and ethers version update (@Aniket-Engg )
+- [#1358](https://github.com/ethereum/remix/pull/1358) task updated & comments added (@Aniket-Engg )
+- [#1357](https://github.com/ethereum/remix/pull/1357) changelog updated (@Aniket-Engg )
+
+## Change Log
+
 ### v0.1.24 (2019/12/10)
 - [#1356](https://github.com/ethereum/remix/pull/1356) Publish 0.1.24 (@Aniket-Engg )
 - [#1355](https://github.com/ethereum/remix/pull/1355) bool type encoding handled  (@Aniket-Engg )
