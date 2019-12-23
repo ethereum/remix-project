@@ -151,7 +151,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
 
   function clickButton (valArr, inputsValues) {
     let logMsg
-    if (lookupOnly) {
+    if (!lookupOnly) {
       logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
     } else {
       logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
@@ -254,7 +254,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     // contractsDetails is used to resolve libraries
     txFormat.buildData(args.contractName, args.contractAbi, {}, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
       if (!error) {
-        if (lookupOnly) {
+        if (!lookupOnly) {
           self.logCallback(`${logMsg} pending ... `)
         } else {
           self.logCallback(`${logMsg}`)
