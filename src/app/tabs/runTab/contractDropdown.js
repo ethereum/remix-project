@@ -8,9 +8,10 @@ var modalDialog = require('../../ui/modaldialog')
 var MultiParamManager = require('../../ui/multiParamManager')
 
 class ContractDropdownUI {
-  constructor (dropdownLogic, logCallback) {
+  constructor (dropdownLogic, logCallback, runView) {
     this.dropdownLogic = dropdownLogic
     this.logCallback = logCallback
+    this.runView = runView
     this.event = new EventManager()
 
     this.listenToEvents()
@@ -39,8 +40,6 @@ class ContractDropdownUI {
         document.querySelector(`.${css.contractNames}`).classList.add(css.contractNamesError)
       }
     })
-
-    this.dropdownLogic.event.register('currentFileChanged', this.changeCurrentFile.bind(this))
   }
 
   render () {
@@ -176,6 +175,15 @@ class ContractDropdownUI {
       this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
     }
 
+    let contractMetadata
+    try {
+      contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name)
+    } catch (error) {
+      return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+    }
+
+    const compilerContracts = this.dropdownLogic.getCompilerContracts()
+
     if (selectedContract.isOverSizeLimit()) {
       return modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
       More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
@@ -183,7 +191,7 @@ class ContractDropdownUI {
         {
           label: 'Force Send',
           fn: () => {
-            this.dropdownLogic.deployContract(selectedContract, args, {continueCb, promptCb, statusCb, finalCb}, {modalDialog, confirmDialog})
+            this.dropdownLogic.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, {modalDialog, confirmDialog})
           }}, {
             label: 'Cancel',
             fn: () => {
@@ -191,7 +199,7 @@ class ContractDropdownUI {
             }
           })
     }
-    this.dropdownLogic.deployContract(selectedContract, args, {continueCb, promptCb, statusCb, finalCb}, {modalDialog, confirmDialog})
+    this.dropdownLogic.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, {modalDialog, confirmDialog})
   }
 
   loadFromAddress () {
