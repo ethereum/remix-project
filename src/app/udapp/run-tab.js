@@ -134,7 +134,7 @@ export class RunTab extends LibraryPlugin {
     const dropdownLogic = new DropdownLogic(this.executionContext, compilersArtefacts, config, editor, udapp, this)
     this.contractDropdownUI = new ContractDropdownUI(dropdownLogic, logCallback, this)
 
-    fileManager.events.on('currentFileChanged', contractDropdownUI.changeCurrentFile.bind(contractDropdownUI))
+    fileManager.events.on('currentFileChanged', this.contractDropdownUI.changeCurrentFile.bind(this.contractDropdownUI))
 
     this.contractDropdownUI.event.register('clearInstance', () => {
       const noInstancesText = this.noInstancesText

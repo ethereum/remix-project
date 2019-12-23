@@ -107,7 +107,7 @@ class ContractDropdownUI {
     }
 
     const selectedContract = this.getSelectedContract()
-    const clickCallback = (valArray, inputsValues) => {
+    const clickCallback = async (valArray, inputsValues) => {
       var selectedContract = this.getSelectedContract()
       this.createInstance(selectedContract, inputsValues)
     }
@@ -130,7 +130,7 @@ class ContractDropdownUI {
     return this.dropdownLogic.getSelectedContract(contractName, compilerAtributeName)
   }
 
-  createInstance (selectedContract, args) {
+  async createInstance (selectedContract, args) {
     if (selectedContract.bytecodeObject.length === 0) {
       return modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
     }
