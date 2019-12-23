@@ -9,22 +9,17 @@ var EventManager = remixLib.EventManager
 var Web3 = require('web3')
 
 class DropdownLogic {
-  constructor (executionContext, fileManager, compilersArtefacts, config, editor, udapp, filePanel, runView) {
+  constructor (executionContext, compilersArtefacts, config, editor, udapp, runView) {
     this.compilersArtefacts = compilersArtefacts
     this.executionContext = executionContext
     this.config = config
     this.editor = editor
     this.udapp = udapp
     this.runView = runView
-    this.filePanel = filePanel
 
     this.event = new EventManager()
 
     this.listenToCompilationEvents()
-
-    fileManager.events.on('currentFileChanged', (currentFile) => {
-      this.event.trigger('currentFileChanged', [currentFile])
-    })
   }
 
   // TODO: can be moved up; the event in contractDropdown will have to refactored a method instead
@@ -124,10 +119,6 @@ class DropdownLogic {
     return this.executionContext.web3().eth.getGasPrice(cb)
   }
 
-  isVM () {
-    return this.executionContext.isVM()
-  }
-
   // TODO: check if selectedContract and data can be joined
   createContract (selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
     if (data) {
@@ -224,20 +215,17 @@ class DropdownLogic {
     this.udapp.runTx(data, confirmationCb, continueCb, promptCb, finalCb)
   }
 
-  async deploContract (selectedContract, args, callbacks, dialogs) {
+  getCompilerContracts() {
+    return this.compilersArtefacts['__last'].getData().contracts
+  }
+
+  async deploContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, dialogs) {
     const {continueCb, promptCb, statusCb, finalCb}  = callbacks
     const {modalDialog, confirmDialog} = dialogs
 
     var constructor = selectedContract.getConstructorInterface()
-    // TODO: deployMetadataOf can be moved here
-    let contractMetadata
-    try {
-      contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name)
-    } catch (error) {
-      return statusCb(`creation of ${selectedContract.name} errored: ` + error)
-    }
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-      return txFormat.buildData(selectedContract.name, selectedContract.object, this.compilersArtefacts['__last'].getData().contracts, true, constructor, args, (error, data) => {
+      return txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
         if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
         statusCb(`creation of ${selectedContract.name} pending...`)
