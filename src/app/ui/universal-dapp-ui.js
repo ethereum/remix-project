@@ -254,7 +254,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     // contractsDetails is used to resolve libraries
     txFormat.buildData(args.contractName, args.contractAbi, {}, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
       if (!error) {
-        if (args.funABI.stateMutability !== 'constant' || args.funABI.constant) {
+        if (lookupOnly) {
           self.logCallback(`${logMsg} pending ... `)
         } else {
           self.logCallback(`${logMsg}`)
