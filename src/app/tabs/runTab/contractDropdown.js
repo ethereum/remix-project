@@ -109,7 +109,8 @@ class ContractDropdownUI {
 
     const selectedContract = this.getSelectedContract()
     const clickCallback = (valArray, inputsValues) => {
-      this.createInstance(inputsValues)
+      var selectedContract = this.getSelectedContract()
+      this.createInstance(selectedContract, inputsValues)
     }
     const createConstructorInstance = new MultiParamManager(
       0,
@@ -130,9 +131,7 @@ class ContractDropdownUI {
     return this.dropdownLogic.getSelectedContract(contractName, compilerAtributeName)
   }
 
-  createInstance (args) {
-    var selectedContract = this.getSelectedContract()
-
+  createInstance (selectedContract, args) {
     if (selectedContract.bytecodeObject.length === 0) {
       return modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
     }
@@ -184,7 +183,7 @@ class ContractDropdownUI {
         {
           label: 'Force Send',
           fn: () => {
-            this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, finalCb)
+            this.dropdownLogic.deployContract(selectedContract, args, {continueCb, promptCb, statusCb, finalCb}, {modalDialog, confirmDialog})
           }}, {
             label: 'Cancel',
             fn: () => {
@@ -192,7 +191,7 @@ class ContractDropdownUI {
             }
           })
     }
-    this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, finalCb)
+    this.dropdownLogic.deployContract(selectedContract, args, {continueCb, promptCb, statusCb, finalCb}, {modalDialog, confirmDialog})
   }
 
   loadFromAddress () {
