@@ -241,7 +241,7 @@ class CompilerContainer {
               <div class="col-sm-4">
                 <div class="d-flex flex-row justify-content-end">
                   <label class="${css.compilerLabel} input-group-text pr-0 border-0 w-100" for="versionSelector">
-                    <button class="far fa-plus-square border-0 p-0 mx-2 text-dark btn-sm" onclick="${(e) => this.promtCompiler(e)}" title="Add a custom compiler with URL"></button>
+                    <button class="far fa-plus-square border-0 p-0 mx-2 btn-sm" onclick="${(e) => this.promtCompiler(e)}" title="Add a custom compiler with URL"></button>
                     Compiler
                   </label>
                 </div>
