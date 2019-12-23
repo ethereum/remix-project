@@ -136,62 +136,7 @@ class DropdownLogic {
       data.contractABI = selectedContract.abi
     }
 
-    var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-      if (network.name !== 'Main') {
-        return continueTxExecution(null)
-      }
-      var amount = Web3.utils.fromWei(typeConversion.toInt(tx.value), 'ether')
-
-      // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
-      var content = confirmDialog(tx, amount, gasEstimation, this.recorder,
-        (gasPrice, cb) => {
-          let txFeeText, priceStatus
-          // TODO: this try catch feels like an anti pattern, can/should be
-          // removed, but for now keeping the original logic
-          try {
-            var fee = Web3.utils.toBN(tx.gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), 'gwei')))
-            txFeeText = ' ' + Web3.utils.fromWei(fee.toString(10), 'ether') + ' Ether'
-            priceStatus = true
-          } catch (e) {
-            txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-            priceStatus = false
-          }
-          cb(txFeeText, priceStatus)
-        },
-        (cb) => {
-          this.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-            var warnMessage = ' Please fix this issue before sending any transaction. '
-            if (error) {
-              return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-            }
-            try {
-              var gasPriceValue = Web3.utils.fromWei(gasPrice.toString(10), 'gwei')
-              cb(null, gasPriceValue)
-            } catch (e) {
-              cb(warnMessage + e.message, null, false)
-            }
-          })
-        }
-      )
-      modalDialog('Confirm transaction', content,
-        { label: 'Confirm',
-          fn: () => {
-            this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-            // TODO: check if this is check is still valid given the refactor
-            if (!content.gasPriceStatus) {
-              cancelCb('Given gas price is not correct')
-            } else {
-              var gasPrice = Web3.utils.toWei(content.querySelector('#gasprice').value, 'gwei')
-              continueTxExecution(gasPrice)
-            }
-          }}, {
-            label: 'Cancel',
-            fn: () => {
-              return cancelCb('Transaction canceled by user.')
-            }
-          })
-    }
-
+    const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
     this.udapp.createContract(data, confirmationCb, continueCb, promptCb,
       (error, txResult) => {
         if (error) {
@@ -213,42 +158,44 @@ class DropdownLogic {
     )
   }
 
-  runTransaction (data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
-    var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+  determineGasFees(gasPrice, cb) {
+    let txFeeText, priceStatus
+    // TODO: this try catch feels like an anti pattern, can/should be
+    // removed, but for now keeping the original logic
+    try {
+      var fee = this.calculateFee(tx.gas, gasPrice)
+      txFeeText = ' ' + this.fromWei(fee, false, 'ether') + ' Ether'
+      priceStatus = true
+    } catch (e) {
+      txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+      priceStatus = false
+    }
+    cb(txFeeText, priceStatus)
+  }
+
+  determineGasPrice(cb) {
+    this.getGasPrice((error, gasPrice) => {
+      var warnMessage = ' Please fix this issue before sending any transaction. '
+      if (error) {
+        return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
+      }
+      try {
+        var gasPriceValue = this.fromWei(gasPrice, false, 'gwei')
+        cb(null, gasPriceValue)
+      } catch (e) {
+        cb(warnMessage + e.message, null, false)
+      }
+    })
+  }
+
+  getConfirmationCb(modalDialog, confirmDialog) {
+    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
       }
-      var amount = this.fromWei(tx.value, true, 'ether')
-      var content = confirmDialog(tx, amount, gasEstimation, null,
-        (gasPrice, cb) => {
-          let txFeeText, priceStatus
-          // TODO: this try catch feels like an anti pattern, can/should be
-          // removed, but for now keeping the original logic
-          try {
-            var fee = this.calculateFee(tx.gas, gasPrice)
-            txFeeText = ' ' + this.fromWei(fee, false, 'ether') + ' Ether'
-            priceStatus = true
-          } catch (e) {
-            txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-            priceStatus = false
-          }
-          cb(txFeeText, priceStatus)
-        },
-        (cb) => {
-          this.getGasPrice((error, gasPrice) => {
-            var warnMessage = ' Please fix this issue before sending any transaction. '
-            if (error) {
-              return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-            }
-            try {
-              var gasPriceValue = this.fromWei(gasPrice, false, 'gwei')
-              cb(null, gasPriceValue)
-            } catch (e) {
-              cb(warnMessage + e.message, null, false)
-            }
-          })
-        }
-      )
+      const amount = this.fromWei(tx.value, true, 'ether')
+      const content = confirmDialog(tx, amount, gasEstimation, null, this.determineGasFees, this.determineGasPrice)
+
       modalDialog('Confirm transaction', content,
         { label: 'Confirm',
           fn: () => {
@@ -269,10 +216,18 @@ class DropdownLogic {
       )
     }
 
+    return confirmationCb
+  }
+
+  runTransaction (data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
+    const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
     this.udapp.runTx(data, confirmationCb, continueCb, promptCb, finalCb)
   }
 
-  async forceSend (selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, cb) {
+  async deploContract (selectedContract, args, callbacks, dialogs) {
+    const {continueCb, promptCb, statusCb, finalCb}  = callbacks
+    const {modalDialog, confirmDialog} = dialogs
+
     var constructor = selectedContract.getConstructorInterface()
     // TODO: deployMetadataOf can be moved here
     let contractMetadata
@@ -286,7 +241,7 @@ class DropdownLogic {
         if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
         statusCb(`creation of ${selectedContract.name} pending...`)
-        this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
+        this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb)
       }, statusCb, (data, runTxCallback) => {
         // called for libraries deployment
         this.runTransaction(data, continueCb, promptCb, modalDialog, confirmDialog, runTxCallback)
@@ -297,7 +252,7 @@ class DropdownLogic {
       if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
       statusCb(`creation of ${selectedContract.name} pending...`)
-      this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
+      this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb)
     })
   }
 
