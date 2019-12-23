@@ -149,22 +149,27 @@ class DropdownLogic {
     )
   }
 
-  determineGasFees(gasPrice, cb) {
-    let txFeeText, priceStatus
-    // TODO: this try catch feels like an anti pattern, can/should be
-    // removed, but for now keeping the original logic
-    try {
-      var fee = this.calculateFee(tx.gas, gasPrice)
-      txFeeText = ' ' + this.fromWei(fee, false, 'ether') + ' Ether'
-      priceStatus = true
-    } catch (e) {
-      txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-      priceStatus = false
+  // determineGasFees (gasPrice, cb) {
+  determineGasFees (tx) {
+    const determineGasFeesCb = (gasPrice, cb) => {
+      let txFeeText, priceStatus
+      // TODO: this try catch feels like an anti pattern, can/should be
+      // removed, but for now keeping the original logic
+      try {
+        var fee = this.calculateFee(tx.gas, gasPrice)
+        txFeeText = ' ' + this.fromWei(fee, false, 'ether') + ' Ether'
+        priceStatus = true
+      } catch (e) {
+        txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+        priceStatus = false
+      }
+      cb(txFeeText, priceStatus)
     }
-    cb(txFeeText, priceStatus)
+
+    return determineGasFeesCb
   }
 
-  determineGasPrice(cb) {
+  determineGasPrice (cb) {
     this.getGasPrice((error, gasPrice) => {
       var warnMessage = ' Please fix this issue before sending any transaction. '
       if (error) {
@@ -179,13 +184,13 @@ class DropdownLogic {
     })
   }
 
-  getConfirmationCb(modalDialog, confirmDialog) {
+  getConfirmationCb (modalDialog, confirmDialog) {
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
       }
       const amount = this.fromWei(tx.value, true, 'ether')
-      const content = confirmDialog(tx, amount, gasEstimation, null, this.determineGasFees, this.determineGasPrice)
+      const content = confirmDialog(tx, amount, gasEstimation, null, this.determineGasFees(tx), this.determineGasPrice)
 
       modalDialog('Confirm transaction', content,
         { label: 'Confirm',
@@ -215,12 +220,12 @@ class DropdownLogic {
     this.udapp.runTx(data, confirmationCb, continueCb, promptCb, finalCb)
   }
 
-  getCompilerContracts() {
+  getCompilerContracts () {
     return this.compilersArtefacts['__last'].getData().contracts
   }
 
-  async deploContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, dialogs) {
-    const {continueCb, promptCb, statusCb, finalCb}  = callbacks
+  async deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, dialogs) {
+    const {continueCb, promptCb, statusCb, finalCb} = callbacks
     const {modalDialog, confirmDialog} = dialogs
 
     var constructor = selectedContract.getConstructorInterface()
