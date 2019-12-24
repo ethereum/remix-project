@@ -1,7 +1,6 @@
-var RemixLib = require('remix-lib')
-var executionContext = RemixLib.execution.executionContext
 
-var Blocks = function (_options) {
+var Blocks = function (executionContext, _options) {
+  this.executionContext = executionContext
   const options = _options || {}
   this.coinbase = options.coinbase || '0x0000000000000000000000000000000000000000'
   this.blockNumber = 0
@@ -25,10 +24,10 @@ Blocks.prototype.methods = function () {
 Blocks.prototype.eth_getBlockByNumber = function (payload, cb) {
   let blockIndex = payload.params[0]
   if (blockIndex === 'latest') {
-    blockIndex = executionContext.latestBlockNumber
+    blockIndex = this.executionContext.latestBlockNumber
   }
 
-  const block = executionContext.blocks[blockIndex]
+  const block = this.executionContext.blocks[blockIndex]
 
   if (!block) {
     return cb(new Error('block not found'))
@@ -65,7 +64,7 @@ function toHex (value) {
 }
 
 Blocks.prototype.eth_getBlockByHash = function (payload, cb) {
-  var block = executionContext.blocks[payload.params[0]]
+  var block = this.executionContext.blocks[payload.params[0]]
 
   let b = {
     'number': toHex(block.header.number),
@@ -104,13 +103,13 @@ Blocks.prototype.eth_blockNumber = function (payload, cb) {
 }
 
 Blocks.prototype.eth_getBlockTransactionCountByHash = function (payload, cb) {
-  var block = executionContext.blocks[payload.params[0]]
+  var block = this.executionContext.blocks[payload.params[0]]
 
   cb(null, block.transactions.length)
 }
 
 Blocks.prototype.eth_getBlockTransactionCountByNumber = function (payload, cb) {
-  var block = executionContext.blocks[payload.params[0]]
+  var block = this.executionContext.blocks[payload.params[0]]
 
   cb(null, block.transactions.length)
 }
@@ -126,7 +125,7 @@ Blocks.prototype.eth_getUncleCountByBlockNumber = function (payload, cb) {
 Blocks.prototype.eth_getStorageAt = function (payload, cb) {
   const [address, position, blockNumber] = payload.params
 
-  executionContext.web3().debug.storageRangeAt(blockNumber, 'latest', address.toLowerCase(), position, 1, (err, result) => {
+  this.executionContext.web3().debug.storageRangeAt(blockNumber, 'latest', address.toLowerCase(), position, 1, (err, result) => {
     if (err || (result.storage && Object.values(result.storage).length === 0)) {
       return cb(err, '')
     }

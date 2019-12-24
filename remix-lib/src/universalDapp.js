@@ -6,27 +6,29 @@ const { EventEmitter } = require('events')
 const TxRunner = require('./execution/txRunner')
 const txHelper = require('./execution/txHelper')
 const EventManager = require('./eventManager')
-const executionContext = require('./execution/execution-context')
+const defaultExecutionContext = require('./execution/execution-context')
 const { resultToRemixTx } = require('./helpers/txResultHelper')
 
 module.exports = class UniversalDApp {
 
-  constructor (config) {
+  constructor (config, executionContext) {
     this.events = new EventEmitter()
     this.event = new EventManager()
+    // has a default for now for backwards compatability
+    this.executionContext = executionContext || defaultExecutionContext
     this.config = config
 
     this.txRunner = new TxRunner({}, {
       config: config,
       detectNetwork: (cb) => {
-        executionContext.detectNetwork(cb)
+        this.executionContext.detectNetwork(cb)
       },
       personalMode: () => {
-        return executionContext.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
+        return this.executionContext.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
-    })
+    }, this.executionContext)
     this.accounts = {}
-    executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
+    this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
   }
 
   // TODO : event should be triggered by Udapp instead of TxListener
@@ -39,7 +41,7 @@ module.exports = class UniversalDApp {
 
   resetEnvironment () {
     this.accounts = {}
-    if (executionContext.isVM()) {
+    if (this.executionContext.isVM()) {
       this._addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511', '0x56BC75E2D63100000')
       this._addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c', '0x56BC75E2D63100000')
       this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', '0x56BC75E2D63100000')
@@ -52,14 +54,14 @@ module.exports = class UniversalDApp {
       config: this.config,
       // TODO: to refactor, TxRunner already has access to executionContext
       detectNetwork: (cb) => {
-        executionContext.detectNetwork(cb)
+        this.executionContext.detectNetwork(cb)
       },
       personalMode: () => {
-        return executionContext.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
+        return this.executionContext.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
-    })
+    }, this.executionContext)
     this.txRunner.event.register('transactionBroadcasted', (txhash) => {
-      executionContext.detectNetwork((error, network) => {
+      this.executionContext.detectNetwork((error, network) => {
         if (error || !network) return
         this.event.trigger('transactionBroadcasted', [txhash, network.name])
       })
@@ -76,7 +78,7 @@ module.exports = class UniversalDApp {
    */
   createVMAccount (newAccount) {
     const { privateKey, balance } = newAccount
-    if (executionContext.getProvider() !== 'vm') {
+    if (this.executionContext.getProvider() !== 'vm') {
       throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
     this._addAccount(privateKey, balance)
@@ -85,12 +87,12 @@ module.exports = class UniversalDApp {
   }
 
   newAccount (password, passwordPromptCb, cb) {
-    if (!executionContext.isVM()) {
+    if (!this.executionContext.isVM()) {
       if (!this.config.get('settings/personal-mode')) {
         return cb('Not running in personal mode')
       }
       passwordPromptCb((passphrase) => {
-        executionContext.web3().personal.newAccount(passphrase, cb)
+        this.executionContext.web3().personal.newAccount(passphrase, cb)
       })
     } else {
       let privateKey
@@ -104,7 +106,7 @@ module.exports = class UniversalDApp {
 
   /** Add an account to the list of account (only for Javascript VM) */
   _addAccount (privateKey, balance) {
-    if (!executionContext.isVM()) {
+    if (!this.executionContext.isVM()) {
       throw new Error('_addAccount() cannot be called in non-VM mode')
     }
 
@@ -113,7 +115,7 @@ module.exports = class UniversalDApp {
       const address = privateToAddress(privateKey)
 
       // FIXME: we don't care about the callback, but we should still make this proper
-      let stateManager = executionContext.vm().stateManager
+      let stateManager = this.executionContext.vm().stateManager
       stateManager.getAccount(address, (error, account) => {
         if (error) return console.log(error)
         account.balance = balance || '0xf00000000000000001'
@@ -129,7 +131,7 @@ module.exports = class UniversalDApp {
   /** Return the list of accounts */
   getAccounts (cb) {
     return new Promise((resolve, reject) => {
-      const provider = executionContext.getProvider()
+      const provider = this.executionContext.getProvider()
       switch (provider) {
         case 'vm': {
           if (!this.accounts) {
@@ -143,13 +145,13 @@ module.exports = class UniversalDApp {
           break
         case 'web3': {
           if (this.config.get('settings/personal-mode')) {
-            return executionContext.web3().personal.getListAccounts((error, accounts) => {
+            return this.executionContext.web3().personal.getListAccounts((error, accounts) => {
               if (cb) cb(error, accounts)
               if (error) return reject(error)
               resolve(accounts)
             })
           } else {
-            executionContext.web3().eth.getAccounts((error, accounts) => {
+            this.executionContext.web3().eth.getAccounts((error, accounts) => {
               if (cb) cb(error, accounts)
               if (error) return reject(error)
               resolve(accounts)
@@ -158,7 +160,7 @@ module.exports = class UniversalDApp {
         }
           break
         case 'injected': {
-          executionContext.web3().eth.getAccounts((error, accounts) => {
+          this.executionContext.web3().eth.getAccounts((error, accounts) => {
             if (cb) cb(error, accounts)
             if (error) return reject(error)
             resolve(accounts)
@@ -172,8 +174,8 @@ module.exports = class UniversalDApp {
   getBalance (address, cb) {
     address = stripHexPrefix(address)
 
-    if (!executionContext.isVM()) {
-      executionContext.web3().eth.getBalance(address, (err, res) => {
+    if (!this.executionContext.isVM()) {
+      this.executionContext.web3().eth.getBalance(address, (err, res) => {
         if (err) {
           cb(err)
         } else {
@@ -185,7 +187,7 @@ module.exports = class UniversalDApp {
         return cb('No accounts?')
       }
 
-      executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, res) => {
+      this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, res) => {
         if (err) {
           cb('Account not found')
         } else {
@@ -201,7 +203,7 @@ module.exports = class UniversalDApp {
       if (error) {
         callback(error)
       } else {
-        callback(null, executionContext.web3().utils.fromWei(balance, 'ether'))
+        callback(null, this.executionContext.web3().fromWei(balance, 'ether'))
       }
     })
   }
@@ -240,7 +242,7 @@ module.exports = class UniversalDApp {
   }
 
   context () {
-    return (executionContext.isVM() ? 'memory' : 'blockchain')
+    return (this.executionContext.isVM() ? 'memory' : 'blockchain')
   }
 
   getABI (contract) {
@@ -266,7 +268,7 @@ module.exports = class UniversalDApp {
    */
   sendTransaction (tx) {
     return new Promise((resolve, reject) => {
-      executionContext.detectNetwork((error, network) => {
+      this.executionContext.detectNetwork((error, network) => {
         if (error) return reject(error)
         if (network.name === 'Main' && network.id === '1') {
           return reject(new Error('It is not allowed to make this action against mainnet'))
@@ -334,7 +336,7 @@ module.exports = class UniversalDApp {
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
-          if (executionContext.isVM() && !self.accounts[address]) {
+          if (self.executionContext.isVM() && !self.accounts[address]) {
             return next('Invalid account selected')
           }
           next(null, address, value, gasLimit)

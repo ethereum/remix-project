@@ -5,7 +5,7 @@ var ethJSUtil = require('ethereumjs-util')
 var EventManager = require('../eventManager')
 var codeUtil = require('../util')
 
-var executionContext = require('./execution-context')
+var defaultExecutionContext = require('./execution-context')
 var txFormat = require('./txFormat')
 var txHelper = require('./txHelper')
 
@@ -17,8 +17,10 @@ var txHelper = require('./txHelper')
   *
   */
 class TxListener {
-  constructor (opt) {
+  constructor (opt, executionContext) {
     this.event = new EventManager()
+    // has a default for now for backwards compatability
+    this.executionContext = executionContext || defaultExecutionContext
     this._api = opt.api
     this._resolvedTransactions = {}
     this._resolvedContracts = {}
@@ -26,7 +28,7 @@ class TxListener {
     this._listenOnNetwork = false
     this._loopId = null
     this.init()
-    executionContext.event.register('contextChanged', (context) => {
+    this.executionContext.event.register('contextChanged', (context) => {
       if (this._isListening) {
         this.stopListening()
         this.startListening()
@@ -39,15 +41,16 @@ class TxListener {
       // in VM mode
       // in web3 mode && listen remix txs only
       if (!this._isListening) return // we don't listen
-      if (this._loopId && executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
+      if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
+
       var call = {
         from: from,
         to: to,
         input: data,
         hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
         isCall: true,
-        returnValue: executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result),
-        envMode: executionContext.getProvider()
+        returnValue: this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result),
+        envMode: this.executionContext.getProvider()
       }
 
       addExecutionCosts(txResult, call)
@@ -65,12 +68,12 @@ class TxListener {
       // in VM mode
       // in web3 mode && listen remix txs only
       if (!this._isListening) return // we don't listen
-      if (this._loopId && executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
-      executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
+      if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
+      this.executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
         if (error) return console.log(error)
 
         addExecutionCosts(txResult, tx)
-        tx.envMode = executionContext.getProvider()
+        tx.envMode = this.executionContext.getProvider()
         tx.status = txResult.result.status // 0x0 or 0x1
         this._resolve([tx], () => {
         })
@@ -120,7 +123,7 @@ class TxListener {
   startListening () {
     this.init()
     this._isListening = true
-    if (this._listenOnNetwork && executionContext.getProvider() !== 'vm') {
+    if (this._listenOnNetwork && this.executionContext.getProvider() !== 'vm') {
       this._startListenOnNetwork()
     }
   }
@@ -142,7 +145,7 @@ class TxListener {
   _startListenOnNetwork () {
     this._loopId = setInterval(() => {
       var currentLoopId = this._loopId
-      executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
+      this.executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
         if (this._loopId === null) return
         if (error) return console.log(error)
         if (currentLoopId === this._loopId && (!this.lastBlock || blockNumber > this.lastBlock)) {
@@ -163,7 +166,7 @@ class TxListener {
   }
 
   _manageBlock (blockNumber) {
-    executionContext.web3().eth.getBlock(blockNumber, true, (error, result) => {
+    this.executionContext.web3().eth.getBlock(blockNumber, true, (error, result) => {
       if (!error) {
         this._newBlock(Object.assign({type: 'web3'}, result))
       }
@@ -240,7 +243,7 @@ class TxListener {
       // first check known contract, resolve against the `runtimeBytecode` if not known
       contractName = this._resolvedContracts[tx.to]
       if (!contractName) {
-        executionContext.web3().eth.getCode(tx.to, (error, code) => {
+        this.executionContext.web3().eth.getCode(tx.to, (error, code) => {
           if (error) return cb(error)
           if (code) {
             var contractName = this._tryResolveContract(code, contracts, false)
