@@ -1,8 +1,8 @@
 'use strict'
 
-var gray = require('ansi-gray')
-var timestamp = require('time-stamp')
-var supportsColor = require('color-support')
+const gray = require('ansi-gray')
+const timestamp = require('time-stamp')
+const supportsColor = require('color-support')
 
 function hasFlag (flag) {
   return ((typeof (process) !== 'undefined') && (process.argv.indexOf('--' + flag) !== -1))
@@ -24,7 +24,7 @@ function addColor (str) {
   return str
 }
 
-let logger = {
+const logger = {
   stdout: function (arg) {
     if (typeof (process) === 'undefined' || !process.stdout) return
     process.stdout.write(arg)
@@ -36,40 +36,40 @@ let logger = {
 }
 
 function getTimestamp () {
-  let coloredTimestamp = addColor(timestamp('HH:mm:ss'))
+  const coloredTimestamp = addColor(timestamp('HH:mm:ss'))
   return '[' + coloredTimestamp + ']'
 }
 
 function log () {
-  var time = getTimestamp()
+  const time = getTimestamp()
   logger.stdout(time + ' ')
   console.log.apply(console, arguments)
   return this
 }
 
 function info () {
-  var time = getTimestamp()
+  const time = getTimestamp()
   logger.stdout(time + ' ')
   console.info.apply(console, arguments)
   return this
 }
 
 function dir () {
-  var time = getTimestamp()
+  const time = getTimestamp()
   logger.stdout(time + ' ')
   console.dir.apply(console, arguments)
   return this
 }
 
 function warn () {
-  var time = getTimestamp()
+  const time = getTimestamp()
   logger.stderr(time + ' ')
   console.warn.apply(console, arguments)
   return this
 }
 
 function error () {
-  var time = getTimestamp()
+  const time = getTimestamp()
   logger.stderr(time + ' ')
   console.error.apply(console, arguments)
   return this

@@ -1,5 +1,5 @@
 'use strict'
-var util = require('./util')
+const util = require('./util')
 
 class RefType {
   constructor (storageSlots, storageBytes, typeName, location) {
@@ -26,7 +26,7 @@ class RefType {
         type: this.typeName
       }
     }
-    var offset = stack[stack.length - 1 - stackDepth]
+    let offset = stack[stack.length - 1 - stackDepth]
     if (this.isInStorage()) {
       offset = util.toBN(offset)
       try {

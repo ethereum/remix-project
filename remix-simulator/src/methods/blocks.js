@@ -1,5 +1,5 @@
 
-var Blocks = function (executionContext, _options) {
+const Blocks = function (executionContext, _options) {
   this.executionContext = executionContext
   const options = _options || {}
   this.coinbase = options.coinbase || '0x0000000000000000000000000000000000000000'
