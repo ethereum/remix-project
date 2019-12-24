@@ -25,15 +25,15 @@ program
   .option('--node [url]', 'node to connect to')
   .parse(process.argv)
 
-var CmdLine = require('../src/cmdline/index.js')
+const CmdLine = require('../src/cmdline/index.js')
 
-var solc = require('solc')
-var fs = require('fs')
+const solc = require('solc')
+const fs = require('fs')
 
-var filename = 'test/sol/simple_storage.sol'
-var shortFilename = 'simple_storage.sol'
+const filename = 'test/sol/simple_storage.sol'
+const shortFilename = 'simple_storage.sol'
 
-var inputJson = {
+const inputJson = {
   language: 'Solidity',
   sources: {
   },
@@ -55,17 +55,17 @@ inputJson.sources[shortFilename] = {content: fs.readFileSync(filename).toString(
 
 console.log('compiling...')
 
-let compilationData = JSON.parse(solc.compileStandardWrapper(JSON.stringify(inputJson)))
-var compilation = {}
+const compilationData = JSON.parse(solc.compileStandardWrapper(JSON.stringify(inputJson)))
+const compilation = {}
 compilation.data = compilationData
 compilation.source = { sources: inputJson.sources }
 
-var cmdLine = new CmdLine()
+const cmdLine = new CmdLine()
 cmdLine.connect('http', 'http://localhost:8545')
 cmdLine.loadCompilationResult(compilation)
 cmdLine.initDebugger()
 
-var tx = '0xf510c4f0b1d9ee262d7b9e9e87b4262f275fe029c2c733feef7dfa1e2b1e32aa'
+const tx = '0xf510c4f0b1d9ee262d7b9e9e87b4262f275fe029c2c733feef7dfa1e2b1e32aa'
 
 cmdLine.startDebug(tx, shortFilename)
 

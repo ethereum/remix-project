@@ -1,6 +1,6 @@
 'use strict'
-var util = require('./util')
-var ValueType = require('./ValueType')
+const util = require('./util')
+const ValueType = require('./ValueType')
 
 class Uint extends ValueType {
   constructor (storageBytes) {

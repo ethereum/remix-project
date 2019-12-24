@@ -1,5 +1,5 @@
-var RemixLib = require('remix-lib')
-var executionContext = RemixLib.execution.executionContext
+const RemixLib = require('remix-lib')
+const executionContext = RemixLib.execution.executionContext
 
 const log = require('./utils/logs.js')
 const merge = require('merge')
@@ -40,7 +40,7 @@ Provider.prototype.init = async function () {
 Provider.prototype.sendAsync = function (payload, callback) {
   log.info('payload method is ', payload.method)
 
-  let method = this.methods[payload.method]
+  const method = this.methods[payload.method]
   if (this.options.logDetails) {
     log.info(payload)
   }
@@ -53,7 +53,7 @@ Provider.prototype.sendAsync = function (payload, callback) {
       if (err) {
         return callback(err)
       }
-      let response = {'id': payload.id, 'jsonrpc': '2.0', 'result': result}
+      const response = {'id': payload.id, 'jsonrpc': '2.0', 'result': result}
       callback(null, response)
     })
   }

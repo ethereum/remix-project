@@ -1,22 +1,22 @@
 /* global describe, before, it */
-var Web3 = require('web3')
-var RemixSim = require('../index.js')
-let web3 = new Web3()
-var assert = require('assert')
+const Web3 = require('web3')
+const RemixSim = require('../index.js')
+const web3 = new Web3()
+const assert = require('assert')
 
-describe('Misc', function () {
-  before(function () {
-    let provider = new RemixSim.Provider()
+describe('Misc', () => {
+  before(() => {
+    const provider = new RemixSim.Provider()
     web3.setProvider(provider)
   })
 
   describe('web3_clientVersion', () => {
-    it('should get correct remix simulator version', async function (done) {
+    it('should get correct remix simulator version', async (done) => {
       web3._requestManager.send({ method: 'web3_clientVersion', params: [] }, (err, version) => {
         if (err) {
           throw new Error(err)
         }
-        let remixVersion = require('../package.json').version
+        const remixVersion = require('../package.json').version
         assert.equal(version, 'Remix Simulator/' + remixVersion)
         done()
       })
@@ -24,7 +24,7 @@ describe('Misc', function () {
   })
 
   describe('eth_protocolVersion', () => {
-    it('should get protocol version', async function () {
+    it('should get protocol version', async () => {
       web3._requestManager.send({ method: 'eth_protocolVersion', params: [] }, (err, result) => {
         if (err) {
           throw new Error(err)
@@ -35,28 +35,28 @@ describe('Misc', function () {
   })
 
   describe('eth_syncing', () => {
-    it('should get if is syncing', async function () {
-      let isSyncing = await web3.eth.isSyncing()
+    it('should get if is syncing', async () => {
+      const isSyncing = await web3.eth.isSyncing()
       assert.equal(isSyncing, false)
     })
   })
 
   describe('eth_mining', () => {
-    it('should get if is mining', async function () {
-      let isMining = await web3.eth.isMining()
+    it('should get if is mining', async () => {
+      const isMining = await web3.eth.isMining()
       assert.equal(isMining, false)
     })
   })
 
   describe('eth_hashrate', () => {
-    it('should get hashrate', async function () {
-      let hashrate = await web3.eth.getHashrate()
+    it('should get hashrate', async () => {
+      const hashrate = await web3.eth.getHashrate()
       assert.equal(hashrate, 0)
     })
   })
 
   describe('web3_sha3', () => {
-    it('should get result of a sha3', async function () {
+    it('should get result of a sha3', async () => {
       web3._requestManager.send({ method: 'web3_sha3', params: ['0x68656c6c6f20776f726c64'] }, (err, result) => {
         if (err) {
           throw new Error(err)
@@ -67,7 +67,7 @@ describe('Misc', function () {
   })
 
   describe('eth_getCompilers', () => {
-    it('should get list of compilers', async function () {
+    it('should get list of compilers', async () => {
       web3._requestManager.send({ method: 'eth_getCompilers', params: [] }, (err, result) => {
         if (err) {
           throw new Error(err)
@@ -78,7 +78,7 @@ describe('Misc', function () {
   })
 
   describe('eth_compileSolidity', () => {
-    it('get unsupported result when requesting solidity compiler', async function () {
+    it('get unsupported result when requesting solidity compiler', async () => {
       web3._requestManager.send({ method: 'eth_compileSolidity', params: [] }, (err, result) => {
         if (err) {
           throw new Error(err)
@@ -89,7 +89,7 @@ describe('Misc', function () {
   })
 
   describe('eth_compileLLL', () => {
-    it('get unsupported result when requesting LLL compiler', async function () {
+    it('get unsupported result when requesting LLL compiler', async () => {
       web3._requestManager.send({ method: 'eth_compileLLL', params: [] }, (err, result) => {
         if (err) {
           throw new Error(err)
@@ -100,7 +100,7 @@ describe('Misc', function () {
   })
 
   describe('eth_compileSerpent', () => {
-    it('get unsupported result when requesting serpent compiler', async function () {
+    it('get unsupported result when requesting serpent compiler', async () => {
       web3._requestManager.send({ method: 'eth_compileSerpent', params: [] }, (err, result) => {
         if (err) {
           throw new Error(err)

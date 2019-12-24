@@ -1,8 +1,8 @@
-var ethJSUtil = require('ethereumjs-util')
-var BN = ethJSUtil.BN
-var Web3 = require('web3')
+const ethJSUtil = require('ethereumjs-util')
+const BN = ethJSUtil.BN
+const Web3 = require('web3')
 
-var Accounts = function (executionContext) {
+const Accounts = function (executionContext) {
   this.web3 = new Web3()
   this.executionContext = executionContext
   // TODO: make it random and/or use remix-libs
@@ -23,7 +23,7 @@ Accounts.prototype.init = async function () {
         if (err) {
           throw new Error(err)
         }
-        var balance = '0x56BC75E2D63100000'
+        const balance = '0x56BC75E2D63100000'
         account.balance = balance || '0xf00000000000000001'
         resolve()
       })

@@ -1,6 +1,6 @@
 'use strict'
-var ethutil = require('ethereumjs-util')
-var BN = require('ethereumjs-util').BN
+const ethutil = require('ethereumjs-util')
+const BN = require('ethereumjs-util').BN
 
 module.exports = {
   readFromStorage: readFromStorage,
@@ -17,7 +17,7 @@ module.exports = {
 }
 
 function decodeIntFromHex (value, byteLength, signed) {
-  var bigNumber = new BN(value, 16)
+  let bigNumber = new BN(value, 16)
   if (signed) {
     bigNumber = bigNumber.fromTwos(8 * byteLength)
   }
@@ -25,7 +25,7 @@ function decodeIntFromHex (value, byteLength, signed) {
 }
 
 function readFromStorage (slot, storageResolver) {
-  var hexSlot = '0x' + normalizeHex(ethutil.bufferToHex(slot))
+  const hexSlot = '0x' + normalizeHex(ethutil.bufferToHex(slot))
   return new Promise((resolve, reject) => {
     storageResolver.storageSlot(hexSlot, (error, slot) => {
       if (error) {
@@ -51,7 +51,7 @@ function readFromStorage (slot, storageResolver) {
  * @param {Int} offsetFromLSB  - byte distance from the right end slot value to the right end of the byte slice
  */
 function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
-  var offset = slotValue.length - 2 * offsetFromLSB - 2 * byteLength
+  const offset = slotValue.length - 2 * offsetFromLSB - 2 * byteLength
   return slotValue.substr(offset, 2 * byteLength)
 }
 
@@ -63,7 +63,7 @@ function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
  * @param {Int} byteLength  - Length of the byte slice to extract
  */
 async function extractHexValue (location, storageResolver, byteLength) {
-  var slotvalue
+  let slotvalue
   try {
     slotvalue = await readFromStorage(location.slot, storageResolver)
   } catch (e) {
@@ -97,7 +97,7 @@ function removeLocation (type) {
 }
 
 function extractLocation (type) {
-  var match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
+  let match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
   if (match[1] !== '') {
     return match[1].trim()
   } else {

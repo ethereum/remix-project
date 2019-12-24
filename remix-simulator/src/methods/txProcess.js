@@ -1,9 +1,9 @@
-var RemixLib = require('remix-lib')
-var TxExecution = RemixLib.execution.txExecution
-var TxRunner = RemixLib.execution.txRunner
+const RemixLib = require('remix-lib')
+const TxExecution = RemixLib.execution.txExecution
+const TxRunner = RemixLib.execution.txRunner
 
 function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
-  let finalCallback = function (err, result) {
+  const finalCallback = function (err, result) {
     if (err) {
       return callback(err)
     }
@@ -16,7 +16,7 @@ function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks,
 }
 
 function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
-  let finalCallback = function (err, result) {
+  const finalCallback = function (err, result) {
     if (err) {
       return callback(err)
     }
@@ -27,7 +27,7 @@ function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, c
 }
 
 function createContract (payload, from, data, value, gasLimit, txRunner, callbacks, callback) {
-  let finalCallback = function (err, result) {
+  const finalCallback = function (err, result) {
     if (err) {
       return callback(err)
     }
@@ -40,7 +40,7 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
 let txRunnerInstance
 
 function processTx (executionContext, accounts, payload, isCall, callback) {
-  let api = {
+  const api = {
     logMessage: (msg) => {
     },
     logHtmlMessage: (msg) => {
