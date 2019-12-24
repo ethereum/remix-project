@@ -2,10 +2,13 @@ var Web3 = require('web3')
 var Debugger = require('../debugger/debugger.js')
 var ContextManager = require('./contextManager.js')
 var EventManager = require('events')
+var remixLib = require('remix-lib')
+var executionContext = remixLib.execution.executionContext
 
 class CmdLine {
 
   constructor () {
+    this.executionContext = executionContext
     this.events = new EventManager()
     this.lineColumnPos = null
     this.rawLocation = null
@@ -30,7 +33,7 @@ class CmdLine {
 
   initDebugger (cb) {
     const self = this
-    this.contextManager = new ContextManager()
+    this.contextManager = new ContextManager(this.executionContext)
 
     this.debugger = new Debugger({
       web3: this.contextManager.getWeb3(),

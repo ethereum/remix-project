@@ -3,16 +3,18 @@ var EthJSTX = require('ethereumjs-tx').Transaction
 var EthJSBlock = require('ethereumjs-block')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
-var executionContext = require('./execution-context')
+var defaultExecutionContext = require('./execution-context')
 var EventManager = require('../eventManager')
 
 class TxRunner {
-  constructor (vmaccounts, api) {
+  constructor (vmaccounts, api, executionContext) {
     this.event = new EventManager()
+    // has a default for now for backwards compatability
+    this.executionContext = executionContext || defaultExecutionContext
     this._api = api
     this.blockNumber = 0
     this.runAsync = true
-    if (executionContext.isVM()) {
+    if (this.executionContext.isVM()) {
       // this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
       this.blockNumber = 0 // The VM is running in Homestead mode, which started at this block.
       this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
@@ -32,18 +34,18 @@ class TxRunner {
   }
 
   _executeTx (tx, gasPrice, api, promptCb, callback) {
-    if (gasPrice) tx.gasPrice = executionContext.web3().utils.toHex(gasPrice)
+    if (gasPrice) tx.gasPrice = this.executionContext.web3().toHex(gasPrice)
     if (api.personalMode()) {
       promptCb(
         (value) => {
-          this._sendTransaction(executionContext.web3().personal.sendTransaction, tx, value, callback)
+          this._sendTransaction(this.executionContext.web3().personal.sendTransaction, tx, value, callback)
         },
         () => {
           return callback('Canceled by user.')
         }
       )
     } else {
-      this._sendTransaction(executionContext.web3().eth.sendTransaction, tx, null, callback)
+      this._sendTransaction(this.executionContext.web3().eth.sendTransaction, tx, null, callback)
     }
   }
 
@@ -83,7 +85,7 @@ class TxRunner {
       data = '0x' + data
     }
 
-    if (!executionContext.isVM()) {
+    if (!this.executionContext.isVM()) {
       self.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, gasEstimationForceSend, promptCb, callback)
     } else {
       try {
@@ -101,7 +103,7 @@ class TxRunner {
       return callback('Invalid account selected')
     }
 
-    executionContext.vm().stateManager.getAccount(Buffer.from(from.replace('0x', ''), 'hex'), (err, res) => {
+    this.executionContext.vm().stateManager.getAccount(Buffer.from(from.replace('0x', ''), 'hex'), (err, res) => {
       if (err) {
         callback('Account not found')
       } else {
@@ -132,9 +134,9 @@ class TxRunner {
           ++self.blockNumber
           this.runBlockInVm(tx, block, callback)
         } else {
-          executionContext.vm().stateManager.checkpoint(() => {
+          this.executionContext.vm().stateManager.checkpoint(() => {
             this.runBlockInVm(tx, block, (err, result) => {
-              executionContext.vm().stateManager.revert(() => {
+              this.executionContext.vm().stateManager.revert(() => {
                 callback(err, result)
               })
             })
@@ -145,14 +147,14 @@ class TxRunner {
   }
 
   runBlockInVm (tx, block, callback) {
-    executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then(function (results) {
+    this.executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then((results) => {
       let result = results.results[0]
       if (result) {
         const status = result.execResult.exceptionError ? 0 : 1
         result.status = `0x${status}`
       }
-      executionContext.addBlock(block)
-      executionContext.trackTx('0x' + tx.hash().toString('hex'), block)
+      this.executionContext.addBlock(block)
+      this.executionContext.trackTx('0x' + tx.hash().toString('hex'), block)
       callback(null, {
         result: result,
         transactionHash: ethJSUtil.bufferToHex(Buffer.from(tx.hash()))
@@ -168,14 +170,14 @@ class TxRunner {
 
     if (useCall) {
       tx.gas = gasLimit
-      return executionContext.web3().eth.call(tx, function (error, result) {
+      return this.executionContext.web3().eth.call(tx, function (error, result) {
         callback(error, {
           result: result,
           transactionHash: result ? result.transactionHash : null
         })
       })
     }
-    executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
+    this.executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
       gasEstimationForceSend(err, () => {
         // callback is called whenever no error
         tx.gas = !gasEstimation ? gasLimit : gasEstimation
@@ -197,7 +199,7 @@ class TxRunner {
           })
         })
       }, () => {
-        var blockGasLimit = executionContext.currentblockGasLimit()
+        var blockGasLimit = self.executionContext.currentblockGasLimit()
         // NOTE: estimateGas very likely will return a large limit if execution of the code failed
         //       we want to be able to run the code in order to debug and find the cause for the failure
         if (err) return callback(err)
@@ -218,7 +220,7 @@ class TxRunner {
 
 async function tryTillReceiptAvailable (txhash, done) {
   return new Promise((resolve, reject) => {
-    executionContext.web3().eth.getTransactionReceipt(txhash, async (err, receipt) => {
+    this.executionContext.web3().eth.getTransactionReceipt(txhash, async (err, receipt) => {
       if (err || !receipt) {
         // Try again with a bit of delay if error or if result still null
         await pause()
@@ -232,7 +234,7 @@ async function tryTillReceiptAvailable (txhash, done) {
 
 async function tryTillTxAvailable (txhash, done) {
   return new Promise((resolve, reject) => {
-    executionContext.web3().eth.getTransaction(txhash, async (err, tx) => {
+    this.executionContext.web3().eth.getTransaction(txhash, async (err, tx) => {
       if (err || !tx) {
         // Try again with a bit of delay if error or if result still null
         await pause()

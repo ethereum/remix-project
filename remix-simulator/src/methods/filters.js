@@ -1,8 +1,6 @@
-var RemixLib = require('remix-lib')
-var executionContext = RemixLib.execution.executionContext
 
-var Filters = function (_options) {
-  // const options = _options || {}
+var Filters = function (executionContext) {
+  this.executionContext = executionContext
 }
 
 Filters.prototype.methods = function () {
@@ -14,49 +12,49 @@ Filters.prototype.methods = function () {
 }
 
 Filters.prototype.eth_getLogs = function (payload, cb) {
-  let results = executionContext.logsManager.getLogsFor(payload.params[0])
+  let results = this.executionContext.logsManager.getLogsFor(payload.params[0])
   cb(null, results)
 }
 
 Filters.prototype.eth_subscribe = function (payload, cb) {
-  let subscriptionId = executionContext.logsManager.subscribe(payload.params)
+  let subscriptionId = this.executionContext.logsManager.subscribe(payload.params)
   cb(null, subscriptionId)
 }
 
 Filters.prototype.eth_unsubscribe = function (payload, cb) {
-  executionContext.logsManager.unsubscribe(payload.params[0])
+  this.executionContext.logsManager.unsubscribe(payload.params[0])
   cb(null, true)
 }
 
 Filters.prototype.eth_newFilter = function (payload, cb) {
-  const filterId = executionContext.logsManager.newFilter('filter', payload.params[0])
+  const filterId = this.executionContext.logsManager.newFilter('filter', payload.params[0])
   cb(null, filterId)
 }
 
 Filters.prototype.eth_newBlockFilter = function (payload, cb) {
-  const filterId = executionContext.logsManager.newFilter('block')
+  const filterId = this.executionContext.logsManager.newFilter('block')
   cb(null, filterId)
 }
 
 Filters.prototype.eth_newPendingTransactionFilter = function (payload, cb) {
-  const filterId = executionContext.logsManager.newFilter('pendingTransactions')
+  const filterId = this.executionContext.logsManager.newFilter('pendingTransactions')
   cb(null, filterId)
 }
 
 Filters.prototype.eth_uninstallfilter = function (payload, cb) {
-  const result = executionContext.logsManager.uninstallFilter(payload.params[0])
+  const result = this.executionContext.logsManager.uninstallFilter(payload.params[0])
   cb(null, result)
 }
 
 Filters.prototype.eth_getFilterChanges = function (payload, cb) {
   const filterId = payload.params[0]
-  let results = executionContext.logsManager.getLogsForFilter(filterId)
+  let results = this.executionContext.logsManager.getLogsForFilter(filterId)
   cb(null, results)
 }
 
 Filters.prototype.eth_getFilterLogs = function (payload, cb) {
   const filterId = payload.params[0]
-  let results = executionContext.logsManager.getLogsForFilter(filterId, true)
+  let results = this.executionContext.logsManager.getLogsForFilter(filterId, true)
   cb(null, results)
 }
 
