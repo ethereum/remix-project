@@ -8,7 +8,8 @@ var modalDialog = require('../../ui/modaldialog')
 var MultiParamManager = require('../../ui/multiParamManager')
 
 class ContractDropdownUI {
-  constructor (dropdownLogic, logCallback, runView) {
+  constructor (blockchain, dropdownLogic, logCallback, runView) {
+    this.blockchain = blockchain
     this.dropdownLogic = dropdownLogic
     this.logCallback = logCallback
     this.runView = runView
@@ -192,7 +193,7 @@ class ContractDropdownUI {
         {
           label: 'Force Send',
           fn: () => {
-            this.dropdownLogic.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
+            this.blockchain.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
           }}, {
             label: 'Cancel',
             fn: () => {
@@ -200,7 +201,7 @@ class ContractDropdownUI {
             }
           })
     }
-    this.dropdownLogic.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
+    this.blockchain.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
   }
 
   getConfirmationCb (modalDialog, confirmDialog) {
@@ -209,7 +210,7 @@ class ContractDropdownUI {
         return continueTxExecution(null)
       }
       const amount = this.dropdownLogic.fromWei(tx.value, true, 'ether')
-      const content = confirmDialog(tx, amount, gasEstimation, null, this.dropdownLogic.determineGasFees(tx), this.dropdownLogic.determineGasPrice)
+      const content = confirmDialog(tx, amount, gasEstimation, null, this.dropdownLogic.determineGasFees(tx), this.blockchain.determineGasPrice)
 
       modalDialog('Confirm transaction', content,
         { label: 'Confirm',
