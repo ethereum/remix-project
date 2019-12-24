@@ -120,14 +120,13 @@ class DropdownLogic {
   }
 
   // TODO: check if selectedContract and data can be joined
-  createContract (selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
+  createContract (selectedContract, data, continueCb, promptCb, confirmationCb, finalCb) {
     if (data) {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.bytecodeLinkReferences
       data.contractABI = selectedContract.abi
     }
 
-    const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
     this.udapp.createContract(data, confirmationCb, continueCb, promptCb,
       (error, txResult) => {
         if (error) {
@@ -184,39 +183,7 @@ class DropdownLogic {
     })
   }
 
-  getConfirmationCb (modalDialog, confirmDialog) {
-    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-      if (network.name !== 'Main') {
-        return continueTxExecution(null)
-      }
-      const amount = this.fromWei(tx.value, true, 'ether')
-      const content = confirmDialog(tx, amount, gasEstimation, null, this.determineGasFees(tx), this.determineGasPrice)
-
-      modalDialog('Confirm transaction', content,
-        { label: 'Confirm',
-          fn: () => {
-            this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-            // TODO: check if this is check is still valid given the refactor
-            if (!content.gasPriceStatus) {
-              cancelCb('Given gas price is not correct')
-            } else {
-              var gasPrice = this.toWei(content.querySelector('#gasprice').value, 'gwei')
-              continueTxExecution(gasPrice)
-            }
-          }}, {
-            label: 'Cancel',
-            fn: () => {
-              return cancelCb('Transaction canceled by user.')
-            }
-          }
-      )
-    }
-
-    return confirmationCb
-  }
-
-  runTransaction (data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
-    const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
+  runTransaction (data, continueCb, promptCb, confirmationCb, finalCb) {
     this.udapp.runTx(data, confirmationCb, continueCb, promptCb, finalCb)
   }
 
@@ -224,9 +191,8 @@ class DropdownLogic {
     return this.compilersArtefacts['__last'].getData().contracts
   }
 
-  async deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, dialogs) {
+  async deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
     const {continueCb, promptCb, statusCb, finalCb} = callbacks
-    const {modalDialog, confirmDialog} = dialogs
 
     var constructor = selectedContract.getConstructorInterface()
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
@@ -234,10 +200,10 @@ class DropdownLogic {
         if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
         statusCb(`creation of ${selectedContract.name} pending...`)
-        this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb)
+        this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
       }, statusCb, (data, runTxCallback) => {
         // called for libraries deployment
-        this.runTransaction(data, continueCb, promptCb, modalDialog, confirmDialog, runTxCallback)
+        this.runTransaction(data, continueCb, promptCb, confirmationCb, runTxCallback)
       })
     }
     if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
@@ -245,7 +211,7 @@ class DropdownLogic {
       if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
       statusCb(`creation of ${selectedContract.name} pending...`)
-      this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb)
+      this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
     })
   }
 

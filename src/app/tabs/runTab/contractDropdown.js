@@ -183,6 +183,7 @@ class ContractDropdownUI {
     }
 
     const compilerContracts = this.dropdownLogic.getCompilerContracts()
+    const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
 
     if (selectedContract.isOverSizeLimit()) {
       return modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
@@ -191,7 +192,7 @@ class ContractDropdownUI {
         {
           label: 'Force Send',
           fn: () => {
-            this.dropdownLogic.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, {modalDialog, confirmDialog})
+            this.dropdownLogic.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
           }}, {
             label: 'Cancel',
             fn: () => {
@@ -199,7 +200,38 @@ class ContractDropdownUI {
             }
           })
     }
-    this.dropdownLogic.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, {modalDialog, confirmDialog})
+    this.dropdownLogic.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
+  }
+
+  getConfirmationCb (modalDialog, confirmDialog) {
+    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      if (network.name !== 'Main') {
+        return continueTxExecution(null)
+      }
+      const amount = this.dropdownLogic.fromWei(tx.value, true, 'ether')
+      const content = confirmDialog(tx, amount, gasEstimation, null, this.dropdownLogic.determineGasFees(tx), this.dropdownLogic.determineGasPrice)
+
+      modalDialog('Confirm transaction', content,
+        { label: 'Confirm',
+          fn: () => {
+            this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+            // TODO: check if this is check is still valid given the refactor
+            if (!content.gasPriceStatus) {
+              cancelCb('Given gas price is not correct')
+            } else {
+              var gasPrice = this.dropdownLogic.toWei(content.querySelector('#gasprice').value, 'gwei')
+              continueTxExecution(gasPrice)
+            }
+          }}, {
+            label: 'Cancel',
+            fn: () => {
+              return cancelCb('Transaction canceled by user.')
+            }
+          }
+      )
+    }
+
+    return confirmationCb
   }
 
   loadFromAddress () {
@@ -222,7 +254,6 @@ class ContractDropdownUI {
       }
     )
   }
-
 }
 
 module.exports = ContractDropdownUI
