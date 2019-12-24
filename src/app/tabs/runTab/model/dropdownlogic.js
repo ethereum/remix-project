@@ -1,20 +1,16 @@
 var ethJSUtil = require('ethereumjs-util')
 var remixLib = require('remix-lib')
 var txHelper = remixLib.execution.txHelper
-var txFormat = remixLib.execution.txFormat
 var typeConversion = remixLib.execution.typeConversion
-var txExecution = remixLib.execution.txExecution
 var CompilerAbstract = require('../../../compiler/compiler-abstract')
 var EventManager = remixLib.EventManager
 var Web3 = require('web3')
 
 class DropdownLogic {
-  constructor (executionContext, compilersArtefacts, config, editor, udapp, runView) {
+  constructor (compilersArtefacts, config, editor, runView) {
     this.compilersArtefacts = compilersArtefacts
-    this.executionContext = executionContext
     this.config = config
     this.editor = editor
-    this.udapp = udapp
     this.runView = runView
 
     this.event = new EventManager()
@@ -115,40 +111,6 @@ class DropdownLogic {
     return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), unit || 'gwei')))
   }
 
-  getGasPrice (cb) {
-    return this.executionContext.web3().eth.getGasPrice(cb)
-  }
-
-  // TODO: check if selectedContract and data can be joined
-  createContract (selectedContract, data, continueCb, promptCb, confirmationCb, finalCb) {
-    if (data) {
-      data.contractName = selectedContract.name
-      data.linkReferences = selectedContract.bytecodeLinkReferences
-      data.contractABI = selectedContract.abi
-    }
-
-    this.udapp.createContract(data, confirmationCb, continueCb, promptCb,
-      (error, txResult) => {
-        if (error) {
-          return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
-        }
-        var isVM = this.executionContext.isVM()
-        if (isVM) {
-          var vmError = txExecution.checkVMError(txResult)
-          if (vmError.error) {
-            return finalCb(vmError.message)
-          }
-        }
-        if (txResult.result.status && txResult.result.status === '0x0') {
-          return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
-        }
-        var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-        finalCb(null, selectedContract, address)
-      }
-    )
-  }
-
-  // determineGasFees (gasPrice, cb) {
   determineGasFees (tx) {
     const determineGasFeesCb = (gasPrice, cb) => {
       let txFeeText, priceStatus
@@ -168,51 +130,8 @@ class DropdownLogic {
     return determineGasFeesCb
   }
 
-  determineGasPrice (cb) {
-    this.getGasPrice((error, gasPrice) => {
-      var warnMessage = ' Please fix this issue before sending any transaction. '
-      if (error) {
-        return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-      }
-      try {
-        var gasPriceValue = this.fromWei(gasPrice, false, 'gwei')
-        cb(null, gasPriceValue)
-      } catch (e) {
-        cb(warnMessage + e.message, null, false)
-      }
-    })
-  }
-
-  runTransaction (data, continueCb, promptCb, confirmationCb, finalCb) {
-    this.udapp.runTx(data, confirmationCb, continueCb, promptCb, finalCb)
-  }
-
   getCompilerContracts () {
     return this.compilersArtefacts['__last'].getData().contracts
-  }
-
-  async deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
-    const {continueCb, promptCb, statusCb, finalCb} = callbacks
-
-    var constructor = selectedContract.getConstructorInterface()
-    if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-      return txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
-        if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
-
-        statusCb(`creation of ${selectedContract.name} pending...`)
-        this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
-      }, statusCb, (data, runTxCallback) => {
-        // called for libraries deployment
-        this.runTransaction(data, continueCb, promptCb, confirmationCb, runTxCallback)
-      })
-    }
-    if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
-    txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
-      if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
-
-      statusCb(`creation of ${selectedContract.name} pending...`)
-      this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
-    })
   }
 
 }

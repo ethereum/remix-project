@@ -15,6 +15,7 @@ const Recorder = require('../tabs/runTab/model/recorder.js')
 const RecorderUI = require('../tabs/runTab/recorder.js')
 const DropdownLogic = require('../tabs/runTab/model/dropdownlogic.js')
 const ContractDropdownUI = require('../tabs/runTab/contractDropdown.js')
+const Blockchain = require('../tabs/runTab/model/blockchain.js')
 
 const UniversalDAppUI = require('../ui/universal-dapp-ui')
 
@@ -131,8 +132,9 @@ export class RunTab extends LibraryPlugin {
   }
 
   renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
-    const dropdownLogic = new DropdownLogic(this.executionContext, compilersArtefacts, config, editor, udapp, this)
-    this.contractDropdownUI = new ContractDropdownUI(dropdownLogic, logCallback, this)
+    const dropdownLogic = new DropdownLogic(compilersArtefacts, config, editor, this)
+    const blockchain = new Blockchain(this.executionContext, udapp)
+    this.contractDropdownUI = new ContractDropdownUI(blockchain, dropdownLogic, logCallback, this)
 
     fileManager.events.on('currentFileChanged', this.contractDropdownUI.changeCurrentFile.bind(this.contractDropdownUI))
 
