@@ -1,10 +1,8 @@
 var EthJSBlock = require('ethereumjs-block')
-var RemixLib = require('remix-lib')
-var executionContext = RemixLib.execution.executionContext
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 
-function generateBlock () {
+function generateBlock (executionContext) {
   var block = new EthJSBlock({
     header: {
       timestamp: (new Date().getTime() / 1000 | 0),

@@ -1,11 +1,11 @@
 var Web3 = require('web3')
-var RemixLib = require('remix-lib')
-var executionContext = RemixLib.execution.executionContext
 var ethJSUtil = require('ethereumjs-util')
 var processTx = require('./txProcess.js')
 var BN = ethJSUtil.BN
 
-var Transactions = function () {}
+var Transactions = function (executionContext) {
+  this.executionContext = executionContext
+}
 
 Transactions.prototype.init = function (accounts) {
   this.accounts = accounts
@@ -30,16 +30,16 @@ Transactions.prototype.eth_sendTransaction = function (payload, cb) {
   if (payload.params && payload.params.length > 0 && payload.params[0].from) {
     payload.params[0].from = ethJSUtil.toChecksumAddress(payload.params[0].from)
   }
-  processTx(this.accounts, payload, false, cb)
+  processTx(this.executionContext, this.accounts, payload, false, cb)
 }
 
 Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
-  executionContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
+  this.executionContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
     if (error) {
       return cb(error)
     }
 
-    var txBlock = executionContext.txs[receipt.hash]
+    var txBlock = this.executionContext.txs[receipt.hash]
 
     var r = {
       'transactionHash': receipt.hash,
@@ -68,7 +68,7 @@ Transactions.prototype.eth_estimateGas = function (payload, cb) {
 Transactions.prototype.eth_getCode = function (payload, cb) {
   let address = payload.params[0]
 
-  executionContext.web3().eth.getCode(address, (error, result) => {
+  this.executionContext.web3().eth.getCode(address, (error, result) => {
     if (error) {
       console.dir('error getting code')
       console.dir(error)
@@ -88,13 +88,13 @@ Transactions.prototype.eth_call = function (payload, cb) {
 
   payload.params[0].value = undefined
 
-  processTx(this.accounts, payload, true, cb)
+  processTx(this.executionContext, this.accounts, payload, true, cb)
 }
 
 Transactions.prototype.eth_getTransactionCount = function (payload, cb) {
   let address = payload.params[0]
 
-  executionContext.vm().stateManager.getAccount(address, (err, account) => {
+  this.executionContext.vm().stateManager.getAccount(address, (err, account) => {
     if (err) {
       return cb(err)
     }
@@ -106,12 +106,12 @@ Transactions.prototype.eth_getTransactionCount = function (payload, cb) {
 Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
   const address = payload.params[0]
 
-  executionContext.web3().eth.getTransactionReceipt(address, (error, receipt) => {
+  this.executionContext.web3().eth.getTransactionReceipt(address, (error, receipt) => {
     if (error) {
       return cb(error)
     }
 
-    var txBlock = executionContext.txs[receipt.transactionHash]
+    var txBlock = this.executionContext.txs[receipt.transactionHash]
 
     // TODO: params to add later
     let r = {
@@ -151,10 +151,10 @@ Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
 Transactions.prototype.eth_getTransactionByBlockHashAndIndex = function (payload, cb) {
   const txIndex = payload.params[1]
 
-  var txBlock = executionContext.blocks[payload.params[0]]
+  var txBlock = this.executionContext.blocks[payload.params[0]]
   const txHash = '0x' + txBlock.transactions[Web3.utils.toDecimal(txIndex)].hash().toString('hex')
 
-  executionContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
+  this.executionContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
     if (error) {
       return cb(error)
     }
@@ -193,10 +193,10 @@ Transactions.prototype.eth_getTransactionByBlockHashAndIndex = function (payload
 Transactions.prototype.eth_getTransactionByBlockNumberAndIndex = function (payload, cb) {
   const txIndex = payload.params[1]
 
-  var txBlock = executionContext.blocks[payload.params[0]]
+  var txBlock = this.executionContext.blocks[payload.params[0]]
   const txHash = '0x' + txBlock.transactions[Web3.utils.toDecimal(txIndex)].hash().toString('hex')
 
-  executionContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
+  this.executionContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
     if (error) {
       return cb(error)
     }
