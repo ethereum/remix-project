@@ -41,7 +41,7 @@ class ValueType {
     * @return {Object} - decoded value
     */
   async decodeFromStack (stackDepth, stack, memory) {
-    var value
+    let value
     if (stackDepth >= stack.length) {
       value = this.decodeValue('')
     } else {
@@ -61,7 +61,7 @@ class ValueType {
     * @return {Object} - decoded value
     */
   decodeFromMemory (offset, memory) {
-    var value = memory.substr(2 * offset, 64)
+    let value = memory.substr(2 * offset, 64)
     return {
       value: this.decodeValue(value),
       type: this.typeName

@@ -1,6 +1,6 @@
 'use strict'
-var remixLib = require('remix-lib')
-var AstWalker = remixLib.AstWalker
+const remixLib = require('remix-lib')
+const AstWalker = remixLib.AstWalker
 
 /**
   * return all contract definitions of the given @astList
@@ -9,14 +9,14 @@ var AstWalker = remixLib.AstWalker
   * @return {Object} - returns a mapping from AST node ids to AST nodes for the contracts
   */
 function extractContractDefinitions (sourcesList) {
-  var ret = {
+  const ret = {
     contractsById: {},
     contractsByName: {},
     sourcesByContract: {}
   }
-  var walker = new AstWalker()
-  for (var k in sourcesList) {
-    walker.walk(sourcesList[k].legacyAST, { 'ContractDefinition': function (node) {
+  const walker = new AstWalker()
+  for (let k in sourcesList) {
+    walker.walk(sourcesList[k].legacyAST, { 'ContractDefinition': (node) => {
       ret.contractsById[node.id] = node
       ret.sourcesByContract[node.id] = k
       ret.contractsByName[k + ':' + node.attributes.name] = node
@@ -50,16 +50,16 @@ function extractStateDefinitions (contractName, sourcesList, contracts) {
   if (!contracts) {
     contracts = extractContractDefinitions(sourcesList)
   }
-  var node = contracts.contractsByName[contractName]
+  const node = contracts.contractsByName[contractName]
   if (node) {
-    var stateItems = []
-    var stateVar = []
-    var baseContracts = getLinearizedBaseContracts(node.id, contracts.contractsById)
+    const stateItems = []
+    const stateVar = []
+    const baseContracts = getLinearizedBaseContracts(node.id, contracts.contractsById)
     baseContracts.reverse()
-    for (var k in baseContracts) {
-      var ctr = baseContracts[k]
-      for (var i in ctr.children) {
-        var item = ctr.children[i]
+    for (let k in baseContracts) {
+      const ctr = baseContracts[k]
+      for (let i in ctr.children) {
+        const item = ctr.children[i]
         stateItems.push(item)
         if (item.name === 'VariableDeclaration') {
           stateVar.push(item)
@@ -85,12 +85,12 @@ function extractStatesDefinitions (sourcesList, contracts) {
   if (!contracts) {
     contracts = extractContractDefinitions(sourcesList)
   }
-  var ret = {}
-  for (var contract in contracts.contractsById) {
-    var name = contracts.contractsById[contract].attributes.name
-    var source = contracts.sourcesByContract[contract]
-    var fullName = source + ':' + name
-    var state = extractStateDefinitions(fullName, sourcesList, contracts)
+  const ret = {}
+  for (let contract in contracts.contractsById) {
+    const name = contracts.contractsById[contract].attributes.name
+    const source = contracts.sourcesByContract[contract]
+    const fullName = source + ':' + name
+    const state = extractStateDefinitions(fullName, sourcesList, contracts)
     ret[fullName] = state
     ret[name] = state // solc < 0.4.9
   }

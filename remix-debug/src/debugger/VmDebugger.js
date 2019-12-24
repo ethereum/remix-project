@@ -1,11 +1,11 @@
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
-var ui = remixLib.helpers.ui
-var StorageResolver = require('../storage/storageResolver')
-var StorageViewer = require('../storage/storageViewer')
+const remixLib = require('remix-lib')
+const EventManager = remixLib.EventManager
+const ui = remixLib.helpers.ui
+const StorageResolver = require('../storage/storageResolver')
+const StorageViewer = require('../storage/storageViewer')
 
-var DebuggerSolidityState = require('./solidityState')
-var DebuggerSolidityLocals = require('./solidityLocals')
+const DebuggerSolidityState = require('./solidityState')
+const DebuggerSolidityLocals = require('./solidityLocals')
 
 class VmDebuggerLogic {
 
@@ -36,151 +36,145 @@ class VmDebuggerLogic {
   }
 
   listenToEvents () {
-    const self = this
-    this.debugger.event.register('traceUnloaded', function () {
-      self.event.trigger('traceUnloaded')
+    this.debugger.event.register('traceUnloaded', () => {
+      this.event.trigger('traceUnloaded')
     })
 
-    this.debugger.event.register('newTraceLoaded', function () {
-      self.event.trigger('newTraceLoaded')
+    this.debugger.event.register('newTraceLoaded', () => {
+      this.event.trigger('newTraceLoaded')
     })
   }
 
   listenToCodeManagerEvents () {
-    const self = this
-    this._codeManager.event.register('changed', function (code, address, index) {
-      self.event.trigger('codeManagerChanged', [code, address, index])
+    this._codeManager.event.register('changed', (code, address, index) => {
+      this.event.trigger('codeManagerChanged', [code, address, index])
     })
   }
 
   listenToTraceManagerEvents () {
-    const self = this
-
-    this.event.register('indexChanged', this, function (index) {
+    this.event.register('indexChanged', this, (index) => {
       if (index < 0) return
-      if (self.stepManager.currentStepIndex !== index) return
+      if (this.stepManager.currentStepIndex !== index) return
 
-      self.event.trigger('indexUpdate', [index])
+      this.event.trigger('indexUpdate', [index])
 
-      self._traceManager.getCallDataAt(index, function (error, calldata) {
+      this._traceManager.getCallDataAt(index, (error, calldata) => {
         if (error) {
           // console.log(error)
-          self.event.trigger('traceManagerCallDataUpdate', [{}])
-        } else if (self.stepManager.currentStepIndex === index) {
-          self.event.trigger('traceManagerCallDataUpdate', [calldata])
+          this.event.trigger('traceManagerCallDataUpdate', [{}])
+        } else if (this.stepManager.currentStepIndex === index) {
+          this.event.trigger('traceManagerCallDataUpdate', [calldata])
         }
       })
 
-      self._traceManager.getMemoryAt(index, function (error, memory) {
+      this._traceManager.getMemoryAt(index, (error, memory) => {
         if (error) {
           // console.log(error)
-          self.event.trigger('traceManagerMemoryUpdate', [{}])
-        } else if (self.stepManager.currentStepIndex === index) {
-          self.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 16)])
+          this.event.trigger('traceManagerMemoryUpdate', [{}])
+        } else if (this.stepManager.currentStepIndex === index) {
+          this.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 16)])
         }
       })
 
-      self._traceManager.getCallStackAt(index, function (error, callstack) {
+      this._traceManager.getCallStackAt(index, (error, callstack) => {
         if (error) {
           // console.log(error)
-          self.event.trigger('traceManagerCallStackUpdate', [{}])
-        } else if (self.stepManager.currentStepIndex === index) {
-          self.event.trigger('traceManagerCallStackUpdate', [callstack])
+          this.event.trigger('traceManagerCallStackUpdate', [{}])
+        } else if (this.stepManager.currentStepIndex === index) {
+          this.event.trigger('traceManagerCallStackUpdate', [callstack])
         }
       })
 
-      self._traceManager.getStackAt(index, function (error, callstack) {
+      this._traceManager.getStackAt(index, (error, callstack) => {
         if (error) {
           // console.log(error)
-          self.event.trigger('traceManagerStackUpdate', [{}])
-        } else if (self.stepManager.currentStepIndex === index) {
-          self.event.trigger('traceManagerStackUpdate', [callstack])
+          this.event.trigger('traceManagerStackUpdate', [{}])
+        } else if (this.stepManager.currentStepIndex === index) {
+          this.event.trigger('traceManagerStackUpdate', [callstack])
         }
       })
 
-      self._traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+      this._traceManager.getCurrentCalledAddressAt(index, (error, address) => {
         if (error) return
-        if (!self.storageResolver) return
+        if (!this.storageResolver) return
 
-        var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.tx, address: address }, self.storageResolver, self._traceManager)
+        var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
 
         storageViewer.storageRange((error, storage) => {
           if (error) {
             // console.log(error)
-            self.event.trigger('traceManagerStorageUpdate', [{}])
-          } else if (self.stepManager.currentStepIndex === index) {
+            this.event.trigger('traceManagerStorageUpdate', [{}])
+          } else if (this.stepManager.currentStepIndex === index) {
             var header = storageViewer.isComplete(address) ? 'completely loaded' : 'partially loaded...'
-            self.event.trigger('traceManagerStorageUpdate', [storage, header])
+            this.event.trigger('traceManagerStorageUpdate', [storage, header])
           }
         })
       })
 
-      self._traceManager.getCurrentStep(index, function (error, step) {
-        self.event.trigger('traceCurrentStepUpdate', [error, step])
+      this._traceManager.getCurrentStep(index, (error, step) => {
+        this.event.trigger('traceCurrentStepUpdate', [error, step])
       })
 
-      self._traceManager.getMemExpand(index, function (error, addmem) {
-        self.event.trigger('traceMemExpandUpdate', [error, addmem])
+      this._traceManager.getMemExpand(index, (error, addmem) => {
+        this.event.trigger('traceMemExpandUpdate', [error, addmem])
       })
 
-      self._traceManager.getStepCost(index, function (error, gas) {
-        self.event.trigger('traceStepCostUpdate', [error, gas])
+      this._traceManager.getStepCost(index, (error, gas) => {
+        this.event.trigger('traceStepCostUpdate', [error, gas])
       })
 
-      self._traceManager.getCurrentCalledAddressAt(index, function (error, address) {
-        self.event.trigger('traceCurrentCalledAddressAtUpdate', [error, address])
+      this._traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+        this.event.trigger('traceCurrentCalledAddressAtUpdate', [error, address])
       })
 
-      self._traceManager.getRemainingGas(index, function (error, remaining) {
-        self.event.trigger('traceRemainingGasUpdate', [error, remaining])
+      this._traceManager.getRemainingGas(index, (error, remaining) => {
+        this.event.trigger('traceRemainingGasUpdate', [error, remaining])
       })
 
-      self._traceManager.getReturnValue(index, function (error, returnValue) {
+      this._traceManager.getReturnValue(index, (error, returnValue) => {
         if (error) {
-          self.event.trigger('traceReturnValueUpdate', [[error]])
-        } else if (self.stepManager.currentStepIndex === index) {
-          self.event.trigger('traceReturnValueUpdate', [[returnValue]])
+          this.event.trigger('traceReturnValueUpdate', [[error]])
+        } else if (this.stepManager.currentStepIndex === index) {
+          this.event.trigger('traceReturnValueUpdate', [[returnValue]])
         }
       })
     })
   }
 
   listenToFullStorageChanges () {
-    const self = this
-
     this.address = []
     this.traceLength = 0
 
-    self.debugger.event.register('newTraceLoaded', function (length) {
-      self._traceManager.getAddresses(function (error, addresses) {
+    this.debugger.event.register('newTraceLoaded', (length) => {
+      this._traceManager.getAddresses((error, addresses) => {
         if (error) return
-        self.event.trigger('traceAddressesUpdate', [addresses])
-        self.addresses = addresses
+        this.event.trigger('traceAddressesUpdate', [addresses])
+        this.addresses = addresses
       })
 
-      self._traceManager.getLength(function (error, length) {
+      this._traceManager.getLength((error, length) => {
         if (error) return
-        self.event.trigger('traceLengthUpdate', [length])
-        self.traceLength = length
+        this.event.trigger('traceLengthUpdate', [length])
+        this.traceLength = length
       })
     })
 
-    self.debugger.event.register('indexChanged', this, function (index) {
+    this.debugger.event.register('indexChanged', this, (index) => {
       if (index < 0) return
-      if (self.stepManager.currentStepIndex !== index) return
-      if (!self.storageResolver) return
+      if (this.stepManager.currentStepIndex !== index) return
+      if (!this.storageResolver) return
       // Clean up storage update
-      if (index === self.traceLength - 1) {
-        return self.event.trigger('traceStorageUpdate', [{}])
+      if (index === this.traceLength - 1) {
+        return this.event.trigger('traceStorageUpdate', [{}])
       }
       var storageJSON = {}
-      for (var k in self.addresses) {
-        var address = self.addresses[k]
-        var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.tx, address: address }, self.storageResolver, self._traceManager)
-        storageViewer.storageRange(function (error, result) {
+      for (var k in this.addresses) {
+        var address = this.addresses[k]
+        var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
+        storageViewer.storageRange((error, result) => {
           if (!error) {
             storageJSON[address] = result
-            self.event.trigger('traceStorageUpdate', [storageJSON])
+            this.event.trigger('traceStorageUpdate', [storageJSON])
           }
         })
       }
@@ -188,51 +182,48 @@ class VmDebuggerLogic {
   }
 
   listenToNewChanges () {
-    const self = this
-    self.debugger.event.register('newTraceLoaded', this, function () {
-      self.storageResolver = new StorageResolver({web3: self.debugger.web3})
-      self.debuggerSolidityState.storageResolver = self.storageResolver
-      self.debuggerSolidityLocals.storageResolver = self.storageResolver
-      self.event.trigger('newTrace', [])
+    this.debugger.event.register('newTraceLoaded', this, () => {
+      this.storageResolver = new StorageResolver({web3: this.debugger.web3})
+      this.debuggerSolidityState.storageResolver = this.storageResolver
+      this.debuggerSolidityLocals.storageResolver = this.storageResolver
+      this.event.trigger('newTrace', [])
     })
 
-    self.debugger.callTree.event.register('callTreeReady', function () {
-      if (self.debugger.callTree.reducedTrace.length) {
-        return self.event.trigger('newCallTree', [])
+    this.debugger.callTree.event.register('callTreeReady', () => {
+      if (this.debugger.callTree.reducedTrace.length) {
+        return this.event.trigger('newCallTree', [])
       }
     })
   }
 
   listenToSolidityStateEvents () {
-    const self = this
     this.event.register('indexChanged', this.debuggerSolidityState.init.bind(this.debuggerSolidityState))
-    this.debuggerSolidityState.event.register('solidityState', function (state) {
-      self.event.trigger('solidityState', [state])
+    this.debuggerSolidityState.event.register('solidityState', (state) => {
+      this.event.trigger('solidityState', [state])
     })
-    this.debuggerSolidityState.event.register('solidityStateMessage', function (message) {
-      self.event.trigger('solidityStateMessage', [message])
+    this.debuggerSolidityState.event.register('solidityStateMessage', (message) => {
+      this.event.trigger('solidityStateMessage', [message])
     })
-    this.debuggerSolidityState.event.register('solidityStateUpdating', function () {
-      self.event.trigger('solidityStateUpdating', [])
+    this.debuggerSolidityState.event.register('solidityStateUpdating', () => {
+      this.event.trigger('solidityStateUpdating', [])
     })
     this.event.register('traceUnloaded', this.debuggerSolidityState.reset.bind(this.debuggerSolidityState))
     this.event.register('newTraceLoaded', this.debuggerSolidityState.reset.bind(this.debuggerSolidityState))
   }
 
   listenToSolidityLocalsEvents () {
-    const self = this
     this.event.register('sourceLocationChanged', this.debuggerSolidityLocals.init.bind(this.debuggerSolidityLocals))
-    this.debuggerSolidityLocals.event.register('solidityLocals', function (state) {
-      self.event.trigger('solidityLocals', [state])
+    this.debuggerSolidityLocals.event.register('solidityLocals', (state) => {
+      this.event.trigger('solidityLocals', [state])
     })
-    this.debuggerSolidityLocals.event.register('solidityLocalsMessage', function (message) {
-      self.event.trigger('solidityLocalsMessage', [message])
+    this.debuggerSolidityLocals.event.register('solidityLocalsMessage', (message) => {
+      this.event.trigger('solidityLocalsMessage', [message])
     })
-    this.debuggerSolidityLocals.event.register('solidityLocalsUpdating', function () {
-      self.event.trigger('solidityLocalsUpdating', [])
+    this.debuggerSolidityLocals.event.register('solidityLocalsUpdating', () => {
+      this.event.trigger('solidityLocalsUpdating', [])
     })
-    this.debuggerSolidityLocals.event.register('traceReturnValueUpdate', function (data, header) {
-      self.event.trigger('traceReturnValueUpdate', [data, header])
+    this.debuggerSolidityLocals.event.register('traceReturnValueUpdate', (data, header) => {
+      this.event.trigger('traceReturnValueUpdate', [data, header])
     })
   }
 

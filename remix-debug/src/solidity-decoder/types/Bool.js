@@ -1,6 +1,6 @@
 'use strict'
-var ValueType = require('./ValueType')
-var util = require('./util')
+const ValueType = require('./ValueType')
+const util = require('./util')
 
 class Bool extends ValueType {
   constructor () {

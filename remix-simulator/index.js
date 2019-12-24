@@ -1,4 +1,4 @@
-var Provider = require('./src/provider')
+const Provider = require('./src/provider')
 
 module.exports = {
   Provider: Provider

@@ -1,7 +1,7 @@
-var version = require('../../package.json').version
-var web3 = require('web3')
+const version = require('../../package.json').version
+const web3 = require('web3')
 
-var Misc = function () {
+const Misc = function () {
 }
 
 Misc.prototype.methods = function () {
@@ -41,7 +41,7 @@ Misc.prototype.eth_hashrate = function (payload, cb) {
 }
 
 Misc.prototype.web3_sha3 = function (payload, cb) {
-  let str = payload.params[0]
+  const str = payload.params[0]
   cb(null, web3.utils.sha3(str))
 }
 
