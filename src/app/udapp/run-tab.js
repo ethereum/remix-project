@@ -41,6 +41,7 @@ export class RunTab extends LibraryPlugin {
     this.config = config
     this.udapp = udapp
     this.executionContext = executionContext
+    this.blockchain = new Blockchain(this.executionContext, udapp)
     this.fileManager = fileManager
     this.editor = editor
     this.logCallback = (msg) => { mainView.getTerminal().logHtml(msg) }
@@ -133,8 +134,7 @@ export class RunTab extends LibraryPlugin {
 
   renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
     const dropdownLogic = new DropdownLogic(compilersArtefacts, config, editor, this)
-    const blockchain = new Blockchain(this.executionContext, udapp)
-    this.contractDropdownUI = new ContractDropdownUI(blockchain, dropdownLogic, logCallback, this)
+    this.contractDropdownUI = new ContractDropdownUI(this.blockchain, dropdownLogic, logCallback, this)
 
     fileManager.events.on('currentFileChanged', this.contractDropdownUI.changeCurrentFile.bind(this.contractDropdownUI))
 
@@ -159,7 +159,7 @@ export class RunTab extends LibraryPlugin {
     })
     this.event.register('clearInstance', recorder.clearAll.bind(recorder))
 
-    this.recorderInterface = new RecorderUI(recorder, logCallback)
+    this.recorderInterface = new RecorderUI(this.blockchain, recorder, logCallback)
 
     this.recorderInterface.event.register('newScenario', (abi, address, contractName) => {
       var noInstancesText = this.noInstancesText
