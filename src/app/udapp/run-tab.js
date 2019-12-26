@@ -159,7 +159,7 @@ export class RunTab extends LibraryPlugin {
     })
     this.event.register('clearInstance', recorder.clearAll.bind(recorder))
 
-    this.recorderInterface = new RecorderUI(this.blockchain, recorder, logCallback)
+    this.recorderInterface = new RecorderUI(this.blockchain, recorder, logCallback, config)
 
     this.recorderInterface.event.register('newScenario', (abi, address, contractName) => {
       var noInstancesText = this.noInstancesText
