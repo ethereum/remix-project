@@ -10,7 +10,8 @@ var confirmDialog = require('../../ui/confirmDialog')
 
 class RecorderUI {
 
-  constructor (recorder, logCallBack) {
+  constructor (blockchain, recorder, logCallBack) {
+    this.blockchain = blockchain
     this.recorder = recorder
     this.logCallBack = logCallBack
     this.event = new EventManager()
@@ -63,14 +64,47 @@ class RecorderUI {
       modalDialogCustom.alert(msg)
     }
 
+    const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
+
     // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
-    this.recorder.runScenario(continueCb, promptCb, alertCb, confirmDialog, modalDialog, this.logCallBack, (error, abi, address, contractName) => {
+    this.recorder.runScenario(continueCb, promptCb, alertCb, confirmationCb, this.logCallBack, (error, abi, address, contractName) => {
       if (error) {
         return modalDialogCustom.alert(error)
       }
 
       this.event.trigger('newScenario', [abi, address, contractName])
     })
+  }
+
+  getConfirmationCb (modalDialog, confirmDialog) {
+    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      if (network.name !== 'Main') {
+        return continueTxExecution(null)
+      }
+      const amount = this.recorder.fromWei(tx.value, true, 'ether')
+      const content = confirmDialog(tx, amount, gasEstimation, null, this.recorder.determineGasFees(tx), this.blockchain.determineGasPrice)
+
+      modalDialog('Confirm transaction', content,
+        { label: 'Confirm',
+          fn: () => {
+            this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+            // TODO: check if this is check is still valid given the refactor
+            if (!content.gasPriceStatus) {
+              cancelCb('Given gas price is not correct')
+            } else {
+              var gasPrice = this.recorder.toWei(content.querySelector('#gasprice').value, 'gwei')
+              continueTxExecution(gasPrice)
+            }
+          }}, {
+            label: 'Cancel',
+            fn: () => {
+              return cancelCb('Transaction canceled by user.')
+            }
+          }
+      )
+    }
+
+    return confirmationCb
   }
 
   triggerRecordButton () {
