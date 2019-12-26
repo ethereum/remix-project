@@ -247,7 +247,7 @@ class Recorder {
       logCallBack(`(${index}) data: ${data.data}`)
       record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName, timestamp: tx.timestamp }
 
-      self.blockchain.runTransaction (record, continueCb, promptCb, confirmationCb,
+      self.blockchain.runTransaction(record, continueCb, promptCb, confirmationCb,
         function (err, txResult) {
           if (err) {
             console.error(err)
