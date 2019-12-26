@@ -10,10 +10,11 @@ var confirmDialog = require('../../ui/confirmDialog')
 
 class RecorderUI {
 
-  constructor (blockchain, recorder, logCallBack) {
+  constructor (blockchain, recorder, logCallBack, config) {
     this.blockchain = blockchain
     this.recorder = recorder
     this.logCallBack = logCallBack
+    this.config = config
     this.event = new EventManager()
   }
 
