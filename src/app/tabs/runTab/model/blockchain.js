@@ -14,7 +14,7 @@ class Blockchain {
     this.setupEvents()
   }
 
-  setupEvents() {
+  setupEvents () {
     this.executionContext.event.register('contextChanged', () => {
       this.event.trigger('contextChanged', [])
     })
@@ -137,7 +137,7 @@ class Blockchain {
     return determineGasFeesCb
   }
 
-  getAddressFromTransactionResult(txResult) {
+  getAddressFromTransactionResult (txResult) {
     return this.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
   }
 
