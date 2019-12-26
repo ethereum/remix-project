@@ -288,7 +288,41 @@ class Recorder {
     return address
   }
 
-  runScenario (continueCb, promptCb, alertCb, confirmDialog, modalDialog, logCallBack, cb) {
+  fromWei (value, doTypeConversion, unit) {
+    if (doTypeConversion) {
+      return Web3.utils.fromWei(typeConversion.toInt(value), unit || 'ether')
+    }
+    return Web3.utils.fromWei(value.toString(10), unit || 'ether')
+  }
+
+  toWei (value, unit) {
+    return Web3.utils.toWei(value, unit || 'gwei')
+  }
+
+  calculateFee (gas, gasPrice, unit) {
+    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), unit || 'gwei')))
+  }
+
+  determineGasFees (tx) {
+    const determineGasFeesCb = (gasPrice, cb) => {
+      let txFeeText, priceStatus
+      // TODO: this try catch feels like an anti pattern, can/should be
+      // removed, but for now keeping the original logic
+      try {
+        var fee = this.calculateFee(tx.gas, gasPrice)
+        txFeeText = ' ' + this.fromWei(fee, false, 'ether') + ' Ether'
+        priceStatus = true
+      } catch (e) {
+        txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+        priceStatus = false
+      }
+      cb(txFeeText, priceStatus)
+    }
+
+    return determineGasFeesCb
+  }
+
+  runScenario (continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
     var currentFile = this.config.get('currentFile')
     this.fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
       if (error) {
@@ -310,62 +344,6 @@ class Recorder {
 
       if (!txArray.length) {
         return
-      }
-
-      var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-        if (network.name !== 'Main') {
-          return continueTxExecution(null)
-        }
-        var amount = Web3.utils.fromWei(typeConversion.toInt(tx.value), 'ether')
-
-        // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
-        var content = confirmDialog(tx, amount, gasEstimation, this.recorder,
-          (gasPrice, cb) => {
-            let txFeeText, priceStatus
-            // TODO: this try catch feels like an anti pattern, can/should be
-            // removed, but for now keeping the original logic
-            try {
-              var fee = Web3.utils.toBN(tx.gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), 'gwei')))
-              txFeeText = ' ' + Web3.utils.fromWei(fee.toString(10), 'ether') + ' Ether'
-              priceStatus = true
-            } catch (e) {
-              txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-              priceStatus = false
-            }
-            cb(txFeeText, priceStatus)
-          },
-          (cb) => {
-            this.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-              var warnMessage = ' Please fix this issue before sending any transaction. '
-              if (error) {
-                return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-              }
-              try {
-                var gasPriceValue = Web3.utils.fromWei(gasPrice.toString(10), 'gwei')
-                cb(null, gasPriceValue)
-              } catch (e) {
-                cb(warnMessage + e.message, null, false)
-              }
-            })
-          }
-        )
-        modalDialog('Confirm transaction', content,
-          { label: 'Confirm',
-            fn: () => {
-              this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-              // TODO: check if this is check is still valid given the refactor
-              if (!content.gasPriceStatus) {
-                cancelCb('Given gas price is not correct')
-              } else {
-                var gasPrice = Web3.utils.toWei(content.querySelector('#gasprice').value, 'gwei')
-                continueTxExecution(gasPrice)
-              }
-            }}, {
-              label: 'Cancel',
-              fn: () => {
-                return cancelCb('Transaction canceled by user.')
-              }
-            })
       }
 
       this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, (abi, address, contractName) => {
