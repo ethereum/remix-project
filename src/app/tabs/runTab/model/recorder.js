@@ -4,9 +4,7 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
-var typeConversion = remixLib.execution.typeConversion
 var helper = require('../../../../lib/helper.js')
-var Web3 = require('web3')
 
 /**
   * Record transaction as long as the user create them.
@@ -286,40 +284,6 @@ class Recorder {
       address = '0x' + address
     }
     return address
-  }
-
-  fromWei (value, doTypeConversion, unit) {
-    if (doTypeConversion) {
-      return Web3.utils.fromWei(typeConversion.toInt(value), unit || 'ether')
-    }
-    return Web3.utils.fromWei(value.toString(10), unit || 'ether')
-  }
-
-  toWei (value, unit) {
-    return Web3.utils.toWei(value, unit || 'gwei')
-  }
-
-  calculateFee (gas, gasPrice, unit) {
-    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), unit || 'gwei')))
-  }
-
-  determineGasFees (tx) {
-    const determineGasFeesCb = (gasPrice, cb) => {
-      let txFeeText, priceStatus
-      // TODO: this try catch feels like an anti pattern, can/should be
-      // removed, but for now keeping the original logic
-      try {
-        var fee = this.calculateFee(tx.gas, gasPrice)
-        txFeeText = ' ' + this.fromWei(fee, false, 'ether') + ' Ether'
-        priceStatus = true
-      } catch (e) {
-        txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-        priceStatus = false
-      }
-      cb(txFeeText, priceStatus)
-    }
-
-    return determineGasFeesCb
   }
 
   runScenario (continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
