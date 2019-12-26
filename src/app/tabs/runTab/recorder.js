@@ -81,8 +81,8 @@ class RecorderUI {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
       }
-      const amount = this.recorder.fromWei(tx.value, true, 'ether')
-      const content = confirmDialog(tx, amount, gasEstimation, null, this.recorder.determineGasFees(tx), this.blockchain.determineGasPrice)
+      const amount = this.blockchain.fromWei(tx.value, true, 'ether')
+      const content = confirmDialog(tx, amount, gasEstimation, null, this.blockchain.determineGasFees(tx), this.blockchain.determineGasPrice)
 
       modalDialog('Confirm transaction', content,
         { label: 'Confirm',
@@ -92,7 +92,7 @@ class RecorderUI {
             if (!content.gasPriceStatus) {
               cancelCb('Given gas price is not correct')
             } else {
-              var gasPrice = this.recorder.toWei(content.querySelector('#gasprice').value, 'gwei')
+              var gasPrice = this.blockchain.toWei(content.querySelector('#gasprice').value, 'gwei')
               continueTxExecution(gasPrice)
             }
           }}, {
