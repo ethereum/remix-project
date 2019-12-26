@@ -2,13 +2,30 @@ const remixLib = require('remix-lib')
 const txFormat = remixLib.execution.txFormat
 const txExecution = remixLib.execution.txExecution
 const typeConversion = remixLib.execution.typeConversion
+const EventManager = remixLib.EventManager
 const Web3 = require('web3')
 
 class Blockchain {
 
   constructor (executionContext, udapp) {
+    this.event = new EventManager()
     this.executionContext = executionContext
     this.udapp = udapp
+    this.setupEvents()
+  }
+
+  setupEvents() {
+    this.executionContext.event.register('contextChanged', () => {
+      this.event.trigger('contextChanged', [])
+    })
+
+    this.udapp.event.register('initiatingTransaction', () => {
+      this.event.trigger('initiatingTransaction', [])
+    })
+
+    this.udapp.event.register('transactionExecuted', () => {
+      this.event.trigger('transactionExecuted', [])
+    })
   }
 
   async deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
@@ -118,6 +135,14 @@ class Blockchain {
     }
 
     return determineGasFeesCb
+  }
+
+  getAddressFromTransactionResult(txResult) {
+    return this.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+  }
+
+  getAccounts (cb) {
+    return this.udapp.getAccounts(cb)
   }
 
 }
