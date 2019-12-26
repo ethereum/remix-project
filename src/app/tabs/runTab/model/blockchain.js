@@ -93,6 +93,33 @@ class Blockchain {
     return Web3.utils.fromWei(value.toString(10), unit || 'ether')
   }
 
+  toWei (value, unit) {
+    return Web3.utils.toWei(value, unit || 'gwei')
+  }
+
+  calculateFee (gas, gasPrice, unit) {
+    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), unit || 'gwei')))
+  }
+
+  determineGasFees (tx) {
+    const determineGasFeesCb = (gasPrice, cb) => {
+      let txFeeText, priceStatus
+      // TODO: this try catch feels like an anti pattern, can/should be
+      // removed, but for now keeping the original logic
+      try {
+        var fee = this.calculateFee(tx.gas, gasPrice)
+        txFeeText = ' ' + this.fromWei(fee, false, 'ether') + ' Ether'
+        priceStatus = true
+      } catch (e) {
+        txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+        priceStatus = false
+      }
+      cb(txFeeText, priceStatus)
+    }
+
+    return determineGasFeesCb
+  }
+
 }
 
 module.exports = Blockchain
