@@ -1,16 +1,16 @@
 'use strict'
 
 module.exports = class TransactionReceiptResolver {
-  constructor (executionContext) {
+  constructor (blockchain) {
     this._transactionReceipts = {}
-    this.executionContext = executionContext
+    this.blockchain = blockchain
   }
 
   resolve (tx, cb) {
     if (this._transactionReceipts[tx.hash]) {
       return cb(null, this._transactionReceipts[tx.hash])
     }
-    this.executionContext.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+    this.blockchain.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
       if (!error) {
         this._transactionReceipts[tx.hash] = receipt
         cb(null, receipt)
