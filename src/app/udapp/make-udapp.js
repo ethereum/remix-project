@@ -18,10 +18,10 @@ function txDetailsLink (network, hash) {
   }
 }
 
-export function makeUdapp (blockchain, udapp, compilersArtefacts, logHtmlCallback) {
+export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
   // ----------------- UniversalDApp -----------------
   // TODO: to remove when possible
-  udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
+  blockchain.event.register('transactionBroadcasted', (txhash, networkName) => {
     var txLink = txDetailsLink(networkName, txhash)
     if (txLink && logHtmlCallback) logHtmlCallback(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
   })
@@ -38,14 +38,11 @@ export function makeUdapp (blockchain, udapp, compilersArtefacts, logHtmlCallbac
       resolveReceipt: function (tx, cb) {
         transactionReceiptResolver.resolve(tx, cb)
       }
-    },
-    event: {
-      udapp: udapp.event
     }
   })
 
   registry.put({api: txlistener, name: 'txlistener'})
-  udapp.startListening(txlistener)
+  blockchain.startListening(txlistener)
 
   const eventsDecoder = new EventsDecoder({
     api: {
@@ -56,5 +53,5 @@ export function makeUdapp (blockchain, udapp, compilersArtefacts, logHtmlCallbac
   })
   txlistener.startListening()
 
-  return {udapp, txlistener, eventsDecoder}
+  return {txlistener, eventsDecoder}
 }

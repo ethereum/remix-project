@@ -39,6 +39,10 @@ class Blockchain {
     this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
       this.event.trigger('transactionExecuted', [error, from, to, data, call, txResult, timestamp])
     })
+
+    this.udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
+      this.event.trigger('transactionBroadcasted', [txhash, networkName])
+    })
   }
 
   async deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
@@ -250,8 +254,15 @@ class Blockchain {
   }
 
   getTxListener (opts) {
+    opts.event = {
+      udapp: this.udapp.event
+    }
     const txlistener = new Txlistener(opts, this.executionContext)
     return txlistener
+  }
+
+  startListening (txlistener) {
+    this.udapp.startListening(txlistener)
   }
 
 }
