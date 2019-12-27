@@ -2,6 +2,7 @@ const remixLib = require('remix-lib')
 const txFormat = remixLib.execution.txFormat
 const txExecution = remixLib.execution.txExecution
 const typeConversion = remixLib.execution.typeConversion
+const Txlistener = remixLib.execution.txListener
 const EventManager = remixLib.EventManager
 const ethJSUtil = require('ethereumjs-util')
 const Personal = require('web3-eth-personal')
@@ -247,6 +248,12 @@ class Blockchain {
   web3 () {
     return this.executionContext.web3()
   }
+
+  getTxListener(opts) {
+    const txlistener = new Txlistener(opts, this.executionContext)
+    return txlistener
+  }
+
 }
 
 module.exports = Blockchain
