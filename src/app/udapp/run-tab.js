@@ -9,7 +9,6 @@ const EventManager = require('../../lib/events')
 const Card = require('../ui/card')
 
 const css = require('../tabs/styles/run-tab-styles')
-// const Settings = require('../tabs/runTab/model/settings.js')
 const SettingsUI = require('../tabs/runTab/settings.js')
 const Recorder = require('../tabs/runTab/model/recorder.js')
 const RecorderUI = require('../tabs/runTab/recorder.js')
@@ -124,7 +123,6 @@ export class RunTab extends LibraryPlugin {
   }
 
   renderSettings (udapp) {
-    // var settings = new Settings(this.blockchain, this.executionContext, udapp)
     this.settingsUI = new SettingsUI(this.blockchain, this.networkModule)
 
     this.settingsUI.event.register('clearInstance', () => {
