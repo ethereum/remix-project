@@ -244,6 +244,9 @@ class Blockchain {
     }
   }
 
+  web3 () {
+    return this.executionContext.web3()
+  }
 }
 
 module.exports = Blockchain
