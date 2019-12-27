@@ -19,12 +19,12 @@ class Blockchain {
       this.event.trigger('contextChanged', [])
     })
 
-    this.udapp.event.register('initiatingTransaction', () => {
-      this.event.trigger('initiatingTransaction', [])
+    this.udapp.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
+      this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
     })
 
-    this.udapp.event.register('transactionExecuted', () => {
-      this.event.trigger('transactionExecuted', [])
+    this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+      this.event.trigger('transactionExecuted', [error, from, to, data, call, txResult, timestamp])
     })
   }
 
