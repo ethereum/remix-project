@@ -255,7 +255,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // LAYOUT & SYSTEM VIEWS
   const appPanel = new MainPanel()
-  const mainview = new MainView(editor, appPanel, fileManager, appManager, txlistener, eventsDecoder, executionContext, blockchain)
+  const mainview = new MainView(editor, appPanel, fileManager, appManager, txlistener, eventsDecoder, blockchain)
   registry.put({ api: mainview, name: 'mainview' })
 
   appManager.register([
