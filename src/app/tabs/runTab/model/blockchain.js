@@ -249,7 +249,7 @@ class Blockchain {
     return this.executionContext.web3()
   }
 
-  getTxListener(opts) {
+  getTxListener (opts) {
     const txlistener = new Txlistener(opts, this.executionContext)
     return txlistener
   }
