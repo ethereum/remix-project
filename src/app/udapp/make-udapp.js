@@ -18,7 +18,7 @@ function txDetailsLink (network, hash) {
   }
 }
 
-export function makeUdapp (blockchain, udapp, executionContext, compilersArtefacts, logHtmlCallback) {
+export function makeUdapp (blockchain, udapp, compilersArtefacts, logHtmlCallback) {
   // ----------------- UniversalDApp -----------------
   // TODO: to remove when possible
   udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
