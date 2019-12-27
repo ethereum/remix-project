@@ -236,7 +236,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
   registry.put({api: compilersArtefacts, name: 'compilersartefacts'})
 
-  const {eventsDecoder, txlistener} = makeUdapp(blockchain, udapp, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
+  const {eventsDecoder, txlistener} = makeUdapp(blockchain, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
   // ----------------- network service (resolve network id / name) ----------------------------
   const networkModule = new NetworkModule(executionContext)
   // ----------------- convert offset to line/column service ----------------------------
