@@ -14,7 +14,6 @@ const Recorder = require('../tabs/runTab/model/recorder.js')
 const RecorderUI = require('../tabs/runTab/recorder.js')
 const DropdownLogic = require('../tabs/runTab/model/dropdownlogic.js')
 const ContractDropdownUI = require('../tabs/runTab/contractDropdown.js')
-const Blockchain = require('../tabs/runTab/model/blockchain.js')
 
 const UniversalDAppUI = require('../ui/universal-dapp-ui')
 
@@ -34,13 +33,13 @@ const profile = {
 
 export class RunTab extends LibraryPlugin {
 
-  constructor (udapp, executionContext, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
+  constructor (blockchain, udapp, executionContext, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
     super(udapp, profile)
     this.event = new EventManager()
     this.config = config
     this.udapp = udapp
     this.executionContext = executionContext
-    this.blockchain = new Blockchain(this.executionContext, udapp)
+    this.blockchain = blockchain
     this.fileManager = fileManager
     this.editor = editor
     this.logCallback = (msg) => { mainView.getTerminal().logHtml(msg) }
