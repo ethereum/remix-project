@@ -121,7 +121,7 @@ export class RunTab extends LibraryPlugin {
     this.instanceContainer.appendChild(this.noInstancesText)
   }
 
-  renderSettings (udapp) {
+  renderSettings () {
     this.settingsUI = new SettingsUI(this.blockchain, this.networkModule)
 
     this.settingsUI.event.register('clearInstance', () => {
@@ -129,7 +129,7 @@ export class RunTab extends LibraryPlugin {
     })
   }
 
-  renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
+  renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, logCallback) {
     const dropdownLogic = new DropdownLogic(compilersArtefacts, config, editor, this)
     this.contractDropdownUI = new ContractDropdownUI(this.blockchain, dropdownLogic, logCallback, this)
 
@@ -147,7 +147,7 @@ export class RunTab extends LibraryPlugin {
     })
   }
 
-  renderRecorder (udapp, udappUI, fileManager, config, logCallback) {
+  renderRecorder (udappUI, fileManager, config, logCallback) {
     this.recorderCount = yo`<span>0</span>`
 
     const recorder = new Recorder(this.blockchain, fileManager, config)
@@ -206,9 +206,9 @@ export class RunTab extends LibraryPlugin {
     this.executionContext.listenOnLastBlock()
     this.udapp.resetEnvironment()
     this.renderInstanceContainer()
-    this.renderSettings(this.udapp)
-    this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.udapp, this.filePanel, this.logCallback)
-    this.renderRecorder(this.udapp, this.udappUI, this.fileManager, this.config, this.logCallback)
+    this.renderSettings()
+    this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.logCallback)
+    this.renderRecorder(this.udappUI, this.fileManager, this.config, this.logCallback)
     this.renderRecorderCard()
     return this.renderContainer()
   }
