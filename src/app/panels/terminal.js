@@ -438,7 +438,7 @@ class Terminal extends Plugin {
     self._shell('remix.help()', self.commands, () => {})
     self.commands.html(intro)
 
-    self._components.txLogger = new TxLogger(self._opts.eventsDecoder, self._opts.txListener, this, self.executionContext)
+    self._components.txLogger = new TxLogger(self._opts.eventsDecoder, self._opts.txListener, this, self.blockchain)
     self._components.txLogger.event.register('debuggingRequested', (hash) => {
       // TODO should probably be in the run module
       if (!self._opts.appManager.isActive('debugger')) self._opts.appManager.activateOne('debugger')
