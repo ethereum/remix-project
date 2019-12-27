@@ -41,7 +41,6 @@ class Terminal extends Plugin {
     super(profile)
     var self = this
     self.event = new EventManager()
-    self.executionContext = opts.executionContext
     self.blockchain = opts.blockchain
     self._api = api
     self._opts = opts
