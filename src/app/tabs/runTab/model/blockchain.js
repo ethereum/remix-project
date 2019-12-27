@@ -183,6 +183,10 @@ class Blockchain {
     })(this.networkcallid)
   }
 
+  detectNetwork (cb) {
+    return this.executionContext.detectNetwork(cb)
+  }
+
   newAccount (passphraseCb, cb) {
     return this.udapp.newAccount('', passphraseCb, cb)
   }

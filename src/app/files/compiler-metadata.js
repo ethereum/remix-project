@@ -11,14 +11,13 @@ const profile = {
 }
 
 class CompilerMetadata extends Plugin {
-  constructor (executionContext, fileManager, config) {
+  constructor (blockchain, fileManager, config) {
     super(profile)
-    var self = this
-    self.executionContext = executionContext
-    self.fileManager = fileManager
-    self.config = config
-    self.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'görli:5', 'Custom']
-    self.innerPath = 'artifacts'
+    this.blockchain = blockchain
+    this.fileManager = fileManager
+    this.config = config
+    this.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'görli:5', 'Custom']
+    this.innerPath = 'artifacts'
   }
 
   _JSONFileName (path, contractName) {
@@ -93,15 +92,14 @@ class CompilerMetadata extends Plugin {
   // TODO: is only called by dropdownLogic and can be moved there
   deployMetadataOf (contractName) {
     return new Promise((resolve, reject) => {
-      var self = this
-      var provider = self.fileManager.currentFileProvider()
-      var path = self.fileManager.currentPath()
+      var provider = this.fileManager.currentFileProvider()
+      var path = this.fileManager.currentPath()
       if (provider && path) {
-        self.executionContext.detectNetwork((err, { id, name } = {}) => {
+        this.blockchain.detectNetwork((err, { id, name } = {}) => {
           if (err) {
             console.log(err)
           } else {
-            var fileName = self._JSONFileName(path, contractName)
+            var fileName = this._JSONFileName(path, contractName)
             provider.get(fileName, (error, content) => {
               if (error) return reject(error)
               if (!content) return resolve()
