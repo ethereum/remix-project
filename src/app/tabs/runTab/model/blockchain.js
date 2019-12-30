@@ -265,6 +265,45 @@ class Blockchain {
     this.udapp.startListening(txlistener)
   }
 
+  runOrCallContractMethod (contractName, contractABI, funABI, value, address, params, lookupOnly, logMsg, logCallback, outputCb, callbacksInContext) {
+    // contractsDetails is used to resolve libraries
+    txFormat.buildData(contractName, contractABI, {}, false, funABI, params, (error, data) => {
+      if (!error) {
+        if (!lookupOnly) {
+          logCallback(`${logMsg} pending ... `)
+        } else {
+          logCallback(`${logMsg}`)
+        }
+        if (funABI.type === 'fallback') data.dataHex = value
+        this.udapp.callFunction(address, data, funABI, callbacksInContext.confirmationCb.bind(callbacksInContext), callbacksInContext.continueCb.bind(callbacksInContext), callbacksInContext.promptCb.bind(callbacksInContext), (error, txResult) => {
+          if (!error) {
+            var isVM = this.executionContext.isVM()
+            if (isVM) {
+              var vmError = txExecution.checkVMError(txResult)
+              if (vmError.error) {
+                logCallback(`${logMsg} errored: ${vmError.message} `)
+                return
+              }
+            }
+            if (lookupOnly) {
+              const returnValue = (this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result))
+              outputCb(returnValue)
+            }
+          } else {
+            logCallback(`${logMsg} errored: ${error} `)
+          }
+        })
+      } else {
+        logCallback(`${logMsg} errored: ${error} `)
+      }
+    }, (msg) => {
+      logCallback(msg)
+    }, (data, runTxCallback) => {
+      // called for libraries deployment
+      this.udapp.runTx(data, callbacksInContext.confirmationCb.bind(callbacksInContext), runTxCallback)
+    })
+  }
+
 }
 
 module.exports = Blockchain
