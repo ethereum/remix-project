@@ -15,7 +15,8 @@ var txFormat = remixLib.execution.txFormat
 var TreeView = require('./TreeView')
 var txCallBacks = require('./sendTxCallbacks')
 
-function UniversalDAppUI (udapp, logCallback, executionContext) {
+function UniversalDAppUI (blockchain, udapp, logCallback, executionContext) {
+  this.blockchain = blockchain
   this.udapp = udapp
   this.logCallback = logCallback
   this.compilerData = {contractsDetails: {}}
