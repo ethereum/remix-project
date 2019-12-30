@@ -1,6 +1,6 @@
 'use strict'
-var ethJSUtil = require('ethereumjs-util')
-var BN = ethJSUtil.BN
+const ethJSUtil = require('ethereumjs-util')
+const BN = ethJSUtil.BN
 
 module.exports = {
   toInt: (h) => {
@@ -17,7 +17,7 @@ module.exports = {
 function stringify (v) {
   try {
     if (v instanceof Array) {
-      var ret = []
+      const ret = []
       for (var k in v) {
         ret.push(stringify(v[k]))
       }
@@ -27,8 +27,8 @@ function stringify (v) {
     } else if (v._isBuffer) {
       return ethJSUtil.bufferToHex(v)
     } else if (typeof v === 'object') {
-      var retObject = {}
-      for (var i in v) {
+      const retObject = {}
+      for (let i in v) {
         retObject[i] = stringify(v[i])
       }
       return retObject

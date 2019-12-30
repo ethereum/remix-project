@@ -1,11 +1,10 @@
-var util = require('../util')
-var uiutil = require('../helpers/uiHelper')
-var traceHelper = require('../helpers/traceHelper')
-var ethutil = require('ethereumjs-util')
-var Web3 = require('web3')
+const util = require('../util')
+const uiutil = require('../helpers/uiHelper')
+const traceHelper = require('../helpers/traceHelper')
+const ethutil = require('ethereumjs-util')
+const Web3 = require('web3')
 
 function web3VmProvider () {
-  var self = this
   this.web3 = new Web3()
   this.vm
   this.vmTraces = {}
@@ -18,40 +17,48 @@ function web3VmProvider () {
   this.incr = 0
   this.eth = {}
   this.debug = {}
-  this.eth.getCode = (...args) => self.getCode(...args)
-  this.eth.getTransaction = (...args) => self.getTransaction(...args)
-  this.eth.getTransactionReceipt = (...args) => self.getTransactionReceipt(...args)
-  this.eth.getTransactionFromBlock = (...args) => self.getTransactionFromBlock(...args)
-  this.eth.getBlockNumber = (...args) => self.getBlockNumber(...args)
-  this.debug.traceTransaction = (...args) => self.traceTransaction(...args)
-  this.debug.storageRangeAt = (...args) => self.storageRangeAt(...args)
-  this.debug.preimage = (...args) => self.preimage(...args)
+  this.eth.getCode = (...args) => this.getCode(...args)
+  this.eth.getTransaction = (...args) => this.getTransaction(...args)
+  this.eth.getTransactionReceipt = (...args) => this.getTransactionReceipt(...args)
+  this.eth.getTransactionFromBlock = (...args) => this.getTransactionFromBlock(...args)
+  this.eth.getBlockNumber = (...args) => this.getBlockNumber(...args)
+  this.debug.traceTransaction = (...args) => this.traceTransaction(...args)
+  this.debug.storageRangeAt = (...args) => this.storageRangeAt(...args)
+  this.debug.preimage = (...args) => this.preimage(...args)
   this.providers = { 'HttpProvider': function (url) {} }
   this.currentProvider = {'host': 'vm provider'}
   this.storageCache = {}
   this.lastProcessedStorageTxHash = {}
   this.sha3Preimages = {}
   // util
+  this.sha3 = (...args) => this.web3.utils.sha3(...args)
+  this.toHex = (...args) => this.web3.utils.toHex(...args)
+  this.toAscii = (...args) => this.web3.utils.hexToAscii(...args)
+  this.fromAscii = (...args) => this.web3.utils.asciiToHex(...args)
+  this.fromDecimal = (...args) => this.web3.utils.numberToHex(...args)
+  this.fromWei = (...args) => this.web3.utils.fromWei(...args)
+  this.toWei = (...args) => this.web3.utils.toWei(...args)
+  this.toBigNumber = (...args) => this.web3.utils.toBN(...args)
+  this.isAddress = (...args) => this.web3.utils.isAddress(...args)
   this.utils = Web3.utils || []
 }
 
 web3VmProvider.prototype.setVM = function (vm) {
   if (this.vm === vm) return
-  var self = this
   this.vm = vm
-  this.vm.on('step', function (data) {
-    self.pushTrace(self, data)
+  this.vm.on('step', (data) => {
+    this.pushTrace(this, data)
   })
-  this.vm.on('afterTx', function (data) {
-    self.txProcessed(self, data)
+  this.vm.on('afterTx', (data) => {
+    this.txProcessed(this, data)
   })
-  this.vm.on('beforeTx', function (data) {
-    self.txWillProcess(self, data)
+  this.vm.on('beforeTx', (data) => {
+    this.txWillProcess(this, data)
   })
 }
 
 web3VmProvider.prototype.releaseCurrentHash = function () {
-  var ret = this.processingHash
+  const ret = this.processingHash
   this.processingHash = undefined
   return ret
 }
@@ -64,7 +71,7 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
     return: '0x0',
     structLogs: []
   }
-  var tx = {}
+  let tx = {}
   tx.hash = self.processingHash
   tx.from = util.hexConvert(data.getSenderAddress())
   if (data.to && data.to.length) {
@@ -82,7 +89,7 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
   self.storageCache[self.processingHash] = {}
   if (tx.to) {
     const account = ethutil.toBuffer(tx.to)
-    self.vm.stateManager.dumpStorage(account, function (storage) {
+    self.vm.stateManager.dumpStorage(account, (storage) => {
       self.storageCache[self.processingHash][tx.to] = storage
       self.lastProcessedStorageTxHash[tx.to] = self.processingHash
     })
@@ -91,16 +98,16 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
 }
 
 web3VmProvider.prototype.txProcessed = function (self, data) {
-  var lastOp = self.vmTraces[self.processingHash].structLogs[self.processingIndex - 1]
+  const lastOp = self.vmTraces[self.processingHash].structLogs[self.processingIndex - 1]
   if (lastOp) {
     lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'SELFDESTRUCT'
   }
   self.vmTraces[self.processingHash].gas = '0x' + data.gasUsed.toString(16)
 
-  var logs = []
-  for (var l in data.execResult.logs) {
-    var log = data.execResult.logs[l]
-    var topics = []
+  const logs = []
+  for (let l in data.execResult.logs) {
+    const log = data.execResult.logs[l]
+    const topics = []
     if (log[1].length > 0) {
       for (var k in log[1]) {
         topics.push('0x' + log[1][k].toString('hex'))
@@ -121,7 +128,7 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
   self.txsReceipt[self.processingHash].status = `0x${status}`
 
   if (data.createdAddress) {
-    var address = util.hexConvert(data.createdAddress)
+    const address = util.hexConvert(data.createdAddress)
     self.vmTraces[self.processingHash].return = address
     self.txsReceipt[self.processingHash].contractAddress = address
   } else if (data.execResult.returnValue) {
@@ -135,12 +142,12 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
 }
 
 web3VmProvider.prototype.pushTrace = function (self, data) {
-  var depth = data.depth + 1 // geth starts the depth from 1
+  const depth = data.depth + 1 // geth starts the depth from 1
   if (!self.processingHash) {
     console.log('no tx processing')
     return
   }
-  var previousopcode
+  let previousopcode
   if (self.vmTraces[self.processingHash] && self.vmTraces[self.processingHash].structLogs[this.processingIndex - 1]) {
     previousopcode = self.vmTraces[self.processingHash].structLogs[this.processingIndex - 1]
   }
@@ -149,7 +156,7 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     // returning from context, set error it is not STOP, RETURN
     previousopcode.invalidDepthChange = previousopcode.op !== 'RETURN' && previousopcode.op !== 'STOP'
   }
-  var step = {
+  const step = {
     stack: util.hexListFromBNs(data.stack),
     memory: util.formatMemory(data.memory),
     storage: data.storage,
@@ -178,8 +185,8 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     }
   }
   if (previousopcode && traceHelper.isSHA3Instruction(previousopcode)) {
-    var preimage = getSha3Input(previousopcode.stack, previousopcode.memory)
-    var imageHash = step.stack[step.stack.length - 1].replace('0x', '')
+    const preimage = getSha3Input(previousopcode.stack, previousopcode.memory)
+    const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
     self.sha3Preimages[imageHash] = {
       'preimage': preimage
     }
@@ -191,7 +198,7 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
 
 web3VmProvider.prototype.getCode = function (address, cb) {
   const account = ethutil.toBuffer(address)
-  this.vm.stateManager.getContractCode(account, function (error, result) {
+  this.vm.stateManager.getContractCode(account, (error, result) => {
     cb(error, util.hexConvert(result))
   })
 }
@@ -219,7 +226,7 @@ web3VmProvider.prototype.storageRangeAt = function (blockNumber, txIndex, addres
   }
 
   if (this.storageCache[txIndex] && this.storageCache[txIndex][address]) {
-    var storage = this.storageCache[txIndex][address]
+    const storage = this.storageCache[txIndex][address]
     return cb(null, {
       storage: JSON.parse(JSON.stringify(storage)),
       nextKey: null
@@ -259,7 +266,7 @@ web3VmProvider.prototype.getTransactionReceipt = function (txHash, cb) {
 }
 
 web3VmProvider.prototype.getTransactionFromBlock = function (blockNumber, txIndex, cb) {
-  var mes = 'not supposed to be needed by remix in vmmode'
+  const mes = 'not supposed to be needed by remix in vmmode'
   console.log(mes)
   if (cb) {
     cb(mes, null)
@@ -272,26 +279,26 @@ web3VmProvider.prototype.preimage = function (hashedKey, cb) {
 }
 
 function getSha3Input (stack, memory) {
-  var memoryStart = stack[stack.length - 1]
-  var memoryLength = stack[stack.length - 2]
-  var memStartDec = (new ethutil.BN(memoryStart.replace('0x', ''), 16)).toString(10)
+  let memoryStart = stack[stack.length - 1]
+  let memoryLength = stack[stack.length - 2]
+  const memStartDec = (new ethutil.BN(memoryStart.replace('0x', ''), 16)).toString(10)
   memoryStart = parseInt(memStartDec) * 2
-  var memLengthDec = (new ethutil.BN(memoryLength.replace('0x', ''), 16).toString(10))
+  const memLengthDec = (new ethutil.BN(memoryLength.replace('0x', ''), 16).toString(10))
   memoryLength = parseInt(memLengthDec) * 2
 
-  var i = Math.floor(memoryStart / 32)
-  var maxIndex = Math.floor(memoryLength / 32) + i
+  let i = Math.floor(memoryStart / 32)
+  const maxIndex = Math.floor(memoryLength / 32) + i
   if (!memory[i]) {
     return emptyFill(memoryLength)
   }
-  var sha3Input = memory[i].slice(memoryStart - 32 * i)
+  let sha3Input = memory[i].slice(memoryStart - 32 * i)
   i++
   while (i < maxIndex) {
     sha3Input += memory[i] ? memory[i] : emptyFill(32)
     i++
   }
   if (sha3Input.length < memoryLength) {
-    var leftSize = memoryLength - sha3Input.length
+    const leftSize = memoryLength - sha3Input.length
     sha3Input += memory[i] ? memory[i].slice(0, leftSize) : emptyFill(leftSize)
   }
   return sha3Input

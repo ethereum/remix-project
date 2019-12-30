@@ -1,7 +1,7 @@
-var name = 'Delete from dynamic Array: '
-var desc = 'Using delete on an array leaves a gap'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
+const name = 'Delete from dynamic Array: '
+const desc = 'Using delete on an array leaves a gap'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
 
 function deleteFromDynamicArray () {
   this.relevantNodes = []

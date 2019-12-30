@@ -1,16 +1,16 @@
 'use strict'
 
-var solc = require('solc/wrapper')
-var solcABI = require('solc/abi')
+const solc = require('solc/wrapper')
+const solcABI = require('solc/abi')
 
-var webworkify = require('webworkify')
+const webworkify = require('webworkify')
 
-var compilerInput = require('./compiler-input')
+const compilerInput = require('./compiler-input')
 
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+const remixLib = require('remix-lib')
+const EventManager = remixLib.EventManager
 
-var txHelper = require('./txHelper')
+const txHelper = require('./txHelper')
 
 /*
   trigger compilationFinished, compilerLoaded, compilationStarted, compilationDuration
@@ -19,17 +19,17 @@ function Compiler (handleImportCall) {
   var self = this
   this.event = new EventManager()
 
-  var compileJSON
+  let compileJSON
 
-  var worker = null
+  let worker = null
 
-  var currentVersion
+  let currentVersion
 
-  var optimize = false
+  let optimize = false
 
-  var evmVersion = null
+  let evmVersion = null
 
-  var language = 'Solidity'
+  let language = 'Solidity'
 
   this.setOptimize = function (_optimize) {
     optimize = _optimize
@@ -43,7 +43,7 @@ function Compiler (handleImportCall) {
     language = _language
   }
 
-  var compilationStartTime = null
+  let compilationStartTime = null
   this.event.register('compilationFinished', (success, data, source) => {
     if (success && compilationStartTime) {
       this.event.trigger('compilationDuration', [(new Date().getTime()) - compilationStartTime])
@@ -55,18 +55,18 @@ function Compiler (handleImportCall) {
     compilationStartTime = new Date().getTime()
   })
 
-  var internalCompile = function (files, target, missingInputs) {
-    gatherImports(files, target, missingInputs, function (error, input) {
+  const internalCompile = (files, target, missingInputs) => {
+    gatherImports(files, target, missingInputs, (error, input) => {
       if (error) {
-        self.lastCompilationResult = null
-        self.event.trigger('compilationFinished', [false, {'error': { formattedMessage: error, severity: 'error' }}, files])
+        this.lastCompilationResult = null
+        this.event.trigger('compilationFinished', [false, {'error': { formattedMessage: error, severity: 'error' }}, files])
       } else {
         compileJSON(input)
       }
     })
   }
 
-  var compile = function (files, target) {
+  const compile = function (files, target) {
     self.event.trigger('compilationStarted', [])
     internalCompile(files, target)
   }
@@ -84,7 +84,7 @@ function Compiler (handleImportCall) {
 
   function onInternalCompilerLoaded () {
     if (worker === null) {
-      var compiler
+      let compiler
       if (typeof (window) === 'undefined') {
         compiler = require('solc')
       } else {
@@ -92,15 +92,15 @@ function Compiler (handleImportCall) {
       }
 
       compileJSON = function (source) {
-        var missingInputs = []
-        var missingInputsCallback = function (path) {
+        const missingInputs = []
+        const missingInputsCallback = function (path) {
           missingInputs.push(path)
           return { error: 'Deferred import' }
         }
 
-        var result
+        let result
         try {
-          var input = compilerInput(source.sources, {optimize: optimize, evmVersion: evmVersion, language: language, target: source.target})
+          const input = compilerInput(source.sources, {optimize: optimize, evmVersion: evmVersion, language: language, target: source.target})
           result = compiler.compile(input, { import: missingInputsCallback })
           result = JSON.parse(result)
         } catch (exception) {
@@ -189,7 +189,7 @@ function Compiler (handleImportCall) {
   }
 
   function compilationFinished (data, missingInputs, source) {
-    var noFatalErrors = true // ie warnings are ok
+    let noFatalErrors = true // ie warnings are ok
 
     function isValidError (error) {
       // The deferred import is not a real error
@@ -236,9 +236,9 @@ function Compiler (handleImportCall) {
   }
 
   // TODO: needs to be changed to be more node friendly
-  this.loadVersion = function (usingWorker, url) {
+  this.loadVersion = (usingWorker, url) => {
     console.log('Loading ' + url + ' ' + (usingWorker ? 'with worker' : 'without worker'))
-    self.event.trigger('loadingCompiler', [url, usingWorker])
+    this.event.trigger('loadingCompiler', [url, usingWorker])
 
     if (worker !== null) {
       worker.terminate()
@@ -261,11 +261,11 @@ function Compiler (handleImportCall) {
       compilationFinished({ error: { formattedMessage: 'Compiler not yet loaded.' } })
     })
 
-    var newScript = document.createElement('script')
+    const newScript = document.createElement('script')
     newScript.type = 'text/javascript'
     newScript.src = url
     document.getElementsByTagName('head')[0].appendChild(newScript)
-    var check = window.setInterval(function () {
+    const check = window.setInterval(function () {
       if (!window.Module) {
         return
       }
@@ -276,21 +276,21 @@ function Compiler (handleImportCall) {
 
   function loadWorker (url) {
     worker = webworkify(require('./compiler-worker.js'))
-    var jobs = []
+    const jobs = []
     worker.addEventListener('message', function (msg) {
-      var data = msg.data
+      const data = msg.data
       switch (data.cmd) {
         case 'versionLoaded':
           onCompilerLoaded(data.data)
           break
         case 'compiled':
-          var result
+          let result
           try {
             result = JSON.parse(data.data)
           } catch (exception) {
             result = { 'error': 'Invalid JSON output from the compiler: ' + exception }
           }
-          var sources = {}
+          let sources = {}
           if (data.job in jobs !== undefined) {
             sources = jobs[data.job].sources
             delete jobs[data.job]
@@ -316,14 +316,14 @@ function Compiler (handleImportCall) {
     // FIXME: This will only match imports if the file begins with one.
     //        It should tokenize by lines and check each.
     // eslint-disable-next-line no-useless-escape
-    var importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g
+    let importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g
 
     for (var fileName in files) {
-      var match
+      let match
       while ((match = importRegex.exec(files[fileName].content))) {
-        var importFilePath = match[1]
+        let importFilePath = match[1]
         if (importFilePath.startsWith('./')) {
-          var path = /(.*\/).*/.exec(fileName)
+          const path = /(.*\/).*/.exec(fileName)
           if (path !== null) {
             importFilePath = importFilePath.replace('./', path[1])
           } else {
@@ -339,7 +339,7 @@ function Compiler (handleImportCall) {
     }
 
     while (importHints.length > 0) {
-      var m = importHints.pop()
+      let m = importHints.pop()
       if (m in files) {
         continue
       }
@@ -362,13 +362,13 @@ function Compiler (handleImportCall) {
   }
 
   function truncateVersion (version) {
-    var tmp = /^(\d+.\d+.\d+)/.exec(version)
+    const tmp = /^(\d+.\d+.\d+)/.exec(version)
     if (tmp) {
       return tmp[1]
     }
     return version
   }
-  
+
   function updateInterface (data) {
     txHelper.visitContracts(data.contracts, (contract) => {
       if (!contract.object.abi) contract.object.abi = []

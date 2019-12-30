@@ -1,22 +1,22 @@
 'use strict'
 
-var parseCode = require('./codeUtils').parseCode
-var util = require('../util')
+const parseCode = require('./codeUtils').parseCode
+const util = require('../util')
 
-var createExpressions = function (instructions) {
-  var expressions = []
-  var labels = 0
-  for (var i = 0; i < instructions.length; i++) {
-    var expr = instructions[i]
+const createExpressions = function (instructions) {
+  const expressions = []
+  let labels = 0
+  for (let i = 0; i < instructions.length; i++) {
+    const expr = instructions[i]
     expr.functional = false
     if (expr.name === 'JUMPDEST') {
       expr.label = 'label' + (++labels)
     } else if (expr.name.slice(0, 3) === 'DUP') {
     } else if (expr.name.slice(0, 4) === 'SWAP') {
     } else if (expr.out <= 1 && expr.in <= expressions.length) {
-      var error = false
-      for (var j = 0; j < expr.in && !error; j++) {
-        var arg = expressions[expressions.length - j - 1]
+      let error = false
+      for (let j = 0; j < expr.in && !error; j++) {
+        const arg = expressions[expressions.length - j - 1]
         if (!arg.functional || arg.out !== 1) {
           error = true
           break
@@ -32,7 +32,7 @@ var createExpressions = function (instructions) {
   return expressions
 }
 
-var toString = function (expr) {
+const toString = function (expr) {
   if (expr.name.slice(0, 4) === 'PUSH') {
     return util.hexConvert(expr.pushData)
   } else if (expr.name === 'JUMPDEST') {
@@ -44,8 +44,8 @@ var toString = function (expr) {
   }
 }
 
-var disassemble = function (input) {
-  var code = parseCode(util.hexToIntArray(input))
+const disassemble = function (input) {
+  const code = parseCode(util.hexToIntArray(input))
   return createExpressions(code).map(toString).join('\n')
 }
 

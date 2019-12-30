@@ -34,7 +34,7 @@ function Storage (prefix) {
   }
 
   this.rename = function (originalName, newName) {
-    var content = this.get(originalName)
+    const content = this.get(originalName)
     if (!this.set(newName, content)) {
       return false
     }

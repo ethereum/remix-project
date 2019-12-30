@@ -1,9 +1,9 @@
 'use strict'
 
-var EventManager = require('../eventManager')
-var traceHelper = require('../helpers/traceHelper')
-var SourceMappingDecoder = require('../sourceMappingDecoder')
-var CodeResolver = require('./codeResolver')
+const EventManager = require('../eventManager')
+const traceHelper = require('../helpers/traceHelper')
+const SourceMappingDecoder = require('../sourceMappingDecoder')
+const CodeResolver = require('./codeResolver')
 
 /*
   resolve contract code referenced by vmtrace in order to be used by asm listview.
@@ -36,15 +36,14 @@ CodeManager.prototype.clear = function () {
 CodeManager.prototype.resolveStep = function (stepIndex, tx) {
   if (stepIndex < 0) return
   this.event.trigger('resolvingStep')
-  var self = this
   if (stepIndex === 0) {
-    retrieveCodeAndTrigger(self, tx.to, stepIndex, tx)
+    retrieveCodeAndTrigger(this, tx.to, stepIndex, tx)
   } else {
-    this.traceManager.getCurrentCalledAddressAt(stepIndex, function (error, address) {
+    this.traceManager.getCurrentCalledAddressAt(stepIndex, (error, address) => {
       if (error) {
         console.log(error)
       } else {
-        retrieveCodeAndTrigger(self, address, stepIndex, tx)
+        retrieveCodeAndTrigger(this, address, stepIndex, tx)
       }
     })
   }
@@ -57,13 +56,12 @@ CodeManager.prototype.resolveStep = function (stepIndex, tx) {
  * @param {Function} cb - callback function, return the bytecode
  */
 CodeManager.prototype.getCode = function (address, cb) {
-  const self = this
   if (traceHelper.isContractCreation(address)) {
     var codes = this.codeResolver.getExecutingCodeFromCache(address)
     if (!codes) {
-      this.traceManager.getContractCreationCode(address, function (error, hexCode) {
+      this.traceManager.getContractCreationCode(address, (error, hexCode) => {
         if (!error) {
-          codes = self.codeResolver.cacheExecutingCode(address, hexCode)
+          codes = this.codeResolver.cacheExecutingCode(address, hexCode)
           cb(null, codes)
         }
       })
@@ -71,7 +69,7 @@ CodeManager.prototype.getCode = function (address, cb) {
       cb(null, codes)
     }
   } else {
-    this.codeResolver.resolveCode(address, function (address, code) {
+    this.codeResolver.resolveCode(address, (address, code) => {
       cb(null, code)
     })
   }
@@ -86,18 +84,17 @@ CodeManager.prototype.getCode = function (address, cb) {
  * @return {Object} return the ast node of the function
  */
 CodeManager.prototype.getFunctionFromStep = function (stepIndex, sourceMap, ast) {
-  var self = this
-  this.traceManager.getCurrentCalledAddressAt(stepIndex, function (error, address) {
+  this.traceManager.getCurrentCalledAddressAt(stepIndex, (error, address) => {
     if (error) {
       console.log(error)
       return { error: 'Cannot retrieve current address for ' + stepIndex }
     } else {
-      self.traceManager.getCurrentPC(stepIndex, function (error, pc) {
+      this.traceManager.getCurrentPC(stepIndex, (error, pc) => {
         if (error) {
           console.log(error)
           return { error: 'Cannot retrieve current PC for ' + stepIndex }
         } else {
-          return self.getFunctionFromPC(address, pc, sourceMap, ast)
+          return this.getFunctionFromPC(address, pc, sourceMap, ast)
         }
       })
     }
@@ -112,13 +109,12 @@ CodeManager.prototype.getFunctionFromStep = function (stepIndex, sourceMap, ast)
  * @param {Function} callback - instruction index
  */
 CodeManager.prototype.getInstructionIndex = function (address, step, callback) {
-  const self = this
-  this.traceManager.getCurrentPC(step, function (error, pc) {
+  this.traceManager.getCurrentPC(step, (error, pc) => {
     if (error) {
       console.log(error)
       callback('Cannot retrieve current PC for ' + step, null)
     } else {
-      var itemIndex = self.codeResolver.getInstructionIndex(address, pc)
+      const itemIndex = this.codeResolver.getInstructionIndex(address, pc)
       callback(null, itemIndex)
     }
   })
@@ -134,12 +130,12 @@ CodeManager.prototype.getInstructionIndex = function (address, step, callback) {
  * @return {Object} return the ast node of the function
  */
 CodeManager.prototype.getFunctionFromPC = function (address, pc, sourceMap, ast) {
-  var instIndex = this.codeResolver.getInstructionIndex(address, pc)
+  const instIndex = this.codeResolver.getInstructionIndex(address, pc)
   return SourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', instIndex, sourceMap, ast)
 }
 
 function retrieveCodeAndTrigger (codeMananger, address, stepIndex, tx) {
-  codeMananger.getCode(address, function (error, result) {
+  codeMananger.getCode(address, (error, result) => {
     if (!error) {
       retrieveIndexAndTrigger(codeMananger, address, stepIndex, result.instructions)
     } else {
@@ -149,7 +145,7 @@ function retrieveCodeAndTrigger (codeMananger, address, stepIndex, tx) {
 }
 
 function retrieveIndexAndTrigger (codeMananger, address, step, code) {
-  codeMananger.getInstructionIndex(address, step, function (error, result) {
+  codeMananger.getInstructionIndex(address, step, (error, result) => {
     if (!error) {
       codeMananger.event.trigger('changed', [code, address, result])
     } else {

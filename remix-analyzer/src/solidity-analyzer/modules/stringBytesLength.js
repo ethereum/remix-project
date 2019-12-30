@@ -1,7 +1,7 @@
-var name = 'String Length: '
-var desc = 'Bytes length != String length'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
+const name = 'String Length: '
+const desc = 'Bytes length != String length'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
 
 function stringBytesLength () {
   this.stringToBytesConversions = []
@@ -31,4 +31,3 @@ module.exports = {
   category: categories.MISC,
   Module: stringBytesLength
 }
-

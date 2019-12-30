@@ -1,7 +1,7 @@
-var name = 'Gas costs: '
-var desc = 'Warn if the gas requirements of functions are too high.'
-var categories = require('./categories')
-var algo = require('./algorithmCategories')
+const name = 'Gas costs: '
+const desc = 'Warn if the gas requirements of functions are too high.'
+const categories = require('./categories')
+const algo = require('./algorithmCategories')
 
 function gasCosts () {
 }
@@ -13,15 +13,15 @@ function gasCosts () {
   */
   // @TODO has been copied from remix-ide repo ! should fix that soon !
 function visitContracts (contracts, cb) {
-  for (var file in contracts) {
-    for (var name in contracts[file]) {
+  for (let file in contracts) {
+    for (let name in contracts[file]) {
       if (cb({ name: name, object: contracts[file][name], file: file })) return
     }
   }
 }
 
 gasCosts.prototype.report = function (compilationResults) {
-  var report = []
+  const report = []
   visitContracts(compilationResults.contracts, (contract) => {
     if (
       !contract.object.evm.gasEstimates ||
@@ -29,7 +29,7 @@ gasCosts.prototype.report = function (compilationResults) {
     ) {
       return
     }
-    var fallback = contract.object.evm.gasEstimates.external['']
+    const fallback = contract.object.evm.gasEstimates.external['']
     if (fallback !== undefined) {
       if (fallback === null || fallback >= 2100 || fallback === 'infinite') {
         report.push({
@@ -43,8 +43,8 @@ gasCosts.prototype.report = function (compilationResults) {
       if (functionName === '') {
         continue
       }
-      var gas = contract.object.evm.gasEstimates.external[functionName]
-      var gasString = gas === null ? 'unknown or not constant' : 'high: ' + gas
+      const gas = contract.object.evm.gasEstimates.external[functionName]
+      const gasString = gas === null ? 'unknown or not constant' : 'high: ' + gas
       if (gas === null || gas >= 3000000 || gas === 'infinite') {
         report.push({
           warning: `Gas requirement of function ${contract.name}.${functionName} ${gasString}. 
