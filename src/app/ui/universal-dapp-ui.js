@@ -10,7 +10,6 @@ var copyToClipboard = require('./copy-to-clipboard')
 var css = require('../../universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 var remixLib = require('remix-lib')
-var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 
 var confirmDialog = require('./confirmDialog')
@@ -189,8 +188,6 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
       logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
     }
 
-    var value = inputsValues
-
     const confirmationCb = self.getConfirmationCb(modalDialog, confirmDialog)
     const continueCb = (error, continueTxExecution, cancelCb) => {
       if (error) {
@@ -215,7 +212,8 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
       }
     }
 
-    const outputCb = (decoded) => {
+    const outputCb = (returnValue) => {
+      const decoded = decodeResponseToTreeView(returnValue, args.funABI)
       outputOverride.innerHTML = ''
       outputOverride.appendChild(decoded)
     }
@@ -224,42 +222,8 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
       modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
 
-    // contractsDetails is used to resolve libraries
-    txFormat.buildData(args.contractName, args.contractAbi, {}, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
-      if (!error) {
-        if (!lookupOnly) {
-          self.logCallback(`${logMsg} pending ... `)
-        } else {
-          self.logCallback(`${logMsg}`)
-        }
-        if (args.funABI.type === 'fallback') data.dataHex = value
-        self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
-          if (!error) {
-            var isVM = self.executionContext.isVM()
-            if (isVM) {
-              var vmError = txExecution.checkVMError(txResult)
-              if (vmError.error) {
-                self.logCallback(`${logMsg} errored: ${vmError.message} `)
-                return
-              }
-            }
-            if (lookupOnly) {
-              const decoded = decodeResponseToTreeView(self.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result), args.funABI)
-              outputCb(decoded)
-            }
-          } else {
-            self.logCallback(`${logMsg} errored: ${error} `)
-          }
-        })
-      } else {
-        self.logCallback(`${logMsg} errored: ${error} `)
-      }
-    }, (msg) => {
-      self.logCallback(msg)
-    }, (data, runTxCallback) => {
-      // called for libraries deployment
-      self.udapp.runTx(data, confirmationCb, runTxCallback)
-    })
+    const callType = args.funABI.type !== 'fallback' ? inputsValues : ''
+    self.blockchain.runOrCallContractMethod(args.contractName, args.contractAbi, args.funABI, inputsValues, args.address, callType, lookupOnly, logMsg, self.logCallback, outputCb, confirmationCb, continueCb, promptCb)
   }
 
   const multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
