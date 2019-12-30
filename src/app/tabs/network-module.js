@@ -1,4 +1,3 @@
-const executionContext = require('../../execution-context')
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
@@ -15,10 +14,11 @@ export const profile = {
 // - methods: ['getNetworkProvider', 'getEndpoint', 'detectNetwork', 'addNetwork', 'removeNetwork']
 
 export class NetworkModule extends Plugin {
-  constructor () {
+  constructor (executionContext) {
     super(profile)
+    this.executionContext = executionContext
     // TODO: See with remix-lib to make sementic coherent
-    executionContext.event.register('contextChanged', (provider) => {
+    this.executionContext.event.register('contextChanged', (provider) => {
       this.emit('providerChanged', provider)
     })
     /*
@@ -37,13 +37,13 @@ export class NetworkModule extends Plugin {
 
   /** Return the current network provider (web3, vm, injected) */
   getNetworkProvider () {
-    return executionContext.getProvider()
+    return this.executionContext.getProvider()
   }
 
   /** Return the current network */
   detectNetwork () {
     return new Promise((resolve, reject) => {
-      executionContext.detectNetwork((error, network) => {
+      this.executionContext.detectNetwork((error, network) => {
         error ? reject(error) : resolve(network)
       })
     })
@@ -51,20 +51,20 @@ export class NetworkModule extends Plugin {
 
   /** Return the url only if network provider is 'web3' */
   getEndpoint () {
-    const provider = executionContext.getProvider()
+    const provider = this.executionContext.getProvider()
     if (provider !== 'web3') {
       throw new Error('no endpoint: current provider is either injected or vm')
     }
-    return executionContext.web3().currentProvider.host
+    return this.executionContext.web3().currentProvider.host
   }
 
   /** Add a custom network to the list of available networks */
   addNetwork (customNetwork) {
-    executionContext.addProvider(customNetwork)
+    this.executionContext.addProvider(customNetwork)
   }
 
   /** Remove a network to the list of availble networks */
   removeNetwork (name) {
-    executionContext.removeProvider(name)
+    this.executionContext.removeProvider(name)
   }
 }

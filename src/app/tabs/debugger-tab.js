@@ -21,9 +21,10 @@ const profile = {
 
 class DebuggerTab extends ViewPlugin {
 
-  constructor () {
+  constructor (executionContext) {
     super(profile)
     this.el = null
+    this.executionContext = executionContext
   }
 
   render () {
@@ -33,7 +34,7 @@ class DebuggerTab extends ViewPlugin {
       <div class="${css.debuggerTabView}" id="debugView">
         <div id="debugger" class="${css.debugger}"></div>
       </div>`
-    this.debuggerUI = new DebuggerUI(this.el.querySelector('#debugger'))
+    this.debuggerUI = new DebuggerUI(this.el.querySelector('#debugger'), this.executionContext)
     return this.el
   }
 

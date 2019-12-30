@@ -8,9 +8,11 @@ var modalDialog = require('../../ui/modaldialog')
 var MultiParamManager = require('../../ui/multiParamManager')
 
 class ContractDropdownUI {
-  constructor (dropdownLogic, logCallback) {
+  constructor (blockchain, dropdownLogic, logCallback, runView) {
+    this.blockchain = blockchain
     this.dropdownLogic = dropdownLogic
     this.logCallback = logCallback
+    this.runView = runView
     this.event = new EventManager()
 
     this.listenToEvents()
@@ -39,8 +41,6 @@ class ContractDropdownUI {
         document.querySelector(`.${css.contractNames}`).classList.add(css.contractNamesError)
       }
     })
-
-    this.dropdownLogic.event.register('currentFileChanged', this.changeCurrentFile.bind(this))
   }
 
   render () {
@@ -108,8 +108,9 @@ class ContractDropdownUI {
     }
 
     const selectedContract = this.getSelectedContract()
-    const clickCallback = (valArray, inputsValues) => {
-      this.createInstance(inputsValues)
+    const clickCallback = async (valArray, inputsValues) => {
+      var selectedContract = this.getSelectedContract()
+      this.createInstance(selectedContract, inputsValues)
     }
     const createConstructorInstance = new MultiParamManager(
       0,
@@ -130,9 +131,7 @@ class ContractDropdownUI {
     return this.dropdownLogic.getSelectedContract(contractName, compilerAtributeName)
   }
 
-  createInstance (args) {
-    var selectedContract = this.getSelectedContract()
-
+  async createInstance (selectedContract, args) {
     if (selectedContract.bytecodeObject.length === 0) {
       return modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
     }
@@ -177,6 +176,16 @@ class ContractDropdownUI {
       this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
     }
 
+    let contractMetadata
+    try {
+      contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name)
+    } catch (error) {
+      return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+    }
+
+    const compilerContracts = this.dropdownLogic.getCompilerContracts()
+    const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
+
     if (selectedContract.isOverSizeLimit()) {
       return modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
       More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
@@ -184,7 +193,7 @@ class ContractDropdownUI {
         {
           label: 'Force Send',
           fn: () => {
-            this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, finalCb)
+            this.blockchain.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
           }}, {
             label: 'Cancel',
             fn: () => {
@@ -192,7 +201,38 @@ class ContractDropdownUI {
             }
           })
     }
-    this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, finalCb)
+    this.blockchain.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
+  }
+
+  getConfirmationCb (modalDialog, confirmDialog) {
+    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      if (network.name !== 'Main') {
+        return continueTxExecution(null)
+      }
+      const amount = this.dropdownLogic.fromWei(tx.value, true, 'ether')
+      const content = confirmDialog(tx, amount, gasEstimation, null, this.dropdownLogic.determineGasFees(tx), this.blockchain.determineGasPrice)
+
+      modalDialog('Confirm transaction', content,
+        { label: 'Confirm',
+          fn: () => {
+            this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+            // TODO: check if this is check is still valid given the refactor
+            if (!content.gasPriceStatus) {
+              cancelCb('Given gas price is not correct')
+            } else {
+              var gasPrice = this.dropdownLogic.toWei(content.querySelector('#gasprice').value, 'gwei')
+              continueTxExecution(gasPrice)
+            }
+          }}, {
+            label: 'Cancel',
+            fn: () => {
+              return cancelCb('Transaction canceled by user.')
+            }
+          }
+      )
+    }
+
+    return confirmationCb
   }
 
   loadFromAddress () {
@@ -215,7 +255,6 @@ class ContractDropdownUI {
       }
     )
   }
-
 }
 
 module.exports = ContractDropdownUI

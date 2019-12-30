@@ -8,7 +8,6 @@ var remixLib = require('remix-lib')
 
 var EventManager = require('../../lib/events')
 var helper = require('../../lib/helper')
-var executionContext = require('../../execution-context')
 var modalDialog = require('./modal-dialog-custom')
 var typeConversion = remixLib.execution.typeConversion
 var globlalRegistry = require('../../global/registry')
@@ -117,7 +116,7 @@ var css = csjs`
   *
   */
 class TxLogger {
-  constructor (eventsDecoder, txListener, terminal) {
+  constructor (eventsDecoder, txListener, terminal, executionContext) {
     this.event = new EventManager()
     this.seen = {}
     function filterTx (value, query) {
@@ -140,7 +139,7 @@ class TxLogger {
       if (data.tx.isCall) {
         el = renderCall(this, data)
       } else {
-        el = renderKnownTransaction(this, data)
+        el = renderKnownTransaction(this, data, executionContext)
       }
       this.seen[data.tx.hash] = el
       append(el)
@@ -149,7 +148,7 @@ class TxLogger {
     this.logUnknownTX = this.terminal.registerCommand('unknownTransaction', (args, cmds, append) => {
       // triggered for transaction AND call
       var data = args[0]
-      var el = renderUnknownTransaction(this, data)
+      var el = renderUnknownTransaction(this, data, executionContext)
       append(el)
     }, { activate: false, filterFn: filterTx })
 
@@ -205,7 +204,7 @@ function log (self, tx, receipt) {
   }
 }
 
-function renderKnownTransaction (self, data) {
+function renderKnownTransaction (self, data, executionContext) {
   var from = data.tx.from
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to}
@@ -214,7 +213,7 @@ function renderKnownTransaction (self, data) {
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt, txType)}
-        ${context(self, {from, to, data})}
+        ${context(self, {from, to, data}, executionContext)}
         <div class=${css.buttons}>
           <button class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
@@ -251,7 +250,7 @@ function renderCall (self, data) {
   return tx
 }
 
-function renderUnknownTransaction (self, data) {
+function renderUnknownTransaction (self, data, executionContext) {
   var from = data.tx.from
   var to = data.tx.to
   var obj = {from, to}
@@ -260,7 +259,7 @@ function renderUnknownTransaction (self, data) {
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt || data.tx, txType)}
-        ${context(self, {from, to, data})}
+        ${context(self, {from, to, data}, executionContext)}
         <div class=${css.buttons}>
           <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
@@ -291,7 +290,7 @@ function checkTxStatus (tx, type) {
   }
 }
 
-function context (self, opts) {
+function context (self, opts, executionContext) {
   var data = opts.data || ''
   var from = opts.from ? helper.shortenHexData(opts.from) : ''
   var to = opts.to
