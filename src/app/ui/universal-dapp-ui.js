@@ -4,14 +4,12 @@
 var $ = require('jquery')
 var yo = require('yo-yo')
 var ethJSUtil = require('ethereumjs-util')
-var Web3 = require('web3')
 var BN = ethJSUtil.BN
 var helper = require('../../lib/helper')
 var copyToClipboard = require('./copy-to-clipboard')
 var css = require('../../universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 var remixLib = require('remix-lib')
-var typeConversion = remixLib.execution.typeConversion
 var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 
@@ -20,7 +18,8 @@ var modalCustom = require('./modal-dialog-custom')
 var modalDialog = require('./modaldialog')
 var TreeView = require('./TreeView')
 
-function UniversalDAppUI (udapp, logCallback, executionContext) {
+function UniversalDAppUI (blockchain, udapp, logCallback, executionContext) {
+  this.blockchain = blockchain
   this.udapp = udapp
   this.logCallback = logCallback
   this.compilerData = {contractsDetails: {}}
@@ -139,6 +138,39 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   return instance
 }
 
+UniversalDAppUI.prototype.getConfirmationCb = function (modalDialog, confirmDialog) {
+  const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+    if (network.name !== 'Main') {
+      return continueTxExecution(null)
+    }
+    const amount = this.blockchain.fromWei(tx.value, true, 'ether')
+    const content = confirmDialog(tx, amount, gasEstimation, null, this.blockchain.determineGasFees(tx), this.blockchain.determineGasPrice)
+
+    modalDialog('Confirm transaction', content,
+      {
+        label: 'Confirm',
+        fn: () => {
+          this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+          // TODO: check if this is check is still valid given the refactor
+          if (!content.gasPriceStatus) {
+            cancelCb('Given gas price is not correct')
+          } else {
+            var gasPrice = this.blockchain.toWei(content.querySelector('#gasprice').value, 'gwei')
+            continueTxExecution(gasPrice)
+          }
+        }
+      }, {
+        label: 'Cancel',
+        fn: () => {
+          return cancelCb('Transaction canceled by user.')
+        }
+      }
+    )
+  }
+
+  return confirmationCb
+}
+
 // TODO this is used by renderInstance when a new instance is displayed.
 // this returns a DOM element.
 UniversalDAppUI.prototype.getCallButton = function (args) {
@@ -159,66 +191,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
 
     var value = inputsValues
 
-    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-      if (network.name !== 'Main') {
-        return continueTxExecution(null)
-      }
-      var amount = Web3.utils.fromWei(typeConversion.toInt(tx.value), 'ether')
-      var content = confirmDialog(tx, amount, gasEstimation, self.udapp,
-        (gasPrice, cb) => {
-          let txFeeText, priceStatus
-          // TODO: this try catch feels like an anti pattern, can/should be
-          // removed, but for now keeping the original logic
-          try {
-            var fee = Web3.utils.toBN(tx.gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), 'gwei')))
-            txFeeText = ' ' + Web3.utils.fromWei(fee.toString(10), 'ether') + ' Ether'
-            priceStatus = true
-          } catch (e) {
-            txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-            priceStatus = false
-          }
-          cb(txFeeText, priceStatus)
-        },
-        (cb) => {
-          self.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-            const warnMessage = ' Please fix this issue before sending any transaction. '
-            if (error) {
-              return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-            }
-            try {
-              var gasPriceValue = Web3.utils.fromWei(gasPrice.toString(10), 'gwei')
-              cb(null, gasPriceValue)
-            } catch (e) {
-              cb(warnMessage + e.message, null, false)
-            }
-          })
-        }
-      )
-      modalDialog(
-        'Confirm transaction',
-        content,
-        { label: 'Confirm',
-          fn: () => {
-            self.udapp.config.setUnpersistedProperty(
-              'doNotShowTransactionConfirmationAgain',
-              content.querySelector('input#confirmsetting').checked
-            )
-            // TODO: check if this is check is still valid given the refactor
-            if (!content.gasPriceStatus) {
-              cancelCb('Given gas price is not correct')
-            } else {
-              var gasPrice = Web3.utils.toWei(content.querySelector('#gasprice').value, 'gwei')
-              continueTxExecution(gasPrice)
-            }
-          }}, {
-            label: 'Cancel',
-            fn: () => {
-              return cancelCb('Transaction canceled by user.')
-            }
-          }
-        )
-    }
-
+    const confirmationCb = self.getConfirmationCb(modalDialog, confirmDialog)
     const continueCb = (error, continueTxExecution, cancelCb) => {
       if (error) {
         const msg = typeof error !== 'string' ? error.message : error
