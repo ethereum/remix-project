@@ -4,6 +4,7 @@ import * as packageJson from '../../../package.json'
 const $ = require('jquery')
 const yo = require('yo-yo')
 const ethJSUtil = require('ethereumjs-util')
+const Web3 = require('web3')
 const EventManager = require('../../lib/events')
 const Card = require('../ui/card')
 
@@ -63,7 +64,7 @@ export class RunTab extends LibraryPlugin {
           if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
             unit = selectedUnit
           }
-          cb(null, executionContext.web3().utils.toWei(number, unit))
+          cb(null, Web3.utils.toWei(number, unit))
         } catch (e) {
           cb(e)
         }
