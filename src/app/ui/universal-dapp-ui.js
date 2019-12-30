@@ -10,7 +10,6 @@ var copyToClipboard = require('./copy-to-clipboard')
 var css = require('../../universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 var remixLib = require('remix-lib')
-var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 var TreeView = require('./TreeView')
 var txCallBacks = require('./sendTxCallbacks')
@@ -232,55 +231,20 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
 }
 
 UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, inputsValues, outputOverride) {
-  let self = this
   const functionName = args.funABI.type === 'function' ? args.funABI.name : `(${args.funABI.type})`
   const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${args.contractName}.${functionName}`
 
-  var value = inputsValues
+  const callbacksInContext = txCallBacks.getCallBacksWithContext(this, this.executionContext)
 
-  const outputCb = (decoded) => {
+  const outputCb = (returnValue) => {
     if (outputOverride) {
+      const decoded = decodeResponseToTreeView(returnValue, args.funABI)
       outputOverride.innerHTML = ''
       outputOverride.appendChild(decoded)
     }
   }
-  // contractsDetails is used to resolve libraries
-  const callbacksInContext = txCallBacks.getCallBacksWithContext(self, self.executionContext)
-  txFormat.buildData(args.contractName, args.contractABI, {}, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
-    if (!error) {
-      if (!lookupOnly) {
-        self.logCallback(`${logMsg} pending ... `)
-      } else {
-        self.logCallback(`${logMsg}`)
-      }
-      if (args.funABI.type === 'fallback') data.dataHex = value
-      self.udapp.callFunction(args.address, data, args.funABI, callbacksInContext.confirmationCb.bind(callbacksInContext), callbacksInContext.continueCb.bind(callbacksInContext), callbacksInContext.promptCb.bind(callbacksInContext), (error, txResult) => {
-        if (!error) {
-          var isVM = self.executionContext.isVM()
-          if (isVM) {
-            var vmError = txExecution.checkVMError(txResult)
-            if (vmError.error) {
-              self.logCallback(`${logMsg} errored: ${vmError.message} `)
-              return
-            }
-          }
-          if (lookupOnly) {
-            const decoded = decodeResponseToTreeView(self.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result), args.funABI)
-            outputCb(decoded)
-          }
-        } else {
-          self.logCallback(`${logMsg} errored: ${error} `)
-        }
-      })
-    } else {
-      self.logCallback(`${logMsg} errored: ${error} `)
-    }
-  }, (msg) => {
-    self.logCallback(msg)
-  }, (data, runTxCallback) => {
-    // called for libraries deployment
-    self.udapp.runTx(data, callbacksInContext.confirmationCb.bind(callbacksInContext), runTxCallback)
-  })
+  const params = args.funABI.type !== 'fallback' ? inputsValues : ''
+  this.blockchain.runOrCallContractMethod(args.contractName, args.contractAbi, args.funABI, inputsValues, args.address, params, lookupOnly, logMsg, this.logCallback, outputCb, callbacksInContext)
 }
 
 module.exports = UniversalDAppUI
