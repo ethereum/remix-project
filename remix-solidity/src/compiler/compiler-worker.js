@@ -1,13 +1,13 @@
 'use strict'
 
-var solc = require('solc/wrapper')
+const solc = require('solc/wrapper')
 
-var compileJSON = function () { return '' }
-var missingInputs = []
+let compileJSON = function () { return '' }
+const missingInputs = []
 
 module.exports = function (self) {
-  self.addEventListener('message', function (e) {
-    var data = e.data
+  self.addEventListener('message', (e) => {
+    const data = e.data
     switch (data.cmd) {
       case 'loadVersion':
         delete self.Module
@@ -18,7 +18,7 @@ module.exports = function (self) {
 
         self.importScripts(data.data)
 
-        var compiler = solc(self.Module)
+        const compiler = solc(self.Module)
 
         compileJSON = function (input) {
           try {

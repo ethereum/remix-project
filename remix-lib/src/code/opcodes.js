@@ -1,5 +1,5 @@
 'use strict'
-var codes = {
+const codes = {
   // 0x0 range - arithmetic ops
   // name, baseCost, off stack, on stack, dynamic, async
   // @todo can be improved on basis of this: https://github.com/ethereumjs/ethereumjs-vm/blob/master/lib/evm/opcodes.ts
@@ -168,8 +168,8 @@ var codes = {
 }
 
 module.exports = function (op, full) {
-  var code = codes[op] ? codes[op] : ['INVALID', 0, 0, 0, false, false]
-  var opcode = code[0]
+  const code = codes[op] ? codes[op] : ['INVALID', 0, 0, 0, false, false]
+  let opcode = code[0]
 
   if (full) {
     if (opcode === 'LOG') {

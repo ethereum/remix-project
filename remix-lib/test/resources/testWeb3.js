@@ -1,9 +1,9 @@
 'use strict'
-var init = require('../init')
-var web3Override = {}
+const init = require('../init')
+const web3Override = {}
 web3Override.eth = {}
 web3Override.debug = {}
-var data = init.readFile(require('path').resolve(__dirname, 'testWeb3.json'))
+let data = init.readFile(require('path').resolve(__dirname, 'testWeb3.json'))
 data = JSON.parse(data)
 
 web3Override.eth.getCode = function (address, callback) {

@@ -1,8 +1,8 @@
-var name = 'Delete on dynamic Array: '
-var desc = 'Use require and appropriately'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var algo = require('./algorithmCategories')
+const name = 'Delete on dynamic Array: '
+const desc = 'Use require and appropriately'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const algo = require('./algorithmCategories')
 
 function deleteDynamicArrays () {
   this.rel = []
