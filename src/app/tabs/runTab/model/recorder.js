@@ -2,7 +2,6 @@ var async = require('async')
 var ethutil = require('ethereumjs-util')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var executionContext = remixLib.execution.executionContext
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
 var typeConversion = remixLib.execution.typeConversion
@@ -15,9 +14,10 @@ var Web3 = require('web3')
   *
   */
 class Recorder {
-  constructor (udapp, fileManager, config) {
+  constructor (executionContext, udapp, fileManager, config) {
     var self = this
     self.event = new EventManager()
+    self.executionContext = executionContext
     self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
     this.udapp = udapp
     this.fileManager = fileManager
@@ -74,7 +74,7 @@ class Recorder {
       if (error) return console.log(error)
       if (call) return
 
-      const rawAddress = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+      const rawAddress = this.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
       if (!rawAddress) return // not a contract creation
       const stringAddress = this.addressToString(rawAddress)
       const address = ethutil.toChecksumAddress(stringAddress)
@@ -82,7 +82,7 @@ class Recorder {
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address
     })
-    executionContext.event.register('contextChanged', this.clearAll.bind(this))
+    this.executionContext.event.register('contextChanged', this.clearAll.bind(this))
     this.event.register('newTxRecorded', (count) => {
       this.event.trigger('recorderCountChange', [count])
     })
@@ -261,7 +261,7 @@ class Recorder {
             console.error(err)
             logCallBack(err + '. Execution failed at ' + index)
           } else {
-            const rawAddress = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+            const rawAddress = self.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
             if (rawAddress) {
               const stringAddress = self.addressToString(rawAddress)
               const address = ethutil.toChecksumAddress(stringAddress)
@@ -335,7 +335,7 @@ class Recorder {
             cb(txFeeText, priceStatus)
           },
           (cb) => {
-            executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+            this.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
               var warnMessage = ' Please fix this issue before sending any transaction. '
               if (error) {
                 return cb('Unable to retrieve the current network gas price.' + warnMessage + error)

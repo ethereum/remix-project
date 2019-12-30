@@ -1,12 +1,11 @@
 var registry = require('../../global/registry')
 var remixLib = require('remix-lib')
 var yo = require('yo-yo')
-var executionContext = remixLib.execution.executionContext
 var Txlistener = remixLib.execution.txListener
 var EventsDecoder = remixLib.execution.EventsDecoder
 var TransactionReceiptResolver = require('../../lib/transactionReceiptResolver')
 
-export function makeUdapp (udapp, compilersArtefacts, logHtmlCallback) {
+export function makeUdapp (udapp, executionContext, compilersArtefacts, logHtmlCallback) {
   // ----------------- UniversalDApp -----------------
   // TODO: to remove when possible
   udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
@@ -15,7 +14,7 @@ export function makeUdapp (udapp, compilersArtefacts, logHtmlCallback) {
   })
 
   // ----------------- Tx listener -----------------
-  const transactionReceiptResolver = new TransactionReceiptResolver()
+  const transactionReceiptResolver = new TransactionReceiptResolver(executionContext)
 
   const txlistener = new Txlistener({
     api: {
@@ -29,7 +28,7 @@ export function makeUdapp (udapp, compilersArtefacts, logHtmlCallback) {
     },
     event: {
       udapp: udapp.event
-    }})
+    }}, executionContext)
   registry.put({api: txlistener, name: 'txlistener'})
   udapp.startListening(txlistener)
 

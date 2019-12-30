@@ -320,7 +320,7 @@ class SettingsUI {
         this.netUI.innerHTML = 'can\'t detect network '
         return
       }
-      let network = this._components.networkModule.getNetworkProvider
+      let network = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
       this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
     })
     this.fillAccountsList()

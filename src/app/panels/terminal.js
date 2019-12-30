@@ -10,7 +10,6 @@ var Web3 = require('web3')
 var swarmgw = require('swarmgw')()
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
-var executionContext = require('../../execution-context')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
 var TxLogger = require('../../app/ui/txLogger')
 
@@ -42,6 +41,7 @@ class Terminal extends Plugin {
     super(profile)
     var self = this
     self.event = new EventManager()
+    self.executionContext = opts.executionContext
     self._api = api
     self._opts = opts
     self.data = {
@@ -52,7 +52,7 @@ class Terminal extends Plugin {
     }
     self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     self._components = {}
-    self._components.cmdInterpreter = new CommandInterpreterAPI(this)
+    self._components.cmdInterpreter = new CommandInterpreterAPI(this, null, self.executionContext)
     self._components.autoCompletePopup = new AutoCompletePopup(self._opts)
     self._components.autoCompletePopup.event.register('handleSelect', function (input) {
       let textList = self._view.input.innerText.split(' ')
@@ -437,7 +437,7 @@ class Terminal extends Plugin {
     self._shell('remix.help()', self.commands, () => {})
     self.commands.html(intro)
 
-    self._components.txLogger = new TxLogger(self._opts.eventsDecoder, self._opts.txListener, this)
+    self._components.txLogger = new TxLogger(self._opts.eventsDecoder, self._opts.txListener, this, self.executionContext)
     self._components.txLogger.event.register('debuggingRequested', (hash) => {
       // TODO should probably be in the run module
       if (!self._opts.appManager.isActive('debugger')) self._opts.appManager.activateOne('debugger')
@@ -668,7 +668,7 @@ class Terminal extends Plugin {
       return done(null, 'This type of command has been deprecated and is not functionning anymore. Please run remix.help() to list available commands.')
     }
     var self = this
-    var context = domTerminalFeatures(self, scopedCommands)
+    var context = domTerminalFeatures(self, scopedCommands, self.executionContext)
     try {
       var cmds = vm.createContext(Object.assign(self._jsSandboxContext, context, self._jsSandboxRegistered))
       var result = vm.runInContext(script, cmds)
@@ -680,7 +680,7 @@ class Terminal extends Plugin {
   }
 }
 
-function domTerminalFeatures (self, scopedCommands) {
+function domTerminalFeatures (self, scopedCommands, executionContext) {
   return {
     swarmgw,
     ethers,
