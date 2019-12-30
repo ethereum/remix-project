@@ -4,6 +4,7 @@
 var $ = require('jquery')
 var yo = require('yo-yo')
 var ethJSUtil = require('ethereumjs-util')
+var Web3 = require('web3')
 var BN = ethJSUtil.BN
 var helper = require('../../lib/helper')
 var copyToClipboard = require('./copy-to-clipboard')
@@ -163,15 +164,15 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
       }
-      var amount = executionContext.web3().utils.fromWei(typeConversion.toInt(tx.value), 'ether')
+      var amount = Web3.utils.fromWei(typeConversion.toInt(tx.value), 'ether')
       var content = confirmDialog(tx, amount, gasEstimation, self.udapp,
         (gasPrice, cb) => {
           let txFeeText, priceStatus
           // TODO: this try catch feels like an anti pattern, can/should be
           // removed, but for now keeping the original logic
           try {
-            var fee = executionContext.web3().utils.toBN(tx.gas).mul(executionContext.web3().utils.toBN(executionContext.web3().utils.toWei(gasPrice.toString(10), 'gwei')))
-            txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+            var fee = Web3.utils.toBN(tx.gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), 'gwei')))
+            txFeeText = ' ' + Web3.utils.fromWei(fee.toString(10), 'ether') + ' Ether'
             priceStatus = true
           } catch (e) {
             txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
@@ -186,7 +187,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
               return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
             }
             try {
-              var gasPriceValue = executionContext.web3().utils.fromWei(gasPrice.toString(10), 'gwei')
+              var gasPriceValue = Web3.utils.fromWei(gasPrice.toString(10), 'gwei')
               cb(null, gasPriceValue)
             } catch (e) {
               cb(warnMessage + e.message, null, false)
@@ -207,7 +208,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
             if (!content.gasPriceStatus) {
               cancelCb('Given gas price is not correct')
             } else {
-              var gasPrice = executionContext.web3().utils.toWei(content.querySelector('#gasprice').value, 'gwei')
+              var gasPrice = Web3.utils.toWei(content.querySelector('#gasprice').value, 'gwei')
               continueTxExecution(gasPrice)
             }
           }}, {
