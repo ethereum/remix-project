@@ -1,5 +1,5 @@
 'use strict'
-var helper = require('../util')
+const helper = require('../util')
 
 function TraceCache () {
   this.init()
@@ -38,7 +38,7 @@ TraceCache.prototype.pushMemoryChanges = function (value) {
 // outOfGas has been removed because gas left logging is apparently made differently
 // in the vm/geth/eth. TODO add the error property (with about the error in all clients)
 TraceCache.prototype.pushCall = function (step, index, address, callStack, reverted) {
-  var validReturnStep = step.op === 'RETURN' || step.op === 'STOP'
+  let validReturnStep = step.op === 'RETURN' || step.op === 'STOP'
   if (validReturnStep || reverted) {
     if (this.currentCall) {
       this.currentCall.call.return = index - 1
@@ -49,7 +49,7 @@ TraceCache.prototype.pushCall = function (step, index, address, callStack, rever
       this.currentCall = parent ? { call: parent.call, parent: parent.parent } : null
     }
   } else {
-    var call = {
+    let call = {
       op: step.op,
       address: address,
       callStack: callStack,
@@ -71,10 +71,10 @@ TraceCache.prototype.pushReturnValue = function (step, value) {
 }
 
 TraceCache.prototype.pushContractCreationFromMemory = function (index, token, trace, lastMemoryChange) {
-  var memory = trace[lastMemoryChange].memory
-  var stack = trace[index].stack
-  var offset = 2 * parseInt(stack[stack.length - 2], 16)
-  var size = 2 * parseInt(stack[stack.length - 3], 16)
+  const memory = trace[lastMemoryChange].memory
+  const stack = trace[index].stack
+  const offset = 2 * parseInt(stack[stack.length - 2], 16)
+  const size = 2 * parseInt(stack[stack.length - 3], 16)
   this.contractCreation[token] = '0x' + memory.join('').substr(offset, size)
 }
 
@@ -98,9 +98,9 @@ TraceCache.prototype.pushStoreChanges = function (index, address, key, value) {
 }
 
 TraceCache.prototype.accumulateStorageChanges = function (index, address, storage) {
-  var ret = Object.assign({}, storage)
+  const ret = Object.assign({}, storage)
   for (var k in this.storageChanges) {
-    var changesIndex = this.storageChanges[k]
+    const changesIndex = this.storageChanges[k]
     if (changesIndex > index) {
       return ret
     }

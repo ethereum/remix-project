@@ -1,5 +1,5 @@
 'use strict'
-var ethutil = require('ethereumjs-util')
+const ethutil = require('ethereumjs-util')
 
 /*
  contains misc util: @TODO should be splitted
@@ -15,9 +15,9 @@ module.exports = {
     ints: IntArray
   */
   hexConvert: function (ints) {
-    var ret = '0x'
-    for (var i = 0; i < ints.length; i++) {
-      var h = ints[i]
+    let ret = '0x'
+    for (let i = 0; i < ints.length; i++) {
+      const h = ints[i]
       if (h) {
         ret += (h <= 0xf ? '0' : '') + h.toString(16)
       } else {
@@ -34,8 +34,8 @@ module.exports = {
     if (hexString.slice(0, 2) === '0x') {
       hexString = hexString.slice(2)
     }
-    var integers = []
-    for (var i = 0; i < hexString.length; i += 2) {
+    const integers = []
+    for (let i = 0; i < hexString.length; i += 2) {
       integers.push(parseInt(hexString.slice(i, i + 2), 16))
     }
     return integers
@@ -45,9 +45,9 @@ module.exports = {
     ints: list of BNs
   */
   hexListFromBNs: function (bnList) {
-    var ret = []
-    for (var k in bnList) {
-      var v = bnList[k]
+    const ret = []
+    for (let k in bnList) {
+      const v = bnList[k]
       if (ethutil.BN.isBN(v)) {
         ret.push('0x' + v.toString('hex', 64))
       } else {
@@ -61,8 +61,8 @@ module.exports = {
     ints: list of IntArrays
   */
   hexListConvert: function (intsList) {
-    var ret = []
-    for (var k in intsList) {
+    const ret = []
+    for (let k in intsList) {
       ret.push(this.hexConvert(intsList[k]))
     }
     return ret
@@ -72,10 +72,10 @@ module.exports = {
     ints: ints: IntArray
   */
   formatMemory: function (mem) {
-    var hexMem = this.hexConvert(mem).substr(2)
-    var ret = []
-    for (var k = 0; k < hexMem.length; k += 32) {
-      var row = hexMem.substr(k, 32)
+    const hexMem = this.hexConvert(mem).substr(2)
+    const ret = []
+    for (let k = 0; k < hexMem.length; k += 32) {
+      const row = hexMem.substr(k, 32)
       ret.push(row)
     }
     return ret
@@ -87,11 +87,11 @@ module.exports = {
     return largest i such that array[i] <= target; return -1 if array[0] > target || array is empty
   */
   findLowerBound: function (target, array) {
-    var start = 0
-    var length = array.length
+    let start = 0
+    let length = array.length
     while (length > 0) {
-      var half = length >> 1
-      var middle = start + half
+      const half = length >> 1
+      const middle = start + half
       if (array[middle] <= target) {
         length = length - 1 - half
         start = middle + 1
@@ -108,7 +108,7 @@ module.exports = {
     return largest array[i] such that array[i] <= target; return null if array[0] > target || array is empty
   */
   findLowerBoundValue: function (target, array) {
-    var index = this.findLowerBound(target, array)
+    const index = this.findLowerBound(target, array)
     return index >= 0 ? array[index] : null
   },
 
@@ -122,13 +122,13 @@ module.exports = {
     if (array.length === 0) {
       return -1
     }
-    var index = this.findLowerBound(target, array)
+    const index = this.findLowerBound(target, array)
     if (index < 0) {
       return 0
     } else if (index >= array.length - 1) {
       return array.length - 1
     } else {
-      var middle = (array[index] + array[index + 1]) / 2
+      const middle = (array[index] + array[index + 1]) / 2
       return target <= middle ? index : index + 1
     }
   },
@@ -161,7 +161,7 @@ module.exports = {
     if (typeof value === 'string' && value.indexOf('0x') !== 0) {
       value = '0x' + value
     }
-    var ret = ethutil.bufferToHex(ethutil.setLengthLeft(value, 32))
+    let ret = ethutil.bufferToHex(ethutil.setLengthLeft(value, 32))
     ret = ethutil.keccak(ret)
     return ethutil.bufferToHex(ret)
   },
@@ -218,7 +218,7 @@ module.exports = {
       // if code2 is not a library, well we still suppose that the comparison remain relevant even if we remove some information from `code1`
       code1 = replaceLibReference(code1, 4)
     }
-    var pos = -1
+    let pos = -1
     while ((pos = code2.search(/__(.*)__/)) !== -1) {
       code2 = replaceLibReference(code2, pos)
       code1 = replaceLibReference(code1, pos)
@@ -240,22 +240,22 @@ function replaceLibReference (code, pos) {
 }
 
 function buildCallPath (index, rootCall) {
-  var ret = []
+  const ret = []
   findCallInternal(index, rootCall, ret)
   return ret
 }
 
 function findCall (index, rootCall) {
-  var ret = buildCallPath(index, rootCall)
+  const ret = buildCallPath(index, rootCall)
   return ret[ret.length - 1]
 }
 
 function findCallInternal (index, rootCall, callsPath) {
-  var calls = Object.keys(rootCall.calls)
-  var ret = rootCall
+  const calls = Object.keys(rootCall.calls)
+  const ret = rootCall
   callsPath.push(rootCall)
-  for (var k in calls) {
-    var subCall = rootCall.calls[calls[k]]
+  for (let k in calls) {
+    let subCall = rootCall.calls[calls[k]]
     if (index >= subCall.start && index <= subCall.return) {
       findCallInternal(index, subCall, callsPath)
       break
@@ -268,7 +268,7 @@ function findCallInternal (index, rootCall, callsPath) {
 function groupBy (arr, key) {
   return arr.reduce((sum, item) => {
     const groupByVal = item[key]
-    var groupedItems = sum[groupByVal] || []
+    const groupedItems = sum[groupByVal] || []
     groupedItems.push(item)
     sum[groupByVal] = groupedItems
     return sum

@@ -1,9 +1,9 @@
-var name = 'no return: '
-var desc = 'Function with return type is not returning'
-var categories = require('./categories')
-var common = require('./staticAnalysisCommon')
-var AbstractAst = require('./abstractAstView')
-var algo = require('./algorithmCategories')
+const name = 'no return: '
+const desc = 'Function with return type is not returning'
+const categories = require('./categories')
+const common = require('./staticAnalysisCommon')
+const AbstractAst = require('./abstractAstView')
+const algo = require('./algorithmCategories')
 
 function noReturn () {
   this.abstractAst = new AbstractAst()
@@ -20,11 +20,11 @@ noReturn.prototype.visit = function () { throw new Error('noReturn.js no visit f
 noReturn.prototype.report = function () { throw new Error('noReturn.js no report function set upon construction') }
 
 function report (contracts, multipleContractsWithSameName) {
-  var warnings = []
+  const warnings = []
 
   contracts.forEach((contract) => {
     contract.functions.filter((func) => common.hasFunctionBody(func.node)).forEach((func) => {
-      var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+      const funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
       if (hasNamedAndUnnamedReturns(func)) {
         warnings.push({
           warning: `${funcName}: Mixing of named and unnamed return parameters is not advised.`,
@@ -51,9 +51,9 @@ function hasReturnStatement (func) {
 }
 
 function hasAssignToAllNamedReturns (func) {
-  var namedReturns = func.returns.filter((n) => n.name.length > 0).map((n) => n.name)
-  var assignedVars = func.relevantNodes.filter(common.isAssignment).map(common.getEffectedVariableName)
-  var diff = namedReturns.filter(e => !assignedVars.includes(e))
+  const namedReturns = func.returns.filter((n) => n.name.length > 0).map((n) => n.name)
+  const assignedVars = func.relevantNodes.filter(common.isAssignment).map(common.getEffectedVariableName)
+  const diff = namedReturns.filter(e => !assignedVars.includes(e))
   return diff.length === 0
 }
 

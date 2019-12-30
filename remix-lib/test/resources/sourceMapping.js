@@ -1,4 +1,4 @@
-var sourceRuntimeMapping = {}
+const sourceRuntimeMapping = {}
 sourceRuntimeMapping.mapping = '0:205:4:-;;;;;;;;;;;;;;;;;;;;;;55:74;;;;;;;;;;;;;;;;;;;;;;;;;;142:61;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;55:74;103:2;99:1;;:6;;;;;120:2;116:1;;:6;;;;;55:74;;;:::o;142:61::-;166:6;174;142:61;;;:::o'
 sourceRuntimeMapping.source = `contract test { 
     int x; 

@@ -1,6 +1,6 @@
 'use strict'
-var ethers = require('ethers')
-var txHelper = require('./txHelper')
+const ethers = require('ethers')
+const txHelper = require('./txHelper')
 
 /**
   * Register to txListener and extract events
@@ -37,17 +37,17 @@ class EventsDecoder {
   }
 
   _eventABI (contract) {
-    var eventABI = {}
-    var abi = new ethers.utils.Interface(contract.abi)
-    for (var e in abi.events) {
-      var event = abi.events[e]
+    const eventABI = {}
+    const abi = new ethers.utils.Interface(contract.abi)
+    for (let e in abi.events) {
+      const event = abi.events[e]
       eventABI[event.topic.replace('0x', '')] = { event: event.name, inputs: event.inputs, object: event, abi: abi }
     }
     return eventABI
   }
 
   _eventsABI (compiledContracts) {
-    var eventsABI = {}
+    const eventsABI = {}
     txHelper.visitContracts(compiledContracts, (contract) => {
       eventsABI[contract.name] = this._eventABI(contract.object)
     })
@@ -55,7 +55,7 @@ class EventsDecoder {
   }
 
   _event (hash, eventsABI) {
-    for (var k in eventsABI) {
+    for (let k in eventsABI) {
       if (eventsABI[k][hash]) {
         return eventsABI[k][hash]
       }
@@ -79,16 +79,16 @@ class EventsDecoder {
   }
 
   _decodeEvents (tx, logs, contractName, compiledContracts, cb) {
-    var eventsABI = this._eventsABI(compiledContracts)
-    var events = []
-    for (var i in logs) {
+    const eventsABI = this._eventsABI(compiledContracts)
+    const events = []
+    for (let i in logs) {
       // [address, topics, mem]
-      var log = logs[i]
-      var topicId = log.topics[0]
-      var eventAbi = this._event(topicId.replace('0x', ''), eventsABI)
+      const log = logs[i]
+      const topicId = log.topics[0]
+      const eventAbi = this._event(topicId.replace('0x', ''), eventsABI)
       if (eventAbi) {
-        var decodedlog = eventAbi.abi.parseLog(log)
-        let decoded = {}
+        const decodedlog = eventAbi.abi.parseLog(log)
+        const decoded = {}
         for (const v in decodedlog.values) {
           decoded[v] = this._stringifyEvent(decodedlog.values[v])
         }

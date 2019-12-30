@@ -9,7 +9,7 @@ module.exports = {
     * @returns contract obj and associated file: { contract, file } or null
     */
   getContract: (contractName, contracts) => {
-    for (var file in contracts) {
+    for (let file in contracts) {
       if (contracts[file][contractName]) {
         return { object: contracts[file][contractName], file: file }
       }
@@ -23,8 +23,8 @@ module.exports = {
     * @param {Function} cb    - callback
     */
   visitContracts: (contracts, cb) => {
-    for (var file in contracts) {
-      for (var name in contracts[file]) {
+    for (let file in contracts) {
+      for (let name in contracts[file]) {
         if (cb({ name: name, object: contracts[file][name], file: file })) return
       }
     }

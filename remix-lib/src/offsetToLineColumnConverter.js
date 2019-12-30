@@ -1,12 +1,12 @@
 'use strict'
-var SourceMappingDecoder = require('./sourceMappingDecoder')
+const SourceMappingDecoder = require('./sourceMappingDecoder')
 
 function offsetToColumnConverter (compilerEvent) {
   this.lineBreakPositionsByContent = {}
   this.sourceMappingDecoder = new SourceMappingDecoder()
   var self = this
   if (compilerEvent) {
-    compilerEvent.register('compilationFinished', function (success, data, source) {
+    compilerEvent.register('compilationFinished', (success, data, source) => {
       self.clear()
     })
   }
@@ -14,8 +14,8 @@ function offsetToColumnConverter (compilerEvent) {
 
 offsetToColumnConverter.prototype.offsetToLineColumn = function (rawLocation, file, sources, asts) {
   if (!this.lineBreakPositionsByContent[file]) {
-    for (var filename in asts) {
-      var source = asts[filename]
+    for (let filename in asts) {
+      const source = asts[filename]
       // source id was string before. in newer versions it has been changed to an integer so we need to check the type here
       if (typeof source.id === 'string') source.id = parseInt(source.id, 10)
       if (source.id === file) {

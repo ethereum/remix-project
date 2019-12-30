@@ -1,5 +1,5 @@
-var Web3VMProvider = require('./web3VmProvider')
-var init = require('../init')
+const Web3VMProvider = require('./web3VmProvider')
+const init = require('../init')
 
 function Web3Providers () {
   this.modes = {}
@@ -7,7 +7,7 @@ function Web3Providers () {
 
 Web3Providers.prototype.addProvider = function (type, obj) {
   if (type === 'INTERNAL') {
-    var web3 = init.loadWeb3()
+    const web3 = init.loadWeb3()
     this.addWeb3(type, web3)
   } else if (type === 'vm') {
     this.addVM(type, obj)
@@ -30,7 +30,7 @@ Web3Providers.prototype.addWeb3 = function (type, web3) {
 }
 
 Web3Providers.prototype.addVM = function (type, vm) {
-  var vmProvider = new Web3VMProvider()
+  const vmProvider = new Web3VMProvider()
   vmProvider.setVM(vm)
   this.modes[type] = vmProvider
 }

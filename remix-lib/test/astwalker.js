@@ -1,12 +1,12 @@
 'use strict'
-var tape = require('tape')
-var AstWalker = require('../src/astWalker')
-var node = require('./resources/ast')
+const tape = require('tape')
+const AstWalker = require('../src/astWalker')
+const node = require('./resources/ast')
 
 tape('ASTWalker', function (t) {
   t.test('ASTWalker.walk', function (st) {
     st.plan(24)
-    var astwalker = new AstWalker()
+    const astwalker = new AstWalker()
 
     astwalker.walk(node.ast.legacyAST, function (node) {
       if (node.name === 'ContractDefinition') {
@@ -18,7 +18,7 @@ tape('ASTWalker', function (t) {
       return true
     })
 
-    var callback = {}
+    const callback = {}
     callback.FunctionDefinition = function (node) {
       st.equal(node.name, 'FunctionDefinition')
       st.equal(node.attributes.name === 'set' || node.attributes.name === 'get', true)
