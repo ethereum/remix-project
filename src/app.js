@@ -23,6 +23,8 @@ var toolTip = require('./app/ui/tooltip')
 var CompilerMetadata = require('./app/files/compiler-metadata')
 var CompilerImport = require('./app/compiler/compiler-imports')
 
+var executionContext = remixLib.execution.executionContext
+
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
 
@@ -222,15 +224,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const fileManager = new FileManager(editor)
   registry.put({api: fileManager, name: 'filemanager'})
   // ----------------- compilation metadata generation servive ----------------------------
-  const compilerMetadataGenerator = new CompilerMetadata(fileManager, registry.get('config').api)
+  const compilerMetadataGenerator = new CompilerMetadata(executionContext, fileManager, registry.get('config').api)
   // ----------------- compilation result service (can keep track of compilation results) ----------------------------
   const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
   registry.put({api: compilersArtefacts, name: 'compilersartefacts'})
   // ----------------- universal dapp: run transaction, listen on transactions, decode events
-  const udapp = new UniversalDApp(registry.get('config').api)
-  const {eventsDecoder, txlistener} = makeUdapp(udapp, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
+  const udapp = new UniversalDApp(registry.get('config').api, executionContext)
+  const {eventsDecoder, txlistener} = makeUdapp(udapp, executionContext, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
   // ----------------- network service (resolve network id / name) ----------------------------
-  const networkModule = new NetworkModule()
+  const networkModule = new NetworkModule(executionContext)
   // ----------------- convert offset to line/column service ----------------------------
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
@@ -248,7 +250,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // LAYOUT & SYSTEM VIEWS
   const appPanel = new MainPanel()
-  const mainview = new MainView(editor, appPanel, fileManager, appManager, txlistener, eventsDecoder)
+  const mainview = new MainView(editor, appPanel, fileManager, appManager, txlistener, eventsDecoder, executionContext)
   registry.put({ api: mainview, name: 'mainview' })
 
   appManager.register([
@@ -293,6 +295,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   )
   const run = new RunTab(
     udapp,
+    executionContext,
     registry.get('config').api,
     registry.get('filemanager').api,
     registry.get('editor').api,
@@ -302,7 +305,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     mainview
   )
   const analysis = new AnalysisTab(registry)
-  const debug = new DebuggerTab()
+  const debug = new DebuggerTab(executionContext)
   const test = new TestTab(
     registry.get('filemanager').api,
     filePanel,

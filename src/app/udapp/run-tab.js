@@ -15,9 +15,9 @@ const Recorder = require('../tabs/runTab/model/recorder.js')
 const RecorderUI = require('../tabs/runTab/recorder.js')
 const DropdownLogic = require('../tabs/runTab/model/dropdownlogic.js')
 const ContractDropdownUI = require('../tabs/runTab/contractDropdown.js')
+const Blockchain = require('../tabs/runTab/model/blockchain.js')
 
 const UniversalDAppUI = require('../ui/universal-dapp-ui')
-const executionContext = require('../../execution-context')
 
 const profile = {
   name: 'udapp',
@@ -35,11 +35,12 @@ const profile = {
 
 export class RunTab extends LibraryPlugin {
 
-  constructor (udapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
+  constructor (udapp, executionContext, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
     super(udapp, profile)
     this.event = new EventManager()
     this.config = config
     this.udapp = udapp
+    this.executionContext = executionContext
     this.fileManager = fileManager
     this.editor = editor
     this.logCallback = (msg) => { mainView.getTerminal().logHtml(msg) }
@@ -49,7 +50,7 @@ export class RunTab extends LibraryPlugin {
   }
 
   onActivationInternal () {
-    this.udappUI = new UniversalDAppUI(this.udapp, this.logCallback)
+    this.udappUI = new UniversalDAppUI(this.udapp, this.logCallback, this.executionContext)
     this.udapp.resetAPI({
       getAddress: (cb) => {
         cb(null, $('#txorigin').val())
@@ -122,7 +123,7 @@ export class RunTab extends LibraryPlugin {
   }
 
   renderSettings (udapp) {
-    var settings = new Settings(udapp)
+    var settings = new Settings(this.executionContext, udapp)
     this.settingsUI = new SettingsUI(settings, this.networkModule)
 
     this.settingsUI.event.register('clearInstance', () => {
@@ -131,8 +132,11 @@ export class RunTab extends LibraryPlugin {
   }
 
   renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
-    const dropdownLogic = new DropdownLogic(fileManager, compilersArtefacts, config, editor, udapp, filePanel, this)
-    this.contractDropdownUI = new ContractDropdownUI(dropdownLogic, logCallback)
+    const dropdownLogic = new DropdownLogic(compilersArtefacts, config, editor, this)
+    const blockchain = new Blockchain(this.executionContext, udapp)
+    this.contractDropdownUI = new ContractDropdownUI(blockchain, dropdownLogic, logCallback, this)
+
+    fileManager.events.on('currentFileChanged', this.contractDropdownUI.changeCurrentFile.bind(this.contractDropdownUI))
 
     this.contractDropdownUI.event.register('clearInstance', () => {
       const noInstancesText = this.noInstancesText
@@ -149,7 +153,7 @@ export class RunTab extends LibraryPlugin {
   renderRecorder (udapp, udappUI, fileManager, config, logCallback) {
     this.recorderCount = yo`<span>0</span>`
 
-    const recorder = new Recorder(udapp, fileManager, config)
+    const recorder = new Recorder(this.executionContext, udapp, fileManager, config)
     recorder.event.register('recorderCountChange', (count) => {
       this.recorderCount.innerText = count
     })
@@ -200,9 +204,9 @@ export class RunTab extends LibraryPlugin {
 
   render () {
     this.onActivationInternal()
-    executionContext.init(this.config)
-    executionContext.stopListenOnLastBlock()
-    executionContext.listenOnLastBlock()
+    this.executionContext.init(this.config)
+    this.executionContext.stopListenOnLastBlock()
+    this.executionContext.listenOnLastBlock()
     this.udapp.resetEnvironment()
     this.renderInstanceContainer()
     this.renderSettings(this.udapp)

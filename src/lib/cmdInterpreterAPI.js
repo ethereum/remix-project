@@ -5,7 +5,6 @@ var remixLib = require('remix-lib')
 var EventManager = require('../lib/events')
 
 var CompilerImport = require('../app/compiler/compiler-imports')
-var executionContext = require('../execution-context')
 var toolTip = require('../app/ui/tooltip')
 var globalRegistry = require('../global/registry')
 var SourceHighlighter = require('../app/editor/sourceHighlighter')
@@ -15,9 +14,10 @@ var solidityTypeFormatter = require('../app/tabs/debugger/debuggerUI/vmDebugger/
 var GistHandler = require('./gist-handler')
 
 class CmdInterpreterAPI {
-  constructor (terminal, localRegistry) {
+  constructor (terminal, localRegistry, executionContext) {
     const self = this
     self.event = new EventManager()
+    self.executionContext = executionContext
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
     self._components.terminal = terminal
@@ -62,14 +62,14 @@ class CmdInterpreterAPI {
   debug (hash, cb) {
     var self = this
     delete self.d
-    executionContext.web3().eth.getTransaction(hash, (error, tx) => {
+    self.executionContext.web3().eth.getTransaction(hash, (error, tx) => {
       if (error) return cb(error)
       var debugSession = new RemixDebug({
         compilationResult: () => {
           return self._deps.compilersArtefacts['__last'].getData()
         }
       })
-      debugSession.addProvider('web3', executionContext.web3())
+      debugSession.addProvider('web3', self.executionContext.web3())
       debugSession.switchProvider('web3')
       debugSession.debug(tx)
       self.d = debugSession
@@ -180,7 +180,7 @@ class CmdInterpreterAPI {
       })
   }
   setproviderurl (url, cb) {
-    executionContext.setProviderFromEndpoint(url, 'web3', (error) => {
+    this.executionContext.setProviderFromEndpoint(url, 'web3', (error) => {
       if (error) toolTip(error)
       if (cb) cb()
     })
