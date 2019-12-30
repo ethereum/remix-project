@@ -49,7 +49,7 @@ export class RunTab extends LibraryPlugin {
   }
 
   onActivationInternal () {
-    this.udappUI = new UniversalDAppUI(this.udapp, this.logCallback, this.executionContext)
+    this.udappUI = new UniversalDAppUI(this.blockchain, this.udapp, this.logCallback, this.executionContext)
     this.udapp.resetAPI({
       getAddress: (cb) => {
         cb(null, $('#txorigin').val())
