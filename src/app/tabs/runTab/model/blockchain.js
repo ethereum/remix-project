@@ -8,12 +8,15 @@ const ethJSUtil = require('ethereumjs-util')
 const Personal = require('web3-eth-personal')
 const Web3 = require('web3')
 
+import { UniversalDApp } from 'remix-lib'
+
 class Blockchain {
 
-  constructor (executionContext, udapp) {
+  // NOTE: the config object will need to be refactored out in remix-lib
+  constructor (config, executionContext) {
     this.event = new EventManager()
     this.executionContext = executionContext
-    this.udapp = udapp
+    this.udapp = new UniversalDApp(config, this.executionContext)
 
     this.networkcallid = 0
     this.setupEvents()
