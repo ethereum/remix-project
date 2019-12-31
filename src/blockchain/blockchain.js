@@ -9,7 +9,7 @@ const ethJSUtil = require('ethereumjs-util')
 const Personal = require('web3-eth-personal')
 const Web3 = require('web3')
 
-import { UniversalDApp } from 'remix-lib'
+const UniversalDApp = require('./universalDapp')
 
 class Blockchain {
 
