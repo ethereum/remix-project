@@ -22,8 +22,6 @@ var toolTip = require('./app/ui/tooltip')
 var CompilerMetadata = require('./app/files/compiler-metadata')
 var CompilerImport = require('./app/compiler/compiler-imports')
 
-var executionContext = remixLib.execution.executionContext
-
 const Blockchain = require('./app/tabs/runTab/model/blockchain.js')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
@@ -224,7 +222,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const fileManager = new FileManager(editor)
   registry.put({api: fileManager, name: 'filemanager'})
 
-  const blockchain = new Blockchain(registry.get('config').api, executionContext)
+  const blockchain = new Blockchain(registry.get('config').api)
 
   // ----------------- compilation metadata generation servive ----------------------------
   const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
