@@ -4,6 +4,7 @@ const txExecution = remixLib.execution.txExecution
 const typeConversion = remixLib.execution.typeConversion
 const Txlistener = remixLib.execution.txListener
 const EventManager = remixLib.EventManager
+const executionContext = remixLib.execution.executionContext
 const ethJSUtil = require('ethereumjs-util')
 const Personal = require('web3-eth-personal')
 const Web3 = require('web3')
@@ -13,7 +14,7 @@ import { UniversalDApp } from 'remix-lib'
 class Blockchain {
 
   // NOTE: the config object will need to be refactored out in remix-lib
-  constructor (config, executionContext) {
+  constructor (config) {
     this.event = new EventManager()
     this.executionContext = executionContext
     this.udapp = new UniversalDApp(config, this.executionContext)
