@@ -306,7 +306,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     mainview
   )
   const analysis = new AnalysisTab(registry)
-  const debug = new DebuggerTab(executionContext)
+  const debug = new DebuggerTab(blockchain)
   const test = new TestTab(
     registry.get('filemanager').api,
     filePanel,
