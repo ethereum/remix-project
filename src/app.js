@@ -23,7 +23,7 @@ var toolTip = require('./app/ui/tooltip')
 var CompilerMetadata = require('./app/files/compiler-metadata')
 var CompilerImport = require('./app/compiler/compiler-imports')
 
-const Blockchain = require('./app/tabs/runTab/model/blockchain.js')
+const Blockchain = require('./blockchain/blockchain.js')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
