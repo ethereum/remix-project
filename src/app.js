@@ -301,8 +301,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   )
   const run = new RunTab(
     blockchain,
-    udapp,
-    executionContext,
     registry.get('config').api,
     registry.get('filemanager').api,
     registry.get('editor').api,
