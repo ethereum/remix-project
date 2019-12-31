@@ -323,6 +323,13 @@ class Blockchain {
     this.udapp.resetEnvironment()
   }
 
+  addNetwork (customNetwork) {
+    this.executionContext.addProvider(customNetwork)
+  }
+
+  removeNetwork (name) {
+    this.executionContext.removeProvider(name)
+  }
 }
 
 module.exports = Blockchain

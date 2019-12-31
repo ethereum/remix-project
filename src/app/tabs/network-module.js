@@ -14,11 +14,11 @@ export const profile = {
 // - methods: ['getNetworkProvider', 'getEndpoint', 'detectNetwork', 'addNetwork', 'removeNetwork']
 
 export class NetworkModule extends Plugin {
-  constructor (executionContext) {
+  constructor (blockchain) {
     super(profile)
-    this.executionContext = executionContext
+    this.blockchain = blockchain
     // TODO: See with remix-lib to make sementic coherent
-    this.executionContext.event.register('contextChanged', (provider) => {
+    this.blockchain.event.register('contextChanged', (provider) => {
       this.emit('providerChanged', provider)
     })
     /*
@@ -37,13 +37,13 @@ export class NetworkModule extends Plugin {
 
   /** Return the current network provider (web3, vm, injected) */
   getNetworkProvider () {
-    return this.executionContext.getProvider()
+    return this.blockchain.getProvider()
   }
 
   /** Return the current network */
   detectNetwork () {
     return new Promise((resolve, reject) => {
-      this.executionContext.detectNetwork((error, network) => {
+      this.blockchain.detectNetwork((error, network) => {
         error ? reject(error) : resolve(network)
       })
     })
@@ -51,20 +51,20 @@ export class NetworkModule extends Plugin {
 
   /** Return the url only if network provider is 'web3' */
   getEndpoint () {
-    const provider = this.executionContext.getProvider()
+    const provider = this.blockchain.getProvider()
     if (provider !== 'web3') {
       throw new Error('no endpoint: current provider is either injected or vm')
     }
-    return this.executionContext.web3().currentProvider.host
+    return this.blockchain.web3().currentProvider.host
   }
 
   /** Add a custom network to the list of available networks */
   addNetwork (customNetwork) {
-    this.executionContext.addProvider(customNetwork)
+    this.blockchain.addProvider(customNetwork)
   }
 
   /** Remove a network to the list of availble networks */
   removeNetwork (name) {
-    this.executionContext.removeProvider(name)
+    this.blockchain.removeProvider(name)
   }
 }
