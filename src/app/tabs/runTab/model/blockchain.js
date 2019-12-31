@@ -308,6 +308,16 @@ class Blockchain {
     return (this.executionContext.isVM() ? 'memory' : 'blockchain')
   }
 
+  // NOTE: the config is only needed because exectuionContext.init does
+  // if config.get('settings/always-use-vm'), we can simplify this later
+  resetAndInit (config, transactionContext) {
+    this.udapp.resetAPI(transactionContext)
+    this.executionContext.init(config)
+    this.executionContext.stopListenOnLastBlock()
+    this.executionContext.listenOnLastBlock()
+    this.udapp.resetEnvironment()
+  }
+
 }
 
 module.exports = Blockchain
