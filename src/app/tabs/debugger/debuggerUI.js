@@ -30,9 +30,9 @@ var css = csjs`
 
 class DebuggerUI {
 
-  constructor (container, executionContext) {
+  constructor (container, blockchain) {
     this.registry = globalRegistry
-    this.executionContext = executionContext
+    this.blockchain = blockchain
     this.event = new EventManager()
 
     this.isActive = false
@@ -105,13 +105,13 @@ class DebuggerUI {
 
   getDebugWeb3 () {
     return new Promise((resolve, reject) => {
-      this.executionContext.detectNetwork((error, network) => {
+      this.blockchain.detectNetwork((error, network) => {
         let web3
         if (error || !network) {
-          web3 = init.web3DebugNode(this.executionContext.web3())
+          web3 = init.web3DebugNode(this.blockchain.web3())
         } else {
           const webDebugNode = init.web3DebugNode(network.name)
-          web3 = !webDebugNode ? this.executionContext.web3() : webDebugNode
+          web3 = !webDebugNode ? this.blockchain.web3() : webDebugNode
         }
         init.extendWeb3(web3)
         resolve(web3)
