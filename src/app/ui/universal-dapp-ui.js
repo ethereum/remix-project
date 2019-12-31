@@ -14,12 +14,10 @@ var txFormat = remixLib.execution.txFormat
 var TreeView = require('./TreeView')
 var txCallBacks = require('./sendTxCallbacks')
 
-function UniversalDAppUI (blockchain, udapp, logCallback, executionContext) {
+function UniversalDAppUI (blockchain, logCallback) {
   this.blockchain = blockchain
-  this.udapp = udapp
   this.logCallback = logCallback
   this.compilerData = {contractsDetails: {}}
-  this.executionContext = executionContext
 }
 
 function decodeResponseToTreeView (response, fnabi) {
@@ -52,11 +50,10 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
 // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
 // this returns a DOM element
 UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
-  var self = this
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   address = ethJSUtil.toChecksumAddress(address)
   var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
-  var context = self.udapp.context()
+  const context = this.blockchain.context()
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
@@ -160,8 +157,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     }
 
     setLLIError('')
-    const fallback = self.udapp.getFallbackInterface(contractABI)
-    const receive = self.udapp.getReceiveInterface(contractABI)
+    const fallback = this.udapp.getFallbackInterface(contractABI)
+    const receive = this.udapp.getReceiveInterface(contractABI)
     const args = {
       funABI: fallback || receive,
       address: address,
@@ -203,7 +200,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     else if (fallback) args.funABI = fallback
 
     if (!args.funABI) return setLLIError(`Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers`)
-    self.runTransaction(false, args, null, calldataInput.value, null)
+    this.runTransaction(false, args, null, calldataInput.value, null)
   }
 
   contractActionsWrapper.appendChild(lowLevelInteracions)

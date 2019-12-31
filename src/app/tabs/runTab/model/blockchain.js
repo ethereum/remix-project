@@ -304,6 +304,10 @@ class Blockchain {
     })
   }
 
+  context () {
+    return (this.executionContext.isVM() ? 'memory' : 'blockchain')
+  }
+
 }
 
 module.exports = Blockchain
