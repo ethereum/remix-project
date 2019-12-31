@@ -234,7 +234,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const {eventsDecoder, txlistener} = makeUdapp(blockchain, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
   // ----------------- network service (resolve network id / name) ----------------------------
-  const networkModule = new NetworkModule(executionContext)
+  const networkModule = new NetworkModule(blockchain)
   // ----------------- convert offset to line/column service ----------------------------
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
