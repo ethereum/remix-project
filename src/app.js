@@ -50,7 +50,6 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
-import { UniversalDApp } from 'remix-lib'
 
 import migrateFileSystem from './migrateFileSystem'
 
@@ -225,9 +224,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const fileManager = new FileManager(editor)
   registry.put({api: fileManager, name: 'filemanager'})
 
-  // ----------------- universal dapp: run transaction, listen on transactions, decode events
-  const udapp = new UniversalDApp(registry.get('config').api, executionContext)
-  const blockchain = new Blockchain(executionContext, udapp)
+  const blockchain = new Blockchain(registry.get('config').api, executionContext)
 
   // ----------------- compilation metadata generation servive ----------------------------
   const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
