@@ -11,18 +11,17 @@ var css = require('../../universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 var remixLib = require('remix-lib')
 var txFormat = remixLib.execution.txFormat
+var txHelper = remixLib.execution.txHelper
 
 var confirmDialog = require('./confirmDialog')
 var modalCustom = require('./modal-dialog-custom')
 var modalDialog = require('./modaldialog')
 var TreeView = require('./TreeView')
 
-function UniversalDAppUI (blockchain, udapp, logCallback, executionContext) {
+function UniversalDAppUI (blockchain, logCallback) {
   this.blockchain = blockchain
-  this.udapp = udapp
   this.logCallback = logCallback
   this.compilerData = {contractsDetails: {}}
-  this.executionContext = executionContext
 }
 
 function decodeResponseToTreeView (response, fnabi) {
@@ -46,7 +45,7 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
   if (noInstances) {
     noInstances.parentNode.removeChild(noInstances)
   }
-  var abi = this.udapp.getABI(contract)
+  const abi = txHelper.sortAbiFunction(contract.abi)
   return this.renderInstanceFromABI(abi, address, contractName)
 }
 
@@ -55,11 +54,10 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
 // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
 // this returns a DOM element
 UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
-  var self = this
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   address = ethJSUtil.toChecksumAddress(address)
   var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
-  var context = self.udapp.context()
+  const context = this.blockchain.context()
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
@@ -111,7 +109,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   instance.appendChild(contractActionsWrapper)
 
   // Add the fallback function
-  var fallback = self.udapp.getFallbackInterface(contractABI)
+  const fallback = txHelper.getFallbackInterface(contractABI)
+
   if (fallback) {
     contractActionsWrapper.appendChild(this.getCallButton({
       funABI: fallback,
@@ -226,9 +225,14 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     self.blockchain.runOrCallContractMethod(args.contractName, args.contractAbi, args.funABI, inputsValues, args.address, callType, lookupOnly, logMsg, self.logCallback, outputCb, confirmationCb, continueCb, promptCb)
   }
 
+  let inputs = ''
+  if (args.funABI.inputs) {
+    inputs = txHelper.inputParametersDeclarationToString(args.funABI.inputs)
+  }
+
   const multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
     clickButton(valArray, inputsValues, domEl)
-  }, self.udapp.getInputs(args.funABI))
+  }, inputs)
 
   const contractActionsContainer = yo`<div class="${css.contractActionsContainer}" >${multiParamManager.render()}</div>`
   contractActionsContainer.appendChild(outputOverride)
