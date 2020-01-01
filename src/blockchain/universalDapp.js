@@ -8,6 +8,7 @@ const remixLib = require('remix-lib')
 const TxRunner = remixLib.execution.txRunner
 const txHelper = remixLib.execution.txHelper
 const EventManager = remixLib.EventManager
+const Web3 = require('web3')
 
 const { resultToRemixTx } = require('./txResultHelper')
 
@@ -205,7 +206,8 @@ class UniversalDApp {
       if (error) {
         callback(error)
       } else {
-        callback(null, this.executionContext.web3().fromWei(balance, 'ether'))
+        // callback(null, this.executionContext.web3().fromWei(balance, 'ether'))
+        callback(null, Web3.utils.fromWei(balance.toString(10), 'ether'))
       }
     })
   }
