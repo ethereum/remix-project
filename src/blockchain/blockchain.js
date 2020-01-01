@@ -266,7 +266,10 @@ class Blockchain {
   }
 
   startListening (txlistener) {
-    this.udapp.startListening(txlistener)
+    txlistener.event.register('newTransaction', (tx, receipt) => {
+      this.event.emit('newTransaction', tx, receipt)
+      this.udapp.events.emit('newTransaction', tx, receipt) // for plugin backwards compatibility
+    })
   }
 
   runOrCallContractMethod (contractName, contractABI, funABI, value, address, params, lookupOnly, logMsg, logCallback, outputCb, callbacksInContext) {
