@@ -33,6 +33,14 @@ class UniversalDApp {
     this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
   }
 
+  // TODO : event should be triggered by Udapp instead of TxListener
+  /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
+  startListening (txlistener) {
+    txlistener.event.register('newTransaction', (tx) => {
+      this.events.emit('newTransaction', tx)
+    })
+  }
+
   resetEnvironment () {
     this.accounts = {}
     if (this.executionContext.isVM()) {
