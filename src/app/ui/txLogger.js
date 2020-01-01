@@ -164,7 +164,7 @@ class TxLogger {
       }
     })
 
-    this.txListener.event.register('newTransaction', (tx, receipt) => {
+    blockchain.event.register('newTransaction', (tx, receipt) => {
       log(this, tx, receipt)
     })
 
