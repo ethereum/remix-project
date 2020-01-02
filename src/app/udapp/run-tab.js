@@ -33,8 +33,8 @@ const profile = {
 
 export class RunTab extends LibraryPlugin {
 
-  constructor (blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
-    super(blockchain.udapp, profile)
+  constructor (blockchain, pluginUDapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
+    super(pluginUDapp, profile)
     this.event = new EventManager()
     this.config = config
     this.blockchain = blockchain
