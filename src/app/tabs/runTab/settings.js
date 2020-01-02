@@ -251,6 +251,7 @@ class SettingsUI {
 
   newAccount () {
     this.blockchain.newAccount(
+      '',
       (cb) => {
         modalDialogCustom.promptPassphraseCreation((error, passphrase) => {
           if (error) {
