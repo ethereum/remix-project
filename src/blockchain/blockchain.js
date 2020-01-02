@@ -60,7 +60,7 @@ class Blockchain {
   async deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
 
-    var constructor = selectedContract.getConstructorInterface()
+    const constructor = selectedContract.getConstructorInterface()
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
       return txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
         if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
@@ -97,9 +97,9 @@ class Blockchain {
               if (error) {
                 return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
               }
-              var isVM = this.executionContext.isVM()
+              const isVM = this.executionContext.isVM()
               if (isVM) {
-                var vmError = txExecution.checkVMError(txResult)
+                const vmError = txExecution.checkVMError(txResult)
                 if (vmError.error) {
                   return finalCb(vmError.message)
                 }
@@ -107,7 +107,7 @@ class Blockchain {
               if (txResult.result.status === false || txResult.result.status === '0x0') {
                 return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
               }
-              var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
+              const address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
               finalCb(null, selectedContract, address)
             }
         )
@@ -115,12 +115,12 @@ class Blockchain {
 
   determineGasPrice (cb) {
     this.getGasPrice((error, gasPrice) => {
-      var warnMessage = ' Please fix this issue before sending any transaction. '
+      const warnMessage = ' Please fix this issue before sending any transaction. '
       if (error) {
         return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
       }
       try {
-        var gasPriceValue = this.fromWei(gasPrice, false, 'gwei')
+        const gasPriceValue = this.fromWei(gasPrice, false, 'gwei')
         cb(null, gasPriceValue)
       } catch (e) {
         cb(warnMessage + e.message, null, false)
@@ -153,7 +153,7 @@ class Blockchain {
       // TODO: this try catch feels like an anti pattern, can/should be
       // removed, but for now keeping the original logic
       try {
-        var fee = this.calculateFee(tx.gas, gasPrice)
+        const fee = this.calculateFee(tx.gas, gasPrice)
         txFeeText = ' ' + this.fromWei(fee, false, 'ether') + ' Ether'
         priceStatus = true
       } catch (e) {
@@ -205,8 +205,8 @@ class Blockchain {
   }
 
   isWeb3Provider () {
-    var isVM = this.executionContext.isVM()
-    var isInjected = this.executionContext.getProvider() === 'injected'
+    const isVM = this.executionContext.isVM()
+    const isInjected = this.executionContext.getProvider() === 'injected'
     return (!isVM && !isInjected)
   }
 
@@ -215,15 +215,15 @@ class Blockchain {
   }
 
   signMessage (message, account, passphrase, cb) {
-    var isVM = this.executionContext.isVM()
-    var isInjected = this.executionContext.getProvider() === 'injected'
+    const isVM = this.executionContext.isVM()
+    const isInjected = this.executionContext.getProvider() === 'injected'
 
     if (isVM) {
       const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
-      var privKey = this.accounts[account].privateKey
+      const privKey = this.accounts[account].privateKey
       try {
-        var rsv = ethJSUtil.ecsign(personalMsg, privKey)
-        var signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
+        const rsv = ethJSUtil.ecsign(personalMsg, privKey)
+        const signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
         cb(null, '0x' + personalMsg.toString('hex'), signedData)
       } catch (e) {
         cb(e.message)
@@ -244,7 +244,7 @@ class Blockchain {
 
     const hashedMsg = Web3.utils.sha3(message)
     try {
-      var personal = new Personal(this.executionContext.web3().currentProvider)
+      const personal = new Personal(this.executionContext.web3().currentProvider)
       personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
         cb(error.message, hashedMsg, signedData)
       })
@@ -277,9 +277,9 @@ class Blockchain {
         if (funABI.type === 'fallback') data.dataHex = value
         this.callFunction(address, data, funABI, callbacksInContext.confirmationCb.bind(callbacksInContext), callbacksInContext.continueCb.bind(callbacksInContext), callbacksInContext.promptCb.bind(callbacksInContext), (error, txResult) => {
           if (!error) {
-            var isVM = this.executionContext.isVM()
+            const isVM = this.executionContext.isVM()
             if (isVM) {
-              var vmError = txExecution.checkVMError(txResult)
+              const vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
                 logCallback(`${logMsg} errored: ${vmError.message} `)
                 return
@@ -410,7 +410,7 @@ class Blockchain {
       stateManager.getAccount(address, (error, account) => {
         if (error) return console.log(error)
         account.balance = balance || '0xf00000000000000001'
-        stateManager.putAccount(address, account, function cb (error) {
+        stateManager.putAccount(address, account, (error) => {
           if (error) console.log(error)
         })
       })
