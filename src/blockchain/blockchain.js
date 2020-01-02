@@ -268,34 +268,31 @@ class Blockchain {
   runOrCallContractMethod (contractName, contractAbi, funABI, value, address, callType, lookupOnly, logMsg, logCallback, outputCb, confirmationCb, continueCb, promptCb) {
     // contractsDetails is used to resolve libraries
     txFormat.buildData(contractName, contractAbi, {}, false, funABI, callType, (error, data) => {
-      if (!error) {
-        if (!lookupOnly) {
-          logCallback(`${logMsg} pending ... `)
-        } else {
-          logCallback(`${logMsg}`)
-        }
-        if (funABI.type === 'fallback') data.dataHex = value
-        this.callFunction(address, data, funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
-          if (!error) {
-            const isVM = this.executionContext.isVM()
-            if (isVM) {
-              const vmError = txExecution.checkVMError(txResult)
-              if (vmError.error) {
-                logCallback(`${logMsg} errored: ${vmError.message} `)
-                return
-              }
-            }
-            if (lookupOnly) {
-              const returnValue = (this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result))
-              outputCb(returnValue)
-            }
-          } else {
-            logCallback(`${logMsg} errored: ${error} `)
-          }
-        })
-      } else {
-        logCallback(`${logMsg} errored: ${error} `)
+      if (error) {
+        return logCallback(`${logMsg} errored: ${error} `)
       }
+      if (!lookupOnly) {
+        logCallback(`${logMsg} pending ... `)
+      } else {
+        logCallback(`${logMsg}`)
+      }
+      if (funABI.type === 'fallback') data.dataHex = value
+      this.callFunction(address, data, funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
+        if (error) {
+          return logCallback(`${logMsg} errored: ${error} `)
+        }
+        const isVM = this.executionContext.isVM()
+        if (isVM) {
+          const vmError = txExecution.checkVMError(txResult)
+          if (vmError.error) {
+            return logCallback(`${logMsg} errored: ${vmError.message} `)
+          }
+        }
+        if (lookupOnly) {
+          const returnValue = (this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result))
+          outputCb(returnValue)
+        }
+      })
     },
     (msg) => {
       logCallback(msg)
@@ -380,21 +377,20 @@ class Blockchain {
   }
 
   newAccount (_password, passwordPromptCb, cb) {
-    if (!this.executionContext.isVM()) {
-      if (!this.config.get('settings/personal-mode')) {
-        return cb('Not running in personal mode')
-      }
-      passwordPromptCb((passphrase) => {
-        this.executionContext.web3().personal.newAccount(passphrase, cb)
-      })
-    } else {
+    if (this.executionContext.isVM()) {
       let privateKey
       do {
         privateKey = crypto.randomBytes(32)
       } while (!isValidPrivate(privateKey))
       this._addAccount(privateKey, '0x56BC75E2D63100000')
-      cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
+      return cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
     }
+    if (!this.config.get('settings/personal-mode')) {
+      return cb('Not running in personal mode')
+    }
+    passwordPromptCb((passphrase) => {
+      this.executionContext.web3().personal.newAccount(passphrase, cb)
+    })
   }
 
   /** Add an account to the list of account (only for Javascript VM) */
@@ -429,8 +425,7 @@ class Blockchain {
         case 'vm': {
           if (!this.accounts) {
             if (cb) cb('No accounts?')
-            reject('No accounts?')
-            return
+            return reject('No accounts?')
           }
           if (cb) cb(null, Object.keys(this.accounts))
           resolve(Object.keys(this.accounts))
@@ -468,37 +463,33 @@ class Blockchain {
     address = stripHexPrefix(address)
 
     if (!this.executionContext.isVM()) {
-      this.executionContext.web3().eth.getBalance(address, (err, res) => {
+      return this.executionContext.web3().eth.getBalance(address, (err, res) => {
         if (err) {
-          cb(err)
-        } else {
-          cb(null, res.toString(10))
+          return cb(err)
         }
-      })
-    } else {
-      if (!this.accounts) {
-        return cb('No accounts?')
-      }
-
-      this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, res) => {
-        if (err) {
-          cb('Account not found')
-        } else {
-          cb(null, new BN(res.balance).toString(10))
-        }
+        cb(null, res.toString(10))
       })
     }
+    if (!this.accounts) {
+      return cb('No accounts?')
+    }
+
+    this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, res) => {
+      if (err) {
+        return cb('Account not found')
+      }
+      cb(null, new BN(res.balance).toString(10))
+    })
   }
 
   /** Get the balance of an address, and convert wei to ether */
   getBalanceInEther (address, callback) {
     this.getBalance(address, (error, balance) => {
       if (error) {
-        callback(error)
-      } else {
-        // callback(null, this.executionContext.web3().fromWei(balance, 'ether'))
-        callback(null, Web3.utils.fromWei(balance.toString(10), 'ether'))
+        return callback(error)
       }
+      // callback(null, this.executionContext.web3().fromWei(balance, 'ether'))
+      callback(null, Web3.utils.fromWei(balance.toString(10), 'ether'))
     })
   }
 
