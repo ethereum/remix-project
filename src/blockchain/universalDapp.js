@@ -249,21 +249,6 @@ class UniversalDApp {
     return (this.executionContext.isVM() ? 'memory' : 'blockchain')
   }
 
-  getABI (contract) {
-    return txHelper.sortAbiFunction(contract.abi)
-  }
-
-  getFallbackInterface (contractABI) {
-    return txHelper.getFallbackInterface(contractABI)
-  }
-
-  getInputs (funABI) {
-    if (!funABI.inputs) {
-      return ''
-    }
-    return txHelper.inputParametersDeclarationToString(funABI.inputs)
-  }
-
   /**
    * This function send a tx only to javascript VM or testnet, will return an error for the mainnet
    * SHOULD BE TAKEN CAREFULLY!
