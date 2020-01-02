@@ -26,6 +26,7 @@ export class Compiler {
       evmVersion: null,
       language: 'Solidity',
       compilationStartTime: null,
+      target: null,
       lastCompilationResult: {
         data: null,
         source: null
@@ -79,7 +80,7 @@ export class Compiler {
   compile (files: Source, target: string): void {
     this.state.target = target
     this.event.trigger('compilationStarted', [])
-    this.internalCompile(files, target)
+    this.internalCompile(files)
   }
 
   /**
@@ -141,7 +142,7 @@ export class Compiler {
       // There are fatal errors, abort here
       this.state.lastCompilationResult = null
       this.event.trigger('compilationFinished', [false, data, source])
-    } else if (missingInputs !== undefined && missingInputs.length > 0) {
+    } else if (missingInputs !== undefined && missingInputs.length > 0 && source && source.sources) {
       // try compiling again with the new set of inputs
       this.internalCompile(source.sources, missingInputs)
     } else {
