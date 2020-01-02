@@ -6,7 +6,6 @@ const { EventEmitter } = require('events')
 const remixLib = require('remix-lib')
 
 const TxRunner = remixLib.execution.txRunner
-const txHelper = remixLib.execution.txHelper
 const EventManager = remixLib.EventManager
 const Web3 = require('web3')
 
