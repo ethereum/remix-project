@@ -68,8 +68,8 @@ class Blockchain {
         statusCb(`creation of ${selectedContract.name} pending...`)
         this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
       }, statusCb, (data, runTxCallback) => {
-                // called for libraries deployment
-        this.runTransaction(data, continueCb, promptCb, confirmationCb, runTxCallback)
+        // called for libraries deployment
+        this.runTx(data, confirmationCb, continueCb, promptCb, runTxCallback)
       })
     }
     if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
@@ -81,10 +81,6 @@ class Blockchain {
     })
   }
 
-  runTransaction (data, continueCb, promptCb, confirmationCb, finalCb) {
-    this.runTx(data, confirmationCb, continueCb, promptCb, finalCb)
-  }
-
   createContract (selectedContract, data, continueCb, promptCb, confirmationCb, finalCb) {
     if (data) {
       data.contractName = selectedContract.name
@@ -92,29 +88,29 @@ class Blockchain {
       data.contractABI = selectedContract.abi
     }
 
-    this._createContract(data, confirmationCb, continueCb, promptCb,
-            (error, txResult) => {
-              if (error) {
-                return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
-              }
-              const isVM = this.executionContext.isVM()
-              if (isVM) {
-                const vmError = txExecution.checkVMError(txResult)
-                if (vmError.error) {
-                  return finalCb(vmError.message)
-                }
-              }
-              if (txResult.result.status && txResult.result.status === '0x0') {
-                return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
-              }
-              const address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-              finalCb(null, selectedContract, address)
-            }
-        )
+    this.runTx({ data: data, useCall: false }, confirmationCb, continueCb, promptCb,
+      (error, txResult) => {
+        if (error) {
+          return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
+        }
+        const isVM = this.executionContext.isVM()
+        if (isVM) {
+          const vmError = txExecution.checkVMError(txResult)
+          if (vmError.error) {
+            return finalCb(vmError.message)
+          }
+        }
+        if (txResult.result.status && txResult.result.status === '0x0') {
+          return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
+        }
+        const address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
+        finalCb(null, selectedContract, address)
+      }
+    )
   }
 
   determineGasPrice (cb) {
-    this.getGasPrice((error, gasPrice) => {
+    this.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
       const warnMessage = ' Please fix this issue before sending any transaction. '
       if (error) {
         return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
@@ -126,10 +122,6 @@ class Blockchain {
         cb(warnMessage + e.message, null, false)
       }
     })
-  }
-
-  getGasPrice (cb) {
-    return this.executionContext.web3().eth.getGasPrice(cb)
   }
 
   fromWei (value, doTypeConversion, unit) {
@@ -180,10 +172,6 @@ class Blockchain {
 
   getProvider () {
     return this.executionContext.getProvider()
-  }
-
-  getAccountBalanceForAddress (address, cb) {
-    return this.getBalanceInEther(address, cb)
   }
 
   updateNetwork (cb) {
@@ -458,8 +446,8 @@ class Blockchain {
     })
   }
 
-  /** Get the balance of an address */
-  getBalance (address, cb) {
+  /** Get the balance of an address, and convert wei to ether */
+  getBalanceInEther (address, cb) {
     address = stripHexPrefix(address)
 
     if (!this.executionContext.isVM()) {
@@ -467,7 +455,7 @@ class Blockchain {
         if (err) {
           return cb(err)
         }
-        cb(null, res.toString(10))
+        cb(null, Web3.utils.fromWei(res.toString(10), 'ether'))
       })
     }
     if (!this.accounts) {
@@ -478,36 +466,12 @@ class Blockchain {
       if (err) {
         return cb('Account not found')
       }
-      cb(null, new BN(res.balance).toString(10))
-    })
-  }
-
-  /** Get the balance of an address, and convert wei to ether */
-  getBalanceInEther (address, callback) {
-    this.getBalance(address, (error, balance) => {
-      if (error) {
-        return callback(error)
-      }
-      // callback(null, this.executionContext.web3().fromWei(balance, 'ether'))
-      callback(null, Web3.utils.fromWei(balance.toString(10), 'ether'))
+      cb(null, Web3.utils.fromWei(new BN(res.balance).toString(10), 'ether'))
     })
   }
 
   pendingTransactionsCount () {
     return Object.keys(this.txRunner.pendingTxs).length
-  }
-
-  /**
-    * deploy the given contract
-    *
-    * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
-    * @param {Function} callback    - callback.
-    */
-  _createContract (data, confirmationCb, continueCb, promptCb, callback) {
-    this.runTx({data: data, useCall: false}, confirmationCb, continueCb, promptCb, (error, txResult) => {
-      // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
-      callback(error, txResult)
-    })
   }
 
   /**
@@ -543,33 +507,23 @@ class Blockchain {
         if (network.name === 'Main' && network.id === '1') {
           return reject(new Error('It is not allowed to make this action against mainnet'))
         }
-        this.silentRunTx(tx, (error, result) => {
-          if (error) return reject(error)
-          try {
-            resolve(resultToRemixTx(result))
-          } catch (e) {
-            reject(e)
+
+        this.txRunner.rawRun(
+          tx,
+          (network, tx, gasEstimation, continueTxExecution, cancelCb) => { continueTxExecution() },
+          (error, continueTxExecution, cancelCb) => { if (error) { reject(error) } else { continueTxExecution() } },
+          (okCb, cancelCb) => { okCb() },
+          (error, result) => {
+            if (error) return reject(error)
+            try {
+              resolve(resultToRemixTx(result))
+            } catch (e) {
+              reject(e)
+            }
           }
-        })
+        )
       })
     })
-  }
-
-  /**
-   * This function send a tx without alerting the user (if mainnet or if gas estimation too high).
-   * SHOULD BE TAKEN CAREFULLY!
-   *
-   * @param {Object} tx    - transaction.
-   * @param {Function} callback    - callback.
-   */
-  silentRunTx (tx, cb) {
-    this.txRunner.rawRun(
-      tx,
-      (network, tx, gasEstimation, continueTxExecution, cancelCb) => { continueTxExecution() },
-      (error, continueTxExecution, cancelCb) => { if (error) { cb(error) } else { continueTxExecution() } },
-      (okCb, cancelCb) => { okCb() },
-      cb
-    )
   }
 
   runTx (args, confirmationCb, continueCb, promptCb, cb) {
