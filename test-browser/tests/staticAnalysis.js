@@ -5,7 +5,7 @@ var sauce = require('./sauce')
 var sources = [
   {
     'browser/Untitled.sol': {content: `
-pragma solidity >=0.4.22 <0.6.0;
+pragma solidity >=0.4.22 <0.7.0;
 contract test1 { address test = tx.origin; }
 contract test2 {}
 contract TooMuchGas {

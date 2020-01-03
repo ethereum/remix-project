@@ -37,7 +37,7 @@ class TestTabLogic {
   }
 
   generateTestContractSample () {
-    return `pragma solidity >=0.4.0 <0.6.0;
+    return `pragma solidity >=0.4.0 <0.7.0;
       import "remix_tests.sol"; // this import is automatically injected by Remix.
 
       // file name has to end with '_test.sol'
