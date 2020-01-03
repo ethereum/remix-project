@@ -17,6 +17,10 @@ const { EventEmitter } = require('events')
 
 const { resultToRemixTx } = require('./txResultHelper')
 
+const VMProvider = require('./providers/vm.js')
+const InjectedProvider = require('./providers/injected.js')
+const NodeProvider = require('./providers/node.js')
+
 class Blockchain {
 
   // NOTE: the config object will need to be refactored out in remix-lib
@@ -36,11 +40,11 @@ class Blockchain {
         return this.executionContext.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
     }, this.executionContext)
-    this.accounts = {}
     this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
 
     this.networkcallid = 0
     this.setupEvents()
+    this.setupProviders()
   }
 
   setupEvents () {
@@ -54,6 +58,34 @@ class Blockchain {
 
     this.executionContext.event.register('removeProvider', (name) => {
       this.event.trigger('removeProvider', [name])
+    })
+  }
+
+  setupProviders () {
+    this.providers = {}
+    this.providers.vm = new VMProvider(this.executionContext)
+    this.providers.injected = new InjectedProvider(this.executionContext)
+    this.providers.web3 = new NodeProvider(this.executionContext, this.config)
+  }
+
+  getCurrentProvider () {
+    const provider = this.executionContext.getProvider()
+    return this.providers[provider]
+  }
+
+  /** Return the list of accounts */
+  // note: the dual promise/callback is kept for now as it was before
+  getAccounts (cb) {
+    return new Promise((resolve, reject) => {
+      this.getCurrentProvider().getAccounts((error, accounts) => {
+        if (cb) {
+          return cb(error, accounts)
+        }
+        if (error) {
+          reject(error)
+        }
+        resolve(accounts)
+      })
     })
   }
 
@@ -208,7 +240,7 @@ class Blockchain {
 
     if (isVM) {
       const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
-      const privKey = this.accounts[account].privateKey
+      const privKey = this.providers.vm.accounts[account].privateKey
       try {
         const rsv = ethJSUtil.ecsign(personalMsg, privKey)
         const signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
@@ -293,8 +325,8 @@ class Blockchain {
 
   // NOTE: the config is only needed because exectuionContext.init does
   // if config.get('settings/always-use-vm'), we can simplify this later
-  resetAndInit (config, transactionContext) {
-    this.resetAPI(transactionContext)
+  resetAndInit (config, transactionContextAPI) {
+    this.transactionContextAPI = transactionContextAPI
     this.executionContext.init(config)
     this.executionContext.stopListenOnLastBlock()
     this.executionContext.listenOnLastBlock()
@@ -318,7 +350,7 @@ class Blockchain {
   }
 
   resetEnvironment () {
-    this.accounts = {}
+    this.providers.vm.accounts = {}
     if (this.executionContext.isVM()) {
       this._addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511', '0x56BC75E2D63100000')
       this._addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c', '0x56BC75E2D63100000')
@@ -327,7 +359,7 @@ class Blockchain {
       this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
     }
     // TODO: most params here can be refactored away in txRunner
-    this.txRunner = new TxRunner(this.accounts, {
+    this.txRunner = new TxRunner(this.providers.vm.accounts, {
       // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
       config: this.config,
       // TODO: to refactor, TxRunner already has access to executionContext
@@ -344,10 +376,6 @@ class Blockchain {
         this.event.trigger('transactionBroadcasted', [txhash, network.name])
       })
     })
-  }
-
-  resetAPI (transactionContextAPI) {
-    this.transactionContextAPI = transactionContextAPI
   }
 
   /**
@@ -387,7 +415,7 @@ class Blockchain {
       throw new Error('_addAccount() cannot be called in non-VM mode')
     }
 
-    if (this.accounts) {
+    if (this.providers.vm.accounts) {
       privateKey = Buffer.from(privateKey, 'hex')
       const address = privateToAddress(privateKey)
 
@@ -401,49 +429,8 @@ class Blockchain {
         })
       })
 
-      this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
+      this.providers.vm.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
     }
-  }
-
-  /** Return the list of accounts */
-  getAccounts (cb) {
-    return new Promise((resolve, reject) => {
-      const provider = this.executionContext.getProvider()
-      switch (provider) {
-        case 'vm': {
-          if (!this.accounts) {
-            if (cb) cb('No accounts?')
-            return reject('No accounts?')
-          }
-          if (cb) cb(null, Object.keys(this.accounts))
-          resolve(Object.keys(this.accounts))
-        }
-          break
-        case 'web3': {
-          if (this.config.get('settings/personal-mode')) {
-            return this.executionContext.web3().personal.getListAccounts((error, accounts) => {
-              if (cb) cb(error, accounts)
-              if (error) return reject(error)
-              resolve(accounts)
-            })
-          } else {
-            this.executionContext.web3().eth.getAccounts((error, accounts) => {
-              if (cb) cb(error, accounts)
-              if (error) return reject(error)
-              resolve(accounts)
-            })
-          }
-        }
-          break
-        case 'injected': {
-          this.executionContext.web3().eth.getAccounts((error, accounts) => {
-            if (cb) cb(error, accounts)
-            if (error) return reject(error)
-            resolve(accounts)
-          })
-        }
-      }
-    })
   }
 
   /** Get the balance of an address, and convert wei to ether */
@@ -458,7 +445,7 @@ class Blockchain {
         cb(null, Web3.utils.fromWei(res.toString(10), 'ether'))
       })
     }
-    if (!this.accounts) {
+    if (!this.providers.vm.accounts) {
       return cb('No accounts?')
     }
 
@@ -560,7 +547,7 @@ class Blockchain {
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
-          if (self.executionContext.isVM() && !self.accounts[address]) {
+          if (self.executionContext.isVM() && !self.providers.vm.accounts[address]) {
             return next('Invalid account selected')
           }
           next(null, address, value, gasLimit)
