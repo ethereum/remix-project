@@ -5,8 +5,10 @@ import { CompilerInput, MessageToWorker } from './types'
 var compileJSON: ((input: CompilerInput) => string) | null = (input) => { return '' }
 var missingInputs: string[] = []
 
+// 'DedicatedWorkerGlobalScope' object (the Worker global scope) is accessible through the self keyword
+// 'dom' and 'webworker' library files can not be included together
 export default (self) => {
-  self.addEventListener('message', function (e) {
+  self.addEventListener('message', (e) => {
     const data: MessageToWorker = e.data
     switch (data.cmd) {
       case 'loadVersion':
@@ -19,7 +21,7 @@ export default (self) => {
         let compiler: solc = solc(self.Module)
         compileJSON = (input) => {
           try {
-            let missingInputsCallback = function (path) {
+            let missingInputsCallback = (path) => {
               missingInputs.push(path)
               return { 'error': 'Deferred import' }
             }
