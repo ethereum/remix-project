@@ -1,14 +1,16 @@
-module.exports = function (browser, callback) {
+module.exports = function (browser, callback, url, preloadPlugins = true) {
   browser
-    .url('http://127.0.0.1:8080')
+    .url(url || 'http://127.0.0.1:8080')
     .injectScript('test-browser/helpers/applytestmode.js', function () {
       browser.resizeWindow(2560, 1440, () => {
-        initModules(browser, () => {
-          browser.clickLaunchIcon('solidity').click('#autoCompile')
-          .perform(function () {
-            callback()
+        if (preloadPlugins) {
+          initModules(browser, () => {
+            browser.clickLaunchIcon('solidity').click('#autoCompile')
+            .perform(function () {
+              callback()
+            })
           })
-        })
+        } else callback()
       })
     })
 }
