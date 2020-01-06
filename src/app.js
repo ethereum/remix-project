@@ -1,4 +1,3 @@
-/* global localStorage */
 'use strict'
 
 var isElectron = require('is-electron')
