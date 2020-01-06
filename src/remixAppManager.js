@@ -2,6 +2,7 @@
 import { PluginEngine, IframePlugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { PermissionHandler } from './app/ui/persmission-handler'
+import QueryParams from './lib/query-params'
 
 const requiredModules = [ // services + layout views + system views
   'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport',
@@ -19,15 +20,13 @@ export class RemixAppManager extends PluginEngine {
   constructor (plugins) {
     super(plugins, settings)
     this.event = new EventEmitter()
-    this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
     this.registered = {}
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/profile.json'
+    this.pluginLoader = new PluginLoader()
   }
 
   onActivated (plugin) {
-    if (!this.donotAutoReload.includes(plugin.name)) {
-      localStorage.setItem('workspace', JSON.stringify(this.actives))
-    }
+    this.pluginLoader.set(plugin, this.actives)
     this.event.emit('activate', plugin.name)
   }
 
@@ -46,7 +45,7 @@ export class RemixAppManager extends PluginEngine {
   }
 
   onDeactivated (plugin) {
-    localStorage.setItem('workspace', JSON.stringify(this.actives))
+    this.pluginLoader.set(plugin, this.actives)
     this.event.emit('deactivate', plugin.name)
   }
 
@@ -230,5 +229,42 @@ export class RemixAppManager extends PluginEngine {
       new IframePlugin(quorum),
       ...plugins.map(plugin => new IframePlugin(plugin))
     ]
+  }
+}
+
+class PluginLoader {
+  constructor () {
+    const queryParams = new QueryParams()
+    this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
+    this.loaders = {}
+    this.loaders['localStorage'] = {
+      set: (plugin, actives) => {
+        if (!this.donotAutoReload.includes(plugin.name)) {
+          localStorage.setItem('workspace', JSON.stringify(actives))
+        }
+      },
+      get: () => {
+        return JSON.parse(localStorage.getItem('workspace'))
+      }
+    }
+
+    this.loaders['queryParams'] = {
+      set: () => {},
+      get: () => {
+        let plugins = queryParams.get()['plugins']
+        if (!plugins) return []
+        return plugins.split(',')
+      }
+    }
+
+    this.current = queryParams.get()['plugins'] ? 'queryParams' : 'localStorage'
+  }
+
+  set (plugin, actives) {
+    this.loaders[this.current].set(plugin, actives)
+  }
+
+  get () {
+    return this.loaders[this.current].get()
   }
 }
