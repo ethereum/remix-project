@@ -1,6 +1,6 @@
 'use strict'
-var init = require('../helpers/init')
-var sauce = require('./sauce')
+const init = require('../helpers/init')
+const sauce = require('./sauce')
 
 module.exports = {
   before: function (browser, done) {
