@@ -240,6 +240,7 @@ class PluginLoader {
   get currentLoader () {
     return this.loaders[this.current]
   }
+
   constructor () {
     const queryParams = new QueryParams()
     this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
@@ -250,15 +251,13 @@ class PluginLoader {
           localStorage.setItem('workspace', JSON.stringify(actives))
         }
       },
-      get: () => {
-        return JSON.parse(localStorage.getItem('workspace'))
-      }
+      get: () => { return JSON.parse(localStorage.getItem('workspace')) }
     }
 
     this.loaders['queryParams'] = {
       set: () => {},
       get: () => {
-        let plugins = queryParams.get()['plugins']
+        const { plugins } = queryParams.get()
         if (!plugins) return []
         return plugins.split(',')
       }
@@ -268,10 +267,10 @@ class PluginLoader {
   }
 
   set (plugin, actives) {
-    this.currentLoader().set(plugin, actives)
+    this.currentLoader.set(plugin, actives)
   }
 
   get () {
-    return this.currentLoader().get()
+    return this.currentLoader.get()
   }
 }
