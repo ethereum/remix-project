@@ -143,8 +143,8 @@ export class PermissionHandler {
       ? yo`<input type="checkbox" onchange="${switchMode}" checkbox class="custom-control-input" id="remember">`
       : yo`<input type="checkbox" onchange="${switchMode}" class="custom-control-input" id="remember">`
     const message = remember
-      ? `${fromName} has changed and would like to access the plugin ${toName}.`
-      : `${fromName} would like to access plugin ${toName}.`
+      ? `${fromName} has changed and would like to access ${toName}.`
+      : `${fromName} would like to access ${toName}.`
 
     return yo`
     <section class="${css.permission}">
