@@ -29,6 +29,17 @@ class InjectedProvider {
       cb(null, Web3.utils.fromWei(res.toString(10), 'ether'))
     })
   }
+
+  signMessage (message, account, _passphrase, cb) {
+    const hashedMsg = Web3.utils.sha3(message)
+    try {
+      this.executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
+        cb(error.message, hashedMsg, signedData)
+      })
+    } catch (e) {
+      cb(e.message)
+    }
+  }
 }
 
 module.exports = InjectedProvider
