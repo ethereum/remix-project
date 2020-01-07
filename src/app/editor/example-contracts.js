@@ -6,7 +6,6 @@ const storage = `pragma solidity >=0.4.22 <0.7.0;
  * @title Storage
  * @dev Store & retreive value in a variable
  */
-
 contract Storage {
 
     uint256 number;
@@ -15,7 +14,6 @@ contract Storage {
      * @dev Store value in variable
      * @param num value to store
      */
-    
     function store(uint256 num) public {
         number = num;
     }
@@ -24,7 +22,6 @@ contract Storage {
      * @dev Return value 
      * @return value of 'number'
      */
-
     function retreive() public view returns (uint256){
         return number;
     }
@@ -36,7 +33,6 @@ const owner = `pragma solidity >=0.4.22 <0.7.0;
  * @title Owner
  * @dev Set & change owner
  */
-
 contract Owner {
 
     address private owner;
@@ -58,7 +54,6 @@ contract Owner {
     /**
      * @dev Set contract deployer as owner
      */
-     
     constructor() public {
         owner = msg.sender; // 'msg.sender' is sender of current call, contract deployer for a constructor
         emit OwnerSet(address(0), owner);
@@ -68,7 +63,6 @@ contract Owner {
      * @dev Change owner
      * @param newOwner address of new owner
      */
-    
     function changeOwner(address newOwner) public isOwner {
         emit OwnerSet(owner, newOwner);
         owner = newOwner;
@@ -78,7 +72,6 @@ contract Owner {
      * @dev Return owner address 
      * @return address of owner
      */
-
     function getOwner() external view returns (address) {
         return owner;
     }
@@ -90,7 +83,6 @@ const ballot = `pragma solidity >=0.4.22 <0.7.0;
  * @title Ballot
  * @dev Implements voting process along with vote delegation
  */
-
 contract Ballot {
    
     struct Voter {
@@ -117,7 +109,6 @@ contract Ballot {
      * @dev Create a new ballot to choose one of 'proposalNames'.
      * @param proposalNames names of proposals
      */
-     
     constructor(bytes32[] memory proposalNames) public {
         chairperson = msg.sender;
         voters[chairperson].weight = 1;
@@ -137,7 +128,6 @@ contract Ballot {
      * @dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'.
      * @param voter address of voter
      */
-     
     function giveRightToVote(address voter) public {
         require(
             msg.sender == chairperson,
@@ -155,7 +145,6 @@ contract Ballot {
      * @dev Delegate your vote to the voter 'to'.
      * @param to address to which vote is delegated
      */
-     
     function delegate(address to) public {
         Voter storage sender = voters[msg.sender];
         require(!sender.voted, "You already voted.");
@@ -185,7 +174,6 @@ contract Ballot {
      * @dev Give your vote (including votes delegated to you) to proposal 'proposals[proposal].name'.
      * @param proposal index of proposal in the proposals array
      */
-     
     function vote(uint proposal) public {
         Voter storage sender = voters[msg.sender];
         require(sender.weight != 0, "Has no right to vote");
@@ -203,7 +191,6 @@ contract Ballot {
      * @dev Computes the winning proposal taking all previous votes into account.
      * @return winningProposal_ index of winning proposal in the proposals array
      */
-     
     function winningProposal() public view
             returns (uint winningProposal_)
     {
@@ -220,7 +207,6 @@ contract Ballot {
      * @dev Calls winningProposal() function to get the index of the winner contained in the proposals array and then
      * @return winnerName_ the name of the winner
      */
-     
     function winnerName() public view
             returns (bytes32 winnerName_)
     {
