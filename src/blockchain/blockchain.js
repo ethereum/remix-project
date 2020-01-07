@@ -375,31 +375,15 @@ class Blockchain {
    * Create a VM Account
    * @param {{privateKey: string, balance: string}} newAccount The new account to create
    */
-  createVMAccount (newAccount) {
-    const { privateKey, balance } = newAccount
+  createVMAccount(newAccount) {
     if (this.executionContext.getProvider() !== 'vm') {
       throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
-    this.providers.vm._addAccount(privateKey, balance)
-    const privKey = Buffer.from(privateKey, 'hex')
-    return '0x' + privateToAddress(privKey).toString('hex')
+    return this.providers.vm.createVMAccount(newAccount)
   }
 
   newAccount (_password, passwordPromptCb, cb) {
-    if (this.executionContext.isVM()) {
-      let privateKey
-      do {
-        privateKey = crypto.randomBytes(32)
-      } while (!isValidPrivate(privateKey))
-      this.providers.vm._addAccount(privateKey, '0x56BC75E2D63100000')
-      return cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
-    }
-    if (!this.config.get('settings/personal-mode')) {
-      return cb('Not running in personal mode')
-    }
-    passwordPromptCb((passphrase) => {
-      this.executionContext.web3().personal.newAccount(passphrase, cb)
-    })
+    return this.getCurrentProvider().newAccount(passwordPromptCb, cb)
   }
 
   /** Get the balance of an address, and convert wei to ether */
