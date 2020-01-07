@@ -237,6 +237,9 @@ export class RemixAppManager extends PluginEngine {
  *  (localStorage, queryParams)
  **/
 class PluginLoader {
+  get currentLoader () {
+    return this.loaders[this.current]
+  }
   constructor () {
     const queryParams = new QueryParams()
     this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
@@ -265,10 +268,10 @@ class PluginLoader {
   }
 
   set (plugin, actives) {
-    this.loaders[this.current].set(plugin, actives)
+    this.currentLoader().set(plugin, actives)
   }
 
   get () {
-    return this.loaders[this.current].get()
+    return this.currentLoader().get()
   }
 }
