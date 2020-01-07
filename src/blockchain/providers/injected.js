@@ -8,6 +8,9 @@ class InjectedProvider {
   getAccounts (cb) {
     return this.executionContext.web3().eth.getAccounts(cb)
   }
+
+  resetEnvironment () {
+  }
 }
 
 module.exports = InjectedProvider

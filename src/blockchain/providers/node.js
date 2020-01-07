@@ -12,6 +12,9 @@ class NodeProvider {
     }
     return this.executionContext.web3().eth.getAccounts(cb)
   }
+
+  resetEnvironment () {
+  }
 }
 
 module.exports = NodeProvider
