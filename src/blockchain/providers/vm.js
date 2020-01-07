@@ -1,5 +1,6 @@
 const Web3 = require('web3')
-const { privateToAddress, toChecksumAddress } = require('ethereumjs-util')
+const { BN, privateToAddress, toChecksumAddress, isValidPrivate, stripHexPrefix } = require('ethereumjs-util')
+const crypto = require('crypto')
 
 class VMProvider {
 
@@ -43,14 +44,14 @@ class VMProvider {
     this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
   }
 
-  createVMAccount (passwordPromptCb, cb) {
+  createVMAccount (newAccount) {
     const { privateKey, balance } = newAccount
     this._addAccount(privateKey, balance)
     const privKey = Buffer.from(privateKey, 'hex')
     return '0x' + privateToAddress(privKey).toString('hex')
   }
 
-  newAccount(_passwordPromptCb, cb) {
+  newAccount (_passwordPromptCb, cb) {
     let privateKey
     do {
       privateKey = crypto.randomBytes(32)
