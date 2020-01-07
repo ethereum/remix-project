@@ -14,6 +14,15 @@ class NodeProvider {
     return this.executionContext.web3().eth.getAccounts(cb)
   }
 
+  newAccount(passwordPromptCb, cb) {
+    if (!this.config.get('settings/personal-mode')) {
+      return cb('Not running in personal mode')
+    }
+    passwordPromptCb((passphrase) => {
+      this.executionContext.web3().personal.newAccount(passphrase, cb)
+    })
+  }
+
   resetEnvironment () {
   }
 

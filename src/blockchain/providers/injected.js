@@ -10,6 +10,12 @@ class InjectedProvider {
     return this.executionContext.web3().eth.getAccounts(cb)
   }
 
+  newAccount(passwordPromptCb, cb) {
+    passwordPromptCb((passphrase) => {
+      this.executionContext.web3().personal.newAccount(passphrase, cb)
+    })
+  }
+
   resetEnvironment () {
   }
 

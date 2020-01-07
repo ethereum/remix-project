@@ -43,6 +43,22 @@ class VMProvider {
     this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
   }
 
+  createVMAccount (passwordPromptCb, cb) {
+    const { privateKey, balance } = newAccount
+    this._addAccount(privateKey, balance)
+    const privKey = Buffer.from(privateKey, 'hex')
+    return '0x' + privateToAddress(privKey).toString('hex')
+  }
+
+  newAccount(_passwordPromptCb, cb) {
+    let privateKey
+    do {
+      privateKey = crypto.randomBytes(32)
+    } while (!isValidPrivate(privateKey))
+    this.providers.vm._addAccount(privateKey, '0x56BC75E2D63100000')
+    return cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
+  }
+
   getBalanceInEther (address, cb) {
     address = stripHexPrefix(address)
 
