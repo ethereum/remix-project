@@ -373,10 +373,6 @@ class Blockchain {
     })
   }
 
-  context () {
-    return (this.executionContext.isVM() ? 'memory' : 'blockchain')
-  }
-
   /**
    * This function send a tx only to javascript VM or testnet, will return an error for the mainnet
    * SHOULD BE TAKEN CAREFULLY!

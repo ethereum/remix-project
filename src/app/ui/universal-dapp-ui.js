@@ -59,7 +59,7 @@ class UniversalDAppUI {
     address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
     address = ethJSUtil.toChecksumAddress(address)
     const instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
-    const context = this.blockchain.context()
+    const context = (this.blockchain.getProvider() === 'vm' ? 'memory' : 'blockchain')
 
     function toggleClass (e) {
       $(instance).toggleClass(`${css.hidesub}`)
