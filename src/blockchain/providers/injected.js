@@ -1,4 +1,5 @@
 const Web3 = require('web3')
+const { stripHexPrefix } = require('ethereumjs-util')
 
 class InjectedProvider {
 
@@ -10,7 +11,7 @@ class InjectedProvider {
     return this.executionContext.web3().eth.getAccounts(cb)
   }
 
-  newAccount(passwordPromptCb, cb) {
+  newAccount (passwordPromptCb, cb) {
     passwordPromptCb((passphrase) => {
       this.executionContext.web3().personal.newAccount(passphrase, cb)
     })

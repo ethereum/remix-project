@@ -1,4 +1,5 @@
 const Web3 = require('web3')
+const { stripHexPrefix } = require('ethereumjs-util')
 
 class NodeProvider {
 
@@ -14,7 +15,7 @@ class NodeProvider {
     return this.executionContext.web3().eth.getAccounts(cb)
   }
 
-  newAccount(passwordPromptCb, cb) {
+  newAccount (passwordPromptCb, cb) {
     if (!this.config.get('settings/personal-mode')) {
       return cb('Not running in personal mode')
     }
@@ -26,7 +27,7 @@ class NodeProvider {
   resetEnvironment () {
   }
 
-  getBalanceInEther(address, cb) {
+  getBalanceInEther (address, cb) {
     address = stripHexPrefix(address)
     this.executionContext.web3().eth.getBalance(address, (err, res) => {
       if (err) {
