@@ -319,7 +319,7 @@ class Blockchain {
     },
     (data, runTxCallback) => {
       // called for libraries deployment
-      this.runTx(data, confirmationCb, runTxCallback)
+      this.runTx(data, confirmationCb, runTxCallback, promptCb, () => {})
     })
   }
 
