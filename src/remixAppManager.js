@@ -232,6 +232,10 @@ export class RemixAppManager extends PluginEngine {
   }
 }
 
+/** @class Reference loaders.
+ *  A loader is a get,set based object which load a workspace from a defined sources.
+ *  (localStorage, queryParams)
+ **/
 class PluginLoader {
   constructor () {
     const queryParams = new QueryParams()
