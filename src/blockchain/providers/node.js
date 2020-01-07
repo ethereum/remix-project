@@ -1,5 +1,6 @@
 const Web3 = require('web3')
 const { stripHexPrefix } = require('ethereumjs-util')
+const Personal = require('web3-eth-personal')
 
 class NodeProvider {
 
@@ -35,6 +36,18 @@ class NodeProvider {
       }
       cb(null, Web3.utils.fromWei(res.toString(10), 'ether'))
     })
+  }
+
+  signMessage (message, account, passphrase, cb) {
+    const hashedMsg = Web3.utils.sha3(message)
+    try {
+      const personal = new Personal(this.executionContext.web3().currentProvider)
+      personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
+        cb(error.message, hashedMsg, signedData)
+      })
+    } catch (e) {
+      cb(e.message)
+    }
   }
 }
 
