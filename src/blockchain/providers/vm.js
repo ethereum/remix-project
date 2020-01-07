@@ -1,6 +1,7 @@
 const Web3 = require('web3')
 const { BN, privateToAddress, toChecksumAddress, isValidPrivate, stripHexPrefix } = require('ethereumjs-util')
 const crypto = require('crypto')
+const ethJSUtil = require('ethereumjs-util')
 
 class VMProvider {
 
@@ -69,6 +70,18 @@ class VMProvider {
       }
       cb(null, Web3.utils.fromWei(new BN(res.balance).toString(10), 'ether'))
     })
+  }
+
+  signMessage (message, account, _passphrase, cb) {
+    const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
+    const privKey = this.providers.vm.accounts[account].privateKey
+    try {
+      const rsv = ethJSUtil.ecsign(personalMsg, privKey)
+      const signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
+      cb(null, '0x' + personalMsg.toString('hex'), signedData)
+    } catch (e) {
+      cb(e.message)
+    }
   }
 }
 

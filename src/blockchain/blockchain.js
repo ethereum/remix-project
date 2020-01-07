@@ -7,7 +7,6 @@ const Txlistener = remixLib.execution.txListener
 const EventManager = remixLib.EventManager
 const executionContext = remixLib.execution.executionContext
 const ethJSUtil = require('ethereumjs-util')
-const Personal = require('web3-eth-personal')
 const Web3 = require('web3')
 
 const async = require('async')
@@ -233,42 +232,7 @@ class Blockchain {
   }
 
   signMessage (message, account, passphrase, cb) {
-    const isVM = this.executionContext.isVM()
-    const isInjected = this.executionContext.getProvider() === 'injected'
-
-    if (isVM) {
-      const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
-      const privKey = this.providers.vm.accounts[account].privateKey
-      try {
-        const rsv = ethJSUtil.ecsign(personalMsg, privKey)
-        const signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
-        cb(null, '0x' + personalMsg.toString('hex'), signedData)
-      } catch (e) {
-        cb(e.message)
-      }
-      return
-    }
-    if (isInjected) {
-      const hashedMsg = Web3.utils.sha3(message)
-      try {
-        this.executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
-          cb(error.message, hashedMsg, signedData)
-        })
-      } catch (e) {
-        cb(e.message)
-      }
-      return
-    }
-
-    const hashedMsg = Web3.utils.sha3(message)
-    try {
-      const personal = new Personal(this.executionContext.web3().currentProvider)
-      personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
-        cb(error.message, hashedMsg, signedData)
-      })
-    } catch (e) {
-      cb(e.message)
-    }
+    this.getCurrentProvider().signMessage(message, account, passphrase, cb)
   }
 
   web3 () {
