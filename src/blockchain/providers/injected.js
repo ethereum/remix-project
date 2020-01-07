@@ -1,3 +1,4 @@
+const Web3 = require('web3')
 
 class InjectedProvider {
 
@@ -10,6 +11,16 @@ class InjectedProvider {
   }
 
   resetEnvironment () {
+  }
+
+  getBalanceInEther (address, cb) {
+    address = stripHexPrefix(address)
+    this.executionContext.web3().eth.getBalance(address, (err, res) => {
+      if (err) {
+        return cb(err)
+      }
+      cb(null, Web3.utils.fromWei(res.toString(10), 'ether'))
+    })
   }
 }
 

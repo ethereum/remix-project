@@ -1,3 +1,4 @@
+const Web3 = require('web3')
 const { privateToAddress, toChecksumAddress } = require('ethereumjs-util')
 
 class VMProvider {
@@ -42,6 +43,16 @@ class VMProvider {
     this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
   }
 
+  getBalanceInEther (address, cb) {
+    address = stripHexPrefix(address)
+
+    this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, res) => {
+      if (err) {
+        return cb('Account not found')
+      }
+      cb(null, Web3.utils.fromWei(new BN(res.balance).toString(10), 'ether'))
+    })
+  }
 }
 
 module.exports = VMProvider
