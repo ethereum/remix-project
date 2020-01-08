@@ -49,6 +49,10 @@ class NodeProvider {
       cb(e.message)
     }
   }
+
+  getProvider () {
+    return this.executionContext.getProvider()
+  }
 }
 
 module.exports = NodeProvider

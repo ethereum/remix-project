@@ -40,6 +40,10 @@ class InjectedProvider {
       cb(e.message)
     }
   }
+
+  getProvider () {
+    return 'injected'
+  }
 }
 
 module.exports = InjectedProvider
