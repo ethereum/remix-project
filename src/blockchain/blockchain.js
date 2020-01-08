@@ -118,21 +118,13 @@ class Blockchain {
     }
 
     this.runTx({ data: data, useCall: false }, confirmationCb, continueCb, promptCb,
-      (error, txResult) => {
+      (error, txResult, address) => {
         if (error) {
           return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
-        }
-        const isVM = this.executionContext.isVM()
-        if (isVM) {
-          const vmError = txExecution.checkVMError(txResult)
-          if (vmError.error) {
-            return finalCb(vmError.message)
-          }
         }
         if (txResult.result.status && txResult.result.status === '0x0') {
           return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
         }
-        const address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
         finalCb(null, selectedContract, address)
       }
     )
@@ -360,18 +352,7 @@ class Blockchain {
     */
   callFunction (to, data, funAbi, confirmationCb, continueCb, promptCb, callback) {
     const useCall = funAbi.stateMutability === 'view' || funAbi.stateMutability === 'pure'
-    this.runTx({to, data, useCall}, confirmationCb, continueCb, promptCb, (error, txResult) => {
-      const isVM = this.executionContext.isVM()
-      if (isVM) {
-        const vmError = txExecution.checkVMError(txResult)
-        if (vmError.error) {
-          return callback(vmError.message)
-        }
-      }
-
-      // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
-      callback(error, txResult)
-    })
+    this.runTx({to, data, useCall}, confirmationCb, continueCb, promptCb, callback)
   }
 
   /**
@@ -470,7 +451,23 @@ class Blockchain {
           }
         )
       }
-    ], cb)
+    ],
+    (error, txResult) => {
+      const isVM = this.executionContext.isVM()
+      if (isVM) {
+        const vmError = txExecution.checkVMError(txResult)
+        if (vmError.error) {
+          return cb(vmError.message)
+        }
+      }
+
+      let address = null
+      if (txResult && txResult.result) {
+        address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
+      }
+
+      cb(error, txResult, address)
+    })
   }
 
 }
