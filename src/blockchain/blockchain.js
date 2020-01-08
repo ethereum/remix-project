@@ -251,12 +251,11 @@ class Blockchain {
         logCallback(`${logMsg}`)
       }
       if (funABI.type === 'fallback') data.dataHex = value
-      this.callFunction(address, data, funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
+      this.callFunction(address, data, funABI, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
         if (error) {
           return logCallback(`${logMsg} errored: ${error} `)
         }
         if (lookupOnly) {
-          const returnValue = (this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result))
           outputCb(returnValue)
         }
       })
@@ -462,11 +461,13 @@ class Blockchain {
       }
 
       let address = null
+      let returnValue = null
       if (txResult && txResult.result) {
         address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
+        returnValue = (txResult.result.execResult && isVM) ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result)
       }
 
-      cb(error, txResult, address)
+      cb(error, txResult, address, returnValue)
     })
   }
 
