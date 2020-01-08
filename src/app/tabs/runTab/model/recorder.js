@@ -248,12 +248,11 @@ class Recorder {
       record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName, timestamp: tx.timestamp }
 
       self.blockchain.runTx(record, confirmationCb, continueCb, promptCb,
-        function (err, txResult) {
+        function (err, txResult, rawAddress) {
           if (err) {
             console.error(err)
             return logCallBack(err + '. Execution failed at ' + index)
           }
-          const rawAddress = self.blockchain.getAddressFromTransactionResult(txResult)
           if (rawAddress) {
             const stringAddress = self.addressToString(rawAddress)
             const address = ethutil.toChecksumAddress(stringAddress)
