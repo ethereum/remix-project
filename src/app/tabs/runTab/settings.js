@@ -56,9 +56,9 @@ class SettingsUI {
 
     var environmentEl = yo`
       <div class="${css.crow}">
-        <div id="selectExEnv" class="${css.settingsLabel} form-control-label">
+        <label id="selectExEnv" class="${css.settingsLabel}">
           Environment
-        </div>
+        </label>
         <div class="${css.environment}">
           <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select}">
             <option id="vm-mode"
@@ -90,12 +90,12 @@ class SettingsUI {
     `
     const accountEl = yo`
       <div class="${css.crow}">
-        <div class="${css.settingsLabel} form-control-label">
+        <label class="${css.settingsLabel}">
           Account
           <span id="remixRunPlusWraper" title="Create a new account" onload=${this.updatePlusButton.bind(this)}>
             <i id="remixRunPlus" class="fas fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)}"></i>
           </span>
-        </div>
+        </label>
         <div class="${css.account}">
           <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
@@ -106,14 +106,14 @@ class SettingsUI {
 
     const gasPriceEl = yo`
       <div class="${css.crow}">
-        <div class="${css.settingsLabel} form-control-label">Gas limit</div>
+        <label class="${css.settingsLabel}">Gas limit</label>
         <input type="number" class="form-control ${css.gasNval} ${css.col2}" id="gasLimit" value="3000000">
       </div>
     `
 
     const valueEl = yo`
       <div class="${css.crow}">
-        <div class="${css.settingsLabel} form-control-label">Value</div>
+        <label class="${css.settingsLabel}">Value</label>
         <div class="${css.gasValueContainer}">
           <input type="text" class="form-control ${css.gasNval} ${css.col2}" id="value" value="0" title="Enter the value and choose the unit">
           <select name="unit" class="form-control p-1 ${css.gasNvalUnit} ${css.col2_2}" id="unit">
