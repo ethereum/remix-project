@@ -204,8 +204,8 @@ class CompilerContainer {
     this._view.evmVersionSelector = yo`
       <select onchange="${this.onchangeEvmVersion.bind(this)}" class="custom-select" id="evmVersionSelector">
         <option value="default">compiler default</option>
-        <option>petersburg</option>
         <option>istanbul</option>
+        <option>petersburg</option>
         <option>constantinople</option>
         <option>byzantium</option>
         <option>spuriousDragon</option>
