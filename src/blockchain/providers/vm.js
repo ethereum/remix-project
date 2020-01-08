@@ -83,6 +83,10 @@ class VMProvider {
       cb(e.message)
     }
   }
+
+  getProvider () {
+    return 'vm'
+  }
 }
 
 module.exports = VMProvider
