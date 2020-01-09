@@ -15,19 +15,19 @@ class PluginUdapp {
   }
 
   createVMAccount (newAccount) {
-    return this.blockchain.udapp.createVMAccount(newAccount)
+    return this.blockchain.createVMAccount(newAccount)
   }
 
   sendTransaction (tx) {
-    return this.blockchain.udapp.sendTransaction(tx)
+    return this.blockchain.sendTransaction(tx)
   }
 
   getAccounts (cb) {
-    return this.blockchain.udapp.getAccounts(cb)
+    return this.blockchain.getAccounts(cb)
   }
 
   pendingTransactionsCount () {
-    return this.blockchain.udapp.pendingTransactionsCount()
+    return this.blockchain.pendingTransactionsCount()
   }
 
 }
