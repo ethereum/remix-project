@@ -292,7 +292,7 @@ class TxListener {
         }
       }
       // receive function
-      if(!inputData && txHelper.getReceiveInterface(abi)){
+      if (!inputData && txHelper.getReceiveInterface(abi)) {
         this._resolvedTransactions[tx.hash] = {
           contractName: contractName,
           to: tx.to,
@@ -300,13 +300,13 @@ class TxListener {
           params: null
         }
       } else {
-          // fallback function
-          this._resolvedTransactions[tx.hash] = {
-            contractName: contractName,
-            to: tx.to,
-            fn: '(fallback)',
-            params: null
-          }
+        // fallback function
+        this._resolvedTransactions[tx.hash] = {
+          contractName: contractName,
+          to: tx.to,
+          fn: '(fallback)',
+          params: null
+        }
       }
     } else {
       const bytecode = contract.object.evm.bytecode.object
