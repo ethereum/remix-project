@@ -251,7 +251,9 @@ class Blockchain {
         logCallback(`${logMsg}`)
       }
       if (funABI.type === 'fallback') data.dataHex = value
-      this.callFunction(address, data, funABI, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
+
+      const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
+      this.runTx({address, data, useCall}, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
         if (error) {
           return logCallback(`${logMsg} errored: ${error} `)
         }
@@ -339,19 +341,6 @@ class Blockchain {
 
   pendingTransactionsCount () {
     return Object.keys(this.txRunner.pendingTxs).length
-  }
-
-  /**
-    * call the current given contract
-    *
-    * @param {String} to    - address of the contract to call.
-    * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
-    * @param {Object} funAbi    - abi definition of the function to call.
-    * @param {Function} callback    - callback.
-    */
-  callFunction (to, data, funAbi, confirmationCb, continueCb, promptCb, callback) {
-    const useCall = funAbi.stateMutability === 'view' || funAbi.stateMutability === 'pure'
-    this.runTx({to, data, useCall}, confirmationCb, continueCb, promptCb, callback)
   }
 
   /**
