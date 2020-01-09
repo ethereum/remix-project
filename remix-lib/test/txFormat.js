@@ -243,12 +243,13 @@ function encodeFunctionCallTest (st) {
 
 /* *********************************************************** */
 
-tape('test fallback function', function (t) {
+tape('test fallback & receive function', function (t) {
   t.test('(fallback)', function (st) {
-    st.plan(2)
-    let output = compiler.compile(compilerInput(fallbackFunction))
+    st.plan(3)
+    let output = compiler.compile(compilerInput(fallbackAndReceiveFunction))
     output = JSON.parse(output)
-    const contract = output.contracts['test.sol']['fallbackFunctionContract']
+    const contract = output.contracts['test.sol']['fallbackAndReceiveFunctionContract']
+    st.equal(txHelper.encodeFunctionId(contract.abi[2]), '0x')
     st.equal(txHelper.encodeFunctionId(contract.abi[1]), '0x805da4ad')
     st.equal(txHelper.encodeFunctionId(contract.abi[0]), '0x')
   })
@@ -381,13 +382,15 @@ contract testContractLinkLibrary {
     }
  }`
 
-const fallbackFunction = `pragma solidity >= 0.5.0 < 0.7.0;
+const fallbackAndReceiveFunction = `pragma solidity >= 0.5.0 < 0.7.0;
 
-contract fallbackFunctionContract {
+contract fallbackAndReceiveFunctionContract {
     function get (uint _p, string memory _o) public {
     }
 
     fallback () external {}
+
+    receive() payable external{}
  }`
 
 const abiEncoderV2 = `pragma experimental ABIEncoderV2;
