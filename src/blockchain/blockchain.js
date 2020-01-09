@@ -253,7 +253,7 @@ class Blockchain {
       if (funABI.type === 'fallback') data.dataHex = value
 
       const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
-      this.runTx({address, data, useCall}, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
+      this.runTx({to: address, data, useCall}, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
         if (error) {
           return logCallback(`${logMsg} errored: ${error} `)
         }
