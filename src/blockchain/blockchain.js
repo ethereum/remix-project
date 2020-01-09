@@ -441,6 +441,10 @@ class Blockchain {
       }
     ],
     (error, txResult) => {
+      if (error) {
+        return cb(error)
+      }
+
       const isVM = this.executionContext.isVM()
       if (isVM) {
         const vmError = txExecution.checkVMError(txResult)
