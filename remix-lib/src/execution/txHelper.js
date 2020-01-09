@@ -34,7 +34,7 @@ module.exports = {
   },
 
   encodeFunctionId: function (funABI) {
-    if (funABI.type === 'fallback') return '0x'
+    if (funABI.type === 'fallback' || funABI.type === 'receive') return '0x'
     let abi = new ethers.utils.Interface([funABI])
     abi = abi.functions[funABI.name]
     return abi.sighash
@@ -53,10 +53,10 @@ module.exports = {
         return -1
       }
       // If we reach here, either a and b are both constant or both not; sort by name then
-      // special case for fallback and constructor
+      // special case for fallback, receive and constructor function
       if (a.type === 'function' && typeof a.name !== 'undefined') {
         return a.name.localeCompare(b.name)
-      } else if (a.type === 'constructor' || a.type === 'fallback') {
+      } else if (a.type === 'constructor' || a.type === 'fallback' || a.type === 'receive') {
         return 1
       }
     })
@@ -119,6 +119,14 @@ module.exports = {
   getFallbackInterface: function (abi) {
     for (let i = 0; i < abi.length; i++) {
       if (abi[i].type === 'fallback') {
+        return abi[i]
+      }
+    }
+  },
+
+  getReceiveInterface: function (abi) {
+    for (let i = 0; i < abi.length; i++) {
+      if (abi[i].type === 'receive') {
         return abi[i]
       }
     }
