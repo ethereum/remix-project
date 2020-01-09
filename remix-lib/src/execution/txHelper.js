@@ -63,7 +63,7 @@ module.exports = {
   },
 
   getConstructorInterface: function (abi) {
-    const funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'payable': 'false', 'outputs': [] }
+    const funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'payable': false, 'outputs': [] }
     if (typeof abi === 'string') {
       try {
         abi = JSON.parse(abi)
