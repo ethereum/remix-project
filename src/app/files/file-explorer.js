@@ -470,7 +470,8 @@ fileExplorer.prototype.toGist = function (id) {
     return data.files || []
   }
 
-  this.packageFiles(this.files, 'browser/gists/' + id, (error, packaged) => {
+  const folder = id ? 'browser/gists/' + id : 'browser/'
+  this.packageFiles(this.files, folder, (error, packaged) => {
     if (error) {
       console.log(error)
       modalDialogCustom.alert('Failed to create gist: ' + error)
