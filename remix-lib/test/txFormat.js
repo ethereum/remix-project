@@ -249,9 +249,9 @@ tape('test fallback & receive function', function (t) {
     let output = compiler.compile(compilerInput(fallbackAndReceiveFunction))
     output = JSON.parse(output)
     const contract = output.contracts['test.sol']['fallbackAndReceiveFunctionContract']
-    st.equal(txHelper.encodeFunctionId(contract.abi[2]), '0x')
+    st.equal(txHelper.encodeFunctionId(contract.abi[2]), '0x') // for receive function
     st.equal(txHelper.encodeFunctionId(contract.abi[1]), '0x805da4ad')
-    st.equal(txHelper.encodeFunctionId(contract.abi[0]), '0x')
+    st.equal(txHelper.encodeFunctionId(contract.abi[0]), '0x') // for fallback function
   })
 })
 
