@@ -291,12 +291,22 @@ class TxListener {
           return this._resolvedTransactions[tx.hash]
         }
       }
-      // fallback function
-      this._resolvedTransactions[tx.hash] = {
-        contractName: contractName,
-        to: tx.to,
-        fn: '(fallback)',
-        params: null
+      // receive function
+      if(!inputData && txHelper.getReceiveInterface(abi)){
+        this._resolvedTransactions[tx.hash] = {
+          contractName: contractName,
+          to: tx.to,
+          fn: '(receive)',
+          params: null
+        }
+      } else {
+          // fallback function
+          this._resolvedTransactions[tx.hash] = {
+            contractName: contractName,
+            to: tx.to,
+            fn: '(fallback)',
+            params: null
+          }
       }
     } else {
       const bytecode = contract.object.evm.bytecode.object
