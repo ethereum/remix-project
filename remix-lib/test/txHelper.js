@@ -3,7 +3,7 @@ const tape = require('tape')
 const txHelper = require('../src/execution/txHelper')
 
 tape('getFunction', function (st) {
-  st.plan(5)
+  st.plan(6)
   let fn = txHelper.getFunction(JSON.parse(abi), 'o((address,uint256))')
   st.equal(fn.name, 'o')
 
@@ -18,6 +18,9 @@ tape('getFunction', function (st) {
 
   fn = txHelper.getFallbackInterface(JSON.parse(abi))
   st.equal(fn.type, 'fallback')
+
+  fn = txHelper.getReceiveInterface(JSON.parse(abi))
+  st.equal(fn.type, 'receive')
 })
 
 const abi = `[
@@ -143,5 +146,10 @@ const abi = `[
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "fallback"
+	},
+	{
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "receive"
 	}
 ]`
