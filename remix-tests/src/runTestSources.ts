@@ -51,7 +51,7 @@ export async function runTestSources(contractSources: SrcIfc, versionUrl: string
             }
             deployAll(compilationResult, web3, (err, contracts) => {
                 if (err) {
-                    next(err)
+                    next([{message: 'contract deployment failed: ' + err.message, severity: 'error'}]) // IDE expects errors in array
                 }
 
                 next(null, compilationResult, contracts)
