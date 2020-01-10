@@ -102,7 +102,8 @@ export function deployAll(compileResult: object, web3: Web3, callback) {
                 let funAbi = null // no need to set the abi for encoding the constructor
                 let params = '' // we suppose that the test contract does not have any param in the constructor
                 remixLib.execution.txFormat.encodeConstructorCallAndDeployLibraries(contractName, contract.raw, compileResult, params, funAbi, encodeDataFinalCallback, encodeDataStepCallback, encodeDataDeployLibraryCallback)
-            }, function () {
+            }, function (err) {
+                if(err) next(err)
                 next(null, contracts)
             })
         }
