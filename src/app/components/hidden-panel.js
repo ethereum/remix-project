@@ -14,7 +14,7 @@ const profile = {
   displayName: 'Hidden Panel',
   description: '',
   version: packageJson.version,
-  methods: []
+  methods: ['addView', 'removeView']
 }
 
 export class HiddenPanel extends AbstractPanel {
