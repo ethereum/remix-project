@@ -470,7 +470,9 @@ fileExplorer.prototype.toGist = function (id) {
     return data.files || []
   }
 
-  this.packageFiles(this.files, 'browser/gists/' + id, (error, packaged) => {
+  // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
+  const folder = id ? 'browser/gists/' + id : 'browser/'
+  this.packageFiles(this.files, folder, (error, packaged) => {
     if (error) {
       console.log(error)
       modalDialogCustom.alert('Failed to create gist: ' + error)
@@ -632,7 +634,7 @@ fileExplorer.prototype.renderMenuItems = function () {
     items = this.menuItems.map(({action, title, icon}) => {
       if (action === 'uploadFile') {
         return yo`
-          <label class="${icon} ${css.newFile}"  title="${title}">
+          <label id=${action} class="${icon} ${css.newFile}"  title="${title}">
             <input type="file" onchange=${(event) => {
               event.stopPropagation()
               this.uploadFile(event)
@@ -641,7 +643,7 @@ fileExplorer.prototype.renderMenuItems = function () {
         `
       } else {
         return yo`
-        <span onclick=${(event) => { event.stopPropagation(); this[ action ]() }} class="newFile ${icon} ${css.newFile}" title=${title}></span>
+        <span id=${action} onclick=${(event) => { event.stopPropagation(); this[ action ]() }} class="newFile ${icon} ${css.newFile}" title=${title}></span>
         `
       }
     })
