@@ -470,6 +470,7 @@ fileExplorer.prototype.toGist = function (id) {
     return data.files || []
   }
 
+  // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = id ? 'browser/gists/' + id : 'browser/'
   this.packageFiles(this.files, folder, (error, packaged) => {
     if (error) {
