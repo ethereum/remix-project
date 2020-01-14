@@ -10,8 +10,7 @@ class Struct extends RefType {
 
   async decodeFromStorage (location, storageResolver) {
     const ret = {}
-    for (var k in this.members) {
-      const item = this.members[k]
+    for (var item of this.members) {
       const globalLocation = {
         offset: location.offset + item.storagelocation.offset,
         slot: util.add(location.slot, item.storagelocation.slot)
