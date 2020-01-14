@@ -102,6 +102,7 @@ var css = csjs`
     height: 32px;
     border-radius: 3px;
     white-space: nowrap;
+    font-size: 11px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
