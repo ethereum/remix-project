@@ -158,7 +158,7 @@ staticAnalysisView.prototype.renderModules = function () {
     var category = groupedModules[categoryId]
     var entriesDom = category.map((item, i) => {
       return yo`
-        <label class="${css.label}">
+        <label class="${css.label} form-check-label">
           <input id="staticanalysismodule_${categoryId}_${i}"
             type="checkbox"
             class="staticAnalysisItem"
