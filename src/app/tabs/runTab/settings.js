@@ -60,7 +60,7 @@ class SettingsUI {
           Environment
         </label>
         <div class="${css.environment}">
-          <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select}">
+          <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select} custom-select">
             <option id="vm-mode"
               title="Execution environment does not connect to any node, everything is local and in memory only."
               value="vm" name="executionContext"> JavaScript VM
@@ -97,7 +97,7 @@ class SettingsUI {
           </span>
         </label>
         <div class="${css.account}">
-          <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
+          <select name="txorigin" class="form-control ${css.select} custom-select" id="txorigin"></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
           <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
@@ -116,7 +116,7 @@ class SettingsUI {
         <label class="${css.settingsLabel}">Value</label>
         <div class="${css.gasValueContainer}">
           <input type="text" class="form-control ${css.gasNval} ${css.col2}" id="value" value="0" title="Enter the value and choose the unit">
-          <select name="unit" class="form-control p-1 ${css.gasNvalUnit} ${css.col2_2}" id="unit">
+          <select name="unit" class="form-control p-1 ${css.gasNvalUnit} ${css.col2_2} custom-select" id="unit">
             <option data-unit="wei">wei</option>
             <option data-unit="gwei">gwei</option>
             <option data-unit="finney">finney</option>
