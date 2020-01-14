@@ -203,7 +203,7 @@ module.exports = class UniversalDApp {
       if (error) {
         callback(error)
       } else {
-        callback(null, this.executionContext.web3().fromWei(balance, 'ether'))
+        callback(null, this.executionContext.web3().utils.fromWei(balance, 'ether'))
       }
     })
   }
