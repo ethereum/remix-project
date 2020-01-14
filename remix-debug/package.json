@@ -1,7 +1,7 @@
 {
   "name": "remix-debug",
-  "version": "0.3.22",
-  "description": "Ethereum IDE and tools for the web",
+  "version": "0.3.23",
+  "description": "Tool to debug Ethereum transactions",
   "contributors": [
     {
       "name": "Yann Levreau",
@@ -53,7 +53,7 @@
   "bugs": {
     "url": "https://github.com/ethereum/remix/issues"
   },
-  "homepage": "https://github.com/ethereum/remix#readme",
+  "homepage": "https://github.com/ethereum/remix/tree/master/remix-debug#readme",
   "standard": {
     "ignore": [
       "node_modules/*",
