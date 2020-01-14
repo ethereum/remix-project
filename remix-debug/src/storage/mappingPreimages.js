@@ -17,7 +17,7 @@ async function decodeMappingsKeys (web3, storage, corrections, callback) {
   const ret = {}
   if (!corrections.length) corrections.push({offset: 0, slot: 0})
   for (let hashedLoc in storage) {
-    let preimage
+    var preimage
     try {
       const key = storage[hashedLoc].key
       for (let k in corrections) {
