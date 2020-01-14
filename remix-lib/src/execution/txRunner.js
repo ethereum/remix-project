@@ -57,8 +57,8 @@ class TxRunner {
       this.event.trigger('transactionBroadcasted', [resp])
       var listenOnResponse = () => {
         return new Promise(async (resolve, reject) => {
-          const result = await tryTillReceiptAvailable(resp)
-          tx = await tryTillTxAvailable(resp)
+          const result = await tryTillReceiptAvailable(resp, this.executionContext)
+          tx = await tryTillTxAvailable(resp, this.executionContext)
           resolve({
             result,
             tx,
@@ -214,13 +214,13 @@ class TxRunner {
   }
 }
 
-async function tryTillReceiptAvailable (txhash, done) {
+async function tryTillReceiptAvailable (txhash, executionContext) {
   return new Promise((resolve, reject) => {
-    this.executionContext.web3().eth.getTransactionReceipt(txhash, async (err, receipt) => {
+    executionContext.web3().eth.getTransactionReceipt(txhash, async (err, receipt) => {
       if (err || !receipt) {
         // Try again with a bit of delay if error or if result still null
         await pause()
-        return resolve(await tryTillReceiptAvailable(txhash))
+        return resolve(await tryTillReceiptAvailable(txhash, executionContext))
       } else {
         return resolve(receipt)
       }
@@ -228,13 +228,13 @@ async function tryTillReceiptAvailable (txhash, done) {
   })
 }
 
-async function tryTillTxAvailable (txhash, done) {
+async function tryTillTxAvailable (txhash, executionContext) {
   return new Promise((resolve, reject) => {
-    this.executionContext.web3().eth.getTransaction(txhash, async (err, tx) => {
+    executionContext.web3().eth.getTransaction(txhash, async (err, tx) => {
       if (err || !tx) {
         // Try again with a bit of delay if error or if result still null
         await pause()
-        return resolve(await tryTillTxAvailable(txhash))
+        return resolve(await tryTillTxAvailable(txhash, executionContext))
       } else {
         return resolve(tx)
       }
