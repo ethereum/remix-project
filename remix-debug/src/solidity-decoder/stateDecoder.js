@@ -11,7 +11,7 @@ const decodeInfo = require('./decodeInfo')
 async function decodeState (stateVars, storageResolver) {
   const ret = {}
   for (var k in stateVars) {
-    const stateVar = stateVars[k]
+    var stateVar = stateVars[k]
     try {
       const decoded = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
       decoded.constant = stateVar.constant
