@@ -1,5 +1,19 @@
 ## Change Log
 
+### v0.1.26 (2020/01/10 12:28 +00:00)
+- [#1386](https://github.com/ethereum/remix/pull/1386) Release 0.1.26 (@Aniket-Engg)
+- [#1385](https://github.com/ethereum/remix/pull/1385) compiler import issue fixed (@Aniket-Engg)
+- [#1384](https://github.com/ethereum/remix/pull/1384) catch and return deployment error in remix-tests (@Aniket-Engg)
+- [#1382](https://github.com/ethereum/remix/pull/1382) receive function support added (@Aniket-Engg)
+- [#1380](https://github.com/ethereum/remix/pull/1380) constructor ABI fixed (@Aniket-Engg)
+- [#1377](https://github.com/ethereum/remix/pull/1377) remix-solidity: js to ts (@Aniket-Engg)
+- [#1374](https://github.com/ethereum/remix/pull/1374) changelog updated (@Aniket-Engg)
+- [#1372](https://github.com/ethereum/remix/pull/1372) Syntax updates2 (@iurimatias)
+- [#1363](https://github.com/ethereum/remix/pull/1363) update syntax to use const, let and this (@iurimatias)
+- [#1362](https://github.com/ethereum/remix/pull/1362) refactor execution context (@iurimatias)
+
+## Change Log
+
 ### v0.1.25 (2019/12/23)
 - [#1373](https://github.com/ethereum/remix/pull/1373) Release 0.1.25 (@Aniket-Engg )
 - [#1371](https://github.com/ethereum/remix/pull/1371) use web3 utils (@Aniket-Engg )
