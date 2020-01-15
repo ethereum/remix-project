@@ -32,10 +32,18 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
 
 TraceAnalyser.prototype.buildReturnValues = function (index, step) {
   if (traceHelper.isReturnInstruction(step)) {
-    const offset = 2 * parseInt(step.stack[step.stack.length - 1], 16)
+    let offset = 2 * parseInt(step.stack[step.stack.length - 1], 16)
     const size = 2 * parseInt(step.stack[step.stack.length - 2], 16)
     const memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
-    this.traceCache.pushReturnValue(index, '0x' + memory.join('').substr(offset, size))
+    const noOfReturnParams = size / 64
+    const memoryInString = memory.join('')
+    let returnParamsObj = [];
+    for(let i = 0; i < noOfReturnParams; i++){
+      returnParamsObj.push('0x' + memoryInString.substring(offset, offset + 64))
+      offset += 64
+    }
+    
+    this.traceCache.pushReturnValue(index, returnParamsObj)
   }
 }
 
