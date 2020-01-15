@@ -24,5 +24,8 @@ function initModules (browser, callback) {
     .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_solidityStaticAnalysis"] button')
     .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
     .scrollAndClick('#icon-panel div[plugin="fileExplorers"]')
+    .clickLaunchIcon('settings')
+    .setValue('#gistaccesstoken', process.env.gist_token)
+    .click('#savegisttoken')
     .perform(() => { callback() })
 }

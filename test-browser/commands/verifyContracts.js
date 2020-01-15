@@ -1,9 +1,9 @@
 const EventEmitter = require('events')
 
 class VerifyContracts extends EventEmitter {
-  command (compiledContractNames) {
+  command (compiledContractNames, opts = { wait: 1000 }) {
     this.api.perform((done) => {
-      verifyContracts(this.api, compiledContractNames, () => {
+      verifyContracts(this.api, compiledContractNames, opts, () => {
         done()
         this.emit('complete')
       })
@@ -12,9 +12,10 @@ class VerifyContracts extends EventEmitter {
   }
 }
 
-function getCompiledContracts (browser, callback) {
+function getCompiledContracts (browser, opts, callback) {
   browser
   .clickLaunchIcon('solidity')
+  .pause(opts.wait)
   .waitForElementPresent('#compileTabView select#compiledContracts option')
   .execute(function () {
     var contracts = document.querySelectorAll('#compileTabView select#compiledContracts option')
@@ -32,8 +33,8 @@ function getCompiledContracts (browser, callback) {
   })
 }
 
-function verifyContracts (browser, compiledContractNames, callback) {
-  getCompiledContracts(browser, (result) => {
+function verifyContracts (browser, compiledContractNames, opts, callback) {
+  getCompiledContracts(browser, opts, (result) => {
     if (result.value) {
       for (var contract in compiledContractNames) {
         console.log(' - ' + compiledContractNames[contract], result.value)
