@@ -67,11 +67,10 @@ class Recorder {
       }
     })
 
-    this.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+    this.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp, _payload, rawAddress) => {
       if (error) return console.log(error)
       if (call) return
 
-      const rawAddress = this.blockchain.getAddressFromTransactionResult(txResult)
       if (!rawAddress) return // not a contract creation
       const stringAddress = this.addressToString(rawAddress)
       const address = ethutil.toChecksumAddress(stringAddress)

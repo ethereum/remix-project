@@ -426,8 +426,10 @@ class Blockchain {
         self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
         self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
           function (error, result) {
+            const rawAddress = self.getAddressFromTransactionResult(result)
+
             let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
-            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
+            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad, rawAddress])
 
             if (error && (typeof (error) !== 'string')) {
               if (error.message) error = error.message
