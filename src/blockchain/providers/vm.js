@@ -72,6 +72,10 @@ class VMProvider {
     })
   }
 
+  getGasPrice (cb) {
+    this.executionContext.web3().eth.getGasPrice(cb)
+  }
+
   signMessage (message, account, _passphrase, cb) {
     const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
     const privKey = this.providers.vm.accounts[account].privateKey
