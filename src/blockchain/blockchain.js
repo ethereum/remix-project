@@ -180,10 +180,6 @@ class Blockchain {
     return determineGasFeesCb
   }
 
-  getAddressFromTransactionResult (txResult) {
-    return this.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
-  }
-
   changeExecutionContext (context, confirmCb, infoCb, cb) {
     return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
@@ -427,8 +423,7 @@ class Blockchain {
         self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
         self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
           function (error, result) {
-            const rawAddress = self.getAddressFromTransactionResult(result)
-
+            const rawAddress = self.executionContext.isVM() ? result.result.createdAddress : result.result.contractAddress
             let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
             self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad, rawAddress])
 
