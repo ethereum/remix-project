@@ -58,7 +58,7 @@ class Blockchain {
                   return finalCb(vmError.message)
                 }
               }
-              if (txResult.result.status && txResult.result.status === '0x0') {
+              if (txResult.result.status === false || txResult.result.status === '0x0') {
                 return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
               }
               var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
