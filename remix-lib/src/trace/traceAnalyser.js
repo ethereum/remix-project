@@ -37,12 +37,12 @@ TraceAnalyser.prototype.buildReturnValues = function (index, step) {
     const memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
     const noOfReturnParams = size / 64
     const memoryInString = memory.join('')
-    let returnParamsObj = [];
-    for(let i = 0; i < noOfReturnParams; i++){
+    let returnParamsObj = []
+    for (let i = 0; i < noOfReturnParams; i++) {
       returnParamsObj.push('0x' + memoryInString.substring(offset, offset + 64))
       offset += 64
     }
-    
+
     this.traceCache.pushReturnValue(index, returnParamsObj)
   }
 }
