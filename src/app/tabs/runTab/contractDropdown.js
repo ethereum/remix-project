@@ -193,7 +193,7 @@ class ContractDropdownUI {
         {
           label: 'Force Send',
           fn: () => {
-            this.blockchain.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
+            this.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
           }}, {
             label: 'Cancel',
             fn: () => {
@@ -201,7 +201,16 @@ class ContractDropdownUI {
             }
           })
     }
-    this.blockchain.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
+    this.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
+  }
+
+  deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
+    const { statusCb } = callbacks
+    if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
+      return this.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
+    }
+    if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+    this.blockchain.deployContractWithLibrary(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
   }
 
   getConfirmationCb (modalDialog, confirmDialog) {
