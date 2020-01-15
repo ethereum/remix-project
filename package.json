@@ -37,6 +37,7 @@
     "exorcist": "^0.4.0",
     "fast-async": "^7.0.6",
     "fast-levenshtein": "^2.0.6",
+    "ganache-cli": "^6.8.1",
     "gists": "^1.0.1",
     "ipfs-mini": "^1.1.5",
     "is-electron": "^2.2.0",
@@ -182,6 +183,7 @@
     "test": "csslint && standard && node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc_root make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js --exclude solc",
-    "reinstall": "rm ./node-modules/ -rf; rm package-lock.json; rm ./build/ -rf; npm install; npm run build"
+    "reinstall": "rm ./node-modules/ -rf; rm package-lock.json; rm ./build/ -rf; npm install; npm run build",
+    "ganache-cli": "npx ganache-cli"
   }
 }
