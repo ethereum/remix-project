@@ -37,9 +37,10 @@ module.exports = {
           .switchFile('browser/gists')
           .switchFile(`browser/gists/${gistid}`)
           .switchFile(`browser/gists/${gistid}/1_Storage.sol`)
-          .end()
+          .perform(done)
       }
     })
+    .end()
   },
   tearDown: sauce
 }
