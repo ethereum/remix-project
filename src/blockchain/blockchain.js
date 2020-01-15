@@ -86,22 +86,23 @@ class Blockchain {
     })
   }
 
-  async deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
+  deployContractAndLibraries (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
-
     const constructor = selectedContract.getConstructorInterface()
-    if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-      return txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
-        if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+    txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
+      if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
-        statusCb(`creation of ${selectedContract.name} pending...`)
-        this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
-      }, statusCb, (data, runTxCallback) => {
-        // called for libraries deployment
-        this.runTx(data, confirmationCb, continueCb, promptCb, runTxCallback)
-      })
-    }
-    if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+      statusCb(`creation of ${selectedContract.name} pending...`)
+      this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
+    }, statusCb, (data, runTxCallback) => {
+      // called for libraries deployment
+      this.runTx(data, confirmationCb, continueCb, promptCb, runTxCallback)
+    })
+  }
+
+  deployContractWithLibrary (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
+    const { continueCb, promptCb, statusCb, finalCb } = callbacks
+    const constructor = selectedContract.getConstructorInterface()
     txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
       if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
