@@ -17,9 +17,6 @@ module.exports = {
     console.log('token', process.env.gist_token)
     browser
     .waitForElementVisible('#icon-panel', 10000)
-    .clickLaunchIcon('settings')
-    .setValue('#gistaccesstoken', process.env.gist_token)
-    .click('#savegisttoken')
     .clickLaunchIcon('fileExplorers')
     .click('#publishToGist')
     .modalFooterOKClick()
