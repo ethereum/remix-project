@@ -132,7 +132,7 @@ class Blockchain {
   }
 
   determineGasPrice (cb) {
-    this.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+    this.getCurrentProvider().getGasPrice((error, gasPrice) => {
       const warnMessage = ' Please fix this issue before sending any transaction. '
       if (error) {
         return cb('Unable to retrieve the current network gas price.' + warnMessage + error)

@@ -30,6 +30,10 @@ class InjectedProvider {
     })
   }
 
+  getGasPrice (cb) {
+    this.executionContext.web3().eth.getGasPrice(cb)
+  }
+
   signMessage (message, account, _passphrase, cb) {
     const hashedMsg = Web3.utils.sha3(message)
     try {
