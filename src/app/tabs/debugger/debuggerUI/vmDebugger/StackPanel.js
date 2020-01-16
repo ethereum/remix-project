@@ -11,7 +11,7 @@ StackPanel.prototype.update = function (calldata) {
 }
 
 StackPanel.prototype.render = function () {
-  return yo`<div id="stackpanel" class="text-monospace small">${this.basicPanel.render()}</div>`
+  return yo`<div id="stackpanel">${this.basicPanel.render()}</div>`
 }
 
 module.exports = StackPanel
