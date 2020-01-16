@@ -211,7 +211,7 @@ class Blockchain {
   }
 
   isWeb3Provider () {
-    const isVM = this.getProvider === 'vm'
+    const isVM = this.getProvider() === 'vm'
     const isInjected = this.getProvider() === 'injected'
     return (!isVM && !isInjected)
   }
@@ -296,7 +296,7 @@ class Blockchain {
 
   resetEnvironment () {
     this.getCurrentProvider().resetEnvironment()
-   // TODO: most params here can be refactored away in txRunner
+    // TODO: most params here can be refactored away in txRunner
     this.txRunner = new TxRunner(this.providers.vm.accounts, {
       // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
       config: this.config,
