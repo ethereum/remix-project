@@ -15,7 +15,7 @@ MemoryPanel.prototype.update = function (calldata) {
 }
 
 MemoryPanel.prototype.render = function () {
-  return yo`<div id="memorypanel" class="text-monospace small">${this.basicPanel.render()}</div>`
+  return yo`<div id="memorypanel">${this.basicPanel.render()}</div>`
 }
 
 module.exports = MemoryPanel
