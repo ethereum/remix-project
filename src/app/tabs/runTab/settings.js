@@ -127,7 +127,7 @@ class SettingsUI {
     `
 
     const el = yo`
-      <div class="${css.settings} border-bottom border-light">
+      <div class="${css.settings}">
         ${environmentEl}
         ${networkEl}
         ${accountEl}

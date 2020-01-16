@@ -43,7 +43,7 @@ module.exports = class Card {
 
     // HTML
     self._view.el = yo`
-      <div class="${css.cardContainer} px-4 py-3 list-group-item">
+      <div class="${css.cardContainer} list-group-item border-0">
         ${self._view.cardHeader}
         ${self._view.cardBody}
       </div>`
@@ -55,8 +55,9 @@ module.exports = class Card {
 
 const css = csjs`
   .cardContainer {
-    padding             : 16px 24px;
+    padding             : 0 24px 16px;
     margin              : 0;
+    background          : none;
   }
   .cardHeader {
     display             : flex;

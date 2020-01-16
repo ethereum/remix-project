@@ -14,7 +14,7 @@ var css = csjs`
     word-break: break-word;
     line-height: initial;
     overflow: visible;
-    padding: 8px 0;
+    padding: 0 0 8px;
     margin: 0;
     background: none;
     border: none;
@@ -116,7 +116,6 @@ var css = csjs`
     justify-content: flex-end;
   }
   .contractProperty {
-    margin: 0 0 8px;
     width:100%;
   }
   .contractProperty.hasArgs input {
