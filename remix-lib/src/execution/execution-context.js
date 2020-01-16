@@ -20,7 +20,7 @@ if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
 }
 
 const blankWeb3 = new Web3()
-const currentFork = 'istanbul'
+const currentFork = 'muirGlacier'
 /*
   extend vm state manager and instanciate VM
 */
@@ -94,7 +94,8 @@ const vms = {
   byzantium: createVm('byzantium'),
   constantinople: createVm('constantinople'),
   petersburg: createVm('petersburg'),
-  istanbul: createVm('istanbul')
+  istanbul: createVm('istanbul'),
+  muirGlacier: createVm('muirGlacier')
 }
 
 const mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
