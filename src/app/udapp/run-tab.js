@@ -62,7 +62,7 @@ export class RunTab extends LibraryPlugin {
   }
 
   renderInstanceContainer () {
-    this.instanceContainer = yo`<div class="${css.instanceContainer} run-instance-section"></div>`
+    this.instanceContainer = yo`<div class="${css.instanceContainer} border-0 run-instance-section"></div>`
 
     const instanceContainerTitle = yo`
       <div class="${css.instanceContainerTitle} run-instance-title"
