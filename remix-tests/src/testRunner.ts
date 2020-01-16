@@ -35,7 +35,7 @@ function getAvailableFunctions (fileAST: AstNode, testContractName: string) {
     if(fileAST.nodes && fileAST.nodes.length > 0) {
         const contractAST: AstNode[] = fileAST.nodes.filter(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
         if(contractAST.length > 0 && contractAST[0].nodes) {
-            const funcNodes: AstNode[] = contractAST[0].nodes.filter(node => node.kind === 'function' && node.nodeType === "FunctionDefinition")
+            const funcNodes: AstNode[] = contractAST[0].nodes.filter(node => ((node.kind === "function" && node.nodeType === "FunctionDefinition") || (node.nodeType === "FunctionDefinition")))
             funcList = funcNodes.map(node => node.name)
         }
     }
