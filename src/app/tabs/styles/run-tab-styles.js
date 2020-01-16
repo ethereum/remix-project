@@ -18,7 +18,7 @@ var css = csjs`
     line-height: 19px;
   }
   .settings {
-    padding: 16px 24px;
+    padding: 0 24px 16px;
   }
   .crow {
     display: block;
@@ -69,7 +69,7 @@ var css = csjs`
     margin-bottom: 2%;
     border: none;
     text-align: center;
-    padding: 16px 14px;
+    padding: 0 14px 16px;
   }
   .pendingTxsContainer  {
     display: flex;
@@ -79,7 +79,7 @@ var css = csjs`
     text-align: center;
   }
   .container {
-    padding: 16px 24px;
+    padding: 0 24px 16px;
   }
   .recorderCollapsedView,
   .recorderExpandedView {
