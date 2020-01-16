@@ -20,7 +20,7 @@
   "dependencies": {
     "commander": "^2.19.0",
     "ethereumjs-util": "^6.2.0",
-    "ethereumjs-vm": "4.1.1",
+    "ethereumjs-vm": "4.1.3",
     "remix-lib": "0.4.19",
     "web3": "^1.2.4"
   },
