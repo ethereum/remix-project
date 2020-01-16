@@ -105,7 +105,7 @@ class VmDebuggerLogic {
             // console.log(error)
             this.event.trigger('traceManagerStorageUpdate', [{}])
           } else if (this.stepManager.currentStepIndex === index) {
-            var header = storageViewer.isComplete(address) ? 'completely loaded' : 'partially loaded...'
+            var header = storageViewer.isComplete(address) ? '[Completely Loaded]' : '[Partially Loaded]'
             this.event.trigger('traceManagerStorageUpdate', [storage, header])
           }
         })
