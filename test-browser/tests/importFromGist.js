@@ -49,6 +49,7 @@ module.exports = {
     .switchFile(`browser/gists/${testData.validGistId}/ApplicationRegistry`)
     .waitForElementVisible(`div[title='browser/gists/${testData.validGistId}/ApplicationRegistry']`)
     .assert.containsText(`div[title='browser/gists/${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
+    .end()
   },
 
   tearDown: sauce
