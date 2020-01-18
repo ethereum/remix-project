@@ -27,11 +27,21 @@ module.exports = (contract, fileManager, cb, ipfsVerifiedPublishCallBack) => {
 
   async.eachSeries(Object.keys(metadata.sources), function (fileName, cb) {
     // find hash
-    var hash
+    let hash = null
     try {
-      hash = metadata.sources[fileName].urls[1].match('dweb:/ipfs/(.+)')[1]
+      // we try extract the hash defined in the metadata.json
+      // in order to check if the hash that we get after publishing is the same as the one located in metadata.json
+      // if it's not the same, we throw "hash mismatch between solidity bytecode and uploaded content"
+      // if we don't find the hash in the metadata.json, the check is not done.
+      //
+      // TODO: refactor this with publishOnSwarm
+      if (metadata.sources[fileName].urls) {
+        metadata.sources[fileName].urls.forEach(url => {
+          if (url.includes('ipfs')) hash = url.match('dweb:/ipfs/(.+)')[1]
+        })
+      }
     } catch (e) {
-      return cb('Metadata inconsistency')
+      return cb('Error while extracting the hash from metadata.json')
     }
 
     fileManager.fileProviderOf(fileName).get(fileName, (error, content) => {
@@ -94,7 +104,7 @@ module.exports = (contract, fileManager, cb, ipfsVerifiedPublishCallBack) => {
 async function ipfsVerifiedPublish (content, expectedHash, cb) {
   try {
     const results = await severalGatewaysPush(content)
-    if (results !== expectedHash) {
+    if (expectedHash && results !== expectedHash) {
       cb(null, { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'dweb:/ipfs/' + results, hash: results })
     } else {
       cb(null, { message: 'ok', url: 'dweb:/ipfs/' + results, hash: results })
