@@ -14,6 +14,7 @@ class CompileTab {
     this.queryParams = queryParams
     this.compilerImport = new CompilerImport()
     this.compiler = new Compiler((url, cb) => this.importFileCb(url, cb))
+    console.log('This is compiler object bro-1-->', this.compiler)
     this.fileManager = fileManager
     this.editor = editor
     this.config = config
@@ -24,26 +25,28 @@ class CompileTab {
     this.optimize = this.queryParams.get().optimize
     this.optimize = this.optimize === 'true'
     this.queryParams.update({ optimize: this.optimize })
-    this.compiler.optimize = this.optimize
+    this.compiler.set('optimize', this.optimize)
 
     this.evmVersion = this.queryParams.get().evmVersion
     if (this.evmVersion === 'undefined' || this.evmVersion === 'null' || !this.evmVersion) {
       this.evmVersion = null
     }
     this.queryParams.update({ evmVersion: this.evmVersion })
-    this.compiler.evmVersion = this.evmVersion
+    this.compiler.set('evmVersion', this.evmVersion)
   }
 
   setOptimize (newOptimizeValue) {
     this.optimize = newOptimizeValue
     this.queryParams.update({ optimize: this.optimize })
-    this.compiler.optimize = this.optimize
+    this.compiler.set('optimize', this.optimize)
+    console.log('This is compiler object bro--2->', this.compiler)
   }
 
   setEvmVersion (newEvmVersion) {
     this.evmVersion = newEvmVersion
     this.queryParams.update({ evmVersion: this.evmVersion })
-    this.compiler.evmVersion = this.evmVersion
+    this.compiler.set('evmVersion', this.evmVersion)
+    console.log('This is compiler object bro--3->', this.compiler)
   }
 
   /**
@@ -51,7 +54,7 @@ class CompileTab {
    * @params lang {'Solidity' | 'Yul'} ...
    */
   setLanguage (lang) {
-    this.compiler.language = lang
+    this.compiler.set('language', lang)
   }
 
   /**
