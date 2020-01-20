@@ -24,26 +24,26 @@ class CompileTab {
     this.optimize = this.queryParams.get().optimize
     this.optimize = this.optimize === 'true'
     this.queryParams.update({ optimize: this.optimize })
-    this.compiler.optimize = this.optimize
+    this.compiler.set('optimize', this.optimize)
 
     this.evmVersion = this.queryParams.get().evmVersion
     if (this.evmVersion === 'undefined' || this.evmVersion === 'null' || !this.evmVersion) {
       this.evmVersion = null
     }
     this.queryParams.update({ evmVersion: this.evmVersion })
-    this.compiler.evmVersion = this.evmVersion
+    this.compiler.set('evmVersion', this.evmVersion)
   }
 
   setOptimize (newOptimizeValue) {
     this.optimize = newOptimizeValue
     this.queryParams.update({ optimize: this.optimize })
-    this.compiler.optimize = this.optimize
+    this.compiler.set('optimize', this.optimize)
   }
 
   setEvmVersion (newEvmVersion) {
     this.evmVersion = newEvmVersion
     this.queryParams.update({ evmVersion: this.evmVersion })
-    this.compiler.evmVersion = this.evmVersion
+    this.compiler.set('evmVersion', this.evmVersion)
   }
 
   /**
@@ -51,7 +51,7 @@ class CompileTab {
    * @params lang {'Solidity' | 'Yul'} ...
    */
   setLanguage (lang) {
-    this.compiler.language = lang
+    this.compiler.set('language', lang)
   }
 
   /**
