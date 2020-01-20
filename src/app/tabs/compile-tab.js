@@ -187,7 +187,7 @@ class CompileTab extends ViewPlugin {
   }
 
   getCompilationResult () {
-    return this.compileTabLogic.compiler.lastCompilationResult
+    return this.compileTabLogic.compiler.state.lastCompilationResult
   }
 
   // This function is used by remix-plugin
