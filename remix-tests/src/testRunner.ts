@@ -14,14 +14,25 @@ function getFunctionFullName (signature: string, methodIdentifiers: Record <stri
 }
 
 function isConstant(funcABI: FunctionDescription): boolean {
-    return (funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure')
+    return (funcABI.constant || funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure')
+}
+
+function isPayable(funcABI: FunctionDescription): boolean {
+    return (funcABI.payable || funcABI.stateMutability === 'payable')
 }
 
 function getOverridedSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>) {
     let fullName: any = getFunctionFullName(signature, methodIdentifiers)
-    let match: RegExp = /sender: account-+(\d)/g
-    let accountIndex: any = userdoc.methods[fullName] ? match.exec(userdoc.methods[fullName].notice) : null
+    let senderRegex: RegExp = /#sender: account-+(\d)/g
+    let accountIndex: RegExpExecArray | null = userdoc.methods[fullName] ? senderRegex.exec(userdoc.methods[fullName].notice) : null
     return fullName && accountIndex ? accountIndex[1] : null
+}
+
+function getProvidedValue (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>) {
+    let fullName: any = getFunctionFullName(signature, methodIdentifiers)
+    let valueRegex: RegExp = /#value: (\d+)/g
+    let value: RegExpExecArray | null = userdoc.methods[fullName] ? valueRegex.exec(userdoc.methods[fullName].notice) : null
+    return fullName && value ? value[1] : null
 }
 
 /**
@@ -74,21 +85,21 @@ function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, 
     let runList: RunListInterface[] = []
 
     if (availableFunctions.indexOf('beforeAll') >= 0) {
-        runList.push({ name: 'beforeAll', type: 'internal', constant: false })
+        runList.push({ name: 'beforeAll', type: 'internal', constant: false, payable: false })
     }
 
     for (const func of testFunctionsInterface) {
         if (availableFunctions.indexOf('beforeEach') >= 0) {
-            runList.push({ name: 'beforeEach', type: 'internal', constant: false })
+            runList.push({ name: 'beforeEach', type: 'internal', constant: false, payable: false })
         }
-        runList.push({ name: func.name, signature: func.signature, type: 'test', constant: isConstant(func) })
+        runList.push({ name: func.name, signature: func.signature, type: 'test', constant: isConstant(func), payable: isPayable(func) })
         if (availableFunctions.indexOf('afterEach') >= 0) {
-            runList.push({ name: 'afterEach', type: 'internal', constant: false })
+            runList.push({ name: 'afterEach', type: 'internal', constant: false, payable: false })
         }
     }
 
     if (availableFunctions.indexOf('afterAll') >= 0) {
-        runList.push({ name: 'afterAll', type: 'internal', constant: false })
+        runList.push({ name: 'afterAll', type: 'internal', constant: false, payable: false })
     }
 
     return runList
@@ -125,7 +136,6 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         }
         let sendParams
         if (sender) sendParams = { from: sender }
-
         const method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
         const startTime = Date.now()
         if (func.constant) {
@@ -155,6 +165,11 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                 next()
             })
         } else {
+            if(func.payable) {
+                const value = getProvidedValue(contractDetails.userdoc, func.signature, contractDetails.evm.methodIdentifiers)
+                if(sendParams) sendParams.value = value
+                else sendParams = { value }
+            }
             method.send(sendParams).on('receipt', (receipt) => {
                 try {
                     const time: number = (Date.now() - startTime) / 1000.0
