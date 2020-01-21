@@ -33,7 +33,8 @@
   },
   "standard": {
     "ignore": [
-      "tests/"
+      "tests/",
+      "dist/"
     ]
   },
   "homepage": "https://github.com/ethereum/remix/tree/master/remix-tests#readme",

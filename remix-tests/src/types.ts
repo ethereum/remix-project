@@ -16,6 +16,7 @@ export interface RunListInterface {
   name: string,
   type: string,
   constant: boolean,
+  payable: boolean,
   signature?: any
 }
 export interface ResultsInterface {
