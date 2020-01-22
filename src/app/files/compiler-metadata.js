@@ -99,7 +99,7 @@ class CompilerMetadata extends Plugin {
       if (provider && path) {
         self.executionContext.detectNetwork((err, { id, name } = {}) => {
           if (err) {
-            reject(error)
+            reject(err)
             console.log(err)
           } else {
             var fileName = self._JSONFileName(path, contractName)
