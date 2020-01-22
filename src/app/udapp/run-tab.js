@@ -9,13 +9,11 @@ const EventManager = require('../../lib/events')
 const Card = require('../ui/card')
 
 const css = require('../tabs/styles/run-tab-styles')
-const Settings = require('../tabs/runTab/model/settings.js')
 const SettingsUI = require('../tabs/runTab/settings.js')
 const Recorder = require('../tabs/runTab/model/recorder.js')
 const RecorderUI = require('../tabs/runTab/recorder.js')
 const DropdownLogic = require('../tabs/runTab/model/dropdownlogic.js')
 const ContractDropdownUI = require('../tabs/runTab/contractDropdown.js')
-const Blockchain = require('../tabs/runTab/model/blockchain.js')
 
 const UniversalDAppUI = require('../ui/universal-dapp-ui')
 
@@ -35,12 +33,13 @@ const profile = {
 
 export class RunTab extends LibraryPlugin {
 
-  constructor (udapp, executionContext, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
+  constructor (blockchain, udapp, executionContext, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
     super(udapp, profile)
     this.event = new EventManager()
     this.config = config
     this.udapp = udapp
     this.executionContext = executionContext
+    this.blockchain = blockchain
     this.fileManager = fileManager
     this.editor = editor
     this.logCallback = (msg) => { mainView.getTerminal().logHtml(msg) }
@@ -122,19 +121,17 @@ export class RunTab extends LibraryPlugin {
     this.instanceContainer.appendChild(this.noInstancesText)
   }
 
-  renderSettings (udapp) {
-    var settings = new Settings(this.executionContext, udapp)
-    this.settingsUI = new SettingsUI(settings, this.networkModule)
+  renderSettings () {
+    this.settingsUI = new SettingsUI(this.blockchain, this.networkModule)
 
     this.settingsUI.event.register('clearInstance', () => {
       this.event.trigger('clearInstance', [])
     })
   }
 
-  renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
+  renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, logCallback) {
     const dropdownLogic = new DropdownLogic(compilersArtefacts, config, editor, this)
-    const blockchain = new Blockchain(this.executionContext, udapp)
-    this.contractDropdownUI = new ContractDropdownUI(blockchain, dropdownLogic, logCallback, this)
+    this.contractDropdownUI = new ContractDropdownUI(this.blockchain, dropdownLogic, logCallback, this)
 
     fileManager.events.on('currentFileChanged', this.contractDropdownUI.changeCurrentFile.bind(this.contractDropdownUI))
 
@@ -150,16 +147,16 @@ export class RunTab extends LibraryPlugin {
     })
   }
 
-  renderRecorder (udapp, udappUI, fileManager, config, logCallback) {
+  renderRecorder (udappUI, fileManager, config, logCallback) {
     this.recorderCount = yo`<span>0</span>`
 
-    const recorder = new Recorder(this.executionContext, udapp, fileManager, config)
+    const recorder = new Recorder(this.blockchain, fileManager, config)
     recorder.event.register('recorderCountChange', (count) => {
       this.recorderCount.innerText = count
     })
     this.event.register('clearInstance', recorder.clearAll.bind(recorder))
 
-    this.recorderInterface = new RecorderUI(recorder, logCallback)
+    this.recorderInterface = new RecorderUI(this.blockchain, recorder, logCallback, config)
 
     this.recorderInterface.event.register('newScenario', (abi, address, contractName) => {
       var noInstancesText = this.noInstancesText
@@ -209,9 +206,9 @@ export class RunTab extends LibraryPlugin {
     this.executionContext.listenOnLastBlock()
     this.udapp.resetEnvironment()
     this.renderInstanceContainer()
-    this.renderSettings(this.udapp)
-    this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.udapp, this.filePanel, this.logCallback)
-    this.renderRecorder(this.udapp, this.udappUI, this.fileManager, this.config, this.logCallback)
+    this.renderSettings()
+    this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.logCallback)
+    this.renderRecorder(this.udappUI, this.fileManager, this.config, this.logCallback)
     this.renderRecorderCard()
     return this.renderContainer()
   }

@@ -2,13 +2,47 @@ const remixLib = require('remix-lib')
 const txFormat = remixLib.execution.txFormat
 const txExecution = remixLib.execution.txExecution
 const typeConversion = remixLib.execution.typeConversion
+const Txlistener = remixLib.execution.txListener
+const EventManager = remixLib.EventManager
+const ethJSUtil = require('ethereumjs-util')
+const Personal = require('web3-eth-personal')
 const Web3 = require('web3')
 
 class Blockchain {
 
   constructor (executionContext, udapp) {
+    this.event = new EventManager()
     this.executionContext = executionContext
     this.udapp = udapp
+
+    this.networkcallid = 0
+    this.setupEvents()
+  }
+
+  setupEvents () {
+    this.executionContext.event.register('contextChanged', (context, silent) => {
+      this.event.trigger('contextChanged', [context, silent])
+    })
+
+    this.executionContext.event.register('addProvider', (network) => {
+      this.event.trigger('addProvider', [network])
+    })
+
+    this.executionContext.event.register('removeProvider', (name) => {
+      this.event.trigger('removeProvider', [name])
+    })
+
+    this.udapp.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
+      this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
+    })
+
+    this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+      this.event.trigger('transactionExecuted', [error, from, to, data, call, txResult, timestamp])
+    })
+
+    this.udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
+      this.event.trigger('transactionBroadcasted', [txhash, networkName])
+    })
   }
 
   async deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
@@ -91,6 +125,144 @@ class Blockchain {
       return Web3.utils.fromWei(typeConversion.toInt(value), unit || 'ether')
     }
     return Web3.utils.fromWei(value.toString(10), unit || 'ether')
+  }
+
+  toWei (value, unit) {
+    return Web3.utils.toWei(value, unit || 'gwei')
+  }
+
+  calculateFee (gas, gasPrice, unit) {
+    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), unit || 'gwei')))
+  }
+
+  determineGasFees (tx) {
+    const determineGasFeesCb = (gasPrice, cb) => {
+      let txFeeText, priceStatus
+      // TODO: this try catch feels like an anti pattern, can/should be
+      // removed, but for now keeping the original logic
+      try {
+        var fee = this.calculateFee(tx.gas, gasPrice)
+        txFeeText = ' ' + this.fromWei(fee, false, 'ether') + ' Ether'
+        priceStatus = true
+      } catch (e) {
+        txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+        priceStatus = false
+      }
+      cb(txFeeText, priceStatus)
+    }
+
+    return determineGasFeesCb
+  }
+
+  getAddressFromTransactionResult (txResult) {
+    return this.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+  }
+
+  changeExecutionContext (context, confirmCb, infoCb, cb) {
+    return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
+  }
+
+  setProviderFromEndpoint (target, context, cb) {
+    return this.executionContext.setProviderFromEndpoint(target, context, cb)
+  }
+
+  getProvider () {
+    return this.executionContext.getProvider()
+  }
+
+  getAccountBalanceForAddress (address, cb) {
+    return this.udapp.getBalanceInEther(address, cb)
+  }
+
+  updateNetwork (cb) {
+    this.networkcallid++
+    ((callid) => {
+      this.executionContext.detectNetwork((err, { id, name } = {}) => {
+        if (this.networkcallid > callid) return
+        this.networkcallid++
+        if (err) {
+          return cb(err)
+        }
+        cb(null, {id, name})
+      })
+    })(this.networkcallid)
+  }
+
+  detectNetwork (cb) {
+    return this.executionContext.detectNetwork(cb)
+  }
+
+  newAccount (passphraseCb, cb) {
+    return this.udapp.newAccount('', passphraseCb, cb)
+  }
+
+  getAccounts (cb) {
+    return this.udapp.getAccounts(cb)
+  }
+
+  isWeb3Provider () {
+    var isVM = this.executionContext.isVM()
+    var isInjected = this.executionContext.getProvider() === 'injected'
+    return (!isVM && !isInjected)
+  }
+
+  isInjectedWeb3 () {
+    return this.executionContext.getProvider() === 'injected'
+  }
+
+  signMessage (message, account, passphrase, cb) {
+    var isVM = this.executionContext.isVM()
+    var isInjected = this.executionContext.getProvider() === 'injected'
+
+    if (isVM) {
+      const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
+      var privKey = this.udapp.accounts[account].privateKey
+      try {
+        var rsv = ethJSUtil.ecsign(personalMsg, privKey)
+        var signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
+        cb(null, '0x' + personalMsg.toString('hex'), signedData)
+      } catch (e) {
+        cb(e.message)
+      }
+      return
+    }
+    if (isInjected) {
+      const hashedMsg = Web3.utils.sha3(message)
+      try {
+        this.executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
+          cb(error.message, hashedMsg, signedData)
+        })
+      } catch (e) {
+        cb(e.message)
+      }
+      return
+    }
+
+    const hashedMsg = Web3.utils.sha3(message)
+    try {
+      var personal = new Personal(this.executionContext.web3().currentProvider)
+      personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
+        cb(error.message, hashedMsg, signedData)
+      })
+    } catch (e) {
+      cb(e.message)
+    }
+  }
+
+  web3 () {
+    return this.executionContext.web3()
+  }
+
+  getTxListener (opts) {
+    opts.event = {
+      udapp: this.udapp.event
+    }
+    const txlistener = new Txlistener(opts, this.executionContext)
+    return txlistener
+  }
+
+  startListening (txlistener) {
+    this.udapp.startListening(txlistener)
   }
 
 }

@@ -14,10 +14,10 @@ var solidityTypeFormatter = require('../app/tabs/debugger/debuggerUI/vmDebugger/
 var GistHandler = require('./gist-handler')
 
 class CmdInterpreterAPI {
-  constructor (terminal, localRegistry, executionContext) {
+  constructor (terminal, localRegistry, blockchain) {
     const self = this
     self.event = new EventManager()
-    self.executionContext = executionContext
+    self.blockchain = blockchain
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
     self._components.terminal = terminal
@@ -62,14 +62,14 @@ class CmdInterpreterAPI {
   debug (hash, cb) {
     var self = this
     delete self.d
-    self.executionContext.web3().eth.getTransaction(hash, (error, tx) => {
+    self.blockchain.web3().eth.getTransaction(hash, (error, tx) => {
       if (error) return cb(error)
       var debugSession = new RemixDebug({
         compilationResult: () => {
           return self._deps.compilersArtefacts['__last'].getData()
         }
       })
-      debugSession.addProvider('web3', self.executionContext.web3())
+      debugSession.addProvider('web3', self.blockchain.web3())
       debugSession.switchProvider('web3')
       debugSession.debug(tx)
       self.d = debugSession
@@ -180,7 +180,7 @@ class CmdInterpreterAPI {
       })
   }
   setproviderurl (url, cb) {
-    this.executionContext.setProviderFromEndpoint(url, 'web3', (error) => {
+    this.blockchain.setProviderFromEndpoint(url, 'web3', (error) => {
       if (error) toolTip(error)
       if (cb) cb()
     })
