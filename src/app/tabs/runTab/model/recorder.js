@@ -4,9 +4,7 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
-var typeConversion = remixLib.execution.typeConversion
 var helper = require('../../../../lib/helper.js')
-var Web3 = require('web3')
 
 /**
   * Record transaction as long as the user create them.
@@ -14,16 +12,15 @@ var Web3 = require('web3')
   *
   */
 class Recorder {
-  constructor (executionContext, udapp, fileManager, config) {
+  constructor (blockchain, fileManager, config) {
     var self = this
     self.event = new EventManager()
-    self.executionContext = executionContext
+    self.blockchain = blockchain
     self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
-    this.udapp = udapp
     this.fileManager = fileManager
     this.config = config
 
-    this.udapp.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
+    this.blockchain.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
       var { from, to, value } = tx
 
@@ -61,7 +58,7 @@ class Recorder {
           if (thistimestamp) record.parameters[p] = `created{${thistimestamp}}`
         }
 
-        this.udapp.getAccounts((error, accounts) => {
+        this.blockchain.getAccounts((error, accounts) => {
           if (error) return console.log(error)
           record.from = `account{${accounts.indexOf(from)}}`
           self.data._usedAccounts[record.from] = from
@@ -70,11 +67,11 @@ class Recorder {
       }
     })
 
-    this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+    this.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
       if (error) return console.log(error)
       if (call) return
 
-      const rawAddress = this.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+      const rawAddress = this.blockchain.getAddressFromTransactionResult(txResult)
       if (!rawAddress) return // not a contract creation
       const stringAddress = this.addressToString(rawAddress)
       const address = ethutil.toChecksumAddress(stringAddress)
@@ -82,7 +79,7 @@ class Recorder {
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address
     })
-    this.executionContext.event.register('contextChanged', this.clearAll.bind(this))
+    this.blockchain.event.register('contextChanged', this.clearAll.bind(this))
     this.event.register('newTxRecorded', (count) => {
       this.event.trigger('recorderCountChange', [count])
     })
@@ -185,7 +182,6 @@ class Recorder {
     * @param {Object} accounts
     * @param {Object} options
     * @param {Object} abis
-    * @param {Object} udapp
     * @param {Function} newContractFn
     *
     */
@@ -197,8 +193,7 @@ class Recorder {
       var record = self.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
       if (!abi) {
-        alertCb('cannot find ABI for ' + tx.record.abi + '.  Execution stopped at ' + index)
-        return
+        return alertCb('cannot find ABI for ' + tx.record.abi + '.  Execution stopped at ' + index)
       }
       /* Resolve Library */
       if (record.linkReferences && Object.keys(record.linkReferences).length) {
@@ -222,8 +217,7 @@ class Recorder {
       }
       if (!fnABI) {
         alertCb('cannot resolve abi of ' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
-        cb('cannot resolve abi')
-        return
+        return cb('cannot resolve abi')
       }
       if (tx.record.parameters) {
         /* check if we have some params to resolve */
@@ -241,35 +235,32 @@ class Recorder {
             tx.record.parameters[index] = value
           })
         } catch (e) {
-          alertCb('cannot resolve input parameters ' + JSON.stringify(tx.record.parameters) + '. Execution stopped at ' + index)
-          return
+          return alertCb('cannot resolve input parameters ' + JSON.stringify(tx.record.parameters) + '. Execution stopped at ' + index)
         }
       }
       var data = format.encodeData(fnABI, tx.record.parameters, tx.record.bytecode)
       if (data.error) {
         alertCb(data.error + '. Record:' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
-        cb(data.error)
-        return
-      } else {
-        logCallBack(`(${index}) ${JSON.stringify(record, null, '\t')}`)
-        logCallBack(`(${index}) data: ${data.data}`)
-        record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName, timestamp: tx.timestamp }
+        return cb(data.error)
       }
-      self.udapp.runTx(record, confirmationCb, continueCb, promptCb,
+      logCallBack(`(${index}) ${JSON.stringify(record, null, '\t')}`)
+      logCallBack(`(${index}) data: ${data.data}`)
+      record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName, timestamp: tx.timestamp }
+
+      self.blockchain.runTransaction(record, continueCb, promptCb, confirmationCb,
         function (err, txResult) {
           if (err) {
             console.error(err)
-            logCallBack(err + '. Execution failed at ' + index)
-          } else {
-            const rawAddress = self.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
-            if (rawAddress) {
-              const stringAddress = self.addressToString(rawAddress)
-              const address = ethutil.toChecksumAddress(stringAddress)
-              // save back created addresses for the convertion from tokens to real adresses
-              self.data._createdContracts[address] = tx.timestamp
-              self.data._createdContractsReverse[tx.timestamp] = address
-              newContractFn(abi, address, record.contractName)
-            }
+            return logCallBack(err + '. Execution failed at ' + index)
+          }
+          const rawAddress = self.blockchain.getAddressFromTransactionResult(txResult)
+          if (rawAddress) {
+            const stringAddress = self.addressToString(rawAddress)
+            const address = ethutil.toChecksumAddress(stringAddress)
+            // save back created addresses for the convertion from tokens to real adresses
+            self.data._createdContracts[address] = tx.timestamp
+            self.data._createdContractsReverse[tx.timestamp] = address
+            newContractFn(abi, address, record.contractName)
           }
           cb(err)
         }
@@ -288,7 +279,7 @@ class Recorder {
     return address
   }
 
-  runScenario (continueCb, promptCb, alertCb, confirmDialog, modalDialog, logCallBack, cb) {
+  runScenario (continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
     var currentFile = this.config.get('currentFile')
     this.fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
       if (error) {
@@ -310,62 +301,6 @@ class Recorder {
 
       if (!txArray.length) {
         return
-      }
-
-      var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-        if (network.name !== 'Main') {
-          return continueTxExecution(null)
-        }
-        var amount = Web3.utils.fromWei(typeConversion.toInt(tx.value), 'ether')
-
-        // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
-        var content = confirmDialog(tx, amount, gasEstimation, this.recorder,
-          (gasPrice, cb) => {
-            let txFeeText, priceStatus
-            // TODO: this try catch feels like an anti pattern, can/should be
-            // removed, but for now keeping the original logic
-            try {
-              var fee = Web3.utils.toBN(tx.gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), 'gwei')))
-              txFeeText = ' ' + Web3.utils.fromWei(fee.toString(10), 'ether') + ' Ether'
-              priceStatus = true
-            } catch (e) {
-              txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-              priceStatus = false
-            }
-            cb(txFeeText, priceStatus)
-          },
-          (cb) => {
-            this.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-              var warnMessage = ' Please fix this issue before sending any transaction. '
-              if (error) {
-                return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-              }
-              try {
-                var gasPriceValue = Web3.utils.fromWei(gasPrice.toString(10), 'gwei')
-                cb(null, gasPriceValue)
-              } catch (e) {
-                cb(warnMessage + e.message, null, false)
-              }
-            })
-          }
-        )
-        modalDialog('Confirm transaction', content,
-          { label: 'Confirm',
-            fn: () => {
-              this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-              // TODO: check if this is check is still valid given the refactor
-              if (!content.gasPriceStatus) {
-                cancelCb('Given gas price is not correct')
-              } else {
-                var gasPrice = Web3.utils.toWei(content.querySelector('#gasprice').value, 'gwei')
-                continueTxExecution(gasPrice)
-              }
-            }}, {
-              label: 'Cancel',
-              fn: () => {
-                return cancelCb('Transaction canceled by user.')
-              }
-            })
       }
 
       this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, (abi, address, contractName) => {

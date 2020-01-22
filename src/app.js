@@ -24,6 +24,8 @@ var CompilerImport = require('./app/compiler/compiler-imports')
 
 var executionContext = remixLib.execution.executionContext
 
+const Blockchain = require('./app/tabs/runTab/model/blockchain.js')
+
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
 
@@ -222,14 +224,18 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- fileManager servive ----------------------------
   const fileManager = new FileManager(editor)
   registry.put({api: fileManager, name: 'filemanager'})
+
+  // ----------------- universal dapp: run transaction, listen on transactions, decode events
+  const udapp = new UniversalDApp(registry.get('config').api, executionContext)
+  const blockchain = new Blockchain(executionContext, udapp)
+
   // ----------------- compilation metadata generation servive ----------------------------
-  const compilerMetadataGenerator = new CompilerMetadata(executionContext, fileManager, registry.get('config').api)
+  const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
   // ----------------- compilation result service (can keep track of compilation results) ----------------------------
   const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
   registry.put({api: compilersArtefacts, name: 'compilersartefacts'})
-  // ----------------- universal dapp: run transaction, listen on transactions, decode events
-  const udapp = new UniversalDApp(registry.get('config').api, executionContext)
-  const {eventsDecoder, txlistener} = makeUdapp(udapp, executionContext, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
+
+  const {eventsDecoder, txlistener} = makeUdapp(blockchain, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
   // ----------------- network service (resolve network id / name) ----------------------------
   const networkModule = new NetworkModule(executionContext)
   // ----------------- convert offset to line/column service ----------------------------
@@ -249,7 +255,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // LAYOUT & SYSTEM VIEWS
   const appPanel = new MainPanel()
-  const mainview = new MainView(editor, appPanel, fileManager, appManager, txlistener, eventsDecoder, executionContext)
+  const mainview = new MainView(editor, appPanel, fileManager, appManager, txlistener, eventsDecoder, blockchain)
   registry.put({ api: mainview, name: 'mainview' })
 
   appManager.register([
@@ -293,6 +299,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     registry.get('filemanager').api
   )
   const run = new RunTab(
+    blockchain,
     udapp,
     executionContext,
     registry.get('config').api,

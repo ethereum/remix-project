@@ -116,7 +116,7 @@ var css = csjs`
   *
   */
 class TxLogger {
-  constructor (eventsDecoder, txListener, terminal, executionContext) {
+  constructor (eventsDecoder, txListener, terminal, blockchain) {
     this.event = new EventManager()
     this.seen = {}
     function filterTx (value, query) {
@@ -139,7 +139,7 @@ class TxLogger {
       if (data.tx.isCall) {
         el = renderCall(this, data)
       } else {
-        el = renderKnownTransaction(this, data, executionContext)
+        el = renderKnownTransaction(this, data, blockchain)
       }
       this.seen[data.tx.hash] = el
       append(el)
@@ -148,7 +148,7 @@ class TxLogger {
     this.logUnknownTX = this.terminal.registerCommand('unknownTransaction', (args, cmds, append) => {
       // triggered for transaction AND call
       var data = args[0]
-      var el = renderUnknownTransaction(this, data, executionContext)
+      var el = renderUnknownTransaction(this, data, blockchain)
       append(el)
     }, { activate: false, filterFn: filterTx })
 
@@ -204,7 +204,7 @@ function log (self, tx, receipt) {
   }
 }
 
-function renderKnownTransaction (self, data, executionContext) {
+function renderKnownTransaction (self, data, blockchain) {
   var from = data.tx.from
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to}
@@ -213,7 +213,7 @@ function renderKnownTransaction (self, data, executionContext) {
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt, txType)}
-        ${context(self, {from, to, data}, executionContext)}
+        ${context(self, {from, to, data}, blockchain)}
         <div class=${css.buttons}>
           <button class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
@@ -250,7 +250,7 @@ function renderCall (self, data) {
   return tx
 }
 
-function renderUnknownTransaction (self, data, executionContext) {
+function renderUnknownTransaction (self, data, blockchain) {
   var from = data.tx.from
   var to = data.tx.to
   var obj = {from, to}
@@ -259,7 +259,7 @@ function renderUnknownTransaction (self, data, executionContext) {
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt || data.tx, txType)}
-        ${context(self, {from, to, data}, executionContext)}
+        ${context(self, {from, to, data}, blockchain)}
         <div class=${css.buttons}>
           <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
@@ -290,7 +290,7 @@ function checkTxStatus (tx, type) {
   }
 }
 
-function context (self, opts, executionContext) {
+function context (self, opts, blockchain) {
   var data = opts.data || ''
   var from = opts.from ? helper.shortenHexData(opts.from) : ''
   var to = opts.to
@@ -302,7 +302,7 @@ function context (self, opts, executionContext) {
   var block = data.tx.blockNumber || ''
   var i = data.tx.transactionIndex
   var value = val ? typeConversion.toInt(val) : 0
-  if (executionContext.getProvider() === 'vm') {
+  if (blockchain.getProvider() === 'vm') {
     return yo`
       <div>
         <span class=${css.txLog}>
@@ -315,7 +315,7 @@ function context (self, opts, executionContext) {
           <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</div>
         </span>
       </div>`
-  } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
+  } else if (blockchain.getProvider() !== 'vm' && data.resolvedData) {
     return yo`
       <div>
         <span class=${css.txLog}>
