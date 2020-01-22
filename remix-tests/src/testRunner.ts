@@ -4,6 +4,12 @@ import Web3 from 'web3';
 import { RunListInterface, TestCbInterface, TestResultInterface, ResultCbInterface,
     CompiledContract, AstNode, Options, FunctionDescription, UserDocumentation } from './types'
 
+/**
+ * @dev Get function name using method signature
+ * @param signature siganture
+ * @param methodIdentifiers Object containing all methods identifier
+ */
+
 function getFunctionFullName (signature: string, methodIdentifiers: Record <string, string>): string | null {
     for (const method in methodIdentifiers) {
         if (signature.replace('0x', '') === methodIdentifiers[method].replace('0x', '')) {
@@ -13,13 +19,30 @@ function getFunctionFullName (signature: string, methodIdentifiers: Record <stri
     return null
 }
 
+/**
+ * @dev Check if function is constant using function ABI
+ * @param funcABI function ABI
+ */
+
 function isConstant(funcABI: FunctionDescription): boolean {
     return (funcABI.constant || funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure')
 }
 
+/**
+ * @dev Check if function is payable using function ABI
+ * @param funcABI function ABI
+ */
+
 function isPayable(funcABI: FunctionDescription): boolean {
     return (funcABI.payable || funcABI.stateMutability === 'payable')
 }
+
+/**
+ * @dev Get overrided sender provided using natspec
+ * @param userdoc method user documentaion
+ * @param signature signature
+ * @param methodIdentifiers Object containing all methods identifier
+ */
 
 function getOverridedSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>): string | null {
     const fullName: string | null = getFunctionFullName(signature, methodIdentifiers)
@@ -27,6 +50,13 @@ function getOverridedSender (userdoc: UserDocumentation, signature: string, meth
     const accountIndex: RegExpExecArray | null = fullName && userdoc.methods[fullName] ? senderRegex.exec(userdoc.methods[fullName].notice) : null
     return fullName && accountIndex ? accountIndex[1] : null
 }
+
+/**
+ * @dev Get value provided using natspec
+ * @param userdoc method user documentaion
+ * @param signature signature
+ * @param methodIdentifiers Object containing all methods identifier
+ */
 
 function getProvidedValue (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>): string | null {
     const fullName: string | null = getFunctionFullName(signature, methodIdentifiers)
