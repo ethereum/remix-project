@@ -4,7 +4,7 @@ import Web3 from 'web3';
 import { RunListInterface, TestCbInterface, TestResultInterface, ResultCbInterface,
     CompiledContract, AstNode, Options, FunctionDescription, UserDocumentation } from './types'
 
-function getFunctionFullName (signature: string, methodIdentifiers: Record <string, string>) {
+function getFunctionFullName (signature: string, methodIdentifiers: Record <string, string>): string | null {
     for (const method in methodIdentifiers) {
         if (signature.replace('0x', '') === methodIdentifiers[method].replace('0x', '')) {
             return method
@@ -21,17 +21,17 @@ function isPayable(funcABI: FunctionDescription): boolean {
     return (funcABI.payable || funcABI.stateMutability === 'payable')
 }
 
-function getOverridedSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>) {
-    let fullName: any = getFunctionFullName(signature, methodIdentifiers)
-    let senderRegex: RegExp = /#sender: account-+(\d)/g
-    let accountIndex: RegExpExecArray | null = userdoc.methods[fullName] ? senderRegex.exec(userdoc.methods[fullName].notice) : null
+function getOverridedSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>): string | null {
+    const fullName: string | null = getFunctionFullName(signature, methodIdentifiers)
+    const senderRegex: RegExp = /#sender: account-+(\d)/g
+    const accountIndex: RegExpExecArray | null = fullName && userdoc.methods[fullName] ? senderRegex.exec(userdoc.methods[fullName].notice) : null
     return fullName && accountIndex ? accountIndex[1] : null
 }
 
-function getProvidedValue (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>) {
-    let fullName: any = getFunctionFullName(signature, methodIdentifiers)
-    let valueRegex: RegExp = /#value: (\d+)/g
-    let value: RegExpExecArray | null = userdoc.methods[fullName] ? valueRegex.exec(userdoc.methods[fullName].notice) : null
+function getProvidedValue (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>): string | null {
+    const fullName: string | null = getFunctionFullName(signature, methodIdentifiers)
+    const valueRegex: RegExp = /#value: (\d+)/g
+    const value: RegExpExecArray | null = fullName && userdoc.methods[fullName] ? valueRegex.exec(userdoc.methods[fullName].notice) : null
     return fullName && value ? value[1] : null
 }
 
@@ -41,7 +41,7 @@ function getProvidedValue (userdoc: UserDocumentation, signature: string, method
  * @param testContractName Name of test contract
  */
 
-function getAvailableFunctions (fileAST: AstNode, testContractName: string) {
+function getAvailableFunctions (fileAST: AstNode, testContractName: string): string[] {
     let funcList: string[] = []
     if(fileAST.nodes && fileAST.nodes.length > 0) {
         const contractAST: AstNode[] = fileAST.nodes.filter(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
@@ -59,13 +59,13 @@ function getAvailableFunctions (fileAST: AstNode, testContractName: string) {
  * @param funcList Methods to extract the interface of
  */
 
-function getTestFunctionsInterface (jsonInterface: FunctionDescription[], funcList: string[]) {
-    const functionsInterface: any[] = []
-    const specialFunctions = ['beforeAll', 'beforeEach', 'afterAll', 'afterEach']
+function getTestFunctionsInterface (jsonInterface: FunctionDescription[], funcList: string[]): FunctionDescription[] {
+    const functionsInterface: FunctionDescription[] = []
+    const specialFunctions: string[] = ['beforeAll', 'beforeEach', 'afterAll', 'afterEach']
     for(const func of funcList){
         if(!specialFunctions.includes(func)) {
-            const funcInterface= jsonInterface.find(node => node.type === 'function' && node.name === func)
-            functionsInterface.push(funcInterface)
+            const funcInterface: FunctionDescription | undefined = jsonInterface.find(node => node.type === 'function' && node.name === func)
+            if(funcInterface) functionsInterface.push(funcInterface)
         }
     }
     return functionsInterface
@@ -80,7 +80,7 @@ function getTestFunctionsInterface (jsonInterface: FunctionDescription[], funcLi
 
 function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, testContractName: string): RunListInterface[] {
     const availableFunctions: string[] = getAvailableFunctions(fileAST, testContractName)
-    const testFunctionsInterface: any[] = getTestFunctionsInterface(jsonInterface, availableFunctions)
+    const testFunctionsInterface: FunctionDescription[] = getTestFunctionsInterface(jsonInterface, availableFunctions)
 
     let runList: RunListInterface[] = []
 
@@ -92,7 +92,7 @@ function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, 
         if (availableFunctions.indexOf('beforeEach') >= 0) {
             runList.push({ name: 'beforeEach', type: 'internal', constant: false, payable: false })
         }
-        runList.push({ name: func.name, signature: func.signature, type: 'test', constant: isConstant(func), payable: isPayable(func) })
+        if(func.name) runList.push({ name: func.name, signature: func.signature, type: 'test', constant: isConstant(func), payable: isPayable(func) })
         if (availableFunctions.indexOf('afterEach') >= 0) {
             runList.push({ name: 'afterEach', type: 'internal', constant: false, payable: false })
         }
@@ -105,7 +105,7 @@ function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, 
     return runList
 }
 
-export function runTest (testName: string, testObject: any, contractDetails: CompiledContract, fileAST: AstNode, opts: Options, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
+export function runTest (testName: string, testObject: any, contractDetails: CompiledContract, fileAST: AstNode, opts: Options, testCallback: TestCbInterface, resultsCallback: ResultCbInterface): void {
     const runList: RunListInterface[] = createRunList(testObject._jsonInterface, fileAST, testName)
     let passingNum: number = 0
     let failureNum: number = 0
@@ -117,7 +117,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
       value: opts.accounts
     }
 
-    testCallback(undefined, accts);
+    testCallback(undefined, accts)
 
     const resp: TestResultInterface = {
       type: 'contract',
@@ -127,14 +127,14 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
 
     testCallback(undefined, resp)
     async.eachOfLimit(runList, 1, function (func, index, next) {
-        let sender
+        let sender: string | null = null
         if (func.signature) {
             sender = getOverridedSender(contractDetails.userdoc, func.signature, contractDetails.evm.methodIdentifiers)
-            if (opts.accounts) {
+            if (opts.accounts && sender) {
                 sender = opts.accounts[sender]
             }
         }
-        let sendParams
+        let sendParams: Record<string, string> | null = null
         if (sender) sendParams = { from: sender }
         const method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
         const startTime = Date.now()
@@ -167,8 +167,10 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         } else {
             if(func.payable) {
                 const value = getProvidedValue(contractDetails.userdoc, func.signature, contractDetails.evm.methodIdentifiers)
-                if(sendParams) sendParams.value = value
-                else sendParams = { value }
+                if(value) {
+                    if(sendParams) sendParams.value = value
+                    else sendParams = { value }
+                }
             }
             method.send(sendParams).on('receipt', (receipt) => {
                 try {
@@ -212,7 +214,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                     console.error(err)
                     return next(err)
                 }
-            }).on('error', function (err: any) {
+            }).on('error', function (err: Error) {
                 console.error(err)
                 const time: number = (Date.now() - startTime) / 1000.0
                 const resp: TestResultInterface = {
