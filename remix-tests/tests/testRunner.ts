@@ -234,22 +234,22 @@ describe('testRunner', () => {
       })
     })
 
-    // Test Transaction with different sender
+    // Test Transaction with custom sender & value
     describe('various sender', function () {
-      const filename: string = 'tests/various_sender/sender_test.sol'
+      const filename: string = 'tests/various_sender/sender_and_value_test.sol'
 
       before(function (done) {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
-          runTest('SenderTest', contracts.SenderTest, compilationData[filename]['SenderTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
+          runTest('SenderAndValueTest', contracts.SenderAndValueTest, compilationData[filename]['SenderAndValueTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
         })
       })
 
       after(() => { tests = [] })
 
-      it('should have 4 passing tests', function () {
-        assert.equal(results.passingNum, 4)
+      it('should have 5 passing tests', function () {
+        assert.equal(results.passingNum, 5)
       })
-      it('should have 1 failing tests', function () {
+      it('should have 0 failing tests', function () {
         assert.equal(results.failureNum, 0)
       })
     })
