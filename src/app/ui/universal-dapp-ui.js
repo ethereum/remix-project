@@ -120,19 +120,16 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     contractActionsWrapper.appendChild(this.getCallButton({
       funABI: funABI,
       address: address,
-      contractAbi: contractABI,
+      contractABI: contractABI,
       contractName: contractName
     }))
   })
 
-  this.calldataInput = yo`
-    <input class="m-0" title="Input the amount of Ether to send to receive function.">
+  const calldataInput = yo`
+    <input class="w-100 m-0" title="The Calldata to send to fallback function of the contract.">
   `
-  this.amountInput = yo`
-    <input class="m-0" title="Input calldata to send to fallback function.">
-  `
-  this.llIError = yo`
-    <label class="text-danger"></label>
+  const llIError = yo`
+    <label id="deployAndRunLLTxError" class="text-danger"></label>
   `
   // constract LLInteractions elements
   const lowLevelInteracions = yo`
@@ -150,99 +147,170 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       </div>
       <div class="d-flex flex-column">
         <div class="d-flex justify-content-end m-2 align-items-center">
-          <label class="mr-2 m-0">Amount</label>
-          ${this.amountInput}
-          <button class="btn btn-sm btn-secondary" title="Send ether to contract." onclick=${() => sendEther()}>Send</button>
-        </div>
-        <div class="d-flex justify-content-end m-2 align-items-center">
           <label class="mr-2 m-0">Calldata</label>
-          ${this.calldataInput}
-          <button class="btn btn-sm btn-secondary" title="Send data to contract." onclick=${() => sendCalldata()}>Send</button>
+          ${calldataInput}
+          <button id="deployAndRunLLTxSendTransaction" class="btn btn-sm btn-secondary" title="Send data to contract." onclick=${() => sendData()}>Transact</button>
         </div>
       </div>
       <div>
-        ${this.llIError}
+        ${llIError}
       </div>
     </div>
   `
 
-  function setLLIError (text) {
-    self.llIError.innerText = text
-  }
-
-  function sendCalldata () {
-    setLLIError('')
-    const fallback = self.udapp.getFallbackInterface(contractABI)
-    const args = {
-      funABI: fallback,
-      address: address,
-      contractAbi: contractABI,
-      contractName: contractName
+  function sendData () {
+    let error = false
+    function setLLIError (text) {
+      llIError.innerText = text
+      if (text !== '') error = true
     }
-    if (!self.calldataInput.value) {
-      // show error:
-      setLLIError('Calldata field is empty')
-    } else {
-      if (fallback) {
-        // fallback is defined. call the fallback function
-        self.clickButton(args)
-      } else {
-        // show error
-        setLLIError("'fallback' function is not defined")
-      }
-    }
-  }
 
-  function sendEther () {
     setLLIError('')
     const fallback = self.udapp.getFallbackInterface(contractABI)
     const receive = self.udapp.getReceiveInterface(contractABI)
-    const argsR = {
-      funABI: receive,
+    const args = {
+      funABI: fallback,
       address: address,
-      contractAbi: contractABI,
-      contractName: contractName
+      contractName: contractName,
+      contractABI: contractABI
     }
-    const argsF = {
-      funABI: receive,
-      address: address,
-      contractAbi: contractABI,
-      contractName: contractName
-    }
-    if (!self.amountInput.value) {
-      // show error:
-      setLLIError('Ether amount field is empty')
-    } else {
-      if (receive) {
-        self.clickButton(argsR)
-        // receive is defined. call the fallback function
-      } else if (fallback && fallback.stateMutability === 'payable') {
-        // receive is not defined but there is payable fallback function, call it
-        self.clickButton(argsF)
-      } else {
-        // show error
+    let calldata = calldataInput.value
+    const amount = document.querySelector('#value').value
+    if (amount !== '0') {
+      // check for numeric and receive/fallback
+      if (!isNumeric(amount)) {
+        setLLIError('Value to send should be a number')
+      } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
         setLLIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
       }
     }
+    if (calldata) {
+      if (calldata.length > 3 && calldata.substr(0, 2) === '0x') {
+        if (!isHexadecimal(calldata.substr(2, calldata.length))) {
+          setLLIError('the calldata should be a valid hexadecimal value.')
+        }
+      }
+      if (!fallback) {
+        setLLIError("'fallback' function is not defined")
+      }
+    }
+    if ((calldata || amount !== '0') && !error) self.runTransaction(false, args, null, calldata, null)
+  }
+
+  function isHexadecimal (value) {
+    return /^[0-9a-fA-F]+$/.test(value)
+  }
+
+  function isNumeric (value) {
+    return /^\+?(0|[1-9]\d*)$/.test(value)
   }
 
   contractActionsWrapper.appendChild(lowLevelInteracions)
   return instance
 }
 
+UniversalDAppUI.prototype.confirmationCb = function (network, tx, gasEstimation, continueTxExecution, cancelCb) {
+  let self = this
+  if (network.name !== 'Main') {
+    return continueTxExecution(null)
+  }
+  var amount = Web3.utils.fromWei(typeConversion.toInt(tx.value), 'ether')
+  var content = confirmDialog(tx, amount, gasEstimation, self.udapp,
+    (gasPrice, cb) => {
+      let txFeeText, priceStatus
+      // TODO: this try catch feels like an anti pattern, can/should be
+      // removed, but for now keeping the original logic
+      try {
+        var fee = Web3.utils.toBN(tx.gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), 'gwei')))
+        txFeeText = ' ' + Web3.utils.fromWei(fee.toString(10), 'ether') + ' Ether'
+        priceStatus = true
+      } catch (e) {
+        txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+        priceStatus = false
+      }
+      cb(txFeeText, priceStatus)
+    },
+    (cb) => {
+      self.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+        const warnMessage = ' Please fix this issue before sending any transaction. '
+        if (error) {
+          return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
+        }
+        try {
+          var gasPriceValue = Web3.utils.fromWei(gasPrice.toString(10), 'gwei')
+          cb(null, gasPriceValue)
+        } catch (e) {
+          cb(warnMessage + e.message, null, false)
+        }
+      })
+    }
+  )
+  modalDialog(
+    'Confirm transaction',
+    content,
+    { label: 'Confirm',
+      fn: () => {
+        self.udapp.config.setUnpersistedProperty(
+          'doNotShowTransactionConfirmationAgain',
+          content.querySelector('input#confirmsetting').checked
+        )
+        // TODO: check if this is check is still valid given the refactor
+        if (!content.gasPriceStatus) {
+          cancelCb('Given gas price is not correct')
+        } else {
+          var gasPrice = Web3.utils.toWei(content.querySelector('#gasprice').value, 'gwei')
+          continueTxExecution(gasPrice)
+        }
+      }
+    },
+    {
+      label: 'Cancel',
+      fn: () => {
+        return cancelCb('Transaction canceled by user.')
+      }
+    }
+  )
+}
+
+const continueCb = (error, continueTxExecution, cancelCb) => {
+  if (error) {
+    const msg = typeof error !== 'string' ? error.message : error
+    modalDialog(
+      'Gas estimation failed',
+      yo`
+        <div>Gas estimation errored with the following message (see below).
+        The transaction execution will likely fail. Do you want to force sending? <br>${msg}</div>
+      `,
+      {
+        label: 'Send Transaction',
+        fn: () => continueTxExecution()
+      },
+      {
+        label: 'Cancel Transaction',
+        fn: () => cancelCb()
+      }
+    )
+  } else {
+    continueTxExecution()
+  }
+}
+
+const promptCb = (okCb, cancelCb) => {
+  modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+}
+
 // TODO this is used by renderInstance when a new instance is displayed.
 // this returns a DOM element.
 UniversalDAppUI.prototype.getCallButton = function (args) {
   let self = this
-  // args.funABI, args.address [fun only]
-  // args.contractName [constr only]
-  const lookupOnly = args.funABI.stateMutability === 'view' || args.funABI.stateMutability === 'pure' || !!args.funABI.constant
-
   var outputOverride = yo`<div class=${css.value}></div>` // show return value
-
-  const multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValue) => {
-    this.clickButton(args, valArray, inputsValue)
-  }, self.udapp.getInputs(args.funABI))
+  const lookupOnly = args.funABI.stateMutability === 'view' || args.funABI.stateMutability === 'pure' || args.funABI.constant
+  const multiParamManager = new MultiParamManager(
+    lookupOnly,
+    args.funABI,
+    (valArray, inputsValues) => self.runTransaction(lookupOnly, args, valArray, inputsValues, outputOverride),
+    self.udapp.getInputs(args.funABI)
+  )
 
   const contractActionsContainer = yo`<div class="${css.contractActionsContainer}" >${multiParamManager.render()}</div>`
   contractActionsContainer.appendChild(outputOverride)
@@ -250,155 +318,59 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
   return contractActionsContainer
 }
 
-UniversalDAppUI.prototype.clickButton = function (args, valArr, inputsValue) {
+UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, inputsValues, outputOverride) {
   let self = this
-  // check if it's a special function and add a name in case it is
-  const fuctionName = args.contractName +
-    (args.funABI.name ? args.funABI.name : args.funABI.type === 'receive' ? '(receive)' : '(fallback)')
-
-  const lookupOnly = args.funABI.stateMutability === 'view' || args.funABI.stateMutability === 'pure' || !!args.funABI.constant
-  const logMsg = lookupOnly ? `transact to ${fuctionName}` : `call to ${fuctionName}`
-
-  var value = inputsValue
-
-  const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-    if (network.name !== 'Main') {
-      return continueTxExecution(null)
-    }
-    var amount = Web3.utils.fromWei(typeConversion.toInt(tx.value), 'ether')
-    var content = confirmDialog(tx, amount, gasEstimation, self.udapp,
-      (gasPrice, cb) => {
-        let txFeeText, priceStatus
-        // TODO: this try catch feels like an anti pattern, can/should be
-        // removed, but for now keeping the original logic
-        try {
-          var fee = Web3.utils.toBN(tx.gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), 'gwei')))
-          txFeeText = ' ' + Web3.utils.fromWei(fee.toString(10), 'ether') + ' Ether'
-          priceStatus = true
-        } catch (e) {
-          txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-          priceStatus = false
-        }
-        cb(txFeeText, priceStatus)
-      },
-      (cb) => {
-        self.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-          const warnMessage = ' Please fix this issue before sending any transaction. '
-          if (error) {
-            return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-          }
-          try {
-            var gasPriceValue = Web3.utils.fromWei(gasPrice.toString(10), 'gwei')
-            cb(null, gasPriceValue)
-          } catch (e) {
-            cb(warnMessage + e.message, null, false)
-          }
-        })
-      }
-    )
-    modalDialog(
-      'Confirm transaction',
-      content,
-      { label: 'Confirm',
-        fn: () => {
-          self.udapp.config.setUnpersistedProperty(
-            'doNotShowTransactionConfirmationAgain',
-            content.querySelector('input#confirmsetting').checked
-          )
-          // TODO: check if this is check is still valid given the refactor
-          if (!content.gasPriceStatus) {
-            cancelCb('Given gas price is not correct')
-          } else {
-            var gasPrice = Web3.utils.toWei(content.querySelector('#gasprice').value, 'gwei')
-            continueTxExecution(gasPrice)
-          }
-        }}, {
-          label: 'Cancel',
-          fn: () => {
-            return cancelCb('Transaction canceled by user.')
-          }
-        }
-      )
+  let logMsg
+  if (!lookupOnly) {
+    logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+  } else {
+    logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
   }
 
-  const continueCb = (error, continueTxExecution, cancelCb) => {
-    if (error) {
-      const msg = typeof error !== 'string' ? error.message : error
-      modalDialog(
-        'Gas estimation failed',
-        yo`
-          <div>Gas estimation errored with the following message (see below).
-          The transaction execution will likely fail. Do you want to force sending? <br>${msg}</div>
-        `,
-        {
-          label: 'Send Transaction',
-          fn: () => continueTxExecution()
-        },
-        {
-          label: 'Cancel Transaction',
-          fn: () => cancelCb()
-        }
-      )
-    } else {
-      continueTxExecution()
-    }
-  }
+  var value = inputsValues
 
   const outputCb = (decoded) => {
-    outputOverride.innerHTML = ''
-    outputOverride.appendChild(decoded)
-  }
-
-  const promptCb = (okCb, cancelCb) => {
-    modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
-  }
-
-  const isSpecialFunction = args.funABI.type === 'fallback' || args.funABI.type === 'receive'
-
-  // contractsDetails is used to resolve libraries
-  txFormat.buildData(
-    args.contractName,
-    args.contractAbi,
-    {},
-    false,
-    args.funABI,
-    !isSpecialFunction ? value : '', // input parameters for the function to call
-    (error, data) => {
-      if (!error) {
-        if (!lookupOnly) {
-          self.logCallback(`${logMsg} pending ... `)
-        } else {
-          self.logCallback(`${logMsg}`)
-        }
-        if (isSpecialFunction) data.dataHex = value
-        self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
-          if (!error) {
-            var isVM = self.executionContext.isVM()
-            if (isVM) {
-              var vmError = txExecution.checkVMError(txResult)
-              if (vmError.error) {
-                self.logCallback(`${logMsg} errored: ${vmError.message} `)
-                return
-              }
-            }
-            if (lookupOnly) {
-              const decoded = decodeResponseToTreeView(self.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result), args.funABI)
-              outputCb(decoded)
-            }
-          } else {
-            self.logCallback(`${logMsg} errored: ${error} `)
-          }
-        })
-      } else {
-        self.logCallback(`${logMsg} errored: ${error} `)
-      }
-    }, (msg) => {
-      self.logCallback(msg)
-    }, (data, runTxCallback) => {
-      // called for libraries deployment
-      self.udapp.runTx(data, confirmationCb, runTxCallback)
+    if (outputOverride) {
+      outputOverride.innerHTML = ''
+      outputOverride.appendChild(decoded)
     }
-  )
+  }
+  // contractsDetails is used to resolve libraries
+  txFormat.buildData(args.contractName, args.contractABI, {}, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
+    if (!error) {
+      if (!lookupOnly) {
+        self.logCallback(`${logMsg} pending ... `)
+      } else {
+        self.logCallback(`${logMsg}`)
+      }
+      if (args.funABI.type === 'fallback') data.dataHex = value
+      self.udapp.callFunction(args.address, data, args.funABI, this.confirmationCb, continueCb, promptCb, (error, txResult) => {
+        if (!error) {
+          var isVM = self.executionContext.isVM()
+          if (isVM) {
+            var vmError = txExecution.checkVMError(txResult)
+            if (vmError.error) {
+              self.logCallback(`${logMsg} errored: ${vmError.message} `)
+              return
+            }
+          }
+          if (lookupOnly) {
+            const decoded = decodeResponseToTreeView(self.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result), args.funABI)
+            outputCb(decoded)
+          }
+        } else {
+          self.logCallback(`${logMsg} errored: ${error} `)
+        }
+      })
+    } else {
+      self.logCallback(`${logMsg} errored: ${error} `)
+    }
+  }, (msg) => {
+    self.logCallback(msg)
+  }, (data, runTxCallback) => {
+    // called for libraries deployment
+    self.udapp.runTx(data, this.confirmationCb, runTxCallback)
+  })
 }
 
 module.exports = UniversalDAppUI
