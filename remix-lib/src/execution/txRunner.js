@@ -95,7 +95,7 @@ class TxRunner {
 
   runInVm (from, to, data, value, gasLimit, useCall, timestamp, callback) {
     const self = this
-    var account = self.vmaccounts[from]
+    const account = self.vmaccounts[from]
     if (!account) {
       return callback('Invalid account selected')
     }
@@ -104,19 +104,20 @@ class TxRunner {
       if (err) {
         callback('Account not found')
       } else {
-        var tx = new EthJSTX({
-          timestamp: timestamp,
-          nonce: new BN(res.nonce),
-          gasPrice: new BN(1),
+        // See https://github.com/ethereumjs/ethereumjs-tx/blob/master/docs/classes/transaction.md#constructor
+        // for initialization fields and their types
+        const tx = new EthJSTX({
+          nonce: '0x' + res.nonce.toString('hex'),
+          gasPrice: '0x1',
           gasLimit: gasLimit,
           to: to,
-          value: new BN(value, 10),
+          value: value,
           data: Buffer.from(data.slice(2), 'hex')
         })
         tx.sign(account.privateKey)
         const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
         const difficulties = [new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10)]
-        var block = new EthJSBlock({
+        const block = new EthJSBlock({
           header: {
             timestamp: timestamp || (new Date().getTime() / 1000 | 0),
             number: self.blockNumber,
