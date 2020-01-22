@@ -241,6 +241,20 @@ module.exports = class UniversalDApp {
     })
   }
 
+   /**
+    * call the current given contract
+    *
+    * @param {String} to    - address of the contract to call.
+    * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
+    * @param {Function} callback    - callback.
+    */
+  callFunction (to, data, confirmationCb, continueCb, promptCb, callback) {
+    this.runTx({to, data, useCall: null}, confirmationCb, continueCb, promptCb, (error, txResult) => {
+      // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
+      callback(error, txResult)
+    })
+  }
+
   context () {
     return (this.executionContext.isVM() ? 'memory' : 'blockchain')
   }
