@@ -239,11 +239,11 @@ class CompileTab extends ViewPlugin {
         ${selectEl}
       </div>
       <article class="px-2 mt-2 pb-0">
-        <button class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish('swarm') }}">
+        <button id="publishOnSwarm" class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish('swarm') }}">
           <span>Publish on Swarm</span>
           <img id="swarmLogo" class="${css.storageLogo} ml-2" src="${swarmImg}">
         </button>
-        <button class="btn btn-secondary btn-block" title="Publish on Ipfs" onclick="${() => { this.publish('ipfs') }}">
+        <button id="publishOnIpfs" class="btn btn-secondary btn-block" title="Publish on Ipfs" onclick="${() => { this.publish('ipfs') }}">
         <span>Publish on Ipfs</span>
         <img id="ipfsLogo" class="${css.storageLogo} ml-2" src="${ipfsImg}">
       </button>
