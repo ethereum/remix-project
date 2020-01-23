@@ -136,12 +136,15 @@ function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, 
 }
 
 export function runTest (testName: string, testObject: any, contractDetails: CompiledContract, fileAST: AstNode, opts: Options, testCallback: TestCbInterface, resultsCallback: ResultCbInterface): void {
-    const runList: RunListInterface[] = createRunList(testObject._jsonInterface, fileAST, testName)
     let passingNum: number = 0
     let failureNum: number = 0
     let timePassed: number = 0
+    const isJSONInterfaceAvailable = testObject && testObject.options && testObject.options.jsonInterface
+    if(!isJSONInterfaceAvailable)
+        return resultsCallback(new Error('Contract interface not available'), { passingNum, failureNum, timePassed })
+    
+    const runList: RunListInterface[] = createRunList(testObject.options.jsonInterface, fileAST, testName)
     const web3 = new Web3()
-
     const accts: TestResultInterface = {
       type: 'accountList',
       value: opts.accounts
@@ -260,10 +263,6 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             })
         }
     }, function(error) {
-        resultsCallback(error, {
-            passingNum: passingNum,
-            failureNum: failureNum,
-            timePassed: timePassed
-        })
+        resultsCallback(error, { passingNum, failureNum, timePassed })
     })
 }
