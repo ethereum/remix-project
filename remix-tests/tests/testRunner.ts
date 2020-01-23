@@ -253,5 +253,31 @@ describe('testRunner', () => {
         assert.equal(results.failureNum, 0)
       })
     })
+
+    // Test `runTest` method without sending contract object (should throw error)
+    describe('runTest method without contract json interface', function () {
+      const filename: string = 'tests/various_sender/sender_and_value_test.sol'
+      const errorCallback: Function = (done) => {
+        return (err, _results) => {
+          if (err && err.message.includes('Contract interface not available')) { 
+            results = _results
+            done() 
+          }
+          else throw err
+        }
+      }
+      before(function (done) {
+        compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
+          runTest('SenderAndValueTest', undefined, compilationData[filename]['SenderAndValueTest'], asts[filename], { accounts }, testCallback, errorCallback(done))
+        })
+      })
+
+      it('should have 0 passing tests', function () {
+        assert.equal(results.passingNum, 0)
+      })
+      it('should have 0 failing tests', function () {
+        assert.equal(results.failureNum, 0)
+      })
+    })
   })
 })
