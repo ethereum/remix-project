@@ -13,10 +13,11 @@ import { deployAll } from './deployer'
  * @param filepath Path of file
  * @param isDirectory True, if path is a directory
  * @param web3 Web3
+ * @param finalCallback optional callback to run finally
  * @param opts Options
  */
 
-export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, opts?: Options) {
+export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, finalCallback: any = () => {}, opts?: Options) {
     opts = opts || {}
     const sourceASTs: any = {}
     const { Signale } = require('signale')
@@ -152,6 +153,5 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
                 next()
             })
         }
-    ], () => {
-    })
+    ], finalCallback)
 }
