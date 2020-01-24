@@ -11,21 +11,20 @@ module.exports = {
   },
   'Use special functions receive/fullback': function (browser) {
     browser.waitForElementVisible('#icon-panel', 10000)
-    .testContracts('receiveAndfFallback.sol', sources[0]['browser/Untitled.sol'], ['CheckSpecials'])
-    .clickLaunchIcon('udapp'
-      .selectContract('CheckSpecials')
-      .createContract('')
-      .clickInstance(0)
-      .perform((done) => {
-        browser.getAddressAtPosition(0, (address) => {
-          browser.sendLowLevelTx(address, '0', '0xaa')
-          .journalLastChild('dd')
-          .waitForElementVisible('label[id="deployAndRunLLTxError"]')
-          .assert.containsText('label[id="deployAndRunLLTxError"]', '')
-          .perform(done)
-        })
+    .testContracts('browser/receiveAndfFallback.sol', sources[0]['receiveAndfFallback.sol'], ['CheckSpecials'])
+    .clickLaunchIcon('udapp')
+    .selectContract('CheckSpecials')
+    .createContract('')
+    .clickInstance(0)
+    .perform((done) => {
+      browser.getAddressAtPosition(0, (address) => {
+        browser.sendLowLevelTx(address, '0', '0xaa')
+        .journalLastChild('dd')
+        .waitForElementVisible('label[id="deployAndRunLLTxError"]')
+        .assert.containsText('label[id="deployAndRunLLTxError"]', '')
+        .perform(done)
       })
-    )
+    })
   },
   tearDown: sauce
 }
