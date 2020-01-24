@@ -7,7 +7,8 @@ import { runTest } from './testRunner'
 
 import Web3 from 'web3';
 import { Provider } from 'remix-simulator'
-import { FinalResult, SrcIfc, compilationInterface, ASTInterface, Options, TestResultInterface, AstNode } from './types'
+import { FinalResult, SrcIfc, compilationInterface, ASTInterface, Options, 
+    TestResultInterface, AstNode, CompilerConfiguration } from './types'
 
 const createWeb3Provider = async function () {
     let web3 = new Web3()
@@ -20,15 +21,14 @@ const createWeb3Provider = async function () {
 /**
  * @dev Run tests from source of a test contract file (used for IDE)
  * @param contractSources Sources of contract
- * @param versionUrl url of selected compiler version to load
- * @param usingWorker if true, load compiler using web worker
+ * @param compilerConfig current compiler configuration
  * @param testCallback Test callback
  * @param resultCallback Result Callback
  * @param finalCallback Final Callback
  * @param importFileCb Import file callback
  * @param opts Options
  */
-export async function runTestSources(contractSources: SrcIfc, versionUrl: string, usingWorker: boolean, testCallback: Function, resultCallback: Function, finalCallback: any, importFileCb: Function, opts: Options) {
+export async function runTestSources(contractSources: SrcIfc, compilerConfig: CompilerConfiguration, testCallback: Function, resultCallback: Function, finalCallback: any, importFileCb: Function, opts: Options) {
     opts = opts || {}
     const sourceASTs: any = {}
     let web3 = opts.web3 || await createWeb3Provider()
@@ -42,7 +42,7 @@ export async function runTestSources(contractSources: SrcIfc, versionUrl: string
             })
         },
         function compile (next) {
-            compileContractSources(contractSources, versionUrl, usingWorker, importFileCb, { accounts }, next)
+            compileContractSources(contractSources, compilerConfig, importFileCb, { accounts }, next)
         },
         function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next) {
             for(const filename in asts) {
