@@ -44,6 +44,13 @@ export interface Options {
   web3?: any
 }
 
+export interface CompilerConfiguration {
+  currentCompilerUrl: string,
+  evmVersion: string, 
+  optimize: boolean, 
+  usingWorker: boolean
+}
+
 /** sources object with name of the file and content **/
 
 ////////////

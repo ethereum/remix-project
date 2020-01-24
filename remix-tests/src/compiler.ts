@@ -2,7 +2,7 @@ import fs from './fileSystem'
 import async from 'async'
 import path from 'path'
 let RemixCompiler = require('remix-solidity').Compiler
-import { SrcIfc } from './types'
+import { SrcIfc, CompilerConfiguration } from './types'
 
 function regexIndexOf (inputString: string, regex: RegExp, startpos: number = 0) {
     const indexOf = inputString.substring(startpos).search(regex)
@@ -143,12 +143,12 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
  * @dev Compile contract source before running tests (used for IDE tests execution)
  * @param sources sources
  * @param versionUrl url of selected compiler version to load
- * @param usingWorker if true, load compiler using web worker
+ * @param compilerConfig current compiler configuration
  * @param importFileCb Import file callback
  * @param opts Options
  * @param cb Callback
  */
-export function compileContractSources(sources: SrcIfc, versionUrl: any, usingWorker: boolean, importFileCb: any, opts: any, cb: Function) {
+export function compileContractSources(sources: SrcIfc, compilerConfig: CompilerConfiguration, importFileCb: any, opts: any, cb: Function) {
     let compiler, filepath: string
     const accounts: string[] = opts.accounts || []
     // Iterate over sources keys. Inject test libraries. Inject test library import statements.
@@ -169,8 +169,11 @@ export function compileContractSources(sources: SrcIfc, versionUrl: any, usingWo
 
     async.waterfall([
         function loadCompiler (next: Function) {
+            const {currentCompilerUrl, evmVersion, optimize, usingWorker} = compilerConfig
             compiler = new RemixCompiler(importFileCb)
-            compiler.loadVersion(usingWorker, versionUrl)
+            compiler.set('evmVersion', evmVersion)
+            compiler.set('optimize', optimize)
+            compiler.loadVersion(usingWorker, currentCompilerUrl)
             // @ts-ignore
             compiler.event.register('compilerLoaded', this, (version) => {
                 next()
