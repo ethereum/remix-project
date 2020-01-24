@@ -178,7 +178,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     const amount = document.querySelector('#value').value
     if (amount !== '0') {
       // check for numeric and receive/fallback
-      if (!isNumeric(amount)) {
+      if (!helper.isNumeric(amount)) {
         setLLIError('Value to send should be a number')
       } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
         setLLIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
@@ -186,7 +186,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     }
     if (calldata) {
       if (calldata.length > 3 && calldata.substr(0, 2) === '0x') {
-        if (!isHexadecimal(calldata.substr(2, calldata.length))) {
+        if (!helper.isHexadecimal(calldata.substr(2, calldata.length))) {
           setLLIError('the calldata should be a valid hexadecimal value.')
         }
       }
@@ -195,14 +195,6 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       }
     }
     if ((calldata || amount !== '0') && !error) self.runTransaction(false, args, null, calldata, null)
-  }
-
-  function isHexadecimal (value) {
-    return /^[0-9a-fA-F]+$/.test(value)
-  }
-
-  function isNumeric (value) {
-    return /^\+?(0|[1-9]\d*)$/.test(value)
   }
 
   contractActionsWrapper.appendChild(lowLevelInteracions)

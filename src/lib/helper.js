@@ -44,6 +44,12 @@ module.exports = {
   checkSpecialChars (name) {
     return name.match(/[:*?"<>\\'|]/) != null
   },
+  isHexadecimal (value) {
+    return /^[0-9a-fA-F]+$/.test(value)
+  },
+  isNumeric (value) {
+    return /^\+?(0|[1-9]\d*)$/.test(value)
+  },
   find: find
 }
 
