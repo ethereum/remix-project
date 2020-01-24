@@ -200,6 +200,15 @@ class CompileTab extends ViewPlugin {
     return this.compilerContainer.data.selectedVersion
   }
 
+  // This function is used for passing the compiler configuration to 'remix-tests'
+  getCurrentCompilerConfig () {
+    return {
+      currentVersion: this.compilerContainer.data.selectedVersion,
+      evmVersion: this.compileTabLogic.evmVersion,
+      optimize: this.compileTabLogic.optimize
+    }
+  }
+
   /*********
    * SUB-COMPONENTS
    */
