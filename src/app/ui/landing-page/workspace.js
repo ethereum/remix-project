@@ -28,6 +28,14 @@ export const defaultWorkspaces = (appManager) => {
         appManager.ensureActivated('vyper')
         appManager.ensureActivated('udapp')
       }, () => {}),
+    new Workspace(
+      'Lexon',
+      'Lexon is a language modelling legal contracts that compiles down to ethereum smart contracts',
+      true,
+      () => {
+        appManager.ensureActivated('lexon')
+        appManager.ensureActivated('udapp')
+      }, () => {}),
     new Workspace('Debugger', 'Debug transactions with remix', false, () => {
       appManager.ensureActivated('debugger')
     }, () => {}),
