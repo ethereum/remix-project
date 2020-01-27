@@ -115,7 +115,7 @@ class SettingsUI {
       <div class="${css.crow}">
         <div class="${css.col1_1}">Value</div>
         <div class="${css.gasValueContainer}">
-          <input type="text" class="form-control ${css.gasNval} ${css.col2}" id="value" value="0" title="Enter the value and choose the unit">
+          <input type="text" class="form-control ${css.gasNval} ${css.col2}" id="deployAndRunTransferValue" value="0" title="Enter the value and choose the unit">
           <select name="unit" class="form-control p-1 ${css.gasNvalUnit} ${css.col2_2}" id="unit">
             <option data-unit="wei">wei</option>
             <option data-unit="gwei">gwei</option>
