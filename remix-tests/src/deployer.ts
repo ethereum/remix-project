@@ -1,17 +1,17 @@
 import async from 'async'
-const remixLib = require('remix-lib')
-import Web3 from 'web3';
-import { compilationInterface } from 'types';
+import { execution } from 'remix-lib'
+import Web3 from 'web3'
+import { compilationInterface } from 'types'
 
 /**
  * @dev Deploy all contracts from compilation result
  * @param compileResult compilation result
  * @param web3 web3 object
- * @param isAgain If true, try deployment with gas double of estimation (used for Out-of-gas error only)
+ * @param withDoubleGas If true, try deployment with gas double of estimation (used for Out-of-gas error only)
  * @param callback Callback
  */
 
-export function deployAll(compileResult: compilationInterface, web3: Web3, isAgain: boolean, callback) {
+export function deployAll(compileResult: compilationInterface, web3: Web3, withDoubleGas: boolean, callback) {
     let compiledObject = {}
     let contracts = {}
     let accounts: string[] = []
@@ -65,9 +65,8 @@ export function deployAll(compileResult: compilationInterface, web3: Web3, isAga
         function deployContracts(contractsToDeploy: string[], next: Function) {
             const deployRunner = (deployObject, contractObject, contractName, filename, callback) => {
                 deployObject.estimateGas().then((gasValue) => {
-                    let gas = Math.ceil(gasValue * 1.2)
-                    if(isAgain)
-                        gas = gas * 2
+                    const gasBase = Math.ceil(gasValue * 1.2)
+                    const gas = withDoubleGas ? gasBase * 2 : gasBase
                     deployObject.send({
                         from: accounts[0],
                         gas: gas
@@ -113,7 +112,7 @@ export function deployAll(compileResult: compilationInterface, web3: Web3, isAga
 
                 let funAbi = null // no need to set the abi for encoding the constructor
                 let params = '' // we suppose that the test contract does not have any param in the constructor
-                remixLib.execution.txFormat.encodeConstructorCallAndDeployLibraries(contractName, contract.raw, compileResult, params, funAbi, encodeDataFinalCallback, encodeDataStepCallback, encodeDataDeployLibraryCallback)
+                execution.txFormat.encodeConstructorCallAndDeployLibraries(contractName, contract.raw, compileResult, params, funAbi, encodeDataFinalCallback, encodeDataStepCallback, encodeDataDeployLibraryCallback)
             }, function (err) {
                 if(err) next(err)
                 next(null, contracts)
