@@ -1,8 +1,17 @@
 import async from 'async'
-var remixLib = require('remix-lib')
+const remixLib = require('remix-lib')
 import Web3 from 'web3';
+import { compilationInterface } from 'types';
 
-export function deployAll(compileResult: object, web3: Web3, isAgain: boolean, callback) {
+/**
+ * @dev Deploy all contracts from compilation result
+ * @param compileResult compilation result
+ * @param web3 web3 object
+ * @param isAgain If true, try deployment with gas double of estimation (used for Out-of-gas error only)
+ * @param callback Callback
+ */
+
+export function deployAll(compileResult: compilationInterface, web3: Web3, isAgain: boolean, callback) {
     let compiledObject = {}
     let contracts = {}
     let accounts: string[] = []

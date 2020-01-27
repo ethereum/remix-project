@@ -6,7 +6,7 @@ import { Provider } from 'remix-simulator'
 
 import { compileFileOrFiles } from '../dist/compiler'
 import { deployAll } from '../dist/deployer'
-import { runTest } from '../dist/index'
+import { runTest, compilationInterface } from '../dist/index'
 import { ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/index'
 
 // deepEqualExcluding allows us to exclude specific keys whose values vary.
@@ -60,7 +60,7 @@ async function compileAndDeploy(filename: string, callback: Function) {
     function compile(next: Function): void {
       compileFileOrFiles(filename, false, { accounts }, next)
     },
-    function deployAllContracts(compilationResult: object, asts, next: Function): void {
+    function deployAllContracts(compilationResult: compilationInterface, asts, next: Function): void {
       for(const filename in asts) {
         if(filename.endsWith('_test.sol'))
           sourceASTs[filename] = asts[filename].ast
