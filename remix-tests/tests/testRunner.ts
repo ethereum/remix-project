@@ -67,7 +67,7 @@ async function compileAndDeploy(filename: string, callback: Function) {
       }
       try {
         compilationData = compilationResult
-        deployAll(compilationResult, web3, next)
+        deployAll(compilationResult, web3, false, next)
       } catch (e) {
         throw e
       }

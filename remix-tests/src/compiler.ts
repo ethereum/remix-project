@@ -142,7 +142,6 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
 /**
  * @dev Compile contract source before running tests (used for IDE tests execution)
  * @param sources sources
- * @param versionUrl url of selected compiler version to load
  * @param compilerConfig current compiler configuration
  * @param importFileCb Import file callback
  * @param opts Options
