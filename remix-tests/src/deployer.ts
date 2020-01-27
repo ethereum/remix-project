@@ -2,7 +2,7 @@ import async from 'async'
 var remixLib = require('remix-lib')
 import Web3 from 'web3';
 
-export function deployAll(compileResult: object, web3: Web3, callback) {
+export function deployAll(compileResult: object, web3: Web3, isAgain: boolean, callback) {
     let compiledObject = {}
     let contracts = {}
     let accounts: string[] = []
@@ -56,9 +56,12 @@ export function deployAll(compileResult: object, web3: Web3, callback) {
         function deployContracts(contractsToDeploy: string[], next: Function) {
             const deployRunner = (deployObject, contractObject, contractName, filename, callback) => {
                 deployObject.estimateGas().then((gasValue) => {
+                    let gas = Math.ceil(gasValue * 1.2)
+                    if(isAgain)
+                        gas = gas * 2
                     deployObject.send({
                         from: accounts[0],
-                        gas: Math.ceil(gasValue * 1.2)
+                        gas: gas
                     }).on('receipt', function (receipt) {
                         contractObject.options.address = receipt.contractAddress
                         contractObject.options.from = accounts[0]

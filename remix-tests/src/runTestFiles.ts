@@ -60,7 +60,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
                 if(filename.endsWith('_test.sol'))
                     sourceASTs[filename] = asts[filename].ast
             }
-            deployAll(compilationResult, web3, (err, contracts) => {
+            deployAll(compilationResult, web3, false, (err, contracts) => {
                 if (err) {
                     next(err)
                 }

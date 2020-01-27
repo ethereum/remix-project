@@ -49,11 +49,19 @@ export async function runTestSources(contractSources: SrcIfc, compilerConfig: Co
                 if(filename.endsWith('_test.sol'))
                     sourceASTs[filename] = asts[filename].ast
             }
-            deployAll(compilationResult, web3, (err, contracts) => {
+            deployAll(compilationResult, web3, false, (err, contracts) => {
                 if (err) {
-                    next([{message: 'contract deployment failed: ' + err.message, severity: 'error'}]) // IDE expects errors in array
-                }
-
+                    // If contract deployment fails because of 'Out of Gas' error, try again with double gas
+                    // This is temporary, should be removed when remix-tests will have a dedicated UI to 
+                    // accept deployment params from UI
+                    if(err.message.includes('The contract code couldn\'t be stored, please check your gas limit')) {
+                        deployAll(compilationResult, web3, true, (error, contracts) => {
+                            if (error) next([{message: 'contract deployment failed after trying twice: ' + error.message, severity: 'error'}]) // IDE expects errors in array
+                            else next(null, compilationResult, contracts)
+                        })
+                    } else
+                        next([{message: 'contract deployment failed: ' + err.message, severity: 'error'}]) // IDE expects errors in array
+                } else
                 next(null, compilationResult, contracts)
             })
         },
