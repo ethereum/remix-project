@@ -173,7 +173,7 @@ module.exports = class TestTab extends ViewPlugin {
   runTest (testFilePath, callback) {
     this.loading.hidden = false
     this.fileManager.getFile(testFilePath).then((content) => {
-      let runningTest = {}
+      const runningTest = {}
       runningTest[testFilePath] = { content }
       const {currentVersion, evmVersion, optimize} = this.compileTab.getCurrentCompilerConfig()
       const currentCompilerUrl = this.baseurl + '/' + currentVersion
