@@ -13,6 +13,7 @@ var remixLib = require('remix-lib')
 var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 var TreeView = require('./TreeView')
+var txCallBacks = require('./sendTxCallbacks')
 
 function UniversalDAppUI (udapp, logCallback, executionContext) {
   this.udapp = udapp
@@ -195,7 +196,6 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   return instance
 }
 
-
 // TODO this is used by renderInstance when a new instance is displayed.
 // this returns a DOM element.
 UniversalDAppUI.prototype.getCallButton = function (args) {
@@ -233,6 +233,7 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
     }
   }
   // contractsDetails is used to resolve libraries
+  const callbacksInContext = txCallBacks.getCallBacksWithContext(self, self.executionContext)
   txFormat.buildData(args.contractName, args.contractABI, {}, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
     if (!error) {
       if (!lookupOnly) {
@@ -241,7 +242,7 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
         self.logCallback(`${logMsg}`)
       }
       if (args.funABI.type === 'fallback') data.dataHex = value
-      self.udapp.callFunction(args.address, data, args.funABI, this.confirmationCb, continueCb, promptCb, (error, txResult) => {
+      self.udapp.callFunction(args.address, data, args.funABI, callbacksInContext.confirmationCb, callbacksInContext.continueCb, callbacksInContext.promptCb, (error, txResult) => {
         if (!error) {
           var isVM = self.executionContext.isVM()
           if (isVM) {
@@ -266,7 +267,7 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
     self.logCallback(msg)
   }, (data, runTxCallback) => {
     // called for libraries deployment
-    self.udapp.runTx(data, this.confirmationCb, runTxCallback)
+    self.udapp.runTx(data, callbacksInContext.confirmationCb, runTxCallback)
   })
 }
 

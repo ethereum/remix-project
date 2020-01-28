@@ -1,20 +1,17 @@
 const EventEmitter = require('events')
 class sendLowLevelTx extends EventEmitter {
-  command (browser, address, value, callData, callback) {
-    this.api.perform((client, done) => {
-      browser.execute(function (value) {
-        browser.waitForElementVisible('deployAndRunLLTxSendTransaction', 1000)
-        .getElementById('deployAndRunLLTxCalldata').value = callData
-        .waitForElementVisible('deployAndRunTransferValue')
-        .getElementById('deployAndRunTransferValue').value = value
-        .click('deployAndRunLLTxSendTransaction', callback)
-        .done()
-        if (callback) {
-          callback.call(this.api)
-        }
-        this.emit('complete')
-      })
-    })
+  command (address, value, callData) {
+    console.log('low level transact to ', address, value, callData)
+    this.api.waitForElementVisible(`#instance${address} #deployAndRunLLTxSendTransaction`, 1000)
+        .clearValue(`#instance${address} #deployAndRunLLTxCalldata`)
+        .setValue(`#instance${address} #deployAndRunLLTxCalldata`, callData)
+        .waitForElementVisible('#value')
+        .clearValue('#value')
+        .setValue('#value', value)
+        .scrollAndClick(`#instance${address} #deployAndRunLLTxSendTransaction`)
+        .perform(() => {
+          this.emit('complete')
+        })
     return this
   }
 }

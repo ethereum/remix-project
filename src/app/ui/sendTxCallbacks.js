@@ -1,11 +1,51 @@
 const yo = require('yo-yo')
+const remixLib = require('remix-lib')
 const confirmDialog = require('./confirmDialog')
 const modalCustom = require('./modal-dialog-custom')
 const modalDialog = require('./modaldialog')
 const typeConversion = remixLib.execution.typeConversion
 const Web3 = require('web3')
 
-UniversalDAppUI.prototype.confirmationCb = function (executionContext, udapp, network, tx, gasEstimation, continueTxExecution, cancelCb) {
+module.exports = {
+  getCallBacksWithContext: (udapp, executionContext) => {
+    let callbacks = {}
+    callbacks.confirmationCb = confirmationCb
+    callbacks.continueCb = continueCb
+    callbacks.promptCb = promptCb
+    callbacks.udapp = udapp
+    callbacks.executionContext = executionContext
+    return callbacks
+  }
+}
+
+const continueCb = (error, continueTxExecution, cancelCb) => {
+  if (error) {
+    const msg = typeof error !== 'string' ? error.message : error
+    modalDialog(
+      'Gas estimation failed',
+      yo`
+        <div>Gas estimation errored with the following message (see below).
+        The transaction execution will likely fail. Do you want to force sending? <br>${msg}</div>
+      `,
+      {
+        label: 'Send Transaction',
+        fn: () => continueTxExecution()
+      },
+      {
+        label: 'Cancel Transaction',
+        fn: () => cancelCb()
+      }
+    )
+  } else {
+    continueTxExecution()
+  }
+}
+
+const promptCb = (okCb, cancelCb) => {
+  modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+}
+
+const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
   let self = this
   if (network.name !== 'Main') {
     return continueTxExecution(null)
@@ -67,36 +107,3 @@ UniversalDAppUI.prototype.confirmationCb = function (executionContext, udapp, ne
     }
   )
 }
-
-module.exports = confirmationCb
-
-const continueCb = (error, continueTxExecution, cancelCb) => {
-  if (error) {
-    const msg = typeof error !== 'string' ? error.message : error
-    modalDialog(
-      'Gas estimation failed',
-      yo`
-        <div>Gas estimation errored with the following message (see below).
-        The transaction execution will likely fail. Do you want to force sending? <br>${msg}</div>
-      `,
-      {
-        label: 'Send Transaction',
-        fn: () => continueTxExecution()
-      },
-      {
-        label: 'Cancel Transaction',
-        fn: () => cancelCb()
-      }
-    )
-  } else {
-    continueTxExecution()
-  }
-}
-
-module.exports = continueCb
-
-const promptCb = (okCb, cancelCb) => {
-  modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
-}
-
-module.exports = promptCb
