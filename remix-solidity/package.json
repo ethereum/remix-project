@@ -1,6 +1,6 @@
 {
   "name": "remix-solidity",
-  "version": "0.3.22",
+  "version": "0.3.23",
   "description": "Ethereum IDE and tools for the web",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "eslint-scope": "^5.0.0",
-    "remix-lib": "0.4.19",
+    "remix-lib": "0.4.20",
     "solc": "^0.6.0",
     "webworkify": "^1.2.1"
   },
