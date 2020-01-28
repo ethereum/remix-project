@@ -1,5 +1,26 @@
 ## Change Log
 
+### v0.1.27 (2020/01/28 05:54 +00:00)
+- [#1411](https://github.com/ethereum/remix/pull/1411) Release 0.1.27 (@Aniket-Engg)
+- [#1410](https://github.com/ethereum/remix/pull/1410) use compiler configuration in tests (@Aniket-Engg)
+- [#1409](https://github.com/ethereum/remix/pull/1409) Json interface unavailability handled (@Aniket-Engg)
+- [#1407](https://github.com/ethereum/remix/pull/1407) optional final callback in runTestFiles (@Aniket-Engg)
+- [#1406](https://github.com/ethereum/remix/pull/1406) Injected tests.sol (@Aniket-Engg)
+- [#1405](https://github.com/ethereum/remix/pull/1405) added sendRawTransaction (@LianaHus)
+- [#1402](https://github.com/ethereum/remix/pull/1402) pass value in test methods using natspec (@Aniket-Engg)
+- [#1400](https://github.com/ethereum/remix/pull/1400) package.json scripts updated (@Aniket-Engg)
+- [#1399](https://github.com/ethereum/remix/pull/1399) muirGlacier support (@Aniket-Engg)
+- [#1398](https://github.com/ethereum/remix/pull/1398) show storage loading status properly (@Aniket-Engg)
+- [#1396](https://github.com/ethereum/remix/pull/1396) multiple return values display separately (@Aniket-Engg)
+- [#1395](https://github.com/ethereum/remix/pull/1395) remove node.kind check since this is not necessarily present in ast t… (@iurimatias)
+- [#1394](https://github.com/ethereum/remix/pull/1394) Pass executionContext as args to to `try` function (@yann300)
+- [#1393](https://github.com/ethereum/remix/pull/1393) Fix compatibility with web3 1.0.0 (@yann300)
+- [#1391](https://github.com/ethereum/remix/pull/1391) package.json updated (@Aniket-Engg)
+- [#1390](https://github.com/ethereum/remix/pull/1390) initial fixes (@Aniket-Engg)
+- [#1389](https://github.com/ethereum/remix/pull/1389) changelog updated (@Aniket-Engg)
+
+## Change Log
+
 ### v0.1.26 (2020/01/10 12:28 +00:00)
 - [#1386](https://github.com/ethereum/remix/pull/1386) Release 0.1.26 (@Aniket-Engg)
 - [#1385](https://github.com/ethereum/remix/pull/1385) compiler import issue fixed (@Aniket-Engg)
