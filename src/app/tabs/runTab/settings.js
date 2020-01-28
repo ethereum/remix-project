@@ -18,7 +18,7 @@ class SettingsUI {
 
     this.blockchain.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
-      if (!lookupOnly) this.el.querySelector('#value').value = '0'
+      if (!lookupOnly) this.el.querySelector('#deployAndRunTransferValue').value = '0'
       this.updateAccountBalances()
     })
     this._components = {
