@@ -107,11 +107,11 @@ class TxRunner {
         // See https://github.com/ethereumjs/ethereumjs-tx/blob/master/docs/classes/transaction.md#constructor
         // for initialization fields and their types
         const tx = new EthJSTX({
-          nonce: '0x' + res.nonce.toString('hex'),
+          nonce: new BN(res.nonce),
           gasPrice: '0x1',
           gasLimit: gasLimit,
           to: to,
-          value: value,
+          value: parseInt(value),
           data: Buffer.from(data.slice(2), 'hex')
         })
         tx.sign(account.privateKey)
