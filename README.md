@@ -109,7 +109,9 @@ To run the Selenium tests via Nightwatch:
 		- npm run nightwatch_local_console
 		
 		- npm run nightwatch_local_remixd # remixd needs to be run
-		
+
+ **the `ballot` tests suite requires to run `ganache-cli` locally.** 
+ **the `remixd` tests suite requires to run `remixd` locally.** 
 
 
 ## Usage as a Chrome Extension
