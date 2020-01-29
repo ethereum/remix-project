@@ -148,7 +148,7 @@ class Terminal extends Plugin {
         ${self._view.dragbar}
         <div class="${css.menu} border-top border-dark bg-light">
           ${self._view.icon}
-          <div class=${css.clear} onclick=${clear}>
+          <div class=${css.clear} id="clearConsole" onclick=${clear}>
             <i class="fas fa-ban" aria-hidden="true" title="Clear console"
             onmouseenter=${hover} onmouseleave=${hover}></i>
           </div>
