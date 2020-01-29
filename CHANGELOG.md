@@ -1,5 +1,18 @@
 ## Change Log
 
+### v0.1.29 (2020/01/29)
+- [#1416](https://github.com/ethereum/remix/pull/1416) bump version (@Aniket-Engg)
+- [#1415 ](https://github.com/ethereum/remix/pull/1415) undefined value type fixed  (@Aniket-Engg)
+
+## Change Log
+
+### v0.1.28 (2020/01/28)
+- [#1414](https://github.com/ethereum/remix/pull/1414) bump versions (@Aniket-Engg)
+- [#1413](https://github.com/ethereum/remix/pull/1413) type mismatch fix for VM transaction instance (@Aniket-Engg)
+- [#1412](https://github.com/ethereum/remix/pull/1412) changelog for v0.1.27 updated (@Aniket-Engg)
+
+## Change Log
+
 ### v0.1.27 (2020/01/28 05:54 +00:00)
 - [#1411](https://github.com/ethereum/remix/pull/1411) Release 0.1.27 (@Aniket-Engg)
 - [#1410](https://github.com/ethereum/remix/pull/1410) use compiler configuration in tests (@Aniket-Engg)
