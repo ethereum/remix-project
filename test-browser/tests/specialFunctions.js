@@ -192,7 +192,7 @@ module.exports = {
         browser.sendLowLevelTx(address, '0', '')
         .pause(1000)
         .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
-        .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, `Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers`)
+        .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, `Both 'receive' and 'fallback' functions are not defined`)
         .perform(done)
       })
     })
