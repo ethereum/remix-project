@@ -34,7 +34,7 @@ module.exports = {
         browser.sendLowLevelTx(address, '0', '0xa')
         .pause(1000)
         .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
-        .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, `size of at least one byte`)
+        .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, `the calldata should be a valid hexadecimal value with size of at least one byte.`)
         .perform(done)
       })
     })
@@ -164,6 +164,18 @@ module.exports = {
       })
     })
   },
+  'Use special functions receive/fallback - receive and fallback are declared and payable, sending wei': function (browser) {
+    browser.perform((done) => {
+      browser.getAddressAtPosition(4, (address) => {
+        browser.sendLowLevelTx(address, '1', '')
+        .pause(1000)
+        .journalLastChildIncludes('to:CheckSpecials.(receive)')
+        .journalLastChildIncludes('value:1 wei')
+        .journalLastChildIncludes('data:0x')
+        .perform(done)
+      })
+    })
+  },
   'Use special functions receive/fallback - receive and fallback are not declared, sending nothing': function (browser) {
     browser.waitForElementVisible('#icon-panel', 10000)
     .testContracts('notSpecial.sol', sources[5]['browser/notSpecial.sol'], ['CheckSpecials'])
@@ -180,7 +192,7 @@ module.exports = {
         browser.sendLowLevelTx(address, '0', '')
         .pause(1000)
         .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
-        .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, `Both 'receive' and 'fallback' functions are not defined`)
+        .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, `Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers`)
         .perform(done)
       })
     })
