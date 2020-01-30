@@ -151,10 +151,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   `
 
   function sendData () {
-    let error = false
     function setLLIError (text) {
       llIError.innerText = text
-      if (text !== '') error = true
     }
 
     setLLIError('')
@@ -170,29 +168,29 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     if (amount !== '0') {
       // check for numeric and receive/fallback
       if (!helper.isNumeric(amount)) {
-        setLLIError('Value to send should be a number')
+        return setLLIError('Value to send should be a number')
       } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
-        setLLIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
+        return setLLIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
       }
     }
     let calldata = calldataInput.value
     if (calldata) {
       if (calldata.length < 2 || calldata.length < 4 && helper.is0XPrefixed(calldata)) {
-        setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
+        return setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
       } else {
         if (helper.is0XPrefixed(calldata)) {
           calldata = calldata.substr(2, calldata.length)
         }
         if (!helper.isHexadecimal(calldata)) {
-          setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
+          return setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
         }
       }
       if (!fallback) {
-        setLLIError("'Fallback' function is not defined")
+        return setLLIError("'Fallback' function is not defined")
       }
     }
 
-    if (!receive && !fallback) setLLIError(`Both 'receive' and 'fallback' functions are not defined`)
+    if (!receive && !fallback) return setLLIError(`Both 'receive' and 'fallback' functions are not defined`)
 
     // we have to put the right function ABI:
     // if receive is defined and that there is no calldata => receive function is called
@@ -200,9 +198,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     if (receive && !calldata) args.funABI = receive
     else if (fallback) args.funABI = fallback
 
-    if (!args.funABI) setLLIError(`Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers`)
-
-    if (!error) self.runTransaction(false, args, null, calldataInput.value, null)
+    if (!args.funABI) return setLLIError(`Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers`)
+    self.runTransaction(false, args, null, calldataInput.value, null)
   }
 
   contractActionsWrapper.appendChild(lowLevelInteracions)
