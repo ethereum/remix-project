@@ -27,7 +27,7 @@ module.exports = {
       })
     })
   },
-  'Use special functions receive/fallback - both are declared - receive called, failing sending data < 1 byte': function (browser) {
+  'Use special functions receive/fallback - both are declared, failing sending data < 1 byte': function (browser) {
     // don't need to redeploy it, same contract
     browser.perform((done) => {
       browser.getAddressAtPosition(0, (address) => {
@@ -94,7 +94,7 @@ module.exports = {
       })
     })
   },
-  'Use special functions receive/fallback - only fallback is payable, sending wei': function (browser) {
+  'Use special functions receive/fallback - only fallback declared and is payable, sending wei': function (browser) {
     browser.waitForElementVisible('#icon-panel', 10000)
     .testContracts('fallbackOnlyPayable.sol', sources[2]['browser/fallbackOnlyPayable.sol'], ['CheckSpecials'])
     .clickLaunchIcon('udapp')
