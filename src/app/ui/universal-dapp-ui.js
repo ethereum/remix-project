@@ -133,12 +133,9 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
         <label class="pt-2 border-top d-flex justify-content-start flex-grow-1">
           Low level interactions with contract
         </label>
-        <i aria-hidden="true"
-        title="A contract can have at most one receive function, declared using receive() external payable { ... } and one fallback function, declared using fallback () external [payable].
-        These functions cannot have arguments, cannot return anything. Receive is executed on a call to the contract with empty calldata on plain Ether transfers (e.g. via .send() or .transfer()).
-        If no such function exists, but a payable fallback function exists, the fallback function will be called on a plain Ether transfer. If neither a receive Ether nor a payable fallback function is present, the contract cannot receive Ether through regular transactions and throws an exception. 
-        Fallback is executed on a call to the contract if none of the other functions match the given function signature."
-        class="fas fa-info text-info my-3 mx-1"></i>
+        <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" class="" title="the link to documentation" target="_blank">
+          <i aria-hidden="true" class="fas fa-info text-info my-2 mr-2"></i>
+        </a>
       </div>
       <div class="d-flex flex-column">
         <div class="d-flex justify-content-end m-2 align-items-center">
