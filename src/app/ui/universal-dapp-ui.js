@@ -166,7 +166,6 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       contractName: contractName,
       contractABI: contractABI
     }
-    let calldata = calldataInput.value
     const amount = document.querySelector('#value').value
     if (amount !== '0') {
       // check for numeric and receive/fallback
@@ -176,16 +175,17 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
         setLLIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
       }
     }
+    let calldata = calldataInput.value
     if (calldata) {
-      if (calldata.length < 2) setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
-      if (calldata.length < 4 && calldata.substr(0, 2) === '0x') {
-        setLLIError('The calldata should be a valid hexadecimal value with size of at least one byte.')
-      } else if (calldata.substr(0, 2) === '0x') {
-        if (!helper.isHexadecimal(calldata.substr(2, calldata.length))) {
-          setLLIError('The calldata should be a valid hexadecimal value.')
+      if (calldata.length < 2 || calldata.length < 4 && helper.is0XPrefixed(calldata)) {
+        setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
+      } else {
+        if (helper.is0XPrefixed(calldata)) {
+          calldata = calldata.substr(2, calldata.length)
         }
-      } else if (!helper.isHexadecimal(calldata)) {
-        setLLIError('The calldata should be a valid hexadecimal value.')
+        if (!helper.isHexadecimal(calldata)) {
+          setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
+        }
       }
       if (!fallback) {
         setLLIError("'Fallback' function is not defined")
@@ -200,9 +200,9 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     if (receive && !calldata) args.funABI = receive
     else if (fallback) args.funABI = fallback
 
-    if (!args.funABI) setLLIError(`Please define at least a 'Fallback' with/without sending calldata or a 'Receive' without sending calldata`)
+    if (!args.funABI) setLLIError(`Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers`)
 
-    if (!error) self.runTransaction(false, args, null, calldata, null)
+    if (!error) self.runTransaction(false, args, null, calldataInput.value, null)
   }
 
   contractActionsWrapper.appendChild(lowLevelInteracions)
