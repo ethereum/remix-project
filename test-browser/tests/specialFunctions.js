@@ -27,7 +27,7 @@ module.exports = {
       })
     })
   },
-  'Use special functions receive/follback - both are declared - receive called, failing sending data < 1 byte': function (browser) {
+  'Use special functions receive/fallback - both are declared - receive called, failing sending data < 1 byte': function (browser) {
     // don't need to redeploy it, same contract
     browser.perform((done) => {
       browser.getAddressAtPosition(0, (address) => {
@@ -39,7 +39,7 @@ module.exports = {
       })
     })
   },
-  'Use special functions receive/follback - both are declared - receive called, sending wei': function (browser) {
+  'Use special functions receive/fallback - both are declared - receive called, sending wei': function (browser) {
     // don't need to redeploy it, same contract
     browser.perform((done) => {
       browser.getAddressAtPosition(0, (address) => {
@@ -52,7 +52,7 @@ module.exports = {
       })
     })
   },
-  'Use special functions receive/follback - both are declared - fallback should fail cause not payable, sending data and wei': function (browser) {
+  'Use special functions receive/fallback - both are declared - fallback should fail cause not payable, sending data and wei': function (browser) {
     // don't need to redeploy it, same contract
     browser.perform((done) => {
       browser.getAddressAtPosition(0, (address) => {
@@ -64,7 +64,7 @@ module.exports = {
       })
     })
   },
-  'Use special functions receive/follback - only receive is declared, sending wei': function (browser) {
+  'Use special functions receive/fallback - only receive is declared, sending wei': function (browser) {
     browser.waitForElementVisible('#icon-panel', 10000)
     .testContracts('receiveOnly.sol', sources[1]['browser/receiveOnly.sol'], ['CheckSpecials'])
     .clickLaunchIcon('udapp')
@@ -82,7 +82,7 @@ module.exports = {
       })
     })
   },
-  'Use special functions receive/follback - only receive is declared, failing, fallback is not declared, sending data': function (browser) {
+  'Use special functions receive/fallback - only receive is declared, failing, fallback is not declared, sending data': function (browser) {
     // don't need to redeploy it, same contract
     browser.perform((done) => {
       browser.getAddressAtPosition(1, (address) => {
@@ -112,7 +112,7 @@ module.exports = {
       })
     })
   },
-  'Use special functions receive/follback - only fallback is diclared and is payable, sending data and wei': function (browser) {
+  'Use special functions receive/fallback - only fallback is diclared and is payable, sending data and wei': function (browser) {
     // don't need to redeploy it, same contract
     browser.perform((done) => {
       browser.getAddressAtPosition(2, (address) => {
