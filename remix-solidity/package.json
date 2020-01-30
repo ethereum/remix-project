@@ -1,7 +1,7 @@
 {
   "name": "remix-solidity",
   "version": "0.3.25",
-  "description": "Ethereum IDE and tools for the web",
+  "description": "Tool to load and run Solidity compiler",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "contributors": [
@@ -45,9 +45,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix/tree/master/remix-solidity"
+    "url": "https://github.com/ethereum/remix/tree/master/remix-solidity"
   },
-  "author": "cpp-ethereum team",
+  "author": "Remix Team",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ethereum/remix/issues"
