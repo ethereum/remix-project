@@ -133,7 +133,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
         <label class="pt-2 border-top d-flex justify-content-start flex-grow-1">
           Low level interactions with contract
         </label>
-        <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" class="" title="the link to documentation" target="_blank">
+        <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" title="the link to documentation" target="_blank">
           <i aria-hidden="true" class="fas fa-info text-info my-2 mr-2"></i>
         </a>
       </div>
@@ -151,42 +151,55 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   `
 
   function sendData () {
-    let error = false
     function setLLIError (text) {
       llIError.innerText = text
-      if (text !== '') error = true
     }
 
     setLLIError('')
     const fallback = self.udapp.getFallbackInterface(contractABI)
     const receive = self.udapp.getReceiveInterface(contractABI)
     const args = {
-      funABI: fallback,
+      funABI: fallback || receive,
       address: address,
       contractName: contractName,
       contractABI: contractABI
     }
-    let calldata = calldataInput.value
     const amount = document.querySelector('#value').value
     if (amount !== '0') {
       // check for numeric and receive/fallback
       if (!helper.isNumeric(amount)) {
-        setLLIError('Value to send should be a number')
+        return setLLIError('Value to send should be a number')
       } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
-        setLLIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
+        return setLLIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
       }
     }
+    let calldata = calldataInput.value
     if (calldata) {
-      if (calldata.length > 3 && calldata.substr(0, 2) === '0x') {
-        if (!helper.isHexadecimal(calldata.substr(2, calldata.length))) {
-          setLLIError('the calldata should be a valid hexadecimal value.')
+      if (calldata.length < 2 || calldata.length < 4 && helper.is0XPrefixed(calldata)) {
+        return setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
+      } else {
+        if (helper.is0XPrefixed(calldata)) {
+          calldata = calldata.substr(2, calldata.length)
+        }
+        if (!helper.isHexadecimal(calldata)) {
+          return setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
         }
       }
       if (!fallback) {
-        setLLIError("'fallback' function is not defined")
+        return setLLIError("'Fallback' function is not defined")
       }
     }
-    if ((calldata || amount !== '0') && !error) self.runTransaction(false, args, null, calldata, null)
+
+    if (!receive && !fallback) return setLLIError(`Both 'receive' and 'fallback' functions are not defined`)
+
+    // we have to put the right function ABI:
+    // if receive is defined and that there is no calldata => receive function is called
+    // if fallback is defined => fallback function is called
+    if (receive && !calldata) args.funABI = receive
+    else if (fallback) args.funABI = fallback
+
+    if (!args.funABI) return setLLIError(`Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers`)
+    self.runTransaction(false, args, null, calldataInput.value, null)
   }
 
   contractActionsWrapper.appendChild(lowLevelInteracions)

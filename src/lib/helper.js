@@ -45,7 +45,10 @@ module.exports = {
     return name.match(/[:*?"<>\\'|]/) != null
   },
   isHexadecimal (value) {
-    return /^[0-9a-fA-F]+$/.test(value)
+    return /^[0-9a-fA-F]+$/.test(value) && (value.length % 2 === 0)
+  },
+  is0XPrefixed (value) {
+    return value.substr(0, 2) === '0x'
   },
   isNumeric (value) {
     return /^\+?(0|[1-9]\d*)$/.test(value)
