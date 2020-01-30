@@ -133,7 +133,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
         <label class="pt-2 border-top d-flex justify-content-start flex-grow-1">
           Low level interactions with contract
         </label>
-        <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" class="" title="the link to documentation" target="_blank">
+        <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" title="the link to documentation" target="_blank">
           <i aria-hidden="true" class="fas fa-info text-info my-2 mr-2"></i>
         </a>
       </div>
@@ -161,7 +161,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     const fallback = self.udapp.getFallbackInterface(contractABI)
     const receive = self.udapp.getReceiveInterface(contractABI)
     const args = {
-      funABI: fallback,
+      funABI: fallback || receive,
       address: address,
       contractName: contractName,
       contractABI: contractABI
@@ -177,16 +177,22 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       }
     }
     if (calldata) {
-      if (calldata.length > 3 && calldata.substr(0, 2) === '0x') {
+      if (calldata.length < 2) setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
+      if (calldata.length < 4 && calldata.substr(0, 2) === '0x') {
+        setLLIError('The calldata should be a valid hexadecimal value with size of at least one byte.')
+      } else if (calldata.substr(0, 2) === '0x') {
         if (!helper.isHexadecimal(calldata.substr(2, calldata.length))) {
-          setLLIError('the calldata should be a valid hexadecimal value.')
+          setLLIError('The calldata should be a valid hexadecimal value.')
         }
+      } else if (!helper.isHexadecimal(calldata)) {
+        setLLIError('The calldata should be a valid hexadecimal value.')
       }
       if (!fallback) {
-        setLLIError("'fallback' function is not defined")
+        setLLIError("'Fallback' function is not defined")
       }
     }
-    if ((calldata || amount !== '0') && !error) self.runTransaction(false, args, null, calldata, null)
+    if (!receive && !fallback) setLLIError("Both 'receive' and 'fallback' functions are not defined")
+    if (!error) self.runTransaction(false, args, null, calldata, null)
   }
 
   contractActionsWrapper.appendChild(lowLevelInteracions)
