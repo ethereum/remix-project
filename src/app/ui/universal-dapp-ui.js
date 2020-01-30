@@ -191,7 +191,17 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
         setLLIError("'Fallback' function is not defined")
       }
     }
-    if (!receive && !fallback) setLLIError("Both 'receive' and 'fallback' functions are not defined")
+
+    if (!receive && !fallback) setLLIError(`Both 'receive' and 'fallback' functions are not defined`)
+
+    // we have to put the right function ABI:
+    // if receive is defined and that there is no calldata => receive function is called
+    // if fallback is defined => fallback function is called
+    if (receive && !calldata) args.funABI = receive
+    else if (fallback) args.funABI = fallback
+
+    if (!args.funABI) setLLIError(`Please define at least a 'Fallback' with/without sending calldata or a 'Receive' without sending calldata`)
+
     if (!error) self.runTransaction(false, args, null, calldata, null)
   }
 
