@@ -133,7 +133,11 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
         <label class="pt-2 border-top d-flex justify-content-start flex-grow-1">
           Low level interactions
         </label>
-        <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" title="check out docs for using 'receive'/'fallback'" target="_blank">
+        <a
+          href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"
+          title="check out docs for using 'receive'/'fallback'"
+          target="_blank"
+        >
           <i aria-hidden="true" class="fas fa-info text-info my-2 mr-2"></i>
         </a>
       </div>
@@ -176,13 +180,13 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     let calldata = calldataInput.value
     if (calldata) {
       if (calldata.length < 2 || calldata.length < 4 && helper.is0XPrefixed(calldata)) {
-        return setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
+        return setLLIError('The calldata should be a valid hexadecimal value with size of at least one byte.')
       } else {
         if (helper.is0XPrefixed(calldata)) {
           calldata = calldata.substr(2, calldata.length)
         }
         if (!helper.isHexadecimal(calldata)) {
-          return setLLIError('the calldata should be a valid hexadecimal value with size of at least one byte.')
+          return setLLIError('The calldata should be a valid hexadecimal value.')
         }
       }
       if (!fallback) {
