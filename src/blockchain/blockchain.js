@@ -321,7 +321,8 @@ class Blockchain {
   resetEnvironment () {
     this.getCurrentProvider().resetEnvironment()
     // TODO: most params here can be refactored away in txRunner
-    this.txRunner = new TxRunner(this.providers.vm.accounts, {
+    // this.txRunner = new TxRunner(this.providers.vm.accounts, {
+    this.txRunner = new TxRunner(this.providers.vm.RemixSimulatorProvider.Accounts.accounts, {
       // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
       config: this.config,
       // TODO: to refactor, TxRunner already has access to executionContext
@@ -430,7 +431,8 @@ class Blockchain {
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
-          if (self.executionContext.isVM() && !self.providers.vm.accounts[address]) {
+          // if (self.executionContext.isVM() && !self.providers.vm.accounts[address]) {
+          if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
             return next('Invalid account selected')
           }
           next(null, address, value, gasLimit)

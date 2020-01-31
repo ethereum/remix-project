@@ -2,20 +2,32 @@ const Web3 = require('web3')
 const { BN, privateToAddress, toChecksumAddress, isValidPrivate, stripHexPrefix } = require('ethereumjs-util')
 const crypto = require('crypto')
 const ethJSUtil = require('ethereumjs-util')
+const RemixSimulator = require('remix-simulator')
 
 class VMProvider {
 
   constructor (executionContext) {
     this.executionContext = executionContext
+    this.RemixSimulatorProvider = new RemixSimulator.Provider({executionContext: this.executionContext})
+    this.RemixSimulatorProvider.init()
+    this.web3 = new Web3(this.RemixSimulatorProvider)
     this.accounts = {}
   }
 
   getAccounts (cb) {
-    if (!this.accounts) {
-      cb('No accounts?')
-      return cb('No accounts?')
-    }
-    return cb(null, Object.keys(this.accounts))
+    this.web3.eth.getAccounts((err, accounts) => {
+      console.dir(err)
+      console.dir(accounts)
+      if (err) {
+        return cb('No accounts?')
+      }
+      return cb(null, accounts)
+    })
+    // if (!this.accounts) {
+    //   cb('No accounts?')
+    //   return cb('No accounts?')
+    // }
+    // return cb(null, Object.keys(this.accounts))
   }
 
   resetEnvironment () {
@@ -29,20 +41,21 @@ class VMProvider {
 
   /** Add an account to the list of account (only for Javascript VM) */
   _addAccount (privateKey, balance) {
-    privateKey = Buffer.from(privateKey, 'hex')
-    const address = privateToAddress(privateKey)
-
+    this.RemixSimulatorProvider.Accounts._addAccount(privateKey, balance)
+    // privateKey = Buffer.from(privateKey, 'hex')
+    // const address = privateToAddress(privateKey)
+// 
     // FIXME: we don't care about the callback, but we should still make this proper
-    let stateManager = this.executionContext.vm().stateManager
-    stateManager.getAccount(address, (error, account) => {
-      if (error) return console.log(error)
-      account.balance = balance || '0xf00000000000000001'
-      stateManager.putAccount(address, account, (error) => {
-        if (error) console.log(error)
-      })
-    })
-
-    this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
+    // let stateManager = this.executionContext.vm().stateManager
+    // stateManager.getAccount(address, (error, account) => {
+      // if (error) return console.log(error)
+      // account.balance = balance || '0xf00000000000000001'
+      // stateManager.putAccount(address, account, (error) => {
+        // if (error) console.log(error)
+      // })
+    // })
+// 
+    // this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
   }
 
   createVMAccount (newAccount) {
@@ -78,7 +91,8 @@ class VMProvider {
 
   signMessage (message, account, _passphrase, cb) {
     const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
-    const privKey = this.accounts[account].privateKey
+    // const privKey = this.providers.vm.accounts[account].privateKey
+    const privKey = this.RemixSimulatorProvider.Accounts.accounts[account].privateKey
     try {
       const rsv = ethJSUtil.ecsign(personalMsg, privKey)
       const signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
