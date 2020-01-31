@@ -211,7 +211,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 UniversalDAppUI.prototype.getCallButton = function (args) {
   let self = this
   var outputOverride = yo`<div class=${css.value}></div>` // show return value
-  const lookupOnly = args.funABI.stateMutability === 'view' || args.funABI.stateMutability === 'pure' || args.funABI.constant
+  const isConstant = args.funABI.constant !== undefined ? args.funABI.constant : false
+  const lookupOnly = args.funABI.stateMutability === 'view' || args.funABI.stateMutability === 'pure' || isConstant
   const multiParamManager = new MultiParamManager(
     lookupOnly,
     args.funABI,
@@ -227,12 +228,8 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
 
 UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, inputsValues, outputOverride) {
   let self = this
-  let logMsg
-  if (!lookupOnly) {
-    logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
-  } else {
-    logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
-  }
+  const functionName = args.funABI.type === 'function' ? args.funABI.name : `(${args.funABI.type})`
+  const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${args.contractName}.${functionName}`
 
   var value = inputsValues
 
