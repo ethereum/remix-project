@@ -131,9 +131,9 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     <div class="d-flex flex-column">
       <div class="d-flex flex-row justify-content-between mt-2">
         <label class="pt-2 border-top d-flex justify-content-start flex-grow-1">
-          Low level interactions with contract
+          Low level interactions
         </label>
-        <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" title="the link to documentation" target="_blank">
+        <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" title="check out docs for using 'receive'/'fallback'" target="_blank">
           <i aria-hidden="true" class="fas fa-info text-info my-2 mr-2"></i>
         </a>
       </div>
