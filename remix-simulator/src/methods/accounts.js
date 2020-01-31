@@ -35,6 +35,23 @@ Accounts.prototype.init = async function () {
   }
 }
 
+Accounts.prototype._addAccount = function (privateKey, balance) {
+  privateKey = Buffer.from(privateKey, 'hex')
+  const address = ethJSUtil.privateToAddress(privateKey)
+
+  // FIXME: we don't care about the callback, but we should still make this proper
+  let stateManager = this.executionContext.vm().stateManager
+  stateManager.getAccount(address, (error, account) => {
+    if (error) return console.log(error)
+    account.balance = balance || '0xf00000000000000001'
+    stateManager.putAccount(address, account, (error) => {
+      if (error) console.log(error)
+    })
+  })
+
+  this.accounts[ethJSUtil.toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
+}
+
 Accounts.prototype.methods = function () {
   return {
     eth_accounts: this.eth_accounts.bind(this),
