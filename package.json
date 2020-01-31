@@ -61,6 +61,7 @@
     "remix-solidity": "0.3.25",
     "remix-tabs": "1.0.48",
     "remix-tests": "0.1.28",
+    "remix-simulator": "0.1.9-alpha.15",
     "remixd": "0.1.8-alpha.10",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
@@ -145,13 +146,14 @@
     "remix-ide": "./bin/remix-ide"
   },
   "scripts": {
-    "setupremix": "npm run linkremixdebug && npm run linkremixlib && npm run linkremixsolidity && npm run linkremixanalyzer && npm run linkremixtests",
+    "setupremix": "npm run linkremixdebug && npm run linkremixlib && npm run linkremixsolidity && npm run linkremixanalyzer && npm run linkremixtests && npm run linkremixsimulator",
     "pullremix": "git clone https://github.com/ethereum/remix",
     "linkremixlib": "cd node_modules && rm -rf remix-lib && ln -s ../../remix/remix-lib remix-lib && cd ..",
     "linkremixsolidity": "cd node_modules && rm -rf remix-solidity && ln -s ../../remix/remix-solidity remix-solidity && cd ..",
     "linkremixtests": "cd node_modules && rm -rf remix-tests && ln -s ../../remix/remix-tests remix-tests && cd ..",
     "linkremixdebug": "cd node_modules && rm -rf remix-debug && ln -s ../../remix/remix-debug remix-debug && cd ..",
     "linkremixanalyzer": "cd node_modules && rm -rf remix-analyzer && ln -s ../../remix/remix-analyzer remix-analyzer && cd ..",
+    "linkremixsimulator": "cd node_modules && rm -rf remix-simulator && ln -s ../../remix/remix-simulator remix-simulator && cd ..",
     "build": "browserify src/index.js -o build/app.js --exclude solc",
     "build_debugger": "browserify src/app/debugger/remix-debugger/index.js -o src/app/debugger/remix-debugger/build/app.js",
     "browsertest": "sleep 5 && npm run nightwatch_local",
