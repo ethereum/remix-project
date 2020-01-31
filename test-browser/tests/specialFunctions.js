@@ -34,7 +34,19 @@ module.exports = {
         browser.sendLowLevelTx(address, '0', '0xa')
         .pause(1000)
         .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
-        .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, `the calldata should be a valid hexadecimal value with size of at least one byte.`)
+        .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, `The calldata should be a valid hexadecimal value with size of at least one byte.`)
+        .perform(done)
+      })
+    })
+  },
+  'Use special functions receive/fallback - both are declared, failing sending data with odd number of digits': function (browser) {
+    // don't need to redeploy it, same contract
+    browser.perform((done) => {
+      browser.getAddressAtPosition(0, (address) => {
+        browser.sendLowLevelTx(address, '0', '0x1aa')
+        .pause(1000)
+        .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
+        .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, `The calldata should be a valid hexadecimal value.`)
         .perform(done)
       })
     })
