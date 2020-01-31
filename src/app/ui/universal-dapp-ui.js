@@ -228,10 +228,11 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
 UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, inputsValues, outputOverride) {
   let self = this
   let logMsg
+  const functionName = args.funABI.type === 'function' ? args.funABI.name : `(${args.funABI.type})`
   if (!lookupOnly) {
-    logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+    logMsg = `call to ${args.contractName}.${functionName}`
   } else {
-    logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+    logMsg = `transact to ${args.contractName}.${functionName}`
   }
 
   var value = inputsValues
