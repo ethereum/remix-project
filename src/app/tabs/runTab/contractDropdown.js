@@ -210,7 +210,7 @@ class ContractDropdownUI {
         return continueTxExecution(null)
       }
       const amount = this.blockchain.fromWei(tx.value, true, 'ether')
-      const content = confirmDialog(tx, amount, gasEstimation, null, this.blockchain.determineGasFees(tx), this.blockchain.determineGasPrice)
+      const content = confirmDialog(tx, amount, gasEstimation, null, this.blockchain.determineGasFees(tx), this.blockchain.determineGasPrice.bind(this.blockchain))
 
       modalDialog('Confirm transaction', content,
         { label: 'Confirm',
