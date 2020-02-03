@@ -78,6 +78,7 @@ class RecorderUI {
   }
 
   getConfirmationCb (modalDialog, confirmDialog) {
+    // this code is the same as in contractDropdown.js. TODO need to be refactored out
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
