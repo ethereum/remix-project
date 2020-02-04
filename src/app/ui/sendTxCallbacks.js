@@ -7,12 +7,12 @@ const typeConversion = remixLib.execution.typeConversion
 const Web3 = require('web3')
 
 module.exports = {
-  getCallBacksWithContext: (udapp, executionContext) => {
+  getCallBacksWithContext: (udappUI, executionContext) => {
     let callbacks = {}
     callbacks.confirmationCb = confirmationCb
     callbacks.continueCb = continueCb
     callbacks.promptCb = promptCb
-    callbacks.udapp = udapp
+    callbacks.udappUI = udappUI
     callbacks.executionContext = executionContext
     return callbacks
   }
@@ -51,7 +51,7 @@ const confirmationCb = function (network, tx, gasEstimation, continueTxExecution
     return continueTxExecution(null)
   }
   var amount = Web3.utils.fromWei(typeConversion.toInt(tx.value), 'ether')
-  var content = confirmDialog(tx, amount, gasEstimation, self.udapp,
+  var content = confirmDialog(tx, amount, gasEstimation, self.udappUI,
     (gasPrice, cb) => {
       let txFeeText, priceStatus
       // TODO: this try catch feels like an anti pattern, can/should be
@@ -86,7 +86,7 @@ const confirmationCb = function (network, tx, gasEstimation, continueTxExecution
     content,
     { label: 'Confirm',
       fn: () => {
-        self.udapp.udapp.config.setUnpersistedProperty(
+        self.udappUI.udapp.config.setUnpersistedProperty(
           'doNotShowTransactionConfirmationAgain',
           content.querySelector('input#confirmsetting').checked
         )
