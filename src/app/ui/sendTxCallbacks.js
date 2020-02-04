@@ -45,7 +45,7 @@ const promptCb = (okCb, cancelCb) => {
   modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
 }
 
-const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+const confirmationCb = function (network, tx, gasEstimation, continueTxExecution, cancelCb) {
   let self = this
   if (network.name !== 'Main') {
     return continueTxExecution(null)
@@ -86,7 +86,7 @@ const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelC
     content,
     { label: 'Confirm',
       fn: () => {
-        self.udapp.config.setUnpersistedProperty(
+        self.udapp.udapp.config.setUnpersistedProperty(
           'doNotShowTransactionConfirmationAgain',
           content.querySelector('input#confirmsetting').checked
         )

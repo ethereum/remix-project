@@ -253,7 +253,7 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
         self.logCallback(`${logMsg}`)
       }
       if (args.funABI.type === 'fallback') data.dataHex = value
-      self.udapp.callFunction(args.address, data, args.funABI, callbacksInContext.confirmationCb, callbacksInContext.continueCb, callbacksInContext.promptCb, (error, txResult) => {
+      self.udapp.callFunction(args.address, data, args.funABI, callbacksInContext.confirmationCb.bind(callbacksInContext), callbacksInContext.continueCb, callbacksInContext.promptCb, (error, txResult) => {
         if (!error) {
           var isVM = self.executionContext.isVM()
           if (isVM) {
