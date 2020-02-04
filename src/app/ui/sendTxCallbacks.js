@@ -18,7 +18,7 @@ module.exports = {
   }
 }
 
-const continueCb = (error, continueTxExecution, cancelCb) => {
+const continueCb = function (error, continueTxExecution, cancelCb) {
   if (error) {
     const msg = typeof error !== 'string' ? error.message : error
     modalDialog(
@@ -41,7 +41,7 @@ const continueCb = (error, continueTxExecution, cancelCb) => {
   }
 }
 
-const promptCb = (okCb, cancelCb) => {
+const promptCb = function (okCb, cancelCb) {
   modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
 }
 
