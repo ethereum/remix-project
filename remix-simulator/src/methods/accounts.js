@@ -63,6 +63,15 @@ Accounts.prototype._addAccount = function (privateKey, balance) {
   this.accounts[ethJSUtil.toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
 }
 
+Accounts.prototype.newAccount = (_passwordPromptCb, cb) => {
+  let privateKey
+  do {
+    privateKey = crypto.randomBytes(32)
+  } while (!isValidPrivate(privateKey))
+  this._addAccount(privateKey, '0x56BC75E2D63100000')
+  return cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
+}
+
 Accounts.prototype.methods = function () {
   return {
     eth_accounts: this.eth_accounts.bind(this),
