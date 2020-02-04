@@ -7,18 +7,18 @@ const typeConversion = remixLib.execution.typeConversion
 const Web3 = require('web3')
 
 module.exports = {
-  getCallBacksWithContext: (udapp, executionContext) => {
+  getCallBacksWithContext: (udappUI, executionContext) => {
     let callbacks = {}
     callbacks.confirmationCb = confirmationCb
     callbacks.continueCb = continueCb
     callbacks.promptCb = promptCb
-    callbacks.udapp = udapp
+    callbacks.udappUI = udappUI
     callbacks.executionContext = executionContext
     return callbacks
   }
 }
 
-const continueCb = (error, continueTxExecution, cancelCb) => {
+const continueCb = function (error, continueTxExecution, cancelCb) {
   if (error) {
     const msg = typeof error !== 'string' ? error.message : error
     modalDialog(
@@ -41,17 +41,17 @@ const continueCb = (error, continueTxExecution, cancelCb) => {
   }
 }
 
-const promptCb = (okCb, cancelCb) => {
+const promptCb = function (okCb, cancelCb) {
   modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
 }
 
-const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+const confirmationCb = function (network, tx, gasEstimation, continueTxExecution, cancelCb) {
   let self = this
   if (network.name !== 'Main') {
     return continueTxExecution(null)
   }
   var amount = Web3.utils.fromWei(typeConversion.toInt(tx.value), 'ether')
-  var content = confirmDialog(tx, amount, gasEstimation, self.udapp,
+  var content = confirmDialog(tx, amount, gasEstimation, self.udappUI,
     (gasPrice, cb) => {
       let txFeeText, priceStatus
       // TODO: this try catch feels like an anti pattern, can/should be
@@ -86,7 +86,7 @@ const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelC
     content,
     { label: 'Confirm',
       fn: () => {
-        self.udapp.config.setUnpersistedProperty(
+        self.udappUI.udapp.config.setUnpersistedProperty(
           'doNotShowTransactionConfirmationAgain',
           content.querySelector('input#confirmsetting').checked
         )
