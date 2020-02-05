@@ -33,12 +33,10 @@ const profile = {
 
 export class RunTab extends LibraryPlugin {
 
-  constructor (blockchain, udapp, executionContext, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
-    super(udapp, profile)
+  constructor (blockchain, pluginUDapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
+    super(pluginUDapp, profile)
     this.event = new EventManager()
     this.config = config
-    this.udapp = udapp
-    this.executionContext = executionContext
     this.blockchain = blockchain
     this.fileManager = fileManager
     this.editor = editor
@@ -46,37 +44,6 @@ export class RunTab extends LibraryPlugin {
     this.filePanel = filePanel
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule
-  }
-
-  onActivationInternal () {
-    this.udappUI = new UniversalDAppUI(this.udapp, this.logCallback, this.executionContext)
-    this.udapp.resetAPI({
-      getAddress: (cb) => {
-        cb(null, $('#txorigin').val())
-      },
-      getValue: (cb) => {
-        try {
-          const number = document.querySelector('#value').value
-          const select = document.getElementById('unit')
-          const index = select.selectedIndex
-          const selectedUnit = select.querySelectorAll('option')[index].dataset.unit
-          let unit = 'ether' // default
-          if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
-            unit = selectedUnit
-          }
-          cb(null, Web3.utils.toWei(number, unit))
-        } catch (e) {
-          cb(e)
-        }
-      },
-      getGasLimit: (cb) => {
-        try {
-          cb(null, '0x' + new ethJSUtil.BN($('#gasLimit').val(), 10).toString(16))
-        } catch (e) {
-          cb(e.message)
-        }
-      }
-    })
   }
 
   renderContainer () {
@@ -200,11 +167,34 @@ export class RunTab extends LibraryPlugin {
   }
 
   render () {
-    this.onActivationInternal()
-    this.executionContext.init(this.config)
-    this.executionContext.stopListenOnLastBlock()
-    this.executionContext.listenOnLastBlock()
-    this.udapp.resetEnvironment()
+    this.udappUI = new UniversalDAppUI(this.blockchain, this.logCallback)
+    this.blockchain.resetAndInit(this.config, {
+      getAddress: (cb) => {
+        cb(null, $('#txorigin').val())
+      },
+      getValue: (cb) => {
+        try {
+          const number = document.querySelector('#value').value
+          const select = document.getElementById('unit')
+          const index = select.selectedIndex
+          const selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+          let unit = 'ether' // default
+          if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
+            unit = selectedUnit
+          }
+          cb(null, Web3.utils.toWei(number, unit))
+        } catch (e) {
+          cb(e)
+        }
+      },
+      getGasLimit: (cb) => {
+        try {
+          cb(null, '0x' + new ethJSUtil.BN($('#gasLimit').val(), 10).toString(16))
+        } catch (e) {
+          cb(e.message)
+        }
+      }
+    })
     this.renderInstanceContainer()
     this.renderSettings()
     this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.logCallback)
