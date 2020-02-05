@@ -11,6 +11,7 @@ var css = require('../../universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 var remixLib = require('remix-lib')
 var txFormat = remixLib.execution.txFormat
+const txHelper = remixLib.execution.txHelper
 var TreeView = require('./TreeView')
 var txCallBacks = require('./sendTxCallbacks')
 
@@ -41,7 +42,7 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
   if (noInstances) {
     noInstances.parentNode.removeChild(noInstances)
   }
-  var abi = this.udapp.getABI(contract)
+  const abi = txHelper.sortAbiFunction(contract.abi)
   return this.renderInstanceFromABI(abi, address, contractName)
 }
 
@@ -50,6 +51,7 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
 // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
 // this returns a DOM element
 UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
+  let self = this
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   address = ethJSUtil.toChecksumAddress(address)
   var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
@@ -157,8 +159,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     }
 
     setLLIError('')
-    const fallback = this.udapp.getFallbackInterface(contractABI)
-    const receive = this.udapp.getReceiveInterface(contractABI)
+    const fallback = self.blockchain.getFallbackInterface(contractABI)
+    const receive = self.blockchain.getReceiveInterface(contractABI)
     const args = {
       funABI: fallback || receive,
       address: address,
@@ -200,7 +202,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     else if (fallback) args.funABI = fallback
 
     if (!args.funABI) return setLLIError(`Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers`)
-    this.runTransaction(false, args, null, calldataInput.value, null)
+    self.runTransaction(false, args, null, calldataInput.value, null)
   }
 
   contractActionsWrapper.appendChild(lowLevelInteracions)
@@ -218,7 +220,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     lookupOnly,
     args.funABI,
     (valArray, inputsValues) => self.runTransaction(lookupOnly, args, valArray, inputsValues, outputOverride),
-    self.udapp.getInputs(args.funABI)
+    self.blockchain.getInputs(args.funABI)
   )
 
   const contractActionsContainer = yo`<div class="${css.contractActionsContainer}" >${multiParamManager.render()}</div>`
