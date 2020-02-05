@@ -1,6 +1,7 @@
 const ethJSUtil = require('ethereumjs-util')
-const BN = ethJSUtil.BN
+const { BN, privateToAddress, isValidPrivate } = require('ethereumjs-util')
 const Web3 = require('web3')
+const crypto = require('crypto')
 
 const Accounts = function (executionContext) {
   this.web3 = new Web3()
@@ -61,9 +62,12 @@ Accounts.prototype._addAccount = function (privateKey, balance) {
   })
 
   this.accounts[ethJSUtil.toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
+  this.accounts[ethJSUtil.toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
+  // this.accountsList[ethJSUtil.toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
 }
 
-Accounts.prototype.newAccount = (_passwordPromptCb, cb) => {
+Accounts.prototype.newAccount = function (cb) {
+  console.dir("newAccount")
   let privateKey
   do {
     privateKey = crypto.randomBytes(32)
@@ -81,7 +85,8 @@ Accounts.prototype.methods = function () {
 }
 
 Accounts.prototype.eth_accounts = function (payload, cb) {
-  return cb(null, this.accountsList.map((x) => ethJSUtil.toChecksumAddress(x.address)))
+  // return cb(null, this.accountsList.map((x) => ethJSUtil.toChecksumAddress(x.address)))
+  return cb(null, Object.keys(this.accounts))
 }
 
 Accounts.prototype.eth_getBalance = function (payload, cb) {
