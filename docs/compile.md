@@ -16,12 +16,14 @@ If the contract has a lot of dependencies it can take a while to compile - so yo
 ![](images/a-sol-compiler.png)
 
 After each compilation, a list is updated with all newly compiled
-contracts.  A compiled contract can be selected with the Contract pulldown menu ( **F. in image below**).  Multiple contracts are compiled when one contract imports other contracts.  Selecting a contract will show information about that one.
+contracts.  A compiled contract can be selected with the Contract pulldown menu ( **F. in the image**).  Multiple contracts are compiled when one contract imports other contracts.  Selecting a contract will show information about that one.
 
-When the "Compilation Details" button is clicked ( **G. in image below**), a modal opens displaying detailed information about the current selected contract.
+When the "Compilation Details" button is clicked ( **G. in image**), a modal opens displaying detailed information about the current selected contract.
 
-From this tab, you can also publish your contract to Swarm (only non
-abstract contracts can be published).
+For those writing your own custom solidity compiler, you can import that by clicking the **+** button (**X. in the image**) to open a modal where you can input the url of the compiler to be loaded.
+
+From the Solidity Compiler module you can also publish your contract to Swarm (only non
+abstract contracts can be published) & IPFS.
 
 Published data notably contains the `abi` and the solidity source code.
 
@@ -29,6 +31,4 @@ After a contract is published, you can find its metadata information
 using the bzz URL located in the details modal dialog `SWARM LOCATION`.
 
 Compilation Errors and Warning are displayed below the contract section.
-At each compilation, the static analysis tab builds a report. It is very
-valuable when addressing reported issues even if the compiler doesn't
-complain. ([see more](static_analysis.html))
+At each compilation, the static analysis tab builds a report. It is important to address reported issues even if the compiler doesn't complain. ([see more](static_analysis.html))
