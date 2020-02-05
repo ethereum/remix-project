@@ -21,10 +21,10 @@ const profile = {
 
 class DebuggerTab extends ViewPlugin {
 
-  constructor (executionContext) {
+  constructor (blockchain) {
     super(profile)
     this.el = null
-    this.executionContext = executionContext
+    this.blockchain = blockchain
   }
 
   render () {
@@ -34,7 +34,7 @@ class DebuggerTab extends ViewPlugin {
       <div class="${css.debuggerTabView}" id="debugView">
         <div id="debugger" class="${css.debugger}"></div>
       </div>`
-    this.debuggerUI = new DebuggerUI(this.el.querySelector('#debugger'), this.executionContext)
+    this.debuggerUI = new DebuggerUI(this.el.querySelector('#debugger'), this.blockchain)
     return this.el
   }
 

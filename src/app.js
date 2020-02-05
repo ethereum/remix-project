@@ -22,9 +22,8 @@ var toolTip = require('./app/ui/tooltip')
 var CompilerMetadata = require('./app/files/compiler-metadata')
 var CompilerImport = require('./app/compiler/compiler-imports')
 
-var executionContext = remixLib.execution.executionContext
-
-const Blockchain = require('./app/tabs/runTab/model/blockchain.js')
+const Blockchain = require('./blockchain/blockchain.js')
+const PluginUDapp = require('./blockchain/pluginUDapp.js')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
@@ -50,7 +49,6 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
-import { UniversalDApp } from 'remix-lib'
 
 import migrateFileSystem from './migrateFileSystem'
 
@@ -225,9 +223,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const fileManager = new FileManager(editor)
   registry.put({api: fileManager, name: 'filemanager'})
 
-  // ----------------- universal dapp: run transaction, listen on transactions, decode events
-  const udapp = new UniversalDApp(registry.get('config').api, executionContext)
-  const blockchain = new Blockchain(executionContext, udapp)
+  const blockchain = new Blockchain(registry.get('config').api)
+  const pluginUdapp = new PluginUDapp(blockchain)
 
   // ----------------- compilation metadata generation servive ----------------------------
   const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
@@ -237,7 +234,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const {eventsDecoder, txlistener} = makeUdapp(blockchain, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
   // ----------------- network service (resolve network id / name) ----------------------------
-  const networkModule = new NetworkModule(executionContext)
+  const networkModule = new NetworkModule(blockchain)
   // ----------------- convert offset to line/column service ----------------------------
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
@@ -300,8 +297,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   )
   const run = new RunTab(
     blockchain,
-    udapp,
-    executionContext,
+    pluginUdapp,
     registry.get('config').api,
     registry.get('filemanager').api,
     registry.get('editor').api,
@@ -311,7 +307,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     mainview
   )
   const analysis = new AnalysisTab(registry)
-  const debug = new DebuggerTab(executionContext)
+  const debug = new DebuggerTab(blockchain)
   const test = new TestTab(
     registry.get('filemanager').api,
     filePanel,
