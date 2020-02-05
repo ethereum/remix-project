@@ -214,17 +214,18 @@ class ContractDropdownUI {
   }
 
   getConfirmationCb (modalDialog, confirmDialog) {
+    // this code is the same as in recorder.js. TODO need to be refactored out
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
       }
       const amount = this.blockchain.fromWei(tx.value, true, 'ether')
-      const content = confirmDialog(tx, amount, gasEstimation, null, this.blockchain.determineGasFees(tx), this.blockchain.determineGasPrice)
+      const content = confirmDialog(tx, amount, gasEstimation, null, this.blockchain.determineGasFees(tx), this.blockchain.determineGasPrice.bind(this.blockchain))
 
       modalDialog('Confirm transaction', content,
         { label: 'Confirm',
           fn: () => {
-            this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+            this.blockchain.udapp.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
             // TODO: check if this is check is still valid given the refactor
             if (!content.gasPriceStatus) {
               cancelCb('Given gas price is not correct')

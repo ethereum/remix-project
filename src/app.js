@@ -1,4 +1,3 @@
-/* global localStorage */
 'use strict'
 
 var isElectron = require('is-electron')
@@ -208,7 +207,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // APP_MANAGER
   const appManager = new RemixAppManager({})
-  const workspace = JSON.parse(localStorage.getItem('workspace'))
+  const workspace = appManager.pluginLoader.get()
 
   // SERVICES
   // ----------------- import content servive ----------------------------
@@ -351,12 +350,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const queryParams = new QueryParams()
   const loadedFromGist = gistHandler.loadFromGist(queryParams.get(), fileManager)
   if (!loadedFromGist) {
-    // insert ballot contract if there are no files to show
+    // insert example contracts if there are no files to show
     self._components.filesProviders['browser'].resolveDirectory('/', (error, filesList) => {
       if (error) console.error(error)
       if (Object.keys(filesList).length === 0) {
-        fileManager.setFile(examples.ballot.name, examples.ballot.content)
-        fileManager.setFile(examples.ballot_test.name, examples.ballot_test.content)
+        for (let file in examples) {
+          fileManager.setFile(examples[file].name, examples[file].content)
+        }
       }
     })
   }

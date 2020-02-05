@@ -2,8 +2,9 @@ const remixLib = require('remix-lib')
 const txFormat = remixLib.execution.txFormat
 const txExecution = remixLib.execution.txExecution
 const typeConversion = remixLib.execution.typeConversion
-const TxRunner = remixLib.execution.txRunner
 const Txlistener = remixLib.execution.txListener
+const TxRunner = remixLib.execution.txRunner
+const txHelper = remixLib.execution.txHelper
 const EventManager = remixLib.EventManager
 const executionContext = remixLib.execution.executionContext
 const ethJSUtil = require('ethereumjs-util')
@@ -56,6 +57,18 @@ class Blockchain {
     this.executionContext.event.register('removeProvider', (name) => {
       this.event.trigger('removeProvider', [name])
     })
+
+    // this.udapp.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
+      // this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
+    // })
+
+    // this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+      // this.event.trigger('transactionExecuted', [error, from, to, data, call, txResult, timestamp])
+    // })
+
+    // this.udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
+      // this.event.trigger('transactionBroadcasted', [txhash, networkName])
+    // })
   }
 
   setupProviders () {
@@ -146,6 +159,13 @@ class Blockchain {
     })
   }
 
+  getInputs (funABI) {
+    if (!funABI.inputs) {
+      return ''
+    }
+    return txHelper.inputParametersDeclarationToString(funABI.inputs)
+  }
+
   fromWei (value, doTypeConversion, unit) {
     if (doTypeConversion) {
       return Web3.utils.fromWei(typeConversion.toInt(value), unit || 'ether')
@@ -230,6 +250,7 @@ class Blockchain {
 
   getTxListener (opts) {
     opts.event = {
+      // udapp: this.udapp.event
       udapp: this.event
     }
     const txlistener = new Txlistener(opts, this.executionContext)
@@ -266,6 +287,10 @@ class Blockchain {
       // called for libraries deployment
       this.runTx(data, confirmationCb, runTxCallback, promptCb, () => {})
     })
+  }
+
+  context () {
+    return (this.executionContext.isVM() ? 'memory' : 'blockchain')
   }
 
   // NOTE: the config is only needed because exectuionContext.init does

@@ -10,7 +10,7 @@ test('compiler.compile smoke', function (t) {
   var noop = function () {}
   var fakeImport = function (url, cb) { cb('Not implemented') }
   var compiler = new Compiler(fakeImport)
-  compiler.setCompileJSON(noop)
+  compiler.compileJSON = noop
   compiler.compile({ 'test': '' }, 'test')
   t.ok(compiler)
 })

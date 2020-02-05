@@ -28,6 +28,12 @@ var sources = [
   {
     'localhost/src/gmbh/company.sol': {content: assetsTestContract},
     'localhost/src/gmbh/contract.sol': {content: gmbhTestContract}
+  },
+  {
+    'browser/test_import_node_modules.sol': {content: 'import "openzeppelin-solidity/contracts/math/SafeMath.sol";'}
+  },
+  {
+    'browser/test_import_node_modules_with_github_import.sol': {content: 'import "openzeppelin-solidity/contracts/sample.sol";'}
   }
 ]
 
@@ -40,6 +46,29 @@ module.exports = {
   },
   'Remixd': function (browser) {
     runTests(browser)
+  },
+  'Import from node_modules ': function (browser) {
+    /*
+      when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
+      remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
+    */
+    browser
+      .waitForElementVisible('#icon-panel', 2000)
+      .clickLaunchIcon('fileExplorers')
+      .addFile('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'])
+      .clickLaunchIcon('solidity')
+      .testContracts('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'], ['SafeMath'])
+  },
+  'Import from node_modules and reference a github import': function (browser) {
+    browser
+      .waitForElementVisible('#icon-panel', 2000)
+      .clickLaunchIcon('fileExplorers')
+      .addFile('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'])
+      .clickLaunchIcon('solidity')
+      .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
+      .clickLaunchIcon('pluginManager')
+      .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+      .end()
   },
   tearDown: sauce
 }
@@ -98,9 +127,6 @@ function runTests (browser, testData) {
     .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // check if renamed (old) file is not present
     .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '_toremove.sol"]') // check if removed (old) file is not present
     .click('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]')
-    .clickLaunchIcon('pluginManager')
-    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
-    .end()
 }
 
 function testImportFromRemixd (browser, callback) {
