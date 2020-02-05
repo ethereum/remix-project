@@ -4,6 +4,7 @@ const txExecution = remixLib.execution.txExecution
 const typeConversion = remixLib.execution.typeConversion
 const TxRunner = remixLib.execution.txRunner
 const Txlistener = remixLib.execution.txListener
+const txHelper = remixLib.execution.txHelper
 const EventManager = remixLib.EventManager
 const executionContext = remixLib.execution.executionContext
 const ethJSUtil = require('ethereumjs-util')
@@ -130,6 +131,19 @@ class Blockchain {
 
   getGasPrice (cb) {
     return this.executionContext.web3().eth.getGasPrice(cb)
+  }
+
+  getFallbackInterface (contractABI) {
+    return txHelper.getFallbackInterface(contractABI)
+  }
+
+  getReceiveInterface (contractABI) {
+    return txHelper.getReceiveInterface(contractABI)
+  }
+
+  getInputs (funABI) {
+    if (!funABI.inputs) return ''
+    return txHelper.inputParametersDeclarationToString(funABI.inputs)
   }
 
   fromWei (value, doTypeConversion, unit) {
