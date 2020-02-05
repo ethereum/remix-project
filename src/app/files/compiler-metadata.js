@@ -98,6 +98,7 @@ class CompilerMetadata extends Plugin {
         this.blockchain.detectNetwork((err, { id, name } = {}) => {
           if (err) {
             console.log(err)
+            reject(err)
           } else {
             var fileName = this._JSONFileName(path, contractName)
             provider.get(fileName, (error, content) => {

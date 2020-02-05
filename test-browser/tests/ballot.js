@@ -20,7 +20,7 @@ module.exports = {
     .clickLaunchIcon('solidity')
     .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
     .clickLaunchIcon('udapp')
-    .setValue('input[placeholder="uint8 _numProposals"]', '1')
+    .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
     .click('#runTabView button[class^="instanceButton"]')
     .waitForElementPresent('.instance:nth-of-type(2)')
     .click('.instance:nth-of-type(2) > div > button')
@@ -36,7 +36,7 @@ module.exports = {
     .clickLaunchIcon('debugger')
     .click('#jumppreviousbreakpoint')
     .pause(2000)
-    .goToVMTraceStep(58)
+    .goToVMTraceStep(79)
     .pause(1000)
     .checkVariableDebug('soliditystate', stateCheck)
     .checkVariableDebug('soliditylocals', localsCheck)
@@ -55,8 +55,25 @@ module.exports = {
     .testFunction('delegate - transact (not payable)', '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
             `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0xca5...5c803`,
             {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null)
+  },
+
+  'Deploy and use Ballot using external web3': function (browser) {
+    browser
+    .click('#selectExEnvOptions #web3-mode')
+    .modalFooterOKClick()
+    .clickLaunchIcon('solidity')
+    .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
+    .clickLaunchIcon('udapp')
+    .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
+    .click('#runTabView button[class^="instanceButton"]')
+    .clickInstance(0)
+    .click('#clearConsole')
+    .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'})
+    .journalLastChildIncludes('Ballot.delegate(address)')
+    .journalLastChildIncludes('data:0x5c1...a733c')
     .end()
   },
+
   tearDown: sauce
 }
 
@@ -85,13 +102,13 @@ var stateCheck = {
             'value': false,
             'type': 'bool'
           },
-          'vote': {
-            'value': '0',
-            'type': 'uint8'
-          },
           'delegate': {
             'value': '0x0000000000000000000000000000000000000000',
             'type': 'address'
+          },
+          'vote': {
+            'value': '0',
+            'type': 'uint256'
           }
         },
         'type': 'struct Ballot.Voter'
@@ -104,6 +121,10 @@ var stateCheck = {
     'value': [
       {
         'value': {
+          'name': {
+            'value': '0x48656C6C6F20576F726C64210000000000000000000000000000000000000000',
+            'type': 'bytes32'
+          },
           'voteCount': {
             'value': '0',
             'type': 'uint256'
@@ -118,4 +139,169 @@ var stateCheck = {
   }
 }
 
-var ballotABI = '[{"constant":false,"inputs":[{"name":"to","type":"address"}],"name":"delegate","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"winningProposal","outputs":[{"name":"_winningProposal","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"toVoter","type":"address"}],"name":"giveRightToVote","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"toProposal","type":"uint8"}],"name":"vote","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_numProposals","type":"uint8"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]'
+var ballotABI = `[
+{
+  "inputs": [
+    {
+      "internalType": "bytes32[]",
+      "name": "proposalNames",
+      "type": "bytes32[]"
+    }
+  ],
+  "payable": false,
+  "stateMutability": "nonpayable",
+  "type": "constructor"
+},
+{
+  "constant": true,
+  "inputs": [],
+  "name": "chairperson",
+  "outputs": [
+    {
+      "internalType": "address",
+      "name": "",
+      "type": "address"
+    }
+  ],
+  "payable": false,
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "constant": false,
+  "inputs": [
+    {
+      "internalType": "address",
+      "name": "to",
+      "type": "address"
+    }
+  ],
+  "name": "delegate",
+  "outputs": [],
+  "payable": false,
+  "stateMutability": "nonpayable",
+  "type": "function"
+},
+{
+  "constant": false,
+  "inputs": [
+    {
+      "internalType": "address",
+      "name": "voter",
+      "type": "address"
+    }
+  ],
+  "name": "giveRightToVote",
+  "outputs": [],
+  "payable": false,
+  "stateMutability": "nonpayable",
+  "type": "function"
+},
+{
+  "constant": true,
+  "inputs": [
+    {
+      "internalType": "uint256",
+      "name": "",
+      "type": "uint256"
+    }
+  ],
+  "name": "proposals",
+  "outputs": [
+    {
+      "internalType": "bytes32",
+      "name": "name",
+      "type": "bytes32"
+    },
+    {
+      "internalType": "uint256",
+      "name": "voteCount",
+      "type": "uint256"
+    }
+  ],
+  "payable": false,
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "constant": false,
+  "inputs": [
+    {
+      "internalType": "uint256",
+      "name": "proposal",
+      "type": "uint256"
+    }
+  ],
+  "name": "vote",
+  "outputs": [],
+  "payable": false,
+  "stateMutability": "nonpayable",
+  "type": "function"
+},
+{
+  "constant": true,
+  "inputs": [
+    {
+      "internalType": "address",
+      "name": "",
+      "type": "address"
+    }
+  ],
+  "name": "voters",
+  "outputs": [
+    {
+      "internalType": "uint256",
+      "name": "weight",
+      "type": "uint256"
+    },
+    {
+      "internalType": "bool",
+      "name": "voted",
+      "type": "bool"
+    },
+    {
+      "internalType": "address",
+      "name": "delegate",
+      "type": "address"
+    },
+    {
+      "internalType": "uint256",
+      "name": "vote",
+      "type": "uint256"
+    }
+  ],
+  "payable": false,
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "constant": true,
+  "inputs": [],
+  "name": "winnerName",
+  "outputs": [
+    {
+      "internalType": "bytes32",
+      "name": "winnerName_",
+      "type": "bytes32"
+    }
+  ],
+  "payable": false,
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "constant": true,
+  "inputs": [],
+  "name": "winningProposal",
+  "outputs": [
+    {
+      "internalType": "uint256",
+      "name": "winningProposal_",
+      "type": "uint256"
+    }
+  ],
+  "payable": false,
+  "stateMutability": "view",
+  "type": "function"
+}
+]`

@@ -20,11 +20,21 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
 
   async.eachSeries(Object.keys(metadata.sources), function (fileName, cb) {
     // find hash
-    var hash
+    let hash = null
     try {
-      hash = metadata.sources[fileName].urls[0].match('(bzzr|bzz-raw)://(.+)')[1]
+      // we try extract the hash defined in the metadata.json
+      // in order to check if the hash that we get after publishing is the same as the one located in metadata.json
+      // if it's not the same, we throw "hash mismatch between solidity bytecode and uploaded content"
+      // if we don't find the hash in the metadata.json, the check is not done.
+      //
+      // TODO: refactor this with publishOnIpfs
+      if (metadata.sources[fileName].urls) {
+        metadata.sources[fileName].urls.forEach(url => {
+          if (url.includes('bzz')) hash = url.match('(bzzr|bzz-raw)://(.+)')[1]
+        })
+      }
     } catch (e) {
-      return cb('Metadata inconsistency')
+      return cb('Error while extracting the hash from metadata.json')
     }
 
     fileManager.fileProviderOf(fileName).get(fileName, (error, content) => {
@@ -90,7 +100,7 @@ function swarmVerifiedPublish (content, expectedHash, cb) {
   swarmgw.put(content, function (err, ret) {
     if (err) {
       cb(err)
-    } else if (ret !== expectedHash) {
+    } else if (expectedHash && ret !== expectedHash) {
       cb(null, { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'bzz-raw://' + ret, hash: ret })
     } else {
       cb(null, { message: 'ok', url: 'bzz-raw://' + ret, hash: ret })
