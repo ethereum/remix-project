@@ -55,10 +55,20 @@ class VMProvider {
     console.dir("--- signMessage")
     const hashedMsg = Web3.utils.sha3(message)
     try {
-      this.web3.eth.sign(account, hashedMsg, (error, signedData) => {
-        cb(error.message, hashedMsg, signedData)
+      // this.web3.eth.sign(account, hashedMsg, (error, signedData) => {
+      this.web3.eth.sign(hashedMsg, account, (error, signedData) => {
+        if (error) {
+          return cb(error)
+        }
+        console.dir("------")
+        console.dir(error)
+        console.dir("------")
+        cb(null, hashedMsg, signedData)
       })
     } catch (e) {
+      console.dir("======")
+      console.dir(e)
+      console.dir("======")
       cb(e.message)
     }
   //   const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
