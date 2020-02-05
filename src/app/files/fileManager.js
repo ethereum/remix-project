@@ -314,6 +314,10 @@ class FileManager extends Plugin {
     })
   }
 
+  getProvider (name) {
+    return this._deps.filesProviders[name]
+  }
+
   fileProviderOf (file) {
     if (file.indexOf('localhost') === 0) {
       return this._deps.filesProviders['localhost']
