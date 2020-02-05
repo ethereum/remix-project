@@ -187,7 +187,7 @@ class CompileTab extends ViewPlugin {
   }
 
   getCompilationResult () {
-    return this.compileTabLogic.compiler.lastCompilationResult
+    return this.compileTabLogic.compiler.state.lastCompilationResult
   }
 
   // This function is used by remix-plugin
@@ -198,6 +198,15 @@ class CompileTab extends ViewPlugin {
   // This function is used for passing the compiler remix-tests
   getCurrentVersion () {
     return this.compilerContainer.data.selectedVersion
+  }
+
+  // This function is used for passing the compiler configuration to 'remix-tests'
+  getCurrentCompilerConfig () {
+    return {
+      currentVersion: this.compilerContainer.data.selectedVersion,
+      evmVersion: this.compileTabLogic.evmVersion,
+      optimize: this.compileTabLogic.optimize
+    }
   }
 
   /*********
@@ -239,11 +248,11 @@ class CompileTab extends ViewPlugin {
         ${selectEl}
       </div>
       <article class="px-2 mt-2 pb-0">
-        <button class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish('swarm') }}">
+        <button id="publishOnSwarm" class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish('swarm') }}">
           <span>Publish on Swarm</span>
           <img id="swarmLogo" class="${css.storageLogo} ml-2" src="${swarmImg}">
         </button>
-        <button class="btn btn-secondary btn-block" title="Publish on Ipfs" onclick="${() => { this.publish('ipfs') }}">
+        <button id="publishOnIpfs" class="btn btn-secondary btn-block" title="Publish on Ipfs" onclick="${() => { this.publish('ipfs') }}">
         <span>Publish on Ipfs</span>
         <img id="ipfsLogo" class="${css.storageLogo} ml-2" src="${ipfsImg}">
       </button>

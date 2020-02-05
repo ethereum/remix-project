@@ -19,6 +19,7 @@ require('ace-mode-zokrates')
 require('brace/mode/javascript')
 require('brace/mode/python')
 require('brace/mode/json')
+require('brace/mode/rust')
 require('brace/theme/chaos')
 require('brace/theme/chrome')
 
@@ -85,7 +86,8 @@ class Editor extends Plugin {
       zok: 'ace/mode/zokrates',
       txt: 'ace/mode/text',
       json: 'ace/mode/json',
-      abi: 'ace/mode/json'
+      abi: 'ace/mode/json',
+      rs: 'ace/mode/rust'
     }
 
     // Editor Setup

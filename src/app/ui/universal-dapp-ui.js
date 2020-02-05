@@ -1,27 +1,30 @@
 /* global */
 'use strict'
 
-const $ = require('jquery')
-const yo = require('yo-yo')
-const ethJSUtil = require('ethereumjs-util')
-const BN = ethJSUtil.BN
-const helper = require('../../lib/helper')
-const copyToClipboard = require('./copy-to-clipboard')
-const css = require('../../universal-dapp-styles')
-const MultiParamManager = require('./multiParamManager')
-const remixLib = require('remix-lib')
-const txFormat = remixLib.execution.txFormat
+var $ = require('jquery')
+var yo = require('yo-yo')
+var ethJSUtil = require('ethereumjs-util')
+var BN = ethJSUtil.BN
+var helper = require('../../lib/helper')
+var copyToClipboard = require('./copy-to-clipboard')
+var css = require('../../universal-dapp-styles')
+var MultiParamManager = require('./multiParamManager')
+var remixLib = require('remix-lib')
+var txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
+var TreeView = require('./TreeView')
+var txCallBacks = require('./sendTxCallbacks')
 
-const confirmDialog = require('./confirmDialog')
-const modalCustom = require('./modal-dialog-custom')
-const modalDialog = require('./modaldialog')
-const TreeView = require('./TreeView')
+function UniversalDAppUI (blockchain, logCallback) {
+  this.blockchain = blockchain
+  this.logCallback = logCallback
+  this.compilerData = {contractsDetails: {}}
+}
 
 function decodeResponseToTreeView (response, fnabi) {
-  const treeView = new TreeView({
+  var treeView = new TreeView({
     extractData: (item, parent, key) => {
-      let ret = {}
+      var ret = {}
       if (BN.isBN(item)) {
         ret.self = item.toString(10)
         ret.children = []
@@ -34,42 +37,28 @@ function decodeResponseToTreeView (response, fnabi) {
   return treeView.render(txFormat.decodeResponse(response, fnabi))
 }
 
-class UniversalDAppUI {
-
-  constructor (blockchain, logCallback) {
-    this.blockchain = blockchain
-    this.logCallback = logCallback
-    this.compilerData = { contractsDetails: {} }
+UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
+  var noInstances = document.querySelector('[class^="noInstancesText"]')
+  if (noInstances) {
+    noInstances.parentNode.removeChild(noInstances)
   }
+  const abi = txHelper.sortAbiFunction(contract.abi)
+  return this.renderInstanceFromABI(abi, address, contractName)
+}
 
-  renderInstance (contract, address, contractName) {
-    const noInstances = document.querySelector('[class^="noInstancesText"]')
-    if (noInstances) {
-      noInstances.parentNode.removeChild(noInstances)
-    }
-    const abi = txHelper.sortAbiFunction(contract.abi)
-    return this.renderInstanceFromABI(abi, address, contractName)
-  }
+// TODO this function was named before "appendChild".
+// this will render an instance: contract name, contract address, and all the public functions
+// basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
+// this returns a DOM element
+UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
+  let self = this
+  address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
+  address = ethJSUtil.toChecksumAddress(address)
+  var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
+  const context = this.blockchain.context()
 
-  // TODO this function was named before "appendChild".
-  // this will render an instance: contract name, contract address, and all the public functions
-  // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
-  // this returns a DOM element
-  renderInstanceFromABI (contractABI, address, contractName) {
-    address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
-    address = ethJSUtil.toChecksumAddress(address)
-    const instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
-    const context = (this.blockchain.getProvider() === 'vm' ? 'memory' : 'blockchain')
-
-    function toggleClass (e) {
-      $(instance).toggleClass(`${css.hidesub}`)
-      // e.currentTarget.querySelector('i')
-      e.currentTarget.querySelector('i').classList.toggle(`fa-angle-right`)
-      e.currentTarget.querySelector('i').classList.toggle(`fa-angle-down`)
-    }
-
-    const shortAddress = helper.shortenAddress(address)
-    const title = yo`
+  var shortAddress = helper.shortenAddress(address)
+  var title = yo`
     <div class="${css.title} alert alert-secondary p-2">
       <button class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}">
         <i class="fas fa-angle-right" aria-hidden="true"></i>
@@ -87,155 +76,174 @@ class UniversalDAppUI {
     </div>
   `
 
-    const close = yo`
+  var close = yo`
     <button
       class="${css.udappClose} p-1 btn btn-secondary"
-      onclick=${() => { instance.remove() }}
+      onclick=${remove}
       title="Remove from the list"
     >
       <i class="${css.closeIcon} fas fa-times" aria-hidden="true"></i>
     </button>`
-    title.querySelector('.btn-group').appendChild(close)
+  title.querySelector('.btn-group').appendChild(close)
 
-    const contractActionsWrapper = yo`
+  var contractActionsWrapper = yo`
     <div class="${css.cActionsWrapper}">
     </div>
   `
 
-    instance.appendChild(title)
-    instance.appendChild(contractActionsWrapper)
+  function remove () {
+    instance.remove()
+    // @TODO perhaps add a callack here to warn the caller that the instance has been removed
+  }
 
-    // Add the fallback function
+  function toggleClass (e) {
+    $(instance).toggleClass(`${css.hidesub}`)
+    // e.currentTarget.querySelector('i')
+    e.currentTarget.querySelector('i').classList.toggle(`fa-angle-right`)
+    e.currentTarget.querySelector('i').classList.toggle(`fa-angle-down`)
+  }
+
+  instance.appendChild(title)
+  instance.appendChild(contractActionsWrapper)
+
+  $.each(contractABI, (i, funABI) => {
+    if (funABI.type !== 'function') {
+      return
+    }
+    // @todo getData cannot be used with overloaded functions
+    contractActionsWrapper.appendChild(this.getCallButton({
+      funABI: funABI,
+      address: address,
+      contractABI: contractABI,
+      contractName: contractName
+    }))
+  })
+
+  const calldataInput = yo`
+    <input id="deployAndRunLLTxCalldata" class="w-100 m-0" title="The Calldata to send to fallback function of the contract.">
+  `
+  const llIError = yo`
+    <label id="deployAndRunLLTxError" class="text-danger"></label>
+  `
+  // constract LLInteractions elements
+  const lowLevelInteracions = yo`
+    <div class="d-flex flex-column">
+      <div class="d-flex flex-row justify-content-between mt-2">
+        <label class="pt-2 border-top d-flex justify-content-start flex-grow-1">
+          Low level interactions
+        </label>
+        <a
+          href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"
+          title="check out docs for using 'receive'/'fallback'"
+          target="_blank"
+        >
+          <i aria-hidden="true" class="fas fa-info text-info my-2 mr-2"></i>
+        </a>
+      </div>
+      <div class="d-flex flex-column">
+        <div class="d-flex justify-content-end m-2 align-items-center">
+          <label class="mr-2 m-0">Calldata</label>
+          ${calldataInput}
+          <button id="deployAndRunLLTxSendTransaction" class="btn btn-sm btn-secondary" title="Send data to contract." onclick=${() => sendData()}>Transact</button>
+        </div>
+      </div>
+      <div>
+        ${llIError}
+      </div>
+    </div>
+  `
+
+  function sendData () {
+    function setLLIError (text) {
+      llIError.innerText = text
+    }
+
+    setLLIError('')
     const fallback = txHelper.getFallbackInterface(contractABI)
-
-    if (fallback) {
-      contractActionsWrapper.appendChild(this.getCallButton({
-        funABI: fallback,
-        address: address,
-        contractAbi: contractABI,
-        contractName: contractName
-      }))
+    const receive = txHelper.getReceiveInterface(contractABI)
+    const args = {
+      funABI: fallback || receive,
+      address: address,
+      contractName: contractName,
+      contractABI: contractABI
     }
-
-    $.each(contractABI, (i, funABI) => {
-      if (funABI.type !== 'function') {
-        return
+    const amount = document.querySelector('#value').value
+    if (amount !== '0') {
+      // check for numeric and receive/fallback
+      if (!helper.isNumeric(amount)) {
+        return setLLIError('Value to send should be a number')
+      } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
+        return setLLIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
       }
-      // @todo getData cannot be used with overloaded functions
-      contractActionsWrapper.appendChild(this.getCallButton({
-        funABI: funABI,
-        address: address,
-        contractAbi: contractABI,
-        contractName: contractName
-      }))
-    })
-
-    return instance
-  }
-
-  getConfirmationCb (modalDialog, confirmDialog) {
-    const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-      if (network.name !== 'Main') {
-        return continueTxExecution(null)
-      }
-      const amount = this.blockchain.fromWei(tx.value, true, 'ether')
-      const content = confirmDialog(tx, amount, gasEstimation, null, this.blockchain.determineGasFees(tx), this.blockchain.determineGasPrice)
-
-      modalDialog('Confirm transaction', content,
-        {
-          label: 'Confirm',
-          fn: () => {
-            this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-            // TODO: check if this is check is still valid given the refactor
-            if (!content.gasPriceStatus) {
-              cancelCb('Given gas price is not correct')
-            } else {
-              const gasPrice = this.blockchain.toWei(content.querySelector('#gasprice').value, 'gwei')
-              continueTxExecution(gasPrice)
-            }
-          }
-        }, {
-          label: 'Cancel',
-          fn: () => {
-            return cancelCb('Transaction canceled by user.')
-          }
-        }
-      )
     }
-
-    return confirmationCb
-  }
-
-  // TODO this is used by renderInstance when a new instance is displayed.
-  // this returns a DOM element.
-  getCallButton (args) {
-    // args.funABI, args.address [fun only]
-    // args.contractName [constr only]
-    const lookupOnly = args.funABI.stateMutability === 'view' || args.funABI.stateMutability === 'pure' || args.funABI.constant
-
-    const outputOverride = yo`<div class=${css.value}></div>` // show return value
-
-    const clickButton = (valArr, inputsValues) => {
-      let logMsg
-      if (!lookupOnly) {
-        logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+    let calldata = calldataInput.value
+    if (calldata) {
+      if (calldata.length < 2 || calldata.length < 4 && helper.is0XPrefixed(calldata)) {
+        return setLLIError('The calldata should be a valid hexadecimal value with size of at least one byte.')
       } else {
-        logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
-      }
-
-      const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
-      const continueCb = (error, continueTxExecution, cancelCb) => {
-        if (error) {
-          const msg = typeof error !== 'string' ? error.message : error
-          modalDialog(
-            'Gas estimation failed',
-            yo`
-            <div>Gas estimation errored with the following message (see below).
-            The transaction execution will likely fail. Do you want to force sending? <br>${msg}</div>
-          `,
-            {
-              label: 'Send Transaction',
-              fn: () => continueTxExecution()
-            },
-            {
-              label: 'Cancel Transaction',
-              fn: () => cancelCb()
-            }
-          )
-        } else {
-          continueTxExecution()
+        if (helper.is0XPrefixed(calldata)) {
+          calldata = calldata.substr(2, calldata.length)
+        }
+        if (!helper.isHexadecimal(calldata)) {
+          return setLLIError('The calldata should be a valid hexadecimal value.')
         }
       }
-
-      const outputCb = (returnValue) => {
-        const decoded = decodeResponseToTreeView(returnValue, args.funABI)
-        outputOverride.innerHTML = ''
-        outputOverride.appendChild(decoded)
+      if (!fallback) {
+        return setLLIError("'Fallback' function is not defined")
       }
-
-      const promptCb = (okCb, cancelCb) => {
-        modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
-      }
-
-      const callType = args.funABI.type !== 'fallback' ? inputsValues : ''
-      this.blockchain.runOrCallContractMethod(args.contractName, args.contractAbi, args.funABI, inputsValues, args.address, callType, lookupOnly, logMsg, this.logCallback, outputCb, confirmationCb, continueCb, promptCb)
     }
 
-    let inputs = ''
-    if (args.funABI.inputs) {
-      inputs = txHelper.inputParametersDeclarationToString(args.funABI.inputs)
-    }
+    if (!receive && !fallback) return setLLIError(`Both 'receive' and 'fallback' functions are not defined`)
 
-    const multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
-      clickButton(valArray, inputsValues, domEl)
-    }, inputs)
+    // we have to put the right function ABI:
+    // if receive is defined and that there is no calldata => receive function is called
+    // if fallback is defined => fallback function is called
+    if (receive && !calldata) args.funABI = receive
+    else if (fallback) args.funABI = fallback
 
-    const contractActionsContainer = yo`<div class="${css.contractActionsContainer}" >${multiParamManager.render()}</div>`
-    contractActionsContainer.appendChild(outputOverride)
-
-    return contractActionsContainer
+    if (!args.funABI) return setLLIError(`Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers`)
+    self.runTransaction(false, args, null, calldataInput.value, null)
   }
 
+  contractActionsWrapper.appendChild(lowLevelInteracions)
+  return instance
+}
+
+// TODO this is used by renderInstance when a new instance is displayed.
+// this returns a DOM element.
+UniversalDAppUI.prototype.getCallButton = function (args) {
+  let self = this
+  var outputOverride = yo`<div class=${css.value}></div>` // show return value
+  const isConstant = args.funABI.constant !== undefined ? args.funABI.constant : false
+  const lookupOnly = args.funABI.stateMutability === 'view' || args.funABI.stateMutability === 'pure' || isConstant
+  const multiParamManager = new MultiParamManager(
+    lookupOnly,
+    args.funABI,
+    (valArray, inputsValues) => self.runTransaction(lookupOnly, args, valArray, inputsValues, outputOverride),
+    self.blockchain.getInputs(args.funABI)
+  )
+
+  const contractActionsContainer = yo`<div class="${css.contractActionsContainer}" >${multiParamManager.render()}</div>`
+  contractActionsContainer.appendChild(outputOverride)
+
+  return contractActionsContainer
+}
+
+UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, inputsValues, outputOverride) {
+  const functionName = args.funABI.type === 'function' ? args.funABI.name : `(${args.funABI.type})`
+  const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${args.contractName}.${functionName}`
+
+  const callbacksInContext = txCallBacks.getCallBacksWithContext(this, this.executionContext)
+
+  const outputCb = (returnValue) => {
+    if (outputOverride) {
+      const decoded = decodeResponseToTreeView(returnValue, args.funABI)
+      outputOverride.innerHTML = ''
+      outputOverride.appendChild(decoded)
+    }
+  }
+  const params = args.funABI.type !== 'fallback' ? inputsValues : ''
+  this.blockchain.runOrCallContractMethod(args.contractName, args.contractAbi, args.funABI, inputsValues, args.address, params, lookupOnly, logMsg, this.logCallback, outputCb, callbacksInContext)
 }
 
 module.exports = UniversalDAppUI

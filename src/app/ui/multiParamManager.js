@@ -113,7 +113,7 @@ class MultiParamManager {
     } else if (this.funABI.name) {
       title = this.funABI.name
     } else {
-      title = '(fallback)'
+      title = this.funABI.type === 'receive' ? '(receive)' : '(fallback)'
     }
 
     this.basicInputField = yo`<input></input>`
@@ -121,7 +121,7 @@ class MultiParamManager {
     this.basicInputField.setAttribute('title', this.inputs)
     this.basicInputField.setAttribute('style', 'flex: 4')
 
-    var onClick = (domEl) => {
+    var onClick = () => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
     }
     let funcButton = yo`<button onclick=${() => onClick()} class="${css.instanceButton} btn btn-sm">${title}</button>`
@@ -204,8 +204,9 @@ class MultiParamManager {
 
     if (this.funABI.inputs && this.funABI.inputs.length > 0) {
       contractProperty.classList.add(css.hasArgs)
-    } else if (this.funABI.type === 'fallback') {
+    } else if (this.funABI.type === 'fallback' || this.funABI.type === 'receive') {
       contractProperty.classList.add(css.hasArgs)
+      this.basicInputField.setAttribute('title', `'(${this.funABI.type}')`) // probably should pass name instead
       this.contractActionsContainerSingle.querySelector('i').style.visibility = 'hidden'
     } else {
       this.contractActionsContainerSingle.querySelector('i').style.visibility = 'hidden'

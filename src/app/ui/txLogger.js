@@ -278,12 +278,12 @@ function renderEmptyBlock (self, data) {
 }
 
 function checkTxStatus (tx, type) {
-  if (tx.status === '0x1') {
+  if (tx.status === '0x1' || tx.status === true) {
     return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
   }
   if (type === 'call' || type === 'unknownCall') {
     return yo`<i class="${css.txStatus} ${css.call}">call</i>`
-  } else if (tx.status === '0x0') {
+  } else if (tx.status === '0x0' || tx.status === false) {
     return yo`<i class="${css.txStatus} ${css.failed} fas fa-times-circle"></i>`
   } else {
     return yo`<i class="${css.txStatus} ${css.notavailable} fas fa-circle-thin" title='Status not available' ></i>`
@@ -387,10 +387,10 @@ function createTable (opts) {
   var table = yo`<table class="${css.txTable}" id="txTable"></table>`
   if (!opts.isCall) {
     var msg = ''
-    if (opts.status) {
-      if (opts.status === '0x0') {
+    if (opts.status !== undefined && opts.status !== null) {
+      if (opts.status === '0x0' || opts.status === false) {
         msg = ' Transaction mined but execution failed'
-      } else if (opts.status === '0x1') {
+      } else if (opts.status === '0x1' || opts.status === true) {
         msg = ' Transaction mined and execution succeed'
       }
     } else {

@@ -211,6 +211,8 @@ class Recorder {
         fnABI = txHelper.getConstructorInterface(abi)
       } else if (tx.record.type === 'fallback') {
         fnABI = txHelper.getFallbackInterface(abi)
+      } else if (tx.record.type === 'receive') {
+        fnABI = txHelper.getReceiveInterface(abi)
       } else {
         fnABI = txHelper.getFunction(abi, record.name + record.inputs)
       }
