@@ -199,7 +199,7 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
       // so, either this is the direct value, or the offset in memory. That depends on the type.
       if (!error) {
         tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
-          if (!error && variableDeclaration.attributes.name != '') {
+          if (!error && variableDeclaration.attributes.name !== '') {
             var states = tree.solidityProxy.extractStatesDefinitions()
             var location = typesUtil.extractLocationFromAstVariable(variableDeclaration)
             location = location === 'default' ? 'storage' : location
