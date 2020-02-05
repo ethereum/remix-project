@@ -56,18 +56,6 @@ class Blockchain {
     this.executionContext.event.register('removeProvider', (name) => {
       this.event.trigger('removeProvider', [name])
     })
-
-    // this.udapp.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
-      // this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
-    // })
-
-    // this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
-      // this.event.trigger('transactionExecuted', [error, from, to, data, call, txResult, timestamp])
-    // })
-
-    // this.udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
-      // this.event.trigger('transactionBroadcasted', [txhash, networkName])
-    // })
   }
 
   setupProviders () {
