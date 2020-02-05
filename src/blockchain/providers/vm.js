@@ -1,7 +1,5 @@
 const Web3 = require('web3')
-const { BN, privateToAddress, toChecksumAddress, isValidPrivate, stripHexPrefix } = require('ethereumjs-util')
-const crypto = require('crypto')
-const ethJSUtil = require('ethereumjs-util')
+const { BN, privateToAddress, stripHexPrefix } = require('ethereumjs-util')
 const RemixSimulator = require('remix-simulator')
 
 class VMProvider {
@@ -53,26 +51,26 @@ class VMProvider {
   }
 
   signMessage (message, account, _passphrase, cb) {
-    // const hashedMsg = Web3.utils.sha3(message)
-    // try {
-    //   this.web3.eth.sign(account, hashedMsg, (error, signedData) => {
-    //     cb(error.message, hashedMsg, signedData)
-    //   })
-    // } catch (e) {
-    //   cb(e.message)
-    // }
- 
-
-    const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
-    // const privKey = this.providers.vm.accounts[account].privateKey
-    const privKey = this.RemixSimulatorProvider.Accounts.accounts[account].privateKey
+    console.dir("-----")
+    console.dir("--- signMessage")
+    const hashedMsg = Web3.utils.sha3(message)
     try {
-      const rsv = ethJSUtil.ecsign(personalMsg, privKey)
-      const signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
-      cb(null, '0x' + personalMsg.toString('hex'), signedData)
+      this.web3.eth.sign(account, hashedMsg, (error, signedData) => {
+        cb(error.message, hashedMsg, signedData)
+      })
     } catch (e) {
       cb(e.message)
     }
+  //   const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
+  //   // const privKey = this.providers.vm.accounts[account].privateKey
+  //   const privKey = this.RemixSimulatorProvider.Accounts.accounts[account].privateKey
+  //   try {
+  //     const rsv = ethJSUtil.ecsign(personalMsg, privKey)
+  //     const signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
+  //     cb(null, '0x' + personalMsg.toString('hex'), signedData)
+  //   } catch (e) {
+  //     cb(e.message)
+  //   }
   }
 
   getProvider () {
