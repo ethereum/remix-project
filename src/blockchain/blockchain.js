@@ -2,21 +2,21 @@ const remixLib = require('remix-lib')
 const txFormat = remixLib.execution.txFormat
 const txExecution = remixLib.execution.txExecution
 const typeConversion = remixLib.execution.typeConversion
-const TxRunner = remixLib.execution.txRunner
 const Txlistener = remixLib.execution.txListener
+const TxRunner = remixLib.execution.txRunner
 const txHelper = remixLib.execution.txHelper
 const EventManager = remixLib.EventManager
 const executionContext = remixLib.execution.executionContext
-const ethJSUtil = require('ethereumjs-util')
-const Personal = require('web3-eth-personal')
 const Web3 = require('web3')
 
 const async = require('async')
-const { BN, privateToAddress, isValidPrivate, stripHexPrefix, toChecksumAddress } = require('ethereumjs-util')
-const crypto = require('crypto')
 const { EventEmitter } = require('events')
 
 const { resultToRemixTx } = require('./txResultHelper')
+
+const VMProvider = require('./providers/vm.js')
+const InjectedProvider = require('./providers/injected.js')
+const NodeProvider = require('./providers/node.js')
 
 class Blockchain {
 
@@ -34,14 +34,14 @@ class Blockchain {
         this.executionContext.detectNetwork(cb)
       },
       personalMode: () => {
-        return this.executionContext.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
+        return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
     }, this.executionContext)
-    this.accounts = {}
     this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
 
     this.networkcallid = 0
     this.setupEvents()
+    this.setupProviders()
   }
 
   setupEvents () {
@@ -56,34 +56,71 @@ class Blockchain {
     this.executionContext.event.register('removeProvider', (name) => {
       this.event.trigger('removeProvider', [name])
     })
+
+    // this.udapp.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
+      // this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
+    // })
+
+    // this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+      // this.event.trigger('transactionExecuted', [error, from, to, data, call, txResult, timestamp])
+    // })
+
+    // this.udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
+      // this.event.trigger('transactionBroadcasted', [txhash, networkName])
+    // })
   }
 
-  async deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
-    const { continueCb, promptCb, statusCb, finalCb } = callbacks
+  setupProviders () {
+    this.providers = {}
+    this.providers.vm = new VMProvider(this.executionContext)
+    this.providers.injected = new InjectedProvider(this.executionContext)
+    this.providers.web3 = new NodeProvider(this.executionContext, this.config)
+  }
 
-    const constructor = selectedContract.getConstructorInterface()
-    if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-      return txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
-        if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+  getCurrentProvider () {
+    const provider = this.getProvider()
+    return this.providers[provider]
+  }
 
-        statusCb(`creation of ${selectedContract.name} pending...`)
-        this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
-      }, statusCb, (data, runTxCallback) => {
-                // called for libraries deployment
-        this.runTransaction(data, continueCb, promptCb, confirmationCb, runTxCallback)
+  /** Return the list of accounts */
+  // note: the dual promise/callback is kept for now as it was before
+  getAccounts (cb) {
+    return new Promise((resolve, reject) => {
+      this.getCurrentProvider().getAccounts((error, accounts) => {
+        if (cb) {
+          return cb(error, accounts)
+        }
+        if (error) {
+          reject(error)
+        }
+        resolve(accounts)
       })
-    }
-    if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+    })
+  }
+
+  deployContractAndLibraries (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
+    const { continueCb, promptCb, statusCb, finalCb } = callbacks
+    const constructor = selectedContract.getConstructorInterface()
+    txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
+      if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+
+      statusCb(`creation of ${selectedContract.name} pending...`)
+      this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
+    }, statusCb, (data, runTxCallback) => {
+      // called for libraries deployment
+      this.runTx(data, confirmationCb, continueCb, promptCb, runTxCallback)
+    })
+  }
+
+  deployContractWithLibrary (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
+    const { continueCb, promptCb, statusCb, finalCb } = callbacks
+    const constructor = selectedContract.getConstructorInterface()
     txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
       if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
       statusCb(`creation of ${selectedContract.name} pending...`)
       this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
     })
-  }
-
-  runTransaction (data, continueCb, promptCb, confirmationCb, finalCb) {
-    this.runTx(data, confirmationCb, continueCb, promptCb, finalCb)
   }
 
   createContract (selectedContract, data, continueCb, promptCb, confirmationCb, finalCb) {
@@ -93,29 +130,21 @@ class Blockchain {
       data.contractABI = selectedContract.abi
     }
 
-    this._createContract(data, confirmationCb, continueCb, promptCb,
-            (error, txResult) => {
-              if (error) {
-                return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
-              }
-              const isVM = this.executionContext.isVM()
-              if (isVM) {
-                const vmError = txExecution.checkVMError(txResult)
-                if (vmError.error) {
-                  return finalCb(vmError.message)
-                }
-              }
-              if (txResult.result.status === false || txResult.result.status === '0x0') {
-                return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
-              }
-              const address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-              finalCb(null, selectedContract, address)
-            }
-        )
+    this.runTx({ data: data, useCall: false }, confirmationCb, continueCb, promptCb,
+      (error, txResult, address) => {
+        if (error) {
+          return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
+        }
+        if (txResult.result.status && txResult.result.status === '0x0') {
+          return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
+        }
+        finalCb(null, selectedContract, address)
+      }
+    )
   }
 
   determineGasPrice (cb) {
-    this.getGasPrice((error, gasPrice) => {
+    this.getCurrentProvider().getGasPrice((error, gasPrice) => {
       const warnMessage = ' Please fix this issue before sending any transaction. '
       if (error) {
         return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
@@ -129,20 +158,10 @@ class Blockchain {
     })
   }
 
-  getGasPrice (cb) {
-    return this.executionContext.web3().eth.getGasPrice(cb)
-  }
-
-  getFallbackInterface (contractABI) {
-    return txHelper.getFallbackInterface(contractABI)
-  }
-
-  getReceiveInterface (contractABI) {
-    return txHelper.getReceiveInterface(contractABI)
-  }
-
   getInputs (funABI) {
-    if (!funABI.inputs) return ''
+    if (!funABI.inputs) {
+      return ''
+    }
     return txHelper.inputParametersDeclarationToString(funABI.inputs)
   }
 
@@ -180,24 +199,12 @@ class Blockchain {
     return determineGasFeesCb
   }
 
-  getAddressFromTransactionResult (txResult) {
-    return this.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
-  }
-
   changeExecutionContext (context, confirmCb, infoCb, cb) {
     return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
 
   setProviderFromEndpoint (target, context, cb) {
     return this.executionContext.setProviderFromEndpoint(target, context, cb)
-  }
-
-  getProvider () {
-    return this.executionContext.getProvider()
-  }
-
-  getAccountBalanceForAddress (address, cb) {
-    return this.getBalanceInEther(address, cb)
   }
 
   updateNetwork (cb) {
@@ -218,53 +225,22 @@ class Blockchain {
     return this.executionContext.detectNetwork(cb)
   }
 
+  getProvider () {
+    return this.executionContext.getProvider()
+  }
+
   isWeb3Provider () {
-    const isVM = this.executionContext.isVM()
-    const isInjected = this.executionContext.getProvider() === 'injected'
+    const isVM = this.getProvider() === 'vm'
+    const isInjected = this.getProvider() === 'injected'
     return (!isVM && !isInjected)
   }
 
   isInjectedWeb3 () {
-    return this.executionContext.getProvider() === 'injected'
+    return this.getProvider() === 'injected'
   }
 
   signMessage (message, account, passphrase, cb) {
-    const isVM = this.executionContext.isVM()
-    const isInjected = this.executionContext.getProvider() === 'injected'
-
-    if (isVM) {
-      const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
-      const privKey = this.accounts[account].privateKey
-      try {
-        const rsv = ethJSUtil.ecsign(personalMsg, privKey)
-        const signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
-        cb(null, '0x' + personalMsg.toString('hex'), signedData)
-      } catch (e) {
-        cb(e.message)
-      }
-      return
-    }
-    if (isInjected) {
-      const hashedMsg = Web3.utils.sha3(message)
-      try {
-        this.executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
-          cb(error.message, hashedMsg, signedData)
-        })
-      } catch (e) {
-        cb(e.message)
-      }
-      return
-    }
-
-    const hashedMsg = Web3.utils.sha3(message)
-    try {
-      const personal = new Personal(this.executionContext.web3().currentProvider)
-      personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
-        cb(error.message, hashedMsg, signedData)
-      })
-    } catch (e) {
-      cb(e.message)
-    }
+    this.getCurrentProvider().signMessage(message, account, passphrase, cb)
   }
 
   web3 () {
@@ -273,55 +249,53 @@ class Blockchain {
 
   getTxListener (opts) {
     opts.event = {
+      // udapp: this.udapp.event
       udapp: this.event
     }
     const txlistener = new Txlistener(opts, this.executionContext)
     return txlistener
   }
 
-  runOrCallContractMethod (contractName, contractABI, funABI, value, address, params, lookupOnly, logMsg, logCallback, outputCb, callbacksInContext) {
+  runOrCallContractMethod (contractName, contractAbi, funABI, value, address, callType, lookupOnly, logMsg, logCallback, outputCb, confirmationCb, continueCb, promptCb) {
     // contractsDetails is used to resolve libraries
-    txFormat.buildData(contractName, contractABI, {}, false, funABI, params, (error, data) => {
-      if (!error) {
-        if (!lookupOnly) {
-          logCallback(`${logMsg} pending ... `)
-        } else {
-          logCallback(`${logMsg}`)
-        }
-        if (funABI.type === 'fallback') data.dataHex = value
-        this.callFunction(address, data, funABI, callbacksInContext.confirmationCb.bind(callbacksInContext), callbacksInContext.continueCb.bind(callbacksInContext), callbacksInContext.promptCb.bind(callbacksInContext), (error, txResult) => {
-          if (!error) {
-            const isVM = this.executionContext.isVM()
-            if (isVM) {
-              const vmError = txExecution.checkVMError(txResult)
-              if (vmError.error) {
-                logCallback(`${logMsg} errored: ${vmError.message} `)
-                return
-              }
-            }
-            if (lookupOnly) {
-              const returnValue = (this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result))
-              outputCb(returnValue)
-            }
-          } else {
-            logCallback(`${logMsg} errored: ${error} `)
-          }
-        })
-      } else {
-        logCallback(`${logMsg} errored: ${error} `)
+    txFormat.buildData(contractName, contractAbi, {}, false, funABI, callType, (error, data) => {
+      if (error) {
+        return logCallback(`${logMsg} errored: ${error} `)
       }
-    }, (msg) => {
+      if (!lookupOnly) {
+        logCallback(`${logMsg} pending ... `)
+      } else {
+        logCallback(`${logMsg}`)
+      }
+      if (funABI.type === 'fallback') data.dataHex = value
+
+      const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
+      this.runTx({to: address, data, useCall}, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
+        if (error) {
+          return logCallback(`${logMsg} errored: ${error} `)
+        }
+        if (lookupOnly) {
+          outputCb(returnValue)
+        }
+      })
+    },
+    (msg) => {
       logCallback(msg)
-    }, (data, runTxCallback) => {
+    },
+    (data, runTxCallback) => {
       // called for libraries deployment
-      this.runTx(data, callbacksInContext.confirmationCb.bind(callbacksInContext), runTxCallback)
+      this.runTx(data, confirmationCb, runTxCallback, promptCb, () => {})
     })
+  }
+
+  context () {
+    return (this.executionContext.isVM() ? 'memory' : 'blockchain')
   }
 
   // NOTE: the config is only needed because exectuionContext.init does
   // if config.get('settings/always-use-vm'), we can simplify this later
-  resetAndInit (config, transactionContext) {
-    this.resetAPI(transactionContext)
+  resetAndInit (config, transactionContextAPI) {
+    this.transactionContextAPI = transactionContextAPI
     this.executionContext.init(config)
     this.executionContext.stopListenOnLastBlock()
     this.executionContext.listenOnLastBlock()
@@ -345,16 +319,9 @@ class Blockchain {
   }
 
   resetEnvironment () {
-    this.accounts = {}
-    if (this.executionContext.isVM()) {
-      this._addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511', '0x56BC75E2D63100000')
-      this._addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c', '0x56BC75E2D63100000')
-      this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', '0x56BC75E2D63100000')
-      this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea', '0x56BC75E2D63100000')
-      this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
-    }
+    this.getCurrentProvider().resetEnvironment()
     // TODO: most params here can be refactored away in txRunner
-    this.txRunner = new TxRunner(this.accounts, {
+    this.txRunner = new TxRunner(this.providers.vm.accounts, {
       // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
       config: this.config,
       // TODO: to refactor, TxRunner already has access to executionContext
@@ -362,7 +329,7 @@ class Blockchain {
         this.executionContext.detectNetwork(cb)
       },
       personalMode: () => {
-        return this.executionContext.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
+        return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
     }, this.executionContext)
     this.txRunner.event.register('transactionBroadcasted', (txhash) => {
@@ -373,182 +340,28 @@ class Blockchain {
     })
   }
 
-  resetAPI (transactionContextAPI) {
-    this.transactionContextAPI = transactionContextAPI
-  }
-
   /**
    * Create a VM Account
    * @param {{privateKey: string, balance: string}} newAccount The new account to create
    */
   createVMAccount (newAccount) {
-    const { privateKey, balance } = newAccount
-    if (this.executionContext.getProvider() !== 'vm') {
+    if (this.getProvider() !== 'vm') {
       throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
-    this._addAccount(privateKey, balance)
-    const privKey = Buffer.from(privateKey, 'hex')
-    return '0x' + privateToAddress(privKey).toString('hex')
+    return this.providers.vm.createVMAccount(newAccount)
   }
 
   newAccount (_password, passwordPromptCb, cb) {
-    if (!this.executionContext.isVM()) {
-      if (!this.config.get('settings/personal-mode')) {
-        return cb('Not running in personal mode')
-      }
-      passwordPromptCb((passphrase) => {
-        this.executionContext.web3().personal.newAccount(passphrase, cb)
-      })
-    } else {
-      let privateKey
-      do {
-        privateKey = crypto.randomBytes(32)
-      } while (!isValidPrivate(privateKey))
-      this._addAccount(privateKey, '0x56BC75E2D63100000')
-      cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
-    }
-  }
-
-  /** Add an account to the list of account (only for Javascript VM) */
-  _addAccount (privateKey, balance) {
-    if (!this.executionContext.isVM()) {
-      throw new Error('_addAccount() cannot be called in non-VM mode')
-    }
-
-    if (this.accounts) {
-      privateKey = Buffer.from(privateKey, 'hex')
-      const address = privateToAddress(privateKey)
-
-      // FIXME: we don't care about the callback, but we should still make this proper
-      let stateManager = this.executionContext.vm().stateManager
-      stateManager.getAccount(address, (error, account) => {
-        if (error) return console.log(error)
-        account.balance = balance || '0xf00000000000000001'
-        stateManager.putAccount(address, account, (error) => {
-          if (error) console.log(error)
-        })
-      })
-
-      this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
-    }
-  }
-
-  /** Return the list of accounts */
-  getAccounts (cb) {
-    return new Promise((resolve, reject) => {
-      const provider = this.executionContext.getProvider()
-      switch (provider) {
-        case 'vm': {
-          if (!this.accounts) {
-            if (cb) cb('No accounts?')
-            reject('No accounts?')
-            return
-          }
-          if (cb) cb(null, Object.keys(this.accounts))
-          resolve(Object.keys(this.accounts))
-        }
-          break
-        case 'web3': {
-          if (this.config.get('settings/personal-mode')) {
-            return this.executionContext.web3().personal.getListAccounts((error, accounts) => {
-              if (cb) cb(error, accounts)
-              if (error) return reject(error)
-              resolve(accounts)
-            })
-          } else {
-            this.executionContext.web3().eth.getAccounts((error, accounts) => {
-              if (cb) cb(error, accounts)
-              if (error) return reject(error)
-              resolve(accounts)
-            })
-          }
-        }
-          break
-        case 'injected': {
-          this.executionContext.web3().eth.getAccounts((error, accounts) => {
-            if (cb) cb(error, accounts)
-            if (error) return reject(error)
-            resolve(accounts)
-          })
-        }
-      }
-    })
-  }
-
-  /** Get the balance of an address */
-  getBalance (address, cb) {
-    address = stripHexPrefix(address)
-
-    if (!this.executionContext.isVM()) {
-      this.executionContext.web3().eth.getBalance(address, (err, res) => {
-        if (err) {
-          cb(err)
-        } else {
-          cb(null, res.toString(10))
-        }
-      })
-    } else {
-      if (!this.accounts) {
-        return cb('No accounts?')
-      }
-
-      this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, res) => {
-        if (err) {
-          cb('Account not found')
-        } else {
-          cb(null, new BN(res.balance).toString(10))
-        }
-      })
-    }
+    return this.getCurrentProvider().newAccount(passwordPromptCb, cb)
   }
 
   /** Get the balance of an address, and convert wei to ether */
-  getBalanceInEther (address, callback) {
-    this.getBalance(address, (error, balance) => {
-      if (error) {
-        callback(error)
-      } else {
-        // callback(null, this.executionContext.web3().fromWei(balance, 'ether'))
-        callback(null, Web3.utils.fromWei(balance.toString(10), 'ether'))
-      }
-    })
+  getBalanceInEther (address, cb) {
+    this.getCurrentProvider().getBalanceInEther(address, cb)
   }
 
   pendingTransactionsCount () {
     return Object.keys(this.txRunner.pendingTxs).length
-  }
-
-  /**
-    * deploy the given contract
-    *
-    * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
-    * @param {Function} callback    - callback.
-    */
-  _createContract (data, confirmationCb, continueCb, promptCb, callback) {
-    this.runTx({data: data, useCall: false}, confirmationCb, continueCb, promptCb, (error, txResult) => {
-      // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
-      callback(error, txResult)
-    })
-  }
-
-  /**
-    * call the current given contract
-    *
-    * @param {String} to    - address of the contract to call.
-    * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
-    * @param {Object} funAbi    - abi definition of the function to call.
-    * @param {Function} callback    - callback.
-    */
-  callFunction (to, data, funAbi, confirmationCb, continueCb, promptCb, callback) {
-    const useCall = funAbi.stateMutability === 'view' || funAbi.stateMutability === 'pure'
-    this.runTx({to, data, useCall}, confirmationCb, continueCb, promptCb, (error, txResult) => {
-      // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
-      callback(error, txResult)
-    })
-  }
-
-  context () {
-    return (this.executionContext.isVM() ? 'memory' : 'blockchain')
   }
 
   /**
@@ -564,33 +377,23 @@ class Blockchain {
         if (network.name === 'Main' && network.id === '1') {
           return reject(new Error('It is not allowed to make this action against mainnet'))
         }
-        this.silentRunTx(tx, (error, result) => {
-          if (error) return reject(error)
-          try {
-            resolve(resultToRemixTx(result))
-          } catch (e) {
-            reject(e)
+
+        this.txRunner.rawRun(
+          tx,
+          (network, tx, gasEstimation, continueTxExecution, cancelCb) => { continueTxExecution() },
+          (error, continueTxExecution, cancelCb) => { if (error) { reject(error) } else { continueTxExecution() } },
+          (okCb, cancelCb) => { okCb() },
+          (error, result) => {
+            if (error) return reject(error)
+            try {
+              resolve(resultToRemixTx(result))
+            } catch (e) {
+              reject(e)
+            }
           }
-        })
+        )
       })
     })
-  }
-
-  /**
-   * This function send a tx without alerting the user (if mainnet or if gas estimation too high).
-   * SHOULD BE TAKEN CAREFULLY!
-   *
-   * @param {Object} tx    - transaction.
-   * @param {Function} callback    - callback.
-   */
-  silentRunTx (tx, cb) {
-    this.txRunner.rawRun(
-      tx,
-      (network, tx, gasEstimation, continueTxExecution, cancelCb) => { continueTxExecution() },
-      (error, continueTxExecution, cancelCb) => { if (error) { cb(error) } else { continueTxExecution() } },
-      (okCb, cancelCb) => { okCb() },
-      cb
-    )
   }
 
   runTx (args, confirmationCb, continueCb, promptCb, cb) {
@@ -627,7 +430,7 @@ class Blockchain {
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
-          if (self.executionContext.isVM() && !self.accounts[address]) {
+          if (self.executionContext.isVM() && !self.providers.vm.accounts[address]) {
             return next('Invalid account selected')
           }
           next(null, address, value, gasLimit)
@@ -644,8 +447,11 @@ class Blockchain {
         self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
         self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
           function (error, result) {
+            if (error) return next(error)
+
+            const rawAddress = self.executionContext.isVM() ? result.result.createdAddress : result.result.contractAddress
             let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
-            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
+            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad, rawAddress])
 
             if (error && (typeof (error) !== 'string')) {
               if (error.message) error = error.message
@@ -657,7 +463,30 @@ class Blockchain {
           }
         )
       }
-    ], cb)
+    ],
+    (error, txResult) => {
+      if (error) {
+        return cb(error)
+      }
+
+      const isVM = this.executionContext.isVM()
+      if (isVM) {
+        const vmError = txExecution.checkVMError(txResult)
+        if (vmError.error) {
+          return cb(vmError.message)
+        }
+      }
+
+      let address = null
+      let returnValue = null
+      if (txResult && txResult.result) {
+        address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
+        // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
+        returnValue = (txResult.result.execResult && isVM) ? txResult.result.execResult.returnValue : ''
+      }
+
+      cb(error, txResult, address, returnValue)
+    })
   }
 
 }
