@@ -37,8 +37,8 @@ class InjectedProvider {
   signMessage (message, account, _passphrase, cb) {
     const hashedMsg = Web3.utils.sha3(message)
     try {
-      this.executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
-        cb(error.message, hashedMsg, signedData)
+      this.executionContext.web3().eth.sign(hashedMsg, account, (error, signedData) => {
+        cb(error, hashedMsg, signedData)
       })
     } catch (e) {
       cb(e.message)
