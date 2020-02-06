@@ -11,7 +11,7 @@ The deployed contract appears but is in its collapsed form.
 
 Click the sideways caret to open it up.
 
-![](images/a-debug3-udapp2.png)
+![](images/a-udapp1.png)
 
 You will see the functions in the contract.  The functions buttons can have different color buttons.
 
@@ -24,8 +24,8 @@ You will see the functions in the contract.  The functions buttons can have diff
 ![](images/a-jvm-calling-instance.png)
 
 
-For more information see more about [Solidity
-modifier](http://solidity.readthedocs.io/en/develop/miscellaneous.html?highlight=pure#modifiers)
+See more information about [Solidity
+modifiers](http://solidity.readthedocs.io/en/develop/miscellaneous.html?highlight=pure#modifiers) in the Solidity docs.
 .
 
 If a function requires input parameters, well.. you gotta put them in.
@@ -54,6 +54,29 @@ In the expanded view, strings do not need to be wrapped.
 Clicking the clipboard icon will encode the inputs and will copy them.  Only a valid set of inputs can be encoded.  
 
 So if you made a mistake and put a uint8 where an address should have been, clicking the clipboard here will give you an error.
+
+## Low level interactions
+
+Low level interactions are used to send funds or calldata or funds & calldata to a contract through the **recieve()** or **fallback()** function.  Typically, you should only need to implement the fallback function if you are following an upgrade or proxy pattern.
+
+The low level interactions section is below the functions in each deployed contract.
+
+![](images/a-udapp1.png)
+
+
+Please note the following:
+
+- If you are executing a plain Ether transfer to a contract, you need to have the receive() function in your contract.  If your contract has been deployed and you want to send it funds, you would input the amount of Ether or Wei etc. (see **A** in graphic below), and then input **NOTHING** in the calldata field of **Low level interactions** (see **B** in graphic) and click the Transact button (see **C** in graphic below).
+
+![](images/a-receive-fun.png)
+
+- If you are sending calldata to your contract with Ether, then you need to use the fallback() function and have it with the state mutability of **payable**.  
+
+- If you are not sending ether to the contract but **are** sending call data then you need to use the fallback() function.
+
+- If you break the rules when using the **Low level interactions** you will be slapped with a warning.
+
+Please see the [solidity docs](https://solidity.readthedocs.io/en/latest/contracts.html#receive-ether-function  ) for more specifics about using the **fallback** and **receive** functions. 
 
 ### Passing in a tuple or a struct to a function
 To pass a tuple in, you need to put in an an array [].
