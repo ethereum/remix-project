@@ -30,6 +30,7 @@
     "csjs-inject": "^1.0.1",
     "csslint": "^1.0.2",
     "deep-equal": "^1.0.1",
+    "dotenv": "^8.2.0",
     "ethereumjs-util": "^6.2.0",
     "ethers": "^4.0.27",
     "events": "^3.0.0",
