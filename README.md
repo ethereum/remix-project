@@ -115,7 +115,7 @@ To run the Selenium tests via Nightwatch:
 
 - **the `remixd` tests suite** requires to run `remixd` locally.** 
 
-- **the `gist` tests suite** requires specifying a `gist_token` value in **.env file**. 
+- **the `gist` tests suite** requires specifying a github access token in **.env file**. 
 ```
     gist_token = <token>
 ```
