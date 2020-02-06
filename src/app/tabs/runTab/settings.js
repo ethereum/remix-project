@@ -44,7 +44,7 @@ class SettingsUI {
     if (!this.el) return
     var accounts = $(this.el.querySelector('#txorigin')).children('option')
     accounts.each((index, account) => {
-      this.blockchain.getAccountBalanceForAddress(account.value, (err, balance) => {
+      this.blockchain.getBalanceInEther(account.value, (err, balance) => {
         if (err) return
         account.innerText = helper.shortenAddress(account.value, balance)
       })

@@ -67,11 +67,10 @@ class Recorder {
       }
     })
 
-    this.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+    this.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp, _payload, rawAddress) => {
       if (error) return console.log(error)
       if (call) return
 
-      const rawAddress = this.blockchain.getAddressFromTransactionResult(txResult)
       if (!rawAddress) return // not a contract creation
       const stringAddress = this.addressToString(rawAddress)
       const address = ethutil.toChecksumAddress(stringAddress)
@@ -249,13 +248,12 @@ class Recorder {
       logCallBack(`(${index}) data: ${data.data}`)
       record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName, timestamp: tx.timestamp }
 
-      self.blockchain.runTransaction(record, continueCb, promptCb, confirmationCb,
-        function (err, txResult) {
+      self.blockchain.runTx(record, confirmationCb, continueCb, promptCb,
+        function (err, txResult, rawAddress) {
           if (err) {
             console.error(err)
             return logCallBack(err + '. Execution failed at ' + index)
           }
-          const rawAddress = self.blockchain.getAddressFromTransactionResult(txResult)
           if (rawAddress) {
             const stringAddress = self.addressToString(rawAddress)
             const address = ethutil.toChecksumAddress(stringAddress)
