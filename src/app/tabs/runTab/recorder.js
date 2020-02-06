@@ -89,7 +89,7 @@ class RecorderUI {
       modalDialog('Confirm transaction', content,
         { label: 'Confirm',
           fn: () => {
-            this.blockchain.udapp.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+            this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
             // TODO: check if this is check is still valid given the refactor
             if (!content.gasPriceStatus) {
               cancelCb('Given gas price is not correct')

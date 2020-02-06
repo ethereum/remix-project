@@ -1,6 +1,7 @@
 var yo = require('yo-yo')
 var css = require('./styles/modaldialog-styles')
 
+let incomingModal = false // in case modals are queued, ensure we are not hiding the last one.
 module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   let agreed = true
   let footerIsActive = false
@@ -9,7 +10,8 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   if (!container) {
     document.querySelector('body').appendChild(html(opts))
     container = document.querySelector(`.modal`)
-  }
+    incomingModal = false
+  } else incomingModal = true
 
   var closeDiv = document.getElementById('modal-close')
   if (opts.hideClose) closeDiv.style.display = 'none'
@@ -50,13 +52,15 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   function okListener () {
     removeEventListener()
     if (ok && ok.fn && agreed) ok.fn()
-    hide()
+    if (!incomingModal) hide()
+    incomingModal = false
   }
 
   function cancelListener () {
     removeEventListener()
     if (cancel && cancel.fn) cancel.fn()
-    hide()
+    if (!incomingModal) hide()
+    incomingModal = false
   }
 
   function modalKeyEvent (e) {
@@ -81,6 +85,7 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
     container.style.display = 'none'
     if (container.parentElement) container.parentElement.removeChild(container)
     container = null
+    incomingModal = false
   }
 
   function show () {
