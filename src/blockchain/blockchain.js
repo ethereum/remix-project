@@ -448,6 +448,8 @@ class Blockchain {
         self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
         self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
           function (error, result) {
+            if (error) return next(error)
+
             const rawAddress = self.executionContext.isVM() ? result.result.createdAddress : result.result.contractAddress
             let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
             self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad, rawAddress])
@@ -480,7 +482,8 @@ class Blockchain {
       let returnValue = null
       if (txResult && txResult.result) {
         address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-        returnValue = (txResult.result.execResult && isVM) ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result)
+        // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
+        returnValue = (txResult.result.execResult && isVM) ? txResult.result.execResult.returnValue : ''
       }
 
       cb(error, txResult, address, returnValue)
