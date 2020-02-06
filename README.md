@@ -113,7 +113,7 @@ To run the Selenium tests via Nightwatch:
 
 - **the `ballot` tests suite** requires to run `ganache-cli` locally.
 
-- **the `remixd` tests suite** requires to run `remixd` locally.** 
+- **the `remixd` tests suite** requires to run `remixd` locally.
 
 - **the `gist` tests suite** requires specifying a github access token in **.env file**. 
 ```
