@@ -243,7 +243,20 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
     }
   }
   const params = args.funABI.type !== 'fallback' ? inputsValues : ''
-  this.blockchain.runOrCallContractMethod(args.contractName, args.contractAbi, args.funABI, inputsValues, args.address, params, lookupOnly, logMsg, this.logCallback, outputCb, callbacksInContext)
+  this.blockchain.runOrCallContractMethod(
+    args.contractName,
+    args.contractAbi,
+    args.funABI,
+    inputsValues,
+    args.address,
+    params,
+    lookupOnly,
+    logMsg,
+    this.logCallback,
+    outputCb,
+    callbacksInContext.confirmationCb.bind(callbacksInContext),
+    callbacksInContext.continueCb.bind(callbacksInContext),
+    callbacksInContext.promptCb.bind(callbacksInContext))
 }
 
 module.exports = UniversalDAppUI
