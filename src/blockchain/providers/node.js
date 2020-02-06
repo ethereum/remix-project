@@ -47,7 +47,7 @@ class NodeProvider {
     try {
       const personal = new Personal(this.executionContext.web3().currentProvider)
       personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
-        cb(error.message, hashedMsg, signedData)
+        cb(error, hashedMsg, signedData)
       })
     } catch (e) {
       cb(e.message)
