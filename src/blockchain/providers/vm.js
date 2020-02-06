@@ -57,7 +57,7 @@ class VMProvider {
     do {
       privateKey = crypto.randomBytes(32)
     } while (!isValidPrivate(privateKey))
-    this.providers.vm._addAccount(privateKey, '0x56BC75E2D63100000')
+    this._addAccount(privateKey, '0x56BC75E2D63100000')
     return cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
   }
 
@@ -78,7 +78,7 @@ class VMProvider {
 
   signMessage (message, account, _passphrase, cb) {
     const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
-    const privKey = this.providers.vm.accounts[account].privateKey
+    const privKey = this.accounts[account].privateKey
     try {
       const rsv = ethJSUtil.ecsign(personalMsg, privKey)
       const signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
