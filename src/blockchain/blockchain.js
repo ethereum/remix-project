@@ -7,7 +7,6 @@ const TxRunner = remixLib.execution.txRunner
 const txHelper = remixLib.execution.txHelper
 const EventManager = remixLib.EventManager
 const executionContext = remixLib.execution.executionContext
-const ethJSUtil = require('ethereumjs-util')
 const Web3 = require('web3')
 
 const async = require('async')
