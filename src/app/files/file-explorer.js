@@ -599,7 +599,7 @@ fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
       } else {
         self._deps.fileManager.switchFile(newName)
         if (newName.includes('_test.sol')) {
-          self.event.trigger('newTestFileCreated', [newName])
+          self.events.trigger('newTestFileCreated', [newName])
         }
       }
     })
