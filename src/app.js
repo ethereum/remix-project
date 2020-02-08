@@ -48,6 +48,7 @@ import { FramingService } from './framingService'
 import { MainView } from './app/panels/main-view'
 import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
+import { Web3ProviderModule } from './app/tabs/web3-provider'
 import { SidePanel } from './app/components/side-panel'
 import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
@@ -267,6 +268,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ----------------- network service (resolve network id / name) -----
   const networkModule = new NetworkModule(blockchain)
+  // ----------------- represent the current selected web3 provider ----
+  const web3Provider = new Web3ProviderModule(blockchain)
   // ----------------- convert offset to line/column service -----------
   const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
@@ -300,7 +303,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     networkModule,
     offsetToLineColumnConverter,
     contextualListener,
-    terminal
+    terminal,
+    web3Provider
   ])
 
   // LAYOUT & SYSTEM VIEWS
@@ -383,7 +387,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     console.log('couldn\'t register iframe plugins', e.message)
   }
 
-  await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'offsetToLineColumnConverter'])
+  await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
   await appManager.activatePlugin(['mainPanel', 'menuicons'])
   await appManager.activatePlugin(['home', 'sidePanel', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'scriptRunner', 'terminal'])
 
