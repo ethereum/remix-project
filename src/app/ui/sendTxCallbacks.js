@@ -7,13 +7,13 @@ const typeConversion = remixLib.execution.typeConversion
 const Web3 = require('web3')
 
 module.exports = {
-  getCallBacksWithContext: (udappUI, executionContext) => {
+  getCallBacksWithContext: (udappUI, blockchain) => {
     let callbacks = {}
     callbacks.confirmationCb = confirmationCb
     callbacks.continueCb = continueCb
     callbacks.promptCb = promptCb
     callbacks.udappUI = udappUI
-    callbacks.executionContext = executionContext
+    callbacks.blockchain = blockchain
     return callbacks
   }
 }
@@ -67,7 +67,7 @@ const confirmationCb = function (network, tx, gasEstimation, continueTxExecution
       cb(txFeeText, priceStatus)
     },
     (cb) => {
-      self.executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+      self.blockchain.web3().eth.getGasPrice((error, gasPrice) => {
         const warnMessage = ' Please fix this issue before sending any transaction. '
         if (error) {
           return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
