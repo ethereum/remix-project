@@ -60,7 +60,7 @@ module.exports = {
   'Deploy and use Ballot using external web3': function (browser) {
     browser
     .click('#selectExEnvOptions #web3-mode')
-    .modalFooterOKClick()
+    .modalFooterClick('#modal-footer-ok')
     .clickLaunchIcon('solidity')
     .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
     .clickLaunchIcon('udapp')
