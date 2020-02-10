@@ -31,7 +31,7 @@ module.exports = {
   'Loads terminal': function (browser) {
     browser
     .waitForElementVisible('#terminalCli', 10000)
-    .journalLastChildIncludes('Welcome to Remix');
+    .journalLastChildIncludes('Welcome to Remix')
   },
 
   'Toggles Side Panel': function (browser) {
