@@ -21,7 +21,7 @@ module.exports = {
       if (value.indexOf('dweb:/ipfs') === -1) browser.assert.fail('ipfs deploy failed', '', '')
       done()
     })
-    .modalFooterOKClick()
+    .modalFooterClick('#modal-footer-ok')
   },
   'Publish on Swarm': function (browser) {
     browser
