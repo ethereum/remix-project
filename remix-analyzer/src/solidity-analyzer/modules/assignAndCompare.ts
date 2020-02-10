@@ -1,17 +1,17 @@
-import { MISC } from './categories'
-const common = require('./staticAnalysisCommon')
+import { default as category } from './categories'
+import { isSubScopeWithTopLevelUnAssignedBinOp, getUnAssignedTopLevelBinOps } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 
 export class assignAndCompare {
-  warningNodes: any = []
+  warningNodes: any[] = []
   name = 'Result not used: '
   description = 'The result of an operation was not used.'
-  category = MISC
+  category = category.MISC
   algorithm = algorithm.EXACT
   Module = this
 
   visit (node) {
-    if (common.isSubScopeWithTopLevelUnAssignedBinOp(node)) common.getUnAssignedTopLevelBinOps(node).forEach((n) => this.warningNodes.push(n))
+    if (isSubScopeWithTopLevelUnAssignedBinOp(node)) getUnAssignedTopLevelBinOps(node).forEach((n) => this.warningNodes.push(n))
   }
 
   report (compilationResults) {
