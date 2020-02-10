@@ -28,6 +28,12 @@ module.exports = {
     .waitForElementVisible('#main-panel div[class^="panel"] > div[class^="terminal_container"]:nth-child(2)')
   },
 
+  'Loads terminal': function (browser) {
+    browser
+    .waitForElementVisible('#terminalCli', 10000)
+    .journalLastChildIncludes('Welcome to Remix');
+  },
+
   'Toggles Side Panel': function (browser) {
     browser.waitForElementVisible('#side-panel')
     .assert.visible('#side-panel')
