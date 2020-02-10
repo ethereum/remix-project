@@ -1,6 +1,10 @@
 'use strict'
 const init = require('../helpers/init')
 const sauce = require('./sauce')
+const testData = {
+  validGistId: '1859c97c6e1efc91047d725d5225888e',
+  invalidGistId: '6368b389f9302v32902msk2402'
+}
 // 99266d6da54cc12f37f11586e8171546c7700d67
 
 module.exports = {
@@ -19,7 +23,7 @@ module.exports = {
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('fileExplorers')
     .click('#publishToGist')
-    .modalFooterOKClick()
+    .modalFooterClick('#modal-footer-ok')
     .getModalBody((value, done) => {
       const reg = /gist.github.com\/([^.]+)/
       const id = value.match(reg)
@@ -29,7 +33,7 @@ module.exports = {
       } else {
         let gistid = id[1]
         browser
-          .modalFooterCancelClick()
+          .modalFooterClick('#modal-footer-cancel')
           .executeScript(`remix.loadgist('${gistid}')`)
           .switchFile('browser/gists')
           .switchFile(`browser/gists/${gistid}`)
@@ -37,6 +41,45 @@ module.exports = {
           .perform(done)
       }
     })
+  },
+  'Load Gist Modal': function (browser) {
+    browser
+    .waitForElementVisible('#icon-panel', 10000)
+    .clickLaunchIcon('fileExplorers')
+    .scrollAndClick('div.file > div.btn-group > button:nth-child(1)')
+    .waitForElementVisible('h6.modal-title')
+    .assert.containsText('h6.modal-title', 'Load a Gist')
+    .waitForElementVisible('div.modal-body > div')
+    .assert.containsText('div.modal-body > div', 'Enter the ID of the Gist or URL you would like to load.')
+    .waitForElementVisible('#prompt_text')
+    .click('#modal-footer-cancel')
+  },
+
+  'Display Error Message For Invalid Gist ID': function (browser) {
+    browser
+    .waitForElementVisible('#icon-panel', 10000)
+    .clickLaunchIcon('fileExplorers')
+    .scrollAndClick('div.file > div.btn-group > button:nth-child(1)')
+    .waitForElementVisible('#prompt_text')
+    .setValue('#prompt_text', testData.invalidGistId)
+    .modalFooterClick('#modal-footer-ok')
+    .waitForElementVisible('div.modal-body > div')
+    .assert.containsText('div.modal-body > div', 'Gist load error: Not Found')
+    .modalFooterClick('#modal-footer-ok')
+  },
+
+  'Import From Gist For Valid Gist ID': function (browser) {
+    browser
+    .waitForElementVisible('#icon-panel', 10000)
+    .clickLaunchIcon('fileExplorers')
+    .scrollAndClick('div.file > div.btn-group > button:nth-child(1)')
+    .waitForElementVisible('#prompt_text')
+    .setValue('#prompt_text', testData.validGistId)
+    .modalFooterClick('#modal-footer-ok')
+    .switchFile(`browser/gists/${testData.validGistId}`)
+    .switchFile(`browser/gists/${testData.validGistId}/ApplicationRegistry`)
+    .waitForElementVisible(`div[title='browser/gists/${testData.validGistId}/ApplicationRegistry']`)
+    .assert.containsText(`div[title='browser/gists/${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
     .end()
   },
   tearDown: sauce
