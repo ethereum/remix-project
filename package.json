@@ -172,7 +172,7 @@
     "nightwatch_local_specialFunctions": "nightwatch ./test-browser/tests/specialFunctions.js --config nightwatch.js --env chrome ",
     "nightwatch_local_solidityUnittests": "nightwatch ./test-browser/tests/solidityUnittests.js --config nightwatch.js --env chrome ",
     "nightwatch_local_remixd": "nightwatch ./test-browser/tests/remixd.js --config nightwatch.js --env chrome ",
-    "nightwatch_local_terminal": "nightwatch ./test-browser/tests/console.js --config nightwatch.js --env chrome ",
+    "nightwatch_local_terminal": "nightwatch ./test-browser/tests/terminal.js --config nightwatch.js --env chrome ",
     "nightwatch_local_gist": "nightwatch ./test-browser/tests/gist.js --config nightwatch.js --env chrome ",
     "nightwatch_local_workspace": "nightwatch ./test-browser/tests/workspace.js --config nightwatch.js --env chrome ",
     "nightwatch_local_defaultLayout": "nightwatch ./test-browser/tests/defaultLayout.js --config nightwatch.js --env chrome ",
