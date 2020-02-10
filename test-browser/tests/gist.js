@@ -23,7 +23,7 @@ module.exports = {
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('fileExplorers')
     .click('#publishToGist')
-    .modalFooterClick('#modal-footer-ok')
+    .modalFooterOKClick()
     .getModalBody((value, done) => {
       const reg = /gist.github.com\/([^.]+)/
       const id = value.match(reg)
@@ -33,7 +33,7 @@ module.exports = {
       } else {
         let gistid = id[1]
         browser
-          .modalFooterClick('#modal-footer-cancel')
+          .modalFooterCancelClick()
           .executeScript(`remix.loadgist('${gistid}')`)
           .switchFile('browser/gists')
           .switchFile(`browser/gists/${gistid}`)
@@ -44,8 +44,8 @@ module.exports = {
   },
   'Load Gist Modal': function (browser) {
     browser
-    .waitForElementVisible('#icon-panel', 10000)
-    .clickLaunchIcon('fileExplorers')
+    .waitForElementVisible('#icon-panel')
+    .clickLaunchIcon('home')
     .scrollAndClick('div.file > div.btn-group > button:nth-child(1)')
     .waitForElementVisible('h6.modal-title')
     .assert.containsText('h6.modal-title', 'Load a Gist')
@@ -62,10 +62,10 @@ module.exports = {
     .scrollAndClick('div.file > div.btn-group > button:nth-child(1)')
     .waitForElementVisible('#prompt_text')
     .setValue('#prompt_text', testData.invalidGistId)
-    .modalFooterClick('#modal-footer-ok')
+    .modalFooterOKClick()
     .waitForElementVisible('div.modal-body > div')
     .assert.containsText('div.modal-body > div', 'Gist load error: Not Found')
-    .modalFooterClick('#modal-footer-ok')
+    .modalFooterOKClick()
   },
 
   'Import From Gist For Valid Gist ID': function (browser) {
@@ -75,7 +75,7 @@ module.exports = {
     .scrollAndClick('div.file > div.btn-group > button:nth-child(1)')
     .waitForElementVisible('#prompt_text')
     .setValue('#prompt_text', testData.validGistId)
-    .modalFooterClick('#modal-footer-ok')
+    .modalFooterOKClick()
     .switchFile(`browser/gists/${testData.validGistId}`)
     .switchFile(`browser/gists/${testData.validGistId}/ApplicationRegistry`)
     .waitForElementVisible(`div[title='browser/gists/${testData.validGistId}/ApplicationRegistry']`)
