@@ -3,6 +3,7 @@ const EventEmitter = require('events')
 class ExecuteScript extends EventEmitter {
   command (script) {
     this.api
+      .clearValue('#terminalCliInput')
       .click('#terminalCli')
       .keys(script)
       .keys(this.api.Keys.ENTER)
