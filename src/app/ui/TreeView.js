@@ -91,7 +91,7 @@ class TreeView {
       var list = yo`<ul key=${keyPath} class=${css.ul_tv}>${children}</ul>`
       list.style.display = 'none'
       caret.className = list.style.display === 'none' ? `fas fa-caret-right caret ${css.caret_tv}` : `fas fa-caret-down caret ${css.caret_tv}`
-      caret.setAttribute('data-id', `toggle_${keyPath}`)
+      caret.setAttribute('data-id', `sidePanelToggle${keyPath}`)
       label.onclick = function () {
         self.expand(keyPath)
       }

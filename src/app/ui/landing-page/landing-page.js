@@ -177,7 +177,7 @@ export class LandingPage extends ViewPlugin {
       document.location.reload()
     }
     const img = yo`<img src="assets/img/hexagon-remix-greengrey-texture.png"></img>`
-    let container = yo`<div class="${css.homeContainer} bg-light" data-id="homeContainer">
+    let container = yo`<div class="${css.homeContainer} bg-light" data-id="mainPanelHomeContainer">
       <div>
         <div class="alert alert-info clearfix ${css.thisJumboton}">
           <div class="${css.headlineContainer}">
@@ -189,7 +189,7 @@ export class LandingPage extends ViewPlugin {
           </div>
         </div><!-- end of jumbotron -->
       </div><!-- end of jumbotron container -->
-      <div class="row ${css.hpSections}" data-id="hpSections">
+      <div class="row ${css.hpSections}" data-id="mainPanelHpSections">
         <div id="col1" class="col-sm-7">
           <div class="mb-5">
             <h4>Environments</h4>
