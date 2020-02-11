@@ -227,7 +227,7 @@ export class VerticalIcons extends Plugin {
         this.appManager.ensureActivated('home')
       }}"
       plugin="home" title="Home"
-      data-id="homeIcon"
+      data-id="remixIdeHomeIcon"
     >
     <svg id="Ebene_2" data-name="Ebene 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105 100">
       <title>remix_logo1</title>
