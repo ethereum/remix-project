@@ -132,7 +132,7 @@ export class SidePanel extends AbstractPanel {
 
     return yo`
       <header class="${css.swapitHeader} px-3">
-        <h6 class="${css.swapitTitle}" data-id="swapitTitle">${name}</h6>
+        <h6 class="${css.swapitTitle}" data-id="sidePanelFileExplorerTitle">${name}</h6>
         ${docLink}
         ${versionWarning}
       </header>
