@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isNowAccess, isBlockTimestampAccess } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 
-export class blockTimestamp  {
+export default class blockTimestamp  {
   warningNowNodes: any[] = []
   warningblockTimestampNodes: any[] = []
   name = 'Block timestamp: '

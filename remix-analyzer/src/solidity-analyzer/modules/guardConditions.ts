@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isRequireCall, isAssertCall } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 
-export class guardConditions {
+export default class guardConditions {
   guards: any[] = []
   name = 'Guard Conditions: '
   desc = 'Use require and appropriately'

@@ -25,11 +25,12 @@
   "scripts": {
     "build": "tsc",
     "lint": "standard",
-    "test": "npm run lint && tape ./test/tests.js"
+    "test": "tsc && npm run lint && tape ./test/tests.js"
   },
   "standard": {
     "ignore": [
-      "node_modules/*"
+      "node_modules/*",
+      "dist/"
     ],
     "parser": "babel-eslint"
   },
