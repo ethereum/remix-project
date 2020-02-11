@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isBlockBlockHashAccess } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 
-export class blockBlockhash {
+export default class blockBlockhash {
   warningNodes: any[] = []
   name = 'Block.blockhash usage: '
   desc = 'Semantics maybe unclear'

@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { isLoop, isBlock, getLoopBlockStartIndex, isExpressionStatement, isTransfer } from './staticAnalysisCommon'
 
-export class etherTransferInLoop {
+export default class etherTransferInLoop {
   relevantNodes: any[] = []
   name = 'Ether transfer in a loop: '
   desc = 'Avoid transferring Ether to multiple addresses in a loop'
@@ -12,7 +12,7 @@ export class etherTransferInLoop {
     if (isLoop(node)) {
       let transferNodes = []
       const loopBlockStartIndex = getLoopBlockStartIndex(node)
-      if (isBlock(node.children[loopBlockStartIndex])) {
+      if (loopBlockStartIndex && isBlock(node.children[loopBlockStartIndex])) {
         transferNodes = node.children[loopBlockStartIndex].children
         .filter(child => (isExpressionStatement(child) &&
                       child.children[0].name === 'FunctionCall' &&

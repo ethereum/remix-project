@@ -363,7 +363,9 @@ function getFunctionCallTypeParameterType (func) {
  */
 function getLibraryCallContractName (funcCall) {
   if (!isLibraryCall(funcCall)) throw new Error('staticAnalysisCommon.js: not an this library call Node')
-  return new RegExp(basicRegex.LIBRARYTYPE).exec(funcCall.children[0].attributes.type)[1]
+  const types = new RegExp(basicRegex.LIBRARYTYPE).exec(funcCall.children[0].attributes.type)
+  if(types)
+    return types[1]
 }
 
 /**
@@ -807,7 +809,7 @@ function isExternalDirectCall (node) {
 function isNowAccess (node) {
   return nodeType(node, exactMatch(nodeTypes.IDENTIFIER)) &&
         expressionType(node, exactMatch(basicTypes.UINT)) &&
-        name(node, exactMatch('now'))
+        memName(node, exactMatch('now'))
 }
 
 /**
@@ -969,7 +971,7 @@ function isStringToBytesConversion (node) {
 
 function isExplicitCast (node, castFromType, castToType) {
   return nodeType(node, exactMatch(nodeTypes.FUNCTIONCALL)) && nrOfChildren(node, 2) &&
-          nodeType(node.children[0], exactMatch(nodeTypes.ELEMENTARYTYPENAMEEXPRESSION)) && name(node.children[0], castToType) &&
+          nodeType(node.children[0], exactMatch(nodeTypes.ELEMENTARYTYPENAMEEXPRESSION)) && memName(node.children[0], castToType) &&
           nodeType(node.children[1], exactMatch(nodeTypes.IDENTIFIER)) && expressionType(node.children[1], castFromType)
 }
 
@@ -1002,9 +1004,9 @@ function isForLoop (node) {
 function isMemberAccess (node, retType, accessor, accessorType, memberName) {
   return nodeType(node, exactMatch(nodeTypes.MEMBERACCESS)) &&
         expressionType(node, retType) &&
-        name(node, memberName) &&
+        memName(node, memberName) &&
         nrOfChildren(node, 1) &&
-        name(node.children[0], accessor) &&
+        memName(node.children[0], accessor) &&
         expressionType(node.children[0], accessorType)
 }
 
@@ -1030,9 +1032,9 @@ function nodeType (node, typeRegex) {
   return (node && !typeRegex) || (node && new RegExp(typeRegex).test(node.name))
 }
 
-function name (node, nameRegex) {
-  const regex = new RegExp(nameRegex)
-  return (node && !nameRegex) || (node && node.attributes && (regex.test(node.attributes.value) || regex.test(node.attributes.member_name)))
+function memName (node, memNameRegex) {
+  const regex = new RegExp(memNameRegex)
+  return (node && !memNameRegex) || (node && node.attributes && (regex.test(node.attributes.value) || regex.test(node.attributes.member_name)))
 }
 
 function operator (node, opRegex) {
@@ -1045,10 +1047,10 @@ function exactMatch (regexStr) {
   return '^' + regexStr + '$'
 }
 
-function matches () {
-  const args = []
-  for (let k = 0; k < arguments.length; k++) {
-    args.push(arguments[k])
+function matches (...fnArgs) {
+  const args: any[] = []
+  for (let k = 0; k < fnArgs.length; k++) {
+    args.push(fnArgs[k])
   }
   return '(' + args.join('|') + ')'
 }
@@ -1061,7 +1063,7 @@ function matches () {
  *  list of return type names
  * @return {Boolean} isPayable
  */
-function buildFunctionSignature (paramTypes, returnTypes, isPayable, additionalMods) {
+function buildFunctionSignature (paramTypes, returnTypes, isPayable, additionalMods?) {
   return 'function (' + util.concatWithSeperator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((additionalMods) ? ' ' + additionalMods : '') + ((returnTypes.length) ? ' returns (' + util.concatWithSeperator(returnTypes, ',') + ')' : '')
 }
 
@@ -1088,117 +1090,119 @@ function findFirstSubNodeLTR (node, type) {
   return null
 }
 
-module.exports = {
+const helpers = {
+  nrOfChildren,
+  minNrOfChildren,
+  expressionType,
+  nodeType,
+  memName,
+  operator,
+  buildFunctionSignature,
+  buildAbiSignature
+}
+
+export {
   // #################### Trivial Getters
-  getType: getType,
+  getType,
   // #################### Complex Getters
-  getThisLocalCallName: getThisLocalCallName,
-  getSuperLocalCallName: getSuperLocalCallName,
-  getFunctionCallType: getFunctionCallType,
-  getContractName: getContractName,
-  getEffectedVariableName: getEffectedVariableName,
-  getDeclaredVariableName: getDeclaredVariableName,
-  getDeclaredVariableType: getDeclaredVariableType,
-  getLocalCallName: getLocalCallName,
-  getInheritsFromName: getInheritsFromName,
-  getExternalDirectCallContractName: getExternalDirectCallContractName,
-  getThisLocalCallContractName: getThisLocalCallContractName,
-  getExternalDirectCallMemberName: getExternalDirectCallMemberName,
-  getFunctionDefinitionName: getFunctionDefinitionName,
-  getFunctionCallTypeParameterType: getFunctionCallTypeParameterType,
-  getLibraryCallContractName: getLibraryCallContractName,
-  getLibraryCallMemberName: getLibraryCallMemberName,
-  getFullQualifiedFunctionCallIdent: getFullQualifiedFunctionCallIdent,
-  getFullQuallyfiedFuncDefinitionIdent: getFullQuallyfiedFuncDefinitionIdent,
-  getStateVariableDeclarationsFormContractNode: getStateVariableDeclarationsFormContractNode,
-  getFunctionOrModifierDefinitionParameterPart: getFunctionOrModifierDefinitionParameterPart,
-  getFunctionOrModifierDefinitionReturnParameterPart: getFunctionOrModifierDefinitionReturnParameterPart,
-  getUnAssignedTopLevelBinOps: getUnAssignedTopLevelBinOps,
-  getLoopBlockStartIndex: getLoopBlockStartIndex,
+  getThisLocalCallName,
+  getSuperLocalCallName,
+  getFunctionCallType,
+  getContractName,
+  getEffectedVariableName,
+  getDeclaredVariableName,
+  getDeclaredVariableType,
+  getLocalCallName,
+  getInheritsFromName,
+  getExternalDirectCallContractName,
+  getThisLocalCallContractName,
+  getExternalDirectCallMemberName,
+  getFunctionDefinitionName,
+  getFunctionCallTypeParameterType,
+  getLibraryCallContractName,
+  getLibraryCallMemberName,
+  getFullQualifiedFunctionCallIdent,
+  getFullQuallyfiedFuncDefinitionIdent,
+  getStateVariableDeclarationsFormContractNode,
+  getFunctionOrModifierDefinitionParameterPart,
+  getFunctionOrModifierDefinitionReturnParameterPart,
+  getUnAssignedTopLevelBinOps,
+  getLoopBlockStartIndex,
 
   // #################### Complex Node Identification
-  isDeleteOfDynamicArray: isDeleteOfDynamicArray,
-  isDeleteFromDynamicArray: isDeleteFromDynamicArray,
-  isAbiNamespaceCall: isAbiNamespaceCall,
-  isSpecialVariableAccess: isSpecialVariableAccess,
-  isDynamicArrayAccess: isDynamicArrayAccess,
-  isDynamicArrayLengthAccess: isDynamicArrayLengthAccess,
-  isIndexAccess: isIndexAccess,
-  isMappingIndexAccess: isMappingIndexAccess,
-  isSubScopeWithTopLevelUnAssignedBinOp: isSubScopeWithTopLevelUnAssignedBinOp,
-  hasFunctionBody: hasFunctionBody,
-  isInteraction: isInteraction,
-  isEffect: isEffect,
-  isNowAccess: isNowAccess,
-  isBlockTimestampAccess: isBlockTimestampAccess,
-  isBlockBlockHashAccess: isBlockBlockHashAccess,
-  isThisLocalCall: isThisLocalCall,
-  isSuperLocalCall: isSuperLocalCall,
-  isLibraryCall: isLibraryCall,
-  isLocalCallGraphRelevantNode: isLocalCallGraphRelevantNode,
-  isLocalCall: isLocalCall,
-  isWriteOnStateVariable: isWriteOnStateVariable,
-  isStateVariable: isStateVariable,
-  isTransfer: isTransfer,
-  isLowLevelCall: isLowLevelCall,
-  isLowLevelCallInst: isLLCall,
-  isLowLevelCallInst050: isLLCall050,
-  isLowLevelSendInst050: isLLSend050,
-  isLLDelegatecallInst050: isLLDelegatecall050,
-  isLowLevelCallcodeInst: isLLCallcode,
-  isLowLevelDelegatecallInst: isLLDelegatecall,
-  isLowLevelSendInst: isLLSend,
-  isExternalDirectCall: isExternalDirectCall,
-  isFullyImplementedContract: isFullyImplementedContract,
-  isLibrary: isLibrary,
-  isCallToNonConstLocalFunction: isCallToNonConstLocalFunction,
-  isPlusPlusUnaryOperation: isPlusPlusUnaryOperation,
-  isMinusMinusUnaryOperation: isMinusMinusUnaryOperation,
-  isBuiltinFunctionCall: isBuiltinFunctionCall,
-  isSelfdestructCall: isSelfdestructCall,
-  isAssertCall: isAssertCall,
-  isRequireCall: isRequireCall,
-  isIntDivision: isIntDivision,
-  isStringToBytesConversion: isStringToBytesConversion,
-  isBytesLengthCheck: isBytesLengthCheck,
-  isLoop: isLoop,
-  isForLoop: isForLoop,
+  isDeleteOfDynamicArray,
+  isDeleteFromDynamicArray,
+  isAbiNamespaceCall,
+  isSpecialVariableAccess,
+  isDynamicArrayAccess,
+  isDynamicArrayLengthAccess,
+  isIndexAccess,
+  isMappingIndexAccess,
+  isSubScopeWithTopLevelUnAssignedBinOp,
+  hasFunctionBody,
+  isInteraction,
+  isEffect,
+  isNowAccess,
+  isBlockTimestampAccess,
+  isBlockBlockHashAccess,
+  isThisLocalCall,
+  isSuperLocalCall,
+  isLibraryCall,
+  isLocalCallGraphRelevantNode,
+  isLocalCall,
+  isWriteOnStateVariable,
+  isStateVariable,
+  isTransfer,
+  isLowLevelCall,
+  isLLCall as isLowLevelCallInst,
+  isLLCall050 as isLowLevelCallInst050,
+  isLLSend050 as isLowLevelSendInst050,
+  isLLDelegatecall050 as isLLDelegatecallInst050,
+  isLLCallcode as isLowLevelCallcodeInst,
+  isLLDelegatecall as isLowLevelDelegatecallInst,
+  isLLSend as isLowLevelSendInst,
+  isExternalDirectCall,
+  isFullyImplementedContract,
+  isLibrary,
+  isCallToNonConstLocalFunction,
+  isPlusPlusUnaryOperation,
+  isMinusMinusUnaryOperation,
+  isBuiltinFunctionCall,
+  isSelfdestructCall,
+  isAssertCall,
+  isRequireCall,
+  isIntDivision,
+  isStringToBytesConversion,
+  isBytesLengthCheck,
+  isLoop,
+  isForLoop,
 
   // #################### Trivial Node Identification
-  isDeleteUnaryOperation: isDeleteUnaryOperation,
-  isFunctionDefinition: isFunctionDefinition,
-  isModifierDefinition: isModifierDefinition,
-  isInheritanceSpecifier: isInheritanceSpecifier,
-  isModifierInvocation: isModifierInvocation,
-  isVariableDeclaration: isVariableDeclaration,
-  isStorageVariableDeclaration: isStorageVariableDeclaration,
-  isAssignment: isAssignment,
-  isContractDefinition: isContractDefinition,
-  isConstantFunction: isConstantFunction,
-  isPayableFunction: isPayableFunction,
-  isConstructor: isConstructor,
-  isInlineAssembly: isInlineAssembly,
-  isNewExpression: isNewExpression,
-  isReturn: isReturn,
-  isStatement: isStatement,
-  isExpressionStatement: isExpressionStatement,
-  isBlock: isBlock,
-  isBinaryOperation: isBinaryOperation,
+  isDeleteUnaryOperation,
+  isFunctionDefinition,
+  isModifierDefinition,
+  isInheritanceSpecifier,
+  isModifierInvocation,
+  isVariableDeclaration,
+  isStorageVariableDeclaration,
+  isAssignment,
+  isContractDefinition,
+  isConstantFunction,
+  isPayableFunction,
+  isConstructor,
+  isInlineAssembly,
+  isNewExpression,
+  isReturn,
+  isStatement,
+  isExpressionStatement,
+  isBlock,
+  isBinaryOperation,
 
   // #################### Constants
-  nodeTypes: nodeTypes,
-  basicTypes: basicTypes,
-  basicFunctionTypes: basicFunctionTypes,
-  lowLevelCallTypes: lowLevelCallTypes,
-  specialVariables: specialVariables,
-  helpers: {
-    nrOfChildren: nrOfChildren,
-    minNrOfChildren: minNrOfChildren,
-    expressionType: expressionType,
-    nodeType: nodeType,
-    name: name,
-    operator: operator,
-    buildFunctionSignature: buildFunctionSignature,
-    buildAbiSignature: buildAbiSignature
-  }
+  nodeTypes,
+  basicTypes,
+  basicFunctionTypes,
+  lowLevelCallTypes,
+  specialVariables,
+  helpers
 }

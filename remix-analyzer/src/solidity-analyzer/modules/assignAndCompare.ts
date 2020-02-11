@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isSubScopeWithTopLevelUnAssignedBinOp, getUnAssignedTopLevelBinOps } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 
-export class assignAndCompare {
+export default class assignAndCompare {
   warningNodes: any[] = []
   name = 'Result not used: '
   description = 'The result of an operation was not used.'

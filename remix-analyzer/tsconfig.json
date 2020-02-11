@@ -12,7 +12,7 @@
       "noImplicitAny": false,                  /* Raise error on expressions and declarations with an implied 'any' type. */
       /* Module Resolution Options */
       "baseUrl": "./src",                       /* Base directory to resolve non-absolute module names. */
-      "paths": { "remix-solidity": ["./"] },       /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+      "paths": { "remix-analyzer": ["./"] },       /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
       "typeRoots": [
         "./@types",
         "./node_modules/@types"

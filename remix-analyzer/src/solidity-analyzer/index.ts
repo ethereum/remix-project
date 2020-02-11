@@ -7,7 +7,7 @@ export class staticAnalysisRunner {
   run (compilationResult, toRun, callback) {
     const modules = toRun.map((i) => {
       const m = this.modules()[i]
-      return { 'name': m.name, 'mod': new m.Module() }
+      return { 'name': m.name, 'mod': m }
     })
 
     this.runWithModuleList(compilationResult, modules, callback)

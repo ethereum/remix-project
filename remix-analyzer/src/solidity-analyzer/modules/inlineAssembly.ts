@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isInlineAssembly } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 
-export class inlineAssembly {
+export default class inlineAssembly {
   inlineAssNodes: any[] = []
   name = 'Inline assembly: '
   desc = 'Use of Inline Assembly'

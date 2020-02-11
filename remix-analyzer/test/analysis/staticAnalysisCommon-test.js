@@ -1,5 +1,5 @@
 var test = require('tape')
-var common = require('../../src/solidity-analyzer/modules/staticAnalysisCommon')
+var common = require('../../dist/src/solidity-analyzer/modules/staticAnalysisCommon')
 var { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignment,
     inlineAssembly, forLoopNode, whileLoopNode, doWhileLoopNode, stateVariableContractNode,
     functionDefinition, fullyQualifiedFunctionDefinition, selfdestruct, storageVariableNodes,
@@ -56,11 +56,11 @@ test('staticAnalysisCommon.helpers.name', function (t) {
   var node = { attributes: { value: 'now' } }
   var node2 = { attributes: { member_name: 'call' } }
 
-  t.ok(common.helpers.name(node, 'now'), 'should work for values')
-  t.ok(common.helpers.name(node2, 'call'), 'should work for member_name')
-  t.ok(common.helpers.name(node2, '.all'), 'regex should work')
+  t.ok(common.helpers.memName(node, 'now'), 'should work for values')
+  t.ok(common.helpers.memName(node2, 'call'), 'should work for member_name')
+  t.ok(common.helpers.memName(node2, '.all'), 'regex should work')
 
-  lowlevelAccessersCommon(t, common.helpers.name, node)
+  lowlevelAccessersCommon(t, common.helpers.memName, node)
 })
 
 test('staticAnalysisCommon.helpers.operator', function (t) {
