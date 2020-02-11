@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { isDeleteFromDynamicArray, isMappingIndexAccess } from './staticAnalysisCommon'
 
-export class deleteFromDynamicArray {
+export default class deleteFromDynamicArray {
   relevantNodes: any[] = []
   name = 'Delete from dynamic Array: '
   desc = 'Using delete on an array leaves a gap'

@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isDeleteOfDynamicArray } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 
-export class deleteDynamicArrays {
+export default class deleteDynamicArrays {
   rel: any = []
   name = 'Delete on dynamic Array: '
   desc = 'Use require and appropriately'

@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 const { isForLoop, isDynamicArrayLengthAccess, isBinaryOperation } = require('./staticAnalysisCommon')
 
-export class forLoopIteratesOverDynamicArray {
+export default class forLoopIteratesOverDynamicArray {
   relevantNodes: any[] = []
   name = 'For loop iterates over dynamic array: '
   desc = 'The number of \'for\' loop iterations depends on dynamic array\'s size'

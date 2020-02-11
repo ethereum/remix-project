@@ -3,7 +3,7 @@ import { isLowLevelCallInst, isLowLevelCallInst050, isLowLevelCallcodeInst, isLo
   isLowLevelSendInst, isLowLevelSendInst050, isLLDelegatecallInst050, lowLevelCallTypes } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 
-export class lowLevelCalls {
+export default class lowLevelCalls {
   llcNodes: any[] = []
   name = 'Low level calls: '
   desc = 'Semantics maybe unclear'

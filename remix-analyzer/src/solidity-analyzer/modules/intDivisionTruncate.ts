@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isIntDivision } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 
-export class intDivitionTruncate {
+export default class intDivitionTruncate {
   warningNodes: any[] = []
   name = 'Data Trucated: '
   desc = 'Division on int/uint values truncates the result.'
