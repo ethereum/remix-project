@@ -7,71 +7,70 @@ module.exports = {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
   'Loads Icon\'s Panel': function (browser) {
-    browser.waitForElementVisible('#icon-panel', 10000)
-    .waitForElementVisible('#icon-panel > div > div[class^="homeIcon"]')
-    .waitForElementVisible('#icon-panel #fileExplorerIcons > div:nth-child(1)')
-    .waitForElementVisible('#icon-panel #settingsIcons > div:nth-child(1)')
-    .waitForElementVisible('#icon-panel #settingsIcons > div:nth-child(2)')
+    browser.waitForElementVisible('div[data-id="icon-panel"]', 10000)
+    .waitForElementVisible('div[data-id="homeIcon"]')
+    .waitForElementVisible('div[plugin="fileExplorers"]')
+    .waitForElementVisible('div[plugin="pluginManager"]')
+    .waitForElementVisible('div[plugin="settings"]')
   },
 
   'Loads Side Panel': function (browser) {
-    browser.waitForElementVisible('#side-panel')
-    .assert.containsText('#side-panel h6[class^="swapitTitle"]', 'FILE EXPLORERS')
-    .waitForElementVisible('#side-panel div[class^="treeview"]')
-    .waitForElementVisible('#side-panel ul[key="browser"] > li:nth-child(4)')
+    browser.waitForElementVisible('div[data-id="side-panel"]')
+    .assert.containsText('h6[data-id="swapitTitle"]', 'FILE EXPLORERS')
+    .waitForElementVisible('div[data-id="fileExplorerInit"]')
+    .waitForElementVisible('li[key="browser/4_Ballot_test.sol"]')
   },
 
   'Loads Main View': function (browser) {
-    browser.waitForElementVisible('#main-panel > div[class^="mainview"] > div[class^="pluginsContainer"]')
-    .waitForElementVisible('#main-panel div[class^="homeContainer"] > div:nth-child(2)')
-    .waitForElementVisible('#main-panel div[class^="row hpSections"] > div:nth-child(1)')
-    .waitForElementVisible('#main-panel div[class^="panel"] > div[class^="terminal_container"]:nth-child(2)')
+    browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
+    .waitForElementVisible('div[data-id="homeContainer"]')
+    .waitForElementVisible('div[data-id="hpSections"]')
+    .waitForElementVisible('div[data-id="terminalContainerDisplay"]')
   },
 
   'Loads terminal': function (browser) {
     browser
-    .waitForElementVisible('#terminalCli', 10000)
+    .waitForElementVisible('div[data-id="terminalCli"]', 10000)
     .journalLastChildIncludes('Welcome to Remix')
   },
 
   'Toggles Side Panel': function (browser) {
-    browser.waitForElementVisible('#side-panel')
-    .assert.visible('#side-panel')
-    .assert.containsText('#side-panel h6[class^="swapitTitle"]', 'FILE EXPLORERS')
+    browser.waitForElementVisible('div[data-id="side-panel"]')
+    .assert.containsText('h6[data-id="swapitTitle"]', 'FILE EXPLORERS')
     .clickLaunchIcon('fileExplorers')
-    .assert.hidden('#side-panel')
+    .assert.hidden('div[data-id="side-panel"]')
     .clickLaunchIcon('fileExplorers')
-    .assert.visible('#side-panel')
-    .assert.containsText('#side-panel h6[class^="swapitTitle"]', 'FILE EXPLORERS')
+    .assert.visible('div[data-id="side-panel"]')
+    .assert.containsText('h6[data-id="swapitTitle"]', 'FILE EXPLORERS')
   },
 
   'Toggles Terminal': function (browser) {
-    browser.waitForElementVisible('#main-panel div[class^="panel"] > div[class^="terminal_container"]')
-    .assert.visible('#main-panel div[class^="panel"] > div[class^="terminal_container"]:nth-child(2)')
-    .click('div[class^="bar"] > div[class^="menu"] > i')
-    .checkElementStyle('div[class^="bar"] > div[class^="menu"]', 'height', '35px')
-    .click('div[class^="bar"] > div[class^="menu"] > i')
-    .assert.visible('#main-panel div[class^="panel"] > div[class^="terminal_container"]:nth-child(2)')
+    browser.waitForElementVisible('div[data-id="terminal_container"]')
+    .assert.visible('div[data-id="terminalContainerDisplay"]')
+    .click('i[data-id="toggleTerminal"]')
+    .checkElementStyle('div[data-id="toggleTerminalMenu"]', 'height', '35px')
+    .click('i[data-id="toggleTerminal"]')
+    .assert.visible('div[data-id="terminalContainerDisplay"]')
   },
 
   'Toggles File Explorer Browser': function (browser) {
     browser
-    .waitForElementVisible('#side-panel div[class^="treeview"]')
+    .waitForElementVisible('div[data-id="fileExplorerInit"]')
     .assert.visible('ul[key="browser"]')
-    .click('li[key="browser"] > div[key="browser"] > div.fas')
+    .click('div[data-id="toggle_browser"]')
     .assert.hidden('ul[key="browser"]')
-    .click('li[key="browser"] > div[key="browser"] > div.fas')
+    .click('div[data-id="toggle_browser"]')
     .assert.visible('ul[key="browser"]')
   },
 
   'Switch Tabs using tabs icon': function (browser) {
     browser
-    .waitForElementVisible('#side-panel div[class^="treeview"]')
+    .waitForElementVisible('div[data-id="fileExplorerInit"]')
     .switchFile('browser/3_Ballot.sol')
-    .assert.containsText('div[title="browser/3_Ballot.sol"] > span', '3_Ballot.sol')
-    .click('div.dropdown.px-1 > span.dropdownCaret')
+    .assert.containsText('div[title="browser/3_Ballot.sol"]', '3_Ballot.sol')
+    .click('span[class^=dropdownCaret]')
     .click('#homeItem')
-    .assert.containsText('div[title="home"] > span', 'Home')
+    .assert.containsText('div[title="home"]', 'Home')
     .end()
   },
 
