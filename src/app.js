@@ -141,21 +141,21 @@ class App {
     if (self._view.el) return self._view.el
     // not resizable
     self._view.iconpanel = yo`
-      <div id="icon-panel" class="${css.iconpanel} bg-light">
+      <div id="icon-panel" data-id="remixIdeIconPanel" class="${css.iconpanel} bg-light">
       ${''}
       </div>
     `
 
     // center panel, resizable
     self._view.sidepanel = yo`
-      <div id="side-panel" style="min-width: 320px;" class=${css.sidepanel}>
+      <div id="side-panel" data-id="remixIdeSidePanel" style="min-width: 320px;" class=${css.sidepanel}>
         ${''}
       </div>
     `
 
     // handle the editor + terminal
     self._view.mainpanel = yo`
-      <div id="main-panel" class=${css.mainpanel}>
+      <div id="main-panel" data-id="remixIdeMainPanel" class=${css.mainpanel}>
         ${''}
       </div>
     `

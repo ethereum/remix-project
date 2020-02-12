@@ -123,14 +123,14 @@ class Terminal extends Plugin {
 
     self._view.input.innerText = '\n'
     self._view.cli = yo`
-      <div id="terminalCli" class="${css.cli}">
+      <div id="terminalCli" data-id="terminalCli" class="${css.cli}">
         <span class=${css.prompt}>${'>'}</span>
         ${self._view.input}
       </div>
     `
     self._view.icon = yo`
       <i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize}
-      class="btn btn-secondary btn-sm align-items-center ${css.toggleTerminal} fas fa-angle-double-down"></i>`
+      class="btn btn-secondary btn-sm align-items-center ${css.toggleTerminal} fas fa-angle-double-down" data-id="terminalToggleIcon"></i>`
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
 
@@ -146,7 +146,7 @@ class Terminal extends Plugin {
     self._view.bar = yo`
       <div class="${css.bar}">
         ${self._view.dragbar}
-        <div class="${css.menu} border-top border-dark bg-light">
+        <div class="${css.menu} border-top border-dark bg-light" data-id="terminalToggleMenu">
           ${self._view.icon}
           <div class=${css.clear} id="clearConsole" onclick=${clear}>
             <i class="fas fa-ban" aria-hidden="true" title="Clear console"
@@ -177,9 +177,9 @@ class Terminal extends Plugin {
       </div>
     `
     self._view.term = yo`
-      <div class="${css.terminal_container}" onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
+      <div class="${css.terminal_container}" data-id="terminalContainer" onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
         ${self._components.autoCompletePopup.render()}
-        <div class="bg-secondary" style="
+        <div class="bg-secondary" data-id="terminalContainerDisplay" style="
           position: absolute;
           height: 100%;
           width: 100%;
