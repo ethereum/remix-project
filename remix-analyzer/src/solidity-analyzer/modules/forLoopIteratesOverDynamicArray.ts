@@ -6,7 +6,6 @@ export default class forLoopIteratesOverDynamicArray {
   name = 'For loop iterates over dynamic array: '
   desc = 'The number of \'for\' loop iterations depends on dynamic array\'s size'
   categories = category.GAS
-  Module = this
 
   visit (node) {
     if (isForLoop(node)) {

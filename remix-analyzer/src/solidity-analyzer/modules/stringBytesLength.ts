@@ -5,7 +5,6 @@ export default class stringBytesLength {
   name = 'String Length: '
   desc = 'Bytes length != String length'
   categories = category.MISC
-  Module = this
 
   stringToBytesConversions: any[] = []
   bytesLengthChecks: any[] = []

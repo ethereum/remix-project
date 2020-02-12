@@ -8,7 +8,6 @@ export default class assignAndCompare {
   description = 'The result of an operation was not used.'
   category = category.MISC
   algorithm = algorithm.EXACT
-  Module = this
 
   visit (node) {
     if (isSubScopeWithTopLevelUnAssignedBinOp(node)) getUnAssignedTopLevelBinOps(node).forEach((n) => this.warningNodes.push(n))

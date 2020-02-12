@@ -8,7 +8,6 @@ export default class deleteDynamicArrays {
   desc = 'Use require and appropriately'
   categories = category.GAS
   algorithm = algorithm.EXACT
-  Module = this
 
   visit (node) {
     if (isDeleteOfDynamicArray(node)) this.rel.push(node)

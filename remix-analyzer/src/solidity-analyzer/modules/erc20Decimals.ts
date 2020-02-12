@@ -8,7 +8,6 @@ export default class erc20Decimals {
   desc = 'Decimal should be uint8'
   categories = category.ERC
   algorithm = algorithm.EXACT
-  Module = this
 
   abstractAst = new AbstractAst()
   visit = this.abstractAst.build_visit((node) => false)

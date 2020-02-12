@@ -8,7 +8,6 @@ export default class thisLocal {
   desc = 'Invocation of local functions via this'
   categories = category.GAS
   algorithm = algorithm.EXACT
-  Module = this
 
   visit (node) {
     if (isThisLocalCall(node)) this.warningNodes.push(node)
