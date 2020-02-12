@@ -50,7 +50,7 @@ export class TabProxy {
     })
 
     appManager.event.on('activate', (name) => {
-      const { profile } = appManager.getOne(name)
+      const { profile } = appManager.getPlugin(name)
       if (profile.location === 'mainPanel') {
         this.addTab(
           name,
@@ -58,7 +58,7 @@ export class TabProxy {
           () => this.event.emit('switchApp', name),
           () => {
             this.event.emit('closeApp', name)
-            this.appManager.deactivateOne(name)
+            this.appManager.deactivatePlugin(name)
           },
           profile.icon
         )
