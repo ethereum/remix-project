@@ -247,6 +247,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       self._view.el.style.visibility = 'visible'
     }, 1500)
   })
+  
   // ----------------- editor servive ----------------------------
   const editor = new Editor({}, themeModule) // wrapper around ace editor
   registry.put({api: editor, name: 'editor'})

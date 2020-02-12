@@ -98,6 +98,9 @@ class Terminal extends Plugin {
     if (opts.shell) self._shell = opts.shell // ???
     register(self)
   }
+  setTxListener(txListener) {
+    this._opts.txListener = txListener
+  }
   logHtml (html) {
     var command = this.commands['html']
     if (typeof command === 'function') command(html)
