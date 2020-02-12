@@ -9,30 +9,30 @@ module.exports = {
 
   'Should execution a simple console command': function (browser) {
     browser
-    .waitForElementVisible('#terminalCli', 10000)
+    .waitForElementVisible('div[data-id="terminalCli"]', 10000)
     .executeScript('1+1')
     .journalLastChild('2')
   },
 
   'Should clear console': function (browser) {
     browser
-    .waitForElementVisible('#terminalCli')
+    .waitForElementVisible('div[data-id="terminalCli"]')
     .journalChildIncludes('Welcome to Remix')
     .click('#clearConsole')
-    .assert.containsText('#journal', '')
+    .assert.containsText('div[data-id="terminalJournal"]', '')
   },
 
   'Should display auto-complete menu': function (browser) {
     browser
-    .waitForElementVisible('#terminalCli')
-    .click('#terminalCli')
+    .waitForElementVisible('div[data-id="terminalCli"]')
+    .click('div[data-id="terminalCli"]')
     .keys('remix.')
-    .assert.visible('div[class^="autoCompleteItem"]')
+    .assert.visible('div[data-id="autoCompletePopUpAutoCompleteItem"]')
   },
 
   'Should execute remix.help() command': function (browser) {
     browser
-    .waitForElementVisible('#terminalCli')
+    .waitForElementVisible('div[data-id="terminalCli"]')
     .executeScript('remix.help()')
     .journalChildIncludes('remix.call(message: {name, key, payload})')
     .journalChildIncludes('remix.getFile(path)')
@@ -48,7 +48,7 @@ module.exports = {
 
   'Should execute remix.debugHelp() command': function (browser) {
     browser
-    .waitForElementVisible('#terminalCli')
+    .waitForElementVisible('div[data-id="terminalCli"]')
     .executeScript('remix.debugHelp()')
     .journalChildIncludes('Here are some examples of scripts that can be run (using remix.exeCurrent() or directly from the console)')
     .journalChildIncludes('Please see https://www.npmjs.com/package/remix-debug for more informations')
