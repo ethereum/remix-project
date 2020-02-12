@@ -1,14 +1,14 @@
 const EventEmitter = require('events')
 
 /*
-  Checks if any child elements of journal (console) contains a value.
+  Checks if any child elements of journal (console) contains a matching value.
 */
 class JournalChildIncludes extends EventEmitter {
   command (val) {
     let isTextFound = false
     const browser = this.api
 
-    this.api.elements('css selector', '#journal', (res) => {
+    this.api.elements('css selector', 'div[data-id="terminalJournal"]', (res) => {
       res.value.forEach(function (jsonWebElement) {
         const jsonWebElementId = jsonWebElement.ELEMENT
 
@@ -20,7 +20,7 @@ class JournalChildIncludes extends EventEmitter {
       })
     })
     browser.perform(() => {
-      browser.assert.ok(isTextFound, isTextFound ? `<#journal> contains ${val}.` : `${val} not found in <#journal > div:last-child>`)
+      browser.assert.ok(isTextFound, isTextFound ? `<div[data-id="terminalJournal"]> contains ${val}.` : `${val} not found in <div[data-id="terminalJournal"]> div:last-child>`)
       this.emit('complete')
     })
     return this
