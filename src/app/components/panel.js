@@ -28,7 +28,7 @@ const css = csjs`
 /** Abstract class used for hosting the view of a plugin */
 export class AbstractPanel extends HostPlugin {
 
-  constructor (profile, opts) {
+  constructor (profile) {
     super(profile)
     this.events = new EventEmitter()
     this.contents = {}

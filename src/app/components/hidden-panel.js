@@ -13,7 +13,8 @@ const profile = {
   name: 'hiddenPanel',
   displayName: 'Hidden Panel',
   description: '',
-  version: packageJson.version
+  version: packageJson.version,
+  methods: {}
 }
 
 export class HiddenPanel extends AbstractPanel {
