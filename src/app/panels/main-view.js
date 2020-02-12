@@ -1,11 +1,9 @@
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 
-var Terminal = require('./terminal')
 var globalRegistry = require('../../global/registry')
 var { TabProxy } = require('./tab-proxy.js')
 
-var ContextualListener = require('../editor/contextualListener')
 var ContextView = require('../editor/contextView')
 
 var csjs = require('csjs-inject')
@@ -20,7 +18,7 @@ var css = csjs`
 `
 
 export class MainView {
-  constructor (editor, mainPanel, fileManager, appManager, txListener, eventsDecoder, blockchain) {
+  constructor (contextualListener, editor, mainPanel, fileManager, appManager, terminal) {
     var self = this
     self.event = new EventManager()
     self._view = {}
@@ -29,9 +27,9 @@ export class MainView {
     self.editor = editor
     self.fileManager = fileManager
     self.mainPanel = mainPanel
-    self.txListener = txListener
-    self.eventsDecoder = eventsDecoder
-    self.blockchain = blockchain
+    self.txListener = globalRegistry.get('txlistener').api
+    self._components.terminal = terminal
+    self._components.contextualListener = contextualListener
     this.appManager = appManager
     this.init()
   }
@@ -88,31 +86,9 @@ export class MainView {
       }
     }
 
-    var contextualListener = new ContextualListener({editor: self.editor})
-    this.appManager.registerOne(contextualListener)
-    this.appManager.activate('contextualListener')
+    const contextView = new ContextView({contextualListener: self._components.contextualListener, editor: self.editor})
 
-    var contextView = new ContextView({contextualListener, editor: self.editor})
-
-    self._components.contextualListener = contextualListener
     self._components.contextView = contextView
-
-    self._components.terminal = new Terminal({
-      appManager: this.appManager,
-      eventsDecoder: this.eventsDecoder,
-      txListener: this.txListener,
-      blockchain: this.blockchain
-    },
-      {
-        getPosition: (event) => {
-          var limitUp = 36
-          var limitDown = 20
-          var height = window.innerHeight
-          var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
-          newpos = (newpos < height - limitDown) ? newpos : height - limitDown
-          return height - newpos
-        }
-      })
 
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
     if (self.txListener) {

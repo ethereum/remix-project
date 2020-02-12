@@ -45,7 +45,7 @@ class Terminal extends Plugin {
     self._api = api
     self._opts = opts
     self.data = {
-      lineLength: opts.lineLength || 80,
+      lineLength: opts.lineLength || 80, // ???
       session: [],
       activeFilters: { commands: {}, input: '' },
       filterFns: {}
@@ -95,13 +95,11 @@ class Terminal extends Plugin {
     self._jsSandboxContext = {}
     self._jsSandboxRegistered = {}
 
-    // TODO move this to the application start. Put it in mainView.
-    // We should have a HostPlugin which add the terminal.
-    opts.appManager.register(this)
-    opts.appManager.activate('terminal')
-
-    if (opts.shell) self._shell = opts.shell
+    if (opts.shell) self._shell = opts.shell // ???
     register(self)
+  }
+  setTxListener(txListener) {
+    this._opts.txListener = txListener
   }
   logHtml (html) {
     var command = this.commands['html']
@@ -441,7 +439,7 @@ class Terminal extends Plugin {
     self._components.txLogger = new TxLogger(self._opts.eventsDecoder, self._opts.txListener, this, self.blockchain)
     self._components.txLogger.event.register('debuggingRequested', (hash) => {
       // TODO should probably be in the run module
-      if (!self._opts.appManager.isActive('debugger')) self._opts.appManager.activateOne('debugger')
+      if (!self._opts.appManager.isActive('debugger')) self._opts.appManager.activatePlugin('debugger')
       this.call('debugger', 'debug', hash)
       this.call('menuicons', 'select', 'debugger')
     })

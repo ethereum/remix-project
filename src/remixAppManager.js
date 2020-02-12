@@ -1,7 +1,6 @@
 /* global localStorage, fetch */
-import { PluginEngine, IframePlugin } from '@remixproject/engine'
+import { PluginManager, IframePlugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
-import { PermissionHandler } from './app/ui/persmission-handler'
 import QueryParams from './lib/query-params'
 
 const requiredModules = [ // services + layout views + system views
@@ -9,20 +8,32 @@ const requiredModules = [ // services + layout views + system views
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
   'terminal', 'settings', 'pluginManager']
 
-const settings = {
-  permissionHandler: new PermissionHandler(),
-  autoActivate: false,
-  natives: ['vyper', 'workshops', 'ethdoc', 'etherscan'] // Force iframe plugin to be seen as native
+export function isNative(name) {
+  const nativePlugins = ['vyper', 'workshops', 'ethdoc', 'etherscan']
+  return nativePlugins.includes(name)
 }
 
-export class RemixAppManager extends PluginEngine {
+export class RemixAppManager extends PluginManager {
 
   constructor (plugins) {
-    super(plugins, settings)
+    super()
     this.event = new EventEmitter()
     this.registered = {}
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
+  }
+
+  async canActivate (from, to) {
+    return true
+  }
+
+  async canDeactivate (from, to) {
+    return from.name === 'manager'
+  }
+
+  async canCall (From, to, method) {
+    // todo This is the dafault behaviour, we could save user choises in session scope
+    return true
   }
 
   onActivated (plugin) {
@@ -34,10 +45,6 @@ export class RemixAppManager extends PluginEngine {
     return Object.keys(this.registered).map((p) => {
       return this.registered[p]
     })
-  }
-
-  getOne (name) {
-    return this.registered[name]
   }
 
   getIds () {
@@ -55,21 +62,9 @@ export class RemixAppManager extends PluginEngine {
     this.event.emit('added', plugin.name)
   }
 
-  // TODO check whether this can be removed
-  ensureActivated (apiName) {
-    if (!this.isActive(apiName)) this.activateOne(apiName)
-    this.event.emit('ensureActivated', apiName)
-  }
-
-  // TODO check whether this can be removed
-  ensureDeactivated (apiName) {
-    if (this.isActive(apiName)) this.deactivateOne(apiName)
-    this.event.emit('ensureDeactivated', apiName)
-  }
-
-  deactivateOne (name) {
+  deactivatePlugin (name) {
     if (requiredModules.includes(name)) return
-    super.deactivateOne(name)
+    super.deactivatePlugin(name)
   }
 
   isRequired (name) {

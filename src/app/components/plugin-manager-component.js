@@ -88,7 +88,7 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   renderItem (name) {
-    const api = this.appManager.getOne(name)
+    const api = this.appManager.getPlugin(name)
     if (!api) return
     const isActive = this.appManager.isActive(name)
     const displayName = (api.profile.displayName) ? api.profile.displayName : name
@@ -106,11 +106,11 @@ class PluginManagerComponent extends ViewPlugin {
 
     const activationButton = isActive
       ? yo`
-      <button onclick="${_ => this.appManager.deactivateOne(name)}" class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${name}">
+      <button onclick="${_ => this.appManager.deactivatePlugin(name)}" class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${name}">
         Deactivate
       </button>`
       : yo`
-      <button onclick="${_ => this.appManager.activateOne(name)}" class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${name}">
+      <button onclick="${_ => this.appManager.activatePlugin(name)}" class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${name}">
         Activate
       </button>`
 
@@ -144,7 +144,7 @@ class PluginManagerComponent extends ViewPlugin {
 
       const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
       this.appManager.registerOne(plugin)
-      this.appManager.activateOne(profile.name)
+      this.appManager.activatePlugin(profile.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
       console.log(`Cannot create Plugin : ${err.message}`)
