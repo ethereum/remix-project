@@ -6,7 +6,6 @@ export default class gasCosts {
   desc = 'Warn if the gas requirements of functions are too high.'
   categories = category.GAS
   algorithm = algorithm.EXACT
-  Module = this
 
 
 /**

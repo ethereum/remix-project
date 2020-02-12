@@ -11,7 +11,6 @@ export default class checksEffectsInteraction {
   desc = 'Avoid potential reentrancy bugs'
   categories = category.SECURITY
   algorithm = algorithm.HEURISTIC
-  Module = this
 
   abstractAst = new AbstractAst()
 

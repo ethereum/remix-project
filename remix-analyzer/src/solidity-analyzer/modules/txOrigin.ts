@@ -7,7 +7,6 @@ export default class txOrigin {
   desc = 'Warn if tx.origin is used'
   categories = category.SECURITY
   algorithm = algorithm.EXACT
-  Module = this
 
   visit (node) {
     if (node.name === 'MemberAccess' &&

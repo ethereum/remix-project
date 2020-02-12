@@ -8,7 +8,6 @@ export default class intDivitionTruncate {
   desc = 'Division on int/uint values truncates the result.'
   categories = category.MISC
   algorithm = algorithm.EXACT
-  Module = this
 
   visit (node) {
     if (isIntDivision(node)) this.warningNodes.push(node)

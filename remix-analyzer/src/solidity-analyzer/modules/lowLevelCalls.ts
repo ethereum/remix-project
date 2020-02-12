@@ -9,7 +9,6 @@ export default class lowLevelCalls {
   desc = 'Semantics maybe unclear'
   categories = category.SECURITY
   algorithm = algorithm.EXACT
-  Module = this
 
   visit (node) {
     if (isLowLevelCallInst(node)) {

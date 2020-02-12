@@ -8,7 +8,6 @@ export default class blockBlockhash {
   desc = 'Semantics maybe unclear'
   categories = category.SECURITY
   algorithm = algorithm.EXACT
-  Module = this
 
   visit (node) {
     if (isBlockBlockHashAccess(node)) this.warningNodes.push(node)

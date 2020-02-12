@@ -8,7 +8,6 @@ export default class inlineAssembly {
   desc = 'Use of Inline Assembly'
   categories = category.SECURITY
   algorithm = algorithm.EXACT
-  Module = this
 
   visit (node) {
     if (isInlineAssembly(node)) this.inlineAssNodes.push(node)
