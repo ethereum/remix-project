@@ -28,7 +28,7 @@ export default class constantFunctions {
               isDeleteUnaryOperation(node)
   )
 
-  report = this.abstractAst.build_report(this._report)
+  report = this.abstractAst.build_report(this._report.bind(this))
 
   private _report (contracts, multipleContractsWithSameName) {
     const warnings: any = []
@@ -89,7 +89,7 @@ export default class constantFunctions {
   }
 
   private checkIfShouldBeConstant (startFuncName, context) {
-    return !analyseCallGraph(context.callGraph, startFuncName, context, this.isConstBreaker)
+    return !analyseCallGraph(context.callGraph, startFuncName, context, this.isConstBreaker.bind(this))
   }
 
   private isConstBreaker (node, context) {

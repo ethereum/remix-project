@@ -17,10 +17,10 @@ export default class checksEffectsInteraction {
 
   visit = this.abstractAst.build_visit((node) => isInteraction(node) || isEffect(node) || isLocalCallGraphRelevantNode(node))
 
-  report = this.abstractAst.build_report(this._report)
+  report = this.abstractAst.build_report(this._report.bind(this))
     
   private _report (contracts, multipleContractsWithSameName) {
-    const warnings: any = []
+    const warnings: any[] = []
     const hasModifiers = contracts.some((item) => item.modifiers.length > 0)
     const callGraph = buildGlobalFuncCallGraph(contracts)
     contracts.forEach((contract) => {

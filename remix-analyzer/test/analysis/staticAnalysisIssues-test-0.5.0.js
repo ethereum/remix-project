@@ -1,7 +1,7 @@
 var test = require('tape')
 var remixLib = require('remix-lib')
 
-var StatRunner = require('../../dist/src/solidity-analyzer')
+var StatRunner = require('../../dist/src/solidity-analyzer').default
 var compilerInput = remixLib.helpers.compiler.compilerInput
 
 const niv = require('npm-install-version')
@@ -22,16 +22,16 @@ test('staticAnalysisIssues.functionParameterPassingError', function (t) {
   t.plan(2)
   var res = compile('functionParameters.sol')
 
-  var module = require('../../dist/src/solidity-analyzer/modules/checksEffectsInteraction')
+  var Module = require('../../dist/src/solidity-analyzer/modules/checksEffectsInteraction').default
 
   var statRunner = new StatRunner()
 
   t.doesNotThrow(() => {
-    statRunner.runWithModuleList(res, [{ name: module.name, mod: new module.Module() }], (reports) => {
+    statRunner.runWithModuleList(res, [{ name: new Module().name, mod: new Module() }], (reports) => {
     })
   }, true, 'Analysis should not throw')
 
-  statRunner.runWithModuleList(res, [{ name: module.name, mod: new module.Module() }], (reports) => {
+  statRunner.runWithModuleList(res, [{ name: new Module().name, mod: new Module() }], (reports) => {
     t.ok(!reports.some((mod) => mod.report.some((rep) => rep.warning.includes('INTERNAL ERROR')), 'Should not have internal errors'))
   })
 })

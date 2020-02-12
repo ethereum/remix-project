@@ -17,7 +17,7 @@ export default class similarVariableNames {
     (node) => false
   )
 
-  report = this.abstractAst.build_report(this._report)
+  report = this.abstractAst.build_report(this._report.bind(this))
 
   private _report (contracts, multipleContractsWithSameName) {
     const warnings: any[] = []
