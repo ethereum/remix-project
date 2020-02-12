@@ -116,7 +116,7 @@ var css = csjs`
   *
   */
 class TxLogger {
-  constructor (eventsDecoder, txListener, terminal, blockchain) {
+  constructor (terminal, blockchain) {
     this.event = new EventManager()
     this.seen = {}
     function filterTx (value, query) {
@@ -125,8 +125,8 @@ class TxLogger {
       }
       return false
     }
-    this.eventsDecoder = eventsDecoder
-    this.txListener = txListener
+    this.eventsDecoder = globalRegistry.get('teventsDecoder').api
+    this.txListener = globalRegistry.get('txListener').api
     this.terminal = terminal
     // dependencies
     this._deps = {

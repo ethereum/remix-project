@@ -118,7 +118,7 @@ export class SidePanel extends AbstractPanel {
     let docLink = ''
     let versionWarning
     if (this.active) {
-      const { profile } = this.appManager.getOne(this.active)
+      const { profile } = this.appManager.getPlugin(this.active)
       name = profile.displayName ? profile.displayName : profile.name
       docLink = profile.documentation ? yo`<a href="${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
       if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
