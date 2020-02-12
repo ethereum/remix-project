@@ -48,10 +48,6 @@ const css = csjs`
   }
 `
 
-const options = {
-  default: true
-}
-
 const sidePanel = {
   name: 'sidePanel',
   displayName: 'Side Panel',
@@ -64,7 +60,7 @@ const sidePanel = {
 export class SidePanel extends AbstractPanel {
 
   constructor (appManager, verticalIcons) {
-    super(sidePanel, options)
+    super(sidePanel)
     this.appManager = appManager
     this.header = this.renderHeader()
     this.verticalIcons = verticalIcons
