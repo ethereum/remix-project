@@ -11,7 +11,7 @@ module.exports = {
   before: function (browser, done) {
     init(browser, done)
   },
-  
+
   'Load Gist Modal': function (browser) {
     browser
     .waitForElementVisible('#icon-panel', 10000)
