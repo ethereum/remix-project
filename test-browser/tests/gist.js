@@ -37,6 +37,7 @@ module.exports = {
           .perform(done)
       }
     })
+    .end()
   },
 
   tearDown: sauce
