@@ -12,7 +12,7 @@ export default class erc20Decimals {
 
   abstractAst = new AbstractAst()
   visit = this.abstractAst.build_visit((node) => false)
-  report = this.abstractAst.build_report(this._report)
+  report = this.abstractAst.build_report(this._report.bind(this))
 
   private _report (contracts, multipleContractsWithSameName) {
     const warnings: any = []

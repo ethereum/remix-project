@@ -2,7 +2,7 @@
 import { AstWalker } from 'remix-astwalker'
 import list from './modules/list'
 
-export class staticAnalysisRunner {
+export default class staticAnalysisRunner {
 
   run (compilationResult, toRun, callback) {
     const modules = toRun.map((i) => {

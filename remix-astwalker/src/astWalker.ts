@@ -79,8 +79,7 @@ export class AstWalker extends EventEmitter {
             this.walk(child, callback);
           }
         }
-      }
-      if (<AstNode>ast) {
+      } else if (<AstNode>ast) {
         if (
           this.manageCallback(<AstNode>ast, callback) &&
           (<AstNode>ast).nodes &&
