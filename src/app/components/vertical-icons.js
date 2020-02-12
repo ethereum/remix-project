@@ -227,7 +227,7 @@ export class VerticalIcons extends Plugin {
         this.appManager.ensureActivated('home')
       }}"
       plugin="home" title="Home"
-      data-id="iconPanelHomeIcon"
+      data-id="verticalIconsHomeIcon"
     >
     <svg id="Ebene_2" data-name="Ebene 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105 100">
       <title>remix_logo1</title>
@@ -239,7 +239,7 @@ export class VerticalIcons extends Plugin {
     </div>`
 
     this.iconKind['fileexplorer'] = yo`
-    <div id='fileExplorerIcons' data-id="fileExplorerIcons">
+    <div id='fileExplorerIcons' data-id="verticalIconsFileExplorerIcons">
     </div>
     `
 
@@ -274,7 +274,7 @@ export class VerticalIcons extends Plugin {
     `
 
     this.iconKind['settings'] = yo`
-    <div id='settingsIcons' data-id="settingsIcons">
+    <div id='settingsIcons' data-id="verticalIconsSettingsIcons">
     </div>
     `
 

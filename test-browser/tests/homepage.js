@@ -8,7 +8,7 @@ module.exports = {
   },
   'Loads Icon\'s Panel': function (browser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
-    .waitForElementVisible('div[data-id="iconPanelHomeIcon"]')
+    .waitForElementVisible('div[data-id="verticalIconsHomeIcon"]')
     .waitForElementVisible('div[plugin="fileExplorers"]')
     .waitForElementVisible('div[plugin="pluginManager"]')
     .waitForElementVisible('div[plugin="settings"]')
@@ -16,56 +16,56 @@ module.exports = {
 
   'Loads Side Panel': function (browser) {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
-    .assert.containsText('h6[data-id="sidePanelFileExplorerTitle"]', 'FILE EXPLORERS')
-    .waitForElementVisible('div[data-id="sidePanelFileExplorerTree"]')
+    .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
+    .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
     .waitForElementVisible('li[key="browser/4_Ballot_test.sol"]')
   },
 
   'Loads Main View': function (browser) {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
-    .waitForElementVisible('div[data-id="mainPanelHomeContainer"]')
-    .waitForElementVisible('div[data-id="mainPanelHpSections"]')
-    .waitForElementVisible('div[data-id="mainPanelTerminalContainer"]')
+    .waitForElementVisible('div[data-id="landingPageHomeContainer"]')
+    .waitForElementVisible('div[data-id="landingPageHpSections"]')
+    .waitForElementVisible('div[data-id="terminalContainer"]')
   },
 
   'Loads terminal': function (browser) {
     browser
-    .waitForElementVisible('div[data-id="mainPanelTerminalCli"]', 10000)
+    .waitForElementVisible('div[data-id="terminalCli"]', 10000)
     .journalLastChildIncludes('Welcome to Remix')
   },
 
   'Toggles Side Panel': function (browser) {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
-    .assert.containsText('h6[data-id="sidePanelFileExplorerTitle"]', 'FILE EXPLORERS')
+    .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
     .clickLaunchIcon('fileExplorers')
     .assert.hidden('div[data-id="remixIdeSidePanel"]')
     .clickLaunchIcon('fileExplorers')
     .assert.visible('div[data-id="remixIdeSidePanel"]')
-    .assert.containsText('h6[data-id="sidePanelFileExplorerTitle"]', 'FILE EXPLORERS')
+    .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
   },
 
   'Toggles Terminal': function (browser) {
-    browser.waitForElementVisible('div[data-id="mainPanelTerminalContainer"]')
-    .assert.visible('div[data-id="mainPanelTerminalContainer"]')
-    .click('i[data-id="mainPanelToggleTerminal"]')
-    .checkElementStyle('div[data-id="mainPanelToggleTerminalMenu"]', 'height', '35px')
-    .click('i[data-id="mainPanelToggleTerminal"]')
-    .assert.visible('div[data-id="mainPanelTerminalContainer"]')
+    browser.waitForElementVisible('div[data-id="terminalContainer"]')
+    .assert.visible('div[data-id="terminalContainerDisplay"]')
+    .click('i[data-id="terminalToggleIcon"]')
+    .checkElementStyle('div[data-id="terminalToggleMenu"]', 'height', '35px')
+    .click('i[data-id="terminalToggleIcon"]')
+    .assert.visible('div[data-id="terminalContainerDisplay"]')
   },
 
   'Toggles File Explorer Browser': function (browser) {
     browser
-    .waitForElementVisible('div[data-id="sidePanelFileExplorerTree"]')
+    .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
     .assert.visible('ul[key="browser"]')
-    .click('div[data-id="sidePanelTogglebrowser"]')
+    .click('div[data-id="treeViewTogglebrowser"]')
     .assert.hidden('ul[key="browser"]')
-    .click('div[data-id="sidePanelTogglebrowser"]')
+    .click('div[data-id="treeViewTogglebrowser"]')
     .assert.visible('ul[key="browser"]')
   },
 
   'Switch Tabs using tabs icon': function (browser) {
     browser
-    .waitForElementVisible('div[data-id="sidePanelFileExplorerTree"]')
+    .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
     .switchFile('browser/3_Ballot.sol')
     .assert.containsText('div[title="browser/3_Ballot.sol"]', '3_Ballot.sol')
     .click('span[class^=dropdownCaret]')
