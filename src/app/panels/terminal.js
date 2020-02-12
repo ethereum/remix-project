@@ -113,7 +113,7 @@ class Terminal extends Plugin {
   render () {
     var self = this
     if (self._view.el) return self._view.el
-    self._view.journal = yo`<div id="journal" class=${css.journal}></div>`
+    self._view.journal = yo`<div id="journal" class=${css.journal} data-id="terminalJournal"></div>`
     self._view.input = yo`
       <span class=${css.input} onload=${() => { this.focus() }} onpaste=${paste} onkeydown=${change}></span>
     `
