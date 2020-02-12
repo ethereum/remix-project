@@ -6,7 +6,6 @@ export default class etherTransferInLoop {
   name = 'Ether transfer in a loop: '
   desc = 'Avoid transferring Ether to multiple addresses in a loop'
   category = category.GAS
-  Module = this
   
   visit (node) {
     if (isLoop(node)) {

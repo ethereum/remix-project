@@ -11,7 +11,6 @@ export default class similarVariableNames {
   abstractAst = new AbstractAst()
   categories = category.MISC
   algorithm = algorithm.EXACT
-  Module = this
 
   visit = this.abstractAst.build_visit(
     (node) => false

@@ -6,7 +6,6 @@ export default class deleteFromDynamicArray {
   name = 'Delete from dynamic Array: '
   desc = 'Using delete on an array leaves a gap'
   categories = category.MISC
-  Module = this
 
   visit (node) {
     if (isDeleteFromDynamicArray(node) && !isMappingIndexAccess(node.children[0])) this.relevantNodes.push(node)

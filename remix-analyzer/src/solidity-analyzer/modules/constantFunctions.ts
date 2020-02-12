@@ -12,7 +12,6 @@ export default class constantFunctions {
   desc = 'Check for potentially constant functions'
   categories = category.MISC
   algorithm = algorithm.HEURISTIC
-  Module = this
 
   abstractAst = new AbstractAst()
 

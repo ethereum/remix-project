@@ -8,7 +8,6 @@ export default class selfdestruct {
   desc = 'Be aware of caller contracts.'
   categories = category.SECURITY
   algorithm = algorithm.HEURISTIC
-  Module = this
 
   abstractAst = new AbstractAst()
 

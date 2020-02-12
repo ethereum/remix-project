@@ -8,7 +8,6 @@ export default class guardConditions {
   desc = 'Use require and appropriately'
   categories = category.MISC
   algorithm = algorithm.EXACT
-  Module = this
 
   visit (node) {
     if (isRequireCall(node) || isAssertCall(node)) this.guards.push(node)

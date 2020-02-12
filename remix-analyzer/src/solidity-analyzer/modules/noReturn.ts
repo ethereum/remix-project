@@ -8,7 +8,6 @@ export default class noReturn {
   desc = 'Function with return type is not returning'
   categories = category.MISC
   algorithm = algorithm.EXACT
-  Module = this
 
   abstractAst = new AbstractAst()
 

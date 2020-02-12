@@ -9,7 +9,6 @@ export default class blockTimestamp  {
   desc = 'Semantics maybe unclear'
   categories = category.SECURITY
   algorithm = algorithm.EXACT
-  Module = this
 
   visit (node) {
     if (isNowAccess(node)) this.warningNowNodes.push(node)
