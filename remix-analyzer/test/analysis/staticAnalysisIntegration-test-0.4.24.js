@@ -1,7 +1,7 @@
 var test = require('tape')
 var remixLib = require('remix-lib')
 
-var StatRunner = require('../../dist/src/solidity-analyzer')
+var StatRunner = require('../../dist/src/solidity-analyzer').default
 var compilerInput = remixLib.helpers.compiler.compilerInput
 
 const niv = require('npm-install-version')
@@ -51,7 +51,7 @@ testFiles.forEach((fileName) => {
 test('Integration test thisLocal.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/thisLocal')
+  var module = require('../../dist/src/solidity-analyzer/modules/thisLocal').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -90,7 +90,7 @@ test('Integration test thisLocal.js', function (t) {
 test('Integration test checksEffectsInteraction.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/checksEffectsInteraction')
+  var module = require('../../dist/src/solidity-analyzer/modules/checksEffectsInteraction').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 1,
@@ -129,7 +129,7 @@ test('Integration test checksEffectsInteraction.js', function (t) {
 test('Integration test constantFunctions.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/constantFunctions')
+  var module = require('../../dist/src/solidity-analyzer/modules/constantFunctions').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -168,7 +168,7 @@ test('Integration test constantFunctions.js', function (t) {
 test('Integration test inlineAssembly.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/inlineAssembly')
+  var module = require('../../dist/src/solidity-analyzer/modules/inlineAssembly').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -207,7 +207,7 @@ test('Integration test inlineAssembly.js', function (t) {
 test('Integration test txOrigin.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/txOrigin')
+  var module = require('../../dist/src/solidity-analyzer/modules/txOrigin').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -246,7 +246,7 @@ test('Integration test txOrigin.js', function (t) {
 test('Integration test gasCosts.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/gasCosts')
+  var module = require('../../dist/src/solidity-analyzer/modules/gasCosts').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 2,
@@ -285,7 +285,7 @@ test('Integration test gasCosts.js', function (t) {
 test('Integration test similarVariableNames.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/similarVariableNames')
+  var module = require('../../dist/src/solidity-analyzer/modules/similarVariableNames').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -321,49 +321,10 @@ test('Integration test similarVariableNames.js', function (t) {
   })
 })
 
-test('Integration test inlineAssembly.js', function (t) {
-  t.plan(testFiles.length)
-
-  var module = require('../../dist/src/solidity-analyzer/modules/inlineAssembly')
-
-  var lengthCheck = {
-    'KingOfTheEtherThrone.sol': 0,
-    'assembly.sol': 2,
-    'ballot.sol': 0,
-    'ballot_reentrant.sol': 0,
-    'ballot_withoutWarnings.sol': 0,
-    'cross_contract.sol': 0,
-    'inheritance.sol': 0,
-    'modifier1.sol': 0,
-    'modifier2.sol': 0,
-    'notReentrant.sol': 0,
-    'structReentrant.sol': 0,
-    'thisLocal.sol': 0,
-    'globals.sol': 0,
-    'library.sol': 0,
-    'transfer.sol': 0,
-    'ctor.sol': 0,
-    'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 0,
-    'deleteFromDynamicArray.sol': 0,
-    'blockLevelCompare.sol': 0,
-    'intDivisionTruncate.sol': 0,
-    'ERC20.sol': 0,
-    'stringBytesLength.sol': 0,
-    'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
-  }
-
-  runModuleOnFiles(module, t, (file, report) => {
-    t.equal(report.length, lengthCheck[file], `${file} has right amount of inlineAssembly warnings`)
-  })
-})
-
 test('Integration test blockTimestamp.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/blockTimestamp')
+  var module = require('../../dist/src/solidity-analyzer/modules/blockTimestamp').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 1,
@@ -402,7 +363,7 @@ test('Integration test blockTimestamp.js', function (t) {
 test('Integration test lowLevelCalls.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/lowLevelCalls')
+  var module = require('../../dist/src/solidity-analyzer/modules/lowLevelCalls').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 1,
@@ -441,7 +402,7 @@ test('Integration test lowLevelCalls.js', function (t) {
 test('Integration test blockBlockhash.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/blockBlockhash')
+  var module = require('../../dist/src/solidity-analyzer/modules/blockBlockhash').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -480,7 +441,7 @@ test('Integration test blockBlockhash.js', function (t) {
 test('Integration test noReturn.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/noReturn')
+  var module = require('../../dist/src/solidity-analyzer/modules/noReturn').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -519,7 +480,7 @@ test('Integration test noReturn.js', function (t) {
 test('Integration test selfdestruct.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/selfdestruct')
+  var module = require('../../dist/src/solidity-analyzer/modules/selfdestruct').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -558,7 +519,7 @@ test('Integration test selfdestruct.js', function (t) {
 test('Integration test guardConditions.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/guardConditions')
+  var module = require('../../dist/src/solidity-analyzer/modules/guardConditions').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -597,7 +558,7 @@ test('Integration test guardConditions.js', function (t) {
 test('Integration test deleteDynamicArrays.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/deleteDynamicArrays')
+  var module = require('../../dist/src/solidity-analyzer/modules/deleteDynamicArrays').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -636,7 +597,7 @@ test('Integration test deleteDynamicArrays.js', function (t) {
 test('Integration test deleteFromDynamicArray.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/deleteFromDynamicArray')
+  var module = require('../../dist/src/solidity-analyzer/modules/deleteFromDynamicArray').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -675,7 +636,7 @@ test('Integration test deleteFromDynamicArray.js', function (t) {
 test('Integration test assignAndCompare.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/assignAndCompare')
+  var module = require('../../dist/src/solidity-analyzer/modules/assignAndCompare').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -714,7 +675,7 @@ test('Integration test assignAndCompare.js', function (t) {
 test('Integration test intDivisionTruncate.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/intDivisionTruncate')
+  var module = require('../../dist/src/solidity-analyzer/modules/intDivisionTruncate').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -753,7 +714,7 @@ test('Integration test intDivisionTruncate.js', function (t) {
 test('Integration test erc20Decimal.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/erc20Decimals')
+  var module = require('../../dist/src/solidity-analyzer/modules/erc20Decimals').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -792,7 +753,7 @@ test('Integration test erc20Decimal.js', function (t) {
 test('Integration test stringBytesLength.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/stringBytesLength')
+  var module = require('../../dist/src/solidity-analyzer/modules/stringBytesLength').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -831,7 +792,7 @@ test('Integration test stringBytesLength.js', function (t) {
 test('Integration test etherTransferInLoop.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/etherTransferInLoop')
+  var module = require('../../dist/src/solidity-analyzer/modules/etherTransferInLoop').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -870,7 +831,7 @@ test('Integration test etherTransferInLoop.js', function (t) {
 test('Integration test forLoopIteratesOverDynamicArray.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../dist/src/solidity-analyzer/modules/forLoopIteratesOverDynamicArray')
+  var module = require('../../dist/src/solidity-analyzer/modules/forLoopIteratesOverDynamicArray').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -907,11 +868,10 @@ test('Integration test forLoopIteratesOverDynamicArray.js', function (t) {
 })
 
 // #################### Helpers
-function runModuleOnFiles (module, t, cb) {
+function runModuleOnFiles (Module, t, cb) {
   var statRunner = new StatRunner()
-
   testFiles.forEach((fileName) => {
-    statRunner.runWithModuleList(testFileAsts[fileName], [{ name: module.name, mod: new module.Module() }], (reports) => {
+    statRunner.runWithModuleList(testFileAsts[fileName], [{ name: new Module().name, mod: new Module() }], (reports) => {
       let report = reports[0].report
       if (report.some((x) => x['warning'].includes('INTERNAL ERROR'))) {
         t.comment('Error while executing Module: ' + JSON.stringify(report))
