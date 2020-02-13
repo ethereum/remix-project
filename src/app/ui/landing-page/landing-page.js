@@ -163,12 +163,8 @@ export class LandingPage extends ViewPlugin {
       this.verticalIcons.select('fileExplorers')
     }
 
-    globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
-      const invert = theme.quality === 'dark' ? 1 : 0
-      const img = document.getElementById('remixLogo')
-      if (img) {
-        img.style.filter = `invert(${invert})`
-      }
+    globalRegistry.get('themeModule').api.events.on('themeChanged', () => {
+      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('remixLogo'))
     })
 
     let switchToPreviousVersion = () => {
