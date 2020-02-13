@@ -100,7 +100,7 @@ class MultiParamManager {
     if (this.funABI.inputs) {
       return yo`<div>
         ${this.funABI.inputs.map(function (inp) {
-          return yo`<div class="${css.multiArg} run-instance-multi-arg"><label for="${inp.name}"> ${inp.name}: </label><input class="form-control" placeholder="${inp.type}" title="${inp.name}"></div>`
+          return yo`<div class="${css.multiArg}"><label for="${inp.name}"> ${inp.name}: </label><input class="form-control" placeholder="${inp.type}" title="${inp.name}"></div>`
         })}
       </div>`
     }
@@ -125,7 +125,7 @@ class MultiParamManager {
     }
     let funcButton = yo`<button onclick=${() => onClick()} class="${css.instanceButton} btn btn-sm">${title}</button>`
     this.contractActionsContainerSingle = yo`
-    <div class="${css.contractActionsContainerSingle} run-instance-dropdown-top" >
+    <div class="${css.contractActionsContainerSingle}" >
       ${funcButton}
       ${this.basicInputField}
       <i class="fas fa-angle-down ${css.methCaret}" onclick=${() => this.switchMethodViewOn()} title=${title} ></i>
@@ -145,8 +145,8 @@ class MultiParamManager {
     var expandedButton = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
 
     this.contractActionsContainerMulti = yo`<div class="${css.contractActionsContainerMulti}" >
-      <div class="${css.contractActionsContainerMultiInner} text-dark run-instance-dropdown-content" >
-        <div onclick=${() => { this.switchMethodViewOff() }} class="${css.multiHeader} run-instance-multi-header">
+      <div class="${css.contractActionsContainerMultiInner} text-dark" >
+        <div onclick=${() => { this.switchMethodViewOff() }} class="${css.multiHeader}">
           <div class="${css.multiTitle} run-instance-multi-title">${title}</div>
           <i class='fas fa-angle-up ${css.methCaret}'></i>
         </div>
@@ -174,7 +174,7 @@ class MultiParamManager {
     </div>`
 
     var contractProperty = yo`
-      <div class="${css.contractProperty} run-instance-dropdown">
+      <div class="${css.contractProperty}">
         ${this.contractActionsContainerSingle} ${this.contractActionsContainerMulti}
       </div>
     `
