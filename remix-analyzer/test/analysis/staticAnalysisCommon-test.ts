@@ -1,6 +1,6 @@
-var test = require('tape')
-var common = require('../../dist/src/solidity-analyzer/modules/staticAnalysisCommon')
-var { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignment,
+import { default as test} from "tape"
+import * as common from '../../dist/src/solidity-analyzer/modules/staticAnalysisCommon'
+const { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignment,
     inlineAssembly, forLoopNode, whileLoopNode, doWhileLoopNode, stateVariableContractNode,
     functionDefinition, fullyQualifiedFunctionDefinition, selfdestruct, storageVariableNodes,
     lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess } = require('./astBlocks')
@@ -164,77 +164,77 @@ test('staticAnalysisCommon.getFunctionCallType', function (t) {
   t.equal(common.getFunctionCallType(thisLocalCall), 'function (bytes32,address) returns (bool)', 'this local call returns correct type')
   t.equal(common.getFunctionCallType(externalDirect), 'function () payable external returns (uint256)', 'external direct call returns correct type')
   t.equal(common.getFunctionCallType(localCall), 'function (struct Ballot.Voter storage pointer)', 'local call returns correct type')
-  t.throws(() => common.getFunctionCallType({ name: 'MemberAccess' }), undefined, 'throws on wrong type')
+  t.throws(() => common.getFunctionCallType({ name: 'MemberAccess' }), Error, 'throws on wrong type')
 })
 
 test('staticAnalysisCommon.getEffectedVariableName', function (t) {
   t.plan(3)
-  t.throws(() => common.getEffectedVariableName(inlineAssembly), 'staticAnalysisCommon.js: not an effect Node or inline assembly', 'get from inline assembly should throw')
+  t.throws(() => common.getEffectedVariableName(inlineAssembly), Error, 'staticAnalysisCommon.js: not an effect Node or inline assembly, get from inline assembly should throw')
   t.ok(common.getEffectedVariableName(assignment) === 'c', 'get right name for assignment')
-  t.throws(() => common.getEffectedVariableName({ name: 'MemberAccess' }), undefined, 'should throw on all other nodes')
+  t.throws(() => common.getEffectedVariableName({ name: 'MemberAccess' }), Error, 'should throw on all other nodes')
 })
 
 test('staticAnalysisCommon.getLocalCallName', function (t) {
   t.plan(3)
   t.ok(common.getLocalCallName(localCall) === 'bli', 'getLocal call name from node')
-  t.throws(() => common.getLocalCallName(externalDirect), undefined, 'throws on other nodes')
-  t.throws(() => common.getLocalCallName(thisLocalCall), undefined, 'throws on other nodes')
+  t.throws(() => common.getLocalCallName(externalDirect), Error, 'throws on other nodes')
+  t.throws(() => common.getLocalCallName(thisLocalCall), Error, 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getThisLocalCallName', function (t) {
   t.plan(3)
   t.ok(common.getThisLocalCallName(thisLocalCall) === 'b', 'get this Local call name from node')
-  t.throws(() => common.getThisLocalCallName(externalDirect), undefined, 'throws on other nodes')
-  t.throws(() => common.getThisLocalCallName(localCall), undefined, 'throws on other nodes')
+  t.throws(() => common.getThisLocalCallName(externalDirect), Error, 'throws on other nodes')
+  t.throws(() => common.getThisLocalCallName(localCall), Error, 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getSuperLocalCallName', function (t) {
   t.plan(4)
   t.equal(common.getSuperLocalCallName(superLocal), 'duper', 'get local name from super local call')
   t.throws(() => common.getSuperLocalCallName(thisLocalCall), 'throws on other nodes')
-  t.throws(() => common.getSuperLocalCallName(externalDirect), undefined, 'throws on other nodes')
-  t.throws(() => common.getSuperLocalCallName(localCall), undefined, 'throws on other nodes')
+  t.throws(() => common.getSuperLocalCallName(externalDirect), 'throws on other nodes')
+  t.throws(() => common.getSuperLocalCallName(localCall), 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getExternalDirectCallContractName', function (t) {
   t.plan(3)
   t.ok(common.getExternalDirectCallContractName(externalDirect) === 'InfoFeed', 'external direct call contract name from node')
-  t.throws(() => common.getExternalDirectCallContractName(thisLocalCall), undefined, 'throws on other nodes')
-  t.throws(() => common.getExternalDirectCallContractName(localCall), undefined, 'throws on other nodes')
+  t.throws(() => common.getExternalDirectCallContractName(thisLocalCall), Error, 'throws on other nodes')
+  t.throws(() => common.getExternalDirectCallContractName(localCall), Error, 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getThisLocalCallContractName', function (t) {
   t.plan(3)
   t.ok(common.getThisLocalCallContractName(thisLocalCall) === 'test', 'this local call contract name from node')
-  t.throws(() => common.getThisLocalCallContractName(localCall), undefined, 'throws on other nodes')
-  t.throws(() => common.getThisLocalCallContractName(externalDirect), undefined, 'throws on other nodes')
+  t.throws(() => common.getThisLocalCallContractName(localCall), Error, 'throws on other nodes')
+  t.throws(() => common.getThisLocalCallContractName(externalDirect), Error, 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getExternalDirectCallMemberName', function (t) {
   t.plan(3)
   t.ok(common.getExternalDirectCallMemberName(externalDirect) === 'info', 'external direct call name from node')
-  t.throws(() => common.getExternalDirectCallMemberName(thisLocalCall), undefined, 'throws on other nodes')
-  t.throws(() => common.getExternalDirectCallMemberName(localCall), undefined, 'throws on other nodes')
+  t.throws(() => common.getExternalDirectCallMemberName(thisLocalCall), Error, 'throws on other nodes')
+  t.throws(() => common.getExternalDirectCallMemberName(localCall), Error, 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getContractName', function (t) {
   t.plan(2)
   var contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
   t.ok(common.getContractName(contract) === 'baz', 'returns right contract name')
-  t.throws(() => common.getContractName({ name: 'InheritanceSpecifier' }), undefined, 'throws on other nodes')
+  t.throws(() => common.getContractName({ name: 'InheritanceSpecifier' }), Error, 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getFunctionDefinitionName', function (t) {
   t.plan(2)
   var func = { name: 'FunctionDefinition', attributes: { name: 'foo' } }
   t.ok(common.getFunctionDefinitionName(func) === 'foo', 'returns right contract name')
-  t.throws(() => common.getFunctionDefinitionName({ name: 'InlineAssembly' }), undefined, 'throws on other nodes')
+  t.throws(() => common.getFunctionDefinitionName({ name: 'InlineAssembly' }), Error, 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getInheritsFromName', function (t) {
   t.plan(2)
   t.ok(common.getInheritsFromName(inheritance) === 'r', 'returns right contract name')
-  t.throws(() => common.getInheritsFromName({ name: 'ElementaryTypeName' }), undefined, 'throws on other nodes')
+  t.throws(() => common.getInheritsFromName({ name: 'ElementaryTypeName' }), Error, 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getDeclaredVariableName', function (t) {
@@ -242,7 +242,7 @@ test('staticAnalysisCommon.getDeclaredVariableName', function (t) {
   t.ok(common.getDeclaredVariableName(storageVariableNodes.node1) === 'x', 'extract right variable name')
   let node1 = JSON.parse(JSON.stringify(storageVariableNodes))
   node1.node1.name = 'FunctionCall'
-  t.throws(() => common.getDeclaredVariableName(node1) === 'x', undefined, 'throw if wrong node')
+  t.throws(() => common.getDeclaredVariableName(node1) === 'x', Error, 'throw if wrong node')
 })
 
 test('staticAnalysisCommon.getStateVariableDeclarationsFormContractNode', function (t) {
@@ -257,7 +257,7 @@ test('staticAnalysisCommon.getStateVariableDeclarationsFormContractNode', functi
 test('staticAnalysisCommon.getFunctionOrModifierDefinitionParameterPart', function (t) {
   t.plan(2)
   t.ok(common.helpers.nodeType(common.getFunctionOrModifierDefinitionParameterPart(functionDefinition), 'ParameterList'), 'should return a parameterList')
-  t.throws(() => common.getFunctionOrModifierDefinitionParameterPart({ name: 'SourceUnit' }), undefined, 'throws on other nodes')
+  t.throws(() => common.getFunctionOrModifierDefinitionParameterPart({ name: 'SourceUnit' }), Error, 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getFunctionCallTypeParameterType', function (t) {
@@ -265,19 +265,19 @@ test('staticAnalysisCommon.getFunctionCallTypeParameterType', function (t) {
   t.ok(common.getFunctionCallTypeParameterType(thisLocalCall) === 'bytes32,address', 'this local call returns correct type')
   t.ok(common.getFunctionCallTypeParameterType(externalDirect) === '', 'external direct call returns correct type')
   t.ok(common.getFunctionCallTypeParameterType(localCall) === 'struct Ballot.Voter storage pointer', 'local call returns correct type')
-  t.throws(() => common.getFunctionCallTypeParameterType({ name: 'MemberAccess' }), undefined, 'throws on wrong type')
+  t.throws(() => common.getFunctionCallTypeParameterType({ name: 'MemberAccess' }), Error, 'throws on wrong type')
 })
 
 test('staticAnalysisCommon.getLibraryCallContractName', function (t) {
   t.plan(2)
   t.equal(common.getLibraryCallContractName(libCall), 'Set', 'should return correct contract name')
-  t.throws(() => common.getLibraryCallContractName({ name: 'Identifier' }), undefined, 'should throw on wrong node')
+  t.throws(() => common.getLibraryCallContractName({ name: 'Identifier' }), Error, 'should throw on wrong node')
 })
 
 test('staticAnalysisCommon.getLibraryCallMemberName', function (t) {
   t.plan(2)
   t.equal(common.getLibraryCallMemberName(libCall), 'insert', 'should return correct member name')
-  t.throws(() => common.getLibraryCallMemberName({ name: 'Identifier' }), undefined, 'should throw on wrong node')
+  t.throws(() => common.getLibraryCallMemberName({ name: 'Identifier' }), Error, 'should throw on wrong node')
 })
 
 test('staticAnalysisCommon.getFullQualifiedFunctionCallIdent', function (t) {
@@ -286,15 +286,15 @@ test('staticAnalysisCommon.getFullQualifiedFunctionCallIdent', function (t) {
   t.ok(common.getFullQualifiedFunctionCallIdent(contract, thisLocalCall) === 'test.b(bytes32,address)', 'this local call returns correct type')
   t.ok(common.getFullQualifiedFunctionCallIdent(contract, externalDirect) === 'InfoFeed.info()', 'external direct call returns correct type')
   t.ok(common.getFullQualifiedFunctionCallIdent(contract, localCall) === 'baz.bli(struct Ballot.Voter storage pointer)', 'local call returns correct type')
-  t.throws(() => common.getFullQualifiedFunctionCallIdent(contract, { name: 'MemberAccess' }), undefined, 'throws on wrong type')
+  t.throws(() => common.getFullQualifiedFunctionCallIdent(contract, { name: 'MemberAccess' }), Error, 'throws on wrong type')
 })
 
 test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
   t.plan(3)
   var contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
   t.ok(common.getFullQuallyfiedFuncDefinitionIdent(contract, fullyQualifiedFunctionDefinition, ['uint256', 'bool']) === 'baz.getY(uint256,bool)', 'creates right signature')
-  t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(contract, { name: 'MemberAccess' }, ['uint256', 'bool']), undefined, 'throws on wrong nodes')
-  t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent({ name: 'FunctionCall' }, fullyQualifiedFunctionDefinition, ['uint256', 'bool']), undefined, 'throws on wrong nodes')
+  t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(contract, { name: 'MemberAccess' }, ['uint256', 'bool']), Error, 'throws on wrong nodes')
+  t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent({ name: 'FunctionCall' }, fullyQualifiedFunctionDefinition, ['uint256', 'bool']), Error, 'throws on wrong nodes')
 })
 
 test('staticAnalysisCommon.getLoopBlockStartIndex', function (t) {
