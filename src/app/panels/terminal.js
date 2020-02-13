@@ -120,6 +120,7 @@ class Terminal extends Plugin {
     self._view.input.setAttribute('spellcheck', 'false')
     self._view.input.setAttribute('contenteditable', 'true')
     self._view.input.setAttribute('id', 'terminalCliInput')
+    self._view.input.setAttribute('data-id', 'terminalCliInput')
 
     self._view.input.innerText = '\n'
     self._view.cli = yo`
