@@ -1,25 +1,26 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
 
-export default class txOrigin {
-  txOriginNodes: any[] = []
-  name = 'Transaction origin: '
-  desc = 'Warn if tx.origin is used'
-  categories = category.SECURITY
-  algorithm = algorithm.EXACT
+export default class txOrigin implements AnalyzerModule {
+  txOriginNodes: AstNodeLegacy[] = []
+  name: string = 'Transaction origin: '
+  description: string = 'Warn if tx.origin is used'
+  category: ModuleCategory = category.SECURITY
+  algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node) {
-    if (node.name === 'MemberAccess' &&
+  visit (node: AstNodeLegacy): void {
+    if (node.name === 'MemberAccess' && node.attributes &&
     node.attributes.member_name === 'origin' &&
     (node.attributes.type === 'address' || node.attributes.type === 'address payable') &&
-    node.children && node.children.length &&
+    node.children && node.children.length && node.children[0].attributes &&
     node.children[0].attributes.type === 'tx' &&
     node.children[0].attributes.value === 'tx') {
       this.txOriginNodes.push(node)
     }
   }
 
-  report () {
+  report (compilationResults: CompilationResult): ReportObj[] {
     return this.txOriginNodes.map((item, i) => {
       return {
         warning: `Use of tx.origin: "tx.origin" is useful only in very exceptional cases. 

@@ -2,15 +2,24 @@ import { default as category } from './categories'
 import { isLowLevelCallInst, isLowLevelCallInst050, isLowLevelCallcodeInst, isLowLevelDelegatecallInst,
   isLowLevelSendInst, isLowLevelSendInst050, isLLDelegatecallInst050, lowLevelCallTypes } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
 
-export default class lowLevelCalls {
-  llcNodes: any[] = []
-  name = 'Low level calls: '
-  desc = 'Semantics maybe unclear'
-  categories = category.SECURITY
-  algorithm = algorithm.EXACT
+interface llcNode {
+  node: AstNodeLegacy
+  type: {
+    ident: string,
+    type: string
+  }
+}
 
-  visit (node) {
+export default class lowLevelCalls implements AnalyzerModule {
+  llcNodes: llcNode[] = []
+  name: string = 'Low level calls: '
+  description: string = 'Semantics maybe unclear'
+  category: ModuleCategory = category.SECURITY
+  algorithm: ModuleAlgorithm = algorithm.EXACT
+
+  visit (node : AstNodeLegacy): void {
     if (isLowLevelCallInst(node)) {
       this.llcNodes.push({node: node, type: lowLevelCallTypes.CALL})
     } else if (isLowLevelCallInst050(node)) {
@@ -28,7 +37,7 @@ export default class lowLevelCalls {
     }
   }
 
-  report (compilationResults) {
+  report (compilationResults: CompilationResult): ReportObj[] {
     return this.llcNodes.map((item, i) => {
       let text = ''
       let morehref: any = null

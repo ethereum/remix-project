@@ -1,19 +1,20 @@
 import { default as category } from './categories'
 import { isBlockBlockHashAccess } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
 
-export default class blockBlockhash {
-  warningNodes: any[] = []
-  name = 'Block.blockhash usage: '
-  desc = 'Semantics maybe unclear'
-  categories = category.SECURITY
-  algorithm = algorithm.EXACT
+export default class blockBlockhash implements AnalyzerModule {
+  warningNodes: AstNodeLegacy[] = []
+  name: string = 'Block.blockhash usage: '
+  description: string = 'Semantics maybe unclear'
+  category: ModuleCategory = category.SECURITY
+  algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node) {
+  visit (node: AstNodeLegacy): void {
     if (isBlockBlockHashAccess(node)) this.warningNodes.push(node)
   }
 
-  report (compilationResults) {
+  report (compilationResults: CompilationResult): ReportObj[] {
     return this.warningNodes.map((item, i) => {
       return {
         warning: `use of "block.blockhash": "block.blockhash" is used to access the last 256 block hashes. 
