@@ -62,6 +62,9 @@ var css = csjs`
     background: none;
     border-radius: 2px;
   }
+  .instance.hidesub {
+    border-bottom: 1px solid;
+  }
   .instance.hidesub .title {
       display: flex;
   }
@@ -155,10 +158,12 @@ var css = csjs`
   }
   .contractActionsContainer {
     width: 100%;
+    margin-bottom: 8px;
   }
   .contractActionsContainerSingle {
     display: flex;
     width: 100%;
+    margin-bottom: 8px;
   }
   .contractActionsContainerSingle i {
     line-height: 2;
@@ -170,8 +175,8 @@ var css = csjs`
   .contractActionsContainerMultiInner {
     width: 100%;
     padding: 16px 8px 16px 14px;
-    background-color: var(--light);
     border-radius: 3px;
+    margin-bottom: 8px;
   }
   .multiHeader {
     display: flex;
