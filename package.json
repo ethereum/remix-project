@@ -178,6 +178,7 @@
     "nightwatch_local_defaultLayout": "nightwatch ./test-browser/tests/defaultLayout.js --config nightwatch.js --env chrome ",
     "nightwatch_local_pluginManager": "nightwatch ./test-browser/tests/pluginManager.js --config nightwatch.js --env chrome ",
     "nightwatch_local_publishContract": "nightwatch ./test-browser/tests/publishContract.js --config nightwatch.js --env chrome ",
+    "nightwatch_local_plugin": "nightwatch ./test-browser/tests/plugin.js --config nightwatch.js --env chrome ",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
     "remixd": "remixd -s ./contracts --remix-ide http://127.0.0.1:8080",
