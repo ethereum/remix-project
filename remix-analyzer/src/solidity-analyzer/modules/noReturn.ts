@@ -2,21 +2,22 @@ import { default as category } from './categories'
 import { isReturn, isAssignment, hasFunctionBody, getFullQuallyfiedFuncDefinitionIdent, getEffectedVariableName } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
 
-export default class noReturn {
-  name = 'no return: '
-  desc = 'Function with return type is not returning'
-  categories = category.MISC
-  algorithm = algorithm.EXACT
+export default class noReturn implements AnalyzerModule {
+  name: string = 'no return: '
+  description: string = 'Function with return type is not returning'
+  category: ModuleCategory = category.MISC
+  algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  abstractAst = new AbstractAst()
+  abstractAst: AbstractAst = new AbstractAst()
 
   visit = this.abstractAst.build_visit(
-    (node) => isReturn(node) || isAssignment(node)
+    (node: AstNodeLegacy) => isReturn(node) || isAssignment(node)
   )
 
   report = this.abstractAst.build_report(this._report.bind(this))
-  private _report (contracts, multipleContractsWithSameName) {
+  private _report (contracts, multipleContractsWithSameName): ReportObj[] {
     const warnings: any[] = []
 
     contracts.forEach((contract) => {
@@ -39,26 +40,26 @@ export default class noReturn {
     return warnings
   }
 
-  private shouldReturn (func) {
+  private shouldReturn (func): boolean {
     return func.returns.length > 0
   }
 
-  private hasReturnStatement (func) {
+  private hasReturnStatement (func): boolean {
     return func.relevantNodes.filter(isReturn).length > 0
   }
 
-  private hasAssignToAllNamedReturns (func) {
+  private hasAssignToAllNamedReturns (func): boolean {
     const namedReturns = func.returns.filter((n) => n.name.length > 0).map((n) => n.name)
     const assignedVars = func.relevantNodes.filter(isAssignment).map(getEffectedVariableName)
     const diff = namedReturns.filter(e => !assignedVars.includes(e))
     return diff.length === 0
   }
 
-  private hasNamedReturns (func) {
+  private hasNamedReturns (func): boolean {
     return func.returns.filter((n) => n.name.length > 0).length > 0
   }
 
-  private hasNamedAndUnnamedReturns (func) {
+  private hasNamedAndUnnamedReturns (func): boolean {
     return func.returns.filter((n) => n.name.length === 0).length > 0 &&
             this.hasNamedReturns(func)
   }

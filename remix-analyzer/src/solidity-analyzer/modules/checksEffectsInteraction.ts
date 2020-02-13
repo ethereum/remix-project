@@ -4,22 +4,22 @@ import { isInteraction, isEffect, isLocalCallGraphRelevantNode, getFullQuallyfie
 import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
 
-export default class checksEffectsInteraction {
-  
-  name = 'Check effects: '
-  desc = 'Avoid potential reentrancy bugs'
-  categories = category.SECURITY
-  algorithm = algorithm.HEURISTIC
+export default class checksEffectsInteraction implements AnalyzerModule {
+  name: string = 'Check effects: '
+  description: string = 'Avoid potential reentrancy bugs'
+  category: ModuleCategory = category.SECURITY
+  algorithm: ModuleAlgorithm = algorithm.HEURISTIC
 
-  abstractAst = new AbstractAst()
+  abstractAst: AbstractAst = new AbstractAst()
 
-  visit = this.abstractAst.build_visit((node) => isInteraction(node) || isEffect(node) || isLocalCallGraphRelevantNode(node))
+  visit = this.abstractAst.build_visit((node: AstNodeLegacy) => isInteraction(node) || isEffect(node) || isLocalCallGraphRelevantNode(node))
 
   report = this.abstractAst.build_report(this._report.bind(this))
     
-  private _report (contracts, multipleContractsWithSameName) {
-    const warnings: any[] = []
+  private _report (contracts, multipleContractsWithSameName): ReportObj[] {
+    const warnings: ReportObj[] = []
     const hasModifiers = contracts.some((item) => item.modifiers.length > 0)
     const callGraph = buildGlobalFuncCallGraph(contracts)
     contracts.forEach((contract) => {
