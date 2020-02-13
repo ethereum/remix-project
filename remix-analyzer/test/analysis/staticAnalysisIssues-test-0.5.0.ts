@@ -10,18 +10,16 @@ const {compilerInput  } = helpers.compiler
 const folder = 'solidity-v0.5'
 
 function compile (fileName) {
-  var content = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
+  const content = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
   return JSON.parse(compiler.compile(compilerInput(content)))
 }
 
 test('staticAnalysisIssues.functionParameterPassingError', function (t) {
   // https://github.com/ethereum/remix-ide/issues/889#issuecomment-351746474
   t.plan(2)
-  var res = compile('functionParameters.sol')
-
-  var Module = require('../../dist/src/solidity-analyzer/modules/checksEffectsInteraction').default
-
-  var statRunner = new StatRunner()
+  const res = compile('functionParameters.sol')
+  const Module = require('../../dist/src/solidity-analyzer/modules/checksEffectsInteraction').default
+  const statRunner = new StatRunner()
 
   t.doesNotThrow(() => {
     statRunner.runWithModuleList(res, [{ name: new Module().name, mod: new Module() }], (reports) => {
