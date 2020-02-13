@@ -1,6 +1,7 @@
 var yo = require('yo-yo')
 var $ = require('jquery')
 const EventEmitter = require('events')
+const globalRegistry = require('../../global/registry')
 
 require('remix-tabs')
 
@@ -13,6 +14,11 @@ export class TabProxy {
     this.data = {}
     this._view = {}
     this._handlers = {}
+
+    globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
+    // update invert for all icons
+      this.updateImgStyles()
+    })
 
     fileManager.events.on('fileRemoved', (name) => {
       this.removeTab(name)
@@ -78,6 +84,14 @@ export class TabProxy {
       }
     })
   }
+  updateImgStyles () {
+    const images = this._view.filetabs.getElementsByClassName('image')
+    if (images.length !== 0) {
+      for (let element of images) {
+        globalRegistry.get('themeModule').api.fixInvert(element)
+      };
+    }
+  }
 
   switchTab (tabName) {
     if (this._handlers[tabName]) {
@@ -130,6 +144,7 @@ export class TabProxy {
       icon,
       tooltip: name
     })
+    this.updateImgStyles()
     this._handlers[name] = { switchTo, close }
   }
 
