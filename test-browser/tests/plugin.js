@@ -16,7 +16,7 @@ module.exports = {
   },
 
   'Should Search for plugins': function (browser) {
-     browser.waitForElementVisible('div[data-id="pluginManagerComponentPluginManager"]')
+    browser.waitForElementVisible('div[data-id="pluginManagerComponentPluginManager"]')
      .click('input[data-id="pluginManagerComponentSearchInput"]')
      .keys('debugger')
      .waitForElementVisible('button[data-id="pluginManagerComponentActivateButtondebugger"]')
@@ -31,10 +31,9 @@ module.exports = {
      .clearValue('input[data-id="pluginManagerComponentSearchInput"]')
      .click('input[data-id="pluginManagerComponentSearchInput"]')
      .keys(browser.Keys.ENTER)
-   },
+  },
 
-
-   'Should activate plugins': function (browser) {
+  'Should activate plugins': function (browser) {
     browser.waitForElementVisible('div[data-id="pluginManagerComponentPluginManager"]')
     .click('div[data-id="pluginManagerComponentPluginManager"]')
     .scrollAndClick('button[data-id="pluginManagerComponentActivateButtondebugger"]')
@@ -43,6 +42,45 @@ module.exports = {
     .waitForElementVisible('button[data-id="pluginManagerComponentDeactivateButtonudapp"]')
     .scrollAndClick('button[data-id="pluginManagerComponentActivateButtonZoKrates"]')
     .waitForElementVisible('button[data-id="pluginManagerComponentDeactivateButtonZoKrates"]')
+  },
+
+  'Should deactivate plugins': function (browser) {
+    browser.waitForElementVisible('div[data-id="pluginManagerComponentPluginManager"]')
+    .click('div[data-id="pluginManagerComponentPluginManager"]')
+    .scrollAndClick('button[data-id="pluginManagerComponentDeactivateButtondebugger"]')
+    .waitForElementVisible('button[data-id="pluginManagerComponentActivateButtondebugger"]')
+    .scrollAndClick('button[data-id="pluginManagerComponentDeactivateButtonudapp"]')
+    .waitForElementVisible('button[data-id="pluginManagerComponentActivateButtonudapp"]')
+  },
+
+  'Grant plugin permission (ZOKRATES)': function (browser) {
+    browser.waitForElementVisible('div[data-id="pluginManagerComponentPluginManager"]')
+    .click('button[data-id="pluginManagerSettingsButton"]')
+    .waitForElementVisible('form[data-id="pluginManagerSettingsPermissionForm"]')
+    .assert.containsText('form[data-id="pluginManagerSettingsPermissionForm"]', 'No Permission requested yet')
+    .modalFooterOKClick()
+    .click('div[data-id="verticalIconsFileExplorerIcons"]')
+    .switchFile('browser/3_Ballot.sol')
+    .click('div[plugin="ZoKrates"]')
+    .pause(5000)
+    .frame(0)
+    .useXpath().click("//span[text()='Compile']")
+    .frameParent()
+    .useCss().waitForElementVisible('div[data-id="modalDialogContainer"]')
+    .assert.containsText('h4[data-id="permissionHandlerMessage"]', 'ZOKRATES" WOULD LIKE TO ACCESS "FILE MANAGER" :')
+    .waitForElementVisible('label[data-id="permissionHandlerRememberChoice"]')
+    .click('label[data-id="permissionHandlerRememberChoice"]')
+    .modalFooterOKClick()
+  },
+
+  'Revert plugin permission (ZOKRATES)': function (browser) {
+    browser.waitForElementVisible('div[data-id="verticalIconsSettingsIcons"]')
+    .click('div[data-id="verticalIconsSettingsIcons"]')
+    .waitForElementVisible('button[data-id="pluginManagerSettingsButton"]')
+    .click('button[data-id="pluginManagerSettingsButton"]')
+    .waitForElementVisible('div[data-id="modalDialogContainer"]')
+    .click('i[data-id="pluginManagerSettingsRemovePermissionZoKrates"]')
+    .modalFooterOKClick()
     .end()
   },
 
