@@ -1,5 +1,1 @@
-const CodeAnalysis = require('./src/solidity-analyzer')
-
-module.exports = {
-  CodeAnalysis: CodeAnalysis
-}
+export { default as CodeAnalysis}  from './src/solidity-analyzer'
