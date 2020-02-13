@@ -53,8 +53,8 @@ test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
 
 test('staticAnalysisCommon.helpers.name', function (t) {
   t.plan(9)
-  var node = { attributes: { value: 'now' } }
-  var node2 = { attributes: { member_name: 'call' } }
+  const node = { attributes: { value: 'now' } }
+  const node2 = { attributes: { member_name: 'call' } }
 
   t.ok(common.helpers.memName(node, 'now'), 'should work for values')
   t.ok(common.helpers.memName(node2, 'call'), 'should work for member_name')
@@ -65,11 +65,11 @@ test('staticAnalysisCommon.helpers.name', function (t) {
 
 test('staticAnalysisCommon.helpers.operator', function (t) {
   t.plan(10)
-  var node = { attributes: { operator: '++' } }
-  var node2 = { attributes: { operator: '+++' } }
+  const node = { attributes: { operator: '++' } }
+  const node2 = { attributes: { operator: '+++' } }
 
-  var escapedPP = escapeRegExp('++')
-  var escapedPPExact = `^${escapedPP}$`
+  const escapedPP = escapeRegExp('++')
+  const escapedPPExact = `^${escapedPP}$`
 
   t.ok(common.helpers.operator(node, escapedPPExact), 'should work for ++')
   t.notOk(common.helpers.operator(node2, escapedPPExact), 'should not work for +++')
@@ -81,8 +81,8 @@ test('staticAnalysisCommon.helpers.operator', function (t) {
 
 test('staticAnalysisCommon.helpers.nodeType', function (t) {
   t.plan(9)
-  var node = { name: 'Identifier', attributes: { name: 'now' } }
-  var node2 = { name: 'FunctionCall', attributes: { member_name: 'call' } }
+  const node = { name: 'Identifier', attributes: { name: 'now' } }
+  const node2 = { name: 'FunctionCall', attributes: { member_name: 'call' } }
 
   t.ok(common.helpers.nodeType(node, common.nodeTypes.IDENTIFIER), 'should work for ident')
   t.ok(common.helpers.nodeType(node2, common.nodeTypes.FUNCTIONCALL), 'should work for funcall')
@@ -93,8 +93,8 @@ test('staticAnalysisCommon.helpers.nodeType', function (t) {
 
 test('staticAnalysisCommon.helpers.expressionType', function (t) {
   t.plan(9)
-  var node = { name: 'Identifier', attributes: { value: 'now', type: 'uint256' } }
-  var node2 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+  const node = { name: 'Identifier', attributes: { value: 'now', type: 'uint256' } }
+  const node2 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
 
   t.ok(common.helpers.expressionType(node, common.basicTypes.UINT), 'should work for ident')
   t.ok(common.helpers.expressionType(node2, escapeRegExp(common.basicFunctionTypes.CALL)), 'should work for funcall')
@@ -105,9 +105,9 @@ test('staticAnalysisCommon.helpers.expressionType', function (t) {
 
 test('staticAnalysisCommon.helpers.nrOfChildren', function (t) {
   t.plan(10)
-  var node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
-  var node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
-  var node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+  const node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
+  const node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+  const node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
 
   t.ok(common.helpers.nrOfChildren(node, 2), 'should work for 2 children')
   t.notOk(common.helpers.nrOfChildren(node, '1+2'), 'regex should not work')
@@ -119,9 +119,9 @@ test('staticAnalysisCommon.helpers.nrOfChildren', function (t) {
 
 test('staticAnalysisCommon.helpers.minNrOfChildren', function (t) {
   t.plan(13)
-  var node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
-  var node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
-  var node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+  const node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
+  const node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+  const node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
 
   t.ok(common.helpers.minNrOfChildren(node, 2), 'should work for 2 children')
   t.ok(common.helpers.minNrOfChildren(node, 1), 'should work for 1 children')
@@ -147,9 +147,9 @@ function lowlevelAccessersCommon (t, f, someNode) {
 
 test('staticAnalysisCommon.getType', function (t) {
   t.plan(3)
-  var node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
-  var node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
-  var node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+  const node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
+  const node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+  const node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
 
   t.ok(common.getType(node) === 'uint256', 'gettype should work for different nodes')
   t.ok(common.getType(node2) === 'function () payable returns (bool)', 'gettype should work for different nodes')
@@ -219,14 +219,14 @@ test('staticAnalysisCommon.getExternalDirectCallMemberName', function (t) {
 
 test('staticAnalysisCommon.getContractName', function (t) {
   t.plan(2)
-  var contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
+  const contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
   t.ok(common.getContractName(contract) === 'baz', 'returns right contract name')
   t.throws(() => common.getContractName({ name: 'InheritanceSpecifier' }), Error, 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getFunctionDefinitionName', function (t) {
   t.plan(2)
-  var func = { name: 'FunctionDefinition', attributes: { name: 'foo' } }
+  const func = { name: 'FunctionDefinition', attributes: { name: 'foo' } }
   t.ok(common.getFunctionDefinitionName(func) === 'foo', 'returns right contract name')
   t.throws(() => common.getFunctionDefinitionName({ name: 'InlineAssembly' }), Error, 'throws on other nodes')
 })
@@ -247,7 +247,7 @@ test('staticAnalysisCommon.getDeclaredVariableName', function (t) {
 
 test('staticAnalysisCommon.getStateVariableDeclarationsFormContractNode', function (t) {
   t.plan(4)
-  var res = common.getStateVariableDeclarationsFormContractNode(stateVariableContractNode).map(common.getDeclaredVariableName)
+  const res = common.getStateVariableDeclarationsFormContractNode(stateVariableContractNode).map(common.getDeclaredVariableName)
   t.ok(res[0] === 'chairperson', 'var 1 should be ')
   t.ok(res[1] === 'voters', 'var 2 should be ')
   t.ok(res[2] === 'proposals', 'var 3 should be ')
@@ -282,7 +282,7 @@ test('staticAnalysisCommon.getLibraryCallMemberName', function (t) {
 
 test('staticAnalysisCommon.getFullQualifiedFunctionCallIdent', function (t) {
   t.plan(4)
-  var contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
+  const contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
   t.ok(common.getFullQualifiedFunctionCallIdent(contract, thisLocalCall) === 'test.b(bytes32,address)', 'this local call returns correct type')
   t.ok(common.getFullQualifiedFunctionCallIdent(contract, externalDirect) === 'InfoFeed.info()', 'external direct call returns correct type')
   t.ok(common.getFullQualifiedFunctionCallIdent(contract, localCall) === 'baz.bli(struct Ballot.Voter storage pointer)', 'local call returns correct type')
@@ -291,7 +291,7 @@ test('staticAnalysisCommon.getFullQualifiedFunctionCallIdent', function (t) {
 
 test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
   t.plan(3)
-  var contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
+  const contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
   t.ok(common.getFullQuallyfiedFuncDefinitionIdent(contract, fullyQualifiedFunctionDefinition, ['uint256', 'bool']) === 'baz.getY(uint256,bool)', 'creates right signature')
   t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(contract, { name: 'MemberAccess' }, ['uint256', 'bool']), Error, 'throws on wrong nodes')
   t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent({ name: 'FunctionCall' }, fullyQualifiedFunctionDefinition, ['uint256', 'bool']), Error, 'throws on wrong nodes')
@@ -308,9 +308,9 @@ test('staticAnalysisCommon.getLoopBlockStartIndex', function (t) {
 
 test('staticAnalysisCommon.isFunctionDefinition', function (t) {
   t.plan(3)
-  var node1 = { name: 'FunctionDefinition' }
-  var node2 = { name: 'MemberAccess' }
-  var node3 = { name: 'FunctionDefinitionBLABLA' }
+  const node1 = { name: 'FunctionDefinition' }
+  const node2 = { name: 'MemberAccess' }
+  const node3 = { name: 'FunctionDefinitionBLABLA' }
 
   t.ok(common.isFunctionDefinition(node1), 'is exact match should work')
   t.notOk(common.isFunctionDefinition(node2), 'different node should not work')
@@ -319,9 +319,9 @@ test('staticAnalysisCommon.isFunctionDefinition', function (t) {
 
 test('staticAnalysisCommon.isModifierDefinition', function (t) {
   t.plan(3)
-  var node1 = { name: 'ModifierDefinition' }
-  var node2 = { name: 'MemberAccess' }
-  var node3 = { name: 'ModifierDefinitionBLABLA' }
+  const node1 = { name: 'ModifierDefinition' }
+  const node2 = { name: 'MemberAccess' }
+  const node3 = { name: 'ModifierDefinitionBLABLA' }
 
   t.ok(common.isModifierDefinition(node1), 'is exact match should work')
   t.notOk(common.isModifierDefinition(node2), 'different node should not work')
@@ -330,9 +330,9 @@ test('staticAnalysisCommon.isModifierDefinition', function (t) {
 
 test('staticAnalysisCommon.isModifierInvocation', function (t) {
   t.plan(3)
-  var node1 = { name: 'ModifierInvocation' }
-  var node2 = { name: 'MemberAccess' }
-  var node3 = { name: 'ModifierInvocationBLABLA' }
+  const node1 = { name: 'ModifierInvocation' }
+  const node2 = { name: 'MemberAccess' }
+  const node3 = { name: 'ModifierInvocationBLABLA' }
 
   t.ok(common.isModifierInvocation(node1), 'is exact match should work')
   t.notOk(common.isModifierInvocation(node2), 'different node should not work')
@@ -341,9 +341,9 @@ test('staticAnalysisCommon.isModifierInvocation', function (t) {
 
 test('staticAnalysisCommon.isVariableDeclaration', function (t) {
   t.plan(3)
-  var node1 = { name: 'VariableDeclaration' }
-  var node2 = { name: 'MemberAccess' }
-  var node3 = { name: 'VariableDeclarationBLABLA' }
+  const node1 = { name: 'VariableDeclaration' }
+  const node2 = { name: 'MemberAccess' }
+  const node3 = { name: 'VariableDeclarationBLABLA' }
 
   t.ok(common.isVariableDeclaration(node1), 'is exact match should work')
   t.notOk(common.isVariableDeclaration(node2), 'different node should not work')
@@ -352,9 +352,9 @@ test('staticAnalysisCommon.isVariableDeclaration', function (t) {
 
 test('staticAnalysisCommon.isInheritanceSpecifier', function (t) {
   t.plan(3)
-  var node1 = { name: 'InheritanceSpecifier' }
-  var node2 = { name: 'MemberAccess' }
-  var node3 = { name: 'InheritanceSpecifierBLABLA' }
+  const node1 = { name: 'InheritanceSpecifier' }
+  const node2 = { name: 'MemberAccess' }
+  const node3 = { name: 'InheritanceSpecifierBLABLA' }
 
   t.ok(common.isInheritanceSpecifier(node1), 'is exact match should work')
   t.notOk(common.isInheritanceSpecifier(node2), 'different node should not work')
@@ -363,9 +363,9 @@ test('staticAnalysisCommon.isInheritanceSpecifier', function (t) {
 
 test('staticAnalysisCommon.isAssignment', function (t) {
   t.plan(3)
-  var node1 = { name: 'Assignment' }
-  var node2 = { name: 'MemberAccess' }
-  var node3 = { name: 'AssignmentBLABLA' }
+  const node1 = { name: 'Assignment' }
+  const node2 = { name: 'MemberAccess' }
+  const node3 = { name: 'AssignmentBLABLA' }
 
   t.ok(common.isAssignment(node1), 'is exact match should work')
   t.notOk(common.isAssignment(node2), 'different node should not work')
@@ -374,9 +374,9 @@ test('staticAnalysisCommon.isAssignment', function (t) {
 
 test('staticAnalysisCommon.isContractDefinition', function (t) {
   t.plan(3)
-  var node1 = { name: 'ContractDefinition' }
-  var node2 = { name: 'MemberAccess' }
-  var node3 = { name: 'ContractDefinitionBLABLA' }
+  const node1 = { name: 'ContractDefinition' }
+  const node2 = { name: 'MemberAccess' }
+  const node3 = { name: 'ContractDefinitionBLABLA' }
 
   t.ok(common.isContractDefinition(node1), 'is exact match should work')
   t.notOk(common.isContractDefinition(node2), 'different node should not work')
@@ -385,9 +385,9 @@ test('staticAnalysisCommon.isContractDefinition', function (t) {
 
 test('staticAnalysisCommon.isInlineAssembly', function (t) {
   t.plan(3)
-  var node1 = { name: 'InlineAssembly' }
-  var node2 = { name: 'MemberAccess' }
-  var node3 = { name: 'InlineAssemblyBLABLA' }
+  const node1 = { name: 'InlineAssembly' }
+  const node2 = { name: 'MemberAccess' }
+  const node3 = { name: 'InlineAssemblyBLABLA' }
 
   t.ok(common.isInlineAssembly(node1), 'is exact match should work')
   t.notOk(common.isInlineAssembly(node2), 'different node should not work')
@@ -428,7 +428,7 @@ test('staticAnalysisCommon.isInteraction', function (t) {
 
 test('staticAnalysisCommon.isEffect', function (t) {
   t.plan(5)
-  var unaryOp = { name: 'UnaryOperation', attributes: { operator: '++' } }
+  const unaryOp = { name: 'UnaryOperation', attributes: { operator: '++' } }
   t.ok(common.isEffect(inlineAssembly), 'inline assembly is treated as effect')
   t.ok(common.isEffect(assignment), 'assignment is treated as effect')
   t.ok(common.isEffect(unaryOp), '++ is treated as effect')
@@ -439,9 +439,9 @@ test('staticAnalysisCommon.isEffect', function (t) {
 
 test('staticAnalysisCommon.isWriteOnStateVariable', function (t) {
   t.plan(3)
-  let node1 = JSON.parse(JSON.stringify(storageVariableNodes.node1))
-  let node2 = node1
-  let node3 = node1
+  const node1 = JSON.parse(JSON.stringify(storageVariableNodes.node1))
+  const node2 = node1
+  const node3 = node1
   node2.attributes.name = 'y'
   node3.attributes.name = 'xx'
   t.ok(common.isWriteOnStateVariable(inlineAssembly, [node1, node2, node3]), 'inline Assembly is write on state')
@@ -459,9 +459,9 @@ test('staticAnalysisCommon.isStateVariable', function (t) {
 
 test('staticAnalysisCommon.isConstantFunction', function (t) {
   t.plan(3)
-  var node1 = { name: 'FunctionDefinition', attributes: { constant: true, stateMutability: 'view' } }
-  var node2 = { name: 'FunctionDefinition', attributes: { constant: false, stateMutability: 'nonpayable' } }
-  var node3 = { name: 'MemberAccess', attributes: { constant: true, stateMutability: 'view' } }
+  const node1 = { name: 'FunctionDefinition', attributes: { constant: true, stateMutability: 'view' } }
+  const node2 = { name: 'FunctionDefinition', attributes: { constant: false, stateMutability: 'nonpayable' } }
+  const node3 = { name: 'MemberAccess', attributes: { constant: true, stateMutability: 'view' } }
 
   t.ok(common.isConstantFunction(node1), 'should be const func definition')
   t.notOk(common.isConstantFunction(node2), 'should not be const func definition')
@@ -470,9 +470,9 @@ test('staticAnalysisCommon.isConstantFunction', function (t) {
 
 test('staticAnalysisCommon.isPlusPlusUnaryOperation', function (t) {
   t.plan(3)
-  var node1 = { name: 'UnaryOperation', attributes: { operator: '++' } }
-  var node2 = { name: 'UnaryOperation', attributes: { operator: '--' } }
-  var node3 = { name: 'FunctionDefinition', attributes: { operator: '++' } }
+  const node1 = { name: 'UnaryOperation', attributes: { operator: '++' } }
+  const node2 = { name: 'UnaryOperation', attributes: { operator: '--' } }
+  const node3 = { name: 'FunctionDefinition', attributes: { operator: '++' } }
 
   t.ok(common.isPlusPlusUnaryOperation(node1), 'should be unary ++')
   t.notOk(common.isPlusPlusUnaryOperation(node2), 'should not be unary ++')
@@ -481,9 +481,9 @@ test('staticAnalysisCommon.isPlusPlusUnaryOperation', function (t) {
 
 test('staticAnalysisCommon.isMinusMinusUnaryOperation', function (t) {
   t.plan(3)
-  var node1 = { name: 'UnaryOperation', attributes: { operator: '--' } }
-  var node2 = { name: 'UnaryOperation', attributes: { operator: '++' } }
-  var node3 = { name: 'FunctionDefinition', attributes: { operator: '--' } }
+  const node1 = { name: 'UnaryOperation', attributes: { operator: '--' } }
+  const node2 = { name: 'UnaryOperation', attributes: { operator: '++' } }
+  const node3 = { name: 'FunctionDefinition', attributes: { operator: '--' } }
 
   t.ok(common.isMinusMinusUnaryOperation(node1), 'should be unary --')
   t.notOk(common.isMinusMinusUnaryOperation(node2), 'should not be unary --')
@@ -492,9 +492,9 @@ test('staticAnalysisCommon.isMinusMinusUnaryOperation', function (t) {
 
 test('staticAnalysisCommon.isFullyImplementedContract', function (t) {
   t.plan(3)
-  var node1 = { name: 'ContractDefinition', attributes: { fullyImplemented: true } }
-  var node2 = { name: 'ContractDefinition', attributes: { fullyImplemented: false } }
-  var node3 = { name: 'FunctionDefinition', attributes: { operator: '--' } }
+  const node1 = { name: 'ContractDefinition', attributes: { fullyImplemented: true } }
+  const node2 = { name: 'ContractDefinition', attributes: { fullyImplemented: false } }
+  const node3 = { name: 'FunctionDefinition', attributes: { operator: '--' } }
 
   t.ok(common.isFullyImplementedContract(node1), 'should be fully implemented contract')
   t.notOk(common.isFullyImplementedContract(node2), 'should not be fully implemented contract')
@@ -510,7 +510,7 @@ test('staticAnalysisCommon.isCallToNonConstLocalFunction', function (t) {
 
 test('staticAnalysisCommon.isExternalDirectCall', function (t) {
   t.plan(5)
-  var node2 = { name: 'MemberAccess', children: [{attributes: { value: 'this', type: 'contract test' }}], attributes: { value: 'b', type: 'function (bytes32,address) returns (bool)' } }
+  const node2 = { name: 'MemberAccess', children: [{attributes: { value: 'this', type: 'contract test' }}], attributes: { value: 'b', type: 'function (bytes32,address) returns (bool)' } }
   t.notOk(common.isThisLocalCall(externalDirect), 'is this.local_method() used should not work')
   t.notOk(common.isBlockTimestampAccess(externalDirect), 'is block.timestamp used should not work')
   t.notOk(common.isNowAccess(externalDirect), 'is now used should not work')
@@ -520,7 +520,7 @@ test('staticAnalysisCommon.isExternalDirectCall', function (t) {
 
 test('staticAnalysisCommon.isNowAccess', function (t) {
   t.plan(3)
-  var node = { name: 'Identifier', attributes: { value: 'now', type: 'uint256' } }
+  const node = { name: 'Identifier', attributes: { value: 'now', type: 'uint256' } }
   t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
   t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
   t.ok(common.isNowAccess(node), 'is now used should work')
@@ -528,7 +528,7 @@ test('staticAnalysisCommon.isNowAccess', function (t) {
 
 test('staticAnalysisCommon.isBlockTimestampAccess', function (t) {
   t.plan(3)
-  var node = { name: 'MemberAccess', children: [{attributes: { value: 'block', type: 'block' }}], attributes: { value: 'timestamp', type: 'uint256' } }
+  const node = { name: 'MemberAccess', children: [{attributes: { value: 'block', type: 'block' }}], attributes: { value: 'timestamp', type: 'uint256' } }
   t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
   t.ok(common.isBlockTimestampAccess(node), 'is block.timestamp used should work')
   t.notOk(common.isNowAccess(node), 'is now used should not work')
@@ -605,7 +605,7 @@ test('staticAnalysisCommon: function call with of function with function paramet
 
 test('staticAnalysisCommon: require call', function (t) {
   t.plan(3)
-  var node = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'tuple()', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_bool', 'typeString': 'bool'}, {'typeIdentifier': 't_stringliteral_80efd193f332877914d93edb0b3ef5c6a7eecd00c6251c3fd7f146b60b40e6cd', 'typeString': 'literal_string \'fuu\''}], 'overloadedDeclarations': [90, 91], 'referencedDeclaration': 91, 'type': 'function (bool,string memory) pure', 'value': 'require'}, 'id': 50, 'name': 'Identifier', 'src': '462:7:0'}, {'attributes': {'argumentTypes': null, 'commonType': {'typeIdentifier': 't_address', 'typeString': 'address'}, 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'operator': '==', 'type': 'bool'}, 'children': [{'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'sender', 'referencedDeclaration': null, 'type': 'address'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 87, 'type': 'msg', 'value': 'msg'}, 'id': 51, 'name': 'Identifier', 'src': '470:3:0'}], 'id': 52, 'name': 'MemberAccess', 'src': '470:10:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 10, 'type': 'address', 'value': 'owner'}, 'id': 53, 'name': 'Identifier', 'src': '484:5:0'}], 'id': 54, 'name': 'BinaryOperation', 'src': '470:19:0'}, {'attributes': {'argumentTypes': null, 'hexvalue': '667575', 'isConstant': false, 'isLValue': false, 'isPure': true, 'lValueRequested': false, 'subdenomination': null, 'token': 'string', 'type': 'literal_string \'fuu\'', 'value': 'fuu'}, 'id': 55, 'name': 'Literal', 'src': '491:5:0'}], 'id': 56, 'name': 'FunctionCall', 'src': '462:35:0'}
+  const node = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'tuple()', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_bool', 'typeString': 'bool'}, {'typeIdentifier': 't_stringliteral_80efd193f332877914d93edb0b3ef5c6a7eecd00c6251c3fd7f146b60b40e6cd', 'typeString': 'literal_string \'fuu\''}], 'overloadedDeclarations': [90, 91], 'referencedDeclaration': 91, 'type': 'function (bool,string memory) pure', 'value': 'require'}, 'id': 50, 'name': 'Identifier', 'src': '462:7:0'}, {'attributes': {'argumentTypes': null, 'commonType': {'typeIdentifier': 't_address', 'typeString': 'address'}, 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'operator': '==', 'type': 'bool'}, 'children': [{'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'sender', 'referencedDeclaration': null, 'type': 'address'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 87, 'type': 'msg', 'value': 'msg'}, 'id': 51, 'name': 'Identifier', 'src': '470:3:0'}], 'id': 52, 'name': 'MemberAccess', 'src': '470:10:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 10, 'type': 'address', 'value': 'owner'}, 'id': 53, 'name': 'Identifier', 'src': '484:5:0'}], 'id': 54, 'name': 'BinaryOperation', 'src': '470:19:0'}, {'attributes': {'argumentTypes': null, 'hexvalue': '667575', 'isConstant': false, 'isLValue': false, 'isPure': true, 'lValueRequested': false, 'subdenomination': null, 'token': 'string', 'type': 'literal_string \'fuu\'', 'value': 'fuu'}, 'id': 55, 'name': 'Literal', 'src': '491:5:0'}], 'id': 56, 'name': 'FunctionCall', 'src': '462:35:0'}
 
   t.equals(common.isRequireCall(node), true)
   t.equals(common.getFunctionCallType(node), 'function (bool,string memory) pure', 'Extracts right type')
@@ -614,17 +614,17 @@ test('staticAnalysisCommon: require call', function (t) {
 
 test('staticAnalysisCommon: isDeleteOfDynamicArray', function (t) {
   t.plan(2)
-  var node = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'operator': 'delete', 'prefix': true, 'type': 'tuple()'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 4, 'type': 'uint256[] storage ref', 'value': 'users'}, 'id': 58, 'name': 'Identifier', 'src': '514:5:0'}], 'id': 59, 'name': 'UnaryOperation', 'src': '507:12:0'}
+  const node = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'operator': 'delete', 'prefix': true, 'type': 'tuple()'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 4, 'type': 'uint256[] storage ref', 'value': 'users'}, 'id': 58, 'name': 'Identifier', 'src': '514:5:0'}], 'id': 59, 'name': 'UnaryOperation', 'src': '507:12:0'}
   t.equals(common.isDeleteOfDynamicArray(node), true)
   t.equals(common.isDynamicArrayAccess(node.children[0]), true, 'Extracts right type')
 })
 
 test('staticAnalysisCommon: isAbiNamespaceCall', function (t) {
   t.plan(8)
-  var node1 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encode', 'referencedDeclaration': null, 'type': 'function () pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 26, 'name': 'Identifier', 'src': '245: 3:0'}], 'id': 28, 'name': 'MemberAccess', 'src': '245:10:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 29, 'name': 'Identifier', 'src': '256:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 30, 'name': 'Identifier', 'src': '258:1:0'}], 'id': 31, 'name': 'FunctionCall', 'src': '245:15:0'}
-  var node2 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encodePacked', 'referencedDeclaration': null, 'type': 'function () pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 33, 'name': 'Identifier', 'src': '279:3:0'}], 'id': 35, 'name': 'MemberAccess', 'src': '279:16:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 36, 'name': 'Identifier', 'src': '296:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 37, 'name': 'Identifier', 'src': '298:1:0'}], 'id': 38, 'name': 'FunctionCall', 'src': '279:21:0'}
-  var node3 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_bytes4', 'typeString': 'bytes4'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encodeWithSelector', 'referencedDeclaration': null, 'type': 'function (bytes4) pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 40, 'name': 'Identifier', 'src': '319:3:0'}], 'id': 42, 'name': 'MemberAccess', 'src': '319:22:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 19, 'type': 'bytes4', 'value': 'selector'}, 'id': 43, 'name': 'Identifier', 'src': '342:8:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 44, 'name': 'Identifier', 'src': '352:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 45, 'name': 'Identifier', 'src': '355:1:0'}], 'id': 46, 'name': 'FunctionCall', 'src': '319:38:0'}
-  var node4 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_string_memory_ptr', 'typeString': 'string memory'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encodeWithSignature', 'referencedDeclaration': null, 'type': 'function (string memory) pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 48, 'name': 'Identifier', 'src': '367:3:0'}], 'id': 50, 'name': 'MemberAccess', 'src': '367:23:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 11, 'type': 'string memory', 'value': 'sig'}, 'id': 51, 'name': 'Identifier', 'src': '391:3:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 52, 'name': 'Identifier', 'src': '396:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 53, 'name': 'Identifier', 'src': '399:1:0'}], 'id': 54, 'name': 'FunctionCall', 'src': '367:34:0'}
+  const node1 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encode', 'referencedDeclaration': null, 'type': 'function () pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 26, 'name': 'Identifier', 'src': '245: 3:0'}], 'id': 28, 'name': 'MemberAccess', 'src': '245:10:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 29, 'name': 'Identifier', 'src': '256:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 30, 'name': 'Identifier', 'src': '258:1:0'}], 'id': 31, 'name': 'FunctionCall', 'src': '245:15:0'}
+  const node2 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encodePacked', 'referencedDeclaration': null, 'type': 'function () pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 33, 'name': 'Identifier', 'src': '279:3:0'}], 'id': 35, 'name': 'MemberAccess', 'src': '279:16:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 36, 'name': 'Identifier', 'src': '296:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 37, 'name': 'Identifier', 'src': '298:1:0'}], 'id': 38, 'name': 'FunctionCall', 'src': '279:21:0'}
+  const node3 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_bytes4', 'typeString': 'bytes4'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encodeWithSelector', 'referencedDeclaration': null, 'type': 'function (bytes4) pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 40, 'name': 'Identifier', 'src': '319:3:0'}], 'id': 42, 'name': 'MemberAccess', 'src': '319:22:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 19, 'type': 'bytes4', 'value': 'selector'}, 'id': 43, 'name': 'Identifier', 'src': '342:8:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 44, 'name': 'Identifier', 'src': '352:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 45, 'name': 'Identifier', 'src': '355:1:0'}], 'id': 46, 'name': 'FunctionCall', 'src': '319:38:0'}
+  const node4 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_string_memory_ptr', 'typeString': 'string memory'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encodeWithSignature', 'referencedDeclaration': null, 'type': 'function (string memory) pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 48, 'name': 'Identifier', 'src': '367:3:0'}], 'id': 50, 'name': 'MemberAccess', 'src': '367:23:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 11, 'type': 'string memory', 'value': 'sig'}, 'id': 51, 'name': 'Identifier', 'src': '391:3:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 52, 'name': 'Identifier', 'src': '396:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 53, 'name': 'Identifier', 'src': '399:1:0'}], 'id': 54, 'name': 'FunctionCall', 'src': '367:34:0'}
 
   t.equals(common.isAbiNamespaceCall(node1), true, 'encode abi')
   t.equals(common.isAbiNamespaceCall(node2), true, 'encodePacked abi')

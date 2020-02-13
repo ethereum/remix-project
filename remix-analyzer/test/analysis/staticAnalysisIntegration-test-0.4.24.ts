@@ -41,7 +41,7 @@ const testFiles = [
 var testFileAsts = {}
 
 testFiles.forEach((fileName) => {
-  var content = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
+  const content = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
   testFileAsts[fileName] = JSON.parse(compiler.compileStandardWrapper(compilerInput(content)))
 })
 
