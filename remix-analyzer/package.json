@@ -45,6 +45,7 @@
     "npm-install-version": "^6.0.2",
     "standard": "^7.0.1",
     "tape": "^4.6.0",
+    "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   }
 }
