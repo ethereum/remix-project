@@ -2,19 +2,20 @@ import { default as category } from './categories'
 import { getFunctionDefinitionName, helpers, getDeclaredVariableName, getDeclaredVariableType } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
 
-export default class erc20Decimals {
-  name = 'ERC20: '
-  desc = 'Decimal should be uint8'
-  categories = category.ERC
-  algorithm = algorithm.EXACT
+export default class erc20Decimals implements AnalyzerModule {
+  name: string = 'ERC20: '
+  description: string = 'Decimal should be uint8'
+  category: ModuleCategory = category.ERC
+  algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  abstractAst = new AbstractAst()
-  visit = this.abstractAst.build_visit((node) => false)
+  abstractAst: AbstractAst = new AbstractAst()
+  visit = this.abstractAst.build_visit((node: AstNodeLegacy) => false)
   report = this.abstractAst.build_report(this._report.bind(this))
 
-  private _report (contracts, multipleContractsWithSameName) {
-    const warnings: any = []
+  private _report (contracts, multipleContractsWithSameName): ReportObj[] {
+    const warnings: ReportObj[] = []
 
     contracts.forEach((contract) => {
       const contractAbiSignatures = contract.functions.map((f) => helpers.buildAbiSignature(getFunctionDefinitionName(f.node), f.parameters))
@@ -41,7 +42,7 @@ export default class erc20Decimals {
     return warnings
   }
 
-  private isERC20 (funSignatures) {
+  private isERC20 (funSignatures: string[]): boolean {
     return funSignatures.includes('totalSupply()') &&
           funSignatures.includes('balanceOf(address)') &&
           funSignatures.includes('transfer(address,uint256)') &&

@@ -1,19 +1,20 @@
 import { default as category } from './categories'
 import { isInlineAssembly } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
 
-export default class inlineAssembly {
-  inlineAssNodes: any[] = []
-  name = 'Inline assembly: '
-  desc = 'Use of Inline Assembly'
-  categories = category.SECURITY
-  algorithm = algorithm.EXACT
+export default class inlineAssembly implements AnalyzerModule {
+  inlineAssNodes: AstNodeLegacy[] = []
+  name: string = 'Inline assembly: '
+  description: string = 'Use of Inline Assembly'
+  category: ModuleCategory = category.SECURITY
+  algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node) {
+  visit (node: AstNodeLegacy): void {
     if (isInlineAssembly(node)) this.inlineAssNodes.push(node)
   }
 
-  report (compilationResults) {
+  report (compilationResults: CompilationResult): ReportObj[] {
     return this.inlineAssNodes.map((node) => {
       return {
         warning: `CAUTION: The Contract uses inline assembly, this is only advised in rare cases. 

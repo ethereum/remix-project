@@ -6,17 +6,18 @@ import { isLowLevelCall, isTransfer, isExternalDirectCall, isEffect, isLocalCall
 import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
 
-export default class constantFunctions {
-  name = 'Constant functions: '
-  desc = 'Check for potentially constant functions'
-  categories = category.MISC
-  algorithm = algorithm.HEURISTIC
+export default class constantFunctions implements AnalyzerModule {
+  name: string = 'Constant functions: '
+  description: string = 'Check for potentially constant functions'
+  category: ModuleCategory = category.MISC
+  algorithm: ModuleAlgorithm = algorithm.HEURISTIC
 
-  abstractAst = new AbstractAst()
+  abstractAst: AbstractAst = new AbstractAst()
 
   visit = this.abstractAst.build_visit(
-    (node) => isLowLevelCall(node) ||
+    (node: AstNodeLegacy) => isLowLevelCall(node) ||
               isTransfer(node) ||
               isExternalDirectCall(node) ||
               isEffect(node) ||
@@ -29,8 +30,8 @@ export default class constantFunctions {
 
   report = this.abstractAst.build_report(this._report.bind(this))
 
-  private _report (contracts, multipleContractsWithSameName) {
-    const warnings: any = []
+  private _report (contracts, multipleContractsWithSameName): ReportObj[] {
+    const warnings: ReportObj[] = []
     const hasModifiers = contracts.some((item) => item.modifiers.length > 0)
 
     const callGraph = buildGlobalFuncCallGraph(contracts)

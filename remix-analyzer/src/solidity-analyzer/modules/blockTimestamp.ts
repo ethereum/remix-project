@@ -1,21 +1,22 @@
 import { default as category } from './categories'
 import { isNowAccess, isBlockTimestampAccess } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
 
-export default class blockTimestamp  {
-  warningNowNodes: any[] = []
-  warningblockTimestampNodes: any[] = []
-  name = 'Block timestamp: '
-  desc = 'Semantics maybe unclear'
-  categories = category.SECURITY
-  algorithm = algorithm.EXACT
+export default class blockTimestamp implements AnalyzerModule {
+  warningNowNodes: AstNodeLegacy[] = []
+  warningblockTimestampNodes: AstNodeLegacy[] = []
+  name: string = 'Block timestamp: '
+  description: string = 'Semantics maybe unclear'
+  category: ModuleCategory = category.SECURITY
+  algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node) {
+  visit (node: AstNodeLegacy): void {
     if (isNowAccess(node)) this.warningNowNodes.push(node)
     else if (isBlockTimestampAccess(node)) this.warningblockTimestampNodes.push(node)
   }
 
-  report (compilationResults) {
+  report (compilationResults: CompilationResult): ReportObj[] {
     return this.warningNowNodes.map((item, i) => {
       return {
         warning: `use of "now": "now" does not mean current time. Now is an alias for block.timestamp. 
