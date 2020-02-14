@@ -75,7 +75,7 @@ class SettingsUI {
               value="web3" name="executionContext"> Web3 Provider
             </option>
           </select>
-          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
+          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank"><i class="${css.infoDeployAction} fas fa-info" title="check out docs to setup Environment"></i></a>
         </div>
       </div>
     `
