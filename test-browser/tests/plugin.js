@@ -68,8 +68,9 @@ module.exports = {
     .frameParent()
     .useCss().waitForElementVisible('div[data-id="modalDialogContainer"]')
     .assert.containsText('h4[data-id="permissionHandlerMessage"]', 'ZOKRATES" WOULD LIKE TO ACCESS "FILE MANAGER" :')
-    .waitForElementVisible('label[data-id="permissionHandlerRememberChoice"]')
+    .pause(2000)
     .click('label[data-id="permissionHandlerRememberChoice"]')
+    .pause(2000)
     .modalFooterOKClick()
   },
 
@@ -79,7 +80,11 @@ module.exports = {
     .waitForElementVisible('button[data-id="pluginManagerSettingsButton"]')
     .click('button[data-id="pluginManagerSettingsButton"]')
     .waitForElementVisible('div[data-id="modalDialogContainer"]')
-    .click('i[data-id="pluginManagerSettingsRemovePermissionZoKrates"]')
+    .click('form[data-id="pluginManagerSettingsPermissionForm"]')
+    .pause(2000)
+    .click('i[data-id="pluginManagerSettingsClearAllPermission"]')
+    .pause(2000)
+    .assert.containsText('form[data-id="pluginManagerSettingsPermissionForm"]', 'No Permission requested yet')
     .modalFooterOKClick()
     .end()
   },
