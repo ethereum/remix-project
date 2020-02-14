@@ -8,7 +8,7 @@ class JournalChildIncludes extends EventEmitter {
     let isTextFound = false
     const browser = this.api
 
-    this.api.elements('css selector', 'div[data-id="terminalJournal"]', (res) => {
+    this.api.elements('css selector', '*[data-id="terminalJournal"]', (res) => {
       res.value.forEach(function (jsonWebElement) {
         const jsonWebElementId = jsonWebElement.ELEMENT
 
@@ -20,7 +20,7 @@ class JournalChildIncludes extends EventEmitter {
       })
     })
     browser.perform(() => {
-      browser.assert.ok(isTextFound, isTextFound ? `<div[data-id="terminalJournal"]> contains ${val}.` : `${val} not found in <div[data-id="terminalJournal"]> div:last-child>`)
+      browser.assert.ok(isTextFound, isTextFound ? `<*[data-id="terminalJournal"]> contains ${val}.` : `${val} not found in <*[data-id="terminalJournal"]> div:last-child>`)
       this.emit('complete')
     })
     return this
