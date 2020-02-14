@@ -103,7 +103,7 @@ export class PluginManagerSettings {
       <div>
         <div class="${css.permissionKey}">
           <h6>${key} :</h6>
-          <i onclick="${() => this.clearAllPersmission(key)}" class="far fa-trash-alt"></i>
+          <i onclick="${() => this.clearAllPersmission(key)}" class="far fa-trash-alt" data-id="pluginManagerSettingsClearAllPermission"></i>
         </div>
         ${byModule}
       </div>`
