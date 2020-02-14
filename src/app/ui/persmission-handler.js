@@ -147,45 +147,39 @@ export class PermissionHandler {
       ? `"${fromName}" has changed and would like to access "${toName}"`
       : `"${fromName}" would like to access "${toName}"`
 
+    const imgFrom = yo`<img id="permissionModalImagesFrom" src="${from.icon}" />`
+    const imgTo = yo`<img id="permissionModalImagesTo" src="${to.icon}" />`
     const pluginsImages = yo`
-      <article id="permissionModalImages" class="${css.images}">
-        <img src="${from.icon}" />
-        <i class="text-warning fas fa-arrow-right"></i>
-        <img src="${to.icon}" />
+      <article class="${css.images}">
+        ${imgFrom}
+        <i class="fas fa-arrow-right"></i>
+        ${imgTo}
       </article>
 
     `
 
-    globalRegistry.get('themeModule').api.fixInvert(pluginsImages)
+    globalRegistry.get('themeModule').api.fixInvert(imgFrom)
+    globalRegistry.get('themeModule').api.fixInvert(imgTo)
 
     return yo`
-    <section class="${css.permission}">
-      ${pluginsImages}
-      <article>
-        <h4 data-id="permissionHandlerMessage">${message} :</h4>
-        <h6>${fromName}</h6>
-        <p>${from.description || yo`<i>No description Provided</i>`}</p>
-        <h6>${toName} :</p>
-        <p>${to.description || yo`<i>No description Provided</i>`}</p>
-      </article>
+      <section class="${css.permission}">
+        ${pluginsImages}
+        <article>
+          <h4 data-id="permissionHandlerMessage">${message} :</h4>
+          <h6>${fromName}</h6>
+          <p>${from.description || yo`<i>No description Provided</i>`}</p>
+          <h6>${toName} :</p>
+          <p>${to.description || yo`<i>No description Provided</i>`}</p>
+        </article>
 
-      <article class="${css.remember}">
-        <div class="form-check">
-          ${rememberSwitch}
-          <label class="form-check-label" for="remember" data-id="permissionHandlerRememberChoice">Remember this choice</label>
-        </div>
-        <button class="btn btn-sm" onclick="${_ => this.clear()}">Reset all Permissions</button>
-      </article>
-
-    </section>
+        <article class="${css.remember}">
+          <div class="form-check">
+            ${rememberSwitch}
+            <label class="form-check-label" for="remember" data-id="permissionHandlerRememberChoice">Remember this choice</label>
+          </div>
+          <button class="btn btn-sm" onclick="${_ => this.clear()}">Reset all Permissions</button>
+        </article>
+      </section>
     `
-  }
-
-  listenOnThemeChange (images) {
-    // update invert for Plugin icons
-    if (!globalRegistry.get('themeModule')) return
-    globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
-      globalRegistry.get('themeModule').api.fixInvert(images)
-    })
   }
 }
