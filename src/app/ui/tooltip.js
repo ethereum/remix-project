@@ -69,7 +69,7 @@ class Toaster {
       ` : ``
 
       this.tooltip = yo`
-        <div class="${css.tooltip} alert alert-info p-2"  onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
+        <div data-id="tooltipPopup" class="${css.tooltip} alert alert-info p-2"  onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
           <span class="px-2">
             ${shortTooltipText}
             ${button}

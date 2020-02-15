@@ -1,6 +1,11 @@
 'use strict'
 const init = require('../helpers/init')
 const sauce = require('./sauce')
+const testData = {
+  pluginName: 'remixIde',
+  pluginDisplayName: 'Remix IDE',
+  pluginUrl: 'https://remix-project.org/'
+}
 
 module.exports = {
   before: function (browser, done) {
@@ -53,7 +58,7 @@ module.exports = {
     .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonudapp"]')
   },
 
-  'Grant plugin permission (ZOKRATES)': function (browser) {
+  'Should grant plugin permission (ZOKRATES)': function (browser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
     .click('*[data-id="pluginManagerSettingsButton"]')
     .waitForElementVisible('*[data-id="pluginManagerSettingsPermissionForm"]')
@@ -74,7 +79,7 @@ module.exports = {
     .modalFooterOKClick()
   },
 
-  'Revert plugin permission (ZOKRATES)': function (browser) {
+  'Should revert plugin permission (ZOKRATES)': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsSettingsIcons"]')
     .click('*[data-id="verticalIconsSettingsIcons"]')
     .waitForElementVisible('*[data-id="pluginManagerSettingsButton"]')
@@ -86,6 +91,37 @@ module.exports = {
     .pause(2000)
     .assert.containsText('*[data-id="pluginManagerSettingsPermissionForm"]', 'No Permission requested yet')
     .modalFooterOKClick()
+  },
+
+  'Should connect a local plugin': function (browser) {
+    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+    .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
+    .waitForElementVisible('*[data-id="modalDialogContainer"]')
+    .click('*[data-id="modalDialogModalBody"]')
+    .setValue('*[data-id="localPluginName"]', testData.pluginName)
+    .setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
+    .setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
+    .click('*[data-id="localPluginRadioButtoniframe"]')
+    .click('*[data-id="localPluginRadioButtonsidePanel"]')
+    .click('*[data-id="modalDialogModalFooter"]')
+    .modalFooterOKClick()
+    .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]')
+  },
+
+  'Should display error message for creating already existing plugin': function (browser) {
+    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+    .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
+    .waitForElementVisible('*[data-id="modalDialogContainer"]')
+    .click('*[data-id="modalDialogModalBody"]')
+    .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', testData.pluginName)
+    .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
+    .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
+    .click('*[data-id="localPluginRadioButtoniframe"]')
+    .click('*[data-id="localPluginRadioButtonsidePanel"]')
+    .click('*[data-id="modalDialogModalFooter"]')
+    .modalFooterOKClick()
+    .waitForElementVisible('*[data-id="tooltipPopup"]')
+    .assert.containsText('*[data-id="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
     .end()
   },
 
