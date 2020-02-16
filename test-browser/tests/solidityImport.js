@@ -27,7 +27,7 @@ module.exports = {
 
   'Test Github Import - from master branch': function (browser) {
     browser
-          .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
+          .setSolidityCompilerVersion('soljson-v0.6.2+commit.bacdbe57.js') // open-zeppelin moved to pragma ^0.6.0 (master branch)
           .addFile('Untitled4.sol', sources[3]['browser/Untitled4.sol'])
           .clickLaunchIcon('fileExplorers')
           .verifyContracts(['test7', 'ERC20', 'SafeMath'], {wait: 10000})
@@ -35,6 +35,7 @@ module.exports = {
 
   'Test Github Import - from other branch': function (browser) {
     browser
+          .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js') // switch back to 0.5.0 : release-v2.3.0 branch is not solidity 0.6 compliant
           .addFile('Untitled5.sol', sources[4]['browser/Untitled5.sol'])
           .clickLaunchIcon('fileExplorers')
           .verifyContracts(['test8', 'ERC20', 'SafeMath'], {wait: 10000})
@@ -42,6 +43,7 @@ module.exports = {
 
   'Test Github Import - no branch specified': function (browser) {
     browser
+          .setSolidityCompilerVersion('soljson-v0.6.2+commit.bacdbe57.js') // open-zeppelin moved to pragma ^0.6.0 (master branch)
           .addFile('Untitled6.sol', sources[5]['browser/Untitled6.sol'])
           .clickLaunchIcon('fileExplorers')
           .verifyContracts(['test10', 'ERC20', 'SafeMath'], {wait: 10000})
