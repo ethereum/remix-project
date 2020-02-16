@@ -100,8 +100,8 @@ var css = csjs`
   }
   .centered {
     position           : fixed;
-    top                : 50%;
-    left               : 50%;
+    top                : 20%;
+    left               : 45%;
     width              : 200px;
     height             : 200px;
   }
