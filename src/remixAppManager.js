@@ -8,9 +8,9 @@ const requiredModules = [ // services + layout views + system views
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
   'terminal', 'settings', 'pluginManager']
 
-export function isNative(name) {
+export function isNative  (name) {
   const nativePlugins = ['vyper', 'workshops', 'ethdoc', 'etherscan']
-  return nativePlugins.includes(name)
+  return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
 export class RemixAppManager extends PluginManager {

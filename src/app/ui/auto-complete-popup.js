@@ -189,8 +189,8 @@ class AutoCompletePopup {
 
   extendAutocompletion () {
     // TODO: this is not using the appManager interface. Terminal should be put as module
-    this.opts.appManager.event.on('activate', (id) => {
-      const profile = this.opts.appManager.getPlugin(id).profile
+    this.opts.appManager.event.on('activate', async (id) => {
+      const profile = await this.opts.appManager.getProfile(id)
       if (!profile.methods) return
       profile.methods.forEach((method) => {
         const key = `remix.call({name: '${id}', key:'${method}', payload: []}).then((result) => { console.log(result) }).catch((error) => { console.log(error) })`

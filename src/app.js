@@ -384,12 +384,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     console.log('couldn\'t register iframe plugins', e.message)
   }
 
-  await appManager.activate(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'offsetToLineColumnConverter'])
-  await appManager.activate(['mainPanel'])
-  await appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'terminal'])
+  await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'offsetToLineColumnConverter'])
+  await appManager.activatePlugin(['mainPanel', 'menuicons'])
+  await appManager.activatePlugin(['home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'terminal'])
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) await appManager.activate(workspace)
+  if (Array.isArray(workspace)) await appManager.activatePlugin(workspace)
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
@@ -415,6 +415,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   if (isElectron()) {
-    appManager.activate(['remixd'])
+    appManager.activatePlugin(['remixd'])
   }
 }
