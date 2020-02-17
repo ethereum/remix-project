@@ -1,11 +1,12 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
+import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult} from './../../types'
 
 export default class gasCosts {
-  name = 'Gas costs: '
-  desc = 'Warn if the gas requirements of functions are too high.'
-  categories = category.GAS
-  algorithm = algorithm.EXACT
+  name: string = 'Gas costs: '
+  description: string = 'Warn if the gas requirements of functions are too high.'
+  category: ModuleCategory = category.GAS
+  algorithm: ModuleAlgorithm = algorithm.EXACT
 
 
 /**
@@ -22,7 +23,7 @@ export default class gasCosts {
     }
   }
 
-  report (compilationResults) {
+  report (compilationResults: CompilationResult): ReportObj[] {
     const report: any[] = []
     this.visitContracts(compilationResults.contracts, (contract) => {
       if (
