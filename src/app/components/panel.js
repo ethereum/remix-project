@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
 const csjs = require('csjs-inject')
 const yo = require('yo-yo')
-const { HostPlugin } = require('@remixproject/engine')
+import { HostPlugin } from '@remixproject/engine'
 
 const css = csjs`
   .plugins        {
