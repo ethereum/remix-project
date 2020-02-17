@@ -35,11 +35,7 @@ export class RemixAppManager extends PluginManager {
     return true
   }
 
-<<<<<<< HEAD
   onPluginActivated (plugin) {
-=======
-  onActivated (plugin) {
->>>>>>> ac82ba81... using new engine
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('activate', plugin)
   }
@@ -63,7 +59,6 @@ export class RemixAppManager extends PluginManager {
     this.event.emit('added', plugin.name)
   }
 
-<<<<<<< HEAD
   async ensureActivated (apiName) {
     await this.activatePlugin(apiName)
     this.event.emit('ensureActivated', apiName)
@@ -74,8 +69,6 @@ export class RemixAppManager extends PluginManager {
     this.event.emit('ensureDeactivated', apiName)
   }
 
-=======
->>>>>>> ac82ba81... using new engine
   deactivatePlugin (name) {
     if (requiredModules.includes(name)) return
     super.deactivatePlugin(name)
