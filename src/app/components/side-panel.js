@@ -62,7 +62,8 @@ export class SidePanel extends AbstractPanel {
   constructor (appManager, verticalIcons) {
     super(sidePanel)
     this.appManager = appManager
-    this.header = this.renderHeader()
+    this.header = yo`<header></header>`
+    this.renderHeader()
     this.verticalIcons = verticalIcons
 
     // Toggle content
@@ -103,18 +104,18 @@ export class SidePanel extends AbstractPanel {
    * Display content and update the header
    * @param {String} name The name of the plugin to display
    */
-  showContent (name) {
+  async showContent (name) {
     super.showContent(name)
-    yo.update(this.header, this.renderHeader())
+    this.renderHeader()
   }
 
   /** The header of the side panel */
-  renderHeader () {
+  async renderHeader () {
     let name = ' - '
     let docLink = ''
     let versionWarning
     if (this.active) {
-      const { profile } = this.appManager.getPlugin(this.active)
+      const profile = await this.appManager.getProfile(this.active)
       name = profile.displayName ? profile.displayName : profile.name
       docLink = profile.documentation ? yo`<a href="${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
       if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
@@ -126,13 +127,14 @@ export class SidePanel extends AbstractPanel {
       }
     }
 
-    return yo`
+    const header =  yo`
       <header class="${css.swapitHeader} px-3">
         <h6 class="${css.swapitTitle}" data-id="sidePanelSwapitTitle">${name}</h6>
         ${docLink}
         ${versionWarning}
       </header>
     `
+    yo.update(this.header, header)
   }
 
   render () {

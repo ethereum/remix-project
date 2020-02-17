@@ -125,8 +125,8 @@ class TxLogger {
       }
       return false
     }
-    this.eventsDecoder = globalRegistry.get('eventsDecoder').api
-    this.txListener = globalRegistry.get('txListener').api
+    this.eventsDecoder = globlalRegistry.get('eventsDecoder').api
+    this.txListener = globlalRegistry.get('txlistener').api
     this.terminal = terminal
     // dependencies
     this._deps = {

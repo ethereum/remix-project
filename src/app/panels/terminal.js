@@ -98,9 +98,6 @@ class Terminal extends Plugin {
     if (opts.shell) self._shell = opts.shell // ???
     register(self)
   }
-  setTxListener(txListener) {
-    this._opts.txListener = txListener
-  }
   logHtml (html) {
     var command = this.commands['html']
     if (typeof command === 'function') command(html)
@@ -137,7 +134,7 @@ class Terminal extends Plugin {
     self._view.inputSearch = yo`<input
       spellcheck="false"
       type="text"
-      class="${css.filter} form-control"
+      class="border ${css.filter} form-control"
       id="searchInput"
       onkeydown=${filter}
       placeholder="Search with transaction hash or address">
@@ -436,7 +433,7 @@ class Terminal extends Plugin {
     self._shell('remix.help()', self.commands, () => {})
     self.commands.html(intro)
 
-    self._components.txLogger = new TxLogger(self._opts.eventsDecoder, self._opts.txListener, this, self.blockchain)
+    self._components.txLogger = new TxLogger(this, self.blockchain)
     self._components.txLogger.event.register('debuggingRequested', (hash) => {
       // TODO should probably be in the run module
       if (!self._opts.appManager.isActive('debugger')) self._opts.appManager.activatePlugin('debugger')
