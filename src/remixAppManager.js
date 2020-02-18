@@ -18,7 +18,6 @@ export class RemixAppManager extends PluginManager {
   constructor (plugins) {
     super()
     this.event = new EventEmitter()
-    this.registered = {}
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
   }
@@ -42,13 +41,13 @@ export class RemixAppManager extends PluginManager {
   }
 
   getAll () {
-    return Object.keys(this.registered).map((p) => {
-      return this.registered[p]
+    return Object.keys(this.profiles).map((p) => {
+      return this.profiles[p]
     })
   }
 
   getIds () {
-    return Object.keys(this.registered)
+    return Object.keys(this.profiles)
   }
 
   onPluginDeactivated (plugin) {
@@ -57,18 +56,16 @@ export class RemixAppManager extends PluginManager {
   }
 
   onRegistration (plugin) {
-    if (!this.registered) this.registered = {}
-    this.registered[plugin.name] = plugin
     this.event.emit('added', plugin.name)
   }
 
-  ensureActivated (apiName) {
-    if (!this.isActive(apiName)) this.activateOne(apiName)
+  async ensureActivated (apiName) {
+    await this.activatePlugin(apiName)
     this.event.emit('ensureActivated', apiName)
   }
 
-  ensureDeactivated (apiName) {
-    if (this.isActive(apiName)) this.deactivateOne(apiName)
+  async ensureDeactivated (apiName) {
+    await this.deactivatePlugin(apiName)
     this.event.emit('ensureDeactivated', apiName)
   }
 
