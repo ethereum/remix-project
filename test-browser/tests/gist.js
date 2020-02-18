@@ -19,6 +19,8 @@ module.exports = {
        - switch to a file in the new gist
       */
     console.log('token', process.env.gist_token)
+    const runtimeBrowser = browser.capabilities.browserName
+
     browser
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('fileExplorers')
@@ -35,8 +37,8 @@ module.exports = {
         browser
           .modalFooterCancelClick()
           .executeScript(`remix.loadgist('${gistid}')`)
-          .switchFile('browser/gists')
-          .switchFile(`browser/gists/${gistid}`)
+        if (runtimeBrowser === 'chrome') browser.switchFile('browser/gists')
+        browser.switchFile(`browser/gists/${gistid}`)
           .switchFile(`browser/gists/${gistid}/1_Storage.sol`)
           .perform(done)
       }
