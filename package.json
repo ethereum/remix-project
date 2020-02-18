@@ -61,7 +61,7 @@
     "remix-solidity": "0.3.25",
     "remix-tabs": "1.0.48",
     "remix-tests": "0.1.28",
-    "remix-simulator": "0.1.9-alpha.15",
+    "remix-simulator": "0.1.9-alpha.15tagRemixSimulator1",
     "remixd": "0.1.8-alpha.10",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
