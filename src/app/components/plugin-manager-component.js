@@ -87,35 +87,32 @@ class PluginManagerComponent extends ViewPlugin {
     this.appManager.event.on('added', () => { this.reRender() })
   }
 
-  renderItem (name) {
-    const api = this.appManager.getPlugin(name)
-    if (!api) return
-    const isActive = this.appManager.isActive(name)
-    const displayName = (api.profile.displayName) ? api.profile.displayName : name
+  renderItem (profile, isActive) {
+    const displayName = (profile.displayName) ? profile.displayName : profile.name
 
     // Check version of the plugin
     let versionWarning
     // Alpha
-    if (api.profile.version && api.profile.version.match(/\b(\w*alpha\w*)\b/g)) {
+    if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
       versionWarning = yo`<small title="Version Alpha" class="${css.versionWarning} plugin-version">alpha</small>`
     }
     // Beta
-    if (api.profile.version && api.profile.version.match(/\b(\w*beta\w*)\b/g)) {
+    if (profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)) {
       versionWarning = yo`<small title="Version Beta" class="${css.versionWarning} plugin-version">beta</small>`
     }
 
     const activationButton = isActive
       ? yo`
-      <button onclick="${_ => this.appManager.deactivatePlugin(name)}" class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${name}">
+      <button onclick="${_ => this.appManager.deactivatePlugin(profile.name)}" class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${name}">
         Deactivate
       </button>`
       : yo`
-      <button onclick="${_ => this.appManager.activatePlugin(name)}" class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${name}">
+      <button onclick="${_ => this.appManager.activatePlugin(profile.name)}" class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${name}">
         Activate
       </button>`
 
     return yo`
-      <article id="remixPluginManagerListItem_${name}" class="list-group-item py-1 plugins-list-group-item" title="${displayName}" >
+      <article id="remixPluginManagerListItem_${profile.name}" class="list-group-item py-1 plugins-list-group-item" title="${displayName}" >
         <div class="${css.row} justify-content-between align-items-center mb-2">
           <h6 class="${css.displayName} plugin-name">
             ${displayName}
@@ -123,7 +120,7 @@ class PluginManagerComponent extends ViewPlugin {
           </h6>
           ${activationButton}
         </div>
-        <p class="${css.description} text-body plugin-text">${api.profile.description}</p>
+        <p class="${css.description} text-body plugin-text">${profile.description}</p>
       </article>
     `
   }
@@ -154,25 +151,26 @@ class PluginManagerComponent extends ViewPlugin {
 
   render () {
     // Filtering helpers
-    const isFiltered = (api) => (api.profile.displayName ? api.profile.displayName : api.name).toLowerCase().includes(this.filter)
-    const isNotRequired = ({profile}) => !this.appManager.isRequired(profile.name)
-    const isNotHome = ({profile}) => profile.name !== 'home'
-    const sortByName = (a, b) => {
-      const nameA = ((a.profile.displayName) ? a.profile.displayName : a.profile.name).toUpperCase()
-      const nameB = ((b.profile.displayName) ? b.profile.displayName : b.profile.name).toUpperCase()
+    const isFiltered = (profile) => (profile.displayName ? profile.displayName : profile.name).toLowerCase().includes(this.filter)
+    const isNotRequired = (profile) => !this.appManager.isRequired(profile.name)
+    const isNotHome = (profile) => profile.name !== 'home'
+    const sortByName = (profileA, profileB) => {
+      const nameA = ((profileA.displayName) ? profileA.displayName : profileA.name).toUpperCase()
+      const nameB = ((profileB.displayName) ? profileB.displayName : profileB.name).toUpperCase()
       return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
     }
 
     // Filter all active and inactive modules that are not required
-    const { actives, inactives } = this.appManager.getAll()
+    const isActive = (name) => { return this.appManager.actives.includes(name) }
+
+    const {actives, inactives} = this.appManager.getAll()
       .filter(isFiltered)
       .filter(isNotRequired)
       .filter(isNotHome)
       .sort(sortByName)
-      .reduce(({actives, inactives}, api) => {
-        return this.appManager.isActive(api.name)
-          ? { actives: [...actives, api.name], inactives }
-          : { inactives: [...inactives, api.name], actives }
+      .reduce(({actives, inactives}, profile) => {
+        return isActive(profile.name) ? { actives: [...actives, profile], inactives }
+          : { inactives: [...inactives, profile], actives }
       }, { actives: [], inactives: [] })
 
     const activeTile = actives.length !== 0
@@ -203,11 +201,11 @@ class PluginManagerComponent extends ViewPlugin {
         <section data-id="pluginManagerComponentPluginManagerSection">
           ${activeTile}
           <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
-            ${actives.map(name => this.renderItem(name))}
+            ${actives.map(profile => this.renderItem(profile, isActive(profile.name)))}
           </div>
           ${inactiveTile}
           <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentInactiveTile">
-            ${inactives.map(name => this.renderItem(name))}
+            ${inactives.map(profile => this.renderItem(profile, isActive(profile.name)))}
           </div>
         </section>
         ${settings}
