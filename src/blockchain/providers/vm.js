@@ -24,7 +24,7 @@ class VMProvider {
   resetEnvironment () {
     this.RemixSimulatorProvider.Accounts.resetAccounts()
     this.accounts = {}
- }
+  }
 
   // TODO: is still here because of the plugin API
   // can be removed later when we update the API
@@ -47,13 +47,13 @@ class VMProvider {
       }
       cb(null, Web3.utils.fromWei(new BN(res).toString(10), 'ether'))
     })
- }
-
-  getGasPrice (cb) {
-    this.web3.eth.getBalance(address, cb)
   }
 
-  signMessage(message, account, _passphrase, cb) {
+  getGasPrice (cb) {
+    this.web3.eth.getGasPrice(cb)
+  }
+
+  signMessage (message, account, _passphrase, cb) {
     const hashedMsg = Web3.utils.sha3(message)
     this.web3.eth.sign(hashedMsg, account, (error, signedData) => {
       if (error) {
