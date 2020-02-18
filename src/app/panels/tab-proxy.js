@@ -49,25 +49,24 @@ export class TabProxy {
       })
     })
 
-    appManager.event.on('activate', (name) => {
-      const { profile } = appManager.getPlugin(name)
+    appManager.event.on('activate', (profile) => {
       if (profile.location === 'mainPanel') {
         this.addTab(
-          name,
+          profile.name,
           profile.displayName,
-          () => this.event.emit('switchApp', name),
+          () => this.event.emit('switchApp', profile.name),
           () => {
-            this.event.emit('closeApp', name)
-            this.appManager.deactivatePlugin(name)
+            this.event.emit('closeApp', profile.name)
+            this.appManager.deactivatePlugin(profile.name)
           },
           profile.icon
         )
-        this.switchTab(name)
+        this.switchTab(profile.name)
       }
     })
 
-    appManager.event.on('deactivate', (name) => {
-      this.removeTab(name)
+    appManager.event.on('deactivate', (profile) => {
+      this.removeTab(profile.name)
     })
 
     appManager.event.on('ensureActivated', (name) => {

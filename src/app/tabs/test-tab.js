@@ -30,11 +30,11 @@ module.exports = class TestTab extends ViewPlugin {
     this.appManager = appManager
     this.renderer = renderer
     this.baseurl = 'https://solc-bin.ethereum.org/bin'
-    appManager.event.on('activate', (name) => {
-      if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
+    appManager.event.on('activate', (profile) => {
+      if (profile.name === 'solidity') this.updateRunAction(fileManager.currentFile())
     })
-    appManager.event.on('deactivate', (name) => {
-      if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
+    appManager.event.on('deactivate', (profile) => {
+      if (profile.name === 'solidity') this.updateRunAction(fileManager.currentFile())
     })
   }
 
