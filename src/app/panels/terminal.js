@@ -434,9 +434,9 @@ class Terminal extends Plugin {
     self.commands.html(intro)
 
     self._components.txLogger = new TxLogger(this, self.blockchain)
-    self._components.txLogger.event.register('debuggingRequested', (hash) => {
+    self._components.txLogger.event.register('debuggingRequested', async (hash) => {
       // TODO should probably be in the run module
-      if (!self._opts.appManager.isActive('debugger')) self._opts.appManager.activatePlugin('debugger')
+      if (!await self._opts.appManager.isActive('debugger')) await self._opts.appManager.activatePlugin('debugger')
       this.call('debugger', 'debug', hash)
       this.call('menuicons', 'select', 'debugger')
     })
