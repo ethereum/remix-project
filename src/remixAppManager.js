@@ -4,7 +4,7 @@ import { EventEmitter } from 'events'
 import QueryParams from './lib/query-params'
 
 const requiredModules = [ // services + layout views + system views
-  'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport',
+  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport',
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
   'terminal', 'settings', 'pluginManager']
 
