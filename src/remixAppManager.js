@@ -8,7 +8,7 @@ const requiredModules = [ // services + layout views + system views
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
   'terminal', 'settings', 'pluginManager']
 
-export function isNative  (name) {
+export function isNative (name) {
   const nativePlugins = ['vyper', 'workshops', 'ethdoc', 'etherscan']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
@@ -36,9 +36,9 @@ export class RemixAppManager extends PluginManager {
     return true
   }
 
-  onActivated (plugin) {
+  onPluginActivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
-    this.event.emit('activate', plugin.name)
+    this.event.emit('activate', plugin)
   }
 
   getAll () {
@@ -51,15 +51,25 @@ export class RemixAppManager extends PluginManager {
     return Object.keys(this.registered)
   }
 
-  onDeactivated (plugin) {
+  onPluginDeactivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
-    this.event.emit('deactivate', plugin.name)
+    this.event.emit('deactivate', plugin)
   }
 
   onRegistration (plugin) {
     if (!this.registered) this.registered = {}
     this.registered[plugin.name] = plugin
     this.event.emit('added', plugin.name)
+  }
+
+  ensureActivated (apiName) {
+    if (!this.isActive(apiName)) this.activateOne(apiName)
+    this.event.emit('ensureActivated', apiName)
+  }
+
+  ensureDeactivated (apiName) {
+    if (this.isActive(apiName)) this.deactivateOne(apiName)
+    this.event.emit('ensureDeactivated', apiName)
   }
 
   deactivatePlugin (name) {

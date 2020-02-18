@@ -127,7 +127,7 @@ export class SidePanel extends AbstractPanel {
       }
     }
 
-    const header =  yo`
+    const header = yo`
       <header class="${css.swapitHeader} px-3">
         <h6 class="${css.swapitTitle}" data-id="sidePanelSwapitTitle">${name}</h6>
         ${docLink}
