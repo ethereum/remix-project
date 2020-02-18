@@ -225,9 +225,9 @@ module.exports = class TestTab extends ViewPlugin {
     return this.generateFileActionElement
   }
 
-  updateRunAction (currentFile) {
+  async updateRunAction (currentFile) {
     let el = yo`<button id="runTestsTabRunAction" class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</button>`
-    const isSolidityActive = this.appManager.isActive('solidity')
+    const isSolidityActive = await this.appManager.isActive('solidity')
     if (!currentFile || !isSolidityActive) {
       el.setAttribute('disabled', 'disabled')
       if (!currentFile) el.setAttribute('title', 'No file selected')
