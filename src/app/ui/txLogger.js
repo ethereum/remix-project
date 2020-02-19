@@ -399,15 +399,15 @@ function createTable (opts) {
     }
     table.appendChild(yo`
       <tr class="${css.tr}">
-        <td class="${css.td}"> status </td>
-        <td class="${css.td}" data-id="txLoggerTableStatus${opts.hash}">${opts.status}${msg}</td>
+        <td class="${css.td}" data-shared="key_${opts.hash}"> status </td>
+        <td class="${css.td}" data-shared="pair_${opts.hash}">${opts.status}${msg}</td>
       </tr>`)
   }
 
   var transactionHash = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> transaction hash </td>
-      <td class="${css.td}" data-id="txLoggerTableHash${opts.hash}">${opts.hash}
+      <td class="${css.td}" data-shared="key_${opts.hash}"> transaction hash </td>
+      <td class="${css.td}" data-shared="pair_${opts.hash}">${opts.hash}
         ${copyToClipboard(() => opts.hash)}
       </td>
     </tr>
@@ -416,8 +416,8 @@ function createTable (opts) {
 
   var contractAddress = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> contract address </td>
-      <td class="${css.td}" data-id="txLoggerTableContractAddress${opts.hash}">${opts.contractAddress}
+      <td class="${css.td}" data-shared="key_${opts.hash}"> contract address </td>
+      <td class="${css.td}" data-shared="pair_${opts.hash}">${opts.contractAddress}
         ${copyToClipboard(() => opts.contractAddress)}
       </td>
     </tr>
@@ -426,8 +426,8 @@ function createTable (opts) {
 
   var from = yo`
     <tr class="${css.tr}">
-      <td class="${css.td} ${css.tableTitle}"> from </td>
-      <td class="${css.td}" data-id="txLoggerTableFrom${opts.hash}">${opts.from}
+      <td class="${css.td} ${css.tableTitle}" data-shared="key_${opts.hash}"> from </td>
+      <td class="${css.td}" data-shared="pair_${opts.hash}">${opts.from}
         ${copyToClipboard(() => opts.from)}
       </td>
     </tr>
@@ -443,8 +443,8 @@ function createTable (opts) {
   }
   var to = yo`
     <tr class="${css.tr}">
-    <td class="${css.td}"> to </td>
-    <td class="${css.td}" data-id="txLoggerTableTo${opts.hash}">${toHash}
+    <td class="${css.td}" data-shared="key_${opts.hash}"> to </td>
+    <td class="${css.td}" data-shared="pair_${opts.hash}">${toHash}
       ${copyToClipboard(() => data.to ? data.to : toHash)}
     </td>
     </tr>
@@ -453,8 +453,8 @@ function createTable (opts) {
 
   var gas = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> gas </td>
-      <td class="${css.td}" data-id="txLoggerTableGas${opts.hash}">${opts.gas} gas
+      <td class="${css.td}" data-shared="key_${opts.hash}"> gas </td>
+      <td class="${css.td}" data-shared="pair_${opts.hash}">${opts.gas} gas
         ${copyToClipboard(() => opts.gas)}
       </td>
     </tr>
@@ -468,8 +468,8 @@ function createTable (opts) {
   if (opts.transactionCost) {
     table.appendChild(yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> transaction cost </td>
-      <td class="${css.td}" data-id="txLoggerTableTransactionCost${opts.hash}">${opts.transactionCost} gas ${callWarning}
+      <td class="${css.td}" data-shared="key_${opts.hash}"> transaction cost </td>
+      <td class="${css.td}" data-shared="pair_${opts.hash}">${opts.transactionCost} gas ${callWarning}
         ${copyToClipboard(() => opts.transactionCost)}
       </td>
     </tr>`)
@@ -478,8 +478,8 @@ function createTable (opts) {
   if (opts.executionCost) {
     table.appendChild(yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> execution cost </td>
-      <td class="${css.td}" data-id="txLoggerTableExecutionHash${opts.hash}">${opts.executionCost} gas ${callWarning}
+      <td class="${css.td}" data-shared="key_${opts.hash}"> execution cost </td>
+      <td class="${css.td}" data-shared="pair_${opts.hash}">${opts.executionCost} gas ${callWarning}
         ${copyToClipboard(() => opts.executionCost)}
       </td>
     </tr>`)
@@ -487,8 +487,8 @@ function createTable (opts) {
 
   var hash = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> hash </td>
-      <td class="${css.td}" data-id="txLoggerTableHash${opts.hash}">${opts.hash}
+      <td class="${css.td}" data-shared="key_${opts.hash}"> hash </td>
+      <td class="${css.td}" data-shared="pair_${opts.hash}">${opts.hash}
         ${copyToClipboard(() => opts.hash)}
       </td>
     </tr>
@@ -497,8 +497,8 @@ function createTable (opts) {
 
   var input = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> input </td>
-      <td class="${css.td}" data-id="txLoggerTableInput${opts.hash}">${helper.shortenHexData(opts.input)}
+      <td class="${css.td}" data-shared="key_${opts.hash}"> input </td>
+      <td class="${css.td}" data-shared="pair_${opts.hash}">${helper.shortenHexData(opts.input)}
         ${copyToClipboard(() => opts.input)}
       </td>
     </tr>
@@ -508,8 +508,8 @@ function createTable (opts) {
   if (opts['decoded input']) {
     var inputDecoded = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> decoded input </td>
-      <td class="${css.td}" data-id="txLoggerTableDecodedInput${opts.hash}">${opts['decoded input']}
+      <td class="${css.td}" data-shared="key_${opts.hash}"> decoded input </td>
+      <td class="${css.td}" data-shared="pair_${opts.hash}">${opts['decoded input']}
         ${copyToClipboard(() => opts['decoded input'])}
       </td>
     </tr>`
@@ -519,8 +519,8 @@ function createTable (opts) {
   if (opts['decoded output']) {
     var outputDecoded = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> decoded output </td>
-      <td class="${css.td}" id="decodedoutput" data-id="txLoggerTableDecodedOutput${opts.hash}">${opts['decoded output']}
+      <td class="${css.td}" data-shared="key_${opts.hash}"> decoded output </td>
+      <td class="${css.td}" id="decodedoutput" data-shared="pair_${opts.hash}">${opts['decoded output']}
         ${copyToClipboard(() => opts['decoded output'])}
       </td>
     </tr>`
@@ -533,8 +533,8 @@ function createTable (opts) {
   }
   var logs = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> logs </td>
-      <td class="${css.td}" id="logs" data-id="txLoggerTableLogs${opts.hash}">
+      <td class="${css.td}" data-shared="key_${opts.hash}"> logs </td>
+      <td class="${css.td}" id="logs" data-shared="pair_${opts.hash}">
         ${JSON.stringify(stringified, null, '\t')}
         ${copyToClipboard(() => JSON.stringify(stringified, null, '\t'))}
         ${copyToClipboard(() => JSON.stringify(opts.logs.raw || '0'))}
@@ -546,8 +546,8 @@ function createTable (opts) {
   var val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   val = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> value </td>
-      <td class="${css.td}" data-id="txLoggerTableValue${opts.hash}">${val} wei
+      <td class="${css.td}" data-shared="key_${opts.hash}"> value </td>
+      <td class="${css.td}" data-shared="pair_${opts.hash}">${val} wei
         ${copyToClipboard(() => `${val} wei`)}
       </td>
     </tr>
