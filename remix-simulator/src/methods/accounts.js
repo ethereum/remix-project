@@ -62,7 +62,7 @@ Accounts.prototype._addAccount = function (privateKey, balance) {
   })
 
   this.accounts[ethJSUtil.toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
-  this.accounts[ethJSUtil.toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
+  this.accountsKeys[ethJSUtil.toChecksumAddress('0x' + address.toString('hex'))] = privateKey
 }
 
 Accounts.prototype.newAccount = function (cb) {
