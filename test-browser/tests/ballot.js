@@ -25,6 +25,8 @@ module.exports = {
     .click('#runTabView button[class^="instanceButton"]')
     .waitForElementPresent('.instance:nth-of-type(2)')
     .click('.instance:nth-of-type(2) > div > button')
+    .createContract(["0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"])
+    .pause(100000)
     .testFunction('delegate - transact (not payable)', '0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
       `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0x41f...c31b3`,
       {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null)
