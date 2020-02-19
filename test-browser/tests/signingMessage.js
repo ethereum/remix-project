@@ -11,7 +11,10 @@ module.exports = {
   },
   'Test Signature': function (browser) {
     let hash, signature
-    browser.clickLaunchIcon('udapp').signMessage('test message', (h, s) => {
+    browser
+    .clickLaunchIcon('udapp')
+    .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
+    .signMessage('test message', (h, s) => {
       hash = h
       signature = s
       console.log('hash', hash)
