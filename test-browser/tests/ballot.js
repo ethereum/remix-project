@@ -16,23 +16,24 @@ module.exports = {
   },
   'Deploy Ballot': function (browser) {
     browser
-    .waitForElementVisible('#icon-panel', 10000)
+    .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('solidity')
     .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
     .clickLaunchIcon('udapp')
     .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
     .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
-    .click('#runTabView button[class^="instanceButton"]')
+    .click('*[data-id="Deploy - transact (not payable)"]')
     .waitForElementPresent('.instance:nth-of-type(2)')
-    .click('.instance:nth-of-type(2) > div > button')
-    .createContract(["0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"])
-    .testTransactionLog('0x57f7ac07a894739a8bbf059248f47aa49935bfcf673494114b1c5c0c183890f0', {
-      status: '0x1 Transaction mined and execution succeed',
-      'transaction hash': '0x57f7ac07a894739a8bbf059248f47aa49935bfcf673494114b1c5c0c183890f0',
-      'decoded input': { 
-        'bytes32[] proposalNames': [ '0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' ]
-      }
-    })
+    .click('*[data-id="universalDappUiTitleExpander"]')
+    .testFunction(
+      'delegate - transact (not payable)', 
+      '0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
+      {
+        status: '0x1 Transaction mined and execution succeed',
+        'transaction hash': '0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
+        'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+      },
+      {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
   },
 
   'Debug Ballot / delegate': function (browser) {
