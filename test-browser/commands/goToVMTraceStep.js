@@ -28,7 +28,7 @@ function goToVMtraceStep (browser, step, incr, done) {
       browser.click('#intoforward')
           .perform(() => {
             setTimeout(() => {
-              goToVMtraceStep(browser, step, done, incr)
+              goToVMtraceStep(browser, step, incr, done)
             }, 200)
           })
     }

@@ -1,26 +1,26 @@
 const EventEmitter = require('events')
 const deepequal = require('deep-equal')
 
-class testTransactionLog extends EventEmitter {
-  command (txHash, expectedValue) {
+class TestFunction extends EventEmitter {
+  command (fnFullName, txHash, expectedReturn, input) {
     const browser = this.api
     const logs = {}
     const setLog = (index, value) => logs[Object.keys(logs)[index]] = value;
 
-    browser.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
+    browser.waitForElementPresent(`*[data-id="${fnFullName}"]`)
     .perform(function (client, done) {
       client.execute(function () {
-        document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
+        document.querySelector('*[data-id="runTabView"]').scrollTop = document.querySelector('*[data-id="runTabView"]').scrollHeight
       }, [], function () {
-        if (expectedInput) {
-          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
+        if (input) {
+          client.setValue(`*[data-id="multiParamManagerBasicInputField${input.types}"]`, input.values, function () {})
         }
         done()
       })
     })
-    .click('.instance button[title="' + fnFullName + '"]')
+    .click(`*[data-id="${fnFullName}"]`)
     .pause(500)
-    browser.waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
+    .waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
     .click(`*[data-id="txLogger${txHash}"]`)
     .waitForElementVisible(`*[data-id="txLoggerTable${txHash}"]`)
     .click(`*[data-id="txLoggerTable${txHash}"]`)
@@ -55,13 +55,13 @@ class testTransactionLog extends EventEmitter {
     })
 
     browser.perform(() => {
-      Object.keys(expectedValue).forEach(key => {
-        const equal = deepequal(logs[key], expectedValue[key])
+      Object.keys(expectedReturn).forEach(key => {
+        const equal = deepequal(logs[key], expectedReturn[key])
 
         if (!equal) {
-          browser.assert.fail(`Expected ${expectedValue[key]} but got ${logs[key]}`)
+          browser.assert.fail(`Expected ${expectedReturn[key]} but got ${logs[key]}`)
         }else{
-          browser.assert.ok(true, `Expected value matched returned value ${expectedValue[key]}`)
+          browser.assert.ok(true, `Expected value matched returned value ${expectedReturn[key]}`)
         }
       })
       this.emit('complete')
@@ -70,4 +70,4 @@ class testTransactionLog extends EventEmitter {
   }
 }
 
-module.exports = testTransactionLog
+module.exports = TestFunction
