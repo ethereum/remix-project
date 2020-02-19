@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const { BN, privateToAddress, stripHexPrefix } = require('ethereumjs-util')
+const { BN, privateToAddress, stripHexPrefix, hashPersonalMessage } = require('ethereumjs-util')
 const RemixSimulator = require('remix-simulator')
 
 class VMProvider {
@@ -54,12 +54,12 @@ class VMProvider {
   }
 
   signMessage (message, account, _passphrase, cb) {
-    const hashedMsg = Web3.utils.sha3(message)
-    this.web3.eth.sign(hashedMsg, account, (error, signedData) => {
+    const messageHash = hashPersonalMessage(Buffer.from(message))
+    this.web3.eth.sign(message, account, (error, signedData) => {
       if (error) {
         return cb(error)
       }
-      cb(null, hashedMsg, signedData)
+      cb(null, '0x' + messageHash.toString('hex'), signedData)
     })
   }
 
