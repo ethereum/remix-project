@@ -7,6 +7,19 @@ class testTransactionLog extends EventEmitter {
     const logs = {}
     const setLog = (index, value) => logs[Object.keys(logs)[index]] = value;
 
+    browser.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
+    .perform(function (client, done) {
+      client.execute(function () {
+        document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
+      }, [], function () {
+        if (expectedInput) {
+          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
+        }
+        done()
+      })
+    })
+    .click('.instance button[title="' + fnFullName + '"]')
+    .pause(500)
     browser.waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
     .click(`*[data-id="txLogger${txHash}"]`)
     .waitForElementVisible(`*[data-id="txLoggerTable${txHash}"]`)
