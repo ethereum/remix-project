@@ -55,6 +55,7 @@ module.exports = {
     .clickLaunchIcon('fileExplorers')
     .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
     .pause(500)
+<<<<<<< HEAD
     .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
     .click('*[data-id="universalDappUiTitleExpander"]')
     .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
@@ -64,6 +65,19 @@ module.exports = {
         'transaction hash': '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
         'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
       })
+=======
+    .waitForElementPresent('.instance:nth-of-type(2)')
+    .click('.instance:nth-of-type(2) > div > button')
+    .createContract(["0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803"])
+    .pause(100000)
+    .testTransactionLog('0x57f7ac07a894739a8bbf059248f47aa49935bfcf673494114b1c5c0c183890f0', {
+      status: '0x1 Transaction mined and execution succeed',
+      'transaction hash': '0x57f7ac07a894739a8bbf059248f47aa49935bfcf673494114b1c5c0c183890f0',
+      'decoded input': { 
+        'bytes32[] proposalNames': [ '0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' ]
+      }
+    })
+>>>>>>> Improve transaction log tests
   },
 
   'Deploy and use Ballot using external web3': function (browser) {
