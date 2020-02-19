@@ -13,6 +13,7 @@ module.exports = {
     var addressRef
     browser.addFile('scenario.json', {content: records})
         .clickLaunchIcon('udapp')
+        .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
         .click('div[class^="cardContainer"] i[class^="arrow"]')
         .click('#runTabView .runtransaction')
         .waitForElementPresent('.instance:nth-of-type(2)')
