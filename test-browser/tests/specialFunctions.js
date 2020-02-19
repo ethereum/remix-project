@@ -13,6 +13,7 @@ module.exports = {
     browser.waitForElementVisible('#icon-panel', 10000)
     .testContracts('receiveAndFallback.sol', sources[0]['browser/receiveAndFallback.sol'], ['CheckSpecials']) // compile
     .clickLaunchIcon('udapp')
+    .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
     .selectContract('CheckSpecials')
     .createContract('') // deploy
     .clickInstance(0)

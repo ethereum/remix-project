@@ -13,6 +13,7 @@ module.exports = {
   'Execute Simple Contract and Test Terminal': function (browser) {
     browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'])
         .clickLaunchIcon('udapp')
+        .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
         .click('#runTabView button[class^="instanceButton"]')
         .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2) > div > button')
