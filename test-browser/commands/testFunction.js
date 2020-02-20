@@ -5,7 +5,7 @@ class TestFunction extends EventEmitter {
   command (txHash, expectedValue) {
     const browser = this.api
     const logs = {}
-    const setLog = (index, value) => logs[Object.keys(logs)[index]] = value;
+    const setLog = (index, value) => { logs[Object.keys(logs)[index]] = value }
 
     browser.waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
     .click(`*[data-id="txLogger${txHash}"]`)
@@ -31,10 +31,10 @@ class TestFunction extends EventEmitter {
         browser.elementIdText(jsonWebElementId, (jsonElement) => {
           let value = jsonElement.value
 
-          try{
+          try {
             value = JSON.parse(jsonElement.value)
             setLog(index, value)
-          }catch(e){
+          } catch (e) {
             setLog(index, value)
           }
         })
@@ -47,7 +47,7 @@ class TestFunction extends EventEmitter {
 
         if (!equal) {
           browser.assert.fail(`Expected ${expectedValue[key]} but got ${logs[key]}`)
-        }else{
+        } else {
           browser.assert.ok(true, `Expected value matched returned value ${expectedValue[key]}`)
         }
       })

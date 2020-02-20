@@ -59,11 +59,11 @@ module.exports = {
     .click('*[data-id="universalDappUiTitleExpander"]')
     .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
     .testFunction('0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
-    {
-      status: '0x0 Transaction mined but execution failed',
-      'transaction hash': '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
-      'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-    })
+      {
+        status: '0x0 Transaction mined but execution failed',
+        'transaction hash': '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
+        'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+      })
   },
 
   'Deploy and use Ballot using external web3': function (browser) {
