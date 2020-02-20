@@ -79,6 +79,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   var close = yo`
     <button
       class="${css.udappClose} p-1 btn btn-secondary"
+      data-id="universalDappUiUdappClose"
       onclick=${remove}
       title="Remove from the list"
     >
@@ -87,7 +88,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   title.querySelector('.btn-group').appendChild(close)
 
   var contractActionsWrapper = yo`
-    <div class="${css.cActionsWrapper}">
+    <div class="${css.cActionsWrapper}" data-id="universalDappUiContractActionWrapper">
     </div>
   `
 
