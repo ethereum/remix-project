@@ -36,6 +36,8 @@ const TestTab = require('./app/tabs/test-tab')
 const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 
+import { basicLogo } from './app/ui/svgLogo'
+
 import { RunTab, makeUdapp } from './app/udapp'
 
 import PanelsResize from './lib/panels-resize'
@@ -98,12 +100,34 @@ var css = csjs`
     background-color   : var(--info);
     opacity            : 0.5;
   }
+  .centered {
+    position           : fixed;
+    top                : 20%;
+    left               : 45%;
+    width              : 200px;
+    height             : 200px;
+  }
+  .centered svg path {
+    fill: var(--secondary);
+  }
+  .centered svg polygon {
+    fill: var(--secondary);
+  }
 `
 
 class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
     self._components = {}
+    self._view = {}
+    self._view.splashScreen = yo`<div class=${css.centered}>
+    ${basicLogo()}
+    <div class="info-secondary" style="text-align:center">
+      REMIX IDE
+    </div>
+    </div>`
+    document.body.appendChild(self._view.splashScreen)
+
     // setup storage
     var configStorage = new Storage('config-v0.8:')
 
@@ -125,8 +149,6 @@ class App {
     self._components.filesProviders['localhost'] = new RemixDProvider(remixd)
     registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
     registry.put({api: self._components.filesProviders, name: 'fileproviders'})
-
-    self._view = {}
 
     migrateFileSystem(self._components.filesProviders['browser'])
   }
@@ -163,7 +185,7 @@ class App {
     self._components.resizeFeature = new PanelsResize(self._view.sidepanel)
 
     self._view.el = yo`
-      <div class=${css.remixIDE}>
+      <div style="visibility:hidden" class=${css.remixIDE}>
         ${self._view.iconpanel}
         ${self._view.sidepanel}
         ${self._components.resizeFeature.render()}
@@ -215,6 +237,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- theme servive ----------------------------
   const themeModule = new ThemeModule(registry)
   registry.put({api: themeModule, name: 'themeModule'})
+  themeModule.initTheme(() => {
+    setTimeout(() => {
+      document.body.removeChild(self._view.splashScreen)
+      self._view.el.style.visibility = 'visible'
+    }, 1500)
+  })
   // ----------------- editor servive ----------------------------
   const editor = new Editor({}, themeModule) // wrapper around ace editor
   registry.put({api: editor, name: 'editor'})
