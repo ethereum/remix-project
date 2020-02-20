@@ -9,8 +9,8 @@ class PluginUdapp {
   }
 
   setupEvents () {
-    this.blockchain.event.register('newTransaction', (tx, receipt) => {
-      this.events.trigger('newTransaction', [tx, receipt])
+    this.blockchain.events.on('newTransaction', (tx, receipt) => {
+      this.events.emit('newTransaction', tx, receipt)
     })
   }
 
