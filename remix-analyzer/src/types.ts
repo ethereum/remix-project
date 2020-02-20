@@ -50,7 +50,7 @@ export interface SourceUnitAstNode {
   nodeType: 'SourceUnit'
   src: string
   absolutePath: string
-  exportedSymbols: Object
+  exportedSymbols: object
   nodes: Array<AstNode>
 }
 
@@ -77,13 +77,13 @@ export interface ContractDefinitionAstNode {
   nodeType: 'ContractDefinition'
   src: string
   name: string
-  documentation: Object
+  documentation: object | null
   contractKind: 'interface' | 'contract' | 'library'
   abstract: string
-  fullyImplemented: Object
-  linearizedBaseContracts: Object
-  baseContracts: Object
-  contractDependencies: Object
+  fullyImplemented: object
+  linearizedBaseContracts: object
+  baseContracts: object
+  contractDependencies: object
   nodes: Array<AstNode>
   scope: number
 }
@@ -93,15 +93,15 @@ export interface InheritanceSpecifierAstNode {
   nodeType: 'InheritanceSpecifier'
   src: string
   baseName: string
-  arguments: Object
+  arguments: object | null
 }
 
 export interface UsingForDirectiveAstNode {
   id: number
   nodeType: 'UsingForDirective'
   src: string
-  libraryName: Object
-  typeName: Object
+  libraryName: object
+  typeName: object | null
 }
 
 export interface StructDefinitionAstNode {
@@ -111,7 +111,7 @@ export interface StructDefinitionAstNode {
   name: string
   visibility: string
   canonicalName: string
-  members: Object
+  members: object
   scope: number
 }
 
@@ -121,7 +121,7 @@ export interface EnumDefinitionAstNode {
   src: string
   name: string
   canonicalName: string
-  members: Object
+  members: object
 }
 
 export interface EnumValueAstNode {
@@ -135,14 +135,14 @@ export interface ParameterListAstNode {
   id: number
   nodeType: 'ParameterList'
   src: string
-  parameters: Object
+  parameters: object
 }
 
 export interface OverrideSpecifierAstNode {
   id: number
   nodeType: 'OverrideSpecifier'
   src: string
-  overrides: Object
+  overrides: object
 }
 
 export interface FunctionDefinitionAstNode {
@@ -150,20 +150,20 @@ export interface FunctionDefinitionAstNode {
   nodeType: 'FunctionDefinition'
   src: string
   name: string
-  documentation: Object
+  documentation: object | null
   kind: string
   stateMutability: string
   visibility: string
   virtual: boolean
-  overrides: Object
-  parameters: Object
-  returnParameters: Object
-  modifiers: Object
-  body: Object
+  overrides: object | null
+  parameters: object
+  returnParameters: object
+  modifiers: object
+  body: object | null
   implemented: boolean
   scope: number
   functionSelector?: string
-  baseFunctions?: Object
+  baseFunctions?: object
 }
 
 export interface VariableDeclarationAstNode {
@@ -171,18 +171,18 @@ export interface VariableDeclarationAstNode {
   nodeType: 'VariableDeclaration'
   src: string
   name: string
-  typeName: Object
+  typeName: object
   constant: boolean
   stateVariable: boolean
   storageLocation: 'storage' | 'memory' | 'calldata' | 'default'
-  overrides: Object
+  overrides: object | null
   visibility: string
-  value: Object
+  value: object | null
   scope: number
-  typeDescriptions: Object
+  typeDescriptions: object
   functionSelector?: string
   indexed?: boolean
-  baseFunctions?: Object
+  baseFunctions?: object
 }
 
 export interface ModifierDefinitionAstNode {
@@ -190,21 +190,21 @@ export interface ModifierDefinitionAstNode {
   nodeType: 'ModifierDefinition'
   src: string
   name: string
-  documentation: Object
+  documentation: object | null
   visibility: string
-  parameters: Object
+  parameters: object
   virtual: boolean
-  overrides: Object
-  body: Object
-  baseModifiers?: Object
+  overrides: object | null
+  body: object
+  baseModifiers?: object
 }
 
 export interface ModifierInvocationAstNode {
   id: number
   nodeType: 'ModifierInvocation'
   src: string
-  modifierName: Object
-  arguments: Object
+  modifierName: object
+  arguments: object | null
 }
 
 export interface EventDefinitionAstNode {
@@ -212,8 +212,8 @@ export interface EventDefinitionAstNode {
   nodeType: 'EventDefinition'
   src: string
   name: string
-  documentation: Object
-  parameters: Object
+  documentation: object | null
+  parameters: object
   anonymous: boolean
 }
 
@@ -222,7 +222,7 @@ export interface ElementaryTypeNameAstNode {
   nodeType: 'ElementaryTypeName'
   src: string
   name: string
-  typeDescriptions: Object
+  typeDescriptions: object
   stateMutability?: string
 }
 
@@ -233,7 +233,7 @@ export interface UserDefinedTypeNameAstNode {
   name: string
   referencedDeclaration: number
   contractScope: number
-  typeDescriptions: Object
+  typeDescriptions: object
 }
 
 export interface FunctionTypeNameAstNode {
@@ -243,35 +243,35 @@ export interface FunctionTypeNameAstNode {
   name: string
   visibility: string
   stateMutability: string
-  parameterTypes: Object
-  returnParameterTypes: Object
-  typeDescriptions: Object
+  parameterTypes: object
+  returnParameterTypes: object
+  typeDescriptions: object
 }
 
 export interface MappingAstNode {
   id: number
   nodeType: 'Mapping'
   src: string
-  keyType: Object
-  valueType: Object
-  typeDescriptions: Object
+  keyType: object
+  valueType: object
+  typeDescriptions: object
 }
 
 export interface ArrayTypeNameAstNode {
   id: number
   nodeType: 'ArrayTypeName'
   src: string
-  baseType: Object
-  length: Object
-  typeDescriptions: Object
+  baseType: object
+  length: object
+  typeDescriptions: object
 }
 
 export interface InlineAssemblyAstNode {
   id: number
   nodeType: 'InlineAssembly'
   src: string
-  AST: Object
-  externalReferences: Object
+  AST: object
+  externalReferences: object
   evmVersion: string
 }
 
@@ -279,7 +279,7 @@ export interface BlockAstNode {
   id: number
   nodeType: 'Block'
   src: string
-  statements: Object
+  statements: object
 }
 
 export interface PlaceholderStatementAstNode {
@@ -292,9 +292,9 @@ export interface IfStatementAstNode {
   id: number
   nodeType: 'IfStatement'
   src: string
-  condition: Object
-  trueBody: Object
-  falseBody: Object
+  condition: object
+  trueBody: object
+  falseBody: object
 }
 
 export interface TryCatchClauseAstNode {
@@ -302,34 +302,34 @@ export interface TryCatchClauseAstNode {
   nodeType: 'TryCatchClause'
   src: string
   errorName: string
-  parameters: Object
-  block: Object
+  parameters: object
+  block: object
 }
 
 export interface TryStatementAstNode {
   id: number
   nodeType: 'TryStatement'
   src: string
-  externalCall: Object
-  clauses: Object
+  externalCall: object
+  clauses: object
 }
 
 export interface WhileStatementAstNode {
   id: number
   nodeType: 'WhileStatement' | 'DoWhileStatement'
   src: string
-  condition: Object
-  body: Object
+  condition: object
+  body: object
 }
 
 export interface ForStatementAstNode {
   id: number
   nodeType: 'ForStatement'
   src: string
-  initializationExpression: Object
-  condition: Object
-  loopExpression: Object
-  body: Object
+  initializationExpression: object
+  condition: object
+  loopExpression: object
+  body: object
 }
 
 export interface ContinueAstNode {
@@ -348,8 +348,8 @@ export interface ReturnAstNode {
   id: number
   nodeType: 'Return'
   src: string
-  expression: Object
-  functionReturnParameters: Object
+  expression: object
+  functionReturnParameters: object
 }
 
 export interface ThrowAstNode {
@@ -362,41 +362,41 @@ export interface EmitStatementAstNode {
   id: number
   nodeType: 'EmitStatement'
   src: string
-  eventCall: Object
+  eventCall: object
 }
 
 export interface VariableDeclarationStatementAstNode {
   id: number
   nodeType: 'VariableDeclarationStatement'
   src: string
-  assignments: Object
-  declarations: Object
-  initialValue: Object
+  assignments: object
+  declarations: object
+  initialValue: object
 }
 
 export interface ExpressionStatementAstNode {
   id: number
   nodeType: 'ExpressionStatement'
   src: string
-  expression: Object
+  expression: object
 }
 
 interface ExpressionAttributes {
-  typeDescriptions: Object
+  typeDescriptions: object
   isConstant: boolean
   isPure: boolean
   isLValue: boolean
   lValueRequested: boolean
-  argumentTypes: Object
+  argumentTypes: object
 }
 
 export interface ConditionalAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'Conditional'
   src: string
-  condition: Object
-  trueExpression: Object
-  falseExpression: Object
+  condition: object
+  trueExpression: object
+  falseExpression: object
 }
 
 export interface AssignmentAstNode extends ExpressionAttributes {
@@ -404,8 +404,8 @@ export interface AssignmentAstNode extends ExpressionAttributes {
   nodeType: 'Assignment'
   src: string
   operator: string
-  leftHandSide: Object
-  rightHandSide: Object
+  leftHandSide: object
+  rightHandSide: object
 }
 
 export interface TupleExpressionAstNode extends ExpressionAttributes {
@@ -413,7 +413,7 @@ export interface TupleExpressionAstNode extends ExpressionAttributes {
   nodeType: 'TupleExpression'
   src: string
   isInlineArray: boolean
-  components: Object
+  components: object
 }
 
 export interface UnaryOperationAstNode extends ExpressionAttributes {
@@ -422,7 +422,7 @@ export interface UnaryOperationAstNode extends ExpressionAttributes {
   src: string
   prefix: boolean
   operator: string
-  subExpression: Object
+  subExpression: object
 }
 
 export interface BinaryOperationAstNode extends ExpressionAttributes {
@@ -430,18 +430,18 @@ export interface BinaryOperationAstNode extends ExpressionAttributes {
   nodeType: 'BinaryOperation'
   src: string
   operator: string
-  leftExpression: Object
-  rightExpression: Object
-  commonType: Object
+  leftExpression: object
+  rightExpression: object
+  commonType: object
 }
 
 export interface FunctionCallAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'FunctionCall'
   src: string
-  expression: Object
-  names: Object
-  arguments: Object
+  expression: object
+  names: object
+  arguments: object
   tryCall: boolean
   kind: 'functionCall' | 'typeConversion' | 'structConstructorCall'
 }
@@ -450,16 +450,16 @@ export interface FunctionCallOptionsAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'FunctionCallOptions'
   src: string
-  expression: Object
-  names: Object
-  options: Object
+  expression: object
+  names: object
+  options: object
 }
 
 export interface NewExpressionAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'NewExpression'
   src: string
-  typeName: Object
+  typeName: object
 }
 
 export interface MemberAccessAstNode extends ExpressionAttributes {
@@ -467,32 +467,32 @@ export interface MemberAccessAstNode extends ExpressionAttributes {
   nodeType: 'MemberAccess'
   src: string
   memberName: string
-  expression: Object
-  referencedDeclaration: Object
+  expression: object
+  referencedDeclaration: object
 }
 
 export interface IndexAccessAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'IndexAccess'
   src: string
-  baseExpression: Object
-  indexExpression: Object
+  baseExpression: object
+  indexExpression: object
 }
 
 export interface IndexRangeAccessAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'IndexRangeAccess'
   src: string
-  baseExpression: Object
-  startExpression: Object
-  endExpression: Object
+  baseExpression: object
+  startExpression: object
+  endExpression: object
 }
 
 export interface ElementaryTypeNameExpressionAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'ElementaryTypeNameExpression'
   src: string
-  typeName: Object
+  typeName: object
 }
 
 export interface LiteralAstNode extends ExpressionAttributes {
@@ -502,7 +502,7 @@ export interface LiteralAstNode extends ExpressionAttributes {
   kind: 'number' | 'string' | 'bool'
   value: string
   hexValue: string
-  subdenomination: Object
+  subdenomination: object | null
 }
 
 export interface IdentifierAstNode {
@@ -510,10 +510,10 @@ export interface IdentifierAstNode {
   nodeType: 'Identifier'
   src: string
   name: string
-  referencedDeclaration: Object
-  overloadedDeclarations: Object
-  typeDescriptions: Object
-  argumentTypes: Object
+  referencedDeclaration: object
+  overloadedDeclarations: object
+  typeDescriptions: object
+  argumentTypes: object
 }
 
 export interface StructuredDocumentationAstNode {
@@ -578,7 +578,7 @@ export interface StructuredDocumentationAstNode {
   /////////
   export interface AstNode {
     absolutePath?: string
-    exportedSymbols?: Object
+    exportedSymbols?: object
     id: number
     nodeType: string
     nodes?: Array<AstNode>
@@ -607,7 +607,7 @@ export interface StructuredDocumentationAstNode {
     constant?: boolean
     name?: string
     public?: boolean
-    exportedSymbols?: Object
+    exportedSymbols?: object
     argumentTypes?: null
     absolutePath?: string
     [x: string]: any
