@@ -23,25 +23,23 @@ module.exports = {
     .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
     .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
-    .waitForElementPresent('.instance:nth-of-type(2)')
+    .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
     .click('*[data-id="universalDappUiTitleExpander"]')
-    .testFunction(
-      'delegate - transact (not payable)', 
-      '0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
+    .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
+    .testFunction('0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
       {
         status: '0x1 Transaction mined and execution succeed',
         'transaction hash': '0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
         'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-      },
-      {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
+      })
   },
 
   'Debug Ballot / delegate': function (browser) {
     browser.pause(500)
-    .click('span#tx0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3 button[class^="debug"]')
+    .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
     .pause(2000)
     .clickLaunchIcon('debugger')
-    .click('#jumppreviousbreakpoint')
+    .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
     .pause(2000)
     .goToVMTraceStep(79)
     .pause(1000)
@@ -51,36 +49,34 @@ module.exports = {
 
   'Access Ballot via at address': function (browser) {
     browser.clickLaunchIcon('udapp')
-    .click('button[class^="udappClose"]')
+    .click('*[data-id="universalDappUiUdappClose"]')
     .addFile('ballot.abi', { content: ballotABI })
     .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)
     .clickLaunchIcon('fileExplorers')
     .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
     .pause(500)
-    .waitForElementPresent('.instance:nth-of-type(2)')
-    .click('.instance:nth-of-type(2) > div > button')
-    .createContract(["0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803"])
-    .pause(100000)
-    .testTransactionLog('0x57f7ac07a894739a8bbf059248f47aa49935bfcf673494114b1c5c0c183890f0', {
-      status: '0x1 Transaction mined and execution succeed',
-      'transaction hash': '0x57f7ac07a894739a8bbf059248f47aa49935bfcf673494114b1c5c0c183890f0',
-      'decoded input': { 
-        'bytes32[] proposalNames': [ '0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' ]
-      }
+    .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
+    .click('*[data-id="universalDappUiTitleExpander"]')
+    .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
+    .testFunction('0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
+    {
+      status: '0x0 Transaction mined but execution failed',
+      'transaction hash': '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
+      'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
     })
   },
 
   'Deploy and use Ballot using external web3': function (browser) {
     browser
-    .click('#selectExEnvOptions #web3-mode')
+    .click('*[data-id="settingsWeb3Mode"]')
     .modalFooterOKClick()
     .clickLaunchIcon('solidity')
     .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
     .clickLaunchIcon('udapp')
     .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
-    .click('#runTabView button[class^="instanceButton"]')
+    .click('*[data-id="Deploy - transact (not payable)"]')
     .clickInstance(0)
-    .click('#clearConsole')
+    .click('*[data-id="terminalClearConsole"]')
     .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'})
     .journalLastChildIncludes('Ballot.delegate(address)')
     .journalLastChildIncludes('data:0x5c1...a733c')

@@ -69,7 +69,7 @@ class SettingsUI {
               title="Execution environment has been provided by Metamask or similar provider."
               value="injected" name="executionContext"> Injected Web3
             </option>
-            <option id="web3-mode"
+            <option id="web3-mode" data-id="settingsWeb3Mode"
               title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
               If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
               value="web3" name="executionContext"> Web3 Provider

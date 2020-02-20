@@ -2,25 +2,12 @@ const EventEmitter = require('events')
 const deepequal = require('deep-equal')
 
 class TestFunction extends EventEmitter {
-  command (fnFullName, txHash, expectedReturn, input) {
+  command (txHash, expectedValue) {
     const browser = this.api
     const logs = {}
     const setLog = (index, value) => logs[Object.keys(logs)[index]] = value;
 
-    browser.waitForElementPresent(`*[data-id="${fnFullName}"]`)
-    .perform(function (client, done) {
-      client.execute(function () {
-        document.querySelector('*[data-id="runTabView"]').scrollTop = document.querySelector('*[data-id="runTabView"]').scrollHeight
-      }, [], function () {
-        if (input) {
-          client.setValue(`*[data-id="multiParamManagerBasicInputField${input.types}"]`, input.values, function () {})
-        }
-        done()
-      })
-    })
-    .click(`*[data-id="${fnFullName}"]`)
-    .pause(500)
-    .waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
+    browser.waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
     .click(`*[data-id="txLogger${txHash}"]`)
     .waitForElementVisible(`*[data-id="txLoggerTable${txHash}"]`)
     .click(`*[data-id="txLoggerTable${txHash}"]`)
@@ -55,13 +42,13 @@ class TestFunction extends EventEmitter {
     })
 
     browser.perform(() => {
-      Object.keys(expectedReturn).forEach(key => {
-        const equal = deepequal(logs[key], expectedReturn[key])
+      Object.keys(expectedValue).forEach(key => {
+        const equal = deepequal(logs[key], expectedValue[key])
 
         if (!equal) {
-          browser.assert.fail(`Expected ${expectedReturn[key]} but got ${logs[key]}`)
+          browser.assert.fail(`Expected ${expectedValue[key]} but got ${logs[key]}`)
         }else{
-          browser.assert.ok(true, `Expected value matched returned value ${expectedReturn[key]}`)
+          browser.assert.ok(true, `Expected value matched returned value ${expectedValue[key]}`)
         }
       })
       this.emit('complete')
