@@ -23,7 +23,7 @@ module.exports = {
     })
     .modalFooterOKClick()
   },
-  'Publish on Swarm': function (browser) {
+  'Publish on Swarm': '' + function (browser) {
     browser
     .click('#publishOnSwarm')
     .getModalBody((value, done) => {
