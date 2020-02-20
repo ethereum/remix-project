@@ -1,6 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import * as packageJson from '../../../package.json'
+import yo from 'yo-yo'
 
 const themes = [
   {name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/dvtmp0niu/raw/upload/v1578991867/remix-dark-theme.css'},
@@ -50,6 +51,21 @@ export class ThemeModule extends Plugin {
   /** Returns all themes as an array */
   getThemes () {
     return Object.keys(this.themes).map(key => this.themes[key])
+  }
+
+  /**
+   * Init the theme
+   */
+  initTheme (callback) {
+    if (this.active) {
+      const nextTheme = this.themes[this.active] // Theme
+      document.documentElement.style.setProperty('--theme', nextTheme.quality)
+      const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
+      theme.addEventListener('load', () => {
+        if (callback) callback()
+      })
+      document.head.appendChild(theme)
+    }
   }
 
   /**
