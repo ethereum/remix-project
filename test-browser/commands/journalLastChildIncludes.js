@@ -6,11 +6,11 @@ const EventEmitter = require('events')
 class JournalLastChildIncludes extends EventEmitter {
   command (val) {
     this.api
-    .waitForElementVisible('#journal > div:last-child', 10000)
-    .getText('#journal > div:last-child', (result) => {
+    .waitForElementVisible('*[data-id="terminalJournal"] > div:last-child', 10000)
+    .getText('*[data-id="terminalJournal"] > div:last-child', (result) => {
       console.log('JournalLastChildIncludes', result.value)
       if (result.value.indexOf(val) === -1) return this.api.assert.fail(`wait for ${val} in ${result.value}`)
-      else this.api.assert.ok(`<#journal > div:last-child> contains ${val}.`)
+      else this.api.assert.ok(`<*[data-id="terminalJournal"] > div:last-child> contains ${val}.`)
       this.emit('complete')
     })
     return this
