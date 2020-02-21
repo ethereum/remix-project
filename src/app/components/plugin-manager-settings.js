@@ -89,9 +89,9 @@ export class PluginManagerSettings {
         <div class="form-group ${css.permissionKey}">
           <div class="${css.checkbox}">
             ${checkbox}
-            <label for="permission-${name}">Allow plugin ${name} to write on ${key}</label>
+            <label for="permission-${name}" data-id="pluginManagerSettingsPermission${name}">Allow plugin ${name} to write on ${key}</label>
           </div>
-          <i onclick="${() => this.clearPersmission(key, name)}" class="fa fa-trash-alt"></i>
+          <i onclick="${() => this.clearPersmission(key, name)}" class="fa fa-trash-alt" data-id="pluginManagerSettingsRemovePermission${name}"></i>
         </div>`
       }
 
@@ -103,7 +103,7 @@ export class PluginManagerSettings {
       <div>
         <div class="${css.permissionKey}">
           <h6>${key} :</h6>
-          <i onclick="${() => this.clearAllPersmission(key)}" class="far fa-trash-alt"></i>
+          <i onclick="${() => this.clearAllPersmission(key)}" class="far fa-trash-alt" data-id="pluginManagerSettingsClearAllPermission"></i>
         </div>
         ${byModule}
       </div>`
@@ -117,7 +117,7 @@ export class PluginManagerSettings {
       ? yo`<h4>No Permission requested yet.</h4>`
       : yo`<h4>Current Permission settings</h4>`
 
-    return yo`<form class="${css.permissionForm}">
+    return yo`<form class="${css.permissionForm}" data-id="pluginManagerSettingsPermissionForm">
       ${title}
       <hr/>
       ${permissions}
@@ -127,7 +127,7 @@ export class PluginManagerSettings {
   render () {
     return yo`
     <footer class="bg-light ${css.permissions} remix-bg-opacity">
-      <button onclick="${() => this.openDialog()}" class="btn btn-primary settings-button">Settings</button>
+      <button onclick="${() => this.openDialog()}" class="btn btn-primary settings-button" data-id="pluginManagerSettingsButton">Settings</button>
     </footer>`
   }
 

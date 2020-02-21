@@ -106,11 +106,11 @@ class PluginManagerComponent extends ViewPlugin {
 
     const activationButton = isActive
       ? yo`
-      <button onclick="${_ => this.appManager.deactivateOne(name)}" class="btn btn-secondary btn-sm">
+      <button onclick="${_ => this.appManager.deactivateOne(name)}" class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${name}">
         Deactivate
       </button>`
       : yo`
-      <button onclick="${_ => this.appManager.activateOne(name)}" class="btn btn-success btn-sm">
+      <button onclick="${_ => this.appManager.activateOne(name)}" class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${name}">
         Activate
       </button>`
 
@@ -179,34 +179,34 @@ class PluginManagerComponent extends ViewPlugin {
       ? yo`
       <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
         <span class="navbar-brand plugins-list-title">Active Modules</span>
-        <span class="badge badge-primary">${actives.length}</span>
+        <span class="badge badge-primary" data-id="pluginManagerComponentActiveTilesCount">${actives.length}</span>
       </nav>`
       : ''
     const inactiveTile = inactives.length !== 0
       ? yo`
       <nav class="plugins-list-header justify-content-between navbar navbar-expand-lg bg-light navbar-light align-items-center">
         <span class="navbar-brand plugins-list-title h6 mb-0 mr-2">Inactive Modules</span>
-        <span class="badge badge-primary" style = "cursor: default;">${inactives.length}</span>
+        <span class="badge badge-primary" style = "cursor: default;" data-id="pluginManagerComponentInactiveTilesCount">${inactives.length}</span>
       </nav>`
       : ''
 
     const settings = new PluginManagerSettings().render()
 
     const rootView = yo`
-      <div id='pluginManager'>
-        <header class="form-group ${css.pluginSearch} plugins-header py-3 px-4 border-bottom">
-          <input onkeyup="${e => this.filterPlugins(e)}" class="${css.pluginSearchInput} form-control" placeholder="Search">
-          <button onclick="${_ => this.openLocalPlugin()}" class="${css.pluginSearchButton} btn bg-transparent text-dark border-0 mt-2 text-underline">
+      <div id='pluginManager' data-id="pluginManagerComponentPluginManager">
+        <header class="form-group ${css.pluginSearch} plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
+          <input onkeyup="${e => this.filterPlugins(e)}" class="${css.pluginSearchInput} form-control" placeholder="Search" data-id="pluginManagerComponentSearchInput">
+          <button onclick="${_ => this.openLocalPlugin()}" class="${css.pluginSearchButton} btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
             Connect to a Local Plugin
           </button>
         </header>
-        <section>
+        <section data-id="pluginManagerComponentPluginManagerSection">
           ${activeTile}
-          <div class="list-group list-group-flush plugins-list-group">
+          <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
             ${actives.map(name => this.renderItem(name))}
           </div>
           ${inactiveTile}
-          <div class="list-group list-group-flush plugins-list-group">
+          <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentInactiveTile">
             ${inactives.map(name => this.renderItem(name))}
           </div>
         </section>
