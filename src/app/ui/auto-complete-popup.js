@@ -41,7 +41,7 @@ class AutoCompletePopup {
         <div>
           ${self.data._options.map((item, index) => {
             return yo`
-              <div class="${css.autoCompleteItem} ${css.listHandlerHide} item ${self._selectedElement === index ? 'border border-primary' : ''}">
+              <div data-id="autoCompletePopUpAutoCompleteItem" class="${css.autoCompleteItem} ${css.listHandlerHide} item ${self._selectedElement === index ? 'border border-primary' : ''}">
                   <div value=${index} onclick=${(event) => { self.handleSelect(event.srcElement.innerText) }}>
                     ${getKeyOf(item)} 
                   </div>
