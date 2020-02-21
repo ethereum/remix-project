@@ -140,8 +140,8 @@ export class PermissionHandler {
         : delete this.permissions[to.name][from.name]
     }
     const rememberSwitch = remember
-      ? yo`<input type="checkbox" onchange="${switchMode}" checkbox class="custom-control-input" id="remember">`
-      : yo`<input type="checkbox" onchange="${switchMode}" class="custom-control-input" id="remember">`
+      ? yo`<input type="checkbox" onchange="${switchMode}" checkbox class="custom-control-input" id="remember" data-id="permissionHandlerRememberChecked">`
+      : yo`<input type="checkbox" onchange="${switchMode}" class="custom-control-input" id="remember" data-id="permissionHandlerRememberUnchecked">`
     const message = remember
       ? `"${fromName}" has changed and would like to access "${toName}"`
       : `"${fromName}" would like to access "${toName}"`
@@ -155,7 +155,7 @@ export class PermissionHandler {
       </article>
       
       <article>
-        <h4>${message} :</h4>
+        <h4 data-id="permissionHandlerMessage">${message} :</h4>
         <h6>${fromName}</h6>
         <p>${from.description || yo`<i>No description Provided</i>`}</p>
         <h6>${toName} :</p>
@@ -165,7 +165,7 @@ export class PermissionHandler {
       <article class="${css.remember}">
         <div class="custom-control custom-checkbox">
           ${rememberSwitch}
-          <label class="custom-control-label" for="remember">Remember this choice</label>
+          <label class="custom-control-label" for="remember" data-id="permissionHandlerRememberChoice">Remember this choice</label>
         </div>
         <button class="btn btn-sm" onclick="${_ => this.clear()}">Reset all Permissions</button>
       </article>
