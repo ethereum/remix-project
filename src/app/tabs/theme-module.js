@@ -64,7 +64,7 @@ export class ThemeModule extends Plugin {
       theme.addEventListener('load', () => {
         if (callback) callback()
       })
-      document.head.appendChild(theme)
+      document.head.insertBefore(theme, document.head.firstChild)
     }
   }
 
