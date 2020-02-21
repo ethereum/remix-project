@@ -20,9 +20,9 @@ module.exports = {
       */
     console.log('token', process.env.gist_token)
     browser
-    .waitForElementVisible('#icon-panel', 10000)
+    .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('fileExplorers')
-    .click('#publishToGist')
+    .click('*[data-id="fileExplorerNewFilepublishToGist"]')
     .modalFooterOKClick()
     .getModalBody((value, done) => {
       const reg = /gist.github.com\/([^.]+)/
@@ -44,38 +44,38 @@ module.exports = {
   },
 
   'Load Gist Modal': function (browser) {
-    browser
-    .waitForElementVisible('#icon-panel', 10000)
+    browser.clickLaunchIcon('home')
+    .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('fileExplorers')
-    .scrollAndClick('div.file > div.btn-group > button:nth-child(1)')
-    .waitForElementVisible('h6.modal-title')
-    .assert.containsText('h6.modal-title', 'Load a Gist')
-    .waitForElementVisible('div.modal-body > div')
-    .assert.containsText('div.modal-body > div', 'Enter the ID of the Gist or URL you would like to load.')
-    .waitForElementVisible('#prompt_text')
-    .click('#modal-footer-cancel')
+    .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
+    .waitForElementVisible('*[data-id="modalDialogModalTitle"]')
+    .assert.containsText('*[data-id="modalDialogModalTitle"]', 'Load a Gist')
+    .waitForElementVisible('*[data-id="modalDialogModalBody"]')
+    .assert.containsText('*[data-id="modalDialogModalBody"]', 'Enter the ID of the Gist or URL you would like to load.')
+    .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
+    .modalFooterCancelClick()
   },
 
   'Display Error Message For Invalid Gist ID': function (browser) {
     browser
-    .waitForElementVisible('#icon-panel', 10000)
+    .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('fileExplorers')
-    .scrollAndClick('div.file > div.btn-group > button:nth-child(1)')
-    .waitForElementVisible('#prompt_text')
-    .setValue('#prompt_text', testData.invalidGistId)
+    .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
+    .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
+    .setValue('*[data-id="modalDialogCustomPromptText"]', testData.invalidGistId)
     .modalFooterOKClick()
-    .waitForElementVisible('div.modal-body > div')
-    .assert.containsText('div.modal-body > div', 'Gist load error: Not Found')
+    .waitForElementVisible('*[data-id="modalDialogModalBody"]')
+    .assert.containsText('*[data-id="modalDialogModalBody"]', 'Gist load error: Not Found')
     .modalFooterOKClick()
   },
 
   'Import From Gist For Valid Gist ID': function (browser) {
     browser
-    .waitForElementVisible('#icon-panel', 10000)
+    .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('fileExplorers')
-    .scrollAndClick('div.file > div.btn-group > button:nth-child(1)')
-    .waitForElementVisible('#prompt_text')
-    .setValue('#prompt_text', testData.validGistId)
+    .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
+    .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
+    .setValue('*[data-id="modalDialogCustomPromptText"]', testData.validGistId)
     .modalFooterOKClick()
     .switchFile(`browser/gists/${testData.validGistId}`)
     .switchFile(`browser/gists/${testData.validGistId}/ApplicationRegistry`)
