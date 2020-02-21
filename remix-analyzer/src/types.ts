@@ -41,9 +41,15 @@ export interface CompilationResult {
     }
   }
 
-/////////////////////////////////////////////
-///////////// Specfic AST Nodes /////////////
-/////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+///////////// Specfic AST Nodes /////////////////////////////
+///////////// (ToDo: YUL ones need to be added) /////////////
+/////////////////////////////////////////////////////////////
+
+interface TypeDescription {
+  typeIdentifier: string
+  typeString: string
+}
 
 export interface SourceUnitAstNode {
   id: number
@@ -79,11 +85,11 @@ export interface ContractDefinitionAstNode {
   name: string
   documentation: object | null
   contractKind: 'interface' | 'contract' | 'library'
-  abstract: string
-  fullyImplemented: object
-  linearizedBaseContracts: object
-  baseContracts: object
-  contractDependencies: object
+  abstract: boolean
+  fullyImplemented: boolean
+  linearizedBaseContracts: Array<number>
+  baseContracts: Array<any>
+  contractDependencies: Array<any>
   nodes: Array<AstNode>
   scope: number
 }
@@ -135,7 +141,7 @@ export interface ParameterListAstNode {
   id: number
   nodeType: 'ParameterList'
   src: string
-  parameters: object
+  parameters: Array<any>
 }
 
 export interface OverrideSpecifierAstNode {
@@ -152,13 +158,13 @@ export interface FunctionDefinitionAstNode {
   name: string
   documentation: object | null
   kind: string
-  stateMutability: string
+  stateMutability: 'pure' | 'view' | 'nonpayable' | 'payable'
   visibility: string
   virtual: boolean
   overrides: object | null
-  parameters: object
-  returnParameters: object
-  modifiers: object
+  parameters: ParameterListAstNode
+  returnParameters: ParameterListAstNode
+  modifiers: Array<any>
   body: object | null
   implemented: boolean
   scope: number
@@ -177,9 +183,9 @@ export interface VariableDeclarationAstNode {
   storageLocation: 'storage' | 'memory' | 'calldata' | 'default'
   overrides: object | null
   visibility: string
-  value: object | null
+  value: string | null
   scope: number
-  typeDescriptions: object
+  typeDescriptions: TypeDescription
   functionSelector?: string
   indexed?: boolean
   baseFunctions?: object
@@ -222,7 +228,7 @@ export interface ElementaryTypeNameAstNode {
   nodeType: 'ElementaryTypeName'
   src: string
   name: string
-  typeDescriptions: object
+  typeDescriptions: TypeDescription
   stateMutability?: string
 }
 
@@ -263,7 +269,7 @@ export interface ArrayTypeNameAstNode {
   src: string
   baseType: object
   length: object
-  typeDescriptions: object
+  typeDescriptions: TypeDescription
 }
 
 export interface InlineAssemblyAstNode {
@@ -271,7 +277,7 @@ export interface InlineAssemblyAstNode {
   nodeType: 'InlineAssembly'
   src: string
   AST: object
-  externalReferences: object
+  externalReferences: Array<any>
   evmVersion: string
 }
 
@@ -279,7 +285,7 @@ export interface BlockAstNode {
   id: number
   nodeType: 'Block'
   src: string
-  statements: object
+  statements: Array<any>
 }
 
 export interface PlaceholderStatementAstNode {
@@ -349,7 +355,7 @@ export interface ReturnAstNode {
   nodeType: 'Return'
   src: string
   expression: object
-  functionReturnParameters: object
+  functionReturnParameters: number
 }
 
 export interface ThrowAstNode {
@@ -369,8 +375,8 @@ export interface VariableDeclarationStatementAstNode {
   id: number
   nodeType: 'VariableDeclarationStatement'
   src: string
-  assignments: object
-  declarations: object
+  assignments: Array<number>
+  declarations: Array<any>
   initialValue: object
 }
 
@@ -382,12 +388,12 @@ export interface ExpressionStatementAstNode {
 }
 
 interface ExpressionAttributes {
-  typeDescriptions: object
+  typeDescriptions: TypeDescription
   isConstant: boolean
   isPure: boolean
   isLValue: boolean
   lValueRequested: boolean
-  argumentTypes: object
+  argumentTypes: object | null
 }
 
 export interface ConditionalAstNode extends ExpressionAttributes {
@@ -413,7 +419,7 @@ export interface TupleExpressionAstNode extends ExpressionAttributes {
   nodeType: 'TupleExpression'
   src: string
   isInlineArray: boolean
-  components: object
+  components: Array<any>
 }
 
 export interface UnaryOperationAstNode extends ExpressionAttributes {
@@ -430,9 +436,9 @@ export interface BinaryOperationAstNode extends ExpressionAttributes {
   nodeType: 'BinaryOperation'
   src: string
   operator: string
-  leftExpression: object
-  rightExpression: object
-  commonType: object
+  leftExpression: LiteralAstNode
+  rightExpression: LiteralAstNode
+  commonType: TypeDescription
 }
 
 export interface FunctionCallAstNode extends ExpressionAttributes {
@@ -510,10 +516,10 @@ export interface IdentifierAstNode {
   nodeType: 'Identifier'
   src: string
   name: string
-  referencedDeclaration: object
-  overloadedDeclarations: object
-  typeDescriptions: object
-  argumentTypes: object
+  referencedDeclaration: number
+  overloadedDeclarations: Array<any>
+  typeDescriptions: TypeDescription
+  argumentTypes: object | null
 }
 
 export interface StructuredDocumentationAstNode {
