@@ -66,7 +66,7 @@ module.exports = {
 function prompt (title, text, hidden, inputValue, ok, cancel, focus) {
   if (!inputValue) inputValue = ''
   var type = hidden ? 'password' : 'text'
-  var input = yo`<input type=${type} name='prompt_text' id='prompt_text' class="${css['prompt_text']} form-control" value='${inputValue}' >`
+  var input = yo`<input type=${type} name='prompt_text' id='prompt_text' class="${css['prompt_text']} form-control" value='${inputValue}' data-id="modalDialogCustomPromptText">`
   modal(title, yo`<div>${text}<div>${input}</div></div>`,
     {
       fn: () => { if (typeof ok === 'function') ok(document.getElementById('prompt_text').value) }

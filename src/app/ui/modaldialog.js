@@ -134,7 +134,7 @@ function html (opts) {
     <div id="modal-background" class="modal-dialog" role="document">
       <div class="modal-content ${css.modalContent} ${opts.class}">
         <div class="modal-header">
-          <h6 class="modal-title"></h6>
+          <h6 class="modal-title" data-id="modalDialogModalTitle"></h6>
           <span class="modal-close">
             <i id="modal-close" title="Close" class="fas fa-times" aria-hidden="true"></i>
           </span>
