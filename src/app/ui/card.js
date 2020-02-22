@@ -24,7 +24,7 @@ module.exports = class Card {
     self._view.statusBar = yo`<div class=${css.statusBar}>${self._opts.collapsedView}</div>`
     self._view.cardHeader = yo`
     <div class=${css.cardHeader} onclick=${() => trigger(self._view.arrow)}>
-      <div class="p-1 ${css.cardTitles}">
+      <div class="pr-1 ${css.cardTitles}">
         <div class=${css.cardTitle}>${self._opts.title}</div>
         ${self._view.statusBar}
       </div>
@@ -43,7 +43,7 @@ module.exports = class Card {
 
     // HTML
     self._view.el = yo`
-      <div class="${css.cardContainer} p-2 list-group-item">
+      <div class="${css.cardContainer} list-group-item border-0">
         ${self._view.cardHeader}
         ${self._view.cardBody}
       </div>`
@@ -55,12 +55,14 @@ module.exports = class Card {
 
 const css = csjs`
   .cardContainer {
-    padding             : 10px 15px 15px 0;
-    margin-bottom       : 2%;
+    padding             : 0 24px 16px;
+    margin              : 0;
+    background          : none;
   }
   .cardHeader {
     display             : flex;
     justify-content     : space-between;
+    align-items         : center;
   }
   .statusBar {}
   .cardBody {}
@@ -70,9 +72,10 @@ const css = csjs`
     align-items         : center;
   }
   .cardTitle {
-    font-size           : 13px;
-    font-weight         : bold;
-    margin-right        : 5px;
+    font-size           : 14px;
+    font-weight         : 400;
+    margin-right        : 8px;
+    line-height         : 19px;
   }
   .expandCollapseButton {}
   .arrow {
