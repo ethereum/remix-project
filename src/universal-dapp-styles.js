@@ -9,33 +9,37 @@ var css = csjs`
     display: flex;
     justify-content: space-between;
     font-size: 11px;
-    /* height: 30px; */
     width: 100%;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
     overflow: visible;
-    margin-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 10px;
+    padding: 0 0 8px;
+    margin: 0;
+    background: none;
+    border: none;
   }
-  .noInstancesText {
-
+  .title button {
+    background: none;
+    border: none;
   }
   .titleLine {
     display: flex;
     align-items: baseline;
   }
   .titleText {
-    /* margin-right: 1em; */
     word-break: break-word;
-    min-width: 170px;
     width: 100%;
+    border: none;
   }
   .spanTitleText {
-    /* font-size: .8rem; */
+    line-height: 12px;
+    padding: 0;
     font-size: 11px;
     width:100%;
+    border: none;
+    background: none;
+    text-transform: uppercase;
   }
   .inputGroupText {
     width: 100%;
@@ -44,7 +48,6 @@ var css = csjs`
     color: var(--primary);
   }
   .titleExpander {
-    /* margin-right: 10px; */
     padding: 5px 7px;
   }
   .nameNbuts {
@@ -54,10 +57,13 @@ var css = csjs`
   }
   .instance {
     display: block;
-    /* display: flex; */
     flex-direction: column;
-    /* padding: 5px 0 0 10px; */
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    background: none;
+    border-radius: 2px;
+  }
+  .instance.hidesub {
+    border-bottom: 1px solid;
   }
   .instance.hidesub .title {
       display: flex;
@@ -69,19 +75,21 @@ var css = csjs`
     display: none;
   }
   .methCaret {
-    margin-right: 5px;
+    min-width: 12px;
+    width: 12px;
+    margin-left: 4px;
     cursor: pointer;
     font-size: 16px;
-    padding-top: 5px;
-    vertical-align: top;
+    line-height: 0.6;
+    vertical-align: middle;
+    padding: 0;
   }
   .cActionsWrapper {
-    padding: 0px 0 10px 10px;
-    border: 1px solid rgba(0,0,0,0.125);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0.25rem;
     border-top-rightt-radius: 0;
     border-bottom-right-radius: 0.25rem;
+    padding: 8px 10px 7px;
   }
   .group:after {
     content: "";
@@ -93,12 +101,11 @@ var css = csjs`
     display: flex;
     overflow: hidden;
   }
-  .contractActions {
-  }
   .instanceButton {
+    height: 32px;
     border-radius: 3px;
-    flex: 3;
     white-space: nowrap;
+    font-size: 11px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -107,14 +114,11 @@ var css = csjs`
     cursor: pointer;
     margin-left: 5px;
   }
-  .udapp {}
   .udappClose {
     display: flex;
     justify-content: flex-end;
   }
   .contractProperty {
-    margin-bottom: 0.4em;
-    margin-top: 1em;
     width:100%;
   }
   .contractProperty.hasArgs input {
@@ -126,10 +130,8 @@ var css = csjs`
     border-bottom-left-radius: 0;
   }
   .contractProperty button {
-    /* background-color: var(--warning); */
     min-width: 100px;
     width: 100px;
-    /* font-size: 10px; */
     margin:0;
     word-break: inherit;
   }
@@ -139,7 +141,6 @@ var css = csjs`
     border-color: lightgray;
   }
   .contractProperty.constant button {
-    /* background-color:var(--info); */
     min-width: 100px;
     width: 100px;
     margin:0;
@@ -149,57 +150,53 @@ var css = csjs`
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .contractProperty input {
-    /* width: 75% */
-  }
   .contractProperty > .value {
     box-sizing: border-box;
     float: left;
     align-self: center;
     margin-left: 4px;
   }
-  .value ul {
-    margin-bottom: 10px;
-    padding-top: 5px;
-    border-bottom: 4px solid var(--light);
-  }
   .contractActionsContainer {
-    width: 98%;
+    width: 100%;
+    margin-bottom: 8px;
   }
   .contractActionsContainerSingle {
     display: flex;
     width: 100%;
+    margin-bottom: 8px;
+  }
+  .contractActionsContainerSingle i {
+    line-height: 2;
   }
   .contractActionsContainerMulti {
     display:none;
     width: 100%;
   }
   .contractActionsContainerMultiInner {
-    margin-bottom: 10px;
-    padding: 0px 5px 5px 5px;
-    background-color: var(--light);
-    width: 99%;
+    width: 100%;
+    padding: 16px 8px 16px 14px;
     border-radius: 3px;
+    margin-bottom: 8px;
   }
   .multiHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
     text-align: left;
     font-size: 10px;
-    margin-bottom: 5px;
     font-weight: bold;
   }
   .contractActionsContainerMultiInner .multiTitle {
     padding-left: 10px;
   }
   .contractProperty .multiTitle {
+    padding: 0;
+    line-height: 16px;
     display: inline-block;
-    width: 90%;
     font-size: 12px;
-    height: 25px;
-    padding-left: 20px;
     font-weight: bold;
-    line-height: 25px;
     cursor: default;
-    padding-top: 5px;
   }
   .contractProperty .contractActionsContainerMultiInner .multiArg label{
     text-align: right;
@@ -219,26 +216,26 @@ var css = csjs`
     cursor: default;
   }
   .multiArg {
-    margin-bottom: 8px;
-    /* display: flex; */
-    clear:both;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 4px;
   }
   .multiArg input{
     padding: 5px;
   }
-
   .multiArg label {
-      float: left;
-      margin-right: 6px;
-      font-size: 10px;
-      width: 30%;
-      padding-top: 5px;
-      word-break: break-all;
+    width: auto;
+    padding: 0;
+    margin: 0 4px 0 0;
+    font-size: 10px;
+    line-height: 12px;
+    text-align: right;
+    word-break: initial;
   }
   .multiArg button {
+    max-width: 100px;
     border-radius: 3px;
-    float: right;
-    margin-right: 2%;
     border-width: 1px;
     width: inherit;
   }
@@ -252,12 +249,12 @@ var css = csjs`
   }
   .hasArgs input {
     display: block;
+    height: 32px;
     border: 1px solid #dddddd;
     padding: .36em;
     border-left: none;
     padding: 8px 8px 8px 10px;
-    font-size: 10px;
-    /* height: 25px; */
+    font-size: 10px !important;
   }
   .hasArgs button {
     border-top-right-radius: 0;
@@ -266,14 +263,13 @@ var css = csjs`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: 11px;
   }
   .hasArgs .contractActionsContainerMulti button {
     border-radius: 3px;
   }
   .contractActionsContainerMultiInner .multiArg i {
-    padding-right: 15px;
-    padding-top: 5px;
-    float: right;
+    padding-right: 10px;
   },
   .hideWarningsContainer {
     display: flex;

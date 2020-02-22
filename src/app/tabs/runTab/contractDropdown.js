@@ -51,10 +51,11 @@ class ContractDropdownUI {
     this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="address of contract" oninput=${this.atAddressChanged.bind(this)} />`
     this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled></select>`
 
-    this.createPanel = yo`<div class="${css.button}"></div>`
+    this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
     let el = yo`
       <div class="${css.container}">
+        <label class="${css.settingsLabel}">Contract</label>
         <div class="${css.subcontainer}">
           ${this.selectContractNames} ${this.compFails} ${info}
         </div>
