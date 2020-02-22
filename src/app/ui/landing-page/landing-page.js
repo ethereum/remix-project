@@ -216,7 +216,7 @@ export class LandingPage extends ViewPlugin {
             <p class="mb-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</p>
             <p class="mb-1">Import From:</p>
             <div class="btn-group">
-              <button class="btn btn-sm btn-secondary" onclick="${() => importFromGist()}">Gist</button>
+              <button class="btn btn-sm btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
               <button class="btn btn-sm btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'])}">GitHub</button>
               <button class="btn btn-sm btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
               <button class="btn btn-sm btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>

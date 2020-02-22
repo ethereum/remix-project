@@ -174,7 +174,6 @@
     "nightwatch_local_remixd": "nightwatch ./test-browser/tests/remixd.js --config nightwatch.js --env chrome ",
     "nightwatch_local_terminal": "nightwatch ./test-browser/tests/terminal.js --config nightwatch.js --env chrome ",
     "nightwatch_local_gist": "nightwatch ./test-browser/tests/gist.js --config nightwatch.js --env chrome ",
-    "nightwatch_local_importFromGist": "nightwatch ./test-browser/tests/importFromGist.js --config nightwatch.js --env chrome ",
     "nightwatch_local_workspace": "nightwatch ./test-browser/tests/workspace.js --config nightwatch.js --env chrome ",
     "nightwatch_local_defaultLayout": "nightwatch ./test-browser/tests/defaultLayout.js --config nightwatch.js --env chrome ",
     "nightwatch_local_pluginManager": "nightwatch ./test-browser/tests/pluginManager.js --config nightwatch.js --env chrome ",
