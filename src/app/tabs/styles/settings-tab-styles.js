@@ -49,8 +49,6 @@ const css = csjs`
     margin-bottom: 3px;
   }
   input {
-    margin-right: 5px;
-    cursor: pointer;
     width: inherit;
   }
   input[type=radio] {
