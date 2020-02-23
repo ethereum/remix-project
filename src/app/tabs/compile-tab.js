@@ -60,7 +60,8 @@ class CompileTab extends ViewPlugin {
     this.fileManager = fileManager
 
     this.data = {
-      contractsDetails: {}
+      contractsDetails: {},
+      eventHandlers: {}
     }
   }
 
@@ -82,35 +83,40 @@ class CompileTab extends ViewPlugin {
    */
 
   listenToEvents () {
-    let onContentChanged = () => {
+    this.data.eventHandlers.onContentChanged = () => {
       this.emit('statusChanged', {key: 'edited', title: 'the content has changed, needs recompilation', type: 'info'})
     }
-    this.editor.event.register('contentChanged', onContentChanged)
+    this.editor.event.register('contentChanged', this.data.eventHandlers.onContentChanged)
 
-    this.compiler.event.register('loadingCompiler', () => {
+    this.data.eventHandlers.onLoadingCompiler = () => {
       this.emit('statusChanged', {key: 'loading', title: 'loading compiler...', type: 'info'})
-    })
+    }
+    this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
 
-    this.compiler.event.register('compilerLoaded', () => {
+    this.data.eventHandlers.onCompilerLoaded = () => {
       this.emit('statusChanged', {key: 'none'})
-    })
+    }
+    this.compiler.event.register('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
 
-    this.compileTabLogic.event.on('startingCompilation', () => {
+    this.data.eventHandlers.onStartingCompilation = () => {
       if (this._view.errorContainer) {
         this._view.errorContainer.innerHTML = ''
       }
       this.emit('statusChanged', {key: 'loading', title: 'compiling...', type: 'info'})
-    })
+    }
+    this.compileTabLogic.event.on('startingCompilation', this.data.eventHandlers.onStartingCompilation)
 
-    this.fileManager.events.on('currentFileChanged', (name) => {
+    this.data.eventHandlers.onCurrentFileChanged = (name) => {
       this.compilerContainer.currentFile = name
-    })
+    }
+    this.fileManager.events.on('currentFileChanged', this.data.eventHandlers.onCurrentFileChanged)
 
-    this.fileManager.events.on('noFileSelected', () => {
+    this.data.eventHandlers.onNoFileSelected = () => {
       this.compilerContainer.currentFile = ''
-    })
+    }
+    this.fileManager.events.on('noFileSelected', this.data.eventHandlers.onNoFileSelected)
 
-    this.compiler.event.register('compilationFinished', (success, data, source) => {
+    this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
       if (success) {
         // forwarding the event to the appManager infra
         this.emit('compilationFinished', source.target, source, 'soljson', data)
@@ -166,11 +172,17 @@ class CompileTab extends ViewPlugin {
           }
         })
       }
-    })
+    }
+    this.compiler.event.register('compilationFinished', this.data.eventHandlers.onCompilationFinished)
 
-    globalRegistry.get('themeModule').api.events.on('themeChanged', () => {
-      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('swarmLogo'))
-    })
+    this.data.eventHandlers.onThemeChanged = (theme) => {
+      const invert = theme.quality === 'dark' ? 1 : 0
+      const img = document.getElementById('swarmLogo')
+      if (img) {
+        img.style.filter = `invert(${invert})`
+      }
+    }
+    globalRegistry.get('themeModule').api.events.on('themeChanged', this.data.eventHandlers.onThemeChanged)
 
     // Run the compiler instead of trying to save the website
     $(window).keydown((e) => {
@@ -448,7 +460,6 @@ class CompileTab extends ViewPlugin {
   render () {
     if (this._view.el) return this._view.el
     this.onActivationInternal()
-    this.listenToEvents()
     this._view.errorContainer = yo`<div class="${css.errorBlobs} p-2"></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
@@ -462,16 +473,20 @@ class CompileTab extends ViewPlugin {
     return this._view.el
   }
 
+  onActivation () {
+    this.listenToEvents()
+  }
+
   onDeactivation () {
     this.compilerContainer.deactivate()
-    this.editor.event.unregister('contentChanged')
-    this.compiler.event.unregister('loadingCompiler')
-    this.compiler.event.unregister('compilerLoaded')
-    this.compileTabLogic.event.off('startingCompilation')
-    this.fileManager.events.off('currentFileChanged')
-    this.fileManager.events.off('noFileSelected')
-    this.compiler.event.unregister('compilationFinished')
-    globalRegistry.get('themeModule').api.events.off('themeChanged')
+    this.editor.event.unregister('contentChanged', this.data.eventHandlers.onContentChanged)
+    this.compiler.event.unregister('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
+    this.compiler.event.unregister('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
+    this.compileTabLogic.event.removeListener('startingCompilation', this.data.eventHandlers.onStartingCompilation)
+    this.fileManager.events.removeListener('currentFileChanged', this.data.eventHandlers.onCurrentFileChanged)
+    this.fileManager.events.removeListener('noFileSelected', this.data.eventHandlers.onNoFileSelected)
+    this.compiler.event.unregister('compilationFinished', this.data.eventHandlers.onCompilationFinished)
+    globalRegistry.get('themeModule').api.events.removeListener('themeChanged', this.data.eventHandlers.onThemeChanged)
   }
 }
 
