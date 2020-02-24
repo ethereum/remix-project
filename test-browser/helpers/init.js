@@ -29,5 +29,6 @@ function initModules (browser, callback) {
     .clickLaunchIcon('settings')
     .setValue('#gistaccesstoken', process.env.gist_token)
     .click('#savegisttoken')
+    .click('#settingsView #Flatly') // e2e tests were initially developed with Flatly. Some tests are failing with the default one (Dark), because the dark theme put uppercase everywhere.
     .perform(() => { callback() })
 }
