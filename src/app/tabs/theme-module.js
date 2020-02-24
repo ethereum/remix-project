@@ -38,7 +38,7 @@ export class ThemeModule extends Plugin {
       config: registry.get('config').api
     }
     this.themes = themes.reduce((acc, theme) => ({ ...acc, [theme.name]: theme }), {})
-    this.active = this._deps.config.get('settings/theme') ? this._deps.config.get('settings/theme') : 'Flatly'
+    this.active = this._deps.config.get('settings/theme') ? this._deps.config.get('settings/theme') : 'Dark'
   }
 
   /** Return the active theme */
