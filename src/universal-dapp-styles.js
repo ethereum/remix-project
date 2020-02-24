@@ -163,7 +163,6 @@ var css = csjs`
   .contractActionsContainerSingle {
     display: flex;
     width: 100%;
-    margin-bottom: 8px;
   }
   .contractActionsContainerSingle i {
     line-height: 2;
