@@ -43,7 +43,6 @@ export interface CompilationResult {
 
 /////////////////////////////////////////////////////////////
 ///////////// Specfic AST Nodes /////////////////////////////
-///////////// (ToDo: YUL ones need to be added) /////////////
 /////////////////////////////////////////////////////////////
 
 interface TypeDescription {
@@ -67,6 +66,11 @@ export interface PragmaDirectiveAstNode {
   literals?: Array<string>
 }
 
+interface SymbolAlias {
+  foreign: IdentifierAstNode
+  local: string | null
+}
+
 export interface ImportDirectiveAstNode {
   id: number
   nodeType: 'ImportDirective'
@@ -75,7 +79,8 @@ export interface ImportDirectiveAstNode {
   file: string
   scope: number
   sourceUnit: number
-  symbolAliases: Array<string>
+  symbolAliases: Array<SymbolAlias>
+  unitAlias: string
 }
 
 export interface ContractDefinitionAstNode {
@@ -88,9 +93,9 @@ export interface ContractDefinitionAstNode {
   abstract: boolean
   fullyImplemented: boolean
   linearizedBaseContracts: Array<number>
-  baseContracts: Array<any>
-  contractDependencies: Array<any>
-  nodes: Array<AstNode>
+  baseContracts: Array<InheritanceSpecifierAstNode>
+  contractDependencies: Array<number>
+  nodes: Array<any>
   scope: number
 }
 
@@ -98,16 +103,16 @@ export interface InheritanceSpecifierAstNode {
   id: number
   nodeType: 'InheritanceSpecifier'
   src: string
-  baseName: string
-  arguments: object | null
+  baseName: UserDefinedTypeNameAstNode
+  arguments: LiteralAstNode | null
 }
 
 export interface UsingForDirectiveAstNode {
   id: number
   nodeType: 'UsingForDirective'
   src: string
-  libraryName: object
-  typeName: object | null
+  libraryName: UserDefinedTypeNameAstNode
+  typeName: UserDefinedTypeNameAstNode | ElementaryTypeNameAstNode | null
 }
 
 export interface StructDefinitionAstNode {
@@ -117,7 +122,7 @@ export interface StructDefinitionAstNode {
   name: string
   visibility: string
   canonicalName: string
-  members: object
+  members: Array<VariableDeclarationAstNode>
   scope: number
 }
 
@@ -127,7 +132,7 @@ export interface EnumDefinitionAstNode {
   src: string
   name: string
   canonicalName: string
-  members: object
+  members: Array<EnumValueAstNode>
 }
 
 export interface EnumValueAstNode {
@@ -141,14 +146,14 @@ export interface ParameterListAstNode {
   id: number
   nodeType: 'ParameterList'
   src: string
-  parameters: Array<any>
+  parameters: Array<VariableDeclarationAstNode>
 }
 
 export interface OverrideSpecifierAstNode {
   id: number
   nodeType: 'OverrideSpecifier'
   src: string
-  overrides: object
+  overrides: Array<UserDefinedTypeNameAstNode>
 }
 
 export interface FunctionDefinitionAstNode {
@@ -161,7 +166,7 @@ export interface FunctionDefinitionAstNode {
   stateMutability: 'pure' | 'view' | 'nonpayable' | 'payable'
   visibility: string
   virtual: boolean
-  overrides: object | null
+  overrides: OverrideSpecifierAstNode | null
   parameters: ParameterListAstNode
   returnParameters: ParameterListAstNode
   modifiers: Array<any>
@@ -169,7 +174,7 @@ export interface FunctionDefinitionAstNode {
   implemented: boolean
   scope: number
   functionSelector?: string
-  baseFunctions?: object
+  baseFunctions?: Array<number>
 }
 
 export interface VariableDeclarationAstNode {
@@ -181,7 +186,7 @@ export interface VariableDeclarationAstNode {
   constant: boolean
   stateVariable: boolean
   storageLocation: 'storage' | 'memory' | 'calldata' | 'default'
-  overrides: object | null
+  overrides: OverrideSpecifierAstNode | null
   visibility: string
   value: string | null
   scope: number
@@ -198,19 +203,19 @@ export interface ModifierDefinitionAstNode {
   name: string
   documentation: object | null
   visibility: string
-  parameters: object
+  parameters: ParameterListAstNode
   virtual: boolean
-  overrides: object | null
-  body: object
-  baseModifiers?: object
+  overrides: OverrideSpecifierAstNode | null
+  body: BlockAstNode
+  baseModifiers?: Array<number>
 }
 
 export interface ModifierInvocationAstNode {
   id: number
   nodeType: 'ModifierInvocation'
   src: string
-  modifierName: object
-  arguments: object | null
+  modifierName: IdentifierAstNode
+  arguments: Array<LiteralAstNode> | null
 }
 
 export interface EventDefinitionAstNode {
@@ -219,7 +224,7 @@ export interface EventDefinitionAstNode {
   src: string
   name: string
   documentation: object | null
-  parameters: object
+  parameters: ParameterListAstNode
   anonymous: boolean
 }
 
@@ -229,7 +234,7 @@ export interface ElementaryTypeNameAstNode {
   src: string
   name: string
   typeDescriptions: TypeDescription
-  stateMutability?: string
+  stateMutability?: 'pure' | 'view' | 'nonpayable' | 'payable'
 }
 
 export interface UserDefinedTypeNameAstNode {
@@ -238,8 +243,8 @@ export interface UserDefinedTypeNameAstNode {
   src: string
   name: string
   referencedDeclaration: number
-  contractScope: number
-  typeDescriptions: object
+  contractScope: number | null
+  typeDescriptions: TypeDescription
 }
 
 export interface FunctionTypeNameAstNode {
@@ -248,36 +253,44 @@ export interface FunctionTypeNameAstNode {
   src: string
   name: string
   visibility: string
-  stateMutability: string
-  parameterTypes: object
-  returnParameterTypes: object
-  typeDescriptions: object
+  stateMutability: 'pure' | 'view' | 'nonpayable' | 'payable'
+  parameterTypes: ParameterListAstNode
+  returnParameterTypes: ParameterListAstNode
+  typeDescriptions: TypeDescription
 }
 
 export interface MappingAstNode {
   id: number
   nodeType: 'Mapping'
   src: string
-  keyType: object
-  valueType: object
-  typeDescriptions: object
+  keyType: UserDefinedTypeNameAstNode | ElementaryTypeNameAstNode
+  valueType: UserDefinedTypeNameAstNode | ElementaryTypeNameAstNode
+  typeDescriptions: TypeDescription
 }
 
 export interface ArrayTypeNameAstNode {
   id: number
   nodeType: 'ArrayTypeName'
   src: string
-  baseType: object
-  length: object
+  baseType: UserDefinedTypeNameAstNode | ElementaryTypeNameAstNode
+  length: LiteralAstNode | null
   typeDescriptions: TypeDescription
+}
+
+interface externalReference {
+  declaration: number
+  isOffset: boolean
+  isSlot: boolean
+  src: string
+  valueSize: number
 }
 
 export interface InlineAssemblyAstNode {
   id: number
   nodeType: 'InlineAssembly'
   src: string
-  AST: object
-  externalReferences: Array<any>
+  AST: YulBlockAstNode
+  externalReferences: Array<externalReference>
   evmVersion: string
 }
 
@@ -285,7 +298,7 @@ export interface BlockAstNode {
   id: number
   nodeType: 'Block'
   src: string
-  statements: Array<any>
+  statements: Array<object>
 }
 
 export interface PlaceholderStatementAstNode {
@@ -308,8 +321,8 @@ export interface TryCatchClauseAstNode {
   nodeType: 'TryCatchClause'
   src: string
   errorName: string
-  parameters: object
-  block: object
+  parameters: ParameterListAstNode
+  block: BlockAstNode
 }
 
 export interface TryStatementAstNode {
@@ -317,7 +330,7 @@ export interface TryStatementAstNode {
   nodeType: 'TryStatement'
   src: string
   externalCall: object
-  clauses: object
+  clauses: Array<TryCatchClauseAstNode>
 }
 
 export interface WhileStatementAstNode {
@@ -325,17 +338,17 @@ export interface WhileStatementAstNode {
   nodeType: 'WhileStatement' | 'DoWhileStatement'
   src: string
   condition: object
-  body: object
+  body: BlockAstNode
 }
 
 export interface ForStatementAstNode {
   id: number
   nodeType: 'ForStatement'
   src: string
-  initializationExpression: object
+  initializationExpression: VariableDeclarationStatementAstNode
   condition: object
-  loopExpression: object
-  body: object
+  loopExpression: ExpressionStatementAstNode
+  body: BlockAstNode
 }
 
 export interface ContinueAstNode {
@@ -354,7 +367,7 @@ export interface ReturnAstNode {
   id: number
   nodeType: 'Return'
   src: string
-  expression: object
+  expression: object | null
   functionReturnParameters: number
 }
 
@@ -368,7 +381,7 @@ export interface EmitStatementAstNode {
   id: number
   nodeType: 'EmitStatement'
   src: string
-  eventCall: object
+  eventCall: FunctionCallAstNode
 }
 
 export interface VariableDeclarationStatementAstNode {
@@ -376,7 +389,7 @@ export interface VariableDeclarationStatementAstNode {
   nodeType: 'VariableDeclarationStatement'
   src: string
   assignments: Array<number>
-  declarations: Array<any>
+  declarations: Array<object>
   initialValue: object
 }
 
@@ -393,7 +406,7 @@ interface ExpressionAttributes {
   isPure: boolean
   isLValue: boolean
   lValueRequested: boolean
-  argumentTypes: object | null
+  argumentTypes: Array<TypeDescription> | null
 }
 
 export interface ConditionalAstNode extends ExpressionAttributes {
@@ -419,7 +432,7 @@ export interface TupleExpressionAstNode extends ExpressionAttributes {
   nodeType: 'TupleExpression'
   src: string
   isInlineArray: boolean
-  components: Array<any>
+  components: Array<object>
 }
 
 export interface UnaryOperationAstNode extends ExpressionAttributes {
@@ -436,8 +449,8 @@ export interface BinaryOperationAstNode extends ExpressionAttributes {
   nodeType: 'BinaryOperation'
   src: string
   operator: string
-  leftExpression: LiteralAstNode
-  rightExpression: LiteralAstNode
+  leftExpression: object
+  rightExpression: object
   commonType: TypeDescription
 }
 
@@ -446,7 +459,7 @@ export interface FunctionCallAstNode extends ExpressionAttributes {
   nodeType: 'FunctionCall'
   src: string
   expression: object
-  names: object
+  names: Array<any>
   arguments: object
   tryCall: boolean
   kind: 'functionCall' | 'typeConversion' | 'structConstructorCall'
@@ -457,15 +470,15 @@ export interface FunctionCallOptionsAstNode extends ExpressionAttributes {
   nodeType: 'FunctionCallOptions'
   src: string
   expression: object
-  names: object
-  options: object
+  names: Array<string>
+  options: Array<object>
 }
 
 export interface NewExpressionAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'NewExpression'
   src: string
-  typeName: object
+  typeName: UserDefinedTypeNameAstNode | ElementaryTypeNameAstNode
 }
 
 export interface MemberAccessAstNode extends ExpressionAttributes {
@@ -474,7 +487,7 @@ export interface MemberAccessAstNode extends ExpressionAttributes {
   src: string
   memberName: string
   expression: object
-  referencedDeclaration: object
+  referencedDeclaration: number | null
 }
 
 export interface IndexAccessAstNode extends ExpressionAttributes {
@@ -498,7 +511,7 @@ export interface ElementaryTypeNameExpressionAstNode extends ExpressionAttribute
   id: number
   nodeType: 'ElementaryTypeNameExpression'
   src: string
-  typeName: object
+  typeName: ElementaryTypeNameAstNode
 }
 
 export interface LiteralAstNode extends ExpressionAttributes {
@@ -508,7 +521,7 @@ export interface LiteralAstNode extends ExpressionAttributes {
   kind: 'number' | 'string' | 'bool'
   value: string
   hexValue: string
-  subdenomination: object | null
+  subdenomination: 'wei' | 'szabo' | 'finney' | 'ether' | null
 }
 
 export interface IdentifierAstNode {
@@ -519,7 +532,7 @@ export interface IdentifierAstNode {
   referencedDeclaration: number
   overloadedDeclarations: Array<any>
   typeDescriptions: TypeDescription
-  argumentTypes: object | null
+  argumentTypes: Array<TypeDescription> | null
 }
 
 export interface StructuredDocumentationAstNode {
@@ -527,6 +540,45 @@ export interface StructuredDocumentationAstNode {
   nodeType: 'StructuredDocumentation'
   src: string
   text: string
+}
+
+
+/////////////////////////////////////////////////////////
+///////////// YUL AST Nodes /////////////////////////////
+/////////////////////////////////////////////////////////
+
+export interface YulTypedNameAstNode {
+  name: string
+  nodeType: 'YulTypedName'
+  src: string
+  type: string
+}
+
+export interface YulIdentifierAstNode {
+  name: string
+  nodeType: 'YulIdentifier'
+  src: string
+}
+
+export interface YulLiteralAstNode {
+  kind: string
+  nodeType: 'YulLiteral'
+  src: string
+  type: string
+  value: string
+}
+
+export interface YulVariableDeclarationAstNode {
+  nodeType: 'YulVariableDeclaration'
+  src: string
+  value: YulIdentifierAstNode | YulLiteralAstNode
+  variables: Array<YulTypedNameAstNode>
+}
+
+export interface YulBlockAstNode {
+  nodeType: 'YulBlock'
+  src: string
+  statements: Array<YulVariableDeclarationAstNode>
 }
  
  
