@@ -125,7 +125,7 @@ class MultiParamManager {
     }
     let funcButton = yo`<button onclick=${() => onClick()} class="${css.instanceButton} btn btn-sm">${title}</button>`
     this.contractActionsContainerSingle = yo`
-    <div class="${css.contractActionsContainerSingle}" >
+    <div class="${css.contractActionsContainerSingle} pt-2">
       ${funcButton}
       ${this.basicInputField}
       <i class="fas fa-angle-down ${css.methCaret}" onclick=${() => this.switchMethodViewOn()} title=${title} ></i>
