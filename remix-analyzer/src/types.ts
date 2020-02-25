@@ -542,6 +542,13 @@ export interface StructuredDocumentationAstNode {
   text: string
 }
 
+export interface CommonAstNode {
+  id: number
+  nodeType: string
+  src: string
+  [x: string]: any
+}
+
 
 /////////////////////////////////////////////////////////
 ///////////// YUL AST Nodes /////////////////////////////
@@ -579,6 +586,12 @@ export interface YulBlockAstNode {
   nodeType: 'YulBlock'
   src: string
   statements: Array<YulVariableDeclarationAstNode>
+}
+
+export interface CommonYulAstNode {
+  nodeType: string
+  src: string
+  [x: string]: any
 }
  
  
