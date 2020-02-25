@@ -1,6 +1,6 @@
 'use strict'
 
-import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode } from "types"
+import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, CommonAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode } from "types"
 
 const remixLib = require('remix-lib')
 const util = remixLib.util
@@ -125,8 +125,8 @@ const abiNamespace = {
 
 // #################### Trivial Getters
 
-function getType (node) {
-  return node.attributes.type
+function getType (node: CommonAstNode) {
+  return node.nodeType
 }
 
 // #################### Complex Getters
@@ -149,7 +149,7 @@ function getFunctionCallType (func) {
  * @return {string} variable name written to
  */
 function getEffectedVariableName (effectNode) {
-  if (!isEffect(effectNode) || isInlineAssembly(effectNode)) throw new Error('staticAnalysisCommon.js: not an effect Node or inline assembly')
+  if (!isEffect(effectNode) || effectNode.nodeType === "InlineAssembly") throw new Error('staticAnalysisCommon.js: not an effect Node or inline assembly')
   return findFirstSubNodeLTR(effectNode, exactMatch(nodeTypes.IDENTIFIER)).attributes.value
 }
 
@@ -234,9 +234,8 @@ function getExternalDirectCallMemberName (extDirectCall) {
  * @contract {ASTNode} Contract Definition node
  * @return {string} name of a contract defined
  */
-function getContractName (contract) {
-  if (!isContractDefinition(contract)) throw new Error('staticAnalysisCommon.js: not an contractDefinition Node')
-  return contract.attributes.name
+function getContractName (contract: ContractDefinitionAstNode) {
+  return contract.name
 }
 
 /**
@@ -258,9 +257,8 @@ function getFunctionDefinitionName (funcDef: FunctionDefinitionAstNode): string 
  * @func {ASTNode} Inheritance specifier
  * @return {string} name of contract inherited from
  */
-function getInheritsFromName (inheritsNode) {
-  if (!isInheritanceSpecifier(inheritsNode)) throw new Error('staticAnalysisCommon.js: not an InheritanceSpecifier Node')
-  return inheritsNode.children[0].attributes.name
+function getInheritsFromName (inheritsNode: InheritanceSpecifierAstNode) {
+  return inheritsNode.baseName
 }
 
 /**
@@ -270,9 +268,8 @@ function getInheritsFromName (inheritsNode) {
  * @varDeclNode {ASTNode} Variable declaration node
  * @return {string} variable name
  */
-function getDeclaredVariableName (varDeclNode) {
-  if (!isVariableDeclaration(varDeclNode)) throw new Error('staticAnalysisCommon.js: not a variable declaration')
-  return varDeclNode.attributes.name
+function getDeclaredVariableName (varDeclNode: VariableDeclarationAstNode) {
+  return varDeclNode.name
 }
 
 /**
@@ -282,9 +279,8 @@ function getDeclaredVariableName (varDeclNode) {
  * @varDeclNode {ASTNode} Variable declaration node
  * @return {string} variable type
  */
-function getDeclaredVariableType (varDeclNode) {
-  if (!isVariableDeclaration(varDeclNode)) throw new Error('staticAnalysisCommon.js: not a variable declaration')
-  return varDeclNode.attributes.type
+function getDeclaredVariableType (varDeclNode: VariableDeclarationAstNode) {
+  return varDeclNode.typeName
 }
 
 /**
@@ -297,10 +293,8 @@ function getDeclaredVariableType (varDeclNode) {
  * @contractNode {ASTNode} Contract Definition node
  * @return {list variable declaration} state variable node list
  */
-function getStateVariableDeclarationsFormContractNode (contractNode) {
-  if (!isContractDefinition(contractNode)) throw new Error('staticAnalysisCommon.js: not a contract definition declaration')
-  if (!contractNode.children) return []
-  return contractNode.children.filter((el) => isVariableDeclaration(el))
+function getStateVariableDeclarationsFormContractNode (contractNode: ContractDefinitionAstNode): CommonAstNode[] {
+  return contractNode.nodes.filter(el => el.nodeType === "VariableDeclaration")
 }
 
 /**
@@ -380,7 +374,7 @@ function getLibraryCallContractName (funcCall) {
  * @return {string} name of function called on the library
  */
 function getLibraryCallMemberName (funcCall) {
-  if (!isLibraryCall(funcCall)) throw new Error('staticAnalysisCommon.js: not an library call Node')
+  // if (!isLibraryCall(funcCall)) throw new Error('staticAnalysisCommon.js: not an library call Node')
   return funcCall.attributes.member_name
 }
 
@@ -413,73 +407,14 @@ function getUnAssignedTopLevelBinOps (subScope) {
   return subScope.children.filter(isBinaryOpInExpression)
 }
 
-function getLoopBlockStartIndex (node) {
-  if (isLoop(node)) {
-    if (nodeType(node, exactMatch(nodeTypes.FORSTATEMENT))) {
-      return 3 // For 'for' loop
-    } else {
-      return 1 // For 'while' and 'do-while' loop
-    }
-  }
+function getLoopBlockStartIndex (node: ForStatementAstNode | WhileStatementAstNode): 3|1 {
+    return node.nodeType === "ForStatement" ? 3 : 1
 }
 
 // #################### Trivial Node Identification
 
-// function isFunctionDefinition (node) {
-//   return nodeType(node, exactMatch(nodeTypes.FUNCTIONDEFINITION))
-// }
-
-function isStatement (node) {
-  return nodeType(node, 'Statement$') || isBlock(node) || isReturn(node)
-}
-
-function isBlock (node) {
-  return nodeType(node, exactMatch(nodeTypes.BLOCK))
-}
-
-function isModifierDefinition (node) {
-  return nodeType(node, exactMatch(nodeTypes.MODIFIERDEFINITION))
-}
-
-function isModifierInvocation (node) {
-  return nodeType(node, exactMatch(nodeTypes.MODIFIERINVOCATION))
-}
-
-function isVariableDeclaration (node) {
-  return nodeType(node, exactMatch(nodeTypes.VARIABLEDECLARATION))
-}
-
-function isReturn (node) {
-  return nodeType(node, exactMatch(nodeTypes.RETURN))
-}
-
-function isInheritanceSpecifier (node) {
-  return nodeType(node, exactMatch(nodeTypes.INHERITANCESPECIFIER))
-}
-
-function isAssignment (node) {
-  return nodeType(node, exactMatch(nodeTypes.ASSIGNMENT))
-}
-
-function isContractDefinition (node) {
-  return nodeType(node, exactMatch(nodeTypes.CONTRACTDEFINITION))
-}
-
-function isInlineAssembly (node) {
-  return nodeType(node, exactMatch(nodeTypes.INLINEASSEMBLY))
-}
-
-function isNewExpression (node) {
-  return nodeType(node, exactMatch(nodeTypes.NEWEXPRESSION))
-}
-
-/**
- * True if is Expression
- * @node {ASTNode} some AstNode
- * @return {bool}
- */
-function isExpressionStatement (node) {
-  return nodeType(node, exactMatch(nodeTypes.EXPRESSIONSTATEMENT))
+function isStatement (node: CommonAstNode) {
+  return nodeType(node, 'Statement$') || node.nodeType === "Block" || node.nodeType === "Return"
 }
 
 /**
@@ -618,8 +553,8 @@ function isRequireCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isStorageVariableDeclaration (node) {
-  return isVariableDeclaration(node) && expressionType(node, basicRegex.REFTYPE)
+function isStorageVariableDeclaration (node: VariableDeclarationAstNode): boolean {
+  return expressionType(node, basicRegex.REFTYPE)
 }
 
 /**
@@ -637,7 +572,7 @@ function isInteraction (node) {
  * @return {bool}
  */
 function isEffect (node) {
-  return isAssignment(node) || isPlusPlusUnaryOperation(node) || isMinusMinusUnaryOperation(node) || isInlineAssembly(node)
+  return node.nodeType === "Assignment" || isPlusPlusUnaryOperation(node) || isMinusMinusUnaryOperation(node) || node.nodeType === "InlineAssembly"
 }
 
 /**
@@ -647,7 +582,7 @@ function isEffect (node) {
  * @return {bool}
  */
 function isWriteOnStateVariable (effectNode, stateVariables) {
-  return isInlineAssembly(effectNode) || (isEffect(effectNode) && isStateVariable(getEffectedVariableName(effectNode), stateVariables))
+  return effectNode.nodeType === "InlineAssembly" || (isEffect(effectNode) && isStateVariable(getEffectedVariableName(effectNode), stateVariables))
 }
 
 /**
@@ -720,7 +655,7 @@ function isSubScopeStatement (node) {
  * @return {bool}
  */
 function isBinaryOpInExpression (node) {
-  return isExpressionStatement(node) && nrOfChildren(node, 1) && isBinaryOperation(node.children[0])
+  return node.nodeType === "ExpressionStatement" && nrOfChildren(node, 1) && isBinaryOperation(node.children[0])
 }
 
 /**
@@ -978,16 +913,17 @@ function isBytesLengthCheck (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLoop (node) {
-  return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
-          nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
-          nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))
-}
+// function isLoop (node) {
+//   return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
+//           nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
+//           nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))
+// }
 
 /**
  * True if it is a 'for' loop
  * @node {ASTNode} some AstNode
  * @return {bool}
+ * TODO: This should be removed once for loop iterates Over dynamic array fixed
  */
 function isForLoop (node) {
   return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT))
@@ -995,13 +931,13 @@ function isForLoop (node) {
 
 // #################### Complex Node Identification - Private
 
-function isMemberAccess (node, retType, accessor, accessorType, memberName) {
+function isMemberAccess (node: MemberAccessAstNode, retType, accessor, accessorType, memberName) {
   return nodeType(node, exactMatch(nodeTypes.MEMBERACCESS)) &&
         expressionType(node, retType) &&
         memName(node, memberName) &&
         nrOfChildren(node, 1) &&
-        memName(node.children[0], accessor) &&
-        expressionType(node.children[0], accessorType)
+        memName(node.expression, accessor) &&
+        expressionType(node.expression, accessorType)
 }
 
 function isSpecialVariableAccess (node, varType) {
@@ -1168,28 +1104,27 @@ export {
   isIntDivision,
   isStringToBytesConversion,
   isBytesLengthCheck,
-  isLoop,
   isForLoop,
 
   // #################### Trivial Node Identification
   isDeleteUnaryOperation,
   // isFunctionDefinition,
-  isModifierDefinition,
-  isInheritanceSpecifier,
-  isModifierInvocation,
-  isVariableDeclaration,
+  // isModifierDefinition,
+  // isInheritanceSpecifier,
+  // isModifierInvocation,
+  // isVariableDeclaration,
   isStorageVariableDeclaration,
-  isAssignment,
-  isContractDefinition,
+  // isAssignment,
+  // isContractDefinition,
   isConstantFunction,
   isPayableFunction,
   isConstructor,
-  isInlineAssembly,
-  isNewExpression,
-  isReturn,
+  // isInlineAssembly,
+  // isNewExpression,
+  // isReturn,
   isStatement,
-  isExpressionStatement,
-  isBlock,
+  // isExpressionStatement,
+  // isBlock,
   isBinaryOperation,
 
   // #################### Constants

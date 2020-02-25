@@ -1,12 +1,12 @@
 import { default as category } from './categories'
-import { isLowLevelCall, isTransfer, isExternalDirectCall, isEffect, isLocalCallGraphRelevantNode,
-  isInlineAssembly,  isNewExpression, isSelfdestructCall, isDeleteUnaryOperation, isPayableFunction,
+import { isLowLevelCall, isTransfer, isExternalDirectCall, isEffect, isLocalCallGraphRelevantNode, 
+  isSelfdestructCall, isDeleteUnaryOperation, isPayableFunction,
   isConstructor, getFullQuallyfiedFuncDefinitionIdent, hasFunctionBody, isConstantFunction, isWriteOnStateVariable,
   isStorageVariableDeclaration, isCallToNonConstLocalFunction, getFullQualifiedFunctionCallIdent} from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, CommonAstNode} from './../../types'
 
 export default class constantFunctions implements AnalyzerModule {
   name: string = 'Constant functions: '
@@ -17,13 +17,13 @@ export default class constantFunctions implements AnalyzerModule {
   abstractAst: AbstractAst = new AbstractAst()
 
   visit = this.abstractAst.build_visit(
-    (node: AstNodeLegacy) => isLowLevelCall(node) ||
+    (node: CommonAstNode) => isLowLevelCall(node) ||
               isTransfer(node) ||
               isExternalDirectCall(node) ||
               isEffect(node) ||
               isLocalCallGraphRelevantNode(node) ||
-              isInlineAssembly(node) ||
-              isNewExpression(node) ||
+              node.nodeType === "InlineAssembly" ||
+              node.nodeType === "NewExpression" ||
               isSelfdestructCall(node) ||
               isDeleteUnaryOperation(node)
   )
@@ -98,8 +98,8 @@ export default class constantFunctions implements AnalyzerModule {
           isTransfer(node) ||
           this.isCallOnNonConstExternalInterfaceFunction(node, context) ||
           isCallToNonConstLocalFunction(node) ||
-          isInlineAssembly(node) ||
-          isNewExpression(node) ||
+          node.nodeType === "InlineAssembly" ||
+          node.nodeType === "NewExpression" ||
           isSelfdestructCall(node) ||
           isDeleteUnaryOperation(node)
   }
