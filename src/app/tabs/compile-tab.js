@@ -9,8 +9,6 @@ const modalDialog = require('../ui/modaldialog')
 const copyToClipboard = require('../ui/copy-to-clipboard')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const parseContracts = require('./compileTab/contractParser')
-const publishOnSwarm = require('../../lib/publishOnSwarm')
-const publishOnIpfs = require('../../lib/publishOnIpfs')
 const addTooltip = require('../ui/tooltip')
 const globalRegistry = require('../../global/registry')
 
@@ -21,6 +19,7 @@ const CompilerContainer = require('./compileTab/compilerContainer.js')
 
 import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
+import publishToStorage from '../../publishToStorage'
 
 const profile = {
   name: 'solidity',
@@ -255,12 +254,12 @@ class CompileTab extends ViewPlugin {
         <label class="${css.compilerLabel} form-check-label" for="compiledContracts">Contract</label>
         ${selectEl}
       </div>
-      <div>
-        <button id="publishOnSwarm" class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish('swarm') }}">
+      <article class="px-2 mt-2 pb-0">
+        <button id="publishOnSwarm" class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { publishToStorage('swarm', this.fileProvider, this.fileManager, this.data.contractsDetails[this.selectedContract]) }}">
           <span>Publish on Swarm</span>
           <img id="swarmLogo" class="${css.storageLogo} ml-2" src="${swarmImg}">
         </button>
-        <button id="publishOnIpfs" class="btn btn-secondary btn-block" title="Publish on Ipfs" onclick="${() => { this.publish('ipfs') }}">
+        <button id="publishOnIpfs" class="btn btn-secondary btn-block" title="Publish on Ipfs" onclick="${() => { publishToStorage('ipfs', this.fileProvider, this.fileManager, this.data.contractsDetails[this.selectedContract]) }}">
         <span>Publish on Ipfs</span>
         <img id="ipfsLogo" class="${css.storageLogo} ml-2" src="${ipfsImg}">
       </button>
