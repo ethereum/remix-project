@@ -306,16 +306,16 @@ test('staticAnalysisCommon.getLoopBlockStartIndex', function (t) {
 
 // #################### Trivial Node Identification
 
-test('staticAnalysisCommon.isFunctionDefinition', function (t) {
-  t.plan(3)
-  const node1 = { name: 'FunctionDefinition' }
-  const node2 = { name: 'MemberAccess' }
-  const node3 = { name: 'FunctionDefinitionBLABLA' }
+// test('staticAnalysisCommon.isFunctionDefinition', function (t) {
+//   t.plan(3)
+//   const node1 = { name: 'FunctionDefinition' }
+//   const node2 = { name: 'MemberAccess' }
+//   const node3 = { name: 'FunctionDefinitionBLABLA' }
 
-  t.ok(common.isFunctionDefinition(node1), 'is exact match should work')
-  t.notOk(common.isFunctionDefinition(node2), 'different node should not work')
-  t.notOk(common.isFunctionDefinition(node3), 'substring should not work')
-})
+//   t.ok(common.isFunctionDefinition(node1), 'is exact match should work')
+//   t.notOk(common.isFunctionDefinition(node2), 'different node should not work')
+//   t.notOk(common.isFunctionDefinition(node3), 'substring should not work')
+// })
 
 test('staticAnalysisCommon.isModifierDefinition', function (t) {
   t.plan(3)

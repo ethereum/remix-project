@@ -1,5 +1,7 @@
 'use strict'
 
+import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode } from "types"
+
 const remixLib = require('remix-lib')
 const util = remixLib.util
 
@@ -244,9 +246,9 @@ function getContractName (contract) {
  * @funcDef {ASTNode} Function Definition node
  * @return {string} name of a function defined
  */
-function getFunctionDefinitionName (funcDef) {
-  if (!isFunctionDefinition(funcDef)) throw new Error('staticAnalysisCommon.js: not an functionDefinition Node')
-  return funcDef.attributes.name
+function getFunctionDefinitionName (funcDef: FunctionDefinitionAstNode): string {
+  // if (!isFunctionDefinition(funcDef)) throw new Error('staticAnalysisCommon.js: not an functionDefinition Node')
+  return funcDef.name
 }
 
 /**
@@ -308,9 +310,9 @@ function getStateVariableDeclarationsFormContractNode (contractNode) {
  * @funcNode {ASTNode} Contract Definition node
  * @return {parameterlist node} parameterlist node
  */
-function getFunctionOrModifierDefinitionParameterPart (funcNode) {
-  if (!isFunctionDefinition(funcNode) && !isModifierDefinition(funcNode)) throw new Error('staticAnalysisCommon.js: not a function definition')
-  return funcNode.children[0]
+function getFunctionOrModifierDefinitionParameterPart (funcNode: FunctionDefinitionAstNode | ModifierDefinitionAstNode): ParameterListAstNode {
+  // if (!isFunctionDefinition(funcNode) && !isModifierDefinition(funcNode)) throw new Error('staticAnalysisCommon.js: not a function definition')
+  return funcNode.parameters
 }
 
 /**
@@ -320,9 +322,8 @@ function getFunctionOrModifierDefinitionParameterPart (funcNode) {
  * @funcNode {ASTNode} Contract Definition node
  * @return {parameterlist node} parameterlist node
  */
-function getFunctionOrModifierDefinitionReturnParameterPart (funcNode) {
-  if (!isFunctionDefinition(funcNode) && !isModifierDefinition(funcNode)) throw new Error('staticAnalysisCommon.js: not a function definition')
-  return funcNode.children[1]
+function getFunctionDefinitionReturnParameterPart (funcNode: FunctionDefinitionAstNode): ParameterListAstNode {
+  return funcNode.returnParameters
 }
 
 /**
@@ -424,9 +425,9 @@ function getLoopBlockStartIndex (node) {
 
 // #################### Trivial Node Identification
 
-function isFunctionDefinition (node) {
-  return nodeType(node, exactMatch(nodeTypes.FUNCTIONDEFINITION))
-}
+// function isFunctionDefinition (node) {
+//   return nodeType(node, exactMatch(nodeTypes.FUNCTIONDEFINITION))
+// }
 
 function isStatement (node) {
   return nodeType(node, 'Statement$') || isBlock(node) || isReturn(node)
@@ -664,11 +665,8 @@ function isStateVariable (name, stateVariables) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isConstantFunction (node) {
-  return isFunctionDefinition(node) && (
-    node.attributes.stateMutability === 'view' ||
-    node.attributes.stateMutability === 'pure'
-  )
+function isConstantFunction (node: FunctionDefinitionAstNode): boolean {
+  return node.stateMutability === 'view' || node.stateMutability === 'pure'
 }
 
 /**
@@ -676,10 +674,8 @@ function isConstantFunction (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isPayableFunction (node) {
-  return isFunctionDefinition(node) && (
-    node.attributes.stateMutability === 'payable'
-  )
+function isPayableFunction (node: FunctionDefinitionAstNode): boolean {
+  return node.stateMutability === 'payable'
 }
 
 /**
@@ -687,10 +683,8 @@ function isPayableFunction (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isConstructor (node) {
-  return isFunctionDefinition(node) && (
-    node.attributes.isConstructor === true
-  )
+function isConstructor (node: FunctionDefinitionAstNode): boolean {
+  return node.kind === "constructor"
 }
 
 /**
@@ -1125,7 +1119,7 @@ export {
   getFullQuallyfiedFuncDefinitionIdent,
   getStateVariableDeclarationsFormContractNode,
   getFunctionOrModifierDefinitionParameterPart,
-  getFunctionOrModifierDefinitionReturnParameterPart,
+  getFunctionDefinitionReturnParameterPart,
   getUnAssignedTopLevelBinOps,
   getLoopBlockStartIndex,
 
@@ -1179,7 +1173,7 @@ export {
 
   // #################### Trivial Node Identification
   isDeleteUnaryOperation,
-  isFunctionDefinition,
+  // isFunctionDefinition,
   isModifierDefinition,
   isInheritanceSpecifier,
   isModifierInvocation,
