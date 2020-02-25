@@ -1,9 +1,9 @@
-import { isContractDefinition,  getStateVariableDeclarationsFormContractNode, isInheritanceSpecifier,
-  getInheritsFromName, isModifierDefinition, isModifierInvocation, getContractName,
-  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, isVariableDeclaration,
+import { getStateVariableDeclarationsFormContractNode,
+  getInheritsFromName, getContractName,
+  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName,
   getFunctionDefinitionReturnParameterPart } from './staticAnalysisCommon'
 import { AstWalker } from 'remix-astwalker'
-import { CommonAstNode } from 'types'
+import { CommonAstNode, FunctionDefinitionAstNode, ParameterListAstNode } from 'types'
 
 export default class abstractAstView {
   contracts = []
@@ -49,7 +49,7 @@ export default class abstractAstView {
  */
   build_visit (relevantNodeFilter) {
     var that = this
-    return function (node: CommonAstNode) {
+    return function (node: any) {
       if (node.nodeType === "ContractDefinition") {
         that.setCurrentContract(that, {
           node: node,
@@ -59,7 +59,7 @@ export default class abstractAstView {
           inheritsFrom: [],
           stateVariables: getStateVariableDeclarationsFormContractNode(node)
         })
-      } else if (isInheritanceSpecifier(node)) {
+      } else if (node.nodeType === "InheritanceSpecifier") {
         const currentContract = that.getCurrentContract(that)
         const inheritsFromName = getInheritsFromName(node)
         currentContract.inheritsFrom.push(inheritsFromName)
@@ -78,14 +78,14 @@ export default class abstractAstView {
             that.getCurrentFunction(that).relevantNodes.push(item.node)
           }
         })
-      } else if (isModifierDefinition(node)) {
+      } else if (node.nodeType === "ModifierDefinition") {
         that.setCurrentModifier(that, {
           node: node,
           relevantNodes: [],
           localVariables: that.getLocalVariables(node),
           parameters: that.getLocalParameters(node)
         })
-      } else if (isModifierInvocation(node)) {
+      } else if (node.nodeType === "ModifierInvocation") {
         if (!that.isFunctionNotModifier) throw new Error('abstractAstView.js: Found modifier invocation outside of function scope.')
         that.getCurrentFunction(that).modifierInvocations.push(node)
       } else if (relevantNodeFilter(node)) {
@@ -160,7 +160,7 @@ export default class abstractAstView {
   }
 
   private getLocalParameters (funcNode) {
-    return this.getLocalVariables(getFunctionOrModifierDefinitionParameterPart(funcNode)).map(getType)
+    return getFunctionOrModifierDefinitionParameterPart(funcNode).parameters.map(getType)
   }
 
   private getReturnParameters (funcNode) {
@@ -172,10 +172,10 @@ export default class abstractAstView {
     })
   }
 
-  private getLocalVariables (funcNode) {
+  private getLocalVariables (funcNode: ParameterListAstNode) {
     const locals: any[] = []
     new AstWalker().walk(funcNode, {'*': function (node) {
-      if (isVariableDeclaration(node)) locals.push(node)
+      if (node.nodeType === "VariableDeclaration") locals.push(node)
       return true
     }})
     return locals

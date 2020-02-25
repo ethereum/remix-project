@@ -1,35 +1,26 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
-import { isLoop, isBlock, getLoopBlockStartIndex, isExpressionStatement, isTransfer } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { getLoopBlockStartIndex, isTransfer } from './staticAnalysisCommon'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, ForStatementAstNode, WhileStatementAstNode, CommonAstNode, ExpressionStatementAstNode} from './../../types'
 
 export default class etherTransferInLoop implements AnalyzerModule {
-  relevantNodes: AstNodeLegacy[] = []
+  relevantNodes: CommonAstNode[] = []
   name: string = 'Ether transfer in a loop: '
   description: string = 'Avoid transferring Ether to multiple addresses in a loop'
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
   
-  visit (node: AstNodeLegacy): void {
-    if (isLoop(node)) {
-      let transferNodes: AstNodeLegacy[] = []
-      const loopBlockStartIndex: number | undefined = getLoopBlockStartIndex(node)
-      if (loopBlockStartIndex && node.children && isBlock(node.children[loopBlockStartIndex])) {
-        const childrenNodes: AstNodeLegacy[] | undefined = node.children[loopBlockStartIndex].children
-        if(childrenNodes)  
-          transferNodes = childrenNodes.filter(child => (
-                            isExpressionStatement(child) && 
-                            child.children &&
-                            child.children[0].name === 'FunctionCall' &&
-                            child.children[0].children &&
-                            isTransfer(child.children[0].children[0])
-                            )
-                          )
-        if (transferNodes.length > 0) {
-          this.relevantNodes.push(...transferNodes)
-        }
+  visit (node: ForStatementAstNode | WhileStatementAstNode): void {
+      let transferNodes: CommonAstNode[] = []
+      transferNodes = node.body.statements.filter(child => (
+                        child.nodeType === 'ExpressionStatement' &&
+                        child.expression.nodeType === 'FunctionCall' &&
+                        isTransfer(child.expression.expression)
+                        )
+                      )
+      if (transferNodes.length > 0) {
+        this.relevantNodes.push(...transferNodes)
       }
-    }
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {
