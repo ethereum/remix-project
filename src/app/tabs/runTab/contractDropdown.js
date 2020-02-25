@@ -43,12 +43,8 @@ class ContractDropdownUI {
         this.compFails.style.display = 'block'
         document.querySelector(`.${css.contractNames}`).classList.add(css.contractNamesError)
       }
+      this.ipfsCheckedState = false
     })
-  }
-
-  updateCheckedState () {
-    this.ipfsCheckedState = !this.ipfsCheckedState
-    console.log('this.ipfsCheckedState: ', this.ipfsCheckedState)
   }
 
   render () {
@@ -60,12 +56,14 @@ class ContractDropdownUI {
 
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
-    const ipfsCheckbox = this.ipfsCheckedState ? 
-    yo`<input id="deployAndRunPublishToIPFS" checked class="mr-2" type="checkbox" onchange=${this.updateCheckedState}>`
+    const ipfsCheckbox = this.ipfsCheckedState ?
+    yo`<input id="deployAndRunPublishToIPFS" checked class="mr-2" type="checkbox" />`
     :
     yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${() => {
-      this.updateCheckedState()
-      publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, this.getSelectedContract.call(this))
+      if(!this.ipfsCheckedState){
+        publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, this.getSelectedContract.call(this))
+        this.ipfsCheckedState = true
+      }
     }}>`
 
     let el = yo`
