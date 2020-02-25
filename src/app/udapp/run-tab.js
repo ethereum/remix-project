@@ -33,7 +33,7 @@ const profile = {
 
 export class RunTab extends LibraryPlugin {
 
-  constructor (blockchain, pluginUDapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
+  constructor (blockchain, pluginUDapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView, fileProvider) {
     super(pluginUDapp, profile)
     this.event = new EventManager()
     this.config = config
@@ -44,6 +44,7 @@ export class RunTab extends LibraryPlugin {
     this.filePanel = filePanel
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule
+    this.fileProvider = fileProvider
   }
 
   renderContainer () {
