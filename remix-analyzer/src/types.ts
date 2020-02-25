@@ -95,7 +95,7 @@ export interface ContractDefinitionAstNode {
   linearizedBaseContracts: Array<number>
   baseContracts: Array<InheritanceSpecifierAstNode>
   contractDependencies: Array<number>
-  nodes: Array<any>
+  nodes: Array<CommonAstNode>
   scope: number
 }
 
@@ -298,7 +298,7 @@ export interface BlockAstNode {
   id: number
   nodeType: 'Block'
   src: string
-  statements: Array<object>
+  statements: Array<CommonAstNode>
 }
 
 export interface PlaceholderStatementAstNode {

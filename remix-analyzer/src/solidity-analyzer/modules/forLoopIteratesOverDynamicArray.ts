@@ -1,17 +1,17 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { isForLoop, isDynamicArrayLengthAccess, isBinaryOperation } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, CommonAstNode} from './../../types'
 
 export default class forLoopIteratesOverDynamicArray implements AnalyzerModule {
-  relevantNodes: AstNodeLegacy[] = []
+  relevantNodes: CommonAstNode[] = []
   name: string = 'For loop iterates over dynamic array: '
   description: string = 'The number of \'for\' loop iterations depends on dynamic array\'s size'
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node: AstNodeLegacy): void {
-    if (isForLoop(node) && node.children) {
+  visit (node: CommonAstNode): void {
+    if (node.nodeType === "Forstatement" && node.children) {
       let conditionChildrenNode: AstNodeLegacy | null = null
       // Access 'condition' node of 'for' loop statement
       const forLoopConditionNode: AstNodeLegacy = node.children[1]

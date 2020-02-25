@@ -317,89 +317,89 @@ test('staticAnalysisCommon.getLoopBlockStartIndex', function (t) {
 //   t.notOk(common.isFunctionDefinition(node3), 'substring should not work')
 // })
 
-test('staticAnalysisCommon.isModifierDefinition', function (t) {
-  t.plan(3)
-  const node1 = { name: 'ModifierDefinition' }
-  const node2 = { name: 'MemberAccess' }
-  const node3 = { name: 'ModifierDefinitionBLABLA' }
+// test('staticAnalysisCommon.isModifierDefinition', function (t) {
+//   t.plan(3)
+//   const node1 = { name: 'ModifierDefinition' }
+//   const node2 = { name: 'MemberAccess' }
+//   const node3 = { name: 'ModifierDefinitionBLABLA' }
 
-  t.ok(common.isModifierDefinition(node1), 'is exact match should work')
-  t.notOk(common.isModifierDefinition(node2), 'different node should not work')
-  t.notOk(common.isModifierDefinition(node3), 'substring should not work')
-})
+//   t.ok(common.isModifierDefinition(node1), 'is exact match should work')
+//   t.notOk(common.isModifierDefinition(node2), 'different node should not work')
+//   t.notOk(common.isModifierDefinition(node3), 'substring should not work')
+// })
 
-test('staticAnalysisCommon.isModifierInvocation', function (t) {
-  t.plan(3)
-  const node1 = { name: 'ModifierInvocation' }
-  const node2 = { name: 'MemberAccess' }
-  const node3 = { name: 'ModifierInvocationBLABLA' }
+// test('staticAnalysisCommon.isModifierInvocation', function (t) {
+//   t.plan(3)
+//   const node1 = { name: 'ModifierInvocation' }
+//   const node2 = { name: 'MemberAccess' }
+//   const node3 = { name: 'ModifierInvocationBLABLA' }
 
-  t.ok(common.isModifierInvocation(node1), 'is exact match should work')
-  t.notOk(common.isModifierInvocation(node2), 'different node should not work')
-  t.notOk(common.isModifierInvocation(node3), 'substring should not work')
-})
+//   t.ok(common.isModifierInvocation(node1), 'is exact match should work')
+//   t.notOk(common.isModifierInvocation(node2), 'different node should not work')
+//   t.notOk(common.isModifierInvocation(node3), 'substring should not work')
+// })
 
-test('staticAnalysisCommon.isVariableDeclaration', function (t) {
-  t.plan(3)
-  const node1 = { name: 'VariableDeclaration' }
-  const node2 = { name: 'MemberAccess' }
-  const node3 = { name: 'VariableDeclarationBLABLA' }
+// test('staticAnalysisCommon.isVariableDeclaration', function (t) {
+//   t.plan(3)
+//   const node1 = { name: 'VariableDeclaration' }
+//   const node2 = { name: 'MemberAccess' }
+//   const node3 = { name: 'VariableDeclarationBLABLA' }
 
-  t.ok(common.isVariableDeclaration(node1), 'is exact match should work')
-  t.notOk(common.isVariableDeclaration(node2), 'different node should not work')
-  t.notOk(common.isVariableDeclaration(node3), 'substring should not work')
-})
+//   t.ok(common.isVariableDeclaration(node1), 'is exact match should work')
+//   t.notOk(common.isVariableDeclaration(node2), 'different node should not work')
+//   t.notOk(common.isVariableDeclaration(node3), 'substring should not work')
+// })
 
-test('staticAnalysisCommon.isInheritanceSpecifier', function (t) {
-  t.plan(3)
-  const node1 = { name: 'InheritanceSpecifier' }
-  const node2 = { name: 'MemberAccess' }
-  const node3 = { name: 'InheritanceSpecifierBLABLA' }
+// test('staticAnalysisCommon.isInheritanceSpecifier', function (t) {
+//   t.plan(3)
+//   const node1 = { name: 'InheritanceSpecifier' }
+//   const node2 = { name: 'MemberAccess' }
+//   const node3 = { name: 'InheritanceSpecifierBLABLA' }
 
-  t.ok(common.isInheritanceSpecifier(node1), 'is exact match should work')
-  t.notOk(common.isInheritanceSpecifier(node2), 'different node should not work')
-  t.notOk(common.isInheritanceSpecifier(node3), 'substring should not work')
-})
+//   t.ok(common.isInheritanceSpecifier(node1), 'is exact match should work')
+//   t.notOk(common.isInheritanceSpecifier(node2), 'different node should not work')
+//   t.notOk(common.isInheritanceSpecifier(node3), 'substring should not work')
+// })
 
-test('staticAnalysisCommon.isAssignment', function (t) {
-  t.plan(3)
-  const node1 = { name: 'Assignment' }
-  const node2 = { name: 'MemberAccess' }
-  const node3 = { name: 'AssignmentBLABLA' }
+// test('staticAnalysisCommon.isAssignment', function (t) {
+//   t.plan(3)
+//   const node1 = { name: 'Assignment' }
+//   const node2 = { name: 'MemberAccess' }
+//   const node3 = { name: 'AssignmentBLABLA' }
 
-  t.ok(common.isAssignment(node1), 'is exact match should work')
-  t.notOk(common.isAssignment(node2), 'different node should not work')
-  t.notOk(common.isAssignment(node3), 'substring should not work')
-})
+//   t.ok(common.isAssignment(node1), 'is exact match should work')
+//   t.notOk(common.isAssignment(node2), 'different node should not work')
+//   t.notOk(common.isAssignment(node3), 'substring should not work')
+// })
 
-test('staticAnalysisCommon.isContractDefinition', function (t) {
-  t.plan(3)
-  const node1 = { name: 'ContractDefinition' }
-  const node2 = { name: 'MemberAccess' }
-  const node3 = { name: 'ContractDefinitionBLABLA' }
+// test('staticAnalysisCommon.isContractDefinition', function (t) {
+//   t.plan(3)
+//   const node1 = { name: 'ContractDefinition' }
+//   const node2 = { name: 'MemberAccess' }
+//   const node3 = { name: 'ContractDefinitionBLABLA' }
 
-  t.ok(common.isContractDefinition(node1), 'is exact match should work')
-  t.notOk(common.isContractDefinition(node2), 'different node should not work')
-  t.notOk(common.isContractDefinition(node3), 'substring should not work')
-})
+//   t.ok(common.isContractDefinition(node1), 'is exact match should work')
+//   t.notOk(common.isContractDefinition(node2), 'different node should not work')
+//   t.notOk(common.isContractDefinition(node3), 'substring should not work')
+// })
 
-test('staticAnalysisCommon.isInlineAssembly', function (t) {
-  t.plan(3)
-  const node1 = { name: 'InlineAssembly' }
-  const node2 = { name: 'MemberAccess' }
-  const node3 = { name: 'InlineAssemblyBLABLA' }
+// test('staticAnalysisCommon.isInlineAssembly', function (t) {
+//   t.plan(3)
+//   const node1 = { name: 'InlineAssembly' }
+//   const node2 = { name: 'MemberAccess' }
+//   const node3 = { name: 'InlineAssemblyBLABLA' }
 
-  t.ok(common.isInlineAssembly(node1), 'is exact match should work')
-  t.notOk(common.isInlineAssembly(node2), 'different node should not work')
-  t.notOk(common.isInlineAssembly(node3), 'substring should not work')
-})
+//   t.ok(common.isInlineAssembly(node1), 'is exact match should work')
+//   t.notOk(common.isInlineAssembly(node2), 'different node should not work')
+//   t.notOk(common.isInlineAssembly(node3), 'substring should not work')
+// })
 
-test('staticAnalysisCommon.isLoop', function (t) {
-  t.plan(3)
-  t.equal(common.isLoop(forLoopNode), true)
-  t.equal(common.isLoop(doWhileLoopNode), true)
-  t.equal(common.isLoop(whileLoopNode), true)
-})
+// test('staticAnalysisCommon.isLoop', function (t) {
+//   t.plan(3)
+//   t.equal(common.isLoop(forLoopNode), true)
+//   t.equal(common.isLoop(doWhileLoopNode), true)
+//   t.equal(common.isLoop(whileLoopNode), true)
+// })
 
 // #################### Complex Node Identification
 

@@ -1,8 +1,8 @@
 import { default as category } from './categories'
-import { isReturn, isAssignment, hasFunctionBody, getFullQuallyfiedFuncDefinitionIdent, getEffectedVariableName } from './staticAnalysisCommon'
+import { hasFunctionBody, getFullQuallyfiedFuncDefinitionIdent, getEffectedVariableName } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, CommonAstNode, FunctionDefinitionAstNode} from './../../types'
 
 export default class noReturn implements AnalyzerModule {
   name: string = 'no return: '
@@ -13,7 +13,7 @@ export default class noReturn implements AnalyzerModule {
   abstractAst: AbstractAst = new AbstractAst()
 
   visit = this.abstractAst.build_visit(
-    (node: AstNodeLegacy) => isReturn(node) || isAssignment(node)
+    (node: CommonAstNode) => node.nodeType === "Return" || node.nodeType === "Assignment"
   )
 
   report = this.abstractAst.build_report(this._report.bind(this))
@@ -44,13 +44,13 @@ export default class noReturn implements AnalyzerModule {
     return func.returns.length > 0
   }
 
-  private hasReturnStatement (func): boolean {
-    return func.relevantNodes.filter(isReturn).length > 0
+  private hasReturnStatement (func: CommonAstNode): boolean {
+    return func.relevantNodes.filter(n => n.nodeType === "Return").length > 0
   }
 
   private hasAssignToAllNamedReturns (func): boolean {
     const namedReturns = func.returns.filter((n) => n.name.length > 0).map((n) => n.name)
-    const assignedVars = func.relevantNodes.filter(isAssignment).map(getEffectedVariableName)
+    const assignedVars = func.relevantNodes.filter(n => n.nodeType === "Assignment").map(getEffectedVariableName)
     const diff = namedReturns.filter(e => !assignedVars.includes(e))
     return diff.length === 0
   }

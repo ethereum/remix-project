@@ -1,17 +1,16 @@
 import { default as category } from './categories'
-import { isInlineAssembly } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, InlineAssemblyAstNode} from './../../types'
 
 export default class inlineAssembly implements AnalyzerModule {
-  inlineAssNodes: AstNodeLegacy[] = []
+  inlineAssNodes: InlineAssemblyAstNode[] = []
   name: string = 'Inline assembly: '
   description: string = 'Use of Inline Assembly'
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node: AstNodeLegacy): void {
-    if (isInlineAssembly(node)) this.inlineAssNodes.push(node)
+  visit (node: InlineAssemblyAstNode): void {
+    this.inlineAssNodes.push(node)
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {
