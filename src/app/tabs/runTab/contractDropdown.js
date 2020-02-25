@@ -56,12 +56,10 @@ class ContractDropdownUI {
 
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
-    const ipfsCheckbox = this.ipfsCheckedState ?
-    yo`<input id="deployAndRunPublishToIPFS" checked class="mr-2" type="checkbox" />`
-    :
-    yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${() => {
-      if(!this.ipfsCheckedState){
-        publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, this.getSelectedContract.call(this))
+    const ipfsCheckbox = this.ipfsCheckedState ? yo`<input id="deployAndRunPublishToIPFS" checked class="mr-2" type="checkbox" />`
+    : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${() => {
+      if (!this.ipfsCheckedState) {
+        publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, this.getSelectedContract.apply(this))
         this.ipfsCheckedState = true
       }
     }}>`
