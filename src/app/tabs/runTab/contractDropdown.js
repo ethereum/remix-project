@@ -7,6 +7,8 @@ var confirmDialog = require('../../ui/confirmDialog')
 var modalDialog = require('../../ui/modaldialog')
 var MultiParamManager = require('../../ui/multiParamManager')
 
+import publishToStorage from '../../../publishToStorage'
+
 class ContractDropdownUI {
   constructor (blockchain, dropdownLogic, logCallback, runView) {
     this.blockchain = blockchain
@@ -16,6 +18,7 @@ class ContractDropdownUI {
     this.event = new EventManager()
 
     this.listenToEvents()
+    this.ipfsCheckedState = false
   }
 
   listenToEvents () {
@@ -43,16 +46,28 @@ class ContractDropdownUI {
     })
   }
 
+  updateCheckedState () {
+    this.ipfsCheckedState = !this.ipfsCheckedState
+    console.log('this.ipfsCheckedState: ', this.ipfsCheckedState)
+  }
+
   render () {
     this.compFails = yo`<i title="No contract compiled yet or compilation failed. Please check the compile tab for more information." class="m-1 fas fa-times-circle ${css.errorIcon}" ></i>`
     var info = yo`<i class="fas fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
-
     this.atAddress = yo`<button class="${css.atAddress} btn btn-sm btn-info" disabled id="runAndDeployAtAdressButton" onclick=${this.loadFromAddress.bind(this)}>At Address</button>`
     this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="address of contract" oninput=${this.atAddressChanged.bind(this)} />`
     this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled></select>`
 
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
+    const ipfsCheckbox = this.ipfsCheckedState ? 
+    yo`<input id="deployAndRunPublishToIPFS" checked class="mr-2" type="checkbox" onchange=${this.updateCheckedState}>`
+    :
+    yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${() => {
+      this.updateCheckedState()
+      publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, this.getSelectedContract.call(this))
+    }}>`
+
     let el = yo`
       <div class="${css.container}" data-id="contractDropdownContainer">
         <label class="${css.settingsLabel}">Contract</label>
@@ -66,6 +81,11 @@ class ContractDropdownUI {
             ${this.atAddress}
             ${this.atAddressButtonInput}
           </div>
+        </div>
+        <div class="mt-2">
+          ${ipfsCheckbox}
+          <label for="deployAndRunPublishToIPFS" class="text-dark p-0 m-0">PUBLISH TO IPFS</label>
+          <i class="fas fa-info ml-2" aria-hidden="true" title="By publishing to IPFS is allowing to verify the contract code. The bytecode is already stored transparently in the blockchain. Publishing the source code and its ABI will greatly foster contract adoption (auditing, debugging, calling it, etc...)"></i>
         </div>
       </div>
     `
