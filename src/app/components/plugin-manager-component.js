@@ -107,12 +107,15 @@ class PluginManagerComponent extends ViewPlugin {
 
     const activationButton = this.isActive(profile.name)
       ? yo`
-      <button onclick="${_ => this.appManager.deactivatePlugin(profile.name)}" class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${name}">
+      <button onclick="${_ => this.appManager.deactivatePlugin(profile.name)}" class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${profile.name}">
         Deactivate
       </button>
       `
       : yo`
-      <button onclick="${_ => this.appManager.activatePlugin(profile.name)}" class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${name}">
+      <button
+        onclick="${_ => this.appManager.activatePlugin(profile.name)}"
+        class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${profile.name}"
+      >
         Activate
       </button>`
 
@@ -166,8 +169,6 @@ class PluginManagerComponent extends ViewPlugin {
     }
 
     // Filter all active and inactive modules that are not required
-
-
     const {actives, inactives} = this.appManager.getAll()
       .filter(isFiltered)
       .filter(isNotRequired)
