@@ -30,12 +30,12 @@ This method uses **remixd** - the remix daemon.  Please go to the [remixd tutori
 Importing from GitHub
 ---------------------
 
-It is possible to import files directly from GitHub.
+It is possible to import files directly from GitHub.  You should specify the release tag (where available), otherwise you will get the latest code in the master branch.  For OpenZeppelin Contracts you should only use code published in an official release, the example below imports from OpenZeppelin Contracts v2.5.0.
 
 ```
 pragma solidity >=0.4.22 <0.6.0;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/math/SafeMath.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v2.5.0/contracts/math/SafeMath.sol";
 
 ```
 
