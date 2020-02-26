@@ -87,7 +87,11 @@ class PluginManagerComponent extends ViewPlugin {
     this.appManager.event.on('added', () => { this.reRender() })
   }
 
-  renderItem (profile, isActive) {
+  isActive (name) {
+    return this.appManager.actives.includes(name)
+  }
+
+  renderItem (profile) {
     const displayName = (profile.displayName) ? profile.displayName : profile.name
 
     // Check version of the plugin
@@ -101,11 +105,12 @@ class PluginManagerComponent extends ViewPlugin {
       versionWarning = yo`<small title="Version Beta" class="${css.versionWarning} plugin-version">beta</small>`
     }
 
-    const activationButton = isActive
+    const activationButton = this.isActive(profile.name)
       ? yo`
       <button onclick="${_ => this.appManager.deactivatePlugin(profile.name)}" class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${name}">
         Deactivate
-      </button>`
+      </button>
+      `
       : yo`
       <button onclick="${_ => this.appManager.activatePlugin(profile.name)}" class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${name}">
         Activate
@@ -161,7 +166,7 @@ class PluginManagerComponent extends ViewPlugin {
     }
 
     // Filter all active and inactive modules that are not required
-    const isActive = (name) => { return this.appManager.actives.includes(name) }
+
 
     const {actives, inactives} = this.appManager.getAll()
       .filter(isFiltered)
@@ -169,7 +174,8 @@ class PluginManagerComponent extends ViewPlugin {
       .filter(isNotHome)
       .sort(sortByName)
       .reduce(({actives, inactives}, profile) => {
-        return isActive(profile.name) ? { actives: [...actives, profile], inactives }
+        return this.isActive(profile.name)
+          ? { actives: [...actives, profile], inactives }
           : { inactives: [...inactives, profile], actives }
       }, { actives: [], inactives: [] })
 
@@ -201,11 +207,11 @@ class PluginManagerComponent extends ViewPlugin {
         <section data-id="pluginManagerComponentPluginManagerSection">
           ${activeTile}
           <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
-            ${actives.map(profile => this.renderItem(profile, isActive(profile.name)))}
+            ${actives.map(profile => this.renderItem(profile))}
           </div>
           ${inactiveTile}
           <div class="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentInactiveTile">
-            ${inactives.map(profile => this.renderItem(profile, isActive(profile.name)))}
+            ${inactives.map(profile => this.renderItem(profile))}
           </div>
         </section>
         ${settings}
