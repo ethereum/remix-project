@@ -17,7 +17,7 @@ export default class constantFunctions implements AnalyzerModule {
   abstractAst: AbstractAst = new AbstractAst()
 
   visit = this.abstractAst.build_visit(
-    (node: CommonAstNode) => isLowLevelCall(node) ||
+    (node: any) => isLowLevelCall(node) ||
               isTransfer(node) ||
               isExternalDirectCall(node) ||
               isEffect(node) ||

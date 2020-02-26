@@ -1,16 +1,16 @@
 import { default as category } from './categories'
 import { isDeleteOfDynamicArray } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, UnaryOperationAstNode} from './../../types'
 
 export default class deleteDynamicArrays implements AnalyzerModule {
-  rel: AstNodeLegacy[] = []
+  rel: UnaryOperationAstNode[] = []
   name: string = 'Delete on dynamic Array: '
   description: string = 'Use require and appropriately'
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node: AstNodeLegacy): void {
+  visit (node: UnaryOperationAstNode): void {
     if (isDeleteOfDynamicArray(node)) this.rel.push(node)
   }
 

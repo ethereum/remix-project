@@ -1,16 +1,16 @@
 import { default as category } from './categories'
 import { isThisLocalCall } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, MemberAccessAstNode} from './../../types'
 
 export default class thisLocal implements AnalyzerModule {
-  warningNodes: AstNodeLegacy[] = []
+  warningNodes: MemberAccessAstNode[] = []
   name: string = 'This on local calls: '
   description: string = 'Invocation of local functions via this'
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node: AstNodeLegacy): void {
+  visit (node: MemberAccessAstNode): void {
     if (isThisLocalCall(node)) this.warningNodes.push(node)
   }
 
