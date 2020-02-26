@@ -337,7 +337,7 @@ export interface WhileStatementAstNode {
   id: number
   nodeType: 'WhileStatement' | 'DoWhileStatement'
   src: string
-  condition: object
+  condition: any
   body: BlockAstNode
 }
 
@@ -346,7 +346,7 @@ export interface ForStatementAstNode {
   nodeType: 'ForStatement'
   src: string
   initializationExpression: VariableDeclarationStatementAstNode
-  condition: object
+  condition: any
   loopExpression: ExpressionStatementAstNode
   body: BlockAstNode
 }
@@ -397,7 +397,7 @@ export interface ExpressionStatementAstNode {
   id: number
   nodeType: 'ExpressionStatement'
   src: string
-  expression: object
+  expression: any
 }
 
 interface ExpressionAttributes {
@@ -441,7 +441,7 @@ export interface UnaryOperationAstNode extends ExpressionAttributes {
   src: string
   prefix: boolean
   operator: string
-  subExpression: object
+  subExpression: any
 }
 
 export interface BinaryOperationAstNode extends ExpressionAttributes {
@@ -458,7 +458,7 @@ export interface FunctionCallAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'FunctionCall'
   src: string
-  expression: object
+  expression: any
   names: Array<any>
   arguments: object
   tryCall: boolean
@@ -481,10 +481,8 @@ export interface NewExpressionAstNode extends ExpressionAttributes {
   typeName: UserDefinedTypeNameAstNode | ElementaryTypeNameAstNode
 }
 
-export interface MemberAccessAstNode extends ExpressionAttributes {
-  id: number
+export interface MemberAccessAstNode extends CommonAstNode, ExpressionAttributes {
   nodeType: 'MemberAccess'
-  src: string
   memberName: string
   expression: object
   referencedDeclaration: number | null
