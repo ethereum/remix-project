@@ -45,7 +45,7 @@ class Terminal extends Plugin {
     self._api = api
     self._opts = opts
     self.data = {
-      lineLength: opts.lineLength || 80, // ???
+      lineLength: opts.lineLength || 80, // ????
       session: [],
       activeFilters: { commands: {}, input: '' },
       filterFns: {}

@@ -308,9 +308,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
   registry.put({ api: mainview, name: 'mainview' })
 
-  engine.register([
-    appPanel
-  ])
+  engine.register(appPanel)
 
   // those views depend on app_manager
   const menuicons = new VerticalIcons(appManager)
@@ -415,6 +413,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   if (isElectron()) {
-    appManager.activatePlugin(['remixd'])
+    appManager.activatePlugin('remixd')
   }
 }
