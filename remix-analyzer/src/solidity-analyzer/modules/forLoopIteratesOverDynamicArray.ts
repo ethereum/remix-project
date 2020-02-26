@@ -1,31 +1,23 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
-import { isForLoop, isDynamicArrayLengthAccess, isBinaryOperation } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, CommonAstNode} from './../../types'
+import { isDynamicArrayLengthAccess } from './staticAnalysisCommon'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, ForStatementAstNode} from './../../types'
 
 export default class forLoopIteratesOverDynamicArray implements AnalyzerModule {
-  relevantNodes: CommonAstNode[] = []
+  relevantNodes: ForStatementAstNode[] = []
   name: string = 'For loop iterates over dynamic array: '
   description: string = 'The number of \'for\' loop iterations depends on dynamic array\'s size'
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node: CommonAstNode): void {
-    if (node.nodeType === "Forstatement" && node.children) {
-      let conditionChildrenNode: AstNodeLegacy | null = null
-      // Access 'condition' node of 'for' loop statement
-      const forLoopConditionNode: AstNodeLegacy = node.children[1]
-      // Access right side of condition as its children
-      if(forLoopConditionNode && forLoopConditionNode.children){
-        conditionChildrenNode = forLoopConditionNode.children[1]
-      }
-      // Check if it is a binary operation. if yes, check if its children node access length of dynamic array
-      if (conditionChildrenNode && conditionChildrenNode.children && isBinaryOperation(conditionChildrenNode) && isDynamicArrayLengthAccess(conditionChildrenNode.children[0])) {
-        this.relevantNodes.push(node)
-      } else if (isDynamicArrayLengthAccess(conditionChildrenNode)) { // else check if condition node itself access length of dynamic array
+  visit (node: ForStatementAstNode): void {
+      const  { condition } = node
+      // Check if condition is `i < array.length - 1`
+      if ((condition.nodeType === "BinaryOperation"  && condition.rightExpression.nodeType === "BinaryOperation" && isDynamicArrayLengthAccess(condition.rightExpression.leftExpression)) || 
+      // or condition is `i < array.length`
+      (condition.nodeType === "BinaryOperation" && isDynamicArrayLengthAccess(condition.rightExpression))) {
         this.relevantNodes.push(node)
       }
-    }
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {

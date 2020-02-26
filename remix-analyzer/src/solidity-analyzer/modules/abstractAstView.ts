@@ -3,7 +3,7 @@ import { getStateVariableDeclarationsFormContractNode,
   getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName,
   getFunctionDefinitionReturnParameterPart } from './staticAnalysisCommon'
 import { AstWalker } from 'remix-astwalker'
-import { CommonAstNode, FunctionDefinitionAstNode, ParameterListAstNode } from 'types'
+import { CommonAstNode, FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode } from 'types'
 
 export default class abstractAstView {
   contracts = []
@@ -159,11 +159,11 @@ export default class abstractAstView {
     return that.getCurrentContract(that).modifiers[that.currentModifierIndex]
   }
 
-  private getLocalParameters (funcNode) {
+  private getLocalParameters (funcNode: FunctionDefinitionAstNode | ModifierDefinitionAstNode) {
     return getFunctionOrModifierDefinitionParameterPart(funcNode).parameters.map(getType)
   }
 
-  private getReturnParameters (funcNode) {
+  private getReturnParameters (funcNode: FunctionDefinitionAstNode) {
     return this.getLocalVariables(getFunctionDefinitionReturnParameterPart(funcNode)).map((n) => {
       return {
         type: getType(n),

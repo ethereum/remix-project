@@ -1,6 +1,6 @@
 'use strict'
 
-import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, CommonAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode } from "types"
+import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, CommonAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, IdentifierAstNode, MappingAstNode, IndexAccessAstNode } from "types"
 
 const remixLib = require('remix-lib')
 const util = remixLib.util
@@ -433,8 +433,8 @@ function isBinaryOperation (node) {
  * @funcNode {ASTNode} function defintion node
  * @return {bool}
  */
-function hasFunctionBody (funcNode) {
-  return findFirstSubNodeLTR(funcNode, exactMatch(nodeTypes.BLOCK)) != null
+function hasFunctionBody (funcNode: FunctionDefinitionAstNode) {
+  return funcNode.body != null
 }
 
 /**
@@ -442,8 +442,8 @@ function hasFunctionBody (funcNode) {
  * @node {ASTNode} node to check for
  * @return {bool}
  */
-function isDeleteOfDynamicArray (node) {
-  return isDeleteUnaryOperation(node) && isDynamicArrayAccess(node.children[0])
+function isDeleteOfDynamicArray (node: UnaryOperationAstNode) {
+  return isDeleteUnaryOperation(node) && isDynamicArrayAccess(node.subExpression)
 }
 
 /**
@@ -451,8 +451,8 @@ function isDeleteOfDynamicArray (node) {
  * @node {ASTNode} node to check for
  * @return {bool}
  */
-function isDynamicArrayAccess (node) {
-  return node && nodeType(node, exactMatch(nodeTypes.IDENTIFIER)) && (node.attributes.type.endsWith('[] storage ref') || node.attributes.type === 'bytes storage ref' || node.attributes.type === 'string storage ref')
+function isDynamicArrayAccess (node: IdentifierAstNode) {
+  return typeDescription(node, '[] storage ref') || typeDescription(node, 'bytes storage ref') || typeDescription(node, 'string storage ref')
 }
 
 /**
@@ -460,11 +460,9 @@ function isDynamicArrayAccess (node) {
  * @node {ASTNode} node to check for
  * @return {bool}
  */
-function isDynamicArrayLengthAccess (node) {
-  return node && // if node exists
-  nodeType(node, exactMatch(nodeTypes.MEMBERACCESS)) && // is memberAccess Node
-  (node.attributes.member_name === 'length') && // accessing 'length' member
-  node.children[0].attributes.type.indexOf('[]') !== -1 // member is accessed from dynamic array, notice [] without any number
+function isDynamicArrayLengthAccess (node: MemberAccessAstNode) {
+  return (node.memberName === 'length') && // accessing 'length' member
+  node.expression['typeDescriptions']['typeString'].indexOf('[]') !== -1 // member is accessed from dynamic array, notice [] without any number
 }
 
 /**
@@ -627,8 +625,8 @@ function isConstructor (node: FunctionDefinitionAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isIntDivision (node) {
-  return isBinaryOperation(node) && operator(node, exactMatch(util.escapeRegExp('/'))) && expressionType(node, util.escapeRegExp('int'))
+function isIntDivision (node: BinaryOperationAstNode) {
+  return operator(node, exactMatch(util.escapeRegExp('/'))) && typeDescription(node.rightExpression, util.escapeRegExp('int'))
 }
 
 /**
@@ -646,7 +644,7 @@ function isSubScopeStatement (node) {
             nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
             nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
             nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))) &&
-          minNrOfChildren(node, 2) && !nodeType(node.children[1], exactMatch(nodeTypes.BLOCK))
+            !nodeType(node.children[1], exactMatch(nodeTypes.BLOCK))
 }
 
 /**
@@ -654,8 +652,8 @@ function isSubScopeStatement (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBinaryOpInExpression (node) {
-  return node.nodeType === "ExpressionStatement" && nrOfChildren(node, 1) && isBinaryOperation(node.children[0])
+function isBinaryOpInExpression (node: ExpressionStatementAstNode) {
+  return node.nodeType === "ExpressionStatement" && node.expression.nodeType === "BinaryOperation"
 }
 
 /**
@@ -663,8 +661,8 @@ function isBinaryOpInExpression (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isPlusPlusUnaryOperation (node) {
-  return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch(util.escapeRegExp('++')))
+function isPlusPlusUnaryOperation (node: UnaryOperationAstNode) {
+  return node.operator === '++'
 }
 
 /**
@@ -672,8 +670,8 @@ function isPlusPlusUnaryOperation (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isDeleteUnaryOperation (node) {
-  return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch(util.escapeRegExp('delete')))
+function isDeleteUnaryOperation (node: UnaryOperationAstNode) {
+  return node.operator === 'delete'
 }
 
 /**
@@ -681,8 +679,8 @@ function isDeleteUnaryOperation (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isMinusMinusUnaryOperation (node) {
-  return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch(util.escapeRegExp('--')))
+function isMinusMinusUnaryOperation (node: UnaryOperationAstNode) {
+  return node.operator === '--'
 }
 
 /**
@@ -690,8 +688,8 @@ function isMinusMinusUnaryOperation (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isFullyImplementedContract (node) {
-  return nodeType(node, exactMatch(nodeTypes.CONTRACTDEFINITION)) && node.attributes.fullyImplemented === true
+function isFullyImplementedContract (node: ContractDefinitionAstNode) {
+  return node.fullyImplemented === true
 }
 
 /**
@@ -699,8 +697,8 @@ function isFullyImplementedContract (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLibrary (node) {
-  return nodeType(node, exactMatch(nodeTypes.CONTRACTDEFINITION)) && node.attributes.isLibrary === true
+function isLibrary (node: ContractDefinitionAstNode) {
+  return node.contractKind === 'library'
 }
 
 /**
@@ -708,8 +706,8 @@ function isLibrary (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isCallToNonConstLocalFunction (node) {
-  return isLocalCall(node) && !expressionType(node.children[0], basicRegex.CONSTANTFUNCTIONTYPE)
+function isCallToNonConstLocalFunction (node: FunctionCallAstNode) {
+  return isLocalCall(node) && !expressionType(node, basicRegex.CONSTANTFUNCTIONTYPE)
 }
 
 /**
@@ -717,7 +715,7 @@ function isCallToNonConstLocalFunction (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLibraryCall (node) {
+function isLibraryCall (node: MemberAccessAstNode) {
   return isMemberAccess(node, basicRegex.FUNCTIONTYPE, undefined, basicRegex.LIBRARYTYPE, undefined)
 }
 
@@ -726,7 +724,7 @@ function isLibraryCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isExternalDirectCall (node) {
+function isExternalDirectCall (node: MemberAccessAstNode) {
   return isMemberAccess(node, basicRegex.EXTERNALFUNCTIONTYPE, undefined, basicRegex.CONTRACTTYPE, undefined) && !isThisLocalCall(node) && !isSuperLocalCall(node)
 }
 
@@ -735,10 +733,8 @@ function isExternalDirectCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isNowAccess (node) {
-  return nodeType(node, exactMatch(nodeTypes.IDENTIFIER)) &&
-        expressionType(node, exactMatch(basicTypes.UINT)) &&
-        memName(node, exactMatch('now'))
+function isNowAccess (node: IdentifierAstNode) {
+  return node.name === "now" && typeDescription(node, exactMatch(basicTypes.UINT))
 }
 
 /**
@@ -746,7 +742,7 @@ function isNowAccess (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBlockTimestampAccess (node) {
+function isBlockTimestampAccess (node: MemberAccessAstNode) {
   return isSpecialVariableAccess(node, specialVariables.BLOCKTIMESTAMP)
 }
 
@@ -755,7 +751,7 @@ function isBlockTimestampAccess (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBlockBlockHashAccess (node) {
+function isBlockBlockHashAccess (node: MemberAccessAstNode) {
   return isSpecialVariableAccess(node, specialVariables.BLOCKHASH) || isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash'
 }
 
@@ -764,7 +760,7 @@ function isBlockBlockHashAccess (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isThisLocalCall (node) {
+function isThisLocalCall (node: MemberAccessAstNode) {
   return isMemberAccess(node, basicRegex.FUNCTIONTYPE, exactMatch('this'), basicRegex.CONTRACTTYPE, undefined)
 }
 
@@ -773,7 +769,7 @@ function isThisLocalCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isSuperLocalCall (node) {
+function isSuperLocalCall (node: MemberAccessAstNode) {
   return isMemberAccess(node, basicRegex.FUNCTIONTYPE, exactMatch('super'), basicRegex.CONTRACTTYPE, undefined)
 }
 
@@ -782,13 +778,11 @@ function isSuperLocalCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLocalCall (node) {
-  return nodeType(node, exactMatch(nodeTypes.FUNCTIONCALL)) &&
-        minNrOfChildren(node, 1) &&
-        nodeType(node.children[0], exactMatch(nodeTypes.IDENTIFIER)) &&
-        expressionType(node.children[0], basicRegex.FUNCTIONTYPE) &&
-        !expressionType(node.children[0], basicRegex.EXTERNALFUNCTIONTYPE) &&
-        nrOfChildren(node.children[0], 0)
+function isLocalCall (node: FunctionCallAstNode) {
+  return node.kind === 'functionCall' && 
+        node.expression.nodeType === 'Identifier' &&
+        expressionTypeDescription(node, basicRegex.FUNCTIONTYPE) &&
+        !expressionTypeDescription(node, basicRegex.FUNCTIONTYPE)
 }
 
 /**
@@ -811,7 +805,7 @@ function isLowLevelCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLSend050 (node) {
+function isLLSend050 (node: MemberAccessAstNode) {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
           undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
@@ -822,7 +816,7 @@ function isLLSend050 (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLSend (node) {
+function isLLSend (node: MemberAccessAstNode) {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
@@ -833,7 +827,7 @@ function isLLSend (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLCall (node) {
+function isLLCall (node: MemberAccessAstNode) {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident))
@@ -844,7 +838,7 @@ function isLLCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLCall050 (node) {
+function isLLCall050 (node: MemberAccessAstNode) {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes['CALL-v0.5'].type)),
           undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes['CALL-v0.5'].ident))
@@ -855,7 +849,7 @@ function isLLCall050 (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLCallcode (node) {
+function isLLCallcode (node: MemberAccessAstNode) {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.CALLCODE.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALLCODE.ident))
@@ -866,7 +860,7 @@ function isLLCallcode (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLDelegatecall (node) {
+function isLLDelegatecall (node: MemberAccessAstNode) {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.DELEGATECALL.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.DELEGATECALL.ident))
@@ -877,7 +871,7 @@ function isLLDelegatecall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLDelegatecall050 (node) {
+function isLLDelegatecall050 (node: MemberAccessAstNode) {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes['DELEGATECALL-v0.5'].type)),
           undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['DELEGATECALL-v0.5'].ident))
@@ -888,7 +882,7 @@ function isLLDelegatecall050 (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isTransfer (node) {
+function isTransfer (node: MemberAccessAstNode) {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.TRANSFER.type)),
           undefined, matches(basicTypes.ADDRESS, basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.TRANSFER.ident))
@@ -898,13 +892,13 @@ function isStringToBytesConversion (node) {
   return isExplicitCast(node, util.escapeRegExp('string *'), util.escapeRegExp('bytes'))
 }
 
-function isExplicitCast (node, castFromType, castToType) {
-  return nodeType(node, exactMatch(nodeTypes.FUNCTIONCALL)) && nrOfChildren(node, 2) &&
-          nodeType(node.children[0], exactMatch(nodeTypes.ELEMENTARYTYPENAMEEXPRESSION)) && memName(node.children[0], castToType) &&
-          nodeType(node.children[1], exactMatch(nodeTypes.IDENTIFIER)) && expressionType(node.children[1], castFromType)
+function isExplicitCast (node: FunctionCallAstNode, castFromType: string, castToType: string) {
+  return node.kind === "typeConversion" && 
+        nodeType(node.expression, exactMatch(nodeTypes.ELEMENTARYTYPENAMEEXPRESSION)) && node.expression.typeName.name === castToType &&
+        nodeType(node.arguments[0], exactMatch(nodeTypes.IDENTIFIER)) && typeDescription(node.arguments[0], castFromType)
 }
 
-function isBytesLengthCheck (node) {
+function isBytesLengthCheck (node: MemberAccessAstNode) {
   return isMemberAccess(node, exactMatch(util.escapeRegExp(basicTypes.UINT)), undefined, util.escapeRegExp('bytes *'), 'length')
 }
 
@@ -925,41 +919,48 @@ function isBytesLengthCheck (node) {
  * @return {bool}
  * TODO: This should be removed once for loop iterates Over dynamic array fixed
  */
-function isForLoop (node) {
-  return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT))
-}
+// function isForLoop (node) {
+//   return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT))
+// }
 
 // #################### Complex Node Identification - Private
 
-function isMemberAccess (node: MemberAccessAstNode, retType, accessor, accessorType, memberName) {
+function isMemberAccess (node: MemberAccessAstNode, retType: string, accessor: string| undefined, accessorType, memberName: string | undefined) {
   return nodeType(node, exactMatch(nodeTypes.MEMBERACCESS)) &&
         expressionType(node, retType) &&
         memName(node, memberName) &&
-        nrOfChildren(node, 1) &&
         memName(node.expression, accessor) &&
         expressionType(node.expression, accessorType)
 }
 
-function isSpecialVariableAccess (node, varType) {
+function isSpecialVariableAccess (node: MemberAccessAstNode, varType) {
   return isMemberAccess(node, exactMatch(util.escapeRegExp(varType.type)), varType.obj, varType.obj, varType.member)
 }
 
 // #################### Node Identification Primitives
 
-function nrOfChildren (node, nr) {
-  return (node && (nr === undefined || nr === null)) || (node && nr === 0 && !node.children) || (node && node.children && node.children.length === nr)
-}
+// function nrOfChildren (node, nr) {
+//   return (node && (nr === undefined || nr === null)) || (node && nr === 0 && !node.children) || (node && node.children && node.children.length === nr)
+// }
 
-function minNrOfChildren (node, nr) {
-  return (node && (nr === undefined || nr === null)) || (node && nr === 0 && !node.children) || (node && node.children && node.children.length >= nr)
-}
+// function minNrOfChildren (node, nr) {
+//   return (node && (nr === undefined || nr === null)) || (node && nr === 0 && !node.children) || (node && node.children && node.children.length >= nr)
+// }
 
 function expressionType (node, typeRegex) {
-  return (node && !typeRegex) || (node && node.attributes && new RegExp(typeRegex).test(node.attributes.type))
+  return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
+}
+
+function expressionTypeDescription (node, typeRegex) {
+  return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
+}
+
+function typeDescription (node, typeRegex) {
+  return  new RegExp(typeRegex).test(node.typeDescriptions.typeString)
 }
 
 function nodeType (node, typeRegex) {
-  return (node && !typeRegex) || (node && new RegExp(typeRegex).test(node.name))
+  return new RegExp(typeRegex).test(node.nodeType)
 }
 
 function memName (node, memNameRegex) {
@@ -968,7 +969,7 @@ function memName (node, memNameRegex) {
 }
 
 function operator (node, opRegex) {
-  return (node && !opRegex) || (node && new RegExp(opRegex).test(node.attributes.operator))
+  return new RegExp(opRegex).test(node.operator)
 }
 
 // #################### Helpers
@@ -1021,8 +1022,8 @@ function findFirstSubNodeLTR (node, type) {
 }
 
 const helpers = {
-  nrOfChildren,
-  minNrOfChildren,
+  // nrOfChildren,
+  // minNrOfChildren,
   expressionType,
   nodeType,
   memName,
@@ -1104,7 +1105,7 @@ export {
   isIntDivision,
   isStringToBytesConversion,
   isBytesLengthCheck,
-  isForLoop,
+  // isForLoop,
 
   // #################### Trivial Node Identification
   isDeleteUnaryOperation,
