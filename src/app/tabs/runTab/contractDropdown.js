@@ -43,8 +43,13 @@ class ContractDropdownUI {
         this.compFails.style.display = 'block'
         document.querySelector(`.${css.contractNames}`).classList.add(css.contractNamesError)
       }
-      this.ipfsCheckedState = false
+      this.reinitializeIpfsCheckedState()
     })
+  }
+
+  reinitializeIpfsCheckedState () {
+    this.ipfsCheckedState = false
+    document.querySelector('#deployAndRunPublishToIPFS').checked = false
   }
 
   render () {
@@ -56,8 +61,7 @@ class ContractDropdownUI {
 
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
-    const ipfsCheckbox = this.ipfsCheckedState ? yo`<input id="deployAndRunPublishToIPFS" checked class="mr-2" type="checkbox" />`
-    : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${() => {
+    const ipfsCheckbox = yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${() => {
       if (!this.ipfsCheckedState) {
         publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, this.getSelectedContract.apply(this))
         this.ipfsCheckedState = true
