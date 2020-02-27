@@ -70,7 +70,7 @@ export default class similarVariableNames implements AnalyzerModule {
     return varName2.match(ref) != null
   }
 
-  private getFunctionVariables (contract, func): string[] {
+  private getFunctionVariables (contract, func) {
     return contract.stateVariables.concat(func.localVariables)
   }
 }

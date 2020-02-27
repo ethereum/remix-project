@@ -1,108 +1,336 @@
 {
-    "attributes": {
-      "fullyImplemented": true,
-      "isLibrary": false,
-      "linearizedBaseContracts": [
-        274
-      ],
-      "name": "Ballot"
-    },
-    "children": [
+  "abstract": false,
+  "baseContracts": [],
+  "contractDependencies": [],
+  "contractKind": "contract",
+  "documentation": null,
+  "fullyImplemented": true,
+  "id": 24,
+  "linearizedBaseContracts":
+  [
+    24
+  ],
+  "name": "C",
+  "nodeType": "ContractDefinition",
+  "nodes":
+  [
+    {
+      "body":
       {
-        "attributes": {
-          "name": "Voter"
-        },
-        "children": [],
-        "name": "StructDefinition"
-      },
-      {
-        "attributes": {
-          "name": "Proposal"
-        },
-        "children": [],
-        "name": "StructDefinition"
-      },
-      {
-        "attributes": {
-          "name": "chairperson",
-          "type": "address"
-        },
-        "children": [
+        "id": 22,
+        "nodeType": "Block",
+        "src": "52:69:0",
+        "statements":
+        [
           {
-            "attributes": {
-              "name": "address"
+            "assignments":
+            [
+              10
+            ],
+            "declarations":
+            [
+              {
+                "constant": false,
+                "id": 10,
+                "name": "z",
+                "nodeType": "VariableDeclaration",
+                "overrides": null,
+                "scope": 22,
+                "src": "62:17:0",
+                "stateVariable": false,
+                "storageLocation": "memory",
+                "typeDescriptions":
+                {
+                  "typeIdentifier": "t_array$_t_uint8_$4_memory_ptr",
+                  "typeString": "uint8[4]"
+                },
+                "typeName":
+                {
+                  "baseType":
+                  {
+                    "id": 8,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "62:5:0",
+                    "typeDescriptions":
+                    {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "id": 9,
+                  "length":
+                  {
+                    "argumentTypes": null,
+                    "hexValue": "34",
+                    "id": 7,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "number",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "68:1:0",
+                    "subdenomination": null,
+                    "typeDescriptions":
+                    {
+                      "typeIdentifier": "t_rational_4_by_1",
+                      "typeString": "int_const 4"
+                    },
+                    "value": "4"
+                  },
+                  "nodeType": "ArrayTypeName",
+                  "src": "62:8:0",
+                  "typeDescriptions":
+                  {
+                    "typeIdentifier": "t_array$_t_uint8_$4_storage_ptr",
+                    "typeString": "uint8[4]"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "id": 16,
+            "initialValue":
+            {
+              "argumentTypes": null,
+              "components":
+              [
+                {
+                  "argumentTypes": null,
+                  "hexValue": "31",
+                  "id": 11,
+                  "isConstant": false,
+                  "isLValue": false,
+                  "isPure": true,
+                  "kind": "number",
+                  "lValueRequested": false,
+                  "nodeType": "Literal",
+                  "src": "83:1:0",
+                  "subdenomination": null,
+                  "typeDescriptions":
+                  {
+                    "typeIdentifier": "t_rational_1_by_1",
+                    "typeString": "int_const 1"
+                  },
+                  "value": "1"
+                },
+                {
+                  "argumentTypes": null,
+                  "hexValue": "32",
+                  "id": 12,
+                  "isConstant": false,
+                  "isLValue": false,
+                  "isPure": true,
+                  "kind": "number",
+                  "lValueRequested": false,
+                  "nodeType": "Literal",
+                  "src": "85:1:0",
+                  "subdenomination": null,
+                  "typeDescriptions":
+                  {
+                    "typeIdentifier": "t_rational_2_by_1",
+                    "typeString": "int_const 2"
+                  },
+                  "value": "2"
+                },
+                {
+                  "argumentTypes": null,
+                  "hexValue": "33",
+                  "id": 13,
+                  "isConstant": false,
+                  "isLValue": false,
+                  "isPure": true,
+                  "kind": "number",
+                  "lValueRequested": false,
+                  "nodeType": "Literal",
+                  "src": "87:1:0",
+                  "subdenomination": null,
+                  "typeDescriptions":
+                  {
+                    "typeIdentifier": "t_rational_3_by_1",
+                    "typeString": "int_const 3"
+                  },
+                  "value": "3"
+                },
+                {
+                  "argumentTypes": null,
+                  "hexValue": "35",
+                  "id": 14,
+                  "isConstant": false,
+                  "isLValue": false,
+                  "isPure": true,
+                  "kind": "number",
+                  "lValueRequested": false,
+                  "nodeType": "Literal",
+                  "src": "89:1:0",
+                  "subdenomination": null,
+                  "typeDescriptions":
+                  {
+                    "typeIdentifier": "t_rational_5_by_1",
+                    "typeString": "int_const 5"
+                  },
+                  "value": "5"
+                }
+              ],
+              "id": 15,
+              "isConstant": false,
+              "isInlineArray": true,
+              "isLValue": false,
+              "isPure": true,
+              "lValueRequested": false,
+              "nodeType": "TupleExpression",
+              "src": "82:9:0",
+              "typeDescriptions":
+              {
+                "typeIdentifier": "t_array$_t_uint8_$4_memory_ptr",
+                "typeString": "uint8[4] memory"
+              }
             },
-            "name": "ElementaryTypeName"
-          }
-        ],
-        "name": "VariableDeclaration"
-      },
-      {
-        "attributes": {
-          "name": "voters",
-          "type": "mapping(address => struct Ballot.Voter storage ref)"
-        },
-        "children": [
+            "nodeType": "VariableDeclarationStatement",
+            "src": "62:29:0"
+          },
           {
-            "children": [
+            "expression":
+            {
+              "argumentTypes": null,
+              "components":
+              [
+                {
+                  "argumentTypes": null,
+                  "baseExpression":
+                  {
+                    "argumentTypes": null,
+                    "id": 17,
+                    "name": "z",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 10,
+                    "src": "109:1:0",
+                    "typeDescriptions":
+                    {
+                      "typeIdentifier": "t_array$_t_uint8_$4_memory_ptr",
+                      "typeString": "uint8[4] memory"
+                    }
+                  },
+                  "id": 19,
+                  "indexExpression":
+                  {
+                    "argumentTypes": null,
+                    "hexValue": "30",
+                    "id": 18,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "number",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "111:1:0",
+                    "subdenomination": null,
+                    "typeDescriptions":
+                    {
+                      "typeIdentifier": "t_rational_0_by_1",
+                      "typeString": "int_const 0"
+                    },
+                    "value": "0"
+                  },
+                  "isConstant": false,
+                  "isLValue": true,
+                  "isPure": false,
+                  "lValueRequested": false,
+                  "nodeType": "IndexAccess",
+                  "src": "109:4:0",
+                  "typeDescriptions":
+                  {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  }
+                }
+              ],
+              "id": 20,
+              "isConstant": false,
+              "isInlineArray": false,
+              "isLValue": false,
+              "isPure": false,
+              "lValueRequested": false,
+              "nodeType": "TupleExpression",
+              "src": "108:6:0",
+              "typeDescriptions":
               {
-                "attributes": {
-                  "name": "address"
-                },
-                "name": "ElementaryTypeName"
-              },
-              {
-                "attributes": {
-                  "name": "Voter"
-                },
-                "name": "UserDefinedTypeName"
+                "typeIdentifier": "t_uint8",
+                "typeString": "uint8"
               }
-            ],
-            "name": "Mapping"
+            },
+            "functionReturnParameters": 4,
+            "id": 21,
+            "nodeType": "Return",
+            "src": "101:13:0"
           }
-        ],
-        "name": "VariableDeclaration"
+        ]
       },
+      "documentation": null,
+      "functionSelector": "26121ff0",
+      "id": 23,
+      "implemented": true,
+      "kind": "function",
+      "modifiers": [],
+      "name": "f",
+      "nodeType": "FunctionDefinition",
+      "overrides": null,
+      "parameters":
       {
-        "attributes": {
-          "name": "proposals",
-          "type": "struct Ballot.Proposal storage ref[] storage ref"
-        },
-        "children": [
+        "id": 1,
+        "nodeType": "ParameterList",
+        "parameters": [],
+        "src": "27:2:0"
+      },
+      "returnParameters":
+      {
+        "id": 4,
+        "nodeType": "ParameterList",
+        "parameters":
+        [
           {
-            "children": [
+            "constant": false,
+            "id": 3,
+            "name": "",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 23,
+            "src": "46:4:0",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName":
+            {
+              "id": 2,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "46:4:0",
+              "typeDescriptions":
               {
-                "attributes": {
-                  "name": "Proposal"
-                },
-                "name": "UserDefinedTypeName"
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
               }
-            ],
-            "name": "ArrayTypeName"
+            },
+            "value": null,
+            "visibility": "internal"
           }
         ],
-        "name": "VariableDeclaration"
+        "src": "45:6:0"
       },
-      {
-        "attributes": {
-          "constant": false,
-          "name": "Ballot",
-          "payable": false,
-          "visibility": "public"
-        },
-        "children": [],
-        "name": "FunctionDefinition"
-      },
-      {
-        "attributes": {
-          "constant": false,
-          "name": "giveRightToVote",
-          "payable": false,
-          "visibility": "public"
-        },
-        "children": [],
-        "name": "FunctionDefinition"
-      }
-    ],
-    "name": "ContractDefinition"
-  }
+      "scope": 24,
+      "src": "17:104:0",
+      "stateMutability": "nonpayable",
+      "virtual": false,
+      "visibility": "public"
+    }
+  ],
+  "scope": 25,
+  "src": "0:123:0"
+}

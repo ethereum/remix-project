@@ -1,29 +1,34 @@
 {
-    "attributes": {
-      "type": "tuple()",
-      "type_conversion": false
-    },
-    "children": [
+    "argumentTypes": null,
+    "arguments": [],
+    "expression":
+    {
+      "argumentTypes": [],
+      "id": 13,
+      "name": "sha3",
+      "nodeType": "Identifier",
+      "overloadedDeclarations": [],
+      "referencedDeclaration": 8,
+      "src": "129:4:0",
+      "typeDescriptions":
       {
-        "attributes": {
-          "type": "function (struct Ballot.Voter storage pointer)",
-          "value": "bli"
-        },
-        "id": 37,
-        "name": "Identifier",
-        "src": "540:3:0"
-      },
-      {
-        "attributes": {
-          "type": "struct Ballot.Voter storage pointer",
-          "value": "x"
-        },
-        "id": 38,
-        "name": "Identifier",
-        "src": "544:1:0"
+        "typeIdentifier": "t_function_internal_pure$__$returns$_t_bool_$",
+        "typeString": "function () pure returns (bool)"
       }
-    ],
-    "id": 39,
-    "name": "FunctionCall",
-    "src": "540:6:0"
-  }
+    },
+    "id": 14,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": false,
+    "kind": "functionCall",
+    "lValueRequested": false,
+    "names": [],
+    "nodeType": "FunctionCall",
+    "src": "129:6:0",
+    "tryCall": false,
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_bool",
+      "typeString": "bool"
+    }
+}

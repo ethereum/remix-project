@@ -103,36 +103,36 @@ test('staticAnalysisCommon.helpers.expressionType', function (t) {
   lowlevelAccessersCommon(t, common.helpers.expressionType, node)
 })
 
-test('staticAnalysisCommon.helpers.nrOfChildren', function (t) {
-  t.plan(10)
-  const node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
-  const node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
-  const node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+// test('staticAnalysisCommon.helpers.nrOfChildren', function (t) {
+//   t.plan(10)
+//   const node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
+//   const node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+//   const node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
 
-  t.ok(common.helpers.nrOfChildren(node, 2), 'should work for 2 children')
-  t.notOk(common.helpers.nrOfChildren(node, '1+2'), 'regex should not work')
-  t.ok(common.helpers.nrOfChildren(node2, 0), 'should work for 0 children')
-  t.ok(common.helpers.nrOfChildren(node3, 0), 'should work without children arr')
+//   t.ok(common.helpers.nrOfChildren(node, 2), 'should work for 2 children')
+//   t.notOk(common.helpers.nrOfChildren(node, '1+2'), 'regex should not work')
+//   t.ok(common.helpers.nrOfChildren(node2, 0), 'should work for 0 children')
+//   t.ok(common.helpers.nrOfChildren(node3, 0), 'should work without children arr')
 
-  lowlevelAccessersCommon(t, common.helpers.nrOfChildren, node)
-})
+//   lowlevelAccessersCommon(t, common.helpers.nrOfChildren, node)
+// })
 
-test('staticAnalysisCommon.helpers.minNrOfChildren', function (t) {
-  t.plan(13)
-  const node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
-  const node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
-  const node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+// test('staticAnalysisCommon.helpers.minNrOfChildren', function (t) {
+//   t.plan(13)
+//   const node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
+//   const node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+//   const node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
 
-  t.ok(common.helpers.minNrOfChildren(node, 2), 'should work for 2 children')
-  t.ok(common.helpers.minNrOfChildren(node, 1), 'should work for 1 children')
-  t.ok(common.helpers.minNrOfChildren(node, 0), 'should work for 0 children')
-  t.notOk(common.helpers.minNrOfChildren(node, 3), 'has less than 3 children')
-  t.notOk(common.helpers.minNrOfChildren(node, '1+2'), 'regex should not work')
-  t.ok(common.helpers.minNrOfChildren(node2, 0), 'should work for 0 children')
-  t.ok(common.helpers.minNrOfChildren(node3, 0), 'should work without children arr')
+//   t.ok(common.helpers.minNrOfChildren(node, 2), 'should work for 2 children')
+//   t.ok(common.helpers.minNrOfChildren(node, 1), 'should work for 1 children')
+//   t.ok(common.helpers.minNrOfChildren(node, 0), 'should work for 0 children')
+//   t.notOk(common.helpers.minNrOfChildren(node, 3), 'has less than 3 children')
+//   t.notOk(common.helpers.minNrOfChildren(node, '1+2'), 'regex should not work')
+//   t.ok(common.helpers.minNrOfChildren(node2, 0), 'should work for 0 children')
+//   t.ok(common.helpers.minNrOfChildren(node3, 0), 'should work without children arr')
 
-  lowlevelAccessersCommon(t, common.helpers.minNrOfChildren, node)
-})
+//   lowlevelAccessersCommon(t, common.helpers.minNrOfChildren, node)
+// })
 
 function lowlevelAccessersCommon (t, f, someNode) {
   t.ok(f(someNode), 'always ok if type is undefinded')
@@ -146,14 +146,22 @@ function lowlevelAccessersCommon (t, f, someNode) {
 // #################### Trivial Getter Test
 
 test('staticAnalysisCommon.getType', function (t) {
-  t.plan(3)
-  const node = { name: 'Identifier', children: ['a', 'b'], attributes: { value: 'now', type: 'uint256' } }
-  const node2 = { name: 'FunctionCall', children: [], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
-  const node3 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
-
+  t.plan(2)
+  const node =  { "argumentTypes": null,
+                  "id": 3,
+                  "name": "a",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 22,
+                  "src": "52:1:0",
+                  "typeDescriptions":
+                  {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                }
+  t.ok(common.getType(blockHashAccess) === 'function (uint256) view returns (bytes32)', 'gettype should work for different nodes')
   t.ok(common.getType(node) === 'uint256', 'gettype should work for different nodes')
-  t.ok(common.getType(node2) === 'function () payable returns (bool)', 'gettype should work for different nodes')
-  t.ok(common.getType(node3) === 'function () payable returns (bool)', 'gettype should work for different nodes')
 })
 
 // #################### Complex Getter Test
@@ -296,110 +304,6 @@ test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
   t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(contract, { name: 'MemberAccess' }, ['uint256', 'bool']), Error, 'throws on wrong nodes')
   t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent({ name: 'FunctionCall' }, fullyQualifiedFunctionDefinition, ['uint256', 'bool']), Error, 'throws on wrong nodes')
 })
-
-test('staticAnalysisCommon.getLoopBlockStartIndex', function (t) {
-  t.plan(3)
-  t.equal(common.getLoopBlockStartIndex(forLoopNode), 3) // 'for' loop
-  t.equal(common.getLoopBlockStartIndex(doWhileLoopNode), 1) // 'do-while' loop
-  t.equal(common.getLoopBlockStartIndex(whileLoopNode), 1) // 'while' loop
-})
-
-// #################### Trivial Node Identification
-
-// test('staticAnalysisCommon.isFunctionDefinition', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'FunctionDefinition' }
-//   const node2 = { name: 'MemberAccess' }
-//   const node3 = { name: 'FunctionDefinitionBLABLA' }
-
-//   t.ok(common.isFunctionDefinition(node1), 'is exact match should work')
-//   t.notOk(common.isFunctionDefinition(node2), 'different node should not work')
-//   t.notOk(common.isFunctionDefinition(node3), 'substring should not work')
-// })
-
-// test('staticAnalysisCommon.isModifierDefinition', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'ModifierDefinition' }
-//   const node2 = { name: 'MemberAccess' }
-//   const node3 = { name: 'ModifierDefinitionBLABLA' }
-
-//   t.ok(common.isModifierDefinition(node1), 'is exact match should work')
-//   t.notOk(common.isModifierDefinition(node2), 'different node should not work')
-//   t.notOk(common.isModifierDefinition(node3), 'substring should not work')
-// })
-
-// test('staticAnalysisCommon.isModifierInvocation', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'ModifierInvocation' }
-//   const node2 = { name: 'MemberAccess' }
-//   const node3 = { name: 'ModifierInvocationBLABLA' }
-
-//   t.ok(common.isModifierInvocation(node1), 'is exact match should work')
-//   t.notOk(common.isModifierInvocation(node2), 'different node should not work')
-//   t.notOk(common.isModifierInvocation(node3), 'substring should not work')
-// })
-
-// test('staticAnalysisCommon.isVariableDeclaration', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'VariableDeclaration' }
-//   const node2 = { name: 'MemberAccess' }
-//   const node3 = { name: 'VariableDeclarationBLABLA' }
-
-//   t.ok(common.isVariableDeclaration(node1), 'is exact match should work')
-//   t.notOk(common.isVariableDeclaration(node2), 'different node should not work')
-//   t.notOk(common.isVariableDeclaration(node3), 'substring should not work')
-// })
-
-// test('staticAnalysisCommon.isInheritanceSpecifier', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'InheritanceSpecifier' }
-//   const node2 = { name: 'MemberAccess' }
-//   const node3 = { name: 'InheritanceSpecifierBLABLA' }
-
-//   t.ok(common.isInheritanceSpecifier(node1), 'is exact match should work')
-//   t.notOk(common.isInheritanceSpecifier(node2), 'different node should not work')
-//   t.notOk(common.isInheritanceSpecifier(node3), 'substring should not work')
-// })
-
-// test('staticAnalysisCommon.isAssignment', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'Assignment' }
-//   const node2 = { name: 'MemberAccess' }
-//   const node3 = { name: 'AssignmentBLABLA' }
-
-//   t.ok(common.isAssignment(node1), 'is exact match should work')
-//   t.notOk(common.isAssignment(node2), 'different node should not work')
-//   t.notOk(common.isAssignment(node3), 'substring should not work')
-// })
-
-// test('staticAnalysisCommon.isContractDefinition', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'ContractDefinition' }
-//   const node2 = { name: 'MemberAccess' }
-//   const node3 = { name: 'ContractDefinitionBLABLA' }
-
-//   t.ok(common.isContractDefinition(node1), 'is exact match should work')
-//   t.notOk(common.isContractDefinition(node2), 'different node should not work')
-//   t.notOk(common.isContractDefinition(node3), 'substring should not work')
-// })
-
-// test('staticAnalysisCommon.isInlineAssembly', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'InlineAssembly' }
-//   const node2 = { name: 'MemberAccess' }
-//   const node3 = { name: 'InlineAssemblyBLABLA' }
-
-//   t.ok(common.isInlineAssembly(node1), 'is exact match should work')
-//   t.notOk(common.isInlineAssembly(node2), 'different node should not work')
-//   t.notOk(common.isInlineAssembly(node3), 'substring should not work')
-// })
-
-// test('staticAnalysisCommon.isLoop', function (t) {
-//   t.plan(3)
-//   t.equal(common.isLoop(forLoopNode), true)
-//   t.equal(common.isLoop(doWhileLoopNode), true)
-//   t.equal(common.isLoop(whileLoopNode), true)
-// })
 
 // #################### Complex Node Identification
 

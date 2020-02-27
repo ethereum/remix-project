@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { isStringToBytesConversion, isBytesLengthCheck } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, FunctionCallAstNode} from './../../types'
 
 export default class stringBytesLength implements AnalyzerModule {
   name: string = 'String Length: '
@@ -9,13 +9,13 @@ export default class stringBytesLength implements AnalyzerModule {
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  stringToBytesConversions: AstNodeLegacy[] = []
-  bytesLengthChecks: AstNodeLegacy[] = []
+  stringToBytesConversions: FunctionCallAstNode[] = []
+  bytesLengthChecks: MemberAccessAstNode[] = []
 
 
-  visit (node: AstNodeLegacy): void {
-    if (isStringToBytesConversion(node)) this.stringToBytesConversions.push(node)
-    else if (isBytesLengthCheck(node)) this.bytesLengthChecks.push(node)
+  visit (node: FunctionCallAstNode | MemberAccessAstNode): void {
+    if (node.nodeType === "FunctionCall" && isStringToBytesConversion(node)) this.stringToBytesConversions.push(node)
+    else if (node.nodeType === "MemberAccess" && isBytesLengthCheck(node)) this.bytesLengthChecks.push(node)
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {

@@ -1,16 +1,32 @@
 {
-  "attributes": {
-    "member_name": "insert",
-    "type": "function (struct Set.Data storage pointer,uint256) returns (bool)"
-  },
-  "children": [
+  "argumentTypes": null,
+  "expression":
+  {
+    "argumentTypes": null,
+    "id": 33,
+    "name": "L",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": 21,
+    "src": "244:1:0",
+    "typeDescriptions":
     {
-      "attributes": {
-        "type": "type(library Set)",
-        "value": "Set"
-      },
-      "name": "Identifier"
+      "typeIdentifier": "t_type$_t_contract$_L_$21_$",
+      "typeString": "type(library L)"
     }
-  ],
-  "name": "MemberAccess"
+  },
+  "id": 34,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "lValueRequested": false,
+  "memberName": "f",
+  "nodeType": "MemberAccess",
+  "referencedDeclaration": 6,
+  "src": "244:3:0",
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_function_delegatecall_nonpayable$_t_uint256_$returns$__$",
+    "typeString": "function (uint256)"
+  }
 }

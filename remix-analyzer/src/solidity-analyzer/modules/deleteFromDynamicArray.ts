@@ -1,17 +1,17 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { isDeleteFromDynamicArray, isMappingIndexAccess } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, UnaryOperationAstNode} from './../../types'
 
 export default class deleteFromDynamicArray implements AnalyzerModule {
-  relevantNodes: AstNodeLegacy[] = []
+  relevantNodes: UnaryOperationAstNode[] = []
   name: string = 'Delete from dynamic Array: '
   description: string = 'Using delete on an array leaves a gap'
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node: AstNodeLegacy): void {
-    if (isDeleteFromDynamicArray(node) && node.children && !isMappingIndexAccess(node.children[0])) this.relevantNodes.push(node)
+  visit (node: UnaryOperationAstNode): void {
+    if (isDeleteFromDynamicArray(node) && !isMappingIndexAccess(node.subExpression)) this.relevantNodes.push(node)
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {

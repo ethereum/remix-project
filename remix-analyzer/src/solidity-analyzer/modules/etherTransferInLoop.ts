@@ -1,6 +1,6 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
-import { getLoopBlockStartIndex, isTransfer } from './staticAnalysisCommon'
+import { isTransfer } from './staticAnalysisCommon'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, ForStatementAstNode, WhileStatementAstNode, CommonAstNode, ExpressionStatementAstNode} from './../../types'
 
 export default class etherTransferInLoop implements AnalyzerModule {
