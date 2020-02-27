@@ -1,6 +1,6 @@
 'use strict'
 
-import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, CommonAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, IdentifierAstNode, MappingAstNode, IndexAccessAstNode } from "types"
+import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, CommonAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, IdentifierAstNode, MappingAstNode, IndexAccessAstNode, UserDefinedTypeNameAstNode, BlockAstNode } from "types"
 
 const remixLib = require('remix-lib')
 const util = remixLib.util
@@ -125,8 +125,8 @@ const abiNamespace = {
 
 // #################### Trivial Getters
 
-function getType (node: CommonAstNode) {
-  return node.nodeType
+function getType (node: any) {
+  return node.typeDescriptions.typeString
 }
 
 // #################### Complex Getters
@@ -159,9 +159,9 @@ function getEffectedVariableName (effectNode) {
  * @localCallNode {ASTNode} Function call node
  * @return {string} name of the function called
  */
-function getLocalCallName (localCallNode) {
+function getLocalCallName (localCallNode: FunctionCallAstNode): string {
   if (!isLocalCall(localCallNode) && !isAbiNamespaceCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not an local call Node')
-  return localCallNode.children[0].attributes.value
+  return localCallNode.expression.name
 }
 
 /**
@@ -170,9 +170,9 @@ function getLocalCallName (localCallNode) {
  * @localCallNode {ASTNode} Function call node
  * @return {string} name of the function called
  */
-function getThisLocalCallName (localCallNode) {
-  if (!isThisLocalCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
-  return localCallNode.attributes.value
+function getThisLocalCallName (localCallNode: FunctionCallAstNode): string {
+  if (!isThisLocalCall(localCallNode.expression)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
+  return localCallNode.expression.memberName
 }
 
 /**
@@ -181,9 +181,9 @@ function getThisLocalCallName (localCallNode) {
  * @localCallNode {ASTNode} Function call node
  * @return {string} name of the function called
  */
-function getSuperLocalCallName (localCallNode) {
-  if (!isSuperLocalCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not an super local call Node')
-  return localCallNode.attributes.member_name
+function getSuperLocalCallName (localCallNode: FunctionCallAstNode): string {
+  if (!isSuperLocalCall(localCallNode.expression)) throw new Error('staticAnalysisCommon.js: not an super local call Node')
+  return localCallNode.expression.memberName
 }
 
 /**
@@ -209,9 +209,9 @@ function getExternalDirectCallContractName (extDirectCall) {
  * @thisLocalCall {ASTNode} Function call node
  * @return {string} name of the contract the function is defined in
  */
-function getThisLocalCallContractName (thisLocalCall) {
-  if (!isThisLocalCall(thisLocalCall)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
-  return thisLocalCall.children[0].attributes.type.replace(new RegExp(basicRegex.CONTRACTTYPE), '')
+function getThisLocalCallContractName (thisLocalCall: FunctionCallAstNode) {
+  if (!isThisLocalCall(thisLocalCall.expression)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
+  return thisLocalCall.expression.expression.typeDescriptions.typeString.replace(new RegExp(basicRegex.CONTRACTTYPE), '')
 }
 
 /**
@@ -257,7 +257,7 @@ function getFunctionDefinitionName (funcDef: FunctionDefinitionAstNode): string 
  * @func {ASTNode} Inheritance specifier
  * @return {string} name of contract inherited from
  */
-function getInheritsFromName (inheritsNode: InheritanceSpecifierAstNode) {
+function getInheritsFromName (inheritsNode: InheritanceSpecifierAstNode): UserDefinedTypeNameAstNode {
   return inheritsNode.baseName
 }
 
@@ -268,7 +268,7 @@ function getInheritsFromName (inheritsNode: InheritanceSpecifierAstNode) {
  * @varDeclNode {ASTNode} Variable declaration node
  * @return {string} variable name
  */
-function getDeclaredVariableName (varDeclNode: VariableDeclarationAstNode) {
+function getDeclaredVariableName (varDeclNode: VariableDeclarationAstNode): string {
   return varDeclNode.name
 }
 
@@ -279,8 +279,8 @@ function getDeclaredVariableName (varDeclNode: VariableDeclarationAstNode) {
  * @varDeclNode {ASTNode} Variable declaration node
  * @return {string} variable type
  */
-function getDeclaredVariableType (varDeclNode: VariableDeclarationAstNode) {
-  return varDeclNode.typeName
+function getDeclaredVariableType (varDeclNode: VariableDeclarationAstNode): string {
+  return varDeclNode.typeName.name
 }
 
 /**
@@ -356,9 +356,9 @@ function getFunctionCallTypeParameterType (func) {
  * @funcCall {ASTNode} function call node
  * @return {string} name of the lib defined
  */
-function getLibraryCallContractName (funcCall) {
-  if (!isLibraryCall(funcCall)) throw new Error('staticAnalysisCommon.js: not an this library call Node')
-  const types = new RegExp(basicRegex.LIBRARYTYPE).exec(funcCall.children[0].attributes.type)
+function getLibraryCallContractName (node: MemberAccessAstNode): string | undefined {
+  if (!isLibraryCall(node)) throw new Error('staticAnalysisCommon.js: not an this library call Node')
+  const types: RegExpExecArray | null = new RegExp(basicRegex.LIBRARYTYPE).exec(node.expression.typeDescriptions.typeString)
   if(types)
     return types[1]
 }
@@ -373,9 +373,9 @@ function getLibraryCallContractName (funcCall) {
  * @func {ASTNode} function call node
  * @return {string} name of function called on the library
  */
-function getLibraryCallMemberName (funcCall) {
+function getLibraryCallMemberName (funcCall: FunctionCallAstNode): string {
   // if (!isLibraryCall(funcCall)) throw new Error('staticAnalysisCommon.js: not an library call Node')
-  return funcCall.attributes.member_name
+  return funcCall.expression.memberName
 }
 
 /**
@@ -407,13 +407,13 @@ function getUnAssignedTopLevelBinOps (subScope) {
   return subScope.children.filter(isBinaryOpInExpression)
 }
 
-function getLoopBlockStartIndex (node: ForStatementAstNode | WhileStatementAstNode): 3|1 {
-    return node.nodeType === "ForStatement" ? 3 : 1
-}
+// function getLoopBlockStartIndex (node: ForStatementAstNode | WhileStatementAstNode): 3|1 {
+//     return node.nodeType === "ForStatement" ? 3 : 1
+// }
 
 // #################### Trivial Node Identification
 
-function isStatement (node: CommonAstNode) {
+function isStatement (node: any): boolean {
   return nodeType(node, 'Statement$') || node.nodeType === "Block" || node.nodeType === "Return"
 }
 
@@ -422,9 +422,9 @@ function isStatement (node: CommonAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBinaryOperation (node) {
-  return nodeType(node, exactMatch(nodeTypes.BINARYOPERATION))
-}
+// function isBinaryOperation (node) {
+//   return nodeType(node, exactMatch(nodeTypes.BINARYOPERATION))
+// }
 
 // #################### Complex Node Identification
 
@@ -433,8 +433,8 @@ function isBinaryOperation (node) {
  * @funcNode {ASTNode} function defintion node
  * @return {bool}
  */
-function hasFunctionBody (funcNode: FunctionDefinitionAstNode) {
-  return funcNode.body != null
+function hasFunctionBody (funcNode: FunctionDefinitionAstNode): boolean {
+  return funcNode.body !== null
 }
 
 /**
@@ -442,7 +442,7 @@ function hasFunctionBody (funcNode: FunctionDefinitionAstNode) {
  * @node {ASTNode} node to check for
  * @return {bool}
  */
-function isDeleteOfDynamicArray (node: UnaryOperationAstNode) {
+function isDeleteOfDynamicArray (node: UnaryOperationAstNode): boolean {
   return isDeleteUnaryOperation(node) && isDynamicArrayAccess(node.subExpression)
 }
 
@@ -451,7 +451,7 @@ function isDeleteOfDynamicArray (node: UnaryOperationAstNode) {
  * @node {ASTNode} node to check for
  * @return {bool}
  */
-function isDynamicArrayAccess (node: IdentifierAstNode) {
+function isDynamicArrayAccess (node: IdentifierAstNode): boolean {
   return typeDescription(node, '[] storage ref') || typeDescription(node, 'bytes storage ref') || typeDescription(node, 'string storage ref')
 }
 
@@ -460,7 +460,7 @@ function isDynamicArrayAccess (node: IdentifierAstNode) {
  * @node {ASTNode} node to check for
  * @return {bool}
  */
-function isDynamicArrayLengthAccess (node: MemberAccessAstNode) {
+function isDynamicArrayLengthAccess (node: MemberAccessAstNode): boolean {
   return (node.memberName === 'length') && // accessing 'length' member
   node.expression['typeDescriptions']['typeString'].indexOf('[]') !== -1 // member is accessed from dynamic array, notice [] without any number
 }
@@ -470,8 +470,8 @@ function isDynamicArrayLengthAccess (node: MemberAccessAstNode) {
  * @node {ASTNode} node to check for
  * @return {bool}
  */
-function isDeleteFromDynamicArray (node) {
-  return isDeleteUnaryOperation(node) && isIndexAccess(node.children[0])
+function isDeleteFromDynamicArray (node: UnaryOperationAstNode): boolean {
+  return isDeleteUnaryOperation(node) && node.subExpression.nodeType === 'IndexAccess'
 }
 
 /**
@@ -479,17 +479,17 @@ function isDeleteFromDynamicArray (node) {
  * @node {ASTNode} node to check for
  * @return {bool}
  */
-function isIndexAccess (node) {
-  return node && node.name === 'IndexAccess'
-}
+// function isIndexAccess (node) {
+//   return node && node.name === 'IndexAccess'
+// }
 
 /**
  * True if node is the access of a mapping index
  * @node {ASTNode} node to check for
  * @return {bool}
  */
-function isMappingIndexAccess (node) {
-  return isIndexAccess(node) && node.children && node.children[0].attributes.type.startsWith('mapping')
+function isMappingIndexAccess (node: IndexAccessAstNode): boolean {
+  return node.typeDescriptions.typeString.startsWith('mapping')
 }
 
 /**
@@ -506,7 +506,7 @@ function isLocalCallGraphRelevantNode (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBuiltinFunctionCall (node) {
+function isBuiltinFunctionCall (node: FunctionCallAstNode): boolean {
   return (isLocalCall(node) && builtinFunctions[getLocalCallName(node) + '(' + getFunctionCallTypeParameterType(node) + ')'] === true) || isAbiNamespaceCall(node)
 }
 
@@ -515,8 +515,8 @@ function isBuiltinFunctionCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isAbiNamespaceCall (node) {
-  return Object.keys(abiNamespace).some((key) => abiNamespace.hasOwnProperty(key) && node.children && node.children[0] && isSpecialVariableAccess(node.children[0], abiNamespace[key]))
+function isAbiNamespaceCall (node: FunctionCallAstNode): boolean {
+  return Object.keys(abiNamespace).some((key) => abiNamespace.hasOwnProperty(key) && node.expression && isSpecialVariableAccess(node.expression, abiNamespace[key]))
 }
 
 /**
@@ -524,7 +524,7 @@ function isAbiNamespaceCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isSelfdestructCall (node) {
+function isSelfdestructCall (node: FunctionCallAstNode): boolean {
   return isBuiltinFunctionCall(node) && getLocalCallName(node) === 'selfdestruct'
 }
 
@@ -533,7 +533,7 @@ function isSelfdestructCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isAssertCall (node) {
+function isAssertCall (node: FunctionCallAstNode): boolean {
   return isBuiltinFunctionCall(node) && getLocalCallName(node) === 'assert'
 }
 
@@ -542,7 +542,7 @@ function isAssertCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isRequireCall (node) {
+function isRequireCall (node: FunctionCallAstNode): boolean  {
   return isBuiltinFunctionCall(node) && getLocalCallName(node) === 'require'
 }
 
@@ -625,7 +625,7 @@ function isConstructor (node: FunctionDefinitionAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isIntDivision (node: BinaryOperationAstNode) {
+function isIntDivision (node: BinaryOperationAstNode): boolean {
   return operator(node, exactMatch(util.escapeRegExp('/'))) && typeDescription(node.rightExpression, util.escapeRegExp('int'))
 }
 
@@ -635,7 +635,7 @@ function isIntDivision (node: BinaryOperationAstNode) {
  * @return {bool}
  */
 function isSubScopeWithTopLevelUnAssignedBinOp (node) {
-  return nodeType(node, exactMatch(nodeTypes.BLOCK)) && node.children && node.children.some(isBinaryOpInExpression) ||
+  return nodeType(node, exactMatch(nodeTypes.BLOCK)) && node.statements.some(isBinaryOpInExpression) ||
           isSubScopeStatement(node) && node.children && node.children.some(isBinaryOpInExpression) // Second Case for if without braces
 }
 
@@ -652,7 +652,7 @@ function isSubScopeStatement (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBinaryOpInExpression (node: ExpressionStatementAstNode) {
+function isBinaryOpInExpression (node: ExpressionStatementAstNode): boolean {
   return node.nodeType === "ExpressionStatement" && node.expression.nodeType === "BinaryOperation"
 }
 
@@ -661,7 +661,7 @@ function isBinaryOpInExpression (node: ExpressionStatementAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isPlusPlusUnaryOperation (node: UnaryOperationAstNode) {
+function isPlusPlusUnaryOperation (node: UnaryOperationAstNode): boolean {
   return node.operator === '++'
 }
 
@@ -670,7 +670,7 @@ function isPlusPlusUnaryOperation (node: UnaryOperationAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isDeleteUnaryOperation (node: UnaryOperationAstNode) {
+function isDeleteUnaryOperation (node: UnaryOperationAstNode): boolean {
   return node.operator === 'delete'
 }
 
@@ -679,7 +679,7 @@ function isDeleteUnaryOperation (node: UnaryOperationAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isMinusMinusUnaryOperation (node: UnaryOperationAstNode) {
+function isMinusMinusUnaryOperation (node: UnaryOperationAstNode): boolean {
   return node.operator === '--'
 }
 
@@ -688,7 +688,7 @@ function isMinusMinusUnaryOperation (node: UnaryOperationAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isFullyImplementedContract (node: ContractDefinitionAstNode) {
+function isFullyImplementedContract (node: ContractDefinitionAstNode): boolean {
   return node.fullyImplemented === true
 }
 
@@ -697,7 +697,7 @@ function isFullyImplementedContract (node: ContractDefinitionAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLibrary (node: ContractDefinitionAstNode) {
+function isLibrary (node: ContractDefinitionAstNode): boolean {
   return node.contractKind === 'library'
 }
 
@@ -706,7 +706,7 @@ function isLibrary (node: ContractDefinitionAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isCallToNonConstLocalFunction (node: FunctionCallAstNode) {
+function isCallToNonConstLocalFunction (node: FunctionCallAstNode): boolean {
   return isLocalCall(node) && !expressionType(node, basicRegex.CONSTANTFUNCTIONTYPE)
 }
 
@@ -715,7 +715,7 @@ function isCallToNonConstLocalFunction (node: FunctionCallAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLibraryCall (node: MemberAccessAstNode) {
+function isLibraryCall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node, basicRegex.FUNCTIONTYPE, undefined, basicRegex.LIBRARYTYPE, undefined)
 }
 
@@ -724,7 +724,7 @@ function isLibraryCall (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isExternalDirectCall (node: MemberAccessAstNode) {
+function isExternalDirectCall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node, basicRegex.EXTERNALFUNCTIONTYPE, undefined, basicRegex.CONTRACTTYPE, undefined) && !isThisLocalCall(node) && !isSuperLocalCall(node)
 }
 
@@ -733,7 +733,7 @@ function isExternalDirectCall (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isNowAccess (node: IdentifierAstNode) {
+function isNowAccess (node: IdentifierAstNode): boolean {
   return node.name === "now" && typeDescription(node, exactMatch(basicTypes.UINT))
 }
 
@@ -751,7 +751,7 @@ function isBlockTimestampAccess (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBlockBlockHashAccess (node: MemberAccessAstNode) {
+function isBlockBlockHashAccess (node) {
   return isSpecialVariableAccess(node, specialVariables.BLOCKHASH) || isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash'
 }
 
@@ -782,7 +782,7 @@ function isLocalCall (node: FunctionCallAstNode) {
   return node.kind === 'functionCall' && 
         node.expression.nodeType === 'Identifier' &&
         expressionTypeDescription(node, basicRegex.FUNCTIONTYPE) &&
-        !expressionTypeDescription(node, basicRegex.FUNCTIONTYPE)
+        !expressionTypeDescription(node, basicRegex.EXTERNALFUNCTIONTYPE)
 }
 
 /**
@@ -888,7 +888,7 @@ function isTransfer (node: MemberAccessAstNode) {
           undefined, matches(basicTypes.ADDRESS, basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.TRANSFER.ident))
 }
 
-function isStringToBytesConversion (node) {
+function isStringToBytesConversion (node: FunctionCallAstNode) {
   return isExplicitCast(node, util.escapeRegExp('string *'), util.escapeRegExp('bytes'))
 }
 
@@ -926,11 +926,10 @@ function isBytesLengthCheck (node: MemberAccessAstNode) {
 // #################### Complex Node Identification - Private
 
 function isMemberAccess (node: MemberAccessAstNode, retType: string, accessor: string| undefined, accessorType, memberName: string | undefined) {
-  return nodeType(node, exactMatch(nodeTypes.MEMBERACCESS)) &&
-        expressionType(node, retType) &&
+  return typeDescription(node, retType) &&
         memName(node, memberName) &&
         memName(node.expression, accessor) &&
-        expressionType(node.expression, accessorType)
+        expressionTypeDescription(node.expression, accessorType)
 }
 
 function isSpecialVariableAccess (node: MemberAccessAstNode, varType) {
@@ -965,7 +964,7 @@ function nodeType (node, typeRegex) {
 
 function memName (node, memNameRegex) {
   const regex = new RegExp(memNameRegex)
-  return (node && !memNameRegex) || (node && node.attributes && (regex.test(node.attributes.value) || regex.test(node.attributes.member_name)))
+  return regex.test(node.name) || regex.test(node.memberName)
 }
 
 function operator (node, opRegex) {
@@ -1058,7 +1057,7 @@ export {
   getFunctionOrModifierDefinitionParameterPart,
   getFunctionDefinitionReturnParameterPart,
   getUnAssignedTopLevelBinOps,
-  getLoopBlockStartIndex,
+  // getLoopBlockStartIndex,
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray,
@@ -1067,7 +1066,7 @@ export {
   isSpecialVariableAccess,
   isDynamicArrayAccess,
   isDynamicArrayLengthAccess,
-  isIndexAccess,
+  // isIndexAccess,
   isMappingIndexAccess,
   isSubScopeWithTopLevelUnAssignedBinOp,
   hasFunctionBody,
@@ -1126,7 +1125,7 @@ export {
   isStatement,
   // isExpressionStatement,
   // isBlock,
-  isBinaryOperation,
+  // isBinaryOperation,
 
   // #################### Constants
   nodeTypes,

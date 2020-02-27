@@ -1,42 +1,142 @@
 {
-    "sendAst": { "name": "MemberAccess", 
-        "children": [
-            {
-                "attributes": { 
-                    "value": "d", 
-                    "type": "address" 
-                    }
-            }], 
-            "attributes": { 
-                "value": "send", 
-                "type": "function (uint256) returns (bool)" } 
-            },
-    "callAst": { "name": "MemberAccess", "children": [{
-        "attributes": { 
-            "value": "f", 
-            "type": "address" 
-            }}], 
-            "attributes": { 
-                "member_name": "call", 
-                "type": "function () payable returns (bool)" } },
-   "callcodeAst": { 
-       "name": "MemberAccess", 
-       "children": [{
-           "attributes": { 
-               "value": "f", 
-               "type": "address" 
-               }}], 
-               "attributes": { 
-                   "member_name": "callcode", 
-                   "type": "function () payable returns (bool)" } },
-   "delegatecallAst": { 
-       "name": "MemberAccess", 
-       "children": [{
-           "attributes": { 
-               "value": "g", 
-               "type": "address"
-            }}], 
-            "attributes": { 
-                "member_name": "delegatecall", 
-                "type": "function () returns (bool)" } }
+    "sendAst": {
+        "argumentTypes":
+        [
+          {
+            "typeIdentifier": "t_rational_1_by_1",
+            "typeString": "int_const 1"
+          }
+        ],
+        "expression":
+        {
+          "argumentTypes": null,
+          "id": 27,
+          "name": "addr",
+          "nodeType": "Identifier",
+          "overloadedDeclarations": [],
+          "referencedDeclaration": 4,
+          "src": "227:4:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_address_payable",
+            "typeString": "address payable"
+          }
+        },
+        "id": 28,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": false,
+        "lValueRequested": false,
+        "memberName": "send",
+        "nodeType": "MemberAccess",
+        "referencedDeclaration": null,
+        "src": "227:9:0",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_function_send_nonpayable$_t_uint256_$returns$_t_bool_$",
+          "typeString": "function (uint256) returns (bool)"
+        }
+      },
+    "callAst": {
+        "argumentTypes": null,
+        "expression":
+        {
+          "argumentTypes": null,
+          "id": 9,
+          "name": "a",
+          "nodeType": "Identifier",
+          "overloadedDeclarations": [],
+          "referencedDeclaration": 6,
+          "src": "91:1:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_address",
+            "typeString": "address"
+          }
+        },
+        "id": 12,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": false,
+        "lValueRequested": false,
+        "memberName": "call",
+        "nodeType": "MemberAccess",
+        "referencedDeclaration": null,
+        "src": "91:6:0",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$",
+          "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+        }
+      },
+   "callcodeAst": {
+        "argumentTypes": [],
+        "expression":
+        {
+        "argumentTypes": null,
+        "id": 3,
+        "name": "test",
+        "nodeType": "Identifier",
+        "overloadedDeclarations": [],
+        "referencedDeclaration": 10,
+        "src": "62:4:0",
+        "typeDescriptions":
+        {
+            "typeIdentifier": "t_type$_t_contract$_test_$10_$",
+            "typeString": "type(contract test)"
+        }
+        },
+        "id": 5,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": false,
+        "lValueRequested": false,
+        "memberName": "callcode",
+        "nodeType": "MemberAccess",
+        "referencedDeclaration": 9,
+        "src": "62:13:0",
+        "typeDescriptions":
+        {
+        "typeIdentifier": "t_function_internal_pure$__$returns$__$",
+        "typeString": "function () pure"
+        }
+    },
+   "delegatecallAst": {
+        "argumentTypes":
+        [
+        {
+            "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+            "typeString": "literal_string \"\""
+        }
+        ],
+        "expression":
+        {
+        "argumentTypes": null,
+        "id": 20,
+        "name": "addr",
+        "nodeType": "Identifier",
+        "overloadedDeclarations": [],
+        "referencedDeclaration": 4,
+        "src": "181:4:0",
+        "typeDescriptions":
+        {
+            "typeIdentifier": "t_address_payable",
+            "typeString": "address payable"
+        }
+        },
+        "id": 21,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": false,
+        "lValueRequested": false,
+        "memberName": "delegatecall",
+        "nodeType": "MemberAccess",
+        "referencedDeclaration": null,
+        "src": "181:17:0",
+        "typeDescriptions":
+        {
+        "typeIdentifier": "t_function_baredelegatecall_nonpayable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$",
+        "typeString": "function (bytes memory) returns (bool,bytes memory)"
+        }
+    }
 }

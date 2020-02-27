@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { hasFunctionBody, getFullQuallyfiedFuncDefinitionIdent, getEffectedVariableName } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, CommonAstNode, FunctionDefinitionAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CommonAstNode, FunctionDefinitionAstNode} from './../../types'
 
 export default class noReturn implements AnalyzerModule {
   name: string = 'no return: '

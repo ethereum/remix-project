@@ -1,16 +1,16 @@
 import { default as category } from './categories'
 import { isRequireCall, isAssertCall } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, FunctionCallAstNode} from './../../types'
 
 export default class guardConditions implements AnalyzerModule {
-  guards: AstNodeLegacy[] = []
+  guards: FunctionCallAstNode[] = []
   name: string = 'Guard Conditions: '
   description: string = 'Use require and appropriately'
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node: AstNodeLegacy): void {
+  visit (node: FunctionCallAstNode): void {
     if (isRequireCall(node) || isAssertCall(node)) this.guards.push(node)
   }
 

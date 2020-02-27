@@ -1,4 +1,4 @@
-pragma solidity >=0.4.9 <0.6.0;
+pragma solidity >=0.4.9 <0.7.0;
 
 library Set {
   // We define a new struct datatype that will be used to
@@ -49,6 +49,10 @@ contract C {
         a.send(10 wei);
         if (!Set.insert(knownValues, value))
             revert();
+    }
+
+    function tests2() public {
+        this.register(10);
     }
     // In this contract, we can also directly access knownValues.flags, if we want.
 }

@@ -1,10 +1,32 @@
-{ 
-  "name": "MemberAccess", 
-  "children": [ { 
-    "attributes": { 
-    "value": "this", 
-    "type": "contract test" }, 
-    "name": "Identifier" } ], 
-    "attributes": { 
-      "value": "b", 
-      "type": "function (bytes32,address) returns (bool)" } }
+{
+  "argumentTypes": null,
+  "expression":
+  {
+    "argumentTypes": null,
+    "id": 13,
+    "name": "this",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": -28,
+    "src": "138:4:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_contract$_C_$21",
+      "typeString": "contract C"
+    }
+  },
+  "id": 14,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "lValueRequested": false,
+  "memberName": "h",
+  "nodeType": "MemberAccess",
+  "referencedDeclaration": 4,
+  "src": "138:6:0",
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_function_external_payable$__$returns$__$",
+    "typeString": "function () payable external"
+  }
+}

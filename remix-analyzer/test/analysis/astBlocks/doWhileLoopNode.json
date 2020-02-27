@@ -1,204 +1,96 @@
 {
-    "children":
-    [
-      {
-        "attributes":
+  "body":
+  {
+    "id": 10,
+    "nodeType": "Block",
+    "src": "113:2:0",
+    "statements": []
+  },
+  "condition":
+  {
+    "argumentTypes": null,
+    "expression":
+    {
+      "argumentTypes": null,
+      "components":
+      [
         {
           "argumentTypes": null,
-          "commonType":
-          {
-            "typeIdentifier": "t_uint256",
-            "typeString": "uint256"
-          },
+          "id": 13,
           "isConstant": false,
           "isLValue": false,
           "isPure": false,
           "lValueRequested": false,
-          "operator": "<",
-          "type": "bool"
-        },
-        "children":
-        [
+          "leftHandSide":
           {
-            "attributes":
+            "argumentTypes": null,
+            "id": 11,
+            "name": "c",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": 8,
+            "src": "123:1:0",
+            "typeDescriptions":
             {
-              "argumentTypes": null,
-              "overloadedDeclarations":
-              [
-                null
-              ],
-              "referencedDeclaration": 69,
-              "type": "uint256",
-              "value": "i"
-            },
-            "id": 82,
-            "name": "Identifier",
-            "src": "592:1:0"
+              "typeIdentifier": "t_struct$_S_$3_storage_ptr",
+              "typeString": "struct C.S storage pointer"
+            }
           },
+          "nodeType": "Assignment",
+          "operator": "=",
+          "rightHandSide":
           {
-            "attributes":
+            "argumentTypes": null,
+            "id": 12,
+            "name": "s",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": 5,
+            "src": "127:1:0",
+            "typeDescriptions":
             {
-              "argumentTypes": null,
-              "hexvalue": "3130",
-              "isConstant": false,
-              "isLValue": false,
-              "isPure": true,
-              "lValueRequested": false,
-              "subdenomination": null,
-              "token": "number",
-              "type": "int_const 10",
-              "value": "10"
-            },
-            "id": 83,
-            "name": "Literal",
-            "src": "596:2:0"
+              "typeIdentifier": "t_struct$_S_$3_storage",
+              "typeString": "struct C.S storage ref"
+            }
+          },
+          "src": "123:5:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_struct$_S_$3_storage_ptr",
+            "typeString": "struct C.S storage pointer"
           }
-        ],
-        "id": 84,
-        "name": "BinaryOperation",
-        "src": "592:6:0"
-      },
+        }
+      ],
+      "id": 14,
+      "isConstant": false,
+      "isInlineArray": false,
+      "isLValue": false,
+      "isPure": false,
+      "lValueRequested": false,
+      "nodeType": "TupleExpression",
+      "src": "122:7:0",
+      "typeDescriptions":
       {
-        "children":
-        [
-          {
-            "children":
-            [
-              {
-                "attributes":
-                {
-                  "argumentTypes": null,
-                  "isConstant": false,
-                  "isLValue": false,
-                  "isPure": false,
-                  "isStructConstructorCall": false,
-                  "lValueRequested": false,
-                  "names":
-                  [
-                    null
-                  ],
-                  "type": "uint256",
-                  "type_conversion": false
-                },
-                "children":
-                [
-                  {
-                    "attributes":
-                    {
-                      "argumentTypes":
-                      [
-                        {
-                          "typeIdentifier": "t_uint256",
-                          "typeString": "uint256"
-                        }
-                      ],
-                      "isConstant": false,
-                      "isLValue": false,
-                      "isPure": false,
-                      "lValueRequested": false,
-                      "member_name": "push",
-                      "referencedDeclaration": null,
-                      "type": "function (uint256) returns (uint256)"
-                    },
-                    "children":
-                    [
-                      {
-                        "attributes":
-                        {
-                          "argumentTypes": null,
-                          "overloadedDeclarations":
-                          [
-                            null
-                          ],
-                          "referencedDeclaration": 4,
-                          "type": "uint256[] storage ref",
-                          "value": "array"
-                        },
-                        "id": 72,
-                        "name": "Identifier",
-                        "src": "544:5:0"
-                      }
-                    ],
-                    "id": 74,
-                    "name": "MemberAccess",
-                    "src": "544:10:0"
-                  },
-                  {
-                    "attributes":
-                    {
-                      "argumentTypes": null,
-                      "overloadedDeclarations":
-                      [
-                        null
-                      ],
-                      "referencedDeclaration": 69,
-                      "type": "uint256",
-                      "value": "i"
-                    },
-                    "id": 75,
-                    "name": "Identifier",
-                    "src": "555:1:0"
-                  }
-                ],
-                "id": 76,
-                "name": "FunctionCall",
-                "src": "544:13:0"
-              }
-            ],
-            "id": 77,
-            "name": "ExpressionStatement",
-            "src": "544:13:0"
-          },
-          {
-            "children":
-            [
-              {
-                "attributes":
-                {
-                  "argumentTypes": null,
-                  "isConstant": false,
-                  "isLValue": false,
-                  "isPure": false,
-                  "lValueRequested": false,
-                  "operator": "++",
-                  "prefix": false,
-                  "type": "uint256"
-                },
-                "children":
-                [
-                  {
-                    "attributes":
-                    {
-                      "argumentTypes": null,
-                      "overloadedDeclarations":
-                      [
-                        null
-                      ],
-                      "referencedDeclaration": 69,
-                      "type": "uint256",
-                      "value": "i"
-                    },
-                    "id": 78,
-                    "name": "Identifier",
-                    "src": "571:1:0"
-                  }
-                ],
-                "id": 79,
-                "name": "UnaryOperation",
-                "src": "571:3:0"
-              }
-            ],
-            "id": 80,
-            "name": "ExpressionStatement",
-            "src": "571:3:0"
-          }
-        ],
-        "id": 81,
-        "name": "Block",
-        "src": "530:55:0"
+        "typeIdentifier": "t_struct$_S_$3_storage_ptr",
+        "typeString": "struct C.S storage pointer"
       }
-    ],
-    "id": 85,
-    "name": "DoWhileStatement",
-    "src": "528:72:0"
-  }
+    },
+    "id": 15,
+    "isConstant": false,
+    "isLValue": true,
+    "isPure": false,
+    "lValueRequested": false,
+    "memberName": "f",
+    "nodeType": "MemberAccess",
+    "referencedDeclaration": 2,
+    "src": "122:9:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_bool",
+      "typeString": "bool"
+    }
+  },
+  "id": 16,
+  "nodeType": "DoWhileStatement",
+  "src": "110:23:0"
+}

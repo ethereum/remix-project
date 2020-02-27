@@ -1,62 +1,51 @@
 {
-      "attributes": {
-        "operator": "=",
-        "type": "uint256"
-      },
-      "children": [
-        {
-          "attributes": {
-            "type": "uint256"
-          },
-          "children": [
-            {
-              "attributes": {
-                "type": "mapping(address => uint256)",
-                "value": "c"
-              },
-              "id": 61,
-              "name": "Identifier",
-              "src": "873:1:0"
-            },
-            {
-              "attributes": {
-                "member_name": "sender",
-                "type": "address"
-              },
-              "children": [
-                {
-                  "attributes": {
-                    "type": "msg",
-                    "value": "msg"
-                  },
-                  "id": 62,
-                  "name": "Identifier",
-                  "src": "875:3:0"
-                }
-              ],
-              "id": 63,
-              "name": "MemberAccess",
-              "src": "875:10:0"
-            }
-          ],
-          "id": 64,
-          "name": "IndexAccess",
-          "src": "873:13:0"
-        },
-        {
-          "attributes": {
-            "hexvalue": "30",
-            "subdenomination": null,
-            "token": null,
-            "type": "int_const 0",
-            "value": "0"
-          },
-          "id": 65,
-          "name": "Literal",
-          "src": "889:1:0"
-        }
-      ],
-      "id": 66,
-      "name": "Assignment",
-      "src": "873:17:0"
+  "argumentTypes": null,
+  "id": 5,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "lValueRequested": false,
+  "leftHandSide":
+  {
+    "argumentTypes": null,
+    "id": 3,
+    "name": "a",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": 22,
+    "src": "52:1:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_uint256",
+      "typeString": "uint256"
     }
+  },
+  "nodeType": "Assignment",
+  "operator": "=",
+  "rightHandSide":
+  {
+    "argumentTypes": null,
+    "hexValue": "31",
+    "id": 4,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": true,
+    "kind": "number",
+    "lValueRequested": false,
+    "nodeType": "Literal",
+    "src": "56:5:0",
+    "subdenomination": "wei",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_rational_1_by_1",
+      "typeString": "int_const 1"
+    },
+    "value": "1"
+  },
+  "src": "52:9:0",
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_uint256",
+    "typeString": "uint256"
+  }
+}
