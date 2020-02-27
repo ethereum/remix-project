@@ -169,7 +169,7 @@ export interface FunctionDefinitionAstNode {
   overrides: OverrideSpecifierAstNode | null
   parameters: ParameterListAstNode
   returnParameters: ParameterListAstNode
-  modifiers: Array<any>
+  modifiers: Array<ModifierInvocationAstNode>
   body: object | null
   implemented: boolean
   scope: number
@@ -182,7 +182,7 @@ export interface VariableDeclarationAstNode {
   nodeType: 'VariableDeclaration'
   src: string
   name: string
-  typeName: object
+  typeName: ElementaryTypeNameAstNode | UserDefinedTypeNameAstNode
   constant: boolean
   stateVariable: boolean
   storageLocation: 'storage' | 'memory' | 'calldata' | 'default'
@@ -298,7 +298,7 @@ export interface BlockAstNode {
   id: number
   nodeType: 'Block'
   src: string
-  statements: Array<CommonAstNode>
+  statements: Array<any>
 }
 
 export interface PlaceholderStatementAstNode {
@@ -481,10 +481,12 @@ export interface NewExpressionAstNode extends ExpressionAttributes {
   typeName: UserDefinedTypeNameAstNode | ElementaryTypeNameAstNode
 }
 
-export interface MemberAccessAstNode extends CommonAstNode, ExpressionAttributes {
+export interface MemberAccessAstNode extends ExpressionAttributes {
+  id: number
   nodeType: 'MemberAccess'
+  src: string
   memberName: string
-  expression: object
+  expression: any
   referencedDeclaration: number | null
 }
 

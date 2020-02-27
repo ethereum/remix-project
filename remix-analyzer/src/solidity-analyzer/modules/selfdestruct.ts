@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isStatement, isSelfdestructCall } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult} from './../../types'
 
 export default class selfdestruct implements AnalyzerModule {
   name: string = 'Selfdestruct: '
@@ -13,8 +13,7 @@ export default class selfdestruct implements AnalyzerModule {
   abstractAst = new AbstractAst()
 
   visit = this.abstractAst.build_visit(
-    (node: AstNodeLegacy) => isStatement(node) ||
-              isSelfdestructCall(node)
+    (node: any) => isStatement(node) || isSelfdestructCall(node.expression)
   )
 
   report = this.abstractAst.build_report(this._report.bind(this))

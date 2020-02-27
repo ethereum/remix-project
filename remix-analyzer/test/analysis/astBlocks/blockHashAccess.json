@@ -1,16 +1,19 @@
 {
-  "attributes": {
-    "member_name": "blockhash",
-    "type": "function (uint256) returns (bytes32)"
-  },
-  "children": [
+  "argumentTypes":[
     {
-      "attributes": {
-        "type": "block",
-        "value": "block"
-      },
-      "name": "Identifier"
+      "typeIdentifier": "t_rational_3_by_1",
+      "typeString": "int_const 3"
     }
   ],
-  "name": "MemberAccess"
+  "id": 5,
+  "name": "blockhash",
+  "nodeType": "Identifier",
+  "overloadedDeclarations": [],
+  "referencedDeclaration": -5,
+  "src": "69:9:0",
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_function_blockhash_view$_t_uint256_$returns$_t_bytes32_$",
+    "typeString": "function (uint256) view returns (bytes32)"
+  }
 }

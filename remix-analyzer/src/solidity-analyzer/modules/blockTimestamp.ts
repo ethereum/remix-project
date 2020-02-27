@@ -1,19 +1,19 @@
 import { default as category } from './categories'
 import { isNowAccess, isBlockTimestampAccess } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, IdentifierAstNode, MemberAccessAstNode} from './../../types'
 
 export default class blockTimestamp implements AnalyzerModule {
-  warningNowNodes: AstNodeLegacy[] = []
-  warningblockTimestampNodes: AstNodeLegacy[] = []
+  warningNowNodes: IdentifierAstNode[] = []
+  warningblockTimestampNodes: MemberAccessAstNode[] = []
   name: string = 'Block timestamp: '
   description: string = 'Semantics maybe unclear'
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node: AstNodeLegacy): void {
-    if (isNowAccess(node)) this.warningNowNodes.push(node)
-    else if (isBlockTimestampAccess(node)) this.warningblockTimestampNodes.push(node)
+  visit (node: IdentifierAstNode | MemberAccessAstNode ): void {
+    if (node.nodeType === "Identifier" && isNowAccess(node)) this.warningNowNodes.push(node)
+    else if (node.nodeType === "MemberAccess" && isBlockTimestampAccess(node)) this.warningblockTimestampNodes.push(node)
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {

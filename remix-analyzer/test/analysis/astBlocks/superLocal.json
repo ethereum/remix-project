@@ -1,16 +1,32 @@
 {
-  "attributes": {
-    "member_name": "duper",
-    "type": "function ()"
-  },
-  "children": [
+  "argumentTypes": [],
+  "expression":
+  {
+    "argumentTypes": null,
+    "id": 10,
+    "name": "super",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": -25,
+    "src": "162:5:0",
+    "typeDescriptions":
     {
-      "attributes": {
-        "type": "contract super a",
-        "value": "super"
-      },
-      "name": "Identifier"
+      "typeIdentifier": "t_super$_B_$17",
+      "typeString": "contract super B"
     }
-  ],
-  "name": "MemberAccess"
+  },
+  "id": 12,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "lValueRequested": false,
+  "memberName": "x",
+  "nodeType": "MemberAccess",
+  "referencedDeclaration": 4,
+  "src": "162:7:0",
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_function_internal_pure$__$returns$__$",
+    "typeString": "function () pure"
+  }
 }

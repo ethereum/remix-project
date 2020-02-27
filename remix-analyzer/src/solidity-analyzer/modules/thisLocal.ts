@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { isThisLocalCall } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, MemberAccessAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode} from './../../types'
 
 export default class thisLocal implements AnalyzerModule {
   warningNodes: MemberAccessAstNode[] = []
