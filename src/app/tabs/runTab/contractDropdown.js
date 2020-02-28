@@ -85,7 +85,7 @@ class ContractDropdownUI {
         <div class="mt-2">
           ${ipfsCheckbox}
           <label for="deployAndRunPublishToIPFS" class="text-dark p-0 m-0">PUBLISH TO IPFS</label>
-          <i class="fas fa-info ml-2" aria-hidden="true" title="By publishing to IPFS is allowing to verify the contract code. The bytecode is already stored transparently in the blockchain. Publishing the source code and its ABI will greatly foster contract adoption (auditing, debugging, calling it, etc...)"></i>
+          <i class="fas fa-info ml-2" aria-hidden="true" title="Publishing to IPFS is allowing to verify the contract code. The bytecode is already stored transparently in the blockchain. Publishing the source code and its ABI will greatly foster contract adoption (auditing, debugging, calling it, etc...)"></i>
         </div>
       </div>
     `
