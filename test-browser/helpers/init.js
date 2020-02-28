@@ -18,7 +18,7 @@ module.exports = function (browser, callback, url, preloadPlugins = true) {
 }
 
 function initModules (browser, callback) {
-  browser.pause(3000)
+  browser.pause(5000)
     .click('#icon-panel div[plugin="pluginManager"]')
     .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_solidity"] button')
     .pause(5000)
