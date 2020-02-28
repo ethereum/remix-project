@@ -107,7 +107,10 @@ class PluginManagerComponent extends ViewPlugin {
 
     const activationButton = this.isActive(profile.name)
       ? yo`
-      <button onclick="${_ => this.appManager.deactivatePlugin(profile.name)}" class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${profile.name}">
+      <button
+        onclick="${_ => this.appManager.deactivatePlugin(profile.name)}"
+        class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${profile.name}"
+      >
         Deactivate
       </button>
       `
