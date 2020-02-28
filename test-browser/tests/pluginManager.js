@@ -126,6 +126,5 @@ module.exports = {
     .assert.containsText('*[data-id="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
     .end()
   },
-  
   tearDown: sauce
 }
