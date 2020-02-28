@@ -58,6 +58,7 @@ module.exports = {
     .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonudapp"]')
   },
 
+  /*
   'Should grant plugin permission (ZOKRATES)': function (browser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
     .click('*[data-id="pluginManagerSettingsButton"]')
@@ -92,6 +93,7 @@ module.exports = {
     .assert.containsText('*[data-id="pluginManagerSettingsPermissionForm"]', 'No Permission requested yet')
     .modalFooterOKClick()
   },
+  */
 
   'Should connect a local plugin': function (browser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
@@ -124,6 +126,6 @@ module.exports = {
     .assert.containsText('*[data-id="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
     .end()
   },
-
+  
   tearDown: sauce
 }

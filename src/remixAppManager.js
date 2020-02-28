@@ -23,7 +23,7 @@ export class RemixAppManager extends PluginManager {
   }
 
   async canActivate (from, to) {
-    return true
+    return from.name === 'manager'
   }
 
   async canDeactivate (from, to) {
