@@ -187,7 +187,7 @@ class App {
     self._components.resizeFeature = new PanelsResize(self._view.sidepanel)
 
     self._view.el = yo`
-      <div style="visibility:hidden" class=${css.remixIDE}>
+      <div style="visibility:hidden" class=${css.remixIDE} data-id="remixIDE">
         ${self._view.iconpanel}
         ${self._view.sidepanel}
         ${self._components.resizeFeature.render()}

@@ -16,7 +16,9 @@ function checkStyle (browser, cssSelector, styleProperty, expectedResult, callba
   browser.execute(function (cssSelector, styleProperty) {
     return window.getComputedStyle(document.querySelector(cssSelector)).getPropertyValue(styleProperty)
   }, [cssSelector, styleProperty], function (result) {
-    browser.assert.equal(result.value, expectedResult)
+    const value = result.value
+
+    browser.assert.equal(value.trim(), expectedResult)
     callback()
   })
 }

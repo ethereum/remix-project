@@ -13,7 +13,7 @@ var css = csjs`
 `
 
 module.exports = function copyToClipboard (getContent, tip = 'Copy value to clipboard', icon = 'fa-copy') {
-  var copyIcon = yo`<i title="${tip}" class="${css.copyIcon} far ${icon}" aria-hidden="true"></i>`
+  var copyIcon = yo`<i title="${tip}" class="${css.copyIcon} far ${icon}" data-id="copyToClipboardCopyIcon" aria-hidden="true"></i>`
   copyIcon.onclick = (event) => {
     event.stopPropagation()
     var copiableContent

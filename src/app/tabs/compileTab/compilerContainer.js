@@ -115,7 +115,7 @@ class CompilerContainer {
     const displayed = name || '<no file selected>'
     const disabled = name ? '' : 'disabled'
     const compileBtn = yo`
-      <button id="compileBtn" class="btn btn-primary btn-block ${disabled}" title="Compile" onclick="${this.compile.bind(this)}">
+      <button id="compileBtn" data-id="compilerContainerCompileBtn" class="btn btn-primary btn-block ${disabled}" title="Compile" onclick="${this.compile.bind(this)}">
         <span>${this._view.compileIcon} Compile ${displayed}</span>
       </button>
     `

@@ -190,7 +190,7 @@ export class LandingPage extends ViewPlugin {
           <div class="mb-5">
             <h4>Environments</h4>
             <div class="${css.enviroments} pt-2">
-              <button class="btn btn-lg btn-secondary mr-3" onclick=${() => startSolidity()}>Solidity</button>
+              <button class="btn btn-lg btn-secondary mr-3" data-id="landingPageStartSolidity" onclick=${() => startSolidity()}>Solidity</button>
               <button class="btn btn-lg btn-secondary mr-3" onclick=${() => startVyper()}>Vyper</button>
             </div>
           </div>
