@@ -20,6 +20,7 @@ module.exports = {
     .clickLaunchIcon('solidity')
     .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
     .clickLaunchIcon('udapp')
+    .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
     .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
     .click('#runTabView button[class^="instanceButton"]')
     .waitForElementPresent('.instance:nth-of-type(2)')

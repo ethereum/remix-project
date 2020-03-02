@@ -22,6 +22,7 @@ module.exports = {
       done()
     })
     .modalFooterOKClick()
+    .end()
   },
   'Publish on Swarm': '' + function (browser) {
     browser

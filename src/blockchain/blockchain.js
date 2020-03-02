@@ -56,18 +56,6 @@ class Blockchain {
     this.executionContext.event.register('removeProvider', (name) => {
       this.event.trigger('removeProvider', [name])
     })
-
-    // this.udapp.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
-      // this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
-    // })
-
-    // this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
-      // this.event.trigger('transactionExecuted', [error, from, to, data, call, txResult, timestamp])
-    // })
-
-    // this.udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
-      // this.event.trigger('transactionBroadcasted', [txhash, networkName])
-    // })
   }
 
   setupProviders () {
@@ -321,7 +309,8 @@ class Blockchain {
   resetEnvironment () {
     this.getCurrentProvider().resetEnvironment()
     // TODO: most params here can be refactored away in txRunner
-    this.txRunner = new TxRunner(this.providers.vm.accounts, {
+    // this.txRunner = new TxRunner(this.providers.vm.accounts, {
+    this.txRunner = new TxRunner(this.providers.vm.RemixSimulatorProvider.Accounts.accounts, {
       // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
       config: this.config,
       // TODO: to refactor, TxRunner already has access to executionContext
@@ -430,7 +419,8 @@ class Blockchain {
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
-          if (self.executionContext.isVM() && !self.providers.vm.accounts[address]) {
+          // if (self.executionContext.isVM() && !self.providers.vm.accounts[address]) {
+          if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
             return next('Invalid account selected')
           }
           next(null, address, value, gasLimit)
