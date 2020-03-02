@@ -11,6 +11,8 @@ module.exports = {
   },
   'Add Lib Test File': function (browser) {
     browser.addFile('Untitled5.sol', sources[0]['browser/Untitled5.sol'])
+          .clickLaunchIcon('udapp')
+          .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
   },
   'Test Auto Deploy Lib': function (browser) {
     let addressRef
