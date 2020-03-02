@@ -53,7 +53,7 @@ module.exports = class SettingsTab extends ViewPlugin {
       return yo`<div class="card-text themes-container">
         ${themes.map((aTheme) => {
           let el = yo`<div class="${css.frow} form-check ${css.crow}">
-          <input type="radio" onchange=${event => { onswitchTheme(event, aTheme.name) }} class="align-middle form-check-input" name="theme" id="${aTheme.name}"   >
+          <input type="radio" onchange=${event => { onswitchTheme(event, aTheme.name) }} class="align-middle form-check-input" name="theme" id="${aTheme.name}" data-id="settingsTabTheme${aTheme.name}"  >
           <label class="form-check-label" for="${aTheme.name}">${aTheme.name} (${aTheme.quality})</label>
         </div>`
           if (this._deps.themeModule.active === aTheme.name) el.querySelector('input').setAttribute('checked', 'checked')
@@ -68,18 +68,18 @@ module.exports = class SettingsTab extends ViewPlugin {
     if (self._view.el) return self._view.el
 
     // Gist settings
-    var gistAccessToken = yo`<input id="gistaccesstoken" type="password" class="form-control mb-2 ${css.inline}" placeholder="Token">`
+    var gistAccessToken = yo`<input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" class="form-control mb-2 ${css.inline}" placeholder="Token">`
     var token = this.config.get('settings/gist-access-token')
     if (token) gistAccessToken.value = token
-    var gistAddToken = yo`<input class="${css.savegisttoken} btn btn-sm btn-primary" id="savegisttoken" onclick=${() => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
-    var gistRemoveToken = yo`<input class="btn btn-sm btn-primary" id="removegisttoken" onclick=${() => { gistAccessToken.value = ''; this.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
+    var gistAddToken = yo`<input class="${css.savegisttoken} btn btn-sm btn-primary" id="savegisttoken" data-id="settingsTabSaveGistToken" onclick=${() => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
+    var gistRemoveToken = yo`<input class="btn btn-sm btn-primary" id="removegisttoken" data-id="settingsTabRemoveGistToken" onclick=${() => { gistAccessToken.value = ''; this.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
     this._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => this.config.get('settings/gist-access-token'))}${gistAddToken}${gistRemoveToken}</div>`
-    this._view.optionVM = yo`<input onchange=${onchangeOption} class="align-middle form-check-input" id="alwaysUseVM" type="checkbox">`
+    this._view.optionVM = yo`<input onchange=${onchangeOption} class="align-middle form-check-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox">`
     if (this.config.get('settings/always-use-vm') === undefined) this.config.set('settings/always-use-vm', true)
     if (this.config.get('settings/always-use-vm')) this._view.optionVM.setAttribute('checked', '')
     this._view.personal = yo`<input onchange=${onchangePersonal} id="personal" type="checkbox" class="align-middle form-check-input">`
     if (this.config.get('settings/personal-mode')) this._view.personal.setAttribute('checked', '')
-    this._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" type="checkbox" class="form-check-input">`
+    this._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" class="form-check-input">`
 
     if (this.config.get('settings/generate-contract-metadata')) this._view.generateContractMetadata.setAttribute('checked', '')
 
@@ -92,7 +92,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     <div class="${css.info} card">
       <div class="card-body">
       <h6 class="${css.title} card-title">Have a question?</h6>
-      <button class="btn btn-primary sm-1" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}">Gitter Channel</button>
+      <button class="btn btn-primary sm-1" data-id="settingsTabGitterChannelButton" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}">Gitter Channel</button>
       </div>
     </div>`
 
@@ -143,7 +143,7 @@ module.exports = class SettingsTab extends ViewPlugin {
         </div>
       </div>`
     this._view.el = yo`
-      <div class="${css.settingsTabView}" id="settingsView">
+      <div class="${css.settingsTabView}" id="settingsView" data-id="settingsTabSettingsView">
         ${this._view.config.homePage}
         ${this._view.config.general}
         ${this._view.gistToken}
