@@ -52,30 +52,23 @@ module.exports = {
       when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
     */
-    const browserName = browser.options.desiredCapabilities.browserName
 
-    return browserName === 'chrome' ? browser
-      .waitForElementVisible('#icon-panel', 2000)
-      .clickLaunchIcon('fileExplorers')
-      .addFile('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'])
-      .clickLaunchIcon('solidity')
-      .testContracts('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'], ['SafeMath'])
-      : ''
+    browser.waitForElementVisible('#icon-panel', 2000)
+    .clickLaunchIcon('fileExplorers')
+    .addFile('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'])
+    .clickLaunchIcon('solidity')
+    .testContracts('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'], ['SafeMath'])
   },
   'Import from node_modules and reference a github import': function (browser) {
-    const browserName = browser.options.desiredCapabilities.browserName
-
-    return browserName === 'chrome' ? browser
-      .waitForElementVisible('#icon-panel', 2000)
-      .clickLaunchIcon('fileExplorers')
-      .addFile('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'])
-      .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.6.2+commit.bacdbe57.js') // open-zeppelin moved to pragma ^0.6.0
-      .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
-      .clickLaunchIcon('pluginManager')
-      .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
-      .end()
-      : ''
+    browser.waitForElementVisible('#icon-panel', 2000)
+    .clickLaunchIcon('fileExplorers')
+    .addFile('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'])
+    .clickLaunchIcon('solidity')
+    .setSolidityCompilerVersion('soljson-v0.6.2+commit.bacdbe57.js') // open-zeppelin moved to pragma ^0.6.0
+    .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
+    .clickLaunchIcon('pluginManager')
+    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+    .end()
   },
   tearDown: sauce
 }
@@ -87,9 +80,8 @@ function runTests (browser, testData) {
     browser.end()
     return
   }
-  if (browserName === 'firefox') {
+  if (browserName === 'firefox' || browserName === 'chrome') {
     console.log('do not run remixd test for ' + browserName + ': TODO to reenable later')
-    browser.end()
     return
   }
   browser
