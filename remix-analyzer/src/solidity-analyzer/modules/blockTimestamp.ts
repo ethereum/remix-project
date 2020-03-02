@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { isNowAccess, isBlockTimestampAccess } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, IdentifierAstNode, MemberAccessAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, IdentifierAstNode, MemberAccessAstNode} from './../../types'
 
 export default class blockTimestamp implements AnalyzerModule {
   warningNowNodes: IdentifierAstNode[] = []

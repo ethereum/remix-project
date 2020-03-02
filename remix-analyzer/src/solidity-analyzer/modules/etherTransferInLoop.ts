@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { isTransfer } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, ForStatementAstNode, WhileStatementAstNode, CommonAstNode, ExpressionStatementAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, ForStatementAstNode, WhileStatementAstNode, CommonAstNode, ExpressionStatementAstNode} from './../../types'
 
 export default class etherTransferInLoop implements AnalyzerModule {
   relevantNodes: CommonAstNode[] = []
@@ -11,13 +11,13 @@ export default class etherTransferInLoop implements AnalyzerModule {
   algorithm: ModuleAlgorithm = algorithm.EXACT
   
   visit (node: ForStatementAstNode | WhileStatementAstNode): void {
-      let transferNodes: CommonAstNode[] = []
-      transferNodes = node.body.statements.filter(child => (
-                        child.nodeType === 'ExpressionStatement' &&
-                        child.expression.nodeType === 'FunctionCall' &&
-                        isTransfer(child.expression.expression)
-                        )
-                      )
+      let transferNodes: ExpressionStatementAstNode[] = []
+      if(node.body.nodeType === 'Block')
+        transferNodes = node.body.statements.filter(child => ( child.nodeType === 'ExpressionStatement' &&
+                          child.expression.nodeType === 'FunctionCall' && isTransfer(child.expression.expression)))
+      // When loop body is described without braces
+      else if(node.body.nodeType === 'ExpressionStatement' && node.body.expression.nodeType === 'FunctionCall' && isTransfer(node.body.expression.expression))
+        transferNodes.push(node.body)
       if (transferNodes.length > 0) {
         this.relevantNodes.push(...transferNodes)
       }
