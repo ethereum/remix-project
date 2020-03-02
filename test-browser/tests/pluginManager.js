@@ -70,6 +70,7 @@ module.exports = {
     .pause(5000)
     .frame(0)
     .useXpath().click("//span[text()='Compile']")
+    .pause(2000)
     .frameParent()
     .useCss().waitForElementVisible('*[data-id="modalDialogContainer"]')
     .assert.containsText('*[data-id="permissionHandlerMessage"]', 'ZOKRATES" WOULD LIKE TO ACCESS "FILE MANAGER" :')
