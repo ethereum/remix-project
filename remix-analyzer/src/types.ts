@@ -312,8 +312,8 @@ export interface IfStatementAstNode {
   nodeType: 'IfStatement'
   src: string
   condition: object
-  trueBody: object
-  falseBody: object
+  trueBody: BlockAstNode | ExpressionStatementAstNode
+  falseBody: BlockAstNode | ExpressionStatementAstNode
 }
 
 export interface TryCatchClauseAstNode {
@@ -338,7 +338,7 @@ export interface WhileStatementAstNode {
   nodeType: 'WhileStatement' | 'DoWhileStatement'
   src: string
   condition: any
-  body: BlockAstNode
+  body: BlockAstNode | ExpressionStatementAstNode
 }
 
 export interface ForStatementAstNode {
@@ -348,7 +348,7 @@ export interface ForStatementAstNode {
   initializationExpression: VariableDeclarationStatementAstNode
   condition: any
   loopExpression: ExpressionStatementAstNode
-  body: BlockAstNode
+  body: BlockAstNode | ExpressionStatementAstNode
 }
 
 export interface ContinueAstNode {
@@ -423,7 +423,7 @@ export interface AssignmentAstNode extends ExpressionAttributes {
   nodeType: 'Assignment'
   src: string
   operator: string
-  leftHandSide: object
+  leftHandSide: any
   rightHandSide: object
 }
 

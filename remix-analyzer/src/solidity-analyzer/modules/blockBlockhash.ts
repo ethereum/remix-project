@@ -1,16 +1,16 @@
 import { default as category } from './categories'
 import { isBlockBlockHashAccess } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, FunctionCallAstNode} from './../../types'
 
 export default class blockBlockhash implements AnalyzerModule {
-  warningNodes: AstNodeLegacy[] = []
+  warningNodes: FunctionCallAstNode[] = []
   name: string = 'Block.blockhash usage: '
   description: string = 'Semantics maybe unclear'
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node: AstNodeLegacy): void {
+  visit (node: FunctionCallAstNode): void {
     if (isBlockBlockHashAccess(node)) this.warningNodes.push(node)
   }
 
