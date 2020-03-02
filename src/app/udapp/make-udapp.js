@@ -52,6 +52,5 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
     }
   })
   txlistener.startListening()
-
-  return {txlistener, eventsDecoder}
+  registry.put({api: eventsDecoder, name: 'eventsDecoder'})
 }

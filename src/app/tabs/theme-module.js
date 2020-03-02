@@ -84,4 +84,15 @@ export class ThemeModule extends Plugin {
     this.emit('themeChanged', nextTheme)
     this.events.emit('themeChanged', nextTheme)
   }
+
+  /**
+   * fixes the invertion for images since this should be adjusted when we switch between dark/light qualified themes
+   * @param {element} [image] - the dom element which invert should be fixed to increase visibility
+   */
+  fixInvert (image) {
+    const invert = this.currentTheme().quality === 'dark' ? 1 : 0
+    if (image) {
+      image.style.filter = `invert(${invert})`
+    }
+  }
 }

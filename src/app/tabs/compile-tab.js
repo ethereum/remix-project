@@ -168,12 +168,8 @@ class CompileTab extends ViewPlugin {
       }
     })
 
-    globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
-      const invert = theme.quality === 'dark' ? 1 : 0
-      const img = document.getElementById('swarmLogo')
-      if (img) {
-        img.style.filter = `invert(${invert})`
-      }
+    globalRegistry.get('themeModule').api.events.on('themeChanged', () => {
+      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('swarmLogo'))
     })
 
     // Run the compiler instead of trying to save the website
