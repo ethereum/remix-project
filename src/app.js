@@ -35,12 +35,14 @@ const DebuggerTab = require('./app/tabs/debugger-tab')
 const TestTab = require('./app/tabs/test-tab')
 const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
-
+const Terminal = require('./app/panels/terminal')
+const ContextualListener = require('./app/editor/contextualListener')
 import { basicLogo } from './app/ui/svgLogo'
 
 import { RunTab, makeUdapp } from './app/udapp'
 
 import PanelsResize from './lib/panels-resize'
+import { Engine } from '@remixproject/engine'
 import { RemixAppManager } from './remixAppManager'
 import { FramingService } from './framingService'
 import { MainView } from './app/panels/main-view'
@@ -229,12 +231,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // APP_MANAGER
   const appManager = new RemixAppManager({})
+  const engine = new Engine(appManager)
+  await engine.onload()
   const workspace = appManager.pluginLoader.get()
 
   // SERVICES
-  // ----------------- import content servive ----------------------------
+  // ----------------- import content servive ------------------------
   const contentImport = new CompilerImport()
-  // ----------------- theme servive ----------------------------
+  // ----------------- theme servive ---------------------------------
   const themeModule = new ThemeModule(registry)
   registry.put({api: themeModule, name: 'themeModule'})
   themeModule.initTheme(() => {
@@ -247,6 +251,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const editor = new Editor({}, themeModule) // wrapper around ace editor
   registry.put({api: editor, name: 'editor'})
   editor.event.register('requiringToSaveCurrentfile', () => fileManager.saveCurrentFile())
+
   // ----------------- fileManager servive ----------------------------
   const fileManager = new FileManager(editor)
   registry.put({api: fileManager, name: 'filemanager'})
@@ -254,20 +259,38 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const blockchain = new Blockchain(registry.get('config').api)
   const pluginUdapp = new PluginUDapp(blockchain)
 
-  // ----------------- compilation metadata generation servive ----------------------------
+  // ----------------- compilation metadata generation servive ---------
   const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
   // ----------------- compilation result service (can keep track of compilation results) ----------------------------
   const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
   registry.put({api: compilersArtefacts, name: 'compilersartefacts'})
 
-  const {eventsDecoder, txlistener} = makeUdapp(blockchain, compilersArtefacts, (domEl) => mainview.getTerminal().logHtml(domEl))
-  // ----------------- network service (resolve network id / name) ----------------------------
+  // ----------------- network service (resolve network id / name) -----
   const networkModule = new NetworkModule(blockchain)
-  // ----------------- convert offset to line/column service ----------------------------
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
+  // ----------------- convert offset to line/column service -----------
+  const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
 
-  appManager.register([
+  // -------------------Terminal----------------------------------------
+
+  const terminal = new Terminal(
+    { appManager, blockchain },
+    {
+      getPosition: (event) => {
+        var limitUp = 36
+        var limitDown = 20
+        var height = window.innerHeight
+        var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
+        newpos = (newpos < height - limitDown) ? newpos : height - limitDown
+        return height - newpos
+      }
+    }
+  )
+  makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
+
+  const contextualListener = new ContextualListener({editor})
+
+  engine.register([
     contentImport,
     themeModule,
     editor,
@@ -275,24 +298,24 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     compilerMetadataGenerator,
     compilersArtefacts,
     networkModule,
-    offsetToLineColumnConverter
+    offsetToLineColumnConverter,
+    contextualListener,
+    terminal
   ])
 
   // LAYOUT & SYSTEM VIEWS
   const appPanel = new MainPanel()
-  const mainview = new MainView(editor, appPanel, fileManager, appManager, txlistener, eventsDecoder, blockchain)
+  const mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
   registry.put({ api: mainview, name: 'mainview' })
 
-  appManager.register([
-    appPanel
-  ])
+  engine.register(appPanel)
 
   // those views depend on app_manager
   const menuicons = new VerticalIcons(appManager)
   const landingPage = new LandingPage(appManager, menuicons)
   const sidePanel = new SidePanel(appManager, menuicons)
   const hiddenPanel = new HiddenPanel()
-  const pluginManagerComponent = new PluginManagerComponent(appManager)
+  const pluginManagerComponent = new PluginManagerComponent(appManager, engine)
   const filePanel = new FilePanel(appManager)
   let settings = new SettingsTab(
     registry.get('config').api,
@@ -306,7 +329,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._view.sidepanel.appendChild(sidePanel.render())
   document.body.appendChild(hiddenPanel.render()) // Hidden Panel is display none, it can be directly on body
 
-  appManager.register([
+  engine.register([
     menuicons,
     landingPage,
     sidePanel,
@@ -344,7 +367,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     new Renderer()
   )
 
-  appManager.register([
+  engine.register([
     compileTab,
     run,
     debug,
@@ -354,17 +377,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   ])
 
   try {
-    appManager.register(await appManager.registeredPlugins())
+    engine.register(await appManager.registeredPlugins())
   } catch (e) {
     console.log('couldn\'t register iframe plugins', e.message)
   }
 
-  await appManager.activate(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'offsetToLineColumnConverter'])
-  await appManager.activate(['mainPanel'])
-  await appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
+  await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'offsetToLineColumnConverter'])
+  await appManager.activatePlugin(['mainPanel', 'menuicons'])
+  await appManager.activatePlugin(['home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'terminal'])
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) await appManager.activate(workspace)
+  if (Array.isArray(workspace)) await appManager.activatePlugin(workspace)
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
@@ -390,6 +413,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   if (isElectron()) {
-    appManager.activate(['remixd'])
+    appManager.activatePlugin('remixd')
   }
 }
