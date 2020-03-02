@@ -66,7 +66,7 @@ export class VerticalIcons extends Plugin {
    */
   addIcon ({kind, name, icon, displayName, tooltip}) {
     let title = (tooltip || displayName || name)
-    title = title.replace(/^\w/, c => c.toUpperCase());
+    title = title.replace(/^\w/, c => c.toUpperCase())
     this.icons[name] = yo`
       <div
         class="${css.icon}"
