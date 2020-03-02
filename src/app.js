@@ -170,7 +170,7 @@ class App {
 
     // center panel, resizable
     self._view.sidepanel = yo`
-      <div id="side-panel" data-id="remixIdeSidePanel" style="min-width: 320px;" class=${css.sidepanel}>
+      <div id="side-panel" data-id="remixIdeSidePanel" style="min-width: 320px;" class="${css.sidepanel} border-right border-left">
         ${''}
       </div>
     `
