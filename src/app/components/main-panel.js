@@ -20,8 +20,8 @@ const profile = {
 }
 
 export class MainPanel extends AbstractPanel {
-  constructor (options) {
-    super(profile, options)
+  constructor () {
+    super(profile)
   }
 
   render () {

@@ -1,75 +1,77 @@
 /* global localStorage, fetch */
-import { PluginEngine, IframePlugin } from '@remixproject/engine'
+import { PluginManager, IframePlugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
-import { PermissionHandler } from './app/ui/persmission-handler'
 import QueryParams from './lib/query-params'
 
 const requiredModules = [ // services + layout views + system views
-  'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport',
+  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport',
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
   'terminal', 'settings', 'pluginManager']
 
-const settings = {
-  permissionHandler: new PermissionHandler(),
-  autoActivate: false,
-  natives: ['vyper', 'workshops', 'ethdoc', 'etherscan'] // Force iframe plugin to be seen as native
+export function isNative (name) {
+  const nativePlugins = ['vyper', 'workshops', 'ethdoc', 'etherscan']
+  return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
-export class RemixAppManager extends PluginEngine {
+export class RemixAppManager extends PluginManager {
 
   constructor (plugins) {
-    super(plugins, settings)
+    super()
     this.event = new EventEmitter()
-    this.registered = {}
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
   }
 
-  onActivated (plugin) {
+  async canActivate (from, to) {
+    return from.name === 'manager'
+  }
+
+  async canDeactivate (from, to) {
+    return from.name === 'manager'
+  }
+
+  async canCall (From, to, method) {
+    // todo This is the dafault behaviour, we could save user choises in session scope
+    return true
+  }
+
+  onPluginActivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
-    this.event.emit('activate', plugin.name)
+    this.event.emit('activate', plugin)
   }
 
   getAll () {
-    return Object.keys(this.registered).map((p) => {
-      return this.registered[p]
+    return Object.keys(this.profiles).map((p) => {
+      return this.profiles[p]
     })
   }
 
-  getOne (name) {
-    return this.registered[name]
-  }
-
   getIds () {
-    return Object.keys(this.registered)
+    return Object.keys(this.profiles)
   }
 
-  onDeactivated (plugin) {
+  onPluginDeactivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
-    this.event.emit('deactivate', plugin.name)
+    this.event.emit('deactivate', plugin)
   }
 
   onRegistration (plugin) {
-    if (!this.registered) this.registered = {}
-    this.registered[plugin.name] = plugin
     this.event.emit('added', plugin.name)
   }
 
-  // TODO check whether this can be removed
-  ensureActivated (apiName) {
-    if (!this.isActive(apiName)) this.activateOne(apiName)
+  async ensureActivated (apiName) {
+    await this.activatePlugin(apiName)
     this.event.emit('ensureActivated', apiName)
   }
 
-  // TODO check whether this can be removed
-  ensureDeactivated (apiName) {
-    if (this.isActive(apiName)) this.deactivateOne(apiName)
+  async ensureDeactivated (apiName) {
+    await this.deactivatePlugin(apiName)
     this.event.emit('ensureDeactivated', apiName)
   }
 
-  deactivateOne (name) {
+  deactivatePlugin (name) {
     if (requiredModules.includes(name)) return
-    super.deactivateOne(name)
+    super.deactivatePlugin(name)
   }
 
   isRequired (name) {
