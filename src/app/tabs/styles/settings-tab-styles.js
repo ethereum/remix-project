@@ -85,7 +85,7 @@ const css = csjs`
   }
   .inline {
     display: inline;
-    width: 50%;
+    width: 40%;
   }
 `
 
