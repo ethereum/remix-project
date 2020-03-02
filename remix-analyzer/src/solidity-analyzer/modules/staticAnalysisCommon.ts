@@ -1,6 +1,6 @@
 'use strict'
 
-import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, CommonAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, IdentifierAstNode, MappingAstNode, IndexAccessAstNode, UserDefinedTypeNameAstNode, BlockAstNode } from "types"
+import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, CommonAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, IdentifierAstNode, MappingAstNode, IndexAccessAstNode, UserDefinedTypeNameAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode } from "types"
 
 const remixLib = require('remix-lib')
 const util = remixLib.util
@@ -125,7 +125,7 @@ const abiNamespace = {
 
 // #################### Trivial Getters
 
-function getType (node: any) {
+function getType (node: any): string {
   return node.typeDescriptions.typeString
 }
 
@@ -136,21 +136,20 @@ function getType (node: any) {
  * @func {ASTNode} Function call node
  * @return {string} type of function call
  */
-function getFunctionCallType (func) {
-  if (!(isExternalDirectCall(func) || isThisLocalCall(func) || isSuperLocalCall(func) || isLocalCall(func) || isLibraryCall(func))) throw new Error('staticAnalysisCommon.js: not function call Node')
-  if (isExternalDirectCall(func) || isThisLocalCall(func) || isSuperLocalCall(func) || isLibraryCall(func)) return func.attributes.type
-  return findFirstSubNodeLTR(func, exactMatch(nodeTypes.IDENTIFIER)).attributes.type
+function getFunctionCallType (func: FunctionCallAstNode): string {
+  return getType(func.expression)
 }
 
 /**
  * Get the variable name written to by a effect node, except for inline assembly because there is no information to find out where we write to. Trows if not a effect node or is inlineassmbly.
  * Example: x = 10; => x
- * @effectNode {ASTNode} Function call node
+ * @effectNode {ASTNode} Assignmnet node
  * @return {string} variable name written to
  */
-function getEffectedVariableName (effectNode) {
-  if (!isEffect(effectNode) || effectNode.nodeType === "InlineAssembly") throw new Error('staticAnalysisCommon.js: not an effect Node or inline assembly')
-  return findFirstSubNodeLTR(effectNode, exactMatch(nodeTypes.IDENTIFIER)).attributes.value
+function getEffectedVariableName (effectNode: AssignmentAstNode | UnaryOperationAstNode): string {
+  if (!isEffect(effectNode)) throw new Error('staticAnalysisCommon.js: not an effect Node')
+  if(effectNode.nodeType === 'Assignment') return effectNode.leftHandSide.name
+  else /* if(effectNode.nodeType === 'UnaryOperation') */ return effectNode.subExpression.name
 }
 
 /**
@@ -194,9 +193,9 @@ function getSuperLocalCallName (localCallNode: FunctionCallAstNode): string {
  * @extDirectCall {ASTNode} Function call node
  * @return {string} name of the contract the function is defined in
  */
-function getExternalDirectCallContractName (extDirectCall) {
-  if (!isExternalDirectCall(extDirectCall)) throw new Error('staticAnalysisCommon.js: not an external direct call Node')
-  return extDirectCall.children[0].attributes.type.replace(new RegExp(basicRegex.CONTRACTTYPE), '')
+function getExternalDirectCallContractName (extDirectCall: FunctionCallAstNode): string {
+  if (!isExternalDirectCall(extDirectCall.expression)) throw new Error('staticAnalysisCommon.js: not an external direct call Node')
+  return extDirectCall.expression.expression.typeDescriptions.typeString.replace(new RegExp(basicRegex.CONTRACTTYPE), '')
 }
 
 /**
@@ -209,7 +208,7 @@ function getExternalDirectCallContractName (extDirectCall) {
  * @thisLocalCall {ASTNode} Function call node
  * @return {string} name of the contract the function is defined in
  */
-function getThisLocalCallContractName (thisLocalCall: FunctionCallAstNode) {
+function getThisLocalCallContractName (thisLocalCall: FunctionCallAstNode): string {
   if (!isThisLocalCall(thisLocalCall.expression)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
   return thisLocalCall.expression.expression.typeDescriptions.typeString.replace(new RegExp(basicRegex.CONTRACTTYPE), '')
 }
@@ -222,9 +221,9 @@ function getThisLocalCallContractName (thisLocalCall: FunctionCallAstNode) {
  * @extDirectCall {ASTNode} Function call node
  * @return {string} name of the function called
  */
-function getExternalDirectCallMemberName (extDirectCall) {
-  if (!isExternalDirectCall(extDirectCall)) throw new Error('staticAnalysisCommon.js: not an external direct call Node')
-  return extDirectCall.attributes.member_name
+function getExternalDirectCallMemberName (extDirectCall: FunctionCallAstNode): string {
+  if (!isExternalDirectCall(extDirectCall.expression)) throw new Error('staticAnalysisCommon.js: not an external direct call Node')
+  return extDirectCall.expression.memberName
 }
 
 /**
@@ -234,7 +233,7 @@ function getExternalDirectCallMemberName (extDirectCall) {
  * @contract {ASTNode} Contract Definition node
  * @return {string} name of a contract defined
  */
-function getContractName (contract: ContractDefinitionAstNode) {
+function getContractName (contract: ContractDefinitionAstNode): string {
   return contract.name
 }
 
@@ -327,7 +326,7 @@ function getFunctionDefinitionReturnParameterPart (funcNode: FunctionDefinitionA
  * @func {ASTNode} function call node
  * @return {string} parameter signature
  */
-function getFunctionCallTypeParameterType (func) {
+function getFunctionCallTypeParameterType (func: FunctionCallAstNode): string | undefined {
   const type = getFunctionCallType(func)
   if (type.startsWith('function (')) {
     let paramTypes = ''
@@ -390,21 +389,37 @@ function getLibraryCallMemberName (funcCall: FunctionCallAstNode): string {
  * @func {ASTNode} contract defintion
  * @return {string} full qualified identifier for the function call
  */
-function getFullQualifiedFunctionCallIdent (contract, func) {
+function getFullQualifiedFunctionCallIdent (contract: ContractDefinitionAstNode, func: FunctionCallAstNode): string {
   if (isLocalCall(func)) return getContractName(contract) + '.' + getLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
-  else if (isThisLocalCall(func)) return getThisLocalCallContractName(func) + '.' + getThisLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
-  else if (isSuperLocalCall(func)) return getContractName(contract) + '.' + getSuperLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
-  else if (isExternalDirectCall(func)) return getExternalDirectCallContractName(func) + '.' + getExternalDirectCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
-  else if (isLibraryCall(func)) return getLibraryCallContractName(func) + '.' + getLibraryCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
+  else if (isThisLocalCall(func.expression)) return getThisLocalCallContractName(func) + '.' + getThisLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
+  else if (isSuperLocalCall(func.expression)) return getContractName(contract) + '.' + getSuperLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
+  else if (isExternalDirectCall(func.expression)) return getExternalDirectCallContractName(func) + '.' + getExternalDirectCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
+  else if (isLibraryCall(func.expression)) return getLibraryCallContractName(func.expression) + '.' + getLibraryCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else throw new Error('staticAnalysisCommon.js: Can not get function name form non function call node')
 }
 
-function getFullQuallyfiedFuncDefinitionIdent (contract, func, paramTypes) {
+function getFullQuallyfiedFuncDefinitionIdent (contract: ContractDefinitionAstNode, func: FunctionDefinitionAstNode, paramTypes: any[]): string {
   return getContractName(contract) + '.' + getFunctionDefinitionName(func) + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
 }
 
-function getUnAssignedTopLevelBinOps (subScope) {
-  return subScope.children.filter(isBinaryOpInExpression)
+function getUnAssignedTopLevelBinOps (subScope: BlockAstNode | IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): ExpressionStatementAstNode[] {
+  let result: ExpressionStatementAstNode[] = []
+  if(subScope.nodeType === 'Block')
+    result = subScope.statements.filter(isBinaryOpInExpression)
+  // for 'without braces' loops
+  else if (isSubScopeStatement(subScope)) {
+    if (subScope.nodeType === 'IfStatement'){
+      if((subScope.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.trueBody)))
+        result.push(subScope.trueBody) 
+      if (subScope.falseBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.falseBody))
+        result.push(subScope.falseBody) 
+    }
+    else {
+      if(subScope.body.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.body))
+        result.push(subScope.body)
+    }
+  }
+  return result 
 }
 
 // function getLoopBlockStartIndex (node: ForStatementAstNode | WhileStatementAstNode): 3|1 {
@@ -497,8 +512,8 @@ function isMappingIndexAccess (node: IndexAccessAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLocalCallGraphRelevantNode (node) {
-  return ((isLocalCall(node) || isSuperLocalCall(node) || isLibraryCall(node)) && !isBuiltinFunctionCall(node))
+function isLocalCallGraphRelevantNode (node: FunctionCallAstNode): boolean {
+  return ((isLocalCall(node) || isSuperLocalCall(node.expression) || isLibraryCall(node.expression)) && !isBuiltinFunctionCall(node))
 }
 
 /**
@@ -560,7 +575,7 @@ function isStorageVariableDeclaration (node: VariableDeclarationAstNode): boolea
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isInteraction (node) {
+function isInteraction (node: MemberAccessAstNode): boolean {
   return isLLCall(node) || isLLSend(node) || isExternalDirectCall(node) || isTransfer(node) || isLLCall050(node) || isLLSend050(node)
 }
 
@@ -569,8 +584,10 @@ function isInteraction (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isEffect (node) {
-  return node.nodeType === "Assignment" || isPlusPlusUnaryOperation(node) || isMinusMinusUnaryOperation(node) || node.nodeType === "InlineAssembly"
+function isEffect (node: AssignmentAstNode | UnaryOperationAstNode | InlineAssemblyAstNode): boolean {
+  return node.nodeType === "Assignment" || 
+        (node.nodeType === "UnaryOperation" && (isPlusPlusUnaryOperation(node) || isMinusMinusUnaryOperation(node))) || 
+        node.nodeType === "InlineAssembly"
 }
 
 /**
@@ -579,7 +596,7 @@ function isEffect (node) {
  * @node {list Variable declaration} state variable declaration currently in scope
  * @return {bool}
  */
-function isWriteOnStateVariable (effectNode, stateVariables) {
+function isWriteOnStateVariable (effectNode: AssignmentAstNode | InlineAssemblyAstNode | UnaryOperationAstNode, stateVariables: any[]) {
   return effectNode.nodeType === "InlineAssembly" || (isEffect(effectNode) && isStateVariable(getEffectedVariableName(effectNode), stateVariables))
 }
 
@@ -589,7 +606,7 @@ function isWriteOnStateVariable (effectNode, stateVariables) {
  * @node {list Variable declaration} state variable declaration currently in scope
  * @return {bool}
  */
-function isStateVariable (name, stateVariables) {
+function isStateVariable (name: string, stateVariables: any[]): boolean {
   return stateVariables.some((item) => name === getDeclaredVariableName(item))
 }
 
@@ -634,17 +651,24 @@ function isIntDivision (node: BinaryOperationAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isSubScopeWithTopLevelUnAssignedBinOp (node) {
-  return nodeType(node, exactMatch(nodeTypes.BLOCK)) && node.statements.some(isBinaryOpInExpression) ||
-          isSubScopeStatement(node) && node.children && node.children.some(isBinaryOpInExpression) // Second Case for if without braces
+function isSubScopeWithTopLevelUnAssignedBinOp (node: BlockAstNode | IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): boolean | undefined {
+  if(node.nodeType === 'Block')
+    return node.statements.some(isBinaryOpInExpression)
+  // for 'without braces' loops
+  else if (isSubScopeStatement(node)) {
+    if (node.nodeType === 'IfStatement')
+      return (node.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.trueBody)) || 
+          (node.falseBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.falseBody))
+    else 
+      return node.body.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.body)
+  } 
 }
 
-function isSubScopeStatement (node) {
-  return (nodeType(node, exactMatch(nodeTypes.IFSTATEMENT)) ||
-            nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
-            nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
-            nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))) &&
-            !nodeType(node.children[1], exactMatch(nodeTypes.BLOCK))
+function isSubScopeStatement (node: IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): boolean {
+  if(node.nodeType === 'IfStatement')
+    return !nodeType(node.trueBody, exactMatch(nodeTypes.BLOCK)) && !nodeType(node.falseBody, exactMatch(nodeTypes.BLOCK))
+  else      
+    return !nodeType(node.body, exactMatch(nodeTypes.BLOCK))
 }
 
 /**
@@ -738,11 +762,20 @@ function isNowAccess (node: IdentifierAstNode): boolean {
 }
 
 /**
+ * True if access to block.timestamp via now alias
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isTxOriginAccess (node: MemberAccessAstNode): boolean {
+  return isMemberAccess(node, 'address', 'tx', 'tx', 'origin')
+}
+
+/**
  * True if access to block.timestamp
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBlockTimestampAccess (node: MemberAccessAstNode) {
+function isBlockTimestampAccess (node: MemberAccessAstNode): boolean {
   return isSpecialVariableAccess(node, specialVariables.BLOCKTIMESTAMP)
 }
 
@@ -751,8 +784,8 @@ function isBlockTimestampAccess (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBlockBlockHashAccess (node) {
-  return isSpecialVariableAccess(node, specialVariables.BLOCKHASH) || isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash'
+function isBlockBlockHashAccess (node: MemberAccessAstNode | FunctionCallAstNode): boolean {
+  return  node.nodeType === 'FunctionCall' && isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash'
 }
 
 /**
@@ -760,7 +793,7 @@ function isBlockBlockHashAccess (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isThisLocalCall (node: MemberAccessAstNode) {
+function isThisLocalCall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node, basicRegex.FUNCTIONTYPE, exactMatch('this'), basicRegex.CONTRACTTYPE, undefined)
 }
 
@@ -769,7 +802,7 @@ function isThisLocalCall (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isSuperLocalCall (node: MemberAccessAstNode) {
+function isSuperLocalCall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node, basicRegex.FUNCTIONTYPE, exactMatch('super'), basicRegex.CONTRACTTYPE, undefined)
 }
 
@@ -778,7 +811,7 @@ function isSuperLocalCall (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLocalCall (node: FunctionCallAstNode) {
+function isLocalCall (node: FunctionCallAstNode): boolean {
   return node.kind === 'functionCall' && 
         node.expression.nodeType === 'Identifier' &&
         expressionTypeDescription(node, basicRegex.FUNCTIONTYPE) &&
@@ -790,7 +823,7 @@ function isLocalCall (node: FunctionCallAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLowLevelCall (node) {
+function isLowLevelCall (node: MemberAccessAstNode): boolean {
   return isLLCall(node) ||
           isLLCallcode(node) ||
           isLLDelegatecall(node) ||
@@ -805,7 +838,7 @@ function isLowLevelCall (node) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLSend050 (node: MemberAccessAstNode) {
+function isLLSend050 (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
           undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
@@ -816,7 +849,7 @@ function isLLSend050 (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLSend (node: MemberAccessAstNode) {
+function isLLSend (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
@@ -827,7 +860,7 @@ function isLLSend (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLCall (node: MemberAccessAstNode) {
+function isLLCall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident))
@@ -838,7 +871,7 @@ function isLLCall (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLCall050 (node: MemberAccessAstNode) {
+function isLLCall050 (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes['CALL-v0.5'].type)),
           undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes['CALL-v0.5'].ident))
@@ -849,7 +882,7 @@ function isLLCall050 (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLCallcode (node: MemberAccessAstNode) {
+function isLLCallcode (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.CALLCODE.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALLCODE.ident))
@@ -860,7 +893,7 @@ function isLLCallcode (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLDelegatecall (node: MemberAccessAstNode) {
+function isLLDelegatecall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.DELEGATECALL.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.DELEGATECALL.ident))
@@ -871,7 +904,7 @@ function isLLDelegatecall (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLDelegatecall050 (node: MemberAccessAstNode) {
+function isLLDelegatecall050 (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes['DELEGATECALL-v0.5'].type)),
           undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['DELEGATECALL-v0.5'].ident))
@@ -882,23 +915,23 @@ function isLLDelegatecall050 (node: MemberAccessAstNode) {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isTransfer (node: MemberAccessAstNode) {
+function isTransfer (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.TRANSFER.type)),
           undefined, matches(basicTypes.ADDRESS, basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.TRANSFER.ident))
 }
 
-function isStringToBytesConversion (node: FunctionCallAstNode) {
+function isStringToBytesConversion (node: FunctionCallAstNode): boolean {
   return isExplicitCast(node, util.escapeRegExp('string *'), util.escapeRegExp('bytes'))
 }
 
-function isExplicitCast (node: FunctionCallAstNode, castFromType: string, castToType: string) {
+function isExplicitCast (node: FunctionCallAstNode, castFromType: string, castToType: string): boolean {
   return node.kind === "typeConversion" && 
         nodeType(node.expression, exactMatch(nodeTypes.ELEMENTARYTYPENAMEEXPRESSION)) && node.expression.typeName.name === castToType &&
         nodeType(node.arguments[0], exactMatch(nodeTypes.IDENTIFIER)) && typeDescription(node.arguments[0], castFromType)
 }
 
-function isBytesLengthCheck (node: MemberAccessAstNode) {
+function isBytesLengthCheck (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node, exactMatch(util.escapeRegExp(basicTypes.UINT)), undefined, util.escapeRegExp('bytes *'), 'length')
 }
 
@@ -925,14 +958,14 @@ function isBytesLengthCheck (node: MemberAccessAstNode) {
 
 // #################### Complex Node Identification - Private
 
-function isMemberAccess (node: MemberAccessAstNode, retType: string, accessor: string| undefined, accessorType, memberName: string | undefined) {
+function isMemberAccess (node: MemberAccessAstNode, retType: string, accessor: string| undefined, accessorType: string, memberName: string | undefined): boolean {
   return typeDescription(node, retType) &&
         memName(node, memberName) &&
         memName(node.expression, accessor) &&
         expressionTypeDescription(node.expression, accessorType)
 }
 
-function isSpecialVariableAccess (node: MemberAccessAstNode, varType) {
+function isSpecialVariableAccess (node: MemberAccessAstNode, varType: any): boolean {
   return isMemberAccess(node, exactMatch(util.escapeRegExp(varType.type)), varType.obj, varType.obj, varType.member)
 }
 
@@ -993,32 +1026,32 @@ function matches (...fnArgs) {
  *  list of return type names
  * @return {Boolean} isPayable
  */
-function buildFunctionSignature (paramTypes, returnTypes, isPayable, additionalMods?) {
+function buildFunctionSignature (paramTypes: any[], returnTypes: any[], isPayable: boolean, additionalMods?: any): string {
   return 'function (' + util.concatWithSeperator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((additionalMods) ? ' ' + additionalMods : '') + ((returnTypes.length) ? ' returns (' + util.concatWithSeperator(returnTypes, ',') + ')' : '')
 }
 
-function buildAbiSignature (funName, paramTypes) {
+function buildAbiSignature (funName: string, paramTypes: any[]): string {
   return funName + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
 }
 
-/**
- * Finds first node of a certain type under a specific node.
- * @node {AstNode} node to start form
- * @type {String} Type the ast node should have
- * @return {AstNode} null or node found
- */
-function findFirstSubNodeLTR (node, type) {
-  if (!node || !node.children) return null
-  for (let i = 0; i < node.children.length; ++i) {
-    const item = node.children[i]
-    if (nodeType(item, type)) return item
-    else {
-      const res = findFirstSubNodeLTR(item, type)
-      if (res) return res
-    }
-  }
-  return null
-}
+// /**
+//  * Finds first node of a certain type under a specific node.
+//  * @node {AstNode} node to start form
+//  * @type {String} Type the ast node should have
+//  * @return {AstNode} null or node found
+//  */
+// function findFirstSubNodeLTR (node, type) {
+//   if (!node || !node.children) return null
+//   for (let i = 0; i < node.children.length; ++i) {
+//     const item = node.children[i]
+//     if (nodeType(item, type)) return item
+//     else {
+//       const res = findFirstSubNodeLTR(item, type)
+//       if (res) return res
+//     }
+//   }
+//   return null
+// }
 
 const helpers = {
   // nrOfChildren,
@@ -1072,6 +1105,7 @@ export {
   hasFunctionBody,
   isInteraction,
   isEffect,
+  isTxOriginAccess,
   isNowAccess,
   isBlockTimestampAccess,
   isBlockBlockHashAccess,

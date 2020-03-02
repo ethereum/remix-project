@@ -1,16 +1,16 @@
 import { default as category } from './categories'
 import { isSubScopeWithTopLevelUnAssignedBinOp, getUnAssignedTopLevelBinOps } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, BlockAstNode, IfStatementAstNode, WhileStatementAstNode, ForStatementAstNode, CompilationResult, ExpressionStatementAstNode} from './../../types'
 
 export default class assignAndCompare implements AnalyzerModule {
-  warningNodes: AstNodeLegacy[] = []
+  warningNodes: ExpressionStatementAstNode[] = []
   name: string = 'Result not used: '
   description: string = 'The result of an operation was not used.'
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  visit (node: AstNodeLegacy): void {
+  visit (node: BlockAstNode | IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): void {
     if (isSubScopeWithTopLevelUnAssignedBinOp(node)) getUnAssignedTopLevelBinOps(node).forEach((n) => this.warningNodes.push(n))
   }
 
