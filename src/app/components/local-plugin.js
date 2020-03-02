@@ -9,7 +9,6 @@ const defaultProfile = {
 }
 
 module.exports = class LocalPlugin {
-
   /**
    * Open a modal to create a local plugin
    * @param {Profile[]} plugins The list of the plugins in the store

@@ -72,7 +72,7 @@ const profile = {
 
 class PluginManagerComponent extends ViewPlugin {
 
-  constructor (appManager) {
+  constructor (appManager, engine) {
     super(profile)
     this.event = new EventEmitter()
     this.appManager = appManager
@@ -85,6 +85,7 @@ class PluginManagerComponent extends ViewPlugin {
     this.appManager.event.on('activate', () => { this.reRender() })
     this.appManager.event.on('deactivate', () => { this.reRender() })
     this.appManager.event.on('added', () => { this.reRender() })
+    this.engine = engine
   }
 
   isActive (name) {
@@ -149,10 +150,9 @@ class PluginManagerComponent extends ViewPlugin {
       if (this.appManager.getIds().includes(profile.name)) {
         throw new Error('This name has already been used')
       }
-
       const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
-      this.appManager.registerOne(plugin)
-      this.appManager.activatePlugin(profile.name)
+      this.engine.register(plugin)
+      this.appManager.activatePlugin(plugin.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
       console.log(`Cannot create Plugin : ${err.message}`)
