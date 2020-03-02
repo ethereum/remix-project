@@ -80,10 +80,7 @@ function runTests (browser, testData) {
     browser.end()
     return
   }
-  // if (browserName === 'firefox' || browserName === 'chrome') {
-  //   console.log('do not run remixd test for ' + browserName + ': TODO to reenable later')
-  //   return
-  // }
+
   browser
     .waitForElementVisible('#icon-panel', 2000)
     .clickLaunchIcon('fileExplorers')
