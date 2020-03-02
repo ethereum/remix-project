@@ -72,7 +72,8 @@ export class VerticalIcons extends Plugin {
         class="${css.icon}"
         onclick="${() => { this.toggle(name) }}"
         plugin="${name}"
-        title="${title}">
+        title="${title}"
+        data-id="verticalIconsKind${name}">
         <img class="image" src="${icon}" alt="${name}" />
       </div>`
     this.iconKind[kind || 'none'].appendChild(this.icons[name])

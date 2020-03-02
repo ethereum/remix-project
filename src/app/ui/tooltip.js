@@ -69,14 +69,14 @@ class Toaster {
       ` : ``
 
       this.tooltip = yo`
-        <div data-id="tooltipPopup" class="${css.tooltip} alert alert-info p-2"  onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
+        <div data-shared="tooltipPopup" class="${css.tooltip} alert alert-info p-2"  onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
           <span class="px-2">
             ${shortTooltipText}
             ${button}
             ${actionElement}
           </span>
           <span style="align-self: baseline;">
-            <button class="fas fa-times btn-info mx-1 p-0" onclick=${() => closeTheToaster(this)}></button>
+            <button data-id="tooltipCloseButton" class="fas fa-times btn-info mx-1 p-0" onclick=${() => closeTheToaster(this)}></button>
           </span>
         </div>`
       let timeOut = () => {
