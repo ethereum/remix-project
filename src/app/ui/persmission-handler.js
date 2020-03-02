@@ -3,6 +3,7 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const addTooltip = require('./tooltip')
 const modalDialog = require('./modaldialog')
+const globalRegistry = require('../../global/registry')
 
 const css = csjs`
 .permission h4 {
@@ -140,37 +141,45 @@ export class PermissionHandler {
         : delete this.permissions[to.name][from.name]
     }
     const rememberSwitch = remember
-      ? yo`<input type="checkbox" onchange="${switchMode}" checkbox class="custom-control-input" id="remember" data-id="permissionHandlerRememberChecked">`
-      : yo`<input type="checkbox" onchange="${switchMode}" class="custom-control-input" id="remember" data-id="permissionHandlerRememberUnchecked">`
+      ? yo`<input type="checkbox" onchange="${switchMode}" checkbox class="form-check-input" id="remember" data-id="permissionHandlerRememberChecked">`
+      : yo`<input type="checkbox" onchange="${switchMode}" class="form-check-input" id="remember" data-id="permissionHandlerRememberUnchecked">`
     const message = remember
       ? `"${fromName}" has changed and would like to access "${toName}"`
       : `"${fromName}" would like to access "${toName}"`
 
-    return yo`
-    <section class="${css.permission}">
+    const imgFrom = yo`<img id="permissionModalImagesFrom" src="${from.icon}" />`
+    const imgTo = yo`<img id="permissionModalImagesTo" src="${to.icon}" />`
+    const pluginsImages = yo`
       <article class="${css.images}">
-        <img src="${from.icon}" />
+        ${imgFrom}
         <i class="fas fa-arrow-right"></i>
-        <img src="${to.icon}" />
-      </article>
-      
-      <article>
-        <h4 data-id="permissionHandlerMessage">${message} :</h4>
-        <h6>${fromName}</h6>
-        <p>${from.description || yo`<i>No description Provided</i>`}</p>
-        <h6>${toName} :</p>
-        <p>${to.description || yo`<i>No description Provided</i>`}</p>
+        ${imgTo}
       </article>
 
-      <article class="${css.remember}">
-        <div class="custom-control custom-checkbox">
-          ${rememberSwitch}
-          <label class="custom-control-label" for="remember" data-id="permissionHandlerRememberChoice">Remember this choice</label>
-        </div>
-        <button class="btn btn-sm" onclick="${_ => this.clear()}">Reset all Permissions</button>
-      </article>
+    `
 
-    </section>
+    globalRegistry.get('themeModule').api.fixInvert(imgFrom)
+    globalRegistry.get('themeModule').api.fixInvert(imgTo)
+
+    return yo`
+      <section class="${css.permission}">
+        ${pluginsImages}
+        <article>
+          <h4 data-id="permissionHandlerMessage">${message} :</h4>
+          <h6>${fromName}</h6>
+          <p>${from.description || yo`<i>No description Provided</i>`}</p>
+          <h6>${toName} :</p>
+          <p>${to.description || yo`<i>No description Provided</i>`}</p>
+        </article>
+
+        <article class="${css.remember}">
+          <div class="form-check">
+            ${rememberSwitch}
+            <label class="form-check-label" for="remember" data-id="permissionHandlerRememberChoice">Remember this choice</label>
+          </div>
+          <button class="btn btn-sm" onclick="${_ => this.clear()}">Reset all Permissions</button>
+        </article>
+      </section>
     `
   }
 }
