@@ -9,10 +9,9 @@ const defaultProfile = {
 }
 
 module.exports = class LocalPlugin {
-
   /**
    * Open a modal to create a local plugin
-   * @param {PluginApi[]} plugins The list of the plugins in the store
+   * @param {Profile[]} plugins The list of the plugins in the store
    * @returns {Promise<{api: any, profile: any}>} A promise with the new plugin profile
    */
   open (plugins) {
@@ -26,7 +25,7 @@ module.exports = class LocalPlugin {
           reject(err)
         }
       }
-      modalDialog('Local Plugin', this.form(plugins),
+      modalDialog('Local Plugin', this.form(),
         { fn: () => onValidation() },
         { fn: () => resolve() }
       )
