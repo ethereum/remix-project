@@ -24,7 +24,7 @@ module.exports = {
     .click('*[data-id="settingsTabGitterChannelButton"]')
     .pause(2000)
     .switchBrowserTab(1)
-    if (runtimeBrowser === 'chrome') browser.assert.urlContains('https://gitter.im/ethereum/remix')
+    .perform((done) => { if (runtimeBrowser === 'chrome') { browser.assert.urlContains('https://gitter.im/ethereum/remix') } done() })
   },
 
   'Should activate `generate contract metadata`': function (browser) {
