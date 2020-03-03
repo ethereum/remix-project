@@ -41,6 +41,47 @@ export interface CompilationResult {
     }
   }
 
+export interface ContractHLAst {
+  node: ContractDefinitionAstNode,
+  functions: FunctionHLAst[],
+  relevantNodes: any[],
+  modifiers: ModifierHLAst[],
+  inheritsFrom: any[],
+  stateVariables: VariableDeclarationAstNode[]
+}
+
+export interface FunctionHLAst {
+  node: FunctionDefinitionAstNode,
+  relevantNodes: any[],
+  modifierInvocations: ModifierInvocationAstNode[],
+  localVariables: VariableDeclarationAstNode[],
+  parameters: string[],
+  returns: Record<string, string>[]
+}
+
+export interface ModifierHLAst {
+  node: ModifierDefinitionAstNode,
+  relevantNodes: any[],
+  localVariables: VariableDeclarationAstNode[],
+  parameters: string[],
+}
+
+export interface Context {
+  callGraph: Record<string, ContractCallGraph>
+  currentContract: ContractHLAst
+  stateVariables: VariableDeclarationAstNode[]
+}
+
+export interface FunctionCallGraph {
+  node: FunctionHLAst
+  calls: any[]
+}
+
+export interface ContractCallGraph {
+  contract: ContractHLAst
+  functions: Record<string, FunctionCallGraph>
+}
+
 /////////////////////////////////////////////////////////////
 ///////////// Specfic AST Nodes /////////////////////////////
 /////////////////////////////////////////////////////////////
@@ -95,7 +136,7 @@ export interface ContractDefinitionAstNode {
   linearizedBaseContracts: Array<number>
   baseContracts: Array<InheritanceSpecifierAstNode>
   contractDependencies: Array<number>
-  nodes: Array<CommonAstNode>
+  nodes: Array<any>
   scope: number
 }
 

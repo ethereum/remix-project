@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isStatement, isSelfdestructCall } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst} from './../../types'
 
 export default class selfdestruct implements AnalyzerModule {
   name: string = 'Selfdestruct: '
@@ -10,19 +10,19 @@ export default class selfdestruct implements AnalyzerModule {
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
 
-  abstractAst = new AbstractAst()
+  abstractAst: AbstractAst = new AbstractAst()
 
-  visit = this.abstractAst.build_visit(
+  visit: Function = this.abstractAst.build_visit(
     (node: any) => isStatement(node) || isSelfdestructCall(node.expression)
   )
 
-  report = this.abstractAst.build_report(this._report.bind(this))
-  private _report (contracts, multipleContractsWithSameName): ReportObj[] {
+  report: Function = this.abstractAst.build_report(this._report.bind(this))
+  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
 
     contracts.forEach((contract) => {
       contract.functions.forEach((func) => {
-        let hasSelf = false
+        let hasSelf: boolean = false
         func.relevantNodes.forEach((node) => {
           if (isSelfdestructCall(node)) {
             warnings.push({

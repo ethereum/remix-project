@@ -18,7 +18,7 @@ export default class staticAnalysisRunner {
     // Also provide convenience analysis via the AST walker.
     const walker = new AstWalker()
     for (let k in compilationResult.sources) {
-      walker.walk(compilationResult.sources[k].legacyAST, {'*': (node) => {
+      walker.walk(compilationResult.sources[k].AST, {'*': (node) => {
         modules.map((item, i) => {
           if (item.mod.visit !== undefined) {
             try {

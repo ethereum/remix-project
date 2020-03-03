@@ -4,7 +4,7 @@ import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
 import { get } from 'fast-levenshtein'
 import { util } from 'remix-lib'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, ContractCallGraph, FunctionHLAst, VariableDeclarationAstNode} from './../../types'
 
 export default class similarVariableNames implements AnalyzerModule {
   name: string = 'Similar variable names: '
@@ -14,32 +14,32 @@ export default class similarVariableNames implements AnalyzerModule {
 
   abstractAst:AbstractAst = new AbstractAst()
 
-  visit = this.abstractAst.build_visit((node: AstNodeLegacy) => false)
+  visit: Function = this.abstractAst.build_visit((node: any) => false)
 
-  report = this.abstractAst.build_report(this._report.bind(this))
+  report: Function = this.abstractAst.build_report(this._report.bind(this))
 
-  private _report (contracts, multipleContractsWithSameName): ReportObj[] {
+  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
-    const hasModifiers = contracts.some((item) => item.modifiers.length > 0)
+    const hasModifiers: boolean = contracts.some((item) => item.modifiers.length > 0)
 
     contracts.forEach((contract) => {
       contract.functions.forEach((func) => {
-        const funcName = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
-        let hasModifiersComments = ''
+        const funcName: string = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+        let hasModifiersComments: string = ''
         if (hasModifiers) {
           hasModifiersComments = 'Note: Modifiers are currently not considered by this static analysis.'
         }
-        let multipleContractsWithSameNameComments = ''
+        let multipleContractsWithSameNameComments: string = ''
         if (multipleContractsWithSameName) {
           multipleContractsWithSameNameComments = 'Note: Import aliases are currently not supported by this static analysis.'
         }
 
-        const vars = this.getFunctionVariables(contract, func).map(getDeclaredVariableName)
+        const vars: string[] = this.getFunctionVariables(contract, func).map(getDeclaredVariableName)
 
         this.findSimilarVarNames(vars).map((sim) => {
           warnings.push({
             warning: `${funcName} : Variables have very similar names ${sim.var1} and ${sim.var2}. ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
-            location: func.src
+            location: func['src']
           })
         })
       })
@@ -70,7 +70,7 @@ export default class similarVariableNames implements AnalyzerModule {
     return varName2.match(ref) != null
   }
 
-  private getFunctionVariables (contract, func) {
+  private getFunctionVariables (contract: ContractHLAst, func: FunctionHLAst): VariableDeclarationAstNode[] {
     return contract.stateVariables.concat(func.localVariables)
   }
 }

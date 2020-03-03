@@ -15,7 +15,7 @@ export default class gasCosts {
   * @param {Function} cb    - callback
   */
   // @TODO has been copied from remix-ide repo ! should fix that soon !
-  visitContracts (contracts, cb) {
+  visitContracts (contracts, cb: Function) {
     for (let file in contracts) {
       for (let name in contracts[file]) {
         if (cb({ name: name, object: contracts[file][name], file: file })) return

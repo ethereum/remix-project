@@ -4,7 +4,7 @@ import { isInteraction, isEffect, isLocalCallGraphRelevantNode, getFullQuallyfie
 import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VariableDeclarationAstNode, FunctionHLAst, ContractCallGraph, Context} from './../../types'
 
 export default class checksEffectsInteraction implements AnalyzerModule {
   name: string = 'Check effects: '
@@ -14,17 +14,17 @@ export default class checksEffectsInteraction implements AnalyzerModule {
 
   abstractAst: AbstractAst = new AbstractAst()
 
-  visit = this.abstractAst.build_visit((node: AstNodeLegacy) => isInteraction(node) || isEffect(node) || isLocalCallGraphRelevantNode(node))
+  visit: Function = this.abstractAst.build_visit((node: any) => isInteraction(node) || isEffect(node) || isLocalCallGraphRelevantNode(node))
 
-  report = this.abstractAst.build_report(this._report.bind(this))
+  report: Function = this.abstractAst.build_report(this._report.bind(this))
     
-  private _report (contracts, multipleContractsWithSameName): ReportObj[] {
+  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
-    const hasModifiers = contracts.some((item) => item.modifiers.length > 0)
-    const callGraph = buildGlobalFuncCallGraph(contracts)
+    const hasModifiers: boolean = contracts.some((item) => item.modifiers.length > 0)
+    const callGraph: Record<string, ContractCallGraph> = buildGlobalFuncCallGraph(contracts)
     contracts.forEach((contract) => {
       contract.functions.forEach((func) => {
-        func.changesState = this.checkIfChangesState(
+        func['changesState'] = this.checkIfChangesState(
                               getFullQuallyfiedFuncDefinitionIdent(
                                 contract.node, 
                                 func.node, 
@@ -43,7 +43,7 @@ export default class checksEffectsInteraction implements AnalyzerModule {
           comments += (multipleContractsWithSameName) ? 'Note: Import aliases are currently not supported by this static analysis.' : ''
           warnings.push({
             warning: `Potential Violation of Checks-Effects-Interaction pattern in ${funcName}: Could potentially lead to re-entrancy vulnerability. ${comments}`,
-            location: func.src,
+            location: func['src'],
             more: 'http://solidity.readthedocs.io/en/develop/security-considerations.html#re-entrancy'
           })
         }
@@ -52,17 +52,17 @@ export default class checksEffectsInteraction implements AnalyzerModule {
     return warnings
   }
 
-  private getContext (callGraph, currentContract, func) {
+  private getContext (callGraph: Record<string, ContractCallGraph>, currentContract: ContractHLAst, func: FunctionHLAst): Context {
     return { callGraph: callGraph, currentContract: currentContract, stateVariables: this.getStateVariables(currentContract, func) }
   }
 
-  private getStateVariables (contract, func) {
+  private getStateVariables (contract: ContractHLAst, func: FunctionHLAst): VariableDeclarationAstNode[] {
     return contract.stateVariables.concat(func.localVariables.filter(isStorageVariableDeclaration))
   }
 
-  private isPotentialVulnerableFunction (func, context) {
-    let isPotentialVulnerable = false
-    let interaction = false
+  private isPotentialVulnerableFunction (func: FunctionHLAst, context: Context): boolean {
+    let isPotentialVulnerable: boolean = false
+    let interaction: boolean = false
     func.relevantNodes.forEach((node) => {
       if (isInteraction(node)) {
         interaction = true
@@ -73,15 +73,15 @@ export default class checksEffectsInteraction implements AnalyzerModule {
     return isPotentialVulnerable
   }
 
-  private isLocalCallWithStateChange (node, context) {
+  private isLocalCallWithStateChange (node: any, context: Context): boolean {
     if (isLocalCallGraphRelevantNode(node)) {
       const func = resolveCallGraphSymbol(context.callGraph, getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
-      return !func || (func && func.node.changesState)
+      return !func || (func && func.node['changesState'])
     }
     return false
   }
 
-  private checkIfChangesState (startFuncName, context) {
+  private checkIfChangesState (startFuncName: string, context: Context): boolean {
     return analyseCallGraph(context.callGraph, startFuncName, context, (node, context) => isWriteOnStateVariable(node, context.stateVariables))
   }
 }
