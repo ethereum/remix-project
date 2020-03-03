@@ -292,7 +292,7 @@ function getDeclaredVariableType (varDeclNode: VariableDeclarationAstNode): stri
  * @contractNode {ASTNode} Contract Definition node
  * @return {list variable declaration} state variable node list
  */
-function getStateVariableDeclarationsFormContractNode (contractNode: ContractDefinitionAstNode): CommonAstNode[] {
+function getStateVariableDeclarationsFormContractNode (contractNode: ContractDefinitionAstNode): VariableDeclarationAstNode[] {
   return contractNode.nodes.filter(el => el.nodeType === "VariableDeclaration")
 }
 
