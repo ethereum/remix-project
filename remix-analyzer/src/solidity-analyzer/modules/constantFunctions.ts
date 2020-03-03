@@ -6,7 +6,7 @@ import { isLowLevelCall, isTransfer, isExternalDirectCall, isEffect, isLocalCall
 import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, AstNodeLegacy, CompilationResult, CommonAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractCallGraph, Context, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, FunctionCallGraph} from './../../types'
 
 export default class constantFunctions implements AnalyzerModule {
   name: string = 'Constant functions: '
@@ -16,7 +16,7 @@ export default class constantFunctions implements AnalyzerModule {
 
   abstractAst: AbstractAst = new AbstractAst()
 
-  visit = this.abstractAst.build_visit(
+  visit: Function = this.abstractAst.build_visit(
     (node: any) => isLowLevelCall(node) ||
               isTransfer(node) ||
               isExternalDirectCall(node) ||
@@ -28,20 +28,20 @@ export default class constantFunctions implements AnalyzerModule {
               isDeleteUnaryOperation(node)
   )
 
-  report = this.abstractAst.build_report(this._report.bind(this))
+  report: Function = this.abstractAst.build_report(this._report.bind(this))
 
-  private _report (contracts, multipleContractsWithSameName): ReportObj[] {
+  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
-    const hasModifiers = contracts.some((item) => item.modifiers.length > 0)
+    const hasModifiers: boolean = contracts.some((item) => item.modifiers.length > 0)
 
-    const callGraph = buildGlobalFuncCallGraph(contracts)
+    const callGraph: Record<string, ContractCallGraph> = buildGlobalFuncCallGraph(contracts)
 
     contracts.forEach((contract) => {
       contract.functions.forEach((func) => {
         if (isPayableFunction(func.node) || isConstructor(func.node)) {
-          func.potentiallyshouldBeConst = false
+          func['potentiallyshouldBeConst'] = false
         } else {
-          func.potentiallyshouldBeConst = this.checkIfShouldBeConstant(
+          func['potentiallyshouldBeConst'] = this.checkIfShouldBeConstant(
                                             getFullQuallyfiedFuncDefinitionIdent(
                                               contract.node, 
                                               func.node, 
@@ -57,20 +57,20 @@ export default class constantFunctions implements AnalyzerModule {
       })
 
       contract.functions.filter((func) => hasFunctionBody(func.node)).forEach((func) => {
-        if (isConstantFunction(func.node) !== func.potentiallyshouldBeConst) {
-          const funcName = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
-          let comments = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''
+        if (isConstantFunction(func.node) !== func['potentiallyshouldBeConst']) {
+          const funcName: string = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+          let comments: string = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''
           comments += (multipleContractsWithSameName) ? 'Note: Import aliases are currently not supported by this static analysis.' : ''
-          if (func.potentiallyshouldBeConst) {
+          if (func['potentiallyshouldBeConst']) {
             warnings.push({
               warning: `${funcName} : Potentially should be constant but is not. ${comments}`,
-              location: func.src,
+              location: func['src'],
               more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
             })
           } else {
             warnings.push({
               warning: `${funcName} : Is constant but potentially should not be. ${comments}`,
-              location: func.src,
+              location: func['src'],
               more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
             })
           }
@@ -80,19 +80,19 @@ export default class constantFunctions implements AnalyzerModule {
     return warnings
   }
 
-  private getContext (callGraph, currentContract, func) {
+  private getContext (callGraph: Record<string, ContractCallGraph>, currentContract: ContractHLAst, func: FunctionHLAst): Context {
     return { callGraph: callGraph, currentContract: currentContract, stateVariables: this.getStateVariables(currentContract, func) }
   }
 
-  private getStateVariables (contract, func) {
+  private getStateVariables (contract: ContractHLAst, func: FunctionHLAst): VariableDeclarationAstNode[] {
     return contract.stateVariables.concat(func.localVariables.filter(isStorageVariableDeclaration))
   }
 
-  private checkIfShouldBeConstant (startFuncName, context) {
+  private checkIfShouldBeConstant (startFuncName: string, context): boolean {
     return !analyseCallGraph(context.callGraph, startFuncName, context, this.isConstBreaker.bind(this))
   }
 
-  private isConstBreaker (node, context) {
+  private isConstBreaker (node: any, context: Context): boolean {
     return isWriteOnStateVariable(node, context.stateVariables) ||
           isLowLevelCall(node) ||
           isTransfer(node) ||
@@ -104,9 +104,9 @@ export default class constantFunctions implements AnalyzerModule {
           isDeleteUnaryOperation(node)
   }
 
-  private isCallOnNonConstExternalInterfaceFunction (node, context) {
+  private isCallOnNonConstExternalInterfaceFunction (node: any, context: Context): boolean {
     if (isExternalDirectCall(node)) {
-      const func = resolveCallGraphSymbol(context.callGraph, getFullQualifiedFunctionCallIdent(context.currentContract, node))
+      const func: FunctionCallGraph | undefined = resolveCallGraphSymbol(context.callGraph, getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
       return !func || (func && !isConstantFunction(func.node.node))
     }
     return false
