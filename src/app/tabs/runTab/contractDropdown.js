@@ -66,6 +66,8 @@ class ContractDropdownUI {
         } else {
           if (this.exEnvironment === 'vm') {
             this.setCheckedState(false)
+          } else if (this.exEnvironment === 'web3') {
+            this.setCheckedState(false)
           } else if (this.exEnvironment === 'injected') {
             if (this.networkName === 'Main') {
               // select publish to ipfs by default for mainnet
