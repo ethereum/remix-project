@@ -19,6 +19,7 @@ class ContractDropdownUI {
 
     this.listenToEvents()
     this.ipfsCheckedState = false
+    this.listenToContextChange()
   }
 
   listenToEvents () {
@@ -43,13 +44,36 @@ class ContractDropdownUI {
         this.compFails.style.display = 'block'
         document.querySelector(`.${css.contractNames}`).classList.add(css.contractNamesError)
       }
-      this.reinitializeIpfsCheckedState()
     })
   }
 
-  reinitializeIpfsCheckedState () {
-    this.ipfsCheckedState = false
-    document.querySelector('#deployAndRunPublishToIPFS').checked = false
+  listenToContextChange () {
+    this.blockchain.event.register('newExecutionContext', () => {
+      this.blockchain.updateNetwork((err, {id, name} = {}) => {
+        if (err) {
+          console.log(`can't detect network`)
+          return
+        }
+        const environment = this.blockchain.getProvider()
+
+        if(environment === 'vm'){
+          this.ipfsCheckedState = false
+          document.getElementById('deployAndRunPublishToIPFS').checked = false
+        }else if(environment === 'injected'){
+          if(name === 'Main'){
+            this.ipfsCheckedState = true
+            document.getElementById('deployAndRunPublishToIPFS').checked = true
+          }else{
+            this.ipfsCheckedState = false
+            document.getElementById('deployAndRunPublishToIPFS').checked = false
+          }
+        }
+      })
+    })
+  }
+
+  toggleCheckedState () {
+    this.ipfsCheckedState = !this.ipfsCheckedState
   }
 
   render () {
@@ -61,12 +85,6 @@ class ContractDropdownUI {
 
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
-    const ipfsCheckbox = yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${() => {
-      if (!this.ipfsCheckedState) {
-        publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, this.getSelectedContract.apply(this))
-        this.ipfsCheckedState = true
-      }
-    }}>`
 
     let el = yo`
       <div class="${css.container}" data-id="contractDropdownContainer">
@@ -83,9 +101,9 @@ class ContractDropdownUI {
           </div>
         </div>
         <div class="mt-2">
-          ${ipfsCheckbox}
+          <input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState}>
           <label for="deployAndRunPublishToIPFS" class="text-dark p-0 m-0">PUBLISH TO IPFS</label>
-          <i class="fas fa-info ml-2" aria-hidden="true" title="Publishing to IPFS is allowing to verify the contract code. The bytecode is already stored transparently in the blockchain. Publishing the source code and its ABI will greatly foster contract adoption (auditing, debugging, calling it, etc...)"></i>
+          <i class="fas fa-info ml-2" aria-hidden="true" title="Publishing to IPFS allows verification of the contract code. This will not compromise your code or make it unsafe (the bytecode is anyway already stored transparently in the blockchain). On the contrary, publishing the source code and its ABI will greatly foster the adoption of your contract (auditing, debugging, calling it, etc...)"></i>
         </div>
       </div>
     `
@@ -132,6 +150,9 @@ class ContractDropdownUI {
     const clickCallback = async (valArray, inputsValues) => {
       var selectedContract = this.getSelectedContract()
       this.createInstance(selectedContract, inputsValues)
+      if (this.ipfsCheckedState) {
+        publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, selectedContract)
+      }
     }
     const createConstructorInstance = new MultiParamManager(
       0,
