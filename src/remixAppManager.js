@@ -10,7 +10,7 @@ const requiredModules = [ // services + layout views + system views
   'terminal', 'settings', 'pluginManager']
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'ethdoc', 'etherscan']
+  const nativePlugins = ['workshops', 'ethdoc', 'etherscan']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -37,6 +37,8 @@ export class RemixAppManager extends PluginManager {
     if (to.name !== this.currentRequest) {
       return false
     }
+    if (isNative)
+      return true
     return await this.permissionHandler.askPermition(from, to, method, message)
   }
 
