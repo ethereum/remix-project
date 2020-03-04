@@ -62,13 +62,15 @@ export class PermissionHandler {
    * Show a message to ask the user for a permission
    * @param {PluginProfile} from The name and hash of the plugin that make the call
    * @param {ModuleProfile} to The name of the plugin that receive the call
+   * @param {string} method The name of the function to be called
+   * @param {string} message from the caller plugin to add more details if needed
    * @returns {Promise<{ allow: boolean; remember: boolean }} Answer from the user to the permission
    */
-  async openPermission (from, to) {
+  async openPermission (from, to, method, message) {
     return new Promise((resolve, reject) => {
       modalDialog(
         `Permission needed for ${to.displayName || to.name}`,
-        this.form(from, to),
+        this.form(from, to, method, message),
         {
           label: 'Accept',
           fn: () => {
@@ -105,11 +107,11 @@ export class PermissionHandler {
    * @param {ModuleProfile} to The profile of the module that receive the call
    * @returns {Promise<boolean>}
    */
-  async askPermission (from, to) {
+  async askPermission (from, to, method, message) {
     try {
       this.permissions = this._getFromLocal()
       if (!this.permissions[to.name]) this.permissions[to.name] = {}
-      if (!this.permissions[to.name][from.name]) return this.openPermission(from, to)
+      if (!this.permissions[to.name][from.name]) return this.openPermission(from, to, from, message)
 
       const { allow, hash } = this.permissions[to.name][from.name]
       if (!allow) {
@@ -119,7 +121,7 @@ export class PermissionHandler {
       }
       return hash === from.hash
         ? true  // Allow
-        : this.openPermission(from, to)  // New version of a plugin
+        : this.openPermission(from, to, method, message)  // New version of a plugin
     } catch (err) {
       throw new Error(err)
     }
@@ -129,8 +131,10 @@ export class PermissionHandler {
    * The permission form
    * @param {PluginProfile} from The name and hash of the plugin that make the call
    * @param {ModuleProfile} to The name of the plugin that receive the call
+   * @param {string} method The name of te methode to be called
+   * @param {string} message from the caller plugin to add more details if needed
    */
-  form (from, to) {
+  form (from, to, method, message) {
     const fromName = from.displayName || from.name
     const toName = to.displayName || to.name
     const remember = this.permissions[to.name][from.name]
@@ -143,10 +147,7 @@ export class PermissionHandler {
     const rememberSwitch = remember
       ? yo`<input type="checkbox" onchange="${switchMode}" checkbox class="form-check-input" id="remember" data-id="permissionHandlerRememberChecked">`
       : yo`<input type="checkbox" onchange="${switchMode}" class="form-check-input" id="remember" data-id="permissionHandlerRememberUnchecked">`
-    const message = remember
-      ? `"${fromName}" has changed and would like to access "${toName}"`
-      : `"${fromName}" would like to access "${toName}"`
-
+    const text = `"${fromName}"` + (remember ? `has changed and` : ``) + `would like to access to "${method}" of "${toName}"`
     const imgFrom = yo`<img id="permissionModalImagesFrom" src="${from.icon}" />`
     const imgTo = yo`<img id="permissionModalImagesTo" src="${to.icon}" />`
     const pluginsImages = yo`
@@ -165,7 +166,7 @@ export class PermissionHandler {
       <section class="${css.permission}">
         ${pluginsImages}
         <article>
-          <h4 data-id="permissionHandlerMessage">${message} :</h4>
+          <h4 data-id="permissionHandlerMessage">${text} :</h4>
           <h6>${fromName}</h6>
           <p>${from.description || yo`<i>No description Provided</i>`}</p>
           <h6>${toName} :</p>
