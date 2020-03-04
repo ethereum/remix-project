@@ -2,6 +2,7 @@
 import { PluginManager, IframePlugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import QueryParams from './lib/query-params'
+import { PermissionHandler } from './app/ui/persmission-handler'
 
 const requiredModules = [ // services + layout views + system views
   'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport', 'web3Provider', 'scriptRunner',
@@ -20,6 +21,7 @@ export class RemixAppManager extends PluginManager {
     this.event = new EventEmitter()
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
+    this.permissionHandler = new PermissionHandler()
   }
 
   async canActivate (from, to) {
@@ -30,9 +32,12 @@ export class RemixAppManager extends PluginManager {
     return from.name === 'manager'
   }
 
-  async canCall (From, to, method) {
-    // todo This is the dafault behaviour, we could save user choises in session scope
-    return true
+  async canCall (from, to, method, message) {
+    // Make sure the caller of this methods is the target plugin
+    if (to.name !== this.currentRequest) {
+      return false
+    }
+    return await this.permissionHandler.askPermition(from, to, method, message)
   }
 
   onPluginActivated (plugin) {
