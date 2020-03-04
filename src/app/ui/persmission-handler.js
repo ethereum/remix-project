@@ -156,7 +156,6 @@ export class PermissionHandler {
         <i class="fas fa-arrow-right"></i>
         ${imgTo}
       </article>
-
     `
 
     globalRegistry.get('themeModule').api.fixInvert(imgFrom)
@@ -171,6 +170,7 @@ export class PermissionHandler {
           <p>${from.description || yo`<i>No description Provided</i>`}</p>
           <h6>${toName} :</p>
           <p>${to.description || yo`<i>No description Provided</i>`}</p>
+          <p>${message}</p>
         </article>
 
         <article class="${css.remember}">
