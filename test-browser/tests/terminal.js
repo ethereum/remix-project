@@ -10,7 +10,7 @@ module.exports = {
   'Should execution a simple console command': function (browser) {
     browser
     .waitForElementVisible('*[data-id="terminalCli"]', 10000)
-    .executeScript('1+1')
+    .executeScript('console.log(1 + 1)')
     .journalLastChild('2')
   },
 
@@ -52,8 +52,63 @@ module.exports = {
     .executeScript('remix.debugHelp()')
     .journalChildIncludes('Here are some examples of scripts that can be run (using remix.exeCurrent() or directly from the console)')
     .journalChildIncludes('Please see https://www.npmjs.com/package/remix-debug for more informations')
+  },
+
+  'Async/Await Script': function (browser) {
+    browser
+    .addFile('asyncAwait.js', { content: asyncAwait })
+    .switchFile('browser/asyncAwait.js')
+    .executeScript(`remix.execute('browser/asyncAwait.js')`)
+    .journalLastChild('Waiting Promise')
+    .pause(5500)
+    .journalLastChild('result - Promise Resolved')
+  },
+
+  'Call Remix File Manager from a script': function (browser) {
+    browser
+    .addFile('asyncAwaitWithFileManagerAccess.js', { content: asyncAwaitWithFileManagerAccess })
+    .switchFile('browser/asyncAwaitWithFileManagerAccess.js')
+    .executeScript(`remix.execute('browser/asyncAwaitWithFileManagerAccess.js')`)
+    .journalLastChildIncludes('contract Ballot {')
     .end()
   },
 
   tearDown: sauce
 }
+
+const asyncAwait = `
+  var p = function () {
+    return new Promise(function (resolve, reject)  {
+        setTimeout(function ()  {
+            resolve("Promise Resolved")
+        }, 5000)
+    })
+  }
+
+  var run = async () => {
+    console.log('Waiting Promise')
+    var result = await p()
+    console.log('result - ', result)
+  }
+
+  run()
+`
+
+const asyncAwaitWithFileManagerAccess = `
+  var p = function () {
+    return new Promise(function (resolve, reject)  {
+        setTimeout(function ()  {
+            resolve("Promise Resolved")
+        }, 0)
+    })
+  }
+
+  var run = async () => {
+    console.log('Waiting Promise')
+    var result = await p()
+    let text = await remix.call('fileManager', 'getFile', 'browser/3_Ballot.sol')
+    console.log('result - ', text)
+  }
+
+  run()
+`
