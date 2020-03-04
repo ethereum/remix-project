@@ -174,10 +174,7 @@ class ContractDropdownUI {
     const selectedContract = this.getSelectedContract()
     const clickCallback = async (valArray, inputsValues) => {
       var selectedContract = this.getSelectedContract()
-      await this.createInstance(selectedContract, inputsValues)
-      if (this.ipfsCheckedState) {
-        publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, selectedContract)
-      }
+      this.createInstance(selectedContract, inputsValues)
     }
     const createConstructorInstance = new MultiParamManager(
       0,
@@ -241,6 +238,9 @@ class ContractDropdownUI {
       }
 
       this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
+      if (this.ipfsCheckedState) {
+        publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, selectedContract)
+      }
     }
 
     let contractMetadata

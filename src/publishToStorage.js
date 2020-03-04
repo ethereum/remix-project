@@ -14,8 +14,7 @@ export default function publish (storage, fileProvider, fileManager, contract) {
             try {
               err = JSON.stringify(err)
             } catch (e) {}
-            modalDialogCustom.alert(yo`<span>Failed to publish metadata file to swarm, please check the Swarm gateways is available ( swarm-gateways.net ).<br />
-            ${err}</span>`)
+            console.log(`Failed to publish metadata file to swarm, please check the Swarm gateways is available ( swarm-gateways.net ) ${err}`)
           } else {
             var result = yo`<div>${uploaded.map((value) => {
               return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
