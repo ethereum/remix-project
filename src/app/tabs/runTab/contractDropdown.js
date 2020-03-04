@@ -19,6 +19,7 @@ class ContractDropdownUI {
 
     this.listenToEvents()
     this.ipfsCheckedState = false
+    this.exEnvironment = blockchain.getProvider()
     this.listenToContextChange()
   }
 
@@ -49,31 +50,45 @@ class ContractDropdownUI {
 
   listenToContextChange () {
     this.blockchain.event.register('newExecutionContext', () => {
-      this.blockchain.updateNetwork((err, {id, name} = {}) => {
+      this.blockchain.updateNetwork((err, {name} = {}) => {
         if (err) {
           console.log(`can't detect network`)
           return
         }
-        const environment = this.blockchain.getProvider()
+        this.exEnvironment = this.blockchain.getProvider()
+        this.networkName = name
 
-        if(environment === 'vm'){
-          this.ipfsCheckedState = false
-          document.getElementById('deployAndRunPublishToIPFS').checked = false
-        }else if(environment === 'injected'){
-          if(name === 'Main'){
-            this.ipfsCheckedState = true
-            document.getElementById('deployAndRunPublishToIPFS').checked = true
-          }else{
-            this.ipfsCheckedState = false
-            document.getElementById('deployAndRunPublishToIPFS').checked = false
+        const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
+        
+        // check if an already selected option exist else use default workflow
+        if (savedConfig !== null) {
+          this.setCheckedState(savedConfig)
+        } else {
+          if (this.exEnvironment === 'vm') {
+            this.setCheckedState(false)
+          } else if (this.exEnvironment === 'injected') {
+            if(this.networkName === 'Main'){
+              // select publish to ipfs by default for mainnet
+              this.setCheckedState(true)
+            } else {
+              this.setCheckedState(false)
+            }
           }
         }
       })
     })
   }
 
+  setCheckedState (value) {
+    value = value === 'true' ? true : value === 'false' ? false : value
+    this.ipfsCheckedState = value
+    document.getElementById('deployAndRunPublishToIPFS').checked = value
+  }
+
   toggleCheckedState () {
+    if(this.exEnvironment === 'vm') this.networkName = 'VM'
     this.ipfsCheckedState = !this.ipfsCheckedState
+    window.localStorage.setItem(`ipfs/${this.exEnvironment}/${this.networkName}`, this.ipfsCheckedState)
   }
 
   render () {
@@ -85,6 +100,14 @@ class ContractDropdownUI {
 
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
+
+    if(this.exEnvironment === 'vm') this.networkName = 'VM'
+    const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
+
+    this.ipfsCheckedState = savedConfig === 'true' ? true : false
+    const ipfsCheckbox = this.ipfsCheckedState === true
+    ? yo`<input id="deployAndRunPublishToIPFS" class="mr-2" checked type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
+    : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
 
     let el = yo`
       <div class="${css.container}" data-id="contractDropdownContainer">
@@ -101,7 +124,7 @@ class ContractDropdownUI {
           </div>
         </div>
         <div class="mt-2">
-          <input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState}>
+          ${ipfsCheckbox}
           <label for="deployAndRunPublishToIPFS" class="text-dark p-0 m-0">PUBLISH TO IPFS</label>
           <i class="fas fa-info ml-2" aria-hidden="true" title="Publishing to IPFS allows verification of the contract code. This will not compromise your code or make it unsafe (the bytecode is anyway already stored transparently in the blockchain). On the contrary, publishing the source code and its ABI will greatly foster the adoption of your contract (auditing, debugging, calling it, etc...)"></i>
         </div>
@@ -149,7 +172,7 @@ class ContractDropdownUI {
     const selectedContract = this.getSelectedContract()
     const clickCallback = async (valArray, inputsValues) => {
       var selectedContract = this.getSelectedContract()
-      this.createInstance(selectedContract, inputsValues)
+      await this.createInstance(selectedContract, inputsValues)
       if (this.ipfsCheckedState) {
         publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, selectedContract)
       }
