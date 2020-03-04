@@ -59,7 +59,7 @@ class ContractDropdownUI {
         this.networkName = name
 
         const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
-        
+
         // check if an already selected option exist else use default workflow
         if (savedConfig !== null) {
           this.setCheckedState(savedConfig)
@@ -67,7 +67,7 @@ class ContractDropdownUI {
           if (this.exEnvironment === 'vm') {
             this.setCheckedState(false)
           } else if (this.exEnvironment === 'injected') {
-            if(this.networkName === 'Main'){
+            if (this.networkName === 'Main') {
               // select publish to ipfs by default for mainnet
               this.setCheckedState(true)
             } else {
@@ -86,7 +86,7 @@ class ContractDropdownUI {
   }
 
   toggleCheckedState () {
-    if(this.exEnvironment === 'vm') this.networkName = 'VM'
+    if (this.exEnvironment === 'vm') this.networkName = 'VM'
     this.ipfsCheckedState = !this.ipfsCheckedState
     window.localStorage.setItem(`ipfs/${this.exEnvironment}/${this.networkName}`, this.ipfsCheckedState)
   }
@@ -101,10 +101,10 @@ class ContractDropdownUI {
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
 
-    if(this.exEnvironment === 'vm') this.networkName = 'VM'
+    if (this.exEnvironment === 'vm') this.networkName = 'VM'
     const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
 
-    this.ipfsCheckedState = savedConfig === 'true' ? true : false
+    this.ipfsCheckedState = savedConfig === 'true' ? true : false // eslint-disable-line
     const ipfsCheckbox = this.ipfsCheckedState === true
     ? yo`<input id="deployAndRunPublishToIPFS" class="mr-2" checked type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
     : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
