@@ -1,5 +1,8 @@
 module.exports = {
   localCall: require('./localCall.json'),
+  contractDefinition: require('./contractDefinition.json'),
+  unaryOperation: require('./unaryOperation.json'),
+  nowAst: require('./nowAst.json'),
   thisLocalCall: require('./thisLocalCall.json'),
   libCall: require('./libCall.json'),
   externalDirect: require('./externalDirect.json'),

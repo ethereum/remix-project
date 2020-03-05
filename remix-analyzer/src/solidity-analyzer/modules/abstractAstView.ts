@@ -1,4 +1,4 @@
-import { getStateVariableDeclarationsFormContractNode,
+import { getStateVariableDeclarationsFromContractNode,
   getInheritsFromName, getContractName,
   getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName,
   getFunctionDefinitionReturnParameterPart } from './staticAnalysisCommon'
@@ -57,7 +57,7 @@ export default class abstractAstView {
           relevantNodes: [],
           modifiers: [],
           inheritsFrom: [],
-          stateVariables: getStateVariableDeclarationsFormContractNode(node)
+          stateVariables: getStateVariableDeclarationsFromContractNode(node)
         })
       } else if (node.nodeType === "InheritanceSpecifier") {
         const currentContract = that.getCurrentContract(that)

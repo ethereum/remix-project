@@ -1,0 +1,14 @@
+{
+    "argumentTypes": null,
+    "id": 11,
+    "name": "now",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": -17,
+    "src": "110:3:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_uint256",
+      "typeString": "uint256"
+    }
+}

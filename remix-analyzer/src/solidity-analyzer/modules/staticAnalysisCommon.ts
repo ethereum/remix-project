@@ -47,7 +47,7 @@ const basicRegex = {
   FUNCTIONTYPE: '^function \\(',
   EXTERNALFUNCTIONTYPE: '^function \\(.*\\).* external',
   CONSTANTFUNCTIONTYPE: '^function \\(.*\\).* (view|pure)',
-  REFTYPE: '( storage )|(mapping\\()|(\\[\\])',
+  REFTYPE: '(storage)|(mapping\\()|(\\[\\])',
   FUNCTIONSIGNATURE: '^function \\(([^\\(]*)\\)',
   LIBRARYTYPE: '^type\\(library (.*)\\)'
 }
@@ -169,9 +169,9 @@ function getLocalCallName (localCallNode: FunctionCallAstNode): string {
  * @localCallNode {ASTNode} Function call node
  * @return {string} name of the function called
  */
-function getThisLocalCallName (localCallNode: FunctionCallAstNode): string {
-  if (!isThisLocalCall(localCallNode.expression)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
-  return localCallNode.expression.memberName
+function getThisLocalCallName (thisLocalCallNode: FunctionCallAstNode): string {
+  if (!isThisLocalCall(thisLocalCallNode.expression)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
+  return thisLocalCallNode.expression.memberName
 }
 
 /**
@@ -180,9 +180,9 @@ function getThisLocalCallName (localCallNode: FunctionCallAstNode): string {
  * @localCallNode {ASTNode} Function call node
  * @return {string} name of the function called
  */
-function getSuperLocalCallName (localCallNode: FunctionCallAstNode): string {
-  if (!isSuperLocalCall(localCallNode.expression)) throw new Error('staticAnalysisCommon.js: not an super local call Node')
-  return localCallNode.expression.memberName
+function getSuperLocalCallName (superLocalCallNode: FunctionCallAstNode): string {
+  if (!isSuperLocalCall(superLocalCallNode.expression)) throw new Error('staticAnalysisCommon.js: not an super local call Node')
+  return superLocalCallNode.expression.memberName
 }
 
 /**
@@ -256,8 +256,8 @@ function getFunctionDefinitionName (funcDef: FunctionDefinitionAstNode): string 
  * @func {ASTNode} Inheritance specifier
  * @return {string} name of contract inherited from
  */
-function getInheritsFromName (inheritsNode: InheritanceSpecifierAstNode): UserDefinedTypeNameAstNode {
-  return inheritsNode.baseName
+function getInheritsFromName (inheritsNode: InheritanceSpecifierAstNode): string {
+  return inheritsNode.baseName.name
 }
 
 /**
@@ -292,7 +292,7 @@ function getDeclaredVariableType (varDeclNode: VariableDeclarationAstNode): stri
  * @contractNode {ASTNode} Contract Definition node
  * @return {list variable declaration} state variable node list
  */
-function getStateVariableDeclarationsFormContractNode (contractNode: ContractDefinitionAstNode): VariableDeclarationAstNode[] {
+function getStateVariableDeclarationsFromContractNode (contractNode: ContractDefinitionAstNode): VariableDeclarationAstNode[] {
   return contractNode.nodes.filter(el => el.nodeType === "VariableDeclaration")
 }
 
@@ -355,9 +355,9 @@ function getFunctionCallTypeParameterType (func: FunctionCallAstNode): string | 
  * @funcCall {ASTNode} function call node
  * @return {string} name of the lib defined
  */
-function getLibraryCallContractName (node: MemberAccessAstNode): string | undefined {
-  if (!isLibraryCall(node)) throw new Error('staticAnalysisCommon.js: not an this library call Node')
-  const types: RegExpExecArray | null = new RegExp(basicRegex.LIBRARYTYPE).exec(node.expression.typeDescriptions.typeString)
+function getLibraryCallContractName (node: FunctionCallAstNode): string | undefined {
+  if (!isLibraryCall(node.expression)) throw new Error('staticAnalysisCommon.js: not an this library call Node')
+  const types: RegExpExecArray | null = new RegExp(basicRegex.LIBRARYTYPE).exec(node.expression.expression.typeDescriptions.typeString)
   if(types)
     return types[1]
 }
@@ -522,6 +522,9 @@ function isLocalCallGraphRelevantNode (node: FunctionCallAstNode): boolean {
  * @return {bool}
  */
 function isBuiltinFunctionCall (node: FunctionCallAstNode): boolean {
+  // console.log('isBuiltinFunctionCall isLocalCall', isLocalCall(node))
+  // console.log('isBuiltinFunctionCall getLocalCallName', getLocalCallName(node))
+  // console.log('isBuiltinFunctionCall getFunctionCallTypeParameterType', getFunctionCallTypeParameterType(node))
   return (isLocalCall(node) && builtinFunctions[getLocalCallName(node) + '(' + getFunctionCallTypeParameterType(node) + ')'] === true) || isAbiNamespaceCall(node)
 }
 
@@ -567,7 +570,7 @@ function isRequireCall (node: FunctionCallAstNode): boolean  {
  * @return {bool}
  */
 function isStorageVariableDeclaration (node: VariableDeclarationAstNode): boolean {
-  return expressionType(node, basicRegex.REFTYPE)
+  return node.storageLocation === 'storage' && new RegExp(basicRegex.REFTYPE).test(node.typeDescriptions.typeIdentifier)
 }
 
 /**
@@ -731,7 +734,7 @@ function isLibrary (node: ContractDefinitionAstNode): boolean {
  * @return {bool}
  */
 function isCallToNonConstLocalFunction (node: FunctionCallAstNode): boolean {
-  return isLocalCall(node) && !expressionType(node, basicRegex.CONSTANTFUNCTIONTYPE)
+  return isLocalCall(node) && !expressionTypeDescription(node, basicRegex.CONSTANTFUNCTIONTYPE)
 }
 
 /**
@@ -862,8 +865,8 @@ function isLLSend (node: MemberAccessAstNode): boolean {
  */
 function isLLCall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident))
+          exactMatch(util.escapeRegExp(lowLevelCallTypes['CALL-v0.5'].type)),
+          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['CALL-v0.5'].ident))
 }
 
 /**
@@ -895,8 +898,8 @@ function isLLCallcode (node: MemberAccessAstNode): boolean {
  */
 function isLLDelegatecall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.DELEGATECALL.type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.DELEGATECALL.ident))
+          exactMatch(util.escapeRegExp(lowLevelCallTypes['DELEGATECALL-v0.5'].type)),
+          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['DELEGATECALL-v0.5'].ident))
 }
 
 /**
@@ -959,10 +962,15 @@ function isBytesLengthCheck (node: MemberAccessAstNode): boolean {
 // #################### Complex Node Identification - Private
 
 function isMemberAccess (node: MemberAccessAstNode, retType: string, accessor: string| undefined, accessorType: string, memberName: string | undefined): boolean {
-  return typeDescription(node, retType) &&
-        memName(node, memberName) &&
-        memName(node.expression, accessor) &&
-        expressionTypeDescription(node.expression, accessorType)
+  const nodeTypeDef: boolean = typeDescription(node, retType)
+  console.log('MemberAccess typeDef ->',nodeTypeDef)
+  const nodeMemName: boolean = memName(node, memberName)
+  console.log('MemberAccess nodeMemName ->',nodeMemName)
+  const nodeExpMemName: boolean = memName(node.expression, accessor)
+  console.log('MemberAccess nodeExpMemName ->',nodeExpMemName)
+  const nodeExpTypeDef: boolean = expressionTypeDescription(node, accessorType)
+  console.log('MemberAccess nodeExpTypeDef ->',nodeExpTypeDef)
+  return nodeTypeDef && nodeMemName && nodeExpTypeDef && nodeExpMemName
 }
 
 function isSpecialVariableAccess (node: MemberAccessAstNode, varType: any): boolean {
@@ -979,9 +987,9 @@ function isSpecialVariableAccess (node: MemberAccessAstNode, varType: any): bool
 //   return (node && (nr === undefined || nr === null)) || (node && nr === 0 && !node.children) || (node && node.children && node.children.length >= nr)
 // }
 
-function expressionType (node, typeRegex) {
-  return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
-}
+// function expressionType (node, typeRegex) {
+//   return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
+// }
 
 function expressionTypeDescription (node, typeRegex) {
   return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
@@ -996,8 +1004,8 @@ function nodeType (node, typeRegex) {
 }
 
 function memName (node, memNameRegex) {
-  const regex = new RegExp(memNameRegex)
-  return regex.test(node.name) || regex.test(node.memberName)
+  // const regex = new RegExp(memNameRegex)
+  return (node && !memNameRegex) || new RegExp(memNameRegex).test(node.name) || new RegExp(memNameRegex).test(node.memberName)
 }
 
 function operator (node, opRegex) {
@@ -1056,7 +1064,7 @@ function buildAbiSignature (funName: string, paramTypes: any[]): string {
 const helpers = {
   // nrOfChildren,
   // minNrOfChildren,
-  expressionType,
+  expressionTypeDescription,
   nodeType,
   memName,
   operator,
@@ -1086,7 +1094,7 @@ export {
   getLibraryCallMemberName,
   getFullQualifiedFunctionCallIdent,
   getFullQuallyfiedFuncDefinitionIdent,
-  getStateVariableDeclarationsFormContractNode,
+  getStateVariableDeclarationsFromContractNode,
   getFunctionOrModifierDefinitionParameterPart,
   getFunctionDefinitionReturnParameterPart,
   getUnAssignedTopLevelBinOps,
