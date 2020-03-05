@@ -1,9 +1,9 @@
 import { default as test} from "tape"
-import * as common from '../../dist/src/solidity-analyzer/modules/staticAnalysisCommon'
+import * as common from '../../src/solidity-analyzer/modules/staticAnalysisCommon'
 const { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignment,
-    inlineAssembly, forLoopNode, whileLoopNode, doWhileLoopNode, stateVariableContractNode,
+    inlineAssembly, unaryOperation, nowAst, doWhileLoopNode, stateVariableContractNode,
     functionDefinition, fullyQualifiedFunctionDefinition, selfdestruct, storageVariableNodes,
-    lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess } = require('./astBlocks')
+    lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess, contractDefinition } = require('./astBlocks')
 
 function escapeRegExp (str) {
   return str.replace(/[-[\]/{}()+?.\\^$|]/g, '\\$&')
@@ -51,57 +51,86 @@ test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
 
 // #################### Node Identification Primitives
 
-// test('staticAnalysisCommon.helpers.name', function (t) {
-//   t.plan(9)
-//   const node = { attributes: { value: 'now' } }
-//   const node2 = { attributes: { member_name: 'call' } }
+test('staticAnalysisCommon.helpers.name', function (t) {
+  t.plan(3)
+  const node = { name: 'now' }
+  const node2 = { memberName: 'call' }
 
-//   t.ok(common.helpers.memName(node, 'now'), 'should work for values')
-//   t.ok(common.helpers.memName(node2, 'call'), 'should work for member_name')
-//   t.ok(common.helpers.memName(node2, '.all'), 'regex should work')
+  t.ok(common.helpers.memName(node, 'now'), 'should work for names')
+  t.ok(common.helpers.memName(node2, 'call'), 'should work for memberName')
+  t.ok(common.helpers.memName(node2, '.all'), 'regex should work')
 
-//   lowlevelAccessersCommon(t, common.helpers.memName, node)
-// })
+  // lowlevelAccessersCommon(t, common.helpers.memName, node)
+})
 
-// test('staticAnalysisCommon.helpers.operator', function (t) {
-//   t.plan(10)
-//   const node = { attributes: { operator: '++' } }
-//   const node2 = { attributes: { operator: '+++' } }
+test('staticAnalysisCommon.helpers.operator', function (t) {
+  t.plan(4)
+  const node = { operator: '++' }
+  const node2 = { operator: '+++' }
 
-//   const escapedPP = escapeRegExp('++')
-//   const escapedPPExact = `^${escapedPP}$`
+  const escapedPP = escapeRegExp('++')
+  const escapedPPExact = `^${escapedPP}$`
 
-//   t.ok(common.helpers.operator(node, escapedPPExact), 'should work for ++')
-//   t.notOk(common.helpers.operator(node2, escapedPPExact), 'should not work for +++')
-//   t.ok(common.helpers.operator(node, escapedPP), 'should work for ++')
-//   t.ok(common.helpers.operator(node2, escapedPP), 'should work for +++')
+  t.ok(common.helpers.operator(node, escapedPPExact), 'should work for ++')
+  t.notOk(common.helpers.operator(node2, escapedPPExact), 'should not work for +++')
+  t.ok(common.helpers.operator(node, escapedPP), 'should work for ++')
+  t.ok(common.helpers.operator(node2, escapedPP), 'should work for +++')
 
-//   lowlevelAccessersCommon(t, common.helpers.operator, node)
-// })
+  // lowlevelAccessersCommon(t, common.helpers.operator, node)
+})
 
-// test('staticAnalysisCommon.helpers.nodeType', function (t) {
-//   t.plan(9)
-//   const node = { name: 'Identifier', attributes: { name: 'now' } }
-//   const node2 = { name: 'FunctionCall', attributes: { member_name: 'call' } }
+test('staticAnalysisCommon.helpers.nodeType', function (t) {
+  t.plan(3)
+  const node = { nodeType: 'Identifier', name: 'now'}
+  const node2 = { nodeType: 'FunctionCall', memberName: 'call' }
 
-//   t.ok(common.helpers.nodeType(node, common.nodeTypes.IDENTIFIER), 'should work for ident')
-//   t.ok(common.helpers.nodeType(node2, common.nodeTypes.FUNCTIONCALL), 'should work for funcall')
-//   t.ok(common.helpers.nodeType(node2, '^F'), 'regex should work for funcall')
+  t.ok(common.helpers.nodeType(node, common.nodeTypes.IDENTIFIER), 'should work for identifier')
+  t.ok(common.helpers.nodeType(node2, common.nodeTypes.FUNCTIONCALL), 'should work for function call')
+  t.ok(common.helpers.nodeType(node2, '^F'), 'regex should work for function call')
 
-//   lowlevelAccessersCommon(t, common.helpers.nodeType, node)
-// })
+  // lowlevelAccessersCommon(t, common.helpers.nodeType, node)
+})
 
-// test('staticAnalysisCommon.helpers.expressionType', function (t) {
-//   t.plan(9)
-//   const node = { name: 'Identifier', attributes: { value: 'now', type: 'uint256' } }
-//   const node2 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
+test('staticAnalysisCommon.helpers.expressionTypeDescription', function (t) {
+  t.plan(3)
+  const node = {
+    "expression":
+    {
+      "argumentTypes":
+      [
+        {
+          "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "typeString": "literal_string \"\""
+        }
+      ],
+      "expression":
+      {
+        "name": "addr",
+        "nodeType": "Identifier",
+        "src": "132:4:0",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_address_payable",
+          "typeString": "address payable"
+        }
+      },
+      "memberName": "call",
+      "nodeType": "MemberAccess",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$",
+        "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+      }
+    },
+    "nodeType": "FunctionCall",
+  }
 
-//   t.ok(common.helpers.expressionType(node, common.basicTypes.UINT), 'should work for ident')
-//   t.ok(common.helpers.expressionType(node2, escapeRegExp(common.basicFunctionTypes.CALL)), 'should work for funcall')
-//   t.ok(common.helpers.expressionType(node2, '^function \\('), 'regex should work')
+  t.ok(common.helpers.expressionTypeDescription(node.expression, common.basicTypes.PAYABLE_ADDRESS), 'should work for ident')
+  t.ok(common.helpers.expressionTypeDescription(node, escapeRegExp(common.basicFunctionTypes['CALL-v0.5'])), 'should work for funcall')
+  t.ok(common.helpers.expressionTypeDescription(node, '^function \\('), 'regex should work')
 
-//   lowlevelAccessersCommon(t, common.helpers.expressionType, node)
-// })
+  // lowlevelAccessersCommon(t, common.helpers.expressionType, node)
+})
 
 // // test('staticAnalysisCommon.helpers.nrOfChildren', function (t) {
 // //   t.plan(10)
@@ -135,8 +164,8 @@ test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
 // // })
 
 // function lowlevelAccessersCommon (t, f, someNode) {
-//   t.ok(f(someNode), 'always ok if type is undefinded')
-//   t.ok(f(someNode, undefined), 'always ok if name is undefinded 2')
+//   t.ok(f(someNode), 'always ok if type is undefined')
+//   t.ok(f(someNode, undefined), 'always ok if name is undefined 2')
 //   t.notOk(f(null, undefined), 'false on no node')
 //   t.notOk(f(null, 'call'), 'false on no node')
 //   t.notOk(f(undefined, null), 'false on no node')
@@ -145,290 +174,257 @@ test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
 
 // // #################### Trivial Getter Test
 
-// test('staticAnalysisCommon.getType', function (t) {
-//   t.plan(2)
-//   const node =  { "argumentTypes": null,
-//                   "id": 3,
-//                   "name": "a",
-//                   "nodeType": "Identifier",
-//                   "overloadedDeclarations": [],
-//                   "referencedDeclaration": 22,
-//                   "src": "52:1:0",
-//                   "typeDescriptions":
-//                   {
-//                     "typeIdentifier": "t_uint256",
-//                     "typeString": "uint256"
-//                   }
-//                 }
-//   t.ok(common.getType(blockHashAccess) === 'function (uint256) view returns (bytes32)', 'gettype should work for different nodes')
-//   t.ok(common.getType(node) === 'uint256', 'gettype should work for different nodes')
-// })
+test('staticAnalysisCommon.getType', function (t) {
+  t.plan(2)
+  const node =  { "argumentTypes": null,
+                  "id": 3,
+                  "name": "a",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 22,
+                  "src": "52:1:0",
+                  "typeDescriptions":
+                  {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                }
+  t.ok(common.getType(blockHashAccess) === 'function (uint256) view returns (bytes32)', 'gettype should work for different nodes')
+  t.ok(common.getType(node) === 'uint256', 'gettype should work for different nodes')
+})
 
 // // #################### Complex Getter Test
 
-// test('staticAnalysisCommon.getFunctionCallType', function (t) {
-//   t.plan(5)
-//   t.equal(common.getFunctionCallType(libCall), 'function (struct Set.Data storage pointer,uint256) returns (bool)', 'this lib call returns correct type')
-//   t.equal(common.getFunctionCallType(thisLocalCall), 'function (bytes32,address) returns (bool)', 'this local call returns correct type')
-//   t.equal(common.getFunctionCallType(externalDirect), 'function () payable external returns (uint256)', 'external direct call returns correct type')
-//   t.equal(common.getFunctionCallType(localCall), 'function (struct Ballot.Voter storage pointer)', 'local call returns correct type')
-//   t.throws(() => common.getFunctionCallType({ name: 'MemberAccess' }), Error, 'throws on wrong type')
-// })
+test('staticAnalysisCommon.getFunctionCallType', function (t) {
+  t.plan(4)
+  t.equal(common.getFunctionCallType(libCall), 'function (struct Set.Data storage pointer,uint256) returns (bool)', 'this lib call returns correct type')
+  t.equal(common.getFunctionCallType(thisLocalCall), 'function () external returns (uint256,uint256)', 'this local call returns correct type')
+  t.equal(common.getFunctionCallType(localCall), 'function (uint256,string memory)', 'local call returns correct type')
+  t.equal(common.getFunctionCallType(externalDirect), 'function () external', 'external call returns correct type')
+})
 
-// test('staticAnalysisCommon.getEffectedVariableName', function (t) {
-//   t.plan(3)
-//   t.throws(() => common.getEffectedVariableName(inlineAssembly), Error, 'staticAnalysisCommon.js: not an effect Node or inline assembly, get from inline assembly should throw')
-//   t.ok(common.getEffectedVariableName(assignment) === 'c', 'get right name for assignment')
-//   t.throws(() => common.getEffectedVariableName({ name: 'MemberAccess' }), Error, 'should throw on all other nodes')
-// })
+test('staticAnalysisCommon.getEffectedVariableName', function (t) {
+  t.plan(3)
+  t.throws(() => common.getEffectedVariableName(inlineAssembly), Error, 'staticAnalysisCommon.js: not an effect Node or inline assembly, get from inline assembly should throw')
+  t.ok(common.getEffectedVariableName(assignment) === 'a', 'get right name for assignment')
+  t.throws(() => common.getEffectedVariableName(externalDirect), Error, 'should throw on all other nodes')
+})
 
-// test('staticAnalysisCommon.getLocalCallName', function (t) {
-//   t.plan(3)
-//   t.ok(common.getLocalCallName(localCall) === 'bli', 'getLocal call name from node')
-//   t.throws(() => common.getLocalCallName(externalDirect), Error, 'throws on other nodes')
-//   t.throws(() => common.getLocalCallName(thisLocalCall), Error, 'throws on other nodes')
-// })
+test('staticAnalysisCommon.getLocalCallName', function (t) {
+  t.plan(3)
+  t.ok(common.getLocalCallName(localCall) === 'e', 'getLocal call name from node')
+  t.throws(() => common.getLocalCallName(externalDirect), Error, 'throws on other nodes')
+  t.throws(() => common.getLocalCallName(thisLocalCall), Error, 'throws on other nodes')
+})
 
-// test('staticAnalysisCommon.getThisLocalCallName', function (t) {
-//   t.plan(3)
-//   t.ok(common.getThisLocalCallName(thisLocalCall) === 'b', 'get this Local call name from node')
-//   t.throws(() => common.getThisLocalCallName(externalDirect), Error, 'throws on other nodes')
-//   t.throws(() => common.getThisLocalCallName(localCall), Error, 'throws on other nodes')
-// })
+test('staticAnalysisCommon.getThisLocalCallName', function (t) {
+  t.plan(3)
+  t.ok(common.getThisLocalCallName(thisLocalCall) === 'f', 'get this Local call name from node')
+  t.throws(() => common.getThisLocalCallName(externalDirect), Error, 'throws on other nodes')
+  t.throws(() => common.getThisLocalCallName(localCall), Error, 'throws on other nodes')
+})
 
-// test('staticAnalysisCommon.getSuperLocalCallName', function (t) {
-//   t.plan(4)
-//   t.equal(common.getSuperLocalCallName(superLocal), 'duper', 'get local name from super local call')
-//   t.throws(() => common.getSuperLocalCallName(thisLocalCall), 'throws on other nodes')
-//   t.throws(() => common.getSuperLocalCallName(externalDirect), 'throws on other nodes')
-//   t.throws(() => common.getSuperLocalCallName(localCall), 'throws on other nodes')
-// })
+test('staticAnalysisCommon.getSuperLocalCallName', function (t) {
+  t.plan(4)
+  t.equal(common.getSuperLocalCallName(superLocal), 'x', 'get local name from super local call')
+  t.throws(() => common.getSuperLocalCallName(thisLocalCall), 'throws on other nodes')
+  t.throws(() => common.getSuperLocalCallName(externalDirect), 'throws on other nodes')
+  t.throws(() => common.getSuperLocalCallName(localCall), 'throws on other nodes')
+})
 
-// test('staticAnalysisCommon.getExternalDirectCallContractName', function (t) {
-//   t.plan(3)
-//   t.ok(common.getExternalDirectCallContractName(externalDirect) === 'InfoFeed', 'external direct call contract name from node')
-//   t.throws(() => common.getExternalDirectCallContractName(thisLocalCall), Error, 'throws on other nodes')
-//   t.throws(() => common.getExternalDirectCallContractName(localCall), Error, 'throws on other nodes')
-// })
+test('staticAnalysisCommon.getExternalDirectCallContractName', function (t) {
+  t.plan(3)
+  t.ok(common.getExternalDirectCallContractName(externalDirect) === 'c', 'external direct call contract name from node')
+  t.throws(() => common.getExternalDirectCallContractName(thisLocalCall), Error, 'throws on other nodes')
+  t.throws(() => common.getExternalDirectCallContractName(localCall), Error, 'throws on other nodes')
+})
 
-// test('staticAnalysisCommon.getThisLocalCallContractName', function (t) {
-//   t.plan(3)
-//   t.ok(common.getThisLocalCallContractName(thisLocalCall) === 'test', 'this local call contract name from node')
-//   t.throws(() => common.getThisLocalCallContractName(localCall), Error, 'throws on other nodes')
-//   t.throws(() => common.getThisLocalCallContractName(externalDirect), Error, 'throws on other nodes')
-// })
+test('staticAnalysisCommon.getThisLocalCallContractName', function (t) {
+  t.plan(3)
+  t.ok(common.getThisLocalCallContractName(thisLocalCall) === 'C', 'this local call contract name from node')
+  t.throws(() => common.getThisLocalCallContractName(localCall), Error, 'throws on other nodes')
+  t.throws(() => common.getThisLocalCallContractName(externalDirect), Error, 'throws on other nodes')
+})
 
-// test('staticAnalysisCommon.getExternalDirectCallMemberName', function (t) {
-//   t.plan(3)
-//   t.ok(common.getExternalDirectCallMemberName(externalDirect) === 'info', 'external direct call name from node')
-//   t.throws(() => common.getExternalDirectCallMemberName(thisLocalCall), Error, 'throws on other nodes')
-//   t.throws(() => common.getExternalDirectCallMemberName(localCall), Error, 'throws on other nodes')
-// })
+test('staticAnalysisCommon.getExternalDirectCallMemberName', function (t) {
+  t.plan(3)
+  t.ok(common.getExternalDirectCallMemberName(externalDirect) === 'f', 'external direct call name from node')
+  t.throws(() => common.getExternalDirectCallMemberName(thisLocalCall), Error, 'throws on other nodes')
+  t.throws(() => common.getExternalDirectCallMemberName(localCall), Error, 'throws on other nodes')
+})
 
-// test('staticAnalysisCommon.getContractName', function (t) {
-//   t.plan(2)
-//   const contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
-//   t.ok(common.getContractName(contract) === 'baz', 'returns right contract name')
-//   t.throws(() => common.getContractName({ name: 'InheritanceSpecifier' }), Error, 'throws on other nodes')
-// })
+test('staticAnalysisCommon.getContractName', function (t) {
+  t.plan(1)
+  t.ok(common.getContractName(contractDefinition) === 'C', 'returns right contract name')
+})
 
-// test('staticAnalysisCommon.getFunctionDefinitionName', function (t) {
-//   t.plan(2)
-//   const func = { name: 'FunctionDefinition', attributes: { name: 'foo' } }
-//   t.ok(common.getFunctionDefinitionName(func) === 'foo', 'returns right contract name')
-//   t.throws(() => common.getFunctionDefinitionName({ name: 'InlineAssembly' }), Error, 'throws on other nodes')
-// })
+test('staticAnalysisCommon.getFunctionDefinitionName', function (t) {
+  t.plan(1)
+  t.ok(common.getFunctionDefinitionName(functionDefinition) === 'f', 'returns right function name')
+})
 
-// test('staticAnalysisCommon.getInheritsFromName', function (t) {
-//   t.plan(2)
-//   t.ok(common.getInheritsFromName(inheritance) === 'r', 'returns right contract name')
-//   t.throws(() => common.getInheritsFromName({ name: 'ElementaryTypeName' }), Error, 'throws on other nodes')
-// })
+test('staticAnalysisCommon.getInheritsFromName', function (t) {
+  t.plan(1)
+  t.ok(common.getInheritsFromName(inheritance) === 'A', 'returns right contract name')
+})
 
-// test('staticAnalysisCommon.getDeclaredVariableName', function (t) {
-//   t.plan(2)
-//   t.ok(common.getDeclaredVariableName(storageVariableNodes.node1) === 'x', 'extract right variable name')
-//   let node1 = JSON.parse(JSON.stringify(storageVariableNodes))
-//   node1.node1.name = 'FunctionCall'
-//   t.throws(() => common.getDeclaredVariableName(node1) === 'x', Error, 'throw if wrong node')
-// })
+test('staticAnalysisCommon.getDeclaredVariableName', function (t) {
+  t.plan(1)
+  t.ok(common.getDeclaredVariableName(storageVariableNodes.node1) === 'c', 'extract right variable name')
+})
 
-// test('staticAnalysisCommon.getStateVariableDeclarationsFormContractNode', function (t) {
-//   t.plan(4)
-//   const res = common.getStateVariableDeclarationsFormContractNode(stateVariableContractNode).map(common.getDeclaredVariableName)
-//   t.ok(res[0] === 'chairperson', 'var 1 should be ')
-//   t.ok(res[1] === 'voters', 'var 2 should be ')
-//   t.ok(res[2] === 'proposals', 'var 3 should be ')
-//   t.ok(res[3] === undefined, 'var 4 should be  undefined')
-// })
+test('staticAnalysisCommon.getStateVariableDeclarationsFromContractNode', function (t) {
+  t.plan(3)
+  const res = common.getStateVariableDeclarationsFromContractNode(stateVariableContractNode).map(common.getDeclaredVariableName)
+  t.ok(res[0] === 'x', 'var 1 should be ')
+  t.ok(res[1] === 'b', 'var 2 should be ')
+  t.ok(res[2] === 's', 'var 3 should be ')
+})
 
-// test('staticAnalysisCommon.getFunctionOrModifierDefinitionParameterPart', function (t) {
-//   t.plan(2)
-//   t.ok(common.helpers.nodeType(common.getFunctionOrModifierDefinitionParameterPart(functionDefinition), 'ParameterList'), 'should return a parameterList')
-//   t.throws(() => common.getFunctionOrModifierDefinitionParameterPart({ name: 'SourceUnit' }), Error, 'throws on other nodes')
-// })
+test('staticAnalysisCommon.getFunctionOrModifierDefinitionParameterPart', function (t) {
+  t.plan(1)
+  t.ok(common.helpers.nodeType(common.getFunctionOrModifierDefinitionParameterPart(functionDefinition), 'ParameterList'), 'should return a parameterList')
+})
 
-// test('staticAnalysisCommon.getFunctionCallTypeParameterType', function (t) {
-//   t.plan(4)
-//   t.ok(common.getFunctionCallTypeParameterType(thisLocalCall) === 'bytes32,address', 'this local call returns correct type')
-//   t.ok(common.getFunctionCallTypeParameterType(externalDirect) === '', 'external direct call returns correct type')
-//   t.ok(common.getFunctionCallTypeParameterType(localCall) === 'struct Ballot.Voter storage pointer', 'local call returns correct type')
-//   t.throws(() => common.getFunctionCallTypeParameterType({ name: 'MemberAccess' }), Error, 'throws on wrong type')
-// })
+test('staticAnalysisCommon.getFunctionCallTypeParameterType', function (t) {
+  t.plan(3)
+  t.ok(common.getFunctionCallTypeParameterType(thisLocalCall) === '', 'this local call returns correct type')
+  t.ok(common.getFunctionCallTypeParameterType(externalDirect) === '', 'external direct call returns correct type')
+  t.ok(common.getFunctionCallTypeParameterType(localCall) === 'uint256,string memory', 'local call returns correct type')
+})
 
-// test('staticAnalysisCommon.getLibraryCallContractName', function (t) {
-//   t.plan(2)
-//   t.equal(common.getLibraryCallContractName(libCall), 'Set', 'should return correct contract name')
-//   t.throws(() => common.getLibraryCallContractName({ name: 'Identifier' }), Error, 'should throw on wrong node')
-// })
+test('staticAnalysisCommon.getLibraryCallContractName', function (t) {
+  t.plan(1)
+  t.equal(common.getLibraryCallContractName(libCall), 'Set', 'should return correct contract name')
+})
 
-// test('staticAnalysisCommon.getLibraryCallMemberName', function (t) {
-//   t.plan(2)
-//   t.equal(common.getLibraryCallMemberName(libCall), 'insert', 'should return correct member name')
-//   t.throws(() => common.getLibraryCallMemberName({ name: 'Identifier' }), Error, 'should throw on wrong node')
-// })
+test('staticAnalysisCommon.getLibraryCallMemberName', function (t) {
+  t.plan(1)
+  t.equal(common.getLibraryCallMemberName(libCall), 'insert', 'should return correct member name')
+})
 
-// test('staticAnalysisCommon.getFullQualifiedFunctionCallIdent', function (t) {
-//   t.plan(4)
-//   const contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
-//   t.ok(common.getFullQualifiedFunctionCallIdent(contract, thisLocalCall) === 'test.b(bytes32,address)', 'this local call returns correct type')
-//   t.ok(common.getFullQualifiedFunctionCallIdent(contract, externalDirect) === 'InfoFeed.info()', 'external direct call returns correct type')
-//   t.ok(common.getFullQualifiedFunctionCallIdent(contract, localCall) === 'baz.bli(struct Ballot.Voter storage pointer)', 'local call returns correct type')
-//   t.throws(() => common.getFullQualifiedFunctionCallIdent(contract, { name: 'MemberAccess' }), Error, 'throws on wrong type')
-// })
+test('staticAnalysisCommon.getFullQualifiedFunctionCallIdent', function (t) {
+  t.plan(3)
+  t.ok(common.getFullQualifiedFunctionCallIdent(contractDefinition, thisLocalCall) === 'C.f()', 'this local call returns correct type')
+  t.ok(common.getFullQualifiedFunctionCallIdent(contractDefinition, externalDirect) === 'c.f()', 'external direct call returns correct type')
+  t.ok(common.getFullQualifiedFunctionCallIdent(contractDefinition, localCall) === 'C.e(uint256,string memory)', 'local call returns correct type')
+})
 
-// test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
-//   t.plan(3)
-//   const contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
-//   t.ok(common.getFullQuallyfiedFuncDefinitionIdent(contract, fullyQualifiedFunctionDefinition, ['uint256', 'bool']) === 'baz.getY(uint256,bool)', 'creates right signature')
-//   t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(contract, { name: 'MemberAccess' }, ['uint256', 'bool']), Error, 'throws on wrong nodes')
-//   t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent({ name: 'FunctionCall' }, fullyQualifiedFunctionDefinition, ['uint256', 'bool']), Error, 'throws on wrong nodes')
-// })
+test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
+  t.plan(1)
+  t.ok(common.getFullQuallyfiedFuncDefinitionIdent(contractDefinition, functionDefinition, ['uint256', 'bool']) === 'C.f(uint256,bool)', 'creates right signature')
+})
 
-// // #################### Complex Node Identification
+// #################### Complex Node Identification
 
-// test('staticAnalysisCommon.isBuiltinFunctionCall', function (t) {
-//   t.plan(2)
-//   t.ok(common.isBuiltinFunctionCall(selfdestruct), 'selfdestruct is builtin')
-//   t.notOk(common.isBuiltinFunctionCall(localCall), 'local call is not builtin')
-// })
+test('staticAnalysisCommon.isBuiltinFunctionCall', function (t) {
+  t.plan(2)
+  t.ok(common.isBuiltinFunctionCall(selfdestruct), 'selfdestruct is builtin')
+  t.throws(() => common.isBuiltinFunctionCall(localCall), Error, 'local call is not builtin')
+})
 
-// test('staticAnalysisCommon.isStorageVariableDeclaration', function (t) {
-//   t.plan(3)
-//   t.ok(common.isStorageVariableDeclaration(storageVariableNodes.node1), 'struct storage pointer param is storage')
-//   t.ok(common.isStorageVariableDeclaration(storageVariableNodes.node2), 'struct storage pointer mapping param is storage')
-//   t.notOk(common.isStorageVariableDeclaration(storageVariableNodes.node3), 'bytes is not storage')
-// })
+test('staticAnalysisCommon.isStorageVariableDeclaration', function (t) {
+  t.plan(3)
+  t.ok(common.isStorageVariableDeclaration(storageVariableNodes.node1), 'struct storage pointer param is storage')
+  t.ok(common.isStorageVariableDeclaration(storageVariableNodes.node2), 'struct storage pointer mapping param is storage')
+  t.notOk(common.isStorageVariableDeclaration(storageVariableNodes.node3), 'bytes is not storage')
+})
 
-// test('staticAnalysisCommon.isInteraction', function (t) {
-//   t.plan(6)
-//   t.ok(common.isInteraction(lowlevelCall.sendAst), 'send is interaction')
-//   t.ok(common.isInteraction(lowlevelCall.callAst), 'call is interaction')
-//   t.ok(common.isInteraction(externalDirect), 'ExternalDirecCall is interaction')
-//   t.notOk(common.isInteraction(lowlevelCall.callcodeAst), 'callcode is not interaction')
-//   t.notOk(common.isInteraction(lowlevelCall.delegatecallAst), 'callcode is not interaction')
-//   t.notOk(common.isInteraction(localCall), 'local call is not interaction')
-// })
+test('staticAnalysisCommon.isInteraction', function (t) {
+  t.plan(6)
+  t.ok(common.isInteraction(lowlevelCall.sendAst), 'send is interaction')
+  t.ok(common.isInteraction(lowlevelCall.callAst), 'call is interaction')
+  t.ok(common.isInteraction(externalDirect.expression), 'ExternalDirecCall is interaction')
+  t.notOk(common.isInteraction(lowlevelCall.callcodeAst), 'callcode is not interaction')
+  t.notOk(common.isInteraction(lowlevelCall.delegatecallAst), 'delegatecall is not interaction')
+  t.notOk(common.isInteraction(localCall), 'local call is not interaction')
+})
 
-// test('staticAnalysisCommon.isEffect', function (t) {
-//   t.plan(5)
-//   const unaryOp = { name: 'UnaryOperation', attributes: { operator: '++' } }
-//   t.ok(common.isEffect(inlineAssembly), 'inline assembly is treated as effect')
-//   t.ok(common.isEffect(assignment), 'assignment is treated as effect')
-//   t.ok(common.isEffect(unaryOp), '++ is treated as effect')
-//   unaryOp.attributes.operator = '--'
-//   t.ok(common.isEffect(unaryOp), '-- is treated as effect')
-//   t.notOk(common.isEffect({ name: 'MemberAccess', attributes: { operator: '++' } }), 'MemberAccess not treated as effect')
-// })
+test('staticAnalysisCommon.isEffect', function (t) {
+  t.plan(5)
+  t.ok(common.isEffect(inlineAssembly), 'inline assembly is treated as effect')
+  t.ok(common.isEffect(assignment), 'assignment is treated as effect')
+  t.ok(common.isEffect(unaryOperation), '++ is treated as effect')
+  const node = JSON.parse(JSON.stringify(unaryOperation))
+  node.operator = '--'
+  t.ok(common.isEffect(node), '-- is treated as effect')
+  t.notOk(common.isEffect(externalDirect.expression), 'MemberAccess not treated as effect')
+})
 
-// test('staticAnalysisCommon.isWriteOnStateVariable', function (t) {
-//   t.plan(3)
-//   const node1 = JSON.parse(JSON.stringify(storageVariableNodes.node1))
-//   const node2 = node1
-//   const node3 = node1
-//   node2.attributes.name = 'y'
-//   node3.attributes.name = 'xx'
-//   t.ok(common.isWriteOnStateVariable(inlineAssembly, [node1, node2, node3]), 'inline Assembly is write on state')
-//   t.notOk(common.isWriteOnStateVariable(assignment, [node1, node2, node3]), 'assignment on non state is not write on state')
-//   node3.attributes.name = 'c'
-//   t.ok(common.isWriteOnStateVariable(assignment, [node1, node2, node3]), 'assignment on state is not write on state')
-// })
+test('staticAnalysisCommon.isWriteOnStateVariable', function (t) {
+  t.plan(3)
+  const node1 = JSON.parse(JSON.stringify(storageVariableNodes.node1))
+  const node2 = node1
+  const node3 = node1
+  node2.name = 'y'
+  node3.name = 'xx'
+  t.ok(common.isWriteOnStateVariable(inlineAssembly, [node1, node2, node3]), 'inline Assembly is write on state')
+  t.notOk(common.isWriteOnStateVariable(assignment, [node1, node2, node3]), 'assignment on non state is not write on state')
+  node3.name = 'a' // same as assignment left hand side var name
+  t.ok(common.isWriteOnStateVariable(assignment, [node1, node2, node3]), 'assignment on state is write on state')
+})
 
-// test('staticAnalysisCommon.isStateVariable', function (t) {
-//   t.plan(3)
-//   t.ok(common.isStateVariable('x', [storageVariableNodes.node1, storageVariableNodes.node2]), 'is contained')
-//   t.ok(common.isStateVariable('x', [storageVariableNodes.node2, storageVariableNodes.node1, storageVariableNodes.node1]), 'is contained twice')
-//   t.notOk(common.isStateVariable('x', [storageVariableNodes.node2, storageVariableNodes.node3]), 'not contained')
-// })
+test('staticAnalysisCommon.isStateVariable', function (t) {
+  t.plan(3)
+  t.ok(common.isStateVariable('c', [storageVariableNodes.node1, storageVariableNodes.node2]), 'is contained')
+  t.ok(common.isStateVariable('c', [storageVariableNodes.node2, storageVariableNodes.node1, storageVariableNodes.node1]), 'is contained twice')
+  t.notOk(common.isStateVariable('c', [storageVariableNodes.node2, storageVariableNodes.node3]), 'not contained')
+})
 
-// test('staticAnalysisCommon.isConstantFunction', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'FunctionDefinition', attributes: { constant: true, stateMutability: 'view' } }
-//   const node2 = { name: 'FunctionDefinition', attributes: { constant: false, stateMutability: 'nonpayable' } }
-//   const node3 = { name: 'MemberAccess', attributes: { constant: true, stateMutability: 'view' } }
+test('staticAnalysisCommon.isConstantFunction', function (t) {
+  t.plan(3)
+  t.ok(common.isConstantFunction(functionDefinition), 'should be const func definition')
+  functionDefinition.stateMutability =  'view'
+  t.ok(common.isConstantFunction(functionDefinition), 'should be const func definition')
+  functionDefinition.stateMutability =  'nonpayable'
+  t.notOk(common.isConstantFunction(functionDefinition), 'should not be const func definition')
+})
 
-//   t.ok(common.isConstantFunction(node1), 'should be const func definition')
-//   t.notOk(common.isConstantFunction(node2), 'should not be const func definition')
-//   t.notOk(common.isConstantFunction(node3), 'wrong node should not be const func definition')
-// })
+test('staticAnalysisCommon.isPlusPlusUnaryOperation', function (t) {
+  t.plan(2)
+  t.ok(common.isPlusPlusUnaryOperation(unaryOperation), 'should be unary ++')
+  const node = JSON.parse(JSON.stringify(unaryOperation))
+  node.operator = '--'
+  t.notOk(common.isPlusPlusUnaryOperation(node), 'should not be unary ++')
+})
 
-// test('staticAnalysisCommon.isPlusPlusUnaryOperation', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'UnaryOperation', attributes: { operator: '++' } }
-//   const node2 = { name: 'UnaryOperation', attributes: { operator: '--' } }
-//   const node3 = { name: 'FunctionDefinition', attributes: { operator: '++' } }
+test('staticAnalysisCommon.isMinusMinusUnaryOperation', function (t) {
+  t.plan(2)
+  unaryOperation.operator = '--'
+  t.ok(common.isMinusMinusUnaryOperation(unaryOperation), 'should be unary --')
+  unaryOperation.operator = '++'
+  t.notOk(common.isMinusMinusUnaryOperation(unaryOperation), 'should not be unary --')
+})
 
-//   t.ok(common.isPlusPlusUnaryOperation(node1), 'should be unary ++')
-//   t.notOk(common.isPlusPlusUnaryOperation(node2), 'should not be unary ++')
-//   t.notOk(common.isPlusPlusUnaryOperation(node3), 'wrong node should not be unary ++')
-// })
+test('staticAnalysisCommon.isFullyImplementedContract', function (t) {
+  t.plan(2)
+  t.ok(common.isFullyImplementedContract(contractDefinition), 'should be fully implemented contract')
+  const node = JSON.parse(JSON.stringify(contractDefinition))
+  node.fullyImplemented = false
+  t.notOk(common.isFullyImplementedContract(node), 'should not be fully implemented contract')
+})
 
-// test('staticAnalysisCommon.isMinusMinusUnaryOperation', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'UnaryOperation', attributes: { operator: '--' } }
-//   const node2 = { name: 'UnaryOperation', attributes: { operator: '++' } }
-//   const node3 = { name: 'FunctionDefinition', attributes: { operator: '--' } }
+test('staticAnalysisCommon.isCallToNonConstLocalFunction', function (t) {
+  t.plan(2)
+  t.ok(common.isCallToNonConstLocalFunction(localCall), 'should be call to non const Local func')
+  const node = JSON.parse(JSON.stringify(localCall))
+  node.expression.typeDescriptions.typeString = 'function (struct Ballot.Voter storage pointer) view payable (uint256)'
+  t.notok(common.isCallToNonConstLocalFunction(node), 'should no longer be call to non const Local func')
+})
 
-//   t.ok(common.isMinusMinusUnaryOperation(node1), 'should be unary --')
-//   t.notOk(common.isMinusMinusUnaryOperation(node2), 'should not be unary --')
-//   t.notOk(common.isMinusMinusUnaryOperation(node3), 'wrong node should not be unary --')
-// })
+test('staticAnalysisCommon.isExternalDirectCall', function (t) {
+  t.plan(5)
+  t.notOk(common.isThisLocalCall(externalDirect), 'is this.local_method() used should not work')
+  t.notOk(common.isBlockTimestampAccess(externalDirect), 'is block.timestamp used should not work')
+  t.notOk(common.isNowAccess(externalDirect), 'is now used should not work')
+  t.ok(common.isExternalDirectCall(externalDirect.expression), 'c.f() should be external direct call')
+  t.notOk(common.isExternalDirectCall(thisLocalCall.expression), 'this local call is not an exernal call')
+})
 
-// test('staticAnalysisCommon.isFullyImplementedContract', function (t) {
-//   t.plan(3)
-//   const node1 = { name: 'ContractDefinition', attributes: { fullyImplemented: true } }
-//   const node2 = { name: 'ContractDefinition', attributes: { fullyImplemented: false } }
-//   const node3 = { name: 'FunctionDefinition', attributes: { operator: '--' } }
-
-//   t.ok(common.isFullyImplementedContract(node1), 'should be fully implemented contract')
-//   t.notOk(common.isFullyImplementedContract(node2), 'should not be fully implemented contract')
-//   t.notOk(common.isFullyImplementedContract(node3), 'wrong node should not be fully implemented contract')
-// })
-
-// test('staticAnalysisCommon.isCallToNonConstLocalFunction', function (t) {
-//   t.plan(2)
-//   t.ok(common.isCallToNonConstLocalFunction(localCall), 'should be call to non const Local func')
-//   localCall.children[0].attributes.type = 'function (struct Ballot.Voter storage pointer) view payable (uint256)'
-//   t.notok(common.isCallToNonConstLocalFunction(localCall), 'should no longer be call to non const Local func')
-// })
-
-// test('staticAnalysisCommon.isExternalDirectCall', function (t) {
-//   t.plan(5)
-//   const node2 = { name: 'MemberAccess', children: [{attributes: { value: 'this', type: 'contract test' }}], attributes: { value: 'b', type: 'function (bytes32,address) returns (bool)' } }
-//   t.notOk(common.isThisLocalCall(externalDirect), 'is this.local_method() used should not work')
-//   t.notOk(common.isBlockTimestampAccess(externalDirect), 'is block.timestamp used should not work')
-//   t.notOk(common.isNowAccess(externalDirect), 'is now used should not work')
-//   t.ok(common.isExternalDirectCall(externalDirect), 'f.info() should be external direct call')
-//   t.notOk(common.isExternalDirectCall(node2), 'local call is not an exernal call')
-// })
-
-// test('staticAnalysisCommon.isNowAccess', function (t) {
-//   t.plan(3)
-//   const node = { name: 'Identifier', attributes: { value: 'now', type: 'uint256' } }
-//   t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
-//   t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
-//   t.ok(common.isNowAccess(node), 'is now used should work')
-// })
+test('staticAnalysisCommon.isNowAccess', function (t) {
+  t.plan(1)
+  t.ok(common.isNowAccess(nowAst), 'is now used should work')
+})
 
 // test('staticAnalysisCommon.isBlockTimestampAccess', function (t) {
 //   t.plan(3)
