@@ -233,7 +233,7 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
   const functionName = args.funABI.type === 'function' ? args.funABI.name : `(${args.funABI.type})`
   const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${args.contractName}.${functionName}`
 
-  const callbacksInContext = txCallBacks.getCallBacksWithContext(this, this.executionContext)
+  const callbacksInContext = txCallBacks.getCallBacksWithContext(this, this.blockchain)
 
   const outputCb = (returnValue) => {
     if (outputOverride) {
