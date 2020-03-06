@@ -50,5 +50,9 @@ contract C {
         if (!Set.insert(knownValues, value))
             revert();
     }
+
+    function testt() public view returns (uint) {
+        return block.timestamp;
+    }
     // In this contract, we can also directly access knownValues.flags, if we want.
 }
