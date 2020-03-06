@@ -1,6 +1,6 @@
 import { default as category } from './categories'
-import { isLowLevelCallInst, isLowLevelCallInst050, isLowLevelCallcodeInst, isLowLevelDelegatecallInst,
-  isLowLevelSendInst, isLowLevelSendInst050, isLLDelegatecallInst050, lowLevelCallTypes } from './staticAnalysisCommon'
+import { isLLCall, isLLDelegatecall,
+  isLLSend, lowLevelCallTypes } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode} from './../../types'
 
@@ -20,20 +20,12 @@ export default class lowLevelCalls implements AnalyzerModule {
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
   visit (node : MemberAccessAstNode): void {
-    if (isLowLevelCallInst(node)) {
+    if (isLLCall(node)) {
       this.llcNodes.push({node: node, type: lowLevelCallTypes.CALL})
-    } else if (isLowLevelCallInst050(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.CALL})
-    } else if (isLowLevelCallcodeInst(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.CALLCODE})
-    } else if (isLowLevelDelegatecallInst(node)) {
+    } else if (isLLDelegatecall(node)) {
       this.llcNodes.push({node: node, type: lowLevelCallTypes.DELEGATECALL})
-    } else if (isLowLevelSendInst(node)) {
+    } else if (isLLSend(node)) {
       this.llcNodes.push({node: node, type: lowLevelCallTypes.SEND})
-    } else if (isLowLevelSendInst050(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.SEND})
-    } else if (isLLDelegatecallInst050(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.DELEGATECALL})
     }
   }
 
@@ -48,12 +40,6 @@ export default class lowLevelCalls implements AnalyzerModule {
                   Please use Direct Calls via specifying the called contract's interface.`
           morehref = 'http://solidity.readthedocs.io/en/develop/control-structures.html?#external-function-calls'
           // http://solidity.readthedocs.io/en/develop/frequently-asked-questions.html?#why-is-the-low-level-function-call-less-favorable-than-instantiating-a-contract-with-a-variable-contractb-b-and-executing-its-functions-b-dosomething
-          break
-        case lowLevelCallTypes.CALLCODE:
-          text = `use of "callcode":  the use of low level "callcode" should be avoided whenever possible. 
-                  External code that is called can change the state of the calling contract and send ether from the caller's balance. 
-                  If this is wanted behaviour use the Solidity library feature if possible.`
-          morehref = 'http://solidity.readthedocs.io/en/develop/contracts.html#libraries'
           break
         case lowLevelCallTypes.DELEGATECALL:
           text = `use of "delegatecall": the use of low level "delegatecall" should be avoided whenever possible. 

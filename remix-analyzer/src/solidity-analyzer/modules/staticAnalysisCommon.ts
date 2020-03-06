@@ -1,9 +1,8 @@
 'use strict'
 
-import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, CommonAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, IdentifierAstNode, MappingAstNode, IndexAccessAstNode, UserDefinedTypeNameAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode } from "types"
+import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, IdentifierAstNode, MappingAstNode, IndexAccessAstNode, UserDefinedTypeNameAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode } from "types"
 
-const remixLib = require('remix-lib')
-const util = remixLib.util
+import { util } from 'remix-lib'
 
 const nodeTypes = {
   IDENTIFIER: 'Identifier',
@@ -54,10 +53,8 @@ const basicRegex = {
 
 const basicFunctionTypes = {
   SEND: buildFunctionSignature([basicTypes.UINT], [basicTypes.BOOL], false),
-  CALL: buildFunctionSignature([], [basicTypes.BOOL], true),
-  'CALL-v0.5': buildFunctionSignature([basicTypes.BYTES_MEM], [basicTypes.BOOL, basicTypes.BYTES_MEM], true),
-  DELEGATECALL: buildFunctionSignature([], [basicTypes.BOOL], false),
-  'DELEGATECALL-v0.5': buildFunctionSignature([basicTypes.BYTES_MEM], [basicTypes.BOOL, basicTypes.BYTES_MEM], false),
+  CALL: buildFunctionSignature([basicTypes.BYTES_MEM], [basicTypes.BOOL, basicTypes.BYTES_MEM], true),
+  DELEGATECALL: buildFunctionSignature([basicTypes.BYTES_MEM], [basicTypes.BOOL, basicTypes.BYTES_MEM], false),
   TRANSFER: buildFunctionSignature([basicTypes.UINT], [], false)
 }
 
@@ -77,16 +74,13 @@ const builtinFunctions = {
   'require(bool)': true,
   'require(bool,string memory)': true,
   'gasleft()': true,
-  'blockhash(uint)': true,
+  'blockhash(uint256)': true,
   'address(address)': true
 }
 
 const lowLevelCallTypes = {
   CALL: { ident: 'call', type: basicFunctionTypes.CALL },
-  'CALL-v0.5': { ident: 'call', type: basicFunctionTypes['CALL-v0.5'] },
-  CALLCODE: { ident: 'callcode', type: basicFunctionTypes.CALL },
   DELEGATECALL: { ident: 'delegatecall', type: basicFunctionTypes.DELEGATECALL },
-  'DELEGATECALL-v0.5': { ident: 'delegatecall', type: basicFunctionTypes['DELEGATECALL-v0.5'] },
   SEND: { ident: 'send', type: basicFunctionTypes.SEND },
   TRANSFER: { ident: 'transfer', type: basicFunctionTypes.TRANSFER }
 }
@@ -467,7 +461,7 @@ function isDeleteOfDynamicArray (node: UnaryOperationAstNode): boolean {
  * @return {bool}
  */
 function isDynamicArrayAccess (node: IdentifierAstNode): boolean {
-  return typeDescription(node, '[] storage ref') || typeDescription(node, 'bytes storage ref') || typeDescription(node, 'string storage ref')
+  return getType(node).endsWith('[] storage ref') || typeDescription(node, 'bytes storage ref') || typeDescription(node, 'string storage ref')
 }
 
 /**
@@ -579,7 +573,7 @@ function isStorageVariableDeclaration (node: VariableDeclarationAstNode): boolea
  * @return {bool}
  */
 function isInteraction (node: MemberAccessAstNode): boolean {
-  return isLLCall(node) || isLLSend(node) || isExternalDirectCall(node) || isTransfer(node) || isLLCall050(node) || isLLSend050(node)
+  return isLLCall(node) || isLLSend(node) || isExternalDirectCall(node) || isTransfer(node)
 }
 
 /**
@@ -787,8 +781,8 @@ function isBlockTimestampAccess (node: MemberAccessAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBlockBlockHashAccess (node: MemberAccessAstNode | FunctionCallAstNode): boolean {
-  return  node.nodeType === 'FunctionCall' && isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash'
+function isBlockBlockHashAccess (node: FunctionCallAstNode): boolean {
+  return isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash'
 }
 
 /**
@@ -828,12 +822,8 @@ function isLocalCall (node: FunctionCallAstNode): boolean {
  */
 function isLowLevelCall (node: MemberAccessAstNode): boolean {
   return isLLCall(node) ||
-          isLLCallcode(node) ||
           isLLDelegatecall(node) ||
-          isLLSend(node) ||
-          isLLSend050(node) ||
-          isLLCall050(node) ||
-          isLLDelegatecall050(node)
+          isLLSend(node)
 }
 
 /**
@@ -841,11 +831,11 @@ function isLowLevelCall (node: MemberAccessAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLSend050 (node: MemberAccessAstNode): boolean {
-  return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
-          undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
-}
+// function isLLSend050 (node: MemberAccessAstNode): boolean {
+//   return isMemberAccess(node,
+//           exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
+//           undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
+// }
 
 /**
  * True if low level send (solidity < 0.5)
@@ -855,7 +845,7 @@ function isLLSend050 (node: MemberAccessAstNode): boolean {
 function isLLSend (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
+          undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
 }
 
 /**
@@ -865,8 +855,8 @@ function isLLSend (node: MemberAccessAstNode): boolean {
  */
 function isLLCall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes['CALL-v0.5'].type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['CALL-v0.5'].ident))
+          exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
+          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident))
 }
 
 /**
@@ -874,22 +864,22 @@ function isLLCall (node: MemberAccessAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLCall050 (node: MemberAccessAstNode): boolean {
-  return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes['CALL-v0.5'].type)),
-          undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes['CALL-v0.5'].ident))
-}
+// function isLLCall050 (node: MemberAccessAstNode): boolean {
+//   return isMemberAccess(node,
+//           exactMatch(util.escapeRegExp(lowLevelCallTypes['CALL-v0.5'].type)),
+//           undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes['CALL-v0.5'].ident))
+// }
 
 /**
  * True if low level callcode
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLCallcode (node: MemberAccessAstNode): boolean {
-  return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.CALLCODE.type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALLCODE.ident))
-}
+// function isLLCallcode (node: MemberAccessAstNode): boolean {
+//   return isMemberAccess(node,
+//           exactMatch(util.escapeRegExp(lowLevelCallTypes.CALLCODE.type)),
+//           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALLCODE.ident))
+// }
 
 /**
  * True if low level delegatecall
@@ -898,8 +888,8 @@ function isLLCallcode (node: MemberAccessAstNode): boolean {
  */
 function isLLDelegatecall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes['DELEGATECALL-v0.5'].type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['DELEGATECALL-v0.5'].ident))
+          exactMatch(util.escapeRegExp(lowLevelCallTypes.DELEGATECALL.type)),
+          undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.DELEGATECALL.ident))
 }
 
 /**
@@ -907,11 +897,11 @@ function isLLDelegatecall (node: MemberAccessAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLLDelegatecall050 (node: MemberAccessAstNode): boolean {
-  return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes['DELEGATECALL-v0.5'].type)),
-          undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['DELEGATECALL-v0.5'].ident))
-}
+// function isLLDelegatecall050 (node: MemberAccessAstNode): boolean {
+//   return isMemberAccess(node,
+//           exactMatch(util.escapeRegExp(lowLevelCallTypes.DELEGATECALL.type)),
+//           undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.DELEGATECALL.ident))
+// }
 
 /**
  * True if transfer call
@@ -991,11 +981,11 @@ function isSpecialVariableAccess (node: MemberAccessAstNode, varType: any): bool
 //   return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
 // }
 
-function expressionTypeDescription (node, typeRegex) {
+function expressionTypeDescription (node: any, typeRegex: string): boolean {
   return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
 }
 
-function typeDescription (node, typeRegex) {
+function typeDescription (node: any, typeRegex: string): boolean {
   return  new RegExp(typeRegex).test(node.typeDescriptions.typeString)
 }
 
@@ -1126,13 +1116,10 @@ export {
   isStateVariable,
   isTransfer,
   isLowLevelCall,
-  isLLCall as isLowLevelCallInst,
-  isLLCall050 as isLowLevelCallInst050,
-  isLLSend050 as isLowLevelSendInst050,
-  isLLDelegatecall050 as isLLDelegatecallInst050,
-  isLLCallcode as isLowLevelCallcodeInst,
-  isLLDelegatecall as isLowLevelDelegatecallInst,
-  isLLSend as isLowLevelSendInst,
+  isLLCall,
+  // isLLCallcode as isLowLevelCallcodeInst,
+  isLLDelegatecall,
+  isLLSend,
   isExternalDirectCall,
   isFullyImplementedContract,
   isLibrary,

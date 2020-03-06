@@ -1,0 +1,380 @@
+{
+    "encode":{
+        "argumentTypes": null,
+        "arguments":
+        [
+          {
+            "argumentTypes": null,
+            "id": 15,
+            "name": "s",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": 10,
+            "src": "144:1:0",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_array$_t_struct$_S_$4_memory_$dyn_memory_ptr",
+              "typeString": "struct C.S memory[] memory"
+            }
+          }
+        ],
+        "expression":
+        {
+          "argumentTypes":
+          [
+            {
+              "typeIdentifier": "t_array$_t_struct$_S_$4_memory_$dyn_memory_ptr",
+              "typeString": "struct C.S memory[] memory"
+            }
+          ],
+          "expression":
+          {
+            "argumentTypes": null,
+            "id": 12,
+            "name": "abi",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": -1,
+            "src": "133:3:0",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_magic_abi",
+              "typeString": "abi"
+            }
+          },
+          "id": 14,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": true,
+          "lValueRequested": false,
+          "memberName": "encode",
+          "nodeType": "MemberAccess",
+          "referencedDeclaration": null,
+          "src": "133:10:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_function_abiencode_pure$__$returns$_t_bytes_memory_ptr_$",
+            "typeString": "function () pure returns (bytes memory)"
+          }
+        },
+        "id": 16,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": false,
+        "kind": "functionCall",
+        "lValueRequested": false,
+        "names": [],
+        "nodeType": "FunctionCall",
+        "src": "133:13:0",
+        "tryCall": false,
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_bytes_memory_ptr",
+          "typeString": "bytes memory"
+        }
+      },
+
+
+    "encodePacked": {
+        "argumentTypes": null,
+        "arguments":
+        [
+          {
+            "argumentTypes": null,
+            "arguments": [],
+            "expression":
+            {
+              "argumentTypes": [],
+              "id": 16,
+              "name": "f",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "referencedDeclaration": 38,
+              "src": "128:1:0",
+              "typeDescriptions":
+              {
+                "typeIdentifier": "t_function_internal_pure$__$returns$_t_bytes_memory_ptr_$",
+                "typeString": "function () pure returns (bytes memory)"
+              }
+            },
+            "id": 17,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": false,
+            "kind": "functionCall",
+            "lValueRequested": false,
+            "names": [],
+            "nodeType": "FunctionCall",
+            "src": "128:3:0",
+            "tryCall": false,
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_bytes_memory_ptr",
+              "typeString": "bytes memory"
+            }
+          }
+        ],
+        "expression":
+        {
+          "argumentTypes":
+          [
+            {
+              "typeIdentifier": "t_bytes_memory_ptr",
+              "typeString": "bytes memory"
+            }
+          ],
+          "expression":
+          {
+            "argumentTypes": null,
+            "id": 14,
+            "name": "abi",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": -1,
+            "src": "111:3:0",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_magic_abi",
+              "typeString": "abi"
+            }
+          },
+          "id": 15,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": true,
+          "lValueRequested": false,
+          "memberName": "encodePacked",
+          "nodeType": "MemberAccess",
+          "referencedDeclaration": null,
+          "src": "111:16:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_function_abiencodepacked_pure$__$returns$_t_bytes_memory_ptr_$",
+            "typeString": "function () pure returns (bytes memory)"
+          }
+        },
+        "id": 18,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": false,
+        "kind": "functionCall",
+        "lValueRequested": false,
+        "names": [],
+        "nodeType": "FunctionCall",
+        "src": "111:21:0",
+        "tryCall": false,
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_bytes_memory_ptr",
+          "typeString": "bytes memory"
+        }
+      },
+
+
+    "encodeWithSelector": {
+        "argumentTypes": null,
+        "arguments":
+        [
+          {
+            "argumentTypes": null,
+            "hexValue": "30783132333435363738",
+            "id": 24,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": true,
+            "kind": "number",
+            "lValueRequested": false,
+            "nodeType": "Literal",
+            "src": "169:10:0",
+            "subdenomination": null,
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_rational_305419896_by_1",
+              "typeString": "int_const 305419896"
+            },
+            "value": "0x12345678"
+          },
+          {
+            "argumentTypes": null,
+            "hexValue": "31",
+            "id": 25,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": true,
+            "kind": "number",
+            "lValueRequested": false,
+            "nodeType": "Literal",
+            "src": "181:1:0",
+            "subdenomination": null,
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_rational_1_by_1",
+              "typeString": "int_const 1"
+            },
+            "value": "1"
+          }
+        ],
+        "expression":
+        {
+          "argumentTypes":
+          [
+            {
+              "typeIdentifier": "t_rational_305419896_by_1",
+              "typeString": "int_const 305419896"
+            },
+            {
+              "typeIdentifier": "t_rational_1_by_1",
+              "typeString": "int_const 1"
+            }
+          ],
+          "expression":
+          {
+            "argumentTypes": null,
+            "id": 22,
+            "name": "abi",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": -1,
+            "src": "146:3:0",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_magic_abi",
+              "typeString": "abi"
+            }
+          },
+          "id": 23,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": true,
+          "lValueRequested": false,
+          "memberName": "encodeWithSelector",
+          "nodeType": "MemberAccess",
+          "referencedDeclaration": null,
+          "src": "146:22:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_function_abiencodewithselector_pure$_t_bytes4_$returns$_t_bytes_memory_ptr_$",
+            "typeString": "function (bytes4) pure returns (bytes memory)"
+          }
+        },
+        "id": 26,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": true,
+        "kind": "functionCall",
+        "lValueRequested": false,
+        "names": [],
+        "nodeType": "FunctionCall",
+        "src": "146:37:0",
+        "tryCall": false,
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_bytes_memory_ptr",
+          "typeString": "bytes memory"
+        }
+      },
+
+
+    "encodeWithSignature": {
+        "argumentTypes": null,
+        "arguments":
+        [
+          {
+            "argumentTypes": null,
+            "hexValue": "662875696e7432353629",
+            "id": 32,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": true,
+            "kind": "string",
+            "lValueRequested": false,
+            "nodeType": "Literal",
+            "src": "221:12:0",
+            "subdenomination": null,
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_stringliteral_b3de648b001c08ab857afe5a9633887e7a4e2a429d1d8d4231238c1ffaeb256f",
+              "typeString": "literal_string \"f(uint256)\""
+            },
+            "value": "f(uint256)"
+          },
+          {
+            "argumentTypes": null,
+            "hexValue": "34",
+            "id": 33,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": true,
+            "kind": "number",
+            "lValueRequested": false,
+            "nodeType": "Literal",
+            "src": "235:1:0",
+            "subdenomination": null,
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_rational_4_by_1",
+              "typeString": "int_const 4"
+            },
+            "value": "4"
+          }
+        ],
+        "expression":
+        {
+          "argumentTypes":
+          [
+            {
+              "typeIdentifier": "t_stringliteral_b3de648b001c08ab857afe5a9633887e7a4e2a429d1d8d4231238c1ffaeb256f",
+              "typeString": "literal_string \"f(uint256)\""
+            },
+            {
+              "typeIdentifier": "t_rational_4_by_1",
+              "typeString": "int_const 4"
+            }
+          ],
+          "expression":
+          {
+            "argumentTypes": null,
+            "id": 30,
+            "name": "abi",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": -1,
+            "src": "197:3:0",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_magic_abi",
+              "typeString": "abi"
+            }
+          },
+          "id": 31,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": true,
+          "lValueRequested": false,
+          "memberName": "encodeWithSignature",
+          "nodeType": "MemberAccess",
+          "referencedDeclaration": null,
+          "src": "197:23:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_function_abiencodewithsignature_pure$_t_string_memory_ptr_$returns$_t_bytes_memory_ptr_$",
+            "typeString": "function (string memory) pure returns (bytes memory)"
+          }
+        },
+        "id": 34,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": true,
+        "kind": "functionCall",
+        "lValueRequested": false,
+        "names": [],
+        "nodeType": "FunctionCall",
+        "src": "197:40:0",
+        "tryCall": false,
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_bytes_memory_ptr",
+          "typeString": "bytes memory"
+        }
+      }
+}

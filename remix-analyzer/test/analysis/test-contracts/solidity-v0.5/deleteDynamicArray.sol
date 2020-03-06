@@ -1,4 +1,4 @@
-pragma solidity >=0.4.9 <0.6.0;
+pragma solidity >=0.4.9 <0.7.0;
 contract arr {
     uint[] users;
     
