@@ -33,8 +33,8 @@ const css = csjs`
 }
 `
 
-function notAllowWarning (from, to) {
-  return `${from.displayName || from.name} is not allowed to call ${to.displayName || to.name}.`
+function notAllowWarning (from, to, method) {
+  return `${from.displayName || from.name} is not allowed to call ${method} method of ${to.displayName || to.name}.`
 }
 
 export class PermissionHandler {
@@ -74,8 +74,8 @@ export class PermissionHandler {
         {
           label: 'Accept',
           fn: () => {
-            if (this.permissions[to.name][from.name]) {
-              this.permissions[to.name][from.name] = {
+            if (this.permissions[to.name][method][from.name]) {
+              this.permissions[to.name][method][from.name] = {
                 allow: true,
                 hash: from.hash
               }
@@ -87,14 +87,14 @@ export class PermissionHandler {
         {
           label: 'Decline',
           fn: () => {
-            if (this.permissions[to.name][from.name]) {
-              this.permissions[to.name][from.name] = {
+            if (this.permissions[to.name][method][from.name]) {
+              this.permissions[to.name][method][from.name] = {
                 allow: false,
                 hash: from.hash
               }
               this.persistPermissions()
             }
-            reject(notAllowWarning(from, to))
+            reject(notAllowWarning(from, to, method))
           }
         }
       )
@@ -105,17 +105,20 @@ export class PermissionHandler {
    * Check if a plugin has the permission to call another plugin and askPermission if needed
    * @param {PluginProfile} from the profile of the plugin that make the call
    * @param {ModuleProfile} to The profile of the module that receive the call
+   * @param {string} method The name of the function to be called
+   * @param {string} message from the caller plugin to add more details if needed
    * @returns {Promise<boolean>}
    */
   async askPermission (from, to, method, message) {
     try {
       this.permissions = this._getFromLocal()
       if (!this.permissions[to.name]) this.permissions[to.name] = {}
-      if (!this.permissions[to.name][from.name]) return this.openPermission(from, to, from, message)
+      if (!this.permissions[to.name][method]) this.permissions[to.name][method] = {}
+      if (!this.permissions[to.name][method][from.name]) return this.openPermission(from, to, method, message)
 
-      const { allow, hash } = this.permissions[to.name][from.name]
+      const { allow, hash } = this.permissions[to.name][method][from.name]
       if (!allow) {
-        const warning = notAllowWarning(from, to)
+        const warning = notAllowWarning(from, to, method)
         addTooltip(warning)
         return false
       }
@@ -137,12 +140,12 @@ export class PermissionHandler {
   form (from, to, method, message) {
     const fromName = from.displayName || from.name
     const toName = to.displayName || to.name
-    const remember = this.permissions[to.name][from.name]
+    const remember = this.permissions[to.name][method][from.name]
 
     const switchMode = (e) => {
       e.target.checked
-        ? this.permissions[to.name][from.name] = {}
-        : delete this.permissions[to.name][from.name]
+        ? this.permissions[to.name][method][from.name] = {}
+        : delete this.permissions[to.name][method][from.name]
     }
     const rememberSwitch = remember
       ? yo`<input type="checkbox" onchange="${switchMode}" checkbox class="form-check-input" id="remember" data-id="permissionHandlerRememberChecked">`
@@ -161,6 +164,12 @@ export class PermissionHandler {
     globalRegistry.get('themeModule').api.fixInvert(imgFrom)
     globalRegistry.get('themeModule').api.fixInvert(imgTo)
 
+    const pluginMessage = message ? yo`
+      <div>
+        <h6>Description</h6>
+        <p>${message}</p>
+      </div>
+    ` : ``
     return yo`
       <section class="${css.permission}">
         ${pluginsImages}
@@ -170,7 +179,7 @@ export class PermissionHandler {
           <p>${from.description || yo`<i>No description Provided</i>`}</p>
           <h6>${toName} :</p>
           <p>${to.description || yo`<i>No description Provided</i>`}</p>
-          <p>${message}</p>
+          ${pluginMessage}
         </article>
 
         <article class="${css.remember}">

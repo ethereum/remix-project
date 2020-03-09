@@ -49,7 +49,7 @@ export class PluginManagerSettings {
     const fromLocal = window.localStorage.getItem('plugins/permissions')
     this.permissions = JSON.parse(fromLocal || '{}')
     this.currentSetting = this.settings()
-    modalDialog('Plugin Manager Settings', this.currentSetting,
+    modalDialog('Plugin Manager Permissions', this.currentSetting,
       { fn: () => this.onValidation() },
     )
   }
@@ -128,7 +128,7 @@ export class PluginManagerSettings {
   render () {
     return yo`
     <footer class="bg-light ${css.permissions} remix-bg-opacity">
-      <button onclick="${() => this.openDialog()}" class="btn btn-primary settings-button" data-id="pluginManagerSettingsButton">Settings</button>
+      <button onclick="${() => this.openDialog()}" class="btn btn-primary settings-button" data-id="pluginManagerPermissionsButton">Permissions</button>
     </footer>`
   }
 
