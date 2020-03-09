@@ -34,12 +34,15 @@ export class RemixAppManager extends PluginManager {
 
   async canCall (from, to, method, message) {
     // Make sure the caller of this methods is the target plugin
-    if (to.name !== this.currentRequest) {
+    if (to !== this.currentRequest.from) {
       return false
     }
-    if (isNative)
+    // skipping native plugins' requests
+    if (isNative(from)) {
       return true
-    return await this.permissionHandler.askPermition(from, to, method, message)
+    }
+    // ask the user for permission
+    return await this.permissionHandler.askPermission(this.profiles[from], this.profiles[to], method, message)
   }
 
   onPluginActivated (plugin) {
