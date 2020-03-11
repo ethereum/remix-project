@@ -10,7 +10,7 @@ const requiredModules = [ // services + layout views + system views
   'terminal', 'settings', 'pluginManager']
 
 export function isNative (name) {
-  const nativePlugins = ['workshops', 'ethdoc', 'etherscan']
+  const nativePlugins = ['vyper', 'workshops', 'ethdoc', 'etherscan']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
