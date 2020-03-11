@@ -11,7 +11,7 @@ export default class blockBlockhash implements AnalyzerModule {
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
   visit (node: FunctionCallAstNode): void {
-    if (isBlockBlockHashAccess(node)) this.warningNodes.push(node)
+    if (node.nodeType === 'FunctionCall' && isBlockBlockHashAccess(node)) this.warningNodes.push(node)
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {

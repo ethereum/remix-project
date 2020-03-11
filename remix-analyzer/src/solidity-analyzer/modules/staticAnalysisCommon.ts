@@ -1,33 +1,61 @@
 'use strict'
 
 import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, IdentifierAstNode, MappingAstNode, IndexAccessAstNode, UserDefinedTypeNameAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode } from "types"
-
 import { util } from 'remix-lib'
 
 const nodeTypes = {
-  IDENTIFIER: 'Identifier',
-  MEMBERACCESS: 'MemberAccess',
-  FUNCTIONCALL: 'FunctionCall',
+  SOURCEUNIT: 'SourceUnit',
+  PRAGMADIRECTIVE: 'PragmaDirective',
+  IMPORTDIRECTIVE: 'ImportDirective',
+  CONTRACTDEFINITION: 'ContractDefinition',
+  INHERITANCESPECIFIER: 'InheritanceSpecifier',
+  USINGFORDIRECTIVE: 'UsingForDirective',
+  STRUCTDEFINITION: 'StructDefinition',
+  ENUMDEFINITION: 'EnumDefinition',
+  ENUMVALUE: 'EnumValue',
+  PARAMETERLIST: 'ParameterList',
+  OVERRIDESPECIFIER: 'OverrideSpecifier',
   FUNCTIONDEFINITION: 'FunctionDefinition',
   VARIABLEDECLARATION: 'VariableDeclaration',
-  ASSIGNMENT: 'Assignment',
-  CONTRACTDEFINITION: 'ContractDefinition',
-  UNARYOPERATION: 'UnaryOperation',
-  BINARYOPERATION: 'BinaryOperation',
-  EXPRESSIONSTATEMENT: 'ExpressionStatement',
   MODIFIERDEFINITION: 'ModifierDefinition',
   MODIFIERINVOCATION: 'ModifierInvocation',
-  INHERITANCESPECIFIER: 'InheritanceSpecifier',
+  EVENTDEFINITION: 'EventDefinition',
+  ELEMENTARYTYPENAME: 'ElementaryTypeName',
   USERDEFINEDTYPENAME: 'UserDefinedTypeName',
-  INLINEASSEMBLY: 'InlineAssembly',
+  FUNCTIONTYPENAME: 'FunctionTypeName',
+  MAPPING: 'Mapping',
+  ARRAYTYPENAME: 'ArrayTypeName',
+  INLINEASSEMBLY: 'InlineAssembly', 
   BLOCK: 'Block',
-  NEWEXPRESSION: 'NewExpression',
-  RETURN: 'Return',
+  PLACEHOLDERSTATEMENT: 'PlaceholderStatement', 
   IFSTATEMENT: 'IfStatement',
-  FORSTATEMENT: 'ForStatement',
+  TRYCATCHCLAUSE: 'TryCatchClause', 
+  TRYSTATEMENT: 'TryStatement', 
   WHILESTATEMENT: 'WhileStatement',
   DOWHILESTATEMENT: 'DoWhileStatement',
-  ELEMENTARYTYPENAMEEXPRESSION: 'ElementaryTypeNameExpression'
+  FORSTATEMENT: 'ForStatement',
+  CONTINUE: 'Continue', 
+  BREAK: 'Break', 
+  RETURN: 'Return', 
+  THROW: 'Throw', 
+  EMITSTATEMENT: 'EmitStatement', 
+  VARIABLEDECLARATIONSTATEMENT: 'VariableDeclarationStatement', 
+  EXPRESSIONSTATEMENT: 'ExpressionStatement',
+  CONDITIONAL: 'Conditional', 
+  ASSIGNMENT: 'Assignment',
+  TUPLEEXPRESSION: 'TupleExpression', 
+  UNARYOPERATION: 'UnaryOperation',
+  BINARYOPERATION: 'BinaryOperation',
+  FUNCTIONCALL: 'FunctionCall',
+  FUNCTIONCALLOPTIONS: 'FunctionCallOptions',
+  NEWEXPRESSION: 'NewExpression', 
+  MEMBERACCESS: 'MemberAccess', 
+  INDEXACCESS: 'IndexAccess', 
+  INDEXRANGEACCESS: 'IndexRangeAccess', 
+  ELEMENTARYTYPENAMEEXPRESSION: 'ElementaryTypeNameExpression', 
+  LITERAL: 'Literal', 
+  IDENTIFIER: 'Identifier',
+  STRUCTUREDDOCUMENTATION: 'StructuredDocumentation'
 }
 
 const basicTypes = {
@@ -401,7 +429,7 @@ function getUnAssignedTopLevelBinOps (subScope: BlockAstNode | IfStatementAstNod
   if(subScope.nodeType === 'Block')
     result = subScope.statements.filter(isBinaryOpInExpression)
   // for 'without braces' loops
-  else if (isSubScopeStatement(subScope)) {
+  else if (subScope && subScope.nodeType && isSubScopeStatement(subScope)) {
     if (subScope.nodeType === 'IfStatement'){
       if((subScope.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.trueBody)))
         result.push(subScope.trueBody) 
@@ -519,7 +547,7 @@ function isBuiltinFunctionCall (node: FunctionCallAstNode): boolean {
   // console.log('isBuiltinFunctionCall isLocalCall', isLocalCall(node))
   // console.log('isBuiltinFunctionCall getLocalCallName', getLocalCallName(node))
   // console.log('isBuiltinFunctionCall getFunctionCallTypeParameterType', getFunctionCallTypeParameterType(node))
-  return (isLocalCall(node) && builtinFunctions[getLocalCallName(node) + '(' + getFunctionCallTypeParameterType(node) + ')'] === true) || isAbiNamespaceCall(node)
+  return (node.nodeType === 'FunctionCall' && isLocalCall(node) && builtinFunctions[getLocalCallName(node) + '(' + getFunctionCallTypeParameterType(node) + ')'] === true) || isAbiNamespaceCall(node)
 }
 
 /**
@@ -564,6 +592,7 @@ function isRequireCall (node: FunctionCallAstNode): boolean  {
  * @return {bool}
  */
 function isStorageVariableDeclaration (node: VariableDeclarationAstNode): boolean {
+  // console.log('storage variable----------', new RegExp(basicRegex.REFTYPE).test(node.typeDescriptions.typeIdentifier))
   return node.storageLocation === 'storage' && new RegExp(basicRegex.REFTYPE).test(node.typeDescriptions.typeIdentifier)
 }
 
@@ -652,20 +681,21 @@ function isSubScopeWithTopLevelUnAssignedBinOp (node: BlockAstNode | IfStatement
   if(node.nodeType === 'Block')
     return node.statements.some(isBinaryOpInExpression)
   // for 'without braces' loops
-  else if (isSubScopeStatement(node)) {
+  else if (node && node.nodeType && isSubScopeStatement(node)) {
     if (node.nodeType === 'IfStatement')
-      return (node.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.trueBody)) || 
-          (node.falseBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.falseBody))
+      return (node.trueBody && node.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.trueBody)) || 
+          (node.falseBody && node.falseBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.falseBody))
     else 
-      return node.body.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.body)
+      return node.body && node.body.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.body)
   } 
 }
 
 function isSubScopeStatement (node: IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): boolean {
   if(node.nodeType === 'IfStatement')
-    return !nodeType(node.trueBody, exactMatch(nodeTypes.BLOCK)) && !nodeType(node.falseBody, exactMatch(nodeTypes.BLOCK))
+    return (node.trueBody && node.trueBody.nodeType && !nodeType(node.trueBody, exactMatch(nodeTypes.BLOCK))) ||
+        (node.falseBody && node.falseBody.nodeType && !nodeType(node.falseBody, exactMatch(nodeTypes.BLOCK)))
   else      
-    return !nodeType(node.body, exactMatch(nodeTypes.BLOCK))
+    return node.body && node.body.nodeType && !nodeType(node.body, exactMatch(nodeTypes.BLOCK))
 }
 
 /**
@@ -809,7 +839,8 @@ function isSuperLocalCall (node: MemberAccessAstNode): boolean {
  * @return {bool}
  */
 function isLocalCall (node: FunctionCallAstNode): boolean {
-  return node.kind === 'functionCall' && 
+  return node.nodeType === 'FunctionCall' && 
+        node.kind === 'functionCall' && 
         node.expression.nodeType === 'Identifier' &&
         expressionTypeDescription(node, basicRegex.FUNCTIONTYPE) &&
         !expressionTypeDescription(node, basicRegex.EXTERNALFUNCTIONTYPE)
@@ -952,15 +983,17 @@ function isBytesLengthCheck (node: MemberAccessAstNode): boolean {
 // #################### Complex Node Identification - Private
 
 function isMemberAccess (node: MemberAccessAstNode, retType: string, accessor: string| undefined, accessorType: string, memberName: string | undefined): boolean {
-  const nodeTypeDef: boolean = typeDescription(node, retType)
-  console.log('MemberAccess typeDef ->',nodeTypeDef)
-  const nodeMemName: boolean = memName(node, memberName)
-  console.log('MemberAccess nodeMemName ->',nodeMemName)
-  const nodeExpMemName: boolean = memName(node.expression, accessor)
-  console.log('MemberAccess nodeExpMemName ->',nodeExpMemName)
-  const nodeExpTypeDef: boolean = expressionTypeDescription(node, accessorType)
-  console.log('MemberAccess nodeExpTypeDef ->',nodeExpTypeDef)
-  return nodeTypeDef && nodeMemName && nodeExpTypeDef && nodeExpMemName
+  if(node && nodeType(node, exactMatch('MemberAccess'))) {
+    const nodeTypeDef: boolean = typeDescription(node, retType)
+    // console.log('MemberAccess typeDef ->',nodeTypeDef)
+    const nodeMemName: boolean = memName(node, memberName)
+    // console.log('MemberAccess nodeMemName ->',nodeMemName)
+    const nodeExpMemName: boolean = memName(node.expression, accessor)
+    // console.log('MemberAccess nodeExpMemName ->',nodeExpMemName)
+    const nodeExpTypeDef: boolean = expressionTypeDescription(node, accessorType)
+    // console.log('MemberAccess nodeExpTypeDef ->',nodeExpTypeDef)
+    return nodeTypeDef && nodeMemName && nodeExpTypeDef && nodeExpMemName
+  } else return false
 }
 
 function isSpecialVariableAccess (node: MemberAccessAstNode, varType: any): boolean {
@@ -989,11 +1022,15 @@ function typeDescription (node: any, typeRegex: string): boolean {
   return  new RegExp(typeRegex).test(node.typeDescriptions.typeString)
 }
 
-function nodeType (node, typeRegex) {
+function nodeType (node: any, typeRegex: string) {
   return new RegExp(typeRegex).test(node.nodeType)
 }
 
-function memName (node, memNameRegex) {
+function nodeTypeIn (node: any, typeRegex: string[]){
+  return typeRegex.some((typeRegex) => nodeType (node, typeRegex))
+}
+
+function memName (node: any, memNameRegex: any) {
   // const regex = new RegExp(memNameRegex)
   return (node && !memNameRegex) || new RegExp(memNameRegex).test(node.name) || new RegExp(memNameRegex).test(node.memberName)
 }
