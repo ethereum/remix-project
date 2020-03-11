@@ -11,7 +11,7 @@ export default class thisLocal implements AnalyzerModule {
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
   visit (node: MemberAccessAstNode): void {
-    if (isThisLocalCall(node)) this.warningNodes.push(node)
+    if (node.nodeType === 'MemberAccess' && isThisLocalCall(node)) this.warningNodes.push(node)
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {

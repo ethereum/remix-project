@@ -13,9 +13,9 @@ export default class forLoopIteratesOverDynamicArray implements AnalyzerModule {
   visit (node: ForStatementAstNode): void {
       const  { condition } = node
       // Check if condition is `i < array.length - 1`
-      if ((condition.nodeType === "BinaryOperation"  && condition.rightExpression.nodeType === "BinaryOperation" && isDynamicArrayLengthAccess(condition.rightExpression.leftExpression)) || 
+      if ((condition && condition.nodeType === "BinaryOperation"  && condition.rightExpression.nodeType === "BinaryOperation" && isDynamicArrayLengthAccess(condition.rightExpression.leftExpression)) || 
       // or condition is `i < array.length`
-      (condition.nodeType === "BinaryOperation" && isDynamicArrayLengthAccess(condition.rightExpression))) {
+      (condition && condition.nodeType === "BinaryOperation" && isDynamicArrayLengthAccess(condition.rightExpression))) {
         this.relevantNodes.push(node)
       }
   }

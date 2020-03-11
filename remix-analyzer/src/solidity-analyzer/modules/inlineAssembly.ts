@@ -10,7 +10,7 @@ export default class inlineAssembly implements AnalyzerModule {
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
   visit (node: InlineAssemblyAstNode): void {
-    this.inlineAssNodes.push(node)
+    if(node.nodeType === 'InlineAssembly') this.inlineAssNodes.push(node)
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {
