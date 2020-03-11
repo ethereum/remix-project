@@ -266,8 +266,11 @@ function fileExplorer (localRegistry, files, menuItems) {
       }
       actions['Delete'] = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
+        const currentPath = self._deps.config.get('currentFile').split('/')
+        const currentFilename = currentPath[currentPath.length - 1]
+
         modalDialogCustom.confirm(
-          'Delete a file', 'Are you sure you want to delete this file?',
+          'Delete a file', `Are you sure you want to delete ${currentFilename} file?`,
           () => {
             files.remove(key)
             self.updatePath('browser')
