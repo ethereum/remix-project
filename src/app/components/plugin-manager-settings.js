@@ -60,68 +60,76 @@ export class PluginManagerSettings {
   }
 
   /** Clear one permission from a plugin */
-  clearPersmission (from, to) {
-    if (!this.permissions[from]) return
-    delete this.permissions[from][to]
-    if (Object.keys(this.permissions[from]).length === 0) {
-      delete this.permissions[from]
+  clearPersmission (from, to, method) {
+    if (this.permissions[to] && this.permissions[to][method]) {
+      delete this.permissions[to][method][from]
+      if (Object.keys(this.permissions[to][method]).length === 0) {
+        delete this.permissions[to][method]
+      }
+      if (Object.keys(this.permissions[to]).length === 0) {
+        delete this.permissions[to]
+      }
+      yo.update(this.currentSetting, this.settings())
     }
-    yo.update(this.currentSetting, this.settings())
   }
 
   /** Clear all persmissions from a plugin */
-  clearAllPersmission (from) {
-    if (!this.permissions[from]) return
-    delete this.permissions[from]
+  clearAllPersmission (to) {
+    if (!this.permissions[to]) return
+    delete this.permissions[to]
     yo.update(this.currentSetting, this.settings())
   }
 
   settings () {
-    const permissionByModule = (key, permission) => {
-      const permissionByPlugin = (name, plugin) => {
-        function updatePermission () {
-          plugin.allow = !plugin.allow
+    const permissionByToPlugin = (toPlugin, funcObj) => {
+      const permissionByFunctions = (funcName, fromPlugins) => {
+        function updatePermission (plugin) {
+          self.permissions[toPlugin][funcName][plugin].allow = !self.permissions[toPlugin][funcName][plugin].allow
         }
-        const checkbox = plugin.allow
-          ? yo`<input onchange="${updatePermission}" type="checkbox" checked id="permission-${name}" aria-describedby="module ${key} ask permission for ${name}" />`
-          : yo`<input onchange="${updatePermission}" type="checkbox" id="permission-${name}" aria-describedby="module ${key} ask permission for ${name}" />`
-
-        return yo`
-        <div class="form-group ${css.permissionKey}">
-          <div class="${css.checkbox}">
-            ${checkbox}
-            <label for="permission-${name}" data-id="pluginManagerSettingsPermission${name}">Allow <u>${name}</u> to access <u>${key}</u></label>
-          </div>
-          <i onclick="${() => this.clearPersmission(key, name)}" class="fa fa-trash-alt" data-id="pluginManagerSettingsRemovePermission${name}"></i>
-        </div>`
+        let self = this
+        return Object.keys(fromPlugins).map(fromName => {
+          const fromPluginPermission = fromPlugins[fromName]
+          const checkbox = fromPluginPermission.allow
+            ? yo`<input onchange=${() => updatePermission(fromName)} class="mr-2" type="checkbox" checked id="permission-checkbox-${toPlugin}-${funcName}-${toPlugin}" aria-describedby="module ${fromPluginPermission} ask permission for ${funcName}" />`
+            : yo`<input onchange=${() => updatePermission(fromName)} class="mr-2" type="checkbox" id="permission-checkbox-${toPlugin}-${funcName}-${toPlugin}" aria-describedby="module ${fromPluginPermission} ask permission for ${funcName}" />`
+          return yo`
+            <div class="form-group ${css.permissionKey}">
+              <div class="${css.checkbox}">
+                ${checkbox}
+                <label for="permission-checkbox-${toPlugin}-${funcName}-${toPlugin}" data-id="permission-label-${toPlugin}-${funcName}-${toPlugin}">Allow <u>${fromName}</u> to call <u>${funcName}</u></label>
+              </div>
+              <i onclick="${() => this.clearPersmission(fromName, toPlugin, funcName)}" class="fa fa-trash-alt" data-id="pluginManagerSettingsRemovePermission-${toPlugin}-${funcName}-${toPlugin}"></i>
+            </div>
+          `
+        })
       }
 
-      const byModule = Object
-        .keys(permission)
-        .map(name => permissionByPlugin(name, permission[name]))
+      const permissionsByFunctions = Object
+        .keys(funcObj)
+        .map(funcName => permissionByFunctions(funcName, funcObj[funcName]))
 
       return yo`
-      <div>
-        <div class="${css.permissionKey}">
-          <h6>${key} :</h6>
-          <i onclick="${() => this.clearAllPersmission(key)}" class="far fa-trash-alt" data-id="pluginManagerSettingsClearAllPermission"></i>
+      <div border p-2>
+        <div class="pb-2 ${css.permissionKey}">
+          <h3>${toPlugin} permissions:</h3>
+          <i onclick="${() => this.clearAllPersmission(toPlugin)}" class="far fa-trash-alt" data-id="pluginManagerSettingsClearAllPermission-${toPlugin}"></i>
         </div>
-        ${byModule}
+        ${permissionsByFunctions}
       </div>`
     }
 
-    const permissions = Object
+    const byToPlugin = Object
       .keys(this.permissions)
-      .map(key => permissionByModule(key, this.permissions[key]))
+      .map(toPlugin => permissionByToPlugin(toPlugin, this.permissions[toPlugin]))
 
-    const title = permissions.length === 0
+    const title = byToPlugin.length === 0
       ? yo`<h4>No Permission requested yet.</h4>`
       : yo`<h4>Current Permission settings</h4>`
 
     return yo`<form class="${css.permissionForm}" data-id="pluginManagerSettingsPermissionForm">
       ${title}
       <hr/>
-      ${permissions}
+      ${byToPlugin}
     </form>`
   }
 
