@@ -13,7 +13,7 @@ export default class selfdestruct implements AnalyzerModule {
   abstractAst: AbstractAst = new AbstractAst()
 
   visit: Function = this.abstractAst.build_visit(
-    (node: any) => isStatement(node) || isSelfdestructCall(node.expression)
+    (node: any) => isStatement(node) || ( node.nodeType=== 'FunctionCall' && isSelfdestructCall(node.expression) )
   )
 
   report: Function = this.abstractAst.build_report(this._report.bind(this))

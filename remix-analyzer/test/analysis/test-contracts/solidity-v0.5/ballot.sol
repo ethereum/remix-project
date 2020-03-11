@@ -121,7 +121,7 @@ contract Ballot {
 
     /// @dev Computes the winning proposal taking all
     /// previous votes into account.
-    function winningProposal() view public
+    function winningProposal() public view
             returns (uint winningProposal)
     {
         uint winningVoteCount = 0;

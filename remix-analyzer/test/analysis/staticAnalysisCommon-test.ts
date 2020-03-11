@@ -266,9 +266,8 @@ test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
 // #################### Complex Node Identification
 
 test('staticAnalysisCommon.isBuiltinFunctionCall', function (t) {
-  t.plan(2)
+  t.plan(1)
   t.ok(common.isBuiltinFunctionCall(selfdestruct), 'selfdestruct is builtin')
-  t.throws(() => common.isBuiltinFunctionCall(localCall), Error, 'local call is not builtin')
 })
 
 test('staticAnalysisCommon.isStorageVariableDeclaration', function (t) {

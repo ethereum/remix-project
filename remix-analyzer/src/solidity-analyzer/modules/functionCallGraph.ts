@@ -1,8 +1,7 @@
 'use strict'
 
 import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph } from "types"
-
-const common = require('./staticAnalysisCommon')
+import { isLocalCallGraphRelevantNode,  isExternalDirectCall, getFullQualifiedFunctionCallIdent, getFullQuallyfiedFuncDefinitionIdent, getContractName } from './staticAnalysisCommon'
 
 function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter: any , extractNodeIdent: any, extractFuncDefIdent: Function): Record<string, FunctionCallGraph> {
   const callGraph: Record<string, FunctionCallGraph> = {}
@@ -44,11 +43,11 @@ function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter
 export function buildGlobalFuncCallGraph (contracts: ContractHLAst[]): Record<string, ContractCallGraph> {
   const callGraph: Record<string, ContractCallGraph> = {}
   contracts.forEach((contract) => {
-    const filterNodes: Function = (node) => { return common.isLocalCallGraphRelevantNode(node) || common.isExternalDirectCall(node) }
-    const getNodeIdent: Function = (node) => { return common.getFullQualifiedFunctionCallIdent(contract.node, node) }
-    const getFunDefIdent: Function = (funcDef) => { return common.getFullQuallyfiedFuncDefinitionIdent(contract.node, funcDef.node, funcDef.parameters) }
+    const filterNodes: Function = (node) => { return isLocalCallGraphRelevantNode(node) || isExternalDirectCall(node) }
+    const getNodeIdent: Function = (node) => { return getFullQualifiedFunctionCallIdent(contract.node, node) }
+    const getFunDefIdent: Function = (funcDef) => { return getFullQuallyfiedFuncDefinitionIdent(contract.node, funcDef.node, funcDef.parameters) }
 
-    callGraph[common.getContractName(contract.node)] = { contract: contract, functions: buildLocalFuncCallGraphInternal(contract.functions, filterNodes, getNodeIdent, getFunDefIdent) }
+    callGraph[getContractName(contract.node)] = { contract: contract, functions: buildLocalFuncCallGraphInternal(contract.functions, filterNodes, getNodeIdent, getFunDefIdent) }
   })
 
   return callGraph

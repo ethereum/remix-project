@@ -64,13 +64,13 @@ export default class constantFunctions implements AnalyzerModule {
           if (func['potentiallyshouldBeConst']) {
             warnings.push({
               warning: `${funcName} : Potentially should be constant but is not. ${comments}`,
-              location: func['src'],
+              location: func.node['src'],
               more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
             })
           } else {
             warnings.push({
               warning: `${funcName} : Is constant but potentially should not be. ${comments}`,
-              location: func['src'],
+              location: func.node['src'],
               more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
             })
           }
@@ -88,7 +88,7 @@ export default class constantFunctions implements AnalyzerModule {
     return contract.stateVariables.concat(func.localVariables.filter(isStorageVariableDeclaration))
   }
 
-  private checkIfShouldBeConstant (startFuncName: string, context): boolean {
+  private checkIfShouldBeConstant (startFuncName: string, context: Context): boolean {
     return !analyseCallGraph(context.callGraph, startFuncName, context, this.isConstBreaker.bind(this))
   }
 
