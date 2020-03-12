@@ -126,7 +126,7 @@ function fileExplorer (localRegistry, files, menuItems) {
     })
   }
 
-  function extractNameFromKey (key){
+  function extractNameFromKey (key) {
     const keyPath = key.split('/')
 
     return keyPath[keyPath.length - 1]
