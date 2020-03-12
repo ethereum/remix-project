@@ -57,7 +57,7 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
     .click('*[data-id="copyToClipboardCopyIcon"]')
     .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
-    .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Copy value to clipboard')
+    .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Copied value to clipboard')
     .click('*[data-id="tooltipCloseButton"]')
   },
 
