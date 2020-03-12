@@ -168,10 +168,31 @@ function getFunctionCallType (func: FunctionCallAstNode): string {
  * @effectNode {ASTNode} Assignmnet node
  * @return {string} variable name written to
  */
-function getEffectedVariableName (effectNode: AssignmentAstNode | UnaryOperationAstNode): string {
+function getEffectedVariableName (effectNode: AssignmentAstNode | UnaryOperationAstNode) {
   if (!isEffect(effectNode)) throw new Error('staticAnalysisCommon.js: not an effect Node')
-  if(effectNode.nodeType === 'Assignment') return effectNode.leftHandSide.name
-  else /* if(effectNode.nodeType === 'UnaryOperation') */ return effectNode.subExpression.name
+  if(effectNode.nodeType === 'Assignment' || effectNode.nodeType === 'UnaryOperation') {
+    const IdentNode = findFirstSubNodeLTR(effectNode, exactMatch(nodeTypes.IDENTIFIER))
+    return IdentNode.name
+  }
+}
+
+// developed keeping identifier node search in mind
+
+function findFirstSubNodeLTR (node, type) {
+  if(node.nodeType && nodeType(node, type))
+    return node
+
+  else if(node.nodeType && nodeType(node, exactMatch('Assignment')))
+    return findFirstSubNodeLTR(node.leftHandSide, type)
+
+  else if(node.nodeType && nodeType(node, exactMatch('MemberAccess')))
+    return findFirstSubNodeLTR(node.expression, type)
+  
+  else if(node.nodeType && nodeType(node, exactMatch('IndexAccess')))
+    return findFirstSubNodeLTR(node.baseExpression, type)
+  
+  else if(node.nodeType && nodeType(node, exactMatch('UnaryOperation')))
+  return findFirstSubNodeLTR(node.subExpression, type)
 }
 
 /**
@@ -417,7 +438,7 @@ function getFullQualifiedFunctionCallIdent (contract: ContractDefinitionAstNode,
   else if (isSuperLocalCall(func.expression)) return getContractName(contract) + '.' + getSuperLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isExternalDirectCall(func.expression)) return getExternalDirectCallContractName(func) + '.' + getExternalDirectCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isLibraryCall(func.expression)) return getLibraryCallContractName(func.expression) + '.' + getLibraryCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
-  else throw new Error('staticAnalysisCommon.js: Can not get function name form non function call node')
+  else throw new Error('staticAnalysisCommon.js: Can not get function name from non function call node')
 }
 
 function getFullQuallyfiedFuncDefinitionIdent (contract: ContractDefinitionAstNode, func: FunctionDefinitionAstNode, paramTypes: any[]): string {
@@ -622,7 +643,7 @@ function isEffect (node: AssignmentAstNode | UnaryOperationAstNode | InlineAssem
  * @node {list Variable declaration} state variable declaration currently in scope
  * @return {bool}
  */
-function isWriteOnStateVariable (effectNode: AssignmentAstNode | InlineAssemblyAstNode | UnaryOperationAstNode, stateVariables: any[]) {
+function isWriteOnStateVariable (effectNode: AssignmentAstNode | InlineAssemblyAstNode | UnaryOperationAstNode, stateVariables: VariableDeclarationAstNode[]) {
   return effectNode.nodeType === "InlineAssembly" || (isEffect(effectNode) && isStateVariable(getEffectedVariableName(effectNode), stateVariables))
 }
 
@@ -632,8 +653,8 @@ function isWriteOnStateVariable (effectNode: AssignmentAstNode | InlineAssemblyA
  * @node {list Variable declaration} state variable declaration currently in scope
  * @return {bool}
  */
-function isStateVariable (name: string, stateVariables: any[]): boolean {
-  return stateVariables.some((item) => name === getDeclaredVariableName(item))
+function isStateVariable (name: string, stateVariables: VariableDeclarationAstNode[]): boolean {
+  return stateVariables.some((item: VariableDeclarationAstNode) => item.stateVariable && name === getDeclaredVariableName(item))
 }
 
 /**

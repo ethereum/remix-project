@@ -129,7 +129,7 @@ export interface ContractDefinitionAstNode {
   nodeType: 'ContractDefinition'
   src: string
   name: string
-  documentation: object | null
+  documentation: string | null
   contractKind: 'interface' | 'contract' | 'library'
   abstract: boolean
   fullyImplemented: boolean
@@ -202,7 +202,7 @@ export interface FunctionDefinitionAstNode {
   nodeType: 'FunctionDefinition'
   src: string
   name: string
-  documentation: object | null
+  documentation: string | null
   kind: string
   stateMutability: 'pure' | 'view' | 'nonpayable' | 'payable'
   visibility: string
