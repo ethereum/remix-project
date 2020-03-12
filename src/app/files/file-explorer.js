@@ -126,6 +126,12 @@ function fileExplorer (localRegistry, files, menuItems) {
     })
   }
 
+  function extractNameFromKey (key){
+    const keyPath = key.split('/')
+
+    return keyPath[keyPath.length - 1]
+  }
+
   function folderAdded (folderpath) {
     self.ensureRoot(() => {
       folderpath = folderpath.split('/').slice(0, -1).join('/')
@@ -228,7 +234,9 @@ function fileExplorer (localRegistry, files, menuItems) {
       }
       actions['Delete'] = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
-        modalDialogCustom.confirm('Confirm to delete a folder', 'Are you sure you want to delete this folder?',
+        const currentFilename = extractNameFromKey(key)
+
+        modalDialogCustom.confirm(`Confirm to delete a folder', 'Are you sure you want to delete ${currentFilename} folder?`,
           () => {
             if (!files.remove(key)) {
               tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
@@ -266,8 +274,7 @@ function fileExplorer (localRegistry, files, menuItems) {
       }
       actions['Delete'] = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
-        const currentPath = self._deps.config.get('currentFile').split('/')
-        const currentFilename = currentPath[currentPath.length - 1]
+        const currentFilename = extractNameFromKey(key)
 
         modalDialogCustom.confirm(
           'Delete a file', `Are you sure you want to delete ${currentFilename} file?`,
