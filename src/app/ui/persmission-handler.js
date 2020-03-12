@@ -150,7 +150,7 @@ export class PermissionHandler {
     const rememberSwitch = remember
       ? yo`<input type="checkbox" onchange="${switchMode}" checkbox class="form-check-input" id="remember" data-id="permissionHandlerRememberChecked">`
       : yo`<input type="checkbox" onchange="${switchMode}" class="form-check-input" id="remember" data-id="permissionHandlerRememberUnchecked">`
-    const text = `"${fromName}"` + (remember ? `has changed and` : ``) + `would like to access to "${method}" of "${toName}"`
+    const text = `"${fromName}" ${(remember ? `has changed and` : ``)} would like to access to "${method}" of "${toName}"`
     const imgFrom = yo`<img id="permissionModalImagesFrom" src="${from.icon}" />`
     const imgTo = yo`<img id="permissionModalImagesTo" src="${to.icon}" />`
     const pluginsImages = yo`
