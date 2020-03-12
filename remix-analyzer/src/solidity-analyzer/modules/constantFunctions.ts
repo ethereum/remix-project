@@ -55,7 +55,6 @@ export default class constantFunctions implements AnalyzerModule {
                                           )
         }
       })
-
       contract.functions.filter((func) => hasFunctionBody(func.node)).forEach((func) => {
         if (isConstantFunction(func.node) !== func['potentiallyshouldBeConst']) {
           const funcName: string = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)

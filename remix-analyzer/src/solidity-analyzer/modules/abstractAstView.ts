@@ -174,10 +174,10 @@ export default class abstractAstView {
 
   private getLocalVariables (funcNode: ParameterListAstNode): VariableDeclarationAstNode[] {
     const locals: VariableDeclarationAstNode[] = []
-    new AstWalker().walk(funcNode, {'*': function (node) {
+    new AstWalker().walkFull(funcNode, (node) => {
       if (node.nodeType === "VariableDeclaration") locals.push(node)
       return true
-    }})
+    })
     return locals
   }
 }
