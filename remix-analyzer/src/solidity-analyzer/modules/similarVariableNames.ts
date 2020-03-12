@@ -52,7 +52,10 @@ export default class similarVariableNames implements AnalyzerModule {
     const similar: Record<string, any>[] = []
     const comb: Record<string, boolean> = {}
     vars.map((varName1) => vars.map((varName2) => {
-      if (varName1.length > 1 && varName2.length > 1 && varName2 !== varName1 && !this.isCommonPrefixedVersion(varName1, varName2) && !this.isCommonNrSuffixVersion(varName1, varName2) && !(comb[varName1 + ';' + varName2] || comb[varName2 + ';' + varName1])) {
+      if (varName1.length > 1 && varName2.length > 1 && 
+        varName2 !== varName1 && !this.isCommonPrefixedVersion(varName1, varName2) && 
+        !this.isCommonNrSuffixVersion(varName1, varName2) && 
+        !(comb[varName1 + ';' + varName2] || comb[varName2 + ';' + varName1])) {
         comb[varName1 + ';' + varName2] = true
         const distance: number = get(varName1, varName2)
         if (distance <= 2) similar.push({ var1: varName1, var2: varName2, distance: distance })

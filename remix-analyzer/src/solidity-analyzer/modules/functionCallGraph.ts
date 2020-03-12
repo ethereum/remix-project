@@ -1,6 +1,6 @@
 'use strict'
 
-import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph } from "types"
+import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph, Context } from "types"
 import { isLocalCallGraphRelevantNode,  isExternalDirectCall, getFullQualifiedFunctionCallIdent, getFullQuallyfiedFuncDefinitionIdent, getContractName } from './staticAnalysisCommon'
 
 function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter: any , extractNodeIdent: any, extractFuncDefIdent: Function): Record<string, FunctionCallGraph> {
@@ -61,11 +61,11 @@ export function buildGlobalFuncCallGraph (contracts: ContractHLAst[]): Record<st
  * @nodeCheck {(ASTNode, context) -> bool} applied on every relevant node in the call graph
  * @return {bool} returns map from contract name to contract call graph
  */
-export function analyseCallGraph (callGraph: Record<string, ContractCallGraph>, funcName: string, context: object, nodeCheck): boolean {
+export function analyseCallGraph (callGraph: Record<string, ContractCallGraph>, funcName: string, context: Context, nodeCheck: ((node: any, context: Context) => boolean)): boolean {
   return analyseCallGraphInternal(callGraph, funcName, context, (a, b) => a || b, nodeCheck, {})
 }
 
-function analyseCallGraphInternal (callGraph: Record<string, ContractCallGraph>, funcName: string, context: object, combinator: Function, nodeCheck, visited : object): boolean {
+function analyseCallGraphInternal (callGraph: Record<string, ContractCallGraph>, funcName: string, context: Context, combinator: Function, nodeCheck, visited : object): boolean {
   const current: FunctionCallGraph | undefined = resolveCallGraphSymbol(callGraph, funcName)
 
   if (current === undefined || visited[funcName] === true) return true

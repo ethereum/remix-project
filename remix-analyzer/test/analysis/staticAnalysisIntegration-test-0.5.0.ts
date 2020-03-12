@@ -12,7 +12,7 @@ const folder = 'solidity-v0.5'
 const testFiles = [
   'KingOfTheEtherThrone.sol',
   'assembly.sol',
-  // 'ballot.sol',
+  'ballot.sol',
   // 'ballot_reentrant.sol',
   // 'ballot_withoutWarnings.sol',
   // 'cross_contract.sol',
@@ -50,14 +50,14 @@ testFiles.forEach((fileName) => {
 test('Integration test thisLocal.js', function (t) {
     // console.log('testFileAsts---------',testFileAsts)
   // t.plan(testFiles.length)
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/thisLocal').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 1,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -89,14 +89,14 @@ test('Integration test thisLocal.js', function (t) {
 })
 
 test('Integration test checksEffectsInteraction.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/checksEffectsInteraction').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 1,
     'assembly.sol': 1,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 1,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -128,14 +128,14 @@ test('Integration test checksEffectsInteraction.js', function (t) {
 })
 
 test('Integration test constantFunctions.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/constantFunctions').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -167,14 +167,14 @@ test('Integration test constantFunctions.js', function (t) {
 })
 
 test('Integration test inlineAssembly.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/inlineAssembly').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 2,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -206,14 +206,14 @@ test('Integration test inlineAssembly.js', function (t) {
 })
 
 test('Integration test txOrigin.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/txOrigin').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 1,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -245,14 +245,14 @@ test('Integration test txOrigin.js', function (t) {
 })
 
 test('Integration test gasCosts.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/gasCosts').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 2,
     'assembly.sol': 2,
-    // 'ballot.sol': 3,
+    'ballot.sol': 3,
     // 'ballot_reentrant.sol': 2,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 1,
@@ -284,14 +284,14 @@ test('Integration test gasCosts.js', function (t) {
 })
 
 test('Integration test similarVariableNames.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/similarVariableNames').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 2,
+    'ballot.sol': 2,
     // 'ballot_reentrant.sol': 11,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -323,14 +323,14 @@ test('Integration test similarVariableNames.js', function (t) {
 })
 
 test('Integration test blockTimestamp.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/blockTimestamp').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 1,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 3,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -362,14 +362,14 @@ test('Integration test blockTimestamp.js', function (t) {
 })
 
 test('Integration test lowLevelCalls.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/lowLevelCalls').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 1,
     'assembly.sol': 1,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 7,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 1,
@@ -401,14 +401,14 @@ test('Integration test lowLevelCalls.js', function (t) {
 })
 
 test('Integration test blockBlockhash.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/blockBlockhash').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -483,14 +483,14 @@ test('Integration test blockBlockhash.js', function (t) {
 // */
 
 test('Integration test selfdestruct.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/selfdestruct').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -522,14 +522,14 @@ test('Integration test selfdestruct.js', function (t) {
 })
 
 test('Integration test guardConditions.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/guardConditions').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 1,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -561,14 +561,14 @@ test('Integration test guardConditions.js', function (t) {
 })
 
 test('Integration test deleteDynamicArrays.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/deleteDynamicArrays').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -600,14 +600,14 @@ test('Integration test deleteDynamicArrays.js', function (t) {
 })
 
 test('Integration test deleteFromDynamicArray.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/deleteFromDynamicArray').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -639,14 +639,14 @@ test('Integration test deleteFromDynamicArray.js', function (t) {
 })
 
 test('Integration test assignAndCompare.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/assignAndCompare').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -678,14 +678,14 @@ test('Integration test assignAndCompare.js', function (t) {
 })
 
 test('Integration test intDivisionTruncate.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/intDivisionTruncate').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -717,14 +717,14 @@ test('Integration test intDivisionTruncate.js', function (t) {
 })
 
 test('Integration test erc20Decimal.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/erc20Decimals').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -756,14 +756,14 @@ test('Integration test erc20Decimal.js', function (t) {
 })
 
 test('Integration test stringBytesLength.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/stringBytesLength').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -795,14 +795,14 @@ test('Integration test stringBytesLength.js', function (t) {
 })
 
 test('Integration test etherTransferInLoop.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/etherTransferInLoop').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 0,
+    'ballot.sol': 0,
     // 'ballot_reentrant.sol': 0,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
@@ -834,14 +834,14 @@ test('Integration test etherTransferInLoop.js', function (t) {
 })
 
 test('Integration test forLoopIteratesOverDynamicArray.js', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var module = require('../../dist/src/solidity-analyzer/modules/forLoopIteratesOverDynamicArray').default
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    // 'ballot.sol': 2,
+    'ballot.sol': 2,
     // 'ballot_reentrant.sol': 1,
     // 'ballot_withoutWarnings.sol': 0,
     // 'cross_contract.sol': 0,
