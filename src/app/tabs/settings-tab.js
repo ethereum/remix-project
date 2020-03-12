@@ -73,7 +73,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     if (token) gistAccessToken.value = token
     var gistAddToken = yo`<input class="${css.savegisttoken} btn btn-sm btn-primary" id="savegisttoken" data-id="settingsTabSaveGistToken" onclick=${() => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
     var gistRemoveToken = yo`<input class="btn btn-sm btn-primary" id="removegisttoken" data-id="settingsTabRemoveGistToken" onclick=${() => { gistAccessToken.value = ''; this.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
-    this._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => gistAccessToken.value )}${gistAddToken}${gistRemoveToken}</div>`
+    this._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => gistAccessToken.value)}${gistAddToken}${gistRemoveToken}</div>`
     this._view.optionVM = yo`<input onchange=${onchangeOption} class="align-middle form-check-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox">`
     if (this.config.get('settings/always-use-vm') === undefined) this.config.set('settings/always-use-vm', true)
     if (this.config.get('settings/always-use-vm')) this._view.optionVM.setAttribute('checked', '')
