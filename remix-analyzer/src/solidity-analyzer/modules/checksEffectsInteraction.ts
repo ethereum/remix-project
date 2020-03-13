@@ -4,7 +4,7 @@ import { isInteraction, isEffect, isLocalCallGraphRelevantNode, getFullQuallyfie
 import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VariableDeclarationAstNode, FunctionHLAst, ContractCallGraph, Context} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VariableDeclarationAstNode, FunctionHLAst, ContractCallGraph, Context, FunctionCallAstNode, AssignmentAstNode, UnaryOperationAstNode, InlineAssemblyAstNode} from './../../types'
 
 export default class checksEffectsInteraction implements AnalyzerModule {
   name: string = 'Check effects: '
@@ -14,7 +14,9 @@ export default class checksEffectsInteraction implements AnalyzerModule {
 
   abstractAst: AbstractAst = new AbstractAst()
 
-  visit: Function = this.abstractAst.build_visit((node: any) => isInteraction(node) || isEffect(node) || isLocalCallGraphRelevantNode(node))
+  visit: Function = this.abstractAst.build_visit((node: FunctionCallAstNode | AssignmentAstNode | UnaryOperationAstNode | InlineAssemblyAstNode) => (
+          node.nodeType === 'FunctionCall' && (isInteraction(node) || isLocalCallGraphRelevantNode(node))) || 
+          ((node.nodeType === 'Assignment' || node.nodeType === 'UnaryOperation' || node.nodeType === 'InlineAssembly') && isEffect(node)))
 
   report: Function = this.abstractAst.build_report(this._report.bind(this))
     
@@ -73,7 +75,7 @@ export default class checksEffectsInteraction implements AnalyzerModule {
     return isPotentialVulnerable
   }
 
-  private isLocalCallWithStateChange (node: any, context: Context): boolean {
+  private isLocalCallWithStateChange (node: FunctionCallAstNode, context: Context): boolean {
     if (isLocalCallGraphRelevantNode(node)) {
       const func = resolveCallGraphSymbol(context.callGraph, getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
       return !func || (func && func.node['changesState'])
