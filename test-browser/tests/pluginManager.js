@@ -124,6 +124,7 @@ module.exports = {
     .click('*[data-id="modalDialogModalFooter"]')
     .modalFooterOKClick()
     .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
+    .pause(2000)
     .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Cannot create Plugin : This name has already been used')
     .end()
   },
