@@ -7,7 +7,7 @@
     "overrides": null,
     "scope": 33,
     "src": "174:11:0",
-    "stateVariable": false,
+    "stateVariable": true,
     "storageLocation": "storage",
     "typeDescriptions":
     {

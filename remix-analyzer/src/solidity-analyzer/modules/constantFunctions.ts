@@ -6,7 +6,7 @@ import { isLowLevelCall, isTransfer, isExternalDirectCall, isEffect, isLocalCall
 import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractCallGraph, Context, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, FunctionCallGraph} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractCallGraph, Context, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, FunctionCallGraph, FunctionCallAstNode} from './../../types'
 
 export default class constantFunctions implements AnalyzerModule {
   name: string = 'Constant functions: '
@@ -103,7 +103,7 @@ export default class constantFunctions implements AnalyzerModule {
           isDeleteUnaryOperation(node)
   }
 
-  private isCallOnNonConstExternalInterfaceFunction (node: any, context: Context): boolean {
+  private isCallOnNonConstExternalInterfaceFunction (node: FunctionCallAstNode, context: Context): boolean {
     if (isExternalDirectCall(node)) {
       const func: FunctionCallGraph | undefined = resolveCallGraphSymbol(context.callGraph, getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
       return !func || (func && !isConstantFunction(func.node.node))

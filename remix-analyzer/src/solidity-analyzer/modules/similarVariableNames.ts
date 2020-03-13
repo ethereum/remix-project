@@ -39,7 +39,7 @@ export default class similarVariableNames implements AnalyzerModule {
         this.findSimilarVarNames(vars).map((sim) => {
           warnings.push({
             warning: `${funcName} : Variables have very similar names ${sim.var1} and ${sim.var2}. ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
-            location: func['src']
+            location: func.node['src']
           })
         })
       })

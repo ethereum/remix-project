@@ -278,11 +278,10 @@ test('staticAnalysisCommon.isStorageVariableDeclaration', function (t) {
 })
 
 test('staticAnalysisCommon.isInteraction', function (t) {
-  t.plan(6)
+  t.plan(5)
   t.ok(common.isInteraction(lowlevelCall.sendAst), 'send is interaction')
   t.ok(common.isInteraction(lowlevelCall.callAst), 'call is interaction')
-  t.ok(common.isInteraction(externalDirect.expression), 'ExternalDirecCall is interaction')
-  t.notOk(common.isInteraction(lowlevelCall.callcodeAst), 'callcode is not interaction')
+  t.ok(common.isInteraction(externalDirect), 'ExternalDirectCall is interaction')
   t.notOk(common.isInteraction(lowlevelCall.delegatecallAst), 'delegatecall is not interaction')
   t.notOk(common.isInteraction(localCall), 'local call is not interaction')
 })
@@ -364,7 +363,7 @@ test('staticAnalysisCommon.isExternalDirectCall', function (t) {
   t.notOk(common.isThisLocalCall(externalDirect), 'is this.local_method() used should not work')
   t.notOk(common.isBlockTimestampAccess(externalDirect), 'is block.timestamp used should not work')
   t.notOk(common.isNowAccess(externalDirect), 'is now used should not work')
-  t.ok(common.isExternalDirectCall(externalDirect.expression), 'c.f() should be external direct call')
+  t.ok(common.isExternalDirectCall(externalDirect), 'c.f() should be external direct call')
   t.notOk(common.isExternalDirectCall(thisLocalCall.expression), 'this local call is not an exernal call')
 })
 
@@ -414,8 +413,8 @@ test('staticAnalysisCommon.isLocalCall', function (t) {
 
 test('staticAnalysisCommon.isLowLevelCall', function (t) {
   t.plan(3)
-  t.ok(common.isLLSend(lowlevelCall.sendAst) && common.isLowLevelCall(lowlevelCall.sendAst), 'send is llc should work')
-  t.ok(common.isLLCall(lowlevelCall.callAst) && common.isLowLevelCall(lowlevelCall.callAst), 'call is llc should work')
+  t.ok(common.isLLSend(lowlevelCall.sendAst.expression) && common.isLowLevelCall(lowlevelCall.sendAst.expression), 'send is llc should work')
+  t.ok(common.isLLCall(lowlevelCall.callAst.expression) && common.isLowLevelCall(lowlevelCall.callAst.expression), 'call is llc should work')
   t.ok(common.isLLDelegatecall(lowlevelCall.delegatecallAst) && common.isLowLevelCall(lowlevelCall.delegatecallAst), 'delegatecall is llc should work')
 })
 
