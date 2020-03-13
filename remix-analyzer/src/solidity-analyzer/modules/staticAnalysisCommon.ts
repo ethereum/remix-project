@@ -168,12 +168,12 @@ function getFunctionCallType (func: FunctionCallAstNode): string {
  * @effectNode {ASTNode} Assignmnet node
  * @return {string} variable name written to
  */
-function getEffectedVariableName (effectNode: AssignmentAstNode | UnaryOperationAstNode) {
+function getEffectedVariableName (effectNode: AssignmentAstNode | UnaryOperationAstNode): string {
   if (!isEffect(effectNode)) throw new Error('staticAnalysisCommon.js: not an effect Node')
   if(effectNode.nodeType === 'Assignment' || effectNode.nodeType === 'UnaryOperation') {
     const IdentNode = findFirstSubNodeLTR(effectNode, exactMatch(nodeTypes.IDENTIFIER))
     return IdentNode.name
-  }
+  } else throw new Error('staticAnalysisCommon.js: wrong node type')
 }
 
 // developed keeping identifier node search in mind
@@ -237,7 +237,7 @@ function getSuperLocalCallName (superLocalCallNode: FunctionCallAstNode): string
  * @return {string} name of the contract the function is defined in
  */
 function getExternalDirectCallContractName (extDirectCall: FunctionCallAstNode): string {
-  if (!isExternalDirectCall(extDirectCall.expression)) throw new Error('staticAnalysisCommon.js: not an external direct call Node')
+  if (!isExternalDirectCall(extDirectCall)) throw new Error('staticAnalysisCommon.js: not an external direct call Node')
   return extDirectCall.expression.expression.typeDescriptions.typeString.replace(new RegExp(basicRegex.CONTRACTTYPE), '')
 }
 
@@ -265,7 +265,7 @@ function getThisLocalCallContractName (thisLocalCall: FunctionCallAstNode): stri
  * @return {string} name of the function called
  */
 function getExternalDirectCallMemberName (extDirectCall: FunctionCallAstNode): string {
-  if (!isExternalDirectCall(extDirectCall.expression)) throw new Error('staticAnalysisCommon.js: not an external direct call Node')
+  if (!isExternalDirectCall(extDirectCall)) throw new Error('staticAnalysisCommon.js: not an external direct call Node')
   return extDirectCall.expression.memberName
 }
 
@@ -436,7 +436,7 @@ function getFullQualifiedFunctionCallIdent (contract: ContractDefinitionAstNode,
   if (isLocalCall(func)) return getContractName(contract) + '.' + getLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isThisLocalCall(func.expression)) return getThisLocalCallContractName(func) + '.' + getThisLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isSuperLocalCall(func.expression)) return getContractName(contract) + '.' + getSuperLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
-  else if (isExternalDirectCall(func.expression)) return getExternalDirectCallContractName(func) + '.' + getExternalDirectCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
+  else if (isExternalDirectCall(func)) return getExternalDirectCallContractName(func) + '.' + getExternalDirectCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isLibraryCall(func.expression)) return getLibraryCallContractName(func.expression) + '.' + getLibraryCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else throw new Error('staticAnalysisCommon.js: Can not get function name from non function call node')
 }
@@ -622,8 +622,8 @@ function isStorageVariableDeclaration (node: VariableDeclarationAstNode): boolea
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isInteraction (node: MemberAccessAstNode): boolean {
-  return isLLCall(node) || isLLSend(node) || isExternalDirectCall(node) || isTransfer(node)
+function isInteraction (node: FunctionCallAstNode): boolean {
+  return isLLCall(node.expression) || isLLSend(node.expression) || isExternalDirectCall(node) || isTransfer(node.expression)
 }
 
 /**
@@ -643,7 +643,7 @@ function isEffect (node: AssignmentAstNode | UnaryOperationAstNode | InlineAssem
  * @node {list Variable declaration} state variable declaration currently in scope
  * @return {bool}
  */
-function isWriteOnStateVariable (effectNode: AssignmentAstNode | InlineAssemblyAstNode | UnaryOperationAstNode, stateVariables: VariableDeclarationAstNode[]) {
+function isWriteOnStateVariable (effectNode: AssignmentAstNode | InlineAssemblyAstNode | UnaryOperationAstNode, stateVariables: VariableDeclarationAstNode[]): boolean {
   return effectNode.nodeType === "InlineAssembly" || (isEffect(effectNode) && isStateVariable(getEffectedVariableName(effectNode), stateVariables))
 }
 
@@ -796,8 +796,8 @@ function isLibraryCall (node: MemberAccessAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isExternalDirectCall (node: MemberAccessAstNode): boolean {
-  return isMemberAccess(node, basicRegex.EXTERNALFUNCTIONTYPE, undefined, basicRegex.CONTRACTTYPE, undefined) && !isThisLocalCall(node) && !isSuperLocalCall(node)
+function isExternalDirectCall (node: FunctionCallAstNode): boolean {
+  return isMemberAccess(node.expression, basicRegex.EXTERNALFUNCTIONTYPE, undefined, basicRegex.CONTRACTTYPE, undefined) && !isThisLocalCall(node.expression) && !isSuperLocalCall(node.expression)
 }
 
 /**
@@ -908,7 +908,10 @@ function isLLSend (node: MemberAccessAstNode): boolean {
 function isLLCall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident))
+          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident)) ||
+          isMemberAccess(node,
+            exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
+            undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident))
 }
 
 /**
