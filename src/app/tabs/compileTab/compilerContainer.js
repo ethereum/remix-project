@@ -45,8 +45,8 @@ class CompilerContainer {
   isSolFileSelected (currentFile = '') {
     if (!currentFile) currentFile = this.config.get('currentFile')
     if (!currentFile) return false
-    return currentFile.substr(currentFile.length - 3, currentFile.length) === 'sol' ||
-      currentFile.substr(currentFile.length - 3, currentFile.length) === 'yul'
+    const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
+    return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
   }
 
   deactivate () {
