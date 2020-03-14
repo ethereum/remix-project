@@ -38,8 +38,15 @@ class CompilerContainer {
     }
     if (!this._view.compilationButton) return
     const button = this.compilationButton(name.split('/').pop())
-    this._disableCompileBtn(!name)
+    this._disableCompileBtn(!name || (name && !this.isSolFileSelected(name)))
     yo.update(this._view.compilationButton, button)
+  }
+
+  isSolFileSelected (currentFile = '') {
+    if (!currentFile) currentFile = this.config.get('currentFile')
+    if (!currentFile) return false
+    return currentFile.substr(currentFile.length - 3, currentFile.length) === 'sol' ||
+      currentFile.substr(currentFile.length - 3, currentFile.length) === 'yul'
   }
 
   deactivate () {
@@ -113,7 +120,7 @@ class CompilerContainer {
    */
   compilationButton (name = '') {
     const displayed = name || '<no file selected>'
-    const disabled = name ? '' : 'disabled'
+    const disabled = name && this.isSolFileSelected() ? '' : 'disabled'
     const compileBtn = yo`
       <button id="compileBtn" data-id="compilerContainerCompileBtn" class="btn btn-primary btn-block ${disabled}" title="Compile" onclick="${this.compile.bind(this)}">
         <span>${this._view.compileIcon} Compile ${displayed}</span>
@@ -131,7 +138,7 @@ class CompilerContainer {
     if (!btn) return
     if (shouldDisable) {
       btn.classList.add('disabled')
-    } else if (this.config.get('currentFile')) {
+    } else if (this.isSolFileSelected()) {
       btn.classList.remove('disabled')
     }
   }
@@ -316,10 +323,11 @@ class CompilerContainer {
   }
 
   compile (event) {
-    if (this.config.get('currentFile')) {
-      this._setCompilerVersionFromPragma(this.config.get('currentFile'))
-      this.compileTabLogic.runCompiler()
-    }
+    const currentFile = this.config.get('currentFile')
+    if (!this.isSolFileSelected()) return
+
+    this._setCompilerVersionFromPragma(currentFile)
+    this.compileTabLogic.runCompiler()
   }
 
   compileIfAutoCompileOn () {
