@@ -51,6 +51,21 @@ export interface CompilerConfiguration {
   usingWorker: boolean
 }
 
+export interface CompilationErrors {
+  name: string,
+  errors: Array<Error>,
+  message: string
+}
+
+export class CompilationErrors extends Error {
+  constructor(errors) {
+    const mapError = errors.map((e) => { return e.formattedMessage || e.message })
+    super(mapError.join('\n'))
+    this.errors = errors
+    this.name = 'CompilationErrors'
+  }
+}
+
 /** sources object with name of the file and content **/
 
 ////////////
