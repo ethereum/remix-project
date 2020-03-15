@@ -122,7 +122,7 @@ module.exports = class TestTab extends ViewPlugin {
   updateFinalResult (_errors, result, filename) {
     this.testsSummary.hidden = false
     if (_errors) {
-      _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsSummary, {type: err.severity}))
+      _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsSummary, {type: err.severity}))
       return
     }
     this.testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
