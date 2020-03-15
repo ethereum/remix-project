@@ -2,7 +2,7 @@ import fs from './fileSystem'
 import async from 'async'
 import path from 'path'
 let RemixCompiler = require('remix-solidity').Compiler
-import { SrcIfc, CompilerConfiguration } from './types'
+import { SrcIfc, CompilerConfiguration, CompilationErrors } from './types'
 
 function regexIndexOf (inputString: string, regex: RegExp, startpos: number = 0) {
     const indexOf = inputString.substring(startpos).search(regex)
@@ -132,7 +132,7 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
             let errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
             if (errors.length > 0) {
                 if (!isBrowser) require('signale').fatal(errors)
-                return cb(errors)
+                return cb(new CompilationErrors(errors))
             }
             cb(err, result.contracts, result.sources) //return callback with contract details & ASTs
         })
@@ -191,7 +191,7 @@ export function compileContractSources(sources: SrcIfc, compilerConfig: Compiler
         let errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
         if (errors.length > 0) {
             if (!isBrowser) require('signale').fatal(errors)
-            return cb(errors)
+            return cb(new CompilationErrors(errors))
         }
         cb(err, result.contracts, result.sources) // return callback with contract details & ASTs
     })
