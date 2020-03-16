@@ -74,21 +74,21 @@ class TreeView {
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
     })
-    return yo`<ul key=${key} class="${css.ul_tv}">${children}</ul>`
+    return yo`<ul key=${key} data-id="treeViewUl${key}" class="${css.ul_tv}">${children}</ul>`
   }
 
   formatData (key, data, children, expand, keyPath) {
     var self = this
-    var li = yo`<li key=${keyPath} class=${css.li_tv}></li>`
+    var li = yo`<li key=${keyPath} data-id="treeViewLi${keyPath}" class=${css.li_tv}></li>`
     var caret = yo`<div class="fas fa-caret-right caret ${css.caret_tv}"></div>`
     var label = yo`
-      <div key=${keyPath} class=${css.label_tv}>
+      <div key=${keyPath} data-id="treeViewDiv${keyPath}" class=${css.label_tv}>
         ${caret}
         <span>${self.formatSelf(key, data, li)}</span>
       </div>`
     li.appendChild(label)
     if (data.children) {
-      var list = yo`<ul key=${keyPath} class=${css.ul_tv}>${children}</ul>`
+      var list = yo`<ul key=${keyPath} data-id="treeViewUlList${keyPath}" class=${css.ul_tv}>${children}</ul>`
       list.style.display = 'none'
       caret.className = list.style.display === 'none' ? `fas fa-caret-right caret ${css.caret_tv}` : `fas fa-caret-down caret ${css.caret_tv}`
       caret.setAttribute('data-id', `treeViewToggle${keyPath}`)
