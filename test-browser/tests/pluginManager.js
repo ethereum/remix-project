@@ -123,6 +123,7 @@ module.exports = {
     .click('*[data-id="localPluginRadioButtonsidePanel"]')
     .click('*[data-id="modalDialogModalFooter"]')
     .modalFooterOKClick()
+    .pause(5000)
     .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
     .pause(2000)
     .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Cannot create Plugin : This name has already been used')
