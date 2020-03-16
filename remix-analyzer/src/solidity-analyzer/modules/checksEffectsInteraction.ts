@@ -78,7 +78,7 @@ export default class checksEffectsInteraction implements AnalyzerModule {
   private isLocalCallWithStateChange (node: FunctionCallAstNode, context: Context): boolean {
     if (isLocalCallGraphRelevantNode(node)) {
       const func = resolveCallGraphSymbol(context.callGraph, getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
-      return !func || (func && func.node['changesState'])
+      return !func || (func && func['changesState'])
     }
     return false
   }
