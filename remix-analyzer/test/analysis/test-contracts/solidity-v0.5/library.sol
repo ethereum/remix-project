@@ -1,4 +1,4 @@
-pragma solidity >=0.4.9 <0.7.0;
+pragma solidity >=0.4.9 <0.6.0;
 
 library Set {
   // We define a new struct datatype that will be used to
@@ -51,8 +51,5 @@ contract C {
             revert();
     }
 
-    function testt() public view returns (uint) {
-        return block.timestamp;
-    }
     // In this contract, we can also directly access knownValues.flags, if we want.
 }

@@ -438,7 +438,7 @@ function getFullQualifiedFunctionCallIdent (contract: ContractDefinitionAstNode,
   else if (isThisLocalCall(func.expression)) return getThisLocalCallContractName(func) + '.' + getThisLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isSuperLocalCall(func.expression)) return getContractName(contract) + '.' + getSuperLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isExternalDirectCall(func)) return getExternalDirectCallContractName(func) + '.' + getExternalDirectCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
-  else if (isLibraryCall(func.expression)) return getLibraryCallContractName(func.expression) + '.' + getLibraryCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
+  else if (isLibraryCall(func.expression)) return getLibraryCallContractName(func) + '.' + getLibraryCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else throw new Error('staticAnalysisCommon.js: Can not get function name from non function call node')
 }
 
@@ -995,11 +995,11 @@ function isBytesLengthCheck (node: MemberAccessAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-// function isLoop (node) {
-//   return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
-//           nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
-//           nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))
-// }
+function isLoop (node) {
+  return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
+          nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
+          nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))
+}
 
 /**
  * True if it is a 'for' loop
@@ -1202,7 +1202,7 @@ export {
   isIntDivision,
   isStringToBytesConversion,
   isBytesLengthCheck,
-  // isForLoop,
+  isLoop,
 
   // #################### Trivial Node Identification
   isDeleteUnaryOperation,

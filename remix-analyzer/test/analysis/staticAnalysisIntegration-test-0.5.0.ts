@@ -17,19 +17,19 @@ const testFiles = [
   'ballot_withoutWarnings.sol',
   'cross_contract.sol',
   'inheritance.sol',
-  // 'modifier1.sol',
-  // 'modifier2.sol',
-  // 'notReentrant.sol',
-  // 'structReentrant.sol',
-  // 'thisLocal.sol',
-  // 'globals.sol',
-  // 'library.sol',
-  // 'transfer.sol',
-  // 'ctor.sol',
-  // 'forgottenReturn.sol',
-  // 'selfdestruct.sol',
-  // 'deleteDynamicArray.sol',
-  // 'deleteFromDynamicArray.sol',
+  'modifier1.sol',
+  'modifier2.sol',
+  'notReentrant.sol',
+  'structReentrant.sol',
+  'thisLocal.sol',
+  'globals.sol',
+  'library.sol',
+  'transfer.sol',
+  'ctor.sol',
+  'forgottenReturn.sol',
+  'selfdestruct.sol',
+  'deleteDynamicArray.sol',
+  'deleteFromDynamicArray.sol',
   // 'blockLevelCompare.sol',
   // 'intDivisionTruncate.sol',
   // 'ERC20.sol',
@@ -50,7 +50,7 @@ testFiles.forEach((fileName) => {
 test('Integration test thisLocal.js', function (t) {
     // console.log('testFileAsts---------',testFileAsts)
   // t.plan(testFiles.length)
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/thisLocal').default
 
@@ -62,19 +62,19 @@ test('Integration test thisLocal.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 1,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 1,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -89,7 +89,7 @@ test('Integration test thisLocal.js', function (t) {
 })
 
 test('Integration test checksEffectsInteraction.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/checksEffectsInteraction').default
 
@@ -101,19 +101,19 @@ test('Integration test checksEffectsInteraction.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 1,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 1,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 1,
-    // 'library.sol': 1,
-    // 'transfer.sol': 1,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 1,
+    'thisLocal.sol': 0,
+    'globals.sol': 1,
+    'library.sol': 1,
+    'transfer.sol': 1,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -128,7 +128,7 @@ test('Integration test checksEffectsInteraction.js', function (t) {
 })
 
 test('Integration test constantFunctions.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/constantFunctions').default
 
@@ -140,19 +140,19 @@ test('Integration test constantFunctions.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 1,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 1,
-    // 'thisLocal.sol': 1,
-    // 'globals.sol': 0,
-    // 'library.sol': 3,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 1,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 1,
+    'thisLocal.sol': 1,
+    'globals.sol': 0,
+    'library.sol': 3,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -167,7 +167,7 @@ test('Integration test constantFunctions.js', function (t) {
 })
 
 test('Integration test inlineAssembly.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/inlineAssembly').default
 
@@ -179,19 +179,19 @@ test('Integration test inlineAssembly.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -206,7 +206,7 @@ test('Integration test inlineAssembly.js', function (t) {
 })
 
 test('Integration test txOrigin.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/txOrigin').default
 
@@ -218,19 +218,19 @@ test('Integration test txOrigin.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 1,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 1,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -245,7 +245,7 @@ test('Integration test txOrigin.js', function (t) {
 })
 
 test('Integration test gasCosts.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/gasCosts').default
 
@@ -257,19 +257,19 @@ test('Integration test gasCosts.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 1,
     'inheritance.sol': 1,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 1,
-    // 'notReentrant.sol': 1,
-    // 'structReentrant.sol': 1,
-    // 'thisLocal.sol': 1,
-    // 'globals.sol': 1,
-    // 'library.sol': 1,
-    // 'transfer.sol': 1,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 3,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 2,
-    // 'deleteFromDynamicArray.sol': 1,
+    'modifier1.sol': 0,
+    'modifier2.sol': 1,
+    'notReentrant.sol': 1,
+    'structReentrant.sol': 1,
+    'thisLocal.sol': 1,
+    'globals.sol': 1,
+    'library.sol': 1,
+    'transfer.sol': 1,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 3,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 2,
+    'deleteFromDynamicArray.sol': 1,
     // 'blockLevelCompare.sol': 1,
     // 'intDivisionTruncate.sol': 1,
     // 'ERC20.sol': 2,
@@ -284,7 +284,7 @@ test('Integration test gasCosts.js', function (t) {
 })
 
 test('Integration test similarVariableNames.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/similarVariableNames').default
 
@@ -296,19 +296,19 @@ test('Integration test similarVariableNames.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 1,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 1,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 1,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 1,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 1,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 1,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -323,7 +323,7 @@ test('Integration test similarVariableNames.js', function (t) {
 })
 
 test('Integration test blockTimestamp.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/blockTimestamp').default
 
@@ -335,19 +335,19 @@ test('Integration test blockTimestamp.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 2,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 2,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -362,7 +362,7 @@ test('Integration test blockTimestamp.js', function (t) {
 })
 
 test('Integration test lowLevelCalls.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/lowLevelCalls').default
 
@@ -374,19 +374,19 @@ test('Integration test lowLevelCalls.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 1,
     'inheritance.sol': 1,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 1,
-    // 'structReentrant.sol': 1,
-    // 'thisLocal.sol': 2,
-    // 'globals.sol': 1,
-    // 'library.sol': 1,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 1,
+    'structReentrant.sol': 1,
+    'thisLocal.sol': 2,
+    'globals.sol': 1,
+    'library.sol': 1,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -401,7 +401,7 @@ test('Integration test lowLevelCalls.js', function (t) {
 })
 
 test('Integration test blockBlockhash.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/blockBlockhash').default
 
@@ -413,19 +413,19 @@ test('Integration test blockBlockhash.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0, // was 1 !! @TODO
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 1,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -440,7 +440,7 @@ test('Integration test blockBlockhash.js', function (t) {
 })
 
 test('Integration test selfdestruct.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/selfdestruct').default
 
@@ -452,19 +452,19 @@ test('Integration test selfdestruct.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 2,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 3,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 2,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 3,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'ERC20.sol': 0,
     // 'intDivisionTruncate.sol': 5,
@@ -479,7 +479,7 @@ test('Integration test selfdestruct.js', function (t) {
 })
 
 test('Integration test guardConditions.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/guardConditions').default
 
@@ -491,19 +491,19 @@ test('Integration test guardConditions.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 1,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 1,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 1,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 1,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 1,
     // 'ERC20.sol': 0,
@@ -518,7 +518,7 @@ test('Integration test guardConditions.js', function (t) {
 })
 
 test('Integration test deleteDynamicArrays.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/deleteDynamicArrays').default
 
@@ -530,19 +530,19 @@ test('Integration test deleteDynamicArrays.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 2,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 2,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -557,7 +557,7 @@ test('Integration test deleteDynamicArrays.js', function (t) {
 })
 
 test('Integration test deleteFromDynamicArray.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/deleteFromDynamicArray').default
 
@@ -569,19 +569,19 @@ test('Integration test deleteFromDynamicArray.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 1,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 1,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -596,7 +596,7 @@ test('Integration test deleteFromDynamicArray.js', function (t) {
 })
 
 test('Integration test assignAndCompare.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/assignAndCompare').default
 
@@ -608,19 +608,19 @@ test('Integration test assignAndCompare.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 8,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -635,7 +635,7 @@ test('Integration test assignAndCompare.js', function (t) {
 })
 
 test('Integration test intDivisionTruncate.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/intDivisionTruncate').default
 
@@ -647,19 +647,19 @@ test('Integration test intDivisionTruncate.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 2,
     // 'ERC20.sol': 0,
@@ -674,7 +674,7 @@ test('Integration test intDivisionTruncate.js', function (t) {
 })
 
 test('Integration test erc20Decimal.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/erc20Decimals').default
 
@@ -686,19 +686,19 @@ test('Integration test erc20Decimal.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 1,
@@ -713,7 +713,7 @@ test('Integration test erc20Decimal.js', function (t) {
 })
 
 test('Integration test stringBytesLength.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/stringBytesLength').default
 
@@ -725,19 +725,19 @@ test('Integration test stringBytesLength.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -752,7 +752,7 @@ test('Integration test stringBytesLength.js', function (t) {
 })
 
 test('Integration test etherTransferInLoop.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/etherTransferInLoop').default
 
@@ -764,19 +764,19 @@ test('Integration test etherTransferInLoop.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
@@ -791,7 +791,7 @@ test('Integration test etherTransferInLoop.js', function (t) {
 })
 
 test('Integration test forLoopIteratesOverDynamicArray.js', function (t) {
-  t.plan(7)
+  t.plan(20)
 
   var module = require('../../dist/src/solidity-analyzer/modules/forLoopIteratesOverDynamicArray').default
 
@@ -803,19 +803,19 @@ test('Integration test forLoopIteratesOverDynamicArray.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
-    // 'modifier1.sol': 0,
-    // 'modifier2.sol': 0,
-    // 'notReentrant.sol': 0,
-    // 'structReentrant.sol': 0,
-    // 'thisLocal.sol': 0,
-    // 'globals.sol': 0,
-    // 'library.sol': 0,
-    // 'transfer.sol': 0,
-    // 'ctor.sol': 0,
-    // 'forgottenReturn.sol': 0,
-    // 'selfdestruct.sol': 0,
-    // 'deleteDynamicArray.sol': 0,
-    // 'deleteFromDynamicArray.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     // 'blockLevelCompare.sol': 0,
     // 'intDivisionTruncate.sol': 0,
     // 'ERC20.sol': 0,
