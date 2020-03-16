@@ -282,7 +282,7 @@ class FileManager extends Plugin {
             this.editor.open(file, content)
           }
           // TODO: Only keep `this.emit` (issue#2210)
-          this.emit('currentFileChanged', file)
+          // this.emit('currentFileChanged', file)
           this.events.emit('currentFileChanged', file)
         }
       })

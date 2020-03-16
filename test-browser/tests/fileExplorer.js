@@ -23,7 +23,7 @@ module.exports = {
     browser
     .moveToElement('*[data-id="treeViewLibrowser/1_Storage.sol"]', 5, 5)
     .mouseButtonClick('right')
-    .click('#menuitemdelete')
+    .click('*[id="menuitemdelete"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .modalFooterOKClick()
     .waitForElementNotPresent('*[data-id="treeViewLibrowser/1_Storage.sol"')
@@ -54,8 +54,24 @@ module.exports = {
     .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_Tests/1_Test.sol"]')
   },
 
+  'Should rename Browser_Tests folder to Browser_E2E_Tests': function (browser) {
+    browser
+    .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_Tests"]')
+    .moveToElement('*[data-id="treeViewLibrowser/Browser_Tests"]', 5, 5)
+    .mouseButtonClick('right')
+    .click('*[id="menuitemrename"]')
+    .keys('Browser_E2E_Tests')
+    .keys(browser.Keys.ENTER)
+    .pause(100000)
+    .waitForElementVisible('*[data-id="modalDialogContainer"]')
+    .click('*[data-id="modalDialogContainer"]')
+    .modalFooterOKClick()
+    .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_E2E_Tests"]')
+  },
+
   'Should delete Browser_Tests folder': function (browser) {
     browser
+    .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_Tests"]')
     .moveToElement('*[data-id="treeViewLibrowser/Browser_Tests"]', 5, 5)
     .mouseButtonClick('right')
     .click('*[id="menuitemdelete"]')
