@@ -169,6 +169,7 @@ function getFunctionCallType (func: FunctionCallAstNode): string {
  * @return {string} variable name written to
  */
 function getEffectedVariableName (effectNode: AssignmentAstNode | UnaryOperationAstNode): string {
+  // console.log('getEffectedVariableName---effectNode---', effectNode)
   if (!isEffect(effectNode)) throw new Error('staticAnalysisCommon.js: not an effect Node')
   if(effectNode.nodeType === 'Assignment' || effectNode.nodeType === 'UnaryOperation') {
     const IdentNode = findFirstSubNodeLTR(effectNode, exactMatch(nodeTypes.IDENTIFIER))
@@ -623,7 +624,10 @@ function isStorageVariableDeclaration (node: VariableDeclarationAstNode): boolea
  * @return {bool}
  */
 function isInteraction (node: FunctionCallAstNode): boolean {
-  return isLLCall(node.expression) || isLLSend(node.expression) || isExternalDirectCall(node) || isTransfer(node.expression)
+  // console.log('Inside isInteraction----------', node)
+  return isLLCall(node.expression) || isLLSend(node.expression) || isExternalDirectCall(node) || isTransfer(node.expression) ||
+  // to cover case of address.call.value.gas , See: inheritance.sol  
+    (node.expression && node.expression.expression && isLLCall(node.expression.expression)) 
 }
 
 /**
@@ -906,6 +910,9 @@ function isLLSend (node: MemberAccessAstNode): boolean {
  * @return {bool}
  */
 function isLLCall (node: MemberAccessAstNode): boolean {
+  // if(node && node.nodeType === 'MemberAccess' && node.memberName !== 'call' && 
+  // node.expression && node.expression.nodeType && nodeType(node.expression, exactMatch(nodeTypes.MEMBERACCESS)))
+  //   node = node.expression;
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident)) ||
@@ -1008,6 +1015,7 @@ function isBytesLengthCheck (node: MemberAccessAstNode): boolean {
 
 function isMemberAccess (node: MemberAccessAstNode, retType: string, accessor: string| undefined, accessorType: string, memberName: string | undefined): boolean {
   if(node && nodeType(node, exactMatch('MemberAccess'))) {
+    // console.log('node inside memberaccess------', node)
     const nodeTypeDef: boolean = typeDescription(node, retType)
     // console.log('MemberAccess typeDef ->',nodeTypeDef)
     const nodeMemName: boolean = memName(node, memberName)
