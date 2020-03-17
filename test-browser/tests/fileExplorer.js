@@ -5,11 +5,12 @@ const sauce = require('./sauce')
 module.exports = {
 
   before: function (browser, done) {
-    init(browser, done, 'http://127.0.0.1:8080', false)
+    init(browser, done)
   },
 
   'Should create a new file `5_New_contract.sol` in file explorer': function (browser) {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
+    .clickLaunchIcon('fileExplorers')
     .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
     .click('*[data-id="fileExplorerNewFilecreateNewFile"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
@@ -72,6 +73,20 @@ module.exports = {
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .modalFooterOKClick()
     .waitForElementNotPresent('*[data-id="treeViewLibrowser/Browser_E2E_Tests"]')
+  },
+
+  'Should publish all explorer files to github gist': function (browser) {
+    browser
+    .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')
+    .click('*[data-id="fileExplorerNewFilepublishToGist"]')
+    .waitForElementVisible('*[data-id="modalDialogContainer"]')
+    .modalFooterOKClick()
+    .pause(10000)
+    .waitForElementVisible('*[data-id="modalDialogContainer"]')
+    .modalFooterOKClick()
+    .pause(2000)
+    .switchBrowserTab(1)
+    .assert.urlContains('https://gist.github.com')
     .end()
   },
 
