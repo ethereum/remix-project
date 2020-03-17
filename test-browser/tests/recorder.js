@@ -12,11 +12,11 @@ module.exports = {
   'Test Recorder': function (browser) {
     var addressRef
     browser.addFile('scenario.json', {content: records})
+        .pause(5000)
         .clickLaunchIcon('udapp')
         .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
         .click('div[class^="cardContainer"] i[class^="arrow"]')
         .click('#runTabView .runtransaction')
-        .pause(10000)
         .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2) > div > button')
         .waitForElementPresent('.instance:nth-of-type(3)')
