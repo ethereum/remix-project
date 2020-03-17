@@ -26,12 +26,12 @@ export default class noReturn implements AnalyzerModule {
         if (this.hasNamedAndUnnamedReturns(func)) {
           warnings.push({
             warning: `${funcName}: Mixing of named and unnamed return parameters is not advised.`,
-            location: func['src']
+            location: func.node['src']
           })
         } else if (this.shouldReturn(func) && !(this.hasReturnStatement(func) || (this.hasNamedReturns(func) && this.hasAssignToAllNamedReturns(func)))) {
           warnings.push({
             warning: `${funcName}: Defines a return type but never explicitly returns a value.`,
-            location: func['src']
+            location: func.node['src']
           })
         }
       })
