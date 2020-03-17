@@ -19,39 +19,37 @@ module.exports = {
     .waitForElementVisible('*[data-id="treeViewLibrowser/5_New_contract.sol"]')
   },
 
-  'Should remove file `1_Storage.sol` from file explorer': function (browser) {
+  'Should rename `5_New_contract.sol` to 5_Renamed_Contract.sol': function (browser) {
     browser
-    .moveToElement('*[data-id="treeViewLibrowser/1_Storage.sol"]', 5, 5)
+    .waitForElementVisible('*[data-id="treeViewLibrowser/5_New_contract.sol"]')
+    .moveToElement('*[data-id="treeViewLibrowser/5_New_contract.sol"]', 5, 5)
+    .mouseButtonClick('right')
+    .click('*[id="menuitemrename"]')
+    .keys('5_Renamed_Contract.sol')
+    .keys(browser.Keys.ENTER)
+    .waitForElementVisible('*[data-id="treeViewLibrowser/5_Renamed_Contract.sol"]')
+  },
+
+  'Should delete file `5_Renamed_Contract.sol` from file explorer': function (browser) {
+    browser
+    .moveToElement('*[data-id="treeViewLibrowser/5_Renamed_Contract.sol"]', 5, 5)
     .mouseButtonClick('right')
     .click('*[id="menuitemdelete"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .modalFooterOKClick()
-    .waitForElementNotPresent('*[data-id="treeViewLibrowser/1_Storage.sol"')
+    .waitForElementNotPresent('*[data-id="treeViewLibrowser/5_Renamed_Contract.sol"')
   },
 
   'Should create a new folder': function (browser) {
     browser
-    .waitForElementVisible('*[data-id="treeViewLibrowser/5_New_contract.sol"]')
-    .moveToElement('*[data-id="treeViewLibrowser/5_New_contract.sol"]', 5, 5)
+    .waitForElementVisible('*[data-id="treeViewLibrowser/1_Storage.sol"]')
+    .moveToElement('*[data-id="treeViewLibrowser/1_Storage.sol"]', 5, 5)
     .mouseButtonClick('right')
     .click('*[id="menuitemcreate folder"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .setValue('*[data-id="modalDialogCustomPromptText"]', 'Browser_Tests')
     .modalFooterOKClick()
     .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_Tests"]')
-  },
-
-  'Should create files in folder Browser_Tests': function (browser) {
-    browser
-    .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_Tests"]')
-    .moveToElement('*[data-id="treeViewLibrowser/Browser_Tests"]', 5, 5)
-    .mouseButtonClick('right')
-    .click('*[id="menuitemcreate file"]')
-    .waitForElementVisible('*[data-id="modalDialogContainer"]')
-    .setValue('*[data-id="modalDialogCustomPromptText"]', '1_Test.sol')
-    .modalFooterOKClick()
-    .switchFile('browser/Browser_Tests')
-    .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_Tests/1_Test.sol"]')
   },
 
   'Should rename Browser_Tests folder to Browser_E2E_Tests': function (browser) {
@@ -62,22 +60,18 @@ module.exports = {
     .click('*[id="menuitemrename"]')
     .keys('Browser_E2E_Tests')
     .keys(browser.Keys.ENTER)
-    .pause(100000)
-    .waitForElementVisible('*[data-id="modalDialogContainer"]')
-    .click('*[data-id="modalDialogContainer"]')
-    .modalFooterOKClick()
     .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_E2E_Tests"]')
   },
 
-  'Should delete Browser_Tests folder': function (browser) {
+  'Should delete Browser_E2E_Tests folder': function (browser) {
     browser
-    .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_Tests"]')
-    .moveToElement('*[data-id="treeViewLibrowser/Browser_Tests"]', 5, 5)
+    .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_E2E_Tests"]')
+    .moveToElement('*[data-id="treeViewLibrowser/Browser_E2E_Tests"]', 5, 5)
     .mouseButtonClick('right')
     .click('*[id="menuitemdelete"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .modalFooterOKClick()
-    .waitForElementNotPresent('*[data-id="treeViewLibrowser/Browser_Tests"]')
+    .waitForElementNotPresent('*[data-id="treeViewLibrowser/Browser_E2E_Tests"]')
     .end()
   },
 
