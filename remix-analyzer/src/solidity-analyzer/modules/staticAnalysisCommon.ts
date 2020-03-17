@@ -448,18 +448,18 @@ function getFullQuallyfiedFuncDefinitionIdent (contract: ContractDefinitionAstNo
 
 function getUnAssignedTopLevelBinOps (subScope: BlockAstNode | IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): ExpressionStatementAstNode[] {
   let result: ExpressionStatementAstNode[] = []
-  if(subScope.nodeType === 'Block')
+  if(subScope && subScope.nodeType === 'Block')
     result = subScope.statements.filter(isBinaryOpInExpression)
   // for 'without braces' loops
   else if (subScope && subScope.nodeType && isSubScopeStatement(subScope)) {
     if (subScope.nodeType === 'IfStatement'){
-      if((subScope.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.trueBody)))
+      if((subScope.trueBody && subScope.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.trueBody)))
         result.push(subScope.trueBody) 
-      if (subScope.falseBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.falseBody))
+      if (subScope.falseBody && subScope.falseBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.falseBody))
         result.push(subScope.falseBody) 
     }
     else {
-      if(subScope.body.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.body))
+      if(subScope.body && subScope.body.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.body))
         result.push(subScope.body)
     }
   }
@@ -982,7 +982,7 @@ function isStringToBytesConversion (node: FunctionCallAstNode): boolean {
 
 function isExplicitCast (node: FunctionCallAstNode, castFromType: string, castToType: string): boolean {
   return node.kind === "typeConversion" && 
-        nodeType(node.expression, exactMatch(nodeTypes.ELEMENTARYTYPENAMEEXPRESSION)) && node.expression.typeName.name === castToType &&
+        nodeType(node.expression, exactMatch(nodeTypes.ELEMENTARYTYPENAMEEXPRESSION)) && node.expression.typeName === castToType &&
         nodeType(node.arguments[0], exactMatch(nodeTypes.IDENTIFIER)) && typeDescription(node.arguments[0], castFromType)
 }
 
