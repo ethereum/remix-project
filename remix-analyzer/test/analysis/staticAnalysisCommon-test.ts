@@ -10,7 +10,7 @@ function escapeRegExp (str) {
 }
 
 test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
-  t.plan(8)
+  t.plan(11)
 
   t.equal(common.helpers.buildFunctionSignature([common.basicTypes.UINT, common.basicTypes.ADDRESS], [common.basicTypes.BOOL], false),
     'function (uint256,address) returns (bool)',
@@ -36,12 +36,24 @@ test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
     'function (bytes memory) payable returns (bool,bytes memory)',
     'check fixed call type')
 
+t.equal(common.lowLevelCallTypes['CALL-0.4'].type,
+    'function () payable returns (bool)',
+    'check fixed call type for version before 0.5.0')
+
+t.equal(common.lowLevelCallTypes.CALLCODE.type,
+    'function () payable returns (bool)',
+    'check fixed callcode type')
+
   t.equal(common.lowLevelCallTypes.SEND.type,
     'function (uint256) returns (bool)',
     'check fixed send type')
 
   t.equal(common.lowLevelCallTypes.DELEGATECALL.type,
     'function (bytes memory) returns (bool,bytes memory)',
+    'check fixed call type')
+
+t.equal(common.lowLevelCallTypes['DELEGATECALL-0.4'].type,
+    'function () returns (bool)',
     'check fixed call type')
 })
 
