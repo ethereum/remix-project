@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isStatement, isSelfdestructCall } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VisitFunction, ReportFunction} from './../../types'
 
 export default class selfdestruct implements AnalyzerModule {
   name: string = 'Selfdestruct: '
@@ -12,11 +12,11 @@ export default class selfdestruct implements AnalyzerModule {
 
   abstractAst: AbstractAst = new AbstractAst()
 
-  visit: Function = this.abstractAst.build_visit(
+  visit: VisitFunction = this.abstractAst.build_visit(
     (node: any) => isStatement(node) || (node.nodeType=== 'FunctionCall' && isSelfdestructCall(node))
   )
 
-  report: Function = this.abstractAst.build_report(this._report.bind(this))
+  report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
   private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
 
@@ -43,7 +43,6 @@ export default class selfdestruct implements AnalyzerModule {
         })
       })
     })
-
     return warnings
   }
 }

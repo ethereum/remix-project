@@ -38,7 +38,7 @@ test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
 
 t.equal(common.lowLevelCallTypes['CALL-0.4'].type,
     'function () payable returns (bool)',
-    'check fixed call type for version before 0.5.0')
+    'check fixed call type for versions before 0.5.0')
 
 t.equal(common.lowLevelCallTypes.CALLCODE.type,
     'function () payable returns (bool)',
@@ -50,11 +50,11 @@ t.equal(common.lowLevelCallTypes.CALLCODE.type,
 
   t.equal(common.lowLevelCallTypes.DELEGATECALL.type,
     'function (bytes memory) returns (bool,bytes memory)',
-    'check fixed call type')
+    'check fixed delegatecall type')
 
 t.equal(common.lowLevelCallTypes['DELEGATECALL-0.4'].type,
     'function () returns (bool)',
-    'check fixed call type')
+    'check fixed delegatecall type for version before 0.5.0')
 })
 
 // #################### Node Identification Primitives

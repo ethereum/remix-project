@@ -1,7 +1,8 @@
 import { default as category } from './categories'
 import { isSubScopeWithTopLevelUnAssignedBinOp, getUnAssignedTopLevelBinOps } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, BlockAstNode, IfStatementAstNode, WhileStatementAstNode, ForStatementAstNode, CompilationResult, ExpressionStatementAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, BlockAstNode, IfStatementAstNode, 
+  WhileStatementAstNode, ForStatementAstNode, CompilationResult, ExpressionStatementAstNode} from './../../types'
 
 export default class assignAndCompare implements AnalyzerModule {
   warningNodes: ExpressionStatementAstNode[] = []

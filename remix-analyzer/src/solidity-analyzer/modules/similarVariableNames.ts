@@ -4,7 +4,13 @@ import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
 import { get } from 'fast-levenshtein'
 import { util } from 'remix-lib'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, ContractCallGraph, FunctionHLAst, VariableDeclarationAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, VisitFunction, ReportFunction} from './../../types'
+
+type SimilarRecord = {
+  var1: string
+  var2: string
+  distance: number
+}
 
 export default class similarVariableNames implements AnalyzerModule {
   name: string = 'Similar variable names: '
@@ -14,9 +20,9 @@ export default class similarVariableNames implements AnalyzerModule {
 
   abstractAst:AbstractAst = new AbstractAst()
 
-  visit: Function = this.abstractAst.build_visit((node: any) => false)
+  visit: VisitFunction = this.abstractAst.build_visit((node: any) => false)
 
-  report: Function = this.abstractAst.build_report(this._report.bind(this))
+  report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
 
   private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
@@ -35,7 +41,6 @@ export default class similarVariableNames implements AnalyzerModule {
         }
 
         const vars: string[] = this.getFunctionVariables(contract, func).map(getDeclaredVariableName)
-
         this.findSimilarVarNames(vars).map((sim) => {
           warnings.push({
             warning: `${funcName} : Variables have very similar names ${sim.var1} and ${sim.var2}. ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
@@ -44,14 +49,13 @@ export default class similarVariableNames implements AnalyzerModule {
         })
       })
     })
-
     return warnings
   }
 
-  private findSimilarVarNames (vars: string[]): Record<string, any>[] {
-    const similar: Record<string, any>[] = []
+  private findSimilarVarNames (vars: string[]): SimilarRecord[] {
+    const similar: SimilarRecord[] = []
     const comb: Record<string, boolean> = {}
-    vars.map((varName1) => vars.map((varName2) => {
+    vars.map((varName1: string) => vars.map((varName2: string) => {
       if (varName1.length > 1 && varName2.length > 1 && 
         varName2 !== varName1 && !this.isCommonPrefixedVersion(varName1, varName2) && 
         !this.isCommonNrSuffixVersion(varName1, varName2) && 

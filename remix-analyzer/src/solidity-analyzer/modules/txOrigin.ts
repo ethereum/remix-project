@@ -11,9 +11,8 @@ export default class txOrigin implements AnalyzerModule {
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
   visit (node: MemberAccessAstNode): void {
-    if (isTxOriginAccess(node)) {
-      this.txOriginNodes.push(node)
-    }
+    if (isTxOriginAccess(node)) this.txOriginNodes.push(node)
+    
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {

@@ -1,15 +1,20 @@
 'use strict'
 
 import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph, Context, FunctionCallAstNode } from "types"
-import { isLocalCallGraphRelevantNode,  isExternalDirectCall, getFullQualifiedFunctionCallIdent, getFullQuallyfiedFuncDefinitionIdent, getContractName } from './staticAnalysisCommon'
+import { isLocalCallGraphRelevantNode,  isExternalDirectCall, getFullQualifiedFunctionCallIdent, 
+  getFullQuallyfiedFuncDefinitionIdent, getContractName } from './staticAnalysisCommon'
 
-function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter: any , extractNodeIdent: any, extractFuncDefIdent: Function): Record<string, FunctionCallGraph> {
+type filterNodesFunction = (node: FunctionCallAstNode) => boolean
+type NodeIdentFunction = (node: FunctionCallAstNode) => string
+type FunDefIdentFunction = (node: FunctionHLAst) => string
+
+function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter: filterNodesFunction , extractNodeIdent: NodeIdentFunction, extractFuncDefIdent: FunDefIdentFunction): Record<string, FunctionCallGraph> {
   const callGraph: Record<string, FunctionCallGraph> = {}
-  functions.forEach((func) => {
-    const calls = func.relevantNodes
+  functions.forEach((func: FunctionHLAst) => {
+    const calls: string[] = func.relevantNodes
       .filter(nodeFilter)
       .map(extractNodeIdent)
-      .filter((name) => name !== extractFuncDefIdent(func)) // filter self recursive call
+      .filter((name: string) => name !== extractFuncDefIdent(func)) // filter self recursive call
 
     callGraph[extractFuncDefIdent(func)] = { node: func, calls: calls }
   })
@@ -43,13 +48,12 @@ function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter
 export function buildGlobalFuncCallGraph (contracts: ContractHLAst[]): Record<string, ContractCallGraph> {
   const callGraph: Record<string, ContractCallGraph> = {}
   contracts.forEach((contract: ContractHLAst) => {
-    const filterNodes: Function = (node: FunctionCallAstNode) => { return isLocalCallGraphRelevantNode(node) || isExternalDirectCall(node) }
-    const getNodeIdent: Function = (node: FunctionCallAstNode) => { return getFullQualifiedFunctionCallIdent(contract.node, node) }
-    const getFunDefIdent: Function = (funcDef) => { return getFullQuallyfiedFuncDefinitionIdent(contract.node, funcDef.node, funcDef.parameters) }
+    const filterNodes: filterNodesFunction = (node: FunctionCallAstNode) => { return isLocalCallGraphRelevantNode(node) || isExternalDirectCall(node) }
+    const getNodeIdent: NodeIdentFunction = (node: FunctionCallAstNode) => { return getFullQualifiedFunctionCallIdent(contract.node, node) }
+    const getFunDefIdent: FunDefIdentFunction = (funcDef: FunctionHLAst) => { return getFullQuallyfiedFuncDefinitionIdent(contract.node, funcDef.node, funcDef.parameters) }
 
     callGraph[getContractName(contract.node)] = { contract: contract, functions: buildLocalFuncCallGraphInternal(contract.functions, filterNodes, getNodeIdent, getFunDefIdent) }
   })
-
   return callGraph
 }
 
@@ -65,7 +69,7 @@ export function analyseCallGraph (callGraph: Record<string, ContractCallGraph>, 
   return analyseCallGraphInternal(callGraph, funcName, context, (a, b) => a || b, nodeCheck, {})
 }
 
-function analyseCallGraphInternal (callGraph: Record<string, ContractCallGraph>, funcName: string, context: Context, combinator: Function, nodeCheck, visited : object): boolean {
+function analyseCallGraphInternal (callGraph: Record<string, ContractCallGraph>, funcName: string, context: Context, combinator: Function, nodeCheck: ((node: any, context: Context) => boolean), visited : Record<string, boolean>): boolean {
   const current: FunctionCallGraph | undefined = resolveCallGraphSymbol(callGraph, funcName)
 
   if (current === undefined || visited[funcName] === true) return true
@@ -82,9 +86,9 @@ export function resolveCallGraphSymbol (callGraph: Record<string, ContractCallGr
 function resolveCallGraphSymbolInternal (callGraph: Record<string, ContractCallGraph>, funcName: string, silent: boolean): FunctionCallGraph | undefined {
   let current: FunctionCallGraph | null = null
   if (funcName.includes('.')) {
-    const parts = funcName.split('.')
-    const contractPart = parts[0]
-    const functionPart = parts[1]
+    const parts: string[] = funcName.split('.')
+    const contractPart: string = parts[0]
+    const functionPart: string = parts[1]
     const currentContract: ContractCallGraph = callGraph[contractPart]
     if (!(currentContract === undefined)) {
       current = currentContract.functions[funcName]
@@ -93,7 +97,7 @@ function resolveCallGraphSymbolInternal (callGraph: Record<string, ContractCallG
         // resolve inheritance lookup in linearized fashion
         const inheritsFromNames: string[] = currentContract.contract.inheritsFrom.reverse()
         for (let i = 0; i < inheritsFromNames.length; i++) {
-          const res = resolveCallGraphSymbolInternal(callGraph, inheritsFromNames[i] + '.' + functionPart, true)
+          const res: FunctionCallGraph | undefined = resolveCallGraphSymbolInternal(callGraph, inheritsFromNames[i] + '.' + functionPart, true)
           if (!(res === undefined)) return res
         }
       }
