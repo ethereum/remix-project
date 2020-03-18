@@ -1,12 +1,13 @@
 import { default as category } from './categories'
-import { isLowLevelCall, isTransfer, isExternalDirectCall, isEffect, isLocalCallGraphRelevantNode, 
-  isSelfdestructCall, isDeleteUnaryOperation, isPayableFunction,
-  isConstructor, getFullQuallyfiedFuncDefinitionIdent, hasFunctionBody, isConstantFunction, isWriteOnStateVariable,
-  isStorageVariableDeclaration, isCallToNonConstLocalFunction, getFullQualifiedFunctionCallIdent} from './staticAnalysisCommon'
+import { isLowLevelCall, isTransfer, isExternalDirectCall, isEffect, isLocalCallGraphRelevantNode, isSelfdestructCall, 
+  isDeleteUnaryOperation, isPayableFunction, isConstructor, getFullQuallyfiedFuncDefinitionIdent, hasFunctionBody, 
+  isConstantFunction, isWriteOnStateVariable, isStorageVariableDeclaration, isCallToNonConstLocalFunction, 
+  getFullQualifiedFunctionCallIdent} from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractCallGraph, Context, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, FunctionCallGraph, FunctionCallAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractCallGraph, Context, ContractHLAst, 
+  FunctionHLAst, VariableDeclarationAstNode, FunctionCallGraph, FunctionCallAstNode, VisitFunction, ReportFunction} from './../../types'
 
 export default class constantFunctions implements AnalyzerModule {
   name: string = 'Constant functions: '
@@ -16,7 +17,7 @@ export default class constantFunctions implements AnalyzerModule {
 
   abstractAst: AbstractAst = new AbstractAst()
 
-  visit: Function = this.abstractAst.build_visit(
+  visit: VisitFunction = this.abstractAst.build_visit(
     (node: any) => isLowLevelCall(node) ||
               isTransfer(node) ||
               isExternalDirectCall(node) ||
@@ -28,7 +29,7 @@ export default class constantFunctions implements AnalyzerModule {
               isDeleteUnaryOperation(node)
   )
 
-  report: Function = this.abstractAst.build_report(this._report.bind(this))
+  report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
 
   private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
@@ -36,8 +37,8 @@ export default class constantFunctions implements AnalyzerModule {
 
     const callGraph: Record<string, ContractCallGraph> = buildGlobalFuncCallGraph(contracts)
 
-    contracts.forEach((contract) => {
-      contract.functions.forEach((func) => {
+    contracts.forEach((contract: ContractHLAst) => {
+      contract.functions.forEach((func: FunctionHLAst) => {
         if (isPayableFunction(func.node) || isConstructor(func.node)) {
           func['potentiallyshouldBeConst'] = false
         } else {
@@ -55,7 +56,7 @@ export default class constantFunctions implements AnalyzerModule {
                                           )
         }
       })
-      contract.functions.filter((func) => hasFunctionBody(func.node)).forEach((func) => {
+      contract.functions.filter((func: FunctionHLAst) => hasFunctionBody(func.node)).forEach((func: FunctionHLAst) => {
         if (isConstantFunction(func.node) !== func['potentiallyshouldBeConst']) {
           const funcName: string = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
           let comments: string = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''

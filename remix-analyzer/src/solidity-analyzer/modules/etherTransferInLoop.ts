@@ -1,10 +1,11 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { isLoop, isTransfer } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, ForStatementAstNode, WhileStatementAstNode, CommonAstNode, ExpressionStatementAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, ForStatementAstNode, 
+  WhileStatementAstNode, ExpressionStatementAstNode} from './../../types'
 
 export default class etherTransferInLoop implements AnalyzerModule {
-  relevantNodes: CommonAstNode[] = []
+  relevantNodes: ExpressionStatementAstNode[] = []
   name: string = 'Ether transfer in a loop: '
   description: string = 'Avoid transferring Ether to multiple addresses in a loop'
   category: ModuleCategory = category.GAS

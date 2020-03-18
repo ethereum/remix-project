@@ -1,9 +1,18 @@
 'use strict'
 
-import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, IdentifierAstNode, MappingAstNode, IndexAccessAstNode, UserDefinedTypeNameAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode } from "types"
+import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, 
+  WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, 
+  MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, 
+  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode } from "types"
 import { util } from 'remix-lib'
 
-const nodeTypes = {
+type SpecialObjDetail = {
+  obj: string
+  member: string
+  type: string
+}
+
+const nodeTypes: Record<string, string> = {
   SOURCEUNIT: 'SourceUnit',
   PRAGMADIRECTIVE: 'PragmaDirective',
   IMPORTDIRECTIVE: 'ImportDirective',
@@ -58,7 +67,7 @@ const nodeTypes = {
   STRUCTUREDDOCUMENTATION: 'StructuredDocumentation'
 }
 
-const basicTypes = {
+const basicTypes: Record<string, string> = {
   UINT: 'uint256',
   BOOL: 'bool',
   ADDRESS: 'address',
@@ -69,7 +78,7 @@ const basicTypes = {
   BYTES4: 'bytes4'
 }
 
-const basicRegex = {
+const basicRegex: Record<string, string> = {
   CONTRACTTYPE: '^contract ',
   FUNCTIONTYPE: '^function \\(',
   EXTERNALFUNCTIONTYPE: '^function \\(.*\\).* external',
@@ -79,7 +88,7 @@ const basicRegex = {
   LIBRARYTYPE: '^type\\(library (.*)\\)'
 }
 
-const basicFunctionTypes = {
+const basicFunctionTypes: Record<string, string> = {
   SEND: buildFunctionSignature([basicTypes.UINT], [basicTypes.BOOL], false),
   'CALL-0.4': buildFunctionSignature([], [basicTypes.BOOL], true),
   CALL: buildFunctionSignature([basicTypes.BYTES_MEM], [basicTypes.BOOL, basicTypes.BYTES_MEM], true),
@@ -88,7 +97,7 @@ const basicFunctionTypes = {
   TRANSFER: buildFunctionSignature([basicTypes.UINT], [], false)
 }
 
-const builtinFunctions = {
+const builtinFunctions: Record<string, boolean> = {
   'keccak256()': true,
   'sha3()': true,
   'sha256()': true,
@@ -108,7 +117,7 @@ const builtinFunctions = {
   'address(address)': true
 }
 
-const lowLevelCallTypes = {
+const lowLevelCallTypes: Record<string, Record<string, string>> = {
   'CALL-0.4': { ident: 'call', type: basicFunctionTypes['CALL-0.4'] },
   CALL: { ident: 'call', type: basicFunctionTypes.CALL },
   CALLCODE: { ident: 'callcode', type: basicFunctionTypes['CALL-0.4'] },
@@ -118,7 +127,7 @@ const lowLevelCallTypes = {
   TRANSFER: { ident: 'transfer', type: basicFunctionTypes.TRANSFER }
 }
 
-const specialVariables = {
+const specialVariables: Record<string, SpecialObjDetail> = {
   BLOCKTIMESTAMP: { obj: 'block', member: 'timestamp', type: basicTypes.UINT },
   BLOCKHASH: {
     obj: 'block',
@@ -127,7 +136,7 @@ const specialVariables = {
   }
 }
 
-const abiNamespace = {
+const abiNamespace: Record<string, SpecialObjDetail> = {
   ENCODE: {
     obj: 'abi',
     member: 'encode',
@@ -174,17 +183,21 @@ function getFunctionCallType (func: FunctionCallAstNode): string {
  * @return {string} variable name written to
  */
 function getEffectedVariableName (effectNode: AssignmentAstNode | UnaryOperationAstNode): string {
-  // console.log('getEffectedVariableName---effectNode---', effectNode)
   if (!isEffect(effectNode)) throw new Error('staticAnalysisCommon.js: not an effect Node')
   if(effectNode.nodeType === 'Assignment' || effectNode.nodeType === 'UnaryOperation') {
-    const IdentNode = findFirstSubNodeLTR(effectNode, exactMatch(nodeTypes.IDENTIFIER))
+    const IdentNode: IdentifierAstNode = findFirstSubNodeLTR(effectNode, exactMatch(nodeTypes.IDENTIFIER))
     return IdentNode.name
   } else throw new Error('staticAnalysisCommon.js: wrong node type')
 }
 
-// developed keeping identifier node search in mind
-
-function findFirstSubNodeLTR (node, type) {
+/**
+ * Finds first node of a certain type under a specific node.
+ * @node {AstNode} node to start form
+ * @type {String} Type the ast node should have
+ * @return {AstNode} null or node found
+ * Note: developed keeping identifier node search in mind to get first identifier node from left in subscope
+ */
+function findFirstSubNodeLTR (node: any, type: string): any {
   if(node.nodeType && nodeType(node, type))
     return node
 
@@ -198,7 +211,7 @@ function findFirstSubNodeLTR (node, type) {
     return findFirstSubNodeLTR(node.baseExpression, type)
   
   else if(node.nodeType && nodeType(node, exactMatch('UnaryOperation')))
-  return findFirstSubNodeLTR(node.subExpression, type)
+    return findFirstSubNodeLTR(node.subExpression, type)
 }
 
 /**
@@ -294,7 +307,6 @@ function getContractName (contract: ContractDefinitionAstNode): string {
  * @return {string} name of a function defined
  */
 function getFunctionDefinitionName (funcDef: FunctionDefinitionAstNode): string {
-  // if (!isFunctionDefinition(funcDef)) throw new Error('staticAnalysisCommon.js: not an functionDefinition Node')
   return funcDef.name
 }
 
@@ -353,7 +365,6 @@ function getStateVariableDeclarationsFromContractNode (contractNode: ContractDef
  * @return {parameterlist node} parameterlist node
  */
 function getFunctionOrModifierDefinitionParameterPart (funcNode: FunctionDefinitionAstNode | ModifierDefinitionAstNode): ParameterListAstNode {
-  // if (!isFunctionDefinition(funcNode) && !isModifierDefinition(funcNode)) throw new Error('staticAnalysisCommon.js: not a function definition')
   return funcNode.parameters
 }
 
@@ -376,17 +387,16 @@ function getFunctionDefinitionReturnParameterPart (funcNode: FunctionDefinitionA
  * @return {string} parameter signature
  */
 function getFunctionCallTypeParameterType (func: FunctionCallAstNode): string | undefined {
-  const type = getFunctionCallType(func)
+  const type: string = getFunctionCallType(func)
   if (type.startsWith('function (')) {
-    let paramTypes = ''
-    let openPar = 1
+    let paramTypes: string = ''
+    let openPar: number = 1
     for (let x = 10; x < type.length; x++) {
-      const c = type.charAt(x)
+      const c: string = type.charAt(x)
       if (c === '(') openPar++
       else if (c === ')') openPar--
 
       if (openPar === 0) return paramTypes
-
       paramTypes += c
     }
   } else {
@@ -471,24 +481,11 @@ function getUnAssignedTopLevelBinOps (subScope: BlockAstNode | IfStatementAstNod
   return result 
 }
 
-// function getLoopBlockStartIndex (node: ForStatementAstNode | WhileStatementAstNode): 3|1 {
-//     return node.nodeType === "ForStatement" ? 3 : 1
-// }
-
 // #################### Trivial Node Identification
 
 function isStatement (node: any): boolean {
   return nodeType(node, 'Statement$') || node.nodeType === "Block" || node.nodeType === "Return"
 }
-
-/**
- * True if is binaryop
- * @node {ASTNode} some AstNode
- * @return {bool}
- */
-// function isBinaryOperation (node) {
-//   return nodeType(node, exactMatch(nodeTypes.BINARYOPERATION))
-// }
 
 // #################### Complex Node Identification
 
@@ -539,15 +536,6 @@ function isDeleteFromDynamicArray (node: UnaryOperationAstNode): boolean {
 }
 
 /**
- * True if node is the access of an index
- * @node {ASTNode} node to check for
- * @return {bool}
- */
-// function isIndexAccess (node) {
-//   return node && node.name === 'IndexAccess'
-// }
-
-/**
  * True if node is the access of a mapping index
  * @node {ASTNode} node to check for
  * @return {bool}
@@ -571,9 +559,6 @@ function isLocalCallGraphRelevantNode (node: FunctionCallAstNode): boolean {
  * @return {bool}
  */
 function isBuiltinFunctionCall (node: FunctionCallAstNode): boolean {
-  // console.log('isBuiltinFunctionCall isLocalCall', isLocalCall(node))
-  // console.log('isBuiltinFunctionCall getLocalCallName', getLocalCallName(node))
-  // console.log('isBuiltinFunctionCall getFunctionCallTypeParameterType', getFunctionCallTypeParameterType(node))
   return (node.nodeType === 'FunctionCall' && isLocalCall(node) && builtinFunctions[getLocalCallName(node) + '(' + getFunctionCallTypeParameterType(node) + ')'] === true) || isAbiNamespaceCall(node)
 }
 
@@ -619,7 +604,6 @@ function isRequireCall (node: FunctionCallAstNode): boolean  {
  * @return {bool}
  */
 function isStorageVariableDeclaration (node: VariableDeclarationAstNode): boolean {
-  // console.log('storage variable----------', new RegExp(basicRegex.REFTYPE).test(node.typeDescriptions.typeIdentifier))
   return node.storageLocation === 'storage' && new RegExp(basicRegex.REFTYPE).test(node.typeDescriptions.typeIdentifier)
 }
 
@@ -629,7 +613,6 @@ function isStorageVariableDeclaration (node: VariableDeclarationAstNode): boolea
  * @return {bool}
  */
 function isInteraction (node: FunctionCallAstNode): boolean {
-  // console.log('Inside isInteraction----------', node)
   return isLLCall(node.expression) || isLLSend(node.expression) || isExternalDirectCall(node) || isTransfer(node.expression) ||
       isLLCall04(node.expression) || isLLSend04(node.expression) ||
       // to cover case of address.call.value.gas , See: inheritance.sol  
@@ -692,7 +675,7 @@ function isPayableFunction (node: FunctionDefinitionAstNode): boolean {
  * @return {bool}
  */
 function isConstructor (node: FunctionDefinitionAstNode): boolean {
-  return node.kind === "constructor"  // ||
+  return node.kind === "constructor"
 }
 
 /**
@@ -871,10 +854,8 @@ function isSuperLocalCall (node: MemberAccessAstNode): boolean {
  * @return {bool}
  */
 function isLocalCall (node: FunctionCallAstNode): boolean {
-  return node.nodeType === 'FunctionCall' && 
-        node.kind === 'functionCall' && 
-        node.expression.nodeType === 'Identifier' &&
-        expressionTypeDescription(node, basicRegex.FUNCTIONTYPE) &&
+  return node.nodeType === 'FunctionCall' && node.kind === 'functionCall' && 
+        node.expression.nodeType === 'Identifier' && expressionTypeDescription(node, basicRegex.FUNCTIONTYPE) &&
         !expressionTypeDescription(node, basicRegex.EXTERNALFUNCTIONTYPE)
 }
 
@@ -1009,50 +990,23 @@ function isLoop (node) {
           nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))
 }
 
-/**
- * True if it is a 'for' loop
- * @node {ASTNode} some AstNode
- * @return {bool}
- * TODO: This should be removed once for loop iterates Over dynamic array fixed
- */
-// function isForLoop (node) {
-//   return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT))
-// }
-
 // #################### Complex Node Identification - Private
 
 function isMemberAccess (node: MemberAccessAstNode, retType: string, accessor: string| undefined, accessorType: string, memberName: string | undefined): boolean {
   if(node && nodeType(node, exactMatch('MemberAccess'))) {
-    // console.log('node inside memberaccess------', node)
     const nodeTypeDef: boolean = typeDescription(node, retType)
-    // console.log('MemberAccess typeDef ->',nodeTypeDef)
     const nodeMemName: boolean = memName(node, memberName)
-    // console.log('MemberAccess nodeMemName ->',nodeMemName)
     const nodeExpMemName: boolean = memName(node.expression, accessor)
-    // console.log('MemberAccess nodeExpMemName ->',nodeExpMemName)
     const nodeExpTypeDef: boolean = expressionTypeDescription(node, accessorType)
-    // console.log('MemberAccess nodeExpTypeDef ->',nodeExpTypeDef)
     return nodeTypeDef && nodeMemName && nodeExpTypeDef && nodeExpMemName
   } else return false
 }
 
-function isSpecialVariableAccess (node: MemberAccessAstNode, varType: any): boolean {
+function isSpecialVariableAccess (node: MemberAccessAstNode, varType: SpecialObjDetail): boolean {
   return isMemberAccess(node, exactMatch(util.escapeRegExp(varType.type)), varType.obj, varType.obj, varType.member)
 }
 
 // #################### Node Identification Primitives
-
-// function nrOfChildren (node, nr) {
-//   return (node && (nr === undefined || nr === null)) || (node && nr === 0 && !node.children) || (node && node.children && node.children.length === nr)
-// }
-
-// function minNrOfChildren (node, nr) {
-//   return (node && (nr === undefined || nr === null)) || (node && nr === 0 && !node.children) || (node && node.children && node.children.length >= nr)
-// }
-
-// function expressionType (node, typeRegex) {
-//   return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
-// }
 
 function expressionTypeDescription (node: any, typeRegex: string): boolean {
   return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
@@ -1062,30 +1016,29 @@ function typeDescription (node: any, typeRegex: string): boolean {
   return  new RegExp(typeRegex).test(node.typeDescriptions.typeString)
 }
 
-function nodeType (node: any, typeRegex: string) {
+function nodeType (node: any, typeRegex: string): boolean {
   return new RegExp(typeRegex).test(node.nodeType)
 }
 
-function nodeTypeIn (node: any, typeRegex: string[]){
+function nodeTypeIn (node: any, typeRegex: string[]): boolean {
   return typeRegex.some((typeRegex) => nodeType (node, typeRegex))
 }
 
-function memName (node: any, memNameRegex: any) {
-  // const regex = new RegExp(memNameRegex)
+function memName (node: any, memNameRegex: any): boolean {
   return (node && !memNameRegex) || new RegExp(memNameRegex).test(node.name) || new RegExp(memNameRegex).test(node.memberName)
 }
 
-function operator (node, opRegex) {
+function operator (node: any, opRegex: string): boolean {
   return new RegExp(opRegex).test(node.operator)
 }
 
 // #################### Helpers
 
-function exactMatch (regexStr) {
+function exactMatch (regexStr: string): string {
   return '^' + regexStr + '$'
 }
 
-function matches (...fnArgs) {
+function matches (...fnArgs: any[]): string {
   const args: any[] = []
   for (let k = 0; k < fnArgs.length; k++) {
     args.push(fnArgs[k])
@@ -1109,28 +1062,7 @@ function buildAbiSignature (funName: string, paramTypes: any[]): string {
   return funName + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
 }
 
-// /**
-//  * Finds first node of a certain type under a specific node.
-//  * @node {AstNode} node to start form
-//  * @type {String} Type the ast node should have
-//  * @return {AstNode} null or node found
-//  */
-// function findFirstSubNodeLTR (node, type) {
-//   if (!node || !node.children) return null
-//   for (let i = 0; i < node.children.length; ++i) {
-//     const item = node.children[i]
-//     if (nodeType(item, type)) return item
-//     else {
-//       const res = findFirstSubNodeLTR(item, type)
-//       if (res) return res
-//     }
-//   }
-//   return null
-// }
-
 const helpers = {
-  // nrOfChildren,
-  // minNrOfChildren,
   expressionTypeDescription,
   nodeType,
   memName,
@@ -1165,7 +1097,6 @@ export {
   getFunctionOrModifierDefinitionParameterPart,
   getFunctionDefinitionReturnParameterPart,
   getUnAssignedTopLevelBinOps,
-  // getLoopBlockStartIndex,
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray,
@@ -1174,7 +1105,6 @@ export {
   isSpecialVariableAccess,
   isDynamicArrayAccess,
   isDynamicArrayLengthAccess,
-  // isIndexAccess,
   isMappingIndexAccess,
   isSubScopeWithTopLevelUnAssignedBinOp,
   hasFunctionBody,
@@ -1217,24 +1147,11 @@ export {
 
   // #################### Trivial Node Identification
   isDeleteUnaryOperation,
-  // isFunctionDefinition,
-  // isModifierDefinition,
-  // isInheritanceSpecifier,
-  // isModifierInvocation,
-  // isVariableDeclaration,
   isStorageVariableDeclaration,
-  // isAssignment,
-  // isContractDefinition,
   isConstantFunction,
   isPayableFunction,
   isConstructor,
-  // isInlineAssembly,
-  // isNewExpression,
-  // isReturn,
   isStatement,
-  // isExpressionStatement,
-  // isBlock,
-  // isBinaryOperation,
 
   // #################### Constants
   nodeTypes,

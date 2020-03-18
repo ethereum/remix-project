@@ -1,27 +1,40 @@
 'use strict'
 import { AstWalker } from 'remix-astwalker'
 import list from './modules/list'
+import { CompilationResult, AnalyzerModule, ReportObj } from 'types'
+
+type ModuleObj = {
+  name: string
+  mod: AnalyzerModule
+}
+
+interface AnalysisReportObj extends ReportObj {
+  error? : string
+}
+
+type AnalysisReport = {
+  name: string
+  report: AnalysisReportObj[]
+}
 
 export default class staticAnalysisRunner {
 
-  run (compilationResult, toRun, callback) {
-    const modules = toRun.map((i) => {
-      const m = this.modules()[i]
+  run (compilationResult: CompilationResult, toRun: any[], callback: ((reports: AnalysisReport[]) => void)): void {
+    const modules: ModuleObj[] = toRun.map((i) => {
+      const m: AnalyzerModule = this.modules()[i]
       return { 'name': m.name, 'mod': m }
     })
-
     this.runWithModuleList(compilationResult, modules, callback)
   }
 
-  runWithModuleList (compilationResult, modules, callback) {
-    let reports: any[] = []
+  runWithModuleList (compilationResult: CompilationResult, modules: ModuleObj[], callback: ((reports: AnalysisReport[]) => void)): void {
+    let reports: AnalysisReport[] = []
     // Also provide convenience analysis via the AST walker.
-    const walker = new AstWalker()
+    const walker: AstWalker = new AstWalker()
     for (let k in compilationResult.sources) {
-      // console.log('Ast in walker---', compilationResult.sources[k])
       walker.walkFull(compilationResult.sources[k].ast, 
-        (node) => {
-        modules.map((item, i) => {
+        (node: any) => {
+        modules.map((item: ModuleObj) => {
           if (item.mod.visit !== undefined) {
             try {
               item.mod.visit(node)
@@ -39,8 +52,8 @@ export default class staticAnalysisRunner {
 
     // Here, modules can just collect the results from the AST walk,
     // but also perform new analysis.
-    reports = reports.concat(modules.map((item, i) => {
-      let report: any = null
+    reports = reports.concat(modules.map((item: ModuleObj) => {
+      let report: AnalysisReportObj[] | null = null
       try {
         report = item.mod.report(compilationResult)
       } catch (e) {
@@ -51,7 +64,7 @@ export default class staticAnalysisRunner {
     callback(reports)
   }
 
-  modules () {
+  modules (): any[] {
     return list
   }
 }

@@ -4,7 +4,9 @@ import { isInteraction, isEffect, isLocalCallGraphRelevantNode, getFullQuallyfie
 import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VariableDeclarationAstNode, FunctionHLAst, ContractCallGraph, Context, FunctionCallAstNode, AssignmentAstNode, UnaryOperationAstNode, InlineAssemblyAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VariableDeclarationAstNode, 
+  FunctionHLAst, ContractCallGraph, Context, FunctionCallAstNode, AssignmentAstNode, UnaryOperationAstNode, 
+  InlineAssemblyAstNode, ReportFunction, VisitFunction, FunctionCallGraph } from './../../types'
 
 export default class checksEffectsInteraction implements AnalyzerModule {
   name: string = 'Check effects: '
@@ -14,11 +16,11 @@ export default class checksEffectsInteraction implements AnalyzerModule {
 
   abstractAst: AbstractAst = new AbstractAst()
 
-  visit: Function = this.abstractAst.build_visit((node: FunctionCallAstNode | AssignmentAstNode | UnaryOperationAstNode | InlineAssemblyAstNode) => (
+  visit: VisitFunction = this.abstractAst.build_visit((node: FunctionCallAstNode | AssignmentAstNode | UnaryOperationAstNode | InlineAssemblyAstNode) => (
           node.nodeType === 'FunctionCall' && (isInteraction(node) || isLocalCallGraphRelevantNode(node))) || 
           ((node.nodeType === 'Assignment' || node.nodeType === 'UnaryOperation' || node.nodeType === 'InlineAssembly') && isEffect(node)))
 
-  report: Function = this.abstractAst.build_report(this._report.bind(this))
+  report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
     
   private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
@@ -38,10 +40,10 @@ export default class checksEffectsInteraction implements AnalyzerModule {
                                 func)
                               )
       })
-      contract.functions.forEach((func) => {
+      contract.functions.forEach((func: FunctionHLAst) => {
         if (this.isPotentialVulnerableFunction(func, this.getContext(callGraph, contract, func))) {
-          const funcName = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
-          let comments = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''
+          const funcName: string = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+          let comments: string = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''
           comments += (multipleContractsWithSameName) ? 'Note: Import aliases are currently not supported by this static analysis.' : ''
           warnings.push({
             warning: `Potential Violation of Checks-Effects-Interaction pattern in ${funcName}: Could potentially lead to re-entrancy vulnerability. ${comments}`,
@@ -77,14 +79,14 @@ export default class checksEffectsInteraction implements AnalyzerModule {
 
   private isLocalCallWithStateChange (node: FunctionCallAstNode, context: Context): boolean {
     if (isLocalCallGraphRelevantNode(node)) {
-      const func = resolveCallGraphSymbol(context.callGraph, getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
+      const func: FunctionCallGraph | undefined = resolveCallGraphSymbol(context.callGraph, getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
       return !func || (func && func.node['changesState'])
     }
     return false
   }
 
   private checkIfChangesState (startFuncName: string, context: Context): boolean {
-    return analyseCallGraph(context.callGraph, startFuncName, context, (node, context) => isWriteOnStateVariable(node, context.stateVariables))
+    return analyseCallGraph(context.callGraph, startFuncName, context, (node: any, context: Context) => isWriteOnStateVariable(node, context.stateVariables))
   }
 }
 
