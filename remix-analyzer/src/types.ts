@@ -3,8 +3,8 @@ export interface AnalyzerModule {
     description: string,
     category: ModuleCategory
     algorithm: ModuleAlgorithm
-    visit: Function
-    report: Function
+    visit: VisitFunction
+    report: ReportFunction
 }
 
 export interface ModuleAlgorithm {
@@ -33,20 +33,27 @@ export interface CompilationResult {
       [contractName: string]: CompilationSource
     }
     /** This contains the contract-level outputs. It can be limited/filtered by the outputSelection settings */
-    contracts?: {
-      /** If the language used has no contract names, this field should equal to an empty string. */
-      [fileName: string]: {
-        [contract: string]: CompiledContract
-      }
-    }
+    contracts?: CompiledContractObj /** If the language used has no contract names, this field should equal to an empty string. */
   }
+
+export interface CompiledContractObj {
+    [fileName: string]: {
+      [contract: string]: CompiledContract
+    }
+}
+
+export type VisitFunction = (node: any) => void
+export type ReportFunction = (compilationResult: CompilationResult) => ReportObj[]
 
 export interface ContractHLAst {
   node: ContractDefinitionAstNode,
   functions: FunctionHLAst[],
-  relevantNodes: any[],
+  relevantNodes: {
+    referencedDeclaration: number,
+    node: any
+  }[],
   modifiers: ModifierHLAst[],
-  inheritsFrom: any[],
+  inheritsFrom: string[],
   stateVariables: VariableDeclarationAstNode[]
 }
 
@@ -74,7 +81,7 @@ export interface Context {
 
 export interface FunctionCallGraph {
   node: FunctionHLAst
-  calls: any[]
+  calls: string[]
 }
 
 export interface ContractCallGraph {

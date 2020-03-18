@@ -1,15 +1,11 @@
 import { default as category } from './categories'
-import { isLLCall, isLLDelegatecall, isLLCallcode, isLLCall04, isLLDelegatecall04, isLLSend04, 
-  isLLSend, lowLevelCallTypes } from './staticAnalysisCommon'
+import { isLLCall, isLLDelegatecall, isLLCallcode, isLLCall04, isLLDelegatecall04, isLLSend04, isLLSend, lowLevelCallTypes } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode} from './../../types'
 
 interface llcNode {
   node: MemberAccessAstNode
-  type: {
-    ident: string,
-    type: string
-  }
+  type: Record<string, string>
 }
 
 export default class lowLevelCalls implements AnalyzerModule {
@@ -39,8 +35,8 @@ export default class lowLevelCalls implements AnalyzerModule {
 
   report (compilationResults: CompilationResult): ReportObj[] {
     return this.llcNodes.map((item, i) => {
-      let text = ''
-      let morehref: any = null
+      let text: string = ''
+      let morehref: string = ''
       switch (item.type) {
         case lowLevelCallTypes.CALL:
           text = `use of "call":  the use of low level "call" should be avoided whenever possible. 

@@ -12,7 +12,6 @@ export default class stringBytesLength implements AnalyzerModule {
   stringToBytesConversions: FunctionCallAstNode[] = []
   bytesLengthChecks: MemberAccessAstNode[] = []
 
-
   visit (node: FunctionCallAstNode | MemberAccessAstNode): void {
     if (node.nodeType === "FunctionCall" && isStringToBytesConversion(node)) this.stringToBytesConversions.push(node)
     else if (node.nodeType === "MemberAccess" && isBytesLengthCheck(node)) this.bytesLengthChecks.push(node)

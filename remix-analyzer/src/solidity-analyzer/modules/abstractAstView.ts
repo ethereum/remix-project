@@ -1,9 +1,9 @@
-import { getStateVariableDeclarationsFromContractNode,
-  getInheritsFromName, getContractName,
-  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName,
-  getFunctionDefinitionReturnParameterPart } from './staticAnalysisCommon'
+import { getStateVariableDeclarationsFromContractNode, getInheritsFromName, getContractName,
+  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, getFunctionDefinitionReturnParameterPart } from './staticAnalysisCommon'
 import { AstWalker } from 'remix-astwalker'
-import { CommonAstNode, FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode, ContractHLAst, VariableDeclarationStatementAstNode, VariableDeclarationAstNode, FunctionHLAst } from 'types'
+import { FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode, ContractHLAst, VariableDeclarationAstNode, FunctionHLAst, ContractDefinitionAstNode, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult } from 'types'
+
+type WrapFunction = ((contracts: ContractHLAst[], isSameName: boolean) => ReportObj[])
 
 export default class abstractAstView {
   contracts: ContractHLAst[] = []
@@ -20,7 +20,6 @@ export default class abstractAstView {
     fully support this and when inheritance is resolved it must include alias resolving e.g x.c = file1.c
   */
   multipleContractsWithSameName: boolean = false
-
 
 /**
  * Builds a higher level AST view. I creates a list with each contract as an object in it.
@@ -47,8 +46,8 @@ export default class abstractAstView {
  * @contractsOut {list} return list for high level AST view
  * @return {ASTNode -> void} returns a function that can be used as visit function for static analysis modules, to build up a higher level AST view for further analysis.
  */
-  build_visit (relevantNodeFilter: Function): Function {
-    var that = this
+  build_visit (relevantNodeFilter: ((node:any) => boolean)): VisitFunction {
+    const that: abstractAstView = this
     return function (node: any) {
       if (node.nodeType === "ContractDefinition") {
         that.setCurrentContract(that, {
@@ -60,8 +59,8 @@ export default class abstractAstView {
           stateVariables: getStateVariableDeclarationsFromContractNode(node)
         })
       } else if (node.nodeType === "InheritanceSpecifier") {
-        const currentContract = that.getCurrentContract(that)
-        const inheritsFromName = getInheritsFromName(node)
+        const currentContract: ContractHLAst = that.getCurrentContract(that)
+        const inheritsFromName: string = getInheritsFromName(node)
         currentContract.inheritsFrom.push(inheritsFromName)
       } else if (node.nodeType === "FunctionDefinition") {
         that.setCurrentFunction(that, {
@@ -89,7 +88,7 @@ export default class abstractAstView {
         if (!that.isFunctionNotModifier) throw new Error('abstractAstView.js: Found modifier invocation outside of function scope.')
         that.getCurrentFunction(that).modifierInvocations.push(node)
       } else if (relevantNodeFilter(node)) {
-        let scope: any = (that.isFunctionNotModifier) ? that.getCurrentFunction(that) : that.getCurrentModifier(that)
+        let scope: FunctionHLAst | ModifierHLAst | ContractHLAst = (that.isFunctionNotModifier) ? that.getCurrentFunction(that) : that.getCurrentModifier(that)
         if (scope) {
           scope.relevantNodes.push(node)
         } else {
@@ -102,24 +101,24 @@ export default class abstractAstView {
     }
   }
 
-  build_report (wrap: Function): Function {
+  build_report (wrap: WrapFunction): ReportFunction {
     const that: abstractAstView = this
-    return function (compilationResult) {
+    return function (compilationResult: CompilationResult) {
       that.resolveStateVariablesInHierarchy(that.contracts)
       return wrap(that.contracts, that.multipleContractsWithSameName)
     }
   }
 
   private resolveStateVariablesInHierarchy (contracts: ContractHLAst[]): void {
-    contracts.map((c) => {
+    contracts.map((c: ContractHLAst) => {
       this.resolveStateVariablesInHierarchyForContract(c, contracts)
     })
   }
 
   private resolveStateVariablesInHierarchyForContract (currentContract: ContractHLAst, contracts: ContractHLAst[]): void {
-    currentContract.inheritsFrom.map((inheritsFromName) => {
+    currentContract.inheritsFrom.map((inheritsFromName: string) => {
       // add variables from inherited contracts
-      const inheritsFrom = contracts.find((contract) => getContractName(contract.node) === inheritsFromName)
+      const inheritsFrom: ContractHLAst | undefined = contracts.find((contract: ContractHLAst) => getContractName(contract.node) === inheritsFromName)
       if (inheritsFrom) {
         currentContract.stateVariables = currentContract.stateVariables.concat(inheritsFrom.stateVariables)
       } else {
@@ -130,7 +129,7 @@ export default class abstractAstView {
 
   private setCurrentContract (that: abstractAstView, contract: ContractHLAst): void {
     const name: string = getContractName(contract.node)
-    if (that.contracts.map((c) => getContractName(c.node)).filter((n) => n === name).length > 0) {
+    if (that.contracts.map((c: ContractHLAst) => getContractName(c.node)).filter((n) => n === name).length > 0) {
       console.log('abstractAstView.js: two or more contracts with the same name dectected, import aliases not supported at the moment')
       that.multipleContractsWithSameName = true
     }
@@ -155,7 +154,7 @@ export default class abstractAstView {
     return that.getCurrentContract(that).functions[that.currentFunctionIndex]
   }
 
-  private getCurrentModifier (that:abstractAstView) {
+  private getCurrentModifier (that:abstractAstView): ModifierHLAst {
     return that.getCurrentContract(that).modifiers[that.currentModifierIndex]
   }
 
@@ -164,7 +163,7 @@ export default class abstractAstView {
   }
 
   private getReturnParameters (funcNode: FunctionDefinitionAstNode): Record<string, string>[] {
-    return this.getLocalVariables(getFunctionDefinitionReturnParameterPart(funcNode)).map((n) => {
+    return this.getLocalVariables(getFunctionDefinitionReturnParameterPart(funcNode)).map((n: VariableDeclarationAstNode) => {
       return {
         type: getType(n),
         name: getDeclaredVariableName(n)
@@ -174,7 +173,7 @@ export default class abstractAstView {
 
   private getLocalVariables (funcNode: ParameterListAstNode): VariableDeclarationAstNode[] {
     const locals: VariableDeclarationAstNode[] = []
-    new AstWalker().walkFull(funcNode, (node) => {
+    new AstWalker().walkFull(funcNode, (node: any) => {
       if (node.nodeType === "VariableDeclaration") locals.push(node)
       return true
     })
