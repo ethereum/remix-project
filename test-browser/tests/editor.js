@@ -42,8 +42,44 @@ module.exports = {
     .waitForElementVisible('.ace_closed')
     .click('.ace_start:nth-of-type(1)')
     .waitForElementVisible('.ace_open')
+  },
+
+  'Should load syntax highlighter for ace light theme': function (browser) {
+    browser.waitForElementVisible('*[data-id="editorInput"]')
+    .checkElementStyle('.ace_keyword', 'color', aceThemes.light.keyword)
+    .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.light.comment)
+    .checkElementStyle('.ace_function', 'color', aceThemes.light.function)
+    .checkElementStyle('.ace_variable', 'color', aceThemes.light.variable)
+  },
+
+  'Should load syntax highlighter for ace dark theme': function (browser) {
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    .click('*[data-id="verticalIconsKindsettings"]')
+    .waitForElementVisible('*[data-id="settingsTabThemeDark"]')
+    .click('*[data-id="settingsTabThemeDark"]')
+    .pause(2000)
+    .waitForElementVisible('*[data-id="editorInput"]')
+    .checkElementStyle('.ace_keyword', 'color', aceThemes.dark.keyword)
+    .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.dark.comment)
+    .checkElementStyle('.ace_function', 'color', aceThemes.dark.function)
+    .checkElementStyle('.ace_variable', 'color', aceThemes.dark.variable)
     .end()
   },
 
   tearDown: sauce
+}
+
+var aceThemes = {
+  light: {
+    keyword: 'rgb(147, 15, 128)',
+    comment: 'rgb(35, 110, 36)',
+    function: 'rgb(0, 0, 162)',
+    variable: 'rgb(253, 151, 31)'
+  },
+  dark: {
+    keyword: 'rgb(0, 105, 143)',
+    comment: 'rgb(85, 85, 85)',
+    function: 'rgb(0, 174, 239)',
+    variable: 'rgb(153, 119, 68)'
+  }
 }
