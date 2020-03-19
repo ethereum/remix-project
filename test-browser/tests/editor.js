@@ -3,7 +3,7 @@ const init = require('../helpers/init')
 const sauce = require('./sauce')
 
 module.exports = {
-  
+
   before: function (browser, done) {
     init(browser, done)
   },
