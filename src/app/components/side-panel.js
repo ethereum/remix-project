@@ -34,6 +34,7 @@ const css = csjs`
   .pluginsContainer {
     height: 100%;
     overflow-y: auto;
+    padding-top: 24px;
   }
   .titleInfo {
     padding-left: 10px;
