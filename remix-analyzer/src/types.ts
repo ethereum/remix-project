@@ -24,6 +24,15 @@ export interface ReportObj {
     more?: string
 }
 
+export interface AnalysisReportObj extends ReportObj {
+  error? : string
+}
+
+export type AnalysisReport = {
+  name: string
+  report: AnalysisReportObj[]
+}
+
 export interface CompilationResult {
     error?:  CompilationError,
     /** not present if no errors/warnings were encountered */
