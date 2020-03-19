@@ -135,7 +135,7 @@ test('staticAnalysisCommon.helpers.expressionTypeDescription', function (t) {
 // #################### Trivial Getter Test
 
 test('staticAnalysisCommon.getType', function (t) {
-  t.plan(2)
+  t.plan(3)
   const node =  { "argumentTypes": null,
                   "id": 3,
                   "name": "a",
@@ -151,6 +151,7 @@ test('staticAnalysisCommon.getType', function (t) {
                 }
   t.ok(common.getType(blockHashAccess) === 'bytes32', 'gettype should work for different nodes')
   t.ok(common.getType(node) === 'uint256', 'gettype should work for different nodes')
+  t.ok(common.getType(assignment) === 'uint256', 'gettype should work for different nodes')
 })
 
 // #################### Complex Getter Test
@@ -165,114 +166,127 @@ test('staticAnalysisCommon.getFunctionCallType', function (t) {
 
 test('staticAnalysisCommon.getEffectedVariableName', function (t) {
   t.plan(3)
-  t.throws(() => common.getEffectedVariableName(inlineAssembly), Error, 'staticAnalysisCommon.js: not an effect Node or inline assembly, get from inline assembly should throw')
   t.ok(common.getEffectedVariableName(assignment) === 'a', 'get right name for assignment')
-  t.throws(() => common.getEffectedVariableName(externalDirect), Error, 'should throw on all other nodes')
+  t.throws(() => common.getEffectedVariableName(inlineAssembly), new RegExp('staticAnalysisCommon.js: wrong node type'), 'staticAnalysisCommon.js: not an effect Node or inline assembly, get from inline assembly should throw')
+  t.throws(() => common.getEffectedVariableName(externalDirect), new RegExp('staticAnalysisCommon.js: not an effect Node'), 'should throw on all other nodes')
 })
 
 test('staticAnalysisCommon.getLocalCallName', function (t) {
   t.plan(3)
   t.ok(common.getLocalCallName(localCall) === 'e', 'getLocal call name from node')
-  t.throws(() => common.getLocalCallName(externalDirect), Error, 'throws on other nodes')
-  t.throws(() => common.getLocalCallName(thisLocalCall), Error, 'throws on other nodes')
+  t.throws(() => common.getLocalCallName(externalDirect), new RegExp('staticAnalysisCommon.js: not a local call Node'), 'throws for externalDirect nodes')
+  t.throws(() => common.getLocalCallName(thisLocalCall), new RegExp('staticAnalysisCommon.js: not a local call Node'), 'throws for this local call nodes')
 })
 
 test('staticAnalysisCommon.getThisLocalCallName', function (t) {
   t.plan(3)
   t.ok(common.getThisLocalCallName(thisLocalCall) === 'f', 'get this Local call name from node')
-  t.throws(() => common.getThisLocalCallName(externalDirect), Error, 'throws on other nodes')
-  t.throws(() => common.getThisLocalCallName(localCall), Error, 'throws on other nodes')
+  t.throws(() => common.getThisLocalCallName(externalDirect), new RegExp('staticAnalysisCommon.js: not a this local call Node'), 'throws on externalDirect nodes')
+  t.throws(() => common.getThisLocalCallName(localCall), new RegExp('staticAnalysisCommon.js: not a this local call Node'), 'throws on localCall nodes')
 })
 
 test('staticAnalysisCommon.getSuperLocalCallName', function (t) {
   t.plan(4)
   t.equal(common.getSuperLocalCallName(superLocal), 'x', 'get local name from super local call')
-  t.throws(() => common.getSuperLocalCallName(thisLocalCall), 'throws on other nodes')
-  t.throws(() => common.getSuperLocalCallName(externalDirect), 'throws on other nodes')
-  t.throws(() => common.getSuperLocalCallName(localCall), 'throws on other nodes')
+  t.throws(() => common.getSuperLocalCallName(thisLocalCall), new RegExp('staticAnalysisCommon.js: not a super local call Node'), 'throws on other nodes')
+  t.throws(() => common.getSuperLocalCallName(externalDirect), new RegExp('staticAnalysisCommon.js: not a super local call Node'),' throws on other nodes')
+  t.throws(() => common.getSuperLocalCallName(localCall), new RegExp('staticAnalysisCommon.js: not a super local call Node'), 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getExternalDirectCallContractName', function (t) {
   t.plan(3)
   t.ok(common.getExternalDirectCallContractName(externalDirect) === 'c', 'external direct call contract name from node')
-  t.throws(() => common.getExternalDirectCallContractName(thisLocalCall), Error, 'throws on other nodes')
-  t.throws(() => common.getExternalDirectCallContractName(localCall), Error, 'throws on other nodes')
+  t.throws(() => common.getExternalDirectCallContractName(thisLocalCall), new RegExp('staticAnalysisCommon.js: not an external direct call Node'), 'throws on other nodes')
+  t.throws(() => common.getExternalDirectCallContractName(localCall), new RegExp('staticAnalysisCommon.js: not an external direct call Node'), 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getThisLocalCallContractName', function (t) {
   t.plan(3)
   t.ok(common.getThisLocalCallContractName(thisLocalCall) === 'C', 'this local call contract name from node')
-  t.throws(() => common.getThisLocalCallContractName(localCall), Error, 'throws on other nodes')
-  t.throws(() => common.getThisLocalCallContractName(externalDirect), Error, 'throws on other nodes')
+  t.throws(() => common.getThisLocalCallContractName(localCall), new RegExp('staticAnalysisCommon.js: not a this local call Node'), 'throws on other nodes')
+  t.throws(() => common.getThisLocalCallContractName(externalDirect), new RegExp('staticAnalysisCommon.js: not a this local call Node'), 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getExternalDirectCallMemberName', function (t) {
   t.plan(3)
   t.ok(common.getExternalDirectCallMemberName(externalDirect) === 'f', 'external direct call name from node')
-  t.throws(() => common.getExternalDirectCallMemberName(thisLocalCall), Error, 'throws on other nodes')
-  t.throws(() => common.getExternalDirectCallMemberName(localCall), Error, 'throws on other nodes')
+  t.throws(() => common.getExternalDirectCallMemberName(thisLocalCall), new RegExp('staticAnalysisCommon.js: not an external direct call Node'), 'throws on other nodes')
+  t.throws(() => common.getExternalDirectCallMemberName(localCall), new RegExp('staticAnalysisCommon.js: not an external direct call Node'), 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getContractName', function (t) {
-  t.plan(1)
+  t.plan(2)
   t.ok(common.getContractName(contractDefinition) === 'C', 'returns right contract name')
+  t.throws(() => common.getContractName(inheritance), new RegExp('staticAnalysisCommon.js: not a ContractDefinition Node'), 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getFunctionDefinitionName', function (t) {
-  t.plan(1)
+  t.plan(2)
   t.ok(common.getFunctionDefinitionName(functionDefinition) === 'f', 'returns right function name')
+  t.throws(() => common.getFunctionDefinitionName(inheritance), new RegExp('staticAnalysisCommon.js: not a FunctionDefinition Node'), 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getInheritsFromName', function (t) {
-  t.plan(1)
+  t.plan(2)
   t.ok(common.getInheritsFromName(inheritance) === 'A', 'returns right contract name')
+  t.throws(() => common.getInheritsFromName(functionDefinition), new RegExp('staticAnalysisCommon.js: not an InheritanceSpecifier Node'), 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getDeclaredVariableName', function (t) {
-  t.plan(1)
+  t.plan(2)
   t.ok(common.getDeclaredVariableName(storageVariableNodes.node1) === 'c', 'extract right variable name')
+  let node1 = JSON.parse(JSON.stringify(storageVariableNodes))
+  node1.node1.nodeType = 'FunctionCall'
+  t.throws(() => common.getDeclaredVariableName(node1) === 'x', new RegExp('staticAnalysisCommon.js: not a VariableDeclaration Node'), 'throw if wrong node')
 })
 
 test('staticAnalysisCommon.getStateVariableDeclarationsFromContractNode', function (t) {
   t.plan(3)
   const res = common.getStateVariableDeclarationsFromContractNode(stateVariableContractNode).map(common.getDeclaredVariableName)
-  t.ok(res[0] === 'x', 'var 1 should be ')
-  t.ok(res[1] === 'b', 'var 2 should be ')
-  t.ok(res[2] === 's', 'var 3 should be ')
+  t.ok(res[0] === 'x', 'var 1 should be x')
+  t.ok(res[1] === 'b', 'var 2 should be b')
+  t.ok(res[2] === 's', 'var 3 should be s')
 })
 
 test('staticAnalysisCommon.getFunctionOrModifierDefinitionParameterPart', function (t) {
-  t.plan(1)
+  t.plan(2)
   t.ok(common.helpers.nodeType(common.getFunctionOrModifierDefinitionParameterPart(functionDefinition), 'ParameterList'), 'should return a parameterList')
+  t.throws(() => common.getFunctionOrModifierDefinitionParameterPart(contractDefinition), new RegExp('staticAnalysisCommon.js: not a FunctionDefinition or ModifierDefinition Node'), 'throws on other nodes')
 })
 
 test('staticAnalysisCommon.getFunctionCallTypeParameterType', function (t) {
-  t.plan(3)
+  t.plan(4)
   t.ok(common.getFunctionCallTypeParameterType(thisLocalCall) === '', 'this local call returns correct type')
   t.ok(common.getFunctionCallTypeParameterType(externalDirect) === '', 'external direct call returns correct type')
   t.ok(common.getFunctionCallTypeParameterType(localCall) === 'uint256,string memory', 'local call returns correct type')
+  t.throws(() => common.getFunctionCallTypeParameterType(thisLocalCall.expression), new RegExp('staticAnalysisCommon.js: cannot extract parameter types from function call'), 'throws on wrong type')
 })
 
 test('staticAnalysisCommon.getLibraryCallContractName', function (t) {
-  t.plan(1)
+  t.plan(2)
   t.equal(common.getLibraryCallContractName(libCall), 'Set', 'should return correct contract name')
+  t.throws(() => common.getLibraryCallContractName(contractDefinition), new RegExp('staticAnalysisCommon.js: not a library call Node'), 'should throw on wrong node')
 })
 
 test('staticAnalysisCommon.getLibraryCallMemberName', function (t) {
-  t.plan(1)
+  t.plan(2)
   t.equal(common.getLibraryCallMemberName(libCall), 'insert', 'should return correct member name')
+  t.throws(() => common.getLibraryCallMemberName(thisLocalCall), new RegExp('staticAnalysisCommon.js: not a library call Node'), 'should throw on wrong node')
 })
 
 test('staticAnalysisCommon.getFullQualifiedFunctionCallIdent', function (t) {
-  t.plan(3)
+  t.plan(4)
   t.ok(common.getFullQualifiedFunctionCallIdent(contractDefinition, thisLocalCall) === 'C.f()', 'this local call returns correct type')
   t.ok(common.getFullQualifiedFunctionCallIdent(contractDefinition, externalDirect) === 'c.f()', 'external direct call returns correct type')
   t.ok(common.getFullQualifiedFunctionCallIdent(contractDefinition, localCall) === 'C.e(uint256,string memory)', 'local call returns correct type')
+  t.throws(() => common.getFullQualifiedFunctionCallIdent(contractDefinition, assignment), new RegExp('staticAnalysisCommon.js: Can not get function name from non function call node'), 'throws on wrong type')
 })
 
 test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
-  t.plan(1)
+  t.plan(3)
   t.ok(common.getFullQuallyfiedFuncDefinitionIdent(contractDefinition, functionDefinition, ['uint256', 'bool']) === 'C.f(uint256,bool)', 'creates right signature')
+  t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(contractDefinition, parameterFunctionCall, ['uint256', 'bool']), new RegExp('staticAnalysisCommon.js: not a FunctionDefinition Node'), 'throws on wrong nodes')
+  t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(parameterFunctionCall, functionDefinition, ['uint256', 'bool']), new RegExp('staticAnalysisCommon.js: not a ContractDefinition Node'), 'throws on wrong nodes')
 })
 
 // #################### Complex Node Identification
@@ -376,7 +390,7 @@ test('staticAnalysisCommon.isExternalDirectCall', function (t) {
   t.notOk(common.isBlockTimestampAccess(externalDirect), 'is block.timestamp used should not work')
   t.notOk(common.isNowAccess(externalDirect), 'is now used should not work')
   t.ok(common.isExternalDirectCall(externalDirect), 'c.f() should be external direct call')
-  t.notOk(common.isExternalDirectCall(thisLocalCall.expression), 'this local call is not an exernal call')
+  t.notOk(common.isExternalDirectCall(thisLocalCall.expression), 'this local call is not an external call')
 })
 
 test('staticAnalysisCommon.isNowAccess', function (t) {
