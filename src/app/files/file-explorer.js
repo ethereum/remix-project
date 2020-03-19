@@ -234,9 +234,9 @@ function fileExplorer (localRegistry, files, menuItems) {
       }
       actions['Delete'] = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
-        const currentFilename = extractNameFromKey(key)
+        const currentFoldername = extractNameFromKey(key)
 
-        modalDialogCustom.confirm(`Confirm to delete a folder', 'Are you sure you want to delete ${currentFilename} folder?`,
+        modalDialogCustom.confirm(`Confirm to delete ${currentFoldername} folder', 'Are you sure you want to delete ${currentFoldername} folder?`,
           () => {
             if (!files.remove(key)) {
               tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
@@ -277,7 +277,7 @@ function fileExplorer (localRegistry, files, menuItems) {
         const currentFilename = extractNameFromKey(key)
 
         modalDialogCustom.confirm(
-          'Delete a file', `Are you sure you want to delete ${currentFilename} file?`,
+          `Delete ${currentFilename} file`, `Are you sure you want to delete ${currentFilename} file?`,
           () => {
             files.remove(key)
             self.updatePath('browser')
