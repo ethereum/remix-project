@@ -191,37 +191,13 @@ function getEffectedVariableName (effectNode: AssignmentAstNode | UnaryOperation
 }
 
 /**
- * Finds first node of a certain type under a specific node.
- * @node {AstNode} node to start form
- * @type {String} Type the ast node should have
- * @return {AstNode} null or node found
- * Note: developed keeping identifier node search in mind to get first identifier node from left in subscope
- */
-function findFirstSubNodeLTR (node: any, type: string): any {
-  if(node.nodeType && nodeType(node, type))
-    return node
-
-  else if(node.nodeType && nodeType(node, exactMatch('Assignment')))
-    return findFirstSubNodeLTR(node.leftHandSide, type)
-
-  else if(node.nodeType && nodeType(node, exactMatch('MemberAccess')))
-    return findFirstSubNodeLTR(node.expression, type)
-  
-  else if(node.nodeType && nodeType(node, exactMatch('IndexAccess')))
-    return findFirstSubNodeLTR(node.baseExpression, type)
-  
-  else if(node.nodeType && nodeType(node, exactMatch('UnaryOperation')))
-    return findFirstSubNodeLTR(node.subExpression, type)
-}
-
-/**
  * Returns the identifier of a local call, Throws on wrong node.
  * Example: f(103) => f
  * @localCallNode {ASTNode} Function call node
  * @return {string} name of the function called
  */
 function getLocalCallName (localCallNode: FunctionCallAstNode): string {
-  if (!isLocalCall(localCallNode) && !isAbiNamespaceCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not an local call Node')
+  if (!isLocalCall(localCallNode) && !isAbiNamespaceCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not a local call Node')
   return localCallNode.expression.name
 }
 
@@ -232,7 +208,7 @@ function getLocalCallName (localCallNode: FunctionCallAstNode): string {
  * @return {string} name of the function called
  */
 function getThisLocalCallName (thisLocalCallNode: FunctionCallAstNode): string {
-  if (!isThisLocalCall(thisLocalCallNode.expression)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
+  if (!isThisLocalCall(thisLocalCallNode.expression)) throw new Error('staticAnalysisCommon.js: not a this local call Node')
   return thisLocalCallNode.expression.memberName
 }
 
@@ -243,7 +219,7 @@ function getThisLocalCallName (thisLocalCallNode: FunctionCallAstNode): string {
  * @return {string} name of the function called
  */
 function getSuperLocalCallName (superLocalCallNode: FunctionCallAstNode): string {
-  if (!isSuperLocalCall(superLocalCallNode.expression)) throw new Error('staticAnalysisCommon.js: not an super local call Node')
+  if (!isSuperLocalCall(superLocalCallNode.expression)) throw new Error('staticAnalysisCommon.js: not a super local call Node')
   return superLocalCallNode.expression.memberName
 }
 
@@ -271,7 +247,7 @@ function getExternalDirectCallContractName (extDirectCall: FunctionCallAstNode):
  * @return {string} name of the contract the function is defined in
  */
 function getThisLocalCallContractName (thisLocalCall: FunctionCallAstNode): string {
-  if (!isThisLocalCall(thisLocalCall.expression)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
+  if (!isThisLocalCall(thisLocalCall.expression)) throw new Error('staticAnalysisCommon.js: not a this local call Node')
   return thisLocalCall.expression.expression.typeDescriptions.typeString.replace(new RegExp(basicRegex.CONTRACTTYPE), '')
 }
 
@@ -296,6 +272,7 @@ function getExternalDirectCallMemberName (extDirectCall: FunctionCallAstNode): s
  * @return {string} name of a contract defined
  */
 function getContractName (contract: ContractDefinitionAstNode): string {
+  if (!nodeType(contract, exactMatch(nodeTypes.CONTRACTDEFINITION))) throw new Error('staticAnalysisCommon.js: not a ContractDefinition Node')
   return contract.name
 }
 
@@ -307,6 +284,7 @@ function getContractName (contract: ContractDefinitionAstNode): string {
  * @return {string} name of a function defined
  */
 function getFunctionDefinitionName (funcDef: FunctionDefinitionAstNode): string {
+  if (!nodeType(funcDef, exactMatch(nodeTypes.FUNCTIONDEFINITION))) throw new Error('staticAnalysisCommon.js: not a FunctionDefinition Node')
   return funcDef.name
 }
 
@@ -318,6 +296,7 @@ function getFunctionDefinitionName (funcDef: FunctionDefinitionAstNode): string 
  * @return {string} name of contract inherited from
  */
 function getInheritsFromName (inheritsNode: InheritanceSpecifierAstNode): string {
+  if (!nodeType(inheritsNode, exactMatch(nodeTypes.INHERITANCESPECIFIER))) throw new Error('staticAnalysisCommon.js: not an InheritanceSpecifier Node')
   return inheritsNode.baseName.name
 }
 
@@ -329,6 +308,7 @@ function getInheritsFromName (inheritsNode: InheritanceSpecifierAstNode): string
  * @return {string} variable name
  */
 function getDeclaredVariableName (varDeclNode: VariableDeclarationAstNode): string {
+  if (!nodeType(varDeclNode, exactMatch(nodeTypes.VARIABLEDECLARATION))) throw new Error('staticAnalysisCommon.js: not a VariableDeclaration Node')
   return varDeclNode.name
 }
 
@@ -365,6 +345,7 @@ function getStateVariableDeclarationsFromContractNode (contractNode: ContractDef
  * @return {parameterlist node} parameterlist node
  */
 function getFunctionOrModifierDefinitionParameterPart (funcNode: FunctionDefinitionAstNode | ModifierDefinitionAstNode): ParameterListAstNode {
+  if (!nodeTypeIn(funcNode, [exactMatch(nodeTypes.FUNCTIONDEFINITION), exactMatch(nodeTypes.MODIFIERDEFINITION)])) throw new Error('staticAnalysisCommon.js: not a FunctionDefinition or ModifierDefinition Node')
   return funcNode.parameters
 }
 
@@ -415,7 +396,7 @@ function getFunctionCallTypeParameterType (func: FunctionCallAstNode): string | 
  * @return {string} name of the lib defined
  */
 function getLibraryCallContractName (node: FunctionCallAstNode): string | undefined {
-  if (!isLibraryCall(node.expression)) throw new Error('staticAnalysisCommon.js: not an this library call Node')
+  if (!isLibraryCall(node.expression)) throw new Error('staticAnalysisCommon.js: not a library call Node')
   const types: RegExpExecArray | null = new RegExp(basicRegex.LIBRARYTYPE).exec(node.expression.expression.typeDescriptions.typeString)
   if(types)
     return types[1]
@@ -432,7 +413,7 @@ function getLibraryCallContractName (node: FunctionCallAstNode): string | undefi
  * @return {string} name of function called on the library
  */
 function getLibraryCallMemberName (funcCall: FunctionCallAstNode): string {
-  // if (!isLibraryCall(funcCall)) throw new Error('staticAnalysisCommon.js: not an library call Node')
+  if (!isLibraryCall(funcCall.expression)) throw new Error('staticAnalysisCommon.js: not a library call Node')
   return funcCall.expression.memberName
 }
 
@@ -1047,7 +1028,31 @@ function matches (...fnArgs: any[]): string {
 }
 
 /**
- * Builds an function signature as used in the AST of the solc-json AST
+ * Finds first node of a certain type under a specific node.
+ * @node {AstNode} node to start form
+ * @type {String} Type the ast node should have
+ * @return {AstNode} null or node found
+ * Note: developed keeping identifier node search in mind to get first identifier node from left in subscope
+ */
+function findFirstSubNodeLTR (node: any, type: string): any {
+  if(node.nodeType && nodeType(node, type))
+    return node
+
+  else if(node.nodeType && nodeType(node, exactMatch('Assignment')))
+    return findFirstSubNodeLTR(node.leftHandSide, type)
+
+  else if(node.nodeType && nodeType(node, exactMatch('MemberAccess')))
+    return findFirstSubNodeLTR(node.expression, type)
+  
+  else if(node.nodeType && nodeType(node, exactMatch('IndexAccess')))
+    return findFirstSubNodeLTR(node.baseExpression, type)
+  
+  else if(node.nodeType && nodeType(node, exactMatch('UnaryOperation')))
+    return findFirstSubNodeLTR(node.subExpression, type)
+}
+
+/**
+ * Builds a function signature as used in the AST of the solc-json AST
  * @param {Array} paramTypes
  *  list of parameter type names
  * @param {Array} returnTypes

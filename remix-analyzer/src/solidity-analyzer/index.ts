@@ -1,20 +1,11 @@
 'use strict'
 import { AstWalker } from 'remix-astwalker'
 import list from './modules/list'
-import { CompilationResult, AnalyzerModule, ReportObj } from 'types'
+import { CompilationResult, AnalyzerModule, AnalysisReportObj, AnalysisReport } from 'types'
 
 type ModuleObj = {
   name: string
   mod: AnalyzerModule
-}
-
-interface AnalysisReportObj extends ReportObj {
-  error? : string
-}
-
-type AnalysisReport = {
-  name: string
-  report: AnalysisReportObj[]
 }
 
 export default class staticAnalysisRunner {
