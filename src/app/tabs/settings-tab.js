@@ -71,8 +71,8 @@ module.exports = class SettingsTab extends ViewPlugin {
     var gistAccessToken = yo`<input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" class="border form-control mb-2 ${css.inline}" placeholder="Token">`
     var token = this.config.get('settings/gist-access-token')
     if (token) gistAccessToken.value = token
-    var gistAddToken = yo`<input class="${css.savegisttoken} btn btn-sm btn-primary" id="savegisttoken" data-id="settingsTabSaveGistToken" onclick=${() => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
-    var gistRemoveToken = yo`<input class="btn btn-sm btn-primary" id="removegisttoken" data-id="settingsTabRemoveGistToken" onclick=${() => { gistAccessToken.value = ''; this.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
+    var gistAddToken = yo`<input class="btn btn-sm btn-primary mx-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onclick=${() => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
+    var gistRemoveToken = yo`<input class="btn btn-sm btn-primary mx-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" onclick=${() => { gistAccessToken.value = ''; this.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
     this._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => gistAccessToken.value)}${gistAddToken}${gistRemoveToken}</div>`
     this._view.optionVM = yo`<input onchange=${onchangeOption} class="align-middle form-check-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox">`
     if (this.config.get('settings/always-use-vm') === undefined) this.config.set('settings/always-use-vm', true)

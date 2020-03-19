@@ -12,8 +12,8 @@ var css = csjs`
   }
 `
 
-module.exports = function copyToClipboard (getContent, tip = 'Copied value to clipboard', icon = 'fa-copy') {
-  var copyIcon = yo`<i title="${tip}" class="${css.copyIcon} far ${icon}" data-id="copyToClipboardCopyIcon" aria-hidden="true"></i>`
+module.exports = function copyToClipboard (getContent, tip = 'Copy value to clipboard', icon = 'fa-copy') {
+  var copyIcon = yo`<i title="${tip}" class="${css.copyIcon} far ${icon} p-2" data-id="copyToClipboardCopyIcon" aria-hidden="true"></i>`
   copyIcon.onclick = (event) => {
     event.stopPropagation()
     var copiableContent
@@ -30,7 +30,7 @@ module.exports = function copyToClipboard (getContent, tip = 'Copied value to cl
         }
       } catch (e) {}
       copy(copiableContent)
-      addTooltip(tip)
+      addTooltip('Copied value to clipboard.')
     } else {
       addTooltip('Cannot copy empty content!')
     }
