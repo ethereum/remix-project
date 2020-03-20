@@ -116,14 +116,14 @@ class MultiParamManager {
       title = this.funABI.type === 'receive' ? '(receive)' : '(fallback)'
     }
 
-    this.basicInputField = yo`<input class="form-control"></input>`
+    this.basicInputField = yo`<input class="form-control" data-shared="multiParamManagerBasicInputField"></input>`
     this.basicInputField.setAttribute('placeholder', this.inputs)
     this.basicInputField.setAttribute('title', this.inputs)
 
     var onClick = () => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
     }
-    let funcButton = yo`<button onclick=${() => onClick()} class="${css.instanceButton} btn btn-sm">${title}</button>`
+    let funcButton = yo`<button onclick=${() => onClick()} data-shared="multiParamManagerFuncButton" class="${css.instanceButton} btn btn-sm">${title}</button>`
     this.contractActionsContainerSingle = yo`
     <div class="${css.contractActionsContainerSingle} pt-2">
       ${funcButton}
@@ -142,7 +142,7 @@ class MultiParamManager {
       }
     }
 
-    var expandedButton = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
+    var expandedButton = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}" data-shared="multiParamManagerExpandedButton"></button>`
 
     this.contractActionsContainerMulti = yo`<div class="${css.contractActionsContainerMulti}" >
       <div class="${css.contractActionsContainerMultiInner} text-dark" >
