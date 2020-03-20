@@ -44,6 +44,13 @@ module.exports = {
     .waitForElementVisible('.ace_open')
   },
 
+  'Should add breakpoint to editor': function (browser) {
+    browser.waitForElementVisible('*[data-id="editorInput"]')
+    .waitForElementNotPresent('.ace_breakpoint')
+    .click('.ace_gutter-cell:nth-of-type(1)')
+    .waitForElementVisible('.ace_breakpoint')
+  },
+
   'Should load syntax highlighter for ace light theme': function (browser) {
     browser.waitForElementVisible('*[data-id="editorInput"]')
     .checkElementStyle('.ace_keyword', 'color', aceThemes.light.keyword)
