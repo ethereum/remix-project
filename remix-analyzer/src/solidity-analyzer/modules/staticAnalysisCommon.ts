@@ -132,7 +132,7 @@ const specialVariables: Record<string, SpecialObjDetail> = {
   BLOCKHASH: {
     obj: 'block',
     member: 'blockhash',
-    type: buildFunctionSignature([basicTypes.UINT], [basicTypes.BYTES32], false)
+    type: buildFunctionSignature([basicTypes.UINT], [basicTypes.BYTES32], false, 'view')
   }
 }
 
@@ -808,7 +808,8 @@ function isBlockTimestampAccess (node: MemberAccessAstNode): boolean {
  * @return {bool}
  */
 function isBlockBlockHashAccess (node: FunctionCallAstNode): boolean {
-  return isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash'
+  return ( isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash' ) || 
+      isSpecialVariableAccess(node.expression, specialVariables.BLOCKHASH)
 }
 
 /**

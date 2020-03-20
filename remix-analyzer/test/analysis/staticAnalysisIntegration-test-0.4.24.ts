@@ -5,11 +5,13 @@ import { join } from 'path'
 import { default as StatRunner } from '../../dist/src/solidity-analyzer'
 import { install, require as requireNPMmodule } from 'npm-install-version'
 install('solc@0.4.24')
-const compiler = requireNPMmodule('solc@0.4.24')
-const {compilerInput  } = helpers.compiler
-const folder = 'solidity-v0.4.24'
+const solc = requireNPMmodule('solc@0.4.24')
+const { compilerInput } = helpers.compiler
+const folder: string = 'solidity-v0.4.24'
+import * as modules from '../../src/solidity-analyzer/modules/'
+import { CompilationResult, AnalysisReportObj, AnalysisReport, AnalyzerModule } from '../../src/types'
 
-const testFiles = [
+const testFiles: string[] = [
   'KingOfTheEtherThrone.sol',
   'assembly.sol',
   'ballot.sol',
@@ -37,20 +39,19 @@ const testFiles = [
   'etherTransferInLoop.sol',
   'forLoopIteratesOverDynamicArray.sol'
 ]
-// Latest AST was introduced in solidity v0.4.12
-var testFileAsts = {}
+
+var compilationResults: Record<string, CompilationResult> = {}
 
 testFiles.forEach((fileName) => {
-  const content = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
-  testFileAsts[fileName] = JSON.parse(compiler.compileStandardWrapper(compilerInput(content)))
+  const content: string = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
+  // Latest AST is available under 'compileStandardWrapper' under solc for, 0.4.12 <= version < 0.5.0 
+  compilationResults[fileName] = JSON.parse(solc.compileStandardWrapper(compilerInput(content)))
 })
 
-test('Integration test thisLocal.js', function (t) {
+test('Integration test thisLocal module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/thisLocal').default
-
-  const lengthCheck = {
+  const module: any = modules.thisLocal
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -78,18 +79,15 @@ test('Integration test thisLocal.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
-    t.equal(report.length, lengthCheck[file], `${file} has right amount of this local warnings`)
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of thisLocal warnings`)
   })
 })
 
-test('Integration test checksEffectsInteraction.js', function (t) {
+test('Integration test checksEffectsInteraction module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/checksEffectsInteraction').default
-
-  const lengthCheck = {
+  const module: any = modules.checksEffectsInteraction
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 1,
     'assembly.sol': 1,
     'ballot.sol': 0,
@@ -117,18 +115,15 @@ test('Integration test checksEffectsInteraction.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
-    t.equal(report.length, lengthCheck[file], `${file} has right amount of checks-effects-interaction warnings`)
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of checksEffectsInteraction warnings`)
   })
 })
 
-test('Integration test constantFunctions.js', function (t) {
+test('Integration test constantFunctions module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/constantFunctions').default
-
-  const lengthCheck = {
+  const module: any = modules.constantFunctions
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -156,18 +151,15 @@ test('Integration test constantFunctions.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
-    t.equal(report.length, lengthCheck[file], `${file} has right amount of constant warnings`)
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of constantFunctions warnings`)
   })
 })
 
-test('Integration test inlineAssembly.js', function (t) {
+test('Integration test inlineAssembly module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/inlineAssembly').default
-
-  const lengthCheck = {
+  const module: any = modules.inlineAssembly
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 2,
     'ballot.sol': 0,
@@ -195,18 +187,15 @@ test('Integration test inlineAssembly.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
-    t.equal(report.length, lengthCheck[file], `${file} has right amount of inline assembly warnings`)
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of inlineAssembly warnings`)
   })
 })
 
-test('Integration test txOrigin.js', function (t) {
+test('Integration test txOrigin module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/txOrigin').default
-
-  const lengthCheck = {
+  const module: any = modules.txOrigin
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 1,
     'ballot.sol': 0,
@@ -234,18 +223,15 @@ test('Integration test txOrigin.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
-    t.equal(report.length, lengthCheck[file], `${file} has right amount of tx.origin warnings`)
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of txOrigin warnings`)
   })
 })
 
-test('Integration test gasCosts.js', function (t) {
+test('Integration test gasCosts module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/gasCosts').default
-
-  const lengthCheck = {
+  const module: any = modules.gasCosts
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 2,
     'assembly.sol': 2,
     'ballot.sol': 3,
@@ -273,18 +259,15 @@ test('Integration test gasCosts.js', function (t) {
     'etherTransferInLoop.sol': 3,
     'forLoopIteratesOverDynamicArray.sol': 2
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
-    t.equal(report.length, lengthCheck[file], `${file} has right amount of gasCost warnings`)
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of gasCosts warnings`)
   })
 })
 
-test('Integration test similarVariableNames.js', function (t) {
+test('Integration test similarVariableNames module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/similarVariableNames').default
-
-  const lengthCheck = {
+  const module: any = modules.similarVariableNames
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 2,
@@ -312,18 +295,15 @@ test('Integration test similarVariableNames.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of similarVariableNames warnings`)
   })
 })
 
-test('Integration test blockTimestamp.js', function (t) {
+test('Integration test blockTimestamp module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/blockTimestamp').default
-
-  const lengthCheck = {
+  const module: any = modules.blockTimestamp
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 1,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -351,18 +331,15 @@ test('Integration test blockTimestamp.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of blockTimestamp warnings`)
   })
 })
 
-test('Integration test lowLevelCalls.js', function (t) {
+test('Integration test lowLevelCalls module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/lowLevelCalls').default
-
-  const lengthCheck = {
+  const module: any = modules.lowLevelCalls
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 1,
     'assembly.sol': 1,
     'ballot.sol': 0,
@@ -390,18 +367,15 @@ test('Integration test lowLevelCalls.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of lowLevelCalls warnings`)
   })
 })
 
-test('Integration test blockBlockhash.js', function (t) {
+test('Integration test blockBlockhash module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/blockBlockhash').default
-
-  const lengthCheck = {
+  const module: any = modules.blockBlockhash
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -414,7 +388,7 @@ test('Integration test blockBlockhash.js', function (t) {
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
-    'globals.sol': 0, // was 1 !! @TODO
+    'globals.sol': 1,
     'library.sol': 0,
     'transfer.sol': 0,
     'ctor.sol': 0,
@@ -429,18 +403,15 @@ test('Integration test blockBlockhash.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of blockBlockhash warnings`)
   })
 })
 
-test('Integration test noReturn.js', function (t) {
+test('Integration test noReturn module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/noReturn').default
-
-  const lengthCheck = {
+  const module: any = modules.noReturn
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 1,
     'ballot.sol': 0,
@@ -468,18 +439,15 @@ test('Integration test noReturn.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of noReturn warnings`)
   })
 })
 
-test('Integration test selfdestruct.js', function (t) {
+test('Integration test selfdestruct module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/selfdestruct').default
-
-  const lengthCheck = {
+  const module: any = modules.selfdestruct
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -507,18 +475,15 @@ test('Integration test selfdestruct.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of selfdestruct warnings`)
   })
 })
 
-test('Integration test guardConditions.js', function (t) {
+test('Integration test guardConditions module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/guardConditions').default
-
-  const lengthCheck = {
+  const module: any = modules.guardConditions
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 1,
     'ballot.sol': 0,
@@ -546,18 +511,15 @@ test('Integration test guardConditions.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
-    t.equal(report.length, lengthCheck[file], `${file} has right amount of guardCondition warnings`)
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of guardConditions warnings`)
   })
 })
 
-test('Integration test deleteDynamicArrays.js', function (t) {
+test('Integration test deleteDynamicArrays module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/deleteDynamicArrays').default
-
-  const lengthCheck = {
+  const module: any = modules.deleteDynamicArrays
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -585,18 +547,15 @@ test('Integration test deleteDynamicArrays.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of deleteDynamicArrays warnings`)
   })
 })
 
-test('Integration test deleteFromDynamicArray.js', function (t) {
+test('Integration test deleteFromDynamicArray module', function (t) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/deleteFromDynamicArray').default
-
-  const lengthCheck = {
+  const module: any = modules.deleteFromDynamicArray
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -624,18 +583,15 @@ test('Integration test deleteFromDynamicArray.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of deleteFromDynamicArray warnings`)
   })
 })
 
-test('Integration test assignAndCompare.js', function (t) {
+test('Integration test assignAndCompare module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/assignAndCompare').default
-
-  const lengthCheck = {
+  const module: any = modules.assignAndCompare
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -663,18 +619,15 @@ test('Integration test assignAndCompare.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of assignAndCompare warnings`)
   })
 })
 
-test('Integration test intDivisionTruncate.js', function (t) {
+test('Integration test intDivisionTruncate module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/intDivisionTruncate').default
-
-  const lengthCheck = {
+  const module: any = modules.intDivisionTruncate
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -702,18 +655,15 @@ test('Integration test intDivisionTruncate.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of intDivisionTruncate warnings`)
   })
 })
 
-test('Integration test erc20Decimal.js', function (t) {
+test('Integration test erc20Decimal module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/erc20Decimals').default
-
-  const lengthCheck = {
+  const module: any = modules.erc20Decimals
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -741,18 +691,15 @@ test('Integration test erc20Decimal.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of erc20Decimals warnings`)
   })
 })
 
-test('Integration test stringBytesLength.js', function (t) {
+test('Integration test stringBytesLength module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/stringBytesLength').default
-
-  const lengthCheck = {
+  const module: any = modules.stringBytesLength
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -780,18 +727,15 @@ test('Integration test stringBytesLength.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of stringBytesLength warnings`)
   })
 })
 
-test('Integration test etherTransferInLoop.js', function (t) {
+test('Integration test etherTransferInLoop module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/etherTransferInLoop').default
-
-  const lengthCheck = {
+  const module: any = modules.etherTransferInLoop
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 0,
@@ -819,18 +763,15 @@ test('Integration test etherTransferInLoop.js', function (t) {
     'etherTransferInLoop.sol': 3,
     'forLoopIteratesOverDynamicArray.sol': 0
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of etherTransferInLoop warnings`)
   })
 })
 
-test('Integration test forLoopIteratesOverDynamicArray.js', function (t) {
+test('Integration test forLoopIteratesOverDynamicArray module', function (t: test.Test) {
   t.plan(testFiles.length)
-
-  const module = require('../../dist/src/solidity-analyzer/modules/forLoopIteratesOverDynamicArray').default
-
-  const lengthCheck = {
+  const module: any = modules.forLoopIteratesOverDynamicArray
+  const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 2,
@@ -858,22 +799,21 @@ test('Integration test forLoopIteratesOverDynamicArray.js', function (t) {
     'etherTransferInLoop.sol': 0,
     'forLoopIteratesOverDynamicArray.sol': 2
   }
-
-  runModuleOnFiles(module, t, (file, report) => {
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of forLoopIteratesOverDynamicArray warnings`)
   })
 })
 
 // #################### Helpers
-function runModuleOnFiles (Module, t, cb) {
-  const statRunner = new StatRunner()
-  testFiles.forEach((fileName) => {
-    statRunner.runWithModuleList(testFileAsts[fileName], [{ name: new Module().name, mod: new Module() }], (reports) => {
-      let report = reports[0].report
-      if (report.some((x) => x['warning'].includes('INTERNAL ERROR'))) {
+function runModuleOnFiles (Module: any, t: test.Test, cb: ((fname: string, report: AnalysisReportObj[]) => void)): void {
+  const statRunner: StatRunner = new StatRunner()
+  testFiles.forEach((fileName: string) => {
+    statRunner.runWithModuleList(compilationResults[fileName], [{ name: new Module().name, mod: new Module() }], (reports: AnalysisReport[]) => {
+      let report: AnalysisReportObj[] = reports[0].report
+      if (report.some((x: AnalysisReportObj) => x.warning.includes('INTERNAL ERROR'))) {
         t.comment('Error while executing Module: ' + JSON.stringify(report))
       }
       cb(fileName, report)
     })
-  })
+  })      
 }
