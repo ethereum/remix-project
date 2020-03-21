@@ -17,8 +17,7 @@ module.exports = {
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[title="Deploy - transact (not payable)"]')
     .click('*[title="Deploy - transact (not payable)"]')
-    .waitForElementPresent('*[data-shared="txLoggerDebugButton"]:nth-of-type(1)')
-    .click('*[data-shared="txLoggerDebugButton"]:nth-of-type(1)')
+    .debugTransaction(0)
     .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER')
   },
 
@@ -27,9 +26,10 @@ module.exports = {
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
     .click('*[data-id="universalDappUiTitleExpander"]')
-    .waitForElementPresent('*[data-shared="multiParamManagerBasicInputField"]:nth-of-type(1)')
-    .sendKeys('*[data-shared="multiParamManagerBasicInputField"]:nth-of-type(1)', '"toast", 999')
-    .pause(100000)
+    .scrollAndClick('*[title="string name, uint256 goal"]')
+    .setValue('*[title="string name, uint256 goal"]', '"toast", 999')
+    .click('*[data-id="createProject - transact (not payable)"]')
+    .debugTransaction(1)
     .end()
   },
 

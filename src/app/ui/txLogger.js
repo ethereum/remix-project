@@ -205,7 +205,7 @@ function log (self, tx, receipt) {
 }
 
 function renderKnownTransaction (self, data, blockchain) {
-  var from = data.tx.from
+  var from = data.tx.from 
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to}
   var txType = 'knownTx'
