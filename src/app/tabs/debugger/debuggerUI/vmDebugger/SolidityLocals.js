@@ -29,7 +29,7 @@ class SolidityLocals {
   }
 
   render () {
-    this.view = yo`<div id='soliditylocals'>${this.basicPanel.render()}</div>`
+    this.view = yo`<div id='soliditylocals' data-id="solidityLocals">${this.basicPanel.render()}</div>`
     return this.view
   }
 }
