@@ -30,6 +30,19 @@ module.exports = {
     .setValue('*[title="string name, uint256 goal"]', '"toast", 999')
     .click('*[data-id="createProject - transact (not payable)"]')
     .debugTransaction(1)
+    .pause(2000)
+    .scrollAndClick('*[data-id="solidityLocals"]')
+    .assert.containsText('*[data-id="solidityLocals"]', "toast")
+    .assert.containsText('*[data-id="solidityLocals"]', "999")
+  },
+
+  'Should debug transaction using slider': function (browser) {
+    browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
+    .click('*[data-id="slider"]')
+    .setValue('*[data-id="slider"]', 50)
+    .pause(2000)
+    .assert.containsText('*[data-id="solidityLocals"]', "no locals")
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step: 92')
     .end()
   },
 
