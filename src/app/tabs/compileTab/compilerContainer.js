@@ -184,12 +184,12 @@ class CompilerContainer {
 
     this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fas fa-exclamation-triangle" aria-hidden="true"></i>`
     this._view.compileIcon = yo`<i class="fas fa-sync ${css.icon}" aria-hidden="true"></i>`
-    this._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${this.updateAutoCompile.bind(this)} id="autoCompile" data-id="compilerContainerAutoCompile" type="checkbox" title="Auto compile">`
-    this._view.hideWarningsBox = yo`<input class="${css.autocompile}" onchange=${this.hideWarnings.bind(this)} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
+    this._view.autoCompile = yo`<input class="${css.autocompile} custom-control-input" onchange=${this.updateAutoCompile.bind(this)} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile">`
+    this._view.hideWarningsBox = yo`<input class="${css.autocompile} custom-control-input" onchange=${this.hideWarnings.bind(this)} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
     if (this.data.autoCompile) this._view.autoCompile.setAttribute('checked', '')
     if (this.data.hideWarnings) this._view.hideWarningsBox.setAttribute('checked', '')
 
-    this._view.optimize = yo`<input onchange=${this.onchangeOptimize.bind(this)} id="optimize" type="checkbox">`
+    this._view.optimize = yo`<input onchange=${this.onchangeOptimize.bind(this)} class="custom-control-input" id="optimize" type="checkbox">`
     if (this.compileTabLogic.optimize) this._view.optimize.setAttribute('checked', '')
 
     this._view.versionSelector = yo`
@@ -233,7 +233,7 @@ class CompilerContainer {
     this._view.compilationButton = this.compilationButton()
 
     this._view.includeNightlies = yo`
-      <input class="mr-2" id="nightlies" type="checkbox" onchange=${() => this._updateVersionSelector()}>
+      <input class="mr-2 custom-control-input" id="nightlies" type="checkbox" onchange=${() => this._updateVersionSelector()}>
     `
     this._view.compileContainer = yo`
       <section>
@@ -247,9 +247,9 @@ class CompilerContainer {
               </label>
               ${this._view.versionSelector}
             </div>
-            <div class="mb-2 ${css.nightlyBuilds}">
+            <div class="mb-2 ${css.nightlyBuilds} custom-control custom-checkbox">
               ${this._view.includeNightlies}
-              <label for="nightlies" class="form-check-label">Include nightly builds</label>
+              <label for="nightlies" class="form-check-label custom-control-label">Include nightly builds</label>
             </div>
             <div class="mb-2">
               <label class="${css.compilerLabel} form-check-label" for="compilierLanguageSelector">Language</label>
@@ -261,17 +261,17 @@ class CompilerContainer {
             </div>
             <div class="mt-3">
               <p class="mt-2 ${css.compilerLabel}">Compiler Configuration</p>
-              <div class="mt-2 ${css.compilerConfig}">
+              <div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox">
                 ${this._view.autoCompile}
-                <label class="ml-2 form-check-label" for="autoCompile">Auto compile</label>
+                <label class="form-check-label custom-control-label" for="autoCompile">Auto compile</label>
               </div>
-              <div class="mt-2 ${css.compilerConfig}">
+              <div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox">
                 ${this._view.optimize}
-                <label class="ml-2 form-check-label" for="optimize">Enable optimization</label>
+                <label class="form-check-label custom-control-label" for="optimize">Enable optimization</label>
               </div>
-              <div class="mt-2 ${css.compilerConfig}">
+              <div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox">
                 ${this._view.hideWarningsBox}
-                <label class="ml-2 form-check-label" for="hideWarningsBox">Hide warnings</label>
+                <label class="form-check-label custom-control-label" for="hideWarningsBox">Hide warnings</label>
               </div>
             </div>
             ${this._view.compilationButton}
