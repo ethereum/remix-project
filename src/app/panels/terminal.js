@@ -195,7 +195,7 @@ class Terminal extends Plugin {
       </div>
     `
     self._view.term = yo`
-      <div class="${css.terminal_container}" data-id="terminalContainer" onscroll=${throttle(reattach, 10)}>
+      <div class="${css.terminal_container}" tabindex="-1" data-id="terminalContainer" onscroll=${throttle(reattach, 10)} onkeypress=${focusinput}>
         ${self._components.autoCompletePopup.render()}
         <div class="bg-secondary" data-id="terminalContainerDisplay" style="
           position: absolute;
@@ -303,9 +303,7 @@ class Terminal extends Plugin {
     })
 
     function focusinput (event) {
-      if (self._view.journal.offsetHeight - (self._view.term.scrollTop + self._view.term.offsetHeight) < 50) {
-        refocus()
-      }
+      refocus()
     }
     function refocus () {
       self._view.input.focus()
