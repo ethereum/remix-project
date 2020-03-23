@@ -91,7 +91,7 @@ class Editor extends Plugin {
     }
 
     // Editor Setup
-    const el = yo`<div id="input"></div>`
+    const el = yo`<div id="input" data-id="editorInput"></div>`
     this.editor = ace.edit(el)
 
     ace.acequire('ace/ext/language_tools')
