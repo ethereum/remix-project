@@ -1,9 +1,9 @@
-var yo = require('yo-yo')
+const yo = require('yo-yo')
 const globalRegistry = require('../../global/registry')
-var tooltip = require('../ui/tooltip')
-var copyToClipboard = require('../ui/copy-to-clipboard')
-var EventManager = require('../../lib/events')
-var css = require('./styles/settings-tab-styles')
+const tooltip = require('../ui/tooltip')
+const copyToClipboard = require('../ui/copy-to-clipboard')
+const EventManager = require('../../lib/events')
+const css = require('./styles/settings-tab-styles')
 import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
@@ -68,12 +68,14 @@ module.exports = class SettingsTab extends ViewPlugin {
     if (self._view.el) return self._view.el
 
     // Gist settings
-    var gistAccessToken = yo`<input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" class="border form-control mb-2 ${css.inline}" placeholder="Token">`
-    var token = this.config.get('settings/gist-access-token')
+    const token = this.config.get('settings/gist-access-token')
+    const gistAccessToken = yo`<input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" class="border form-control mb-2 ${css.inline}" placeholder="Token">`
     if (token) gistAccessToken.value = token
-    var gistAddToken = yo`<input class="btn btn-sm btn-primary mx-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onclick=${() => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
-    var gistRemoveToken = yo`<input class="btn btn-sm btn-primary mx-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" onclick=${() => { gistAccessToken.value = ''; this.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
-    this._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => gistAccessToken.value)}${gistAddToken}${gistRemoveToken}</div>`
+    const removeToken = () => { self.config.set('settings/gist-access-token', ''); gistAccessToken.value = ''; tooltip('Access token removed') }
+    const saveToken = () => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }
+    const gistAddToken = yo`<input class="btn btn-secondary mx-1" id="savegisttoken" data-id="settingsTabSaveGistToken" onclick=${() => saveToken()} value="Save" type="button">`
+    const gistRemoveToken = yo`<i class="mx-1 fas fa-trash-alt" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onclick=${() => removeToken()}" type="button"></i>`
+    this._view.gistToken = yo`<div class="text-secondary mb-0 h6">${gistAccessToken}${gistAddToken}${copyToClipboard(() => gistAccessToken.value)}${gistRemoveToken}</div>`
     this._view.optionVM = yo`<input onchange=${onchangeOption} class="align-middle form-check-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox">`
     if (this.config.get('settings/always-use-vm') === undefined) this.config.set('settings/always-use-vm', true)
     if (this.config.get('settings/always-use-vm')) this._view.optionVM.setAttribute('checked', '')
@@ -96,7 +98,7 @@ module.exports = class SettingsTab extends ViewPlugin {
       </div>
     </div>`
 
-    var warnText = `Transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it.
+    const warnText = `Transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it.
     This mode allows to provide the passphrase in the Remix interface without having to unlock the account.
     Although this is very convenient, you should completely trust the backend you are connected to (Geth, Parity, ...).
     Remix never persist any passphrase.`.split('\n').map(s => s.trim()).join(' ')
