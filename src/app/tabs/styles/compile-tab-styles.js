@@ -70,7 +70,7 @@ const css = csjs`
     margin: 0;
   }
   .compilerSection {
-    padding: 0 24px 16px;
+    padding: 12px 24px 16px;
   }
   .compilerLabel {
     margin-bottom: 2px;
