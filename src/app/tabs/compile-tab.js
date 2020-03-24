@@ -238,7 +238,7 @@ class CompileTab extends ViewPlugin {
     let selectEl = yo`
       <select
         onchange="${e => this.selectContract(e.target.value)}"
-        id="compiledContracts" class="custom-select"
+        data-id="compiledContracts" id="compiledContracts" class="custom-select"
       >
         ${contractList.map(({name, file}) => yo`<option value="${name}">${name} (${file})</option>`)}
       </select>
