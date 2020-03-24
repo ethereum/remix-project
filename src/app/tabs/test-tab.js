@@ -225,7 +225,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateGenerateFileAction (currentFile) {
-    let el = yo`<button class="${css.generateTestFile} btn btn-primary" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate test file</button>`
+    let el = yo`<button class="${css.generateTestFile} btn btn-primary" data-id="testTabGenerateTestFile" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate test file</button>`
     if (!currentFile) {
       el.setAttribute('disabled', 'disabled')
       el.setAttribute('title', 'No file selected')
