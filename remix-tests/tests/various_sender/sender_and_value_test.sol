@@ -9,11 +9,11 @@ contract SenderAndValueTest {
         Assert.equal(msg.sender, TestsAccounts.getAccount(1), "wrong sender in checkSenderIs1");
     }
 
-    /// #sender: account-0
+    /// #sender: account-9
     /// #value: 10
-    function checkSenderIs0AndValueis10 () public payable{
-        Assert.equal(msg.sender, TestsAccounts.getAccount(0), "wrong sender in checkSenderIs0AndValueis10");
-        Assert.equal(msg.value, 10, "wrong value in checkSenderIs0AndValueis10");
+    function checkSenderIs9AndValueis10 () public payable{
+        Assert.equal(msg.sender, TestsAccounts.getAccount(9), "wrong sender in checkSenderIs9AndValueis10");
+        Assert.equal(msg.value, 10, "wrong value in checkSenderIs9AndValueis10");
     }
 
     /// #value: 100

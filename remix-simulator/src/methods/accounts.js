@@ -7,7 +7,18 @@ const Accounts = function (executionContext) {
   this.web3 = new Web3()
   this.executionContext = executionContext
   // TODO: make it random and/or use remix-libs
-  this.accountsList = [this.web3.eth.accounts.create(['abcd']), this.web3.eth.accounts.create(['ef12']), this.web3.eth.accounts.create(['ef34'])]
+  this.accountsList = [
+    this.web3.eth.accounts.create(['abcd']),
+    this.web3.eth.accounts.create(['ef12']),
+    this.web3.eth.accounts.create(['ef34']),
+    this.web3.eth.accounts.create(['ab12']),
+    this.web3.eth.accounts.create(['ab34']),
+    this.web3.eth.accounts.create(['cd12']),
+    this.web3.eth.accounts.create(['cd34']),
+    this.web3.eth.accounts.create(['bcde']),
+    this.web3.eth.accounts.create(['cdef']),
+    this.web3.eth.accounts.create(['1234'])
+  ]
   this.accounts = {}
   this.accountsKeys = {}
 
