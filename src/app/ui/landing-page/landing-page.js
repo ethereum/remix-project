@@ -57,7 +57,7 @@ let css = csjs`
   }
   .logoContainer img{
     height: 150px;
-    opacity: 0.6;
+    opacity: 0.7;
   }
   .enviroments {
     display: flex;
