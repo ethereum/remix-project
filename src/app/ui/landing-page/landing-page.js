@@ -57,7 +57,7 @@ let css = csjs`
   }
   .logoContainer img{
     height: 150px;
-    opacity: 0.5;
+    opacity: 0.7;
   }
   .enviroments {
     display: flex;
@@ -172,8 +172,8 @@ export class LandingPage extends ViewPlugin {
       query.update({appVersion: '0.7.7'})
       document.location.reload()
     }
-    const img = yo`<img src="assets/img/hexagon-remix-greengrey-texture.png"></img>`
-    let container = yo`<div class="${css.homeContainer} bg-light" data-id="landingPageHomeContainer">
+    const img = yo`<img src="assets/img/sleepingRemiCroped.webp"></img>`
+    const container = yo`<div class="${css.homeContainer} bg-light" data-id="landingPageHomeContainer">
       <div>
         <div class="alert alert-info clearfix ${css.thisJumboton}">
           <div class="${css.headlineContainer}">
