@@ -64,18 +64,7 @@ class ContractDropdownUI {
         if (savedConfig !== null) {
           this.setCheckedState(savedConfig)
         } else {
-          if (this.exEnvironment === 'vm') {
-            this.setCheckedState(false)
-          } else if (this.exEnvironment === 'web3') {
-            this.setCheckedState(false)
-          } else if (this.exEnvironment === 'injected') {
-            if (this.networkName === 'Main') {
-              // select publish to ipfs by default for mainnet
-              this.setCheckedState(true)
-            } else {
-              this.setCheckedState(false)
-            }
-          }
+          this.setCheckedState(this.networkName === 'Main')
         }
       })
     })
@@ -101,7 +90,7 @@ class ContractDropdownUI {
     this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled></select>`
 
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
-    this.orLabel = yo`<div class="${css.orLabel}">or</div>`
+    this.orLabel = yo`<div class="${css.orLabel} mt-2">or</div>`
 
     if (this.exEnvironment === 'vm') this.networkName = 'VM'
     const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
@@ -119,16 +108,16 @@ class ContractDropdownUI {
         </div>
         <div>
           ${this.createPanel}
+          <div class="mt-2">
+            ${ipfsCheckbox}
+            <label for="deployAndRunPublishToIPFS" class="text-dark p-0 m-0">PUBLISH TO IPFS</label>
+            <i class="fas fa-info ml-2" aria-hidden="true" title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"></i>
+          </div>
           ${this.orLabel}
           <div class="${css.button} ${css.atAddressSect}">
             ${this.atAddress}
             ${this.atAddressButtonInput}
           </div>
-        </div>
-        <div class="mt-2">
-          ${ipfsCheckbox}
-          <label for="deployAndRunPublishToIPFS" class="text-dark p-0 m-0">PUBLISH TO IPFS</label>
-          <i class="fas fa-info ml-2" aria-hidden="true" title="Publishing the source code and ABI to IPFS facilitates source code verification and greatly foster contract adoption (auditing, debugging, calling it, etc...)"></i>
         </div>
       </div>
     `
