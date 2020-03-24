@@ -41,6 +41,11 @@ export class PermissionHandler {
 
   constructor () {
     this.permissions = this._getFromLocal()
+    // remove the old permissions saved in versions < 0.9.4 since the structior has been changed
+    if (!localStorage.getItem('isNewEngine')) {
+      localStorage.setItem('plugins/permissions', '')
+      localStorage.setItem('isNewEngine', 'true')
+    }
   }
 
   _getFromLocal () {
