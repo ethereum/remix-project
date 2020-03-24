@@ -384,7 +384,6 @@ function txDetails (e, tx, data, obj) {
 }
 
 function createTable (opts) {
-  console.log('opts: ', opts)
   var table = yo`<table class="${css.txTable}" id="txTable" data-id="txLoggerTable${opts.hash}"></table>`
   if (!opts.isCall) {
     var msg = ''
