@@ -17,7 +17,7 @@ StepDetail.prototype.updateField = function (key, value) {
 }
 
 StepDetail.prototype.render = function () {
-  return yo`<div id='stepdetail' >${this.basicPanel.render()}</div>`
+  return yo`<div id='stepdetail' data-id="stepdetail">${this.basicPanel.render()}</div>`
 }
 
 module.exports = StepDetail
