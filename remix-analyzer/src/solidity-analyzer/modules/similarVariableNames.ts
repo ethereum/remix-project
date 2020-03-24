@@ -6,7 +6,7 @@ import { get } from 'fast-levenshtein'
 import { util } from 'remix-lib'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, VisitFunction, ReportFunction} from './../../types'
 
-type SimilarRecord = {
+interface SimilarRecord {
   var1: string
   var2: string
   distance: number

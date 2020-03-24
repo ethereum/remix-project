@@ -10,7 +10,13 @@ type ModuleObj = {
 
 export default class staticAnalysisRunner {
 
-  run (compilationResult: CompilationResult, toRun: any[], callback: ((reports: AnalysisReport[]) => void)): void {
+  /**
+   * Run analysis (Used by IDE)
+   * @param compilationResult contract compilation result
+   * @param toRun module indexes (compiled from remix IDE)
+   * @param callback callback
+   */
+  run (compilationResult: CompilationResult, toRun: number[], callback: ((reports: AnalysisReport[]) => void)): void {
     const modules: ModuleObj[] = toRun.map((i) => {
       const m: AnalyzerModule = this.modules()[i]
       return { 'name': m.name, 'mod': m }
@@ -18,10 +24,16 @@ export default class staticAnalysisRunner {
     this.runWithModuleList(compilationResult, modules, callback)
   }
 
+  /**
+   * Run analysis passing list of modules to run
+   * @param compilationResult contract compilation result
+   * @param modules analysis module
+   * @param callback callback
+   */
   runWithModuleList (compilationResult: CompilationResult, modules: ModuleObj[], callback: ((reports: AnalysisReport[]) => void)): void {
     let reports: AnalysisReport[] = []
     // Also provide convenience analysis via the AST walker.
-    const walker: AstWalker = new AstWalker()
+    const walker = new AstWalker()
     for (let k in compilationResult.sources) {
       walker.walkFull(compilationResult.sources[k].ast, 
         (node: any) => {
@@ -55,6 +67,9 @@ export default class staticAnalysisRunner {
     callback(reports)
   }
 
+  /**
+   * Get list of all analysis modules
+   */
   modules (): any[] {
     return list
   }

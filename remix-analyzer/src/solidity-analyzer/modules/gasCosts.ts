@@ -3,7 +3,7 @@ import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
 import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContractObj, CompiledContract, VisitFunction, AnalyzerModule} from './../../types'
 
-type VisitedContract = {
+interface VisitedContract {
   name: string
   object: CompiledContract
   file: string
