@@ -119,6 +119,7 @@ class MultiParamManager {
     this.basicInputField = yo`<input class="form-control"></input>`
     this.basicInputField.setAttribute('placeholder', this.inputs)
     this.basicInputField.setAttribute('title', this.inputs)
+    this.basicInputField.setAttribute('data-id', this.inputs)
 
     var onClick = () => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
@@ -185,6 +186,7 @@ class MultiParamManager {
       expandedButton.classList.add('btn-info')
       funcButton.setAttribute('title', (title + ' - call'))
       funcButton.classList.add('btn-info')
+      funcButton.setAttribute('data-id', (title + ' - call'))
     } else if (this.funABI.stateMutability === 'payable' || this.funABI.payable) {
       // transact. stateMutability = payable
       expandedButton.setAttribute('title', (title + ' - transact (payable)'))
@@ -192,6 +194,7 @@ class MultiParamManager {
       expandedButton.classList.add('btn-danger')
       funcButton.setAttribute('title', (title + ' - transact (payable)'))
       funcButton.classList.add('btn-danger')
+      funcButton.setAttribute('data-id', (title + ' - transact (payable)'))
     } else {
       // transact. stateMutability = nonpayable
       expandedButton.setAttribute('title', (title + ' - transact (not payable)'))
@@ -199,6 +202,7 @@ class MultiParamManager {
       expandedButton.classList.add('btn-warning')
       funcButton.classList.add('btn-warning')
       funcButton.setAttribute('title', (title + ' - transact (not payable)'))
+      funcButton.setAttribute('data-id', (title + ' - transact (not payable)'))
     }
 
     if (this.funABI.inputs && this.funABI.inputs.length > 0) {
@@ -207,6 +211,7 @@ class MultiParamManager {
       contractProperty.classList.add(css.hasArgs)
       this.basicInputField.setAttribute('title', `'(${this.funABI.type}')`) // probably should pass name instead
       this.contractActionsContainerSingle.querySelector('i').style.visibility = 'hidden'
+      this.basicInputField.setAttribute('data-id', `'(${this.funABI.type}')`)
     } else {
       this.contractActionsContainerSingle.querySelector('i').style.visibility = 'hidden'
       this.basicInputField.style.visibility = 'hidden'
