@@ -1,7 +1,8 @@
 import { getStateVariableDeclarationsFromContractNode, getInheritsFromName, getContractName,
   getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, getFunctionDefinitionReturnParameterPart } from './staticAnalysisCommon'
 import { AstWalker } from 'remix-astwalker'
-import { FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode, ContractHLAst, VariableDeclarationAstNode, FunctionHLAst, ContractDefinitionAstNode, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult } from 'types'
+import { FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode, ContractHLAst, VariableDeclarationAstNode, 
+  FunctionHLAst, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult } from 'types'
 
 type WrapFunction = ((contracts: ContractHLAst[], isSameName: boolean) => ReportObj[])
 
@@ -47,10 +48,9 @@ export default class abstractAstView {
  * @return {ASTNode -> void} returns a function that can be used as visit function for static analysis modules, to build up a higher level AST view for further analysis.
  */
   build_visit (relevantNodeFilter: ((node:any) => boolean)): VisitFunction {
-    const that: abstractAstView = this
-    return function (node: any) {
+    return (node: any) => {
       if (node.nodeType === "ContractDefinition") {
-        that.setCurrentContract(that, {
+        this.setCurrentContract({
           node: node,
           functions: [],
           relevantNodes: [],
@@ -59,40 +59,40 @@ export default class abstractAstView {
           stateVariables: getStateVariableDeclarationsFromContractNode(node)
         })
       } else if (node.nodeType === "InheritanceSpecifier") {
-        const currentContract: ContractHLAst = that.getCurrentContract(that)
+        const currentContract: ContractHLAst = this.getCurrentContract()
         const inheritsFromName: string = getInheritsFromName(node)
         currentContract.inheritsFrom.push(inheritsFromName)
       } else if (node.nodeType === "FunctionDefinition") {
-        that.setCurrentFunction(that, {
+        this.setCurrentFunction({
           node: node,
           relevantNodes: [],
           modifierInvocations: [],
-          localVariables: that.getLocalVariables(node),
-          parameters: that.getLocalParameters(node),
-          returns: that.getReturnParameters(node)
+          localVariables: this.getLocalVariables(node),
+          parameters: this.getLocalParameters(node),
+          returns: this.getReturnParameters(node)
         })
         // push back relevant nodes to their the current fn if any
-        that.getCurrentContract(that).relevantNodes.map((item) => {
+        this.getCurrentContract().relevantNodes.map((item) => {
           if (item.referencedDeclaration === node.id) {
-            that.getCurrentFunction(that).relevantNodes.push(item.node)
+            this.getCurrentFunction().relevantNodes.push(item.node)
           }
         })
       } else if (node.nodeType === "ModifierDefinition") {
-        that.setCurrentModifier(that, {
+        this.setCurrentModifier({
           node: node,
           relevantNodes: [],
-          localVariables: that.getLocalVariables(node),
-          parameters: that.getLocalParameters(node)
+          localVariables: this.getLocalVariables(node),
+          parameters: this.getLocalParameters(node)
         })
       } else if (node.nodeType === "ModifierInvocation") {
-        if (!that.isFunctionNotModifier) throw new Error('abstractAstView.js: Found modifier invocation outside of function scope.')
-        that.getCurrentFunction(that).modifierInvocations.push(node)
+        if (!this.isFunctionNotModifier) throw new Error('abstractAstView.js: Found modifier invocation outside of function scope.')
+        this.getCurrentFunction().modifierInvocations.push(node)
       } else if (relevantNodeFilter(node)) {
-        let scope: FunctionHLAst | ModifierHLAst | ContractHLAst = (that.isFunctionNotModifier) ? that.getCurrentFunction(that) : that.getCurrentModifier(that)
+        let scope: FunctionHLAst | ModifierHLAst | ContractHLAst = (this.isFunctionNotModifier) ? this.getCurrentFunction() : this.getCurrentModifier()
         if (scope) {
           scope.relevantNodes.push(node)
         } else {
-          scope = that.getCurrentContract(that) // if we are not in a function scope, add the node to the contract scope
+          scope = this.getCurrentContract() // if we are not in a function scope, add the node to the contract scope
           if (scope && node.referencedDeclaration) {
             scope.relevantNodes.push({ referencedDeclaration: node.referencedDeclaration, node: node })
           }
@@ -102,10 +102,9 @@ export default class abstractAstView {
   }
 
   build_report (wrap: WrapFunction): ReportFunction {
-    const that: abstractAstView = this
-    return function (compilationResult: CompilationResult) {
-      that.resolveStateVariablesInHierarchy(that.contracts)
-      return wrap(that.contracts, that.multipleContractsWithSameName)
+    return (compilationResult: CompilationResult) => {
+      this.resolveStateVariablesInHierarchy(this.contracts)
+      return wrap(this.contracts, this.multipleContractsWithSameName)
     }
   }
 
@@ -127,35 +126,35 @@ export default class abstractAstView {
     })
   }
 
-  private setCurrentContract (that: abstractAstView, contract: ContractHLAst): void {
+  private setCurrentContract (contract: ContractHLAst): void {
     const name: string = getContractName(contract.node)
-    if (that.contracts.map((c: ContractHLAst) => getContractName(c.node)).filter((n) => n === name).length > 0) {
+    if (this.contracts.map((c: ContractHLAst) => getContractName(c.node)).filter((n) => n === name).length > 0) {
       console.log('abstractAstView.js: two or more contracts with the same name dectected, import aliases not supported at the moment')
-      that.multipleContractsWithSameName = true
+      this.multipleContractsWithSameName = true
     }
-    that.currentContractIndex = (that.contracts.push(contract) - 1)
+    this.currentContractIndex = (this.contracts.push(contract) - 1)
   }
 
-  private setCurrentFunction (that: abstractAstView, func: FunctionHLAst): void {
-    that.isFunctionNotModifier = true
-    that.currentFunctionIndex = (that.getCurrentContract(that).functions.push(func) - 1)
+  private setCurrentFunction (func: FunctionHLAst): void {
+    this.isFunctionNotModifier = true
+    this.currentFunctionIndex = (this.getCurrentContract().functions.push(func) - 1)
   }
 
-  private setCurrentModifier (that, modi): void {
-    that.isFunctionNotModifier = false
-    that.currentModifierIndex = (that.getCurrentContract(that).modifiers.push(modi) - 1)
+  private setCurrentModifier (modi): void {
+    this.isFunctionNotModifier = false
+    this.currentModifierIndex = (this.getCurrentContract().modifiers.push(modi) - 1)
   }
 
-  private getCurrentContract (that: abstractAstView): ContractHLAst {
-    return that.contracts[that.currentContractIndex]
+  private getCurrentContract (): ContractHLAst {
+    return this.contracts[this.currentContractIndex]
   }
 
-  private getCurrentFunction (that: abstractAstView): FunctionHLAst {
-    return that.getCurrentContract(that).functions[that.currentFunctionIndex]
+  private getCurrentFunction (): FunctionHLAst {
+    return this.getCurrentContract().functions[this.currentFunctionIndex]
   }
 
-  private getCurrentModifier (that:abstractAstView): ModifierHLAst {
-    return that.getCurrentContract(that).modifiers[that.currentModifierIndex]
+  private getCurrentModifier (): ModifierHLAst {
+    return this.getCurrentContract().modifiers[this.currentModifierIndex]
   }
 
   private getLocalParameters (funcNode: FunctionDefinitionAstNode | ModifierDefinitionAstNode): string[] {
