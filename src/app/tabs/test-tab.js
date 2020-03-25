@@ -267,7 +267,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
   render () {
     this.onActivationInternal()
-    this.testsOutput = yo`<div class="${css.container} m-3 border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="solidityUnittestsOutput"></div>`
+    this.testsOutput = yo`<div class="${css.container} m-3 border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></div>`
     this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="solidityUnittestsSummary"></div>`
     this.loading = yo`<span class='text-info ml-1'>Running tests...</span>`
     this.loading.hidden = true
@@ -289,6 +289,7 @@ module.exports = class TestTab extends ViewPlugin {
           ${this.updateRunAction()}
             <label class="${css.label} mx-4 m-2" for="checkAllTests">
               <input id="checkAllTests"
+                data-id="testTabCheckAllTests"
                 type="checkbox"
                 onclick="${(event) => { this.checkAll(event) }}"
                 checked="true"
