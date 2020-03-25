@@ -195,7 +195,7 @@ class Terminal extends Plugin {
       </div>
     `
     self._view.term = yo`
-      <div class="${css.terminal_container}" tabindex="-1" data-id="terminalContainer" onscroll=${throttle(reattach, 10)} onkeypress=${focusinput}>
+      <div class="${css.terminal_container}" tabindex="-1" data-id="terminalContainer" onscroll=${throttle(reattach, 10)} onkeydown=${focusinput}>
         ${self._components.autoCompletePopup.render()}
         <div class="bg-secondary" data-id="terminalContainerDisplay" style="
           position: absolute;
@@ -303,8 +303,13 @@ class Terminal extends Plugin {
     })
 
     function focusinput (event) {
-      refocus()
+      const excludeKeys = [16, 17, 18, 27, 37, 38, 39, 40, 91, 92]
+
+      if (!excludeKeys.includes(event.keyCode) && !(event.ctrlKey && event.keyCode)) {
+         refocus()
+      }
     }
+
     function refocus () {
       self._view.input.focus()
       reattach({ currentTarget: self._view.term })
