@@ -303,11 +303,24 @@ class Terminal extends Plugin {
     })
 
     function focusinput (event) {
-      const excludeKeys = [16, 17, 18, 27, 37, 38, 39, 40, 91, 92]
+      if (
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        event.key === 'Down' ||
+        event.key === 'ArrowDown' ||
+        event.key === 'Up' ||
+        event.key === 'ArrowUp' ||
+        event.key === 'Left' ||
+        event.key === 'ArrowLeft' ||
+        event.key === 'Right' ||
+        event.key === 'ArrowRight' ||
+        event.key === 'Esc' ||
+        event.key === 'Escape'
+        ) return
 
-      if (!excludeKeys.includes(event.keyCode) && !(event.ctrlKey && event.keyCode)) {
-         refocus()
-      }
+      refocus()
     }
 
     function refocus () {
