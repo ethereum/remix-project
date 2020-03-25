@@ -4,7 +4,7 @@ var css = require('./styles/modal-dialog-custom-styles')
 
 module.exports = {
   alert: function (title, text) {
-    if(text) return modal(title, yo`<div>${text}</div>`, null, { label: null })
+    if (text) return modal(title, yo`<div>${text}</div>`, null, { label: null })
     return modal('', yo`<div>${title}</div>`, null, { label: null })
   },
   prompt: function (title, text, inputValue, ok, cancel, focus) {
