@@ -239,7 +239,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateRunAction (currentFile) {
-    let el = yo`<button id="runTestsTabRunAction" class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</button>`
+    let el = yo`<button id="runTestsTabRunAction" data-id="testTabRunTestsTabRunAction" class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</button>`
     const isSolidityActive = this.appManager.actives.includes('solidity')
     if (!currentFile || !isSolidityActive) {
       el.setAttribute('disabled', 'disabled')
