@@ -16,6 +16,7 @@ module.exports = {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .clickLaunchIcon('fileExplorers')
     .addFile('simple_storage.sol', sources[0]['browser/simple_storage.sol'])
+    .addFile('ks2a.sol', sources[0]['browser/ks2a.sol'])
     .clickLaunchIcon('pluginManager')
     .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonsolidityUnitTesting"]')
     .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
@@ -31,16 +32,17 @@ module.exports = {
     .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
     .click('*[data-id="testTabGenerateTestFile"]')
     .waitForElementPresent('*[title="browser/test_test.sol"]')
+    .clickLaunchIcon('fileExplorers')
+    .removeFile('browser/test_test.sol')
   },
 
   'Should run simple unit test `simple_storage_test.sol` ': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .clickLaunchIcon('fileExplorers')
     .addFile('simple_storage_test.sol', sources[0]['browser/simple_storage_test.sol'])
     .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
     .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
     .click('*[data-id="testTabCheckAllTests"]')
-    .click('.singleTestLabel:nth-of-type(3)')
+    .click('.singleTestLabel:nth-of-type(2)')
     .scrollAndClick('#runTestsTabRunAction')
     .pause(10000)
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/simple_storage_test.sol (MyTest)')
@@ -49,30 +51,42 @@ module.exports = {
   },
 
   'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser) {
-    browser.pause(100000)
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    .clickLaunchIcon('fileExplorers')
+    .addFile('ks2b_test.sol', sources[0]['browser/ks2b_test.sol'])
+    .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
+    .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
+    .click('*[data-id="testTabCheckAllTests"]')
+    .click('.singleTestLabel:nth-of-type(3)')
+    .scrollAndClick('#runTestsTabRunAction')
+    .pause(10000)
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol (kickstarterTest)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project exists)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project is fundable)')
   },
 
-  'Solidity Unittests': function (browser) {
-    runTests(browser)
-  },
-
-  tearDown: sauce
-}
-
-function runTests (browser) {
-  browser
-    .waitForElementVisible('#icon-panel', 10000)
+  'Should run all test files': function (browser) {
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .clickLaunchIcon('fileExplorers')
     .switchFile('browser/3_Ballot.sol')
     .clickLaunchIcon('solidityUnitTesting')
     .scrollAndClick('#runTestsTabRunAction')
     .pause(5000)
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]')
-    .pause(10000)
-    .assert.containsText('#solidityUnittestsOutput', 'browser/4_Ballot_test.sol (BallotTest)')
-    .assert.containsText('#solidityUnittestsOutput', '✓ (Check winning proposal)')
-    .assert.containsText('#solidityUnittestsOutput', '✓ (Check winnin proposal with return value)')
+    .pause(20000)
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/4_Ballot_test.sol (BallotTest)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check winning proposal)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check winnin proposal with return value)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/simple_storage_test.sol (MyTest)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Initial value should be100)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Value is set200)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol (kickstarterTest)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project exists)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project is fundable)')
     .end()
+  },
+
+  tearDown: sauce
 }
 
 var sources = [
@@ -176,7 +190,7 @@ var sources = [
       }
         `
     },
-    'ks2b_test.sol': {
+    'browser/ks2b_test.sol': {
       content: `
       pragma solidity >=0.4.22 <0.6.0;
       pragma experimental ABIEncoderV2;
