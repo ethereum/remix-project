@@ -316,6 +316,7 @@ class CompileTab extends ViewPlugin {
   publish (storage) {
     if (this.selectedContract) {
       var contract = this.data.contractsDetails[this.selectedContract]
+
       if (contract.metadata === undefined || contract.metadata.length === 0) {
         modalDialogCustom.alert('This contract may be abstract, may not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
       } else {
@@ -331,7 +332,7 @@ class CompileTab extends ViewPlugin {
               var result = yo`<div>${uploaded.map((value) => {
                 return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
               })}</div>`
-              modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
+              modalDialogCustom.alert(`Published ${contract.name} Metadata`, yo`<span>Metadata of ${contract.name.toLowerCase()} contract was published successfully.<br> <pre>${result}</pre> </span>`)
             }
           }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
             this.fileProvider.addExternal('swarm/' + item.hash, item.content)
@@ -348,7 +349,7 @@ class CompileTab extends ViewPlugin {
               var result = yo`<div>${uploaded.map((value) => {
                 return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
               })}</div>`
-              modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
+              modalDialogCustom.alert(`Published ${contract.name} Metadata`, yo`<span>Metadata of ${contract.name.toLowerCase()} contract was published successfully.<br> <pre>${result}</pre> </span>`)
             }
           }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
             this.fileProvider.addExternal('ipfs/' + item.hash, item.content)
