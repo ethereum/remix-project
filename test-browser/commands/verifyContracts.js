@@ -16,6 +16,7 @@ function getCompiledContracts (browser, opts, callback) {
   browser
   .clickLaunchIcon('solidity')
   .pause(opts.wait)
+  .saveScreenshot(`test-browser/screenshots/screenshot_${new Date().valueOf()}.png`)
   .scrollInto('*[data-id="compiledContracts"] option:first-child')
   .waitForElementPresent('*[data-id="compiledContracts"] option')
   .execute(function () {
