@@ -122,7 +122,7 @@ function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, 
         if (availableFunctions.indexOf('beforeEach') >= 0) {
             runList.push({ name: 'beforeEach', type: 'internal', constant: false, payable: false })
         }
-        if(func.name) runList.push({ name: func.name, signature: func.signature, type: 'test', constant: isConstant(func), payable: isPayable(func) })
+        if(func.name && func.inputs) runList.push({ name: func.name, inputs: func.inputs, signature: func.signature, type: 'test', constant: isConstant(func), payable: isPayable(func) })
         if (availableFunctions.indexOf('afterEach') >= 0) {
             runList.push({ name: 'afterEach', type: 'internal', constant: false, payable: false })
         }
@@ -142,14 +142,12 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
     const isJSONInterfaceAvailable = testObject && testObject.options && testObject.options.jsonInterface
     if(!isJSONInterfaceAvailable)
         return resultsCallback(new Error('Contract interface not available'), { passingNum, failureNum, timePassed })
-    
     const runList: RunListInterface[] = createRunList(testObject.options.jsonInterface, fileAST, testName)
     const web3 = new Web3()
     const accts: TestResultInterface = {
       type: 'accountList',
       value: opts.accounts
     }
-
     testCallback(undefined, accts)
 
     const resp: TestResultInterface = {
@@ -157,7 +155,6 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
       value: testName,
       filename: testObject.filename
     }
-
     testCallback(undefined, resp)
     async.eachOfLimit(runList, 1, function (func, index, next) {
         let sender: string | null = null
@@ -169,6 +166,8 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         }
         let sendParams: Record<string, string> | null = null
         if (sender) sendParams = { from: sender }
+        if(func.inputs && func.inputs.length > 0)
+            return resultsCallback(new Error('Method inside a test contract can not have parameters'), { passingNum, failureNum, timePassed })
         const method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
         const startTime = Date.now()
         if (func.constant) {
@@ -248,7 +247,6 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                     return next(err)
                 }
             }).on('error', function (err: Error) {
-                console.error(err)
                 const time: number = (Date.now() - startTime) / 1000.0
                 const resp: TestResultInterface = {
                     type: 'testFailure',
