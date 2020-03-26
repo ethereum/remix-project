@@ -14,6 +14,7 @@ export interface FinalResult {
 /** List of tests to run **/
 export interface RunListInterface {
   name: string,
+  inputs?: any[]
   type: string,
   constant: boolean,
   payable: boolean,
