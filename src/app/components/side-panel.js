@@ -23,9 +23,9 @@ const css = csjs`
     font-size: 14px;
   }
   .swapitHeader {
-    height: 35px;
     display: flex;
     align-items: center;
+    padding: 16px 24px 15px;
   }
   .icons i {
     height: 80%;
@@ -128,7 +128,7 @@ export class SidePanel extends AbstractPanel {
     }
 
     const header = yo`
-      <header class="${css.swapitHeader} px-3">
+      <header class="${css.swapitHeader}">
         <h6 class="${css.swapitTitle}" data-id="sidePanelSwapitTitle">${name}</h6>
         ${docLink}
         ${versionWarning}

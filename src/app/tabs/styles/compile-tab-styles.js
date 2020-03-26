@@ -37,8 +37,6 @@ const css = csjs`
   .nightlyBuilds {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
-    align-content: center;
     align-items: center;
   }
   .autocompileContainer {
@@ -71,11 +69,20 @@ const css = csjs`
   .compilerConfig label {
     margin: 0;
   }
-  .compilerSm {
-    padding-left: 1.25rem;
+  .compilerSection {
+    padding: 12px 24px 16px;
   }
   .compilerLabel {
-    direction: rtl;
+    margin-bottom: 2px;
+    font-size: 11px;
+    line-height: 12px;
+    text-transform: uppercase;
+  }
+  .copyButton {
+    padding: 6px;
+    font-weight: bold;
+    font-size: 11px;
+    line-height: 15px;
   }
   .name {
     display: flex;
@@ -107,7 +114,7 @@ const css = csjs`
     align-items: center;
   }
   .contractHelperButtons {
-    margin-top: 10px;
+    margin-top: 6px;
     display: flex;
     align-items: center;
     justify-content: space-between;

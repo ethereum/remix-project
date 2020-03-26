@@ -121,15 +121,10 @@ class CompilerContainer {
   compilationButton (name = '') {
     const displayed = name || '<no file selected>'
     const disabled = name && this.isSolFileSelected() ? '' : 'disabled'
-    const compileBtn = yo`
-      <button id="compileBtn" data-id="compilerContainerCompileBtn" class="btn btn-primary btn-block ${disabled}" title="Compile" onclick="${this.compile.bind(this)}">
+    return yo`
+      <button id="compileBtn" data-id="compilerContainerCompileBtn" class="btn btn-primary btn-block ${disabled} mt-3" title="Compile" onclick="${this.compile.bind(this)}">
         <span>${this._view.compileIcon} Compile ${displayed}</span>
       </button>
-    `
-    return yo`
-      <div class="px-2 mt-2 pb-0 d-flex">
-        ${compileBtn}
-      </div>
     `
   }
 
@@ -189,12 +184,12 @@ class CompilerContainer {
 
     this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fas fa-exclamation-triangle" aria-hidden="true"></i>`
     this._view.compileIcon = yo`<i class="fas fa-sync ${css.icon}" aria-hidden="true"></i>`
-    this._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${this.updateAutoCompile.bind(this)} id="autoCompile" data-id="compilerContainerAutoCompile" type="checkbox" title="Auto compile">`
-    this._view.hideWarningsBox = yo`<input class="${css.autocompile}" onchange=${this.hideWarnings.bind(this)} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
+    this._view.autoCompile = yo`<input class="${css.autocompile} custom-control-input" onchange=${this.updateAutoCompile.bind(this)} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile">`
+    this._view.hideWarningsBox = yo`<input class="${css.autocompile} custom-control-input" onchange=${this.hideWarnings.bind(this)} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
     if (this.data.autoCompile) this._view.autoCompile.setAttribute('checked', '')
     if (this.data.hideWarnings) this._view.hideWarningsBox.setAttribute('checked', '')
 
-    this._view.optimize = yo`<input onchange=${this.onchangeOptimize.bind(this)} id="optimize" type="checkbox">`
+    this._view.optimize = yo`<input onchange=${this.onchangeOptimize.bind(this)} class="custom-control-input" id="optimize" type="checkbox">`
     if (this.compileTabLogic.optimize) this._view.optimize.setAttribute('checked', '')
 
     this._view.versionSelector = yo`
@@ -238,67 +233,51 @@ class CompilerContainer {
     this._view.compilationButton = this.compilationButton()
 
     this._view.includeNightlies = yo`
-      <input class="mr-0 ml-1" id="nightlies" type="checkbox" onchange=${() => this._updateVersionSelector()}>
+      <input class="mr-2 custom-control-input" id="nightlies" type="checkbox" onchange=${() => this._updateVersionSelector()}>
     `
     this._view.compileContainer = yo`
       <section>
         <!-- Select Compiler Version -->
         <article>
-          <header class="navbar navbar-light p-2 bg-light">
-            <div class="row w-100 no-gutters mb-2">
-              <div class="col-sm-4">
-                <div class="d-flex flex-row justify-content-end">
-                  <label class="${css.compilerLabel} form-check-label input-group-text pr-0 border-0 w-100" for="versionSelector">
-                    <button class="far fa-plus-square border-0 p-0 mx-2 btn-sm" onclick="${(e) => this.promtCompiler(e)}" title="Add a custom compiler with URL"></button>
-                    Compiler
-                  </label>
-                </div>
+          <header class="${css.compilerSection} border-bottom">
+            <div class="mb-2">
+              <label class="${css.compilerLabel} form-check-label" for="versionSelector">
+                Compiler
+                <button class="far fa-plus-square border-0 p-0 mx-2 btn-sm" onclick="${(e) => this.promtCompiler(e)}" title="Add a custom compiler with URL"></button>
+              </label>
+              ${this._view.versionSelector}
+            </div>
+            <div class="mb-2 ${css.nightlyBuilds} custom-control custom-checkbox">
+              ${this._view.includeNightlies}
+              <label for="nightlies" class="form-check-label custom-control-label">Include nightly builds</label>
+            </div>
+            <div class="mb-2">
+              <label class="${css.compilerLabel} form-check-label" for="compilierLanguageSelector">Language</label>
+              ${this._view.languageSelector}
+            </div>
+            <div class="mb-2">
+              <label class="${css.compilerLabel} form-check-label" for="evmVersionSelector">EVM Version</label>
+              ${this._view.evmVersionSelector}
+            </div>
+            <div class="mt-3">
+              <p class="mt-2 ${css.compilerLabel}">Compiler Configuration</p>
+              <div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox">
+                ${this._view.autoCompile}
+                <label class="form-check-label custom-control-label" for="autoCompile">Auto compile</label>
               </div>
-              <div class="col-sm-8">
-                ${this._view.versionSelector}
-                <div class="pt-0 ${css.nightlyBuilds}">
-                  <label for="nightlies" class="text-dark p-0 m-0 form-check-label">Include nightly builds</label>
-                  ${this._view.includeNightlies}
-                </div>
+              <div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox">
+                ${this._view.optimize}
+                <label class="form-check-label custom-control-label" for="optimize">Enable optimization</label>
+              </div>
+              <div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox">
+                ${this._view.hideWarningsBox}
+                <label class="form-check-label custom-control-label" for="hideWarningsBox">Hide warnings</label>
               </div>
             </div>
-            <div class="row w-100 no-gutters mb-2">
-              <div class="col-sm-4">
-                <label class="${css.compilerLabel} form-check-label input-group-text pl-0 border-0" for="compilierLanguageSelector">Language</label>
-              </div>
-              <div class="col-sm-8">
-                ${this._view.languageSelector}
-              </div>
-            </div>
-            <div class="row w-100 no-gutters">
-              <div class="col-sm-4">
-                <label class="${css.compilerLabel} form-check-label input-group-text pl-0 border-0" for="evmVersionSelector">EVM Version</label>
-              </div>
-              <div class="col-sm-8">
-                ${this._view.evmVersionSelector}
-              </div>
-            </div>
+            ${this._view.compilationButton}
           </header>
-          ${this._view.compilationButton}
         </article>
         <!-- Config -->
-        <article class="p-2">
-          <small class="${css.compilerSm}">Compiler Configuration</small>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item form-group ${css.compilerConfig}">
-              ${this._view.autoCompile}
-              <label class="form-check-label" for="autoCompile">Auto compile</label>
-            </li>
-            <li class="list-group-item form-group ${css.compilerConfig}">
-              ${this._view.optimize}
-              <label class="form-check-label" for="optimize">Enable optimization</label>
-            </li>
-            <li class="list-group-item form-group ${css.compilerConfig}">
-              ${this._view.hideWarningsBox}
-              <label class="form-check-label" for="hideWarningsBox">Hide warnings</label>
-            </li>
-          </ul>
-        </article>
       </section>`
 
     return this._view.compileContainer
