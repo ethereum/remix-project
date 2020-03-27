@@ -167,7 +167,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         let sendParams: Record<string, string> | null = null
         if (sender) sendParams = { from: sender }
         if(func.inputs && func.inputs.length > 0)
-            return resultsCallback(new Error('Method inside a test contract can not have parameters'), { passingNum, failureNum, timePassed })
+            return resultsCallback(new Error(`Method '${func.name}' can not have parameters inside a test contract`), { passingNum, failureNum, timePassed })
         const method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
         const startTime = Date.now()
         if (func.constant) {
