@@ -121,8 +121,12 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateFinalResult (_errors, result, filename) {
     this.testsSummary.hidden = false
-    if (_errors) {
+    if (_errors && _errors.errors) {
       _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsSummary, {type: err.severity}))
+      return
+    } else if (_errors && !_errors.errors && !Array.isArray(_errors)) {
+      // To track error like this: https://github.com/ethereum/remix/pull/1438
+      this.renderer.error(_errors.formattedMessage || _errors.message, this.testsSummary, {type: 'error'})
       return
     }
     this.testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
