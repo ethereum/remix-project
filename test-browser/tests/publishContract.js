@@ -17,7 +17,7 @@ module.exports = {
     .verifyContracts(['Ballot'])
     .click('#publishOnIpfs')
     .getModalBody((value, done) => {
-      if (value.indexOf('Metadata of ballot contract was published successfully.') === -1) browser.assert.fail('ipfs deploy failed', '', '')
+      if (value.indexOf('Metadata of ballot was published successfully.') === -1) browser.assert.fail('ipfs deploy failed', '', '')
       if (value.indexOf('dweb:/ipfs') === -1) browser.assert.fail('ipfs deploy failed', '', '')
       done()
     })
@@ -28,7 +28,7 @@ module.exports = {
     browser
     .click('#publishOnSwarm')
     .getModalBody((value, done) => {
-      if (value.indexOf('Metadata published successfully.') === -1) browser.assert.fail('swarm deploy failed', '', '')
+      if (value.indexOf('Metadata of ballot was successfully.') === -1) browser.assert.fail('swarm deploy failed', '', '')
       if (value.indexOf('bzz') === -1) browser.assert.fail('swarm deploy failed', '', '')
       done()
     })
