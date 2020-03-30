@@ -118,11 +118,8 @@ function runTests (browser, testData) {
     .perform(function (done) {
       testImportFromRemixd(browser, () => { done() })
     })
-    .clickLaunchIcon('fileExplorers').click('[data-path="localhost"]') // collapse and expand
-    .waitForElementNotVisible('[data-path="localhost/folder1"]')
-    .click('[data-path="localhost"]')
+    .clickLaunchIcon('fileExplorers')
     .waitForElementVisible('[data-path="localhost/folder1"]')
-    .click('[data-path="localhost/folder1"]')
     .waitForElementVisible('[data-path="localhost/folder1/contract1.sol"]')
     .waitForElementVisible('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]') // check if renamed file is preset
     .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // check if renamed (old) file is not present
