@@ -28,15 +28,6 @@ var css = csjs`
   .gist i:hover    {
     color             : orange;
   }
-  .copyFiles            {
-    padding           : 10px;
-  }
-  .copyFiles i          {
-    cursor            : pointer;
-  }
-  .copyFiles i:hover    {
-    color             : orange;
-  }
   .connectToLocalhost {
     padding           : 10px;
   }
