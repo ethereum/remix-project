@@ -44,10 +44,13 @@ module.exports = {
     .click('*[data-id="testTabCheckAllTests"]')
     .click('.singleTestLabel:nth-of-type(2)')
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-    .pause(10000)
+    .pause(15000)
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/simple_storage_test.sol (MyTest)')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Initial value should be100)')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Value is set200)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ (Should fail for wrong value200)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', '1 failing')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', '2 passing')
   },
 
   'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser) {
@@ -59,32 +62,60 @@ module.exports = {
     .click('*[data-id="testTabCheckAllTests"]')
     .click('.singleTestLabel:nth-of-type(3)')
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-    .pause(10000)
+    .pause(15000)
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol (kickstarterTest)')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project exists)')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project is fundable)')
   },
 
-  'Should run all test files': function (browser) {
+  'Should fail on compilation': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    .addFile('compilationError_test.sol', sources[0]['browser/compilationError_test.sol'])
     .clickLaunchIcon('fileExplorers')
-    .switchFile('browser/3_Ballot.sol')
+    .switchFile('browser/compilationError_test.sol')
     .clickLaunchIcon('solidityUnitTesting')
+    .click('*[data-id="testTabCheckAllTests"]')
+    .click('.singleTestLabel:nth-of-type(4)')
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-    .pause(30000)
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/4_Ballot_test.sol (BallotTest)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check winning proposal)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check winnin proposal with return value)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/simple_storage_test.sol (MyTest)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Initial value should be100)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Value is set200)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol (kickstarterTest)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project exists)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project is fundable)')
-    .end()
+    .pause(5000)
+    .waitForElementPresent('*[data-id="testTabSolidityUnitTestsSummary"]')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'SyntaxError: No visibility specified')
+  },
+
+  'Should fail on deploy': function (browser) {
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    .addFile('deployError_test.sol', sources[0]['browser/deployError_test.sol'])
+    .clickLaunchIcon('fileExplorers')
+    .switchFile('browser/deployError_test.sol')
+    .clickLaunchIcon('solidityUnitTesting')
+    .click('*[data-id="testTabCheckAllTests"]')
+    .click('.singleTestLabel:nth-of-type(5)')
+    .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
+    .pause(10000)
+    .waitForElementPresent('*[data-id="testTabSolidityUnitTestsSummary"]')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'contract deployment failed after trying twice')
+  },
+
+  'Solidity Unittests': function (browser) {
+    runTests(browser)
   },
 
   tearDown: sauce
+}
+
+function runTests (browser) {
+  browser
+    .waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    .clickLaunchIcon('fileExplorers')
+    .switchFile('browser/3_Ballot.sol')
+    .clickLaunchIcon('solidityUnitTesting')
+    .scrollAndClick('#runTestsTabRunAction')
+    .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]')
+    .pause(10000)
+    .assert.containsText('#solidityUnittestsOutput', 'browser/4_Ballot_test.sol (BallotTest)')
+    .assert.containsText('#solidityUnittestsOutput', '✓ (Check winning proposal)')
+    .assert.containsText('#solidityUnittestsOutput', '✓ (Check winnin proposal with return value)')
+    .end()
 }
 
 var sources = [
@@ -129,6 +160,11 @@ var sources = [
 
         function valueIsSet200() public returns (bool) {
           foo.set(200);
+          return Assert.equal(foo.get(), 200, "value is not 200");
+        }
+
+        function shouldFailForWrongValue200() public returns (bool) {
+          foo.set(300);
           return Assert.equal(foo.get(), 200, "value is not 200");
         }
       }
@@ -221,6 +257,28 @@ var sources = [
               kickstarter.fundProject.value(120000)(0);
               (address owner, string memory name, uint goal, uint fundsAvailable, uint amountContributed, Kickstarter.State state) = kickstarter.projects(0);
               Assert.equal(amountContributed, 120000, "contributed amount is incorrect");
+          }
+      }
+        `
+    },
+    'browser/compilationError_test.sol': {
+      content: `
+      pragma solidity ^0.6.1;
+      
+      contract failOnCompilation {
+        fallback() {
+
+        }
+      }
+        `
+    },
+    'browser/deployError_test.sol': {
+      content: `
+      pragma solidity ^0.6.0;
+
+      contract failingDeploy {
+          constructor() public {
+              revert('Deploy Failed');
           }
       }
         `
