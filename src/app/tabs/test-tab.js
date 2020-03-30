@@ -268,7 +268,7 @@ module.exports = class TestTab extends ViewPlugin {
   render () {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="${css.container} m-3 border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></div>`
-    this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="solidityUnittestsSummary"></div>`
+    this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="solidityUnittestsSummary" data-id="testTabSolidityUnitTestsSummary"></div>`
     this.loading = yo`<span class='text-info ml-1'>Running tests...</span>`
     this.loading.hidden = true
     var el = yo`
