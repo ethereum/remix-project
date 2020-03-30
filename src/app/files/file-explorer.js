@@ -563,36 +563,6 @@ fileExplorer.prototype.packageFiles = function (filesProvider, directory, callba
   })
 }
 
-// ------------------ copy files --------------
-fileExplorer.prototype.copyFiles = function () {
-  let self = this
-  modalDialogCustom.prompt(
-    'Copy files from browser explorer',
-    'To which other remix-ide instance do you want to copy over all files?',
-    'https://remix.ethereum.org',
-    (target) => {
-      doCopy(target)
-    }
-  )
-  function doCopy (target) {
-    // package only files from the browser storage.
-    self.packageFiles(self.files, '/', (error, packaged) => {
-      if (error) {
-        console.log(error)
-      } else {
-        let iframe = yo`
-          <iframe src=${target} style='display:none;'></iframe>
-        `
-        iframe.onload = function () {
-          iframe.contentWindow.postMessage(['loadFiles', packaged], '*')
-          tooltip('Files copied successfully.')
-        }
-        document.querySelector('body').appendChild(iframe)
-      }
-    })
-  }
-}
-
 fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
   let self = this
   modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
