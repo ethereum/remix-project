@@ -89,8 +89,8 @@ class FileManager extends Plugin {
       }
     }
     // TODO: Only keep `this.emit` (issue#2210)
-    this.emit('fileRenamed', oldName, newName)
-    this.events.emit('fileRenamed', oldName, newName)
+    this.emit('fileRenamed', oldName, newName, isFolder)
+    this.events.emit('fileRenamed', oldName, newName, isFolder)
   }
 
   currentFileProvider () {
