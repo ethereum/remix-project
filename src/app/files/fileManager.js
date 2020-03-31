@@ -149,63 +149,23 @@ class FileManager extends Plugin {
   }
 
   async setFile (path, content) {
-    let reject = false
-    let saveAsCopy = false
-
-    function acceptFileRewriting (e, toaster) {
-      reject = false
-      e.target.innerHTML = 'Accepted'
-      toaster.hide()
-      toaster.forceResolve()
-    }
-    function cancelFileRewriting (e, toaster) {
-      reject = true
-      e.target.innerHTML = 'Canceled'
-      toaster.hide()
-    }
-    const saveFileAsCopy = (e, toaster) => {
-      if (saveAsCopy) return
-      this._saveAsCopy(path, content)
-
-      saveAsCopy = true
-      e.target.innerHTML = 'Saved'
-      toaster.hide()
-    }
     if (this.currentRequest) {
       const canCall = await this.askUserPermission('setFile', '')
       if (canCall) {
         this._setFileInternal(path, content)
-        return
-      }
-
-      let actions = (toaster) => {
-        return yo`
-          <div class="container ml-1">
-            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => acceptFileRewriting(e, toaster)}>
-              Accept
-            </button>
-            <button class="btn btn-primary btn-sm m-1" onclick=${(e) => cancelFileRewriting(e, toaster)}>
-              Cancel
-            </button>
-            <button class="btn btn-primary btn-sm m-1" onclick="${(e) => saveFileAsCopy(e, toaster)}">
-              Save As Copy
-            </button>
+        // inform the user about modification after permission is granted and even if permission was saved before
+        await toaster(yo`
+          <div>
+            <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
+            <span>
+              ${this.currentRequest.from}
+              <span class="font-weight-bold text-warning">
+                is modifying 
+              </span>${path}
+            </span>
           </div>
-        `
+        `, '', { time: 5000 })
       }
-      await toaster(yo`
-        <div>
-          <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
-          <span>
-            ${this.currentRequest.from}
-            <span class="font-weight-bold border-bottom border-danger">
-              is trying to create or modify 
-            </span>${path}
-          </span>
-        </div>
-      `, actions, { time: 5000 })
-      if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
-      if (saveAsCopy) return
     }
     this._setFileInternal(path, content)
   }
