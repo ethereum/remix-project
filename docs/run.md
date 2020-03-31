@@ -1,49 +1,77 @@
 Deploy & Run
 ============
 
-The Deploy & Run module allows you to send transactions to the current environment.
+![](images/a-run-icon.png) The Deploy & Run module allows you to send transactions to the current environment.
 
-To get to the Run & Deploy module - click the run icon in the icon panel.
+To use this module, you need to have a contract compiled.  So, if there is a contract name in the <b>CONTRACT</b> select box (the select box is under the VALUE input field), you can use this module.  If nothing is there or you do not see the contract you want, you need to select a contract in the editor to make it active, go to a compiler module and compile it, and then come back to Deploy & Run.
 
-In order to use this module you need to have a contract compiled.  So, if there is a contract name in the contract select box (in the image below it's the pulldown that says **Ballot**), then you can interact with this contract.  If nothing is there - then you need to select a contract. And you do that by clicking the file in the editor panel to make it the active tab ( in the image below - on the right side of the page - in the main panel - you see the ballot.sol so it is the active contract).  Once its active, then go to the compiler module and compile it. Then come back to Deploy & Run.
+![](images/a-runtab1a.png)
 
-![](images/a-runtab2.png)
-
-Run Setup
+Environment
 ---------
-
-The following settings allow you to directly influence the transaction
-execution:
-
-**Environment:**
 
 -   `JavaScript VM`: All the transactions will be executed in
     a sandbox blockchain in the browser. This means nothing
     will be persisted when you reload the page. The JsVM is its own blockchain and on each reload it will start a new blockchain, the old one will not be saved.
 
 -   `Injected Provider`: Remix will connect to an injected
-    web3 provider. `Metamask` is an example of a 
-    provider that inject web3.
+    web3 provider. `Metamask` is an example of a provider that inject web3.
 
--   `Web3 Provider`: Remix will connect to a remote node. You will need to provide the URL to the selected provider: geth, parity or any Ethereum client.
+-   `Web3 Provider`: Remix will connect to a remote node. You will need to provide the URL to the selected provider: geth, parity or any Ethereum client. 
 
-**Account:**
+More about Web3 Provider
+-------------
+If you are using Geth & https://remix.ethereum.org, please use the following Geth command to allow requests from Remix:
+
+**geth --rpc --rpccorsdomain https://remix.ethereum.org**
+
+Also see [Geth Docs about the rpc server](https://geth.ethereum.org/docs/rpc/server)
+
+To run Remix using  https://remix.ethereum.org & a local test node, use this Geth command:
+
+**geth --rpc --rpccorsdomain="https://remix.ethereum.org" --rpcapi web3,eth,debug,personal,net --vmdebug --datadir <path/to/local/folder/for/test/chain> --dev console**
+
+If you are using remix-alpha or a local version of remix - replace the url of the --rpccorsdomain with the url of Remix that you are using. 
+
+To run Remix Desktop & a local test node, use this Geth command:
+
+**geth --rpc --rpccorsdomain="package://a7df6d3c223593f3550b35e90d7b0b1f.mod" --rpcapi web3,eth,debug,personal,net --vmdebug --datadir <path/to/local/folder/for/test/chain> --dev console**
+
+Also see [Geth Docs on Dev mode](https://geth.ethereum.org/getting-started/dev-mode)
+
+The Web3 Provider Endpoint for a local node is **http://localhost:8545**
+
+---
+
+**WARNING:** Don't get lazy. It is a bad idea to use the Geth flag <b>--rpccorsdomain</b> with a wildcard: `--rpccorsdomain *`
+
+If you put the wildcard `*`, it means everyone can request the node. Whereas, if you put a URL, it restricts the urls to just that one - e.g.  `--rpccorsdomain 'https://remix-alpha.ethereum.org'`
+
+Only use `--rpccorsdomain *` when using a **test chain** AND using only **test accounts**. For real accounts or on the mainchain **specify the url**.
+
+--- 
+      
+
+Account:
+--------
 -   Account: the list of accounts associated with the current
      environment (and their associated balances).  On the JsVM, you have a choice of 5 accounts.  If using Injected Web3 with MetaMask, you need to change the account in MetaMask.
 
-**Gas Limit:**
+Gas Limit:
+---------
 -   This sets the maximum amount of gas that will be allowed for all the
      transactions created in Remix.
 
-**Value:**
--   This sets the amount of ETH, WEI, GWEI etc that is sent to a contract or a payable function.  ( Note: payable functions have a red button). The value is always reset to 0 after each transaction execution).
+Value:
+-----
+-   This sets the amount of ETH, WEI, GWEI etc that is sent to a contract or a payable function.  ( Note: payable functions have a red button). The value is always reset to 0 after each transaction execution). The Value field is **NOT** for gas.  
 
  ![](images/a-Runtab-deploy-atAddress.png)
 
 Initiate Instance
 -----------------
 
--   In the image above the select box is set to Ballot.  This select box will contain the list of compiled contracts.
+-   In the image above, the select box is set to Ballot.  This select box will contain the list of compiled contracts.
 
 -   `Deploy` send a transaction that deploys the selected contract. When
     the transaction is mined, the newly created instance will be added
@@ -57,7 +85,7 @@ Pending Instances
 -----------------
 
 Validating a transaction takes several seconds. During this time, the GUI
-shows it in a pending mode. When the transaction is mined the number of
+shows it in a pending mode. When the transaction is mined, the number of
 pending transactions is updated and the transaction is added to the log
 ([see terminal](terminal.html)).
 
