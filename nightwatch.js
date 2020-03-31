@@ -18,8 +18,10 @@ module.exports = {
         'asyncHookTimeout': 100000
       },
       'screenshots': {
-        'enabled': false,
-        'path': ''
+        'enabled': true,
+        'path': './reports/screenshots',
+        'on_failure': true,
+        'on_error': true
       },
       'desiredCapabilities': {
         'browserName': 'firefox',
