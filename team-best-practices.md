@@ -4,7 +4,6 @@
 This document aims to address contibutors best practices of the following repositories:
  - remix-ide https://github.com/ethereum/remix-ide
  - remix https://github.com/ethereum/remix
- - remix-tests https://github.com/ethereum/remix-tests
  - remixd https://github.com/ethereum/remixd
 
 This document is not in its final version, **a team meeting which aim to address new/old best practices, feedback, workflows, all kind of issues related to how the team work together occurs every 2 weeks.**
@@ -12,9 +11,8 @@ This document link to other specialised best practices (like coding best practic
 
 Related links:
  - Remix basic FAQ: https://hackmd.io/KVooMJhWRImCGq6zkDgW9A
- - Remix weekly agenda: https://hackmd.io/2nJJZmMPQwCN4qwkxmfXVQ?edit
- - Remix live: remix.ethereum.org
- - Remix alpha live: remix-alpha.ethereum.org
+ - Remix live: https://remix.ethereum.org
+ - Remix alpha live: https://remix-alpha.ethereum.org
  - Remix-ide NPM module: https://www.npmjs.com/package/remix-ide
  - Remix-lib NPM module: https://www.npmjs.com/package/remix-lib
  - Remix-solidity NPM module: https://www.npmjs.com/package/remix-solidity
@@ -22,15 +20,16 @@ Related links:
  - Remix documentation: http://remix-ide.readthedocs.io/en/latest/
  - General gitter channel: https://gitter.im/ethereum/remix
  - Dev gitter channel: https://gitter.im/ethereum/remix-dev
- - Huboard (task management tool): https://huboard.com/ethereum/remix-ide
-
+ 
 ---
 
 # Team communication
 
  ### 1) Team meetings:
  
- - A regular standup - each Tuesday 4pm CET - which aim to 
+ - Daily standup (1pm15) for taking care of the current issues.
+ 
+ - A regular standup - each Tuesday 3pm CET - which aim to 
     - Update every contributor on what others are doing.
     - Update the prioritised issues / PRs list.
     - Address little issues (possibly related to the current ongoing milestone).
@@ -38,9 +37,9 @@ Related links:
 
  - A milestone standup - scheduled before the beginning of each milestone, roughly on a monthly basis - which aim to define what will be included in the **next milestone** and who will work on what. This standup also help to set a clear long term vision.
  
- - A retrospective standup - every 2 weeks - which aim to talk about **best practices in general**: what is good, what is bad, how we can improve workflows.
+ - A retrospective standup - after each released - which aim to talk about **best practices in general**: what is good, what is bad, how we can improve workflows.
 
- - A tour standup - on a monthly basis and just after a milestone finished - which aim to demo, **explain in details** features, bug fixes or any part of the codebase.
+ - A tour standup - Just after a release or whenever it is needed - which aim to demo, **explain in details** features, bug fixes or any part of the codebase.
  
  
  ### 2) Group meetings:
@@ -52,7 +51,6 @@ Related links:
      - What is the general vision of the UX design for this particular story.
      Later progress and discussion is updated directly on the issue or pull request (Github).
  
-
 ---
 
 # Prerequisites:
@@ -69,13 +67,12 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 
 # Story / Bug fix
 
-- Prioritised list of PRs / issues are tracked in the Remix huboard.
+- Prioritised list of PRs / issues are tracked in a Github Project.
 - Every story can be executed by a single developer or a group of 2 or more developers (depending on the size and complexity)
 - Each dev should take the part he/she feels the most confortable with.
 - Later progress and discussion is updated directly on the issue or pull request (github).
 - When a developer or team decides on the story they want to work on (at the start of milestone for instance), they assign themselves to the issue. 
-- The issue whould be moved in Huboard to the column named `working` when the work actually starts.
-- Updates of the documentation should be done together with the story.
+- Documentation update should be done together with the story, or an issue with the label "documentation" has to be created.
 
 ---
 
@@ -89,7 +86,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - Code should comply to the `JavaScript standard style` - https://www.npmjs.com/package/standard
  - You should not expect complete review on a pull request which is not passing CI.
  - You can obviously ask for feedback on your approach.
- - You should assign a reviewer.
+ - You should assign a reviewer(s).
  - Pull requests should be used as a reference to update coding best practices whenever it is needed.
 
  ### 2) Review:
@@ -108,25 +105,25 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - Pull request should be reviewed to comply to coding best practices.
  - You should take the responsability of the PR you are reviewing.
  - You should make sure the app is viable after the PR is being merged.
+ - You should make sure the PR is correctly tested (e2e tests, unit tests)
  - Ideally You should have enough knowledge to be able to fix related bugs.
       
  ### 3) Merge:
 
  - Merging is possible after Review and Tests are ok and when the PR is approved.
- - If possible the build of the dev branch (master) should be triggered in the Travis CI.
- - After a merge and master being built in Travis, it is highly recommended to check the new code in `remix-alpha.ethereum.org`
+ - After a merge, it is highly recommended to check the new code in `remix-alpha.ethereum.org`
 
 ---
 
 # Milestone
 
- - A milestone is small and contains **only** items we are sure to finish.
+ - A milestone should **only** contain items we are sure to finish.
  - The end of a milestone trigger a new release.
  - Milestone items and duration should take in account time spent in bugs fixing and support.
  - The team should commit to the milestone duration.
  - If a dev finish early he/she can help other to push remaining tasks.
  - If a dev finish early he/she can work on specifying / integrating the next milestone.
- - A milestone duration is fixed at the start of the milestone (but should not exceed 1 month).
+ - A milestone duration is fixed at the start of the milestone (but should better not exceed 1 month).
  - Progress and issues regarding a milestone are discussed on regular standups.
 
 ---
@@ -138,7 +135,6 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - A new release is triggered:
     - after an important bug fix
     - at the end of a milestone
- - Pushing `remix-alpha.ethereum.org` should be done very frequently (if possible after each feature / bug fix completion.
  - We can release an `m.m.m-alpha.x` (whenever we need to release and for whatever reasons) being in between a feature / bug fix completion.
  - We release an `m.m.x` whenever there is a bug fix.
  - We release an `m.x.0` whenever there is a new feature.
@@ -159,7 +155,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 ### 1) Bugs:
 - A critical bug should get the label `Blocker`, and every effort should be put to fix it.
 - Addressing a non critical and non planned bug can be done:
-  - After having notified in the `remix-dev` channel if the bug does not involves UX or public API changes.
+  - After having notified in the `remix-dev` channel if the bug does not involves UX or public API changes.
   - After a dev meeting (e.g the regular standup) if the bug involves any UX or public API changes.
 
 ### 2) Support:
@@ -226,4 +222,3 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - https://github.com/pipermerriam/ethereum-dev-tactical-manual/blob/master/opsec.md
 ### bug bounty program
  - https://github.com/pipermerriam/ethereum-dev-tactical-manual/blob/master/bug-bounty-program.md
-
