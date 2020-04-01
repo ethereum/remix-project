@@ -182,11 +182,16 @@ staticAnalysisView.prototype.renderModules = function () {
 
 module.exports = staticAnalysisView
 
+/**
+ * @dev Process & categorize static analysis modules to show them on UI
+ * @param arr list of static analysis modules received from remix-analyzer module
+ */
 function preProcessModules (arr) {
-  return arr.map((item, i) => {
-    item['_index'] = i
-    item.categoryDisplayName = item.category.displayName
-    item.categoryId = item.category.id
-    return item
+  return arr.map((Item, i) => {
+    const itemObj = new Item()
+    itemObj['_index'] = i
+    itemObj.categoryDisplayName = itemObj.category.displayName
+    itemObj.categoryId = itemObj.category.id
+    return itemObj
   })
 }
