@@ -212,7 +212,6 @@ class SettingsUI {
     this.event.trigger('clearInstance', [])
     this.updateNetwork()
     this.updatePlusButton()
-    this.blockchain.event.trigger('newExecutionContext', [])
   }
 
   updatePlusButton () {

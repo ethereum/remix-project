@@ -49,7 +49,7 @@ class ContractDropdownUI {
   }
 
   listenToContextChange () {
-    this.blockchain.event.register('newExecutionContext', () => {
+    this.blockchain.event.register('contextChanged', () => {
       this.blockchain.updateNetwork((err, {name} = {}) => {
         if (err) {
           console.log(`can't detect network`)
