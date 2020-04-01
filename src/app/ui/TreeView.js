@@ -45,6 +45,7 @@ class TreeView {
     this.extractData = opts.extractData || this.extractDataDefault
     this.formatSelf = opts.formatSelf || this.formatSelfDefault
     this.view = null
+    this.expandPath = []
   }
 
   render (json, expand) {
@@ -86,14 +87,20 @@ class TreeView {
         ${caret}
         <span>${self.formatSelf(key, data, li)}</span>
       </div>`
+    const expanded = self.expandPath.includes(keyPath)
     li.appendChild(label)
     if (data.children) {
       var list = yo`<ul key=${keyPath} data-id="treeViewUlList${keyPath}" class=${css.ul_tv}>${children}</ul>`
-      list.style.display = 'none'
+      list.style.display = expanded ? 'block' : 'none'
       caret.className = list.style.display === 'none' ? `fas fa-caret-right caret ${css.caret_tv}` : `fas fa-caret-down caret ${css.caret_tv}`
       caret.setAttribute('data-id', `treeViewToggle${keyPath}`)
       label.onclick = function () {
         self.expand(keyPath)
+        if (self.isExpanded(keyPath)) {
+          if (!self.expandPath.includes(keyPath)) self.expandPath.push(keyPath)
+        } else {
+          self.expandPath = self.expandPath.filter(path => path !== keyPath)
+        }
       }
       label.oncontextmenu = function (event) {
         self.event.trigger('nodeRightClick', [keyPath, data, label, event])
