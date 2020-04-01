@@ -187,8 +187,8 @@ module.exports = staticAnalysisView
  * @param arr list of static analysis modules received from remix-analyzer module
  */
 function preProcessModules (arr) {
-  return arr.map((item, i) => {
-    const itemObj = new item()
+  return arr.map((Item, i) => {
+    const itemObj = new Item()
     itemObj['_index'] = i
     itemObj.categoryDisplayName = itemObj.category.displayName
     itemObj.categoryId = itemObj.category.id
