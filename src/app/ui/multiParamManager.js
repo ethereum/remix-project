@@ -119,7 +119,7 @@ class MultiParamManager {
     this.basicInputField = yo`<input class="form-control"></input>`
     this.basicInputField.setAttribute('placeholder', this.inputs)
     this.basicInputField.setAttribute('title', this.inputs)
-    this.basicInputField.setAttribute('data-id', `multiParamManagerBasicInputField${this.inputs}`)
+    this.basicInputField.setAttribute('data-id', this.inputs)
 
     var onClick = () => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
