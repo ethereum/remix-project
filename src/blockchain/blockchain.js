@@ -196,17 +196,12 @@ class Blockchain {
   }
 
   updateNetwork (cb) {
-    this.networkcallid++
-    ((callid) => {
-      this.executionContext.detectNetwork((err, { id, name } = {}) => {
-        if (this.networkcallid > callid) return
-        this.networkcallid++
-        if (err) {
-          return cb(err)
-        }
-        cb(null, {id, name})
-      })
-    })(this.networkcallid)
+    this.executionContext.detectNetwork((err, { id, name } = {}) => {
+      if (err) {
+        return cb(err)
+      }
+      cb(null, {id, name})
+    })
   }
 
   detectNetwork (cb) {
