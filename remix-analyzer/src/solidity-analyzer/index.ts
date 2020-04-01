@@ -18,7 +18,8 @@ export default class staticAnalysisRunner {
    */
   run (compilationResult: CompilationResult, toRun: number[], callback: ((reports: AnalysisReport[]) => void)): void {
     const modules: ModuleObj[] = toRun.map((i) => {
-      const m: AnalyzerModule = this.modules()[i]
+      const module = this.modules()[i]
+      const m = new module()
       return { 'name': m.name, 'mod': m }
     })
     this.runWithModuleList(compilationResult, modules, callback)
