@@ -43,8 +43,9 @@ export class TabProxy {
       })
     })
 
-    fileManager.events.on('fileRenamed', (oldName, newName) => {
-      this.removeTab(oldName)
+    fileManager.events.on('fileRenamed', (oldName, newName, isFolder) => {
+      if (isFolder) return
+      // should change the tab title too
       this.addTab(newName, '', () => {
         this.fileManager.switchFile(newName)
         this.event.emit('switchFile', newName)
@@ -53,6 +54,7 @@ export class TabProxy {
         this.fileManager.closeFile(newName)
         this.event.emit('closeFile', newName)
       })
+      this.removeTab(oldName)
     })
 
     appManager.event.on('activate', ({ name, location, displayName, icon }) => {

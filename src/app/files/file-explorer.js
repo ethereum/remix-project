@@ -173,12 +173,13 @@ function fileExplorer (localRegistry, files, menuItems) {
       }
     },
     formatSelf: function formatSelf (key, data, li) {
-      var isRoot = data.path === self.files.type
+      const isRoot = data.path === self.files.type
+      const isFolder = !!data.children
       return yo`
         <div class="${css.items}">
           <span
             title="${data.path}"
-            class="${css.label} ${!isRoot ? css.leaf : ''}"
+            class="${css.label} ${!isRoot ? !isFolder ? css.leaf : css.folder : ''}"
             data-path="${data.path}"
             style="${isRoot ? 'font-weight:bold;' : ''}"
             onkeydown=${editModeOff}
@@ -232,7 +233,7 @@ function fileExplorer (localRegistry, files, menuItems) {
         if (self.files.isReadOnly(key)) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
         const currentFoldername = extractNameFromKey(key)
 
-        modalDialogCustom.confirm(`Confirm to delete ${currentFoldername} folder`, `Are you sure you want to delete ${currentFoldername} folder?`,
+        modalDialogCustom.confirm(`Confirm to delete folder`, `Are you sure you want to delete ${currentFoldername} folder?`,
           () => {
             if (!files.remove(key)) {
               tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
@@ -273,7 +274,7 @@ function fileExplorer (localRegistry, files, menuItems) {
         const currentFilename = extractNameFromKey(key)
 
         modalDialogCustom.confirm(
-          `Delete ${currentFilename} file`, `Are you sure you want to delete ${currentFilename} file?`,
+          `Delete file`, `Are you sure you want to delete ${currentFilename} file?`,
           () => {
             files.remove(key)
             self.updatePath('browser')
@@ -339,7 +340,9 @@ function fileExplorer (localRegistry, files, menuItems) {
   }
 
   function editModeOff (event) {
-    var label = this
+    let label = this
+
+    const isFolder = label.className.indexOf('folder') !== -1
     function rename () {
       var newPath = label.dataset.path
       newPath = newPath.split('/')
@@ -366,10 +369,14 @@ function fileExplorer (localRegistry, files, menuItems) {
 
     if (event.which === 13) event.preventDefault()
     if ((event.type === 'blur' || event.which === 13) && label.getAttribute('contenteditable')) {
-      var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {
-        modalDialogCustom.confirm('Confirm to rename a file', 'Are you sure you want to rename this file?', () => { rename() }, () => { label.innerText = textUnderEdit })
+        modalDialogCustom.confirm(
+          'Confirm to rename a ' + (isFolder ? 'folder' : 'file'),
+          'Are you sure you want to rename ' + textUnderEdit + '?',
+          () => { rename() },
+          () => { label.innerText = textUnderEdit }
+        )
       }
       label.removeAttribute('contenteditable')
       label.classList.remove('bg-light')
@@ -619,7 +626,13 @@ fileExplorer.prototype.renderMenuItems = function () {
         `
       } else {
         return yo`
-        <span id=${action} data-id="fileExplorerNewFile${action}" onclick=${(event) => { event.stopPropagation(); this[ action ]() }} class="newFile ${icon} ${css.newFile}" title=${title}></span>
+        <span
+          id=${action}
+          data-id="fileExplorerNewFile${action}"
+          onclick=${(event) => { event.stopPropagation(); this[ action ]() }}
+          class="newFile ${icon} ${css.newFile}"
+          title=${title}>
+        </span>
         `
       }
     })
