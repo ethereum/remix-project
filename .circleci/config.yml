@@ -42,7 +42,9 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "remix_live" ]; then
               ./ci/deploy_from_travis_remix-live.sh;
-            fi 
+            fi
+      - store_artifacts:
+          path: ./reports/screenshots
 
 workflows:
   version: 2
