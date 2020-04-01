@@ -23,18 +23,18 @@ module.exports = {
   'Should rename `5_New_contract.sol` to 5_Renamed_Contract.sol': function (browser) {
     browser
     .waitForElementVisible('*[data-id="treeViewLibrowser/5_New_contract.sol"]')
-    .moveToElement('*[data-id="treeViewLibrowser/5_New_contract.sol"]', 5, 5)
-    .mouseButtonClick('right')
+    .rightClick('[data-path="browser/5_New_contract.sol"]')
     .click('*[id="menuitemrename"]')
-    .keys('5_Renamed_Contract.sol')
-    .keys(browser.Keys.ENTER)
+    .sendKeys('[data-path="browser/5_New_contract.sol"]', '5_Renamed_Contract.sol')
+    .sendKeys('[data-path="browser/5_New_contract.sol"]', browser.Keys.ENTER)
+    .keys()
     .waitForElementVisible('*[data-id="treeViewLibrowser/5_Renamed_Contract.sol"]')
   },
 
   'Should delete file `5_Renamed_Contract.sol` from file explorer': function (browser) {
     browser
-    .moveToElement('*[data-id="treeViewLibrowser/5_Renamed_Contract.sol"]', 5, 5)
-    .mouseButtonClick('right')
+    .waitForElementVisible('*[data-id="treeViewLibrowser/5_Renamed_Contract.sol"]')
+    .rightClick('[data-path="browser/5_Renamed_Contract.sol"]')
     .click('*[id="menuitemdelete"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .modalFooterOKClick()
@@ -44,8 +44,7 @@ module.exports = {
   'Should create a new folder': function (browser) {
     browser
     .waitForElementVisible('*[data-id="treeViewLibrowser/1_Storage.sol"]')
-    .moveToElement('*[data-id="treeViewLibrowser/1_Storage.sol"]', 5, 5)
-    .mouseButtonClick('right')
+    .rightClick('[data-path="browser/1_Storage.sol"]')
     .click('*[id="menuitemcreate folder"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .setValue('*[data-id="modalDialogCustomPromptText"]', 'Browser_Tests')
@@ -56,19 +55,17 @@ module.exports = {
   'Should rename Browser_Tests folder to Browser_E2E_Tests': function (browser) {
     browser
     .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_Tests"]')
-    .moveToElement('*[data-id="treeViewLibrowser/Browser_Tests"]', 5, 5)
-    .mouseButtonClick('right')
+    .rightClick('[data-path="browser/Browser_Tests"]')
     .click('*[id="menuitemrename"]')
-    .keys('Browser_E2E_Tests')
-    .keys(browser.Keys.ENTER)
+    .sendKeys('[data-path="browser/Browser_Tests"]', 'Browser_E2E_Tests')
+    .sendKeys('[data-path="browser/Browser_Tests"]', browser.Keys.ENTER)
     .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_E2E_Tests"]')
   },
 
   'Should delete Browser_E2E_Tests folder': function (browser) {
     browser
     .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_E2E_Tests"]')
-    .moveToElement('*[data-id="treeViewLibrowser/Browser_E2E_Tests"]', 5, 5)
-    .mouseButtonClick('right')
+    .rightClick('[data-path="browser/Browser_E2E_Tests"]')
     .click('*[id="menuitemdelete"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .modalFooterOKClick()
@@ -76,6 +73,8 @@ module.exports = {
   },
 
   'Should publish all explorer files to github gist': function (browser) {
+    const runtimeBrowser = browser.capabilities.browserName
+
     browser
     .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')
     .click('*[data-id="fileExplorerNewFilepublishToGist"]')
@@ -86,7 +85,12 @@ module.exports = {
     .modalFooterOKClick()
     .pause(2000)
     .switchBrowserTab(1)
-    .assert.urlContains('https://gist.github.com')
+    .perform((done) => {
+      if (runtimeBrowser === 'chrome') {
+        browser.assert.urlContains('https://gist.github.com')
+      }
+      done()
+    })
     .end()
   },
 
