@@ -54,7 +54,7 @@ class ContractDropdownUI {
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
     let el = yo`
-      <div class="${css.container}">
+      <div class="${css.container}" data-id="contractDropdownContainer">
         <label class="${css.settingsLabel}">Contract</label>
         <div class="${css.subcontainer}">
           ${this.selectContractNames} ${this.compFails} ${info}
