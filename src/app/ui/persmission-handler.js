@@ -43,10 +43,10 @@ export class PermissionHandler {
     this.permissions = this._getFromLocal()
     this.currentVersion = 1
     // here we remove the old permissions saved before adding 'permissionVersion'
-    // since with v1 the structior has been changed because of new engine ^0.2.0-alpha.6 changes
+    // since with v1 the structure has been changed because of new engine ^0.2.0-alpha.6 changes
     if (!localStorage.getItem('permissionVersion')) {
       localStorage.setItem('plugins/permissions', '')
-      localStorage.setItem('permissionVersion', '1')
+      localStorage.setItem('permissionVersion', this.currentVersion)
     }
   }
 
