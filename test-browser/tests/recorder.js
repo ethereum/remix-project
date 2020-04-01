@@ -70,7 +70,7 @@ var sources = [{'browser/testRecorder.sol': {content: `contract testRecorder {
 
 var records = `{
   "accounts": {
-    "account{3}": "0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c"
+    "account{10}": "0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c"
   },
   "linkReferences": {
     "testLib": "created{1512830014773}"
@@ -87,7 +87,7 @@ var records = `{
         "linkReferences": {},
         "inputs": "()",  
         "type": "constructor",
-        "from": "account{3}"
+        "from": "account{10}"
       }
     },
     {
@@ -113,7 +113,7 @@ var records = `{
         "name": "",
         "type": "constructor",
         "inputs": "(uint256)",
-        "from": "account{3}"
+        "from": "account{10}"
       }
     },
     {
@@ -129,7 +129,7 @@ var records = `{
         "name": "set",
         "inputs": "(uint256,address)",
         "type": "function",
-        "from": "account{3}"
+        "from": "account{10}"
       }
     }
   ],
@@ -228,7 +228,7 @@ var records = `{
 
 var scenario = {
   'accounts': {
-    'account{3}': '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'
+    'account{10}': '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'
   },
   'linkReferences': {},
   'transactions': [
@@ -246,7 +246,7 @@ var scenario = {
         'name': '',
         'type': 'constructor',
         'inputs': '(uint256)',
-        'from': 'account{3}'
+        'from': 'account{10}'
       }
     },
     {
@@ -261,7 +261,7 @@ var scenario = {
         'name': 'set',
         'inputs': '(uint256)',
         'type': 'function',
-        'from': 'account{3}'
+        'from': 'account{10}'
       }
     }
   ],
