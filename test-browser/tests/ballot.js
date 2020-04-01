@@ -16,26 +16,30 @@ module.exports = {
   },
   'Deploy Ballot': function (browser) {
     browser
-    .waitForElementVisible('#icon-panel', 10000)
+    .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('solidity')
     .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
     .clickLaunchIcon('udapp')
     .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
     .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
-    .click('#runTabView button[class^="instanceButton"]')
-    .waitForElementPresent('.instance:nth-of-type(2)')
-    .click('.instance:nth-of-type(2) > div > button')
-    .testFunction('delegate - transact (not payable)', '0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
-      `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0x41f...c31b3`,
-      {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null)
+    .click('*[data-id="Deploy - transact (not payable)"]')
+    .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
+    .click('*[data-id="universalDappUiTitleExpander"]')
+    .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
+    .testFunction('0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
+      {
+        status: '0x1 Transaction mined and execution succeed',
+        'transaction hash': '0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
+        'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+      })
   },
 
   'Debug Ballot / delegate': function (browser) {
     browser.pause(500)
-    .click('span#tx0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3 button[class^="debug"]')
+    .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
     .pause(2000)
     .clickLaunchIcon('debugger')
-    .click('#jumppreviousbreakpoint')
+    .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
     .pause(2000)
     .goToVMTraceStep(79)
     .pause(1000)
@@ -45,30 +49,34 @@ module.exports = {
 
   'Access Ballot via at address': function (browser) {
     browser.clickLaunchIcon('udapp')
-    .click('button[class^="udappClose"]')
+    .click('*[data-id="universalDappUiUdappClose"]')
     .addFile('ballot.abi', { content: ballotABI })
     .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)
     .clickLaunchIcon('fileExplorers')
     .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
     .pause(500)
-    .waitForElementPresent('.instance:nth-of-type(2)')
-    .click('.instance:nth-of-type(2) > div > button')
-    .testFunction('delegate - transact (not payable)', '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
-            `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0xca5...5c803`,
-            {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null)
+    .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
+    .click('*[data-id="universalDappUiTitleExpander"]')
+    .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
+    .testFunction('0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
+      {
+        status: '0x0 Transaction mined but execution failed',
+        'transaction hash': '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
+        'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+      })
   },
 
   'Deploy and use Ballot using external web3': function (browser) {
     browser
-    .click('#selectExEnvOptions #web3-mode')
+    .click('*[data-id="settingsWeb3Mode"]')
     .modalFooterOKClick()
     .clickLaunchIcon('solidity')
     .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
     .clickLaunchIcon('udapp')
     .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
-    .click('#runTabView button[class^="instanceButton"]')
+    .click('*[data-id="Deploy - transact (not payable)"]')
     .clickInstance(0)
-    .click('#clearConsole')
+    .click('*[data-id="terminalClearConsole"]')
     .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'})
     .journalLastChildIncludes('Ballot.delegate(address)')
     .journalLastChildIncludes('data:0x5c1...a733c')

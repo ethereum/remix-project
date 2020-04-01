@@ -262,7 +262,7 @@ export class VerticalIcons extends Plugin {
     `
 
     this.iconKind['debugging'] = yo`
-    <div id='debuggingIcons'>
+    <div id='debuggingIcons' data-id="verticalIconsDebuggingIcons">
     </div>
     `
 
