@@ -86,7 +86,7 @@ const confirmationCb = function (network, tx, gasEstimation, continueTxExecution
     content,
     { label: 'Confirm',
       fn: () => {
-        self.udappUI.udapp.config.setUnpersistedProperty(
+        self.blockchain.config.setUnpersistedProperty(
           'doNotShowTransactionConfirmationAgain',
           content.querySelector('input#confirmsetting').checked
         )
