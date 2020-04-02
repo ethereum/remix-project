@@ -26,7 +26,7 @@ module.exports = {
     browser
     .waitForElementVisible('*[data-id="terminalCli"]')
     .click('*[data-id="terminalCli"]')
-    .keys('remix.')
+    .sendKeys('*[data-id="terminalCliInput"]', 'remix.')
     .assert.visible('*[data-id="autoCompletePopUpAutoCompleteItem"]')
   },
 

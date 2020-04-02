@@ -158,7 +158,8 @@ class Terminal extends Plugin {
       class="border ${css.filter} form-control"
       id="searchInput"
       onkeydown=${filter}
-      placeholder="Filter with transaction hash or address">
+      placeholder="Search with transaction hash or address"
+      data-id="terminalInputSearch">
     </input>`
     self._view.bar = yo`
       <div class="${css.bar}">
