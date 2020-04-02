@@ -30,7 +30,7 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="editorInput"]')
     .waitForElementVisible('*[class="ace_content"]')
     .click('*[class="ace_content"]')
-    .keys('error')
+    .sendKeys('*[class="ace_text-input"]', 'error')
     .pause(2000)
     .waitForElementVisible('.ace_error')
   },

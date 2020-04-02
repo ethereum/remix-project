@@ -17,10 +17,10 @@ function checkFilter (browser, filter, test, done) {
     done()
     return
   }
-  const filterClass = '#main-panel div[class^="search"] input[class^="filter"]'
+  const filterClass = '[data-id="terminalInputSearch"]'
   browser.setValue(filterClass, filter, function () {
     browser.execute(function () {
-      return document.querySelector('#main-panel div[class^="journal"]').innerHTML === test
+      return document.querySelector('[data-id="terminalJournal"]').innerHTML === test
     }, [], function (result) {
       browser.clearValue(filterClass).setValue(filterClass, '', function () {
         if (!result.value) {

@@ -26,6 +26,7 @@ function runTests (browser) {
     .switchFile('browser/3_Ballot.sol')
     .clickLaunchIcon('solidityUnitTesting')
     .scrollAndClick('#runTestsTabRunAction')
+    .pause(5000)
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]')
     .pause(10000)
     .assert.containsText('#solidityUnittestsOutput', 'browser/4_Ballot_test.sol (BallotTest)')
