@@ -68,6 +68,7 @@ module.exports = {
     browser
     .addFile('asyncAwaitWithFileManagerAccess.js', { content: asyncAwaitWithFileManagerAccess })
     .switchFile('browser/asyncAwaitWithFileManagerAccess.js')
+    .pause(5000)
     .executeScript(`remix.execute('browser/asyncAwaitWithFileManagerAccess.js')`)
     .journalLastChildIncludes('contract Ballot {')
     .end()
