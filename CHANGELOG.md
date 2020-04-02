@@ -1,8 +1,33 @@
 ## Change Log
 
+### remix-analyzer 0.5.0-beta.2 (2020/04/01)
+- [#1445](https://github.com/ethereum/remix/pull/1445) analyser module listing updated (@Aniket-Engg)
+
+## Change Log
+
+### v0.1.31 (2020/03/31)
+- [#1444](https://github.com/ethereum/remix/pull/1444) Release 0 1 31 (@Aniket-Engg)
+- [#1438](https://github.com/ethereum/remix/pull/1438) test function with params will throw error (@Aniket-Engg)
+- [#1436](https://github.com/ethereum/remix/pull/1436) accounts count increased to 10 (@Aniket-Engg)
+- [#1434](https://github.com/ethereum/remix/pull/1434) Add type for compilation error (@yann300  )
+- [#1427](https://github.com/ethereum/remix/pull/1427) Remix-analyzer: LegacyAST to AST (@Aniket-Engg)
+
+## Change Log
+
+### v0.1.30 (2020/02/21 09:53 +00:00)
+- [#1428](https://github.com/ethereum/remix/pull/1428) release 0.1.30 (@Aniket-Engg)
+- [#1425](https://github.com/ethereum/remix/pull/1425) remix-analyzer: js to ts (@Aniket-Engg)
+- [#1423](https://github.com/ethereum/remix/pull/1423) add resetAccounts, new Account, fix getAccounts on remix-simulator (@iurimatias )
+- [#1422](https://github.com/ethereum/remix/pull/1422) anonymous locals rendering fixed (@Aniket-Engg)
+- [#1419](https://github.com/ethereum/remix/pull/1419) remix-solidity readme updated (@Aniket-Engg)
+- [#1418](https://github.com/ethereum/remix/pull/1418) npmignore file added (@Aniket-Engg)
+- [#1417](https://github.com/ethereum/remix/pull/1417) changelog updated (@Aniket-Engg)
+
+## Change Log
+
 ### v0.1.29 (2020/01/29)
 - [#1416](https://github.com/ethereum/remix/pull/1416) bump version (@Aniket-Engg)
-- [#1415 ](https://github.com/ethereum/remix/pull/1415) undefined value type fixed  (@Aniket-Engg)
+- [#1415](https://github.com/ethereum/remix/pull/1415) undefined value type fixed  (@Aniket-Engg)
 
 ## Change Log
 

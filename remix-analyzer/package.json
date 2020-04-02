@@ -1,6 +1,6 @@
 {
   "name": "remix-analyzer",
-  "version": "0.5.0-beta.1",
+  "version": "0.5.0-beta.2",
   "description": "Remix Analyzer",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
