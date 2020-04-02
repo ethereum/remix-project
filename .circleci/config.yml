@@ -25,11 +25,17 @@ jobs:
       - run: npm run lint && npm run test && npm run make-mock-compiler
       - run:
           name: Download Selenium
-          command: wget http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-ide/seleniumConfig.js
       - run:
           name: Start Selenium
-          command: java -jar selenium-server-standalone-3.5.3.jar
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-ide/seleniumConfig.js
           background: true
+      - run:
+          name: Download Latest Firefox
+          command: sudo apt-get purge -y firefox && wget https://sourceforge.net/projects/ubuntuzilla/files/mozilla/apt/pool/main/f/firefox-mozilla-build/firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
+      - run:
+          name: Install Firefox
+          command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
       - run: ./ci/browser_tests.sh
       - run: 
           name: Deploy
