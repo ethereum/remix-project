@@ -88,6 +88,10 @@ class ContractDropdownUI {
     this.atAddress = yo`<button class="${css.atAddress} btn btn-sm btn-info" disabled id="runAndDeployAtAdressButton" onclick=${this.loadFromAddress.bind(this)}>At Address</button>`
     this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="address of contract" oninput=${this.atAddressChanged.bind(this)} />`
     this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled></select>`
+
+    if (this.exEnvironment === 'vm') this.networkName = 'VM'
+
+    const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
     this.ipfsCheckedState = savedConfig === 'true' ? true : false // eslint-disable-line
 
     const ipfsCheckbox = this.ipfsCheckedState === true
@@ -104,8 +108,6 @@ class ContractDropdownUI {
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel} mt-2">or</div>`
 
-    if (this.exEnvironment === 'vm') this.networkName = 'VM'
-    const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
     let el = yo`
       <div class="${css.container}" data-id="contractDropdownContainer">
         <label class="${css.settingsLabel}">Contract</label>
