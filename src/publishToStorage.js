@@ -19,29 +19,29 @@ export default function publish (storage, fileProvider, fileManager, contract) {
             var result = yo`<div>${uploaded.map((value) => {
               return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
             })}</div>`
-            modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
+            modalDialogCustom.alert(`Published ${contract.name}'s Metadata`, yo`<span>Metadata of "${contract.name.toLowerCase()}" was published successfully.<br> <pre>${result}</pre> </span>`)
           }
         }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
           fileProvider.addExternal('swarm/' + item.hash, item.content)
         })
       } else {
-          publishOnIpfs(contract, fileManager, function (err, uploaded) {
-            if (err) {
-              try {
-                err = JSON.stringify(err)
-              } catch (e) {}
-              modalDialogCustom.alert(yo`<span>Failed to publish metadata file to ${storage}, please check the ${storage} gateways is available.<br />
-              ${err}</span>`)
-            } else {
-              var result = yo`<div>${uploaded.map((value) => {
-                return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
-              })}</div>`
-              modalDialogCustom.alert(`Published ${contract.name}'s Metadata`, yo`<span>Metadata of "${contract.name.toLowerCase()}" was published successfully.<br> <pre>${result}</pre> </span>`)
-            }
-          }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-            fileProvider.addExternal('ipfs/' + item.hash, item.content)
-          })
-        }
+        publishOnIpfs(contract, fileManager, function (err, uploaded) {
+          if (err) {
+            try {
+              err = JSON.stringify(err)
+            } catch (e) {}
+            modalDialogCustom.alert(yo`<span>Failed to publish metadata file to ${storage}, please check the ${storage} gateways is available.<br />
+            ${err}</span>`)
+          } else {
+            var result = yo`<div>${uploaded.map((value) => {
+              return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
+            })}</div>`
+            modalDialogCustom.alert(`Published ${contract.name}'s Metadata`, yo`<span>Metadata of "${contract.name.toLowerCase()}" was published successfully.<br> <pre>${result}</pre> </span>`)
+          }
+        }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
+          fileProvider.addExternal('ipfs/' + item.hash, item.content)
+        })
       }
     }
   }
+}
