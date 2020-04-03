@@ -488,7 +488,7 @@ fileExplorer.prototype.toGist = function (id) {
   this.packageFiles(this.files, folder, (error, packaged) => {
     if (error) {
       console.log(error)
-      modalDialogCustom.alert('Failed to create gist: ' + error)
+      modalDialogCustom.alert('Failed to create gist: ' + error.message)
     } else {
       // check for token
       var tokenAccess = this._deps.config.get('settings/gist-access-token')
@@ -550,19 +550,23 @@ fileExplorer.prototype.toGist = function (id) {
 
 // return all the files, except the temporary/readonly ones..
 fileExplorer.prototype.packageFiles = function (filesProvider, directory, callback) {
-  var ret = {}
+  let ret = {}
   filesProvider.resolveDirectory(directory, (error, files) => {
     if (error) callback(error)
     else {
       async.eachSeries(Object.keys(files), (path, cb) => {
-        filesProvider.get(path, (error, content) => {
-          if (error) return cb(error)
-          if (/^\s+$/.test(content) || !content.length) {
-            content = '// this line is added to create a gist. Empty file is not allowed.'
-          }
-          ret[path] = { content }
+        if (filesProvider.isDirectory(path)) {
           cb()
-        })
+        } else {
+          filesProvider.get(path, (error, content) => {
+            if (error) return cb(error)
+            if (/^\s+$/.test(content) || !content.length) {
+              content = '// this line is added to create a gist. Empty file is not allowed.'
+            }
+            ret[path] = { content }
+            cb()
+          })
+        }
       }, (error) => {
         callback(error, ret)
       })
