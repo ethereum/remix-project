@@ -133,6 +133,10 @@ class FileProvider {
     return false
   }
 
+  isDirectory (path) {
+    return window.remixFileSystem.statSync(path).isDirectory()
+  }
+
   /**
    * Removes the folder recursively
    * @param {*} path is the folder to be removed

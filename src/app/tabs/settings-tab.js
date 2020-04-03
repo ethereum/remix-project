@@ -69,11 +69,11 @@ module.exports = class SettingsTab extends ViewPlugin {
 
     // Gist settings
     const token = this.config.get('settings/gist-access-token')
-    const gistAccessToken = yo`<input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" class="border form-control mb-2 ${css.inline}" placeholder="Token">`
+    const gistAccessToken = yo`<input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" class="border form-control-sm mb-2 ${css.inline}" placeholder="Token">`
     if (token) gistAccessToken.value = token
     const removeToken = () => { self.config.set('settings/gist-access-token', ''); gistAccessToken.value = ''; tooltip('Access token removed') }
     const saveToken = () => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }
-    const gistAddToken = yo`<input class="btn btn-secondary mx-1" id="savegisttoken" data-id="settingsTabSaveGistToken" onclick=${() => saveToken()} value="Save" type="button">`
+    const gistAddToken = yo`<input class="btn btn-sm btn-primary" id="savegisttoken" data-id="settingsTabSaveGistToken" onclick=${() => saveToken()} value="Save" type="button">`
     const gistRemoveToken = yo`<i class="mx-1 fas fa-trash-alt" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onclick=${() => removeToken()}" type="button"></i>`
     this._view.gistToken = yo`<div class="text-secondary mb-0 h6">${gistAccessToken}${gistAddToken}${copyToClipboard(() => gistAccessToken.value)}${gistRemoveToken}</div>`
     this._view.optionVM = yo`<input onchange=${onchangeOption} class="align-middle form-check-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox">`
