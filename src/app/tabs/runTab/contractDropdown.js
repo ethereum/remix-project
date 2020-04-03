@@ -88,18 +88,24 @@ class ContractDropdownUI {
     this.atAddress = yo`<button class="${css.atAddress} btn btn-sm btn-info" disabled id="runAndDeployAtAdressButton" onclick=${this.loadFromAddress.bind(this)}>At Address</button>`
     this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="address of contract" oninput=${this.atAddressChanged.bind(this)} />`
     this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled></select>`
+    this.ipfsCheckedState = savedConfig === 'true' ? true : false // eslint-disable-line
 
+    const ipfsCheckbox = this.ipfsCheckedState === true
+    ? yo`<input id="deployAndRunPublishToIPFS" class="mr-2" checked type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
+    : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
+
+    this.deployCheckBox = yo`
+      <div class="mt-2 text-left">
+        ${ipfsCheckbox}
+        <label for="deployAndRunPublishToIPFS" class="text-dark p-0 m-0">PUBLISH TO IPFS</label>
+        <i class="fas fa-info ml-2" aria-hidden="true" title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"></i>
+      </div>
+      `
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel} mt-2">or</div>`
 
     if (this.exEnvironment === 'vm') this.networkName = 'VM'
     const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
-
-    this.ipfsCheckedState = savedConfig === 'true' ? true : false // eslint-disable-line
-    const ipfsCheckbox = this.ipfsCheckedState === true
-    ? yo`<input id="deployAndRunPublishToIPFS" class="mr-2" checked type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
-    : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
-
     let el = yo`
       <div class="${css.container}" data-id="contractDropdownContainer">
         <label class="${css.settingsLabel}">Contract</label>
@@ -108,11 +114,6 @@ class ContractDropdownUI {
         </div>
         <div>
           ${this.createPanel}
-          <div class="mt-2">
-            ${ipfsCheckbox}
-            <label for="deployAndRunPublishToIPFS" class="text-dark p-0 m-0">PUBLISH TO IPFS</label>
-            <i class="fas fa-info ml-2" aria-hidden="true" title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"></i>
-          </div>
           ${this.orLabel}
           <div class="${css.button} ${css.atAddressSect}">
             ${this.atAddress}
@@ -174,6 +175,7 @@ class ContractDropdownUI {
       selectedContract.bytecodeObject
     )
     this.createPanel.appendChild(createConstructorInstance.render())
+    this.createPanel.appendChild(this.deployCheckBox)
   }
 
   getSelectedContract () {
