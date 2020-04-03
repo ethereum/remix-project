@@ -621,12 +621,17 @@ fileExplorer.prototype.renderMenuItems = function () {
     items = this.menuItems.map(({action, title, icon}) => {
       if (action === 'uploadFile') {
         return yo`
-          <label id=${action} class="${icon} ${css.newFile}"  title="${title}">
+          <span
+            id=${action}
+            data-id="fileExplorerUploadFile${action}"
+            class="${icon} ${css.newFile}"
+            title="${title}"
+          >
             <input type="file" onchange=${(event) => {
               event.stopPropagation()
               this.uploadFile(event)
             }} multiple />
-          </label>
+          </span>
         `
       } else {
         return yo`
