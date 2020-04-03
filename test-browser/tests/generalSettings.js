@@ -97,7 +97,7 @@ module.exports = {
   'Should load Cerulean theme': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
     .click('*[data-id="settingsTabThemeCerulean"]')
-    .pause(2000)
+    .pause(5000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.curelean.primary)
     .checkElementStyle(':root', '--secondary', remixIdeThemes.curelean.secondary)
     .checkElementStyle(':root', '--success', remixIdeThemes.curelean.success)
