@@ -133,7 +133,7 @@ class FileProvider {
     return false
   }
 
-  isDirectory(path) {
+  isDirectory (path) {
     return window.remixFileSystem.statSync(path).isDirectory()
   }
 
