@@ -1,24 +1,25 @@
 const EventEmitter = require('events')
 
 class SwitchBrowserWindow extends EventEmitter {
-  command (url, windowName) {
+  command (url, windowName, cb) {
     this.api.perform((done) => {
-      switchWindow(this.api, url, windowName, () => {
-        done()
-        this.emit('complete')
-      })
+      switchWindow(this.api, url, windowName, cb)
+      done()
+      this.emit('complete')
     })
     return this
   }
 }
 
-function switchWindow (browser, url, windowName, callback) {
-  browser.execute(function (url, windowName) {
-    window.open(url, windowName, 'width=2560, height=1440')
-  }, [url, windowName], function () {
+function switchWindow (browser, url, windowName, cb) {
+  browser.execute(function (windowName) {
+    return window.open('', windowName, 'width=2560, height=1440')
+  }, [windowName], (newWindow) => {
     browser.switchWindow(windowName)
+    .url(url)
+    .pause(5000)
     .assert.urlContains(url)
-    callback()
+    if (cb) cb(browser, newWindow)
   })
 }
 

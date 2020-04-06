@@ -1,9 +1,9 @@
 const EventEmitter = require('events')
 
 class MetaMask extends EventEmitter {
-  command () {
+  command (passphrase, password) {
     this.api.perform((done) => {
-      setupMetaMask(this.api, () => {
+      setupMetaMask(this.api, passphrase, password, () => {
         done()
         this.emit('complete')
       })
@@ -12,30 +12,19 @@ class MetaMask extends EventEmitter {
   }
 }
 
-function setupMetaMask (browser, done) {
+function setupMetaMask (browser, passphrase, password, done) {
   browser
-  .execute(() => {
-    var event = new KeyboardEvent('keydown', {
-      altKey: true,
-      shiftKey: true,
-      code: 'keyM',
-    })
-
-    console.log('event: ', event)
-
-    document.dispatchEvent(event)
-  }, [], () => {
-    browser.pause(100000)
-    .waitForElementPresent('.first-time-flow__button')
+  .switchBrowserWindow('chrome-extension://poemojpkcjbpmcccohjnomjffeinlafe/home.html#initialize/welcome', 'MetaMask', (browser) => {
+    browser.waitForElementPresent('.first-time-flow__button')
     .click('.first-time-flow__button')
     .waitForElementPresent('.select-action__select-button:nth-of-type(1) > .first-time-flow__button')
     .click('.select-action__select-button:nth-of-type(1) > .first-time-flow__button')
     .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
     .click('.page-container__footer-button:nth-of-type(2)')
     .waitForElementPresent('.first-time-flow__textarea')
-    .setValue('.first-time-flow__textarea', 'explain uniform adapt basic blue onion rebel pull rice erase volcano couple')
-    .setValue('*[autocomplete="new-password"]', 'remix_is_cool')
-    .setValue('*[autocomplete="confirm-password"]', 'remix_is_cool')
+    .setValue('.first-time-flow__textarea', passphrase)
+    .setValue('*[autocomplete="new-password"]', password)
+    .setValue('*[autocomplete="confirm-password"]', password)
     .click('.first-time-flow__checkbox')
     .click('.first-time-flow__button')
     .pause(5000)
