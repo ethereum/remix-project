@@ -14,9 +14,7 @@ module.exports = {
 
   'Should load run and deploy tab': function (browser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-    .setupMetamask()
     .pause(3000)
-    .pause(1000000)
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="sidePanelSwapitTitle"]')
     .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
@@ -46,6 +44,7 @@ module.exports = {
     .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
     .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
+    .pause(5000)
     .testFunction('0xf887e3ac3143430b0c22d055eb25d234675e7f3246cb0824efc4c1437a1405d5', {
       status: '0x1 Transaction mined and execution succeed',
       'transaction hash': '0xf887e3ac3143430b0c22d055eb25d234675e7f3246cb0824efc4c1437a1405d5'
@@ -58,10 +57,15 @@ module.exports = {
     .click('*[data-id="universalDappUiTitleExpander"]')
     .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
     .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
+    .pause(5000)
     .testFunction('0xfe718871ee0b4d03cdcac0e12e5b164efaf7e23ba952c07db76e62692867019b', {
       status: '0x1 Transaction mined and execution succeed',
       'transaction hash': '0xfe718871ee0b4d03cdcac0e12e5b164efaf7e23ba952c07db76e62692867019b'
     })
+  },
+
+  'Should': function (browser) {
+    browser.setupMetamask()
     .end()
   },
 
