@@ -24,6 +24,13 @@ module.exports = {
     browser
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('fileExplorers')
+    .rightClick('[data-path="browser/1_Storage.sol"]')
+    .click('*[id="menuitemcreate folder"]')
+    .waitForElementVisible('*[data-id="modalDialogContainer"]')
+    .setValue('*[data-id="modalDialogCustomPromptText"]', 'Browser_Tests')
+    .modalFooterOKClick()
+    .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_Tests"]')
+    .addFile('File.sol', { content: '' })
     .click('*[data-id="fileExplorerNewFilepublishToGist"]')
     .modalFooterOKClick()
     .getModalBody((value, done) => {
