@@ -9,8 +9,6 @@ const modalDialog = require('../ui/modaldialog')
 const copyToClipboard = require('../ui/copy-to-clipboard')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const parseContracts = require('./compileTab/contractParser')
-const publishOnSwarm = require('../../lib/publishOnSwarm')
-const publishOnIpfs = require('../../lib/publishOnIpfs')
 const addTooltip = require('../ui/tooltip')
 const globalRegistry = require('../../global/registry')
 
@@ -21,6 +19,7 @@ const CompilerContainer = require('./compileTab/compilerContainer.js')
 
 import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
+import publishToStorage from '../../publishToStorage'
 
 const profile = {
   name: 'solidity',
@@ -255,12 +254,12 @@ class CompileTab extends ViewPlugin {
         <label class="${css.compilerLabel} form-check-label" for="compiledContracts">Contract</label>
         ${selectEl}
       </div>
-      <div>
-        <button id="publishOnSwarm" class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { this.publish('swarm') }}">
+      <article class="px-2 mt-2 pb-0">
+        <button id="publishOnSwarm" class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { publishToStorage('swarm', this.fileProvider, this.fileManager, this.data.contractsDetails[this.selectedContract]) }}">
           <span>Publish on Swarm</span>
           <img id="swarmLogo" class="${css.storageLogo} ml-2" src="${swarmImg}">
         </button>
-        <button id="publishOnIpfs" class="btn btn-secondary btn-block" title="Publish on Ipfs" onclick="${() => { this.publish('ipfs') }}">
+        <button id="publishOnIpfs" class="btn btn-secondary btn-block" title="Publish on Ipfs" onclick="${() => { publishToStorage('ipfs', this.fileProvider, this.fileManager, this.data.contractsDetails[this.selectedContract]) }}">
         <span>Publish on Ipfs</span>
         <img id="ipfsLogo" class="${css.storageLogo} ml-2" src="${ipfsImg}">
       </button>
@@ -311,52 +310,6 @@ class CompileTab extends ViewPlugin {
 
   selectContract (contractName) {
     this.selectedContract = contractName
-  }
-
-  publish (storage) {
-    if (this.selectedContract) {
-      var contract = this.data.contractsDetails[this.selectedContract]
-
-      if (contract.metadata === undefined || contract.metadata.length === 0) {
-        modalDialogCustom.alert('This contract may be abstract, may not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
-      } else {
-        if (storage === 'swarm') {
-          publishOnSwarm(contract, this.fileManager, function (err, uploaded) {
-            if (err) {
-              try {
-                err = JSON.stringify(err)
-              } catch (e) {}
-              modalDialogCustom.alert(yo`<span>Failed to publish metadata file to swarm, please check the Swarm gateways is available ( swarm-gateways.net ).<br />
-              ${err}</span>`)
-            } else {
-              var result = yo`<div>${uploaded.map((value) => {
-                return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
-              })}</div>`
-              modalDialogCustom.alert(`Published ${contract.name}'s Metadata`, yo`<span>Metadata of "${contract.name.toLowerCase()}" was published successfully.<br> <pre>${result}</pre> </span>`)
-            }
-          }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-            this.fileProvider.addExternal('swarm/' + item.hash, item.content)
-          })
-        } else {
-          publishOnIpfs(contract, this.fileManager, function (err, uploaded) {
-            if (err) {
-              try {
-                err = JSON.stringify(err)
-              } catch (e) {}
-              modalDialogCustom.alert(yo`<span>Failed to publish metadata file to ${storage}, please check the ${storage} gateways is available.<br />
-              ${err}</span>`)
-            } else {
-              var result = yo`<div>${uploaded.map((value) => {
-                return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
-              })}</div>`
-              modalDialogCustom.alert(`Published ${contract.name}'s Metadata`, yo`<span>Metadata of "${contract.name.toLowerCase()}" was published successfully.<br> <pre>${result}</pre> </span>`)
-            }
-          }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-            this.fileProvider.addExternal('ipfs/' + item.hash, item.content)
-          })
-        }
-      }
-    }
   }
 
   details () {
