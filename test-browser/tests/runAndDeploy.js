@@ -2,6 +2,9 @@
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 
+const passphrase = process.env.account_passphrase
+const password = process.env.account_password
+
 module.exports = {
 
   before: function (browser, done) {
@@ -64,9 +67,27 @@ module.exports = {
     })
   },
 
-  'Should': function (browser) {
-    browser.setupMetamask()
+  'Should connect to Ropsten Test Network using MetaMask': function (browser) {
+    const runtimeBrowser = browser.capabilities.browserName
+
+    runtimeBrowser === 'chrome' ? browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    .setupMetamask(passphrase, password)
+    .click('.network-indicator__down-arrow')
+    .useXpath().click("//span[text()='Ropsten Test Network']")
+    .useCss().switchBrowserTab(0)
+    .refresh()
+    .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+    .click('*[data-id="landingPageStartSolidity"]')
+    .pause(5000)
+    .clickLaunchIcon('udapp')
+    .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')
+    .click('*[data-id="settingsSelectEnvOptions"] option[id="injected-mode"]')
+    .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Ropsten (3) network')
+    .switchBrowserTab(2)
+    .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
+    .click('.page-container__footer-button:nth-of-type(2)')
     .end()
+    : browser.end()
   },
 
   tearDown: sauce
@@ -75,7 +96,7 @@ module.exports = {
 var sources = [
   {
     'browser/Greet.sol': {
-      content: 
+      content:
       `
       pragma solidity ^0.6.0;
 
@@ -91,5 +112,5 @@ var sources = [
           }
       }`
     }
-  },
+  }
 ]
