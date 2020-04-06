@@ -7,6 +7,8 @@ var confirmDialog = require('../../ui/confirmDialog')
 var modalDialog = require('../../ui/modaldialog')
 var MultiParamManager = require('../../ui/multiParamManager')
 
+import publishToStorage from '../../../publishToStorage'
+
 class ContractDropdownUI {
   constructor (blockchain, dropdownLogic, logCallback, runView) {
     this.blockchain = blockchain
@@ -16,6 +18,9 @@ class ContractDropdownUI {
     this.event = new EventManager()
 
     this.listenToEvents()
+    this.ipfsCheckedState = false
+    this.exEnvironment = blockchain.getProvider()
+    this.listenToContextChange()
   }
 
   listenToEvents () {
@@ -43,16 +48,66 @@ class ContractDropdownUI {
     })
   }
 
+  listenToContextChange () {
+    this.blockchain.event.register('contextChanged', () => {
+      this.blockchain.updateNetwork((err, {name} = {}) => {
+        if (err) {
+          console.log(`can't detect network`)
+          return
+        }
+        this.exEnvironment = this.blockchain.getProvider()
+        this.networkName = name
+
+        const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
+
+        // check if an already selected option exist else use default workflow
+        if (savedConfig !== null) {
+          this.setCheckedState(savedConfig)
+        } else {
+          this.setCheckedState(this.networkName === 'Main')
+        }
+      })
+    })
+  }
+
+  setCheckedState (value) {
+    value = value === 'true' ? true : value === 'false' ? false : value
+    this.ipfsCheckedState = value
+    document.getElementById('deployAndRunPublishToIPFS').checked = value
+  }
+
+  toggleCheckedState () {
+    if (this.exEnvironment === 'vm') this.networkName = 'VM'
+    this.ipfsCheckedState = !this.ipfsCheckedState
+    window.localStorage.setItem(`ipfs/${this.exEnvironment}/${this.networkName}`, this.ipfsCheckedState)
+  }
+
   render () {
     this.compFails = yo`<i title="No contract compiled yet or compilation failed. Please check the compile tab for more information." class="m-1 fas fa-times-circle ${css.errorIcon}" ></i>`
     var info = yo`<i class="fas fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
-
     this.atAddress = yo`<button class="${css.atAddress} btn btn-sm btn-info" disabled id="runAndDeployAtAdressButton" onclick=${this.loadFromAddress.bind(this)}>At Address</button>`
     this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="address of contract" oninput=${this.atAddressChanged.bind(this)} />`
     this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled></select>`
 
+    if (this.exEnvironment === 'vm') this.networkName = 'VM'
+
+    const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
+    this.ipfsCheckedState = savedConfig === 'true' ? true : false // eslint-disable-line
+
+    const ipfsCheckbox = this.ipfsCheckedState === true
+    ? yo`<input id="deployAndRunPublishToIPFS" class="mr-2" checked type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
+    : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
+
+    this.deployCheckBox = yo`
+      <div class="mt-2 text-left">
+        ${ipfsCheckbox}
+        <label for="deployAndRunPublishToIPFS" class="text-dark p-0 m-0">PUBLISH TO IPFS</label>
+        <i class="fas fa-info ml-2" aria-hidden="true" title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"></i>
+      </div>
+      `
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
-    this.orLabel = yo`<div class="${css.orLabel}">or</div>`
+    this.orLabel = yo`<div class="${css.orLabel} mt-2">or</div>`
+
     let el = yo`
       <div class="${css.container}" data-id="contractDropdownContainer">
         <label class="${css.settingsLabel}">Contract</label>
@@ -122,6 +177,7 @@ class ContractDropdownUI {
       selectedContract.bytecodeObject
     )
     this.createPanel.appendChild(createConstructorInstance.render())
+    this.createPanel.appendChild(this.deployCheckBox)
   }
 
   getSelectedContract () {
@@ -175,6 +231,9 @@ class ContractDropdownUI {
       }
 
       this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
+      if (this.ipfsCheckedState) {
+        publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, selectedContract)
+      }
     }
 
     let contractMetadata

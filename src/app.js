@@ -360,7 +360,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel,
     registry.get('compilersartefacts').api,
     networkModule,
-    mainview
+    mainview,
+    registry.get('fileproviders/browser').api,
   )
   const analysis = new AnalysisTab(registry)
   const debug = new DebuggerTab(blockchain)
