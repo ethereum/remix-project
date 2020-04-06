@@ -27,9 +27,9 @@ Related links:
 
  ### 1) Team meetings:
  
- - Daily standup (1pm15) for taking care of the current issues.
+ - Daily standup (1pm CET - 11am GMT) for taking care of the current issues.
  
- - A regular standup - each Tuesday 3pm CET - which aim to 
+ - A regular standup - each Tuesday (3pm CET - 1pm GMT) - which aim to 
     - Update every contributor on what others are doing.
     - Update the prioritised issues / PRs list.
     - Address little issues (possibly related to the current ongoing milestone).
