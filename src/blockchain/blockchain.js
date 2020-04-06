@@ -472,7 +472,7 @@ class Blockchain {
       if (txResult && txResult.result) {
         address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
         // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
-        returnValue = (txResult.result.execResult && isVM) ? txResult.result.execResult.returnValue : ''
+        returnValue = (txResult.result.execResult && isVM) ? txResult.result.execResult.returnValue : txResult.result
       }
 
       cb(error, txResult, address, returnValue)
