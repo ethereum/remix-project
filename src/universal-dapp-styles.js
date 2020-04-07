@@ -5,6 +5,9 @@ var css = csjs`
     display: flex;
     align-items: center;
   }
+  .calldataInput{
+    height: 32px;
+  }
   .title {
     display: flex;
     justify-content: space-between;
@@ -269,7 +272,7 @@ var css = csjs`
   }
   .contractActionsContainerMultiInner .multiArg i {
     padding-right: 10px;
-  },
+  }
   .hideWarningsContainer {
     display: flex;
     align-items: center;

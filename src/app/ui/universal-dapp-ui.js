@@ -38,7 +38,7 @@ function decodeResponseToTreeView (response, fnabi) {
 }
 
 UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
-  var noInstances = document.querySelector('[class^="noInstancesText"]')
+  var noInstances = document.querySelector('[data-id="deployAndRunNoInstanceText"]')
   if (noInstances) {
     noInstances.parentNode.removeChild(noInstances)
   }
@@ -121,29 +121,29 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   })
 
   const calldataInput = yo`
-    <input id="deployAndRunLLTxCalldata" class="w-100 m-0 form-control" title="The Calldata to send to fallback function of the contract.">
+    <input id="deployAndRunLLTxCalldata" class="${css.calldataInput} form-control" title="The Calldata to send to fallback function of the contract.">
   `
   const llIError = yo`
-    <label id="deployAndRunLLTxError" class="text-danger"></label>
+    <label id="deployAndRunLLTxError" class="text-danger my-2"></label>
   `
   // constract LLInteractions elements
   const lowLevelInteracions = yo`
     <div class="d-flex flex-column">
       <div class="d-flex flex-row justify-content-between mt-2">
-        <label class="pt-2 border-top d-flex justify-content-start flex-grow-1">
+        <div class="py-2 border-top d-flex justify-content-start flex-grow-1">
           Low level interactions
-        </label>
+        </div>
         <a
           href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"
           title="check out docs for using 'receive'/'fallback'"
           target="_blank"
         >
-          <i aria-hidden="true" class="fas fa-info text-info my-2 mr-2"></i>
+          <i aria-hidden="true" class="fas fa-info my-2 mr-1"></i>
         </a>
       </div>
-      <div class="d-flex flex-column">
-        <div class="d-flex justify-content-end m-2 align-items-center">
-          <label class="mr-2 m-0">Calldata</label>
+      <div class="d-flex flex-column align-items-start">
+        <label class="">CALLDATA</label>
+        <div class="d-flex justify-content-end w-100 align-items-center">
           ${calldataInput}
           <button id="deployAndRunLLTxSendTransaction" class="btn btn-sm btn-secondary" title="Send data to contract." onclick=${() => sendData()}>Transact</button>
         </div>
