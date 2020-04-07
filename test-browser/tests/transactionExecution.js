@@ -40,7 +40,7 @@ module.exports = {
           '3': 'uint256: 4'
         }
       })
-        .click('i[class^="clearinstance"]')
+        .click('*[data-id="deployAndRunClearInstances"]')
   },
 
   'Test Complex Return Values': function (browser) {
@@ -88,7 +88,7 @@ module.exports = {
           '0': 'uint8: _en 2',
           '1': 'int256[5][]: _a1 1,-45,-78,56,60,-1,42,334,-45455,-446,1,10,-5435,45,-7'
         }
-      }).click('i[class^="clearinstance"]')
+      }).click('*[data-id="deployAndRunClearInstances"]')
   },
 
   'Test Complex Input Values': function (browser) {
@@ -144,7 +144,7 @@ module.exports = {
             }
           ]
         })
-      .click('i[class^="clearinstance"]')
+      .click('*[data-id="clearinstance"]')
       .end()
   },
 

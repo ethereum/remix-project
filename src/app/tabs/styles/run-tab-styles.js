@@ -8,15 +8,6 @@ var css = csjs`
   .runTabView::-webkit-scrollbar {
     display: none;
   }
-  .instanceContainerTitle {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-left: 10px;
-    margin: 0 0 16px;
-    font-size: 14px;
-    line-height: 19px;
-  }
   .settings {
     padding: 0 24px 16px;
   }
@@ -81,19 +72,12 @@ var css = csjs`
   .container {
     padding: 0 24px 16px;
   }
-  .recorderCollapsedView,
-  .recorderExpandedView {
-    display: flex;
-    flex-direction: column;
-  }
   .recorderDescription {
     margin: 0 15px 15px 0;
    }
   .contractNames {
     width: 100%;
     border: 1px solid
-  }
-  .contractNamesError {
   }
   .subcontainer {
     display: flex;
@@ -200,9 +184,6 @@ var css = csjs`
   }
   .networkItem {
     margin-right: 5px;
-  }
-  .clearinstance {
-    margin-right: 15px;
   }
   .transactionActions {
     display: flex;

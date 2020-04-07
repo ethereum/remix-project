@@ -33,7 +33,7 @@ module.exports = {
   },
   'Test Manual Deploy Lib': function (browser) {
     console.log('testManualDeployLib')
-    browser.click('i[class^="clearinstance"]')
+    browser.click('*[data-id="deployAndRunClearInstances"]')
           .pause(5000)
           .clickLaunchIcon('settings')
           .click('#generatecontractmetadata')

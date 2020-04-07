@@ -15,20 +15,20 @@ module.exports = class Card {
     const self = this
     if (self._view.el) return self._view.el
 
-    self._view.cardBody = yo`<div class=${css.cardBody}></div>`
+    self._view.cardBody = yo`<div></div>`
     self._view.arrow = yo`<i class="${css.arrow} fas fa-angle-down" onclick="${() => trigger(this)}"></i>`
 
     self._view.expandCollapseButton = yo`
-    <div class=${css.expandCollapseButton}>${self._view.arrow}</div>`
+    <div>${self._view.arrow}</div>`
 
-    self._view.statusBar = yo`<div class=${css.statusBar}>${self._opts.collapsedView}</div>`
+    self._view.statusBar = yo`<div>${self._opts.collapsedView}</div>`
     self._view.cardHeader = yo`
-    <div class=${css.cardHeader} onclick=${() => trigger(self._view.arrow)}>
-      <div class="pr-1 ${css.cardTitles}">
-        <div class=${css.cardTitle}>${self._opts.title}</div>
+    <div class="d-flex justify-content-between align-items-center" onclick=${() => trigger(self._view.arrow)}>
+      <div class="pr-1 d-flex flex-row">
+        <div class="">${self._opts.title}</div>
         ${self._view.statusBar}
       </div>
-      <div class=${css.expandCollapseButton}>${self._view.expandCollapseButton}</div>
+      <div>${self._view.expandCollapseButton}</div>
     </div>`
 
     function trigger (el) {
@@ -59,25 +59,6 @@ const css = csjs`
     margin              : 0;
     background          : none;
   }
-  .cardHeader {
-    display             : flex;
-    justify-content     : space-between;
-    align-items         : center;
-  }
-  .statusBar {}
-  .cardBody {}
-  .cardTitles {
-    display             : flex;
-    flex-direction      : row;
-    align-items         : center;
-  }
-  .cardTitle {
-    font-size           : 14px;
-    font-weight         : 400;
-    margin-right        : 8px;
-    line-height         : 19px;
-  }
-  .expandCollapseButton {}
   .arrow {
     font-weight         : bold;
     cursor              : pointer;
