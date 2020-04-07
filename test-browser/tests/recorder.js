@@ -33,7 +33,7 @@ module.exports = {
           browser.verifyCallReturnValue(addressRef, ['0: uint256: 1', '0: uint256: 3456', '0: address: 0xbBF289D846208c16EDc8474705C748aff07732dB'])
           .perform(() => done())
         })
-        .click('i[class^="clearinstance"]')
+        .click('*[data-id="deployAndRunClearInstances"]')
         .testContracts('testRecorder.sol', sources[0]['browser/testRecorder.sol'], ['testRecorder'])
         .createContract('12')
         .waitForElementPresent('.instance:nth-of-type(2)')

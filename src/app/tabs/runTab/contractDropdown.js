@@ -40,10 +40,8 @@ class ContractDropdownUI {
 
       if (success) {
         this.compFails.style.display = 'none'
-        document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
       } else {
         this.compFails.style.display = 'block'
-        document.querySelector(`.${css.contractNames}`).classList.add(css.contractNamesError)
       }
     })
   }
@@ -99,10 +97,15 @@ class ContractDropdownUI {
     : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
 
     this.deployCheckBox = yo`
-      <div class="mt-2 text-left">
+      <div class="mt-2 d-flex flex-column align-items-start">
         ${ipfsCheckbox}
-        <label for="deployAndRunPublishToIPFS" class="text-dark p-0 m-0">PUBLISH TO IPFS</label>
-        <i class="fas fa-info ml-2" aria-hidden="true" title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"></i>
+        <label
+          for="deployAndRunPublishToIPFS"
+          class="text-dark p-0 m-0"
+          title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
+        >
+          PUBLISH TO IPFS
+        </label>
       </div>
       `
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
@@ -142,7 +145,6 @@ class ContractDropdownUI {
 
   changeCurrentFile (currentFile) {
     if (!document.querySelector(`.${css.contractNames}`)) return
-    document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     if (/.(.abi)$/.exec(currentFile)) {
       this.createPanel.style.display = 'none'

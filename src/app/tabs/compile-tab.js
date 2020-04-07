@@ -254,7 +254,7 @@ class CompileTab extends ViewPlugin {
         <label class="${css.compilerLabel} form-check-label" for="compiledContracts">Contract</label>
         ${selectEl}
       </div>
-      <article class="px-2 mt-2 pb-0">
+      <article class="mt-2 pb-0">
         <button id="publishOnSwarm" class="btn btn-secondary btn-block" title="Publish on Swarm" onclick="${() => { publishToStorage('swarm', this.fileProvider, this.fileManager, this.data.contractsDetails[this.selectedContract]) }}">
           <span>Publish on Swarm</span>
           <img id="swarmLogo" class="${css.storageLogo} ml-2" src="${swarmImg}">
@@ -284,7 +284,7 @@ class CompileTab extends ViewPlugin {
       </div>
     </section>`
     : yo`<section class="${css.container} clearfix"><article class="px-2 mt-2 pb-0 d-flex">
-      <span class="m-0 w-100 alert alert-warning" role="alert">No Contract Compiled Yet</span>
+      <span class="mt-2 mx-3 w-100 alert alert-warning" role="alert">No Contract Compiled Yet</span>
     </article></section>`
 
     if (contractList.length) {
