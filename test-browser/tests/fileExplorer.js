@@ -84,10 +84,10 @@ module.exports = {
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .modalFooterOKClick()
     .pause(2000)
-    .switchBrowserTab(1)
     .perform((done) => {
       if (runtimeBrowser === 'chrome') {
-        browser.assert.urlContains('https://gist.github.com')
+        browser.switchBrowserTab(2)
+        .assert.urlContains('https://gist.github.com')
       }
       done()
     })
