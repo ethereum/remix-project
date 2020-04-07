@@ -30,12 +30,12 @@ This method uses **remixd** - the remix daemon.  Please go to the [remixd tutori
 Importing from GitHub
 ---------------------
 
-It is possible to import files directly from GitHub.
+It is possible to import files directly from GitHub.  You should specify the release tag (where available), otherwise you will get the latest code in the master branch.  For OpenZeppelin Contracts you should only use code published in an official release, the example below imports from OpenZeppelin Contracts v2.5.0.
 
 ```
 pragma solidity >=0.4.22 <0.6.0;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/math/SafeMath.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v2.5.0/contracts/math/SafeMath.sol";
 
 ```
 
@@ -61,10 +61,10 @@ import 'ipfs://Qmdyq9ZmWcaryd1mgGZ4PttRNctLGUSAMpPqufsk6uRMKh';
 Importing from the console
 --------------------------
 
-You can also use a remix command remix.loadurl('<the_url>')in the console:
+You can also use a remix command remix.loadurl('<the_url>')in the console. You should specify the release tag (where available), otherwise you will get the latest code in the master branch. For OpenZeppelin Contracts you should only use code published in an official release, the example below imports from OpenZeppelin Contracts v2.5.0.
 
 ```
-remix.loadurl('https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/math/SafeMath.sol')
+remix.loadurl('https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v2.5.0/contracts/math/SafeMath.sol')
 ```
 
 Notice that this will create a `github` folder in the file explorer.  To load a file in the `github` folder, you would use a command like this:
