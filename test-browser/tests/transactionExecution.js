@@ -144,7 +144,7 @@ module.exports = {
             }
           ]
         })
-      .click('*[data-id="clearinstance"]')
+      .click('*[data-id="deployAndRunClearInstances"]')
       .end()
   },
 
