@@ -2,7 +2,7 @@
 require('@babel/register')()
 
 const crxFile = require('fs').readFileSync('./test-browser/extensions/chrome/metamask.crx')
-const metamaskExtension = new Buffer(crxFile).toString('base64')
+const metamaskExtension = new Buffer.from(crxFile).toString('base64')
 
 module.exports = {
   'src_folders': ['test-browser/tests'],
