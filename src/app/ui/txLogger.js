@@ -302,6 +302,7 @@ function context (self, opts, blockchain) {
   var block = data.tx.blockNumber || ''
   var i = data.tx.transactionIndex
   var value = val ? typeConversion.toInt(val) : 0
+  const hashInfo = (block||i) ? '[' : '' + (block) ? 'block:${block}' : '' + (i) ? ' txIndex:${i}' : '' + (block||i) ? ']' : ''
   if (blockchain.getProvider() === 'vm') {
     return yo`
       <div>
@@ -319,7 +320,7 @@ function context (self, opts, blockchain) {
     return yo`
       <div>
         <span class=${css.txLog}>
-          <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
+        <span class='${css.tx}'>${hashInfo}</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
