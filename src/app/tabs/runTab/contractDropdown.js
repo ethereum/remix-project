@@ -97,7 +97,7 @@ class ContractDropdownUI {
     : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
 
     this.deployCheckBox = yo`
-      <div class="mt-2 d-flex flex-column align-items-start">
+      <div class="mt-2 d-flex align-items-start">
         ${ipfsCheckbox}
         <label
           for="deployAndRunPublishToIPFS"
