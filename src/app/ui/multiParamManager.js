@@ -18,7 +18,7 @@ class MultiParamManager {
     * @param {string} evmBC
     *
     */
-  constructor (lookupOnly, funABI, clickCallBack, inputs, title, evmBC) {
+  constructor (lookupOnly, funABI, clickCallBack, inputs, title, evmBC, isDeploy) {
     this.lookupOnly = lookupOnly
     this.funABI = funABI
     this.clickCallBack = clickCallBack
@@ -27,6 +27,7 @@ class MultiParamManager {
     this.evmBC = evmBC
     this.basicInputField
     this.multiFields
+    this.isDeploy = isDeploy
   }
 
   switchMethodViewOn () {
@@ -124,7 +125,8 @@ class MultiParamManager {
     var onClick = () => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
     }
-    let funcButton = yo`<button onclick=${() => onClick()} class="${css.instanceButton} btn btn-sm">${title}</button>`
+    const width = this.isDeploy ? '' : 'w-50'
+    let funcButton = yo`<button onclick=${() => onClick()} class="${css.instanceButton} ${width} btn btn-sm">${title}</button>`
     this.contractActionsContainerSingle = yo`
     <div class="${css.contractActionsContainerSingle} pt-2">
       ${funcButton}

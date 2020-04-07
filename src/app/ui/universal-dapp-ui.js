@@ -78,7 +78,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   var close = yo`
     <button
-      class="${css.udappClose} p-1 btn btn-secondary"
+      class="${css.udappClose} mr-2 p-1 btn btn-secondary"
       data-id="universalDappUiUdappClose"
       onclick=${remove}
       title="Remove from the list"
@@ -145,7 +145,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
         <label class="">CALLDATA</label>
         <div class="d-flex justify-content-end w-100 align-items-center">
           ${calldataInput}
-          <button id="deployAndRunLLTxSendTransaction" class="btn btn-sm btn-secondary" title="Send data to contract." onclick=${() => sendData()}>Transact</button>
+          <button id="deployAndRunLLTxSendTransaction" class="${css.instanceButton} btn border-warning text-warning" title="Send data to contract." onclick=${() => sendData()}>Transact</button>
         </div>
       </div>
       <div>

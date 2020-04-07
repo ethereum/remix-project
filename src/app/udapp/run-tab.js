@@ -154,7 +154,7 @@ export class RunTab extends LibraryPlugin {
         </div>
       </div>`
 
-    this.recorderCard = new Card({}, {}, { title: 'Transactions recorded:', collapsedView: collapsedView })
+    this.recorderCard = new Card({}, {}, { title: 'Transactions recorded', collapsedView: collapsedView })
     this.recorderCard.event.register('expandCollapseCard', (arrow, body, status) => {
       body.innerHTML = ''
       status.innerHTML = ''
