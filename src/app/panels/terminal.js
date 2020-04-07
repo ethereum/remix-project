@@ -197,7 +197,7 @@ class Terminal extends Plugin {
     self._view.term = yo`
       <div class="${css.terminal_container}" tabindex="-1" data-id="terminalContainer" onscroll=${throttle(reattach, 10)} onkeydown=${focusinput}>
         ${self._components.autoCompletePopup.render()}
-        <div class="bg-secondary" data-id="terminalContainerDisplay" style="
+        <div data-id="terminalContainerDisplay" style="
           position: absolute;
           height: 100%;
           width: 100%;
@@ -752,6 +752,6 @@ function domTerminalFeatures (self, scopedCommands, blockchain) {
   }
 }
 
-function blockify (el) { return yo`<div class=${css.block}>${el}</div>` }
+function blockify (el) { return yo`<div class="px-4 ${css.block}">${el}</div>` }
 
 module.exports = Terminal

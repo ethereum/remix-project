@@ -101,7 +101,7 @@ class ContractDropdownUI {
         ${ipfsCheckbox}
         <label
           for="deployAndRunPublishToIPFS"
-          class="text-dark p-0 m-0"
+          class="p-0 m-0"
           title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
         >
           PUBLISH TO IPFS
@@ -176,7 +176,8 @@ class ContractDropdownUI {
       clickCallback,
       selectedContract.getConstructorInputs(),
       'Deploy',
-      selectedContract.bytecodeObject
+      selectedContract.bytecodeObject,
+      true
     )
     this.createPanel.appendChild(createConstructorInstance.render())
     this.createPanel.appendChild(this.deployCheckBox)

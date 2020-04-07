@@ -15,7 +15,6 @@ let css = csjs`
     font-weight: normal;
     max-width: 300px;
     user-select: none;
-    color: var(--primary);
   }
   .text:hover {
     text-decoration: underline;
@@ -40,7 +39,6 @@ let css = csjs`
   }
   .hpSections {
     min-width: 640px;
-    margin: 0 60px;
   }
   .labelIt {
     margin-bottom: 0;
@@ -61,6 +59,16 @@ let css = csjs`
   }
   .enviroments {
     display: flex;
+  }
+  .envLogo {
+    height: 24px;
+  }
+  .envLabel {
+    cursor: pointer;
+  }
+  .envButton {
+    width: 120px;
+    height: 70px;
   }
 }
 `
@@ -165,7 +173,38 @@ export class LandingPage extends ViewPlugin {
 
     globalRegistry.get('themeModule').api.events.on('themeChanged', () => {
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('remixLogo'))
+      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('solidityLogo'))
+      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('vyperLogo'))
+      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('pipelineLogo'))
+      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('debuggerLogo'))
+      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('workshopLogo'))
+      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('moreLogo'))
     })
+
+    const creatEnvButton = (imgPath, envID, envText, callback) => {
+      return yo`
+        <button class="btn btn-lg border-secondary d-flex mr-3 justify-content-center flex-column align-items-center ${css.envButton}" data-id="landingPageStartSolidity" onclick=${() => callback()}>
+          <img class="m-2 align-self-center ${css.envLogo}" id=${envID} src="${imgPath}">
+          <label class="h4 text-dark ${css.envLabel}">${envText}</label>
+        </button>
+      `
+    }
+    // main
+    const solEnv = creatEnvButton('/assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
+    const vyperEnv = creatEnvButton('/assets/img/vyperLogo.webp', 'vyperLogo', 'Vyper', startVyper)
+    // Featured
+    const pipelineEnv = creatEnvButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
+    const debuggerEnv = creatEnvButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
+    const workshopEnv = creatEnvButton('assets/img/workshopLogo.webp', 'workshopLogo', 'Workshop', startWorkshop)
+    const moreEnv = creatEnvButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
+
+    const invertNum = (globalRegistry.get('themeModule').api.currentTheme().quality === 'dark') ? 1 : 0
+    solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    vyperEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    pipelineEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    workshopEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
 
     let switchToPreviousVersion = () => {
       const query = new QueryParams()
@@ -175,7 +214,7 @@ export class LandingPage extends ViewPlugin {
     const img = yo`<img src="assets/img/sleepingRemiCroped.webp"></img>`
     const container = yo`<div class="${css.homeContainer} bg-light" data-id="landingPageHomeContainer">
       <div>
-        <div class="alert alert-info clearfix ${css.thisJumboton}">
+        <div class="alert alert-info clearfix py-3 ${css.thisJumboton}">
           <div class="${css.headlineContainer}">
             <div class="${css.logoContainer}">${img}</div>
           </div>
@@ -185,20 +224,20 @@ export class LandingPage extends ViewPlugin {
           </div>
         </div><!-- end of jumbotron -->
       </div><!-- end of jumbotron container -->
-      <div class="row ${css.hpSections}" data-id="landingPageHpSections">
-        <div id="col1" class="col-sm-7">
+      <div class="row ${css.hpSections} mx-4" data-id="landingPageHpSections">
+        <div id="col1" class="col-sm-5">
           <div class="mb-5">
             <h4>Environments</h4>
             <div class="${css.enviroments} pt-2">
-              <button class="btn btn-lg btn-secondary mr-3" data-id="landingPageStartSolidity" onclick=${() => startSolidity()}>Solidity</button>
-              <button class="btn btn-lg btn-secondary mr-3" onclick=${() => startVyper()}>Vyper</button>
+              ${solEnv}
+              ${vyperEnv}        
             </div>
           </div>
           <div class="file">
             <h4>File</h4>
             <p class="mb-1 ${css.text}" onclick=${() => createNewFile()}>New File</p>
             <p class="mb-1">
-              <label class="${css.labelIt} ${css.text}">
+              <p class="${css.labelIt} ${css.text}">
                 Open Files
                 <input title="open file" type="file" onchange="${
                   (event) => {
@@ -207,32 +246,29 @@ export class LandingPage extends ViewPlugin {
                     fileExplorer.uploadFile(event)
                   }
                 }" multiple />
-              </label>
+              </p>
             </p>
             <p class="mb-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</p>
-            <p class="mb-1">Import From:</p>
+            <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
             <div class="btn-group">
-              <button class="btn btn-sm btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
-              <button class="btn btn-sm btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'])}">GitHub</button>
-              <button class="btn btn-sm btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
-              <button class="btn btn-sm btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
-              <button class="btn btn-sm btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-solidity/master/contracts/crowdsale/validation/IndividuallyCappedCrowdsale.sol'])}">https</button>
-              <button class="btn btn-sm btn-secondary" onclick="${() => load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`)}">Resolver-engine</button>
+              <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
+              <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'])}">GitHub</button>
+              <button class="btn mx-1 btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
+              <button class="btn mx-1 btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
+              <button class="btn mx-1 btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-solidity/master/contracts/crowdsale/validation/IndividuallyCappedCrowdsale.sol'])}">https</button>
+              <button class="btn mx-1 btn-secondary" onclick="${() => load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`)}">Resolver-engine</button>
             </div><!-- end of btn-group -->
           </div><!-- end of div.file -->
         </div><!-- end of #col1 -->
         <div id="col2" class="col-sm-5">
           <div class="plugins mb-5">
             <h4>Featured Plugins</h4>
-            <p class="mb-1 ${css.text}" onclick=${() => { startPipeline() }}>Pipeline</p>
-            <p class="mb-1 ${css.text}" onclick=${() => { startDebugger() }}>Debugger</p>
-            <p class="mb-1 ${css.text}" onclick=${() => startWorkshop()}>Workshops</p>
-            <p class="mb-1">
-              <button onclick=${() => { startPluginManager() }} class="btn btn-sm btn-secondary ${css.seeAll}">
-                See all Plugins
-                <i class="fas fa-plug p-1" ></i>
-              </button>
-            </p>
+            <div class="d-flex flex-row">
+              ${pipelineEnv}
+              ${debuggerEnv}
+              ${workshopEnv}
+              ${moreEnv}
+            </div>
           </div>
           <div class="resources">
             <h4>Resources</h4>
