@@ -70,8 +70,8 @@ module.exports = {
   'Should connect to Ropsten Test Network using MetaMask': function (browser) {
     const runtimeBrowser = browser.capabilities.browserName
 
-    runtimeBrowser === 'chrome' ?
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    runtimeBrowser === 'chrome'
+    ? browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .setupMetamask(passphrase, password)
     .click('.network-indicator__down-arrow')
     .useXpath().click("//span[text()='Ropsten Test Network']")
@@ -95,8 +95,8 @@ module.exports = {
   'Should deploy contract on Ropsten Test Network using MetaMask': function (browser) {
     const runtimeBrowser = browser.capabilities.browserName
 
-    runtimeBrowser === 'chrome' ?
-    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+    runtimeBrowser === 'chrome'
+    ? browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
     .clickLaunchIcon('fileExplorers')
     .switchFile('browser/Greet.sol')
     .clickLaunchIcon('udapp')
@@ -116,8 +116,8 @@ module.exports = {
   'Should run low level interaction (fallback function) on Ropsten Test Network using MetaMask': function (browser) {
     const runtimeBrowser = browser.capabilities.browserName
 
-    runtimeBrowser === 'chrome' ?
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    runtimeBrowser === 'chrome'
+    ? browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
     .click('*[data-id="universalDappUiTitleExpander"]')
     .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
@@ -136,8 +136,8 @@ module.exports = {
   'Should connect to Ethereum Main Network using MetaMask': function (browser) {
     const runtimeBrowser = browser.capabilities.browserName
 
-    runtimeBrowser === 'chrome' ?
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    runtimeBrowser === 'chrome'
+    ? browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .switchBrowserTab(2)
     .waitForElementPresent('.network-indicator__down-arrow')
     .click('.network-indicator__down-arrow')
@@ -158,8 +158,8 @@ module.exports = {
   'Should deploy contract on Ethereum Main Network using MetaMask': function (browser) {
     const runtimeBrowser = browser.capabilities.browserName
 
-    runtimeBrowser === 'chrome' ?
-    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+    runtimeBrowser === 'chrome'
+    ? browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
     .clickLaunchIcon('fileExplorers')
     .switchFile('browser/Greet.sol')
     .clickLaunchIcon('udapp')
