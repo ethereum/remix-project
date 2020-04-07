@@ -70,7 +70,8 @@ module.exports = {
   'Should connect to Ropsten Test Network using MetaMask': function (browser) {
     const runtimeBrowser = browser.capabilities.browserName
 
-    runtimeBrowser === 'chrome' ? browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    runtimeBrowser === 'chrome' ?
+    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .setupMetamask(passphrase, password)
     .click('.network-indicator__down-arrow')
     .useXpath().click("//span[text()='Ropsten Test Network']")
@@ -82,10 +83,91 @@ module.exports = {
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')
     .click('*[data-id="settingsSelectEnvOptions"] option[id="injected-mode"]')
+    .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
     .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Ropsten (3) network')
     .switchBrowserTab(2)
     .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
     .click('.page-container__footer-button:nth-of-type(2)')
+    .switchBrowserTab(0)
+    : ''
+  },
+
+  'Should deploy contract on Ropsten Test Network using MetaMask': function (browser) {
+    const runtimeBrowser = browser.capabilities.browserName
+
+    runtimeBrowser === 'chrome' ?
+    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+    .clickLaunchIcon('fileExplorers')
+    .switchFile('browser/Greet.sol')
+    .clickLaunchIcon('udapp')
+    .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
+    .click('*[data-id="Deploy - transact (not payable)"]')
+    .switchBrowserTab(2)
+    .waitForElementPresent('.transaction-status--unapproved')
+    .click('.transaction-status--unapproved')
+    .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
+    .click('.page-container__footer-button:nth-of-type(2)')
+    .waitForElementPresent('.transaction-status--submitted')
+    .pause(35000)
+    .switchBrowserTab(0)
+    : ''
+  },
+
+  'Should run low level interaction (fallback function) on Ropsten Test Network using MetaMask': function (browser) {
+    const runtimeBrowser = browser.capabilities.browserName
+
+    runtimeBrowser === 'chrome' ?
+    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
+    .click('*[data-id="universalDappUiTitleExpander"]')
+    .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
+    .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
+    .switchBrowserTab(2)
+    .waitForElementPresent('.transaction-status--unapproved')
+    .click('.transaction-status--unapproved')
+    .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
+    .click('.page-container__footer-button:nth-of-type(2)')
+    .waitForElementPresent('.transaction-status--submitted')
+    .pause(35000)
+    .switchBrowserTab(0)
+    : ''
+  },
+
+  'Should connect to Ethereum Main Network using MetaMask': function (browser) {
+    const runtimeBrowser = browser.capabilities.browserName
+
+    runtimeBrowser === 'chrome' ?
+    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    .switchBrowserTab(2)
+    .waitForElementPresent('.network-indicator__down-arrow')
+    .click('.network-indicator__down-arrow')
+    .useXpath().click("//span[text()='Main Ethereum Network']")
+    .useCss().switchBrowserTab(0)
+    .refresh()
+    .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+    .click('*[data-id="landingPageStartSolidity"]')
+    .pause(5000)
+    .clickLaunchIcon('udapp')
+    .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')
+    .click('*[data-id="settingsSelectEnvOptions"] option[id="injected-mode"]')
+    .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
+    .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
+    : ''
+  },
+
+  'Should deploy contract on Ethereum Main Network using MetaMask': function (browser) {
+    const runtimeBrowser = browser.capabilities.browserName
+
+    runtimeBrowser === 'chrome' ?
+    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+    .clickLaunchIcon('fileExplorers')
+    .switchFile('browser/Greet.sol')
+    .clickLaunchIcon('udapp')
+    .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
+    .click('*[data-id="Deploy - transact (not payable)"]')
+    .waitForElementPresent('*[data-id="modalDialogContainer"]')
+    .assert.containsText('*[data-id="modalDialogModalBody"]', 'You are creating a transaction on the main network. Click confirm if you are sure to continue.')
+    .modalFooterCancelClick()
     .end()
     : browser.end()
   },
