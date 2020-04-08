@@ -86,7 +86,7 @@ module.exports = {
     .pause(2000)
     .perform((done) => {
       if (runtimeBrowser === 'chrome') {
-        browser.switchBrowserTab(2)
+        browser.switchBrowserTab(1)
         .assert.urlContains('https://gist.github.com')
       }
       done()
