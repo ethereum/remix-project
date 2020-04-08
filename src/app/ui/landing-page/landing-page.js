@@ -61,7 +61,7 @@ let css = csjs`
     display: flex;
   }
   .envLogo {
-    height: 24px;
+    height: 16px;
   }
   .envLabel {
     cursor: pointer;
@@ -181,22 +181,22 @@ export class LandingPage extends ViewPlugin {
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('moreLogo'))
     })
 
-    const creatEnvButton = (imgPath, envID, envText, callback) => {
+    const createEnvButton = (imgPath, envID, envText, callback) => {
       return yo`
         <button class="btn btn-lg border-secondary d-flex mr-3 justify-content-center flex-column align-items-center ${css.envButton}" data-id="landingPageStartSolidity" onclick=${() => callback()}>
           <img class="m-2 align-self-center ${css.envLogo}" id=${envID} src="${imgPath}">
-          <label class="h4 text-dark ${css.envLabel}">${envText}</label>
+          <label class="text-uppercase text-dark ${css.envLabel}">${envText}</label>
         </button>
       `
     }
     // main
-    const solEnv = creatEnvButton('/assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
-    const vyperEnv = creatEnvButton('/assets/img/vyperLogo.webp', 'vyperLogo', 'Vyper', startVyper)
+    const solEnv = createEnvButton('/assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
+    const vyperEnv = createEnvButton('/assets/img/vyperLogo.webp', 'vyperLogo', 'Vyper', startVyper)
     // Featured
-    const pipelineEnv = creatEnvButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
-    const debuggerEnv = creatEnvButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
-    const workshopEnv = creatEnvButton('assets/img/workshopLogo.webp', 'workshopLogo', 'Workshop', startWorkshop)
-    const moreEnv = creatEnvButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
+    const pipelineEnv = createEnvButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
+    const debuggerEnv = createEnvButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
+    const workshopEnv = createEnvButton('assets/img/workshopLogo.webp', 'workshopLogo', 'Workshop', startWorkshop)
+    const moreEnv = createEnvButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
 
     const invertNum = (globalRegistry.get('themeModule').api.currentTheme().quality === 'dark') ? 1 : 0
     solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
@@ -230,7 +230,7 @@ export class LandingPage extends ViewPlugin {
             <h4>Environments</h4>
             <div class="${css.enviroments} pt-2">
               ${solEnv}
-              ${vyperEnv}        
+              ${vyperEnv}
             </div>
           </div>
           <div class="file">
@@ -256,14 +256,14 @@ export class LandingPage extends ViewPlugin {
               <button class="btn mx-1 btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
               <button class="btn mx-1 btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
               <button class="btn mx-1 btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-solidity/master/contracts/crowdsale/validation/IndividuallyCappedCrowdsale.sol'])}">https</button>
-              <button class="btn mx-1 btn-secondary" onclick="${() => load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`)}">Resolver-engine</button>
+              <button class="btn mx-1 btn-secondary  text-nowrap" onclick="${() => load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`)}">Resolver-engine</button>
             </div><!-- end of btn-group -->
           </div><!-- end of div.file -->
         </div><!-- end of #col1 -->
-        <div id="col2" class="col-sm-5">
+        <div id="col2" class="col-sm-7">
           <div class="plugins mb-5">
             <h4>Featured Plugins</h4>
-            <div class="d-flex flex-row">
+            <div class="d-flex flex-row pt-2">
               ${pipelineEnv}
               ${debuggerEnv}
               ${workshopEnv}

@@ -75,7 +75,7 @@ class SettingsUI {
               value="web3" name="executionContext"> Web3 Provider
             </option>
           </select>
-          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank"><i class="${css.infoDeployAction} fas fa-info" title="check out docs to setup Environment"></i></a>
+          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank"><i class="${css.infoDeployAction} ml-2 fas fa-info" title="check out docs to setup Environment"></i></a>
         </div>
       </div>
     `
@@ -97,9 +97,9 @@ class SettingsUI {
           </span>
         </label>
         <div class="${css.account}">
-          <select data-id="runTabSelectAccount" name="txorigin" class="form-control ${css.select} custom-select" id="txorigin"></select>
-          <div style="margin-left: 0px;">${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}</div>
-          <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
+          <select data-id="runTabSelectAccount" name="txorigin" class="form-control ${css.select} custom-select pr-4" id="txorigin"></select>
+          <div style="margin-left: -5px;">${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}</div>
+          <i id="remixRunSignMsg" class="mx-1 fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
       </div>
     `

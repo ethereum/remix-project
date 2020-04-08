@@ -25,7 +25,7 @@ module.exports = class Card {
     self._view.cardHeader = yo`
     <div class="d-flex justify-content-between align-items-center" onclick=${() => trigger(self._view.arrow)}>
       <div class="pr-1 d-flex flex-row">
-        <div class="">${self._opts.title}</div>
+        <div>${self._opts.title}</div>
         ${self._view.statusBar}
       </div>
       <div>${self._view.expandCollapseButton}</div>
