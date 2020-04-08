@@ -348,13 +348,16 @@ module.exports = TxLogger
 // helpers
 
 function txDetails (e, tx, data, obj) {
-  var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
-  var from = obj.from
-  var to = obj.to
-  var log = document.querySelector(`#${tx.id} [class^='log']`)
-  var arrow = document.querySelector(`#${tx.id} [class^='arrow']`)
-  var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
-  var arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
+  const from = obj.from
+  const to = obj.to
+  const arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
+  const arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
+
+  const parentTxSpan = e.toElement.parentElement.parentElement
+  let table = parentTxSpan.querySelector(`#${tx.id} [class^="txTable"]`)
+  const log = parentTxSpan.querySelector(`#${tx.id} [class^='log']`)
+  const arrow = parentTxSpan.querySelector(`#${tx.id} [class^='arrow']`)
+
   if (table && table.parentNode) {
     tx.removeChild(table)
     log.removeChild(arrow)
