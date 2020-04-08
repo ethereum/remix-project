@@ -146,6 +146,7 @@ module.exports = {
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
+    .pause(2000)
     .waitForElementPresent('*[data-id="modalDialogContainer"]')
     .assert.containsText('*[data-id="modalDialogModalBody"]', 'You are creating a transaction on the main network. Click confirm if you are sure to continue.')
     .modalFooterCancelClick()
