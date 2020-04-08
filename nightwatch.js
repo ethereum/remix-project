@@ -30,10 +30,22 @@ module.exports = {
         'browserName': 'firefox',
         'javascriptEnabled': true,
         'acceptSslCerts': true
-      }
+      },
+      'exclude': ['./test-browser/tests/runAndDeploy.js']
     },
 
     'chrome': {
+      'desiredCapabilities': {
+        'browserName': 'chrome',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
+        'goog:chromeOptions': {
+          'args': ['window-size=2560,1440', 'start-fullscreen']
+        }
+      }
+    },
+
+    'chrome-runAndDeploy': {
       'desiredCapabilities': {
         'browserName': 'chrome',
         'javascriptEnabled': true,
