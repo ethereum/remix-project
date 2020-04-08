@@ -145,7 +145,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
         <label class="">CALLDATA</label>
         <div class="d-flex justify-content-end w-100 align-items-center">
           ${calldataInput}
-          <button id="deployAndRunLLTxSendTransaction" class="${css.instanceButton} w-50 btn border-warning text-warning" title="Send data to contract." onclick=${() => sendData()}>Transact</button>
+          <button id="deployAndRunLLTxSendTransaction" class="${css.instanceButton} p-0 w-50 btn border-warning text-warning" title="Send data to contract." onclick=${() => sendData()}>Transact</button>
         </div>
       </div>
       <div>
