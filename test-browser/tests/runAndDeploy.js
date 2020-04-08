@@ -68,10 +68,7 @@ module.exports = {
   },
 
   'Should connect to Ropsten Test Network using MetaMask': function (browser) {
-    const runtimeBrowser = browser.capabilities.browserName
-
-    runtimeBrowser === 'chrome'
-    ? browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .setupMetamask(passphrase, password)
     .click('.network-indicator__down-arrow')
     .useXpath().click("//span[text()='Ropsten Test Network']")
@@ -89,14 +86,10 @@ module.exports = {
     .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
     .click('.page-container__footer-button:nth-of-type(2)')
     .switchBrowserTab(0)
-    : ''
   },
 
   'Should deploy contract on Ropsten Test Network using MetaMask': function (browser) {
-    const runtimeBrowser = browser.capabilities.browserName
-
-    runtimeBrowser === 'chrome'
-    ? browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
     .clickLaunchIcon('fileExplorers')
     .switchFile('browser/Greet.sol')
     .clickLaunchIcon('udapp')
@@ -110,14 +103,10 @@ module.exports = {
     .waitForElementPresent('.transaction-status--submitted')
     .pause(35000)
     .switchBrowserTab(0)
-    : ''
   },
 
   'Should run low level interaction (fallback function) on Ropsten Test Network using MetaMask': function (browser) {
-    const runtimeBrowser = browser.capabilities.browserName
-
-    runtimeBrowser === 'chrome'
-    ? browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
     .click('*[data-id="universalDappUiTitleExpander"]')
     .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
@@ -130,14 +119,10 @@ module.exports = {
     .waitForElementPresent('.transaction-status--submitted')
     .pause(35000)
     .switchBrowserTab(0)
-    : ''
   },
 
   'Should connect to Ethereum Main Network using MetaMask': function (browser) {
-    const runtimeBrowser = browser.capabilities.browserName
-
-    runtimeBrowser === 'chrome'
-    ? browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .switchBrowserTab(2)
     .waitForElementPresent('.network-indicator__down-arrow')
     .click('.network-indicator__down-arrow')
@@ -152,14 +137,10 @@ module.exports = {
     .click('*[data-id="settingsSelectEnvOptions"] option[id="injected-mode"]')
     .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
     .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
-    : ''
   },
 
   'Should deploy contract on Ethereum Main Network using MetaMask': function (browser) {
-    const runtimeBrowser = browser.capabilities.browserName
-
-    runtimeBrowser === 'chrome'
-    ? browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
     .clickLaunchIcon('fileExplorers')
     .switchFile('browser/Greet.sol')
     .clickLaunchIcon('udapp')
@@ -169,7 +150,6 @@ module.exports = {
     .assert.containsText('*[data-id="modalDialogModalBody"]', 'You are creating a transaction on the main network. Click confirm if you are sure to continue.')
     .modalFooterCancelClick()
     .end()
-    : browser.end()
   },
 
   tearDown: sauce
