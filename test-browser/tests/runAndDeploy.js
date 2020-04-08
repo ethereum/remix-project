@@ -101,7 +101,7 @@ module.exports = {
     .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
     .click('.page-container__footer-button:nth-of-type(2)')
     .waitForElementPresent('.transaction-status--submitted')
-    .pause(35000)
+    .pause(60000)
     .switchBrowserTab(0)
   },
 
@@ -117,7 +117,7 @@ module.exports = {
     .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
     .click('.page-container__footer-button:nth-of-type(2)')
     .waitForElementPresent('.transaction-status--submitted')
-    .pause(35000)
+    .pause(60000)
     .switchBrowserTab(0)
   },
 
