@@ -1,4 +1,4 @@
-Remix Tutorials
+Remix Github Tutorials
 =======================
 
 There are a series of tutorials in our github repo [remix-workshops](https://github.com/ethereum/remix-workshops).  

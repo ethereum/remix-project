@@ -1,4 +1,4 @@
-Remixd: Get access your local filesystem 
+Remixd: Access your Local Filesystem 
 =========================================
 
 `remixd` is an npm module. Its purpose is to give the remix web
