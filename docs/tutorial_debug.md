@@ -1,4 +1,4 @@
-Debugging transactions
+Debugging Transactions
 ======================
 
 There are two ways to start debugging, each one corresponds to a different use case.

@@ -1,4 +1,4 @@
-Code contribution guide
+Code Contribution Guide
 =======================
 
 Remix is an open source tool and we encourage anyone to help us improve our tool.

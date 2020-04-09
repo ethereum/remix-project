@@ -55,40 +55,29 @@ Useful links:
 
 .. toctree::
    :maxdepth: 2
+   :caption: Solidity Unit Testing
+
+   unittesting
+   assert_library
+   examples
+
+.. toctree::
+   :maxdepth: 2
    :caption: Using Remix
    
    contract_metadata
    create_deploy
    tutorial_debug
-   FAQ
    import
    remix_commands
    remixd
-   unittesting
-   assert_library
-   
-.. toctree::
-   :maxdepth: 2
-   :caption: Building Plugins
-
-   remix_plugin.md
+   FAQ
 
 .. toctree::
    :maxdepth: 2
-   :caption: URLs & Downloads
+   :caption: Miscellaneous
 
    locations
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Tutorials and workshops
-
    remix_tutorials_github
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Code contribution guide
-
    code_contribution_guide
    community
-   support
