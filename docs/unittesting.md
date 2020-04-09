@@ -1,4 +1,4 @@
-Unit Testing
+Unit Testing Plugin
 ============
 
 Click the

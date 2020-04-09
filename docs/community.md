@@ -1,4 +1,4 @@
-Community
+Community Support
 =======================
 
 We know that blockchain ecosystem is very new and that lots of information is scattered around the web.
