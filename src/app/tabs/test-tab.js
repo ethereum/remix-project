@@ -87,9 +87,19 @@ module.exports = class TestTab extends ViewPlugin {
 
     if (eChecked) {
       checkAll.checked = true
+      this.testsSummary.hidden = true
+      this.testsOutput.hidden = true
       runBtn.removeAttribute('disabled')
     } else if (!selectedTests.length) {
       checkAll.checked = false
+      this.testsOutput.hidden = true
+      this.testsSummary.hidden = false
+      this.testsSummary.innerHTML = ''
+      this.testsSummary.appendChild(yo`
+        <div class=${css.summaryTitle}>
+          <div class="text-info">No test file selected</div>
+        </div>
+      `)
       runBtn.setAttribute('disabled', 'disabled')
     }
   }
