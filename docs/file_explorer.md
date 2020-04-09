@@ -1,54 +1,59 @@
-File Explorer
+File Explorers
 =============
 
-To get to the file explorers - click the file explorers icon.
+To get to the File Explorers module - click the file explorers icon.
 
 ![](images/a-file-explorer1.png)
 
-The file explorer lists by default all the files stored in your browser.
-You can see them in the browser folder. You can always rename, remove or
-add new files to the file explorer.
+The basic files explorer lists all the files stored in your browser's **browser storage**.
+You can see them in the **browser** folder. 
 
-Note that clearing the browser storage will permanently delete all the
-solidity files you wrote. To avoid this, you can use Remixd, which
-enables you to store and sync files in the browser with your local
-computer ( for more information see [remixd](remixd.html) ).
+**Important Note:** Clearing the browser storage will **permanently delete** all the
+solidity files stored there. This is an inherent limitation of a browser-based IDE.  However, if you want to store files outside of the browser and on your computer's filesystem, use [Remixd](remixd.html) or use the [desktop version of Remix-IDE](https://github.com/ethereum/remix-desktop/releases/). RemixD enables you to have access to a selected folder on your hard drive. Remix Desktop is a version of Remix-IDE in an Electron app.
+
+You can rename, remove or
+add new files to the file explorer.
 
 ![](images/a-file-explorer-buttons.png)
 
-We will start by reviewing at the icons at the top left - from left to
-the right:
+We will start by reviewing the icons in the image above.
+
+The book icon - **A.** is the link to the module's documentation.
+
+The icons to the right of the **browser** file explorer in the image above only appear for browser storage. 
 
 Create new File
 ---------------
 
-Creates a new `untitled.sol` file in Remix.
-
-Add Local File
---------------
-
-Allows you to select files from the local file system and import them to
-the Remix browser storage.
+The icon marked **B.** above. Creates a new file.
 
 Publish to Gist
 ---------------
 
-Publishes all files from the browser folder to a gist.
-Gist API has changed in 2018 and it unfortunately requires users to be authenticated to be able to publish a gist.
+The icon marked **C.** above. Publishes all files from the browser folder to a gist.  Only file in the root of **browser** will be published.  Files in subfolders will not be publish to the Gist.
+Gist API has changed in 2018 and **requires** users to be authenticated to be able to publish a gist.
 
-Click [this link](https://github.com/settings/tokens) to Github tokens setup  and select Generate new token.
-Then check only Create gists checkbox and generate a new token.
+Click [this link](https://github.com/settings/tokens) to Github tokens setup and select Generate new token. Then check the **Create gists** checkbox and generate a new token.
 
-Then paste it in Remix (right panel/Settings tab) and click Save. Now you should be able to use the feature.
+Take the token and paste it in Remix's **Settings** module in the **Github Access Token** section. And then click Save. Now you should be able to use the feature.
 
-Copy to another Remix instance
-------------------------
+Create a folder
+---------------
 
-Enables you to copy files from the browser storage to another instance
-(URL) of Remix.
+The icon marked **D.** above.  Creates a new folder in **browser** file explorer.
 
-Connect your filesystem to Remix
---------------------
+Context Menu (Right Click)
+-----------------------------
+Right click on a file or a folder and the **context menu** will appear. 
 
-Allows to sync between Remix and your local file system (see
-[more about RemixD](remixd.html)).
+![](images/a-file-ex-rt-click.png)
+
+You can rename or delete a selected file or a folder. You can also create a folder. 
+
+To create a file with the context menu, right click on a folder to get the **Create File** option. A file will be created inside that folder. 
+
+![](images/a-file-ex-rt-click-folder.png)
+
+The functionality of the context menu also works with RemixD (which gives you have access to a folder on your hard drive).  
+
+**Note:** When working with RemixD, you need to open and close the **localhost** folder to refresh the view.
