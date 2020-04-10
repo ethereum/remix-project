@@ -37,7 +37,7 @@ templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-# source_suffix = ['.rst', '.md']
+source_suffix = ['.rst', '.md']
 
 
 # The encoding of source files.
@@ -288,9 +288,8 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
-
+# Remove this two lines if 'recommonmark' is in extensions array (at line 33) and sphinx version is v1.0.0
 from recommonmark.parser import CommonMarkParser
-source_suffix = ['.rst', '.md']
 source_parsers = {'.md': CommonMarkParser}
 
 
