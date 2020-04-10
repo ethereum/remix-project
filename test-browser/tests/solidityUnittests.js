@@ -108,6 +108,7 @@ module.exports = {
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
     .pause(10000)
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsSummary"]')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'Method \'add\' can not have parameters inside a test contract')
   },
 
   'Solidity Unittests': function (browser) {
@@ -314,6 +315,6 @@ var sources = [
         }
       } 
         `
-    },
+    }
   }
 ]
