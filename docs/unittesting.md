@@ -30,7 +30,7 @@ Apart from this, Remix allows usage of some special functions to make testing mo
 * `afterEach()` - Runs after each test
 * `afterAll()` - Runs after all tests
 
-To get started, see [this](https://github.com/ethereum/remix/blob/master/remix-tests/tests/examples_4/SafeMath_test.sol) for sample implementation.
+To get started, see [this simple example](./unittesting_examples.html#simple-example).
 
 Run Tests
 ------------------
@@ -38,6 +38,45 @@ Run Tests
 Click the button "Run tests" to executes all tests whose box has been checked below (by default all). The execution is run in a separate environment and the result is displayed below.
 
 ![](images/a-unit-testing-run-result.png)
+
+Customization
+------------------
+Remix facilitates users with various types of customizations to test a contract properly.
+
+**1. Custom Compiler Context**
+
+`Solidity Unit Testing` refers `Solidity Compiler` plugin for compiler configurations. One can provide customized inputs for `Compiler`, `EVM Version` & `Enable Optimization`.
+
+![](images/a-unit-testing-custom-compiler-config.png)
+
+**2. Custom Transaction Context**
+
+For a contract method interaction, prime parameters of transaction are `from` address, `value` & `gas`. Usually, we need to test method's behaviour under different values of these parameters.
+
+Remix provides the functionality of custom `msg.sender` & `msg.value` of transaction using method devdoc like:
+
+```
+/// #sender: account-0
+/// #value: 10
+function checkSenderIs0AndValueis10 () public payable{
+    Assert.equal(msg.sender, TestsAccounts.getAccount(0), "wrong sender in checkSenderIs0AndValueis10");
+    Assert.equal(msg.value, 10, "wrong value in checkSenderIs0AndValueis10");
+}
+```
+
+**Note:** To use custom `msg.sender` functionality, `remix_accounts.sol` should be imported in your test file. 
+
+Complete example can be seen in [examples](./unittesting_examples) section.
+
+Regarding `gas`, Remix estimate the required gas for each transaction internally. Still if a contract deployment fails with `Out-of-Gas` error, it tries to redeploy it by doubling the gas. Deployment failing with double gas will show error: `contract deployment failed after trying twice: The contract code couldn\'t be stored, please check your gas limit`
+
+
+Points to remember
+------------------
+
+* A test contract can not have a method with parameters. Having one such method will show error: `Method 'methodname' can not have parameters inside a test contract`
+* No. of test accounts are `3` before remix-ide release v0.10.0 and `10` afterwards
+* A test file which imports `remix_accounts.sol` might not compile successfully with `Solidity Compiler` plugin but it will work fine with Solidity Unit Testing plugin
 
 Continuous integration
 ----------------------
