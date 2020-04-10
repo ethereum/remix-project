@@ -59,7 +59,7 @@ Useful links:
 
    unittesting
    assert_library
-   examples
+   unittesting_examples
 
 .. toctree::
    :maxdepth: 2
