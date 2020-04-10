@@ -64,8 +64,9 @@ module.exports = {
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
     .pause(15000)
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol (kickstarterTest)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project exists)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ (Check project exists)')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project is fundable)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'owner is incorrect')
   },
 
   'Should fail on compilation': function (browser) {
@@ -94,6 +95,19 @@ module.exports = {
     .pause(10000)
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsSummary"]')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'contract deployment failed after trying twice')
+  },
+
+  'Should fail when parameters are to method in test contract': function (browser) {
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    .addFile('methodFailure_test.sol', sources[0]['browser/methodFailure_test.sol'])
+    .clickLaunchIcon('fileExplorers')
+    .switchFile('browser/methodFailure_test.sol')
+    .clickLaunchIcon('solidityUnitTesting')
+    .click('*[data-id="testTabCheckAllTests"]')
+    .click('.singleTestLabel:nth-of-type(6)')
+    .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
+    .pause(10000)
+    .waitForElementPresent('*[data-id="testTabSolidityUnitTestsSummary"]')
   },
 
   'Solidity Unittests': function (browser) {
@@ -237,20 +251,25 @@ var sources = [
           enum State { Started, Completed }
 
           Kickstarter kickstarter;
-          /// #sender: account-0
+          
           function beforeAll () public {
             kickstarter = new Kickstarter();
             kickstarter.createProject("ProjectA", 123000);
             kickstarter.createProject("ProjectB", 100);
           }
       
-          /// #sender: account-0
+          /// #sender: account-1
           /// #value: 10000000
           function checkProjectExists () public payable {
               (address owner, string memory name, uint goal, uint fundsAvailable, uint amountContributed, Kickstarter.State state) = kickstarter.projects(0);
               Assert.equal(name, "ProjectA", "project name is incorrect");
-              Assert.equal(owner, address(this), "owner is incorrect");
               Assert.equal(goal, 123000, "funding goal is incorrect");
+              Assert.equal(owner, TestsAccounts.getAccount(0), "owner is incorrect"); //failing case
+              Assert.equal(owner, address(this), "owner is incorrect");
+              Assert.equal(msg.sender, TestsAccounts.getAccount(0), "wrong sender"); //failing case
+              Assert.equal(msg.sender, TestsAccounts.getAccount(1), "wrong sender");
+              Assert.equal(msg.value, 5000000, "wrong value"); //failing case
+              Assert.equal(msg.value, 10000000, "wrong value");
           }
 
           function checkProjectIsFundable () public {
@@ -258,6 +277,7 @@ var sources = [
               (address owner, string memory name, uint goal, uint fundsAvailable, uint amountContributed, Kickstarter.State state) = kickstarter.projects(0);
               Assert.equal(amountContributed, 120000, "contributed amount is incorrect");
           }
+          
       }
         `
     },
@@ -282,6 +302,18 @@ var sources = [
           }
       }
         `
-    }
+    },
+    'browser/methodFailure_test.sol': {
+      content: `
+      pragma solidity ^0.6.0;
+
+      contract methodfailure {
+        function add(uint a, uint b) public {
+           uint c = a+b;
+           Assert.equal(a+b, c, "wrong value");
+        }
+      } 
+        `
+    },
   }
 ]
