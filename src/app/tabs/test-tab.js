@@ -124,7 +124,7 @@ module.exports = class TestTab extends ViewPlugin {
     if (_errors && _errors.errors) {
       _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsSummary, {type: err.severity}))
       return
-    } else if (_errors && Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage)){
+    } else if (_errors && Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage)) {
       _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsSummary, {type: err.severity}))
       return
     } else if (_errors && !_errors.errors && !Array.isArray(_errors)) {
