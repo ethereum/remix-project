@@ -23,7 +23,7 @@ const profile = {
   icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNjk2IDM4NHE0MCAwIDY4IDI4dDI4IDY4djEyMTZxMCA0MC0yOCA2OHQtNjggMjhoLTk2MHEtNDAgMC02OC0yOHQtMjgtNjh2LTI4OGgtNTQ0cS00MCAwLTY4LTI4dC0yOC02OHYtNjcycTAtNDAgMjAtODh0NDgtNzZsNDA4LTQwOHEyOC0yOCA3Ni00OHQ4OC0yMGg0MTZxNDAgMCA2OCAyOHQyOCA2OHYzMjhxNjgtNDAgMTI4LTQwaDQxNnptLTU0NCAyMTNsLTI5OSAyOTloMjk5di0yOTl6bS02NDAtMzg0bC0yOTkgMjk5aDI5OXYtMjk5em0xOTYgNjQ3bDMxNi0zMTZ2LTQxNmgtMzg0djQxNnEwIDQwLTI4IDY4dC02OCAyOGgtNDE2djY0MGg1MTJ2LTI1NnEwLTQwIDIwLTg4dDQ4LTc2em05NTYgODA0di0xMTUyaC0zODR2NDE2cTAgNDAtMjggNjh0LTY4IDI4aC00MTZ2NjQwaDg5NnoiLz48L3N2Zz4=',
   permission: true,
   version: packageJson.version,
-  methods: ['getCurrentFile', 'getFile', 'setFile', 'switchFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'unlink', 'rename', 'readdir', 'rmdir'],
+  methods: ['setFile', 'switchFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'unlink', 'rename', 'readdir', 'rmdir'],
   kind: 'file-system'
 }
 
@@ -60,7 +60,7 @@ class FileManager extends Plugin {
    */
   _handleIsFile (path, message) {
     if (!this.isFile(path)) {
-      this._handleError({ message: `Path ${path} is not a file: ${message}.` })
+      this._handleError({ code: 'EISDIR', message })
     }
   }
 
@@ -71,7 +71,7 @@ class FileManager extends Plugin {
    */
   _handleIsDir (path, message) {
     if (this.isFile(path)) {
-      throw new Error(`Path ${path} is not a directory: ${message}.`)
+      throw new Error({ code: 'ENOTDIR', message })
     }
   }
 
@@ -80,24 +80,26 @@ class FileManager extends Plugin {
    * @param {object} error error { code, message }
    */
   _handleError (error) {
-    if (error.message) {
-      throw new Error(message)
-    }
+    const message = error.message ? `: ${error.message}` : ''
 
     if (error.code === 'ENOENT') {
-      throw new Error('No such file or directory')
+      throw new Error('No such file or directory' + message)
     }
 
     if (error.code === 'EISDIR') {
-      throw new Error('Invalid operation on a directory')
+      throw new Error('Path is a directory' + message)
+    }
+
+    if (error.code === 'ENOTDIR') {
+      throw new Error('Path is not on a directory' + message)
     }
 
     if (error.code === 'EEXIST') {
-      throw new Error('File already exists')
+      throw new Error('File already exists' + message)
     }
 
     if (error.code === 'EPERM' || error.code === 'EACCESS') {
-      throw new Error('Permission denied')
+      throw new Error('Permission denied' + message)
     }
 
     return error
@@ -105,7 +107,10 @@ class FileManager extends Plugin {
 
   /** The current opened file */
   file () {
-    return this.currentFile()
+    const file = this.currentFile()
+    
+    if (!file) this._handleError({ code: 'ENOENT', message: 'No file selected' })
+    return file
   }
 
   /**
@@ -125,7 +130,9 @@ class FileManager extends Plugin {
    */
   isFile (path) {
     const extension = path.split('.').pop()
-    return !!extension && extension.split('/').length === 0
+    const splitExtension = extension.split('/')
+    
+    return !!extension && splitExtension.length === 1 && splitExtension[0] === extension
   }
 
   /**
@@ -134,8 +141,8 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   open (path) {
-    this._handleExists(path, 'Cannot open file')
-    this._handleIsFile(path, 'Cannot open file')
+    this._handleExists(path, `Cannot open file ${path}`)
+    this._handleIsFile(path, `Cannot open file ${path}`)
     this.switchFile(path)
   }
 
@@ -146,7 +153,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   writeFile (path, data) {
-    this._handleIsFile(path, 'Cannot write file')
+    this._handleIsFile(path, `Cannot write file ${path}`)
     this.setFile(path, data)
   }
 
@@ -156,8 +163,8 @@ class FileManager extends Plugin {
    * @returns {string} content of the file
    */
   readFile (path) {
-    this._handleExists(path, 'Cannot read file')
-    this._handleIsFile(path, 'Cannot read file')
+    this._handleExists(path, `Cannot read file ${path}`)
+    this._handleIsFile(path, `Cannot read file ${path}`)
     this.getFile(path)
   }
 
@@ -168,9 +175,9 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   copyFile (src, dest) {
-    this._handleExists(src, 'Cannot copy from it')
-    this._handleIsFile(src, 'Cannot copy from it')
-    this._handleIsFile(dest, 'Cannot paste content into it')
+    this._handleExists(src, `Cannot copy from ${src}`)
+    this._handleIsFile(src, `Cannot copy from ${src}`)
+    this._handleIsFile(dest, `Cannot paste content into ${dest}`)
     const content = this.readFile(src)
     this.writeFile(dest, content)
   }
@@ -182,8 +189,8 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   unlink(path) {
-    this._handleExists(path, 'Cannot remove file')
-    this._handleIsDir(path, 'Cannot remove file')
+    this._handleExists(path, `Cannot remove file ${path}`)
+    this._handleIsDir(path, `Cannot remove file ${path}`)
   }
 
   /** 
@@ -193,7 +200,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   rename (oldPath, newPath) {
-    this.__handleExists(oldPath, 'Cannot rename')
+    this.__handleExists(oldPath, `Cannot rename ${oldPath}`)
     // todo: should we verify if newPath exists here ?
     const isFile = this.isFile(oldPath)
     this.fileRenamedEvent(oldPath, newPath, !isFile)
@@ -206,7 +213,7 @@ class FileManager extends Plugin {
    */
   mkdir (path) {
     if (this.exists(path)) {
-      throw new Error(`Path ${path} already exists: Cannot create a directory`)
+      this._handleError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
     }
     // To implement
   }
@@ -237,8 +244,8 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   rmdir(path) {
-    this._handleExists(path, 'Cannot remove directory')
-    this._handleIsDir(path, 'Cannot remove directory')
+    this._handleExists(path, `Cannot remove directory ${path}`)
+    this._handleIsDir(path, `Cannot remove directory ${path}`)
     // To implement
   }
 
@@ -329,15 +336,10 @@ class FileManager extends Plugin {
     return path ? path[1] : null
   }
 
-  getCurrentFile () {
-    const path = this.currentFile()
-    if (!path) throw new Error('No file selected')
-    return path
-  }
-
   getFile (path) {
     const provider = this.fileProviderOf(path)
-    if (!provider) throw new Error(`${path} not available`)
+    
+    if (!provider) this._handleError({ code: 'ENOENT', message: `${path} not available` })
     // TODO: change provider to Promise
     return new Promise((resolve, reject) => {
       if (this.currentFile() === path) return resolve(this.editor.currentContent())
@@ -372,7 +374,7 @@ class FileManager extends Plugin {
 
   _setFileInternal (path, content) {
     const provider = this.fileProviderOf(path)
-    if (!provider) throw new Error(`${path} not availble`)
+    if (!provider) this._handleError({ code: 'ENOENT', message: `${path} not available` })
     // TODO : Add permission
     // TODO : Change Provider to Promise
     return new Promise((resolve, reject) => {
@@ -389,7 +391,6 @@ class FileManager extends Plugin {
     if (fileProvider) {
       helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, copyName) => {
         if (error) {
-          console.log('createNonClashingNameWithPrefix', error)
           copyName = path + '.' + this.currentRequest.from
         }
         this._setFileInternal(copyName, content)
