@@ -289,7 +289,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   async testFromPath (path) {
-    const fileContent = await this.fileManager.getFile(path)
+    const fileContent = await this.fileManager.readFile(path)
     return this.testFromSource(fileContent, path)
   }
 
@@ -323,7 +323,7 @@ module.exports = class TestTab extends ViewPlugin {
       return
     }
     this.resultStatistics.hidden = false
-    this.fileManager.getFile(testFilePath).then((content) => {
+    this.fileManager.readFile(testFilePath).then((content) => {
       const runningTest = {}
       runningTest[testFilePath] = { content }
       const {currentVersion, evmVersion, optimize} = this.compileTab.getCurrentCompilerConfig()
