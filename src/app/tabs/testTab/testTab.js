@@ -43,21 +43,28 @@ import "remix_tests.sol"; // this import is automatically injected by Remix.
 // file name has to end with '_test.sol'
 contract test_1 {
 
-  function beforeAll() public {
-    // here should instantiate tested contract
-    Assert.equal(uint(4), uint(3), "error in before all function");
-  }
+    /// 'beforeAll' runs before all other tests
+    /// More special functions are: 'beforeEach', 'beforeAll', 'afterEach' & 'afterAll'
+    function beforeAll() public {
+        // Here should instantiate tested contract
+        Assert.equal(uint(1), uint(1), "1 should be equal to 1");
+    }
 
-  function check1() public {
-    // use 'Assert' to test the contract
-    Assert.equal(uint(2), uint(1), "error message");
-    Assert.equal(uint(2), uint(2), "error message");
-  }
+    function checkSuccess() public {
+        // Use 'Assert' to test the contract, 
+        // See documentation: https://remix-ide.readthedocs.io/en/latest/assert_library.html
+        Assert.equal(uint(2), uint(2), "2 should be equal to 2");
+        Assert.notEqual(uint(2), uint(3), "2 should not be equal to 3");
+    }
 
-  function check2() public view returns (bool) {
-    // use the return value (true or false) to test the contract
-    return true;
-  }
+    function checkSuccess2() public view returns (bool) {
+        // Use the return value (true or false) to test the contract
+        return true;
+    }
+    
+    function checkFailure() public {
+        Assert.equal(uint(1), uint(2), "1 is not equal to 2");
+    }
 }
 `
   }
