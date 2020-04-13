@@ -78,10 +78,11 @@ Points to remember
 * No. of test accounts are `3` before remix-ide release v0.10.0 and `10` afterwards
 * A test file which imports `remix_accounts.sol` might not compile successfully with `Solidity Compiler` plugin but it will work fine with Solidity Unit Testing plugin
 
-Continuous integration
+Remix-tests
 ----------------------
 
-remix-tests is also a CLI, it can be used in a continuous integration environment which support node.js.
-Please find more information in the [remix-tests repository](https://github.com/ethereum/remix/tree/master/remix-tests)
+`remix-tests` is the module which works underneath of remix-ide `Solidity Unit Testing` plugin. 
 
-See also: example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [Travis build](https://travis-ci.org/su-squares/ethereum-contract/builds/446186067) that uses remix-tests for continuous integration testing.
+`remix-tests` is an [NPM package](https://www.npmjs.com/package/remix-tests). It can also be used as  a CLI/CI solution, supporting node.js. Find more information about this type of usage in the [remix-tests repository](https://github.com/ethereum/remix/tree/master/remix-tests#as-command-line-interface)
+
+For CI implementation example, see [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [Travis build](https://travis-ci.org/su-squares/ethereum-contract/builds/446186067) that uses `remix-tests` for continuous integration testing.
