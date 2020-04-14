@@ -14,9 +14,12 @@ class GetAddressAtPosition extends EventEmitter {
 }
 
 function getAddressAtPosition (browser, index, callback) {
-  index = index + 2
-  browser.execute(function (index) {
-    return document.querySelector('.instance:nth-of-type(' + index + ')').getAttribute('id').replace('instance', '')
+  browser.waitForElementPresent('*[data-shared="universalDappUiInstance"]')
+  .execute(function (index) {
+    const deployedContracts = document.querySelectorAll('*[data-shared="universalDappUiInstance"]')
+    const id = deployedContracts[index].getAttribute('id')
+
+    return id.replace('instance', '')
   }, [index], function (result) {
     callback(result.value)
   })
