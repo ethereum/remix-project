@@ -88,7 +88,7 @@ Test contract/program: `Sender_test.sol`
 pragma solidity >=0.4.22 <0.7.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix
 import "remix_accounts.sol";
-import "./sender.sol";
+import "./Sender.sol";
 
 // Inherit 'Sender' contract
 contract SenderTest is Sender {
