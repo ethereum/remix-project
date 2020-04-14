@@ -54,7 +54,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   let self = this
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   address = ethJSUtil.toChecksumAddress(address)
-  var instance = yo`<div class="instance run-instance border-dark ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
+  var instance = yo`<div class="instance run-instance border-dark ${css.instance} ${css.hidesub}" id="instance${address}" data-shared="universalDappUiInstance"></div>`
   const context = this.blockchain.context()
 
   var shortAddress = helper.shortenAddress(address)
