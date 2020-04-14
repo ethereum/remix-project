@@ -45,38 +45,45 @@ Remix facilitates users with various types of customizations to test a contract 
 
 **1. Custom Compiler Context**
 
-`Solidity Unit Testing` refers `Solidity Compiler` plugin for compiler configurations. One can provide customized inputs for `Compiler`, `EVM Version` & `Enable Optimization`.
+`Solidity Unit Testing` refers `Solidity Compiler` plugin for compiler configurations. One can provide customized inputs for `Compiler`, `EVM Version` & `Enable Optimization` and these will be the configuration settings used for contract compilation before running unit tests.
 
 ![](images/a-unit-testing-custom-compiler-config.png)
 
 **2. Custom Transaction Context**
 
-For a contract method interaction, prime parameters of transaction are `from` address, `value` & `gas`. Usually, we need to test method's behaviour under different values of these parameters.
+For a contract method interaction, prime parameters of transaction are `from` address, `value` & `gas`. Usually, we need to test a method's behaviour under different values of these parameters.
 
 Remix provides the functionality of custom `msg.sender` & `msg.value` of transaction using method devdoc like:
 
 ```
 /// #sender: account-0
 /// #value: 10
-function checkSenderIs0AndValueis10 () public payable{
+function checkSenderIs0AndValueis10 () public payable {
     Assert.equal(msg.sender, TestsAccounts.getAccount(0), "wrong sender in checkSenderIs0AndValueis10");
     Assert.equal(msg.value, 10, "wrong value in checkSenderIs0AndValueis10");
 }
 ```
+Things to keep in mind while using custom transaction context:
 
-**Note:** To use custom `msg.sender` functionality, `remix_accounts.sol` should be imported in your test file. 
+1. Parameters must be defined in devdoc of related method
+2. Each parameter key should be prefixed with a hash (**#**) and end with a colon following a space (**:&nbsp;**) like `#sender: ` & `#value: `
+3. For now, customization is available for parameters `sender` & `value` only
+4. Sender is `from` address of a transaction which is accessed using `msg.sender` inside a contract method. It should be defined in a fixed format as '**account-**<account_index>'
+5. `<account_index>` varies from `0-2` before remix-ide release v0.10.0 and `0-9` afterwards
+6. `remix_accounts.sol` must be imported in your test file to use custom `sender`
+7. Value is `value` sent along with a transaction in `wei` which is accessed using `msg.value` inside a contract method. It should be a number.
 
-Complete example can be seen in [examples](./unittesting_examples) section.
+Regarding `gas`, Remix estimates the required gas for each transaction internally. Still if a contract deployment fails with `Out-of-Gas` error, it tries to redeploy it by doubling the gas. Deployment failing with double gas will show error: ```contract deployment failed after trying twice: The contract code couldn't be stored, please check your gas limit```
 
-Regarding `gas`, Remix estimate the required gas for each transaction internally. Still if a contract deployment fails with `Out-of-Gas` error, it tries to redeploy it by doubling the gas. Deployment failing with double gas will show error: `contract deployment failed after trying twice: The contract code couldn\'t be stored, please check your gas limit`
+Various test examples can be seen in [examples](./unittesting_examples) section.
 
 
 Points to remember
 ------------------
 
-* A test contract can not have a method with parameters. Having one such method will show error: `Method 'methodname' can not have parameters inside a test contract`
-* No. of test accounts are `3` before remix-ide release v0.10.0 and `10` afterwards
-* A test file which imports `remix_accounts.sol` might not compile successfully with `Solidity Compiler` plugin but it will work fine with Solidity Unit Testing plugin
+* A test contract cannot have a method with parameters. Having one such method will show error: `Method 'methodname' can not have parameters inside a test contract`
+* Number of test accounts are `3` before remix-ide release v0.10.0 and `10` afterwards
+* A test file which imports `remix_accounts.sol` might not compile successfully with `Solidity Compiler` plugin but it will work fine with Solidity Unit Testing plugin.
 
 Remix-tests
 ----------------------

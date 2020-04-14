@@ -88,65 +88,74 @@ Test contract/program: `Sender_test.sol`
 pragma solidity >=0.4.22 <0.7.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix
 import "remix_accounts.sol";
-import "./Sender.sol";
+import "./sender.sol";
+
 // Inherit 'Sender' contract
 contract SenderTest is Sender {
-    address account0;
-    address account1;
-    address account2;
+    /// Define variables referring to different accounts
+    address acc0;
+    address acc1;
+    address acc2;
     
     /// Initiate accounts variable
     function beforeAll() public {
-        account0 = TestsAccounts.getAccount(0);
-        account1 = TestsAccounts.getAccount(1);
-        account2 = TestsAccounts.getAccount(2);
+        acc0 = TestsAccounts.getAccount(0); 
+        acc1 = TestsAccounts.getAccount(1);
+        acc2 = TestsAccounts.getAccount(2);
     }
     
     /// Test if initial owner is set correctly
     function testInitialOwner() public {
-        // account-0 is default account, so current owner should be account0
-        Assert.equal(getOwner(), account0, 'owner should be account-0');
+        // account at zero index (account-0) is default account, so current owner should be acc0
+        Assert.equal(getOwner(), acc0, 'owner should be acc0');
     }
     
-    /// Update owner. This method will be called by account0 as there is not custom sender appointed
+    /// Update owner first time
+    /// This method will be called by default account(account-0) as there is no custom sender defined
     function updateOwnerOnce() public {
-        // check method call is as expected
-        Assert.ok(msg.sender == account0, 'caller should default account i.e. account0');
-        // update owner address to account1
-        updateOwner(account1);
+        // check method caller is as expected
+        Assert.ok(msg.sender == acc0, 'caller should be default account i.e. acc0');
+        // update owner address to acc1
+        updateOwner(acc1);
         // check if owner is set to expected account
-        Assert.equal(getOwner(), account1, 'owner should be updated to account1');
+        Assert.equal(getOwner(), acc1, 'owner should be updated to acc1');
     }
     
     /// Update owner again by defining custom sender
-    /// #sender: account-1
+    /// #sender: account-1 (sender is account at index '1')
     function updateOwnerOnceAgain() public {
         // check if caller is custom and is as expected
-        Assert.ok(msg.sender == account1, 'caller should be custom account i.e. account1');
-        // update owner address to account2. This will be successful because account1 is current owner & caller both
-        updateOwner(account2);
+        Assert.ok(msg.sender == acc1, 'caller should be custom account i.e. acc1');
+        // update owner address to acc2. This will be successful because acc1 is current owner & caller both
+        updateOwner(acc2);
         // check if owner is set to expected account i.e. account2
-        Assert.equal(getOwner(), account2, 'owner should be updated to account2');
+        Assert.equal(getOwner(), acc2, 'owner should be updated to acc2');
     }
 }
 ```
 
 ### 3. Testing method execution
 
-With Solidity, one can verify the changes made by a method in storage by accessing those variables out of a contract. But while testing whether method execution was successful and if execution failed, what was the reason behind it, can also be an importnat case.
-Solidity introduced `try-catch` statement in version 0.6.0 which helps a lot to solve this purpose. Previously, this could be achieved using low-level call to some extent. Here is the example to test such a scenario:
+With Solidity, one can directly verify the changes made by a method in storage by retrieving those variables from a contract. But testing for a successful method execution takes some strategy. Well that is not entirely true, when a test is successful - it is usually obvious why it passed. However, when a test fails, it is essential to understand why it failed. 
+
+To help in such cases, Solidity introduced the `try-catch` statement in version `0.6.0`. Previously, we had to use low-level calls to track down what was going on.
+
+Here is an example test file that use both **try-catch** blocks and **low level calls**:
 
 Contract/Program to be tested: `AttendanceRegister.sol`
 
 ```
 pragma solidity >=0.4.22 <0.7.0;
 contract AttendanceRegister {
-struct Student{
-        string name;
-        uint class;
-    }
-event Added(string name, uint class, uint time);
-mapping(uint => Student) public register; // roll number => student details
+    struct Student{
+            string name;
+            uint class;
+        }
+
+    event Added(string name, uint class, uint time);
+
+    mapping(uint => Student) public register; // roll number => student details
+
     function add(uint rollNumber, string memory name, uint class) public returns (uint256){
         require(class > 0 && class <= 12, "Invalid class");
         require(register[rollNumber].class == 0, "Roll number not available");
@@ -168,6 +177,7 @@ Test contract/program: `AttendanceRegister_test.sol`
 pragma solidity >=0.4.22 <0.7.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 import "./AttendanceRegister.sol";
+
 contract AttendanceRegisterTest {
    
     AttendanceRegister ar;
@@ -278,6 +288,7 @@ Test contract/program: `Value_test.sol`
 pragma solidity >=0.4.22 <0.7.0;
 import "remix_tests.sol"; 
 import "./Value.sol";
+
 contract ValueTest{
     Value v;
     
