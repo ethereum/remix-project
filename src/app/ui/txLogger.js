@@ -299,8 +299,8 @@ function context (self, opts, blockchain) {
   var hash = data.tx.hash ? helper.shortenHexData(data.tx.hash) : ''
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
-  var block = data.tx.blockNumber || ''
-  var i = data.tx.transactionIndex
+  var block = data.receipt ? data.receipt.blockNumber : data.tx.blockNumber || ''
+  var i = data.receipt ? data.receipt.transactionIndex : data.tx.transactionIndex
   var value = val ? typeConversion.toInt(val) : 0
   if (blockchain.getProvider() === 'vm') {
     return yo`
