@@ -353,10 +353,15 @@ function txDetails (e, tx, data, obj) {
   const arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
   const arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
 
-  const parentTxSpan = e.toElement.parentElement.parentElement
-  let table = parentTxSpan.querySelector(`#${tx.id} [class^="txTable"]`)
-  const log = parentTxSpan.querySelector(`#${tx.id} [class^='log']`)
-  const arrow = parentTxSpan.querySelector(`#${tx.id} [class^='arrow']`)
+  let blockElement = e.target
+  while (true) { // get the parent block element
+    if (blockElement.className.startsWith('block')) break
+    else blockElement = blockElement.parentElement
+  }
+
+  let table = blockElement.querySelector(`#${tx.id} [class^="txTable"]`)
+  const log = blockElement.querySelector(`#${tx.id} [class^='log']`)
+  const arrow = blockElement.querySelector(`#${tx.id} [class^='arrow']`)
 
   if (table && table.parentNode) {
     tx.removeChild(table)
