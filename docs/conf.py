@@ -288,9 +288,10 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
-# Remove this two lines if 'recommonmark' is in extensions array (at line 33) and sphinx version is v1.0.0
-from recommonmark.parser import CommonMarkParser
-source_parsers = {'.md': CommonMarkParser}
+
+# Uncomment these two lines with sphinx version 1.0.0
+# from recommonmark.parser import CommonMarkParser
+# source_parsers = {'.md': CommonMarkParser}
 
 
 # app setup hook
