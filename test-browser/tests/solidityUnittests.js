@@ -92,7 +92,7 @@ module.exports = {
     .click('*[data-id="testTabCheckAllTests"]')
     .click('.singleTestLabel:nth-of-type(5)')
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-    .pause(20000)
+    .pause(10000)
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsSummary"]')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'contract deployment failed after trying twice')
   },
