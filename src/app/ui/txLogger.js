@@ -356,7 +356,9 @@ function txDetails (e, tx, data, obj) {
   let blockElement = e.target
   while (true) { // get the parent block element
     if (blockElement.className.startsWith('block')) break
-    else blockElement = blockElement.parentElement
+    else if (blockElement.parentElement) {
+      blockElement = blockElement.parentElement
+    } else break
   }
 
   let table = blockElement.querySelector(`#${tx.id} [class^="txTable"]`)
