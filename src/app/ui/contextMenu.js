@@ -45,12 +45,22 @@ module.exports = (event, items) => {
     current.onclick = () => { hide(null, true); items[item]() }
     return current
   })
-  const container = yo`<div class="p-1 ${css.container} bg-light shadow border"><ul id='menuitems'>${menu}</ul></div>`
+  const container = yo`<div id="menuItemsContainer" class="p-1 ${css.container} bg-light shadow border"><ul id='menuitems'>${menu}</ul></div>`
+
   container.style.left = event.pageX + 'px'
   container.style.top = event.pageY + 'px'
   container.style.display = 'block'
-
   document.querySelector('body').appendChild(container)
+
+  const menuItemsContainer = document.getElementById('menuItemsContainer')
+  const boundary = menuItemsContainer.getBoundingClientRect()
+
+  if (boundary.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
+    menuItemsContainer.style.position = 'absolute'
+    menuItemsContainer.style.bottom = '10px'
+    menuItemsContainer.style.top = null
+  }
+
   setTimeout(() => {
     window.addEventListener('click', hide)
   }, 500)
