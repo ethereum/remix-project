@@ -108,7 +108,7 @@ class FileManager extends Plugin {
   /** The current opened file */
   file () {
     const file = this.currentFile()
-    
+
     if (!file) this._handleError({ code: 'ENOENT', message: 'No file selected' })
     return file
   }
@@ -118,9 +118,9 @@ class FileManager extends Plugin {
    * @param {string} path path of the directory or file
    * @returns {boolean} true if the path exists
    */
-  exists(path) {
+  exists (path) {
     const provider = this.fileProviderOf(path)
-    return provider ? true : false
+    return provider ? true : false // eslint-disable-line
   }
 
   /**
@@ -142,10 +142,10 @@ class FileManager extends Plugin {
   open (path) {
     this._handleExists(path, `Cannot open file ${path}`)
     this._handleIsFile(path, `Cannot open file ${path}`)
-    this.switchFile(path)
+    return this.switchFile(path)
   }
 
-  /** 
+  /**
    * Set the content of a specific file
    * @param {string} path path of the file
    * @param {string} data content to write on the file
@@ -167,7 +167,7 @@ class FileManager extends Plugin {
     return this.getFile(path)
   }
 
-  /** 
+  /**
    * Upsert a file with the content of the source file
    * @param {string} src path of the source file
    * @param {string} dest path of the destrination file
@@ -187,12 +187,12 @@ class FileManager extends Plugin {
    * @note will not work on a directory, use `rmdir` instead
    * @returns {void}
    */
-  unlink(path) {
+  unlink (path) {
     this._handleExists(path, `Cannot remove file ${path}`)
     this._handleIsDir(path, `Cannot remove file ${path}`)
   }
 
-  /** 
+  /**
    * Change the path of a file/directory
    * @param {string} oldPath current path of the file/directory
    * @param {string} newPath new path of the file/directory
@@ -217,7 +217,7 @@ class FileManager extends Plugin {
     // To implement
   }
 
-  /** 
+  /**
    * Get the list of files in the directory
    * @param {string} path path of the directory
    * @returns {string[]} list of the file/directory name in this directory
@@ -242,7 +242,7 @@ class FileManager extends Plugin {
    * @note will not work on a file, use `unlink` instead
    * @returns {void}
    */
-  rmdir(path) {
+  rmdir (path) {
     this._handleExists(path, `Cannot remove directory ${path}`)
     this._handleIsDir(path, `Cannot remove directory ${path}`)
     // To implement
@@ -337,7 +337,7 @@ class FileManager extends Plugin {
 
   getFile (path) {
     const provider = this.fileProviderOf(path)
-    
+
     if (!provider) this._handleError({ code: 'ENOENT', message: `${path} not available` })
     // TODO: change provider to Promise
     return new Promise((resolve, reject) => {
