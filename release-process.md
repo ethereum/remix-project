@@ -9,7 +9,7 @@ This document includes:
  - git checkout origin/master
  - git checkout -b bumpVersion
  - update package.json version
- - remove package-lock/json version and generate a new one with `npm install`
+ - remove package-lock.json version and generate a new one with `npm install`
  - merge PR
  - git fetch origin master
  - git checkout origin/master
