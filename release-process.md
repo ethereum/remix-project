@@ -43,7 +43,7 @@ This document includes:
 
 This is not strictly speaking a release. Updating the remix site is done through the Travis build:
 
- - switch to the remix_live
+ - git co -b remix_live origin/remix_live
  - git reset --hard -master-commit-hash-
  - git push -f origin remix_live
 
