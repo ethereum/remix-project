@@ -319,7 +319,7 @@ class Recorder {
       helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
         if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
         if (!fileProvider.set(newFile, txJSON)) return cb('Failed to create file ' + newFile)
-        this.fileManager.switchFile(newFile)
+        this.fileManager.open(newFile)
       })
     })
   }

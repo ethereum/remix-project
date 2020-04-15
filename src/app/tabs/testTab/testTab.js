@@ -19,7 +19,7 @@ class TestTabLogic {
       // This should be updated to pass complete path, if test file comes from different directory/path
       const fileNameToImport = splittedFileName[splittedFileName.length - 1]
       if (!fileProvider.set(newFile, this.generateTestContractSample(fileNameToImport))) return modalDialogCustom.alert('Failed to create test file ' + newFile)
-      this.fileManager.switchFile(newFile)
+      this.fileManager.open(newFile)
     })
   }
 
