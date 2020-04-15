@@ -23,7 +23,7 @@ const profile = {
   icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNjk2IDM4NHE0MCAwIDY4IDI4dDI4IDY4djEyMTZxMCA0MC0yOCA2OHQtNjggMjhoLTk2MHEtNDAgMC02OC0yOHQtMjgtNjh2LTI4OGgtNTQ0cS00MCAwLTY4LTI4dC0yOC02OHYtNjcycTAtNDAgMjAtODh0NDgtNzZsNDA4LTQwOHEyOC0yOCA3Ni00OHQ4OC0yMGg0MTZxNDAgMCA2OCAyOHQyOCA2OHYzMjhxNjgtNDAgMTI4LTQwaDQxNnptLTU0NCAyMTNsLTI5OSAyOTloMjk5di0yOTl6bS02NDAtMzg0bC0yOTkgMjk5aDI5OXYtMjk5em0xOTYgNjQ3bDMxNi0zMTZ2LTQxNmgtMzg0djQxNnEwIDQwLTI4IDY4dC02OCAyOGgtNDE2djY0MGg1MTJ2LTI1NnEwLTQwIDIwLTg4dDQ4LTc2em05NTYgODA0di0xMTUyaC0zODR2NDE2cTAgNDAtMjggNjh0LTY4IDI4aC00MTZ2NjQwaDg5NnoiLz48L3N2Zz4=',
   permission: true,
   version: packageJson.version,
-  methods: ['setFile', 'switchFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'unlink', 'rename', 'readdir', 'rmdir'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'unlink', 'rename', 'readdir', 'rmdir'],
   kind: 'file-system'
 }
 
@@ -76,7 +76,7 @@ class FileManager extends Plugin {
   }
 
   /**
-   * Emit error based on error code
+   * Emits error based on error code
    * @param {object} error error { code, message }
    */
   _handleError (error) {
@@ -129,10 +129,9 @@ class FileManager extends Plugin {
    * @returns {boolean} true if path is a file.
    */
   isFile (path) {
-    const extension = path.split('.').pop()
-    const splitExtension = extension.split('/')
-    
-    return !!extension && splitExtension.length === 1 && splitExtension[0] === extension
+    const extension = path.split('/').pop()
+
+    return extension && extension.indexOf('.') > -1
   }
 
   /**
@@ -165,7 +164,7 @@ class FileManager extends Plugin {
   readFile (path) {
     this._handleExists(path, `Cannot read file ${path}`)
     this._handleIsFile(path, `Cannot read file ${path}`)
-    this.getFile(path)
+    return this.getFile(path)
   }
 
   /** 

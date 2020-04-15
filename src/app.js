@@ -419,7 +419,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       if (error) console.error(error)
       if (Object.keys(filesList).length === 0) {
         for (let file in examples) {
-          fileManager.setFile(examples[file].name, examples[file].content)
+          fileManager.writeFile(examples[file].name, examples[file].content)
         }
       }
     })

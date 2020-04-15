@@ -112,7 +112,7 @@ class ContextView {
         if (provider) {
           provider.exists(filename, (error, exist) => {
             if (error) return console.log(error)
-            this._deps.fileManager.switchFile(filename)
+            this._deps.fileManager.open(filename)
             jumpToLine(lineColumn)
           })
         }

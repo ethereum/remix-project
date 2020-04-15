@@ -151,7 +151,7 @@ class CmdInterpreterAPI {
           toolTip(`Unable to load ${url}: ${err}`)
           if (cb) cb(err)
         } else {
-          self._deps.fileManager.setFile(type + '/' + cleanUrl, content)
+          self._deps.fileManager.writeFile(type + '/' + cleanUrl, content)
           try {
             content = JSON.parse(content)
             async.eachOfSeries(content.sources, (value, file, callbackSource) => {
@@ -164,7 +164,7 @@ class CmdInterpreterAPI {
                     return callbackSource(`Cannot retrieve the content of ${url}: ${error}`)
                   } else {
                     try {
-                      await self._deps.fileManager.setFile(type + '/' + cleanUrl, content)
+                      await self._deps.fileManager.writeFile(type + '/' + cleanUrl, content)
                       callbackSource()
                     } catch (e) {
                       callbackSource(e.message)

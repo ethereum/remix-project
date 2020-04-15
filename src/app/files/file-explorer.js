@@ -60,7 +60,7 @@ function fileExplorer (localRegistry, files, menuItems) {
   }
 
   self.events.register('focus', function (path) {
-    self._deps.fileManager.switchFile(path)
+    self._deps.fileManager.open(path)
   })
 
   self._components.registry.put({ api: self, name: `fileexplorer/${self.files.type}` })
@@ -584,7 +584,7 @@ fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
       if (!self.files.set(newName, '')) {
         tooltip('Failed to create file ' + newName)
       } else {
-        self._deps.fileManager.switchFile(newName)
+        self._deps.fileManager.open(newName)
         if (newName.includes('_test.sol')) {
           self.events.trigger('newTestFileCreated', [newName])
         }

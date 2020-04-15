@@ -34,7 +34,6 @@ class Toaster {
   }
 
   render (tooltipText, actionElement, opts) {
-    console.log('tooltipText: ', tooltipText)
     opts = defaultOptions(opts)
     let canShorten = true
     if (tooltipText instanceof Element) {
