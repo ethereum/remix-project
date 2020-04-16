@@ -72,7 +72,13 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   listTests () {
-    return this.data.allTests.map(test => yo`<label class="singleTestLabel"><input class="singleTest" onchange =${(e) => this.toggleCheckbox(e.target.checked, test)} type="checkbox" checked="true">${test} </label>`)
+    return this.data.allTests.map(
+      test => yo`
+        <div class="singleTestLabel d-flex py-1">
+          <input class="singleTest" id="singleTest${test}" onchange=${(e) => this.toggleCheckbox(e.target.checked, test)} type="checkbox" checked="true">
+          <label class="text-nowrap pl-2 mb-0" for="singleTest${test}">${test}</label>
+        </div>`
+    )
   }
 
   toggleCheckbox (eChecked, test) {
@@ -225,7 +231,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateGenerateFileAction (currentFile) {
-    let el = yo`<button class="${css.generateTestFile} btn btn-primary" data-id="testTabGenerateTestFile" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate test file</button>`
+    let el = yo`<button class="btn border w-50" data-id="testTabGenerateTestFile" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate</button>`
     if (!currentFile) {
       el.setAttribute('disabled', 'disabled')
       el.setAttribute('title', 'No file selected')
@@ -239,12 +245,18 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateRunAction (currentFile) {
-    let el = yo`<button id="runTestsTabRunAction" data-id="testTabRunTestsTabRunAction" class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</button>`
+    let el = yo`
+      <div id="runTestsTabRunAction"  data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${this.runTests.bind(this)}">
+        <span class="fas fa-play ml-2"></span>
+        <label class="btn p-1 ml-2 m-0">Run</label>
+      </div>
+    `
     const isSolidityActive = this.appManager.actives.includes('solidity')
     if (!currentFile || !isSolidityActive) {
       el.setAttribute('disabled', 'disabled')
-      if (!currentFile) el.setAttribute('title', 'No file selected')
-      if (!isSolidityActive) el.setAttribute('title', 'The solidity module should be activated')
+      if (!currentFile) {
+        el.setAttribute('title', 'No file selected')
+      } else if (!isSolidityActive) el.setAttribute('title', 'The solidity module should be activated')
     }
 
     if (!this.runActionElement) {
@@ -255,9 +267,18 @@ module.exports = class TestTab extends ViewPlugin {
     return this.runActionElement
   }
 
+  updateStopAction () {
+    return yo`
+      <div id="runTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary"  onclick="${this.runTests.bind(this)}">
+        <span class="fas fa-stop ml-2"></span>
+        <label class="btn p-1 ml-2 m-0">Stop</label>
+      </div>
+    `
+  }
+
   updateTestFileList (tests) {
     const testsMessage = (tests && tests.length ? this.listTests() : 'No test file available')
-    let el = yo`<div class=${css.testList}>${testsMessage}</div>`
+    let el = yo`<div class="${css.testList} py-2 border-bottom">${testsMessage}</div>`
     if (!this.testFilesListElement) {
       this.testFilesListElement = el
     } else {
@@ -265,41 +286,52 @@ module.exports = class TestTab extends ViewPlugin {
     }
     return this.testFilesListElement
   }
+
+  selectAll () {
+    return yo`
+      <div class="d-flex mx-3 pb-2 mt-2 border-bottom">
+        <input id="checkAllTests"
+          type="checkbox"
+          data-id="testTabCheckAllTests"
+          onclick="${(event) => { this.checkAll(event) }}"
+          checked="true"
+        >
+        <label class="text-nowrap pl-2 mb-0" for="checkAllTests"> Select all </label>
+      </div>
+    `
+  }
+
+  infoButton () {
+    return yo`
+      <a class="btn border d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html">
+        <label class="btn p-1 ml-2 text-dark m-0">How to use</label>
+      </a>
+    `
+  }
   render () {
     this.onActivationInternal()
-    this.testsOutput = yo`<div class="${css.container} m-3 border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></div>`
-    this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="solidityUnittestsSummary" data-id="testTabSolidityUnitTestsSummary"></div>`
+    this.testsOutput = yo`<div class="${css.container} mx-3 border-top border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
+    this.testsSummary = yo`<div class="${css.container} mx-3 border-top border-primary" hidden='true' id="solidityUnittestsSummary" data-id="testTabSolidityUnitTestsSummary"></div>`
     this.loading = yo`<span class='text-info ml-1'>Running tests...</span>`
     this.loading.hidden = true
     var el = yo`
-      <div class="${css.testTabView} card" id="testView">
+      <div class="${css.testTabView} px-2" id="testView">
         <div class="${css.infoBox}">
-          Test your smart contract in Solidity.<br/><br/>
-          <ol>
-            <li> To get started, click on "Generate test file" button</li>
-            <li> To write tests, visit our <a href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#write-tests" target="_blank"> documentation </a></li>
-            <li> To run tests, select file(s) and click on "Run Tests" button</li>
-          </ol>
-          To run unit tests in your Continuous Integration and as CLI, use the stand alone NPM module <a href="https://www.npmjs.com/package/remix-tests" target="_blank">remix-tests</a>.
-          <p>To get support, join our  <a href="https://gitter.im/ethereum/remix" target="_blank">Gitter</a> channel. </p>
-          ${this.updateGenerateFileAction()}
+          <p class="text-lg"> Test your smart contract in Solidity.</p>
+          <p> Click on "Generate" to generate a sample test file.</p>
         </div>
         <div class="${css.tests}">          
-          <div class="${css.buttons}">
-          ${this.updateRunAction()}
-            <label class="${css.label} mx-4 m-2" for="checkAllTests">
-              <input id="checkAllTests"
-                data-id="testTabCheckAllTests"
-                type="checkbox"
-                onclick="${(event) => { this.checkAll(event) }}"
-                checked="true"
-              >
-              Check/Uncheck all
-            </label>
+          <div class="d-flex p-2">
+           ${this.updateGenerateFileAction()}
+           ${this.infoButton()}
           </div>
+          <div class="d-flex p-2">
+            ${this.updateRunAction()}
+            ${this.updateStopAction()}
+          </div>
+          ${this.selectAll()}
           ${this.updateTestFileList()}
-          <hr>
-          <div class="${css.buttons}" ><h6>Results:${this.loading}</h6></div>
+          <div class="${css.buttons} mt-2 mb-0"><h6>Results:${this.loading}</h6></div>
           ${this.testsOutput}
           ${this.testsSummary}
         </div>
