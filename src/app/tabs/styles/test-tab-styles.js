@@ -44,13 +44,6 @@ var css = csjs`
     display: flex;
     align-items: center;
   }
-  .runButton {
-    white-space: nowrap;
-  }
-  .generateTestFile {
-    margin-top: 20px;
-    min-width: 100px
-  }
   .title {
     font-size: 1.1em;
     font-weight: bold;
