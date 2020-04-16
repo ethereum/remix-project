@@ -62,11 +62,16 @@ module.exports = {
     .click('*[data-id="testTabCheckAllTests"]')
     .click('.singleTestLabel:nth-of-type(3)')
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-    .pause(15000)
+    .pause(20000)
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol (kickstarterTest)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ (Check project exists)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project exists)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ (Check wrong project owner)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ (Check wrong sender)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ (Check wrong value)')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ (Check project is fundable)')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'owner is incorrect')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'wrong sender')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'wrong value')
   },
 
   'Should fail on compilation': function (browser) {
@@ -265,12 +270,28 @@ var sources = [
               (address owner, string memory name, uint goal, uint fundsAvailable, uint amountContributed, Kickstarter.State state) = kickstarter.projects(0);
               Assert.equal(name, "ProjectA", "project name is incorrect");
               Assert.equal(goal, 123000, "funding goal is incorrect");
-              Assert.equal(owner, TestsAccounts.getAccount(0), "owner is incorrect"); //failing case
               Assert.equal(owner, address(this), "owner is incorrect");
-              Assert.equal(msg.sender, TestsAccounts.getAccount(0), "wrong sender"); //failing case
               Assert.equal(msg.sender, TestsAccounts.getAccount(1), "wrong sender");
-              Assert.equal(msg.value, 5000000, "wrong value"); //failing case
               Assert.equal(msg.value, 10000000, "wrong value");
+          }
+
+          /// #sender: account-1
+          /// #value: 10000000
+          function checkWrongProjectOwner () public payable {
+            (address owner,,,,,) = kickstarter.projects(0);
+            Assert.equal(owner, TestsAccounts.getAccount(0), "owner is incorrect"); //failing case
+          }
+
+          /// #sender: account-1
+          /// #value: 10000000
+          function checkWrongSender () public payable {
+            Assert.equal(msg.sender, TestsAccounts.getAccount(0), "wrong sender"); //failing case
+          }
+
+          /// #sender: account-1
+          /// #value: 10000000
+          function checkWrongValue () public payable {
+            Assert.equal(msg.value, 5000000, "wrong value"); //failing case
           }
 
           function checkProjectIsFundable () public {
