@@ -120,7 +120,11 @@ class FileManager extends Plugin {
    */
   exists (path) {
     const provider = this.fileProviderOf(path)
-    return provider ? true : false // eslint-disable-line
+
+    return provider.exists(path, (err, result) => {
+      if (err) return false
+      return result
+    })
   }
 
   /**
