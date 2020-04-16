@@ -66,12 +66,12 @@ class FileProvider {
   exists (path, cb) {
     // todo check the type (directory/file) as well #2386
     // currently it is not possible to have a file and folder with same path
-    cb(null, this._exists(path))
+    return cb(null, this._exists(path))
   }
 
   _exists (path) {
     var unprefixedpath = this.removePrefix(path)
-    return window.remixFileSystem.existsSync(unprefixedpath)
+    return path === this.type ? true : window.remixFileSystem.existsSync(unprefixedpath)
   }
 
   init (cb) {
@@ -79,6 +79,7 @@ class FileProvider {
   }
 
   get (path, cb) {
+    console.log('window.remixFileSystem: ', window.remixFileSystem)
     cb = cb || function () {}
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
