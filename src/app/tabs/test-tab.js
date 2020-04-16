@@ -83,10 +83,16 @@ module.exports = class TestTab extends ViewPlugin {
     selectedTests = eChecked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
     this.data.selectedTests = selectedTests
     let checkAll = this._view.el.querySelector('[id="checkAllTests"]')
+    const runBtn = document.getElementById('runTestsTabRunAction')
+
     if (eChecked) {
       checkAll.checked = true
+      runBtn.removeAttribute('disabled')
+      runBtn.setAttribute('title', 'Run tests')
     } else if (!selectedTests.length) {
       checkAll.checked = false
+      runBtn.setAttribute('disabled', 'disabled')
+      runBtn.setAttribute('title', 'No test file selected')
     }
   }
 
