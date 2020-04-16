@@ -231,7 +231,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateGenerateFileAction (currentFile) {
-    let el = yo`<button class="btn border w-50" data-id="testTabGenerateTestFile" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate</button>`
+    let el = yo`<button class="btn border w-50" data-id="testTabGenerateTestFile" title="Generate sample test file." onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate</button>`
     if (!currentFile) {
       el.setAttribute('disabled', 'disabled')
       el.setAttribute('title', 'No file selected')
@@ -269,7 +269,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateStopAction () {
     return yo`
-      <div id="runTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary"  onclick="${this.runTests.bind(this)}">
+      <div id="runTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary" title="Stop running tests" onclick="${this.runTests.bind(this)}">
         <span class="fas fa-stop ml-2"></span>
         <label class="btn p-1 ml-2 m-0">Stop</label>
       </div>
@@ -278,7 +278,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateTestFileList (tests) {
     const testsMessage = (tests && tests.length ? this.listTests() : 'No test file available')
-    let el = yo`<div class="${css.testList} py-2 border-bottom">${testsMessage}</div>`
+    let el = yo`<div class="${css.testList} py-2 mt-0 border-bottom">${testsMessage}</div>`
     if (!this.testFilesListElement) {
       this.testFilesListElement = el
     } else {
@@ -303,7 +303,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   infoButton () {
     return yo`
-      <a class="btn border d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html">
+      <a class="btn border d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html">
         <label class="btn p-1 ml-2 text-dark m-0">How to use</label>
       </a>
     `
@@ -311,7 +311,7 @@ module.exports = class TestTab extends ViewPlugin {
   render () {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="${css.container} mx-3 border-top border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
-    this.testsSummary = yo`<div class="${css.container} mx-3 border-top border-primary" hidden='true' id="solidityUnittestsSummary" data-id="testTabSolidityUnitTestsSummary"></div>`
+    this.testsSummary = yo`<div class="${css.container} mx-3 pt-2 border-top border-primary" hidden='true' id="solidityUnittestsSummary" data-id="testTabSolidityUnitTestsSummary"></div>`
     this.loading = yo`<span class='text-info ml-1'>Running tests...</span>`
     this.loading.hidden = true
     var el = yo`
