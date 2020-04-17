@@ -31,9 +31,9 @@ module.exports = {
     .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
     .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
     .click('*[data-id="testTabGenerateTestFile"]')
-    .waitForElementPresent('*[title="browser/test_test.sol"]')
+    .waitForElementPresent('*[title="browser/simple_storage_test.sol"]')
     .clickLaunchIcon('fileExplorers')
-    .removeFile('browser/test_test.sol')
+    .removeFile('browser/simple_storage_test.sol')
   },
 
   'Should run simple unit test `simple_storage_test.sol` ': function (browser) {
