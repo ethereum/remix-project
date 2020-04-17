@@ -1,5 +1,5 @@
-var helper = require('../../../lib/helper.js')
-var modalDialogCustom = require('../../ui/modal-dialog-custom')
+const helper = require('../../../lib/helper.js')
+const modalDialogCustom = require('../../ui/modal-dialog-custom')
 
 class TestTabLogic {
 
@@ -8,10 +8,11 @@ class TestTabLogic {
   }
 
   generateTestFile () {
-    var path = this.fileManager.currentPath()
-    var fileProvider = this.fileManager.fileProviderOf(path)
+    const path = this.fileManager.currentPath()
+    const fileName = this.fileManager.currentFile()
+    const fileProvider = this.fileManager.fileProviderOf(path)
     if (!fileProvider) return
-    helper.createNonClashingNameWithPrefix(path + '/test.sol', fileProvider, '_test', (error, newFile) => {
+    helper.createNonClashingNameWithPrefix(fileName, fileProvider, '_test', (error, newFile) => {
       if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
       if (!fileProvider.set(newFile, this.generateTestContractSample())) return modalDialogCustom.alert('Failed to create test file ' + newFile)
       this.fileManager.switchFile(newFile)
@@ -19,11 +20,11 @@ class TestTabLogic {
   }
 
   async getTests (cb) {
-    var path = this.fileManager.currentPath()
+    const path = this.fileManager.currentPath()
     if (!path) return cb(null, [])
-    var provider = this.fileManager.fileProviderOf(path)
+    const provider = this.fileManager.fileProviderOf(path)
     if (!provider) return cb(null, [])
-    var tests = []
+    const tests = []
     let files
     try {
       files = await this.fileManager.getFolder(path)
