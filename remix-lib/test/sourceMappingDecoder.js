@@ -22,7 +22,7 @@ tape('SourceMappingDecoder', function (t) {
 
   const testSourceMapping = {}
   t.test('sourceMappingDecoder', function (st) {
-    st.plan(28)
+    st.plan(32)
     const sourceMappingDecoder = new SourceMappingDecoder()
     console.log('test decompressAll')
     let result = sourceMappingDecoder.decompressAll(sourceMapping.mapping)
@@ -73,6 +73,14 @@ tape('SourceMappingDecoder', function (t) {
     st.equal(result.file, 4)
     st.equal(result.jump, '-')
     testSourceMapping[85] = result
+
+    // ballot - function deletegate(address)
+    const delegateSrcMap = sourceMappingDecoder.atIndex(64, sourceMapping.ballotSourceMap)
+    console.log(delegateSrcMap)
+    st.equal(delegateSrcMap.start, 712)
+    st.equal(delegateSrcMap.length, 577)
+    st.equal(delegateSrcMap.file, 0)
+    st.equal(delegateSrcMap.jump, '-')
   })
 
   t.test('sourceMappingLineColumnConverter', function (st) {
