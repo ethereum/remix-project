@@ -1,6 +1,9 @@
 'use strict'
 require('@babel/register')()
 
+const crxFile = require('fs').readFileSync('./test-browser/extensions/chrome/metamask.crx')
+const metamaskExtension = new Buffer.from(crxFile).toString('base64') // eslint-disable-line
+
 module.exports = {
   'src_folders': ['test-browser/tests'],
   'output_folder': 'reports',
@@ -27,7 +30,8 @@ module.exports = {
         'browserName': 'firefox',
         'javascriptEnabled': true,
         'acceptSslCerts': true
-      }
+      },
+      'exclude': ['./test-browser/tests/runAndDeploy.js']
     },
 
     'chrome': {
@@ -35,8 +39,20 @@ module.exports = {
         'browserName': 'chrome',
         'javascriptEnabled': true,
         'acceptSslCerts': true,
-        'chromeOptions': {
+        'goog:chromeOptions': {
           'args': ['window-size=2560,1440', 'start-fullscreen']
+        }
+      }
+    },
+
+    'chrome-runAndDeploy': {
+      'desiredCapabilities': {
+        'browserName': 'chrome',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
+        'goog:chromeOptions': {
+          'args': ['window-size=2560,1440', 'start-fullscreen'],
+          'extensions': [metamaskExtension]
         }
       }
     },
