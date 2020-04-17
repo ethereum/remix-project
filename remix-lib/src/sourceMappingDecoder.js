@@ -188,8 +188,23 @@ function nodesAtPosition (astNodeType, position, ast) {
   return found
 }
 
+/**
+ * starts with the given @arg index and move backward until it can find all the values for start, length, file, jump
+ * if `file === -1` then the value of the sourcemap should be taken from the previous step,
+ * because some steps are internal subroutine for the compiler and doesn't link to any high level code.
+ *
+ * Solidity source maps format is
+ *  - start:length:file:jump
+ *  - jump can be 'i', 'o' or '-' (jump 'in' or 'out' of a function)
+ *  - if no value is specified ( e.g "5:2" - no mention of 'file' and 'jump' ), actual values are the one of the step before
+ *  - if the file (3rd value) has -1, the source maps should be discarded
+ *
+ *  @param Int index - index in the bytecode to decode source mapping from
+ *  @param Array mapping - source maps returned by the compiler. e.g 121:3741:0:-:0;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;121:3741:0;;;;;;;
+ *  @return Object { start, length, file, jump }
+ */
 function atIndex (index, mapping) {
-  const ret = {}
+  let ret = {}
   const map = mapping.split(';')
   if (index >= map.length) {
     index = map.length - 1
@@ -200,6 +215,10 @@ function atIndex (index, mapping) {
       continue
     }
     current = current.split(':')
+    if (current[2] === '-1') { // if the current step has -1 for the file attribute, we discard it
+      if (ret.file === undefined) ret = {} // if the file was not already set by a previous (meaning it is -1), we discard the whole step
+      continue
+    }
     if (ret.start === undefined && current[0] && current[0] !== '-1' && current[0].length) {
       ret.start = parseInt(current[0])
     }
