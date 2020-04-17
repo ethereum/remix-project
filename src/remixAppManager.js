@@ -10,8 +10,12 @@ const requiredModules = [ // services + layout views + system views
   'terminal', 'settings', 'pluginManager']
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'ethdoc', 'etherscan']
+  const nativePlugins = ['vyper', 'workshops']
   return nativePlugins.includes(name) || requiredModules.includes(name)
+}
+
+export function canActivate (name) {
+  return ['manager', 'debugger'].includes(name)
 }
 
 export class RemixAppManager extends PluginManager {
@@ -25,7 +29,7 @@ export class RemixAppManager extends PluginManager {
   }
 
   async canActivate (from, to) {
-    return from.name === 'manager'
+    return canActivate(from.name)
   }
 
   async canDeactivate (from, to) {

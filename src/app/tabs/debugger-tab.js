@@ -1,8 +1,9 @@
-var yo = require('yo-yo')
-var css = require('./styles/debugger-tab-styles')
-
-var DebuggerUI = require('./debugger/debuggerUI')
-
+const yo = require('yo-yo')
+const css = require('./styles/debugger-tab-styles')
+var globalRegistry = require('../../global/registry')
+import fetchAndCompile from '../compiler/compiler-sourceVerifier-fetchAndCompile'
+import toaster from '../ui/tooltip'
+const DebuggerUI = require('./debugger/debuggerUI')
 import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
@@ -34,7 +35,32 @@ class DebuggerTab extends ViewPlugin {
       <div class="${css.debuggerTabView}" id="debugView">
         <div id="debugger" class="${css.debugger}"></div>
       </div>`
-    this.debuggerUI = new DebuggerUI(this.el.querySelector('#debugger'), this.blockchain)
+
+    let compilers = globalRegistry.get('compilersartefacts').api
+
+    fetchAndCompile.event.on('compiling', (settings) => {
+      toaster(yo`<div><b>Recompiling and debugging with params</b><pre>${JSON.stringify(settings, null, '\t')}</pre></div>`)
+    })
+
+    fetchAndCompile.event.on('compilationFailed', (data) => {
+      toaster(yo`<div><b>Compilation failed...</b> continuing <i>without</i> source code debugging.</div>`)
+    })
+
+    fetchAndCompile.event.on('notFound', (contractAddress) => {
+      toaster(yo`<div><b>Contract ${contractAddress} not found in source code repository</b> continuing <i>without</i> source code debugging.</div>`)
+    })
+
+    fetchAndCompile.event.on('usingLocalCompilation', (contractAddress) => {
+      toaster(yo`<div><b>Using compilation result from Solidity module</b></div>`)
+    })
+
+    this.debuggerUI = new DebuggerUI(
+      this.el.querySelector('#debugger'),
+      this.blockchain,
+      adddress => fetchAndCompile.resolve(adddress, compilers, this, '.debug', this.blockchain.web3()))
+
+    this.call('manager', 'activatePlugin', 'udapp')
+
     return this.el
   }
 
