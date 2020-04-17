@@ -14,7 +14,11 @@ class TestTabLogic {
     if (!fileProvider) return
     helper.createNonClashingNameWithPrefix(fileName, fileProvider, '_test', (error, newFile) => {
       if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-      if (!fileProvider.set(newFile, this.generateTestContractSample())) return modalDialogCustom.alert('Failed to create test file ' + newFile)
+      const splittedFileName = fileName.split('/')
+      // This is fine for now because test file is created on same path where file to be tested is.
+      // This should be updated to pass complete path, if test file comes from different directory/path
+      const fileNameToImport = splittedFileName[splittedFileName.length - 1]
+      if (!fileProvider.set(newFile, this.generateTestContractSample(fileNameToImport))) return modalDialogCustom.alert('Failed to create test file ' + newFile)
       this.fileManager.switchFile(newFile)
     })
   }
@@ -37,12 +41,15 @@ class TestTabLogic {
     cb(null, tests, path)
   }
 
-  generateTestContractSample () {
-    return `pragma solidity >=0.4.0 <0.7.0;
+  // TODO: If currently selected file is compiled and compilation result is available,
+  // 'contractName' should be <compiledContractName> + '_testSuite'
+  generateTestContractSample (fileToImport, contractName = 'testSuite') {
+    return `pragma solidity >=0.4.22 <0.7.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
+import "./${fileToImport}";
 
-// file name has to end with '_test.sol'
-contract test_1 {
+// File name has to end with '_test.sol', this file can contain more than one testSuite contracts
+contract ${contractName} {
 
     /// 'beforeAll' runs before all other tests
     /// More special functions are: 'beforeEach', 'beforeAll', 'afterEach' & 'afterAll'
