@@ -30,9 +30,10 @@ var css = csjs`
 
 class DebuggerUI {
 
-  constructor (container, blockchain) {
+  constructor (container, blockchain, fetchContractAndCompile) {
     this.registry = globalRegistry
     this.blockchain = blockchain
+    this.fetchContractAndCompile = fetchContractAndCompile
     this.event = new EventManager()
 
     this.isActive = false
@@ -77,8 +78,12 @@ class DebuggerUI {
       self.isActive = isActive
     })
 
-    this.debugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
-      self.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
+    this.debugger.event.register('newSourceLocation', async function (lineColumnPos, rawLocation) {
+      const contracts = await self.fetchContractAndCompile()
+      if (contracts) {
+        const path = contracts.getSourceName(rawLocation.file)
+        if (path) self.sourceHighlighter.currentSourceLocationFromfileName(lineColumnPos, path)
+      }
     })
 
     this.debugger.event.register('debuggerUnloaded', self.unLoad.bind(this))
@@ -122,15 +127,18 @@ class DebuggerUI {
   async startDebugging (blockNumber, txNumber, tx) {
     if (this.debugger) this.unLoad()
 
-    let compilers = this.registry.get('compilersartefacts').api
-    let lastCompilationResult
-    if (compilers['__last']) lastCompilationResult = compilers['__last']
-
     let web3 = await this.getDebugWeb3()
     this.debugger = new Debugger({
       web3,
       offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
-      compiler: { lastCompilationResult }
+      compilationResult: async (address) => {
+        try {
+          return await this.fetchContractAndCompile(address)
+        } catch (e) {
+          console.error(e)
+        }
+        return null
+      }
     })
 
     this.listenToEvents()
@@ -147,16 +155,19 @@ class DebuggerUI {
 
   getTrace (hash) {
     return new Promise(async (resolve, reject) => {
-      const compilers = this.registry.get('compilersartefacts').api
-      let lastCompilationResult
-      if (compilers['__last']) lastCompilationResult = compilers['__last']
-
       const web3 = await this.getDebugWeb3()
 
       const debug = new Debugger({
         web3,
         offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
-        compiler: { lastCompilationResult }
+        compilationResult: async (address) => {
+          try {
+            return await this.fetchContractAndCompile(address)
+          } catch (e) {
+            console.error(e)
+          }
+          return null
+        }
       })
       debug.debugger.traceManager.traceRetriever.getTrace(hash, (error, trace) => {
         if (error) return reject(error)
