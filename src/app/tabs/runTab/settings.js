@@ -99,7 +99,7 @@ class SettingsUI {
         <div class="${css.account}">
           <select data-id="runTabSelectAccount" name="txorigin" class="form-control ${css.select} custom-select pr-4" id="txorigin"></select>
           <div style="margin-left: -5px;">${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}</div>
-          <i id="remixRunSignMsg" class="mx-1 fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
+          <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" class="mx-1 fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
       </div>
     `
@@ -301,9 +301,9 @@ class SettingsUI {
             modalDialogCustom.alert(yo`
               <div>
                 <b>hash:</b><br>
-                <span id="remixRunSignMsgHash">${msgHash}</span>
+                <span id="remixRunSignMsgHash" data-id="settingsRemixRunSignMsgHash">${msgHash}</span>
                 <br><b>signature:</b><br>
-                <span id="remixRunSignMsgSignature">${signedData}</span>
+                <span id="remixRunSignMsgSignature" data-id="settingsRemixRunSignMsgSignature">${signedData}</span>
               </div>
             `)
           })
