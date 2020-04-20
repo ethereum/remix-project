@@ -89,7 +89,6 @@ class FileManager extends Plugin {
   file () {
     const file = this.currentFile()
 
-    
     if (!file) throw createError({ code: 'ENOENT', message: 'No file selected' })
     return file
   }
@@ -235,7 +234,7 @@ class FileManager extends Plugin {
   rmdir (path) {
     this._handleExists(path, `Cannot remove directory ${path}`)
     this._handleIsDir(path, `Cannot remove directory ${path}`)
-    
+
     const provider = this.fileProviderOf(path)
 
     return provider.remove(path)
