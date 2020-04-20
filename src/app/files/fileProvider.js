@@ -139,10 +139,12 @@ class FileProvider {
   }
 
   isDirectory (path) {
+    path = this.removePrefix(path)
     return window.remixFileSystem.statSync(path).isDirectory()
   }
 
   isFile (path) {
+    path = this.removePrefix(path)
     return window.remixFileSystem.statSync(path).isFile()
   }
 
@@ -156,9 +158,7 @@ class FileProvider {
       const stat = window.remixFileSystem.statSync(path)
       try {
         if (!stat.isDirectory()) {
-          window.remixFileSystem.unlinkSync(path, console.log)
-          this.event.trigger('fileRemoved', [this._normalizePath(path)])
-          return true
+          return this.removeFile(path)
         } else {
           const items = window.remixFileSystem.readdirSync(path)
           if (items.length !== 0) {
@@ -167,8 +167,7 @@ class FileProvider {
               if (window.remixFileSystem.statSync(curPath).isDirectory()) { // delete folder
                 this.remove(curPath)
               } else { // delete file
-                window.remixFileSystem.unlinkSync(curPath, console.log)
-                this.event.trigger('fileRemoved', [this._normalizePath(path)])
+                this.removeFile(curPath)
               }
             })
             if (window.remixFileSystem.readdirSync(path).length === 0) window.remixFileSystem.rmdirSync(path, console.log)
@@ -183,6 +182,15 @@ class FileProvider {
       }
     }
     return true
+  }
+
+  removeFile (path) {
+    path = this.removePrefix(path)
+    if (window.remixFileSystem.existsSync(path) && !window.remixFileSystem.statSync(path).isDirectory()) {
+      window.remixFileSystem.unlinkSync(path, console.log)
+      this.event.trigger('fileRemoved', [this._normalizePath(path)])
+      return true
+    } else return false
   }
 
   rename (oldPath, newPath, isFolder) {
