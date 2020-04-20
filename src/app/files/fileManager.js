@@ -26,6 +26,16 @@ const profile = {
   methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'unlink', 'rename', 'readdir', 'rmdir'],
   kind: 'file-system'
 }
+const errorMsg = {
+  ENOENT: 'No such file or directory',
+  EISDIR: 'Path is a directory',
+  ENOTDIR: 'Path is not on a directory',
+  EEXIST: 'File already exists',
+  EPERM: 'Permission denied'
+}
+const createError = (err) => {
+  return new Error(`${errorMsg[err.code]} ${err.message || ''}`)
+}
 
 // File System profile
 // - methods: ['getFolder', 'getCurrentFile', 'getFile', 'setFile', 'switchFile']
@@ -49,7 +59,7 @@ class FileManager extends Plugin {
    */
   _handleExists (path, message) {
     if (!this.exists(path)) {
-      this._handleError({ code: 'ENOENT', message })
+      throw createError({ code: 'ENOENT', message })
     }
   }
 
@@ -60,7 +70,7 @@ class FileManager extends Plugin {
    */
   _handleIsFile (path, message) {
     if (!this.isFile(path)) {
-      this._handleError({ code: 'EISDIR', message })
+      throw createError({ code: 'EISDIR', message })
     }
   }
 
@@ -71,45 +81,16 @@ class FileManager extends Plugin {
    */
   _handleIsDir (path, message) {
     if (this.isFile(path)) {
-      throw new Error({ code: 'ENOTDIR', message })
+      throw createError({ code: 'ENOTDIR', message })
     }
-  }
-
-  /**
-   * Emits error based on error code
-   * @param {object} error error { code, message }
-   */
-  _handleError (error) {
-    const message = error.message ? `: ${error.message}` : ''
-
-    if (error.code === 'ENOENT') {
-      throw new Error('No such file or directory' + message)
-    }
-
-    if (error.code === 'EISDIR') {
-      throw new Error('Path is a directory' + message)
-    }
-
-    if (error.code === 'ENOTDIR') {
-      throw new Error('Path is not on a directory' + message)
-    }
-
-    if (error.code === 'EEXIST') {
-      throw new Error('File already exists' + message)
-    }
-
-    if (error.code === 'EPERM' || error.code === 'EACCESS') {
-      throw new Error('Permission denied' + message)
-    }
-
-    return error
   }
 
   /** The current opened file */
   file () {
     const file = this.currentFile()
 
-    if (!file) this._handleError({ code: 'ENOENT', message: 'No file selected' })
+    
+    if (!file) throw createError({ code: 'ENOENT', message: 'No file selected' })
     return file
   }
 
@@ -194,6 +175,9 @@ class FileManager extends Plugin {
   unlink (path) {
     this._handleExists(path, `Cannot remove file ${path}`)
     this._handleIsDir(path, `Cannot remove file ${path}`)
+    const provider = this.fileProviderOf(path)
+
+    provider.removeFile(path)
   }
 
   /**
@@ -216,7 +200,7 @@ class FileManager extends Plugin {
    */
   mkdir (path) {
     if (this.exists(path)) {
-      this._handleError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
+      throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
     }
     const provider = this.fileProviderOf(path)
 
@@ -347,7 +331,7 @@ class FileManager extends Plugin {
   getFile (path) {
     const provider = this.fileProviderOf(path)
 
-    if (!provider) this._handleError({ code: 'ENOENT', message: `${path} not available` })
+    if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
     // TODO: change provider to Promise
     return new Promise((resolve, reject) => {
       if (this.currentFile() === path) return resolve(this.editor.currentContent())
@@ -382,7 +366,7 @@ class FileManager extends Plugin {
 
   _setFileInternal (path, content) {
     const provider = this.fileProviderOf(path)
-    if (!provider) this._handleError({ code: 'ENOENT', message: `${path} not available` })
+    if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
     // TODO : Add permission
     // TODO : Change Provider to Promise
     return new Promise((resolve, reject) => {
