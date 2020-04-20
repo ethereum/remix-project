@@ -133,9 +133,9 @@ class FileManager extends Plugin {
    * @returns {boolean} true if path is a file.
    */
   isFile (path) {
-    const extension = path.split('/').pop()
+    const provider = this.fileProviderOf(path)
 
-    return extension && extension.indexOf('.') > -1
+    return provider.isFile(path)
   }
 
   /**
@@ -218,7 +218,9 @@ class FileManager extends Plugin {
     if (this.exists(path)) {
       this._handleError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
     }
-    // To implement
+    const provider = this.fileProviderOf(path)
+
+    provider.createDir(path)
   }
 
   /**
@@ -249,7 +251,10 @@ class FileManager extends Plugin {
   rmdir (path) {
     this._handleExists(path, `Cannot remove directory ${path}`)
     this._handleIsDir(path, `Cannot remove directory ${path}`)
-    // To implement
+    
+    const provider = this.fileProviderOf(path)
+
+    return provider.remove(path)
   }
 
   init () {
