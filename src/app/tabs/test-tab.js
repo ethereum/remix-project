@@ -29,7 +29,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.data = {}
     this.appManager = appManager
     this.renderer = renderer
-    this.hasBeenStoped = false
+    this.hasBeenStopped = false
     this.baseurl = 'https://solc-bin.ethereum.org/bin'
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
@@ -159,7 +159,7 @@ module.exports = class TestTab extends ViewPlugin {
       this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${error.message}</div>`)
       this.testsSummary.appendChild(yo`<br>`)
     })
-    if (this.hasBeenStoped) {
+    if (this.hasBeenStopped) {
       this.testsSummary.appendChild(yo`<label class="text-warning h5">The test execution has been stopped</label>`)
     }
   }
@@ -194,7 +194,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   runTest (testFilePath, callback) {
-    if (this.hasBeenStoped) {
+    if (this.hasBeenStopped) {
       this.updateFinalResult()
       return
     }
@@ -239,7 +239,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   stopTests () {
-    this.hasBeenStoped = true
+    this.hasBeenStopped = true
   }
 
   updateGenerateFileAction (currentFile) {
@@ -258,7 +258,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateRunAction (currentFile) {
     let el = yo`
-      <button id="runTestsTabRunAction"  data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => { this.hasBeenStoped = false; this.runTests() }}">
+      <button id="runTestsTabRunAction"  data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => { this.hasBeenStopped = false; this.runTests() }}">
         <span class="fas fa-play ml-2"></span>
         <label class="btn btn-primary p-1 ml-2 m-0">Run</label>
       </button>
@@ -321,7 +321,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   infoButton () {
     return yo`
-      <a class="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html">
+      <a class="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#generate-test-file">
         <label class="btn p-1 ml-3 text-dark m-0">How to use</label>
       </a>
     `
