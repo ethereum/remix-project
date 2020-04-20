@@ -150,18 +150,25 @@ module.exports = class TestTab extends ViewPlugin {
       this.testsSummary.appendChild(yo`<div class="text-success" >${result.totalPassing} passing (${result.totalTime}s)</div>`)
       this.testsSummary.appendChild(yo`<br>`)
     }
-    if (result.totalFailing > 0) {
-      this.testsSummary.appendChild(yo`<div class="text-danger" >${result.totalFailing} failing</div>`)
-      this.testsSummary.appendChild(yo`<br>`)
+    if (result) {
+      if (result.totalFailing > 0) {
+        this.testsSummary.appendChild(yo`<div class="text-danger" >${result.totalFailing} failing</div>`)
+        this.testsSummary.appendChild(yo`<br>`)
+      }
+      result.errors.forEach((error, index) => {
+        this.testsSummary.appendChild(yo`<div class="text-danger" >${error.context} - ${error.value} </div>`)
+        this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${error.message}</div>`)
+        this.testsSummary.appendChild(yo`<br>`)
+      })
     }
-    result.errors.forEach((error, index) => {
-      this.testsSummary.appendChild(yo`<div class="text-danger" >${error.context} - ${error.value} </div>`)
-      this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${error.message}</div>`)
-      this.testsSummary.appendChild(yo`<br>`)
-    })
     if (this.hasBeenStopped) {
       this.testsSummary.appendChild(yo`<label class="text-warning h5">The test execution has been stopped</label>`)
     }
+    
+    const stopBtn = document.getElementById('runTestsTabStopAction')
+    const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
+    stopBtnLabel.innerText = 'Stop'
+    stopBtn.setAttribute('disabled', 'disabled')
   }
 
   async testFromPath (path) {
@@ -229,6 +236,9 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   runTests () {
+    this.hasBeenStopped = false;
+    const stopBtn = document.getElementById('runTestsTabStopAction')
+    stopBtn.removeAttribute('disabled')
     this.call('editor', 'clearAnnotations')
     this.testsOutput.innerHTML = ''
     this.testsSummary.innerHTML = ''
@@ -240,6 +250,8 @@ module.exports = class TestTab extends ViewPlugin {
 
   stopTests () {
     this.hasBeenStopped = true
+    const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
+    stopBtnLabel.innerText = 'Stopping...'
   }
 
   updateGenerateFileAction (currentFile) {
@@ -258,9 +270,9 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateRunAction (currentFile) {
     let el = yo`
-      <button id="runTestsTabRunAction"  data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => { this.hasBeenStopped = false; this.runTests() }}">
+      <button id="runTestsTabRunAction"  data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => this.runTests()}">
         <span class="fas fa-play ml-2"></span>
-        <label class="btn btn-primary p-1 ml-2 m-0">Run</label>
+        <label class="btn bg-transparent p-1 ml-2 m-0">Run</label>
       </button>
     `
     const isSolidityActive = this.appManager.actives.includes('solidity')
@@ -281,17 +293,12 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateStopAction () {
-    const runBtn = document.getElementById('runTestsTabRunAction')
-    const stopBtn = yo`
-    <button id="runTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary" title="Stop running tests" onclick=${() => this.stopTests()}">
-      <span class="fas fa-stop ml-2"></span>
-      <label class="btn btn-secondary p-1 ml-2 m-0">Stop</label>
-    </button>
+    return yo`
+      <button id="runTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary" disabled="disabled" title="Stop running tests" onclick=${() => this.stopTests()}">
+        <span class="fas fa-stop ml-2"></span>
+        <label class="btn bg-transparent p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
+      </button>
     `
-    if (runBtn && runBtn.getAttribute('disabled')) {
-      runBtn.setAttribute('disabled', 'disabled')
-    }
-    return stopBtn
   }
 
   updateTestFileList (tests) {
