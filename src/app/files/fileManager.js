@@ -136,8 +136,12 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   writeFile (path, data) {
-    this._handleIsFile(path, `Cannot write file ${path}`)
-    this.setFile(path, data)
+    if (this.exists(path)) {
+      this._handleIsFile(path, `Cannot write file ${path}`)
+      this.setFile(path, data)
+    } else {
+      this.setFile(path, data)
+    }
   }
 
   /**
