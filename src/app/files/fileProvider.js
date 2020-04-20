@@ -79,7 +79,6 @@ class FileProvider {
   }
 
   get (path, cb) {
-    console.log('window.remixFileSystem: ', window.remixFileSystem)
     cb = cb || function () {}
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
@@ -95,19 +94,8 @@ class FileProvider {
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (exists && window.remixFileSystem.readFileSync(unprefixedpath, 'utf8') === content) return true
-
     if (!exists && unprefixedpath.indexOf('/') !== -1) {
-      const paths = unprefixedpath.split('/')
-      paths.pop() // last element should the filename
-      if (paths.length && paths[0] === '') paths.shift()
-      let currentCheck = ''
-      paths.forEach((value) => {
-        currentCheck = currentCheck + '/' + value
-        if (!window.remixFileSystem.existsSync(currentCheck)) {
-          window.remixFileSystem.mkdirSync(currentCheck)
-          this.event.trigger('folderAdded', [this._normalizePath(currentCheck)])
-        }
-      })
+      this.createDir(path)
     }
     try {
       window.remixFileSystem.writeFileSync(unprefixedpath, content)
@@ -124,6 +112,22 @@ class FileProvider {
     return true
   }
 
+  createDir (path, cb) {
+    var unprefixedpath = this.removePrefix(path)
+    const paths = unprefixedpath.split('/')
+    paths.pop() // last element should the filename
+    if (paths.length && paths[0] === '') paths.shift()
+    let currentCheck = ''
+    paths.forEach((value) => {
+      currentCheck = currentCheck + '/' + value
+      if (!window.remixFileSystem.existsSync(currentCheck)) {
+        window.remixFileSystem.mkdirSync(currentCheck)
+        this.event.trigger('folderAdded', [this._normalizePath(currentCheck)])
+      }
+    })
+    if (cb) cb()
+  }
+
   // this will not add a folder as readonly but keep the original url to be able to restore it later
   addExternal (path, content, url) {
     if (url) this.addNormalizedName(path, url)
@@ -136,6 +140,10 @@ class FileProvider {
 
   isDirectory (path) {
     return window.remixFileSystem.statSync(path).isDirectory()
+  }
+
+  isFile (path) {
+    return window.remixFileSystem.statSync(path).isFile()
   }
 
   /**
