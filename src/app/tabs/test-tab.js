@@ -321,8 +321,8 @@ module.exports = class TestTab extends ViewPlugin {
 
   infoButton () {
     return yo`
-      <a class="btn border d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html">
-        <label class="btn p-1 ml-2 text-dark m-0">How to use</label>
+      <a class="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html">
+        <label class="btn p-1 ml-3 text-dark m-0">How to use</label>
       </a>
     `
   }
