@@ -18,6 +18,7 @@ module.exports = {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
     .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
     .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
+    .pause(1000000)
     .waitForElementVisible('li[key="browser/4_Ballot_test.sol"]')
   },
 
