@@ -46,23 +46,27 @@ staticAnalysisView.prototype.render = function () {
       <div class="${css.buttons}">
           <div class="${css.buttonsInner}">
             <button class="${css.buttonRun} btn btn-sm btn-primary" onclick="${function () { self.run() }}" >Run</button>
-            <label class="${css.label}" for="autorunstaticanalysis">
+            <div class="${css.label}" for="autorunstaticanalysis">
               <input id="autorunstaticanalysis"
                 type="checkbox"
                 style="vertical-align:bottom"
                 checked="true"
               >
-              Auto run
-            </label>
-            <label class="${css.label}" for="checkAllEntries">
+              <label class="text-nowrap pl-2 mb-0" for="autorunstaticanalysis">
+                Auto run
+              </label>
+            </div>
+            <div class="${css.label}" for="checkAllEntries">
               <input id="checkAllEntries"
                 type="checkbox"
                 onclick="${function (event) { self.checkAll(event) }}"
                 style="vertical-align:bottom"
                 checked="true"
               >
-              Check/Uncheck all
-            </label>
+              <label class="text-nowrap pl-2 mb-0" for="checkAllEntries">
+                Check/Uncheck all
+              </label>
+            </div>
           </div>
         </div>
         <div id="staticanalysismodules" class="list-group list-group-flush ${css.container}">
