@@ -162,7 +162,7 @@ staticAnalysisView.prototype.renderModules = function () {
     var category = groupedModules[categoryId]
     var entriesDom = category.map((item, i) => {
       return yo`
-        <label class="${css.label} form-check-label">
+        <div class="${css.label}">
           <input id="staticanalysismodule_${categoryId}_${i}"
             type="checkbox"
             class="staticAnalysisItem"
@@ -171,16 +171,19 @@ staticAnalysisView.prototype.renderModules = function () {
             checked="true"
             style="vertical-align:bottom"
             onclick="${function (event) { self.checkModule(event) }}"
-            >
-          ${item.name}
-          ${item.description}
-        </label>
+          >
+          <label for="staticanalysismodule_${categoryId}_${i}" class="pl-2 mb-1">
+            ${item.name}
+            ${item.description}
+          </label>
+        </div>
             `
     })
-    return yo`<div class="${css.analysisModulesContainer} list-group-item py-1">
-                <label class="${css.label}"><b>${category[0].categoryDisplayName}</b></label>
-                ${entriesDom}
-              </div>`
+    return yo`
+      <div class="${css.analysisModulesContainer} list-group-item py-1">
+        <label class="${css.label}"><b>${category[0].categoryDisplayName}</b></label>
+        ${entriesDom}
+      </div>`
   })
 }
 
