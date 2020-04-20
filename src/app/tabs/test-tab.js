@@ -260,7 +260,7 @@ module.exports = class TestTab extends ViewPlugin {
     let el = yo`
       <button id="runTestsTabRunAction"  data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => { this.hasBeenStoped = false; this.runTests() }}">
         <span class="fas fa-play ml-2"></span>
-        <label class="btn p-1 ml-2 m-0">Run</label>
+        <label class="btn btn-primary p-1 ml-2 m-0">Run</label>
       </button>
     `
     const isSolidityActive = this.appManager.actives.includes('solidity')
@@ -285,7 +285,7 @@ module.exports = class TestTab extends ViewPlugin {
     const stopBtn = yo`
     <button id="runTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary" title="Stop running tests" onclick=${() => this.stopTests()}">
       <span class="fas fa-stop ml-2"></span>
-      <label class="btn p-1 ml-2 m-0">Stop</label>
+      <label class="btn btn-secondary p-1 ml-2 m-0">Stop</label>
     </button>
     `
     if (runBtn && runBtn.getAttribute('disabled')) {
