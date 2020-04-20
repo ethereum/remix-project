@@ -29,6 +29,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.data = {}
     this.appManager = appManager
     this.renderer = renderer
+    this.hasBeenStoped = false
     this.baseurl = 'https://solc-bin.ethereum.org/bin'
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
@@ -158,6 +159,9 @@ module.exports = class TestTab extends ViewPlugin {
       this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${error.message}</div>`)
       this.testsSummary.appendChild(yo`<br>`)
     })
+    if (this.hasBeenStoped) {
+      this.testsSummary.appendChild(yo`<label class="text-warning h5">The test execution has been stopped</label>`)
+    }
   }
 
   async testFromPath (path) {
@@ -190,6 +194,10 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   runTest (testFilePath, callback) {
+    if (this.hasBeenStoped) {
+      this.updateFinalResult()
+      return
+    }
     this.loading.hidden = false
     this.fileManager.getFile(testFilePath).then((content) => {
       const runningTest = {}
@@ -224,10 +232,14 @@ module.exports = class TestTab extends ViewPlugin {
     this.call('editor', 'clearAnnotations')
     this.testsOutput.innerHTML = ''
     this.testsSummary.innerHTML = ''
-    var tests = this.data.selectedTests
+    const tests = this.data.selectedTests
     if (!tests) return
     this.loading.hidden = tests.length === 0
     async.eachOfSeries(tests, (value, key, callback) => { this.runTest(value, callback) })
+  }
+
+  stopTests () {
+    this.hasBeenStoped = true
   }
 
   updateGenerateFileAction (currentFile) {
@@ -246,17 +258,18 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateRunAction (currentFile) {
     let el = yo`
-      <div id="runTestsTabRunAction"  data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${this.runTests.bind(this)}">
+      <button id="runTestsTabRunAction"  data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => { this.hasBeenStoped = false; this.runTests() }}">
         <span class="fas fa-play ml-2"></span>
         <label class="btn p-1 ml-2 m-0">Run</label>
-      </div>
+      </button>
     `
     const isSolidityActive = this.appManager.actives.includes('solidity')
     if (!currentFile || !isSolidityActive) {
       el.setAttribute('disabled', 'disabled')
       if (!currentFile) {
         el.setAttribute('title', 'No file selected')
-      } else if (!isSolidityActive) el.setAttribute('title', 'The solidity module should be activated')
+      } else if (!isSolidityActive) el.setAttribute('title', 'The "Solidity Plugin" should be activated')
+      // @todo(#2747)  we can activate the plugin here
     }
 
     if (!this.runActionElement) {
@@ -268,12 +281,17 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateStopAction () {
-    return yo`
-      <div id="runTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary" title="Stop running tests" onclick="${this.runTests.bind(this)}">
-        <span class="fas fa-stop ml-2"></span>
-        <label class="btn p-1 ml-2 m-0">Stop</label>
-      </div>
+    const runBtn = document.getElementById('runTestsTabRunAction')
+    const stopBtn = yo`
+    <button id="runTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary" title="Stop running tests" onclick=${() => this.stopTests()}">
+      <span class="fas fa-stop ml-2"></span>
+      <label class="btn p-1 ml-2 m-0">Stop</label>
+    </button>
     `
+    if (runBtn && runBtn.getAttribute('disabled')) {
+      runBtn.setAttribute('disabled', 'disabled')
+    }
+    return stopBtn
   }
 
   updateTestFileList (tests) {
