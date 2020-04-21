@@ -164,7 +164,7 @@ module.exports = class TestTab extends ViewPlugin {
     if (this.hasBeenStopped) {
       this.testsSummary.appendChild(yo`<label class="text-warning h5">The test execution has been stopped</label>`)
     }
-    
+
     const stopBtn = document.getElementById('runTestsTabStopAction')
     const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
     stopBtnLabel.innerText = 'Stop'
@@ -236,7 +236,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   runTests () {
-    this.hasBeenStopped = false;
+    this.hasBeenStopped = false
     const stopBtn = document.getElementById('runTestsTabStopAction')
     stopBtn.removeAttribute('disabled')
     this.call('editor', 'clearAnnotations')
@@ -255,10 +255,20 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateGenerateFileAction (currentFile) {
-    let el = yo`<button class="btn border w-50" data-id="testTabGenerateTestFile" title="Generate sample test file." onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate</button>`
-    if (!currentFile) {
+    let el = yo`<button
+      class="btn border w-50"
+      data-id="testTabGenerateTestFile"
+      title="Generate sample test file."
+      onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}"
+    >
+      Generate
+    </button>`
+    if (
+      !currentFile ||
+      (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')
+    ) {
       el.setAttribute('disabled', 'disabled')
-      el.setAttribute('title', 'No file selected')
+      el.setAttribute('title', 'No solidity file selected')
     }
     if (!this.generateFileActionElement) {
       this.generateFileActionElement = el
@@ -270,20 +280,21 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateRunAction (currentFile) {
     let el = yo`
-      <button id="runTestsTabRunAction"  data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => this.runTests()}">
+      <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => this.runTests()}">
         <span class="fas fa-play ml-2"></span>
-        <label class="btn bg-transparent p-1 ml-2 m-0">Run</label>
+        <label class="${css.labelOnBtn} btn btn-primary bg-transparent p-1 ml-2 m-0">Run</label>
       </button>
     `
     const isSolidityActive = this.appManager.actives.includes('solidity')
-    if (!currentFile || !isSolidityActive) {
+    if (!currentFile || !isSolidityActive || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
       el.setAttribute('disabled', 'disabled')
-      if (!currentFile) {
-        el.setAttribute('title', 'No file selected')
-      } else if (!isSolidityActive) el.setAttribute('title', 'The "Solidity Plugin" should be activated')
-      // @todo(#2747)  we can activate the plugin here
+      if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
+        el.setAttribute('title', 'No solidity file selected')
+      } else {
+        el.setAttribute('title', 'The "Solidity Plugin" should be activated')
+        // @todo(#2747)  we can activate the plugin here
+      }
     }
-
     if (!this.runActionElement) {
       this.runActionElement = el
     } else {
@@ -296,7 +307,7 @@ module.exports = class TestTab extends ViewPlugin {
     return yo`
       <button id="runTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary" disabled="disabled" title="Stop running tests" onclick=${() => this.stopTests()}">
         <span class="fas fa-stop ml-2"></span>
-        <label class="btn bg-transparent p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
+        <label class="${css.labelOnBtn} btn btn-primary bg-transparent p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
       </button>
     `
   }
@@ -329,7 +340,7 @@ module.exports = class TestTab extends ViewPlugin {
   infoButton () {
     return yo`
       <a class="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#generate-test-file">
-        <label class="btn p-1 ml-3 text-dark m-0">How to use</label>
+        <label class="btn p-1 ml-2 m-0">How to use...</label>
       </a>
     `
   }
