@@ -41,7 +41,7 @@ class TestTabLogic {
     cb(null, tests, path)
   }
 
-  // TODO: If currently selected file is compiled and compilation result is available,
+  // @todo(#2758): If currently selected file is compiled and compilation result is available,
   // 'contractName' should be <compiledContractName> + '_testSuite'
   generateTestContractSample (fileToImport, contractName = 'testSuite') {
     return `pragma solidity >=0.4.22 <0.7.0;
