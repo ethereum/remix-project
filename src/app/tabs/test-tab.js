@@ -170,6 +170,8 @@ module.exports = class TestTab extends ViewPlugin {
     const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
     stopBtnLabel.innerText = 'Stop'
     stopBtn.setAttribute('disabled', 'disabled')
+    const runBtn = document.getElementById('runTestsTabRunAction')
+    runBtn.removeAttribute('disabled')
   }
 
   async testFromPath (path) {
@@ -240,6 +242,8 @@ module.exports = class TestTab extends ViewPlugin {
     this.hasBeenStopped = false
     const stopBtn = document.getElementById('runTestsTabStopAction')
     stopBtn.removeAttribute('disabled')
+    const runBtn = document.getElementById('runTestsTabRunAction')
+    runBtn.setAttribute('disabled', 'disabled')
     this.call('editor', 'clearAnnotations')
     this.testsOutput.innerHTML = ''
     this.testsSummary.innerHTML = ''
@@ -253,6 +257,10 @@ module.exports = class TestTab extends ViewPlugin {
     this.hasBeenStopped = true
     const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
     stopBtnLabel.innerText = 'Stopping...'
+    const stopBtn = document.getElementById('runTestsTabStopAction')
+    stopBtn.setAttribute('disabled', 'disabled')
+    const runBtn = document.getElementById('runTestsTabRunAction')
+    runBtn.setAttribute('disabled', 'disabled')
   }
 
   updateGenerateFileAction (currentFile) {
