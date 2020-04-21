@@ -91,6 +91,12 @@ module.exports = {
       }
       done()
     })
+  },
+
+  'Should open local filesystem explorer': function (browser) {
+    browser.waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
+    .waitForElementNotPresent('*[data-id="fileExplorerUploadFileuploadFile"]')
+    .click('*[data-id="fileExplorerUploadFileuploadFile"]')
     .end()
   },
 
