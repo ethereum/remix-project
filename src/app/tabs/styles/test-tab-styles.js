@@ -54,5 +54,8 @@ var css = csjs`
     align-items: center;
     white-space: nowrap;
   }
+  .labelOnBtn {
+    border: hidden;
+  }
 `
 module.exports = css
