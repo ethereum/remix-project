@@ -75,7 +75,7 @@ module.exports = class TestTab extends ViewPlugin {
   listTests () {
     return this.data.allTests.map(
       test => yo`
-        <div class="singleTestLabel d-flex py-1">
+        <div class="singleTestLabel d-flex align-items-center py-1">
           <input class="singleTest" id="singleTest${test}" onchange=${(e) => this.toggleCheckbox(e.target.checked, test)} type="checkbox" checked="true">
           <label class="text-nowrap pl-2 mb-0" for="singleTest${test}">${test}</label>
         </div>`
@@ -146,17 +146,18 @@ module.exports = class TestTab extends ViewPlugin {
       return
     }
     this.testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
-    if (result.totalPassing > 0) {
-      this.testsSummary.appendChild(yo`<div class="text-success" >${result.totalPassing} passing (${result.totalTime}s)</div>`)
-      this.testsSummary.appendChild(yo`<br>`)
-    }
+
     if (result) {
+      if (result.totalPassing > 0) {
+        this.testsSummary.appendChild(yo`<div class="text-success">${result.totalPassing} passing (${result.totalTime}s)</div>`)
+        this.testsSummary.appendChild(yo`<br>`)
+      }
       if (result.totalFailing > 0) {
-        this.testsSummary.appendChild(yo`<div class="text-danger" >${result.totalFailing} failing</div>`)
+        this.testsSummary.appendChild(yo`<div class="text-danger">${result.totalFailing} failing</div>`)
         this.testsSummary.appendChild(yo`<br>`)
       }
       result.errors.forEach((error, index) => {
-        this.testsSummary.appendChild(yo`<div class="text-danger" >${error.context} - ${error.value} </div>`)
+        this.testsSummary.appendChild(yo`<div class="text-danger">${error.context} - ${error.value} </div>`)
         this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${error.message}</div>`)
         this.testsSummary.appendChild(yo`<br>`)
       })
@@ -245,7 +246,7 @@ module.exports = class TestTab extends ViewPlugin {
     const tests = this.data.selectedTests
     if (!tests) return
     this.loading.hidden = tests.length === 0
-    async.eachOfSeries(tests, (value, key, callback) => { this.runTest(value, callback) })
+    async.eachOfSeries(tests, (value, key, callback) => { if (this.hasBeenStopped) return; this.runTest(value, callback) })
   }
 
   stopTests () {
@@ -325,7 +326,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   selectAll () {
     return yo`
-      <div class="d-flex mx-3 pb-2 mt-2 border-bottom">
+      <div class="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
         <input id="checkAllTests"
           type="checkbox"
           data-id="testTabCheckAllTests"
