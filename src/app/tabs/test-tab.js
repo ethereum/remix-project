@@ -148,6 +148,8 @@ module.exports = class TestTab extends ViewPlugin {
     this.testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
 
     if (result) {
+      ++this.readyTestsNumber
+      yo.update(this.resultStatistics, this.createResultLabel())
       if (result.totalPassing > 0) {
         this.testsSummary.appendChild(yo`<div class="text-success">${result.totalPassing} passing (${result.totalTime}s)</div>`)
         this.testsSummary.appendChild(yo`<br>`)
@@ -163,15 +165,17 @@ module.exports = class TestTab extends ViewPlugin {
       })
     }
     if (this.hasBeenStopped) {
-      this.testsSummary.appendChild(yo`<label class="text-warning h5">The test execution has been stopped</label>`)
+      this.testsExecutionStopped.hidden = false
     }
-
-    const stopBtn = document.getElementById('runTestsTabStopAction')
-    const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
-    stopBtnLabel.innerText = 'Stop'
-    stopBtn.setAttribute('disabled', 'disabled')
-    const runBtn = document.getElementById('runTestsTabRunAction')
-    runBtn.removeAttribute('disabled')
+    if (this.hasBeenStopped || this.readyTestsNumber === this.data.selectedTests.length) {
+      // All tests are ready or the operation has been canceled
+      const stopBtn = document.getElementById('runTestsTabStopAction')
+      stopBtn.setAttribute('disabled', 'disabled')
+      const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
+      stopBtnLabel.innerText = 'Stop'
+      const runBtn = document.getElementById('runTestsTabRunAction')
+      runBtn.removeAttribute('disabled')
+    }
   }
 
   async testFromPath (path) {
@@ -208,7 +212,7 @@ module.exports = class TestTab extends ViewPlugin {
       this.updateFinalResult()
       return
     }
-    this.loading.hidden = false
+    this.resultStatistics.hidden = false
     this.fileManager.getFile(testFilePath).then((content) => {
       const runningTest = {}
       runningTest[testFilePath] = { content }
@@ -227,7 +231,6 @@ module.exports = class TestTab extends ViewPlugin {
         (_err, result, cb) => this.resultsCallback(_err, result, cb),
         (error, result) => {
           this.updateFinalResult(error, result, testFilePath)
-          this.loading.hidden = true
           callback(error)
         }, (url, cb) => {
           return this.compileTab.compileTabLogic.importFileCb(url, cb)
@@ -240,6 +243,8 @@ module.exports = class TestTab extends ViewPlugin {
 
   runTests () {
     this.hasBeenStopped = false
+    this.readyTestsNumber = 0
+    yo.update(this.resultStatistics, this.createResultLabel())
     const stopBtn = document.getElementById('runTestsTabStopAction')
     stopBtn.removeAttribute('disabled')
     const runBtn = document.getElementById('runTestsTabRunAction')
@@ -247,10 +252,14 @@ module.exports = class TestTab extends ViewPlugin {
     this.call('editor', 'clearAnnotations')
     this.testsOutput.innerHTML = ''
     this.testsSummary.innerHTML = ''
+    this.testsExecutionStopped.hidden = true
     const tests = this.data.selectedTests
     if (!tests) return
-    this.loading.hidden = tests.length === 0
-    async.eachOfSeries(tests, (value, key, callback) => { if (this.hasBeenStopped) return; this.runTest(value, callback) })
+    this.resultStatistics.hidden = tests.length === 0
+    async.eachOfSeries(tests, (value, key, callback) => {
+      if (this.hasBeenStopped) return
+      this.runTest(value, callback)
+    })
   }
 
   stopTests () {
@@ -353,12 +362,21 @@ module.exports = class TestTab extends ViewPlugin {
       </a>
     `
   }
+
+  createResultLabel () {
+    if (!this.data.selectedTests) return yo`<span></span>`
+    const ready = this.readyTestsNumber ? `${this.readyTestsNumber}` : '0'
+    return yo`<span class='text-info ml-1'>Progress: ${ready} finished (out of ${this.data.selectedTests.length})</span>`
+  }
+
   render () {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="${css.container} mx-3 border-top border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsSummary = yo`<div class="${css.container} mx-3 pt-2 border-top border-primary" hidden='true' id="solidityUnittestsSummary" data-id="testTabSolidityUnitTestsSummary"></div>`
-    this.loading = yo`<span class='text-info ml-1'>Running tests...</span>`
-    this.loading.hidden = true
+    this.testsExecutionStopped = yo`<label class="text-warning h5">The test execution has been stopped</label>`
+    this.testsExecutionStopped.hidden = true
+    this.resultStatistics = this.createResultLabel()
+    this.resultStatistics.hidden = true
     var el = yo`
       <div class="${css.testTabView} px-2" id="testView">
         <div class="${css.infoBox}">
@@ -376,7 +394,10 @@ module.exports = class TestTab extends ViewPlugin {
           </div>
           ${this.selectAll()}
           ${this.updateTestFileList()}
-          <div class="${css.buttons} mt-2 mb-0"><h6>Results:${this.loading}</h6></div>
+          <div class="align-items-start flex-column mt-2 mb-0">
+            <h6>${this.resultStatistics}</h6>
+            ${this.testsExecutionStopped}
+          </div>
           ${this.testsOutput}
           ${this.testsSummary}
         </div>
