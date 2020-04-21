@@ -1,6 +1,12 @@
 'use strict'
 const init = require('../helpers/init')
 const sauce = require('./sauce')
+const path = require('path')
+const testData = {
+  testFile1: path.resolve(__dirname + '/editor.js'),
+  testFile2: path.resolve(__dirname + '/fileExplorer.js'),
+  testFile3: path.resolve(__dirname + '/generalSettings.js')
+}
 
 module.exports = {
 
@@ -88,6 +94,7 @@ module.exports = {
       if (runtimeBrowser === 'chrome') {
         browser.switchBrowserTab(1)
         .assert.urlContains('https://gist.github.com')
+        .switchBrowserTab(0)
       }
       done()
     })
@@ -95,8 +102,12 @@ module.exports = {
 
   'Should open local filesystem explorer': function (browser) {
     browser.waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
-    .waitForElementNotPresent('*[data-id="fileExplorerUploadFileuploadFile"]')
-    .click('*[data-id="fileExplorerUploadFileuploadFile"]')
+    .setValue('input#fileUpload', testData.testFile1)
+    .setValue('input#fileUpload', testData.testFile2)
+    .setValue('input#fileUpload', testData.testFile3)
+    .waitForElementVisible('*[key="browser/editor.js"]')
+    .waitForElementVisible('*[key="browser/fileExplorer.js"]')
+    .waitForElementVisible('*[key="browser/generalSettings.js"]')
     .end()
   },
 
