@@ -3,9 +3,9 @@ const init = require('../helpers/init')
 const sauce = require('./sauce')
 const path = require('path')
 const testData = {
-  testFile1: path.resolve(__dirname + '/editor.js'),
-  testFile2: path.resolve(__dirname + '/fileExplorer.js'),
-  testFile3: path.resolve(__dirname + '/generalSettings.js')
+  testFile1: path.resolve(__dirname + '/editor.js'), // eslint-disable-line
+  testFile2: path.resolve(__dirname + '/fileExplorer.js'), // eslint-disable-line
+  testFile3: path.resolve(__dirname + '/generalSettings.js') // eslint-disable-line
 }
 
 module.exports = {
