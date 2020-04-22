@@ -627,7 +627,7 @@ fileExplorer.prototype.renderMenuItems = function () {
             class="${icon} ${css.newFile}"
             title="${title}"
           >
-            <input type="file" onchange=${(event) => {
+            <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onchange=${(event) => {
               event.stopPropagation()
               this.uploadFile(event)
             }} multiple />
