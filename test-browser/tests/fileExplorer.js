@@ -102,9 +102,9 @@ module.exports = {
 
   'Should open local filesystem explorer': function (browser) {
     browser.waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
-    .setValue('input#fileUpload', testData.testFile1)
-    .setValue('input#fileUpload', testData.testFile2)
-    .setValue('input#fileUpload', testData.testFile3)
+    .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile1)
+    .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile2)
+    .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile3)
     .waitForElementVisible('*[key="browser/editor.js"]')
     .waitForElementVisible('*[key="browser/fileExplorer.js"]')
     .waitForElementVisible('*[key="browser/generalSettings.js"]')
