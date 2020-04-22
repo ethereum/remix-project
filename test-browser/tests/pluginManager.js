@@ -127,6 +127,23 @@ module.exports = {
     .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
     .pause(2000)
     .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Cannot create Plugin : This name has already been used')
+  },
+
+  'Should load back installed plugins after reload': function (browser) {
+    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+    .getInstalledPlugins((plugins) => {
+      browser.refresh()
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+      .pause(3000)
+      .perform((done) => {
+        plugins.forEach(plugin => {
+          if (plugin !== testData.pluginName) {
+            browser.waitForElementVisible(`[plugin="${plugin}"`)
+          }
+        })
+        done()
+      })
+    })
     .end()
   },
   tearDown: sauce
