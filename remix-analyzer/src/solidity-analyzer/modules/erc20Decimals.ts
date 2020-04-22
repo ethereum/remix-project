@@ -6,8 +6,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, VisitFuncti
   FunctionHLAst, VariableDeclarationAstNode} from './../../types'
 
 export default class erc20Decimals implements AnalyzerModule {
-  name: string = 'ERC20: '
-  description: string = 'Decimal should be uint8'
+  name: string = `ERC20: `
+  description: string = `'decimals' should be 'uint8'`
   category: ModuleCategory = category.ERC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 

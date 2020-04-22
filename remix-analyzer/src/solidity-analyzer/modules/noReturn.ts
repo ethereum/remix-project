@@ -6,8 +6,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLA
   VisitFunction, ReportFunction, ReturnAstNode, AssignmentAstNode} from './../../types'
 
 export default class noReturn implements AnalyzerModule {
-  name: string = 'no return: '
-  description: string = 'Function with return type is not returning'
+  name: string = `No return: `
+  description: string = `Function with 'returns' not returning`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 

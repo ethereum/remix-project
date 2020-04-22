@@ -4,8 +4,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class inlineAssembly implements AnalyzerModule {
   inlineAssNodes: InlineAssemblyAstNode[] = []
-  name: string = 'Inline assembly: '
-  description: string = 'Use of Inline Assembly'
+  name: string = `Inline assembly: `
+  description: string = `Inline assembly used`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
