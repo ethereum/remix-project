@@ -23,6 +23,7 @@ export default [
   gasCosts,
   thisLocal,
   checksEffectsInteraction,
+  erc20Decimals,
   constantFunctions,
   similarVariableNames,
   inlineAssembly,
@@ -34,7 +35,6 @@ export default [
   guardConditions,
   deleteDynamicArrays,
   assignAndCompare,
-  erc20Decimals,
   stringBytesLength,
   deleteFromDynamicArray,
   forLoopIteratesOverDynamicArray
