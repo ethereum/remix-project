@@ -32,6 +32,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.hasBeenStopped = false
     this.runningTestsNumber = 0
     this.readyTestsNumber = 0
+    this.areTestsRunning = false
     this.baseurl = 'https://solc-bin.ethereum.org/bin'
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
@@ -63,7 +64,7 @@ module.exports = class TestTab extends ViewPlugin {
 
     this.fileManager.events.on('currentFileChanged', (file, provider) => {
       this.updateGenerateFileAction(file)
-      this.updateRunAction(file)
+      if (!this.areTestsRunning) this.updateRunAction(file)
       this.testTabLogic.getTests((error, tests) => {
         if (error) return tooltip(error)
         this.data.allTests = tests
@@ -139,22 +140,18 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateFinalResult (_errors, result, filename) {
     this.testsSummary.hidden = false
+    ++this.readyTestsNumber
     if (_errors && _errors.errors) {
       _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsSummary, {type: err.severity}))
-      return
     } else if (_errors && Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage)) {
       _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsSummary, {type: err.severity}))
-      return
     } else if (_errors && !_errors.errors && !Array.isArray(_errors)) {
       // To track error like this: https://github.com/ethereum/remix/pull/1438
       this.renderer.error(_errors.formattedMessage || _errors.message, this.testsSummary, {type: 'error'})
-      return
     }
     this.testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
-
+    yo.update(this.resultStatistics, this.createResultLabel())
     if (result) {
-      ++this.readyTestsNumber
-      yo.update(this.resultStatistics, this.createResultLabel())
       if (result.totalPassing > 0) {
         this.testsSummary.appendChild(yo`<div class="text-success">${result.totalPassing} passing (${result.totalTime}s)</div>`)
         this.testsSummary.appendChild(yo`<br>`)
@@ -170,6 +167,7 @@ module.exports = class TestTab extends ViewPlugin {
       })
     }
     if (this.hasBeenStopped && (this.readyTestsNumber !== this.runningTestsNumber)) {
+      // if all tests has been through before stopping no need to print this.
       this.testsExecutionStopped.hidden = false
     }
     if (this.hasBeenStopped || this.readyTestsNumber === this.runningTestsNumber) {
@@ -182,6 +180,7 @@ module.exports = class TestTab extends ViewPlugin {
         const runBtn = document.getElementById('runTestsTabRunAction')
         runBtn.removeAttribute('disabled')
       }
+      this.areTestsRunning = false
     }
   }
 
@@ -249,6 +248,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   runTests () {
+    this.areTestsRunning = true
     this.hasBeenStopped = false
     this.readyTestsNumber = 0
     this.runningTestsNumber = this.data.selectedTests.length
@@ -275,7 +275,7 @@ module.exports = class TestTab extends ViewPlugin {
   stopTests () {
     this.hasBeenStopped = true
     const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
-    stopBtnLabel.innerText = 'Stopping...'
+    stopBtnLabel.innerText = 'Stopping'
     const stopBtn = document.getElementById('runTestsTabStopAction')
     stopBtn.setAttribute('disabled', 'disabled')
     const runBtn = document.getElementById('runTestsTabRunAction')
