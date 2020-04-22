@@ -193,6 +193,19 @@ module.exports = {
     return /a265627a7a72305820([0-9a-f]{64})64736f6c6343([0-9a-f]{6})0032$/
   },
 
+  /**
+    * return a regex which extract the cbor encoded metadata : {"ipfs": <IPFS hash>, "solc": <compiler version>} from the bytecode.
+    * ref https://solidity.readthedocs.io/en/v0.6.6/metadata.html?highlight=ipfs#encoding-of-the-metadata-hash-in-the-bytecode
+    * @return {RegEx}
+    */
+  cborEncodedValueExtraction: function () {
+    return /64697066735822([0-9a-f]{68})64736f6c6343([0-9a-f]{6})0033$/
+  },
+
+  extractcborMetadata: function (value) {
+    return value.replace(this.cborEncodedValueExtraction(), '')
+  },
+
   extractSwarmHash: function (value) {
     value = value.replace(this.swarmHashExtraction(), '')
     value = value.replace(this.swarmHashExtractionPOC31(), '')
@@ -224,7 +237,10 @@ module.exports = {
       code1 = replaceLibReference(code1, pos)
     }
     code1 = this.extractSwarmHash(code1)
+    code1 = this.extractcborMetadata(code1)
     code2 = this.extractSwarmHash(code2)
+    code2 = this.extractcborMetadata(code2)
+
     if (code1 && code2 && code1.indexOf(code2) === 0) {
       return true
     }
