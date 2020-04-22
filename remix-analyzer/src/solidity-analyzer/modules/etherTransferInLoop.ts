@@ -6,8 +6,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class etherTransferInLoop implements AnalyzerModule {
   relevantNodes: ExpressionStatementAstNode[] = []
-  name: string = 'Ether transfer in a loop: '
-  description: string = 'Avoid transferring Ether to multiple addresses in a loop'
+  name: string = `Ether transfer in loop: `
+  description: string = `Transferring Ether in a for/while/do-while loop`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
   

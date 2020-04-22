@@ -7,8 +7,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 export default class blockTimestamp implements AnalyzerModule {
   warningNowNodes: IdentifierAstNode[] = []
   warningblockTimestampNodes: MemberAccessAstNode[] = []
-  name: string = 'Block timestamp: '
-  description: string = 'Semantics maybe unclear'
+  name: string = `Block timestamp: `
+  description: string = `Semantics maybe unclear`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
 

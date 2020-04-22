@@ -10,8 +10,8 @@ interface VisitedContract {
 }
 
 export default class gasCosts implements AnalyzerModule {
-  name: string = 'Gas costs: '
-  description: string = 'Warn if the gas requirements of functions are too high.'
+  name: string = `Gas costs: `
+  description: string = `Too high gas requirement of functions`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
 

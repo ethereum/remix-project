@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class txOrigin implements AnalyzerModule {
   txOriginNodes: MemberAccessAstNode[] = []
-  name: string = 'Transaction origin: '
-  description: string = 'Warn if tx.origin is used'
+  name: string = `Transaction origin: `
+  description: string = `'tx.origin' is used`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
 

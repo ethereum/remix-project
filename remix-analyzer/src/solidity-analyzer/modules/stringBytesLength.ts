@@ -4,8 +4,8 @@ import { isStringToBytesConversion, isBytesLengthCheck } from './staticAnalysisC
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, FunctionCallAstNode} from './../../types'
 
 export default class stringBytesLength implements AnalyzerModule {
-  name: string = 'String Length: '
-  description: string = 'Bytes length != String length'
+  name: string = `String length: `
+  description: string = `Bytes length != String length`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
