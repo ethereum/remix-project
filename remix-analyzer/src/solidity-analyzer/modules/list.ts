@@ -17,12 +17,15 @@ import erc20Decimals from './erc20Decimals'
 import stringBytesLength from './stringBytesLength'
 import deleteFromDynamicArray from './deleteFromDynamicArray'
 import forLoopIteratesOverDynamicArray from './forLoopIteratesOverDynamicArray'
+import etherTransferInLoop from './etherTransferInLoop'
+import intDivisionTruncate from './intDivisionTruncate'
 
 export default [
   txOrigin,
   gasCosts,
   thisLocal,
   checksEffectsInteraction,
+  erc20Decimals,
   constantFunctions,
   similarVariableNames,
   inlineAssembly,
@@ -34,8 +37,9 @@ export default [
   guardConditions,
   deleteDynamicArrays,
   assignAndCompare,
-  erc20Decimals,
   stringBytesLength,
   deleteFromDynamicArray,
-  forLoopIteratesOverDynamicArray
+  forLoopIteratesOverDynamicArray,
+  etherTransferInLoop,
+  intDivisionTruncate
 ]

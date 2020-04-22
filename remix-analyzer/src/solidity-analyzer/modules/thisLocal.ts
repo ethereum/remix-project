@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class thisLocal implements AnalyzerModule {
   warningNodes: MemberAccessAstNode[] = []
-  name: string = 'This on local calls: '
-  description: string = 'Invocation of local functions via this'
+  name: string = `This on local calls: `
+  description: string = `Invocation of local functions via 'this'`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
