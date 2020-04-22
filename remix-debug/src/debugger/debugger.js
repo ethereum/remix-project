@@ -110,7 +110,7 @@ Debugger.prototype.debugTx = function (tx, loadingCb) {
         this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [sourceLocation])
       }
     })
-  })  
+  })
 
   this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
   this.vmDebuggerLogic.start()
