@@ -243,13 +243,11 @@ class Editor extends Plugin {
    * @param {string} path Path of the file
    */
   _getMode (path) {
-    let ext = path.indexOf('.') !== -1 ? /[^.]+/.exec(path) : null
-    if (ext) {
-      ext = path.replace(ext[0] + '.', '') // we get <ext>
-    } else ext = 'txt'
-    ext = ext.split('#')
-    if (!ext.length) return this.modes['txt']
-    ext = ext[0]
+    if (!path) return this.modes['txt']
+    const root = path.split('#')[0].split('?')[0]
+    let ext = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
+    if (ext) ext = ext[0]
+    else ext = 'txt'
     return ext && this.modes[ext] ? this.modes[ext] : this.modes['txt']
   }
 
