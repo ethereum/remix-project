@@ -28,7 +28,7 @@ class CmdLine {
 
   loadCompilationResult (compilationResult) {
     this.compilation = {}
-    this.compilation.lastCompilationResult = compilationResult
+    this.compilation.compilationResult = compilationResult
   }
 
   initDebugger (cb) {
@@ -36,7 +36,7 @@ class CmdLine {
 
     this.debugger = new Debugger({
       web3: this.contextManager.getWeb3(),
-      compiler: this.compilation
+      compilationResult: () => { return this.compilation.compilationResult }
     })
 
     this.contextManager.event.register('providerChanged', () => {
@@ -54,7 +54,7 @@ class CmdLine {
 
     if (!lineColumnPos || !lineColumnPos.start) return []
 
-    const content = this.compilation.lastCompilationResult.source.sources[this.filename].content.split('\n')
+    const content = this.compilation.compilationResult.source.sources[this.filename].content.split('\n')
 
     const source = []
 
@@ -85,7 +85,7 @@ class CmdLine {
     const lineColumnPos = this.lineColumnPos
     if (!lineColumnPos) return ''
     const currentLineNumber = lineColumnPos.start.line
-    const content = this.compilation.lastCompilationResult.source.sources[this.filename].content.split('\n')
+    const content = this.compilation.compilationResult.source.sources[this.filename].content.split('\n')
     return content[currentLineNumber]
   }
 
