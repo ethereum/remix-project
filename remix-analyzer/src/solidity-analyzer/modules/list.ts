@@ -17,6 +17,8 @@ import erc20Decimals from './erc20Decimals'
 import stringBytesLength from './stringBytesLength'
 import deleteFromDynamicArray from './deleteFromDynamicArray'
 import forLoopIteratesOverDynamicArray from './forLoopIteratesOverDynamicArray'
+import etherTransferInLoop from './etherTransferInLoop'
+import intDivisionTruncate from './intDivisionTruncate'
 
 export default [
   txOrigin,
@@ -37,5 +39,7 @@ export default [
   assignAndCompare,
   stringBytesLength,
   deleteFromDynamicArray,
-  forLoopIteratesOverDynamicArray
+  forLoopIteratesOverDynamicArray,
+  etherTransferInLoop,
+  intDivisionTruncate
 ]
