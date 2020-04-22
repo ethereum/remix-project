@@ -29,9 +29,7 @@ const EventManager = remixLib.EventManager
   * @param {Map} opts  -  { function compilationResult } //
   */
 function Ethdebugger (opts) {
-  this.opts = opts || {}
-  if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
-
+  this.compilationResult = opts.compilationResult || function (contractAddress) { return null }
   this.web3 = opts.web3
 
   this.event = new EventManager()
@@ -60,8 +58,8 @@ Ethdebugger.prototype.resolveStep = function (index) {
 }
 
 Ethdebugger.prototype.setCompilationResult = function (compilationResult) {
-  if (compilationResult && compilationResult.sources && compilationResult.contracts) {
-    this.solidityProxy.reset(compilationResult)
+  if (compilationResult && compilationResult.data) {
+    this.solidityProxy.reset(compilationResult.data)
   } else {
     this.solidityProxy.reset({})
   }
@@ -173,10 +171,10 @@ Ethdebugger.prototype.debug = function (tx) {
   if (!tx.to) {
     tx.to = traceHelper.contractCreationToken('0')
   }
-  this.setCompilationResult(this.opts.compilationResult())
   this.tx = tx
-  this.traceManager.resolveTrace(tx, (error, result) => {
+  this.traceManager.resolveTrace(tx, async (error, result) => {
     if (result) {
+      this.setCompilationResult(await this.compilationResult(tx.to))
       this.event.trigger('newTraceLoaded', [this.traceManager.trace])
       if (this.breakpointManager && this.breakpointManager.hasBreakpoint()) {
         this.breakpointManager.jumpNextBreakpoint(false)
