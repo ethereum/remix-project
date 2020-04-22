@@ -13,8 +13,8 @@ interface SimilarRecord {
 }
 
 export default class similarVariableNames implements AnalyzerModule {
-  name: string = 'Similar variable names: '
-  description: string = 'Check if variable names are too similar'
+  name: string = `Similar variable names: `
+  description: string = `Variable names are too similar`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 

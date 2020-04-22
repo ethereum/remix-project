@@ -5,8 +5,8 @@ import  AbstractAst from './abstractAstView'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VisitFunction, ReportFunction} from './../../types'
 
 export default class selfdestruct implements AnalyzerModule {
-  name: string = 'Selfdestruct: '
-  description: string = 'Be aware of caller contracts.'
+  name: string = `Selfdestruct: `
+  description: string = `Beware of caller contracts`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
 

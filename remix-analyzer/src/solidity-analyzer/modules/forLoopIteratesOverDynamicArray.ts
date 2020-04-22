@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class forLoopIteratesOverDynamicArray implements AnalyzerModule {
   relevantNodes: ForStatementAstNode[] = []
-  name: string = 'For loop iterates over dynamic array: '
-  description: string = 'The number of \'for\' loop iterations depends on dynamic array\'s size'
+  name: string = `For loop over dynamic array: `
+  description: string = `Iterations depend on dynamic array's size`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
 

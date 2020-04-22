@@ -10,8 +10,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractCal
   FunctionHLAst, VariableDeclarationAstNode, FunctionCallGraph, FunctionCallAstNode, VisitFunction, ReportFunction} from './../../types'
 
 export default class constantFunctions implements AnalyzerModule {
-  name: string = 'Constant functions: '
-  description: string = 'Check for potentially constant functions'
+  name: string = `Constant/View/Pure functions: `
+  description: string = `Potentially constant/view/pure functions`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
 
@@ -63,7 +63,7 @@ export default class constantFunctions implements AnalyzerModule {
           comments += (multipleContractsWithSameName) ? 'Note: Import aliases are currently not supported by this static analysis.' : ''
           if (func['potentiallyshouldBeConst']) {
             warnings.push({
-              warning: `${funcName} : Potentially should be constant but is not. ${comments}`,
+              warning: `${funcName} : Potentially should be constant/view/pure but is not. ${comments}`,
               location: func.node['src'],
               more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
             })
