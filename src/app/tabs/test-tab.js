@@ -30,6 +30,8 @@ module.exports = class TestTab extends ViewPlugin {
     this.appManager = appManager
     this.renderer = renderer
     this.hasBeenStopped = false
+    this.runningTestsNumber = 0
+    this.readyTestsNumber = 0
     this.baseurl = 'https://solc-bin.ethereum.org/bin'
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
@@ -94,8 +96,10 @@ module.exports = class TestTab extends ViewPlugin {
 
     if (eChecked) {
       checkAll.checked = true
-      runBtn.removeAttribute('disabled')
-      runBtn.setAttribute('title', 'Run tests')
+      if ((this.readyTestsNumber === this.runningTestsNumber || this.hasBeenStopped) && document.getElementById('runTestsTabStopAction').innerText === 'Stop') {
+        runBtn.removeAttribute('disabled')
+        runBtn.setAttribute('title', 'Run tests')
+      }
     } else if (!selectedTests.length) {
       checkAll.checked = false
       runBtn.setAttribute('disabled', 'disabled')
@@ -129,6 +133,7 @@ module.exports = class TestTab extends ViewPlugin {
     // result.passingNum
     // result.failureNum
     // result.timePassed
+    this.testsSummary.hidden = false
     cb()
   }
 
@@ -164,17 +169,19 @@ module.exports = class TestTab extends ViewPlugin {
         this.testsSummary.appendChild(yo`<br>`)
       })
     }
-    if (this.hasBeenStopped) {
+    if (this.hasBeenStopped && (this.readyTestsNumber !== this.runningTestsNumber)) {
       this.testsExecutionStopped.hidden = false
     }
-    if (this.hasBeenStopped || this.readyTestsNumber === this.data.selectedTests.length) {
+    if (this.hasBeenStopped || this.readyTestsNumber === this.runningTestsNumber) {
       // All tests are ready or the operation has been canceled
       const stopBtn = document.getElementById('runTestsTabStopAction')
       stopBtn.setAttribute('disabled', 'disabled')
       const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
       stopBtnLabel.innerText = 'Stop'
-      const runBtn = document.getElementById('runTestsTabRunAction')
-      runBtn.removeAttribute('disabled')
+      if (this.data.selectedTests.length !== 0) {
+        const runBtn = document.getElementById('runTestsTabRunAction')
+        runBtn.removeAttribute('disabled')
+      }
     }
   }
 
@@ -244,6 +251,7 @@ module.exports = class TestTab extends ViewPlugin {
   runTests () {
     this.hasBeenStopped = false
     this.readyTestsNumber = 0
+    this.runningTestsNumber = this.data.selectedTests.length
     yo.update(this.resultStatistics, this.createResultLabel())
     const stopBtn = document.getElementById('runTestsTabStopAction')
     stopBtn.removeAttribute('disabled')
@@ -251,7 +259,9 @@ module.exports = class TestTab extends ViewPlugin {
     runBtn.setAttribute('disabled', 'disabled')
     this.call('editor', 'clearAnnotations')
     this.testsOutput.innerHTML = ''
+    this.testsOutput.hidden = true
     this.testsSummary.innerHTML = ''
+    this.testsSummary.hidden = true
     this.testsExecutionStopped.hidden = true
     const tests = this.data.selectedTests
     if (!tests) return
@@ -366,14 +376,14 @@ module.exports = class TestTab extends ViewPlugin {
   createResultLabel () {
     if (!this.data.selectedTests) return yo`<span></span>`
     const ready = this.readyTestsNumber ? `${this.readyTestsNumber}` : '0'
-    return yo`<span class='text-info ml-1'>Progress: ${ready} finished (out of ${this.data.selectedTests.length})</span>`
+    return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
   }
 
   render () {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="${css.container} mx-3 border-top border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsSummary = yo`<div class="${css.container} mx-3 pt-2 border-top border-primary" hidden='true' id="solidityUnittestsSummary" data-id="testTabSolidityUnitTestsSummary"></div>`
-    this.testsExecutionStopped = yo`<label class="text-warning h5">The test execution has been stopped</label>`
+    this.testsExecutionStopped = yo`<label class="text-warning h6">The test execution has been stopped</label>`
     this.testsExecutionStopped.hidden = true
     this.resultStatistics = this.createResultLabel()
     this.resultStatistics.hidden = true
@@ -394,8 +404,8 @@ module.exports = class TestTab extends ViewPlugin {
           </div>
           ${this.selectAll()}
           ${this.updateTestFileList()}
-          <div class="align-items-start flex-column mt-2 mb-0">
-            <h6>${this.resultStatistics}</h6>
+          <div class="align-items-start flex-column mt-2 mx-3 mb-0">
+            ${this.resultStatistics}
             ${this.testsExecutionStopped}
           </div>
           ${this.testsOutput}
