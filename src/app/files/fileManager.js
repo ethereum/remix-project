@@ -154,7 +154,7 @@ class FileManager extends Plugin {
       if (canCall) {
         this._setFileInternal(path, content)
         // inform the user about modification after permission is granted and even if permission was saved before
-        await toaster(yo`
+        toaster(yo`
           <div>
             <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
             <span>
@@ -164,7 +164,7 @@ class FileManager extends Plugin {
               </span>${path}
             </span>
           </div>
-        `, '', { time: 5000 })
+        `, '', { time: 3000 })
       }
     }
     this._setFileInternal(path, content)
