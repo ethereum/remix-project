@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class guardConditions implements AnalyzerModule {
   guards: FunctionCallAstNode[] = []
-  name: string = 'Guard Conditions: '
-  description: string = 'Use require and appropriately'
+  name: string = `Guard conditions: `
+  description: string = `Use 'require' and 'assert' appropriately`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
