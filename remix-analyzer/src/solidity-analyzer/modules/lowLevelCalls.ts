@@ -10,8 +10,8 @@ interface llcNode {
 
 export default class lowLevelCalls implements AnalyzerModule {
   llcNodes: llcNode[] = []
-  name: string = 'Low level calls: '
-  description: string = 'Semantics maybe unclear'
+  name: string = `Low level calls: `
+  description: string = `Semantics maybe unclear`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
 

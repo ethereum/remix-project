@@ -6,8 +6,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, BlockAstNod
 
 export default class assignAndCompare implements AnalyzerModule {
   warningNodes: ExpressionStatementAstNode[] = []
-  name: string = 'Result not used: '
-  description: string = 'The result of an operation was not used.'
+  name: string = `Result not used: `
+  description: string = `The result of an operation not used`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
