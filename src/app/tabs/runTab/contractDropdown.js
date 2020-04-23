@@ -93,8 +93,8 @@ class ContractDropdownUI {
     this.ipfsCheckedState = savedConfig === 'true' ? true : false // eslint-disable-line
 
     this.ipfsCheckbox = this.ipfsCheckedState === true
-    ? yo`<input id="deployAndRunPublishToIPFS" class="mr-2" checked type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
-    : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
+    ? yo`<input id="deployAndRunPublishToIPFS" data-id="contractDropdownIpfsCheckbox" class="mr-2" checked type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
+    : yo`<input id="deployAndRunPublishToIPFS" data-id="contractDropdownIpfsCheckbox" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
 
     this.deployCheckBox = yo`
       <div class="mt-2 d-flex align-items-start">
