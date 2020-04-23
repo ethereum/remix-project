@@ -401,8 +401,12 @@ module.exports = {
             endQuoteIndex = true
             i = j
           }
+          // Throw error if end of params string is arrived but couldn't get end quote
+          if (!endQuoteIndex && j === params.length - 1) {
+            throw new Error('invalid params')
+          }
         }
-      } else if (params.charAt(i) === '[') {  // If a array opening bracket is received
+      } else if (params.charAt(i) === '[') {  // If an array/struct opening bracket is received
         startIndex = -1
         let bracketCount = 1
         let j
@@ -412,6 +416,10 @@ module.exports = {
             bracketCount++
           } else if (params.charAt(j) === ']') {  // // Decrease count if an array closing bracket is received (To handle nested array)
             bracketCount--
+          }
+          // Throw error if end of params string is arrived but couldn't get end of tuple
+          if (bracketCount !== 0 && j === params.length - 1) {
+            throw new Error('invalid tuple params')
           }
         }
         // If bracketCount = 0, it means complete array/nested array parsed, push it to the arguments list

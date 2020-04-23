@@ -309,7 +309,6 @@ tape('TraceManager', function (t) {
 
   t.test('TraceManager.getReturnValue', function (st) {
     traceManager.getReturnValue(108, function (error, result) {
-      console.log('result------->', result)
       if (error) {
         st.fail(error)
       } else {
