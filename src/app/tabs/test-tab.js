@@ -62,16 +62,18 @@ module.exports = class TestTab extends ViewPlugin {
       this.updateTestFileList()
     })
 
-    this.fileManager.events.on('currentFileChanged', (file, provider) => {
-      this.updateGenerateFileAction(file)
-      if (!this.areTestsRunning) this.updateRunAction(file)
-      this.testTabLogic.getTests((error, tests) => {
-        if (error) return tooltip(error)
-        this.data.allTests = tests
-        this.data.selectedTests = [...this.data.allTests]
-        this.updateTestFileList(tests)
-        if (!this.testsOutput || !this.testsSummary) return
-      })
+    this.fileManager.events.on('currentFileChanged', (file, provider) => this.updateForNewCurrent(file))
+  }
+
+  updateForNewCurrent (file) {
+    this.updateGenerateFileAction(file)
+    if (!this.areTestsRunning) this.updateRunAction(file)
+    this.testTabLogic.getTests((error, tests) => {
+      if (error) return tooltip(error)
+      this.data.allTests = tests
+      this.data.selectedTests = [...this.data.allTests]
+      this.updateTestFileList(tests)
+      if (!this.testsOutput || !this.testsSummary) return
     })
   }
 
@@ -413,6 +415,7 @@ module.exports = class TestTab extends ViewPlugin {
         </div>
       </div>
     `
+    this.updateForNewCurrent(this.fileManager.currentFile())
     if (!this._view.el) this._view.el = el
     return el
   }
