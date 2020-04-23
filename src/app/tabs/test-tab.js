@@ -177,8 +177,8 @@ module.exports = class TestTab extends ViewPlugin {
       // if all tests has been through before stopping no need to print this.
       this.testsExecutionStopped.hidden = false
     }
-    if (this.hasBeenStopped || this.readyTestsNumber === this.runningTestsNumber) {
-      // All tests are ready or the operation has been canceled
+    if (_errors || this.hasBeenStopped || this.readyTestsNumber === this.runningTestsNumber) {
+      // All tests are ready or the operation has been canceled or there was a compilation error in one of the test files.
       const stopBtn = document.getElementById('runTestsTabStopAction')
       stopBtn.setAttribute('disabled', 'disabled')
       const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
@@ -197,7 +197,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   /*
-    Test are not associated with the UI
+    Test is not associated with the UI
   */
   testFromSource (content, path = 'browser/unit_test.sol') {
     return new Promise((resolve, reject) => {
