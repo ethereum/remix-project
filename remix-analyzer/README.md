@@ -49,13 +49,13 @@ One can import the module and use the available methods to run analysis. Related
 
 Details of modules are explained in [official remix-ide documentation](https://remix-ide.readthedocs.io/en/latest/static_analysis.html).
 
-## Contribute
+### Contribute
 
 We are always open to new features or bug reports. Please feel free to open an issue or a pull request. 
 
 In case you want to add some code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix/blob/master/CONTRIBUTING.md). Reach us in [Gitter](https://gitter.im/ethereum/remix) in case of any queries.
 
-## License
+### License
 
 MIT © 2018-20 Remix Team
 
