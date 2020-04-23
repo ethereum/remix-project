@@ -125,6 +125,28 @@ function testWithNestedArrayInput (st, params, expected) {
   }, () => {}, () => {})
 }
 
+tape('abiEncoderV2InvalidTuple - (TxFormat.buildData) - should throw error for invalid tuple value', function (t) {
+  let output = compiler.compile(compilerInput(abiEncoderV2InvalidTuple))
+  output = JSON.parse(output)
+  let contract = output.contracts['test.sol']['test']
+  context = { output, contract }
+  t.test('(TxFormat.buildData)', function (st) {
+    st.plan(4)
+    testInvalidTupleInput(st, '[11, 12, "13"')
+    testInvalidTupleInput(st, '[11, 12, 13')
+    testInvalidTupleInput(st, '[11, 12, "13')
+    testInvalidTupleInput(st, '[11, 12, 13"')
+  })
+})
+
+function testInvalidTupleInput (st, params) {
+  txFormat.buildData('abiEncoderV2InvalidTuple', context.contract, context.output.contracts, true, context.contract.abi[2], params, (error, data) => {
+    if (error) {
+      return st.ok(error.includes('Error encoding arguments: Error: invalid tuple params'), 'should fail because of invalid tuple input')
+    }
+  }, () => {}, () => {})
+}
+
 /* tape *********************************************************** */
 
 tape('ContractParameters - (TxFormat.buildData) - link Libraries', function (t) {
@@ -411,6 +433,20 @@ contract test {
         mm.b = 133;
         return mm;
     }
+
+    function t2 (p memory _p) public {}
+}`
+
+const abiEncoderV2InvalidTuple = `pragma experimental ABIEncoderV2;
+
+contract test {
+    struct p {
+        uint a;
+        uint b;
+        string s;
+    }
+
+    function t2 (p memory _p) public {}
 }`
 
 const abiEncoderV2ArrayOfTuple = `pragma experimental ABIEncoderV2;
