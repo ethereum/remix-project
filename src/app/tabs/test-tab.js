@@ -50,7 +50,7 @@ module.exports = class TestTab extends ViewPlugin {
   listenToEvents () {
     this.filePanel.event.register('newTestFileCreated', file => {
       var testList = this.view.querySelector("[class^='testList']")
-      var test = yo`<label class="singleTestLabel"><input class="singleTest" onchange=${(e) => this.toggleCheckbox(e.target.checked, file)} type="checkbox" checked="true">${file}</label>`
+      var test = this.createSingleTest(file)
       testList.appendChild(test)
       this.data.allTests.push(file)
       this.data.selectedTests.push(file)
@@ -77,13 +77,18 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
+  createSingleTest (testFile) {
+    return yo`
+      <div class="d-flex align-items-center py-1">
+        <input class="singleTest" id="singleTest${testFile}" onchange=${(e) => this.toggleCheckbox(e.target.checked, testFile)} type="checkbox" checked="true">
+        <label class="singleTestLabel text-nowrap pl-2 mb-0" for="singleTest${testFile}">${testFile}</label>
+      </div>
+    `
+  }
+
   listTests () {
     return this.data.allTests.map(
-      test => yo`
-        <div class="singleTestLabel d-flex align-items-center py-1">
-          <input class="singleTest" id="singleTest${test}" onchange=${(e) => this.toggleCheckbox(e.target.checked, test)} type="checkbox" checked="true">
-          <label class="text-nowrap pl-2 mb-0" for="singleTest${test}">${test}</label>
-        </div>`
+      testFile => this.createSingleTest(testFile)
     )
   }
 
@@ -111,7 +116,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   checkAll (event) {
-    let checkBoxes = this._view.el.querySelectorAll('.singleTest')
+    const checkBoxes = this._view.el.querySelectorAll('.singleTest')
     const checkboxesLabels = this._view.el.querySelectorAll('.singleTestLabel')
     // checks/unchecks all
     for (let i = 0; i < checkBoxes.length; i++) {
@@ -389,7 +394,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.testsExecutionStopped.hidden = true
     this.resultStatistics = this.createResultLabel()
     this.resultStatistics.hidden = true
-    var el = yo`
+    const el = yo`
       <div class="${css.testTabView} px-2" id="testView">
         <div class="${css.infoBox}">
           <p class="text-lg"> Test your smart contract in Solidity.</p>
@@ -415,8 +420,8 @@ module.exports = class TestTab extends ViewPlugin {
         </div>
       </div>
     `
+    this._view.el = el
     this.updateForNewCurrent(this.fileManager.currentFile())
-    if (!this._view.el) this._view.el = el
     return el
   }
 
