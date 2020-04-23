@@ -1,6 +1,6 @@
 {
   "name": "remix-tests",
-  "version": "0.1.30",
+  "version": "0.1.31",
   "description": "Tool to test Solidity smart contracts",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -43,9 +43,9 @@
     "change-case": "^3.0.1",
     "colors": "^1.1.2",
     "commander": "^2.13.0",
-    "remix-lib": "0.4.24",
-    "remix-simulator": "0.1.9-beta.2",
-    "remix-solidity": "0.3.27",
+    "remix-lib": "0.4.25",
+    "remix-simulator": "0.1.9-beta.3",
+    "remix-solidity": "0.3.28",
     "signale": "^1.4.0",
     "web3": "^1.2.4",
     "winston": "^3.0.0"
