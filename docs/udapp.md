@@ -76,12 +76,64 @@ Please note the following:
 
 - If you break the rules when using the **Low level interactions** you will be slapped with a warning.
 
-Please see the [solidity docs](https://solidity.readthedocs.io/en/latest/contracts.html#receive-ether-function  ) for more specifics about using the **fallback** and **receive** functions. 
+Please see the [solidity docs](https://solidity.readthedocs.io/en/latest/contracts.html#receive-ether-function) for more specifics about using the **fallback** and **receive** functions. 
 
 ### Passing in a tuple or a struct to a function
-To pass a tuple in, you need to put in an an array [].
+To pass a tuple in, you need to put in an array [].
 
 Similarly, to pass in a struct as a parameter of a function, it needs to be put in as an array [].  Also note that the line
 `pragma experimental ABIEncoderV2;`
 needs to put in at the top of the solidity file.
 
+### Example of passing nested struct to a function
+Consider a nested struct defined like this:
+```
+struct gardenPlot {
+    uint slugCount;  
+    uint wormCount;
+    Flower[] theFlowers;
+}
+struct Flower {
+    uint flowerNum;
+    string color;
+}
+```
+If a function has the signature `fertilizer(Garden memory gardenPlot)` then the correct syntax is:
+```
+[1,2,[[3,"Petunia"]]]
+```
+
+To continue on this example, here's a sample contract:
+
+```
+pragma solidity >=0.4.22 <0.7.0;
+pragma experimental ABIEncoderV2;
+
+contract Sunshine {
+    struct Garden {
+      uint slugCount;  
+      uint wormCount;
+      Flower[] theFlowers;
+    }
+    struct Flower {
+        uint flowerNum;
+        string color;
+    }
+      
+    function picker(Garden memory gardenPlot) public {
+        uint a = gardenPlot.slugCount;
+        uint b = gardenPlot.wormCount;
+        Flower[] memory cFlowers = gardenPlot.theFlowers;
+        uint d = gardenPlot.theFlowers[0].flowerNum;
+        string memory e = gardenPlot.theFlowers[0].color;
+    }
+}
+```
+
+After compiling, deploying the contract and opening up the deployed instance, we can then add the following input parameters to the function named **fertilizer** :
+
+```
+[1,2,[[3,"Black-eyed Susan"],[4,"Pansy"]]]
+```
+
+The function **fertilizer** accepts a single parameter of the type **Garden**. The type **Garden** is a **struct**. Structs are wrapped in **square brackets**.  Inside **Garden** is an array that is an array of structs named **theFlowers**. It gets a set of brackets for the array and another set for the struct. Thus the double square brackets.
