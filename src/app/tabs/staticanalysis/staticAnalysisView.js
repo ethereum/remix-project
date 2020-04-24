@@ -158,7 +158,7 @@ staticAnalysisView.prototype.checkAll = function (event) {
 staticAnalysisView.prototype.renderModules = function () {
   var self = this
   var groupedModules = utils.groupBy(preProcessModules(self.runner.modules()), 'categoryId')
-  return Object.keys(groupedModules).map((categoryId, i) => {
+  const moduleEntries = Object.keys(groupedModules).map((categoryId, i) => {
     var category = groupedModules[categoryId]
     var entriesDom = category.map((item, i) => {
       return yo`
@@ -173,18 +173,28 @@ staticAnalysisView.prototype.renderModules = function () {
             onclick="${function (event) { self.checkModule(event) }}"
           >
           <label for="staticanalysismodule_${categoryId}_${i}" class="form-check-label mb-1">
-            ${item.name}
+            <p class="mb-0 font-weight-bold text-capitalize">${item.name}</p>
             ${item.description}
           </label>
         </div>
-            `
+      `
     })
     return yo`
-      <div class="${css.analysisModulesContainer} list-group-item py-1">
-        <label class="${css.label}"><b>${category[0].categoryDisplayName}</b></label>
-        ${entriesDom}
-      </div>`
+      <div class="${css.block}">
+          <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}"/>
+          <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header font-weight-bold border-bottom px-1 py-2 w-100">
+            <span>${category[0].categoryDisplayName}</span>
+          </label>
+        <div class="w-100 d-block px-2 py-1 ${css.entries}">
+          ${entriesDom}
+        </div>
+      </>
+    `
   })
+  return yo`
+    <div class="accordion" id="accordionModules">
+      ${moduleEntries}
+    </div>`
 }
 
 module.exports = staticAnalysisView
