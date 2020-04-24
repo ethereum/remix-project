@@ -130,9 +130,9 @@ module.exports = class TestTab extends ViewPlugin {
     if (result.type === 'contract') {
       this.testsOutput.appendChild(yo`<div class=${css.outputTitle}>${result.filename} (${result.value})</div>`)
     } else if (result.type === 'testPass') {
-      this.testsOutput.appendChild(yo`<div class="${css.testPass} ${css.testLog} alert-success">✓ (${result.value})</div>`)
+      this.testsOutput.appendChild(yo`<div class="${css.testPass} ${css.testLog} alert-success">✓ ${result.value}</div>`)
     } else if (result.type === 'testFailure') {
-      this.testsOutput.appendChild(yo`<div class="${css.testFailure} ${css.testLog} alert-danger">✘ (${result.value})</div>`)
+      this.testsOutput.appendChild(yo`<div class="${css.testFailure} ${css.testLog} alert-danger">✘ ${result.value}</div>`)
     }
   }
 
