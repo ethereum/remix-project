@@ -127,7 +127,7 @@ module.exports = class TestTab extends ViewPlugin {
   testCallback (result) {
     this.testsOutput.hidden = false
     if (result.type === 'contract') {
-      this.testsOutput.appendChild(yo`<div class=${css.outputTitle}>${result.filename} (${result.value})</div>`)
+      this.testsOutput.appendChild(yo`<div class="${css.outputTitle}">${result.filename} (${result.value})</div>`)
     } else if (result.type === 'testPass') {
       this.testsOutput.appendChild(yo`<div class="${css.testPass} ${css.testLog} alert-success bg-transparent border-0">✓ ${result.value}</div>`)
     } else if (result.type === 'testFailure') {
@@ -188,6 +188,13 @@ module.exports = class TestTab extends ViewPlugin {
       }
       this.areTestsRunning = false
     }
+    result.errors.forEach((error, index) => {
+      this.testsOutput.appendChild(yo`<div class="${css.outputTitle}">${result.filename} (${result.value})</div>`)
+      this.testsOutput.appendChild(yo`<div class="${css.testFailure} ${css.testLog} alert-danger bg-transparent border-0">✘ ${result.value}</div>`)
+      this.testsSummary.appendChild(yo`<div class="text-danger" >${error.context} - ${error.value} </div>`)
+      this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${error.message}</div>`)
+      this.testsSummary.appendChild(yo`<br>`)
+    })
   }
 
   async testFromPath (path) {
