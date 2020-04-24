@@ -155,7 +155,7 @@ staticAnalysisView.prototype.checkModule = function (event) {
 }
 staticAnalysisView.prototype.correctRunBtnDisabled = function () {
   const selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
-  if (this.lastCompilationResult && selected.length != 0) {
+  if (this.lastCompilationResult && selected.length !== 0) {
     this.runBtn.removeAttribute('disabled')
   } else {
     this.runBtn.setAttribute('disabled', 'disabled')
@@ -174,42 +174,42 @@ staticAnalysisView.prototype.checkAll = function (event) {
 staticAnalysisView.prototype.renderModules = function () {
   const groupedModules = utils.groupBy(preProcessModules(this.runner.modules()), 'categoryId')
   const moduleEntries = Object.keys(groupedModules).map((categoryId, i) => {
-  const category = groupedModules[categoryId]
-  const entriesDom = category.map((item, i) => {
+    const category = groupedModules[categoryId]
+    const entriesDom = category.map((item, i) => {
+      return yo`
+        <div class="form-check">
+          <input id="staticanalysismodule_${categoryId}_${i}"
+            type="checkbox"
+            class="form-check-input staticAnalysisItem"
+            name="staticanalysismodule"
+            index=${item._index}
+            checked="true"
+            style="vertical-align:bottom"
+            onclick="${(event) => this.checkModule(event)}"
+          >
+          <label for="staticanalysismodule_${categoryId}_${i}" class="form-check-label mb-1">
+            <p class="mb-0 font-weight-bold text-capitalize">${item.name}</p>
+            ${item.description}
+          </label>
+        </div>
+      `
+    })
     return yo`
-      <div class="form-check">
-        <input id="staticanalysismodule_${categoryId}_${i}"
-          type="checkbox"
-          class="form-check-input staticAnalysisItem"
-          name="staticanalysismodule"
-          index=${item._index}
-          checked="true"
-          style="vertical-align:bottom"
-          onclick="${(event) => this.checkModule(event) }"
-        >
-        <label for="staticanalysismodule_${categoryId}_${i}" class="form-check-label mb-1">
-          <p class="mb-0 font-weight-bold text-capitalize">${item.name}</p>
-          ${item.description}
-        </label>
-      </div>
+      <div class="${css.block}">
+          <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}"/>
+          <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header font-weight-bold border-bottom px-1 py-2 w-100">
+            <span>${category[0].categoryDisplayName}</span>
+          </label>
+        <div class="w-100 d-block px-2 py-1 ${css.entries}">
+          ${entriesDom}
+        </div>
+      </>
     `
   })
   return yo`
-    <div class="${css.block}">
-        <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}"/>
-        <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header font-weight-bold border-bottom px-1 py-2 w-100">
-          <span>${category[0].categoryDisplayName}</span>
-        </label>
-      <div class="w-100 d-block px-2 py-1 ${css.entries}">
-        ${entriesDom}
-      </div>
-    </>
-  `
-  })
-return yo`
-  <div class="accordion" id="accordionModules">
-    ${moduleEntries}
-  </div>`
+    <div class="accordion" id="accordionModules">
+      ${moduleEntries}
+    </div>`
 }
 
 module.exports = staticAnalysisView
