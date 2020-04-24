@@ -69,7 +69,7 @@ staticAnalysisView.prototype.render = function () {
             </div>
           </div>
         </div>
-        <div id="staticanalysismodules" class="list-group list-group-flush ${css.container}">
+        <div id="staticanalysismodules" class="list-group list-group-flush">
           ${this.modulesView}
         </div>
         <div class="${css.resultTitle} mx-2"><h6>Results:</h6></div>

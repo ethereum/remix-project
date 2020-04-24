@@ -24,22 +24,14 @@ var css = csjs`
   .buttonRun  {
     margin-right: 1%;
   }
-  .analysisModulesContainer {
-  }
   .label {
     display: flex;
     align-items: center;
   }
-  .container {
-    max-height: 500px;
-    overflow-y: auto;
-  }
-
   .block input[type='radio']:checked ~ .entries{
     height: auto;
     transition: .3s ease-in;
   }
-
   .entries{
     height: 0;
     overflow: hidden;
