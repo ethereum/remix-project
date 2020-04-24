@@ -71,7 +71,7 @@ class ContractDropdownUI {
   setCheckedState (value) {
     value = value === 'true' ? true : value === 'false' ? false : value
     this.ipfsCheckedState = value
-    document.getElementById('deployAndRunPublishToIPFS').checked = value
+    if (this.ipfsCheckbox) this.ipfsCheckbox.checked = value
   }
 
   toggleCheckedState () {
@@ -92,13 +92,13 @@ class ContractDropdownUI {
     const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
     this.ipfsCheckedState = savedConfig === 'true' ? true : false // eslint-disable-line
 
-    const ipfsCheckbox = this.ipfsCheckedState === true
-    ? yo`<input id="deployAndRunPublishToIPFS" class="mr-2" checked type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
-    : yo`<input id="deployAndRunPublishToIPFS" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
+    this.ipfsCheckbox = this.ipfsCheckedState === true
+    ? yo`<input id="deployAndRunPublishToIPFS" data-id="contractDropdownIpfsCheckbox" class="mr-2" checked type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
+    : yo`<input id="deployAndRunPublishToIPFS" data-id="contractDropdownIpfsCheckbox" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
 
     this.deployCheckBox = yo`
       <div class="mt-2 d-flex align-items-start">
-        ${ipfsCheckbox}
+        ${this.ipfsCheckbox}
         <label
           for="deployAndRunPublishToIPFS"
           class="p-0 m-0"
