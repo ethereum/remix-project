@@ -21,9 +21,6 @@ var css = csjs`
     align-items: center;
     justify-content: space-around;
   }
-  .buttonRun  {
-    margin-right: 1%;
-  }
   .label {
     display: flex;
     align-items: center;

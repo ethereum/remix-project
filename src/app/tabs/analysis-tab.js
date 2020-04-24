@@ -42,7 +42,7 @@ class AnalysisTab extends ViewPlugin {
     })
     this.registry.put({api: this.staticanalysis, name: 'staticanalysis'})
 
-    return yo`<div class="p-3 pb-1" id="staticanalysisView">${this.staticanalysis.render()}</div>`
+    return yo`<div class="px-3 pb-1" id="staticanalysisView">${this.staticanalysis.render()}</div>`
   }
 
 }

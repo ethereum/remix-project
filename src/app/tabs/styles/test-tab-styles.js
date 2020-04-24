@@ -39,11 +39,6 @@ var css = csjs`
   }
   .testFailureSummary {
   }
-  .buttons {
-    margin: 5%;
-    display: flex;
-    align-items: center;
-  }
   .title {
     font-size: 1.1em;
     font-weight: bold;

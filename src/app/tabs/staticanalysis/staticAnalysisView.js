@@ -32,6 +32,7 @@ function staticAnalysisView (localRegistry, analysisModule) {
     $('#staticanalysisresult').empty()
     if (languageVersion.indexOf('soljson') !== 0) return
     self.lastCompilationResult = data
+    if (self.view) self.view.querySelector('#staticAnalysisCurrentFile').innerText = file
     self.lastCompilationSource = source
     if (self.view.querySelector('#autorunstaticanalysis').checked) {
       self.run()
@@ -40,45 +41,50 @@ function staticAnalysisView (localRegistry, analysisModule) {
 }
 
 staticAnalysisView.prototype.render = function () {
-  var self = this
-  var view = yo`
+  this.runBtn = yo`<button class="btn btn-sm btn-primary" onclick="${() => { this.run() }}" >Run</button>`
+  const view = yo`
     <div class="${css.analysis}">
-      <div class="${css.buttons}">
-          <div class="${css.buttonsInner}">
-            <button class="${css.buttonRun} btn btn-sm btn-primary" onclick="${function () { self.run() }}" >Run</button>
-            <div class="${css.label}" for="autorunstaticanalysis">
-              <input id="autorunstaticanalysis"
-                type="checkbox"
-                style="vertical-align:bottom"
-                checked="true"
-              >
-              <label class="text-nowrap pl-2 mb-0" for="autorunstaticanalysis">
-                Auto run
-              </label>
-            </div>
-            <div class="${css.label}" for="checkAllEntries">
-              <input id="checkAllEntries"
-                type="checkbox"
-                onclick="${function (event) { self.checkAll(event) }}"
-                style="vertical-align:bottom"
-                checked="true"
-              >
-              <label class="text-nowrap pl-2 mb-0" for="checkAllEntries">
-                Check/Uncheck all
-              </label>
-            </div>
+      <div class="mb-2 d-flex flex-column align-items-left">
+        <div class="mb-2 p-2 alert alert-info">
+          <span>For: <span id="staticAnalysisCurrentFile">No file compiled</span></span>
+        </div>
+        <div class="d-flex justify-content-between">
+          ${this.runBtn}
+          <div class="${css.label}" for="autorunstaticanalysis">
+            <input id="autorunstaticanalysis"
+              type="checkbox"
+              style="vertical-align:bottom"
+              checked="true"
+            >
+            <label class="text-nowrap pl-2 mb-0" for="autorunstaticanalysis">
+              Auto run
+            </label>
+          </div>
+          <div class="${css.label}" for="checkAllEntries">
+            <input id="checkAllEntries"
+              type="checkbox"
+              onclick="${(event) => { this.checkAll(event) }}"
+              style="vertical-align:bottom"
+              checked="true"
+            >
+            <label class="text-nowrap pl-2 mb-0" for="checkAllEntries">
+              Check/Uncheck all
+            </label>
           </div>
         </div>
-        <div id="staticanalysismodules" class="list-group list-group-flush">
-          ${this.modulesView}
-        </div>
-        <div class="${css.resultTitle} mx-2"><h6>Results:</h6></div>
-        <div class="${css.result} m-2" id='staticanalysisresult'></div>
+      </div>
+      <div id="staticanalysismodules" class="list-group list-group-flush">
+        ${this.modulesView}
+      </div>
+      <div class="${css.resultTitle} mx-2"><h6>Results:</h6></div>
+      <div class="${css.result} my-2" id='staticanalysisresult'></div>
     </div>
   `
+
   if (!this.view) {
     this.view = view
   }
+  this.correctRunBtnDisabled()
   return view
 }
 
@@ -86,7 +92,7 @@ staticAnalysisView.prototype.selectedModules = function () {
   if (!this.view) {
     return []
   }
-  var selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
+  const selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
   var toRun = []
   for (var i = 0; i < selected.length; i++) {
     toRun.push(selected[i].attributes['index'].value)
@@ -98,16 +104,17 @@ staticAnalysisView.prototype.run = function () {
   if (!this.view) {
     return
   }
-  var selected = this.selectedModules()
-  var warningContainer = $('#staticanalysisresult')
+  const selected = this.selectedModules()
+  const warningContainer = $('#staticanalysisresult')
   warningContainer.empty()
   var self = this
   if (this.lastCompilationResult && selected.length) {
-    var warningCount = 0
+    this.runBtn.removeAttribute('disabled')
+    let warningCount = 0
     this.runner.run(this.lastCompilationResult, selected, function (results) {
       results.map(function (result, i) {
         result.report.map(function (item, i) {
-          var location = ''
+          let location = ''
           if (item.location) {
             var split = item.location.split(':')
             var file = split[2]
@@ -122,79 +129,87 @@ staticAnalysisView.prototype.run = function () {
             location = Object.keys(self.lastCompilationResult.contracts)[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
           warningCount++
-          var msg = yo`<span>${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
+          const msg = yo`<span>${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
           self._components.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning alert alert-warning', useSpan: true})
         })
       })
       self.event.trigger('staticAnaysisWarning', [warningCount])
     })
   } else {
+    this.runBtn.setAttribute('disabled', 'disabled')
     if (selected.length) {
       warningContainer.html('No compiled AST available')
     }
     self.event.trigger('staticAnaysisWarning', [-1])
   }
 }
-
 staticAnalysisView.prototype.checkModule = function (event) {
-  let selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
-  let checkAll = this.view.querySelector('[id="checkAllEntries"]')
+  const selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
+  const checkAll = this.view.querySelector('[id="checkAllEntries"]')
+  this.correctRunBtnDisabled()
   if (event.target.checked) {
     checkAll.checked = true
   } else if (!selected.length) {
     checkAll.checked = false
   }
 }
-
+staticAnalysisView.prototype.correctRunBtnDisabled = function () {
+  const selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
+  if (this.lastCompilationResult && selected.length != 0) {
+    this.runBtn.removeAttribute('disabled')
+  } else {
+    this.runBtn.setAttribute('disabled', 'disabled')
+  }
+}
 staticAnalysisView.prototype.checkAll = function (event) {
   if (!this.view) {
     return
   }
   // checks/unchecks all
-  var checkBoxes = this.view.querySelectorAll('[name="staticanalysismodule"]')
+  const checkBoxes = this.view.querySelectorAll('[name="staticanalysismodule"]')
   checkBoxes.forEach((checkbox) => { checkbox.checked = event.target.checked })
+  this.correctRunBtnDisabled()
 }
 
 staticAnalysisView.prototype.renderModules = function () {
-  var self = this
-  var groupedModules = utils.groupBy(preProcessModules(self.runner.modules()), 'categoryId')
+  const groupedModules = utils.groupBy(preProcessModules(this.runner.modules()), 'categoryId')
   const moduleEntries = Object.keys(groupedModules).map((categoryId, i) => {
-    var category = groupedModules[categoryId]
-    var entriesDom = category.map((item, i) => {
-      return yo`
-        <div class="form-check">
-          <input id="staticanalysismodule_${categoryId}_${i}"
-            type="checkbox"
-            class="form-check-input staticAnalysisItem"
-            name="staticanalysismodule"
-            index=${item._index}
-            checked="true"
-            style="vertical-align:bottom"
-            onclick="${function (event) { self.checkModule(event) }}"
-          >
-          <label for="staticanalysismodule_${categoryId}_${i}" class="form-check-label mb-1">
-            <p class="mb-0 font-weight-bold text-capitalize">${item.name}</p>
-            ${item.description}
-          </label>
-        </div>
-      `
-    })
+  const category = groupedModules[categoryId]
+  const entriesDom = category.map((item, i) => {
     return yo`
-      <div class="${css.block}">
-          <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}"/>
-          <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header font-weight-bold border-bottom px-1 py-2 w-100">
-            <span>${category[0].categoryDisplayName}</span>
-          </label>
-        <div class="w-100 d-block px-2 py-1 ${css.entries}">
-          ${entriesDom}
-        </div>
-      </>
+      <div class="form-check">
+        <input id="staticanalysismodule_${categoryId}_${i}"
+          type="checkbox"
+          class="form-check-input staticAnalysisItem"
+          name="staticanalysismodule"
+          index=${item._index}
+          checked="true"
+          style="vertical-align:bottom"
+          onclick="${(event) => this.checkModule(event) }"
+        >
+        <label for="staticanalysismodule_${categoryId}_${i}" class="form-check-label mb-1">
+          <p class="mb-0 font-weight-bold text-capitalize">${item.name}</p>
+          ${item.description}
+        </label>
+      </div>
     `
   })
   return yo`
-    <div class="accordion" id="accordionModules">
-      ${moduleEntries}
-    </div>`
+    <div class="${css.block}">
+        <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}"/>
+        <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header font-weight-bold border-bottom px-1 py-2 w-100">
+          <span>${category[0].categoryDisplayName}</span>
+        </label>
+      <div class="w-100 d-block px-2 py-1 ${css.entries}">
+        ${entriesDom}
+      </div>
+    </>
+  `
+  })
+return yo`
+  <div class="accordion" id="accordionModules">
+    ${moduleEntries}
+  </div>`
 }
 
 module.exports = staticAnalysisView
