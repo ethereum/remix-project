@@ -55,7 +55,7 @@ class DebuggerTab extends ViewPlugin {
       this.blockchain,
       adddress => this.call('fetchAndCompile', 'resolve', adddress, '.debug', this.blockchain.web3()))
 
-    this.call('manager', 'activatePlugin', 'udapp')
+    // this.call('manager', 'activatePlugin', 'udapp')
 
     return this.el
   }
