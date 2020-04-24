@@ -31,8 +31,19 @@ var css = csjs`
     align-items: center;
   }
   .container {
-    max-height: 300px;
+    max-height: 500px;
     overflow-y: auto;
+  }
+
+  .block input[type='radio']:checked ~ .entries{
+    height: auto;
+    transition: .3s ease-in;
+  }
+
+  .entries{
+    height: 0;
+    overflow: hidden;
+    transition: .3s ease-out;
   }
 `
 

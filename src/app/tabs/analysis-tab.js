@@ -1,7 +1,6 @@
 var yo = require('yo-yo')
 var StaticAnalysis = require('./staticanalysis/staticAnalysisView')
 var EventManager = require('../../lib/events')
-var css = require('./styles/analysis-tab-styles')
 
 import { ViewPlugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
@@ -43,7 +42,7 @@ class AnalysisTab extends ViewPlugin {
     })
     this.registry.put({api: this.staticanalysis, name: 'staticanalysis'})
 
-    return yo`<div class="${css.analysisTabView}" id="staticanalysisView">${this.staticanalysis.render()}</div>`
+    return yo`<div class="p-3 pb-1" id="staticanalysisView">${this.staticanalysis.render()}</div>`
   }
 
 }
