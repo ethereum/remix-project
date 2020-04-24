@@ -46,7 +46,7 @@ staticAnalysisView.prototype.render = function () {
     <div class="${css.analysis}">
       <div class="mb-2 d-flex flex-column align-items-left">
         <div class="mb-2 p-2 alert alert-info">
-          <span>For: <span id="staticAnalysisCurrentFile">No file compiled</span></span>
+          <span class="font-weight-bold " id="staticAnalysisCurrentFile">No file compiled</span>
         </div>
         <div class="d-flex justify-content-between">
           ${this.runBtn}
