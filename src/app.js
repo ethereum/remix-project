@@ -54,6 +54,7 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
+import FetchAndCompile from './app/compiler/compiler-sourceVerifier-fetchAndCompile'
 
 import migrateFileSystem from './migrateFileSystem'
 
@@ -267,6 +268,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
   registry.put({api: compilersArtefacts, name: 'compilersartefacts'})
 
+  // service which fetch contract artifacts from sourve-verify, put artifacts in remix and compile it
+  const fetchAndCompile = new FetchAndCompile()
   // ----------------- network service (resolve network id / name) -----
   const networkModule = new NetworkModule(blockchain)
   // ----------------- represent the current selected web3 provider ----
@@ -305,7 +308,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     offsetToLineColumnConverter,
     contextualListener,
     terminal,
-    web3Provider
+    web3Provider,
+    fetchAndCompile
   ])
 
   // LAYOUT & SYSTEM VIEWS
@@ -391,7 +395,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
   await appManager.activatePlugin(['mainPanel', 'menuicons'])
-  await appManager.activatePlugin(['home', 'sidePanel', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'scriptRunner', 'terminal'])
+  await appManager.activatePlugin(['home', 'sidePanel', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'scriptRunner', 'terminal', 'fetchAndCompile'])
 
   // Set workspace after initial activation
   if (Array.isArray(workspace)) await appManager.activatePlugin(workspace)
