@@ -46,18 +46,7 @@ staticAnalysisView.prototype.render = function () {
     <div class="${css.analysis}">
       <div class="my-2 d-flex flex-column align-items-left">
         <div class="d-flex justify-content-between">
-          ${this.runBtn}
-          <div class="${css.label}" for="autorunstaticanalysis">
-            <input id="autorunstaticanalysis"
-              type="checkbox"
-              style="vertical-align:bottom"
-              checked="true"
-            >
-            <label class="text-nowrap pl-2 mb-0" for="autorunstaticanalysis">
-              Autorun
-            </label>
-          </div>
-          <div class="${css.label}" for="checkAllEntries">
+          <div class="pl-2 ${css.label}" for="checkAllEntries">
             <input id="checkAllEntries"
               type="checkbox"
               onclick="${(event) => { this.checkAll(event) }}"
@@ -68,6 +57,17 @@ staticAnalysisView.prototype.render = function () {
               Select all
             </label>
           </div>
+          <div class="${css.label}" for="autorunstaticanalysis">
+            <input id="autorunstaticanalysis"
+              type="checkbox"
+              style="vertical-align:bottom"
+              checked="true"
+            >
+            <label class="text-nowrap pl-2 mb-0" for="autorunstaticanalysis">
+              Autorun
+            </label>
+          </div>
+          ${this.runBtn}
         </div>
       </div>
       <div id="staticanalysismodules" class="list-group list-group-flush">
