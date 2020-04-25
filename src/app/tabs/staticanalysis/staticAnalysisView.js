@@ -41,13 +41,10 @@ function staticAnalysisView (localRegistry, analysisModule) {
 }
 
 staticAnalysisView.prototype.render = function () {
-  this.runBtn = yo`<button class="btn btn-sm btn-primary" onclick="${() => { this.run() }}" >Run</button>`
+  this.runBtn = yo`<button class="btn btn-sm w-25 btn-primary" onclick="${() => { this.run() }}" >Run</button>`
   const view = yo`
     <div class="${css.analysis}">
-      <div class="mb-2 d-flex flex-column align-items-left">
-        <div class="mb-2 p-2 alert alert-info">
-          <span class="font-weight-bold " id="staticAnalysisCurrentFile">No file compiled</span>
-        </div>
+      <div class="my-2 d-flex flex-column align-items-left">
         <div class="d-flex justify-content-between">
           ${this.runBtn}
           <div class="${css.label}" for="autorunstaticanalysis">
@@ -57,7 +54,7 @@ staticAnalysisView.prototype.render = function () {
               checked="true"
             >
             <label class="text-nowrap pl-2 mb-0" for="autorunstaticanalysis">
-              Auto run
+              Autorun
             </label>
           </div>
           <div class="${css.label}" for="checkAllEntries">
@@ -68,7 +65,7 @@ staticAnalysisView.prototype.render = function () {
               checked="true"
             >
             <label class="text-nowrap pl-2 mb-0" for="checkAllEntries">
-              Check/Uncheck all
+              Select all
             </label>
           </div>
         </div>
@@ -76,7 +73,10 @@ staticAnalysisView.prototype.render = function () {
       <div id="staticanalysismodules" class="list-group list-group-flush">
         ${this.modulesView}
       </div>
-      <div class="${css.resultTitle} mx-2"><h6>Results:</h6></div>
+      <div class="my-2 p-2 d-flex flex-column alert alert-info">
+        <span>Analysis for:</span>
+        <span class="text-break break-word word-break font-weight-bold" id="staticAnalysisCurrentFile">No file compiled</span>
+      </div>
       <div class="${css.result} my-2" id='staticanalysisresult'></div>
     </div>
   `
@@ -200,7 +200,7 @@ staticAnalysisView.prototype.renderModules = function () {
           <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header font-weight-bold border-bottom px-1 py-2 w-100">
             <span>${category[0].categoryDisplayName}</span>
           </label>
-        <div class="w-100 d-block px-2 py-1 ${css.entries}">
+        <div class="w-100 d-block px-2 my-1 ${css.entries}">
           ${entriesDom}
         </div>
       </>
