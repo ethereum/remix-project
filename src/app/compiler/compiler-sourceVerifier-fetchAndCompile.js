@@ -16,7 +16,6 @@ export default class FetchAndCompile extends Plugin {
 
   constructor () {
     super(profile)
-    this.compiler = null
     this.unresolvedAddresses = []
     this.firstResolvedAddress = null
     this.sourceVerifierNetWork = ['Main', 'Rinkeby', 'Ropsten', 'Goerli']
