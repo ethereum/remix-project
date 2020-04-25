@@ -172,6 +172,13 @@ staticAnalysisView.prototype.checkAll = function (event) {
   this.correctRunBtnDisabled()
 }
 
+staticAnalysisView.prototype.handleCollapse = function (e) {
+  const downs = e.toElement.parentElement.getElementsByClassName("fas fa-angle-double-right")
+  const iEls = document.getElementsByTagName("i")
+  for (var i = 0; i < iEls.length; i++) { iEls[i].hidden = false }
+  downs[0].hidden = true
+}
+
 staticAnalysisView.prototype.renderModules = function () {
   const groupedModules = utils.groupBy(preProcessModules(this.runner.modules()), 'categoryId')
   const moduleEntries = Object.keys(groupedModules).map((categoryId, i) => {
@@ -197,9 +204,12 @@ staticAnalysisView.prototype.renderModules = function () {
     })
     return yo`
       <div class="${css.block}">
-        <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}"/>
-        <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header font-weight-bold border-bottom px-1 py-2 w-100">
+        <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}" onclick=${(e) => this.handleCollapse(e)}"/>
+        <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header d-flex justify-content-between font-weight-bold border-bottom px-1 py-2 w-100">
           <span>${category[0].categoryDisplayName}</span>
+          <div>
+            <i class="fas fa-angle-double-right"></i>
+          </div>
         </label>
         <div class="w-100 d-block px-2 my-1 ${css.entries}">
           ${entriesDom}
@@ -209,6 +219,7 @@ staticAnalysisView.prototype.renderModules = function () {
   })
   // collaps first module
   moduleEntries[0].getElementsByTagName('input')[0].checked = true
+  moduleEntries[0].getElementsByTagName('i')[0].hidden = true
   return yo`
     <div class="accordion" id="accordionModules">
       ${moduleEntries}
