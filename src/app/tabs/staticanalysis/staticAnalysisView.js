@@ -34,6 +34,7 @@ function staticAnalysisView (localRegistry, analysisModule) {
     self.lastCompilationResult = data
     if (self.view) self.view.querySelector('#staticAnalysisCurrentFile').innerText = file
     self.lastCompilationSource = source
+    this.correctRunBtnDisabled()
     if (self.view.querySelector('#autorunstaticanalysis').checked) {
       self.run()
     }
@@ -45,7 +46,7 @@ staticAnalysisView.prototype.render = function () {
   const view = yo`
     <div class="${css.analysis}">
       <div class="my-2 d-flex flex-column align-items-left">
-        <div class="d-flex justify-content-between">
+        <div class="${css.top} d-flex justify-content-between">
           <div class="pl-2 ${css.label}" for="checkAllEntries">
             <input id="checkAllEntries"
               type="checkbox"
@@ -196,18 +197,18 @@ staticAnalysisView.prototype.renderModules = function () {
     })
     return yo`
       <div class="${css.block}">
-          <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}"/>
-          <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header font-weight-bold border-bottom px-1 py-2 w-100">
-            <span>${category[0].categoryDisplayName}</span>
-          </label>
+        <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}"/>
+        <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header font-weight-bold border-bottom px-1 py-2 w-100">
+          <span>${category[0].categoryDisplayName}</span>
+        </label>
         <div class="w-100 d-block px-2 my-1 ${css.entries}">
           ${entriesDom}
         </div>
-      </>
+      </div>
     `
   })
   // collaps first module
-  moduleEntries[0].getElementsByTagName("input")[0].checked = true
+  moduleEntries[0].getElementsByTagName('input')[0].checked = true
   return yo`
     <div class="accordion" id="accordionModules">
       ${moduleEntries}
