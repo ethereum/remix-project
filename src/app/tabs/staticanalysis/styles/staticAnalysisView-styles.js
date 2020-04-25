@@ -17,6 +17,11 @@ var css = csjs`
     display: flex;
     align-items: center;
   }
+  .label {
+    display: flex;
+    align-items: center;
+    user-select: none;
+  }
   .block input[type='radio']:checked ~ .entries{
     height: auto;
     transition: .3s ease-in;
