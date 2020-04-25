@@ -93,6 +93,7 @@ TxBrowser.prototype.render = function () {
       type='text'
       oninput=${this.txInputChanged.bind(this)}
       placeholder=${'Transaction hash, should start with 0x'}
+      data-id="debuggerTransactionInput"
     />
   `
   let txButton = yo`
