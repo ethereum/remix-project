@@ -206,6 +206,8 @@ staticAnalysisView.prototype.renderModules = function () {
       </>
     `
   })
+  // collaps first module
+  moduleEntries[0].getElementsByTagName("input")[0].checked = true
   return yo`
     <div class="accordion" id="accordionModules">
       ${moduleEntries}
