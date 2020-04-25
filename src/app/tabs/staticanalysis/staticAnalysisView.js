@@ -73,11 +73,11 @@ staticAnalysisView.prototype.render = function () {
       <div id="staticanalysismodules" class="list-group list-group-flush">
         ${this.modulesView}
       </div>
-      <div class="my-2 p-2 d-flex flex-column alert alert-info">
-        <span>Analysis for:</span>
+      <div class="mt-2 p-2 d-flex flex-column">
+        <span>Result for:</span>
         <span class="text-break break-word word-break font-weight-bold" id="staticAnalysisCurrentFile">No file compiled</span>
       </div>
-      <div class="${css.result} my-2" id='staticanalysisresult'></div>
+      <div class="${css.result} my-1" id='staticanalysisresult'></div>
     </div>
   `
 
