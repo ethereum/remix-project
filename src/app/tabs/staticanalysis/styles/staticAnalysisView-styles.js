@@ -10,16 +10,8 @@ var css = csjs`
     max-height: 300px;
     word-break: break-all;
   }
-  .resultTitle {
-    padding-top: 20px;
-  }
   .buttons  {
     margin: 1rem 0;
-  }
-  .buttonsInner {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
   }
   .label {
     display: flex;
