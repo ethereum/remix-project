@@ -75,8 +75,14 @@ export default class FetchAndCompile extends Plugin {
 
     let name = network.name.toLowerCase()
     name === 'main' ? 'mainnet' : name // source-verifier api expect "mainnet" and not "main"
-    await this.call('manager', 'activatePlugin', 'source-verification')
-    const data = await this.call('source-verification', 'fetch', contractAddress, name.toLowerCase())
+    let data
+    try {
+      data = await this.call('source-verification', 'fetch', contractAddress, name.toLowerCase())
+    } catch (e) {
+      setTimeout(_ => this.emit('sourceVerificationNotAvailable'), 0)
+      this.unresolvedAddresses.push(contractAddress)
+      return localCompilation()
+    }
     if (!data || !data.metadata) {
       setTimeout(_ => this.emit('notFound', contractAddress), 0)
       this.unresolvedAddresses.push(contractAddress)

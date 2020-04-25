@@ -50,11 +50,16 @@ class DebuggerTab extends ViewPlugin {
       toaster(yo`<div><b>Using compilation result from Solidity module</b></div>`)
     })
 
+    this.on('fetchAndCompile', 'sourceVerificationNotAvailable', () => {
+      toaster(yo`<div><b>Source verification plugin not activated or not available.</b> continuing <i>without</i> source code debugging.</div>`)
+    })
+
     this.debuggerUI = new DebuggerUI(
       this.el.querySelector('#debugger'),
       this.blockchain,
       adddress => this.call('fetchAndCompile', 'resolve', adddress, '.debug', this.blockchain.web3()))
 
+    this.call('manager', 'activatePlugin', 'source-verification')
     // this.call('manager', 'activatePlugin', 'udapp')
 
     return this.el
