@@ -102,6 +102,7 @@ TxBrowser.prototype.render = function () {
       id='load'
       title='${this.state.debugging ? 'Stop' : 'Start'} debugging'
       onclick=${function () { self.submit() }}
+      data-id="debuggerTransactionStartButton"
     >
       ${this.state.debugging ? 'Stop' : 'Start'} debugging
     </button>
