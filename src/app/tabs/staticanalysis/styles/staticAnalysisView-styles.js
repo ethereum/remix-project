@@ -24,12 +24,12 @@ var css = csjs`
   }
   .block input[type='radio']:checked ~ .entries{
     height: auto;
-    transition: .3s ease-in;
+    transition: .5s ease-in;
   }
   .entries{
     height: 0;
     overflow: hidden;
-    transition: .3s ease-out;
+    transition: .5s ease-out;
   }
 `
 
