@@ -74,7 +74,7 @@ staticAnalysisView.prototype.render = function () {
       <div id="staticanalysismodules" class="list-group list-group-flush">
         ${this.modulesView}
       </div>
-      <div class="mt-2 p-2 d-flex flex-column">
+      <div class="mt-2 p-2 d-flex border-top flex-column">
         <span>Result for:</span>
         <span class="text-break break-word word-break font-weight-bold" id="staticAnalysisCurrentFile">No file compiled</span>
       </div>
@@ -205,7 +205,7 @@ staticAnalysisView.prototype.renderModules = function () {
     return yo`
       <div class="${css.block}">
         <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}" onclick=${(e) => this.handleCollapse(e)}"/>
-        <label for="heading${categoryId}" style="cursor: pointer;" class="h6 card-header d-flex justify-content-between font-weight-bold border-bottom px-1 py-2 w-100">
+        <label for="heading${categoryId}" style="cursor: pointer;" class="pl-3 h6 card-header d-flex justify-content-between font-weight-bold border-left px-1 py-2 w-100">
           <span>${category[0].categoryDisplayName}</span>
           <div>
             <i class="fas fa-angle-double-right"></i>
