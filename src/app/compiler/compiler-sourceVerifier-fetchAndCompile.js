@@ -17,7 +17,6 @@ export default class FetchAndCompile extends Plugin {
   constructor () {
     super(profile)
     this.unresolvedAddresses = []
-    this.firstResolvedAddress = null
     this.sourceVerifierNetWork = ['Main', 'Rinkeby', 'Ropsten', 'Goerli']
   }
 
@@ -26,15 +25,12 @@ export default class FetchAndCompile extends Plugin {
    * Put the artifacts in the file explorer
    * Compile the code using Solidity compiler
    * Returns compilation data
-   * if no contract address are passed, we default to the first resolved address.
    *
    * @param {string} contractAddress - Address of the contrac to resolve
    * @param {string} compilersartefacts - Object containing a mapping of compilation results (byContractAddress and __last)
    * @return {CompilerAbstract} - compilation data targeting the given @arg contractAddress
    */
   async resolve (contractAddress, targetPath, web3) {
-    contractAddress = contractAddress || this.firstResolvedAddress
-
     const compilersartefacts = globalRegistry.get('compilersartefacts').api
 
     const localCompilation = () => compilersartefacts.get('__last') ? compilersartefacts.get('__last') : null
@@ -42,9 +38,8 @@ export default class FetchAndCompile extends Plugin {
     const resolved = compilersartefacts.get(contractAddress)
     if (resolved) return resolved
     if (this.unresolvedAddresses.includes(contractAddress)) return localCompilation()
-    if (this.firstResolvedAddress) return compilersartefacts.get(this.firstResolvedAddress)
-    // ^ for the moment we don't add compilation result for each adddress, but just for the root addres ^ . We can add this later.
-    // usecase is: sometimes when doing an internal call, the only available artifact is the Solidity interface.
+    
+    // sometimes when doing an internal call, the only available artifact is the Solidity interface.
     // resolving addresses of internal call would allow to step over the source code, even if the declaration was made using an Interface.
 
     let network
@@ -67,7 +62,6 @@ export default class FetchAndCompile extends Plugin {
       })
       if (found) {
         compilersartefacts.addResolvedContract(contractAddress, compilation)
-        this.firstResolvedAddress = contractAddress
         setTimeout(_ => this.emit('usingLocalCompilation', contractAddress), 0)
         return compilation
       }
@@ -119,7 +113,6 @@ export default class FetchAndCompile extends Plugin {
       setTimeout(_ => this.emit('compiling', settings), 0)
       const compData = await compile(compilationTargets, settings)
       compilersartefacts.addResolvedContract(contractAddress, compData)
-      this.firstResolvedAddress = contractAddress
       return compData
     } catch (e) {
       this.unresolvedAddresses.push(contractAddress)

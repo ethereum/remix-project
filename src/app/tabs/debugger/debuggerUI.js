@@ -44,6 +44,7 @@ class DebuggerUI {
     this.stepManager = null
 
     this.statusMessage = ''
+    this.currentReceipt
 
     this.view
 
@@ -79,7 +80,9 @@ class DebuggerUI {
     })
 
     this.debugger.event.register('newSourceLocation', async function (lineColumnPos, rawLocation) {
-      const contracts = await self.fetchContractAndCompile()
+      const contracts = await self.fetchContractAndCompile(
+        self.currentReceipt.contractAddress || self.currentReceipt.to,
+        self.currentReceipt)
       if (contracts) {
         const path = contracts.getSourceName(rawLocation.file)
         if (path) self.sourceHighlighter.currentSourceLocationFromfileName(lineColumnPos, path)
@@ -128,12 +131,13 @@ class DebuggerUI {
     if (this.debugger) this.unLoad()
 
     let web3 = await this.getDebugWeb3()
+    this.currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     this.debugger = new Debugger({
       web3,
       offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
       compilationResult: async (address) => {
         try {
-          return await this.fetchContractAndCompile(address)
+          return await this.fetchContractAndCompile(address, this.currentReceipt)
         } catch (e) {
           console.error(e)
         }
@@ -157,12 +161,13 @@ class DebuggerUI {
     return new Promise(async (resolve, reject) => {
       const web3 = await this.getDebugWeb3()
 
+      this.currentReceipt = await web3.eth.getTransactionReceipt(hash)
       const debug = new Debugger({
         web3,
         offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
         compilationResult: async (address) => {
           try {
-            return await this.fetchContractAndCompile(address)
+            return await this.fetchContractAndCompile(address, this.currentReceipt)
           } catch (e) {
             console.error(e)
           }
