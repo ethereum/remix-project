@@ -169,7 +169,7 @@ module.exports = {
     .useCss().switchBrowserTab(0)
     .refresh()
     .clickLaunchIcon('pluginManager') // load debugger and source verification
-    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_source-verification"] button')
+    // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_source-verification"] button')
     // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')
@@ -179,9 +179,8 @@ module.exports = {
     .clickLaunchIcon('debugger')
     .setValue('*[data-id="debuggerTransactionInput"]', '0x5db1b4212e4f83e36bf5bc306888df50f01a73708a71322bdc6f39a76a7ebdaa') // debug tx
     .click('*[data-id="debuggerTransactionStartButton"]')
-    .waitForElementVisible('*[data-id="treeViewDivvm trace step"]', 30000)
-    .assert.containsText('*[data-id="stepdetail"]', 'loaded address: 0x96d87AB604AEC7FB26C2E046CA5e6eBBB9D8b74D')
     .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
+    .assert.containsText('*[data-id="stepdetail"]', 'loaded address: 0x96d87AB604AEC7FB26C2E046CA5e6eBBB9D8b74D')
     .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x6C3CCC7FBA111707D5A1AAF2758E9D4F4AC5E7B1')
     .end()
   },
