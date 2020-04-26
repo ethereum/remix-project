@@ -125,13 +125,28 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   testCallback (result) {
+    const hasFailingLabel = document.querySelector(`.failed_${this.runningTestFileName}`)
+    const hasPassingLabel = document.querySelector(`.passed_${this.runningTestFileName}`)
+
     this.testsOutput.hidden = false
     if (result.type === 'contract') {
-      this.testsOutput.appendChild(yo`<div class="${css.outputTitle}">${result.filename} (${result.value})</div>`)
+      this.runningTestFileName = this.cleanFileName(result.filename)
+      this.outputHeader = yo`<div class="${css.outputTitle}">${result.value} <br /> <div class="alert-success bg-transparent border-0"> ${result.filename} </div></div>`
+      this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
       this.testsOutput.appendChild(yo`<div class="${css.testPass} ${css.testLog} alert-success bg-transparent border-0">✓ ${result.value}</div>`)
+      if(!hasFailingLabel && !hasPassingLabel) {
+        const label = yo`<span class="alert-success mr-1 passed_${this.runningTestFileName}">PASS</span>`
+
+        this.outputHeader && yo.update(this.outputHeader, yo`<div class="${css.outputTitle}">${label} ${result.context} <br /> <div class="alert-success bg-transparent border-0"> ${result.filename} </div></div>`)
+      }
     } else if (result.type === 'testFailure') {
       this.testsOutput.appendChild(yo`<div class="${css.testFailure} ${css.testLog} alert-danger bg-transparent border-0">✘ ${result.value}</div>`)
+      if(!hasFailingLabel) {
+        const label = yo`<span class="alert-danger mr-1 failed_${this.runningTestFileName}">FAIL</span>`
+
+        this.outputHeader && yo.update(this.outputHeader, yo`<div class="${css.outputTitle}">${label} ${result.context} <br /> <div class="alert-success bg-transparent border-0"> ${result.filename} </div></div>`)
+      }
     }
   }
 
@@ -141,7 +156,14 @@ module.exports = class TestTab extends ViewPlugin {
     // result.failureNum
     // result.timePassed
     this.testsSummary.hidden = false
+    if (!_err) {
+      this.testsOutput
+    }
     cb()
+  }
+
+  cleanFileName (fileName) {
+    return fileName ? fileName.replace(/\//g, '_').replace(/\./g, '_') : fileName
   }
 
   updateFinalResult (_errors, result, filename) {
