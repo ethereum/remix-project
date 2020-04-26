@@ -86,7 +86,7 @@ class BreakpointManager {
         console.log('cannot jump to breakpoint ' + e)
         return
       }
-      let lineColumn = this.locationToRowConverter(sourceLocation)
+      let lineColumn = await this.locationToRowConverter(sourceLocation)
       if (this.previousLine !== lineColumn.start.line) {
         if (direction === -1 && lineHadBreakpoint) { // TODO : improve this when we will build the correct structure before hand
           lineHadBreakpoint = false
