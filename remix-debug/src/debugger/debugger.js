@@ -24,6 +24,7 @@ function Debugger (options) {
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, async (sourceLocation) => {
     const compilationResult = await this.compilationResult()
+    if (!compilationResult) return { start: null, end: null }
     return this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationResult.source.sources, compilationResult.data.sources)
   }, (step) => {
     this.event.trigger('breakpointStep', [step])
@@ -49,6 +50,7 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   this.debugger.traceManager.getCurrentCalledAddressAt(index, async (error, address) => {
     if (error) return console.log(error)
     const compilationResultForAddress = await this.compilationResult(address)
+    if (!compilationResultForAddress) return
     this.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts, (error, rawLocation) => {
       if (!error && compilationResultForAddress && compilationResultForAddress.data) {
         var lineColumnPos = this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, compilationResultForAddress.source.sources, compilationResultForAddress.data.sources)
