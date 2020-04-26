@@ -173,8 +173,8 @@ staticAnalysisView.prototype.checkAll = function (event) {
 }
 
 staticAnalysisView.prototype.handleCollapse = function (e) {
-  const downs = e.toElement.parentElement.getElementsByClassName("fas fa-angle-double-right")
-  const iEls = document.getElementsByTagName("i")
+  const downs = e.toElement.parentElement.getElementsByClassName('fas fa-angle-double-right')
+  const iEls = document.getElementsByTagName('i')
   for (var i = 0; i < iEls.length; i++) { iEls[i].hidden = false }
   downs[0].hidden = true
 }
