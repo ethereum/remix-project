@@ -38,7 +38,7 @@ export default class FetchAndCompile extends Plugin {
     const resolved = compilersartefacts.get(contractAddress)
     if (resolved) return resolved
     if (this.unresolvedAddresses.includes(contractAddress)) return localCompilation()
-    
+
     // sometimes when doing an internal call, the only available artifact is the Solidity interface.
     // resolving addresses of internal call would allow to step over the source code, even if the declaration was made using an Interface.
 
