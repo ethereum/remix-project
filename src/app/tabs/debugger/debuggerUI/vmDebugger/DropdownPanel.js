@@ -28,15 +28,15 @@ var css = csjs`
   }
   .dropdownpanel {
     width: 100%;
-    word-break: break-all;
+    word-break: break-word;
   }
   .dropdownrawcontent {
     padding: 2px;
-    word-break: break-all;
+    word-break: break-word;
   }
   .message {
     padding: 2px;
-    word-break: break-all;
+    word-break: break-word;
   }
   .refresh {
     display: none;
