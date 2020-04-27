@@ -95,7 +95,7 @@ export default class FetchAndCompile extends Plugin {
           let stdUrl = `ipfs://${url.split('/')[2]}`
           const source = await this.call('contentImport', 'resolve', stdUrl)
           file = file.replace('browser/', '') // should be fixed in the remix IDE end.
-          const path = `${targetPath}/${contractAddress}/${file}`
+          const path = `${targetPath}/${name}/${contractAddress}/${file}`
           await this.call('fileManager', 'setFile', path, source.content)
           compilationTargets[path] = { content: source.content }
           break
