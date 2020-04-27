@@ -84,7 +84,7 @@ export default class FetchAndCompile extends Plugin {
     }
 
     // set the solidity contract code using metadata
-    await this.call('fileManager', 'setFile', `${targetPath}/${contractAddress}/metadata.json`, JSON.stringify(data.metadata, null, '\t'))
+    await this.call('fileManager', 'setFile', `${targetPath}/${name}/${contractAddress}/metadata.json`, JSON.stringify(data.metadata, null, '\t'))
     let compilationTargets = {}
     for (let file in data.metadata.sources) {
       const urls = data.metadata.sources[file].urls
