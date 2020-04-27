@@ -169,7 +169,7 @@ module.exports = class TestTab extends ViewPlugin {
   updateFinalResult (_errors, result, filename) {
     ++this.readyTestsNumber
     this.testsOutput.hidden = false
-    if(!result && (_errors || _errors.errors || Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))) {
+    if (!result && (_errors || _errors.errors || Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))) {
       this.testCallback({ type: 'contract', filename })
       this.setHeader(false)
     }
