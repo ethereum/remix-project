@@ -17,6 +17,7 @@ function staticAnalysisView (localRegistry, analysisModule) {
   this.modulesView = this.renderModules()
   this.lastCompilationResult = null
   this.lastCompilationSource = null
+  this.currentFile = 'No file compiled'
   self._components = {
     renderer: new Renderer()
   }
@@ -29,13 +30,12 @@ function staticAnalysisView (localRegistry, analysisModule) {
   analysisModule.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
     self.lastCompilationResult = null
     self.lastCompilationSource = null
-    $('#staticanalysisresult').empty()
     if (languageVersion.indexOf('soljson') !== 0) return
     self.lastCompilationResult = data
-    if (self.view) self.view.querySelector('#staticAnalysisCurrentFile').innerText = file
     self.lastCompilationSource = source
-    this.correctRunBtnDisabled()
-    if (self.view.querySelector('#autorunstaticanalysis').checked) {
+    self.currentFile = file
+    self.correctRunBtnDisabled()
+    if (self.view && self.view.querySelector('#autorunstaticanalysis').checked) {
       self.run()
     }
   })
@@ -75,8 +75,8 @@ staticAnalysisView.prototype.render = function () {
         ${this.modulesView}
       </div>
       <div class="mt-2 p-2 d-flex border-top flex-column">
-        <span>Result for:</span>
-        <span class="text-break break-word word-break font-weight-bold" id="staticAnalysisCurrentFile">No file compiled</span>
+        <span>The last results for:</span>
+        <span class="text-break break-word word-break font-weight-bold" id="staticAnalysisCurrentFile">${this.currentFile}</span>
       </div>
       <div class="${css.result} my-1" id='staticanalysisresult'></div>
     </div>
@@ -108,6 +108,7 @@ staticAnalysisView.prototype.run = function () {
   const selected = this.selectedModules()
   const warningContainer = $('#staticanalysisresult')
   warningContainer.empty()
+  this.view.querySelector('#staticAnalysisCurrentFile').innerText = this.currentFile
   var self = this
   if (this.lastCompilationResult && selected.length) {
     this.runBtn.removeAttribute('disabled')
