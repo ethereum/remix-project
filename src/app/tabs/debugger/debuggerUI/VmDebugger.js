@@ -144,7 +144,7 @@ VmDebugger.prototype.remove = function () {
 
 VmDebugger.prototype.render = function () {
   const view = yo`
-    <div id="vmdebugger">
+    <div id="vmdebugger" class="pl-2">
       <div>
         ${this.solidityLocals.render()}
         ${this.solidityState.render()}
