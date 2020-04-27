@@ -14,16 +14,17 @@ If you select this plugin, you will see a number of modules listed along with ch
 
 By default, all modules are selected for analysis and a new analysis is performed at each compilation.
 
-One can select the modules under which contract should be analyzed and can run the analysis again for last compiled contract by clicking on `Run`.
+One can select/deselect the modules under which contract should be analyzed and can run the analysis again for last compiled contract by clicking on `Run`.
 
 If you don't want to run analysis each time you compile a contract, just uncheck the checkbox near to `Auto run`.
 
 Analysis Modules
 -----------------
+Currently, with Remix IDE v0.10.1, there are 21 analysis modules listed under 4 categories. Categories are: `Security`, `Gas & Economy`, `ERC` & `Miscellaneous`.
 
-Here is the list of analyzers:
+Here is the list of modules under each category:
 
-Security:
+### Category: Security
 -   Transaction origin: Warns if tx.origin is used
 -   Check effects: Avoid potential reentrancy bugs
 -   Inline assembly: Use of Inline Assembly
@@ -31,14 +32,15 @@ Security:
 -   Low level calls: Semantics maybe unclear
 -   Block.blockhash usage: Semantics maybe unclear
 
-
-Gas & Economy:
+### Category: Gas & Economy
 -   Gas costs: Warns if the gas requirements of the functions
     are too high
 -   This on local calls: Invocation of local functions via
     this
 
-Miscellaneous:
+### Category: ERC
+
+### Category: Miscellaneous
 -   Constant functions: Checks for potentially constant
     functions
 -   Similar variable names: Checks if variable names are too
