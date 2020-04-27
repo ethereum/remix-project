@@ -154,13 +154,13 @@ module.exports = class TestTab extends ViewPlugin {
     return fileName ? fileName.replace(/\//g, '_').replace(/\./g, '_') : fileName
   }
 
-  updateHeader (status) {
+  setHeader (status) {
     if (status) {
-      const label = yo`<span class="alert-success mr-1 p-1 passed_${this.runningTestFileName}">PASS</span>`
+      const label = yo`<div class="alert-success d-inline-block mb-1 mr-1 p-1 passed_${this.runningTestFileName}">PASS</div>`
 
       this.outputHeader && yo.update(this.outputHeader, yo`<div class="${css.outputTitle}">${label} ${this.testSuite} <br /> ${this.rawFileName}</div>`)
     } else {
-      const label = yo`<span class="alert-danger mr-1 p-1 failed_${this.runningTestFileName}">FAIL</span>`
+      const label = yo`<div class="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}">FAIL</div>`
 
       this.outputHeader && yo.update(this.outputHeader, yo`<div class="${css.outputTitle}">${label} ${this.testSuite} <br /> ${this.rawFileName}</div>`)
     }
@@ -168,33 +168,36 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateFinalResult (_errors, result, filename) {
     ++this.readyTestsNumber
+    this.testsOutput.hidden = false
+    if(!result && (_errors || _errors.errors || Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))) {
+      this.testCallback({ type: 'contract', filename })
+      this.setHeader(false)
+    }
     if (_errors && _errors.errors) {
       _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, {type: err.severity}))
-      this.updateHeader(false)
     } else if (_errors && Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage)) {
       _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, {type: err.severity}))
-      this.updateHeader(false)
     } else if (_errors && !_errors.errors && !Array.isArray(_errors)) {
       // To track error like this: https://github.com/ethereum/remix/pull/1438
       this.renderer.error(_errors.formattedMessage || _errors.message, this.testsOutput, {type: 'error'})
-      this.updateHeader(false)
     }
     yo.update(this.resultStatistics, this.createResultLabel())
     if (result) {
       if (result.totalPassing > 0 && result.totalFailing > 0) {
         this.testsOutput.appendChild(yo`<div class="text-success">${result.totalPassing} passing, <span class="text-danger"> ${result.totalFailing} failing </span> (${result.totalTime}s)</div>`)
-        this.updateHeader(false)
+        if (this.rawFileName === filename) this.setHeader(false)
       } else if (result.totalPassing > 0 && result.totalFailing <= 0) {
         this.testsOutput.appendChild(yo`<div class="text-success">${result.totalPassing} passing (${result.totalTime}s)</div>`)
-        this.updateHeader(true)
+        if (this.rawFileName === filename) this.setHeader(true)
       } else if (result.totalPassing <= 0 && result.totalFailing > 0) {
         this.testsOutput.appendChild(yo`<div class="text-danger">${result.totalFailing} failing</div>`)
-        this.updateHeader(false)
+        if (this.rawFileName === filename) this.setHeader(false)
       }
       result.errors.forEach((error, index) => {
-        this.testsOutput.appendChild(yo`<ul type="disc" class="ml-3 mb-0"><li class="text-danger">${error.value} </li></ul>`)
-        this.testsOutput.appendChild(yo`<div class="${css.testFailureSummary}"><span>Error:</span><br /><span class="text-danger ml-2">${error.message}</span></div>`)
-        this.testsOutput.appendChild(yo`<br>`)
+        this.testsOutput.appendChild(yo`<div class="sol error alert alert-danger">
+          <ul type="disc" class="ml-3 mb-0"><li>${error.value} </li></ul>
+          <span class="text-danger ml-3">${error.message}</span>
+        </div>`)
       })
     }
     if (this.hasBeenStopped && (this.readyTestsNumber !== this.runningTestsNumber)) {
@@ -410,7 +413,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   render () {
     this.onActivationInternal()
-    this.testsOutput = yo`<div class="mx-3 border-top border-bottom border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
+    this.testsOutput = yo`<div class="mx-3 mb-2 border-top border-bottom border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsExecutionStopped = yo`<label class="text-warning h6">The test execution has been stopped</label>`
     this.testsExecutionStopped.hidden = true
     this.resultStatistics = this.createResultLabel()
