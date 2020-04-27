@@ -1,3 +1,4 @@
+const ethutil = require('ethereumjs-util')
 import * as packageJson from '../../../package.json'
 import { Plugin } from '@remixproject/engine'
 import { urlFromVersion } from './compiler-utils'
@@ -31,6 +32,7 @@ export default class FetchAndCompile extends Plugin {
    * @return {CompilerAbstract} - compilation data targeting the given @arg contractAddress
    */
   async resolve (contractAddress, targetPath, web3) {
+    contractAddress = ethutil.toChecksumAddress(contractAddress)
     const compilersartefacts = globalRegistry.get('compilersartefacts').api
 
     const localCompilation = () => compilersartefacts.get('__last') ? compilersartefacts.get('__last') : null
