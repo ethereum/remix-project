@@ -123,12 +123,14 @@ class App {
     var self = this
     self._components = {}
     self._view = {}
-    self._view.splashScreen = yo`<div class=${css.centered}>
-    ${basicLogo()}
-    <div class="info-secondary" style="text-align:center">
-      REMIX IDE
-    </div>
-    </div>`
+    self._view.splashScreen = yo`
+    <div class=${css.centered}>
+      ${basicLogo()}
+      <div class="info-secondary" style="text-align:center">
+        REMIX IDE
+      </div>
+      </div>
+    `
     document.body.appendChild(self._view.splashScreen)
 
     // setup storage
