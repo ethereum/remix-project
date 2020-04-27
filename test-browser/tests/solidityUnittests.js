@@ -74,6 +74,19 @@ module.exports = {
     .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'wrong value')
   },
 
+  'Should stop unit tests during test execution` ': function (browser) {
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    .waitForElementPresent('*[data-id="testTabRunTestsTabRunAction"]')
+    .clickElementAtPosition('.singleTestLabel', 0)
+    .clickElementAtPosition('.singleTestLabel', 1)
+    .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
+    .pause(15000)
+    .click('*[data-id="testTabRunTestsTabStopAction"]')
+    .assert.containsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol (kickstarterTest)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/4_Ballot_test.sol (BallotTest)'))
+  },
+
   'Should fail on compilation': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .addFile('compilationError_test.sol', sources[0]['browser/compilationError_test.sol'])
