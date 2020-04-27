@@ -22,7 +22,7 @@ Analysis Modules
 -----------------
 Currently, with Remix IDE v0.10.1, there are 21 analysis modules listed under 4 categories. Categories are: `Security`, `Gas & Economy`, `ERC` & `Miscellaneous`.
 
-Here is the list of modules under each category along with the example code which should be avoided or used carefully while development:
+Here is the list of modules under each category along with the example code which **should be avoided or used carefully while development**:
 
 ### Category: Security
 -   **Transaction origin: 'tx.origin' is used**
@@ -98,12 +98,106 @@ selfdestruct(address(0x123abc..));
 ```
 
 ### Category: Gas & Economy
--   Gas costs: Warns if the gas requirements of the functions
-    are too high
--   This on local calls: Invocation of local functions via
-    this
+-   **Gas costs: Too high gas requirement of functions**
+
+If the gas requirement of a function is higher than the block gas limit, it cannot be executed. Please avoid loops in your functions or actions that modify large areas of storage
+
+_Example:_
+```
+for (uint8 proposal = 0; proposal < proposals.length; proposal++) {
+    if (proposals[proposal].voteCount > winningVoteCount) {
+        winningVoteCount = proposals[proposal].voteCount;
+        winningProposal = proposal;
+    }
+}
+```
+
+-   **This on local calls: Invocation of local functions via 'this'**
+
+Never use `this` to call functions in the same contract, it only consumes more gas than normal local calls.
+
+_Example:_
+```
+contract test {
+    
+    function callb() public {
+        address x;
+        this.b(x);
+    }
+    
+    function b(address a) public returns (bool) {}
+}
+```
+
+-   **Delete on dynamic Array: Use require/assert appropriately**
+
+The `delete` operation when applied to a dynamically sized array in Solidity generates code to delete each of the elements contained. If the array is large, this operation can surpass the block gas limit and raise an OOG exception. Also nested dynamically sized objects can produce the same results.
+
+_Example:_
+```
+contract arr {
+    uint[] users;
+    function resetState() public{
+        delete users;
+    }
+}
+```
+
+-   **For loop over dynamic array: Iterations depend on dynamic array's size**
+
+Loops that do not have a fixed number of iterations, for example, loops that depend on storage values, have to be used carefully: Due to the block gas limit, transactions can only consume a certain amount of gas. The number of iterations in a loop can grow beyond the block gas limit which can cause the complete contract to be stalled at a certain point. Additionally, using unbounded loops incurs in a lot of avoidable gas costs. Carefully test how many items at maximum you can pass to such functions to make it successful.
+
+_Example:_
+```
+contract forLoopArr {
+    uint[] array;
+
+    function shiftArrItem(uint index) public returns(uint[] memory) {
+        for (uint i = index; i < array.length; i++) {
+            array[i] = array[i+1];
+        }
+        return array;
+    }
+}
+```
+
+-   **Ether transfer in loop: Transferring Ether in a for/while/do-while loop**
+
+Ether payout should not be done in a loop. Due to the block gas limit, transactions can only consume a certain amount of gas. The number of iterations in a loop can grow beyond the block gas limit which can cause the complete contract to be stalled at a certain point. If required, make sure that number of iterations are low and you trust each address involved.
+
+_Example:_
+```
+contract etherTransferInLoop {
+    address payable owner;
+
+    function transferInForLoop(uint index) public  {
+        for (uint i = index; i < 100; i++) {
+            owner.transfer(i);
+        }
+    }
+
+    function transferInWhileLoop(uint index) public  {
+        uint i = index;
+        while (i < 100) {
+            owner.transfer(i);
+            i++;
+        }
+    }
+}
+```
 
 ### Category: ERC
+-   **ERC20: 'decimals' should be 'uint8'**
+
+ERC20 Contracts `decimals` function should have `uint8` as return type.
+
+_Example:_
+```
+contract EIP20 {
+
+    uint public decimals = 12;
+}
+```
 
 ### Category: Miscellaneous
 -   Constant functions: Checks for potentially constant
