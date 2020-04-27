@@ -193,12 +193,15 @@ module.exports = class TestTab extends ViewPlugin {
         this.testsOutput.appendChild(yo`<div class="text-danger">${result.totalFailing} failing</div>`)
         if (this.rawFileName === filename) this.setHeader(false)
       }
+      const displayError = yo`<div class="sol error alert alert-danger"></div>`
+
       result.errors.forEach((error, index) => {
-        this.testsOutput.appendChild(yo`<div class="sol error alert alert-danger">
-          <ul type="disc" class="ml-3 mb-0"><li>${error.value} </li></ul>
-          <span class="text-danger ml-3">${error.message}</span>
+        displayError.appendChild(yo`<div>
+        <ul type="disc" class="ml-3 mb-0"><li>${error.value} </li></ul>
+        <span class="text-danger ml-3">${error.message}</span>
         </div>`)
       })
+      this.testsOutput.appendChild(displayError)
     }
     if (this.hasBeenStopped && (this.readyTestsNumber !== this.runningTestsNumber)) {
       // if all tests has been through before stopping no need to print this.
