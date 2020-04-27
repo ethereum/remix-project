@@ -22,7 +22,7 @@ Analysis Modules
 -----------------
 Currently, with Remix IDE v0.10.1, there are 21 analysis modules listed under 4 categories. Categories are: `Security`, `Gas & Economy`, `ERC` & `Miscellaneous`.
 
-Here is the list of modules under each category along with the example code which **should be avoided or used carefully while development**:
+Here is the list of modules under each category along with the example code which **should be avoided or used very carefully while development**:
 
 ### Category: Security
 -   **Transaction origin: 'tx.origin' is used**
@@ -200,7 +200,91 @@ contract EIP20 {
 ```
 
 ### Category: Miscellaneous
--   Constant functions: Checks for potentially constant
-    functions
--   Similar variable names: Checks if variable names are too
-    similar
+-   **Constant/View/Pure functions: Potentially constant/view/pure functions**
+
+It warns for the methods which potentially should be constant/view/pure but are not.
+
+_Example:_
+```
+function b(address a) public returns (bool) {
+        return true;
+}
+```
+-   **Similar variable names: Variable names are too similar**
+
+It warns on the usage of similar variable names.
+
+_Example:_
+```
+// Variables have very similar names voter and voters.
+function giveRightToVote(address voter) public {
+    require(voters[voter].weight == 0);
+    voters[voter].weight = 1;
+}
+```
+-   **No return: Function with 'returns' not returning**
+
+It warns for the methods which define a return type but never explicitly return a value.
+
+_Example:_
+```
+function noreturn(string memory _dna) public returns (bool) {
+       dna = _dna;
+   }
+```
+-   **Guard conditions: Use 'require' and 'assert' appropriately**
+
+Use `assert(x)` if you never ever want x to be false, not in any circumstance (apart from a bug in your code). Use `require(x)` if x can be false, due to e.g. invalid input or a failing external component.
+
+_Example:_
+```
+assert(a.balance == 0);
+```
+-   **Result not used: The result of an operation not used**
+
+A binary operation yields a value that is not used in the following. This is often caused by confusing assignment (=) and comparison (==).
+
+_Example:_
+```
+c == 5;
+or
+a + b;
+```
+-   **String Length: Bytes length != String length**
+
+Bytes and string length are not the same since strings are assumed to be UTF-8 encoded (according to the ABI defintion) therefore one character is not nessesarily encoded in one byte of data.
+
+_Example:_
+```
+function length(string memory a) public pure returns(uint) {
+    bytes memory x = bytes(a);
+
+    return x.length;
+}
+```
+-   **Delete from dynamic qrray: 'delete' on an array leaves a gap**
+
+Using `delete` on an array leaves a gap. The length of the array remains the same. If you want to remove the empty position you need to shift items manually and update the length property.
+
+_Example:_
+```
+contract arr {
+    uint[] array = [1,2,3];
+
+    function removeAtIndex() public returns (uint[] memory) {
+        delete array[1];
+        return array;
+    }
+}
+```
+-   **Data Truncated: Division on int/uint values truncates the result**
+
+Division of integer values yields an integer value again. That means e.g. 10 / 100 = 0 instead of 0.1 since the result is an integer again. This does not hold for division of (only) literal values since those yield rational constants.
+
+_Example:_
+```
+function contribute() payable public {
+    uint fee = msg.value * uint256(feePercentage / 100);
+    fee = msg.value * (p2 / 100);
+}
+```
