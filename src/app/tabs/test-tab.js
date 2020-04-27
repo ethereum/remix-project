@@ -340,7 +340,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateStopAction () {
     return yo`
-      <button id="runTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary" disabled="disabled" title="Stop running tests" onclick=${() => this.stopTests()}">
+      <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary" disabled="disabled" title="Stop running tests" onclick=${() => this.stopTests()}">
         <span class="fas fa-stop ml-2"></span>
         <label class="${css.labelOnBtn} btn btn-primary bg-transparent p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
       </button>
@@ -390,7 +390,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="${css.container} mx-3 border-top border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsSummary = yo`<div class="${css.container} mx-3 pt-2 border-top border-primary" hidden='true' id="solidityUnittestsSummary" data-id="testTabSolidityUnitTestsSummary"></div>`
-    this.testsExecutionStopped = yo`<label class="text-warning h6">The test execution has been stopped</label>`
+    this.testsExecutionStopped = yo`<label class="text-warning h6" data-id="testTabTestsExecutionStopped">The test execution has been stopped</label>`
     this.testsExecutionStopped.hidden = true
     this.resultStatistics = this.createResultLabel()
     this.resultStatistics.hidden = true
