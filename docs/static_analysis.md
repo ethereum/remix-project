@@ -288,3 +288,9 @@ function contribute() payable public {
     fee = msg.value * (p2 / 100);
 }
 ```
+
+Remix-analyzer
+-----------------
+`remix-analyzer` is the library which works underneath of remix-ide `Solidity Static Analysis` plugin.
+
+`remix-analyzer` is an [NPM package](https://www.npmjs.com/package/remix-analyzer). It can be used as a library in a solution supporting node.js. Find more information about this type of usage in the [remix-analyzer repository](https://github.com/ethereum/remix/tree/master/remix-analyzer#how-to-use)
