@@ -27,7 +27,7 @@ var css = csjs`
     align-items: center;
   }
   .label_tv>span {
-    word-break: break-all;
+    word-break: break-word;
   }
 `
 
