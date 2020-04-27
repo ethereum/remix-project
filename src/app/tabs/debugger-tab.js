@@ -36,7 +36,7 @@ class DebuggerTab extends ViewPlugin {
       </div>`
 
     this.on('fetchAndCompile', 'compiling', (settings) => {
-      toaster(yo`<div><b>Recompiling and debugging with params</b><pre>${JSON.stringify(settings, null, '\t')}</pre></div>`)
+      toaster(yo`<div><b>Recompiling and debugging with params</b><pre class="text-left">${JSON.stringify(settings, null, '\t')}</pre></div>`)
     })
 
     this.on('fetchAndCompile', 'compilationFailed', (data) => {
