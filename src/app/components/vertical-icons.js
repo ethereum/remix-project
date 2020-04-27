@@ -224,57 +224,25 @@ export class VerticalIcons extends Plugin {
 
   render () {
     let home = yo`
-    <div
-      class="${css.homeIcon}"
-      onclick="${(e) => {
-        this.appManager.ensureActivated('home')
-      }}"
-      plugin="home" title="Home"
-      data-id="verticalIconsHomeIcon"
-    >
-    ${basicLogo()}
-
-    </div>`
-
-    this.iconKind['fileexplorer'] = yo`
-    <div id='fileExplorerIcons' data-id="verticalIconsFileExplorerIcons">
-    </div>
+      <div
+        class="${css.homeIcon}"
+        onclick="${(e) => {
+          this.appManager.ensureActivated('home')
+        }}"
+        plugin="home" title="Home"
+        data-id="verticalIconsHomeIcon"
+      >
+        ${basicLogo()}
+      </div>
     `
-
-    this.iconKind['compiler'] = yo`
-    <div id='compileIcons'>
-    </div>
-    `
-
-    this.iconKind['udapp'] = yo`
-    <div id='runIcons'>
-    </div>
-    `
-
-    this.iconKind['testing'] = yo`
-    <div id='testingIcons'>
-    </div>
-    `
-
-    this.iconKind['analysis'] = yo`
-    <div id='analysisIcons'>
-    </div>
-    `
-
-    this.iconKind['debugging'] = yo`
-    <div id='debuggingIcons' data-id="verticalIconsDebuggingIcons">
-    </div>
-    `
-
-    this.iconKind['none'] = yo`
-    <div id='otherIcons'>
-    </div>
-    `
-
-    this.iconKind['settings'] = yo`
-    <div id='settingsIcons' data-id="verticalIconsSettingsIcons">
-    </div>
-    `
+    this.iconKind['fileexplorer'] = yo`<div id='fileExplorerIcons' data-id="verticalIconsFileExplorerIcons"></div>`
+    this.iconKind['compiler'] = yo`<div id='compileIcons'></div>`
+    this.iconKind['udapp'] = yo`<div id='runIcons'></div>`
+    this.iconKind['testing'] = yo`<div id='testingIcons'></div>`
+    this.iconKind['analysis'] = yo`<div id='analysisIcons'></div>`
+    this.iconKind['debugging'] = yo`<div id='debuggingIcons' data-id="verticalIconsDebuggingIcons"></div>`
+    this.iconKind['none'] = yo`<div id='otherIcons'></div>`
+    this.iconKind['settings'] = yo`<div id='settingsIcons' data-id="verticalIconsSettingsIcons"></div>`
 
     this.view = yo`
       <div class=${css.icons}>
