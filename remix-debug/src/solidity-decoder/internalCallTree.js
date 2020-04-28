@@ -227,10 +227,23 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
         tree.traceManager.getStackAt(step, (error, stack) => {
           if (!error) {
             var states = tree.solidityProxy.extractStatesDefinitions()
-            // input params
-            addParams(functionDefinition.children[0], tree, scopeId, states, contractName, previousSourceLocation, stack.length, functionDefinition.children[0].children.length, -1)
-            // output params
-            addParams(functionDefinition.children[1], tree, scopeId, states, contractName, previousSourceLocation, stack.length, 0, 1)
+            if (functionDefinition.children && functionDefinition.children.length) {
+              let inputs
+              let outputs
+              for (const element of functionDefinition.children) {
+                if (element.name === 'ParameterList') {
+                  if (!inputs) inputs = element
+                  else {
+                    outputs = element
+                    break
+                  }
+                }
+              }
+              // input params
+              if (inputs) addParams(inputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, inputs.children.length, -1)
+              // output params
+              if (outputs) addParams(outputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, 0, 1)
+            }
           }
         })
       }
