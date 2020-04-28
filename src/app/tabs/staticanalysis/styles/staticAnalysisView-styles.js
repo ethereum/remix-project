@@ -8,7 +8,7 @@ var css = csjs`
   .result {
     margin-top: 1%;
     max-height: 300px;
-    word-break: break-all;
+    word-break: break-word;
   }
   .buttons  {
     margin: 1rem 0;

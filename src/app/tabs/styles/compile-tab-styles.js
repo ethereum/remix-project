@@ -158,7 +158,7 @@ const css = csjs`
   .errorBlobs {
     padding-left: 5px;
     padding-right: 5px;
-    word-break: break-all;
+    word-break: break-word;
   }
   .storageLogo {
     width: 20px;
