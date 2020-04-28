@@ -83,9 +83,9 @@ module.exports = {
     .click('*[data-id="testTabRunTestsTabStopAction"]')
     .assert.containsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping')
     .pause(10000)
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol (kickstarterTest)')
-    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/4_Ballot_test.sol (BallotTest)')
-    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/simple_storage_test.sol (MyTest)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol')
+    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/4_Ballot_test.sol')
+    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/simple_storage_test.sol')
     .assert.containsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped')
   },
 
