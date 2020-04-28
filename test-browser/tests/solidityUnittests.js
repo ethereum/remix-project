@@ -80,11 +80,14 @@ module.exports = {
     .clickElementAtPosition('.singleTestLabel', 0)
     .clickElementAtPosition('.singleTestLabel', 1)
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-    .pause(15000)
+    .pause(10000)
     .click('*[data-id="testTabRunTestsTabStopAction"]')
     .assert.containsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping')
+    .pause(5000)
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol (kickstarterTest)')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/4_Ballot_test.sol (BallotTest)'))
+    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/4_Ballot_test.sol (BallotTest)')
+    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/simple_storage_test.sol (MyTest)')
+    .assert.containsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped')
   },
 
   'Should fail on compilation': function (browser) {
