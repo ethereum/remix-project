@@ -137,19 +137,19 @@ module.exports = class TestTab extends ViewPlugin {
       this.runningTestFileName = this.cleanFileName(this.rawFileName, this.testSuite)
       this.outputHeader = yo`
         <div id="${this.runningTestFileName}" class="pt-1">
-          <span class="font-weight-bold">${this.testSuite} from ${this.rawFileName}</span>
+          <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
         </div>
       `
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
       this.testsOutput.appendChild(yo`
-        <div id="${this.runningTestFileName}" class="${css.testPass} ${css.testLog} alert-success bg-transparent border-0">
+        <div id="${this.runningTestFileName}" class="${css.testPass} ${css.testLog} text-success border-0">
           ✓ ${result.value}
         </div>
       `)
     } else if (result.type === 'testFailure') {
       this.testsOutput.appendChild(yo`
-        <div class="${css.testFailure} ${css.testLog} d-flex flex-column alert-danger bg-transparent border-0" id="UTContext${result.context}">
+        <div class="${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0" id="UTContext${result.context}">
           <span> ✘ ${result.value}</span>
           <span>"${result.errMsg}"</span>
         </div>
@@ -182,7 +182,7 @@ module.exports = class TestTab extends ViewPlugin {
 
       this.outputHeader && yo.update(this.outputHeader, yo`
         <div id="${this.runningTestFileName}" class="pt-1">
-          ${label} <span class="font-weight-bold">${this.testSuite} from ${this.rawFileName}</span>
+          ${label} <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
         </div>
       `)
     } else {
@@ -197,7 +197,7 @@ module.exports = class TestTab extends ViewPlugin {
 
       this.outputHeader && yo.update(this.outputHeader, yo`
         <div id="${this.runningTestFileName}" class="pt-1">
-          ${label} <span class="font-weight-bold">${this.testSuite} from ${this.rawFileName}</span>
+          ${label} <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
         </div>
       `)
     }
@@ -224,22 +224,27 @@ module.exports = class TestTab extends ViewPlugin {
 
       if (result.totalPassing > 0 && result.totalFailing > 0) {
         this.testsOutput.appendChild(yo`
-          <div class="d-flex border p-2 flex-column">
-            <span class="text-success">${result.totalPassing} passing </span> 
-            <span class="text-danger"> ${result.totalFailing} failing </span>
+          <div class="d-flex alert-secondary mb-3 p-3 flex-column">
+            <span class="font-weight-bold">Result for ${filename}</span>
+            <span class="text-success">Passing: ${result.totalPassing}</span>
+            <span class="text-danger">Failing: ${result.totalFailing}</span>
             <span>Total time: ${totalTime}s</span>
           </div>
         `)
       } else if (result.totalPassing > 0 && result.totalFailing <= 0) {
         this.testsOutput.appendChild(yo`
-          <div class="text-success">
-            ${result.totalPassing} passing (${totalTime}s)
+          <div class="d-flex alert-secondary mb-3 p-3 flex-column">
+            <span class="font-weight-bold">Result for ${filename}</span>
+            <span class="text-success">Passing: ${result.totalPassing}</span>
+            <span>Total time: ${totalTime}s</span>
           </div>
         `)
       } else if (result.totalPassing <= 0 && result.totalFailing > 0) {
         this.testsOutput.appendChild(yo`
-          <div class="text-danger">
-            ${result.totalFailing} failing (${totalTime}s)
+          <div class="d-flex alert-secondary mb-3 p-3 flex-column">
+            <span class="font-weight-bold">Result for ${filename}</span>
+            <span class="text-danger">Failing: ${result.totalFailing}</span>
+            <span>Total time: ${totalTime}s</span>
           </div>
         `)
       }
@@ -260,7 +265,7 @@ module.exports = class TestTab extends ViewPlugin {
       })
       this.testsOutput.appendChild(yo`
         <div>
-          <p class="text-info border-top m-0"></p>
+          <p class="text-info mb-2 border-top m-0"></p>
         </div>
       `)
     }
@@ -406,7 +411,7 @@ module.exports = class TestTab extends ViewPlugin {
     let el = yo`
       <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => this.runTests()}">
         <span class="fas fa-play ml-2"></span>
-        <label class="${css.labelOnBtn} btn btn-primary bg-transparent p-1 ml-2 m-0">Run</label>
+        <label class="${css.labelOnBtn} btn btn-primary p-1 ml-2 m-0">Run</label>
       </button>
     `
     const isSolidityActive = this.appManager.actives.includes('solidity')
@@ -431,7 +436,7 @@ module.exports = class TestTab extends ViewPlugin {
     return yo`
       <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" class="w-50 pl-2 ml-2 btn btn-secondary" disabled="disabled" title="Stop running tests" onclick=${() => this.stopTests()}">
         <span class="fas fa-stop ml-2"></span>
-        <label class="${css.labelOnBtn} btn btn-primary bg-transparent p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
+        <label class="${css.labelOnBtn} btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">Stop</label>
       </button>
     `
   }
