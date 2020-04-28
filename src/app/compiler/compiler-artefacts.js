@@ -33,4 +33,16 @@ module.exports = class CompilerArtefacts extends Plugin {
       this.compilersArtefacts['__last'] = new CompilerAbstract(languageVersion, data, source)
     })
   }
+
+  addResolvedContract (address, compilerData) {
+    this.compilersArtefacts[address] = compilerData
+  }
+
+  isResolved (address) {
+    return this.compilersArtefacts[address] !== undefined
+  }
+
+  get (key) {
+    return this.compilersArtefacts[key]
+  }
 }
