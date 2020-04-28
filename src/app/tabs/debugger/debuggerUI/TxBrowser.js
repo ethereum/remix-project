@@ -93,6 +93,7 @@ TxBrowser.prototype.render = function () {
       type='text'
       oninput=${this.txInputChanged.bind(this)}
       placeholder=${'Transaction hash, should start with 0x'}
+      data-id="debuggerTransactionInput"
     />
   `
   let txButton = yo`
@@ -101,6 +102,7 @@ TxBrowser.prototype.render = function () {
       id='load'
       title='${this.state.debugging ? 'Stop' : 'Start'} debugging'
       onclick=${function () { self.submit() }}
+      data-id="debuggerTransactionStartButton"
     >
       ${this.state.debugging ? 'Stop' : 'Start'} debugging
     </button>

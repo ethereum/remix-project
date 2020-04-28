@@ -1,8 +1,8 @@
-var yo = require('yo-yo')
-var css = require('./styles/debugger-tab-styles')
-
-var DebuggerUI = require('./debugger/debuggerUI')
-
+const yo = require('yo-yo')
+const remixLib = require('remix-lib')
+const css = require('./styles/debugger-tab-styles')
+import toaster from '../ui/tooltip'
+const DebuggerUI = require('./debugger/debuggerUI')
 import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 
@@ -34,7 +34,38 @@ class DebuggerTab extends ViewPlugin {
       <div class="${css.debuggerTabView}" id="debugView">
         <div id="debugger" class="${css.debugger}"></div>
       </div>`
-    this.debuggerUI = new DebuggerUI(this.el.querySelector('#debugger'), this.blockchain)
+
+    this.on('fetchAndCompile', 'compiling', (settings) => {
+      toaster(yo`<div><b>Recompiling and debugging with params</b><pre class="text-left">${JSON.stringify(settings, null, '\t')}</pre></div>`)
+    })
+
+    this.on('fetchAndCompile', 'compilationFailed', (data) => {
+      toaster(yo`<div><b>Compilation failed...</b> continuing <i>without</i> source code debugging.</div>`)
+    })
+
+    this.on('fetchAndCompile', 'notFound', (contractAddress) => {
+      toaster(yo`<div><b>Contract ${contractAddress} not found in source code repository</b> continuing <i>without</i> source code debugging.</div>`)
+    })
+
+    this.on('fetchAndCompile', 'usingLocalCompilation', (contractAddress) => {
+      toaster(yo`<div><b>Using compilation result from Solidity module</b></div>`)
+    })
+
+    this.on('fetchAndCompile', 'sourceVerificationNotAvailable', () => {
+      toaster(yo`<div><b>Source verification plugin not activated or not available.</b> continuing <i>without</i> source code debugging.</div>`)
+    })
+
+    this.debuggerUI = new DebuggerUI(
+      this.el.querySelector('#debugger'),
+      this.blockchain,
+      (address, receipt) => {
+        const target = (address && remixLib.helpers.trace.isContractCreation(address)) ? receipt.contractAddress : address
+        return this.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', this.blockchain.web3())
+      })
+
+    this.call('manager', 'activatePlugin', 'source-verification')
+    // this.call('manager', 'activatePlugin', 'udapp')
+
     return this.el
   }
 
