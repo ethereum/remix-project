@@ -9,7 +9,7 @@ class NotContainsText extends EventEmitter {
       else this.api.assert.ok(`${cssSelector} does not contains ${text}.`)
     })
     .perform(() => {
-        this.emit('complete')
+      this.emit('complete')
     })
     return this
   }
