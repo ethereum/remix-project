@@ -479,7 +479,7 @@ module.exports = class TestTab extends ViewPlugin {
   render () {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="mx-3 mb-2 pb-2 border-top border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
-    this.testsExecutionStopped = yo`<label class="text-warning h6">The test execution has been stopped</label>`
+    this.testsExecutionStopped = yo`<label class="text-warning h6" data-id="testTabTestsExecutionStopped">The test execution has been stopped</label>`
     this.testsExecutionStopped.hidden = true
     this.resultStatistics = this.createResultLabel()
     this.resultStatistics.hidden = true
