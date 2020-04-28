@@ -143,7 +143,7 @@ module.exports = class TestTab extends ViewPlugin {
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
       this.testsOutput.appendChild(yo`
-        <div class="${css.testPass} ${css.testLog} alert-success bg-transparent border-0">
+        <div id="${this.runningTestFileName}" class="${css.testPass} ${css.testLog} alert-success bg-transparent border-0">
           ✓ ${result.value}
         </div>
       `)
@@ -151,6 +151,8 @@ module.exports = class TestTab extends ViewPlugin {
       this.testsOutput.appendChild(yo`
         <div class="${css.testFailure} ${css.testLog} alert-danger bg-transparent border-0">
           ✘ ${result.value}
+          <br/>
+          <span class="ml-3">"${result.errMsg}"</span>
         </div>
       `)
     }
@@ -217,24 +219,26 @@ module.exports = class TestTab extends ViewPlugin {
     }
     yo.update(this.resultStatistics, this.createResultLabel())
     if (result) {
+      const totalTime = parseFloat(result.totalTime).toFixed(2)
+
       if (result.totalPassing > 0 && result.totalFailing > 0) {
         this.testsOutput.appendChild(yo`
           <div class="text-success">
             ${result.totalPassing} passing, 
             <span class="text-danger"> ${result.totalFailing} failing </span> 
-            (${result.totalTime}s)
+            (${totalTime}s)
           </div>
         `)
       } else if (result.totalPassing > 0 && result.totalFailing <= 0) {
         this.testsOutput.appendChild(yo`
           <div class="text-success">
-            ${result.totalPassing} passing (${result.totalTime}s)
+            ${result.totalPassing} passing (${totalTime}s)
           </div>
         `)
       } else if (result.totalPassing <= 0 && result.totalFailing > 0) {
         this.testsOutput.appendChild(yo`
           <div class="text-danger">
-            ${result.totalFailing} failing
+            ${result.totalFailing} failing (${totalTime}s)
           </div>
         `)
       }
@@ -245,7 +249,6 @@ module.exports = class TestTab extends ViewPlugin {
         this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
         this.setHeader(true)
       })
-      const displayError = yo`<div class="sol error alert alert-danger"></div>`
 
       result.errors.forEach((error, index) => {
         this.testSuite = error.context
@@ -254,30 +257,7 @@ module.exports = class TestTab extends ViewPlugin {
         const isFailingLabel = document.querySelector(`.failed_${this.runningTestFileName}`)
 
         if (!isFailingLabel) this.setHeader(false)
-        if (result.errors.length > 1) {
-          displayError.appendChild(yo`
-          <div>
-            ${error.context}
-            <ul class="ml-3 mb-0">
-              <li>${error.value} </li>
-            </ul>
-            <span class="ml-3">${error.message}</span>
-          </div>
-        `)
-        } else {
-          displayError.appendChild(yo`
-          <div>
-            <ul class="ml-3 mb-0">
-              <li>${error.value} </li>
-            </ul>
-            <span class="ml-3">${error.message}</span>
-          </div>
-        `)
-        }
       })
-      if (result.errors && result.errors.length > 0) {
-        this.testsOutput.appendChild(displayError)
-      }
       this.testsOutput.appendChild(yo`
         <div>
           <br/>
