@@ -48,9 +48,9 @@ module.exports = {
     .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
     .pause(5000)
-    .testFunction('0xf887e3ac3143430b0c22d055eb25d234675e7f3246cb0824efc4c1437a1405d5', {
+    .testFunction('0xe9b627a180f90a24feb6850f29e4121ea312f315f61756c31468ffbda2955a64', {
       status: '0x1 Transaction mined and execution succeed',
-      'transaction hash': '0xf887e3ac3143430b0c22d055eb25d234675e7f3246cb0824efc4c1437a1405d5'
+      'transaction hash': '0xe9b627a180f90a24feb6850f29e4121ea312f315f61756c31468ffbda2955a64'
     })
   },
 
