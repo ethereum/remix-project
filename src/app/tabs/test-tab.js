@@ -135,12 +135,24 @@ module.exports = class TestTab extends ViewPlugin {
       } 
       this.rawFileName = result.filename
       this.runningTestFileName = this.cleanFileName(this.rawFileName, this.testSuite)
-      this.outputHeader = yo`<div id="${this.runningTestFileName}" class="${css.outputTitle}">${this.testSuite} <br /> ${this.rawFileName}</div>`
+      this.outputHeader = yo`
+        <div id="${this.runningTestFileName}" class="${css.outputTitle}">
+          ${this.testSuite} <br /> ${this.rawFileName}
+        </div>
+      `
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
-      this.testsOutput.appendChild(yo`<div class="${css.testPass} ${css.testLog} alert-success bg-transparent border-0">✓ ${result.value}</div>`)
+      this.testsOutput.appendChild(yo`
+        <div class="${css.testPass} ${css.testLog} alert-success bg-transparent border-0">
+          ✓ ${result.value}
+        </div>
+      `)
     } else if (result.type === 'testFailure') {
-      this.testsOutput.appendChild(yo`<div class="${css.testFailure} ${css.testLog} alert-danger bg-transparent border-0">✘ ${result.value}</div>`)
+      this.testsOutput.appendChild(yo`
+        <div class="${css.testFailure} ${css.testLog} alert-danger bg-transparent border-0">
+          ✘ ${result.value}
+        </div>
+      `)
     }
   }
 
@@ -149,9 +161,6 @@ module.exports = class TestTab extends ViewPlugin {
     // result.passingNum
     // result.failureNum
     // result.timePassed
-    if (!_err) {
-      this.testsOutput
-    }
     cb()
   }
 
@@ -161,13 +170,29 @@ module.exports = class TestTab extends ViewPlugin {
 
   setHeader (status) {
     if (status) {
-      const label = yo`<div class="alert-success d-inline-block mb-1 mr-1 p-1 passed_${this.runningTestFileName}">PASS</div>`
+      const label = yo`
+        <div class="alert-success d-inline-block mb-1 mr-1 p-1 passed_${this.runningTestFileName}">
+          PASS
+        </div>
+      `
 
-      this.outputHeader && yo.update(this.outputHeader, yo`<div id="${this.runningTestFileName}" class="${css.outputTitle}">${label} ${this.testSuite} <br /> ${this.rawFileName}</div>`)
+      this.outputHeader && yo.update(this.outputHeader, yo`
+        <div id="${this.runningTestFileName}" class="${css.outputTitle}">
+          ${label} ${this.testSuite} <br/> ${this.rawFileName}
+        </div>
+      `)
     } else {
-      const label = yo`<div class="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}">FAIL</div>`
+      const label = yo`
+        <div class="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}">
+          FAIL
+        </div>
+      `
 
-      this.outputHeader && yo.update(this.outputHeader, yo`<div id="${this.runningTestFileName}" class="${css.outputTitle}">${label} ${this.testSuite} <br /> ${this.rawFileName}</div>`)
+      this.outputHeader && yo.update(this.outputHeader, yo`
+        <div id="${this.runningTestFileName}" class="${css.outputTitle}">
+          ${label} ${this.testSuite} <br/> ${this.rawFileName}
+        </div>
+      `)
     }
   }
 
@@ -189,11 +214,25 @@ module.exports = class TestTab extends ViewPlugin {
     yo.update(this.resultStatistics, this.createResultLabel())
     if (result) {
       if (result.totalPassing > 0 && result.totalFailing > 0) {
-        this.testsOutput.appendChild(yo`<div class="text-success">${result.totalPassing} passing, <span class="text-danger"> ${result.totalFailing} failing </span> (${result.totalTime}s)</div>`)
+        this.testsOutput.appendChild(yo`
+          <div class="text-success">
+            ${result.totalPassing} passing, 
+            <span class="text-danger"> ${result.totalFailing} failing </span> 
+            (${result.totalTime}s)
+          </div>
+        `)
       } else if (result.totalPassing > 0 && result.totalFailing <= 0) {
-        this.testsOutput.appendChild(yo`<div class="text-success">${result.totalPassing} passing (${result.totalTime}s)</div>`)
+        this.testsOutput.appendChild(yo`
+          <div class="text-success">
+          ${result.totalPassing} passing (${result.totalTime}s)
+          </div>
+        `)
       } else if (result.totalPassing <= 0 && result.totalFailing > 0) {
-        this.testsOutput.appendChild(yo`<div class="text-danger">${result.totalFailing} failing</div>`)
+        this.testsOutput.appendChild(yo`
+          <div class="text-danger">
+            ${result.totalFailing} failing
+          </div>
+        `)
       }
       //fix for displaying right label for multiple tests (testsuites) in a single file
       this.testSuites.forEach(testSuite => {
@@ -212,18 +251,23 @@ module.exports = class TestTab extends ViewPlugin {
 
         if (!isFailingLabel) this.setHeader(false)
         displayError.appendChild(yo`
-        <div>
-          <ul class="ml-3 mb-0">
-            <li>${error.value} </li>
-          </ul>
-          <span class="text-danger ml-3">${error.message}</span>
-        </div>
+          <div>
+            <ul class="ml-3 mb-0">
+              <li>${error.value} </li>
+            </ul>
+            <span class="text-danger ml-3">${error.message}</span>
+          </div>
         `)
       })
       if (result.errors && result.errors.length > 0) {
         this.testsOutput.appendChild(displayError)
       }
-      this.testsOutput.appendChild(yo`<div><br /><p class="text-info border-top m-0"></p></div>`)
+      this.testsOutput.appendChild(yo`
+        <div>
+          <br/>
+          <p class="text-info border-top m-0"></p>
+        </div>
+      `)
     }
     if (this.hasBeenStopped && (this.readyTestsNumber !== this.runningTestsNumber)) {
       // if all tests has been through before stopping no need to print this.
@@ -438,7 +482,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   render () {
     this.onActivationInternal()
-    this.testsOutput = yo`<div class="mx-3 mb-2 border-top border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
+    this.testsOutput = yo`<div class="mx-3 mb-2 pb-2 border-top border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsExecutionStopped = yo`<label class="text-warning h6">The test execution has been stopped</label>`
     this.testsExecutionStopped.hidden = true
     this.resultStatistics = this.createResultLabel()
