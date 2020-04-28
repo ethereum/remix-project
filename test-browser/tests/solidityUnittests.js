@@ -74,6 +74,22 @@ module.exports = {
     .assert.containsText('*[data-id="testTabSolidityUnitTestsSummary"]', 'wrong value')
   },
 
+  'Should stop unit tests during test execution` ': function (browser) {
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    .waitForElementPresent('*[data-id="testTabRunTestsTabRunAction"]')
+    .clickElementAtPosition('.singleTestLabel', 0)
+    .clickElementAtPosition('.singleTestLabel', 1)
+    .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
+    .pause(5000)
+    .click('*[data-id="testTabRunTestsTabStopAction"]')
+    .assert.containsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping')
+    .pause(10000)
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol (kickstarterTest)')
+    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/4_Ballot_test.sol (BallotTest)')
+    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/simple_storage_test.sol (MyTest)')
+    .assert.containsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped')
+  },
+
   'Should fail on compilation': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .addFile('compilationError_test.sol', sources[0]['browser/compilationError_test.sol'])
@@ -131,7 +147,7 @@ function runTests (browser) {
     .clickLaunchIcon('solidityUnitTesting')
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]')
-    .pause(10000)
+    .pause(15000)
     .assert.containsText('#solidityUnittestsOutput', 'browser/4_Ballot_test.sol (BallotTest)')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winning proposal')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value')
