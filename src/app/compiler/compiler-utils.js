@@ -1,6 +1,11 @@
 const semver = require('semver')
 /* global Worker */
 
+export const baseUrl = 'https://solc-bin.ethereum.org/bin'
+
+export function urlFromVersion (version) {
+  return `${baseUrl}/soljson-v${version}.js`
+}
 /**
  * Checks if the worker can be used to load a compiler.
  * checks a compiler whitelist, browser support and OS.

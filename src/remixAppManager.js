@@ -5,13 +5,17 @@ import QueryParams from './lib/query-params'
 import { PermissionHandler } from './app/ui/persmission-handler'
 
 const requiredModules = [ // services + layout views + system views
-  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport', 'web3Provider', 'scriptRunner',
+  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport', 'web3Provider', 'scriptRunner', 'fetchAndCompile',
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
   'terminal', 'settings', 'pluginManager']
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'ethdoc', 'etherscan']
+  const nativePlugins = ['vyper', 'workshops']
   return nativePlugins.includes(name) || requiredModules.includes(name)
+}
+
+export function canActivate (name) {
+  return ['manager', 'debugger'].includes(name)
 }
 
 export class RemixAppManager extends PluginManager {
@@ -25,7 +29,7 @@ export class RemixAppManager extends PluginManager {
   }
 
   async canActivate (from, to) {
-    return from.name === 'manager'
+    return canActivate(from.name)
   }
 
   async canDeactivate (from, to) {
