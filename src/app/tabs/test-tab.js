@@ -254,7 +254,18 @@ module.exports = class TestTab extends ViewPlugin {
         const isFailingLabel = document.querySelector(`.failed_${this.runningTestFileName}`)
 
         if (!isFailingLabel) this.setHeader(false)
-        displayError.appendChild(yo`
+        if (result.errors.length > 1) {
+          displayError.appendChild(yo`
+          <div>
+            ${error.context}
+            <ul class="ml-3 mb-0">
+              <li>${error.value} </li>
+            </ul>
+            <span class="ml-3">${error.message}</span>
+          </div>
+        `)
+        } else {
+          displayError.appendChild(yo`
           <div>
             <ul class="ml-3 mb-0">
               <li>${error.value} </li>
@@ -262,6 +273,7 @@ module.exports = class TestTab extends ViewPlugin {
             <span class="ml-3">${error.message}</span>
           </div>
         `)
+        }
       })
       if (result.errors && result.errors.length > 0) {
         this.testsOutput.appendChild(displayError)
