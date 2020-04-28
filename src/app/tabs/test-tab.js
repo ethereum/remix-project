@@ -136,8 +136,8 @@ module.exports = class TestTab extends ViewPlugin {
       this.rawFileName = result.filename
       this.runningTestFileName = this.cleanFileName(this.rawFileName, this.testSuite)
       this.outputHeader = yo`
-        <div id="${this.runningTestFileName}" class="${css.outputTitle}">
-          ${this.testSuite} <br /> ${this.rawFileName}
+        <div id="${this.runningTestFileName}" class="pt-1">
+          <span class="font-weight-bold">${this.testSuite} from ${this.rawFileName}</span>
         </div>
       `
       this.testsOutput.appendChild(this.outputHeader)
@@ -149,10 +149,9 @@ module.exports = class TestTab extends ViewPlugin {
       `)
     } else if (result.type === 'testFailure') {
       this.testsOutput.appendChild(yo`
-        <div class="${css.testFailure} ${css.testLog} alert-danger bg-transparent border-0">
-          ✘ ${result.value}
-          <br/>
-          <span class="ml-3">"${result.errMsg}"</span>
+        <div class="${css.testFailure} ${css.testLog} d-flex flex-column alert-danger bg-transparent border-0" id="UTContext${result.context}">
+          <span> ✘ ${result.value}</span>
+          <span>"${result.errMsg}"</span>
         </div>
       `)
     }
@@ -175,28 +174,30 @@ module.exports = class TestTab extends ViewPlugin {
       const label = yo`
         <div
           class="alert-success d-inline-block mb-1 mr-1 p-1 passed_${this.runningTestFileName}"
-          title="All contract tests passed">
+          title="All contract tests passed"
+        >
           PASS
         </div>
       `
 
       this.outputHeader && yo.update(this.outputHeader, yo`
-        <div id="${this.runningTestFileName}" class="${css.outputTitle}">
-          ${label} ${this.testSuite} <br/> ${this.rawFileName}
+        <div id="${this.runningTestFileName}" class="pt-1">
+          ${label} <span class="font-weight-bold">${this.testSuite} from ${this.rawFileName}</span>
         </div>
       `)
     } else {
       const label = yo`
         <div
           class="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}"
-          title="At least one contract test failed">
+          title="At least one contract test failed"
+        >
           FAIL
         </div>
       `
 
       this.outputHeader && yo.update(this.outputHeader, yo`
-        <div id="${this.runningTestFileName}" class="${css.outputTitle}">
-          ${label} ${this.testSuite} <br/> ${this.rawFileName}
+        <div id="${this.runningTestFileName}" class="pt-1">
+          ${label} <span class="font-weight-bold">${this.testSuite} from ${this.rawFileName}</span>
         </div>
       `)
     }
@@ -223,10 +224,10 @@ module.exports = class TestTab extends ViewPlugin {
 
       if (result.totalPassing > 0 && result.totalFailing > 0) {
         this.testsOutput.appendChild(yo`
-          <div class="text-success">
-            ${result.totalPassing} passing, 
-            <span class="text-danger"> ${result.totalFailing} failing </span> 
-            (${totalTime}s)
+          <div class="d-flex border p-2 flex-column">
+            <span class="text-success">${result.totalPassing} passing </span> 
+            <span class="text-danger"> ${result.totalFailing} failing </span>
+            <span>Total time: ${totalTime}s</span>
           </div>
         `)
       } else if (result.totalPassing > 0 && result.totalFailing <= 0) {
@@ -255,12 +256,10 @@ module.exports = class TestTab extends ViewPlugin {
         this.runningTestFileName = this.cleanFileName(filename, error.context)
         this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
         const isFailingLabel = document.querySelector(`.failed_${this.runningTestFileName}`)
-
         if (!isFailingLabel) this.setHeader(false)
       })
       this.testsOutput.appendChild(yo`
         <div>
-          <br/>
           <p class="text-info border-top m-0"></p>
         </div>
       `)
@@ -478,7 +477,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   render () {
     this.onActivationInternal()
-    this.testsOutput = yo`<div class="mx-3 mb-2 pb-2 border-top border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
+    this.testsOutput = yo`<div class="mx-3 mb-2 pb-4 border-top border-primary" hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsExecutionStopped = yo`<label class="text-warning h6" data-id="testTabTestsExecutionStopped">The test execution has been stopped</label>`
     this.testsExecutionStopped.hidden = true
     this.resultStatistics = this.createResultLabel()

@@ -21,10 +21,6 @@ var css = csjs`
     max-height: 300px;
     overflow-y: auto;
   }
-  .outputTitle {
-    font-weight: bold;
-    margin: 10px 0;
-  }
   .summaryTitle {
     font-weight: bold;
   }
