@@ -172,8 +172,8 @@ module.exports = class TestTab extends ViewPlugin {
     if (status) {
       const label = yo`
         <div
-        class="alert-success d-inline-block mb-1 mr-1 p-1 passed_${this.runningTestFileName}"
-        title="All contract tests passed">
+          class="alert-success d-inline-block mb-1 mr-1 p-1 passed_${this.runningTestFileName}"
+          title="All contract tests passed">
           PASS
         </div>
       `
@@ -186,8 +186,8 @@ module.exports = class TestTab extends ViewPlugin {
     } else {
       const label = yo`
         <div
-        class="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}"
-        title="At least one contract test failed">
+          class="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}"
+          title="At least one contract test failed">
           FAIL
         </div>
       `
@@ -228,7 +228,7 @@ module.exports = class TestTab extends ViewPlugin {
       } else if (result.totalPassing > 0 && result.totalFailing <= 0) {
         this.testsOutput.appendChild(yo`
           <div class="text-success">
-          ${result.totalPassing} passing (${result.totalTime}s)
+            ${result.totalPassing} passing (${result.totalTime}s)
           </div>
         `)
       } else if (result.totalPassing <= 0 && result.totalFailing > 0) {
