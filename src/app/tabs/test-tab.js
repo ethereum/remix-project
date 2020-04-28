@@ -171,7 +171,9 @@ module.exports = class TestTab extends ViewPlugin {
   setHeader (status) {
     if (status) {
       const label = yo`
-        <div class="alert-success d-inline-block mb-1 mr-1 p-1 passed_${this.runningTestFileName}">
+        <div
+        class="alert-success d-inline-block mb-1 mr-1 p-1 passed_${this.runningTestFileName}"
+        title="All contract tests passed">
           PASS
         </div>
       `
@@ -183,7 +185,9 @@ module.exports = class TestTab extends ViewPlugin {
       `)
     } else {
       const label = yo`
-        <div class="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}">
+        <div
+        class="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}"
+        title="At least one contract test failed">
           FAIL
         </div>
       `
