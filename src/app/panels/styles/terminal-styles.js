@@ -62,7 +62,7 @@ var css = csjs`
     font-family       : monospace;
   }
   .block              {
-    word-break        : break-all;
+    word-break        : break-word;
     white-space       : pre-wrap;
     line-height       : 2ch;
     padding           : 1ch;
@@ -82,7 +82,7 @@ var css = csjs`
     font-size         : 14px;
   }
   .input              {
-    word-break        : break-all;
+    word-break        : break-word;
     outline           : none;
     font-family       : monospace;
   }
