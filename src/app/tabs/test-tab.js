@@ -132,7 +132,7 @@ module.exports = class TestTab extends ViewPlugin {
         this.testSuites.push(this.testSuite)
       } else {
         this.testSuites = [this.testSuite]
-      } 
+      }
       this.rawFileName = result.filename
       this.runningTestFileName = this.cleanFileName(this.rawFileName, this.testSuite)
       this.outputHeader = yo`
@@ -234,7 +234,7 @@ module.exports = class TestTab extends ViewPlugin {
           </div>
         `)
       }
-      //fix for displaying right label for multiple tests (testsuites) in a single file
+      // fix for displaying right label for multiple tests (testsuites) in a single file
       this.testSuites.forEach(testSuite => {
         this.testSuite = testSuite
         this.runningTestFileName = this.cleanFileName(filename, this.testSuite)
