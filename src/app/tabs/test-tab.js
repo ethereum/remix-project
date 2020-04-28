@@ -128,9 +128,14 @@ module.exports = class TestTab extends ViewPlugin {
     this.testsOutput.hidden = false
     if (result.type === 'contract') {
       this.testSuite = result.value
+      if (this.testSuites) {
+        this.testSuites.push(this.testSuite)
+      } else {
+        this.testSuites = [this.testSuite]
+      } 
       this.rawFileName = result.filename
-      this.runningTestFileName = this.cleanFileName(this.rawFileName)
-      this.outputHeader = yo`<div class="${css.outputTitle}">${this.testSuite} <br /> ${this.rawFileName}</div>`
+      this.runningTestFileName = this.cleanFileName(this.rawFileName, this.testSuite)
+      this.outputHeader = yo`<div id="${this.runningTestFileName}" class="${css.outputTitle}">${this.testSuite} <br /> ${this.rawFileName}</div>`
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
       this.testsOutput.appendChild(yo`<div class="${css.testPass} ${css.testLog} alert-success bg-transparent border-0">✓ ${result.value}</div>`)
@@ -150,19 +155,19 @@ module.exports = class TestTab extends ViewPlugin {
     cb()
   }
 
-  cleanFileName (fileName) {
-    return fileName ? fileName.replace(/\//g, '_').replace(/\./g, '_') : fileName
+  cleanFileName (fileName, testSuite) {
+    return fileName ? fileName.replace(/\//g, '_').replace(/\./g, '_') + testSuite : fileName
   }
 
   setHeader (status) {
     if (status) {
       const label = yo`<div class="alert-success d-inline-block mb-1 mr-1 p-1 passed_${this.runningTestFileName}">PASS</div>`
 
-      this.outputHeader && yo.update(this.outputHeader, yo`<div class="${css.outputTitle}">${label} ${this.testSuite} <br /> ${this.rawFileName}</div>`)
+      this.outputHeader && yo.update(this.outputHeader, yo`<div id="${this.runningTestFileName}" class="${css.outputTitle}">${label} ${this.testSuite} <br /> ${this.rawFileName}</div>`)
     } else {
       const label = yo`<div class="alert-danger d-inline-block mb-1 mr-1 p-1 failed_${this.runningTestFileName}">FAIL</div>`
 
-      this.outputHeader && yo.update(this.outputHeader, yo`<div class="${css.outputTitle}">${label} ${this.testSuite} <br /> ${this.rawFileName}</div>`)
+      this.outputHeader && yo.update(this.outputHeader, yo`<div id="${this.runningTestFileName}" class="${css.outputTitle}">${label} ${this.testSuite} <br /> ${this.rawFileName}</div>`)
     }
   }
 
@@ -185,23 +190,40 @@ module.exports = class TestTab extends ViewPlugin {
     if (result) {
       if (result.totalPassing > 0 && result.totalFailing > 0) {
         this.testsOutput.appendChild(yo`<div class="text-success">${result.totalPassing} passing, <span class="text-danger"> ${result.totalFailing} failing </span> (${result.totalTime}s)</div>`)
-        if (this.rawFileName === filename) this.setHeader(false)
       } else if (result.totalPassing > 0 && result.totalFailing <= 0) {
         this.testsOutput.appendChild(yo`<div class="text-success">${result.totalPassing} passing (${result.totalTime}s)</div>`)
-        if (this.rawFileName === filename) this.setHeader(true)
       } else if (result.totalPassing <= 0 && result.totalFailing > 0) {
         this.testsOutput.appendChild(yo`<div class="text-danger">${result.totalFailing} failing</div>`)
-        if (this.rawFileName === filename) this.setHeader(false)
       }
+      //fix for displaying right label for multiple tests (testsuites) in a single file
+      this.testSuites.forEach(testSuite => {
+        this.testSuite = testSuite
+        this.runningTestFileName = this.cleanFileName(filename, this.testSuite)
+        this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
+        this.setHeader(true)
+      })
       const displayError = yo`<div class="sol error alert alert-danger"></div>`
 
       result.errors.forEach((error, index) => {
-        displayError.appendChild(yo`<div>
-        <ul type="disc" class="ml-3 mb-0"><li>${error.value} </li></ul>
-        <span class="text-danger ml-3">${error.message}</span>
-        </div>`)
+        this.testSuite = error.context
+        this.runningTestFileName = this.cleanFileName(filename, error.context)
+        this.outputHeader = document.querySelector(`#${this.runningTestFileName}`)
+        const isFailingLabel = document.querySelector(`.failed_${this.runningTestFileName}`)
+
+        if (!isFailingLabel) this.setHeader(false)
+        displayError.appendChild(yo`
+        <div>
+          <ul class="ml-3 mb-0">
+            <li>${error.value} </li>
+          </ul>
+          <span class="text-danger ml-3">${error.message}</span>
+        </div>
+        `)
       })
-      this.testsOutput.appendChild(displayError)
+      if (result.errors && result.errors.length > 0) {
+        this.testsOutput.appendChild(displayError)
+      }
+      this.testsOutput.appendChild(yo`<div><br /><p class="text-info border-top m-0"></p></div>`)
     }
     if (this.hasBeenStopped && (this.readyTestsNumber !== this.runningTestsNumber)) {
       // if all tests has been through before stopping no need to print this.
@@ -416,7 +438,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   render () {
     this.onActivationInternal()
-    this.testsOutput = yo`<div class="mx-3 mb-2 border-top border-bottom border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
+    this.testsOutput = yo`<div class="mx-3 mb-2 border-top border-primary"  hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsExecutionStopped = yo`<label class="text-warning h6">The test execution has been stopped</label>`
     this.testsExecutionStopped.hidden = true
     this.resultStatistics = this.createResultLabel()
