@@ -49,7 +49,9 @@ module.exports = {
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Initial value should be100')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Value is set200')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Should fail for wrong value200')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '2 passing, 1 failing')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Passing: 2')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Failing: 1')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAIL MyTest (browser/simple_storage_test.sol)')
   },
 
   'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser) {
@@ -81,11 +83,13 @@ module.exports = {
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
     .pause(5000)
     .click('*[data-id="testTabRunTestsTabStopAction"]')
+    .pause(2000)
     .assert.containsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping')
     .pause(10000)
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol')
     .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/4_Ballot_test.sol')
     .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/simple_storage_test.sol')
+    .pause(5000)
     .assert.containsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped')
   },
 
@@ -144,6 +148,7 @@ function runTests (browser) {
     .clickLaunchIcon('fileExplorers')
     .switchFile('browser/3_Ballot.sol')
     .clickLaunchIcon('solidityUnitTesting')
+    .pause(500)
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]')
     .pause(15000)
