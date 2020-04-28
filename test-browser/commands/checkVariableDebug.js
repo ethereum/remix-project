@@ -29,7 +29,7 @@ function checkDebug (browser, id, debugValue, done) {
     }
     var equal = deepequal(debugValue, value)
     if (!equal) {
-      browser.assert.fail('checkDebug on ' + id, 'info about error', '')
+      browser.assert.fail('checkDebug on ' + id, 'info about error\n ' + JSON.stringify(debugValue) + '\n ' + JSON.stringify(value), '')
     }
     done()
   })
