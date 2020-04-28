@@ -255,7 +255,7 @@ module.exports = class TestTab extends ViewPlugin {
             <ul class="ml-3 mb-0">
               <li>${error.value} </li>
             </ul>
-            <span class="text-danger ml-3">${error.message}</span>
+            <span class="ml-3">${error.message}</span>
           </div>
         `)
       })
