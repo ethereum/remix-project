@@ -3,7 +3,7 @@ Solidity Static Analysis
 
 Static code analysis is a process to debug the code by examining it and without actually executing the code. 
 
-`Solidity Static Analysis` plugin performs static analysis on Solidity smart contracts once they are compiled. It helps to check security vulnerabilities and bad development practices. This plugin comes with `Solidity` environment of Remix IDE. It can also be activated individually from `Plugin Manager`.
+`Solidity Static Analysis` plugin performs static analysis on Solidity smart contracts once they are compiled. It checks for security vulnerabilities and bad development practices, among other issues. This plugin comes with `Solidity` environment of Remix IDE. It can also be activated individually from `Plugin Manager`.
 
 How to use
 ------------
@@ -145,7 +145,7 @@ contract arr {
 
 -   **For loop over dynamic array: Iterations depend on dynamic array's size**
 
-Loops that do not have a fixed number of iterations, for example, loops that depend on storage values, have to be used carefully: Due to the block gas limit, transactions can only consume a certain amount of gas. The number of iterations in a loop can grow beyond the block gas limit which can cause the complete contract to be stalled at a certain point. Additionally, using unbounded loops incurs in a lot of avoidable gas costs. Carefully test how many items at maximum you can pass to such functions to make it successful.
+Loops that do not have a fixed number of iterations, for example, loops that depend on storage values, have to be used carefully: Due to the block gas limit, transactions can only consume a certain amount of gas. The number of iterations in a loop can grow beyond the block gas limit which can stall the complete contract at a certain point. Additionally, using unbounded loops can incur in a lot of avoidable gas costs. Carefully test how many items at maximum you can pass to such functions to make it successful.
 
 _Example:_
 ```
@@ -262,7 +262,7 @@ function length(string memory a) public pure returns(uint) {
     return x.length;
 }
 ```
--   **Delete from dynamic qrray: 'delete' on an array leaves a gap**
+-   **Delete from dynamic array: 'delete' on an array leaves a gap**
 
 Using `delete` on an array leaves a gap. The length of the array remains the same. If you want to remove the empty position you need to shift items manually and update the length property.
 
