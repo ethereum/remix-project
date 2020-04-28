@@ -137,6 +137,7 @@ export class LandingPage extends ViewPlugin {
       this.appManager.ensureActivated('udapp')
       this.verticalIcons.select('vyper')
     }
+    /*
     const startWorkshop = () => {
       this.appManager.ensureActivated('box')
       this.appManager.ensureActivated('solidity')
@@ -144,6 +145,7 @@ export class LandingPage extends ViewPlugin {
       this.appManager.ensureActivated('workshops')
       this.verticalIcons.select('workshops')
     }
+    */
 
     const startPipeline = () => {
       this.appManager.ensureActivated('solidity')
@@ -153,6 +155,16 @@ export class LandingPage extends ViewPlugin {
     const startDebugger = () => {
       this.appManager.ensureActivated('debugger')
       this.verticalIcons.select('debugger')
+    }
+    const startMythX = () => {
+      this.appManager.ensureActivated('solidity')
+      this.appManager.ensureActivated('mythx')
+      this.verticalIcons.select('mythx')
+    }
+    const startSourceVerify = () => {
+      this.appManager.ensureActivated('solidity')
+      this.appManager.ensureActivated('source-verification')
+      this.verticalIcons.select('source-verification')
     }
     const startPluginManager = () => {
       this.appManager.ensureActivated('pluginManager')
@@ -195,7 +207,8 @@ export class LandingPage extends ViewPlugin {
     // Featured
     const pipelineEnv = createEnvButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
     const debuggerEnv = createEnvButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
-    const workshopEnv = createEnvButton('assets/img/workshopLogo.webp', 'workshopLogo', 'Workshop', startWorkshop)
+    const mythXEnv = createEnvButton('assets/img/mythxLogo.webp', 'mythxLogo', 'MythX', startMythX)
+    const SourceVerifyEnv = createEnvButton('assets/img/sourceVerifyLogo.webp', 'sourceVerifyLogo', 'Source Verify', startSourceVerify)
     const moreEnv = createEnvButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
 
     const invertNum = (globalRegistry.get('themeModule').api.currentTheme().quality === 'dark') ? 1 : 0
@@ -203,7 +216,8 @@ export class LandingPage extends ViewPlugin {
     vyperEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     pipelineEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    workshopEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    mythXEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    SourceVerifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
 
     let switchToPreviousVersion = () => {
@@ -265,8 +279,9 @@ export class LandingPage extends ViewPlugin {
             <h4>Featured Plugins</h4>
             <div class="d-flex flex-row pt-2">
               ${pipelineEnv}
+              ${mythXEnv}
+              ${SourceVerifyEnv}
               ${debuggerEnv}
-              ${workshopEnv}
               ${moreEnv}
             </div>
           </div>
