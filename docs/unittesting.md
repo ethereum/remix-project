@@ -3,7 +3,7 @@ Unit Testing Plugin
 
 Click the
 ![double check](images/a-user-testing-icon.png)
- icon to get to the "Solidity Unit Testing" plugin. 
+ icon to get to the `Solidity Unit Testing` plugin. 
  
  If you haven't used this plugin before and are not seeing `double check` icon, you have to activate it from Remix plugin manager.
  
@@ -13,11 +13,13 @@ Go to the plugin manager (by click the ![plug](images/a-plug.png) icon) and load
 
 Now `double check` icon will appear on the left side icon bar. Clicking on icon will load the unit testing module in the side panel.
 
+Alternatively, just select `Solidity` environment from remix IDE home page. This will activate `Solidity Unit Testing` plugin along with `Solidity Compiler`, `Deploy & Run Transactions` & `Solidity Static Analysis` plugins.
+
 ![](images/a-unit-testing-feature.png)
 
-Generate Test File
-------------------
-Click the button `Generate test file` to create a new solidity file in the current folder suffixed with `_test`. This file contains the minimum you need for running unit testing.
+Generate
+----------
+Select a solidity file which you want to test and click on the button `Generate`. It will generate a new sample solidity test file **in the current folder** suffixed with `_test`. This file contains the minimum you need for running unit testing.
 
 Write Tests
 -----------
@@ -32,12 +34,15 @@ Apart from this, Remix allows usage of some special functions to make testing mo
 
 To get started, see [this simple example](./unittesting_examples.html#simple-example).
 
-Run Tests
-------------------
-
-Click the button "Run tests" to executes all tests whose box has been checked below (by default all). The execution is run in a separate environment and the result is displayed below.
+Run
+-----
+Once you are done with writing tests, select the _test.sol files in the list and click on the button `Run` to execute the tests in the selected files. The execution will run in a separate environment and the result will be displayed below.
 
 ![](images/a-unit-testing-run-result.png)
+
+Stop
+-----
+If you have selected multiple files to run the tests and want to stop the execution, click on `Stop` button. It will stop execution after running the tests for current file.
 
 Customization
 ------------------
