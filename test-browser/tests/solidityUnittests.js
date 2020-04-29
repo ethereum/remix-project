@@ -152,7 +152,7 @@ function runTests (browser) {
     .pause(500)
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]')
-    .pause(15000)
+    .pause(20000)
     .assert.containsText('#solidityUnittestsOutput', 'browser/4_Ballot_test.sol')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winning proposal')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value')
