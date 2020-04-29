@@ -21,13 +21,13 @@ setupRemixd
 
 sleep 5
 
+npm run nightwatch_local_generalSettings_firefox || TEST_EXITCODE=1
 npm run nightwatch_local_ballot_firefox || TEST_EXITCODE=1
 npm run nightwatch_local_gist_firefox || TEST_EXITCODE=1
 npm run nightwatch_local_workspace_firefox || TEST_EXITCODE=1
 npm run nightwatch_local_defaultLayout_firefox || TEST_EXITCODE=1
 npm run nightwatch_local_pluginManager_firefox || TEST_EXITCODE=1
 npm run nightwatch_local_publishContract_firefox || TEST_EXITCODE=1
-npm run nightwatch_local_generalSettings_firefox || TEST_EXITCODE=1
 npm run nightwatch_local_fileExplorer_firefox || TEST_EXITCODE=1
 npm run nightwatch_local_debugger_firefox || TEST_EXITCODE=1
 npm run nightwatch_local_editor_firefox || TEST_EXITCODE=1
