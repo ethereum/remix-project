@@ -105,7 +105,7 @@ module.exports = {
     .pause(10000)
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'SyntaxError: No visibility specified')
-    .assert.containsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error in your test file')
+    .assert.containsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error(s) in your test file')
   },
 
   'Should fail on deploy': function (browser) {
