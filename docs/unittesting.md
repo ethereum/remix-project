@@ -36,7 +36,7 @@ To get started, see [this simple example](./unittesting_examples.html#simple-exa
 
 Run
 -----
-Once you are done with writing tests, select the right file(s) and click on the button `Run` to execute the tests in the selected files. The execution will run in a separate environment and the result will be displayed below.
+Once you are done with writing tests, select the _test.sol files in the list and click on the button `Run` to execute the tests in the selected files. The execution will run in a separate environment and the result will be displayed below.
 
 ![](images/a-unit-testing-run-result.png)
 
