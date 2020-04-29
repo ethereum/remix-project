@@ -136,14 +136,14 @@ module.exports = class TestTab extends ViewPlugin {
       this.rawFileName = result.filename
       this.runningTestFileName = this.cleanFileName(this.rawFileName, this.testSuite)
       this.outputHeader = yo`
-        <div id="${this.runningTestFileName}" class="pt-1">
+        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="pt-1">
           <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
         </div>
       `
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
       this.testsOutput.appendChild(yo`
-        <div id="${this.runningTestFileName}" class="${css.testPass} ${css.testLog} text-success border-0">
+        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="${css.testPass} ${css.testLog} text-success border-0">
           ✓ ${result.value}
         </div>
       `)
@@ -181,7 +181,7 @@ module.exports = class TestTab extends ViewPlugin {
       `
 
       this.outputHeader && yo.update(this.outputHeader, yo`
-        <div id="${this.runningTestFileName}" class="pt-1">
+        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="pt-1">
           ${label} <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
         </div>
       `)
@@ -196,7 +196,7 @@ module.exports = class TestTab extends ViewPlugin {
       `
 
       this.outputHeader && yo.update(this.outputHeader, yo`
-        <div id="${this.runningTestFileName}" class="pt-1">
+        <div id="${this.runningTestFileName}"  data-id="testTabSolidityUnitTestsOutputheader" class="pt-1">
           ${label} <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
         </div>
       `)
