@@ -21,13 +21,13 @@ setupRemixd
 
 sleep 5
 
+npm run nightwatch_local_generalSettings || TEST_EXITCODE=1
 npm run nightwatch_local_ballot || TEST_EXITCODE=1
 npm run nightwatch_local_gist || TEST_EXITCODE=1
 npm run nightwatch_local_workspace || TEST_EXITCODE=1
 npm run nightwatch_local_defaultLayout || TEST_EXITCODE=1
 npm run nightwatch_local_pluginManager || TEST_EXITCODE=1
 npm run nightwatch_local_publishContract || TEST_EXITCODE=1
-npm run nightwatch_local_generalSettings || TEST_EXITCODE=1
 npm run nightwatch_local_fileExplorer || TEST_EXITCODE=1
 npm run nightwatch_local_debugger || TEST_EXITCODE=1
 npm run nightwatch_local_editor || TEST_EXITCODE=1
