@@ -12,15 +12,14 @@ module.exports = {
     .click('*[data-id="landingPageStartSolidity"]')
     .waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="verticalIconsKindsettings"]')
-    .waitForElementVisible('*[data-id="settingsTabSettingsView"]')
-    .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
+    .waitForElementContainsText('h6[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
   },
 
   'Should open gitter channel in a new tab when `Gitter Channel Button` is clicked': function (browser) {
     const runtimeBrowser = browser.capabilities.browserName
 
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-    .waitForElementVisible('*[data-id="settingsTabGitterChannelButton"]')
+    .waitForElementVisible('*[data-id="settingsTabGitterChannelButton"]', 5000)
     .click('*[data-id="settingsTabGitterChannelButton"]')
     .pause(2000)
     .perform((done) => { if (runtimeBrowser === 'chrome') { browser.switchBrowserTab(1).assert.urlContains('https://gitter.im/ethereum/remix') } done() })
@@ -28,8 +27,8 @@ module.exports = {
 
   'Should activate `generate contract metadata`': function (browser) {
     browser.switchBrowserTab(0)
-    .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-    .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadata"]')
+    .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
+    .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadata"]', 5000)
     .click('*[data-id="settingsTabGenerateContractMetadata"]')
     .click('*[data-id="verticalIconsFileExplorerIcons"]')
     .switchFile('browser/3_Ballot.sol')
@@ -43,34 +42,34 @@ module.exports = {
   },
 
   'Should add new github access token': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="verticalIconsKindsettings"]')
     .setValue('*[data-id="settingsTabGistAccessToken"]', '**********')
     .click('*[data-id="settingsTabSaveGistToken"]')
-    .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
+    .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
     .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token saved')
     .click('*[data-id="tooltipCloseButton"]')
   },
 
   'Should copy github access token to clipboard': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="copyToClipboardCopyIcon"]')
-    .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
+    .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
     .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Copied value to clipboard.')
     .click('*[data-id="tooltipCloseButton"]')
   },
 
   'Should remove github access token': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabRemoveGistToken"]')
-    .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
+    .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
     .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token removed')
     .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
     .click('*[data-id="tooltipCloseButton"]')
   },
 
   'Should load dark theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeDark"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.dark.primary)
@@ -82,7 +81,7 @@ module.exports = {
   },
 
   'Should load light theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeLight"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.light.primary)
@@ -94,7 +93,7 @@ module.exports = {
   },
 
   'Should load Cerulean theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeCerulean"]')
     .pause(5000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.curelean.primary)
@@ -106,7 +105,7 @@ module.exports = {
   },
 
   'Should load Flatly theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeFlatly"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.flatly.primary)
@@ -118,7 +117,7 @@ module.exports = {
   },
 
   'Should load Lumen theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeLumen"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.lumen.primary)
@@ -130,7 +129,7 @@ module.exports = {
   },
 
   'Should load Minty theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeMinty"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.minty.primary)
@@ -142,7 +141,7 @@ module.exports = {
   },
 
   'Should load Pulse theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemePulse"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.pulse.primary)
@@ -154,7 +153,7 @@ module.exports = {
   },
 
   'Should load Sandstone theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeSandstone"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.sandstone.primary)
@@ -166,7 +165,7 @@ module.exports = {
   },
 
   'Should load Spacelab theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeSpacelab"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.spacelab.primary)
@@ -178,7 +177,7 @@ module.exports = {
   },
 
   'Should load Yeti theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeYeti"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.yeti.primary)
@@ -190,7 +189,7 @@ module.exports = {
   },
 
   'Should load Cyborg theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeCyborg"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.cyborg.primary)
@@ -202,7 +201,7 @@ module.exports = {
   },
 
   'Should load Darkly theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeDarkly"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.darkly.primary)
@@ -214,7 +213,7 @@ module.exports = {
   },
 
   'Should load Slate theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeSlate"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.slate.primary)
@@ -226,7 +225,7 @@ module.exports = {
   },
 
   'Should load Superhero theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeSuperhero"]')
     .pause(2000)
     .checkElementStyle(':root', '--primary', remixIdeThemes.superhero.primary)
