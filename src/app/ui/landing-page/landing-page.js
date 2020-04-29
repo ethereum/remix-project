@@ -208,7 +208,7 @@ export class LandingPage extends ViewPlugin {
     const pipelineEnv = createEnvButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
     const debuggerEnv = createEnvButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
     const mythXEnv = createEnvButton('assets/img/mythxLogo.webp', 'mythxLogo', 'MythX', startMythX)
-    const SourceVerifyEnv = createEnvButton('assets/img/sourceVerifyLogo.webp', 'sourceVerifyLogo', 'Source Verify', startSourceVerify)
+    const sourceVerifyEnv = createEnvButton('assets/img/sourceVerifyLogo.webp', 'sourceVerifyLogo', 'Source Verify', startSourceVerify)
     const moreEnv = createEnvButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
 
     const invertNum = (globalRegistry.get('themeModule').api.currentTheme().quality === 'dark') ? 1 : 0
@@ -217,7 +217,7 @@ export class LandingPage extends ViewPlugin {
     pipelineEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     mythXEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    SourceVerifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    sourceVerifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
 
     let switchToPreviousVersion = () => {
@@ -280,7 +280,7 @@ export class LandingPage extends ViewPlugin {
             <div class="d-flex flex-row pt-2">
               ${pipelineEnv}
               ${mythXEnv}
-              ${SourceVerifyEnv}
+              ${sourceVerifyEnv}
               ${debuggerEnv}
               ${moreEnv}
             </div>
