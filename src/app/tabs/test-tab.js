@@ -136,14 +136,14 @@ module.exports = class TestTab extends ViewPlugin {
       this.rawFileName = result.filename
       this.runningTestFileName = this.cleanFileName(this.rawFileName, this.testSuite)
       this.outputHeader = yo`
-        <div id="${this.runningTestFileName}" class="pt-1">
+        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="pt-1">
           <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
         </div>
       `
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
       this.testsOutput.appendChild(yo`
-        <div id="${this.runningTestFileName}" class="${css.testPass} ${css.testLog} text-success border-0">
+        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="${css.testPass} ${css.testLog} text-success border-0">
           ✓ ${result.value}
         </div>
       `)
@@ -181,7 +181,7 @@ module.exports = class TestTab extends ViewPlugin {
       `
 
       this.outputHeader && yo.update(this.outputHeader, yo`
-        <div id="${this.runningTestFileName}" class="pt-1">
+        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="pt-1">
           ${label} <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
         </div>
       `)
@@ -196,7 +196,7 @@ module.exports = class TestTab extends ViewPlugin {
       `
 
       this.outputHeader && yo.update(this.outputHeader, yo`
-        <div id="${this.runningTestFileName}" class="pt-1">
+        <div id="${this.runningTestFileName}"  data-id="testTabSolidityUnitTestsOutputheader" class="pt-1">
           ${label} <span class="font-weight-bold">${this.testSuite} (${this.rawFileName})</span>
         </div>
       `)
@@ -273,6 +273,7 @@ module.exports = class TestTab extends ViewPlugin {
       // if all tests has been through before stopping no need to print this.
       this.testsExecutionStopped.hidden = false
     }
+    if (_errors) this.testsExecutionStoppedError.hidden = false
     if (_errors || this.hasBeenStopped || this.readyTestsNumber === this.runningTestsNumber) {
       // All tests are ready or the operation has been canceled or there was a compilation error in one of the test files.
       const stopBtn = document.getElementById('runTestsTabStopAction')
@@ -364,6 +365,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.testsOutput.innerHTML = ''
     this.testsOutput.hidden = true
     this.testsExecutionStopped.hidden = true
+    this.testsExecutionStoppedError.hidden = true
     const tests = this.data.selectedTests
     if (!tests) return
     this.resultStatistics.hidden = tests.length === 0
@@ -484,7 +486,9 @@ module.exports = class TestTab extends ViewPlugin {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="mx-3 mb-2 pb-4 border-top border-primary" hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsExecutionStopped = yo`<label class="text-warning h6" data-id="testTabTestsExecutionStopped">The test execution has been stopped</label>`
+    this.testsExecutionStoppedError = yo`<label class="text-danger h6" data-id="testTabTestsExecutionStoppedError">The test execution has been stopped because of error(s) in your test file</label>`
     this.testsExecutionStopped.hidden = true
+    this.testsExecutionStoppedError.hidden = true
     this.resultStatistics = this.createResultLabel()
     this.resultStatistics.hidden = true
     const el = yo`
@@ -507,6 +511,7 @@ module.exports = class TestTab extends ViewPlugin {
           <div class="align-items-start flex-column mt-2 mx-3 mb-0">
             ${this.resultStatistics}
             ${this.testsExecutionStopped}
+            ${this.testsExecutionStoppedError}
           </div>
           ${this.testsOutput}
         </div>
