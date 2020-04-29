@@ -1,6 +1,6 @@
 {
   "name": "remix-ide",
-  "version": "v0.10.0",
+  "version": "v0.10.1",
   "description": "Extendable Web IDE for Ethereum",
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -205,7 +205,6 @@
     "nightwatch_local_fileExplorer_firefox": "nightwatch ./test-browser/tests/fileExplorer.js --config nightwatch.js --env firefox ",
     "nightwatch_local_debugger_firefox": "nightwatch ./test-browser/tests/debugger.js --config nightwatch.js --env firefox ",
     "nightwatch_local_editor_firefox": "nightwatch ./test-browser/tests/editor.js --config nightwatch.js --env firefox ",
-    
     "nightwatch_local_runAndDeploy": "nightwatch ./test-browser/tests/runAndDeploy.js --config nightwatch.js --env chrome-runAndDeploy ",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
