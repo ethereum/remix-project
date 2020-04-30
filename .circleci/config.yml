@@ -32,10 +32,10 @@ jobs:
           name: Start Selenium
           command: ./node_modules/.bin/selenium-standalone start --config=../remix-ide/seleniumConfig.js
           background: true
-      - run: ./ci/browser_tests_chrome.sh
       - run:
-          name: Setup Directory For Test Results
+          name: Setup Directory For Saving Test Results
           command: mkdir -p ./reports/test_results/chrome
+      - run: ./ci/browser_tests_chrome.sh
       - store_test_results:
           path: ./reports/test_results/chrome
       - store_artifacts:
@@ -75,10 +75,10 @@ jobs:
       - run:
           name: Install Firefox
           command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      - run: ./ci/browser_tests_firefox.sh
       - run:
-          name: Setup Directory For Test Results
-          command: mkdir -p ./reports/test_results/chrome
+          name: Setup Directory For Saving Test Results
+          command: mkdir -p ./reports/test_results/firefox
+      - run: ./ci/browser_tests_firefox.sh
       - store_test_results:
           path: ./reports/test_results/firefox
       - store_artifacts:
