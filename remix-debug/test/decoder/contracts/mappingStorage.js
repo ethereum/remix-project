@@ -1,7 +1,5 @@
 module.exports = {
   contract: `
-  pragma solidity ^0.5.0;
-
 contract SimpleMappingState {
     uint _num;
     mapping(string => uint) _iBreakSolidityState;
