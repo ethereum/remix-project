@@ -17,7 +17,6 @@ module.exports = {
 
   'Should load run and deploy tab': function (browser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-    .pause(3000)
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="sidePanelSwapitTitle"]')
     .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
@@ -67,11 +66,11 @@ module.exports = {
     })
   },
 
-  'Should connect to Ropsten Test Network using MetaMask': function (browser) {
+  'Should connect to Goerli Test Network using MetaMask': function (browser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .setupMetamask(passphrase, password)
     .click('.network-indicator__down-arrow')
-    .useXpath().click("//span[text()='Ropsten Test Network']")
+    .useXpath().click("//span[text()='Goerli Test Network']")
     .useCss().switchBrowserTab(0)
     .refresh()
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -81,14 +80,14 @@ module.exports = {
     .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')
     .click('*[data-id="settingsSelectEnvOptions"] option[id="injected-mode"]')
     .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
-    .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Ropsten (3) network')
+    .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Goerli (5) network')
     .switchBrowserTab(2)
     .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
     .click('.page-container__footer-button:nth-of-type(2)')
     .switchBrowserTab(0)
   },
 
-  'Should deploy contract on Ropsten Test Network using MetaMask': function (browser) {
+  'Should deploy contract on Goerli Test Network using MetaMask': function (browser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
     .clickLaunchIcon('fileExplorers')
     .switchFile('browser/Greet.sol')
@@ -101,11 +100,11 @@ module.exports = {
     .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
     .click('.page-container__footer-button:nth-of-type(2)')
     .waitForElementPresent('.transaction-status--submitted')
-    .pause(60000)
+    .pause(25000)
     .switchBrowserTab(0)
   },
 
-  'Should run low level interaction (fallback function) on Ropsten Test Network using MetaMask': function (browser) {
+  'Should run low level interaction (fallback function) on Goerli Test Network using MetaMask': function (browser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
     .click('*[data-id="universalDappUiTitleExpander"]')
@@ -117,7 +116,7 @@ module.exports = {
     .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
     .click('.page-container__footer-button:nth-of-type(2)')
     .waitForElementPresent('.transaction-status--submitted')
-    .pause(60000)
+    .pause(25000)
     .switchBrowserTab(0)
   },
 
