@@ -162,7 +162,6 @@
     "lint": "standard | notify-error",
     "make-mock-compiler": "node ci/makeMockCompiler.js",
     "minify": "uglifyjs --in-source-map inline --source-map-inline -c warnings=false",
-    "nightwatch": "nightwatch --config nightwatch.js --env chrome",
     "nightwatch_parallel": "nightwatch -e chrome,firefox --config nightwatch.js",
     "nightwatch_local_firefox": "nightwatch --config nightwatch.js --env firefox",
     "nightwatch_local_chrome": "nightwatch --config nightwatch.js --env chrome",
