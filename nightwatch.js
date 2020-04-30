@@ -6,7 +6,7 @@ const metamaskExtension = new Buffer.from(crxFile).toString('base64') // eslint-
 
 module.exports = {
   'src_folders': ['test-browser/tests'],
-  'output_folder': 'reports',
+  'output_folder': './reports/tests',
   'custom_commands_path': ['test-browser/commands'],
   'custom_assertions_path': '',
   'page_objects_path': '',

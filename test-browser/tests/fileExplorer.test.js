@@ -3,9 +3,9 @@ const init = require('../helpers/init')
 const sauce = require('./sauce')
 const path = require('path')
 const testData = {
-  testFile1: path.resolve(__dirname + '/editor.js'), // eslint-disable-line
-  testFile2: path.resolve(__dirname + '/fileExplorer.js'), // eslint-disable-line
-  testFile3: path.resolve(__dirname + '/generalSettings.js') // eslint-disable-line
+  testFile1: path.resolve(__dirname + '/editor.test.js'), // eslint-disable-line
+  testFile2: path.resolve(__dirname + '/fileExplorer.test.js'), // eslint-disable-line
+  testFile3: path.resolve(__dirname + '/generalSettings.test.js') // eslint-disable-line
 }
 
 module.exports = {
@@ -105,9 +105,9 @@ module.exports = {
     .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile1)
     .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile2)
     .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile3)
-    .waitForElementVisible('*[key="browser/editor.js"]')
-    .waitForElementVisible('*[key="browser/fileExplorer.js"]')
-    .waitForElementVisible('*[key="browser/generalSettings.js"]')
+    .waitForElementVisible('*[key="browser/editor.test.js"]')
+    .waitForElementVisible('*[key="browser/fileExplorer.test.js"]')
+    .waitForElementVisible('*[key="browser/generalSettings.test.js"]')
     .end()
   },
 

@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  remix-ide-chrome-1:
+  remix-ide-chrome:
     docker:
       # specify the version you desire here
       - image: circleci/node:9.11.2-browsers
@@ -20,6 +20,7 @@ jobs:
       - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
     working_directory: ~/remix-ide
 
+    parallelism: 20
     steps:
       - checkout
       - run: npm install
@@ -31,11 +32,13 @@ jobs:
           name: Start Selenium
           command: ./node_modules/.bin/selenium-standalone start --config=../remix-ide/seleniumConfig.js
           background: true
-      - run: ./ci/browser_tests_chrome_part1.sh
+      - run: ./ci/browser_tests_chrome.sh
+      - store_test_results:
+          path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
 
-  remix-ide-chrome-2:
+  remix-ide-firefox:
     docker:
       # specify the version you desire here
       - image: circleci/node:9.11.2-browsers
@@ -51,37 +54,7 @@ jobs:
       - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
     working_directory: ~/remix-ide
 
-    steps:
-      - checkout
-      - run: npm install
-      - run: npm run lint && npm run test && npm run make-mock-compiler
-      - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-ide/seleniumConfig.js
-      - run:
-          name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-ide/seleniumConfig.js
-          background: true
-      - run: ./ci/browser_tests_chrome_part2.sh
-      - store_artifacts:
-          path: ./reports/screenshots
-
-  remix-ide-firefox-1:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:9.11.2-browsers
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
-    working_directory: ~/remix-ide
-
+    parallelism: 20
     steps:
       - checkout
       - run: npm install
@@ -99,44 +72,9 @@ jobs:
       - run:
           name: Install Firefox
           command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      - run: ./ci/browser_tests_firefox_part1.sh
-      - store_artifacts:
-          path: ./reports/screenshots
-
-  remix-ide-firefox-2:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:9.11.2-browsers
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
-    working_directory: ~/remix-ide
-
-    steps:
-      - checkout
-      - run: npm install
-      - run: npm run lint && npm run test && npm run make-mock-compiler
-      - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-ide/seleniumConfig.js
-      - run:
-          name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-ide/seleniumConfig.js
-          background: true
-      - run:
-          name: Download Latest Firefox
-          command: sudo apt-get purge -y firefox && wget https://sourceforge.net/projects/ubuntuzilla/files/mozilla/apt/pool/main/f/firefox-mozilla-build/firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      - run:
-          name: Install Firefox
-          command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      - run: ./ci/browser_tests_firefox_part2.sh
+      - run: ./ci/browser_tests_firefox.sh
+      - store_test_results:
+          path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
 
@@ -234,27 +172,21 @@ workflows:
   version: 2
   build_all:
     jobs:
-      - remix-ide-chrome-1
-      - remix-ide-firefox-1
-      - remix-ide-chrome-2
-      - remix-ide-firefox-2
+      - remix-ide-chrome
+      - remix-ide-firefox
       - remix-ide-run-deploy
       - deploy-remix-live:          
           requires:
-            - remix-ide-chrome-1
-            - remix-ide-firefox-1
-            - remix-ide-chrome-2
-            - remix-ide-firefox-2
+            - remix-ide-chrome
+            - remix-ide-firefox
             - remix-ide-run-deploy
           filters:
             branches:
               only: remix_live
       - deploy-remix-alpha:          
           requires:
-            - remix-ide-chrome-1
-            - remix-ide-firefox-1
-            - remix-ide-chrome-2
-            - remix-ide-firefox-2
+            - remix-ide-chrome
+            - remix-ide-firefox
             - remix-ide-run-deploy
           filters:
             branches:
