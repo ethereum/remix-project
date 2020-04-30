@@ -34,7 +34,7 @@ jobs:
           background: true
       - run: ./ci/browser_tests_chrome.sh
       - store_test_results:
-          path: test_results
+          path: ./reports/test_results/chrome
       - store_artifacts:
           path: ./reports/screenshots
 
@@ -74,7 +74,7 @@ jobs:
           command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
       - run: ./ci/browser_tests_firefox.sh
       - store_test_results:
-          path: test_results
+          path: ./reports/test_results/firefox
       - store_artifacts:
           path: ./reports/screenshots
 
