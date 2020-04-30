@@ -31,7 +31,7 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
             st.fail(error)
           })
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
-            helper.decodeLocals(st, 51, traceManager, callTree, function (locals) {
+            helper.decodeLocals(st, 49, traceManager, callTree, function (locals) {
               try {
                 st.equals(locals['dynbytes'].value, '0x64796e616d69636279746573')
                 st.equals(locals['smallstring'].value, 'test_test_test')
