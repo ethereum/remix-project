@@ -131,7 +131,7 @@ staticAnalysisView.prototype.run = function () {
             location = Object.keys(self.lastCompilationResult.contracts)[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
           warningCount++
-          const msg = yo`<span>${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
+          const msg = yo`<span>${result.name} ${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
           self._components.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning alert alert-warning', useSpan: true})
         })
       })
