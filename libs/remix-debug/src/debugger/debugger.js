@@ -1,17 +1,15 @@
 'use strict'
+const EventManager = require('../eventManager')
 const Ethdebugger = require('../Ethdebugger')
-const remixLib = require('@remix-project/remix-lib')
-const EventManager = remixLib.EventManager
-const traceHelper = remixLib.helpers.trace
-const OffsetToColumnConverter = remixLib.OffsetToColumnConverter
-
+const traceHelper = require('../trace/traceHelper')
+const BreakpointManager = require('../code/breakpointManager')
 const StepManager = require('./stepManager')
 const VmDebuggerLogic = require('./VmDebugger')
 
 function Debugger (options) {
   this.event = new EventManager()
 
-  this.offsetToLineColumnConverter = options.offsetToLineColumnConverter || (new OffsetToColumnConverter())
+  this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
   /*
     Returns a compilation result for a given address or the last one available if none are found
   */
@@ -22,7 +20,7 @@ function Debugger (options) {
     compilationResult: this.compilationResult
   })
 
-  this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, async (sourceLocation) => {
+  this.breakPointManager = new BreakpointManager(this.debugger, async (sourceLocation) => {
     const compilationResult = await this.compilationResult()
     if (!compilationResult) return { start: null, end: null }
     return this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationResult.source.sources, compilationResult.data.sources)

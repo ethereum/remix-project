@@ -9,11 +9,10 @@ const stateDecoder = SolidityDecoder.stateDecoder
 const localDecoder = SolidityDecoder.localDecoder
 const InternalCallTree = SolidityDecoder.InternalCallTree
 
-const remixLib = require('@remix-project/remix-lib')
-const TraceManager = remixLib.trace.TraceManager
-const CodeManager = remixLib.code.CodeManager
-const traceHelper = remixLib.helpers.trace
-const EventManager = remixLib.EventManager
+const TraceManager = require('./trace/traceManager')
+const CodeManager = require('./code/codeManager')
+const traceHelper = require('./trace/traceHelper')
+const EventManager = require('./eventManager')
 
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction

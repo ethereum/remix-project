@@ -3,7 +3,7 @@ var utileth = require('ethereumjs-util')
 var Tx = require('ethereumjs-tx').Transaction
 var Block = require('ethereumjs-block')
 var BN = require('ethereumjs-util').BN
-var remixLib = require('@remix-project/remix-lib')
+var Web3VMProvider = require('../src/web3VmProvider')
 
 function sendTx (vm, from, to, value, data, cb) {
   var tx = new Tx({
@@ -38,7 +38,7 @@ function sendTx (vm, from, to, value, data, cb) {
 */
 function initVM (privateKey) {
   var VM = require('ethereumjs-vm').default
-  var Web3Providers = remixLib.vm.Web3Providers
+
   var address = utileth.privateToAddress(privateKey)
   var vm = new VM({
     enableHomestead: true,
@@ -53,16 +53,10 @@ function initVM (privateKey) {
     })
   })
 
-  var web3Providers = new Web3Providers()
-  web3Providers.addVM('VM', vm)
-  web3Providers.get('VM', function (error, obj) {
-    if (error) {
-      var mes = 'provider TEST not defined'
-      console.log(mes)
-    } else {
-      vm.web3 = obj
-    }
-  })
+  var web3Provider = new Web3VMProvider()
+  web3Provider.setVM(vm)
+  vm.web3 = web3Provider
+
   return vm
 }
 

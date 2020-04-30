@@ -1,15 +1,14 @@
 'use strict'
 
 var vmCall = require('../vmCall')
-var remixLib = require('@remix-project/remix-lib')
 
-var TraceManager = remixLib.trace.TraceManager
-var CodeManager = remixLib.code.CodeManager
+var TraceManager = require('../../../src/trace/traceManager')
+var CodeManager = require('../../../src/code/codeManager')
 
-var traceHelper = remixLib.helpers.trace
+var traceHelper = require('../../../src/trace/traceHelper')
 var SolidityProxy = require('../../../src/solidity-decoder/solidityProxy')
 var InternalCallTree = require('../../../src/solidity-decoder/internalCallTree')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../../src/eventManager')
 var helper = require('./helper')
 
 module.exports = function (st, vm, privateKey, contractBytecode, compilationResult, cb) {

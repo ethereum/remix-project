@@ -1,6 +1,5 @@
 'use strict'
-const remixLib = require('@remix-project/remix-lib')
-const AstWalker = remixLib.AstWalker
+const AstWalker = require('../source/astWalker')
 
 /**
   * return all contract definitions of the given @astList

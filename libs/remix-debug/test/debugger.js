@@ -1,9 +1,10 @@
 var tape = require('tape')
-var remixLib = require('@remix-project/remix-lib')
-var compilerInput = remixLib.helpers.compiler.compilerInput
+var compilerInput = require('./helpers/compilerHelper').compilerInput
+var SourceMappingDecoder = require('../src/source/sourceMappingDecoder')
 var vmCall = require('./vmCall')
 var Debugger = require('../src/Ethdebugger')
 var compiler = require('solc')
+var Web3VmProvider = require('../src/web3VmProvider')
 
 var ballot = `pragma solidity >=0.4.22 <0.7.0;
 
@@ -146,13 +147,13 @@ contract Ballot {
 }
 `
 
-var BreakpointManager = remixLib.code.BreakpointManager
+var BreakpointManager = require('../src/code/breakpointManager')
 
 var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
 var vm = vmCall.initVM(privateKey)
 var output = compiler.compile(compilerInput(ballot))
 output = JSON.parse(output)
-var web3VM = new remixLib.vm.Web3VMProvider()
+var web3VM = new Web3VmProvider()
 web3VM.setVM(vm)
 const param = '0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000148656c6c6f20576f726c64210000000000000000000000000000000000000000'
 vmCall.sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['Ballot'].evm.bytecode.object + param, (error, txHash) => {
@@ -261,7 +262,7 @@ function testDebugging (debugManager) {
 
   tape('breakPointManager', (t) => {
     t.plan(2)
-    var sourceMappingDecoder = new remixLib.SourceMappingDecoder()
+    var sourceMappingDecoder = new SourceMappingDecoder()
     var breakPointManager = new BreakpointManager(debugManager, (rawLocation) => {
       return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
     })
