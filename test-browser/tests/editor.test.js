@@ -70,6 +70,12 @@ module.exports = {
     .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.dark.comment)
     .checkElementStyle('.ace_function', 'color', aceThemes.dark.function)
     .checkElementStyle('.ace_variable', 'color', aceThemes.dark.variable)
+  },
+
+  'Should highlight source code': function (browser) {
+    browser.addFile('browser/sourcehighlight.js', sourcehighlightScript)
+    .switchFile('browser/sourcehighlight.js')
+    .executeScript('remix.exeCurrent()')
     .end()
   },
 
@@ -90,3 +96,47 @@ var aceThemes = {
     variable: 'rgb(153, 119, 68)'
   }
 }
+
+const sourcehighlightScript = `
+(async () => {
+  try {
+      const pos = {
+          start: {
+              line: 32,
+              column: 3
+          },
+          end: {
+              line: 32,
+              column: 20
+          }
+      }
+      await remix.call('editor', 'highlight', pos, 'browser/3_Ballot.sol')
+      
+       const pos2 = {
+          start: {
+              line: 40,
+              column: 3
+          },
+          end: {
+              line: 40,
+              column: 20
+          }
+      }
+      await remix.call('editor', 'highlight', pos2, 'browser/3_Ballot.sol')
+      
+       const pos3 = {
+          start: {
+              line: 50,
+              column: 3
+          },
+          end: {
+              line: 50,
+              column: 20
+          }
+      }
+      await remix.call('editor', 'highlight', pos3, 'browser/3_Ballot.sol')
+  } catch (e) {
+      console.log(e.message)
+  }
+})()
+`
