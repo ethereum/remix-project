@@ -102,6 +102,23 @@ function getTestFunctionsInterface (jsonInterface: FunctionDescription[], funcLi
 }
 
 /**
+ * @dev returns ABI of special functions from passed interface
+ * @param jsonInterface Json Interface
+ */
+
+function getSpecialFunctionsInterface (jsonInterface: FunctionDescription[]): Record<string, FunctionDescription> {
+    const specialFunctionsInterface: Record<string, FunctionDescription> = {}
+    const funcList: string[] = ['beforeAll', 'beforeEach', 'afterAll', 'afterEach']
+    for(const func of funcList){
+        const funcInterface: FunctionDescription | undefined = jsonInterface.find(node => node.type === 'function' && node.name === func)
+        if(funcInterface) {
+            specialFunctionsInterface[func] = funcInterface
+        } 
+    }
+    return specialFunctionsInterface
+}
+
+/**
  * @dev Prepare a list of tests to run using test contract file ABI, AST & contract name
  * @param jsonInterface File JSON interface
  * @param fileAST File AST
@@ -111,25 +128,29 @@ function getTestFunctionsInterface (jsonInterface: FunctionDescription[], funcLi
 function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, testContractName: string): RunListInterface[] {
     const availableFunctions: string[] = getAvailableFunctions(fileAST, testContractName)
     const testFunctionsInterface: FunctionDescription[] = getTestFunctionsInterface(jsonInterface, availableFunctions)
-
+    const specialFunctionsInterface: Record<string, FunctionDescription> = getSpecialFunctionsInterface(jsonInterface)
     let runList: RunListInterface[] = []
 
-    if (availableFunctions.indexOf('beforeAll') >= 0) {
-        runList.push({ name: 'beforeAll', type: 'internal', constant: false, payable: false })
+    if (availableFunctions.includes('beforeAll')) {
+        let func = specialFunctionsInterface['beforeAll']
+        runList.push({ name: 'beforeAll', inputs: func.inputs, signature: func.signature, type: 'internal', constant: isConstant(func), payable: isPayable(func) })
     }
 
     for (const func of testFunctionsInterface) {
-        if (availableFunctions.indexOf('beforeEach') >= 0) {
-            runList.push({ name: 'beforeEach', type: 'internal', constant: false, payable: false })
+        if (availableFunctions.includes('beforeEach')) {
+            let func = specialFunctionsInterface['beforeEach']
+            runList.push({ name: 'beforeEach', inputs: func.inputs, signature: func.signature, type: 'internal', constant: isConstant(func), payable: isPayable(func) })
         }
         if(func.name && func.inputs) runList.push({ name: func.name, inputs: func.inputs, signature: func.signature, type: 'test', constant: isConstant(func), payable: isPayable(func) })
         if (availableFunctions.indexOf('afterEach') >= 0) {
-            runList.push({ name: 'afterEach', type: 'internal', constant: false, payable: false })
+            let func = specialFunctionsInterface['afterEach']
+            runList.push({ name: 'afterEach', inputs: func.inputs, signature: func.signature, type: 'internal', constant: isConstant(func), payable: isPayable(func) })
         }
     }
 
     if (availableFunctions.indexOf('afterAll') >= 0) {
-        runList.push({ name: 'afterAll', type: 'internal', constant: false, payable: false })
+        let func = specialFunctionsInterface['afterAll']
+        runList.push({ name: 'afterAll', inputs: func.inputs, signature: func.signature, type: 'internal', constant: isConstant(func), payable: isPayable(func) })
     }
 
     return runList

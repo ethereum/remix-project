@@ -246,8 +246,8 @@ describe('testRunner', () => {
 
       after(() => { tests = [] })
 
-      it('should have 5 passing tests', function () {
-        assert.equal(results.passingNum, 5)
+      it('should have 17 passing tests', function () {
+        assert.equal(results.passingNum, 17)
       })
       it('should have 0 failing tests', function () {
         assert.equal(results.failureNum, 0)
