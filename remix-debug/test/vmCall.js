@@ -23,17 +23,20 @@ function sendTx (vm, from, to, value, data, cb) {
     transactions: [],
     uncleHeaders: []
   })
-  vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (error, result) {
+  vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}).then(function (result) {
     setTimeout(() => {
-      cb(error, utileth.bufferToHex(tx.hash()))
+      cb(null, utileth.bufferToHex(tx.hash()))
     }, 500)
+  }).catch((error) => {
+    console.error(error)
+    cb(error)
   })
 }
 
 /*
   Init VM / Send Transaction
 */
-function initVM (st, privateKey) {
+function initVM (privateKey) {
   var VM = require('ethereumjs-vm').default
   var Web3Providers = remixLib.vm.Web3Providers
   var address = utileth.privateToAddress(privateKey)
@@ -56,7 +59,6 @@ function initVM (st, privateKey) {
     if (error) {
       var mes = 'provider TEST not defined'
       console.log(mes)
-      st.fail(mes)
     } else {
       vm.web3 = obj
     }
