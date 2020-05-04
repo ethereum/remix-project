@@ -57,7 +57,6 @@ class Mapping extends RefType {
         slot: mapLocation
       }
       ret[i] = await this.valueType.decodeFromStorage(globalLocation, storageResolver)
-      console.log('global location', globalLocation, i, ret[i])
     }
     return ret
   }

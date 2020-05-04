@@ -41,103 +41,114 @@ module.exports = {
         i5[5] = -2344;
         i5[6] = 3254;
         
-        idyn5.length = 9;
-        idyn5[0] = -2134;
-        idyn5[1] = 345;
-        idyn5[2] = -3246;
-        idyn5[3] = 4357;
-        idyn5[4] = 324;
-        idyn5[5] = -2344;
-        idyn5[6] = 3254;
-        idyn5[7] = -254;
-        idyn5[8] = -2354;
+        idyn5.push(-2134);
+        idyn5.push(345);
+        idyn5.push(-3246);
+        idyn5.push(4357);
+        idyn5.push(324);
+        idyn5.push(-2344);
+        idyn5.push(3254);
+        idyn5.push(-254);
+        idyn5.push(-2354);
         
-        dyn1[0].length = 1;
-        dyn1[1].length = 3;
-        dyn1[2].length = 10;
-        dyn1[3].length = 2;
+        dyn1[0].push(3);
+        dyn1[1].push(12);
+        dyn1[1].push(-12);
+        dyn1[1].push(-1234);
         
-        dyn1[0][0] = 3;
-        dyn1[1][0] = 12;
-        dyn1[1][1] = -12;
-        dyn1[1][2] = -1234;
+        dyn1[2].push(1);
+        dyn1[2].push(12);
+        dyn1[2].push(1235);
+        dyn1[2].push(-12);
+        dyn1[2].push(-123456);
+        dyn1[2].push(-23435435);
+        dyn1[2].push(543543);
+        dyn1[2].push(2);
+        dyn1[2].push(-1);
+        dyn1[2].push(232432);
+        dyn1[3].push(232432);
+        dyn1[3].push(232432);
         
-        dyn1[2][0] = 1;
-        dyn1[2][1] = 12;
-        dyn1[2][2] = 1235;
-        dyn1[2][3] = -12;
-        dyn1[2][4] = -123456;
-        dyn1[2][5] = -23435435;
-        dyn1[2][6] = 543543;
-        dyn1[2][7] = 2;
-        dyn1[2][8] = -1;
-        dyn1[2][9] = 232432;
-        dyn1[3][0] = 232432;
-        dyn1[3][1] = 232432;
+        int32[][4] memory e1;
+        e1[0] = new int32[](3);
+        e1[1] = new int32[](3);
+        e1[2] = new int32[](3);
+        e1[3] = new int32[](3);
         
-        dyn2.length = 2;
-        dyn2[0][0].length = 3;
-        dyn2[0][1].length = 3;
-        dyn2[0][2].length = 3;
-        dyn2[0][3].length = 3;
-        dyn2[1][0].length = 3;
-        dyn2[1][1].length = 3;
-        dyn2[1][2].length = 3;
-        dyn2[1][3].length = 3;
+        e1[0][0] = 23;
+        e1[0][1] = -23;
+        e1[0][2] = -28;
         
-        dyn2[0][0][0] = 23;
-        dyn2[0][0][1] = -23;
-        dyn2[0][0][2] = -28;
+        e1[1][0] = 23;
+        e1[1][1] = -23;
+        e1[1][2] = -28;
         
-        dyn2[0][1][0] = 23;
-        dyn2[0][1][1] = -23;
-        dyn2[0][1][2] = -28;
+        e1[2][0] = 23;
+        e1[2][1] = -23;
+        e1[2][2] = -28;
         
-        dyn2[0][2][0] = 23;
-        dyn2[0][2][1] = -23;
-        dyn2[0][2][2] = -28;
+        e1[3][0] = 23;
+        e1[3][1] = -23;
+        e1[3][2] = -28;
         
-        dyn2[0][3][0] = 23;
-        dyn2[0][3][1] = -23;
-        dyn2[0][3][2] = -28;
+        dyn2.push(e1);
         
-        dyn2[1][0][0] = 23;
-        dyn2[1][0][1] = -23;
-        dyn2[1][0][2] = -28;
+        int32[][4] memory e2;
+        e2[0] = new int32[](3);
+        e2[1] = new int32[](3);
+        e2[2] = new int32[](3);
+        e2[3] = new int32[](3);
         
-        dyn2[1][1][0] = 23;
-        dyn2[1][1][1] = -23;
-        dyn2[1][1][2] = -28;
+        e2[0][0] = 23;
+        e2[0][1] = -23;
+        e2[0][2] = -28;
         
-        dyn2[1][2][0] = 23;
-        dyn2[1][2][1] = -23;
-        dyn2[1][2][2] = -28;
+        e2[1][0] = 23;
+        e2[1][1] = -23;
+        e2[1][2] = -28;
         
-        dyn2[1][3][0] = 23;
-        dyn2[1][3][1] = -23;
-        dyn2[1][3][2] = -28;
+        e2[2][0] = 23;
+        e2[2][1] = -23;
+        e2[2][2] = -28;
         
+        e2[3][0] = 23;
+        e2[3][1] = -23;
+        e2[3][2] = -28;
         
-        arrayStruct[0].length = 2;
-        arrayStruct[1].length = 1;
-        arrayStruct[2].length = 3;
+        dyn2.push(e2);
         
-        arrayStruct[0][0].i8 = 34;
-        arrayStruct[0][0].str = 'test_str_short';
-        arrayStruct[0][1].i8 = -123;
-        arrayStruct[0][1].str = 'test_str_long test_str_lo ngtest_str_longtest_str_ longtest_str_longtest_ str_longtest_str_l ongtest_str_long';
+        simpleStruct memory s1;
+        s1.i8 = 34;
+        s1.str = 'test_str_short';
         
-        arrayStruct[1][0].i8 = 50;
-        arrayStruct[1][0].str = 'test_str_short';
+        simpleStruct memory s2;
+        s1.i8 = -123;
+        s1.str = 'test_str_long test_str_lo ngtest_str_longtest_str_ longtest_str_longtest_ str_longtest_str_l ongtest_str_long';
+       
+        arrayStruct[0].push(s1);
+        arrayStruct[0].push(s2);
         
-        arrayStruct[2][0].i8 = 60;
-        arrayStruct[2][0].str = 'test_str_short';
-        arrayStruct[2][1].i8 = 84;
-        arrayStruct[2][1].str = 'test_str_long test_str_lo ngtest_str_longtest_str_ longtest_str_longtest_ str_longtest_str_l ongtest_str_long';
-        arrayStruct[2][2].i8 = -34;
-        arrayStruct[2][2].str = 'test_str_short';
+        simpleStruct memory s3;
+        s3.i8 = 50;
+        s3.str = 'test_str_short';
         
+        arrayStruct[1].push(s3);
         
+        simpleStruct memory s4;
+        s4.i8 = 60;
+        s4.str = 'test_str_short';
+        
+        simpleStruct memory s5;
+        s5.i8 = 84;
+        s5.str = 'test_str_long test_str_lo ngtest_str_longtest_str_ longtest_str_longtest_ str_longtest_str_l ongtest_str_long';
+       
+        simpleStruct memory s6;
+        s5.i8 = -34;
+        s5.str = 'test_str_short';
+        
+        arrayStruct[2].push(s4);
+        arrayStruct[2].push(s5);
+        arrayStruct[2].push(s6);
     }
 }
 `,
