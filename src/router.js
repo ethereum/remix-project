@@ -7,6 +7,7 @@ class Router {
     this.service = service
     this.initCallback = initCallback
   }
+
   start () {
     var websocket = new Websocket(this.port, this.opt)
     this.websocket = websocket
