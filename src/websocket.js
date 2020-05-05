@@ -24,7 +24,7 @@ class WebSocket {
       httpServer: this.server,
       autoAcceptConnections: false,
       maxReceivedFrameSize: 131072,
-      maxReceivedMessageSize: 10 * 1024 * 1024,
+      maxReceivedMessageSize: 10 * 1024 * 1024
     })
 
     this.wsServer.on('request', (request) => {
