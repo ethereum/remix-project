@@ -57,8 +57,10 @@ class FileManager extends Plugin {
    * @param {string} path path of the file/directory
    * @param {string} message message to display if path doesn't exist.
    */
-  _handleExists (path, message) {
-    if (!this.exists(path)) {
+  async _handleExists (path, message) {
+    const exists = await this.exists(path)
+
+    if (!exists) {
       throw createError({ code: 'ENOENT', message })
     }
   }
@@ -68,8 +70,10 @@ class FileManager extends Plugin {
    * @param {string} path path of the file/directory
    * @param {string} message message to display if path is not a file.
    */
-  _handleIsFile (path, message) {
-    if (!this.isFile(path)) {
+  async _handleIsFile (path, message) {
+    const isFile = await this.isFile(path)
+
+    if (!isFile) {
       throw createError({ code: 'EISDIR', message })
     }
   }
@@ -79,8 +83,10 @@ class FileManager extends Plugin {
    * @param {string} path path of the file/directory
    * @param {string} message message to display if path is not a directory.
    */
-  _handleIsDir (path, message) {
-    if (this.isFile(path)) {
+  async _handleIsDir (path, message) {
+    const isDir = await this.isDirectory(path)
+
+    if (!isDir) {
       throw createError({ code: 'ENOTDIR', message })
     }
   }
@@ -100,11 +106,12 @@ class FileManager extends Plugin {
    */
   exists (path) {
     const provider = this.fileProviderOf(path)
-
-    return provider.exists(path, (err, result) => {
+    const result = provider.exists(path, (err, result) => {
       if (err) return false
       return result
     })
+    
+    return result
   }
 
   /**
@@ -114,8 +121,21 @@ class FileManager extends Plugin {
    */
   isFile (path) {
     const provider = this.fileProviderOf(path)
+    const result = provider.isFile(path)
 
-    return provider.isFile(path)
+    return result
+  }
+
+    /**
+   * Verify if the path provided is a directory
+   * @param {string} path path of the directory
+   * @returns {boolean} true if path is a directory.
+   */
+  isDirectory (path) {
+    const provider = this.fileProviderOf(path)
+    const result = provider.isDirectory(path)
+
+    return result
   }
 
   /**
@@ -123,9 +143,9 @@ class FileManager extends Plugin {
    * @param {string} path path of the file
    * @returns {void}
    */
-  open (path) {
-    this._handleExists(path, `Cannot open file ${path}`)
-    this._handleIsFile(path, `Cannot open file ${path}`)
+  async open (path) {
+    await this._handleExists(path, `Cannot open file ${path}`)
+    await this._handleIsFile(path, `Cannot open file ${path}`)
     return this.switchFile(path)
   }
 
@@ -135,9 +155,9 @@ class FileManager extends Plugin {
    * @param {string} data content to write on the file
    * @returns {void}
    */
-  writeFile (path, data) {
-    if (this.exists(path)) {
-      this._handleIsFile(path, `Cannot write file ${path}`)
+  async writeFile (path, data) {
+    if (await this.exists(path)) {
+      await this._handleIsFile(path, `Cannot write file ${path}`)
       this.setFile(path, data)
     } else {
       this.setFile(path, data)
@@ -149,9 +169,9 @@ class FileManager extends Plugin {
    * @param {string} path path of the file
    * @returns {string} content of the file
    */
-  readFile (path) {
-    this._handleExists(path, `Cannot read file ${path}`)
-    this._handleIsFile(path, `Cannot read file ${path}`)
+  async readFile (path) {
+    await this._handleExists(path, `Cannot read file ${path}`)
+    await this._handleIsFile(path, `Cannot read file ${path}`)
     return this.getFile(path)
   }
 
@@ -161,12 +181,13 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destrination file
    * @returns {void}
    */
-  copyFile (src, dest) {
-    this._handleExists(src, `Cannot copy from ${src}`)
-    this._handleIsFile(src, `Cannot copy from ${src}`)
-    this._handleIsFile(dest, `Cannot paste content into ${dest}`)
-    const content = this.readFile(src)
-    this.writeFile(dest, content)
+  async copyFile (src, dest) {
+    await this._handleExists(src, `Cannot copy from ${src}`)
+    await this._handleIsFile(src, `Cannot copy from ${src}`)
+    await this._handleIsFile(dest, `Cannot paste content into ${dest}`)
+    const content = await this.readFile(src)
+
+    await this.writeFile(dest, content)
   }
 
   /**
@@ -175,9 +196,9 @@ class FileManager extends Plugin {
    * @note will not work on a directory, use `rmdir` instead
    * @returns {void}
    */
-  unlink (path) {
-    this._handleExists(path, `Cannot remove file ${path}`)
-    this._handleIsDir(path, `Cannot remove file ${path}`)
+  async unlink (path) {
+    await this._handleExists(path, `Cannot remove file ${path}`)
+    await this._handleIsDir(path, `Cannot remove file ${path}`)
     const provider = this.fileProviderOf(path)
 
     provider.removeFile(path)
@@ -189,10 +210,10 @@ class FileManager extends Plugin {
    * @param {string} newPath new path of the file/directory
    * @returns {void}
    */
-  rename (oldPath, newPath) {
-    this.__handleExists(oldPath, `Cannot rename ${oldPath}`)
-    // todo: should we verify if newPath exists here ?
-    const isFile = this.isFile(oldPath)
+  async rename (oldPath, newPath) {
+    await this.__handleExists(oldPath, `Cannot rename ${oldPath}`)
+    const isFile = await this.isFile(oldPath)
+    
     this.fileRenamedEvent(oldPath, newPath, !isFile)
   }
 
@@ -201,8 +222,8 @@ class FileManager extends Plugin {
    * @param {string} path path of the new directory
    * @returns {void}
    */
-  mkdir (path) {
-    if (this.exists(path)) {
+  async mkdir (path) {
+    if (await this.exists(path)) {
       throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
     }
     const provider = this.fileProviderOf(path)
@@ -215,9 +236,9 @@ class FileManager extends Plugin {
    * @param {string} path path of the directory
    * @returns {string[]} list of the file/directory name in this directory
    */
-  readdir (path) {
-    this._handleExists(path)
-    this._handleIsDir(path)
+  async readdir (path) {
+    await this._handleExists(path)
+    await this._handleIsDir(path)
 
     return new Promise((resolve, reject) => {
       const provider = this.fileProviderOf(path)
@@ -235,9 +256,9 @@ class FileManager extends Plugin {
    * @note will not work on a file, use `unlink` instead
    * @returns {void}
    */
-  rmdir (path) {
-    this._handleExists(path, `Cannot remove directory ${path}`)
-    this._handleIsDir(path, `Cannot remove directory ${path}`)
+  async rmdir (path) {
+    await this._handleExists(path, `Cannot remove directory ${path}`)
+    await this._handleIsDir(path, `Cannot remove directory ${path}`)
 
     const provider = this.fileProviderOf(path)
 
