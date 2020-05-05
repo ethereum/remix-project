@@ -63,7 +63,8 @@ module.exports = {
   },
 
   exists: function (args, cb) {
-    var path = utils.absolutePath(args.path, this.currentSharedFolder)
+    const path = utils.absolutePath(args.path, this.currentSharedFolder)
+
     cb(null, fs.existsSync(path))
   },
 
@@ -114,6 +115,18 @@ module.exports = {
       if (error) console.log(error)
       cb(error, data)
     })
+  },
+
+  isDirectory: function (args, cb) {
+    const path = utils.absolutePath(args.path, this.currentSharedFolder)
+
+    cb(null, fs.statSync(path).isDirectory())
+  },
+
+  isFile: function (args, cb) {
+    const path = utils.absolutePath(args.path, this.currentSharedFolder)
+
+    cb(null, fs.statSync(path).isFile())
   },
 
   setupNotifications: function (path) {
