@@ -81,11 +81,12 @@ module.exports = class RemixDProvider {
   //
   // this.remixd.exists(path, (error, isValid) => {})
 
-  exists (path, cb) {
-    var unprefixedpath = this.removePrefix(path)
-    this._remixd.call('sharedfolder', 'exists', {path: unprefixedpath}, (error, result) => {
-      cb(error, result)
-    })
+  async exists (path, cb) {
+    const unprefixedpath = this.removePrefix(path)
+    const callId = await this._remixd.call('sharedfolder', 'exists', {path: unprefixedpath})
+    const result = await this._remixd.receiveResponse(callId)
+
+    return cb(null, result)
   }
 
   get (path, cb) {
@@ -166,6 +167,20 @@ module.exports = class RemixDProvider {
     if (!path) return callback(null, { [self.type]: { } })
     path = self.removePrefix(path)
     self.remixd.dir(path, callback)
+  }
+
+  async isDirectory (path) {
+    const unprefixedpath = this.removePrefix(path)
+    const callId = await this._remixd.call('sharedfolder', 'isDirectory', {path: unprefixedpath})
+
+    return await this._remixd.receiveResponse(callId)
+  }
+
+  async isFile (path) {
+    const unprefixedpath = this.removePrefix(path)
+    const callId = await this._remixd.call('sharedfolder', 'isFile', {path: unprefixedpath})
+
+    return await this._remixd.receiveResponse(callId)
   }
 }
 
