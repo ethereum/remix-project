@@ -10,8 +10,6 @@
     "test": "echo \"Error: no test specified\"",
     "start": "./bin/remixd",
     "npip": "npip",
-    "install-python-deps": "npip install",
-    "prepublish": "npm run install-python-deps",
     "lint": "eslint ./src"
   },
   "repository": {
