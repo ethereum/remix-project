@@ -73,9 +73,16 @@ module.exports = {
   },
 
   'Should highlight source code': function (browser) {
-    browser.addFile('browser/sourcehighlight.js', sourcehighlightScript)
+    browser.addFile('sourcehighlight.js', sourcehighlightScript)
     .switchFile('browser/sourcehighlight.js')
     .executeScript('remix.exeCurrent()')
+    .scrollUp('*[data-id="editorInput"]', 100)
+    .pause(5000)
+    .scrollUp('.ace_scroller', 100)
+    .waitForElementPresent('.highlightLine32')
+    .checkElementStyle('.highlightLine32', 'background-color', 'rgb(8, 108, 181)')
+    .waitForElementPresent('.highlightLine40')
+    .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
     .end()
   },
 
@@ -97,46 +104,48 @@ var aceThemes = {
   }
 }
 
-const sourcehighlightScript = `
-(async () => {
-  try {
-      const pos = {
-          start: {
-              line: 32,
-              column: 3
-          },
-          end: {
-              line: 32,
-              column: 20
-          }
-      }
-      await remix.call('editor', 'highlight', pos, 'browser/3_Ballot.sol')
-      
-       const pos2 = {
-          start: {
-              line: 40,
-              column: 3
-          },
-          end: {
-              line: 40,
-              column: 20
-          }
-      }
-      await remix.call('editor', 'highlight', pos2, 'browser/3_Ballot.sol')
-      
-       const pos3 = {
-          start: {
-              line: 50,
-              column: 3
-          },
-          end: {
-              line: 50,
-              column: 20
-          }
-      }
-      await remix.call('editor', 'highlight', pos3, 'browser/3_Ballot.sol')
-  } catch (e) {
-      console.log(e.message)
-  }
-})()
-`
+const sourcehighlightScript = {
+  content: `
+  (async () => {
+    try {
+        const pos = {
+            start: {
+                line: 32,
+                column: 3
+            },
+            end: {
+                line: 32,
+                column: 20
+            }
+        }
+        await remix.call('editor', 'highlight', pos, 'browser/3_Ballot.sol')
+        
+         const pos2 = {
+            start: {
+                line: 40,
+                column: 3
+            },
+            end: {
+                line: 40,
+                column: 20
+            }
+        }
+        await remix.call('editor', 'highlight', pos2, 'browser/3_Ballot.sol')
+        
+         const pos3 = {
+            start: {
+                line: 50,
+                column: 3
+            },
+            end: {
+                line: 50,
+                column: 20
+            }
+        }
+        await remix.call('editor', 'highlight', pos3, 'browser/3_Ballot.sol')
+    } catch (e) {
+        console.log(e.message)
+    }
+  })()
+  `  
+}
