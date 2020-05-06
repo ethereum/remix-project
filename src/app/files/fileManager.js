@@ -158,9 +158,9 @@ class FileManager extends Plugin {
   async writeFile (path, data) {
     if (await this.exists(path)) {
       await this._handleIsFile(path, `Cannot write file ${path}`)
-      this.setFile(path, data)
+      return await this.setFile(path, data)
     } else {
-      this.setFile(path, data)
+      return await this.setFile(path, data)
     }
   }
 
@@ -262,7 +262,7 @@ class FileManager extends Plugin {
 
     const provider = this.fileProviderOf(path)
 
-    return provider.remove(path)
+    return await provider.remove(path)
   }
 
   init () {
@@ -385,7 +385,7 @@ class FileManager extends Plugin {
         `, '', { time: 3000 })
       }
     }
-    this._setFileInternal(path, content)
+    return await this._setFileInternal(path, content)
   }
 
   _setFileInternal (path, content) {
