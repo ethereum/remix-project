@@ -234,8 +234,11 @@ function fileExplorer (localRegistry, files, menuItems) {
         const currentFoldername = extractNameFromKey(key)
 
         modalDialogCustom.confirm(`Confirm to delete folder`, `Are you sure you want to delete ${currentFoldername} folder?`,
-          () => {
-            if (!files.remove(key)) {
+          async () => {
+            const fileManager = self._deps.fileManager
+            const removeFolder = await fileManager.rmdir(key)
+
+            if (!removeFolder) {
               tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
             } else {
               self.updatePath('browser')
@@ -578,13 +581,15 @@ fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
   let self = this
   modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
     if (!input) input = 'New file'
-    helper.createNonClashingName(parentFolder + '/' + input, self.files, (error, newName) => {
+    helper.createNonClashingName(parentFolder + '/' + input, self.files, async (error, newName) => {
       if (error) return tooltip('Failed to create file ' + newName + ' ' + error)
+      const fileManager = self._deps.fileManager
+      const createFile = await fileManager.writeFile(newName, '')
 
-      if (!self.files.set(newName, '')) {
+      if (!createFile) {
         tooltip('Failed to create file ' + newName)
       } else {
-        self._deps.fileManager.open(newName)
+        await fileManager.open(newName)
         if (newName.includes('_test.sol')) {
           self.events.trigger('newTestFileCreated', [newName])
         }

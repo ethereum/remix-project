@@ -118,9 +118,9 @@ module.exports = class RemixDProvider {
     return this._readOnlyMode || this._readOnlyFiles[path] === 1
   }
 
-  remove (path) {
+  async remove (path) {
     var unprefixedpath = this.removePrefix(path)
-    this._remixd.call('sharedfolder', 'remove', {path: unprefixedpath}, (error, result) => {
+    const callId = await this._remixd.call('sharedfolder', 'remove', {path: unprefixedpath}, (error, result) => {
       if (error) console.log(error)
       var path = this.type + '/' + unprefixedpath
       delete this.filesContent[path]
@@ -128,6 +128,9 @@ module.exports = class RemixDProvider {
         this.event.trigger('fileRemoved', [path])
       })
     })
+    
+    await this._remixd.receiveResponse(callId)
+    return true
   }
 
   rename (oldPath, newPath, isFolder) {
