@@ -113,10 +113,33 @@ staticAnalysisView.prototype.run = function () {
   if (this.lastCompilationResult && selected.length) {
     this.runBtn.removeAttribute('disabled')
     let warningCount = 0
-    this.runner.run(this.lastCompilationResult, selected, function (results) {
-      results.map(function (result, i) {
-        result.report.map(function (item, i) {
+    this.runner.run(this.lastCompilationResult, selected, (results) => {
+      const groupedModules = utils.groupBy(preProcessModules(this.runner.modules()), 'categoryId')
+      results.map((result, j) => {
+        let moduleName
+        Object.keys(groupedModules).map((key) => {
+          groupedModules[key].forEach((el) => {
+            if (el.name === result.name) {
+              moduleName = groupedModules[key][0].categoryDisplayName
+              return
+            }
+          })
+        })
+        let alreadyExistedEl = this.view.querySelector(`[id="staticAnalysisModule${moduleName}"]`)
+        if (!alreadyExistedEl) {
+          warningContainer.append(`
+            <div class="mb-4" name="staticAnalysisModules" id="staticAnalysisModule${moduleName}">
+              <span class="text-dark h6">${moduleName}</span>
+            </div>
+          `)
+        }
+
+        result.report.map((item, i) => {
           let location = ''
+          let locationString = 'not available'
+          let column = 0
+          let row = 0
+          let fileName = this.currentFile
           if (item.location) {
             var split = item.location.split(':')
             var file = split[2]
@@ -127,13 +150,37 @@ staticAnalysisView.prototype.run = function () {
             location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(location,
               parseInt(file),
               self.lastCompilationSource.sources,
-              self.lastCompilationResult.sources)
-            location = Object.keys(self.lastCompilationResult.contracts)[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
+              self.lastCompilationResult.sources
+            )
+            row = location.start.line + 1
+            column = location.start.column + 1
+            locationString = row + ':' + column + ':'
+            fileName = Object.keys(self.lastCompilationResult.contracts)[file]
           }
           warningCount++
-          const msg = yo`<span>${result.name} ${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
-          self._components.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning alert alert-warning', useSpan: true})
+          const msg = yo`
+            <span class="d-flex flex-column">
+              <span class="h6">${result.name}</span>
+              ${item.warning}
+              ${item.more ? yo`<span><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}
+              <span class="" title="Position in ${fileName}">Pos: ${locationString}</span>
+            </span>`
+          self._components.renderer.error(
+            msg,
+            this.view.querySelector(`[id="staticAnalysisModule${moduleName}"]`),
+            {
+              type: 'staticAnalysisWarning mx-2 alert alert-warning',
+              useSpan: true,
+              errFile: fileName,
+              errLine: row,
+              errCol: column
+            }
+          )
         })
+      })
+      // hide empty staticAnalysisModules sections
+      this.view.querySelectorAll('[name="staticAnalysisModules"]').forEach((section) => {
+        if (!section.getElementsByClassName('alert-warning').length) section.hidden = true
       })
       self.event.trigger('staticAnaysisWarning', [warningCount])
     })
@@ -206,7 +253,7 @@ staticAnalysisView.prototype.renderModules = function () {
     return yo`
       <div class="${css.block}">
         <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}" onclick=${(e) => this.handleCollapse(e)}"/>
-        <label for="heading${categoryId}" style="cursor: pointer;" class="pl-3 h6 card-header d-flex justify-content-between font-weight-bold border-left px-1 py-2 w-100">
+        <label for="heading${categoryId}" style="cursor: pointer;" class="pl-3 card-heaader h6 d-flex justify-content-between font-weight-bold border-left px-1 py-2 w-100">
           <span>${category[0].categoryDisplayName}</span>
           <div>
             <i class="fas fa-angle-double-right"></i>

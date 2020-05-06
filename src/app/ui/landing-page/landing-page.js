@@ -195,7 +195,7 @@ export class LandingPage extends ViewPlugin {
 
     const createEnvButton = (imgPath, envID, envText, callback) => {
       return yo`
-        <button class="btn btn-lg border-secondary d-flex mr-3 justify-content-center flex-column align-items-center ${css.envButton}" data-id="landingPageStartSolidity" onclick=${() => callback()}>
+        <button class="btn border-secondary d-flex mr-3 text-nowrap justify-content-center flex-column align-items-center ${css.envButton}" data-id="landingPageStartSolidity" onclick=${() => callback()}>
           <img class="m-2 align-self-center ${css.envLogo}" id=${envID} src="${imgPath}">
           <label class="text-uppercase text-dark ${css.envLabel}">${envText}</label>
         </button>
@@ -233,8 +233,8 @@ export class LandingPage extends ViewPlugin {
             <div class="${css.logoContainer}">${img}</div>
           </div>
           <div class="${css.jumboBtnContainer} px-5">
-            <button class="btn btn-primary btn-lg mx-3" href="#" onclick=${() => learnMore()} role="button">Learn more</button>
-            <button class="btn btn-secondary btn-lg" onclick=${() => switchToPreviousVersion()}>Use previous version</button>
+            <button class="btn btn-primary mx-3" href="#" onclick=${() => learnMore()} role="button">Learn more</button>
+            <button class="btn btn-secondary" onclick=${() => switchToPreviousVersion()}>Use previous version</button>
           </div>
         </div><!-- end of jumbotron -->
       </div><!-- end of jumbotron container -->
