@@ -23,7 +23,7 @@ const profile = {
   icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNjk2IDM4NHE0MCAwIDY4IDI4dDI4IDY4djEyMTZxMCA0MC0yOCA2OHQtNjggMjhoLTk2MHEtNDAgMC02OC0yOHQtMjgtNjh2LTI4OGgtNTQ0cS00MCAwLTY4LTI4dC0yOC02OHYtNjcycTAtNDAgMjAtODh0NDgtNzZsNDA4LTQwOHEyOC0yOCA3Ni00OHQ4OC0yMGg0MTZxNDAgMCA2OCAyOHQyOCA2OHYzMjhxNjgtNDAgMTI4LTQwaDQxNnptLTU0NCAyMTNsLTI5OSAyOTloMjk5di0yOTl6bS02NDAtMzg0bC0yOTkgMjk5aDI5OXYtMjk5em0xOTYgNjQ3bDMxNi0zMTZ2LTQxNmgtMzg0djQxNnEwIDQwLTI4IDY4dC02OCAyOGgtNDE2djY0MGg1MTJ2LTI1NnEwLTQwIDIwLTg4dDQ4LTc2em05NTYgODA0di0xMTUyaC0zODR2NDE2cTAgNDAtMjggNjh0LTY4IDI4aC00MTZ2NjQwaDg5NnoiLz48L3N2Zz4=',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'unlink', 'rename', 'readdir', 'rmdir'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'readdir', 'remove'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -191,20 +191,6 @@ class FileManager extends Plugin {
   }
 
   /**
-   * Removes a file
-   * @param {string} path path of the file to remove
-   * @note will not work on a directory, use `rmdir` instead
-   * @returns {void}
-   */
-  async unlink (path) {
-    await this._handleExists(path, `Cannot remove file ${path}`)
-    await this._handleIsDir(path, `Cannot remove file ${path}`)
-    const provider = this.fileProviderOf(path)
-
-    provider.removeFile(path)
-  }
-
-  /**
    * Change the path of a file/directory
    * @param {string} oldPath current path of the file/directory
    * @param {string} newPath new path of the file/directory
@@ -251,15 +237,12 @@ class FileManager extends Plugin {
   }
 
   /**
-   * Removes a directory recursively
-   * @param {string} path path of the directory to remove
-   * @note will not work on a file, use `unlink` instead
+   * Removes a file or directory recursively
+   * @param {string} path path of the directory/file to remove
    * @returns {void}
    */
-  async rmdir (path) {
-    await this._handleExists(path, `Cannot remove directory ${path}`)
-    await this._handleIsDir(path, `Cannot remove directory ${path}`)
-
+  async remove (path) {
+    await this._handleExists(path, `Cannot remove file or directory ${path}`)
     const provider = this.fileProviderOf(path)
 
     return await provider.remove(path)

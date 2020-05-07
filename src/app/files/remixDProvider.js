@@ -129,8 +129,7 @@ module.exports = class RemixDProvider {
       })
     })
     
-    await this._remixd.receiveResponse(callId)
-    return true
+    return await this._remixd.receiveResponse(callId)
   }
 
   rename (oldPath, newPath, isFolder) {
