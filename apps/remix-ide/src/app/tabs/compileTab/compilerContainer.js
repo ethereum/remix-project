@@ -6,7 +6,7 @@ const addTooltip = require('../../ui/tooltip')
 const semver = require('semver')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const css = require('../styles/compile-tab-styles')
-import { canUseWorker } from '../../compiler/compiler-utils'
+import { canUseWorker, baseUrl } from '../../compiler/compiler-utils'
 
 class CompilerContainer {
 
@@ -25,7 +25,7 @@ class CompilerContainer {
       allversions: null,
       selectedVersion: null,
       defaultVersion: 'soljson-v0.6.6+commit.6c089d02.js', // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
-      baseurl: 'https://solc-bin.ethereum.org/bin'
+      baseurl: baseUrl
     }
   }
 
