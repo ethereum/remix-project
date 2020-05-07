@@ -55,9 +55,8 @@ module.exports = {
     const step = trace[index]
     if (this.isCallInstruction(step)) {
       return index + 1 < trace.length && trace[index + 1].stack.length !== 0
-    } else {
-      return false
     }
+    return false
   },
 
   contractCreationToken: function (index) {
