@@ -6,7 +6,7 @@ function TraceAnalyser (_cache) {
   this.trace = null
 }
 
-TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
+TraceAnalyser.prototype.analyse = function (trace, tx) {
   this.trace = trace
   this.traceCache.pushStoreChanges(0, tx.to)
   let context = {
@@ -27,7 +27,7 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
     context = this.buildStorage(k, step, context)
     this.buildReturnValues(k, step)
   }
-  callback(null, true)
+  return true
 }
 
 TraceAnalyser.prototype.buildReturnValues = function (index, step) {

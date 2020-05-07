@@ -37,16 +37,14 @@ CodeManager.prototype.resolveStep = function (stepIndex, tx) {
   if (stepIndex < 0) return
   this.event.trigger('resolvingStep')
   if (stepIndex === 0) {
-    retrieveCodeAndTrigger(this, tx.to, stepIndex, tx)
-  } else {
-    this.traceManager.getCurrentCalledAddressAt(stepIndex, (error, address) => {
-      if (error) {
-        console.log(error)
-      } else {
-        retrieveCodeAndTrigger(this, address, stepIndex, tx)
-      }
-    })
+    return retrieveCodeAndTrigger(this, tx.to, stepIndex, tx)
   }
+  this.traceManager.getCurrentCalledAddressAt(stepIndex, (error, address) => {
+    if (error) {
+      return console.log(error)
+    }
+    retrieveCodeAndTrigger(this, address, stepIndex, tx)
+  })
 }
 
 /**
@@ -56,23 +54,21 @@ CodeManager.prototype.resolveStep = function (stepIndex, tx) {
  * @param {Function} cb - callback function, return the bytecode
  */
 CodeManager.prototype.getCode = function (address, cb) {
-  if (traceHelper.isContractCreation(address)) {
-    var codes = this.codeResolver.getExecutingCodeFromCache(address)
-    if (!codes) {
-      this.traceManager.getContractCreationCode(address, (error, hexCode) => {
-        if (!error) {
-          codes = this.codeResolver.cacheExecutingCode(address, hexCode)
-          cb(null, codes)
-        }
-      })
-    } else {
-      cb(null, codes)
-    }
-  } else {
-    this.codeResolver.resolveCode(address, (address, code) => {
+  if (!traceHelper.isContractCreation(address)) {
+    return this.codeResolver.resolveCode(address).then((code) => {
       cb(null, code)
     })
   }
+  var codes = this.codeResolver.getExecutingCodeFromCache(address)
+  if (codes) {
+    return cb(null, codes)
+  }
+  this.traceManager.getContractCreationCode(address, (error, hexCode) => {
+    if (!error) {
+      codes = this.codeResolver.cacheExecutingCode(address, hexCode)
+      cb(null, codes)
+    }
+  })
 }
 
 /**
@@ -88,16 +84,14 @@ CodeManager.prototype.getFunctionFromStep = function (stepIndex, sourceMap, ast)
     if (error) {
       console.log(error)
       return { error: 'Cannot retrieve current address for ' + stepIndex }
-    } else {
-      this.traceManager.getCurrentPC(stepIndex, (error, pc) => {
-        if (error) {
-          console.log(error)
-          return { error: 'Cannot retrieve current PC for ' + stepIndex }
-        } else {
-          return this.getFunctionFromPC(address, pc, sourceMap, ast)
-        }
-      })
     }
+    this.traceManager.getCurrentPC(stepIndex, (error, pc) => {
+      if (error) {
+        console.log(error)
+        return { error: 'Cannot retrieve current PC for ' + stepIndex }
+      }
+      return this.getFunctionFromPC(address, pc, sourceMap, ast)
+    })
   })
 }
 
@@ -112,11 +106,10 @@ CodeManager.prototype.getInstructionIndex = function (address, step, callback) {
   this.traceManager.getCurrentPC(step, (error, pc) => {
     if (error) {
       console.log(error)
-      callback('Cannot retrieve current PC for ' + step, null)
-    } else {
-      const itemIndex = this.codeResolver.getInstructionIndex(address, pc)
-      callback(null, itemIndex)
+      return callback('Cannot retrieve current PC for ' + step, null)
     }
+    const itemIndex = this.codeResolver.getInstructionIndex(address, pc)
+    callback(null, itemIndex)
   })
 }
 
@@ -136,21 +129,19 @@ CodeManager.prototype.getFunctionFromPC = function (address, pc, sourceMap, ast)
 
 function retrieveCodeAndTrigger (codeMananger, address, stepIndex, tx) {
   codeMananger.getCode(address, (error, result) => {
-    if (!error) {
-      retrieveIndexAndTrigger(codeMananger, address, stepIndex, result.instructions)
-    } else {
-      console.log(error)
+    if (error) {
+      return console.log(error)
     }
+    retrieveIndexAndTrigger(codeMananger, address, stepIndex, result.instructions)
   })
 }
 
 function retrieveIndexAndTrigger (codeMananger, address, step, code) {
   codeMananger.getInstructionIndex(address, step, (error, result) => {
-    if (!error) {
-      codeMananger.event.trigger('changed', [code, address, result])
-    } else {
-      console.log(error)
+    if (error) {
+      return console.log(error)
     }
+    codeMananger.event.trigger('changed', [code, address, result])
   })
 }
 

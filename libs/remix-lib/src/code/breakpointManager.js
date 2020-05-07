@@ -67,11 +67,10 @@ class BreakpointManager {
         (sourceLocation.start <= previousSourceLocation.start &&
         sourceLocation.start + sourceLocation.length >= previousSourceLocation.start + previousSourceLocation.length)) {
         return false
-      } else {
-        self.jumpToCallback(currentStep)
-        self.event.trigger('breakpointHit', [sourceLocation, currentStep])
-        return true
       }
+      self.jumpToCallback(currentStep)
+      self.event.trigger('breakpointHit', [sourceLocation, currentStep])
+      return true
     }
 
     let sourceLocation
@@ -97,22 +96,21 @@ class BreakpointManager {
         this.previousLine = lineColumn.start.line
         if (this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line)) {
           lineHadBreakpoint = true
-          if (direction === 1) {
-            if (hitLine(currentStep, sourceLocation, previousSourceLocation, this)) {
-              return
-            }
+          if (direction === 1 && hitLine(currentStep, sourceLocation, previousSourceLocation, this)) {
+            return
           }
         }
       }
       currentStep += direction
     }
     this.event.trigger('NoBreakpointHit', [])
-    if (defaultToLimit) {
-      if (direction === -1) {
-        this.jumpToCallback(0)
-      } else if (direction === 1) {
-        this.jumpToCallback(this.debugger.traceManager.trace.length - 1)
-      }
+    if (!defaultToLimit) {
+      return
+    }
+    if (direction === -1) {
+      this.jumpToCallback(0)
+    } else if (direction === 1) {
+      this.jumpToCallback(this.debugger.traceManager.trace.length - 1)
     }
   }
 
@@ -125,16 +123,16 @@ class BreakpointManager {
     */
   hasBreakpointAtLine (fileIndex, line) {
     const filename = this.debugger.solidityProxy.fileNameFromIndex(fileIndex)
-    if (filename && this.breakpoints[filename]) {
-      const sources = this.breakpoints[filename]
-      for (let k in sources) {
-        const source = sources[k]
-        if (line === source.row) {
-          return true
-        }
+    if (!(filename && this.breakpoints[filename])) {
+      return false
+    }
+    const sources = this.breakpoints[filename]
+    for (let k in sources) {
+      const source = sources[k]
+      if (line === source.row) {
+        return true
       }
     }
-    return false
   }
 
   /**
@@ -170,15 +168,16 @@ class BreakpointManager {
     * @param {Object} sourceLocation - position of the breakpoint { file: '<file index>', row: '<line number' }
     */
   remove (sourceLocation) {
-    if (this.breakpoints[sourceLocation.fileName]) {
-      var sources = this.breakpoints[sourceLocation.fileName]
-      for (let k in sources) {
-        const source = sources[k]
-        if (sourceLocation.row === source.row) {
-          sources.splice(k, 1)
-          this.event.trigger('breakpointRemoved', [sourceLocation])
-          break
-        }
+    var sources = this.breakpoints[sourceLocation.fileName]
+    if (!sources) {
+      return
+    }
+    for (let k in sources) {
+      const source = sources[k]
+      if (sourceLocation.row === source.row) {
+        sources.splice(k, 1)
+        this.event.trigger('breakpointRemoved', [sourceLocation])
+        break
       }
     }
   }

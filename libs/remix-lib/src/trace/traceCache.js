@@ -39,31 +39,29 @@ TraceCache.prototype.pushMemoryChanges = function (value) {
 // in the vm/geth/eth. TODO add the error property (with about the error in all clients)
 TraceCache.prototype.pushCall = function (step, index, address, callStack, reverted) {
   let validReturnStep = step.op === 'RETURN' || step.op === 'STOP'
-  if (validReturnStep || reverted) {
-    if (this.currentCall) {
-      this.currentCall.call.return = index - 1
-      if (!validReturnStep) {
-        this.currentCall.call.reverted = reverted
-      }
-      var parent = this.currentCall.parent
-      this.currentCall = parent ? { call: parent.call, parent: parent.parent } : null
+  if ((validReturnStep || reverted) && (this.currentCall)) {
+    this.currentCall.call.return = index - 1
+    if (!validReturnStep) {
+      this.currentCall.call.reverted = reverted
     }
-  } else {
-    let call = {
-      op: step.op,
-      address: address,
-      callStack: callStack,
-      calls: {},
-      start: index
-    }
-    this.addresses.push(address)
-    if (this.currentCall) {
-      this.currentCall.call.calls[index] = call
-    } else {
-      this.callsTree = { call: call }
-    }
-    this.currentCall = { call: call, parent: this.currentCall }
+    var parent = this.currentCall.parent
+    this.currentCall = parent ? { call: parent.call, parent: parent.parent } : null
+    return
   }
+  let call = {
+    op: step.op,
+    address: address,
+    callStack: callStack,
+    calls: {},
+    start: index
+  }
+  this.addresses.push(address)
+  if (this.currentCall) {
+    this.currentCall.call.calls[index] = call
+  } else {
+    this.callsTree = { call: call }
+  }
+  this.currentCall = { call: call, parent: this.currentCall }
 }
 
 TraceCache.prototype.pushReturnValue = function (step, value) {
