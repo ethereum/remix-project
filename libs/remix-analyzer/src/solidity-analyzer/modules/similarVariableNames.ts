@@ -3,8 +3,8 @@ import { getDeclaredVariableName, getFullQuallyfiedFuncDefinitionIdent } from '.
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
 import { get } from 'fast-levenshtein'
-import { util } from '@remix-project/remix-lib'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, VisitFunction, ReportFunction, SupportedVersion} from './../../types'
+import { escapeRegExp } from '../../util/helpers'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, VisitFunction, ReportFunction} from './../../types'
 
 interface SimilarRecord {
   var1: string
@@ -77,7 +77,7 @@ export default class similarVariableNames implements AnalyzerModule {
   }
 
   private isCommonNrSuffixVersion (varName1: string, varName2: string): boolean {
-    const ref: string = '^' + util.escapeRegExp(varName1.slice(0, -1)) + '[0-9]*$'
+    const ref: string = '^' + escapeRegExp(varName1.slice(0, -1)) + '[0-9]*$'
     return varName2.match(ref) != null
   }
 

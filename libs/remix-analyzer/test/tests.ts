@@ -1,3 +1,5 @@
+require('./util/test')
+
 require('./analysis/staticAnalysisCommon-test')
 
 require('./analysis/staticAnalysisIntegration-test-0.4.24')

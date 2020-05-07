@@ -3,8 +3,8 @@
 import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, 
   WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, 
   MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, 
-  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter, CompiledContract } from "../../types"
-import { util } from '@remix-project/remix-lib'
+  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode } from "types"
+import { concatWithSeperator, escapeRegExp  } from '../../util/helpers'
 
 type SpecialObjDetail = {
   obj: string
@@ -439,7 +439,7 @@ function getFullQualifiedFunctionCallIdent (contract: ContractDefinitionAstNode,
 }
 
 function getFullQuallyfiedFuncDefinitionIdent (contract: ContractDefinitionAstNode, func: FunctionDefinitionAstNode, paramTypes: any[]): string {
-  return getContractName(contract) + '.' + getFunctionDefinitionName(func) + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
+  return getContractName(contract) + '.' + getFunctionDefinitionName(func) + '(' + concatWithSeperator(paramTypes, ',') + ')'
 }
 
 function getUnAssignedTopLevelBinOps (subScope: BlockAstNode | IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): ExpressionStatementAstNode[] {
@@ -675,7 +675,7 @@ function isConstructor (node: FunctionDefinitionAstNode): boolean {
  * @return {bool}
  */
 function isIntDivision (node: BinaryOperationAstNode): boolean {
-  return operator(node, exactMatch(util.escapeRegExp('/'))) && typeDescription(node.rightExpression, util.escapeRegExp('int'))
+  return operator(node, exactMatch(escapeRegExp('/'))) && typeDescription(node.rightExpression, escapeRegExp('int'))
 }
 
 /**
@@ -873,7 +873,7 @@ function isLowLevelCall (node: MemberAccessAstNode): boolean {
  */
 function isLLSend04 (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
+          exactMatch(escapeRegExp(lowLevelCallTypes.SEND.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
 }
 
@@ -884,7 +884,7 @@ function isLLSend04 (node: MemberAccessAstNode): boolean {
  */
 function isLLSend (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
+          exactMatch(escapeRegExp(lowLevelCallTypes.SEND.type)),
           undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
 }
 
@@ -895,10 +895,10 @@ function isLLSend (node: MemberAccessAstNode): boolean {
  */
 function isLLCall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
+          exactMatch(escapeRegExp(lowLevelCallTypes.CALL.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident)) ||
           isMemberAccess(node,
-            exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
+            exactMatch(escapeRegExp(lowLevelCallTypes.CALL.type)),
             undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident))
 }
 
@@ -909,7 +909,7 @@ function isLLCall (node: MemberAccessAstNode): boolean {
  */
 function isLLCall04 (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes['CALL-0.4'].type)),
+          exactMatch(escapeRegExp(lowLevelCallTypes['CALL-0.4'].type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['CALL-0.4'].ident))
 }
 
@@ -920,7 +920,7 @@ function isLLCall04 (node: MemberAccessAstNode): boolean {
  */
 function isLLCallcode (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.CALLCODE.type)),
+          exactMatch(escapeRegExp(lowLevelCallTypes.CALLCODE.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALLCODE.ident))
 }
 
@@ -931,7 +931,7 @@ function isLLCallcode (node: MemberAccessAstNode): boolean {
  */
 function isLLDelegatecall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.DELEGATECALL.type)),
+          exactMatch(escapeRegExp(lowLevelCallTypes.DELEGATECALL.type)),
           undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.DELEGATECALL.ident))
 }
 
@@ -942,7 +942,7 @@ function isLLDelegatecall (node: MemberAccessAstNode): boolean {
  */
 function isLLDelegatecall04 (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes['DELEGATECALL-0.4'].type)),
+          exactMatch(escapeRegExp(lowLevelCallTypes['DELEGATECALL-0.4'].type)),
           undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['DELEGATECALL-0.4'].ident))
 }
 
@@ -953,12 +953,12 @@ function isLLDelegatecall04 (node: MemberAccessAstNode): boolean {
  */
 function isTransfer (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.TRANSFER.type)),
+          exactMatch(escapeRegExp(lowLevelCallTypes.TRANSFER.type)),
           undefined, matches(basicTypes.ADDRESS, basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.TRANSFER.ident))
 }
 
 function isStringToBytesConversion (node: FunctionCallAstNode): boolean {
-  return isExplicitCast(node, util.escapeRegExp('string *'), util.escapeRegExp('bytes'))
+  return isExplicitCast(node, escapeRegExp('string *'), escapeRegExp('bytes'))
 }
 
 function isExplicitCast (node: FunctionCallAstNode, castFromType: string, castToType: string): boolean {
@@ -968,7 +968,7 @@ function isExplicitCast (node: FunctionCallAstNode, castFromType: string, castTo
 }
 
 function isBytesLengthCheck (node: MemberAccessAstNode): boolean {
-  return isMemberAccess(node, exactMatch(util.escapeRegExp(basicTypes.UINT)), undefined, util.escapeRegExp('bytes *'), 'length')
+  return isMemberAccess(node, exactMatch(escapeRegExp(basicTypes.UINT)), undefined, escapeRegExp('bytes *'), 'length')
 }
 
 /**
@@ -996,7 +996,7 @@ function isMemberAccess (node: MemberAccessAstNode, retType: string, accessor: s
 }
 
 function isSpecialVariableAccess (node: MemberAccessAstNode, varType: SpecialObjDetail): boolean {
-  return isMemberAccess(node, exactMatch(util.escapeRegExp(varType.type)), varType.obj, varType.obj, varType.member)
+  return isMemberAccess(node, exactMatch(escapeRegExp(varType.type)), varType.obj, varType.obj, varType.member)
 }
 
 // #################### Node Identification Primitives
@@ -1079,11 +1079,11 @@ function findFirstSubNodeLTR (node: any, type: string): any {
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function buildFunctionSignature (paramTypes: any[], returnTypes: any[], isPayable: boolean, additionalMods?: any): string {
-  return 'function (' + util.concatWithSeperator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((additionalMods) ? ' ' + additionalMods : '') + ((returnTypes.length) ? ' returns (' + util.concatWithSeperator(returnTypes, ',') + ')' : '')
+  return 'function (' + concatWithSeperator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((additionalMods) ? ' ' + additionalMods : '') + ((returnTypes.length) ? ' returns (' + concatWithSeperator(returnTypes, ',') + ')' : '')
 }
 
 function buildAbiSignature (funName: string, paramTypes: any[]): string {
-  return funName + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
+  return funName + '(' + concatWithSeperator(paramTypes, ',') + ')'
 }
 
 // To create the method signature similar to contract.evm.gasEstimates.external object

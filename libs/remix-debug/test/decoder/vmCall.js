@@ -4,7 +4,7 @@ var Tx = require('ethereumjs-tx').Transaction
 var Block = require('ethereumjs-block')
 var BN = require('ethereumjs-util').BN
 var EthJSVM = require('ethereumjs-vm').default
-var Web3VMProvider = require('../../src/web3VmProvider')
+var Web3VmProvider = require('remix-lib').vm.web3VmProvider
 
 function sendTx (vm, from, to, value, data, cb) {
   var tx = new Tx({
@@ -66,7 +66,7 @@ function initVM (st, privateKey) {
     })
   })
 
-  var web3Provider = new Web3VMProvider()
+  var web3Provider = new Web3VmProvider()
   web3Provider.setVM(vm)
   vm.web3 = web3Provider
 

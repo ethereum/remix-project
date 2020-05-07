@@ -4,7 +4,7 @@ var SourceMappingDecoder = require('../src/source/sourceMappingDecoder')
 var vmCall = require('./vmCall')
 var Debugger = require('../src/Ethdebugger')
 var compiler = require('solc')
-var Web3VmProvider = require('../src/web3VmProvider')
+var Web3VmProvider = require('remix-lib').vm.Web3VmProvider
 
 var ballot = `pragma solidity >=0.4.22 <0.7.0;
 

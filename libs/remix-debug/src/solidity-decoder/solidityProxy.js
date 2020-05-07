@@ -3,7 +3,7 @@
 const traceHelper = require('../trace/traceHelper')
 const stateDecoder = require('./stateDecoder')
 const astHelper = require('./astHelper')
-const util = require('../util')
+const util = require('remix-lib').util
 
 class SolidityProxy {
   constructor (traceManager, codeManager) {

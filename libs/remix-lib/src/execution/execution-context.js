@@ -5,7 +5,7 @@ const EventManager = require('../eventManager')
 const EthJSVM = require('ethereumjs-vm').default
 const ethUtil = require('ethereumjs-util')
 const StateManager = require('ethereumjs-vm/dist/state/stateManager').default
-const Web3VMProvider = require('../web3Provider/web3VmProvider')
+const Web3VMProvider = require('../web3Provider/Web3VmProvider')
 
 const LogsManager = require('./logsManager.js')
 

@@ -2,7 +2,7 @@
 const EventManager = require('../eventManager')
 const helper = require('../trace/traceHelper')
 const SourceMappingDecoder = require('./sourceMappingDecoder')
-const util = require('../util')
+const util = require('remix-lib').util
 
 /**
  * Process the source code location for the current executing bytecode

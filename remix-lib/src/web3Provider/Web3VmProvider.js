@@ -1,10 +1,10 @@
-const util = require('./util')
-const uiutil = require('./uiHelper')
-const traceHelper = require('./trace/traceHelper')
+const util = require('../../../remix-debug/src/util')
+const uiutil = require('../../../remix-debug/src/uiHelper')
+const traceHelper = require('../../../remix-debug/src/trace/traceHelper')
 const ethutil = require('ethereumjs-util')
 const Web3 = require('web3')
 
-function web3VmProvider () {
+function Web3VmProvider () {
   this.web3 = new Web3()
   this.vm
   this.vmTraces = {}
@@ -43,7 +43,7 @@ function web3VmProvider () {
   this.utils = Web3.utils || []
 }
 
-web3VmProvider.prototype.setVM = function (vm) {
+Web3VmProvider.prototype.setVM = function (vm) {
   if (this.vm === vm) return
   this.vm = vm
   this.vm.on('step', (data) => {
@@ -57,13 +57,13 @@ web3VmProvider.prototype.setVM = function (vm) {
   })
 }
 
-web3VmProvider.prototype.releaseCurrentHash = function () {
+Web3VmProvider.prototype.releaseCurrentHash = function () {
   const ret = this.processingHash
   this.processingHash = undefined
   return ret
 }
 
-web3VmProvider.prototype.txWillProcess = function (self, data) {
+Web3VmProvider.prototype.txWillProcess = function (self, data) {
   self.incr++
   self.processingHash = util.hexConvert(data.hash())
   self.vmTraces[self.processingHash] = {
@@ -97,7 +97,7 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
   this.processingIndex = 0
 }
 
-web3VmProvider.prototype.txProcessed = function (self, data) {
+Web3VmProvider.prototype.txProcessed = function (self, data) {
   const lastOp = self.vmTraces[self.processingHash].structLogs[self.processingIndex - 1]
   if (lastOp) {
     lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'SELFDESTRUCT'
@@ -141,7 +141,7 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
   this.previousDepth = 0
 }
 
-web3VmProvider.prototype.pushTrace = function (self, data) {
+Web3VmProvider.prototype.pushTrace = function (self, data) {
   const depth = data.depth + 1 // geth starts the depth from 1
   if (!self.processingHash) {
     console.log('no tx processing')
@@ -196,16 +196,16 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
   this.previousDepth = depth
 }
 
-web3VmProvider.prototype.getCode = function (address, cb) {
+Web3VmProvider.prototype.getCode = function (address, cb) {
   const account = ethutil.toBuffer(address)
   this.vm.stateManager.getContractCode(account, (error, result) => {
     cb(error, util.hexConvert(result))
   })
 }
 
-web3VmProvider.prototype.setProvider = function (provider) {}
+Web3VmProvider.prototype.setProvider = function (provider) {}
 
-web3VmProvider.prototype.traceTransaction = function (txHash, options, cb) {
+Web3VmProvider.prototype.traceTransaction = function (txHash, options, cb) {
   if (this.vmTraces[txHash]) {
     if (cb) {
       cb(null, this.vmTraces[txHash])
@@ -218,7 +218,7 @@ web3VmProvider.prototype.traceTransaction = function (txHash, options, cb) {
   }
 }
 
-web3VmProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, maxLength, cb) { // txIndex is the hash in the case of the VM
+Web3VmProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, maxLength, cb) { // txIndex is the hash in the case of the VM
   // we don't use the range params here
 
   if (txIndex === 'latest') {
@@ -236,9 +236,9 @@ web3VmProvider.prototype.storageRangeAt = function (blockNumber, txIndex, addres
   }
 }
 
-web3VmProvider.prototype.getBlockNumber = function (cb) { cb(null, 'vm provider') }
+Web3VmProvider.prototype.getBlockNumber = function (cb) { cb(null, 'vm provider') }
 
-web3VmProvider.prototype.getTransaction = function (txHash, cb) {
+Web3VmProvider.prototype.getTransaction = function (txHash, cb) {
   if (this.txs[txHash]) {
     if (cb) {
       cb(null, this.txs[txHash])
@@ -251,7 +251,7 @@ web3VmProvider.prototype.getTransaction = function (txHash, cb) {
   }
 }
 
-web3VmProvider.prototype.getTransactionReceipt = function (txHash, cb) {
+Web3VmProvider.prototype.getTransactionReceipt = function (txHash, cb) {
   // same as getTransaction but return the created address also
   if (this.txsReceipt[txHash]) {
     if (cb) {
@@ -265,7 +265,7 @@ web3VmProvider.prototype.getTransactionReceipt = function (txHash, cb) {
   }
 }
 
-web3VmProvider.prototype.getTransactionFromBlock = function (blockNumber, txIndex, cb) {
+Web3VmProvider.prototype.getTransactionFromBlock = function (blockNumber, txIndex, cb) {
   const mes = 'not supposed to be needed by remix in vmmode'
   console.log(mes)
   if (cb) {
@@ -273,7 +273,7 @@ web3VmProvider.prototype.getTransactionFromBlock = function (blockNumber, txInde
   }
 }
 
-web3VmProvider.prototype.preimage = function (hashedKey, cb) {
+Web3VmProvider.prototype.preimage = function (hashedKey, cb) {
   hashedKey = hashedKey.replace('0x', '')
   cb(null, this.sha3Preimages[hashedKey] !== undefined ? this.sha3Preimages[hashedKey].preimage : null)
 }
@@ -308,4 +308,4 @@ function emptyFill (size) {
   return (new Array(size)).join('0')
 }
 
-module.exports = web3VmProvider
+module.exports = Web3VmProvider
