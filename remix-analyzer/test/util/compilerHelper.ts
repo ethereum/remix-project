@@ -1,0 +1,22 @@
+export const compilerInput = (contracts) => {
+  return JSON.stringify({
+    language: 'Solidity',
+    sources: {
+      'test.sol': {
+        content: contracts
+      }
+    },
+    settings: {
+      optimizer: {
+        enabled: false,
+        runs: 200
+      },
+      outputSelection: {
+        '*': {
+          '': [ 'legacyAST', 'ast' ],
+          '*': [ 'abi', 'metadata', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
+        }
+      }
+    }
+  })
+}
