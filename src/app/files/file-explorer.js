@@ -236,12 +236,14 @@ function fileExplorer (localRegistry, files, menuItems) {
         modalDialogCustom.confirm(`Confirm to delete folder`, `Are you sure you want to delete ${currentFoldername} folder?`,
           async () => {
             const fileManager = self._deps.fileManager
-            const removeFolder = await fileManager.rmdir(key)
-
+            const removeFolder = await fileManager.remove(key)
+            
             if (!removeFolder) {
               tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
             } else {
-              self.updatePath('browser')
+              const { type } = fileManager.currentFileProvider()
+
+              self.updatePath(type)
             }
           }, () => {})
       }
@@ -278,9 +280,17 @@ function fileExplorer (localRegistry, files, menuItems) {
 
         modalDialogCustom.confirm(
           `Delete file`, `Are you sure you want to delete ${currentFilename} file?`,
-          () => {
-            files.remove(key)
-            self.updatePath('browser')
+          async () => {
+            const fileManager = self._deps.fileManager
+            const removeFile = await fileManager.remove(key)
+
+            if (!removeFile) {
+              tooltip(`failed to remove file ${key}.`)
+            } else {
+              const { type } = fileManager.currentFileProvider()
+
+              self.updatePath(type)
+            }
           },
           () => {}
         )
