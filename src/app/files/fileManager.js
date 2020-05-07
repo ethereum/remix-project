@@ -110,7 +110,7 @@ class FileManager extends Plugin {
       if (err) return false
       return result
     })
-    
+
     return result
   }
 
@@ -199,7 +199,7 @@ class FileManager extends Plugin {
   async rename (oldPath, newPath) {
     await this.__handleExists(oldPath, `Cannot rename ${oldPath}`)
     const isFile = await this.isFile(oldPath)
-    
+
     this.fileRenamedEvent(oldPath, newPath, !isFile)
   }
 

@@ -237,7 +237,7 @@ function fileExplorer (localRegistry, files, menuItems) {
           async () => {
             const fileManager = self._deps.fileManager
             const removeFolder = await fileManager.remove(key)
-            
+
             if (!removeFolder) {
               tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
             } else {
