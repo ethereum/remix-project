@@ -76,13 +76,13 @@ module.exports = {
     browser.addFile('sourcehighlight.js', sourcehighlightScript)
     .switchFile('browser/sourcehighlight.js')
     .executeScript('remix.exeCurrent()')
-    .scrollUp('*[data-id="editorInput"]', 100)
-    .pause(5000)
-    .scrollUp('.ace_scroller', 100)
+    .editorScroll('down', 60)
     .waitForElementPresent('.highlightLine32')
     .checkElementStyle('.highlightLine32', 'background-color', 'rgb(8, 108, 181)')
     .waitForElementPresent('.highlightLine40')
     .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
+    .waitForElementPresent('.highlightLine50')
+    .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
     .end()
   },
 
