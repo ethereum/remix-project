@@ -6,7 +6,7 @@ class ScrollEditor extends EventEmitter {
     const browser = this.api
 
     browser.waitForElementPresent('.ace_text-input')
-    for (let i=0; i<numberOfTimes; i++){
+    for (let i = 0; i < numberOfTimes; i++) {
       if (direction.toLowerCase() === 'up') browser.sendKeys('.ace_text-input', browser.Keys.ARROW_UP)
       if (direction.toLowerCase() === 'down') browser.sendKeys('.ace_text-input', browser.Keys.ARROW_DOWN)
     }
