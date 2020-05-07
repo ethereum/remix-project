@@ -1,7 +1,7 @@
 const semver = require('semver')
 /* global Worker */
 
-export const baseUrl = 'https://solc-bin.ethereum.org/bin'
+export const baseUrl = 'https://solc-bin.ethereum.org/wasm'
 
 export function urlFromVersion (version) {
   return `${baseUrl}/soljson-v${version}.js`
@@ -30,7 +30,7 @@ export function canUseWorker (selectedVersion) {
     default :
       isFromWhiteList = true
   }
-  return browserSupportWorker() && (!isChrome || (isChrome && isFromWhiteList))
+  return browserSupportWorker()// && (!isChrome || (isChrome && isFromWhiteList))
 }
 
 function browserSupportWorker () {
