@@ -75,7 +75,7 @@ class Remixd {
     })
   }
 
-  async receiveResponse(requestId) {
+  async receiveResponse (requestId) {
     return new Promise((resolve, reject) => {
       this.event.register('replied', (data) => {
         if (data.id === requestId) {

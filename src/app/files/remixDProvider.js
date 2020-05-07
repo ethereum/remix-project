@@ -128,7 +128,7 @@ module.exports = class RemixDProvider {
         this.event.trigger('fileRemoved', [path])
       })
     })
-    
+
     return await this._remixd.receiveResponse(callId)
   }
 

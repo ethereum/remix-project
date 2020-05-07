@@ -140,7 +140,7 @@ class FileProvider {
 
   isDirectory (path) {
     const unprefixedpath = this.removePrefix(path)
-    
+
     return path === this.type ? true : window.remixFileSystem.statSync(unprefixedpath).isDirectory()
   }
 
