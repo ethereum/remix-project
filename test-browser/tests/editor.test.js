@@ -147,5 +147,5 @@ const sourcehighlightScript = {
         console.log(e.message)
     }
   })()
-  `  
+  `
 }
