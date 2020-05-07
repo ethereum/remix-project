@@ -81,7 +81,7 @@ class InternalCallTree {
     */
   findScope (vmtraceIndex) {
     let scopeId = this.findScopeId(vmtraceIndex)
-    if (!scopeId) return null
+    if (scopeId !== '' && !scopeId) return null
     let scope = this.scopes[scopeId]
     while (scope.lastStep && scope.lastStep < vmtraceIndex && scope.firstStep > 0) {
       scopeId = this.parentScope(scopeId)
