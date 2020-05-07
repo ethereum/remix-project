@@ -111,9 +111,9 @@ module.exports = {
       return cb('File not found ' + path)
     }
     if (!isRealPath(path, cb)) return
-    fs.remove(path, (error, data) => {
+    fs.remove(path, (error) => {
       if (error) console.log(error)
-      cb(error, data)
+      cb(error, true)
     })
   },
 
