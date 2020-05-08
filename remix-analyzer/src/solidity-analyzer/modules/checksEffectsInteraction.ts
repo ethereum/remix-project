@@ -9,7 +9,7 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLA
   InlineAssemblyAstNode, ReportFunction, VisitFunction, FunctionCallGraph } from './../../types'
 
 export default class checksEffectsInteraction implements AnalyzerModule {
-  name: string = `Check effects: `
+  name: string = `Check-effects-interaction: `
   description: string = `Potential reentrancy bugs`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
