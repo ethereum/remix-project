@@ -5,7 +5,7 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class intDivisionTruncate implements AnalyzerModule {
   warningNodes: BinaryOperationAstNode[] = []
-  name: string = `Data Truncated: `
+  name: string = `Data truncated: `
   description: string = `Division on int/uint values truncates the result`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
