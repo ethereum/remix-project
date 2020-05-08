@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class blockBlockhash implements AnalyzerModule {
   warningNodes: FunctionCallAstNode[] = []
-  name: string = `Blockhash usage: `
-  description: string = `Semantics maybe unclear`
+  name: string = `Block hash: `
+  description: string = `Can be influenced by miners`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
 

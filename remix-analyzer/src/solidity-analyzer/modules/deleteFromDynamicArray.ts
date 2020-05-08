@@ -6,7 +6,7 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 export default class deleteFromDynamicArray implements AnalyzerModule {
   relevantNodes: UnaryOperationAstNode[] = []
   name: string = `Delete from dynamic array: `
-  description: string = `'delete' on an array leaves a gap`
+  description: string = `'delete' leaves a gap in array`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
