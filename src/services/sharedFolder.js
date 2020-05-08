@@ -112,7 +112,10 @@ module.exports = {
     }
     if (!isRealPath(path, cb)) return
     fs.remove(path, (error) => {
-      if (error) console.log(error)
+      if (error) {
+        console.log(error)
+        return cb('Failed to remove file/directory: ' + error)
+      }
       cb(error, true)
     })
   },
