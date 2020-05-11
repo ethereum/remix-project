@@ -86,7 +86,7 @@ module.exports = {
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
     .pause(5000)
     .click('*[data-id="testTabRunTestsTabStopAction"]')
-    .pause(2000)
+    .pause(1000)
     .assert.containsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping')
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol')
