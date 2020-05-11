@@ -91,7 +91,7 @@ module.exports = {
     .executeScript('remix.exeCurrent()')
     .switchFile('browser/3_Ballot.sol')
     .editorScroll('down', 60)
-    .elementIsNotPresent('.highlightLine32')
+    .waitForElementNotPresent('.highlightLine32')
     .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
     .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
   },
@@ -102,9 +102,9 @@ module.exports = {
     .executeScript('remix.exeCurrent()')
     .switchFile('browser/3_Ballot.sol')
     .editorScroll('down', 60)
-    .elementIsNotPresent('.highlightLine32')
-    .elementIsNotPresent('.highlightLine40')
-    .elementIsNotPresent('.highlightLine50')
+    .waitForElementNotPresent('.highlightLine32')
+    .waitForElementNotPresent('.highlightLine40')
+    .waitForElementNotPresent('.highlightLine50')
     .end()
   },
 
