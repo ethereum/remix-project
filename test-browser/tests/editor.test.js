@@ -83,6 +83,28 @@ module.exports = {
     .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
     .waitForElementPresent('.highlightLine50')
     .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
+  },
+
+  'Should remove 1 highlight from source code': function (browser) {
+    browser.addFile('removeSourcehighlightScript.js', removeSourcehighlightScript)
+    .switchFile('browser/removeSourcehighlightScript.js')
+    .executeScript('remix.exeCurrent()')
+    .switchFile('browser/3_Ballot.sol')
+    .editorScroll('down', 60)
+    .elementIsNotPresent('.highlightLine32')
+    .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
+    .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
+  },
+
+  'Should remove all highlights from source code': function (browser) {
+    browser.addFile('removeAllSourcehighlightScript.js', removeAllSourcehighlightScript)
+    .switchFile('browser/removeAllSourcehighlightScript.js')
+    .executeScript('remix.exeCurrent()')
+    .switchFile('browser/3_Ballot.sol')
+    .editorScroll('down', 60)
+    .elementIsNotPresent('.highlightLine32')
+    .elementIsNotPresent('.highlightLine40')
+    .elementIsNotPresent('.highlightLine50')
     .end()
   },
 
@@ -143,6 +165,30 @@ const sourcehighlightScript = {
             }
         }
         await remix.call('editor', 'highlight', pos3, 'browser/3_Ballot.sol')
+    } catch (e) {
+        console.log(e.message)
+    }
+  })()
+  `
+}
+
+const removeSourcehighlightScript = {
+  content: `
+  (async () => {
+    try {
+        await remix.call('editor', 'discardHighlightAt', 32, 'browser/3_Ballot.sol')         
+    } catch (e) {
+        console.log(e.message)
+    }
+  })()
+  `
+}
+
+const removeAllSourcehighlightScript = {
+  content: `
+  (async () => {
+    try {
+        await remix.call('editor', 'discardHighlight')         
     } catch (e) {
         console.log(e.message)
     }
