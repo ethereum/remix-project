@@ -47,6 +47,7 @@ class SourceHighlighter {
         .highlightcode {
           position:absolute;
           z-index:20;
+          opacity: 0.2;
           background-color: ${style || 'var(--info)'};
         }
         .highlightcode_fullLine {

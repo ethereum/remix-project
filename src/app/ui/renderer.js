@@ -55,7 +55,18 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
  *
  * @param {String or DOMElement} message
  * @param {DOMElement} container
- * @param {Object} options {useSpan, noAnnotations, click:(Function), type:(warning, error, staticAnalysisWarning), errFile, errLine, errCol}
+ * @param {Object} options {
+ *  useSpan,
+ *  noAnnotations,
+ *  click:(Function),
+ *  type:(
+ *    warning,
+ *    error
+ *  ),
+ *  errFile,
+ *  errLine,
+ *  errCol
+ * }
  */
 Renderer.prototype.error = function (message, container, opt) {
   if (!message) return
@@ -94,10 +105,10 @@ Renderer.prototype.error = function (message, container, opt) {
   $(container).append($error)
 
   $error.click((ev) => {
-    if (opt.errFile && opt.errLine && opt.errCol) {
-      this._errorClick(opt.errFile, opt.errLine, opt.errCol)
-    } else if (opt.click) {
+    if (opt.click) {
       opt.click(message)
+    } else if (opt.errFile && opt.errLine && opt.errCol) {
+      this._errorClick(opt.errFile, opt.errLine, opt.errCol)
     }
   })
 
