@@ -2,10 +2,10 @@
 const tape = require('tape')
 const txFormat = require('../src/execution/txFormat')
 const txHelper = require('../src/execution/txHelper')
-const util = require('../src/util')
+const util = require('./helpers/util')
 let compiler = require('solc')
-const compilerInput = require('../src/helpers/compilerHelper').compilerInput
-const executionContext = require('../').execution.executionContext
+const compilerInput = require('./helpers/compilerHelper').compilerInput
+const executionContext = require('../src/execution/execution-context')
 const solidityVersion = 'v0.6.0+commit.26b70077'
 
 /* tape *********************************************************** */
