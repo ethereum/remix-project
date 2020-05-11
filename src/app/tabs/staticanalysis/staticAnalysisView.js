@@ -6,6 +6,7 @@ var remixLib = require('remix-lib')
 var utils = remixLib.util
 var css = require('./styles/staticAnalysisView-styles')
 var Renderer = require('../../ui/renderer')
+const SourceHighlighter = require('../../editor/sourceHighlighter')
 
 var EventManager = require('../../../lib/events')
 
@@ -18,6 +19,7 @@ function staticAnalysisView (localRegistry, analysisModule) {
   this.lastCompilationResult = null
   this.lastCompilationSource = null
   this.currentFile = 'No file compiled'
+  this.sourceHighlighter = new SourceHighlighter()
   self._components = {
     renderer: new Renderer()
   }
@@ -105,6 +107,9 @@ staticAnalysisView.prototype.run = function () {
   if (!this.view) {
     return
   }
+  const highlightLocation = (location, fileName) => {
+    this.sourceHighlighter.currentSourceLocationFromfileName(location, fileName)
+  }
   const selected = this.selectedModules()
   const warningContainer = $('#staticanalysisresult')
   warningContainer.empty()
@@ -169,6 +174,7 @@ staticAnalysisView.prototype.run = function () {
             msg,
             this.view.querySelector(`[id="staticAnalysisModule${moduleName}"]`),
             {
+              click: () => highlightLocation(location, fileName),
               type: 'warning',
               useSpan: true,
               errFile: fileName,
