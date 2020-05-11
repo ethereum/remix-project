@@ -1,4 +1,4 @@
-const semver = require('semver')
+// const semver = require('semver')
 /* global Worker */
 
 export const baseUrl = 'https://solc-bin.ethereum.org/wasm'
@@ -13,7 +13,7 @@ export function urlFromVersion (version) {
 export function canUseWorker (selectedVersion) {
   // Following restrictions should be deleted when Solidity will release fixed versions of compilers.
   // See https://github.com/ethereum/remix-ide/issues/2461
-  const isChrome = !!window.chrome
+  /* const isChrome = !!window.chrome
   const os = retrieveOS()
   // define a whitelist for Linux
   const linuxWL = ['0.4.26', '0.5.3', '0.5.4', '0.5.5']
@@ -29,7 +29,7 @@ export function canUseWorker (selectedVersion) {
       break
     default :
       isFromWhiteList = true
-  }
+  } */
   return browserSupportWorker()// && (!isChrome || (isChrome && isFromWhiteList))
 }
 
@@ -37,7 +37,7 @@ function browserSupportWorker () {
   return document.location.protocol !== 'file:' && Worker !== undefined
 }
 
-function retrieveOS () {
+/* function retrieveOS () {
   let osName = 'Unknown OS'
   if (navigator.platform.indexOf('Win') !== -1) {
     osName = 'Windows'
@@ -45,4 +45,4 @@ function retrieveOS () {
     osName = 'Linux'
   }
   return osName
-}
+} */
