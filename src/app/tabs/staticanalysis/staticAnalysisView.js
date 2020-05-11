@@ -152,9 +152,9 @@ staticAnalysisView.prototype.run = function () {
               self.lastCompilationSource.sources,
               self.lastCompilationResult.sources
             )
-            row = location.start.line + 1
-            column = location.start.column + 1
-            locationString = row + ':' + column + ':'
+            row = location.start.line
+            column = location.start.column
+            locationString = (row + 1) + ':' + column + ':'
             fileName = Object.keys(self.lastCompilationResult.contracts)[file]
           }
           warningCount++
@@ -169,7 +169,7 @@ staticAnalysisView.prototype.run = function () {
             msg,
             this.view.querySelector(`[id="staticAnalysisModule${moduleName}"]`),
             {
-              type: 'staticAnalysisWarning mx-2 alert alert-warning',
+              type: 'warning',
               useSpan: true,
               errFile: fileName,
               errLine: row,

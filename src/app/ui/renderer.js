@@ -71,7 +71,7 @@ Renderer.prototype.error = function (message, container, opt) {
   }
 
   var errLocation = text.match(/^([^:]*):([0-9]*):(([0-9]*):)? /)
-  if (errLocation) {
+  if ((!opt.errFile || !opt.errCol || !opt.errLine) && errLocation) {
     errLocation = parseRegExError(errLocation)
     opt.errFile = errLocation.errFile
     opt.errLine = errLocation.errLine
@@ -94,7 +94,7 @@ Renderer.prototype.error = function (message, container, opt) {
   $(container).append($error)
 
   $error.click((ev) => {
-    if (opt.errFile && opt.errLine) {
+    if (opt.errFile && opt.errLine && opt.errCol) {
       this._errorClick(opt.errFile, opt.errLine, opt.errCol)
     } else if (opt.click) {
       opt.click(message)
