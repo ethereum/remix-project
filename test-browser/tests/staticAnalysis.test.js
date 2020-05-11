@@ -39,7 +39,7 @@ function runTests (browser) {
     .clickLaunchIcon('solidityStaticAnalysis')
     .click('#staticanalysisView button')
     .waitForElementPresent('#staticanalysisresult .staticAnalysisWarning', 2000, true, function () {
-      listSelectorContains(['browser/Untitled.sol:3:33:Use of tx.origin',
+      listSelectorContains(['Use of tx.origin',
         'Fallback function of contract TooMuchGas requires too much gas',
         'TooMuchGas.() : Variables have very similar names test and test1.'],
         '#staticanalysisresult .staticAnalysisWarning',
@@ -61,7 +61,7 @@ function listSelectorContains (textsToFind, selector, browser, callback) {
   }, [selector], function (result) {
     console.log(result.value)
     for (var k in textsToFind) {
-      console.log('testing ' + result.value[k] + ' against ' + textsToFind[k])
+      console.log('testing `' + result.value[k] + '` against `' + textsToFind[k] + '`')
       browser.assert.equal(result.value[k].indexOf(textsToFind[k]) !== -1, true)
     }
     callback()
