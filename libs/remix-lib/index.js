@@ -21,7 +21,7 @@ if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') 
 }
 
 function modules () {
-  return {   
+  return {
     EventManager: EventManager,
     vm: {
       Web3Providers: Web3Providers,
