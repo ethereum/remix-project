@@ -207,11 +207,6 @@ class Editor extends Plugin {
     this.sourceHighlighters.discardHighlightAt(line, filePath, from)
   }
 
-  currentHighlights () {
-    const { from } = this.currentRequest
-    return this.sourceHighlighters.currentHighlights(from)
-  }
-
   setTheme (type) {
     this.editor.setTheme('ace/theme/' + this._themes[type])
   }
