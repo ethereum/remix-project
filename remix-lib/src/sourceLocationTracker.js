@@ -65,9 +65,13 @@ function getSourceMap (address, code, contracts) {
   let bytes
   for (let file in contracts) {
     for (let contract in contracts[file]) {
-      bytes = isCreation ? contracts[file][contract].evm.bytecode.object : contracts[file][contract].evm.deployedBytecode.object
+      const bytecode = contracts[file][contract].evm.bytecode
+      const deployedBytecode = contracts[file][contract].evm.deployedBytecode
+      if (!deployedBytecode) return bytecode.sourceMap
+      
+      bytes = isCreation ? bytecode.object : deployedBytecode.object
       if (util.compareByteCode(code, '0x' + bytes)) {
-        return isCreation ? contracts[file][contract].evm.bytecode.sourceMap : contracts[file][contract].evm.deployedBytecode.sourceMap
+        return isCreation ? bytecode.sourceMap : deployedBytecode.sourceMap
       }
     }
   }
