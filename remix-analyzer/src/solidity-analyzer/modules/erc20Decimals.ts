@@ -29,13 +29,22 @@ export default class erc20Decimals implements AnalyzerModule {
                                                               (f.returns.length === 1 && (f.returns[0].type !== 'uint8' || f.node.visibility !== 'public'))
                                                             )
                                                     )
-
-        if (decimalsVar.length > 0 || decimalsFun.length > 0) {
-          warnings.push({
-            warning: 'ERC20 Contracts decimals function should have uint8 as return type',
-            location: null,
-            more: ' https://eips.ethereum.org/EIPS/eip-20'
-          })
+        if (decimalsVar.length > 0) {
+          for (const node of decimalsVar) {
+            warnings.push({
+              warning: `ERC20 contract's 'decimals' variable should be 'uint8' type`,
+              location: node.src,
+              more: ' https://eips.ethereum.org/EIPS/eip-20'
+            })
+          }
+        } else if (decimalsFun.length > 0) {
+          for (const fn of decimalsFun) {
+            warnings.push({
+              warning: `ERC20 contract's 'decimals' function should have 'uint8' as return type`,
+              location: fn.node.src,
+              more: ' https://eips.ethereum.org/EIPS/eip-20'
+            })
+          }
         }
       }
     })
