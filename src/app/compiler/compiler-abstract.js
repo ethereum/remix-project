@@ -32,6 +32,10 @@ module.exports = class CompilerAbstract {
   getSourceName (fileIndex) {
     if (this.data && this.data.sources) {
       return Object.keys(this.data.sources)[fileIndex]
+    } else if (Object.keys(this.source.sources).length === 1) {
+      // if we don't have ast, we return the only one filename present.
+      const sourcesArray = Object.keys(this.source.sources)
+      return sourcesArray[0]
     }
     return null
   }
