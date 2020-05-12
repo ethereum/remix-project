@@ -3,7 +3,6 @@ var yo = require('yo-yo')
 var css = yo`<style>
 .sol.success,
 .sol.error,
-.sol.staticAnalysisWarning,
 .sol.warning {
     white-space: pre-line;
     word-wrap: break-word;
@@ -17,7 +16,6 @@ var css = yo`<style>
 
 .sol.success pre,
 .sol.error pre,
-.sol.staticAnalysisWarning pre,
 .sol.warning pre {
     white-space: pre-line;
     overflow-y: hidden;
@@ -30,7 +28,6 @@ var css = yo`<style>
 }
 
 .sol.success .close,
-.sol.staticAnalysisWarning .close,
 .sol.error .close,
 .sol.warning .close {
     white-space: pre-line;
@@ -46,9 +43,6 @@ var css = yo`<style>
 }
 
 .sol.warning {
-}
-
-.sol.staticAnalysisWarning {
 }
 
 .sol.success {
