@@ -24,6 +24,15 @@ export interface ReportObj {
     more?: string
 }
 
+// Regarding location, she source mappings inside the AST use the following notation:
+
+// s:l:f
+
+// Where, 
+//  s is the byte-offset to the start of the range in the source file, 
+//  l is the length of the source range in bytes and 
+//  f is the source index mentioned above.
+
 export interface AnalysisReportObj extends ReportObj {
   error? : string
 }
