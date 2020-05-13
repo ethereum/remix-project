@@ -35,7 +35,7 @@ export class TabProxy {
       }
       this.addTab(file, '', () => {
         this.fileManager.open(file)
-        this.event.emit('switchFile', file)
+        this.event.emit('openFile', file)
       },
       () => {
         this.fileManager.closeFile(file)
@@ -48,7 +48,7 @@ export class TabProxy {
       // should change the tab title too
       this.addTab(newName, '', () => {
         this.fileManager.open(newName)
-        this.event.emit('switchFile', newName)
+        this.event.emit('openFile', newName)
       },
       () => {
         this.fileManager.closeFile(newName)
