@@ -20,6 +20,7 @@ function staticAnalysisView (localRegistry, analysisModule) {
   this.lastCompilationSource = null
   this.currentFile = 'No file compiled'
   this.sourceHighlighter = new SourceHighlighter()
+  this.analysisModule = analysisModule
   self._components = {
     renderer: new Renderer()
   }
@@ -108,6 +109,7 @@ staticAnalysisView.prototype.run = function () {
     return
   }
   const highlightLocation = (location, fileName) => {
+    // await this.analysisModule.call('editor', 'highlight', location, fileName) @todo(#2834) use this after fixing the issue
     this.sourceHighlighter.currentSourceLocationFromfileName(location, fileName)
   }
   const selected = this.selectedModules()
