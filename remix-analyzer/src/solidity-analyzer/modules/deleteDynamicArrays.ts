@@ -6,7 +6,7 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 export default class deleteDynamicArrays implements AnalyzerModule {
   rel: UnaryOperationAstNode[] = []
   name: string = `Delete dynamic array: `
-  description: string = `Use require/assert to ensure`
+  description: string = `Use require/assert to ensure complete deletion`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
