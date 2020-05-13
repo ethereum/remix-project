@@ -486,7 +486,7 @@ test('Integration test guardConditions module', function (t: test.Test) {
   const module: any = modules.guardConditions
   const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
-    'assembly.sol': 1,
+    'assembly.sol': 2,
     'ballot.sol': 0,
     'ballot_reentrant.sol': 0,
     'ballot_withoutWarnings.sol': 0,
