@@ -261,7 +261,7 @@ staticAnalysisView.prototype.renderModules = function () {
     return yo`
       <div class="${css.block}">
         <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}" onclick=${(e) => this.handleCollapse(e)}"/>
-        <label for="heading${categoryId}" style="cursor: pointer;" class="pl-3 card-heaader h6 d-flex justify-content-between font-weight-bold border-left px-1 py-2 w-100">
+        <label for="heading${categoryId}" style="cursor: pointer;" class="pl-3 card-header h6 d-flex justify-content-between font-weight-bold border-left px-1 py-2 w-100">
           <span>${category[0].categoryDisplayName}</span>
           <div>
             <i class="fas fa-angle-double-right"></i>
