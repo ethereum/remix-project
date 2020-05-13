@@ -108,7 +108,7 @@ const asyncAwaitWithFileManagerAccess = `
   var run = async () => {
     console.log('Waiting Promise')
     var result = await p()
-    let text = await remix.call('fileManager', 'getFile', 'browser/3_Ballot.sol')
+    let text = await remix.call('fileManager', 'readFile', 'browser/3_Ballot.sol')
     console.log('result - ', text)
   }
 
