@@ -288,7 +288,6 @@ function fileExplorer (localRegistry, files, menuItems) {
               tooltip(`failed to remove file ${key}.`)
             } else {
               const { type } = fileManager.currentFileProvider()
-              console.log('file deleted!')
               self.updatePath(type)
             }
           },
@@ -399,8 +398,6 @@ function fileExplorer (localRegistry, files, menuItems) {
 
 fileExplorer.prototype.updatePath = function (path) {
   this.files.resolveDirectory(path, (error, fileTree) => {
-    console.log('path: ', path)
-    console.log('fileTree: ', fileTree)
     if (error) console.error(error)
     if (!fileTree) return
     var newTree = normalize(path, fileTree)
