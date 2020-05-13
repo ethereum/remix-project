@@ -1,4 +1,5 @@
 require('dotenv').config()
+require("@babel/register")()
 
 module.exports = function (browser, callback, url, preloadPlugins = true) {
   browser
