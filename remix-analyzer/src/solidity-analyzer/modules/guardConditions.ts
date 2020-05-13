@@ -15,12 +15,12 @@ export default class guardConditions implements AnalyzerModule {
   }
 
   report (compilationResults: CompilationResult): ReportObj[] {
-    if (this.guards.length > 0) {
-      return [{
-        warning: 'Use assert(x) if you never ever want x to be false, not in any circumstance (apart from a bug in your code). Use require(x) if x can be false, due to e.g. invalid input or a failing external component.',
+    return this.guards.map((node) => {
+      return {
+        warning: `Use 'assert(x)' if you never ever want x to be false, not in any circumstance (apart from a bug in your code). Use 'require(x)' if x can be false, due to e.g. invalid input or a failing external component.`,
+        location: node.src,
         more: 'http://solidity.readthedocs.io/en/develop/control-structures.html#error-handling-assert-require-revert-and-exceptions'
-      }]
-    }
-    return []
+      }
+    })
   }
 }
