@@ -285,7 +285,7 @@ function fileExplorer (localRegistry, files, menuItems) {
             const removeFile = await fileManager.remove(key)
 
             if (!removeFile) {
-              tooltip(`failed to remove file ${key}.`)
+              tooltip(`Failed to remove file ${key}.`)
             } else {
               const { type } = fileManager.currentFileProvider()
               self.updatePath(type)
