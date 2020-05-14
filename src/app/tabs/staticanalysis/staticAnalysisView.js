@@ -78,7 +78,7 @@ staticAnalysisView.prototype.render = function () {
         ${this.modulesView}
       </div>
       <div class="mt-2 p-2 d-flex border-top flex-column">
-        <span>The last results for:</span>
+        <span>last results for:</span>
         <span class="text-break break-word word-break font-weight-bold" id="staticAnalysisCurrentFile">${this.currentFile}</span>
       </div>
       <div class="${css.result} my-1" id='staticanalysisresult'></div>
@@ -167,7 +167,7 @@ staticAnalysisView.prototype.run = function () {
           warningCount++
           const msg = yo`
             <span class="d-flex flex-column">
-              <span class="h6">${result.name}</span>
+              <span class="h6 font-weight-bold">${result.name}</span>
               ${item.warning}
               ${item.more ? yo`<span><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}
               <span class="" title="Position in ${fileName}">Pos: ${locationString}</span>
@@ -262,7 +262,7 @@ staticAnalysisView.prototype.renderModules = function () {
       <div class="${css.block}">
         <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}" onclick=${(e) => this.handleCollapse(e)}"/>
         <label for="heading${categoryId}" style="cursor: pointer;" class="pl-3 card-header h6 d-flex justify-content-between font-weight-bold border-left px-1 py-2 w-100">
-          <span>${category[0].categoryDisplayName}</span>
+          ${category[0].categoryDisplayName}
           <div>
             <i class="fas fa-angle-double-right"></i>
           </div>
