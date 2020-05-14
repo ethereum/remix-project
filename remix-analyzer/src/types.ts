@@ -51,7 +51,7 @@ export interface CompilationResult {
       [contractName: string]: CompilationSource
     }
     /** This contains the contract-level outputs. It can be limited/filtered by the outputSelection settings */
-    contracts?: CompiledContractObj /** If the language used has no contract names, this field should equal to an empty string. */
+    contracts: CompiledContractObj /** If the language used has no contract names, this field should equal to an empty string. */
   }
 
 export interface CompiledContractObj {
