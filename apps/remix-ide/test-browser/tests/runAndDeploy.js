@@ -25,8 +25,8 @@ module.exports = {
   'Should sign message using account key': function (browser) {
     browser.waitForElementPresent('*[data-id="settingsRemixRunSignMsg"]')
     .click('*[data-id="settingsRemixRunSignMsg"]')
-    .waitForElementPresent('*[data-id="modalDialogContainer"]')
-    .click('*[data-id="modalDialogCustomPromptText"]')
+    .pause(2000)
+    .waitForElementPresent('*[data-id="modalDialogCustomPromptText"]')
     .setValue('*[data-id="modalDialogCustomPromptText"]', 'Remix is cool!')
     .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgHash"]')
     .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgSignature"]')

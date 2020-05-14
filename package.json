@@ -26,7 +26,7 @@
     "serve": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "lint": "nx workspace-lint && nx lint",
+    "lint": "nx lint",
     "e2e": "nx e2e",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",
@@ -73,7 +73,7 @@
     "nightwatch_local_terminal": "nightwatch ./apps/remix-ide/test-browser/tests/terminal.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_gist": "nightwatch ./apps/remix-ide/test-browser/tests/gist.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_workspace": "nightwatch ./apps/remix-ide/test-browser/tests/workspace.test.js --config nightwatch.js --env chrome ",
-    "nightwatch_local_defaultLayout": "nightwatch ./apps/remix-ide/test-browser/tests/defaultLayout.test.js --config apps/remix-ide/nightwatch.js --env chrome ",
+    "nightwatch_local_defaultLayout": "nightwatch ./apps/remix-ide/test-browser/tests/defaultLayout.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_pluginManager": "nightwatch ./apps/remix-ide/test-browser/tests/pluginManager.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_publishContract": "nightwatch ./apps/remix-ide/test-browser/tests/publishContract.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_generalSettings": "nightwatch ./apps/remix-ide/test-browser/tests/generalSettings.test.js --config nightwatch.js --env chrome ",
@@ -97,7 +97,7 @@
       "apps/remix-ide/build/",
       "apps/remix-ide/src/app/editor/mode-solidity.js",
       "apps/remix-ide/soljson.js",
-      "apps/remix-ide/assets/js/0.7.7/app.js"
+      "apps/remix-ide/assets/js/"
     ],
     "parser": "babel-eslint"
   },
@@ -195,7 +195,7 @@
     "minixhr": "^3.2.2",
     "mkdirp": "^0.5.1",
     "nanohtml": "^1.6.3",
-    "nightwatch": "^0.9.20",
+    "nightwatch": "^1.3.5",
     "notify-error": "^1.2.0",
     "npm-link-local": "^1.1.0",
     "npm-merge-driver": "^2.3.5",
