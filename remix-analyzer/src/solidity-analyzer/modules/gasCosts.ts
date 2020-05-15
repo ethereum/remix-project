@@ -1,13 +1,8 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
-import { getFunctionDefinitionName, helpers, getType } from './staticAnalysisCommon'
-import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContractObj, CompiledContract, VisitFunction, AnalyzerModule, FunctionDefinitionAstNode, YulVariableDeclarationAstNode, VariableDeclarationAstNode} from './../../types'
-
-interface VisitedContract {
-  name: string
-  object: CompiledContract
-  file: string
-}
+import { getFunctionDefinitionName, helpers } from './staticAnalysisCommon'
+import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContract, AnalyzerModule, 
+  FunctionDefinitionAstNode, VariableDeclarationAstNode } from './../../types'
 
 export default class gasCosts implements AnalyzerModule {
   name: string = `Gas costs: `
@@ -24,11 +19,12 @@ export default class gasCosts implements AnalyzerModule {
   
   report (compilationResults: CompilationResult): ReportObj[] {
     const report: ReportObj[] = []
-    const filename = Object.keys(compilationResults.contracts)[0]
-    const methodsWithSignature =  this.warningNodes.map(node => {
-      let signature;
-      if(node.nodeType === 'FunctionDefinition')
-        signature = helpers.buildAbiSignature(getFunctionDefinitionName(node), node.parameters.parameters.map(node => node.typeDescriptions.typeString.split(' ')[0]))
+    const methodsWithSignature: Record<string, string>[] =  this.warningNodes.map(node => {
+      let signature: string;
+      if(node.nodeType === 'FunctionDefinition'){
+        const functionName: string = getFunctionDefinitionName(node)
+        signature = helpers.buildAbiSignature(functionName, node.parameters.parameters.map(this.getSplittedTypeDesc))
+      }
       else 
         signature = node.name + '()'
       
@@ -41,20 +37,22 @@ export default class gasCosts implements AnalyzerModule {
     for (const method of methodsWithSignature) {
       for (const filename in compilationResults.contracts) {
         for (const contractName in compilationResults.contracts[filename]) {
-          const contract = compilationResults.contracts[filename][contractName]
-          const methodGas: any = this.checkMethodGas(contract, method.signature)
+          const contract: CompiledContract = compilationResults.contracts[filename][contractName]
+          const methodGas: Record<string, any> | undefined = this.checkMethodGas(contract, method.signature)
           if(methodGas && methodGas.isInfinite) {
             if(methodGas.isFallback) {
               report.push({
                 warning: `Fallback function of contract ${contractName} requires too much gas (${methodGas.msg}). 
-                If the fallback function requires more than 2300 gas, the contract cannot receive Ether.`
+                If the fallback function requires more than 2300 gas, the contract cannot receive Ether.`,
+                location: method.src
               })
             } else {
               report.push({
                 warning: `Gas requirement of function ${contractName}.${method.name} ${methodGas.msg}. 
                 If the gas requirement of a function is higher than the block gas limit, it cannot be executed.
                 Please avoid loops in your functions or actions that modify large areas of storage
-                (this includes clearing or copying arrays in storage)`
+                (this includes clearing or copying arrays in storage)`,
+                location: method.src
               })
             } 
           } else continue
@@ -64,7 +62,14 @@ export default class gasCosts implements AnalyzerModule {
     return report
   }
 
-  private checkMethodGas(contract: any, methodSignature: string) {
+  // To create the method signature similar to contract.evm.gasEstimates.external object
+  // For address payable, return address 
+  private getSplittedTypeDesc(node: VariableDeclarationAstNode): string {
+    return node.typeDescriptions.typeString.split(' ')[0]
+  }
+
+
+  private checkMethodGas(contract: CompiledContract, methodSignature: string): Record<string, any> | undefined {
     if(contract.evm && contract.evm.gasEstimates && contract.evm.gasEstimates.external) {
       if(methodSignature === '()') {
         const fallback: string = contract.evm.gasEstimates.external['']
