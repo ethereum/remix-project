@@ -143,7 +143,7 @@ class FileManager extends Plugin {
   async open (path) {
     await this._handleExists(path, `Cannot open file ${path}`)
     await this._handleIsFile(path, `Cannot open file ${path}`)
-    return this.switchFile(path)
+    return this.openFile(path)
   }
 
   /**
@@ -274,7 +274,7 @@ class FileManager extends Plugin {
         delete this.openedFiles[oldName]
         this.openedFiles[newName] = newName
       }
-      this.switchFile(newName)
+      this.openFile(newName)
     } else {
       var newFocus
       for (var k in this.openedFiles) {
@@ -288,7 +288,7 @@ class FileManager extends Plugin {
         }
       }
       if (newFocus) {
-        this.switchFile(newFocus)
+        this.openFile(newFocus)
       }
     }
     // TODO: Only keep `this.emit` (issue#2210)
@@ -390,7 +390,7 @@ class FileManager extends Plugin {
           copyName = path + '.' + this.currentRequest.from
         }
         this._setFileInternal(copyName, content)
-        this.switchFile(copyName)
+        this.openFile(copyName)
       })
     }
   }
@@ -413,7 +413,7 @@ class FileManager extends Plugin {
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRemoved', path)
     this.events.emit('fileRemoved', path)
-    this.switchFile()
+    this.openFile()
   }
 
   unselectCurrentFile () {
@@ -424,8 +424,8 @@ class FileManager extends Plugin {
     this.events.emit('noFileSelected')
   }
 
-  switchFile (file) {
-    const _switchFile = (file) => {
+  openFile (file) {
+    const _openFile = (file) => {
       this.saveCurrentFile()
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
@@ -444,14 +444,14 @@ class FileManager extends Plugin {
         }
       })
     }
-    if (file) return _switchFile(file)
+    if (file) return _openFile(file)
     else {
       var browserProvider = this._deps.filesProviders['browser']
       browserProvider.resolveDirectory('browser', (error, filesProvider) => {
         if (error) console.error(error)
         var fileList = Object.keys(filesProvider)
         if (fileList.length) {
-          _switchFile(browserProvider.type + '/' + fileList[0])
+          _openFile(browserProvider.type + '/' + fileList[0])
         } else {
           // TODO: Only keep `this.emit` (issue#2210)
           this.emit('noFileSelected')

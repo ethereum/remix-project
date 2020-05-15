@@ -66,7 +66,7 @@ module.exports = {
     .assert.containsText('*[data-id="pluginManagerSettingsPermissionForm"]', 'No Permission requested yet')
     .modalFooterOKClick()
     .click('*[data-id="verticalIconsFileExplorerIcons"]')
-    .switchFile('browser/3_Ballot.sol')
+    .openFile('browser/3_Ballot.sol')
     .click('*[plugin="ZoKrates"]')
     .pause(5000)
     .frame(0)
