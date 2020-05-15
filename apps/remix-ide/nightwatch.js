@@ -1,12 +1,12 @@
 'use strict'
 require('@babel/register')()
 
-const crxFile = require('fs').readFileSync('./test-browser/extensions/chrome/metamask.crx')
+const crxFile = require('fs').readFileSync('test-browser/extensions/chrome/metamask.crx')
 const metamaskExtension = new Buffer.from(crxFile).toString('base64') // eslint-disable-line
 
 module.exports = {
   'src_folders': ['test-browser/tests'],
-  'output_folder': './reports/tests',
+  'output_folder': 'reports/tests',
   'custom_commands_path': ['test-browser/commands'],
   'custom_assertions_path': '',
   'page_objects_path': '',
@@ -31,7 +31,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true
       },
-      'exclude': ['./test-browser/tests/runAndDeploy.js']
+      'exclude': ['tests/runAndDeploy.js']
     },
 
     'chrome': {
