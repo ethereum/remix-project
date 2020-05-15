@@ -66,7 +66,7 @@ module.exports = {
   'Switch Tabs using tabs icon': function (browser) {
     browser
     .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-    .switchFile('browser/3_Ballot.sol')
+    .openFile('browser/3_Ballot.sol')
     .assert.containsText('div[title="browser/3_Ballot.sol"]', '3_Ballot.sol')
     .click('span[class^=dropdownCaret]')
     .click('#homeItem')

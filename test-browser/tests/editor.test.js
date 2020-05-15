@@ -10,7 +10,7 @@ module.exports = {
 
   'Should zoom in editor': function (browser) {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
-    .switchFile('browser/1_Storage.sol')
+    .openFile('browser/1_Storage.sol')
     .waitForElementVisible('*[data-id="editorInput"]')
     .checkElementStyle('*[data-id="editorInput"]', 'font-size', '12px')
     .click('*[data-id="tabProxyZoomIn"]')
@@ -74,7 +74,7 @@ module.exports = {
 
   'Should highlight source code': function (browser) {
     browser.addFile('sourcehighlight.js', sourcehighlightScript)
-    .switchFile('browser/sourcehighlight.js')
+    .openFile('browser/sourcehighlight.js')
     .executeScript('remix.exeCurrent()')
     .editorScroll('down', 60)
     .waitForElementPresent('.highlightLine32')
@@ -87,9 +87,9 @@ module.exports = {
 
   'Should remove 1 highlight from source code': function (browser) {
     browser.addFile('removeSourcehighlightScript.js', removeSourcehighlightScript)
-    .switchFile('browser/removeSourcehighlightScript.js')
+    .openFile('browser/removeSourcehighlightScript.js')
     .executeScript('remix.exeCurrent()')
-    .switchFile('browser/3_Ballot.sol')
+    .openFile('browser/3_Ballot.sol')
     .editorScroll('down', 60)
     .waitForElementNotPresent('.highlightLine32')
     .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
@@ -98,9 +98,9 @@ module.exports = {
 
   'Should remove all highlights from source code': function (browser) {
     browser.addFile('removeAllSourcehighlightScript.js', removeAllSourcehighlightScript)
-    .switchFile('browser/removeAllSourcehighlightScript.js')
+    .openFile('browser/removeAllSourcehighlightScript.js')
     .executeScript('remix.exeCurrent()')
-    .switchFile('browser/3_Ballot.sol')
+    .openFile('browser/3_Ballot.sol')
     .editorScroll('down', 60)
     .waitForElementNotPresent('.highlightLine32')
     .waitForElementNotPresent('.highlightLine40')

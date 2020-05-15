@@ -57,7 +57,7 @@ module.exports = {
   'Async/Await Script': function (browser) {
     browser
     .addFile('asyncAwait.js', { content: asyncAwait })
-    .switchFile('browser/asyncAwait.js')
+    .openFile('browser/asyncAwait.js')
     .executeScript(`remix.execute('browser/asyncAwait.js')`)
     .journalLastChild('Waiting Promise')
     .pause(5500)
@@ -67,7 +67,7 @@ module.exports = {
   'Call Remix File Manager from a script': function (browser) {
     browser
     .addFile('asyncAwaitWithFileManagerAccess.js', { content: asyncAwaitWithFileManagerAccess })
-    .switchFile('browser/asyncAwaitWithFileManagerAccess.js')
+    .openFile('browser/asyncAwaitWithFileManagerAccess.js')
     .pause(5000)
     .executeScript(`remix.execute('browser/asyncAwaitWithFileManagerAccess.js')`)
     .pause(6000)
