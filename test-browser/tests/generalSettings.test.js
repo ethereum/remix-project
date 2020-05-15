@@ -31,14 +31,14 @@ module.exports = {
     .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadata"]', 5000)
     .click('*[data-id="settingsTabGenerateContractMetadata"]')
     .click('*[data-id="verticalIconsFileExplorerIcons"]')
-    .switchFile('browser/3_Ballot.sol')
+    .openFile('browser/3_Ballot.sol')
     .click('*[data-id="verticalIconsKindsolidity"]')
     .pause(2000)
     .click('*[data-id="compilerContainerCompileBtn"]')
     .pause(3000)
     .click('*[data-id="verticalIconsKindfileExplorers"]')
-    .switchFile('browser/artifacts')
-    .switchFile('browser/artifacts/Ballot.json')
+    .openFile('browser/artifacts')
+    .openFile('browser/artifacts/Ballot.json')
   },
 
   'Should add new github access token': function (browser) {
