@@ -20,11 +20,11 @@ export interface ModuleCategory {
 
 export interface ReportObj {
     warning: string,
-    location?: string | null,
+    location: string,
     more?: string
 }
 
-// Regarding location, she source mappings inside the AST use the following notation:
+// Regarding location, the source mappings inside the AST use the following notation:
 
 // s:l:f
 
@@ -33,7 +33,10 @@ export interface ReportObj {
 //  l is the length of the source range in bytes and 
 //  f is the source index mentioned above.
 
-export interface AnalysisReportObj extends ReportObj {
+export interface AnalysisReportObj {
+  warning: string,
+  location?: string,
+  more?: string
   error? : string
 }
 
