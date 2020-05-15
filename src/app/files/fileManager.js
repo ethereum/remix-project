@@ -37,9 +37,6 @@ const createError = (err) => {
   return new Error(`${errorMsg[err.code]} ${err.message || ''}`)
 }
 
-// File System profile
-// - methods: ['getFolder', 'getCurrentFile', 'getFile', 'setFile', 'switchFile']
-
 class FileManager extends Plugin {
   constructor (editor) {
     super(profile)
