@@ -39,24 +39,26 @@ export default class gasCosts implements AnalyzerModule {
       }
     })
     for (const method of methodsWithSignature) {
-      for (const contractName in compilationResults.contracts[filename]) {
-        const contract = compilationResults.contracts[filename][contractName]
-        const methodGas: any = this.checkMethodGas(contract, method.signature)
-        if(methodGas && methodGas.isInfinite) {
-          if(methodGas.isFallback) {
-            report.push({
-              warning: `Fallback function of contract ${contractName} requires too much gas (${methodGas.msg}). 
-              If the fallback function requires more than 2300 gas, the contract cannot receive Ether.`
-            })
-          } else {
-            report.push({
-              warning: `Gas requirement of function ${contractName}.${method.name} ${methodGas.msg}. 
-              If the gas requirement of a function is higher than the block gas limit, it cannot be executed.
-              Please avoid loops in your functions or actions that modify large areas of storage
-              (this includes clearing or copying arrays in storage)`
-            })
-          } 
-        } else continue
+      for (const filename in compilationResults.contracts) {
+        for (const contractName in compilationResults.contracts[filename]) {
+          const contract = compilationResults.contracts[filename][contractName]
+          const methodGas: any = this.checkMethodGas(contract, method.signature)
+          if(methodGas && methodGas.isInfinite) {
+            if(methodGas.isFallback) {
+              report.push({
+                warning: `Fallback function of contract ${contractName} requires too much gas (${methodGas.msg}). 
+                If the fallback function requires more than 2300 gas, the contract cannot receive Ether.`
+              })
+            } else {
+              report.push({
+                warning: `Gas requirement of function ${contractName}.${method.name} ${methodGas.msg}. 
+                If the gas requirement of a function is higher than the block gas limit, it cannot be executed.
+                Please avoid loops in your functions or actions that modify large areas of storage
+                (this includes clearing or copying arrays in storage)`
+              })
+            } 
+          } else continue
+        }
       }
     }
     return report
