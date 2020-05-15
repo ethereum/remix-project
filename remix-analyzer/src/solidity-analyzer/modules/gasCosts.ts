@@ -24,7 +24,7 @@ export default class gasCosts implements AnalyzerModule {
   
   report (compilationResults: CompilationResult): ReportObj[] {
     const report: ReportObj[] = []
-
+    const filename = Object.keys(compilationResults.contracts)[0]
     const methodsWithSignature =  this.warningNodes.map(node => {
       let signature;
       if(node.nodeType === 'FunctionDefinition')
@@ -39,8 +39,8 @@ export default class gasCosts implements AnalyzerModule {
       }
     })
     for (const method of methodsWithSignature) {
-      for (const contractName in compilationResults.contracts['test.sol']) {
-        const contract = compilationResults.contracts['test.sol'][contractName]
+      for (const contractName in compilationResults.contracts[filename]) {
+        const contract = compilationResults.contracts[filename][contractName]
         const methodGas: any = this.checkMethodGas(contract, method.signature)
         if(methodGas && methodGas.isInfinite) {
           if(methodGas.isFallback) {
@@ -79,6 +79,7 @@ export default class gasCosts implements AnalyzerModule {
         if (gas === null || parseInt(gas) >= 3000000 || gas === 'infinite') {
           return {
             isInfinite: true,
+            isFallback: false,
             msg: gasString
           }
         } 
