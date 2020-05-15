@@ -18,5 +18,9 @@
       }
     }
   },
-  "projects": {}
+  "projects": {
+    "remix-ide": {
+      "tags": []
+    }
+  }
 }
