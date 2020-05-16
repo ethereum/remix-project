@@ -38,13 +38,12 @@
           }
         },
         "lint": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "commands": [
-              {
-                "command": "standard | notify-error"
-              }
-            ]
+            "linter": "eslint",
+            "config": "apps/remix-ide-e2e/.eslintrc",
+            "tsConfig": ["apps/remix-ide-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/remix-ide-e2e/**"]
           }
         },
         "test": {
