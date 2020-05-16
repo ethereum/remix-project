@@ -1,6 +1,67 @@
 {
   "version": 1,
-  "projects": {},
+  "projects": {
+    "remix-ide": {
+      "root": "apps/remix-ide",
+      "sourceRoot": "apps/remix-ide/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+              "command": "browserify apps/remix-ide/src/index.js -o apps/remix-ide/build/app.js --exclude solc"
+              }
+            ]
+          }
+        },
+        "start": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "npm-run-all -lpr serve watch onchange remixd"
+              }
+            ]
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "npx http-server ./apps/remix-ide"
+              }
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "standard | notify-error"
+              }
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "csslint && standard && node test/index.js"
+              }
+            ]
+          }
+       
+        }
+
+      }
+    }
+  },
   "cli": {
     "defaultCollection": "@nrwl/workspace"
   },
@@ -62,5 +123,6 @@
         "linter": "eslint"
       }
     }
-  }
+  },
+  "defaultProject": "remix-ide"
 }

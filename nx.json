@@ -1,5 +1,5 @@
 {
-  "npmScope": "new-workspace",
+  "npmScope": "remix-project",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
@@ -18,5 +18,9 @@
       }
     }
   },
-  "projects": {}
+  "projects": {
+    "remix-ide": {
+      "tags": []
+    }
+  }
 }
