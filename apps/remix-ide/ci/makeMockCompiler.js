@@ -10,7 +10,7 @@ compiler.loadRemoteVersion(defaultVersion, (error, solcSnapshot) => {
   console.log('solcSnapshot: ', solcSnapshot)
   if (error) console.log(error)
   var compilationResult = {}
-  const testsFolder = path.resolve(__dirname + '/../test-browser/tests/') + '/'
+  const testsFolder = path.resolve(__dirname + '/../test-browser/tests/') + '/' // eslint-disable-line
 
   gatherCompilationResults(testsFolder, compilationResult, solcSnapshot)
   replaceSolCompiler(compilationResult, solcSnapshot)
@@ -65,8 +65,8 @@ function compile (solcSnapshot, source, optimization, addCompilationResult) {
 }
 
 function replaceSolCompiler (results, solcSnapshot) {
-  const compilerPath = path.resolve(__dirname + '/../test-browser/mockcompiler/compiler.js')
-  const soljsonPath = path.resolve(__dirname + '/../soljson.js')
+  const compilerPath = path.resolve(__dirname + '/../test-browser/mockcompiler/compiler.js') // eslint-disable-line
+  const soljsonPath = path.resolve(__dirname + '/../soljson.js') // eslint-disable-line
 
   fs.readFile(compilerPath, 'utf8', function (error, data) {
     if (error) {
