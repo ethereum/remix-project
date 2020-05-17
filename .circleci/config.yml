@@ -32,7 +32,6 @@ jobs:
           name: Start Selenium
           command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
           background: true
-      - run: ls
       - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
       - store_test_results:
           path: ./apps/remix-ide/reports/tests
