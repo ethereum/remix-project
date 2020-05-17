@@ -4,7 +4,7 @@ set -e
 
 setupRemixd () {
   mkdir remixdSharedfolder
-  cd contracts
+  cd apps/remix-ide/contracts
   echo 'sharing folder: '
   echo $PWD
   remixd -s $PWD --remix-ide http://127.0.0.1:8080 &
@@ -21,7 +21,7 @@ setupRemixd
 
 sleep 5
 
-TESTFILES=$(circleci tests glob "./test-browser/tests/**/*.test.js" | circleci tests split --split-by=timings)
+TESTFILES=$(circleci tests glob "./apps/remix-ide/test-browser/tests/**/*.test.js" | circleci tests split --split-by=timings)
 npm run nightwatch_local_chrome $TESTFILES
 
 echo "$TEST_EXITCODE"
