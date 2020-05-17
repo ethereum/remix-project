@@ -70,7 +70,7 @@ function replaceSolCompiler (results, solcSnapshot) {
     console.log(solcSnapshot.version())
     data = data + '\n\nvar mockCompilerVersion = \'' + solcSnapshot.version() + '\''
     data = data + '\n\nvar mockData = ' + JSON.stringify(results) + ';\n'
-    fs.writeFile('./soljson.js', data, 'utf8', function (error) {
+    fs.writeFile('./apps/remix-ide/soljson.js', data, 'utf8', function (error) {
       if (error) {
         console.log(error)
         process.exit(1)
