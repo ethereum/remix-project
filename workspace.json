@@ -41,9 +41,16 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/remix-ide-e2e/.eslintrc",
-            "tsConfig": ["apps/remix-ide-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/remix-ide-e2e/**"]
+            "config": "apps/remix-ide/.eslintrc.json",
+            "files": [
+              "apps/remix-ide/**/*.js"
+            ],
+            "exclude": ["**/node_modules/**",
+              "apps/remix-ide/build/**/*.js",
+              "apps/remix-ide/src/app/editor/mode-solidity.js",
+              "apps/remix-ide/soljson.js",
+              "apps/remix-ide/assets/js/**/*.js"
+            ]
           }
         },
         "test": {
@@ -51,7 +58,7 @@
           "options": {
             "commands": [
               {
-                "command": "csslint && standard && node test/index.js"
+                "command": "csslint && node test/index.js"
               }
             ]
           }
