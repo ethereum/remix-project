@@ -196,7 +196,6 @@ var sources = [
       content:
       `
       pragma solidity ^0.6.0;
-
       contract helloWorld {
           string public message;
           
