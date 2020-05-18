@@ -1,6 +1,6 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
-import { getFunctionDefinitionName, helpers } from './staticAnalysisCommon'
+import { getFunctionDefinitionName, helpers, isVariableTurnedIntoGetter } from './staticAnalysisCommon'
 import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContract, AnalyzerModule, 
   FunctionDefinitionAstNode, VariableDeclarationAstNode } from './../../types'
 
@@ -13,7 +13,7 @@ export default class gasCosts implements AnalyzerModule {
   warningNodes: any[] = []
   visit (node: FunctionDefinitionAstNode | VariableDeclarationAstNode): void {
     if ((node.nodeType === 'FunctionDefinition' && node.kind !== 'constructor' && node.implemented) || 
-    (node.nodeType === 'VariableDeclaration' && node.stateVariable && node.visibility === 'public')) 
+    (node.nodeType === 'VariableDeclaration' && isVariableTurnedIntoGetter(node))) 
       this.warningNodes.push(node)
   }
   
