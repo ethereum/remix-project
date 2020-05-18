@@ -31,9 +31,8 @@ module.exports = {
     .waitForElementVisible('*[data-id="treeViewLibrowser/5_New_contract.sol"]')
     .rightClick('[data-path="browser/5_New_contract.sol"]')
     .click('*[id="menuitemrename"]')
-    .sendKeys('[data-path="browser/5_New_contract.sol"]', '5_Renamed_Contract.sol')
-    .sendKeys('[data-path="browser/5_New_contract.sol"]', browser.Keys.ENTER)
-    .keys()
+    .keys('5_Renamed_Contract.sol')
+    .keys(browser.Keys.ENTER)
     .waitForElementVisible('*[data-id="treeViewLibrowser/5_Renamed_Contract.sol"]')
   },
 
