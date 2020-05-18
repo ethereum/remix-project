@@ -642,6 +642,15 @@ function isConstantFunction (node: FunctionDefinitionAstNode): boolean {
 }
 
 /**
+* True if variable decalaration is converted into a getter method
+ * @node {ASTNode} variable declaration AstNode
+ * @return {bool}
+ */
+function isVariableTurnedIntoGetter (varDeclNode: VariableDeclarationAstNode): boolean {
+  return varDeclNode.stateVariable && varDeclNode.visibility === 'public';
+}
+
+/**
  * True if is function defintion has payable modifier
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -1109,6 +1118,7 @@ export {
   isDeleteFromDynamicArray,
   isAbiNamespaceCall,
   isSpecialVariableAccess,
+  isVariableTurnedIntoGetter,
   isDynamicArrayAccess,
   isDynamicArrayLengthAccess,
   isMappingIndexAccess,
