@@ -10,7 +10,6 @@ class TestFunction extends EventEmitter {
     browser.waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
     .click(`*[data-id="txLogger${txHash}"]`)
     .waitForElementVisible(`*[data-id="txLoggerTable${txHash}"]`)
-    .click(`*[data-id="txLoggerTable${txHash}"]`)
 
     // fetch and format transaction logs as key => pair object
     .elements('css selector', `*[data-shared="key_${txHash}"]`, (res) => {
