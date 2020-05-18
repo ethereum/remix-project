@@ -70,43 +70,44 @@ module.exports = {
     .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.dark.comment)
     .checkElementStyle('.ace_function', 'color', aceThemes.dark.function)
     .checkElementStyle('.ace_variable', 'color', aceThemes.dark.variable)
-  },
-
-  'Should highlight source code': function (browser) {
-    browser.addFile('sourcehighlight.js', sourcehighlightScript)
-    .switchFile('browser/sourcehighlight.js')
-    .executeScript('remix.exeCurrent()')
-    .editorScroll('down', 60)
-    .waitForElementPresent('.highlightLine32')
-    .checkElementStyle('.highlightLine32', 'background-color', 'rgb(8, 108, 181)')
-    .waitForElementPresent('.highlightLine40')
-    .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
-    .waitForElementPresent('.highlightLine50')
-    .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
-  },
-
-  'Should remove 1 highlight from source code': function (browser) {
-    browser.addFile('removeSourcehighlightScript.js', removeSourcehighlightScript)
-    .switchFile('browser/removeSourcehighlightScript.js')
-    .executeScript('remix.exeCurrent()')
-    .switchFile('browser/3_Ballot.sol')
-    .editorScroll('down', 60)
-    .waitForElementNotPresent('.highlightLine32')
-    .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
-    .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
-  },
-
-  'Should remove all highlights from source code': function (browser) {
-    browser.addFile('removeAllSourcehighlightScript.js', removeAllSourcehighlightScript)
-    .switchFile('browser/removeAllSourcehighlightScript.js')
-    .executeScript('remix.exeCurrent()')
-    .switchFile('browser/3_Ballot.sol')
-    .editorScroll('down', 60)
-    .waitForElementNotPresent('.highlightLine32')
-    .waitForElementNotPresent('.highlightLine40')
-    .waitForElementNotPresent('.highlightLine50')
     .end()
   },
+
+  // 'Should highlight source code': function (browser) {
+  //   browser.addFile('sourcehighlight.js', sourcehighlightScript)
+  //   .switchFile('browser/sourcehighlight.js')
+  //   .executeScript('remix.exeCurrent()')
+  //   .editorScroll('down', 60)
+  //   .waitForElementPresent('.highlightLine32')
+  //   .checkElementStyle('.highlightLine32', 'background-color', 'rgb(8, 108, 181)')
+  //   .waitForElementPresent('.highlightLine40')
+  //   .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
+  //   .waitForElementPresent('.highlightLine50')
+  //   .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
+  // },
+
+  // 'Should remove 1 highlight from source code': function (browser) {
+  //   browser.addFile('removeSourcehighlightScript.js', removeSourcehighlightScript)
+  //   .switchFile('browser/removeSourcehighlightScript.js')
+  //   .executeScript('remix.exeCurrent()')
+  //   .switchFile('browser/3_Ballot.sol')
+  //   .editorScroll('down', 60)
+  //   .waitForElementNotPresent('.highlightLine32')
+  //   .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
+  //   .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
+  // },
+
+  // 'Should remove all highlights from source code': function (browser) {
+  //   browser.addFile('removeAllSourcehighlightScript.js', removeAllSourcehighlightScript)
+  //   .switchFile('browser/removeAllSourcehighlightScript.js')
+  //   .executeScript('remix.exeCurrent()')
+  //   .switchFile('browser/3_Ballot.sol')
+  //   .editorScroll('down', 60)
+  //   .waitForElementNotPresent('.highlightLine32')
+  //   .waitForElementNotPresent('.highlightLine40')
+  //   .waitForElementNotPresent('.highlightLine50')
+  //   .end()
+  // },
 
   tearDown: sauce
 }
