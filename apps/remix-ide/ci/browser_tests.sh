@@ -3,12 +3,10 @@
 set -e
 
 setupRemixd () {
-  mkdir remixdSharedfolder
-  cd apps/remix-ide/contracts
+  SHAREDDIR="apps/remix-ide/contracts"
   echo 'sharing folder: '
-  echo $PWD
-  ./../node_modules/remixd/bin/remixd -s $PWD --remix-ide http://127.0.0.1:8080 &
-  cd ../../
+  echo $PWD$SHAREDDIR
+  remixd -s $PWD$SHAREDDIR --remix-ide http://127.0.0.1:8080 &
 }
 
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
