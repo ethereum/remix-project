@@ -125,7 +125,7 @@ test('Integration test constantFunctions module', function (t: test.Test) {
   const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
-    'ballot.sol': 0,
+    'ballot.sol': 1,
     'ballot_reentrant.sol': 0,
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
@@ -233,7 +233,7 @@ test('Integration test gasCosts module', function (t: test.Test) {
   const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 2,
     'assembly.sol': 2,
-    'ballot.sol': 3,
+    'ballot.sol': 4,
     'ballot_reentrant.sol': 2,
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 1,

@@ -141,5 +141,7 @@ contract Ballot {
     {
         winnerName = proposals[winningProposal()].name;
     }
+
+    function testWithArray (bytes32[] memory param) public {}
 }
 

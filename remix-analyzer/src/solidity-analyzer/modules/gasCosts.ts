@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { getFunctionDefinitionName, helpers, isVariableTurnedIntoGetter } from './staticAnalysisCommon'
 import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContract, AnalyzerModule, 
-  FunctionDefinitionAstNode, VariableDeclarationAstNode } from './../../types'
+  FunctionDefinitionAstNode, VariableDeclarationAstNode, CompiledContractObj } from './../../types'
 
 export default class gasCosts implements AnalyzerModule {
   name: string = `Gas costs: `
@@ -23,7 +23,7 @@ export default class gasCosts implements AnalyzerModule {
       let signature: string;
       if(node.nodeType === 'FunctionDefinition'){
         const functionName: string = getFunctionDefinitionName(node)
-        signature = helpers.buildAbiSignature(functionName, node.parameters.parameters.map(this.getSplittedTypeDesc))
+        signature = helpers.buildAbiSignature(functionName, this.getSplittedTypeDesc(node, compilationResults.contracts))
       }
       else 
         signature = node.name + '()'
@@ -64,8 +64,48 @@ export default class gasCosts implements AnalyzerModule {
 
   // To create the method signature similar to contract.evm.gasEstimates.external object
   // For address payable, return address 
-  private getSplittedTypeDesc(node: VariableDeclarationAstNode): string {
-    return node.typeDescriptions.typeString.split(' ')[0]
+  private getSplittedTypeDesc(node: FunctionDefinitionAstNode, contracts: CompiledContractObj): string[] {
+    return node.parameters.parameters.map((varNode, varIndex) => {
+      let finalTypeString;
+      const typeString = varNode.typeDescriptions.typeString
+      if(typeString.includes('struct')) {
+        const paramsCount = node.parameters.parameters.length
+        const fnName = node.name
+        for (const filename in contracts) {
+          for (const contractName in contracts[filename]) {
+            const methodABI = contracts[filename][contractName].abi
+              .find(e => e.name === fnName && e.inputs?.length && 
+                  e.inputs[varIndex]['type'].includes('tuple') && 
+                  e.inputs[varIndex]['internalType'] === typeString)
+            if(methodABI && methodABI.inputs) {
+              const inputs = methodABI.inputs[varIndex]
+              let typeStr = this.getTypeStringFromComponents(inputs['components'])
+              finalTypeString = typeStr + inputs['type'].replace('tuple', '')
+            }
+          }
+        }
+      } else 
+        finalTypeString = typeString.split(' ')[0]
+      return finalTypeString
+    })
+  }
+
+  private getTypeStringFromComponents(components: any[]) {
+    let typeString = '('
+    for(var i=0; i < components.length; i++) {
+      const param = components[i]
+      if(param.type.includes('tuple') && param.components && param.components.length > 0){
+        typeString = typeString + this.getTypeStringFromComponents(param.components)
+        typeString = typeString + param.type.replace('tuple', '')
+      }
+      else
+        typeString = typeString + param.type
+
+      if(i !== components.length - 1)
+        typeString = typeString + ','
+    }
+    typeString = typeString + ')'
+    return typeString
   }
 
 
