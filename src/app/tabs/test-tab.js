@@ -4,7 +4,7 @@ var tooltip = require('../ui/tooltip')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
 import { ViewPlugin } from '@remixproject/engine'
-import { canUseWorker, baseUrl } from '../compiler/compiler-utils'
+import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
 
 const TestTabLogic = require('./testTab/testTab')
 
@@ -301,7 +301,7 @@ module.exports = class TestTab extends ViewPlugin {
       let runningTest = {}
       runningTest[path] = { content }
       const {currentVersion, evmVersion, optimize} = this.compileTab.getCurrentCompilerConfig()
-      const currentCompilerUrl = baseUrl + '/' + currentVersion
+      const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
         evmVersion,
@@ -327,7 +327,7 @@ module.exports = class TestTab extends ViewPlugin {
       const runningTest = {}
       runningTest[testFilePath] = { content }
       const {currentVersion, evmVersion, optimize} = this.compileTab.getCurrentCompilerConfig()
-      const currentCompilerUrl = baseUrl + '/' + currentVersion
+      const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
         evmVersion,
