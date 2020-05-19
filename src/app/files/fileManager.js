@@ -432,13 +432,16 @@ class FileManager extends Plugin {
   openFile (file) {
     const _openFile = (file) => {
       this.saveCurrentFile()
+      const provider = this.fileProviderOf(file)
+      if (!provider) return console.error(`no provider for ${file}`)
+      file = provider.getPathFromUrl(file) || file // in case an external URL is given as input, we resolve it to the right internal path
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
-      this.fileProviderOf(file).get(file, (error, content) => {
+      provider.get(file, (error, content) => {
         if (error) {
           console.log(error)
         } else {
-          if (this.fileProviderOf(file).isReadOnly(file)) {
+          if (provider.isReadOnly(file)) {
             this.editor.openReadOnly(file, content)
           } else {
             this.editor.open(file, content)
