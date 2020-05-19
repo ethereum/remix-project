@@ -39,8 +39,9 @@ class SourceHighlighter {
     this.source = null
     if (lineColumnPos) {
       this.source = filePath
-      if (this._deps.config.get('currentFile') !== this.source) {
+      if (this._deps.fileManager.currentFile() !== this.source) {
         await this._deps.fileManager.open(this.source)
+        this.source = this._deps.fileManager.currentFile()
       }
 
       const css = csjs`
