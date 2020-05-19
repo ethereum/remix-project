@@ -89,6 +89,14 @@ module.exports = class RemixDProvider {
     return cb(null, result)
   }
 
+  getNormalizedName (path) {
+    return path
+  }
+
+  getPathFromUrl (path) {
+    return path
+  }
+
   get (path, cb) {
     var unprefixedpath = this.removePrefix(path)
     this._remixd.call('sharedfolder', 'get', {path: unprefixedpath}, (error, file) => {
