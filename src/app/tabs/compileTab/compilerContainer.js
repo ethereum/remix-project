@@ -6,7 +6,7 @@ const addTooltip = require('../../ui/tooltip')
 const semver = require('semver')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const css = require('../styles/compile-tab-styles')
-import { canUseWorker, baseUrl } from '../../compiler/compiler-utils'
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '../../compiler/compiler-utils'
 
 class CompilerContainer {
 
@@ -25,7 +25,8 @@ class CompilerContainer {
       allversions: null,
       selectedVersion: null,
       defaultVersion: 'soljson-v0.6.6+commit.6c089d02.js', // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
-      baseurl: baseUrl
+      baseURLWasm: baseURLWasm,
+      baseURLBin: baseURLBin
     }
   }
 
@@ -383,7 +384,7 @@ class CompilerContainer {
       if (this.data.selectedVersion.indexOf('soljson') !== 0 || helper.checkSpecialChars(this.data.selectedVersion)) {
         return console.log('loading ' + this.data.selectedVersion + ' not allowed')
       }
-      url = `${this.data.baseurl}/${this.data.selectedVersion}`
+      url = `${urlFromVersion(this.data.selectedVersion)}`
     }
 
     // Workers cannot load js on "file:"-URLs and we get a
@@ -413,25 +414,59 @@ class CompilerContainer {
     if (this._view.version) this._view.version.innerText = text
   }
 
+  // fetching both normal and wasm builds and creating an array [version, baseUrl]
   fetchAllVersion (callback) {
-    minixhr(`${this.data.baseurl}/list.json`, (json, event) => {
+    let allVersions, selectedVersion, allVersionsWasm, urls
+    // fetch normal builds
+    minixhr(`${this.data.baseURLBin}/list.json`, (json, event) => {
       // @TODO: optimise and cache results to improve app loading times #2461
-      var allversions, selectedVersion
       if (event.type !== 'error') {
         try {
           const data = JSON.parse(json)
-          allversions = data.builds.slice().reverse()
+          allVersions = data.builds.slice().reverse()
           selectedVersion = this.data.defaultVersion
           if (this.queryParams.get().version) selectedVersion = this.queryParams.get().version
+          // no fetching wasm builds
+          minixhr(`${this.data.baseURLWasm}/list.json`, (json, event) => {
+            // @TODO: optimise and cache results to improve app loading times #2461
+            if (event.type !== 'error') {
+              try {
+                const data = JSON.parse(json)
+                allVersionsWasm = data.builds.slice().reverse()
+                //selectedVersion = this.data.defaultVersion
+                if (this.queryParams.get().version) selectedVersion = this.queryParams.get().version
+                // rewriting all versions in allVersions which exist in allVersionsWasm
+                if (allVersionsWasm && allVersions)
+                allVersions.forEach((compiler, index) => {
+                  const rewritten = allVersionsWasm.findIndex(oldCompiler => { return oldCompiler.longVersion === compiler.longVersion })
+                  if (-1 !== rewritten) {
+                    allVersions[index] = allVersionsWasm[rewritten]
+                    pathToURL[compiler.path] = baseURLWasm
+                  } else {
+                    pathToURL[compiler.path] = baseURLBin
+                  }
+                })
+                callback(allVersions, selectedVersion)
+              } catch (e) {
+                addTooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
+              }
+            } else {
+              allVersionsWasm = [{ path: 'builtin', longVersion: 'latest local version' }]
+              selectedVersion = 'builtin'
+            }
+            //callback(allVersions, selectedVersion)
+          })
         } catch (e) {
           addTooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
         }
       } else {
-        allversions = [{ path: 'builtin', longVersion: 'latest local version' }]
+        allVersions = [{ path: 'builtin', longVersion: 'latest local version' }]
         selectedVersion = 'builtin'
       }
-      callback(allversions, selectedVersion)
+      //callback(allVersions, selectedVersion)
     })
+    
+    
   }
 
   scheduleCompilation () {
