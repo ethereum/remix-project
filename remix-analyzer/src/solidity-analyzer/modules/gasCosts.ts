@@ -1,6 +1,6 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
-import { getFunctionDefinitionName, helpers, isVariableTurnedIntoGetter, getSplittedTypeDesc } from './staticAnalysisCommon'
+import { getFunctionDefinitionName, helpers, isVariableTurnedIntoGetter, getMethodParamsSplittedTypeDesc } from './staticAnalysisCommon'
 import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContract, AnalyzerModule, 
   FunctionDefinitionAstNode, VariableDeclarationAstNode } from './../../types'
 
@@ -23,7 +23,7 @@ export default class gasCosts implements AnalyzerModule {
       let signature: string;
       if(node.nodeType === 'FunctionDefinition'){
         const functionName: string = getFunctionDefinitionName(node)
-        signature = helpers.buildAbiSignature(functionName, getSplittedTypeDesc(node, compilationResults.contracts))
+        signature = helpers.buildAbiSignature(functionName, getMethodParamsSplittedTypeDesc(node, compilationResults.contracts))
       }
       else 
         signature = node.name + '()'
