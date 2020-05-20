@@ -1,12 +1,11 @@
 
 const yo = require('yo-yo')
-const minixhr = require('minixhr')
 const helper = require('../../../lib/helper')
 const addTooltip = require('../../ui/tooltip')
 const semver = require('semver')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const css = require('../styles/compile-tab-styles')
-import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '../../compiler/compiler-utils'
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '../../compiler/compiler-utils'
 
 class CompilerContainer {
 
@@ -414,61 +413,42 @@ class CompilerContainer {
     if (this._view.version) this._view.version.innerText = text
   }
 
-  // fetching both normal and wasm builds and creating an array [version, baseUrl]
-  fetchAllVersion (callback) {
-    let allVersions, selectedVersion, allVersionsWasm, urls
+  // fetching both normal and wasm builds and creating a [version, baseUrl] map
+  async fetchAllVersion (callback) {
+    let allVersions, selectedVersion, allVersionsWasm
     // fetch normal builds
-    minixhr(`${this.data.baseURLBin}/list.json`, (json, event) => {
-      // @TODO: optimise and cache results to improve app loading times #2461
-      if (event.type !== 'error') {
-        try {
-          const data = JSON.parse(json)
-          allVersions = data.builds.slice().reverse()
-          selectedVersion = this.data.defaultVersion
-          if (this.queryParams.get().version) selectedVersion = this.queryParams.get().version
-          // no fetching wasm builds
-          minixhr(`${this.data.baseURLWasm}/list.json`, (json, event) => {
-            // @TODO: optimise and cache results to improve app loading times #2461
-            if (event.type !== 'error') {
-              try {
-                const data = JSON.parse(json)
-                allVersionsWasm = data.builds.slice().reverse()
-                //selectedVersion = this.data.defaultVersion
-                if (this.queryParams.get().version) selectedVersion = this.queryParams.get().version
-                // rewriting all versions in allVersions which exist in allVersionsWasm
-                if (allVersionsWasm && allVersions)
-                allVersions.forEach((compiler, index) => {
-                  const rewritten = allVersionsWasm.findIndex(oldCompiler => { return oldCompiler.longVersion === compiler.longVersion })
-                  if (-1 !== rewritten) {
-                    allVersions[index] = allVersionsWasm[rewritten]
-                    pathToURL[compiler.path] = baseURLWasm
-                  } else {
-                    pathToURL[compiler.path] = baseURLBin
-                  }
-                })
-                callback(allVersions, selectedVersion)
-              } catch (e) {
-                addTooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
-              }
-            } else {
-              allVersionsWasm = [{ path: 'builtin', longVersion: 'latest local version' }]
-              selectedVersion = 'builtin'
-            }
-            //callback(allVersions, selectedVersion)
-          })
-        } catch (e) {
-          addTooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
-        }
-      } else {
-        allVersions = [{ path: 'builtin', longVersion: 'latest local version' }]
-        selectedVersion = 'builtin'
+    const binRes = await promisedMiniXhr(`${this.data.baseURLBin}/list.json`)
+    // fetch wasm builds
+    const wasmRes = await promisedMiniXhr(`${this.data.baseURLWasm}/list.json`)
+    if (binRes.event.type === 'error' && wasmRes.event.type === 'error') {
+      allVersions = [{ path: 'builtin', longVersion: 'latest local version' }]
+      selectedVersion = 'builtin'
+      callback(allVersions, selectedVersion)
+    }
+    try {
+      allVersions = JSON.parse(binRes.json).builds.slice().reverse()
+      selectedVersion = this.data.defaultVersion
+      if (this.queryParams.get().version) selectedVersion = this.queryParams.get().version
+      if (wasmRes.event.type !== 'error') {
+        allVersionsWasm = JSON.parse(wasmRes.json).builds.slice().reverse()
       }
-      //callback(allVersions, selectedVersion)
-    })
-    
-    
+    } catch (e) {
+      addTooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload. Error: ' + e)
+    }
+    // replace in allVersions those compiler builds which exist in allVersionsWasm with new once
+    if (allVersionsWasm && allVersions) {
+      allVersions.forEach((compiler, index) => {
+        const wasmIndex = allVersionsWasm.findIndex(wasmCompiler => { return wasmCompiler.longVersion === compiler.longVersion })
+        if (wasmIndex !== -1) {
+          allVersions[index] = allVersionsWasm[wasmIndex]
+          pathToURL[compiler.path] = baseURLWasm
+        } else {
+          pathToURL[compiler.path] = baseURLBin
+        }
+      })
+    }
+    callback(allVersions, selectedVersion)
   }
-
   scheduleCompilation () {
     if (!this.config.get('autoCompile')) return
     if (this.data.compileTimeout) window.clearTimeout(this.data.compileTimeout)
