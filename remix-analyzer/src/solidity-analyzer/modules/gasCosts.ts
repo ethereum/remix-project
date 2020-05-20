@@ -1,13 +1,8 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
-import  AbstractAst from './abstractAstView'
-import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContractObj, CompiledContract, VisitFunction, AnalyzerModule} from './../../types'
-
-interface VisitedContract {
-  name: string
-  object: CompiledContract
-  file: string
-}
+import { getFunctionDefinitionName, helpers, isVariableTurnedIntoGetter, getMethodParamsSplittedTypeDesc } from './staticAnalysisCommon'
+import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContract, AnalyzerModule, 
+  FunctionDefinitionAstNode, VariableDeclarationAstNode } from './../../types'
 
 export default class gasCosts implements AnalyzerModule {
   name: string = `Gas costs: `
@@ -15,58 +10,80 @@ export default class gasCosts implements AnalyzerModule {
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
 
-  abstractAst: AbstractAst = new AbstractAst()
-  visit: VisitFunction = this.abstractAst.build_visit((node: any) => false)
+  warningNodes: any[] = []
+  visit (node: FunctionDefinitionAstNode | VariableDeclarationAstNode): void {
+    if ((node.nodeType === 'FunctionDefinition' && node.kind !== 'constructor' && node.implemented) || 
+    (node.nodeType === 'VariableDeclaration' && isVariableTurnedIntoGetter(node))) 
+      this.warningNodes.push(node)
+  }
   
   report (compilationResults: CompilationResult): ReportObj[] {
     const report: ReportObj[] = []
-    this.visitContracts(compilationResults.contracts, (contract: VisitedContract) => {
-      if (
-        !contract.object.evm.gasEstimates ||
-        !contract.object.evm.gasEstimates.external
-      ) {
-        return
+    const methodsWithSignature: Record<string, string>[] =  this.warningNodes.map(node => {
+      let signature: string;
+      if(node.nodeType === 'FunctionDefinition'){
+        const functionName: string = getFunctionDefinitionName(node)
+        signature = helpers.buildAbiSignature(functionName, getMethodParamsSplittedTypeDesc(node, compilationResults.contracts))
       }
-      const fallback: string = contract.object.evm.gasEstimates.external['']
-      if (fallback !== undefined) {
-        if (fallback === null || parseInt(fallback) >= 2100 || fallback === 'infinite') {
-          report.push({
-            warning: `Fallback function of contract ${contract.name} requires too much gas (${fallback}). 
-            If the fallback function requires more than 2300 gas, the contract cannot receive Ether.`
-          })
-        }
-      }
-
-      for (var functionName in contract.object.evm.gasEstimates.external) {
-        if (functionName === '') {
-          continue
-        }
-        const gas: string = contract.object.evm.gasEstimates.external[functionName]
-        const gasString: string = gas === null ? 'unknown or not constant' : 'high: ' + gas
-        if (gas === null || parseInt(gas) >= 3000000 || gas === 'infinite') {
-          report.push({
-            warning: `Gas requirement of function ${contract.name}.${functionName} ${gasString}. 
-            If the gas requirement of a function is higher than the block gas limit, it cannot be executed.
-            Please avoid loops in your functions or actions that modify large areas of storage
-            (this includes clearing or copying arrays in storage)`
-          })
-        }
+      else 
+        signature = node.name + '()'
+      
+      return {
+        name: node.name,
+        src: node.src,
+        signature: signature
       }
     })
+    for (const method of methodsWithSignature) {
+      for (const filename in compilationResults.contracts) {
+        for (const contractName in compilationResults.contracts[filename]) {
+          const contract: CompiledContract = compilationResults.contracts[filename][contractName]
+          const methodGas: Record<string, any> | undefined = this.checkMethodGas(contract, method.signature)
+          if(methodGas && methodGas.isInfinite) {
+            if(methodGas.isFallback) {
+              report.push({
+                warning: `Fallback function of contract ${contractName} requires too much gas (${methodGas.msg}). 
+                If the fallback function requires more than 2300 gas, the contract cannot receive Ether.`,
+                location: method.src
+              })
+            } else {
+              report.push({
+                warning: `Gas requirement of function ${contractName}.${method.name} ${methodGas.msg}. 
+                If the gas requirement of a function is higher than the block gas limit, it cannot be executed.
+                Please avoid loops in your functions or actions that modify large areas of storage
+                (this includes clearing or copying arrays in storage)`,
+                location: method.src
+              })
+            } 
+          } else continue
+        }
+      }
+    }
     return report
   }
 
-  /**
-  * call the given @arg cb (function) for all the contracts. Uses last compilation result
-  * stop visiting when cb return true
-  * @param {Function} cb    - callback
-  */
-  // @TODO has been copied from remix-ide repo ! should fix that soon !
-  private visitContracts (contracts: CompiledContractObj | undefined, cb: ((contract: VisitedContract) => void | undefined)): void {
-    for (let file in contracts) {
-      for (let name in contracts[file]) {
-        if (cb({ name: name, object: contracts[file][name], file: file })) return
+  private checkMethodGas(contract: CompiledContract, methodSignature: string): Record<string, any> | undefined {
+    if(contract.evm && contract.evm.gasEstimates && contract.evm.gasEstimates.external) {
+      if(methodSignature === '()') {
+        const fallback: string = contract.evm.gasEstimates.external['']
+          if (fallback !== undefined && (fallback === null || parseInt(fallback) >= 2100 || fallback === 'infinite')) {
+            return {
+              isInfinite: true,
+              isFallback: true,
+              msg: fallback
+            }
+          } 
+      } else {
+        const gas: string = contract.evm.gasEstimates.external[methodSignature]
+        const gasString: string = gas === null ? 'unknown or not constant' : 'high: ' + gas
+        if (gas === null || parseInt(gas) >= 3000000 || gas === 'infinite') {
+          return {
+            isInfinite: true,
+            isFallback: false,
+            msg: gasString
+          }
+        } 
       }
     }
-  }
+  }   
 }
