@@ -25,5 +25,6 @@ module.exports = {
   parameterFunction: require('./parameterFunction.json'),
   parameterFunctionCall: require('./parameterFunctionCall.json'),
   inheritance: require('./inheritance.json'),
-  blockHashAccess: require('./blockHashAccess.json')
+  blockHashAccess: require('./blockHashAccess.json'),
+  funcDefForComplexParams: require('./funcDefForComplexParams.json')
 }
