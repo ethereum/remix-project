@@ -20,11 +20,11 @@ export interface ModuleCategory {
 
 export interface ReportObj {
     warning: string,
-    location?: string | null,
+    location: string,
     more?: string
 }
 
-// Regarding location, she source mappings inside the AST use the following notation:
+// Regarding location, the source mappings inside the AST use the following notation:
 
 // s:l:f
 
@@ -33,7 +33,10 @@ export interface ReportObj {
 //  l is the length of the source range in bytes and 
 //  f is the source index mentioned above.
 
-export interface AnalysisReportObj extends ReportObj {
+export interface AnalysisReportObj {
+  warning: string,
+  location?: string,
+  more?: string
   error? : string
 }
 
@@ -51,7 +54,7 @@ export interface CompilationResult {
       [contractName: string]: CompilationSource
     }
     /** This contains the contract-level outputs. It can be limited/filtered by the outputSelection settings */
-    contracts?: CompiledContractObj /** If the language used has no contract names, this field should equal to an empty string. */
+    contracts: CompiledContractObj /** If the language used has no contract names, this field should equal to an empty string. */
   }
 
 export interface CompiledContractObj {
@@ -834,6 +837,7 @@ export interface CommonYulAstNode {
   }
   
   export interface ABIParameter {
+    internalType: string
     /** The name of the parameter */
     name: string
     /** The canonical type of the parameter */
