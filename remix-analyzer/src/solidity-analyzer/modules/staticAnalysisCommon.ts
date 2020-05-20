@@ -3,7 +3,7 @@
 import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, 
   WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, 
   MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, 
-  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode } from "types"
+  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj } from "types"
 import { util } from 'remix-lib'
 
 type SpecialObjDetail = {
@@ -1077,6 +1077,52 @@ function buildAbiSignature (funName: string, paramTypes: any[]): string {
   return funName + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
 }
 
+// To create the method signature similar to contract.evm.gasEstimates.external object
+  // For address payable, return address 
+  function getSplittedTypeDesc(node: FunctionDefinitionAstNode, contracts: CompiledContractObj): string[] {
+    return node.parameters.parameters.map((varNode, varIndex) => {
+      let finalTypeString;
+      const typeString = varNode.typeDescriptions.typeString
+      if(typeString.includes('struct')) {
+        const paramsCount = node.parameters.parameters.length
+        const fnName = node.name
+        for (const filename in contracts) {
+          for (const contractName in contracts[filename]) {
+            const methodABI = contracts[filename][contractName].abi
+              .find(e => e.name === fnName && e.inputs?.length && 
+                  e.inputs[varIndex]['type'].includes('tuple') && 
+                  e.inputs[varIndex]['internalType'] === typeString)
+            if(methodABI && methodABI.inputs) {
+              const inputs = methodABI.inputs[varIndex]
+              let typeStr = getTypeStringFromComponents(inputs['components'])
+              finalTypeString = typeStr + inputs['type'].replace('tuple', '')
+            }
+          }
+        }
+      } else 
+        finalTypeString = typeString.split(' ')[0]
+      return finalTypeString
+    })
+  }
+
+  function getTypeStringFromComponents(components: any[]) {
+    let typeString = '('
+    for(var i=0; i < components.length; i++) {
+      const param = components[i]
+      if(param.type.includes('tuple') && param.components && param.components.length > 0){
+        typeString = typeString + getTypeStringFromComponents(param.components)
+        typeString = typeString + param.type.replace('tuple', '')
+      }
+      else
+        typeString = typeString + param.type
+
+      if(i !== components.length - 1)
+        typeString = typeString + ','
+    }
+    typeString = typeString + ')'
+    return typeString
+  }
+
 const helpers = {
   expressionTypeDescription,
   nodeType,
@@ -1112,6 +1158,7 @@ export {
   getFunctionOrModifierDefinitionParameterPart,
   getFunctionDefinitionReturnParameterPart,
   getUnAssignedTopLevelBinOps,
+  getSplittedTypeDesc,
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray,
