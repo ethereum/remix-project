@@ -3,8 +3,10 @@ import * as common from '../../src/solidity-analyzer/modules/staticAnalysisCommo
 const { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignment, abiNamespaceCallNodes,
     inlineAssembly, unaryOperation, nowAst, blockTimestamp, stateVariableContractNode,
     functionDefinition, requireCall, selfdestruct, storageVariableNodes, dynamicDeleteUnaryOp,
-    lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess, contractDefinition } = require('./astBlocks')
+    lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess, contractDefinition, funcDefForComplexParams } = require('./astBlocks')
 
+
+const compiledContractObj = require('./compilationDetails/CompiledContractObj.json')
 function escapeRegExp (str) {
   return str.replace(/[-[\]/{}()+?.\\^$|]/g, '\\$&')
 }
@@ -287,6 +289,13 @@ test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
   t.ok(common.getFullQuallyfiedFuncDefinitionIdent(contractDefinition, functionDefinition, ['uint256', 'bool']) === 'C.f(uint256,bool)', 'creates right signature')
   t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(contractDefinition, parameterFunctionCall, ['uint256', 'bool']), new RegExp('staticAnalysisCommon.js: not a FunctionDefinition Node'), 'throws on wrong nodes')
   t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(parameterFunctionCall, functionDefinition, ['uint256', 'bool']), new RegExp('staticAnalysisCommon.js: not a ContractDefinition Node'), 'throws on wrong nodes')
+})
+
+test('staticAnalysisCommon.getSplittedTypeDesc', function (t) {
+  t.plan(3)
+  t.ok(common.getMethodParamsSplittedTypeDesc(funcDefForComplexParams.withoutParams, compiledContractObj).length === 0, 'no params, no params type signature')
+  t.ok(common.getMethodParamsSplittedTypeDesc(funcDefForComplexParams.bytesArray, compiledContractObj)[0] === 'bytes32[]', 'creates right params type signature')
+  t.ok(common.getMethodParamsSplittedTypeDesc(funcDefForComplexParams.nestedStruct, compiledContractObj)[0] === '(bytes32,uint256,uint256[],address,(bytes32,uint256)[])[][]', 'creates right params type signature')
 })
 
 // #################### Complex Node Identification
