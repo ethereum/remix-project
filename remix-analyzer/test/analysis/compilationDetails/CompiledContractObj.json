@@ -1,0 +1,84 @@
+{ "test.sol":
+    { "Ballot":
+       { "abi": [
+        {"inputs":[{"internalType":"bytes32[]","name":"proposalNames","type":"bytes32[]"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},
+        {"constant":true,"inputs":[],"name":"chairperson","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},
+        {"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"delegate","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+        {"constant":false,"inputs":[{"internalType":"address","name":"voter","type":"address"}],"name":"giveRightToVote","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+        {"constant":true,"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"bytes32","name":"name","type":"bytes32"},{"internalType":"uint256","name":"voteCount","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},
+        {"constant":false,"inputs":[{"internalType":"bytes32[]","name":"param","type":"bytes32[]"}],"name":"testWithArray","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+        {"constant":false,"inputs":[{"components":[{"internalType":"bytes32","name":"name","type":"bytes32"},{"internalType":"uint256","name":"voteCount","type":"uint256"},{"internalType":"uint256[]","name":"arr","type":"uint256[]"},{"internalType":"address payable","name":"sender","type":"address"},{"components":[{"internalType":"bytes32","name":"name","type":"bytes32"},{"internalType":"uint256","name":"voteCount","type":"uint256"}],"internalType":"struct Ballot.Proposal[]","name":"p","type":"tuple[]"}],"internalType":"struct Ballot.Proposal1[][]","name":"param","type":"tuple[][]"}],"name":"testWithArrayOfStruct","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+        {"constant":false,"inputs":[{"internalType":"uint256","name":"proposal","type":"uint256"}],"name":"vote","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+        {"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"voters","outputs":[{"internalType":"uint256","name":"weight","type":"uint256"},{"internalType":"bool","name":"voted","type":"bool"},{"internalType":"address","name":"delegate","type":"address"},{"internalType":"uint256","name":"vote","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},
+        {"constant":true,"inputs":[],"name":"winnerName","outputs":[{"internalType":"bytes32","name":"winnerName_","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},
+        {"constant":true,"inputs":[],"name":"winningProposal","outputs":[{"internalType":"uint256","name":"winningProposal_","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}
+        ],
+         "evm": "[Object]",
+         "metadata":
+          {"compiler":
+            {
+                "version":"0.5.17+commit.d19bba13"
+            },
+            "language":"Solidity",
+            "output":{
+                "abi":[
+                    {"inputs":[{"internalType":"bytes32[]","name":"proposalNames","type":"bytes32[]"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},
+                    {"constant":true,"inputs":[],"name":"chairperson","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},
+                    {"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"delegate","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+                    {"constant":false,"inputs":[{"internalType":"address","name":"voter","type":"address"}],"name":"giveRightToVote","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+                    {"constant":true,"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"bytes32","name":"name","type":"bytes32"},{"internalType":"uint256","name":"voteCount","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},
+                    {"constant":false,"inputs":[{"internalType":"bytes32[]","name":"param","type":"bytes32[]"}],"name":"testWithArray","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+                    {"constant":false,"inputs":[{"components":[{"internalType":"bytes32","name":"name","type":"bytes32"},{"internalType":"uint256","name":"voteCount","type":"uint256"},{"internalType":"uint256[]","name":"arr","type":"uint256[]"},{"internalType":"address payable","name":"sender","type":"address"},{"components":[{"internalType":"bytes32","name":"name","type":"bytes32"},{"internalType":"uint256","name":"voteCount","type":"uint256"}],"internalType":"struct Ballot.Proposal[]","name":"p","type":"tuple[]"}],"internalType":"struct Ballot.Proposal1[][]","name":"param","type":"tuple[][]"}],"name":"testWithArrayOfStruct","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+                    {"constant":false,"inputs":[{"internalType":"uint256","name":"proposal","type":"uint256"}],"name":"vote","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+                    {"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"voters","outputs":[{"internalType":"uint256","name":"weight","type":"uint256"},{"internalType":"bool","name":"voted","type":"bool"},{"internalType":"address","name":"delegate","type":"address"},{"internalType":"uint256","name":"vote","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},
+                    {"constant":true,"inputs":[],"name":"winnerName","outputs":[{"internalType":"bytes32","name":"winnerName_","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},
+                    {"constant":true,"inputs":[],"name":"winningProposal","outputs":[{"internalType":"uint256","name":"winningProposal_","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}
+                    ],
+                    "devdoc":{
+                        "details":"Implements voting process along with vote delegation",
+                        "methods":{
+                            "constructor":{
+                                "details":"Create a new ballot to choose one of proposalNames",
+                                "params":{"proposalNames":"names of proposals"}
+                                },
+                            "delegate(address)":{
+                                "details":"Delegate your vote to the voter",
+                                "params":{"to":"address to which vote is delegated"}
+                            },
+                            "giveRightToVote(address)":{
+                                "details":"Give voter the right to vote on this ballot. May only be called by chairperson",
+                                "params":{"voter":"address of voter"}
+                            },
+                            "vote(uint256)":{
+                                "details":"Give your vote (including votes delegated to you) to proposal proposals[proposal].name",
+                                "params":{"proposal":"index of proposal in the proposals array"}
+                                },
+                            "winnerName()":{
+                                "details":"Calls winningProposal() function to get the index of the winner contained in the proposals array and then",
+                                "return":"winnerName_ the name of the winner"
+                                },
+                            "winningProposal()":{
+                                "details":"Computes the winning proposal taking all previous votes into account.",
+                                "return":"winningProposal_ index of winning proposal in the proposals array"}
+                            },
+                            "title":"Ballot"
+                        },
+                    "userdoc":{"methods":{}}},
+                    "settings":{
+                        "compilationTarget":{"test.sol":"Ballot"},
+                        "evmVersion":"istanbul",
+                        "libraries":{},
+                        "optimizer":{"enabled":false,"runs":200},
+                        "remappings":[]},
+                        "sources":{
+                            "test.sol":{
+                                "keccak256":"0x1008aa4339f4493c8b48dc3d4217403c26a19b1524d1cd79f43d8963e376357e",
+                                "urls":["bzz-raw://0576de9b9e96c2c26296ac3fd9db440d42816bcf3ff03fe50c0323578e089398",
+                                    "dweb:/ipfs/QmZ3uBGpFbQ5VsdfVyG8R2KBvwn2oW4SeuFHi1sq9zuMFE"]
+                                }
+                            },
+                        "version":1
+                        } 
+                    } 
+                } 
+            }
