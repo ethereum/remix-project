@@ -46,7 +46,7 @@ export default class checksEffectsInteraction implements AnalyzerModule {
           let comments: string = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''
           comments += (multipleContractsWithSameName) ? 'Note: Import aliases are currently not supported by this static analysis.' : ''
           warnings.push({
-            warning: `Potential Violation of Checks-Effects-Interaction pattern in ${funcName}: Could potentially lead to re-entrancy vulnerability. ${comments}`,
+            warning: `Potential violation of Checks-Effects-Interaction pattern in ${funcName}: Could potentially lead to re-entrancy vulnerability. ${comments}`,
             location: func.node['src'],
             more: 'http://solidity.readthedocs.io/en/develop/security-considerations.html#re-entrancy'
           })
