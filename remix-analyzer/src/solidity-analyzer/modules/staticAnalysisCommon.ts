@@ -1084,7 +1084,6 @@ function buildAbiSignature (funName: string, paramTypes: any[]): string {
       let finalTypeString;
       const typeString = varNode.typeDescriptions.typeString
       if(typeString.includes('struct')) {
-        const paramsCount = node.parameters.parameters.length
         const fnName = node.name
         for (const filename in contracts) {
           for (const contractName in contracts[filename]) {
