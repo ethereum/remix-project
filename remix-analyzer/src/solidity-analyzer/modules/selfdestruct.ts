@@ -26,7 +26,7 @@ export default class selfdestruct implements AnalyzerModule {
         func.relevantNodes.forEach((node) => {
           if (isSelfdestructCall(node)) {
             warnings.push({
-              warning: 'Use of selfdestruct: can block calling contracts unexpectedly. Be especially careful if this contract is planned to be used by other contracts (i.e. library contracts, interactions). Selfdestruction of the callee contract can leave callers in an inoperable state.',
+              warning: `Use of selfdestruct: Can block calling contracts unexpectedly. Be especially careful if this contract is planned to be used by other contracts (i.e. library contracts, interactions). Selfdestruction of the callee contract can leave callers in an inoperable state.`,
               location: node.src,
               more: 'https://paritytech.io/blog/security-alert.html'
             })
@@ -34,7 +34,7 @@ export default class selfdestruct implements AnalyzerModule {
           }
           if (isStatement(node) && hasSelf) {
             warnings.push({
-              warning: 'Use of selfdestruct: No code after selfdestruct is executed. Selfdestruct is a terminal.',
+              warning: `Use of selfdestruct: No code after selfdestruct is executed. Selfdestruct is a terminal.`,
               location: node.src,
               more: 'http://solidity.readthedocs.io/en/develop/introduction-to-smart-contracts.html#self-destruct'
             })

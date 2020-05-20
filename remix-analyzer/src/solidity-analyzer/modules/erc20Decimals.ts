@@ -32,7 +32,7 @@ export default class erc20Decimals implements AnalyzerModule {
         if (decimalsVar.length > 0) {
           for (const node of decimalsVar) {
             warnings.push({
-              warning: `ERC20 contract's 'decimals' variable should be 'uint8' type`,
+              warning: `ERC20 contract's "decimals" variable should be "uint8" type`,
               location: node.src,
               more: ' https://eips.ethereum.org/EIPS/eip-20'
             })
@@ -40,7 +40,7 @@ export default class erc20Decimals implements AnalyzerModule {
         } else if (decimalsFun.length > 0) {
           for (const fn of decimalsFun) {
             warnings.push({
-              warning: `ERC20 contract's 'decimals' function should have 'uint8' as return type`,
+              warning: `ERC20 contract's "decimals" function should have "uint8" as return type`,
               location: fn.node.src,
               more: ' https://eips.ethereum.org/EIPS/eip-20'
             })
