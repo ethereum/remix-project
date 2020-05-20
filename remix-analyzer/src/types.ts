@@ -837,6 +837,7 @@ export interface CommonYulAstNode {
   }
   
   export interface ABIParameter {
+    internalType: string
     /** The name of the parameter */
     name: string
     /** The canonical type of the parameter */
