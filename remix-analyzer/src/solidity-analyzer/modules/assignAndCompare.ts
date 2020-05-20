@@ -18,7 +18,7 @@ export default class assignAndCompare implements AnalyzerModule {
   report (compilationResults: CompilationResult): ReportObj[] {
     return this.warningNodes.map((item, i) => {
       return {
-        warning: 'A binary operation yields a value that is not used in the following. This is often caused by confusing assignment (=) and comparison (==).',
+        warning: 'A binary operation yields a value that is not used further. This is often caused by confusing assignment (=) and comparison (==).',
         location: item.src
       }
     })

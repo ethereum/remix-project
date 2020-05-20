@@ -48,7 +48,7 @@ export default class gasCosts implements AnalyzerModule {
               })
             } else {
               report.push({
-                warning: `Gas requirement of function ${contractName}.${method.name} ${methodGas.msg}. 
+                warning: `Gas requirement of function ${contractName}.${method.name} ${methodGas.msg}: 
                 If the gas requirement of a function is higher than the block gas limit, it cannot be executed.
                 Please avoid loops in your functions or actions that modify large areas of storage
                 (this includes clearing or copying arrays in storage)`,
@@ -75,7 +75,7 @@ export default class gasCosts implements AnalyzerModule {
           } 
       } else {
         const gas: string = contract.evm.gasEstimates.external[methodSignature]
-        const gasString: string = gas === null ? 'unknown or not constant' : 'high: ' + gas
+        const gasString: string = gas === null ? 'unknown or not constant' : 'is ' + gas
         if (gas === null || parseInt(gas) >= 3000000 || gas === 'infinite') {
           return {
             isInfinite: true,
