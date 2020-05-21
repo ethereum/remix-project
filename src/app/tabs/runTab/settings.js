@@ -178,7 +178,7 @@ class SettingsUI {
     selectExEnv.addEventListener('change', (event) => {
       let context = selectExEnv.options[selectExEnv.selectedIndex].value
       this.blockchain.changeExecutionContext(context, () => {
-        modalDialogCustom.prompt('External node request', this.web3ProviderDialogBody(), 'http://localhost:8545', (target) => {
+        modalDialogCustom.prompt('External node request', this.web3ProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
           this.blockchain.setProviderFromEndpoint(target, context, (alertMsg) => {
             if (alertMsg) addTooltip(alertMsg)
             this.setFinalContext()
