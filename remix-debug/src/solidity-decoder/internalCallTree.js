@@ -109,7 +109,10 @@ class InternalCallTree {
     let functions = []
     if (!scopeId) return functions
     while (true) {
-      functions.push(this.functionDefinitionsByScope[scopeId])
+      let functionDefinition = this.functionDefinitionsByScope[scopeId]
+      if (functionDefinition !== undefined) {
+        functions.push(functionDefinition)
+      }
       let parent = this.parentScope(scopeId)
       if (!parent) break
       else scopeId = parent
