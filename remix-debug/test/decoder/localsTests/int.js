@@ -37,7 +37,25 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
           })
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
             try {
-              console.log(scopeStarts)
+              let functions1 = callTree.retrieveFunctionsStack(101)
+              let functions2 = callTree.retrieveFunctionsStack(113)
+              let functions3 = callTree.retrieveFunctionsStack(13)
+
+              st.equals(functions1.length, 1)
+              st.equals(functions2.length, 2)
+              st.equals(functions3.length, 0)
+
+              st.equals(Object.keys(functions1[0])[0], 'functionDefinition')
+              st.equals(Object.keys(functions1[0])[1], 'inputs')
+              st.equals(Object.keys(functions2[0])[0], 'functionDefinition')
+              st.equals(Object.keys(functions2[0])[1], 'inputs')
+              st.equals(Object.keys(functions2[1])[0], 'functionDefinition')
+              st.equals(Object.keys(functions2[1])[1], 'inputs')
+
+              st.equals(functions1[0].functionDefinition.attributes.name, 'level11')
+              st.equals(functions2[0].functionDefinition.attributes.name, 'level12')
+              st.equals(functions2[1].functionDefinition.attributes.name, 'level11')
+
               st.equals(scopeStarts[0], '')
               st.equals(scopeStarts[13], '1')
               st.equals(scopeStarts[101], '2')
