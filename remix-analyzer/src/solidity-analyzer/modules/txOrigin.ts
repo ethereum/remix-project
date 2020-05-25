@@ -20,7 +20,8 @@ export default class txOrigin implements AnalyzerModule {
       return {
         warning: `Use of tx.origin: "tx.origin" is useful only in very exceptional cases. 
                   If you use it for authentication, you usually want to replace it by "msg.sender", because otherwise any contract you call can act on your behalf.`,
-        location: item.src
+        location: item.src,
+        more: 'https://solidity.readthedocs.io/en/develop/security-considerations.html#tx-origin'
       }
     })
   }

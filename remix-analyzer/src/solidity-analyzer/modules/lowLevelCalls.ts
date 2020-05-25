@@ -43,7 +43,6 @@ export default class lowLevelCalls implements AnalyzerModule {
                   It can lead to unexpected behavior if return value is not handled properly. 
                   Please use Direct Calls via specifying the called contract's interface.`
           morehref = 'http://solidity.readthedocs.io/en/develop/control-structures.html?#external-function-calls'
-          // http://solidity.readthedocs.io/en/develop/frequently-asked-questions.html?#why-is-the-low-level-function-call-less-favorable-than-instantiating-a-contract-with-a-variable-contractb-b-and-executing-its-functions-b-dosomething
           break
         case lowLevelCallTypes.CALLCODE:
           text = `Use of "callcode": should be avoided whenever possible. 
