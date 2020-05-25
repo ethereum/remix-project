@@ -34,7 +34,7 @@ export default class erc20Decimals implements AnalyzerModule {
             warnings.push({
               warning: `ERC20 contract's "decimals" variable should be "uint8" type`,
               location: node.src,
-              more: ' https://eips.ethereum.org/EIPS/eip-20'
+              more: 'https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md#decimals'
             })
           }
         } else if (decimalsFun.length > 0) {
@@ -42,7 +42,7 @@ export default class erc20Decimals implements AnalyzerModule {
             warnings.push({
               warning: `ERC20 contract's "decimals" function should have "uint8" as return type`,
               location: fn.node.src,
-              more: ' https://eips.ethereum.org/EIPS/eip-20'
+              more: 'https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md#decimals'
             })
           }
         }
