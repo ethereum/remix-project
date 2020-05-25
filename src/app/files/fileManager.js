@@ -23,7 +23,7 @@ const profile = {
   icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNjk2IDM4NHE0MCAwIDY4IDI4dDI4IDY4djEyMTZxMCA0MC0yOCA2OHQtNjggMjhoLTk2MHEtNDAgMC02OC0yOHQtMjgtNjh2LTI4OGgtNTQ0cS00MCAwLTY4LTI4dC0yOC02OHYtNjcycTAtNDAgMjAtODh0NDgtNzZsNDA4LTQwOHEyOC0yOCA3Ni00OHQ4OC0yMGg0MTZxNDAgMCA2OCAyOHQyOCA2OHYzMjhxNjgtNDAgMTI4LTQwaDQxNnptLTU0NCAyMTNsLTI5OSAyOTloMjk5di0yOTl6bS02NDAtMzg0bC0yOTkgMjk5aDI5OXYtMjk5em0xOTYgNjQ3bDMxNi0zMTZ2LTQxNmgtMzg0djQxNnEwIDQwLTI4IDY4dC02OCAyOGgtNDE2djY0MGg1MTJ2LTI1NnEwLTQwIDIwLTg4dDQ4LTc2em05NTYgODA0di0xMTUyaC0zODR2NDE2cTAgNDAtMjggNjh0LTY4IDI4aC00MTZ2NjQwaDg5NnoiLz48L3N2Zz4=',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'readdir', 'remove'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -155,9 +155,9 @@ class FileManager extends Plugin {
   async writeFile (path, data) {
     if (await this.exists(path)) {
       await this._handleIsFile(path, `Cannot write file ${path}`)
-      return await this.setFile(path, data)
+      return await this.setFileContent(path, data)
     } else {
-      return await this.setFile(path, data)
+      return await this.setFileContent(path, data)
     }
   }
 
@@ -169,7 +169,7 @@ class FileManager extends Plugin {
   async readFile (path) {
     await this._handleExists(path, `Cannot read file ${path}`)
     await this._handleIsFile(path, `Cannot read file ${path}`)
-    return this.getFile(path)
+    return this.getFileContent(path)
   }
 
   /**
@@ -259,6 +259,11 @@ class FileManager extends Plugin {
     this._deps.localhostExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
     this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
+    this.getCurrentFile = this.file
+    this.getFile = this.readFile
+    this.getFolder = this.readdir
+    this.setFile = this.writeFile
+    this.switchFile = this.open
   }
 
   fileChangedEvent (path) {
@@ -332,7 +337,7 @@ class FileManager extends Plugin {
     return path ? path[1] : null
   }
 
-  getFile (path) {
+  getFileContent (path) {
     const provider = this.fileProviderOf(path)
 
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
@@ -346,9 +351,9 @@ class FileManager extends Plugin {
     })
   }
 
-  async setFile (path, content) {
+  async setFileContent (path, content) {
     if (this.currentRequest) {
-      const canCall = await this.askUserPermission('setFile', '')
+      const canCall = await this.askUserPermission('writeFile', '')
       if (canCall) {
         this._setFileInternal(path, content)
         // inform the user about modification after permission is granted and even if permission was saved before
