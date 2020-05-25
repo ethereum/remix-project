@@ -25,7 +25,7 @@ export default class forLoopIteratesOverDynamicArray implements AnalyzerModule {
       return {
         warning: `Loops that do not have a fixed number of iterations, for example, loops that depend on storage values, have to be used carefully. Due to the block gas limit, transactions can only consume a certain amount of gas. The number of iterations in a loop can grow beyond the block gas limit which can cause the complete contract to be stalled at a certain point. \n Additionally, using unbounded loops incurs in a lot of avoidable gas costs. Carefully test how many items at maximum you can pass to such functions to make it successful.`,
         location: node.src,
-        more: 'http://solidity.readthedocs.io/en/v0.4.24/security-considerations.html#gas-limit-and-loops'
+        more: 'http://solidity.readthedocs.io/en/latest/security-considerations.html#gas-limit-and-loops'
       }
     })
   }

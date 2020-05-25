@@ -19,7 +19,7 @@ export default class deleteFromDynamicArray implements AnalyzerModule {
       return {
         warning: `Using "delete" on an array leaves a gap. The length of the array remains the same. If you want to remove the empty position you need to shift items manually and update the "length" property.`,
         location: node.src,
-        more: 'https://github.com/miguelmota/solidity-idiosyncrasies'
+        more: 'https://github.com/miguelmota/solidity-idiosyncrasies#examples'
       }
     })
   }
