@@ -23,9 +23,7 @@ class CompilerContainer {
       timeout: 300,
       allversions: null,
       selectedVersion: null,
-      defaultVersion: 'soljson-v0.6.6+commit.6c089d02.js', // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
-      baseURLWasm: baseURLWasm,
-      baseURLBin: baseURLBin
+      defaultVersion: 'soljson-v0.6.6+commit.6c089d02.js' // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
     }
   }
 
@@ -417,9 +415,9 @@ class CompilerContainer {
   async fetchAllVersion (callback) {
     let allVersions, selectedVersion, allVersionsWasm
     // fetch normal builds
-    const binRes = await promisedMiniXhr(`${this.data.baseURLBin}/list.json`)
+    const binRes = await promisedMiniXhr(`${baseURLBin}/list.json`)
     // fetch wasm builds
-    const wasmRes = await promisedMiniXhr(`${this.data.baseURLWasm}/list.json`)
+    const wasmRes = await promisedMiniXhr(`${baseURLWasm}/list.json`)
     if (binRes.event.type === 'error' && wasmRes.event.type === 'error') {
       allVersions = [{ path: 'builtin', longVersion: 'latest local version' }]
       selectedVersion = 'builtin'
