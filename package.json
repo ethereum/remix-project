@@ -29,15 +29,12 @@
   },
   "homepage": "https://github.com/ethereum/remixd#readme",
   "dependencies": {
+    "@remixproject/plugin": "^0.1.18",
+    "@remixproject/plugin-ws": "^0.2.0-alpha.1",
     "chokidar": "^2.0.2",
     "commander": "^2.9.0",
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
-    "lerna": "^2.9.0",
-    "nopy": "^0.2.6",
-    "serve": "7.0.0",
-    "stdout": "0.0.3",
-    "watch": "^1.0.2",
     "websocket": "^1.0.24"
   },
   "python": {
