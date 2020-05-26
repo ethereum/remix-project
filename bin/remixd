@@ -2,6 +2,7 @@
 var Router = require('../src/router')
 var servicesList = require('../src/servicesList')
 var program = require('commander')
+const { buildWebsocketClient } = require('@remixproject/plugin-ws')
 
 program
 .usage('-s <shared folder>')
@@ -27,6 +28,7 @@ if (program.sharedFolder) {
     servicesList['sharedfolder'].setWebSocket(webSocket)
     servicesList['sharedfolder'].setupNotifications(program.sharedFolder)
     servicesList['sharedfolder'].sharedFolder(program.sharedFolder, program.readOnly || false)
+    buildWebsocketClient(webSocket.connection, new servicesList['sharedfolder']())
   })
   killCallBack.push(sharedFolderrouter.start())
 }
