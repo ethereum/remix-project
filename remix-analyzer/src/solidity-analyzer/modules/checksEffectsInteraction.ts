@@ -6,13 +6,16 @@ import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } fr
 import  AbstractAst from './abstractAstView'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VariableDeclarationAstNode, 
   FunctionHLAst, ContractCallGraph, Context, FunctionCallAstNode, AssignmentAstNode, UnaryOperationAstNode, 
-  InlineAssemblyAstNode, ReportFunction, VisitFunction, FunctionCallGraph } from './../../types'
+  InlineAssemblyAstNode, ReportFunction, VisitFunction, FunctionCallGraph, SupportedVersion } from './../../types'
 
 export default class checksEffectsInteraction implements AnalyzerModule {
   name: string = `Check-effects-interaction: `
   description: string = `Potential reentrancy bugs`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   abstractAst: AbstractAst = new AbstractAst()
 

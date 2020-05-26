@@ -2,13 +2,16 @@ import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { getFunctionDefinitionName, helpers, isVariableTurnedIntoGetter, getMethodParamsSplittedTypeDesc } from './staticAnalysisCommon'
 import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContract, AnalyzerModule, 
-  FunctionDefinitionAstNode, VariableDeclarationAstNode } from './../../types'
+  FunctionDefinitionAstNode, VariableDeclarationAstNode, SupportedVersion } from './../../types'
 
 export default class gasCosts implements AnalyzerModule {
   name: string = `Gas costs: `
   description: string = `Too high gas requirement of functions`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   warningNodes: any[] = []
   visit (node: FunctionDefinitionAstNode | VariableDeclarationAstNode): void {

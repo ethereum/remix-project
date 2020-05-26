@@ -7,13 +7,16 @@ import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractCallGraph, Context, ContractHLAst, 
-  FunctionHLAst, VariableDeclarationAstNode, FunctionCallGraph, FunctionCallAstNode, VisitFunction, ReportFunction} from './../../types'
+  FunctionHLAst, VariableDeclarationAstNode, FunctionCallGraph, FunctionCallAstNode, VisitFunction, ReportFunction, SupportedVersion} from './../../types'
 
 export default class constantFunctions implements AnalyzerModule {
   name: string = `Constant/View/Pure functions: `
   description: string = `Potentially constant/view/pure functions`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   abstractAst: AbstractAst = new AbstractAst()
 

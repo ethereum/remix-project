@@ -3,8 +3,14 @@ export interface AnalyzerModule {
     description: string,
     category: ModuleCategory
     algorithm: ModuleAlgorithm
+    version: SupportedVersion
     visit: VisitFunction
     report: ReportFunction
+}
+
+export interface SupportedVersion {
+  start: string
+  end?: string
 }
 
 export interface ModuleAlgorithm {

@@ -2,13 +2,16 @@ import { default as category } from './categories'
 import { isStatement, isSelfdestructCall } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VisitFunction, ReportFunction} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VisitFunction, ReportFunction, SupportedVersion} from './../../types'
 
 export default class selfdestruct implements AnalyzerModule {
   name: string = `Selfdestruct: `
   description: string = `Contracts using destructed contract can be broken`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   abstractAst: AbstractAst = new AbstractAst()
 

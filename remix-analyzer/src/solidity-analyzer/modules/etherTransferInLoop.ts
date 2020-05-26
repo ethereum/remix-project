@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { isLoop, isTransfer } from './staticAnalysisCommon'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, ForStatementAstNode, 
-  WhileStatementAstNode, ExpressionStatementAstNode} from './../../types'
+  WhileStatementAstNode, ExpressionStatementAstNode, SupportedVersion} from './../../types'
 
 export default class etherTransferInLoop implements AnalyzerModule {
   relevantNodes: ExpressionStatementAstNode[] = []
@@ -10,6 +10,9 @@ export default class etherTransferInLoop implements AnalyzerModule {
   description: string = `Transferring Ether in a for/while/do-while loop`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
   
   visit (node: ForStatementAstNode | WhileStatementAstNode): void {
       let transferNodes: ExpressionStatementAstNode[] = []

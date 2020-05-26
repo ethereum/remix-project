@@ -1,13 +1,16 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { isStringToBytesConversion, isBytesLengthCheck } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, FunctionCallAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, FunctionCallAstNode, SupportedVersion} from './../../types'
 
 export default class stringBytesLength implements AnalyzerModule {
   name: string = `String length: `
   description: string = `Bytes length != String length`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   stringToBytesConversions: FunctionCallAstNode[] = []
   bytesLengthChecks: MemberAccessAstNode[] = []
