@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { isLLCall, isLLDelegatecall, isLLCallcode, isLLCall04, isLLDelegatecall04, isLLSend04, isLLSend, lowLevelCallTypes } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, SupportedVersion} from './../../types'
 
 interface llcNode {
   node: MemberAccessAstNode
@@ -14,6 +14,9 @@ export default class lowLevelCalls implements AnalyzerModule {
   description: string = `Should only be used by experienced devs`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   visit (node : MemberAccessAstNode): void {
     if (isLLCall(node)) {

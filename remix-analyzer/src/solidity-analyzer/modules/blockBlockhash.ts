@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { isBlockBlockHashAccess } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, FunctionCallAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, FunctionCallAstNode, SupportedVersion} from './../../types'
 
 export default class blockBlockhash implements AnalyzerModule {
   warningNodes: FunctionCallAstNode[] = []
@@ -9,6 +9,9 @@ export default class blockBlockhash implements AnalyzerModule {
   description: string = `Can be influenced by miners`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   visit (node: FunctionCallAstNode): void {
     if (node.nodeType === 'FunctionCall' && isBlockBlockHashAccess(node)) this.warningNodes.push(node)

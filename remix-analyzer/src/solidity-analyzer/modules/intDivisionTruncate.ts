@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { isIntDivision } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, BinaryOperationAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, BinaryOperationAstNode, SupportedVersion} from './../../types'
 
 export default class intDivisionTruncate implements AnalyzerModule {
   warningNodes: BinaryOperationAstNode[] = []
@@ -9,6 +9,9 @@ export default class intDivisionTruncate implements AnalyzerModule {
   description: string = `Division on int/uint values truncates the result`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   visit (node: BinaryOperationAstNode): void {
     if (isIntDivision(node)) this.warningNodes.push(node)

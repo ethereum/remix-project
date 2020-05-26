@@ -3,13 +3,16 @@ import { getFunctionDefinitionName, helpers, getDeclaredVariableName, getDeclare
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, VisitFunction, ReportFunction, ContractHLAst, 
-  FunctionHLAst, VariableDeclarationAstNode} from './../../types'
+  FunctionHLAst, VariableDeclarationAstNode, SupportedVersion} from './../../types'
 
 export default class erc20Decimals implements AnalyzerModule {
   name: string = `ERC20: `
   description: string = `'decimals' should be 'uint8'`
   category: ModuleCategory = category.ERC
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   abstractAst: AbstractAst = new AbstractAst()
   visit: VisitFunction = this.abstractAst.build_visit((node: any) => false)
