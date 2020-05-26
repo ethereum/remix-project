@@ -2,15 +2,16 @@
   "name": "remixd",
   "version": "0.1.8-alpha.16",
   "description": "remix server: allow accessing file system from remix.ethereum.org and start a dev environment (see help section)",
-  "main": "./src/index.js",
+  "main": "./lib/src/index.js",
   "bin": {
-    "remixd": "./bin/remixd"
+    "remixd": "./lib/bin/remixd"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\"",
-    "start": "./bin/remixd",
+    "start": "./lib/bin/remixd",
     "npip": "npip",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "build": "tsc -p ./"
   },
   "repository": {
     "type": "git",
@@ -44,11 +45,16 @@
     }
   },
   "devDependencies": {
+    "@types/node": "^14.0.5",
+    "@types/websocket": "^1.0.0",
     "eslint": "6.8.0",
     "eslint-config-standard": "14.1.1",
     "eslint-plugin-import": "2.20.2",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "4.2.1",
-    "eslint-plugin-standard": "4.0.1"
+    "eslint-plugin-standard": "4.0.1",
+    "nodemon": "^2.0.4",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.3"
   }
 }

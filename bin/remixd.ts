@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-var Router = require('../src/router')
-var servicesList = require('../src/servicesList')
-var program = require('commander')
-const { buildWebsocketClient } = require('@remixproject/plugin-ws')
+const Router = require('../src/router')
+const servicesList = require('../src/servicesList')
+const program = require('commander')
 
 program
 .usage('-s <shared folder>')
@@ -14,21 +13,21 @@ program
   console.log('\nExample:\n\n    remixd -s ./ --remix-ide http://localhost:8080')
 }).parse(process.argv)
 
-var killCallBack = []
+const killCallBack: Array<Function> = []
 
 if (!program.remixIde) {
-  return console.log('\x1b[31m%s\x1b[0m', '[ERR] URL Remix IDE instance has to be provided.')
+  console.log('\x1b[31m%s\x1b[0m', '[ERR] URL Remix IDE instance has to be provided.')
 }
 console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + program.remixIde + ' to connect to that instance')
 
 if (program.sharedFolder) {
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolic links are not forwarded to Remix IDE\n')
-  var sharedFolderrouter = new Router(65520, servicesList['sharedfolder'], { remixIdeUrl: program.remixIde }, (webSocket) => {
+  const sharedFolderrouter = new Router(65520, servicesList['sharedfolder'], { remixIdeUrl: program.remixIde }, (webSocket: WebSocket) => {
     servicesList['sharedfolder'].setWebSocket(webSocket)
     servicesList['sharedfolder'].setupNotifications(program.sharedFolder)
     servicesList['sharedfolder'].sharedFolder(program.sharedFolder, program.readOnly || false)
-    buildWebsocketClient(webSocket.connection, new servicesList['sharedfolder']())
+    // buildWebsocketClient(webSocket.connection, new servicesList['sharedfolder']())
   })
   killCallBack.push(sharedFolderrouter.start())
 }
