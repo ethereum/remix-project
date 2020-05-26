@@ -68,7 +68,7 @@ module.exports = {
 }
 
 const web3DebugNodes = {
-  'Main': 'https://mainnet.infura.io/remix',
+  'Main': 'https://gethmainnet.komputing.org',
   'Rinkeby': 'https://remix-rinkeby.ethdevops.io',
   'Ropsten': 'https://remix-ropsten.ethdevops.io',
   'Goerli': 'https://remix-goerli.ethdevops.io',
