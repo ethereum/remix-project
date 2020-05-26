@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { isDynamicArrayLengthAccess } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, ForStatementAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, ForStatementAstNode, SupportedVersion} from './../../types'
 
 export default class forLoopIteratesOverDynamicArray implements AnalyzerModule {
   relevantNodes: ForStatementAstNode[] = []
@@ -9,6 +9,9 @@ export default class forLoopIteratesOverDynamicArray implements AnalyzerModule {
   description: string = `Iterations depend on dynamic array's size`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   visit (node: ForStatementAstNode): void {
       const  { condition } = node

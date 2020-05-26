@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isNowAccess, isBlockTimestampAccess } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, IdentifierAstNode, 
-  MemberAccessAstNode} from './../../types'
+  MemberAccessAstNode, SupportedVersion} from './../../types'
 
 export default class blockTimestamp implements AnalyzerModule {
   warningNowNodes: IdentifierAstNode[] = []
@@ -11,6 +11,9 @@ export default class blockTimestamp implements AnalyzerModule {
   description: string = `Can be influenced by miners`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   visit (node: IdentifierAstNode | MemberAccessAstNode ): void {
     if (node.nodeType === "Identifier" && isNowAccess(node)) this.warningNowNodes.push(node)

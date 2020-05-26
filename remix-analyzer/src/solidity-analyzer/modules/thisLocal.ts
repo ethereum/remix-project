@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { isThisLocalCall } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, SupportedVersion} from './../../types'
 
 export default class thisLocal implements AnalyzerModule {
   warningNodes: MemberAccessAstNode[] = []
@@ -9,6 +9,9 @@ export default class thisLocal implements AnalyzerModule {
   description: string = `Invocation of local functions via 'this'`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   visit (node: MemberAccessAstNode): void {
     if (node.nodeType === 'MemberAccess' && isThisLocalCall(node)) this.warningNodes.push(node)

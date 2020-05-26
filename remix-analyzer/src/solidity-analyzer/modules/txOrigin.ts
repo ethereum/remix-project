@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { isTxOriginAccess } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, SupportedVersion} from './../../types'
 
 export default class txOrigin implements AnalyzerModule {
   txOriginNodes: MemberAccessAstNode[] = []
@@ -9,6 +9,9 @@ export default class txOrigin implements AnalyzerModule {
   description: string = `'tx.origin' used`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   visit (node: MemberAccessAstNode): void {
     if (isTxOriginAccess(node)) this.txOriginNodes.push(node)

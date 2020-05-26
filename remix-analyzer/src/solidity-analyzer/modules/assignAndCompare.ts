@@ -2,7 +2,7 @@ import { default as category } from './categories'
 import { isSubScopeWithTopLevelUnAssignedBinOp, getUnAssignedTopLevelBinOps } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, BlockAstNode, IfStatementAstNode, 
-  WhileStatementAstNode, ForStatementAstNode, CompilationResult, ExpressionStatementAstNode} from './../../types'
+  WhileStatementAstNode, ForStatementAstNode, CompilationResult, ExpressionStatementAstNode, SupportedVersion} from './../../types'
 
 export default class assignAndCompare implements AnalyzerModule {
   warningNodes: ExpressionStatementAstNode[] = []
@@ -10,6 +10,9 @@ export default class assignAndCompare implements AnalyzerModule {
   description: string = `The result of an operation not used`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   visit (node: BlockAstNode | IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): void {
     if (node?.nodeType && isSubScopeWithTopLevelUnAssignedBinOp(node)) getUnAssignedTopLevelBinOps(node).forEach((n) => this.warningNodes.push(n))

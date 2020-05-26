@@ -3,13 +3,16 @@ import { hasFunctionBody, getFullQuallyfiedFuncDefinitionIdent, getEffectedVaria
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, FunctionHLAst, 
-  VisitFunction, ReportFunction, ReturnAstNode, AssignmentAstNode} from './../../types'
+  VisitFunction, ReportFunction, ReturnAstNode, AssignmentAstNode, SupportedVersion} from './../../types'
 
 export default class noReturn implements AnalyzerModule {
   name: string = `No return: `
   description: string = `Function with 'returns' not returning`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   abstractAst: AbstractAst = new AbstractAst()
 

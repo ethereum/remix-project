@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
 import { isDeleteFromDynamicArray, isMappingIndexAccess } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, UnaryOperationAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, UnaryOperationAstNode, SupportedVersion} from './../../types'
 
 export default class deleteFromDynamicArray implements AnalyzerModule {
   relevantNodes: UnaryOperationAstNode[] = []
@@ -9,6 +9,9 @@ export default class deleteFromDynamicArray implements AnalyzerModule {
   description: string = `'delete' leaves a gap in array`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   visit (node: UnaryOperationAstNode): void {
     if (isDeleteFromDynamicArray(node) && !isMappingIndexAccess(node.subExpression)) this.relevantNodes.push(node)

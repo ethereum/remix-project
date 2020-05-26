@@ -1,7 +1,7 @@
 import { default as category } from './categories'
 import { isDeleteOfDynamicArray } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, UnaryOperationAstNode} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, UnaryOperationAstNode, SupportedVersion} from './../../types'
 
 export default class deleteDynamicArrays implements AnalyzerModule {
   rel: UnaryOperationAstNode[] = []
@@ -9,6 +9,9 @@ export default class deleteDynamicArrays implements AnalyzerModule {
   description: string = `Use require/assert to ensure complete deletion`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
+  version: SupportedVersion = {
+    start: '0.4.12'
+  }
 
   visit (node: UnaryOperationAstNode): void {
     if (isDeleteOfDynamicArray(node)) this.rel.push(node)
