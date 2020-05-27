@@ -8,6 +8,11 @@ export interface AnalyzerModule {
     report: ReportFunction
 }
 
+// This version signifies the module support for Solidity version.
+// start will be minimum at 0.4.12 as since that version Solidity exports latest AST
+// end should be a version in which analysis feature got deprecated.
+// This will be helpful in version based analysis in future.
+
 export interface SupportedVersion {
   start: string
   end?: string
