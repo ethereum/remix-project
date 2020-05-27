@@ -1,75 +1,87 @@
+import WebSocket from '../websocket'
+
 var utils = require('../utils')
 var isbinaryfile = require('isbinaryfile')
 var fs = require('fs-extra')
 var chokidar = require('chokidar')
-const { PluginClient } = require('@remixproject/plugin')
+import { PluginClient } from '@remixproject/plugin'
 
-Object.create(PluginClient, {
-  trackDownStreamUpdate: {},
-  websocket: null,
-  alreadyNotified: {},
+export default class RemixdClient extends PluginClient {
+  trackDownStreamUpdate: {
+    [key: string]: string
+  }
+  websocket: WebSocket | null
+  currentSharedFolder: string
+  readOnly: boolean
 
-  setWebSocket: function (websocket) {
+  setWebSocket (websocket: WebSocket) {
     this.websocket = websocket
-  },
+  }
 
-  sharedFolder: function (currentSharedFolder, readOnly) {
+  sharedFolder (currentSharedFolder: string, readOnly: boolean) {
     this.currentSharedFolder = currentSharedFolder
     this.readOnly = readOnly
-    if (this.websocket.connection) this.websocket.send(message('rootFolderChanged', {}))
-  },
+  }
 
-  list: function (args, cb) {
+  list (args: {
+    [key: string]: string
+  }, cb: Function) {
     try {
       cb(null, utils.walkSync(this.currentSharedFolder, {}, this.currentSharedFolder))
     } catch (e) {
       cb(e.message)
     }
-  },
+  }
 
-  resolveDirectory: function (args, cb) {
+  resolveDirectory (args: {
+    [key: string]: string
+  }, cb: Function) {
     try {
       var path = utils.absolutePath(args.path, this.currentSharedFolder)
-      if (this.websocket && !this.alreadyNotified[path]) {
-        this.alreadyNotified[path] = 1
-        this.setupNotifications(path)
-      }
       cb(null, utils.resolveDirectory(path, this.currentSharedFolder))
     } catch (e) {
       cb(e.message)
     }
-  },
+  }
 
-  folderIsReadOnly: function (args, cb) {
+  folderIsReadOnly (args: {
+    [key: string]: string
+  }, cb: Function) {
     return cb(null, this.readOnly)
-  },
+  }
 
-  get: function (args, cb) {
+  get (args: {
+    [key: string]: string
+  }, cb: Function) {
     var path = utils.absolutePath(args.path, this.currentSharedFolder)
     if (!fs.existsSync(path)) {
       return cb('File not found ' + path)
     }
     if (!isRealPath(path, cb)) return
-    isbinaryfile(path, (error, isBinary) => {
+    isbinaryfile(path, (error: Error, isBinary: boolean) => {
       if (error) console.log(error)
       if (isBinary) {
         cb(null, { content: '<binary content not displayed>', readonly: true })
       } else {
-        fs.readFile(path, 'utf8', (error, data) => {
+        fs.readFile(path, 'utf8', (error: Error, data: string) => {
           if (error) console.log(error)
           cb(error, { content: data, readonly: false })
         })
       }
     })
-  },
+  }
 
-  exists: function (args, cb) {
+  exists (args: {
+    [key: string]: string
+  }, cb: Function) {
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
     cb(null, fs.existsSync(path))
-  },
+  }
 
-  set: function (args, cb) {
+  set (args: {
+    [key: string]: string
+  }, cb: Function) {
     if (this.readOnly) return cb('Cannot write file: read-only mode selected')
     const isFolder = args.path.endsWith('/')
     var path = utils.absolutePath(args.path, this.currentSharedFolder)
@@ -80,18 +92,20 @@ Object.create(PluginClient, {
     }
     this.trackDownStreamUpdate[path] = path
     if (isFolder) {
-      fs.mkdirp(path).then(_ => cb()).catch(e => cb(e))
+      fs.mkdirp(path).then(() => cb()).catch((e: Error) => cb(e))
     } else {
       fs.ensureFile(path).then(() => {
-        fs.writeFile(path, args.content, 'utf8', (error, data) => {
+        fs.writeFile(path, args.content, 'utf8', (error: Error, data: string) => {
           if (error) console.log(error)
           cb(error, data)
         })
-      }).catch(e => cb(e))
+      }).catch((e: Error) => cb(e))
     }
-  },
+  }
 
-  rename: function (args, cb) {
+  rename (args: {
+    [key: string]: string
+  }, cb: Function) {
     if (this.readOnly) return cb('Cannot rename file: read-only mode selected')
     var oldpath = utils.absolutePath(args.oldPath, this.currentSharedFolder)
     if (!fs.existsSync(oldpath)) {
@@ -99,73 +113,48 @@ Object.create(PluginClient, {
     }
     var newpath = utils.absolutePath(args.newPath, this.currentSharedFolder)
     if (!isRealPath(oldpath, cb)) return
-    fs.move(oldpath, newpath, (error, data) => {
+    fs.move(oldpath, newpath, (error: Error, data: string) => {
       if (error) console.log(error)
       cb(error, data)
     })
-  },
+  }
 
-  remove: function (args, cb) {
+  remove (args: {
+    [key: string]: string
+  }, cb: Function) {
     if (this.readOnly) return cb('Cannot remove file: read-only mode selected')
     var path = utils.absolutePath(args.path, this.currentSharedFolder)
     if (!fs.existsSync(path)) {
       return cb('File not found ' + path)
     }
     if (!isRealPath(path, cb)) return
-    fs.remove(path, (error) => {
+    fs.remove(path, (error: Error) => {
       if (error) {
         console.log(error)
         return cb('Failed to remove file/directory: ' + error)
       }
       cb(error, true)
     })
-  },
+  }
 
-  isDirectory: function (args, cb) {
+  isDirectory (args: {
+    [key: string]: string
+  }, cb: Function) {
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
     cb(null, fs.statSync(path).isDirectory())
-  },
+  }
 
-  isFile: function (args, cb) {
+  isFile (args: {
+    [key: string]: string
+  }, cb: Function) {
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
     cb(null, fs.statSync(path).isFile())
-  },
-
-  setupNotifications: function (path) {
-    if (!isRealPath(path)) return
-    var watcher = chokidar.watch(path, { depth: 0, ignorePermissionErrors: true })
-    console.log('setup notifications for ' + path)
-    /* we can't listen on created file / folder
-    watcher.on('add', (f, stat) => {
-      isbinaryfile(f, (error, isBinary) => {
-        if (error) console.log(error)
-        console.log('add', f)
-        if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: isBinary, isFolder: false }))
-      })
-    })
-    watcher.on('addDir', (f, stat) => {
-      if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: false, isFolder: true }))
-    })
-    */
-    watcher.on('change', (f, curr, prev) => {
-      if (this.trackDownStreamUpdate[f]) {
-        delete this.trackDownStreamUpdate[f]
-        return
-      }
-      if (this.websocket.connection) this.websocket.send(message('changed', utils.relativePath(f, this.currentSharedFolder)))
-    })
-    watcher.on('unlink', (f) => {
-      if (this.websocket.connection) this.websocket.send(message('removed', { path: utils.relativePath(f, this.currentSharedFolder), isFolder: false }))
-    })
-    watcher.on('unlinkDir', (f) => {
-      if (this.websocket.connection) this.websocket.send(message('removed', { path: utils.relativePath(f, this.currentSharedFolder), isFolder: true }))
-    })
   }
-})
+}
 
-function isRealPath (path, cb) {
+function isRealPath (path: string, cb: Function) {
   var realPath = fs.realpathSync(path)
   var isRealPath = path === realPath
   var mes = '[WARN] Symbolic link modification not allowed : ' + path + ' | ' + realPath
@@ -174,8 +163,4 @@ function isRealPath (path, cb) {
   }
   if (cb && !isRealPath) cb(mes)
   return isRealPath
-}
-
-function message (name, value) {
-  return JSON.stringify({ type: 'notification', scope: 'sharedfolder', name: name, value: value })
 }
