@@ -80,7 +80,7 @@ export class MainView {
     self.data = {
       _layout: {
         top: {
-          offset: self._deps.config.get('terminal-top-offset') || 150,
+          offset: self._terminalTopOffset(),
           show: true
         }
       }
@@ -96,6 +96,9 @@ export class MainView {
         self.txListener.setListenOnNetwork(listenOnNetWork)
       })
     }
+  }
+  _terminalTopOffset () {
+    return this._deps.config.get('terminal-top-offset') || 150
   }
   _adjustLayout (direction, delta) {
     var limitUp = 0
@@ -125,6 +128,12 @@ export class MainView {
       self.editor.resize((document.querySelector('#editorWrap') || {}).checked)
       self._components.terminal.scroll2bottom()
     }
+  }
+  minimizeTerminal () {
+    this._adjustLayout('top')
+  }
+  showTerminal (offset) {
+    this._adjustLayout('top', offset || this._terminalTopOffset())
   }
   getTerminal () {
     return this._components.terminal
