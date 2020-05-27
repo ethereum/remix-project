@@ -3,7 +3,7 @@
 import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, 
   WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, 
   MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, 
-  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter } from "types"
+  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter, CompilationResult, CompiledContract } from "types"
 import { util } from 'remix-lib'
 
 type SpecialObjDetail = {
@@ -1122,6 +1122,17 @@ function getTypeStringFromComponents(components: ABIParameter[]) {
   return typeString
 }
 
+function getCompilerVersion(contractFiles: CompiledContractObj): string {
+  const fileNames: string[] = Object.keys(contractFiles)
+  const contracts = contractFiles[fileNames[0]]
+  const contractNames: string[] = Object.keys(contracts)
+  const contract: CompiledContract = contracts[contractNames[0]]
+  const metadata = JSON.parse(contract.metadata)
+  const compilerVersion: string = metadata.compiler.version
+  if(!compilerVersion.includes('nightly')) return 'v' + compilerVersion.split('+commit')[0]
+  else return 'develop'
+}
+
 const helpers = {
   expressionTypeDescription,
   nodeType,
@@ -1158,6 +1169,7 @@ export {
   getFunctionDefinitionReturnParameterPart,
   getUnAssignedTopLevelBinOps,
   getMethodParamsSplittedTypeDesc,
+  getCompilerVersion,
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray,
