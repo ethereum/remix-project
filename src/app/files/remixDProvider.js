@@ -81,11 +81,12 @@ module.exports = class RemixDProvider {
   //
   // this.remixd.exists(path, (error, isValid) => {})
 
-  exists (path, cb) {
-    var unprefixedpath = this.removePrefix(path)
-    this._remixd.call('sharedfolder', 'exists', {path: unprefixedpath}, (error, result) => {
-      cb(error, result)
-    })
+  async exists (path, cb) {
+    const unprefixedpath = this.removePrefix(path)
+    const callId = await this._remixd.call('sharedfolder', 'exists', {path: unprefixedpath})
+    const result = await this._remixd.receiveResponse(callId)
+
+    return cb(null, result)
   }
 
   get (path, cb) {
@@ -117,9 +118,9 @@ module.exports = class RemixDProvider {
     return this._readOnlyMode || this._readOnlyFiles[path] === 1
   }
 
-  remove (path) {
+  async remove (path) {
     var unprefixedpath = this.removePrefix(path)
-    this._remixd.call('sharedfolder', 'remove', {path: unprefixedpath}, (error, result) => {
+    const callId = await this._remixd.call('sharedfolder', 'remove', {path: unprefixedpath}, (error, result) => {
       if (error) console.log(error)
       var path = this.type + '/' + unprefixedpath
       delete this.filesContent[path]
@@ -127,6 +128,8 @@ module.exports = class RemixDProvider {
         this.event.trigger('fileRemoved', [path])
       })
     })
+
+    return await this._remixd.receiveResponse(callId)
   }
 
   rename (oldPath, newPath, isFolder) {
@@ -166,6 +169,20 @@ module.exports = class RemixDProvider {
     if (!path) return callback(null, { [self.type]: { } })
     path = self.removePrefix(path)
     self.remixd.dir(path, callback)
+  }
+
+  async isDirectory (path) {
+    const unprefixedpath = this.removePrefix(path)
+    const callId = await this._remixd.call('sharedfolder', 'isDirectory', {path: unprefixedpath})
+
+    return await this._remixd.receiveResponse(callId)
+  }
+
+  async isFile (path) {
+    const unprefixedpath = this.removePrefix(path)
+    const callId = await this._remixd.call('sharedfolder', 'isFile', {path: unprefixedpath})
+
+    return await this._remixd.receiveResponse(callId)
   }
 }
 
