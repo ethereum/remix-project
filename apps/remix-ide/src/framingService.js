@@ -34,4 +34,9 @@ export class FramingService {
       }
     })
   }
+
+  embed () {
+    this.mainView.minimizeTerminal()
+    this.resizeFeature.hidePanel()
+  }
 }
