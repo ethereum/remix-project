@@ -90,7 +90,7 @@ module.exports = {
   'Should deploy contract on Goerli Test Network using MetaMask': function (browser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
     .clickLaunchIcon('fileExplorers')
-    .switchFile('browser/Greet.sol')
+    .openFile('browser/Greet.sol')
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
@@ -141,7 +141,7 @@ module.exports = {
   'Should deploy contract on Ethereum Main Network using MetaMask': function (browser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
     .clickLaunchIcon('fileExplorers')
-    .switchFile('browser/Greet.sol')
+    .openFile('browser/Greet.sol')
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
