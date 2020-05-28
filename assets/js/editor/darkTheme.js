@@ -1,3 +1,4 @@
+/* eslint-disable */
 ace.define("ace/theme/chaos",["require","exports","module","ace/lib/dom"], function(acequire, exports, module) {
 
   exports.isDark = true;
