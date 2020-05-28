@@ -27,7 +27,7 @@ export default class similarVariableNames implements AnalyzerModule {
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
 
-  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
+  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean, version: string): ReportObj[] {
     const warnings: ReportObj[] = []
     const hasModifiers: boolean = contracts.some((item) => item.modifiers.length > 0)
 
@@ -46,7 +46,7 @@ export default class similarVariableNames implements AnalyzerModule {
         const vars: string[] = this.getFunctionVariables(contract, func).map(getDeclaredVariableName)
         this.findSimilarVarNames(vars).map((sim) => {
           warnings.push({
-            warning: `${funcName} : Variables have very similar names ${sim.var1} and ${sim.var2}. ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
+            warning: `${funcName} : Variables have very similar names "${sim.var1}" and "${sim.var2}". ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
             location: func.node['src']
           })
         })
