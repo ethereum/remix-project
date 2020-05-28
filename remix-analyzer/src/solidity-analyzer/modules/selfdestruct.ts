@@ -20,7 +20,7 @@ export default class selfdestruct implements AnalyzerModule {
   )
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
-  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
+  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean, version: string): ReportObj[] {
     const warnings: ReportObj[] = []
 
     contracts.forEach((contract) => {
@@ -39,7 +39,7 @@ export default class selfdestruct implements AnalyzerModule {
             warnings.push({
               warning: `Use of selfdestruct: No code after selfdestruct is executed. Selfdestruct is a terminal.`,
               location: node.src,
-              more: 'https://solidity.readthedocs.io/en/develop/introduction-to-smart-contracts.html#deactivate-and-self-destruct'
+              more: `https://solidity.readthedocs.io/en/${version}/introduction-to-smart-contracts.html#deactivate-and-self-destruct`
             })
             hasSelf = false
           }

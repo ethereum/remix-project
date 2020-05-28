@@ -34,7 +34,7 @@ export default class constantFunctions implements AnalyzerModule {
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
 
-  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
+  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean, version: string): ReportObj[] {
     const warnings: ReportObj[] = []
     const hasModifiers: boolean = contracts.some((item) => item.modifiers.length > 0)
 
@@ -68,13 +68,13 @@ export default class constantFunctions implements AnalyzerModule {
             warnings.push({
               warning: `${funcName} : Potentially should be constant/view/pure but is not. ${comments}`,
               location: func.node['src'],
-              more: 'https://solidity.readthedocs.io/en/develop/contracts.html#view-functions'
+              more: `https://solidity.readthedocs.io/en/${version}/contracts.html#view-functions`
             })
           } else {
             warnings.push({
               warning: `${funcName} : Is constant but potentially should not be. ${comments}`,
               location: func.node['src'],
-              more: 'https://solidity.readthedocs.io/en/develop/contracts.html#view-functions'
+              more: `https://solidity.readthedocs.io/en/${version}/contracts.html#view-functions`
             })
           }
         }
