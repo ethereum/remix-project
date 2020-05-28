@@ -79,6 +79,7 @@ class Editor extends Plugin {
     this.emptySession = this._createSession('')
     this.modes = {
       sol: 'ace/mode/solidity',
+      yul: 'ace/mode/solidity',
       mvir: 'ace/mode/move',
       js: 'ace/mode/javascript',
       py: 'ace/mode/python',
