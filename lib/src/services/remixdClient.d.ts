@@ -1,5 +1,5 @@
 import WebSocket from '../websocket';
-import { PluginClient } from '@remixproject/plugin';
+import { PluginClient } from '@remixproject/plugin-ws';
 export default class RemixdClient extends PluginClient {
     trackDownStreamUpdate: {
         [key: string]: string;
