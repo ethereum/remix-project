@@ -14,8 +14,15 @@ class SourceHighlighters {
     try {
       if (!this.highlighters[from]) this.highlighters[from] = []
       const sourceHighlight = new SourceHighlighter()
-      sourceHighlight.currentSourceLocationFromfileName(position, filePath, hexColor)
-      this.highlighters[from].push(sourceHighlight)
+      if (
+        !this.highlighters[from].length ||
+        (this.highlighters[from].length && !this.highlighters[from].find((el) => {
+          return el.source === filePath && el.position === position
+        }))
+      ) {
+        sourceHighlight.currentSourceLocationFromfileName(position, filePath, hexColor)
+        this.highlighters[from].push(sourceHighlight)
+      }
     } catch (e) {
       throw e
     }
