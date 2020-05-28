@@ -89,7 +89,7 @@ class DebuggerUI {
       }
     })
 
-    this.debugger.event.register('debuggerUnloaded', () => unLoad)
+    this.debugger.event.register('debuggerUnloaded', () => this.unLoad())
   }
 
   startTxBrowser () {
