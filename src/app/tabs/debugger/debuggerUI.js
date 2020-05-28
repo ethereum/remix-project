@@ -206,7 +206,8 @@ class DebuggerUI {
     return view
   }
 
-  unLoad () {
+  async unLoad () {
+    await this.debuggerModule.call('editor', 'discardHighlight')
     yo.update(this.debuggerHeadPanelsView, yo`<div></div>`)
     yo.update(this.debuggerPanelsView, yo`<div></div>`)
     yo.update(this.stepManagerView, yo`<div></div>`)
