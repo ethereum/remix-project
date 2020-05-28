@@ -122,7 +122,7 @@ ace.define("ace/theme/chaos",["require","exports","module","ace/lib/dom"], funct
     color:#ff86ac;\
   }\
   .ace-chaos .ace_statemutability {\
-    color:#ff8181;\
+    color:#FFCC00;\
   }\
   .ace-chaos .ace_variable {\
   color:#e0bb83;\
