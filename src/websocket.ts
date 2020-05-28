@@ -1,7 +1,7 @@
 import * as WS from 'ws'
 import * as http from 'http'
 import RemixdClient from './services/remixdClient'
-import { buildWebsocketClient } from '@remixproject/plugin-ws'
+const { buildWebsocketClient } = require('@remixproject/plugin-ws')
 
 export default class WebSocket {
   port: number
