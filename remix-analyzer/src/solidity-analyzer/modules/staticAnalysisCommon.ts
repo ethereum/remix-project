@@ -1123,14 +1123,15 @@ function getTypeStringFromComponents(components: ABIParameter[]) {
 }
 
 function getCompilerVersion(contractFiles: CompiledContractObj): string {
+  let version = 'develop'
   const fileNames: string[] = Object.keys(contractFiles)
   const contracts = contractFiles[fileNames[0]]
   const contractNames: string[] = Object.keys(contracts)
   const contract: CompiledContract = contracts[contractNames[0]]
   const metadata = JSON.parse(contract.metadata)
   const compilerVersion: string = metadata.compiler.version
-  if(!compilerVersion.includes('nightly')) return 'v' + compilerVersion.split('+commit')[0]
-  else return 'develop'
+  if(!compilerVersion.includes('nightly')) version = 'v' + compilerVersion.split('+commit')[0]
+  return version
 }
 
 const helpers = {
