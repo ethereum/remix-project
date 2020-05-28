@@ -31,13 +31,10 @@
   },
   "homepage": "https://github.com/ethereum/remixd#readme",
   "dependencies": {
-    "@remixproject/plugin": "^0.1.18",
     "@remixproject/plugin-ws": "^0.2.0-alpha.1",
     "chalk": "^4.0.0",
     "chokidar": "^2.0.2",
-    "clear": "^0.1.0",
     "commander": "^2.20.3",
-    "figlet": "^1.4.0",
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
     "ws": "^7.3.0"

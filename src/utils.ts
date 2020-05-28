@@ -1,7 +1,7 @@
-var fs = require('fs-extra')
-var path = require('path')
-var isbinaryfile = require('isbinaryfile')
-var pathModule = require('path')
+const fs = require('fs-extra')
+const path = require('path')
+const isbinaryfile = require('isbinaryfile')
+const pathModule = require('path')
 
 module.exports = {
   absolutePath: absolutePath,
@@ -17,7 +17,7 @@ module.exports = {
  * @param {String} sharedFolder - absolute shared path. platform dependent representation.
  * @return {String} platform dependent absolute path (/home/user1/.../... for unix, c:\user\...\... for windows)
  */
-function absolutePath (path, sharedFolder) {
+function absolutePath (path: string, sharedFolder:string) {
   path = normalizePath(path)
   if (path.indexOf(sharedFolder) !== 0) {
     path = pathModule.resolve(sharedFolder, path)
@@ -32,20 +32,22 @@ function absolutePath (path, sharedFolder) {
  * @param {String} sharedFolder - absolute shared path. platform dependent representation
  * @return {String} relative path (Unix style which is the one used by Remix IDE)
  */
-function relativePath (path, sharedFolder) {
-  var relative = pathModule.relative(sharedFolder, path)
+function relativePath (path: string, sharedFolder: string) {
+  const relative = pathModule.relative(sharedFolder, path)
   return normalizePath(relative)
 }
 
-function normalizePath (path) {
+function normalizePath (path: string) {
   if (process.platform === 'win32') {
     return path.replace(/\\/g, '/')
   }
   return path
 }
 
-function walkSync (dir, filelist, sharedFolder) {
-  var files = fs.readdirSync(dir)
+function walkSync (dir: string, filelist: {
+  [key: string]: string
+}, sharedFolder: string) {
+  const files: string[] = fs.readdirSync(dir)
   filelist = filelist || {}
   files.forEach(function (file) {
     var subElement = path.join(dir, file)
@@ -61,14 +63,16 @@ function walkSync (dir, filelist, sharedFolder) {
   return filelist
 }
 
-function resolveDirectory (dir, sharedFolder) {
-  var ret = {}
-  var files = fs.readdirSync(dir)
+function resolveDirectory (dir: string, sharedFolder: string) {
+  const ret: {
+    [key: string]: any
+  } = {}
+  const files: string[] = fs.readdirSync(dir)
   files.forEach(function (file) {
-    var subElement = path.join(dir, file)
+    const subElement = path.join(dir, file)
     if (!fs.lstatSync(subElement).isSymbolicLink()) {
-      var relative = relativePath(subElement, sharedFolder)
-      ret[relative] = { isDirectory: fs.statSync(subElement).isDirectory() }
+      const relative: string = relativePath(subElement, sharedFolder)
+      ret[relative] = { isDirectory: <boolean>fs.statSync(subElement).isDirectory() }
     }
   })
   return ret
