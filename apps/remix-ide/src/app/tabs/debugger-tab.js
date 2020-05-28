@@ -61,12 +61,18 @@ class DebuggerTab extends ViewPlugin {
       (address, receipt) => {
         const target = (address && remixLib.helpers.trace.isContractCreation(address)) ? receipt.contractAddress : address
         return this.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', this.blockchain.web3())
-      })
+      }
+    )
 
     this.call('manager', 'activatePlugin', 'source-verification')
     // this.call('manager', 'activatePlugin', 'udapp')
 
     return this.el
+  }
+
+  deactivate () {
+    this.debuggerUI.unLoad()
+    super.deactivate()
   }
 
   debug (hash) {
