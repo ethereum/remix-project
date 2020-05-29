@@ -11,6 +11,7 @@ class Remixd {
     this.callid = 0
     this.socket = null
     this.connected = false
+    this.receiveResponse()
   }
 
   online () {
@@ -74,6 +75,17 @@ class Remixd {
     })
   }
 
+  async receiveResponse (requestId) {
+    return new Promise((resolve, reject) => {
+      this.event.register('replied', (data) => {
+        if (data.id === requestId) {
+          if (data.error) reject(data.error)
+          else resolve(data.result)
+        }
+      })
+    })
+  }
+
   errored (event) {
     function remixdDialog () {
       return yo`<div>Connection to Remixd closed. Localhost connection not available anymore.</div>`
@@ -87,15 +99,23 @@ class Remixd {
   }
 
   call (service, fn, args, callback) {
-    this.ensureSocket((error) => {
-      if (error) return callback(error)
-      if (this.socket && this.socket.readyState === this.socket.OPEN) {
-        var data = this.format(service, fn, args)
-        this.callbacks[data.id] = callback
-        this.socket.send(JSON.stringify(data))
-      } else {
-        callback('Socket not ready. state:' + this.socket.readyState)
-      }
+    return new Promise((resolve, reject) => {
+      this.ensureSocket((error) => {
+        if (error) {
+          callback && typeof callback === 'function' && callback(error)
+          reject(error)
+          return
+        }
+        if (this.socket && this.socket.readyState === this.socket.OPEN) {
+          var data = this.format(service, fn, args)
+          this.callbacks[data.id] = callback
+          this.socket.send(JSON.stringify(data))
+          resolve(data.id)
+        } else {
+          callback && typeof callback === 'function' && callback('Socket not ready. state:' + this.socket.readyState)
+          reject('Socket not ready. state:' + this.socket.readyState)
+        }
+      })
     })
   }
 

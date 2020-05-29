@@ -66,12 +66,12 @@ class FileProvider {
   exists (path, cb) {
     // todo check the type (directory/file) as well #2386
     // currently it is not possible to have a file and folder with same path
-    cb(null, this._exists(path))
+    return cb(null, this._exists(path))
   }
 
   _exists (path) {
     var unprefixedpath = this.removePrefix(path)
-    return window.remixFileSystem.existsSync(unprefixedpath)
+    return path === this.type ? true : window.remixFileSystem.existsSync(unprefixedpath)
   }
 
   init (cb) {
@@ -94,19 +94,8 @@ class FileProvider {
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (exists && window.remixFileSystem.readFileSync(unprefixedpath, 'utf8') === content) return true
-
     if (!exists && unprefixedpath.indexOf('/') !== -1) {
-      const paths = unprefixedpath.split('/')
-      paths.pop() // last element should the filename
-      if (paths.length && paths[0] === '') paths.shift()
-      let currentCheck = ''
-      paths.forEach((value) => {
-        currentCheck = currentCheck + '/' + value
-        if (!window.remixFileSystem.existsSync(currentCheck)) {
-          window.remixFileSystem.mkdirSync(currentCheck)
-          this.event.trigger('folderAdded', [this._normalizePath(currentCheck)])
-        }
-      })
+      this.createDir(path)
     }
     try {
       window.remixFileSystem.writeFileSync(unprefixedpath, content)
@@ -123,6 +112,22 @@ class FileProvider {
     return true
   }
 
+  createDir (path, cb) {
+    var unprefixedpath = this.removePrefix(path)
+    const paths = unprefixedpath.split('/')
+    paths.pop() // last element should the filename
+    if (paths.length && paths[0] === '') paths.shift()
+    let currentCheck = ''
+    paths.forEach((value) => {
+      currentCheck = currentCheck + '/' + value
+      if (!window.remixFileSystem.existsSync(currentCheck)) {
+        window.remixFileSystem.mkdirSync(currentCheck)
+        this.event.trigger('folderAdded', [this._normalizePath(currentCheck)])
+      }
+    })
+    if (cb) cb()
+  }
+
   // this will not add a folder as readonly but keep the original url to be able to restore it later
   addExternal (path, content, url) {
     if (url) this.addNormalizedName(path, url)
@@ -134,7 +139,14 @@ class FileProvider {
   }
 
   isDirectory (path) {
-    return window.remixFileSystem.statSync(path).isDirectory()
+    const unprefixedpath = this.removePrefix(path)
+
+    return path === this.type ? true : window.remixFileSystem.statSync(unprefixedpath).isDirectory()
+  }
+
+  isFile (path) {
+    path = this.removePrefix(path)
+    return window.remixFileSystem.statSync(path).isFile()
   }
 
   /**
@@ -147,9 +159,7 @@ class FileProvider {
       const stat = window.remixFileSystem.statSync(path)
       try {
         if (!stat.isDirectory()) {
-          window.remixFileSystem.unlinkSync(path, console.log)
-          this.event.trigger('fileRemoved', [this._normalizePath(path)])
-          return true
+          return this.removeFile(path)
         } else {
           const items = window.remixFileSystem.readdirSync(path)
           if (items.length !== 0) {
@@ -158,8 +168,7 @@ class FileProvider {
               if (window.remixFileSystem.statSync(curPath).isDirectory()) { // delete folder
                 this.remove(curPath)
               } else { // delete file
-                window.remixFileSystem.unlinkSync(curPath, console.log)
-                this.event.trigger('fileRemoved', [this._normalizePath(path)])
+                this.removeFile(curPath)
               }
             })
             if (window.remixFileSystem.readdirSync(path).length === 0) window.remixFileSystem.rmdirSync(path, console.log)
@@ -174,6 +183,15 @@ class FileProvider {
       }
     }
     return true
+  }
+
+  removeFile (path) {
+    path = this.removePrefix(path)
+    if (window.remixFileSystem.existsSync(path) && !window.remixFileSystem.statSync(path).isDirectory()) {
+      window.remixFileSystem.unlinkSync(path, console.log)
+      this.event.trigger('fileRemoved', [this._normalizePath(path)])
+      return true
+    } else return false
   }
 
   rename (oldPath, newPath, isFolder) {

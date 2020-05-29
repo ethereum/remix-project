@@ -15,7 +15,7 @@ module.exports = {
   'Test Success Import': function (browser) {
     browser.addFile('Untitled1.sol', sources[1]['browser/Untitled1.sol'])
           .addFile('Untitled2.sol', sources[1]['browser/Untitled2.sol'])
-          .switchFile('browser/Untitled1.sol')
+          .openFile('browser/Untitled1.sol')
           .verifyContracts(['test6', 'test4', 'test5'])
   },
 
