@@ -1,13 +1,13 @@
 'use strict'
 require('@babel/register')()
 
-const crxFile = require('fs').readFileSync('test-browser/extensions/chrome/metamask.crx')
+const crxFile = require('fs').readFileSync('apps/remix-ide/test-browser/extensions/chrome/metamask.crx')
 const metamaskExtension = new Buffer.from(crxFile).toString('base64') // eslint-disable-line
 
 module.exports = {
-  'src_folders': ['test-browser/tests'],
-  'output_folder': 'reports/tests',
-  'custom_commands_path': ['test-browser/commands'],
+  'src_folders': ['apps/remix-ide/test-browser/tests'],
+  'output_folder': 'apps/remix-ide/reports/tests',
+  'custom_commands_path': ['apps/remix-ide/test-browser/commands'],
   'custom_assertions_path': '',
   'page_objects_path': '',
   'globals_path': '',
@@ -22,7 +22,7 @@ module.exports = {
       },
       'screenshots': {
         'enabled': true,
-        'path': './reports/screenshots',
+        'path': 'apps/remix-ide/reports/screenshots',
         'on_failure': true,
         'on_error': true
       },
@@ -31,7 +31,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true
       },
-      'exclude': ['tests/runAndDeploy.js']
+      'exclude': ['apps/remix-ide/test-browser/tests/runAndDeploy.js']
     },
 
     'chrome': {

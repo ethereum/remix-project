@@ -38,12 +38,18 @@
           }
         },
         "lint": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "commands": [
-              {
-                "command": "standard | notify-error"
-              }
+            "linter": "eslint",
+            "config": "apps/remix-ide/.eslintrc.json",
+            "files": [
+              "apps/remix-ide/**/*.js"
+            ],
+            "exclude": ["**/node_modules/**",
+              "apps/remix-ide/build/**/*.js",
+              "apps/remix-ide/src/app/editor/mode-solidity.js",
+              "apps/remix-ide/soljson.js",
+              "apps/remix-ide/assets/js/**/*.js"
             ]
           }
         },
@@ -52,7 +58,7 @@
           "options": {
             "commands": [
               {
-                "command": "csslint && standard && node test/index.js"
+                "command": "csslint && node apps/remix-ide/test/index.js"
               }
             ]
           }
@@ -63,7 +69,7 @@
     }
   },
   "cli": {
-    "defaultCollection": "@nrwl/web"
+    "defaultCollection": "@nrwl/workspace"
   },
   "schematics": {
     "@nrwl/workspace": {
@@ -81,6 +87,9 @@
         "linter": "eslint"
       },
       "library": {
+        "linter": "eslint"
+      },
+      "storybook-configuration": {
         "linter": "eslint"
       }
     },

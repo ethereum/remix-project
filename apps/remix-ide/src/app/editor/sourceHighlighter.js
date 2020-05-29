@@ -13,6 +13,7 @@ class SourceHighlighter {
       fileManager: this._components.registry.get('filemanager').api,
       compilerArtefacts: this._components.registry.get('compilersartefacts').api
     }
+    this.position = null
     this.statementMarker = null
     this.fullLineMarker = null
     this.source = null
@@ -46,6 +47,7 @@ class SourceHighlighter {
         .highlightcode {
           position:absolute;
           z-index:20;
+          opacity: 0.3;
           background-color: ${style || 'var(--info)'};
         }
         .highlightcode_fullLine {
@@ -59,9 +61,9 @@ class SourceHighlighter {
         }
         `
 
-      this.statementMarker = this._deps.editor.addMarker(lineColumnPos, this.source, css.highlightcode.className + ' ' + css.customBackgroundColor.className)
+      this.statementMarker = this._deps.editor.addMarker(lineColumnPos, this.source, css.highlightcode.className + ' ' + css.customBackgroundColor.className + ' ' + `highlightLine${lineColumnPos.start.line}`)
       this._deps.editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
-
+      this.position = lineColumnPos
       if (lineColumnPos.start.line === lineColumnPos.end.line) {
         this.fullLineMarker = this._deps.editor.addMarker({
           start: {
