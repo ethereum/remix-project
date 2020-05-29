@@ -46,7 +46,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation']
+  methods: ['highlight', 'discardHighlight', 'discardHighlightAt', 'clearAnnotations', 'addAnnotation']
 }
 
 class Editor extends Plugin {
@@ -200,6 +200,11 @@ class Editor extends Plugin {
   discardHighlight () {
     const { from } = this.currentRequest
     this.sourceHighlighters.discardHighlight(from)
+  }
+
+  discardHighlightAt (line, filePath) {
+    const { from } = this.currentRequest
+    this.sourceHighlighters.discardHighlightAt(line, filePath, from)
   }
 
   setTheme (type) {

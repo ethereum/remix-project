@@ -47,9 +47,9 @@ module.exports = {
     .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
     .pause(5000)
-    .testFunction('0xe9b627a180f90a24feb6850f29e4121ea312f315f61756c31468ffbda2955a64', {
+    .testFunction('0xc39ee005c1e1368c84f02e458de4b41dbb966631a8714d15ef8362dada249ede', {
       status: '0x1 Transaction mined and execution succeed',
-      'transaction hash': '0xe9b627a180f90a24feb6850f29e4121ea312f315f61756c31468ffbda2955a64'
+      'transaction hash': '0xc39ee005c1e1368c84f02e458de4b41dbb966631a8714d15ef8362dada249ede'
     })
   },
 
@@ -196,7 +196,6 @@ var sources = [
       content:
       `
       pragma solidity ^0.6.0;
-
       contract helloWorld {
           string public message;
           
