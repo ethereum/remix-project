@@ -4,11 +4,15 @@ var fs = require('fs')
 var compiler = require('solc')
 var compilerInput = require('remix-solidity').CompilerInput
 var defaultVersion = 'v0.6.6+commit.6c089d02'
+const path = require('path')
 
 compiler.loadRemoteVersion(defaultVersion, (error, solcSnapshot) => {
+  console.log('solcSnapshot: ', solcSnapshot)
   if (error) console.log(error)
   var compilationResult = {}
-  gatherCompilationResults('./test-browser/tests/', compilationResult, solcSnapshot)
+  const testsFolder = path.resolve(__dirname + '/../test-browser/tests/') + '/' // eslint-disable-line
+
+  gatherCompilationResults(testsFolder, compilationResult, solcSnapshot)
   replaceSolCompiler(compilationResult, solcSnapshot)
 })
 
@@ -16,7 +20,7 @@ function gatherCompilationResults (dir, compilationResult, solcSnapshot) {
   var filenames = fs.readdirSync(dir, 'utf8')
   filenames.map(function (item, i) {
     if (item.endsWith('.js')) {
-      var testDef = require('.' + dir + item)
+      var testDef = require(dir + item)
       if ('@sources' in testDef) {
         var sources = testDef['@sources']()
         for (var files in sources) {
@@ -61,7 +65,10 @@ function compile (solcSnapshot, source, optimization, addCompilationResult) {
 }
 
 function replaceSolCompiler (results, solcSnapshot) {
-  fs.readFile('./test-browser/mockcompiler/compiler.js', 'utf8', function (error, data) {
+  const compilerPath = path.resolve(__dirname + '/../test-browser/mockcompiler/compiler.js') // eslint-disable-line
+  const soljsonPath = path.resolve(__dirname + '/../soljson.js') // eslint-disable-line
+
+  fs.readFile(compilerPath, 'utf8', function (error, data) {
     if (error) {
       console.log(error)
       process.exit(1)
@@ -70,7 +77,7 @@ function replaceSolCompiler (results, solcSnapshot) {
     console.log(solcSnapshot.version())
     data = data + '\n\nvar mockCompilerVersion = \'' + solcSnapshot.version() + '\''
     data = data + '\n\nvar mockData = ' + JSON.stringify(results) + ';\n'
-    fs.writeFile('./soljson.js', data, 'utf8', function (error) {
+    fs.writeFile(soljsonPath, data, 'utf8', function (error) {
       if (error) {
         console.log(error)
         process.exit(1)
