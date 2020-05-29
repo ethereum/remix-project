@@ -1,0 +1,37 @@
+language: node_js
+node_js:
+  - "9"
+addons:
+  chrome: stable
+language: java
+branches:
+  only:
+  - master
+  - remix_live
+script:
+  - npm install
+  - npm run lint && npm run test && npm run make-mock-compiler && npm run build
+  - wget http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
+  - wget http://chromedriver.storage.googleapis.com/2.30/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
+  - java -Dwebdriver.chrome.driver="chromedriver" -jar selenium-server-standalone-3.5.3.jar &
+  - ./ci/browser_tests.sh
+deploy:
+  - provider: script
+    script: ci/deploy_from_travis_remix-alpha.sh
+    skip_cleanup: true
+    on:
+      branch: master
+  - provider: script
+    script: ci/deploy_from_travis_remix-live.sh
+    skip_cleanup: true
+    on:
+      branch: remix_live
+env:
+  global:
+    - ENCRYPTION_LABEL2="85f76a180658"
+    - ENCRYPTION_LABEL3="3737d4fd78e9"
+    - COMMIT_AUTHOR_EMAIL="chris@ethereum.org"
+    - COMMIT_AUTHOR="Travis CI"
+    - FILES_TO_PACKAGE="assets background.js build icon.png index.html manifest.json README.md soljson.js"
+cache: false
