@@ -61,7 +61,7 @@ export class MainView {
       self._view.mainPanel.style.display = 'none'
       self._components.contextView.show()
     })
-    self.tabProxy.event.on('switchFile', (file) => {
+    self.tabProxy.event.on('openFile', (file) => {
       self._view.editor.style.display = 'block'
       self._view.mainPanel.style.display = 'none'
       self._components.contextView.show()
