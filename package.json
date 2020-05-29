@@ -128,8 +128,7 @@
   },
   "dependencies": {
     "@remixproject/engine": "^0.2.3",
-    "http-server": "^0.11.1",
-    "remixd": "0.1.8-alpha.10"
+    "http-server": "^0.11.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -152,7 +151,6 @@
     "babel-eslint": "^10.0.0",
     "babel-plugin-fast-async": "^6.1.2",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-plugin-yo-yoify": "^2.0.0",
     "babelify": "^10.0.0",
     "brace": "^0.8.0",
     "browserify": "^16.2.3",
@@ -171,15 +169,6 @@
     "exorcist": "^0.4.0",
     "fast-async": "^7.0.6",
     "fast-levenshtein": "^2.0.6",
-    "ganache-cli": "^6.8.1",
-    "gists": "^1.0.1",
-    "ipfs-mini": "^1.1.5",
-    "is-electron": "^2.2.0",
-    "javascript-serialize": "^1.6.1",
-    "jquery": "^3.3.1",
-    "js-base64": "^2.1.9",
-    "js-beautify": "1.6.14",
-    "minixhr": "^3.2.2",
     "mkdirp": "^0.5.1",
     "nanohtml": "^1.6.3",
     "nightwatch": "^1.3.5",
@@ -209,10 +198,20 @@
     "typescript": "~3.8.3",
     "uglify-js": "^2.8.16",
     "vm-browserify": "0.0.4",
+    "yo-yo": "^1.2.2",
+    "yo-yoify": "^3.7.3",
+    "babel-plugin-yo-yoify": "^2.0.0",
+    "ganache-cli": "^6.8.1",
+    "gists": "^1.0.1",
+    "ipfs-mini": "^1.1.5",
+    "is-electron": "^2.2.0",
+    "javascript-serialize": "^1.6.1",
+    "jquery": "^3.3.1",
+    "js-base64": "^2.1.9",
+    "js-beautify": "1.6.14",
+    "minixhr": "^3.2.2",
     "watchify": "^3.9.0",
     "web3": "1.2.4",
-    "webworkify": "^1.2.1",
-    "yo-yo": "^1.2.2",
-    "yo-yoify": "^3.7.3"
+    "webworkify": "^1.2.1"
   }
 }
