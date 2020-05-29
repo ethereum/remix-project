@@ -355,7 +355,6 @@ class FileManager extends Plugin {
     if (this.currentRequest) {
       const canCall = await this.askUserPermission('writeFile', '')
       if (canCall) {
-        this._setFileInternal(path, content)
         // inform the user about modification after permission is granted and even if permission was saved before
         toaster(yo`
           <div>
