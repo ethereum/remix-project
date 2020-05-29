@@ -49,7 +49,7 @@
     "minixhr": "^3.2.2",
     "mkdirp": "^0.5.1",
     "nanohtml": "^1.6.3",
-    "nightwatch": "^0.9.20",
+    "nightwatch": "^1.3.5",
     "notify-error": "^1.2.0",
     "npm-link-local": "^1.1.0",
     "npm-merge-driver": "^2.3.5",
@@ -62,7 +62,7 @@
     "remix-solidity": "0.3.30",
     "remix-tabs": "1.0.48",
     "remix-tests": "0.1.33",
-    "remixd": "0.1.8-alpha.16",
+    "remixd": "0.1.8-alpha.10",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.17.0",
@@ -81,6 +81,7 @@
   "dependencies": {
     "@remixproject/engine": "^0.2.3",
     "http-server": "^0.11.1",
+    "remixd": "0.1.8-alpha.10",
     "standard": "^8.5.0"
   },
   "repository": {
@@ -184,6 +185,7 @@
     "nightwatch_local_fileExplorer": "nightwatch ./test-browser/tests/fileExplorer.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_debugger": "nightwatch ./test-browser/tests/debugger.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_editor": "nightwatch ./test-browser/tests/editor.test.js --config nightwatch.js --env chrome ",
+    
     "nightwatch_local_runAndDeploy": "nightwatch ./test-browser/tests/runAndDeploy.js --config nightwatch.js --env chrome-runAndDeploy ",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
