@@ -90,7 +90,7 @@ module.exports = {
   'Should deploy contract on Goerli Test Network using MetaMask': function (browser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
     .clickLaunchIcon('fileExplorers')
-    .switchFile('browser/Greet.sol')
+    .openFile('browser/Greet.sol')
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
@@ -141,7 +141,7 @@ module.exports = {
   'Should deploy contract on Ethereum Main Network using MetaMask': function (browser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
     .clickLaunchIcon('fileExplorers')
-    .switchFile('browser/Greet.sol')
+    .openFile('browser/Greet.sol')
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
@@ -149,7 +149,6 @@ module.exports = {
     .waitForElementPresent('*[data-id="modalDialogContainer"]')
     .assert.containsText('*[data-id="modalDialogModalBody"]', 'You are creating a transaction on the main network. Click confirm if you are sure to continue.')
     .modalFooterCancelClick()
-    .end()
   },
 
   /*
@@ -159,7 +158,6 @@ module.exports = {
    * - Ropsten node for retrieving the trace and storage
    *
   */
-  /* to readd when the source verify is stable
   'Should debug Ropsten transaction with source highlighting using the source verifier service and MetaMask': function (browser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -178,15 +176,13 @@ module.exports = {
     .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
     .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Ropsten (3) network')
     .clickLaunchIcon('debugger')
-    .setValue('*[data-id="debuggerTransactionInput"]', '0x5db1b4212e4f83e36bf5bc306888df50f01a73708a71322bdc6f39a76a7ebdaa') // debug tx
+    .setValue('*[data-id="debuggerTransactionInput"]', '0x959371506b8f6223d71c709ac2eb2d0158104dca2d76ca949f1662712cf0e6db') // debug tx
     .click('*[data-id="debuggerTransactionStartButton"]')
     .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
-    .assert.containsText('*[data-id="stepdetail"]', 'loaded address: 0x96d87AB604AEC7FB26C2E046CA5e6eBBB9D8b74D')
+    .assert.containsText('*[data-id="stepdetail"]', 'loaded address: 0x3c943Fb816694d7D1f4C738e3e7823818a88DD6C')
     .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x6C3CCC7FBA111707D5A1AAF2758E9D4F4AC5E7B1')
     .end()
   },
-  */
-
   tearDown: sauce
 }
 

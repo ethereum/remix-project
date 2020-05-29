@@ -31,7 +31,7 @@ class SourceHighlighter {
     }
   }
 
-  currentSourceLocationFromfileName (lineColumnPos, filePath, style) {
+  async currentSourceLocationFromfileName (lineColumnPos, filePath, style) {
     if (this.statementMarker) this._deps.editor.removeMarker(this.statementMarker, this.source)
     if (this.fullLineMarker) this._deps.editor.removeMarker(this.fullLineMarker, this.source)
     this.statementMarker = null
@@ -39,8 +39,9 @@ class SourceHighlighter {
     this.source = null
     if (lineColumnPos) {
       this.source = filePath
-      if (this._deps.config.get('currentFile') !== this.source) {
-        this._deps.fileManager.switchFile(this.source)
+      if (this._deps.fileManager.currentFile() !== this.source) {
+        await this._deps.fileManager.open(this.source)
+        this.source = this._deps.fileManager.currentFile()
       }
 
       const css = csjs`

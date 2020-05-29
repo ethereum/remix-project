@@ -1,9 +1,9 @@
 const EventEmitter = require('events')
 
-class SwitchFile extends EventEmitter {
+class OpenFile extends EventEmitter {
   command (name) {
     this.api.perform((done) => {
-      switchFile(this.api, name, () => {
+      openFile(this.api, name, () => {
         done()
         this.emit('complete')
       })
@@ -13,7 +13,7 @@ class SwitchFile extends EventEmitter {
 }
 
 // click on fileExplorer can toggle it. We go through settings to be sure FE is open
-function switchFile (browser, name, done) {
+function openFile (browser, name, done) {
   browser.clickLaunchIcon('settings').clickLaunchIcon('fileExplorers')
       .waitForElementVisible('li[key="' + name + '"]')
       .click('li[key="' + name + '"]')
@@ -23,4 +23,4 @@ function switchFile (browser, name, done) {
       })
 }
 
-module.exports = SwitchFile
+module.exports = OpenFile
