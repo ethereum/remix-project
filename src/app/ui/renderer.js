@@ -41,7 +41,7 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
     if (provider) {
       provider.exists(errFile, (error, exist) => {
         if (error) return console.log(error)
-        self._deps.fileManager.switchFile(errFile)
+        self._deps.fileManager.open(errFile)
         editor.gotoLine(errLine, errCol)
       })
     }

@@ -108,9 +108,9 @@ staticAnalysisView.prototype.run = function () {
   if (!this.view) {
     return
   }
-  const highlightLocation = (location, fileName) => {
-    // await this.analysisModule.call('editor', 'highlight', location, fileName) @todo(#2834) use this after fixing the issue
-    this.sourceHighlighter.currentSourceLocationFromfileName(location, fileName)
+  const highlightLocation = async (location, fileName) => {
+    await this.analysisModule.call('editor', 'discardHighlight')
+    await this.analysisModule.call('editor', 'highlight', location, fileName)
   }
   const selected = this.selectedModules()
   const warningContainer = $('#staticanalysisresult')

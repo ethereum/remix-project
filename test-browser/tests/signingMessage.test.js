@@ -23,7 +23,7 @@ module.exports = {
       browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
     })
       .addFile('signMassage.sol', sources[0]['browser/signMassage.sol'])
-      .switchFile('browser/signMassage.sol')
+      .openFile('browser/signMassage.sol')
       .pause(5000)
       .selectContract('ECVerify')
       .createContract('')
