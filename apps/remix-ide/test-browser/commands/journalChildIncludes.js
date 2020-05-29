@@ -10,7 +10,7 @@ class JournalChildIncludes extends EventEmitter {
 
     this.api.elements('css selector', '*[data-id="terminalJournal"]', (res) => {
       res.value.forEach(function (jsonWebElement) {
-        const jsonWebElementId = jsonWebElement.ELEMENT
+        const jsonWebElementId = jsonWebElement.ELEMENT || jsonWebElement[Object.keys(jsonWebElement)[0]]
 
         browser.elementIdText(jsonWebElementId, (jsonElement) => {
           const text = jsonElement.value
