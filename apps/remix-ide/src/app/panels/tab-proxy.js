@@ -189,7 +189,7 @@ export class TabProxy {
 
     // @todo(#2492) remove style after the mainPanel layout fix.
     this._view.tabs = yo`
-      <div  style="display: -webkit-box; min-height: 35px">
+      <div  style="display: -webkit-box; max-height: 32px">
         ${zoomBtns}
         ${this._view.filetabs}
       </div>

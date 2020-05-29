@@ -55,7 +55,18 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
  *
  * @param {String or DOMElement} message
  * @param {DOMElement} container
- * @param {Object} options {useSpan, noAnnotations, click:(Function), type:(warning, error, staticAnalysisWarning), errFile, errLine, errCol}
+ * @param {Object} options {
+ *  useSpan,
+ *  noAnnotations,
+ *  click:(Function),
+ *  type:(
+ *    warning,
+ *    error
+ *  ),
+ *  errFile,
+ *  errLine,
+ *  errCol
+ * }
  */
 Renderer.prototype.error = function (message, container, opt) {
   if (!message) return
@@ -71,7 +82,7 @@ Renderer.prototype.error = function (message, container, opt) {
   }
 
   var errLocation = text.match(/^([^:]*):([0-9]*):(([0-9]*):)? /)
-  if (errLocation) {
+  if ((!opt.errFile || !opt.errCol || !opt.errLine) && errLocation) {
     errLocation = parseRegExError(errLocation)
     opt.errFile = errLocation.errFile
     opt.errLine = errLocation.errLine
@@ -94,10 +105,10 @@ Renderer.prototype.error = function (message, container, opt) {
   $(container).append($error)
 
   $error.click((ev) => {
-    if (opt.errFile && opt.errLine) {
-      this._errorClick(opt.errFile, opt.errLine, opt.errCol)
-    } else if (opt.click) {
+    if (opt.click) {
       opt.click(message)
+    } else if (opt.errFile && opt.errLine && opt.errCol) {
+      this._errorClick(opt.errFile, opt.errLine, opt.errCol)
     }
   })
 
