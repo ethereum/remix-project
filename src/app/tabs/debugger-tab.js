@@ -71,7 +71,7 @@ class DebuggerTab extends ViewPlugin {
   }
 
   deactivate () {
-    this.debuggerUI.unLoad()
+    this.debuggerUI.deletHighlights()
     super.deactivate()
   }
 
