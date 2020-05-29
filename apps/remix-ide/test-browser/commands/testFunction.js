@@ -10,12 +10,11 @@ class TestFunction extends EventEmitter {
     browser.waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
     .click(`*[data-id="txLogger${txHash}"]`)
     .waitForElementVisible(`*[data-id="txLoggerTable${txHash}"]`)
-    .click(`*[data-id="txLoggerTable${txHash}"]`)
 
     // fetch and format transaction logs as key => pair object
     .elements('css selector', `*[data-shared="key_${txHash}"]`, (res) => {
       res.value.forEach(function (jsonWebElement) {
-        const jsonWebElementId = jsonWebElement.ELEMENT
+        const jsonWebElementId = jsonWebElement.ELEMENT || jsonWebElement[Object.keys(jsonWebElement)[0]]
 
         browser.elementIdText(jsonWebElementId, (jsonElement) => {
           const key = jsonElement.value.trim()
@@ -26,7 +25,7 @@ class TestFunction extends EventEmitter {
     })
     .elements('css selector', `*[data-shared="pair_${txHash}"]`, (res) => {
       res.value.forEach(function (jsonWebElement, index) {
-        const jsonWebElementId = jsonWebElement.ELEMENT
+        const jsonWebElementId = jsonWebElement.ELEMENT || jsonWebElement[Object.keys(jsonWebElement)[0]]
 
         browser.elementIdText(jsonWebElementId, (jsonElement) => {
           let value = jsonElement.value
