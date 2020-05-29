@@ -59,7 +59,7 @@ module.exports = {
 
 function checkDeployShouldFail (browser, callback) {
   let config
-  browser.switchFile('browser/artifacts').switchFile('browser/artifacts/test.json')
+  browser.openFile('browser/artifacts').openFile('browser/artifacts/test.json')
         .getEditorValue((content) => {
           config = JSON.parse(content)
           config.deploy['VM:-'].autoDeployLib = false
@@ -67,7 +67,7 @@ function checkDeployShouldFail (browser, callback) {
         .perform(() => {
           browser.setEditorValue(JSON.stringify(config))
         })
-        .switchFile('browser/Untitled5.sol')
+        .openFile('browser/Untitled5.sol')
         .selectContract('test') // deploy lib
         .createContract('')
         .assert.containsText('div[class^="terminal"]', '<address> is not a valid address')
@@ -77,7 +77,7 @@ function checkDeployShouldFail (browser, callback) {
 function checkDeployShouldSucceed (browser, address, callback) {
   let addressRef
   let config
-  browser.switchFile('browser/artifacts').switchFile('browser/artifacts/test.json')
+  browser.openFile('browser/artifacts').openFile('browser/artifacts/test.json')
         .getEditorValue((content) => {
           config = JSON.parse(content)
           config.deploy['VM:-'].autoDeployLib = false
@@ -86,7 +86,7 @@ function checkDeployShouldSucceed (browser, address, callback) {
         .perform(() => {
           browser.setEditorValue(JSON.stringify(config))
         })
-        .switchFile('browser/Untitled5.sol')
+        .openFile('browser/Untitled5.sol')
         .selectContract('test') // deploy lib
         .createContract('')
         .getAddressAtPosition(1, (address) => {
