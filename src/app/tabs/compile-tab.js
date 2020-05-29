@@ -411,7 +411,7 @@ class CompileTab extends ViewPlugin {
   render () {
     if (this._view.el) return this._view.el
     this.onActivationInternal()
-    this._view.errorContainer = yo`<div class="${css.errorBlobs} p-4"></div>`
+    this._view.errorContainer = yo`<div class="${css.errorBlobs} p-4" data-id="compiledErrors" ></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
     this.compilerContainer.activate()
