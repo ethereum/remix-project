@@ -219,7 +219,7 @@ class DebuggerUI {
     this.event.trigger('traceUnloaded')
   }
 
-  async deletHighlights () {
+  async deleteHighlights () {
     await this.debuggerModule.call('editor', 'discardHighlight')
   }
 
