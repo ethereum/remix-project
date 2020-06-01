@@ -1,0 +1,112 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const version = require('../package.json').version
+
+program
+  .command('version')
+  .description("outputs version number")
+  .action(() => {
+    console.log(version)
+    process.exit(0)
+  })
+
+program
+  .command('help')
+  .description("outputs usage information")
+  .action(() => {
+    program.help()
+    process.exit(0)
+  })
+
+program
+  .option('-f, --file [filename]', 'solidity filename to debug')
+  .option('--tx [txHash]', 'transaction hash to debug')
+  .option('--node [url]', 'node to connect to')
+  .parse(process.argv)
+
+const CmdLine = require('../src/cmdline/index.js')
+
+const solc = require('solc')
+const fs = require('fs')
+
+const filename = 'test/sol/simple_storage.sol'
+const shortFilename = 'simple_storage.sol'
+
+const inputJson = {
+  language: 'Solidity',
+  sources: {
+  },
+  settings: {
+    optimizer: {
+      enabled: true,
+      runs: 200
+    },
+    outputSelection: {
+      '*': {
+        '': [ 'legacyAST' ],
+        '*': [ 'abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
+      }
+    }
+  }
+}
+
+inputJson.sources[shortFilename] = {content: fs.readFileSync(filename).toString()}
+
+console.log('compiling...')
+
+const compilationData = JSON.parse(solc.compileStandardWrapper(JSON.stringify(inputJson)))
+const compilation = {}
+compilation.data = compilationData
+compilation.source = { sources: inputJson.sources }
+
+const cmdLine = new CmdLine()
+cmdLine.connect('http', 'http://localhost:8545')
+cmdLine.loadCompilationResult(compilation)
+cmdLine.initDebugger()
+
+const tx = '0xf510c4f0b1d9ee262d7b9e9e87b4262f275fe029c2c733feef7dfa1e2b1e32aa'
+
+cmdLine.startDebug(tx, shortFilename)
+
+cmdLine.events.on('source', () => {
+  cmdLine.getSource().forEach(console.dir)
+})
+
+const repl = require('repl')
+
+repl.start({
+  prompt: '> ',
+  eval: (cmd, context, filename, cb) => {
+    let command = cmd.trim()
+    if (command === 'next' || command === 'n') {
+      cmdLine.stepOverForward(true)
+    }
+    if (command === 'previous' || command === 'p' || command === 'prev') {
+      cmdLine.stepOverBack(true)
+    }
+    if (command === 'step' || command === 's') {
+      cmdLine.stepIntoForward(true)
+    }
+    if (command === 'stepback' || command === 'sb') {
+      cmdLine.stepIntoBack(true)
+    }
+    if (command === 'exit' || command === 'quit') {
+      process.exit(0)
+    }
+    if (command === 'var local' || command === 'v l' || command === 'vl') {
+      cmdLine.displayLocals()
+    }
+    if (command === 'var global' || command === 'v g' || command === 'vg') {
+      cmdLine.displayGlobals()
+    }
+    if (command.split(' ')[0] === 'jump') {
+      let stepIndex = parseInt(command.split(' ')[1], 10)
+      cmdLine.jumpTo(stepIndex)
+    }
+    cb(null, '')
+  }
+})
+
+module.exports = cmdLine
+
