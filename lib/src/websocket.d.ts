@@ -9,12 +9,10 @@ export default class WebSocket {
     };
     server: http.Server;
     wsServer: WS.Server;
-    connection: WS;
     remixdClient: RemixdClient;
     constructor(port: number, opt: {
         [key: string]: string;
     }, remixdClient: RemixdClient);
     start(callback?: Function): void;
-    send(data: any): void;
     close(): void;
 }

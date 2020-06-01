@@ -31,7 +31,8 @@
   },
   "homepage": "https://github.com/ethereum/remixd#readme",
   "dependencies": {
-    "@remixproject/plugin-ws": "^0.2.0-alpha.1",
+    "@remixproject/plugin": "^0.3.0-alpha.3",
+    "@remixproject/plugin-ws": "^0.3.0-alpha.1",
     "chalk": "^4.0.0",
     "chokidar": "^2.0.2",
     "commander": "^2.20.3",

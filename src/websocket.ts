@@ -10,7 +10,6 @@ export default class WebSocket {
   }
   server: http.Server
   wsServer: WS.Server
-  connection: WS
   remixdClient: RemixdClient
 
   constructor (port: number, opt: {
@@ -36,23 +35,14 @@ export default class WebSocket {
     })
     this.wsServer = new WS.Server({ server: this.server })
     this.wsServer.on('connection', function connection(ws) {
-      obj.connection = ws
-      const client = buildWebsocketClient(obj.connection, obj.remixdClient)
+      const client = buildWebsocketClient(ws, obj.remixdClient)
 
       if(callback) callback(client)
     })
   }
 
-  send (data: any) {
-    this.connection.send(data)
-  }
-
   close () {
-    if (this.connection) {
-      this.connection.close()
-    }
-    if (this.server) {
-      this.server.close()
-    }
+    console.log('this.server: ', this.server)
+    this.server.close()
   }
 }
