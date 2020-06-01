@@ -1,0 +1,99 @@
+{
+  "argumentTypes": null,
+  "arguments": [],
+  "expression":
+  {
+    "argumentTypes": [],
+    "expression":
+    {
+      "argumentTypes": null,
+      "arguments":
+      [
+        {
+          "argumentTypes": null,
+          "hexValue": "30",
+          "id": 9,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": true,
+          "kind": "number",
+          "lValueRequested": false,
+          "nodeType": "Literal",
+          "src": "83:1:0",
+          "subdenomination": null,
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_rational_0_by_1",
+            "typeString": "int_const 0"
+          },
+          "value": "0"
+        }
+      ],
+      "expression":
+      {
+        "argumentTypes":
+        [
+          {
+            "typeIdentifier": "t_rational_0_by_1",
+            "typeString": "int_const 0"
+          }
+        ],
+        "id": 8,
+        "name": "c",
+        "nodeType": "Identifier",
+        "overloadedDeclarations": [],
+        "referencedDeclaration": 5,
+        "src": "81:1:0",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_type$_t_contract$_c_$5_$",
+          "typeString": "type(contract c)"
+        }
+      },
+      "id": 10,
+      "isConstant": false,
+      "isLValue": false,
+      "isPure": true,
+      "kind": "typeConversion",
+      "lValueRequested": false,
+      "names": [],
+      "nodeType": "FunctionCall",
+      "src": "81:4:0",
+      "tryCall": false,
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_contract$_c_$5",
+        "typeString": "contract c"
+      }
+    },
+    "id": 11,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": false,
+    "lValueRequested": false,
+    "memberName": "f",
+    "nodeType": "MemberAccess",
+    "referencedDeclaration": 4,
+    "src": "81:6:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_function_external_nonpayable$__$returns$__$",
+      "typeString": "function () external"
+    }
+  },
+  "id": 12,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "kind": "functionCall",
+  "lValueRequested": false,
+  "names": [],
+  "nodeType": "FunctionCall",
+  "src": "81:8:0",
+  "tryCall": false,
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_tuple$__$",
+    "typeString": "tuple()"
+  }
+}

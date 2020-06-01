@@ -1,0 +1,32 @@
+{
+    "argumentTypes": null,
+    "id": 13,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": false,
+    "lValueRequested": false,
+    "nodeType": "UnaryOperation",
+    "operator": "++",
+    "prefix": false,
+    "src": "95:3:0",
+    "subExpression":
+    {
+      "argumentTypes": null,
+      "id": 12,
+      "name": "x",
+      "nodeType": "Identifier",
+      "overloadedDeclarations": [],
+      "referencedDeclaration": 4,
+      "src": "95:1:0",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_uint256",
+        "typeString": "uint256"
+      }
+    },
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_uint256",
+      "typeString": "uint256"
+    }
+  }
