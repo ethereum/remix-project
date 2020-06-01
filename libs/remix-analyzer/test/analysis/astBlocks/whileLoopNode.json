@@ -1,0 +1,101 @@
+{
+  "body":
+  {
+    "id": 13,
+    "nodeType": "Block",
+    "src": "89:27:0",
+    "statements":
+    [
+      {
+        "expression":
+        {
+          "argumentTypes": null,
+          "id": 9,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": false,
+          "lValueRequested": false,
+          "leftHandSide":
+          {
+            "argumentTypes": null,
+            "id": 7,
+            "name": "x",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": 4,
+            "src": "91:1:0",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            }
+          },
+          "nodeType": "Assignment",
+          "operator": "=",
+          "rightHandSide":
+          {
+            "argumentTypes": null,
+            "hexValue": "31",
+            "id": 8,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": true,
+            "kind": "number",
+            "lValueRequested": false,
+            "nodeType": "Literal",
+            "src": "95:1:0",
+            "subdenomination": null,
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_rational_1_by_1",
+              "typeString": "int_const 1"
+            },
+            "value": "1"
+          },
+          "src": "91:5:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_uint256",
+            "typeString": "uint256"
+          }
+        },
+        "id": 10,
+        "nodeType": "ExpressionStatement",
+        "src": "91:5:0"
+      },
+      {
+        "id": 11,
+        "nodeType": "Break",
+        "src": "98:5:0"
+      },
+      {
+        "id": 12,
+        "nodeType": "Continue",
+        "src": "105:8:0"
+      }
+    ]
+  },
+  "condition":
+  {
+    "argumentTypes": null,
+    "hexValue": "74727565",
+    "id": 6,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": true,
+    "kind": "bool",
+    "lValueRequested": false,
+    "nodeType": "Literal",
+    "src": "83:4:0",
+    "subdenomination": null,
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_bool",
+      "typeString": "bool"
+    },
+    "value": "true"
+  },
+  "id": 14,
+  "nodeType": "WhileStatement",
+  "src": "76:40:0"
+}
