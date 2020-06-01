@@ -1,5 +1,5 @@
 import WebSocket from '../websocket'
-import { PluginClient } from '@remixproject/plugin-ws'
+import { PluginClient } from '@remixproject/plugin'
 
 const utils = require('../utils')
 const isbinaryfile = require('isbinaryfile')
