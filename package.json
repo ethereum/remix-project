@@ -8,10 +8,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\"",
-    "start": "./lib/bin/remixd.js -s ./shared --remix-ide http://127.0.0.1:8080",
+    "start": "./lib/bin/remixd.js",
     "npip": "npip",
     "lint": "eslint ./src",
-    "build": "tsc -p ./; chmod +x ./lib/bin/remixd.js",
+    "build": "tsc -p ./ && chmod +x ./lib/bin/remixd.js",
     "dev": "nodemon"
   },
   "repository": {
