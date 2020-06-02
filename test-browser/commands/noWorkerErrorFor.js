@@ -1,9 +1,9 @@
 const EventEmitter = require('events')
 
 class NoWorkerErrorFor extends EventEmitter {
-  command (version, content) {
+  command (version) {
     this.api.perform((done) => {
-      noWorkerErrorFor(this.api, version, content, () => {
+      noWorkerErrorFor(this.api, version, () => {
         done()
         this.emit('complete')
       })
@@ -12,16 +12,16 @@ class NoWorkerErrorFor extends EventEmitter {
   }
 }
 
-function noWorkerErrorFor (browser, version, done) {
+function noWorkerErrorFor (browser, version, callback) {
   browser
-    .clickLaunchIcon('solidity')
     .setSolidityCompilerVersion(version)
+    .pause(2000)
     .waitForElementPresent('*[data-id="compiledErrors"]')
     .notContainsText('*[data-id="compiledErrors"]', 'worker error:undefined')
     .notContainsText('*[data-id="compiledErrors"]', 'Uncaught RangeError: Maximum call stack size exceeded')
     .notContainsText('*[data-id="compiledErrors"]', 'RangeError: Maximum call stack size exceeded')
-    .perform(function (done) {
-      done()
+    .perform(() => {
+      callback()
     })
 }
 
