@@ -318,17 +318,21 @@ class CompilerContainer {
     this.compileIfAutoCompileOn()
   }
 
+  /*
+    The following functions are handlers for internal events.
+  */
+
   onchangeOptimize () {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
     this.compileIfAutoCompileOn()
   }
 
-  onchangeLanguage (event) {
-    this.compileTabLogic.setLanguage(event.target.value)
+  onchangeLanguage () {
+    this.compileTabLogic.setLanguage(this._view.languageSelector.value)
     this.compileIfAutoCompileOn()
   }
 
-  onchangeEvmVersion (_) {
+  onchangeEvmVersion () {
     let s = this._view.evmVersionSelector
     let v = s.value
     if (v === 'default') {
@@ -338,10 +342,35 @@ class CompilerContainer {
     this.compileIfAutoCompileOn()
   }
 
-  onchangeLoadVersion (event) {
+  onchangeLoadVersion () {
     this.data.selectedVersion = this._view.versionSelector.value
     this._updateVersionSelector()
     this._updateLanguageSelector()
+  }
+
+  /*
+    The following functions map with the above event handlers.
+    They are an external API for modifying the compiler configuration.
+  */
+
+  setOptimize (enabled) {
+    this._view.optimize.checked = enabled
+    this.onchangeOptimize()
+  }
+
+  setLanguage (lang) {
+    this._view.languageSelector.value = lang
+    this.onchangeLanguage()
+  }
+
+  setEvmVersion (version) {
+    this._view.evmVersionSelector.value = version || 'default'
+    this.onchangeEvmVersion()
+  }
+
+  setVersion (version) {
+    this._view.versionSelector.value = `soljson-v${version}.js`
+    this.onchangeLoadVersion()
   }
 
   _shouldBeAdded (version) {
