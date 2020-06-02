@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.json",
   "include": ["src"],
   "exclude":  ["node_modules", "src/@types" ],
   "compilerOptions": {
@@ -8,15 +9,10 @@
     "lib": ["dom", "es2018"],                 /* Specify library files to be included in the compilation. */
     "declaration": true,                      /* Generates corresponding '.d.ts' file. */
     "sourceMap": true,                        /* Generates corresponding '.map' file. */
-    "outDir": "./dist",                       /* Redirect output structure to the directory. */
 
     /* Strict Type-Checking Options */
     "strict": true,                           /* Enable all strict type-checking options. */
     "noImplicitAny": false,                   /* Raise error on expressions and declarations with an implied 'any' type. */
-
-    /* Module Resolution Options */
-    "baseUrl": "./src",                       /* Base directory to resolve non-absolute module names. */
-    "paths": { "remix-tests": ["./"] },       /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     "typeRoots": ["./@types", "node_modules/@types"], /* List of folders to include type definitions from. */
     "esModuleInterop": true,                   /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
     "types": [
