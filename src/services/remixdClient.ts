@@ -45,6 +45,7 @@ export default class RemixdClient extends PluginClient {
   }
 
   get (args: SharedFolderArgs, cb: Function) {
+    console.log('called on server')
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
     if (!fs.existsSync(path)) {
