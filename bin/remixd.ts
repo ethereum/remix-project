@@ -23,11 +23,10 @@ console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + program
 if (program.sharedFolder) {
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolic links are not forwarded to Remix IDE\n')
-  const remixdClient = new RemixdClient()
-  const websocketHandler = new WebSocket(65520, { remixIdeUrl: program.remixIde }, remixdClient)
+  const websocketHandler = new WebSocket(65520, { remixIdeUrl: program.remixIde }, new RemixdClient())
 
   websocketHandler.start()
-  killCallBack.push(websocketHandler.close)
+  killCallBack.push(websocketHandler.close.bind(websocketHandler))
 }
 
 // kill

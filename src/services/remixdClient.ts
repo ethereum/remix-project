@@ -1,14 +1,14 @@
 import WebSocket from '../websocket'
 import { PluginClient } from '@remixproject/plugin'
+import { SharedFolderArgs, TrackDownStreamUpdate } from '../../types'
 
 const utils = require('../utils')
 const isbinaryfile = require('isbinaryfile')
 const fs = require('fs-extra')
 
 export default class RemixdClient extends PluginClient {
-  trackDownStreamUpdate: {
-    [key: string]: string
-  }
+  methods: []
+  trackDownStreamUpdate: TrackDownStreamUpdate
   websocket: WebSocket | null
   currentSharedFolder: string
   readOnly: boolean
@@ -22,9 +22,7 @@ export default class RemixdClient extends PluginClient {
     this.readOnly = readOnly
   }
 
-  list (args: {
-    [key: string]: string
-  }, cb: Function) {
+  list (args: SharedFolderArgs, cb: Function) {
     try {
       cb(null, utils.walkSync(this.currentSharedFolder, {}, this.currentSharedFolder))
     } catch (e) {
@@ -32,27 +30,23 @@ export default class RemixdClient extends PluginClient {
     }
   }
 
-  resolveDirectory (args: {
-    [key: string]: string
-  }, cb: Function) {
+  resolveDirectory (args: SharedFolderArgs, cb: Function) {
     try {
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
+      
       cb(null, utils.resolveDirectory(path, this.currentSharedFolder))
     } catch (e) {
       cb(e.message)
     }
   }
 
-  folderIsReadOnly (args: {
-    [key: string]: string
-  }, cb: Function) {
+  folderIsReadOnly (args: SharedFolderArgs, cb: Function) {
     return cb(null, this.readOnly)
   }
 
-  get (args: {
-    [key: string]: string
-  }, cb: Function) {
+  get (args: SharedFolderArgs, cb: Function) {
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
+
     if (!fs.existsSync(path)) {
       return cb('File not found ' + path)
     }
@@ -70,20 +64,17 @@ export default class RemixdClient extends PluginClient {
     })
   }
 
-  exists (args: {
-    [key: string]: string
-  }, cb: Function) {
+  exists (args: SharedFolderArgs, cb: Function) {
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
     cb(null, fs.existsSync(path))
   }
 
-  set (args: {
-    [key: string]: string
-  }, cb: Function) {
+  set (args: SharedFolderArgs, cb: Function) {
     if (this.readOnly) return cb('Cannot write file: read-only mode selected')
     const isFolder = args.path.endsWith('/')
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
+
     if (fs.existsSync(path) && !isRealPath(path, cb)) return
     if (args.content === 'undefined') { // no !!!!!
       console.log('trying to write "undefined" ! stopping.')
@@ -102,15 +93,15 @@ export default class RemixdClient extends PluginClient {
     }
   }
 
-  rename (args: {
-    [key: string]: string
-  }, cb: Function) {
+  rename (args: SharedFolderArgs, cb: Function) {
     if (this.readOnly) return cb('Cannot rename file: read-only mode selected')
     const oldpath = utils.absolutePath(args.oldPath, this.currentSharedFolder)
+
     if (!fs.existsSync(oldpath)) {
       return cb('File not found ' + oldpath)
     }
     const newpath = utils.absolutePath(args.newPath, this.currentSharedFolder)
+
     if (!isRealPath(oldpath, cb)) return
     fs.move(oldpath, newpath, (error: Error, data: string) => {
       if (error) console.log(error)
@@ -118,11 +109,10 @@ export default class RemixdClient extends PluginClient {
     })
   }
 
-  remove (args: {
-    [key: string]: string
-  }, cb: Function) {
+  remove (args: SharedFolderArgs, cb: Function) {
     if (this.readOnly) return cb('Cannot remove file: read-only mode selected')
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
+
     if (!fs.existsSync(path)) {
       return cb('File not found ' + path)
     }
@@ -136,17 +126,13 @@ export default class RemixdClient extends PluginClient {
     })
   }
 
-  isDirectory (args: {
-    [key: string]: string
-  }, cb: Function) {
+  isDirectory (args: SharedFolderArgs, cb: Function) {
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
     cb(null, fs.statSync(path).isDirectory())
   }
 
-  isFile (args: {
-    [key: string]: string
-  }, cb: Function) {
+  isFile (args: SharedFolderArgs, cb: Function) {
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
     cb(null, fs.statSync(path).isFile())
@@ -157,6 +143,7 @@ function isRealPath (path: string, cb: Function) {
   const realPath = fs.realpathSync(path)
   const isRealPath = path === realPath
   const mes = '[WARN] Symbolic link modification not allowed : ' + path + ' | ' + realPath
+
   if (!isRealPath) {
     console.log('\x1b[33m%s\x1b[0m', mes)
   }
