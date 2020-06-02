@@ -15,7 +15,15 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@remix-project/remix-analyzer": ["libs/remix-analyzer/index.ts"],
+      "@remix-project/remix-astwalker": ["libs/remix-astwalker/src/index.ts"],
+      "@remix-project/remix-debug": ["libs/remix-debug/index.js"],
+      "@remix-project/remix-lib": ["libs/remix-lib/index.js"],
+      "@remix-project/remix-simulator": ["libs/remix-simulator/index.js"],
+      "@remix-project/remix-solidity": ["libs/remix-solidity/index.ts"],
+      "@remix-project/remix-url-resolver": ["libs/remix-url-resolver/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
