@@ -15,8 +15,8 @@ class NoWorkerErrorFor extends EventEmitter {
 function noWorkerErrorFor (browser, version, callback) {
   browser
     .setSolidityCompilerVersion(version)
-    .pause(2000)
-    .waitForElementPresent('*[data-id="compiledErrors"]')
+    .click('*[data-id="compilerContainerCompileBtn"]')
+    .waitForElementPresent('*[data-id="compilationFinishedWith_' + version + '"]', 10000)
     .notContainsText('*[data-id="compiledErrors"]', 'worker error:undefined')
     .notContainsText('*[data-id="compiledErrors"]', 'Uncaught RangeError: Maximum call stack size exceeded')
     .notContainsText('*[data-id="compiledErrors"]', 'RangeError: Maximum call stack size exceeded')
