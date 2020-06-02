@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class VerifyContracts extends EventEmitter {
-  command (compiledContractNames, opts = { wait: 1000 }) {
+  command (compiledContractNames, opts = { wait: 1000, version: null }) {
     this.api.perform((done) => {
       verifyContracts(this.api, compiledContractNames, opts, () => {
         done()
@@ -17,6 +17,17 @@ function getCompiledContracts (browser, opts, callback) {
   .clickLaunchIcon('solidity')
   .pause(opts.wait)
   .waitForElementPresent('*[data-id="compiledContracts"] option')
+  .perform((done) => {
+    if (opts.version) {
+      browser
+      .click('*[data-id="compilation-details"]')
+      .waitForElementPresent('*[data-id="treeViewLicompiler"]')
+      .click('*[data-id="treeViewLicompiler"]')
+      .waitForElementPresent('*[data-id="treeViewTogglecompiler/version"]')
+      .assert.containsText('*[data-id="treeViewLicompiler/version"]', `version: ${opts.version}`)
+      .perform(done)
+    } else done()
+  })
   .execute(function () {
     var contracts = document.querySelectorAll('*[data-id="compiledContracts"] option')
     if (!contracts) {
