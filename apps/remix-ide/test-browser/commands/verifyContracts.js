@@ -21,9 +21,10 @@ function getCompiledContracts (browser, opts, callback) {
     if (opts.version) {
       browser
       .click('*[data-id="compilation-details"]')
-      .waitForElementPresent('*[data-id="treeViewLicompiler"]')
-      .click('*[data-id="treeViewLicompiler"]')
-      .waitForElementPresent('*[data-id="treeViewTogglecompiler/version"]')
+      .waitForElementVisible('*[data-id="treeViewDivcompiler"]')
+      .pause(2000)
+      .click('*[data-id="treeViewDivcompiler"]')
+      .waitForElementVisible('*[data-id="treeViewLicompiler/version"]')
       .assert.containsText('*[data-id="treeViewLicompiler/version"]', `version: ${opts.version}`)
       .perform(done)
     } else done()
