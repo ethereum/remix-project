@@ -21,6 +21,30 @@
   "projects": {
     "remix-ide": {
       "tags": []
+    },
+    "remix-analyzer": {
+      "tags": []
+    },
+    "remix-astwalker": {
+      "tags": []
+    },
+    "remix-debug": {
+      "tags": []
+    },
+    "remix-lib": {
+      "tags": []
+    },
+    "remix-simulator": {
+      "tags": []
+    },
+    "remix-solidity": {
+      "tags": []
+    },
+    "remix-tests": {
+      "tags": []
+    },
+    "remix-url-resolver": {
+      "tags": []
     }
   }
 }
