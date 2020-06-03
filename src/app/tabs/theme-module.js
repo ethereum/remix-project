@@ -1,5 +1,6 @@
 import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
+import QueryParams from '../../lib/query-params'
 import * as packageJson from '../../../package.json'
 import yo from 'yo-yo'
 
@@ -38,7 +39,9 @@ export class ThemeModule extends Plugin {
       config: registry.get('config').api
     }
     this.themes = themes.reduce((acc, theme) => ({ ...acc, [theme.name]: theme }), {})
-    this.active = this._deps.config.get('settings/theme') ? this._deps.config.get('settings/theme') : 'Dark'
+    const theme = (new QueryParams()).get().theme
+    this.active = theme || this._deps.config.get('settings/theme') || 'Dark'
+    this.forced = theme !== undefined
   }
 
   /** Return the active theme */
@@ -76,7 +79,7 @@ export class ThemeModule extends Plugin {
     }
     const next = themeName || this.active   // Name
     const nextTheme = this.themes[next] // Theme
-    this._deps.config.set('settings/theme', next)
+    if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName
