@@ -20,8 +20,8 @@ require('brace/mode/javascript')
 require('brace/mode/python')
 require('brace/mode/json')
 require('brace/mode/rust')
-require('brace/theme/chaos')
 require('brace/theme/chrome')
+require('../../../assets/js/editor/darkTheme')
 
 const css = csjs`
   .ace-editor {
