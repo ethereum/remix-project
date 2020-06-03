@@ -66,6 +66,166 @@
         }
 
       }
+    },
+    "remix-analyzer": {
+      "root": "libs/remix-analyzer",
+      "sourceRoot": "libs/remix-analyzer/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {},
+        "test": {},
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-analyzer",
+            "tsConfig": "libs/remix-analyzer/tsconfig.lib.json",
+            "packageJson": "libs/remix-analyzer/package.json",
+            "main": "libs/remix-analyzer/index.ts",
+            "assets": ["libs/remix-analyzer/*.md"]
+          }
+        }
+      }
+    },
+    "remix-astwalker": {
+      "root": "libs/remix-astwalker",
+      "sourceRoot": "libs/remix-astwalker/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {},
+        "test": {},
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-astwalker",
+            "tsConfig": "libs/remix-astwalker/tsconfig.lib.json",
+            "packageJson": "libs/remix-astwalker/package.json",
+            "main": "libs/remix-astwalker/src/index.ts",
+            "assets": ["libs/remix-astwalker/*.md"]
+          }
+        }
+      }
+    },
+    "remix-debug": {
+      "root": "libs/remix-debug",
+      "sourceRoot": "libs/remix-debug/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {},
+        "test": {},
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-debug",
+            "tsConfig": "",
+            "packageJson": "libs/remix-debug/package.json",
+            "main": "libs/remix-debug/index.js",
+            "assets": ["libs/remix-debug/*.md"]
+          }
+        }
+      }
+    },
+    "remix-lib": {
+      "root": "libs/remix-lib",
+      "sourceRoot": "libs/remix-lib/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {},
+        "test": {},
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-lib",
+            "tsConfig": "",
+            "packageJson": "libs/remix-lib/package.json",
+            "main": "libs/remix-lib/index.js",
+            "assets": ["libs/remix-lib/*.md"]
+          }
+        }
+      }
+    },
+    "remix-simulator": {
+      "root": "libs/remix-simulator",
+      "sourceRoot": "libs/remix-simulator/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {},
+        "test": {},
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-simulator",
+            "tsConfig": "",
+            "packageJson": "libs/remix-simulator/package.json",
+            "main": "libs/remix-simulator/index.js",
+            "assets": ["libs/remix-simulator/*.md"]
+          }
+        }
+      }
+    },
+    "remix-solidity": {
+      "root": "libs/remix-solidity",
+      "sourceRoot": "libs/remix-solidity/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {},
+        "test": {},
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-solidity",
+            "tsConfig": "libs/remix-solidity/tsconfig.lib.json",
+            "packageJson": "libs/remix-solidity/package.json",
+            "main": "libs/remix-solidity/index.ts",
+            "assets": ["libs/remix-solidity/*.md"]
+          }
+        }
+      }
+    },
+    "remix-tests": {
+      "root": "libs/remix-tests",
+      "sourceRoot": "libs/remix-tests/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {},
+        "test": {},
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-tests",
+            "tsConfig": "libs/remix-tests/tsconfig.lib.json",
+            "packageJson": "libs/remix-tests/package.json",
+            "main": "libs/remix-tests/src/index.ts",
+            "assets": ["libs/remix-tests/*.md"]
+          }
+        }
+      }
+    },
+    "remix-url-resolver": {
+      "root": "libs/remix-url-resolver",
+      "sourceRoot": "libs/remix-url-resolver/src/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {},
+        "test": {},
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-url-resolver",
+            "tsConfig": "libs/remix-url-resolver/tsconfig.lib.json",
+            "packageJson": "libs/remix-url-resolver/package.json",
+            "main": "libs/remix-url-resolver/src/index.ts",
+            "assets": ["libs/remix-url-resolver/*.md"]
+          }
+        }
+      }
     }
   },
   "cli": {
