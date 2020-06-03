@@ -407,6 +407,42 @@ test('Integration test blockBlockhash module', function (t: test.Test) {
   })
 })
 
+test('Integration test noReturn module', function (t: test.Test) {
+  t.plan(testFiles.length)
+  const module = modules.noReturn
+  const lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 1,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 1,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 1,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0,
+    'ERC20.sol': 0,
+    'stringBytesLength.sol': 0,
+    'etherTransferInLoop.sol': 0,
+    'forLoopIteratesOverDynamicArray.sol': 0
+  }
+  runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of noReturn warnings`)
+  })
+})
+
 test('Integration test selfdestruct module', function (t: test.Test) {
   t.plan(testFiles.length)
   const module: any = modules.selfdestruct
