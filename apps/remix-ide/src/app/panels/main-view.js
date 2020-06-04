@@ -34,7 +34,7 @@ export class MainView {
     this.init()
   }
   showApp (name) {
-    this.fileManager.unselectCurrentFile()
+    // this.fileManager.unselectCurrentFile()
     this.mainPanel.showContent(name)
     this._view.editor.style.display = 'none'
     this._components.contextView.hide()

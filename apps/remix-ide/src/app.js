@@ -42,7 +42,7 @@ import { basicLogo } from './app/ui/svgLogo'
 import { RunTab, makeUdapp } from './app/udapp'
 
 import PanelsResize from './lib/panels-resize'
-import { Engine } from '@remixproject/engine'
+import { Engine, WebsocketPlugin } from '@remixproject/engine'
 import { RemixAppManager } from './remixAppManager'
 import { FramingService } from './framingService'
 import { MainView } from './app/panels/main-view'
@@ -146,14 +146,21 @@ class App {
     self._components.filesProviders['browser'] = new FileProvider('browser')
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
 
-    var remixd = new Remixd(65520)
-    registry.put({api: remixd, name: 'remixd'})
-    remixd.event.register('system', (message) => {
-      if (message.error) toolTip(message.error)
+    self._components.remixd = new WebsocketPlugin({
+      name: 'remixd-websocket',
+      methods: ['get'],
+      url: 'ws://127.0.0.1:65520'
     })
 
-    self._components.filesProviders['localhost'] = new RemixDProvider(remixd)
+    console.log('remixd: ', self._components.remixd)
+    // registry.put({api: remixd, name: 'remixd'})
+    // remixd.event.register('system', (message) => {
+    //   if (message.error) toolTip(message.error)
+    // })
+
+    self._components.filesProviders['localhost'] = new RemixDProvider(self._components.remixd)
     registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
+    console.log('self._components.filesProviders: ', self._components.filesProviders)
     registry.put({api: self._components.filesProviders, name: 'fileproviders'})
 
     migrateFileSystem(self._components.filesProviders['browser'])
@@ -304,6 +311,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
 
   const contextualListener = new ContextualListener({editor})
+  const { remixd } = self._components
 
   engine.register([
     contentImport,
@@ -317,7 +325,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     contextualListener,
     terminal,
     web3Provider,
-    fetchAndCompile
+    fetchAndCompile,
+    remixd
   ])
 
   // LAYOUT & SYSTEM VIEWS
