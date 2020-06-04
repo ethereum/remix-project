@@ -25,7 +25,7 @@ export class OffsetToLineColumnConverter extends Plugin {
         this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[sourcesArray[0]].content)
       } else {
         for (var filename in asts) {
-          var source = asts[filename]
+          const source = asts[filename]
           if (source.id === file) {
             this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[filename].content)
             break
