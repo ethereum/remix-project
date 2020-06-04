@@ -11,11 +11,9 @@ export const pathToURL = {}
  * Retrieves the URL of the given compiler version
  * @param version is the version of compiler with or without 'soljson-v' prefix and .js postfix
  */
-export function urlFromVersion (version) { // 0x959371506b8f6223d71c709ac2eb2d0158104dca2d76ca949f1662712cf0e6db
-  console.log("1. orig_________= " + version + " path =", pathToURL, " version =", version, " and url is = ", pathToURL[version])
-  if (version.substr(0, 9) !== 'soljson-v') version = 'soljson-v' + version
-  if (version.substr(version.length - 3, version.length) !== '.js') version = version + '.js;'
-  console.log("2. orig_________= " + version + " path =", pathToURL, " version =", version, " and url is = ", pathToURL[version])
+export function urlFromVersion (version) {
+  if (!version.startsWith('soljson-v')) version = 'soljson-v' + version
+  if (!version.endsWith('.js')) version = version + '.js'
   return `${pathToURL[version]}/${version}`
 }
 
