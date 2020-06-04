@@ -93,7 +93,10 @@ class FileProvider {
     cb = cb || function () {}
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
-    if (exists && window.remixFileSystem.readFileSync(unprefixedpath, 'utf8') === content) return true
+    if (exists && window.remixFileSystem.readFileSync(unprefixedpath, 'utf8') === content) {
+      cb()
+      return true
+    }
     if (!exists && unprefixedpath.indexOf('/') !== -1) {
       this.createDir(path)
     }
