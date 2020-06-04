@@ -19,32 +19,58 @@
     }
   },
   "projects": {
-    "remix-ide": {
-      "tags": []
-    },
-    "remix-analyzer": {
-      "tags": []
-    },
     "remix-astwalker": {
-      "tags": []
-    },
-    "remix-debug": {
       "tags": []
     },
     "remix-lib": {
       "tags": []
     },
+    "remix-analyzer": {
+      "tags": [],
+      "implicitDependencies": [
+        "remix-astwalker",
+        "remix-lib"
+      ]
+    },
+    "remix-debug": {
+      "tags": [],
+      "implicitDependencies": [
+        "remix-lib"
+      ]
+    },
     "remix-simulator": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": [
+        "remix-lib"
+      ]
     },
     "remix-solidity": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": [
+        "remix-lib"
+      ]
     },
     "remix-tests": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": [
+        "remix-lib",
+        "remix-simulator",
+        "remix-solidity"
+      ]
     },
     "remix-url-resolver": {
       "tags": []
+    },
+    "remix-ide": {
+      "tags": [],
+      "implicitDependencies": [
+        "remix-analyzer", 
+        "remix-debug",
+        "remix-lib",
+        "remix-simulator",
+        "remix-solidity",
+        "remix-tests"
+      ]
     }
   }
 }
