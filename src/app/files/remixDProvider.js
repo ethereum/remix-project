@@ -15,39 +15,39 @@ module.exports = class RemixDProvider {
     this.filesContent = {}
     this.files = {}
 
-    var remixdEvents = ['connecting', 'connected', 'errored', 'closed']
-    remixdEvents.forEach((value) => {
-      remixd.event.register(value, (event) => {
-        this.event.trigger(value, [event])
-      })
-    })
+    // var remixdEvents = ['connecting', 'connected', 'errored', 'closed']
+    // remixdEvents.forEach((value) => {
+    //   remixd.event.register(value, (event) => {
+    //     this.event.trigger(value, [event])
+    //   })
+    // })
 
-    remixd.event.register('notified', (data) => {
-      if (data.scope === 'sharedfolder') {
-        if (data.name === 'created') {
-          this.init(() => {
-            this.event.trigger('fileAdded', [this.type + '/' + data.value.path, data.value.isReadOnly, data.value.isFolder])
-          })
-        } else if (data.name === 'removed') {
-          this.init(() => {
-            this.event.trigger('fileRemoved', [this.type + '/' + data.value.path])
-          })
-        } else if (data.name === 'changed') {
-          this._remixd.call('sharedfolder', 'get', {path: data.value}, (error, content) => {
-            if (error) {
-              console.log(error)
-            } else {
-              var path = this.type + '/' + data.value
-              this.filesContent[path] = content
-              this.event.trigger('fileExternallyChanged', [path, content])
-            }
-          })
-        } else if (data.name === 'rootFolderChanged') {
-          // new path has been set, we should reset
-          this.event.trigger('folderAdded', [this.type + '/'])
-        }
-      }
-    })
+    // remixd.event.register('notified', (data) => {
+    //   if (data.scope === 'sharedfolder') {
+    //     if (data.name === 'created') {
+    //       this.init(() => {
+    //         this.event.trigger('fileAdded', [this.type + '/' + data.value.path, data.value.isReadOnly, data.value.isFolder])
+    //       })
+    //     } else if (data.name === 'removed') {
+    //       this.init(() => {
+    //         this.event.trigger('fileRemoved', [this.type + '/' + data.value.path])
+    //       })
+    //     } else if (data.name === 'changed') {
+    //       this._remixd.call('sharedfolder', 'get', {path: data.value}, (error, content) => {
+    //         if (error) {
+    //           console.log(error)
+    //         } else {
+    //           var path = this.type + '/' + data.value
+    //           this.filesContent[path] = content
+    //           this.event.trigger('fileExternallyChanged', [path, content])
+    //         }
+    //       })
+    //     } else if (data.name === 'rootFolderChanged') {
+    //       // new path has been set, we should reset
+    //       this.event.trigger('folderAdded', [this.type + '/'])
+    //     }
+    //   }
+    // })
   }
 
   isConnected () {
@@ -61,14 +61,11 @@ module.exports = class RemixDProvider {
   }
 
   init (cb) {
-    this._remixd.ensureSocket((error) => {
-      if (error) return cb(error)
-      this._isReady = !error
-      this._remixd.call('sharedfolder', 'folderIsReadOnly', {}, (error, result) => {
-        this._readOnlyMode = result
-        cb(error)
-      })
-    })
+    // this._remixd.call('remixd', 'folderIsReadOnly', {}, (error, result) => {
+    //   console.log('result -> folderIsReadOnly: ', result)
+    //   this._readOnlyMode = result
+    //   cb(error)
+    // })
   }
 
   // @TODO: refactor all `this._remixd.call(....)` uses into `this.remixd[api](...)`
