@@ -41,7 +41,7 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc.json",
+            "config": "apps/remix-ide/.eslintrc",
             "files": [
               "apps/remix-ide/**/*.js"
             ],
@@ -73,7 +73,17 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {},
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/remix-ide/.eslintrc",
+            "tsConfig": [
+              "libs/remix-analyzer/tsconfig.lib.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-analyzer/**"]
+          }
+        },
         "test": {},
         "build": {
           "builder": "@nrwl/node:package",
@@ -93,7 +103,17 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {},
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/remix-ide/.eslintrc",
+            "tsConfig": [
+              "libs/remix-astwalker/tsconfig.lib.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-astwalker/**"]
+          }
+        },
         "test": {},
         "build": {
           "builder": "@nrwl/node:package",
@@ -113,7 +133,15 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {},
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/remix-ide/.eslintrc",
+            "tsConfig": [],
+            "exclude": ["**/node_modules/**", "!libs/remix-debug/**"]
+          }
+        },
         "test": {},
         "build": {
           "builder": "@nrwl/node:package",
@@ -133,7 +161,15 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {},
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/remix-ide/.eslintrc",
+            "tsConfig": [],
+            "exclude": ["**/node_modules/**", "!libs/remix-lib/**"]
+          }
+        },
         "test": {},
         "build": {
           "builder": "@nrwl/node:package",
@@ -153,7 +189,15 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {},
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/remix-ide/.eslintrc",
+            "tsConfig": [],
+            "exclude": ["**/node_modules/**", "!libs/remix-simulator/**"]
+          }
+        },
         "test": {},
         "build": {
           "builder": "@nrwl/node:package",
@@ -173,7 +217,17 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {},
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/remix-ide/.eslintrc",
+            "tsConfig": [
+              "libs/remix-solidity/tsconfig.lib.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-solidity/**"]
+          }
+        },
         "test": {},
         "build": {
           "builder": "@nrwl/node:package",
@@ -193,7 +247,17 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {},
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/remix-ide/.eslintrc",
+            "tsConfig": [
+              "libs/remix-tests/tsconfig.lib.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-tests/**"]
+          }
+        },
         "test": {},
         "build": {
           "builder": "@nrwl/node:package",
@@ -213,7 +277,17 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {},
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/remix-ide/.eslintrc",
+            "tsConfig": [
+              "libs/remix-url-resolver/tsconfig.lib.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-url-resolver/**"]
+          }
+        },
         "test": {},
         "build": {
           "builder": "@nrwl/node:package",
