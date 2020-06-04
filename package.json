@@ -165,6 +165,7 @@
     "nightwatch_local_firefox": "nightwatch --config nightwatch.js --env firefox",
     "nightwatch_local_chrome": "nightwatch --config nightwatch.js --env chrome",
     "nightwatch_local_ballot": "nightwatch ./test-browser/tests/ballot.test.js --config nightwatch.js --env chrome ",
+    "nightwatch_local_usingWorker": "nightwatch ./test-browser/tests/usingWebWorker.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_libraryDeployment": "nightwatch ./test-browser/tests/libraryDeployment.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_solidityImport": "nightwatch ./test-browser/tests/solidityImport.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_recorder": "nightwatch ./test-browser/tests/recorder.test.js --config nightwatch.js --env chrome ",
