@@ -116,6 +116,7 @@ class CompileTab extends ViewPlugin {
     this.fileManager.events.on('noFileSelected', this.data.eventHandlers.onNoFileSelected)
 
     this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
+      this._view.errorContainer.appendChild(yo`<span data-id="compilationFinishedWith_${this.getCurrentVersion()}"></span>`)
       if (success) {
         // forwarding the event to the appManager infra
         this.emit('compilationFinished', source.target, source, 'soljson', data)
@@ -411,7 +412,7 @@ class CompileTab extends ViewPlugin {
   render () {
     if (this._view.el) return this._view.el
     this.onActivationInternal()
-    this._view.errorContainer = yo`<div class="${css.errorBlobs} p-4"></div>`
+    this._view.errorContainer = yo`<div class="${css.errorBlobs} p-4" data-id="compiledErrors" ></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
     this.compilerContainer.activate()
