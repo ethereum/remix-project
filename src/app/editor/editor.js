@@ -324,7 +324,7 @@ class Editor extends Plugin {
    * @param {string} content Content of the document or update.
    */
   open (path, content) {
-    /* 
+    /*
       we have the following cases:
        - URL prepended with "localhost"
        - URL prepended with "browser"
