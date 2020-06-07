@@ -61,7 +61,7 @@ module.exports = class RemixDProvider {
   }
 
   async init (cb) {
-      const result = await this._appManager.call('remixd', 'folderIsReadOnly', {})
+      const result = await this._appManager.call('remixdWebsocketPlugin', 'folderIsReadOnly', {})
       this._readOnlyMode = result
   }
 
