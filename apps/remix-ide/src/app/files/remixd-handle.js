@@ -20,6 +20,7 @@ var css = csjs`
 
 const profile = {
   name: 'remixd',
+  methods: ['folderIsReadOnly'],
   description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',
   version: packageJson.version
@@ -31,7 +32,6 @@ export class RemixdHandle extends WebsocketPlugin {
     this.fileSystemExplorer = fileSystemExplorer
     this.locahostProvider = locahostProvider
     this.appManager = appManager
-    this.methods = ['get']
   }
 
   deactivate () {
