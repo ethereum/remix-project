@@ -60,6 +60,9 @@ module.exports = class Filepanel extends ViewPlugin {
     var fileExplorer = createProvider('browser', ['createNewFile', 'publishToGist', canUpload ? 'uploadFile' : ''])
     var fileSystemExplorer = createProvider('localhost')
 
+    console.log('fileSystemExplorer: ', fileSystemExplorer)
+    console.log('self._deps.fileProviders: ', self._deps.fileProviders['localhost'])
+    console.log('appManager: ', appManager)
     self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'], appManager)
 
     const explorers = yo`
