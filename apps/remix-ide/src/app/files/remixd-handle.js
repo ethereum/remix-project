@@ -34,6 +34,7 @@ export class RemixdHandle extends WebsocketPlugin {
     this.fileSystemExplorer = fileSystemExplorer
     this.locahostProvider = locahostProvider
     this.appManager = appManager
+    this.methods = ['get']
   }
 
   deactivate () {
