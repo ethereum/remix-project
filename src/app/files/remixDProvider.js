@@ -15,12 +15,12 @@ module.exports = class RemixDProvider {
     this.filesContent = {}
     this.files = {}
 
-    // var remixdEvents = ['connecting', 'connected', 'errored', 'closed']
-    // remixdEvents.forEach((value) => {
-    //   remixd.event.register(value, (event) => {
-    //     this.event.trigger(value, [event])
-    //   })
-    // })
+    var remixdEvents = ['connecting', 'connected', 'errored', 'closed']
+    remixdEvents.forEach((value) => {
+      // remixd.event.register(value, (event) => {
+      //   this.event.trigger(value, [event])
+      // })
+    })
 
     // remixd.event.register('notified', (data) => {
     //   if (data.scope === 'sharedfolder') {
@@ -69,7 +69,7 @@ module.exports = class RemixDProvider {
     })
   }
 
-  // @TODO: refactor all `this._remixd.call(....)` uses into `this.remixd[api](...)`
+  // @TODO: refactor all `this._appManager.call(....)` uses into `this.remixd[api](...)`
   // where `api = ...`:
   // this.remixd.read(path, (error, content) => {})
   // this.remixd.write(path, content, (error, result) => {})
@@ -182,7 +182,7 @@ module.exports = class RemixDProvider {
     const unprefixedpath = this.removePrefix(path)
     const callId = await this._appManager.call('remixd', 'isDirectory', {path: unprefixedpath})
 
-    return await this._remixd.receiveResponse(callId)
+    return await this._appManager.receiveResponse(callId)
   }
 
   async isFile (path) {
