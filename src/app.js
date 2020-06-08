@@ -236,7 +236,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // APP_MANAGER
   const appManager = new RemixAppManager({})
-  const workspace = appManager.pluginLoader.get()
+  const pluginLoader = appManager.pluginLoader
+  const workspace = pluginLoader.get()
   const engine = new Engine(appManager)
   await engine.onload()
 
@@ -399,6 +400,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activatePlugin(['mainPanel', 'menuicons'])
   await appManager.activatePlugin(['home', 'sidePanel', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'scriptRunner', 'terminal', 'fetchAndCompile'])
 
+  const queryParams = new QueryParams()
+  const params = queryParams.get()
+
   // Set workspace after initial activation
   if (Array.isArray(workspace)) {
     await appManager.activatePlugin(workspace)
@@ -410,15 +414,16 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
-  framingService.start()
+  framingService.start(params)
+
+  // If plugins are loaded from the URL params, we focus on the last one.
+  if (pluginLoader.current === 'queryParams' && Array.isArray(workspace) && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
 
   // get the file list from the parent iframe
   loadFileFromParent(fileManager)
 
   // get the file from gist
   const gistHandler = new GistHandler()
-  const queryParams = new QueryParams()
-  const params = queryParams.get()
   const loadedFromGist = gistHandler.loadFromGist(params, fileManager)
   if (!loadedFromGist) {
     // insert example contracts if there are no files to show
