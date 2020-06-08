@@ -1,0 +1,20 @@
+# This dockerfile is to build each branch seperately (for dev purpouses)
+FROM node:10
+# Create Remix user, don't use root!
+# RUN yes | adduser --disabled-password remix && mkdir /app
+# USER remix
+
+# #Now do remix stuff
+# USER remix
+WORKDIR /home/remix
+
+COPY ./ ./
+
+WORKDIR /home/remix/remix
+# npm ci would probably be better
+RUN npm install
+RUN npm run build
+
+EXPOSE 8080 65520
+
+CMD ["npm", "run", "serve"]
