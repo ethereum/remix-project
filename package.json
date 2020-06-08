@@ -27,6 +27,7 @@
     "build": "nx build",
     "test": "nx test",
     "lint": "nx lint",
+    "lint:libs": "nx run-many --target=lint --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver",
     "e2e": "nx e2e",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",

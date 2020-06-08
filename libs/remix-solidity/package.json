@@ -36,6 +36,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "lint": "standard",
     "test": "tsc && tape ./test/tests.js"
   },
   "standard": {
