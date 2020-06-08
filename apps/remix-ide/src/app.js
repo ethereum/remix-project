@@ -5,7 +5,7 @@ var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var registry = require('./global/registry')
-var Remixd = require('./lib/remixd')
+// var Remixd = require('./lib/remixd')
 var loadFileFromParent = require('./loadFilesFromParent')
 var { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
 var QueryParams = require('./lib/query-params')
@@ -147,13 +147,13 @@ class App {
     self._components.filesProviders['browser'] = new FileProvider('browser')
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
 
-    var remixd = new Remixd(65520)
-    registry.put({api: remixd, name: 'remixd'})
-    remixd.event.register('system', (message) => {
-      if (message.error) toolTip(message.error)
-    })
+    // var remixd = new Remixd(65520)
+    // registry.put({api: remixd, name: 'remixd'})
+    // remixd.event.register('system', (message) => {
+    //   if (message.error) toolTip(message.error)
+    // })
 
-    self._components.filesProviders['localhost'] = new RemixDProvider(remixd, self.appManager)
+    self._components.filesProviders['localhost'] = new RemixDProvider(self.appManager)
     registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
     registry.put({api: self._components.filesProviders, name: 'fileproviders'})
 

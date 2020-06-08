@@ -21,7 +21,7 @@ var css = csjs`
 const profile = {
   name: 'remixd',
   url: 'ws://127.0.0.1:65520',
-  methods: ['folderIsReadOnly'],
+  methods: ['folderIsReadOnly', 'resolveDirectory'],
   events: [],
   description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',
@@ -43,8 +43,7 @@ export class RemixdHandle extends WebsocketPlugin {
     })
   }
 
-  async activate () {
-    await super.activate()
+  activate () {
     this.connectToLocalhost()
   }
 
@@ -58,7 +57,7 @@ export class RemixdHandle extends WebsocketPlugin {
     *
     * @param {String} txHash    - hash of the transaction
     */
-  connectToLocalhost () {
+  async connectToLocalhost () {
     let connection = (error) => {
       if (error) {
         console.log(error)
@@ -68,13 +67,12 @@ export class RemixdHandle extends WebsocketPlugin {
         )
         this.canceled()
       } else {
+        this.locahostProvider.init()
         this.fileSystemExplorer.ensureRoot()
       }
     }
     if (this.locahostProvider.isConnected()) {
-      this.locahostProvider.close((error) => {
-        if (error) console.log(error)
-      })
+      this.deactivate()
     } else if (!isElectron()) {
       // warn the user only if he/she is in the browser context
       modalDialog(
@@ -82,7 +80,12 @@ export class RemixdHandle extends WebsocketPlugin {
         remixdDialog(),
         { label: 'Connect',
           fn: () => {
-            this.locahostProvider.init((error) => connection(error))
+            try {
+              super.activate()
+              setTimeout(() => { connection() }, 3000)
+            } catch(error) {
+              connection(error)
+            }
           }
         },
         { label: 'Cancel',
@@ -92,7 +95,12 @@ export class RemixdHandle extends WebsocketPlugin {
         }
       )
     } else {
-      this.locahostProvider.init((error) => connection(error))
+      try {
+        super.activate()
+        setTimeout(() => { connection() }, 3000)
+      } catch(error) {
+        connection(error)
+      }
     }
   }
 }
