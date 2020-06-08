@@ -192,7 +192,7 @@ module.exports = class RemixDProvider {
   }
 }
 
-function remixapi (remixd, self) {
+function remixapi (appManager, self) {
   const read = (path, callback) => {
     path = '' + (path || '')
     path = pathtool.join('./', path)
