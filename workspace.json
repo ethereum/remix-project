@@ -74,14 +74,14 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc",
-            "tsConfig": [
-              "libs/remix-analyzer/tsconfig.lib.json"
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all lint"
+              }
             ],
-            "exclude": ["**/node_modules/**", "!libs/remix-analyzer/**"]
+            "cwd": "libs/remix-analyzer"
           }
         },
         "test": {},
@@ -104,14 +104,14 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc",
-            "tsConfig": [
-              "libs/remix-astwalker/tsconfig.lib.json"
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all lint"
+              }
             ],
-            "exclude": ["**/node_modules/**", "!libs/remix-astwalker/**"]
+            "cwd": "libs/remix-astwalker"
           }
         },
         "test": {},
@@ -134,12 +134,14 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc",
-            "tsConfig": [],
-            "exclude": ["**/node_modules/**", "!libs/remix-debug/**"]
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all lint"
+              }
+            ],
+            "cwd": "libs/remix-debug"
           }
         },
         "test": {},
@@ -162,12 +164,14 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc",
-            "tsConfig": [],
-            "exclude": ["**/node_modules/**", "!libs/remix-lib/**"]
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all lint"
+              }
+            ],
+            "cwd": "libs/remix-lib"
           }
         },
         "test": {},
@@ -190,12 +194,14 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc",
-            "tsConfig": [],
-            "exclude": ["**/node_modules/**", "!libs/remix-simulator/**"]
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all lint"
+              }
+            ],
+            "cwd": "libs/remix-simulator"
           }
         },
         "test": {},
@@ -218,14 +224,14 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc",
-            "tsConfig": [
-              "libs/remix-solidity/tsconfig.lib.json"
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all lint"
+              }
             ],
-            "exclude": ["**/node_modules/**", "!libs/remix-solidity/**"]
+            "cwd": "libs/remix-solidity"
           }
         },
         "test": {},
@@ -248,14 +254,14 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc",
-            "tsConfig": [
-              "libs/remix-tests/tsconfig.lib.json"
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all lint"
+              }
             ],
-            "exclude": ["**/node_modules/**", "!libs/remix-tests/**"]
+            "cwd": "libs/remix-tests"
           }
         },
         "test": {},
@@ -278,14 +284,14 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc",
-            "tsConfig": [
-              "libs/remix-url-resolver/tsconfig.lib.json"
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all lint"
+              }
             ],
-            "exclude": ["**/node_modules/**", "!libs/remix-url-resolver/**"]
+            "cwd": "libs/remix-url-resolver"
           }
         },
         "test": {},
