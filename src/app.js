@@ -122,6 +122,7 @@ var css = csjs`
 class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
+    self.appManager = new RemixAppManager({})
     self._components = {}
     self._view = {}
     self._view.splashScreen = yo`
@@ -142,18 +143,17 @@ class App {
     registry.put({api: config, name: 'config'})
 
     // load file system
-    self.appManager = new RemixAppManager({})
     self._components.filesProviders = {}
     self._components.filesProviders['browser'] = new FileProvider('browser')
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
 
-    // var remixd = new Remixd(65520)
-    // registry.put({api: remixd, name: 'remixd'})
-    // remixd.event.register('system', (message) => {
-    //   if (message.error) toolTip(message.error)
-    // })
+    var remixd = new Remixd(65520)
+    registry.put({api: remixd, name: 'remixd'})
+    remixd.event.register('system', (message) => {
+      if (message.error) toolTip(message.error)
+    })
 
-    self._components.filesProviders['localhost'] = new RemixDProvider(self.appManager)
+    self._components.filesProviders['localhost'] = new RemixDProvider(remixd, self.appManager)
     registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
     registry.put({api: self._components.filesProviders, name: 'fileproviders'})
 
