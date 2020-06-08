@@ -1,15 +1,15 @@
 import * as WS from 'ws'
 import * as http from 'http'
-import RemixdClient from './services/remixdClient'
-import { WebsocketOpt } from '../types'
+import { WebsocketOpt, SharedFolder } from '../types'
 
 const { buildWebsocketClient } = require('@remixproject/plugin-ws')
 
 export default class WebSocket {
   server: http.Server
   wsServer: WS.Server
+  connection: WS
 
-  constructor (public port: number, public opt: WebsocketOpt, public remixdClient: RemixdClient) {}
+  constructor (public port: number, public opt: WebsocketOpt, public remixdClient: SharedFolder) {}
 
   start (callback?: Function) {
     const obj = this
@@ -36,8 +36,9 @@ export default class WebSocket {
       }
     })
     this.wsServer.on('connection', function connection(ws, request) {
-      const client = buildWebsocketClient(ws, obj.remixdClient)
+      const client = buildWebsocketClient(ws, new obj.remixdClient())
 
+      obj.connection = ws
       if(callback) callback(client)
     })
   }
