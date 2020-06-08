@@ -13,7 +13,7 @@ const DEFAULT_OPTIONS = {
 module.exports = (embark) => {
   // plugin options
   const readOnly = embark.pluginConfig.readOnly || false
-  const {protocol, host, port} = merge.recursive(DEFAULT_OPTIONS, embark.pluginConfig.remixIde)
+  const { protocol, host, port } = merge.recursive(DEFAULT_OPTIONS, embark.pluginConfig.remixIde)
 
   // globals
   const remixIdeUrl = `${protocol}://${host}` + `${port ? `:${port}` : ''}`
