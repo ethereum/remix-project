@@ -21,7 +21,7 @@ var css = csjs`
 const profile = {
   name: 'remixd',
   url: 'ws://127.0.0.1:65520',
-  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile'],
+  methods: ['folderIsReadOnly'],
   events: [],
   description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',
@@ -43,7 +43,8 @@ export class RemixdHandle extends WebsocketPlugin {
     })
   }
 
-  activate () {
+  async activate () {
+    await super.activate()
     this.connectToLocalhost()
   }
 
