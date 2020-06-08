@@ -2,3 +2,4 @@ node_modules
 npm-debug.log
 python_modules
 lib
+shared

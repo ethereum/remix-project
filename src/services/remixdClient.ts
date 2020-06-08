@@ -7,7 +7,7 @@ const isbinaryfile = require('isbinaryfile')
 const fs = require('fs-extra')
 
 export default class RemixdClient extends PluginClient {
-  methods: []
+  methods: ['folderIsReadOnly', 'resolveDirectory']
   trackDownStreamUpdate: TrackDownStreamUpdate
   websocket: WebSocket | null
   currentSharedFolder: string
@@ -31,6 +31,7 @@ export default class RemixdClient extends PluginClient {
   }
 
   resolveDirectory (args: SharedFolderArgs, cb: Function) {
+    console.log('called resolveDirectory!')
     try {
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
       
@@ -40,8 +41,8 @@ export default class RemixdClient extends PluginClient {
     }
   }
 
-  folderIsReadOnly (args: SharedFolderArgs, cb: Function) {
-    return cb(null, this.readOnly)
+  folderIsReadOnly () {
+    return this.readOnly
   }
 
   get (args: SharedFolderArgs, cb: Function) {

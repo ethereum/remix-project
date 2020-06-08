@@ -17,4 +17,14 @@ export type ResolveDirectory = {
     }
 }
 
+export type WebsocketProfile = {
+    name: string
+    methods?: string[]
+    permission?: boolean
+    hash?: string
+    redirect?: {
+      [key: string]: string
+    }
+}
+
 export type TrackDownStreamUpdate = KeyPairString
