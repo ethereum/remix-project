@@ -106,6 +106,7 @@ class Remixd {
           reject(error)
           return
         }
+        console.log('this.socket: ', this.socket)
         if (this.socket && this.socket.readyState === this.socket.OPEN) {
           var data = this.format(service, fn, args)
           this.callbacks[data.id] = callback
