@@ -5,13 +5,6 @@ const path = require('path')
 const isbinaryfile = require('isbinaryfile')
 const pathModule = require('path')
 
-module.exports = {
-  absolutePath: absolutePath,
-  relativePath: relativePath,
-  walkSync: walkSync,
-  resolveDirectory: resolveDirectory
-}
-
 /**
  * returns the absolute path of the given @arg path
  *
@@ -79,3 +72,5 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
   })
   return ret
 }
+
+export { absolutePath, relativePath, walkSync, resolveDirectory }

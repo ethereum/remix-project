@@ -1,10 +1,14 @@
+import * as ServiceList from '../src/serviceList'
+
+type ServiceListKeys = keyof typeof ServiceList;
+export type SharedFolder = typeof ServiceList[ServiceListKeys]
+
 export type WebsocketOpt = {
     remixIdeUrl: string
 }
 
-export type SharedFolderArgs = {
-    path: string,
-    [key: string]: string | number | boolean
+export type FolderArgs = {
+    path: string
 }
 
 export type KeyPairString = {
@@ -17,14 +21,6 @@ export type ResolveDirectory = {
     }
 }
 
-export type WebsocketProfile = {
-    name: string
-    methods?: string[]
-    permission?: boolean
-    hash?: string
-    redirect?: {
-      [key: string]: string
-    }
-}
-
 export type TrackDownStreamUpdate = KeyPairString
+
+export type SharedFolderArgs = FolderArgs & KeyPairString

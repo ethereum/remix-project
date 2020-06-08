@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import WebSocket from '../src/websocket'
-import RemixdClient from '../src/services/remixdClient'
+import * as servicesList from '../src/serviceList'
+
 const program = require('commander')
 
 program
@@ -23,10 +24,19 @@ console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + program
 if (program.sharedFolder) {
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolic links are not forwarded to Remix IDE\n')
-  const websocketHandler = new WebSocket(65520, { remixIdeUrl: program.remixIde }, new RemixdClient())
+  try {
+    const websocketHandler = new WebSocket(65520, { remixIdeUrl: program.remixIde }, servicesList['sharedfolder'])
 
-  websocketHandler.start()
-  killCallBack.push(websocketHandler.close.bind(websocketHandler))
+    websocketHandler.start(() => {
+      const remixdClient = new servicesList['sharedfolder']()
+
+      remixdClient.setWebSocket(websocketHandler)
+      remixdClient.sharedFolder(program.sharedFolder, program.readOnly || false)
+    })
+    killCallBack.push(websocketHandler.close.bind(websocketHandler))
+  } catch(error) {
+    throw new Error(error)
+  }
 }
 
 // kill
