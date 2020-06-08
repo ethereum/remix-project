@@ -17,9 +17,9 @@ module.exports = class RemixDProvider {
 
     var remixdEvents = ['connecting', 'connected', 'errored', 'closed']
     remixdEvents.forEach((value) => {
-      // remixd.event.register(value, (event) => {
-      //   this.event.trigger(value, [event])
-      // })
+      remixd.event.register(value, (event) => {
+        this.event.trigger(value, [event])
+      })
     })
 
     // remixd.event.register('notified', (data) => {
@@ -69,7 +69,7 @@ module.exports = class RemixDProvider {
     })
   }
 
-  // @TODO: refactor all `this._appManager.call(....)` uses into `this.remixd[api](...)`
+  // @TODO: refactor all `this._remixd.call(....)` uses into `this.remixd[api](...)`
   // where `api = ...`:
   // this.remixd.read(path, (error, content) => {})
   // this.remixd.write(path, content, (error, result) => {})
@@ -182,7 +182,7 @@ module.exports = class RemixDProvider {
     const unprefixedpath = this.removePrefix(path)
     const callId = await this._appManager.call('remixd', 'isDirectory', {path: unprefixedpath})
 
-    return await this._appManager.receiveResponse(callId)
+    return await this._remixd.receiveResponse(callId)
   }
 
   async isFile (path) {
@@ -192,7 +192,7 @@ module.exports = class RemixDProvider {
   }
 }
 
-function remixapi (appManager, self) {
+function remixapi (remixd, self) {
   const read = (path, callback) => {
     path = '' + (path || '')
     path = pathtool.join('./', path)
