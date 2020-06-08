@@ -21,7 +21,7 @@ var css = csjs`
 const profile = {
   name: 'remixd',
   url: 'ws://127.0.0.1:65520',
-  methods: ['folderIsReadOnly'],
+  methods: ['folderIsReadOnly', 'resolveDirectory'],
   events: [],
   description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',
@@ -43,8 +43,7 @@ export class RemixdHandle extends WebsocketPlugin {
     })
   }
 
-  async activate () {
-    await super.activate()
+  activate () {
     this.connectToLocalhost()
   }
 
@@ -58,7 +57,7 @@ export class RemixdHandle extends WebsocketPlugin {
     *
     * @param {String} txHash    - hash of the transaction
     */
-  connectToLocalhost () {
+  async connectToLocalhost () {
     let connection = (error) => {
       if (error) {
         console.log(error)
