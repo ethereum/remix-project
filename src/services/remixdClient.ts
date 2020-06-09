@@ -1,4 +1,4 @@
-import WebSocket from '../websocket'
+import * as WS from 'ws'
 import { PluginClient } from '@remixproject/plugin'
 import { SharedFolderArgs, TrackDownStreamUpdate } from '../../types'
 import * as utils from '../utils'
@@ -9,11 +9,11 @@ const fs = require('fs-extra')
 export class RemixdClient extends PluginClient {
   methods: ['folderIsReadOnly', 'resolveDirectory']
   trackDownStreamUpdate: TrackDownStreamUpdate
-  websocket: WebSocket | null
+  websocket: WS
   currentSharedFolder: string
   readOnly: boolean
 
-  setWebSocket (websocket: WebSocket) {
+  setWebSocket (websocket: WS) {
     this.websocket = websocket
   }
 
@@ -31,16 +31,12 @@ export class RemixdClient extends PluginClient {
   }
 
   resolveDirectory (args: SharedFolderArgs) {
-    console.log('args: ', args)
-    console.log('called resolveDirectory!')
     try {
-      console.log('called try resolveDirectory!')
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
-      
       const result = utils.resolveDirectory(path, this.currentSharedFolder)
-      console.log('result: ', result)
+
+      return result
     } catch (e) {
-      console.log('called catch resolveDirectory!')
       throw new Error(e)
     }
   }

@@ -1,7 +1,10 @@
 import * as ServiceList from '../src/serviceList'
 
 type ServiceListKeys = keyof typeof ServiceList;
+
 export type SharedFolder = typeof ServiceList[ServiceListKeys]
+
+export type SharedFolderClient = InstanceType<typeof ServiceList[ServiceListKeys]>
 
 export type WebsocketOpt = {
     remixIdeUrl: string
