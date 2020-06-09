@@ -59,12 +59,10 @@ module.exports = class RemixDProvider {
     cb()
   }
 
-  async init (cb) {
-    await this._appManager.call('remixd', 'sharedFolder', { currentSharedFolder })
+  init (cb) {
     this._appManager.call('remixd', 'folderIsReadOnly', {}).then((result) => {
       this._isReady = true
       this._readOnlyMode = result
-      console.log('this._readOnlyMode: ', this._readOnlyMode)
       cb && cb()
     }).catch((error) => {
       cb && cb(error)
@@ -81,13 +79,13 @@ module.exports = class RemixDProvider {
   //
   // this.remixd.exists(path, (error, isValid) => {})
 
-  async exists (path, cb) {
+  exists (path, cb) {
     const unprefixedpath = this.removePrefix(path)
 
-    this._appManager.call('remixd', 'exists', {path: unprefixedpath}).then((result) => {
-      return cb && cb(null, result)
+    return this._appManager.call('remixd', 'exists', { path: unprefixedpath }).then((result) => {
+      return cb(null, result)
     }).catch((error) => {
-      return cb && cb(error)
+      return cb(error)
     })
   }
 
@@ -101,16 +99,14 @@ module.exports = class RemixDProvider {
 
   get (path, cb) {
     var unprefixedpath = this.removePrefix(path)
-    this._appManager.call('remixd', 'get', {path: unprefixedpath}, (error, file) => {
-      if (!error) {
-        this.filesContent[path] = file.content
-        if (file.readonly) { this._readOnlyFiles[path] = 1 }
-        cb(error, file.content)
-      } else {
-        // display the last known content.
-        // TODO should perhaps better warn the user that the file is not synced.
-        cb(null, this.filesContent[path])
-      }
+    this._appManager.call('remixd', 'get', { path: unprefixedpath }).then((file) => {
+      this.filesContent[path] = file.content
+      if (file.readonly) { this._readOnlyFiles[path] = 1 }
+      cb(error, file.content)
+    }).catch((error) => {
+      // display the last known content.
+      // TODO should perhaps better warn the user that the file is not synced.
+      cb(null, this.filesContent[path])
     })
   }
 
@@ -190,9 +186,8 @@ module.exports = class RemixDProvider {
 
   async isFile (path) {
     const unprefixedpath = this.removePrefix(path)
-    const callId = await this._appManager.call('remixd', 'isFile', {path: unprefixedpath})
 
-    return await this._remixd.receiveResponse(callId)
+    return await this._appManager.call('remixd', 'isFile', { path: unprefixedpath })
   }
 }
 
@@ -220,8 +215,7 @@ function remixapi (appManager, self) {
   const dir = (path, callback) => {
     path = '' + (path || '')
     path = pathtool.join('./', path)
-    appManager.call('remixd', 'resolveDirectory', { path }).then((filesList) => { 
-      console.log('filesList: ', filesList)
+    appManager.call('remixd', 'resolveDirectory', { path }).then((filesList) => {
       callback(null, filesList)
     }).catch((error) => {
       callback(error)
