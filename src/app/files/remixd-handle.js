@@ -21,7 +21,7 @@ var css = csjs`
 const profile = {
   name: 'remixd',
   url: 'ws://127.0.0.1:65520',
-  methods: ['folderIsReadOnly', 'resolveDirectory'],
+  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile'],
   events: [],
   description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',
