@@ -353,6 +353,13 @@ class CompilerContainer {
     They are an external API for modifying the compiler configuration.
   */
 
+  setConfiguration (settings) {
+    this.setLanguage(settings.language)
+    this.setEvmVersion(settings.evmVersion)
+    this.setOptimize(settings.optimize)
+    this.setVersion(settings.version)
+  }
+
   setOptimize (enabled) {
     this._view.optimize.checked = enabled
     this.onchangeOptimize()
