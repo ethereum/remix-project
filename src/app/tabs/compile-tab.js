@@ -246,10 +246,7 @@ class CompileTab extends ViewPlugin {
   setCompilerConfig (settings) {
     return new Promise((resolve, reject) => {
       addTooltip(yo`<div><b>${this.currentRequest.from}</b> is updating the <b>Solidity compiler configuration</b>.<pre class="text-left">${JSON.stringify(settings, null, '\t')}</pre></div>`)
-      this.compilerContainer.setLanguage(settings.language)
-      this.compilerContainer.setEvmVersion(settings.evmVersion)
-      this.compilerContainer.setOptimize(settings.optimize)
-      this.compilerContainer.setVersion(settings.version)
+      this.compilerContainer.setConfiguration(settings)
       // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
       let timeout = 0
       const id = setInterval(() => {
