@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import WebSocket from '../src/websocket'
 import * as servicesList from '../src/serviceList'
-import * as WS from 'ws'
+import { WS } from '../types/index'
 
 const program = require('commander')
 

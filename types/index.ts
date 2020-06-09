@@ -1,4 +1,5 @@
 import * as ServiceList from '../src/serviceList'
+import * as Websocket from 'ws'
 
 type ServiceListKeys = keyof typeof ServiceList;
 
@@ -27,3 +28,5 @@ export type ResolveDirectory = {
 export type TrackDownStreamUpdate = KeyPairString
 
 export type SharedFolderArgs = FolderArgs & KeyPairString
+
+export type WS = typeof Websocket
