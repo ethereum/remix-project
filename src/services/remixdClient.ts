@@ -1,13 +1,12 @@
-import * as WS from 'ws'
 import { PluginClient } from '@remixproject/plugin'
-import { SharedFolderArgs, TrackDownStreamUpdate } from '../../types'
+import { SharedFolderArgs, TrackDownStreamUpdate, WS } from '../../types'
 import * as utils from '../utils'
 
 const isbinaryfile = require('isbinaryfile')
 const fs = require('fs-extra')
 
 export class RemixdClient extends PluginClient {
-  methods: ['folderIsReadOnly', 'resolveDirectory']
+  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile']
   trackDownStreamUpdate: TrackDownStreamUpdate
   websocket: WS
   currentSharedFolder: string
@@ -45,31 +44,36 @@ export class RemixdClient extends PluginClient {
     return this.readOnly
   }
 
-  get (args: SharedFolderArgs, cb: Function) {
-    console.log('called on server')
-    const path = utils.absolutePath(args.path, this.currentSharedFolder)
+  get (args: SharedFolderArgs) {
+    return new Promise((resolve, reject) => {
+      const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
-    if (!fs.existsSync(path)) {
-      return cb('File not found ' + path)
-    }
-    if (!isRealPath(path, cb)) return
-    isbinaryfile(path, (error: Error, isBinary: boolean) => {
-      if (error) console.log(error)
-      if (isBinary) {
-        cb(null, { content: '<binary content not displayed>', readonly: true })
-      } else {
-        fs.readFile(path, 'utf8', (error: Error, data: string) => {
-          if (error) console.log(error)
-          cb(error, { content: data, readonly: false })
-        })
+      if (!fs.existsSync(path)) {
+        reject('File not found ' + path)
       }
+      if (!isRealPath(path)) return
+      isbinaryfile(path, (error: Error, isBinary: boolean) => {
+        if (error) console.log(error)
+        if (isBinary) {
+          resolve({ content: '<binary content not displayed>', readonly: true })
+        } else {
+          fs.readFile(path, 'utf8', (error: Error, data: string) => {
+            if (error) console.log(error)
+            resolve({ content: data, readonly: false })
+          })
+        }
+      })
     })
   }
 
-  exists (args: SharedFolderArgs, cb: Function) {
-    const path = utils.absolutePath(args.path, this.currentSharedFolder)
+  exists (args: SharedFolderArgs) {
+    try {
+      const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
-    cb(null, fs.existsSync(path))
+      return fs.existsSync(path)
+    } catch(error) {
+      throw new Error(error)
+    }
   }
 
   set (args: SharedFolderArgs, cb: Function) {
@@ -77,7 +81,7 @@ export class RemixdClient extends PluginClient {
     const isFolder = args.path.endsWith('/')
     const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
-    if (fs.existsSync(path) && !isRealPath(path, cb)) return
+    if (fs.existsSync(path) && !isRealPath(path)) return
     if (args.content === 'undefined') { // no !!!!!
       console.log('trying to write "undefined" ! stopping.')
       return
@@ -104,7 +108,7 @@ export class RemixdClient extends PluginClient {
     }
     const newpath = utils.absolutePath(args.newPath, this.currentSharedFolder)
 
-    if (!isRealPath(oldpath, cb)) return
+    if (!isRealPath(oldpath)) return
     fs.move(oldpath, newpath, (error: Error, data: string) => {
       if (error) console.log(error)
       cb(error, data)
@@ -118,7 +122,7 @@ export class RemixdClient extends PluginClient {
     if (!fs.existsSync(path)) {
       return cb('File not found ' + path)
     }
-    if (!isRealPath(path, cb)) return
+    if (!isRealPath(path)) return
     fs.remove(path, (error: Error) => {
       if (error) {
         console.log(error)
@@ -134,21 +138,25 @@ export class RemixdClient extends PluginClient {
     cb(null, fs.statSync(path).isDirectory())
   }
 
-  isFile (args: SharedFolderArgs, cb: Function) {
-    const path = utils.absolutePath(args.path, this.currentSharedFolder)
+  isFile (args: SharedFolderArgs) {
+    try {
+      const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
-    cb(null, fs.statSync(path).isFile())
+      return fs.statSync(path).isFile()
+    } catch (error) {
+      throw new Error(error)
+    }
   }
 }
 
-function isRealPath (path: string, cb: Function) {
+function isRealPath (path: string) {
   const realPath = fs.realpathSync(path)
   const isRealPath = path === realPath
   const mes = '[WARN] Symbolic link modification not allowed : ' + path + ' | ' + realPath
 
   if (!isRealPath) {
     console.log('\x1b[33m%s\x1b[0m', mes)
+    throw new Error(mes)
   }
-  if (cb && !isRealPath) cb(mes)
   return isRealPath
 }
