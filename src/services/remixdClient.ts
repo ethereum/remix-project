@@ -6,7 +6,7 @@ const isbinaryfile = require('isbinaryfile')
 const fs = require('fs-extra')
 
 export class RemixdClient extends PluginClient {
-  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set']
+  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'list', 'isDirectory']
   trackDownStreamUpdate: TrackDownStreamUpdate = {}
   websocket: WS
   currentSharedFolder: string
