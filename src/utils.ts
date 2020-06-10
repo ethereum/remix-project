@@ -1,4 +1,4 @@
-import { ResolveDirectory } from '../types'
+import { ResolveDirectory, Filelist } from '../types'
 
 const fs = require('fs-extra')
 const path = require('path')
@@ -12,7 +12,7 @@ const pathModule = require('path')
  * @param {String} sharedFolder - absolute shared path. platform dependent representation.
  * @return {String} platform dependent absolute path (/home/user1/.../... for unix, c:\user\...\... for windows)
  */
-function absolutePath (path: string, sharedFolder:string) {
+function absolutePath (path: string, sharedFolder:string): string {
   path = normalizePath(path)
   if (path.indexOf(sharedFolder) !== 0) {
     path = pathModule.resolve(sharedFolder, path)
@@ -28,7 +28,8 @@ function absolutePath (path: string, sharedFolder:string) {
  * @return {String} relative path (Unix style which is the one used by Remix IDE)
  */
 function relativePath (path: string, sharedFolder: string): string {
-  const relative = <string>pathModule.relative(sharedFolder, path)
+  const relative: string = pathModule.relative(sharedFolder, path)
+
   return normalizePath(relative)
 }
 
@@ -39,9 +40,7 @@ function normalizePath (path: string): string {
   return path
 }
 
-function walkSync (dir: string, filelist: {
-  [key: string]: string
-}, sharedFolder: string) {
+function walkSync (dir: string, filelist: Filelist, sharedFolder: string): Filelist {
   const files: string[] = fs.readdirSync(dir)
 
   filelist = filelist || {}
@@ -65,9 +64,11 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
 
   files.forEach(function (file) {
     const subElement = path.join(dir, file)
+
     if (!fs.lstatSync(subElement).isSymbolicLink()) {
       const relative: string = relativePath(subElement, sharedFolder)
-      ret[relative] = { isDirectory: <boolean>fs.statSync(subElement).isDirectory() }
+
+      ret[relative] = { isDirectory: fs.statSync(subElement).isDirectory() }
     }
   })
   return ret

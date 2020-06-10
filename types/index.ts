@@ -25,8 +25,15 @@ export type ResolveDirectory = {
     }
 }
 
+export type FileContent = {
+    content: string
+    readonly: boolean
+}
+
 export type TrackDownStreamUpdate = KeyPairString
 
 export type SharedFolderArgs = FolderArgs & KeyPairString
 
 export type WS = typeof Websocket
+
+export type Filelist = KeyPairString
