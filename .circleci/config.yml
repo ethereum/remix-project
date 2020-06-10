@@ -166,6 +166,8 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - run: npm install
+      - run: npm run build
       - run: ./ci/build_and_publish_docker_images.sh
 
   deploy-remix-alpha:
