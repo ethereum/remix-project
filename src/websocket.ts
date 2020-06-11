@@ -11,9 +11,7 @@ export default class WebSocket {
 
   constructor (public port: number, public opt: WebsocketOpt, public sharedFolder: SharedFolderClient) {}
 
-  start (callback?: Function) {
-    const obj = this
-
+  start (callback?: Function): void {
     this.server = http.createServer((request, response) => {
       console.log((new Date()) + ' Received request for ' + request.url)
       response.writeHead(404)
@@ -35,16 +33,16 @@ export default class WebSocket {
         done(true)
       }
     })
-    this.wsServer.on('connection', function connection(ws, request) {
-      const { sharedFolder } = obj
+    this.wsServer.on('connection', (ws) => {
+      const { sharedFolder } = this
 
-      obj.connection = ws
+      this.connection = ws
       buildWebsocketClient(ws, sharedFolder)
       if(callback) callback(ws)
     })
   }
 
-  close () {
+  close (): void {
     if (this.wsServer) {
       this.wsServer.close(() => {
         this.server.close()
@@ -53,6 +51,6 @@ export default class WebSocket {
   }
 }
 
-function originIsAllowed (origin: string, self: WebSocket) {
+function originIsAllowed (origin: string, self: WebSocket): boolean {
   return origin === self.opt.remixIdeUrl
 }
