@@ -21,7 +21,7 @@ export class RemixdClient extends PluginClient {
     this.readOnly = readOnly
   }
 
-  list (args: SharedFolderArgs): Filelist {
+  list (): Filelist {
     try {
       return utils.walkSync(this.currentSharedFolder, {}, this.currentSharedFolder)
     } catch (e) {
@@ -97,7 +97,7 @@ export class RemixdClient extends PluginClient {
           fs.mkdirp(path).then(() => resolve()).catch((e: Error) => reject(e))
         } else {
           fs.ensureFile(path).then(() => {
-            fs.writeFile(path, args.content, 'utf8', (error: Error, data: string) => {
+            fs.writeFile(path, args.content, 'utf8', (error: Error) => {
               if (error) {
                 console.log(error)
                 reject(error)
@@ -124,7 +124,7 @@ export class RemixdClient extends PluginClient {
         const newpath = utils.absolutePath(args.newPath, this.currentSharedFolder)
     
         if (!isRealPath(oldpath)) return
-        fs.move(oldpath, newpath, (error: Error, data: string) => {
+        fs.move(oldpath, newpath, (error: Error) => {
           if (error) {
             console.log(error)
             reject(error.message)
@@ -145,7 +145,7 @@ export class RemixdClient extends PluginClient {
     
         if (!fs.existsSync(path)) reject('File not found ' + path)
         if (!isRealPath(path)) return
-        return fs.remove(path, (error: Error, data: string) => {
+        return fs.remove(path, (error: Error) => {
           if (error) {
             console.log(error)
             reject('Failed to remove file/directory: ' + error)

@@ -45,12 +45,14 @@ function walkSync (dir: string, filelist: Filelist, sharedFolder: string): Filel
 
   filelist = filelist || {}
   files.forEach(function (file) {
-    var subElement = path.join(dir, file)
+    const subElement = path.join(dir, file)
+
     if (!fs.lstatSync(subElement).isSymbolicLink()) {
       if (fs.statSync(subElement).isDirectory()) {
         filelist = walkSync(subElement, filelist, sharedFolder)
       } else {
-        var relative = relativePath(subElement, sharedFolder)
+        const relative = relativePath(subElement, sharedFolder)
+        
         filelist[relative] = isbinaryfile.sync(subElement)
       }
     }

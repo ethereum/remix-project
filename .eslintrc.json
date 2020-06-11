@@ -5,16 +5,17 @@
         "es6": true
     },
     "extends": [
-        "standard"
+        "plugin:@typescript-eslint/recommended"
     ],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
     },
-    "parserOptions": {
-        "ecmaVersion": 2018
-    },
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
     "rules": {
-        "standard/no-callback-literal": 0
+        "standard/no-callback-literal": 0,
+        "@typescript-eslint/no-var-requires": 0,
+        "@typescript-eslint/ban-types": 0
     }
 }
