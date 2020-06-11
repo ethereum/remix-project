@@ -84,11 +84,27 @@
             "cwd": "libs/remix-analyzer"
           }
         },
-        "test": {},
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-analyzer"
+          }
+        },
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
               {
                 "command": "./../../node_modules/.bin/npm-run-all build"
               }
@@ -115,11 +131,27 @@
             "cwd": "libs/remix-astwalker"
           }
         },
-        "test": {},
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-astwalker"
+          }
+        },
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
               {
                 "command": "./../../node_modules/.bin/npm-run-all build"
               }
@@ -146,15 +178,18 @@
             "cwd": "libs/remix-debug"
           }
         },
-        "test": {},
-        "build": {
-          "builder": "@nrwl/node:package",
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "dist/libs/remix-debug",
-            "tsConfig": "",
-            "packageJson": "libs/remix-debug/package.json",
-            "main": "libs/remix-debug/index.js",
-            "assets": ["libs/remix-debug/*.md"]
+            "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-debug"
           }
         }
       }
@@ -176,15 +211,18 @@
             "cwd": "libs/remix-lib"
           }
         },
-        "test": {},
-        "build": {
-          "builder": "@nrwl/node:package",
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "dist/libs/remix-lib",
-            "tsConfig": "",
-            "packageJson": "libs/remix-lib/package.json",
-            "main": "libs/remix-lib/index.js",
-            "assets": ["libs/remix-lib/*.md"]
+            "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-lib"
           }
         }
       }
@@ -206,15 +244,18 @@
             "cwd": "libs/remix-simulator"
           }
         },
-        "test": {},
-        "build": {
-          "builder": "@nrwl/node:package",
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "dist/libs/remix-simulator",
-            "tsConfig": "",
-            "packageJson": "libs/remix-simulator/package.json",
-            "main": "libs/remix-simulator/index.js",
-            "assets": ["libs/remix-simulator/*.md"]
+            "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-simulator"
           }
         }
       }
@@ -236,11 +277,27 @@
             "cwd": "libs/remix-solidity"
           }
         },
-        "test": {},
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-solidity"
+          }
+        },
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
               {
                 "command": "./../../node_modules/.bin/npm-run-all build"
               }
@@ -267,11 +324,27 @@
             "cwd": "libs/remix-tests"
           }
         },
-        "test": {},
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-tests"
+          }
+        },
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
               {
                 "command": "./../../node_modules/.bin/npm-run-all build"
               }
@@ -298,11 +371,27 @@
             "cwd": "libs/remix-url-resolver"
           }
         },
-        "test": {},
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-url-resolver"
+          }
+        },
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
+              {
+                "command": "rm -rf ../../dist"
+              },
               {
                 "command": "./../../node_modules/.bin/npm-run-all build"
               }
