@@ -281,7 +281,7 @@ module.exports = class TestTab extends ViewPlugin {
       const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
       stopBtnLabel.innerText = 'Stop'
       if (this.data.selectedTests.length !== 0) {
-        const runBtn = document.getElementById('runTestsTabRunAction')
+        const runBtn = document.getElemenstById('runTestsTabRunAction')
         runBtn.removeAttribute('disabled')
       }
       this.areTestsRunning = false
@@ -351,6 +351,11 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
+  updateCurrentPath(e) {
+    this.testTabLogic.setCurrentPath(e.target.value)
+    // todo check if path exists if not create one.
+  }
+
   runTests () {
     this.areTestsRunning = true
     this.hasBeenStopped = false
@@ -386,20 +391,22 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateGenerateFileAction (currentFile) {
-    let el = yo`<button
-      class="btn border w-50"
-      data-id="testTabGenerateTestFile"
-      title="Generate sample test file."
-      onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}"
-    >
-      Generate
-    </button>`
+    let el = yo`
+      <button
+        class="btn border w-50"
+        data-id="testTabGenerateTestFile"
+        title="Generate sample test file."
+        onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}"
+      >
+        Generate
+      </button>
+    `
     if (
       !currentFile ||
       (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')
     ) {
-      el.setAttribute('disabled', 'disabled')
-      el.setAttribute('title', 'No solidity file selected')
+      //el.setAttribute('disabled', 'disabled')
+      //el.setAttribute('title', 'No solidity file selected')
     }
     if (!this.generateFileActionElement) {
       this.generateFileActionElement = el
@@ -487,6 +494,24 @@ module.exports = class TestTab extends ViewPlugin {
     this.testsOutput = yo`<div class="mx-3 mb-2 pb-4 border-top border-primary" hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsExecutionStopped = yo`<label class="text-warning h6" data-id="testTabTestsExecutionStopped">The test execution has been stopped</label>`
     this.testsExecutionStoppedError = yo`<label class="text-danger h6" data-id="testTabTestsExecutionStoppedError">The test execution has been stopped because of error(s) in your test file</label>`
+    this.uiPathList = yo`<datalist id="utPathList"></datalist>`
+    const availablePaths = yo`
+      <div>
+        <input
+          placeholder="browser/tests"
+          list="utPathList"
+          class="custom-select"
+          id="utPath"
+          name="utPath"
+          onchange=${(e)=>this.updateCurrentPath(e)}/>
+          ${this.uiPathList}
+      </div>
+    `
+    let options = ['browser', 'browser/ll/test']
+    options.forEach((path) => {
+      this.uiPathList.appendChild(yo`<option>${path}</option>`)
+    })
+
     this.testsExecutionStopped.hidden = true
     this.testsExecutionStoppedError.hidden = true
     this.resultStatistics = this.createResultLabel()
@@ -495,7 +520,8 @@ module.exports = class TestTab extends ViewPlugin {
       <div class="${css.testTabView} px-2" id="testView">
         <div class="${css.infoBox}">
           <p class="text-lg"> Test your smart contract in Solidity.</p>
-          <p> Click on "Generate" to generate a sample test file.</p>
+          <p> Click on "Generate" to generate a sample test file in.</p>
+          ${availablePaths}
         </div>
         <div class="${css.tests}">          
           <div class="d-flex p-2">
