@@ -37,4 +37,7 @@ testem.log
 
 # System Files
 .DS_Store
-Thumbs.db
+contracts
+TODO
+.tern-port
+temp_publish_docker
