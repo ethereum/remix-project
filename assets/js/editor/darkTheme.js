@@ -1,21 +1,21 @@
 /* eslint-disable */
-ace.define("ace/theme/chaos",["require","exports","module","ace/lib/dom"], function(acequire, exports, module) {
+ace.define("ace/theme/remixDark",["require","exports","module","ace/lib/dom"], function(acequire, exports, module) {
 
   exports.isDark = true;
-  exports.cssClass = "ace-chaos";
-  exports.cssText = ".ace-chaos .ace_gutter {\
+  exports.cssClass = "ace-remixDark";
+  exports.cssText = ".ace-remixDark .ace_gutter {\
   background: #2a2c3f;\
   color: #8789a1;\
   border-right: 1px solid #282828;\
   }\
-  .ace-chaos .ace_gutter-cell.ace_warning {\
+  .ace-remixDark .ace_gutter-cell.ace_warning {\
   background-image: none;\
   background: #FC0;\
   border-left: none;\
   padding-left: 0;\
   color: #000;\
   }\
-  .ace-chaos .ace_gutter-cell.ace_error {\
+  .ace-remixDark .ace_gutter-cell.ace_error {\
   background-position: -6px center;\
   background-image: none;\
   background: #F10;\
@@ -23,153 +23,153 @@ ace.define("ace/theme/chaos",["require","exports","module","ace/lib/dom"], funct
   padding-left: 0;\
   color: #000;\
   }\
-  .ace-chaos .ace_print-margin {\
+  .ace-remixDark .ace_print-margin {\
   border-left: 1px solid #555;\
   right: 0;\
   background: #1D1D1D;\
   }\
-  .ace-chaos {\
+  .ace-remixDark {\
   background-color: #222336;\
   color: #a2a3bd;\
   }\
-  .ace-chaos .ace_cursor {\
+  .ace-remixDark .ace_cursor {\
   border-left: 2px solid #FFFFFF;\
   }\
-  .ace-chaos .ace_cursor.ace_overwrite {\
+  .ace-remixDark .ace_cursor.ace_overwrite {\
   border-left: 0px;\
   border-bottom: 1px solid #FFFFFF;\
   }\
-  .ace-chaos .ace_marker-layer .ace_selection {\
+  .ace-remixDark .ace_marker-layer .ace_selection {\
   background: #494836;\
   }\
-  .ace-chaos .ace_marker-layer .ace_step {\
+  .ace-remixDark .ace_marker-layer .ace_step {\
   background: rgb(198, 219, 174);\
   }\
-  .ace-chaos .ace_marker-layer .ace_bracket {\
+  .ace-remixDark .ace_marker-layer .ace_bracket {\
   margin: -1px 0 0 -1px;\
   border: 1px solid #FCE94F;\
   }\
-  .ace-chaos .ace_marker-layer .ace_active-line {\
+  .ace-remixDark .ace_marker-layer .ace_active-line {\
   background: #363950;\
   }\
-  .ace-chaos .ace_gutter-active-line {\
+  .ace-remixDark .ace_gutter-active-line {\
   background-color: #363950;\
   }\
-  .ace-chaos .ace_invisible {\
+  .ace-remixDark .ace_invisible {\
   color: #404040;\
   }\
-  .ace-chaos .ace_rparen {\
+  .ace-remixDark .ace_rparen {\
     color: #d4d7ed;\
   }\
-  .ace-chaos .ace_lparen {\
+  .ace-remixDark .ace_lparen {\
     color: #d4d7ed;\
   }\
-  .ace-chaos .ace_keyword {\
+  .ace-remixDark .ace_keyword {\
   color:#ffa76d;\
   }\
-  .ace-chaos .ace_keyword.ace_operator {\
+  .ace-remixDark .ace_keyword.ace_operator {\
   color:#eceeff;\
   }\
-  .ace-chaos .ace_constant {\
+  .ace-remixDark .ace_constant {\
   color:#1EDAFB;\
   }\
-  .ace-chaos .ace_constant.ace_language {\
+  .ace-remixDark .ace_constant.ace_language {\
   color:#FDC251;\
   }\
-  .ace-chaos .ace_constant.ace_library {\
+  .ace-remixDark .ace_constant.ace_library {\
   color:#8DFF0A;\
   }\
-  .ace-chaos .ace_constant.ace_numeric {\
+  .ace-remixDark .ace_constant.ace_numeric {\
   color:#eceeff;\
   }\
-  .ace-chaos .ace_invalid {\
+  .ace-remixDark .ace_invalid {\
   color:#FFFFFF;\
   background-color:#990000;\
   }\
-  .ace-chaos .ace_invalid.ace_deprecated {\
+  .ace-remixDark .ace_invalid.ace_deprecated {\
   color:#FFFFFF;\
   background-color:#990000;\
   }\
-  .ace-chaos .ace_support {\
+  .ace-remixDark .ace_support {\
   color: #999;\
   }\
-  .ace-chaos .ace_support.ace_function {\
+  .ace-remixDark .ace_support.ace_function {\
   color:#3fe2a7;\
   }\
-  .ace-chaos .ace_function {\
+  .ace-remixDark .ace_function {\
   color:#3fe2a7;\
   }\
-  .ace-chaos .ace_string {\
+  .ace-remixDark .ace_string {\
   color:#eceeff;\
   }\
-  .ace-chaos .ace_comment {\
+  .ace-remixDark .ace_comment {\
   color:#a7a7a7;\
   font-style:italic;\
   padding-bottom: 0px;\
   }\
-  .ace-chaos .ace_type {\
+  .ace-remixDark .ace_type {\
   color:#75ceef;\
   }]\
-  .ace-chaos .ace_visibility (\
+  .ace-remixDark .ace_visibility (\
     color:#f7d777;\
   )\
-  .ace-chaos .ace_identifier {\
+  .ace-remixDark .ace_identifier {\
     color:#bec1dd;\
   }\
-  .ace-chaos .ace_modifier {\
+  .ace-remixDark .ace_modifier {\
     color:#efff2f;\
   }\
-  .ace-chaos .ace-boolean {\
+  .ace-remixDark .ace-boolean {\
     color:#ff86ac;\
   }\
-  .ace-chaos .ace_statemutability {\
+  .ace-remixDark .ace_statemutability {\
     color:#FFCC00;\
   }\
-  .ace-chaos .ace_variable {\
+  .ace-remixDark .ace_variable {\
   color:#e0bb83;\
   }\
-  .ace-chaos .ace_meta.ace_tag {\
+  .ace-remixDark .ace_meta.ace_tag {\
   color:#BE53E6;\
   }\
-  .ace-chaos .ace_entity.ace_other.ace_attribute-name {\
+  .ace-remixDark .ace_entity.ace_other.ace_attribute-name {\
   color:#4aa8fd;\
   }\
-  .ace-chaos .ace_markup.ace_underline {\
+  .ace-remixDark .ace_markup.ace_underline {\
   text-decoration: underline;\
   }\
-  .ace-chaos .ace_fold-widget {\
+  .ace-remixDark .ace_fold-widget {\
   text-align: center;\
   }\
-  .ace-chaos .ace_fold-widget:hover {\
+  .ace-remixDark .ace_fold-widget:hover {\
   color: #777;\
   }\
-  .ace-chaos .ace_fold-widget.ace_start,\
-  .ace-chaos .ace_fold-widget.ace_end,\
-  .ace-chaos .ace_fold-widget.ace_closed{\
+  .ace-remixDark .ace_fold-widget.ace_start,\
+  .ace-remixDark .ace_fold-widget.ace_end,\
+  .ace-remixDark .ace_fold-widget.ace_closed{\
   background: none;\
   border: none;\
   box-shadow: none;\
   }\
-  .ace-chaos .ace_fold-widget.ace_start:after {\
+  .ace-remixDark .ace_fold-widget.ace_start:after {\
   content: '▾'\
   }\
-  .ace-chaos .ace_fold-widget.ace_end:after {\
+  .ace-remixDark .ace_fold-widget.ace_end:after {\
   content: '▴'\
   }\
-  .ace-chaos .ace_fold-widget.ace_closed:after {\
+  .ace-remixDark .ace_fold-widget.ace_closed:after {\
   content: '‣'\
   }\
-  .ace-chaos .ace_indent-guide {\
+  .ace-remixDark .ace_indent-guide {\
   border-right:1px dotted #333;\
   margin-right:-1px;\
   }\
-  .ace-chaos .ace_fold { \
+  .ace-remixDark .ace_fold { \
   background: #222; \
   border-radius: 3px; \
   color: #7AF; \
   border: none; \
   }\
-  .ace-chaos .ace_fold:hover {\
+  .ace-remixDark .ace_fold:hover {\
   background: #CCC; \
   color: #000;\
   }\
