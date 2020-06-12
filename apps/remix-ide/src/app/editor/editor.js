@@ -21,6 +21,7 @@ require('brace/mode/python')
 require('brace/mode/json')
 require('brace/mode/rust')
 require('brace/theme/chrome')
+require('brace/theme/chaos')
 require('../../../assets/js/editor/darkTheme')
 
 const css = csjs`
@@ -62,10 +63,11 @@ class Editor extends Plugin {
 
     this._themes = {
       'light': 'chrome',
-      'dark': 'chaos'
+      'dark': 'chaos',
+      'remixDark': 'remixDark'
     }
     themeModule.events.on('themeChanged', (theme) => {
-      this.setTheme(theme.quality)
+      this.setTheme(theme.name === 'Dark' ? 'remixDark' : theme.quality)
     })
 
     // Init
