@@ -1,6 +1,6 @@
 'use strict'
 
-import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph, Context, FunctionCallAstNode } from "types"
+import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph, Context, FunctionCallAstNode } from "../../types"
 import { isLocalCallGraphRelevantNode,  isExternalDirectCall, getFullQualifiedFunctionCallIdent, 
   getFullQuallyfiedFuncDefinitionIdent, getContractName } from './staticAnalysisCommon'
 

@@ -17,4 +17,4 @@ fs.walkSync = function (start: string, callback: Function) {
     })
 }
 
-export = fs
+export default fs

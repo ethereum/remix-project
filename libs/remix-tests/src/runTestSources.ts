@@ -6,7 +6,7 @@ import { deployAll } from './deployer'
 import { runTest } from './testRunner'
 
 import Web3 from 'web3';
-import { Provider } from 'remix-simulator'
+import { Provider } from '@remix-project/remix-simulator'
 import { FinalResult, SrcIfc, compilationInterface, ASTInterface, Options, 
     TestResultInterface, AstNode, CompilerConfiguration } from './types'
 

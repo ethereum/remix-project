@@ -1,0 +1,12 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+      "allowJs": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "types": ["node"]
+    },
+    "files": [],
+    "include": ["**/*.js", "**/*.ts"]
+  }
+  

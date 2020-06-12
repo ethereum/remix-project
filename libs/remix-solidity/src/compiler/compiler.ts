@@ -3,7 +3,7 @@
 import { update } from 'solc/abi'
 import webworkify from 'webworkify'
 import compilerInput from './compiler-input'
-import { EventManager } from 'remix-lib'
+import { EventManager } from '@remix-project/remix-lib'
 import { default as txHelper } from './txHelper';
 import { Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult, 
         visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError, 
@@ -211,7 +211,7 @@ export class Compiler {
    */
 
   loadWorker (url: string): void {
-    this.state.worker = webworkify(require('./compiler-worker.js').default)
+    this.state.worker = webworkify(require('./compiler-worker').default)
     let jobs: Record<'sources', SourceWithTarget> [] = []
 
     this.state.worker.addEventListener('message', (msg: Record <'data', MessageFromWorker>) => {

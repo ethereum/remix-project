@@ -8,13 +8,16 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/web:build",
           "options": {
-            "commands": [
-              {
-              "command": "browserify apps/remix-ide/src/index.js -o apps/remix-ide/build/app.js --exclude solc"
-              }
-            ]
+            "outputPath": "dist/apps/remix-ide",
+            "index": "apps/remix-ide/index.html",
+            "main": "apps/remix-ide/src/app.js",
+            "tsConfig": "apps/remix-ide/tsconfig.app.json",
+            "assets": [],
+            "styles": [],
+            "scripts": [],
+            "webpackConfig": "apps/remix-ide/webpack.config.js"
           }
         },
         "start": {

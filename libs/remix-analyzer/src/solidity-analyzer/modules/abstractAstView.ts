@@ -1,8 +1,8 @@
 import { getStateVariableDeclarationsFromContractNode, getInheritsFromName, getContractName,
   getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, getFunctionDefinitionReturnParameterPart } from './staticAnalysisCommon'
-import { AstWalker } from 'remix-astwalker'
+import { AstWalker } from '@remix-project/remix-astwalker'
 import { FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode, ContractHLAst, VariableDeclarationAstNode, 
-  FunctionHLAst, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult } from 'types'
+  FunctionHLAst, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult } from '../../types'
 
 type WrapFunction = ((contracts: ContractHLAst[], isSameName: boolean) => ReportObj[])
 

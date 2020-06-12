@@ -1,4 +1,4 @@
-const RemixLib = require('remix-lib')
+const RemixLib = require('@remix-project/remix-lib')
 const executionContext = RemixLib.execution.executionContext
 
 const log = require('./utils/logs.js')

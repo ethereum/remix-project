@@ -1,8 +1,8 @@
 'use strict'
-var StaticAnalysisRunner = require('remix-analyzer').CodeAnalysis
+var StaticAnalysisRunner = require('@remix-project/remix-analyzer').CodeAnalysis
 var yo = require('yo-yo')
 var $ = require('jquery')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var utils = remixLib.util
 var css = require('./styles/staticAnalysisView-styles')
 var Renderer = require('../../ui/renderer')
