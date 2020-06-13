@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.json",
   "include": ["src"],
   "compilerOptions": {
     "target": "es5",                          /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
@@ -11,8 +12,6 @@
     "strict": true,                           /* Enable all strict type-checking options. */
     "noImplicitAny": false,                   /* Raise error on expressions and declarations with an implied 'any' type. */
     /* Module Resolution Options */
-    "baseUrl": "./src",                       /* Base directory to resolve non-absolute module names. */
-    "paths": { "remix-tests": ["./"] },       /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     "typeRoots": [
       "./@types",
       "./node_modules/@types"

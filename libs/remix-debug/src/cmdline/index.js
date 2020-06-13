@@ -2,7 +2,7 @@ const Web3 = require('web3')
 const Debugger = require('../debugger/debugger.js')
 const ContextManager = require('./contextManager.js')
 const EventManager = require('events')
-const remixLib = require('@remix-project/remix-lib')
+const remixLib = require('remix-lib')
 const executionContext = remixLib.execution.executionContext
 
 class CmdLine {

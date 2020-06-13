@@ -1,5 +1,5 @@
 const yo = require('yo-yo')
-const remixLib = require('@remix-project/remix-lib')
+const remixLib = require('remix-lib')
 const css = require('./styles/debugger-tab-styles')
 import toaster from '../ui/tooltip'
 const DebuggerUI = require('./debugger/debuggerUI')

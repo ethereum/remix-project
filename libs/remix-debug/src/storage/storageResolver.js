@@ -1,5 +1,5 @@
 'use strict'
-const remixLib = require('@remix-project/remix-lib')
+const remixLib = require('remix-lib')
 const traceHelper = remixLib.helpers.trace
 const mappingPreimages = require('./mappingPreimages')
 

@@ -1,5 +1,5 @@
 var ethJSUtil = require('ethereumjs-util')
-var remixLib = require('@remix-project/remix-lib')
+var remixLib = require('remix-lib')
 var txHelper = remixLib.execution.txHelper
 var CompilerAbstract = require('../../../compiler/compiler-abstract')
 var EventManager = remixLib.EventManager

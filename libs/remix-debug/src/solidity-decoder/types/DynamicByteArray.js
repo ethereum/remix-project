@@ -1,6 +1,6 @@
 'use strict'
 const util = require('./util')
-const remixLib = require('@remix-project/remix-lib')
+const remixLib = require('remix-lib')
 const sha3256 = remixLib.util.sha3_256
 const BN = require('ethereumjs-util').BN
 const RefType = require('./RefType')

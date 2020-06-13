@@ -1,4 +1,4 @@
-const RemixLib = require('@remix-project/remix-lib')
+const RemixLib = require('remix-lib')
 const TxExecution = RemixLib.execution.txExecution
 const TxRunner = RemixLib.execution.txRunner
 

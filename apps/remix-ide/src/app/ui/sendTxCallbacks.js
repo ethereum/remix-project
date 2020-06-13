@@ -1,5 +1,5 @@
 const yo = require('yo-yo')
-const remixLib = require('@remix-project/remix-lib')
+const remixLib = require('remix-lib')
 const confirmDialog = require('./confirmDialog')
 const modalCustom = require('./modal-dialog-custom')
 const modalDialog = require('./modaldialog')

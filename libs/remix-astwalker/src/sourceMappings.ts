@@ -1,6 +1,6 @@
 import { isAstNode, AstWalker } from './astWalker';
 import { AstNode, LineColPosition, LineColRange, Location } from "./types";
-import { util } from "@remix-project/remix-lib";
+import { util } from "remix-lib";
 
 export declare interface SourceMappings {
   new(): SourceMappings;

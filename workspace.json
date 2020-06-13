@@ -3,7 +3,7 @@
   "projects": {
     "remix-ide": {
       "root": "apps/remix-ide",
-      "sourceRoot": "apps/remix-ide/src",
+      "sourceRoot": "apps/remix-ide",
       "projectType": "application",
       "schematics": {},
       "architect": {
@@ -12,9 +12,9 @@
           "options": {
             "outputPath": "dist/apps/remix-ide",
             "index": "apps/remix-ide/index.html",
-            "main": "apps/remix-ide/src/app.js",
+            "main": "apps/remix-ide/src/index.js",
             "tsConfig": "apps/remix-ide/tsconfig.app.json",
-            "assets": [],
+            "assets": ["apps/remix-ide/assets"],
             "styles": [],
             "scripts": [],
             "webpackConfig": "apps/remix-ide/webpack.config.js"
@@ -31,13 +31,9 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/web:dev-server",
           "options": {
-            "commands": [
-              {
-                "command": "npx http-server ./apps/remix-ide"
-              }
-            ]
+            "buildTarget": "remix-ide:build"
           }
         },
         "lint": {

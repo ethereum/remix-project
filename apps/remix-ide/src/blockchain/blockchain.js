@@ -1,4 +1,4 @@
-const remixLib = require('@remix-project/remix-lib')
+const remixLib = require('remix-lib')
 const txFormat = remixLib.execution.txFormat
 const txExecution = remixLib.execution.txExecution
 const typeConversion = remixLib.execution.typeConversion

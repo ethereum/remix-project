@@ -1,5 +1,5 @@
 'use strict'
-const remixLib = require('@remix-project/remix-lib')
+const remixLib = require('remix-lib')
 const csjs = require('csjs-inject')
 const SourceMappingDecoder = remixLib.SourceMappingDecoder
 const AstWalker = remixLib.AstWalker

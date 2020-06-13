@@ -4,7 +4,7 @@ import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstN
   WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, 
   MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, 
   IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter } from "../../types"
-import { util } from '@remix-project/remix-lib'
+import { util } from 'remix-lib'
 
 type SpecialObjDetail = {
   obj: string

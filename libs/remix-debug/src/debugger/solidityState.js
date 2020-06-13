@@ -1,4 +1,4 @@
-const remixLib = require('@remix-project/remix-lib')
+const remixLib = require('remix-lib')
 const EventManager = remixLib.EventManager
 const stateDecoder = require('../solidity-decoder/stateDecoder')
 const StorageViewer = require('../storage/storageViewer')

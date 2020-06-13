@@ -1,6 +1,6 @@
 const Web3 = require('web3')
 const { BN, privateToAddress, stripHexPrefix, hashPersonalMessage } = require('ethereumjs-util')
-const RemixSimulator = require('@remix-project/remix-simulator')
+const RemixSimulator = require('remix-simulator')
 
 class VMProvider {
 

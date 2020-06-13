@@ -3,7 +3,7 @@
 import { update } from 'solc/abi'
 import webworkify from 'webworkify'
 import compilerInput from './compiler-input'
-import { EventManager } from '@remix-project/remix-lib'
+import { EventManager } from 'remix-lib'
 import { default as txHelper } from './txHelper';
 import { Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult, 
         visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError, 

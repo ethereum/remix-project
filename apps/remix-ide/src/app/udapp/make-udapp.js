@@ -1,5 +1,5 @@
 var registry = require('../../global/registry')
-var remixLib = require('@remix-project/remix-lib')
+var remixLib = require('remix-lib')
 var yo = require('yo-yo')
 var EventsDecoder = remixLib.execution.EventsDecoder
 var TransactionReceiptResolver = require('../../lib/transactionReceiptResolver')

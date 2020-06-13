@@ -1,6 +1,6 @@
 'use strict'
 const yo = require('yo-yo')
-const remixLib = require('@remix-project/remix-lib')
+const remixLib = require('remix-lib')
 const SourceMappingDecoder = remixLib.SourceMappingDecoder
 const globalRegistry = require('../../global/registry')
 

@@ -1,5 +1,5 @@
 
-import { Storage } from '@remix-project/remix-lib'
+import { Storage } from 'remix-lib'
 
 /*
   Migrating the files to the BrowserFS storage instead or raw localstorage
