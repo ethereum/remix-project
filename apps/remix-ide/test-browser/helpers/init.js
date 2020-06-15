@@ -11,12 +11,14 @@ module.exports = function (browser, callback, url, preloadPlugins = true) {
           initModules(browser, () => {
             browser.clickLaunchIcon('solidity')
             .pause(2000)
-            .click('*[for="autoCompile"]')
-            .perform(function () {
-              callback()
+            .execute(() => {
+              document.getElementById('autoCompile').click()
             })
           })
-        } else callback()
+        }
+      })
+      .perform(()=>{
+        callback()
       })
     })
 }
