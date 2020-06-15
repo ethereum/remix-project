@@ -14,11 +14,11 @@ module.exports = function (browser, callback, url, preloadPlugins = true) {
             .execute(() => {
               document.getElementById('autoCompile').click()
             })
-            .perform(function () {
-              callback()
-            })
           })
-        } else callback()
+        }
+      })
+      .perform(()=>{
+        callback()
       })
     })
 }
