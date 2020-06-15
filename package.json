@@ -246,8 +246,8 @@
     "watchify": "^3.9.0",
     "web3": "1.2.4",
     "webworkify": "^1.2.1",
-    "yo-yo": "github:ioedeveloper/yo-yo",
-    "yo-yoify": "^3.7.3",
-    "webworkify-webpack": "^2.1.5"
+"yo-yo": "github:ioedeveloper/yo-yo",
+"yo-yoify": "^3.7.3",
+"webworkify-webpack": "^2.1.5"
   }
 }
