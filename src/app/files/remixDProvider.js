@@ -111,10 +111,11 @@ module.exports = class RemixDProvider {
   }
 
   set (path, content, cb) {
-    var unprefixedpath = this.removePrefix(path)
-    this._appManager.call('remixd', 'set', {path: unprefixedpath, content: content}, (error, result) => {
-      if (cb) return cb(error, result)
-      var path = this.type + '/' + unprefixedpath
+    const unprefixedpath = this.removePrefix(path)
+    this._appManager.call('remixd', 'set', {path: unprefixedpath, content: content}).then((result) => {
+      if (cb) return cb(null, result)
+
+      const path = this.type + '/' + unprefixedpath
       this.event.trigger('fileChanged', [path])
     })
     return true
