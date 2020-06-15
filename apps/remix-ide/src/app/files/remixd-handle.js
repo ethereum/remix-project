@@ -37,7 +37,7 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   deactivate () {
-    super.deactivate()
+    if (super.socket) super.deactivate()
     this.locahostProvider.close((error) => {
       if (error) console.log(error)
     })
@@ -47,7 +47,7 @@ export class RemixdHandle extends WebsocketPlugin {
     this.connectToLocalhost()
   }
 
-  canceled () {
+  async canceled () {
     this.appManager.ensureDeactivated('remixd')
   }
 
@@ -57,7 +57,7 @@ export class RemixdHandle extends WebsocketPlugin {
     *
     * @param {String} txHash    - hash of the transaction
     */
-  async connectToLocalhost () {
+  connectToLocalhost () {
     let connection = (error) => {
       if (error) {
         console.log(error)
