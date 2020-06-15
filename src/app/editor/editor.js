@@ -20,8 +20,9 @@ require('brace/mode/javascript')
 require('brace/mode/python')
 require('brace/mode/json')
 require('brace/mode/rust')
-require('brace/theme/chrome')
-require('../../../assets/js/editor/darkTheme')
+require('brace/theme/chrome') // for all light themes
+require('brace/theme/chaos') // for all dark themes
+require('../../../assets/js/editor/darkTheme') // a custom one for remix 'Dark' theme
 
 const css = csjs`
   .ace-editor {
@@ -62,10 +63,11 @@ class Editor extends Plugin {
 
     this._themes = {
       'light': 'chrome',
-      'dark': 'chaos'
+      'dark': 'chaos',
+      'remixDark': 'remixDark'
     }
     themeModule.events.on('themeChanged', (theme) => {
-      this.setTheme(theme.quality)
+      this.setTheme(theme.name === 'Dark' ? 'remixDark' : theme.quality)
     })
 
     // Init
