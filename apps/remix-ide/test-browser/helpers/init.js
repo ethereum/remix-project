@@ -17,7 +17,7 @@ module.exports = function (browser, callback, url, preloadPlugins = true) {
           })
         }
       })
-      .perform(()=>{
+      .perform(() => {
         callback()
       })
     })
