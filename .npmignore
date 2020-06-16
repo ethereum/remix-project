@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+python_modules
+shared
+/bin
+/src
+.circleci
+tsconfig.json
+nodemon.json
+.eslintrc.json
