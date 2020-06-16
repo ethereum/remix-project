@@ -83,7 +83,7 @@ export class RemixdHandle extends WebsocketPlugin {
             try {
               super.activate()
               setTimeout(() => { connection() }, 2000)
-            } catch(error) {
+            } catch (error) {
               connection(error)
             }
           }
@@ -98,7 +98,7 @@ export class RemixdHandle extends WebsocketPlugin {
       try {
         super.activate()
         setTimeout(() => { connection() }, 2000)
-      } catch(error) {
+      } catch (error) {
         connection(error)
       }
     }
