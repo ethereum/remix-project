@@ -130,19 +130,22 @@ module.exports = class RemixDProvider {
   }
 
   remove (path) {
+    return new Promise((resolve, reject) => {
     const unprefixedpath = this.removePrefix(path)
-    
     this._appManager.call('remixd', 'remove', { path: unprefixedpath })
     .then(result => {
       console.log('result: ', result)
       const path = this.type + '/' + unprefixedpath
 
       delete this.filesContent[path]
+        resolve(true)
       this.init(() => {
         this.event.trigger('fileRemoved', [path])
       })
     }).catch(error => {
       if (error) console.log(error)
+        resolve(false)
+    })
     })
   }
 
