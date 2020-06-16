@@ -1,14 +1,9 @@
-var fs = require('fs-extra')
-var path = require('path')
-var isbinaryfile = require('isbinaryfile')
-var pathModule = require('path')
+import { ResolveDirectory, Filelist } from '../types'
 
-module.exports = {
-  absolutePath: absolutePath,
-  relativePath: relativePath,
-  walkSync: walkSync,
-  resolveDirectory: resolveDirectory
-}
+const fs = require('fs-extra')
+const path = require('path')
+const isbinaryfile = require('isbinaryfile')
+const pathModule = require('path')
 
 /**
  * returns the absolute path of the given @arg path
@@ -17,7 +12,7 @@ module.exports = {
  * @param {String} sharedFolder - absolute shared path. platform dependent representation.
  * @return {String} platform dependent absolute path (/home/user1/.../... for unix, c:\user\...\... for windows)
  */
-function absolutePath (path, sharedFolder) {
+function absolutePath (path: string, sharedFolder:string): string {
   path = normalizePath(path)
   if (path.indexOf(sharedFolder) !== 0) {
     path = pathModule.resolve(sharedFolder, path)
@@ -32,28 +27,32 @@ function absolutePath (path, sharedFolder) {
  * @param {String} sharedFolder - absolute shared path. platform dependent representation
  * @return {String} relative path (Unix style which is the one used by Remix IDE)
  */
-function relativePath (path, sharedFolder) {
-  var relative = pathModule.relative(sharedFolder, path)
+function relativePath (path: string, sharedFolder: string): string {
+  const relative: string = pathModule.relative(sharedFolder, path)
+
   return normalizePath(relative)
 }
 
-function normalizePath (path) {
+function normalizePath (path: string): string {
   if (process.platform === 'win32') {
     return path.replace(/\\/g, '/')
   }
   return path
 }
 
-function walkSync (dir, filelist, sharedFolder) {
-  var files = fs.readdirSync(dir)
+function walkSync (dir: string, filelist: Filelist, sharedFolder: string): Filelist {
+  const files: string[] = fs.readdirSync(dir)
+
   filelist = filelist || {}
   files.forEach(function (file) {
-    var subElement = path.join(dir, file)
+    const subElement = path.join(dir, file)
+
     if (!fs.lstatSync(subElement).isSymbolicLink()) {
       if (fs.statSync(subElement).isDirectory()) {
         filelist = walkSync(subElement, filelist, sharedFolder)
       } else {
-        var relative = relativePath(subElement, sharedFolder)
+        const relative = relativePath(subElement, sharedFolder)
+        
         filelist[relative] = isbinaryfile.sync(subElement)
       }
     }
@@ -61,15 +60,20 @@ function walkSync (dir, filelist, sharedFolder) {
   return filelist
 }
 
-function resolveDirectory (dir, sharedFolder) {
-  var ret = {}
-  var files = fs.readdirSync(dir)
+function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory {
+  const ret: ResolveDirectory = {}
+  const files: string[] = fs.readdirSync(dir)
+
   files.forEach(function (file) {
-    var subElement = path.join(dir, file)
+    const subElement = path.join(dir, file)
+
     if (!fs.lstatSync(subElement).isSymbolicLink()) {
-      var relative = relativePath(subElement, sharedFolder)
+      const relative: string = relativePath(subElement, sharedFolder)
+
       ret[relative] = { isDirectory: fs.statSync(subElement).isDirectory() }
     }
   })
   return ret
 }
+
+export { absolutePath, relativePath, walkSync, resolveDirectory }

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
-var Router = require('../src/router')
-var servicesList = require('../src/servicesList')
-var program = require('commander')
+import WebSocket from '../src/websocket'
+import * as servicesList from '../src/serviceList'
+import { WS } from '../types/index'
+
+const program = require('commander')
 
 program
 .usage('-s <shared folder>')
@@ -13,22 +15,28 @@ program
   console.log('\nExample:\n\n    remixd -s ./ --remix-ide http://localhost:8080')
 }).parse(process.argv)
 
-var killCallBack = []
+const killCallBack: Array<Function> = []
 
 if (!program.remixIde) {
-  return console.log('\x1b[31m%s\x1b[0m', '[ERR] URL Remix IDE instance has to be provided.')
+  console.log('\x1b[31m%s\x1b[0m', '[ERR] URL Remix IDE instance has to be provided.')
 }
 console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + program.remixIde + ' to connect to that instance')
 
 if (program.sharedFolder) {
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolic links are not forwarded to Remix IDE\n')
-  var sharedFolderrouter = new Router(65520, servicesList['sharedfolder'], { remixIdeUrl: program.remixIde }, (webSocket) => {
-    servicesList['sharedfolder'].setWebSocket(webSocket)
-    servicesList['sharedfolder'].setupNotifications(program.sharedFolder)
-    servicesList['sharedfolder'].sharedFolder(program.sharedFolder, program.readOnly || false)
-  })
-  killCallBack.push(sharedFolderrouter.start())
+  try {
+    const sharedFolderClient = new servicesList['sharedfolder']()
+    const websocketHandler = new WebSocket(65520, { remixIdeUrl: program.remixIde }, sharedFolderClient)
+
+    websocketHandler.start((ws: WS) => {
+      sharedFolderClient.setWebSocket(ws)
+      sharedFolderClient.sharedFolder(program.sharedFolder, program.readOnly || false)
+    })
+    killCallBack.push(websocketHandler.close.bind(websocketHandler))
+  } catch(error) {
+    throw new Error(error)
+  }
 }
 
 // kill
