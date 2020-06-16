@@ -1,12 +1,10 @@
 'use strict'
 var EventManager = require('../../lib/events')
-var pathtool = require('path')
 
 module.exports = class RemixDProvider {
   constructor (appManager) {
     this.event = new EventManager()
     this._appManager = appManager
-    this.remixd = remixapi(appManager, this)
     this.type = 'localhost'
     this.error = { 'EEXIST': 'File already exists' }
     this._isReady = false
@@ -14,40 +12,42 @@ module.exports = class RemixDProvider {
     this._readOnlyMode = false
     this.filesContent = {}
     this.files = {}
+  }
 
+  _registerEvent () {
     var remixdEvents = ['connecting', 'connected', 'errored', 'closed']
     remixdEvents.forEach((value) => {
-      remixd.event.register(value, (event) => {
+      this._appManager.on('remixd', value, (event) => {
         this.event.trigger(value, [event])
       })
     })
 
-    // remixd.event.register('notified', (data) => {
-    //   if (data.scope === 'sharedfolder') {
-    //     if (data.name === 'created') {
-    //       this.init(() => {
-    //         this.event.trigger('fileAdded', [this.type + '/' + data.value.path, data.value.isReadOnly, data.value.isFolder])
-    //       })
-    //     } else if (data.name === 'removed') {
-    //       this.init(() => {
-    //         this.event.trigger('fileRemoved', [this.type + '/' + data.value.path])
-    //       })
-    //     } else if (data.name === 'changed') {
-    //       this._appManager.call('remixd', 'get', {path: data.value}, (error, content) => {
-    //         if (error) {
-    //           console.log(error)
-    //         } else {
-    //           var path = this.type + '/' + data.value
-    //           this.filesContent[path] = content
-    //           this.event.trigger('fileExternallyChanged', [path, content])
-    //         }
-    //       })
-    //     } else if (data.name === 'rootFolderChanged') {
-    //       // new path has been set, we should reset
-    //       this.event.trigger('folderAdded', [this.type + '/'])
-    //     }
-    //   }
-    // })
+    this._appManager.on('remixd', 'notified', (data) => {
+      if (data.scope === 'sharedfolder') {
+        if (data.name === 'created') {
+          this.init(() => {
+            this.event.trigger('fileAdded', [this.type + '/' + data.value.path, data.value.isReadOnly, data.value.isFolder])
+          })
+        } else if (data.name === 'removed') {
+          this.init(() => {
+            this.event.trigger('fileRemoved', [this.type + '/' + data.value.path])
+          })
+        } else if (data.name === 'changed') {
+          this._appManager.call('remixd', 'get', {path: data.value}, (error, content) => {
+            if (error) {
+              console.log(error)
+            } else {
+              var path = this.type + '/' + data.value
+              this.filesContent[path] = content
+              this.event.trigger('fileExternallyChanged', [path, content])
+            }
+          })
+        } else if (data.name === 'rootFolderChanged') {
+          // new path has been set, we should reset
+          this.event.trigger('folderAdded', [this.type + '/'])
+        }
+      }
+    })
   }
 
   isConnected () {
@@ -60,25 +60,17 @@ module.exports = class RemixDProvider {
   }
 
   init (cb) {
+    if (this._isReady) return cb()
     this._appManager.call('remixd', 'folderIsReadOnly', {})
     .then((result) => {
       this._isReady = true
       this._readOnlyMode = result
+      this._registerEvent()
       cb && cb()
     }).catch((error) => {
       cb && cb(error)
     })
   }
-
-  // @TODO: refactor all `this._remixd.call(....)` uses into `this.remixd[api](...)`
-  // where `api = ...`:
-  // this.remixd.read(path, (error, content) => {})
-  // this.remixd.write(path, content, (error, result) => {})
-  // this.remixd.rename(path1, path2, (error, result) => {})
-  // this.remixd.remove(path, (error, result) => {})
-  // this.remixd.dir(path, (error, filesList) => {})
-  //
-  // this.remixd.exists(path, (error, isValid) => {})
 
   exists (path, cb) {
     const unprefixedpath = this.removePrefix(path)
@@ -109,7 +101,8 @@ module.exports = class RemixDProvider {
     }).catch((error) => {
       // display the last known content.
       // TODO should perhaps better warn the user that the file is not synced.
-      cb(null, this.filesContent[path])
+      if (this.filesContent[path]) return cb(null, this.filesContent[path])
+      else cb(error)
     })
   }
 
@@ -131,21 +124,21 @@ module.exports = class RemixDProvider {
 
   remove (path) {
     return new Promise((resolve, reject) => {
-    const unprefixedpath = this.removePrefix(path)
-    this._appManager.call('remixd', 'remove', { path: unprefixedpath })
-    .then(result => {
-      console.log('result: ', result)
-      const path = this.type + '/' + unprefixedpath
+      const unprefixedpath = this.removePrefix(path)
+      this._appManager.call('remixd', 'remove', { path: unprefixedpath })
+      .then(result => {
+        console.log('result: ', result)
+        const path = this.type + '/' + unprefixedpath
 
-      delete this.filesContent[path]
+        delete this.filesContent[path]
         resolve(true)
-      this.init(() => {
-        this.event.trigger('fileRemoved', [path])
-      })
-    }).catch(error => {
-      if (error) console.log(error)
+        this.init(() => {
+          this.event.trigger('fileRemoved', [path])
+        })
+      }).catch(error => {
+        if (error) console.log(error)
         resolve(false)
-    })
+      })
     })
   }
 
@@ -155,20 +148,20 @@ module.exports = class RemixDProvider {
 
     return this._appManager.call('remixd', 'rename', { oldPath: unprefixedoldPath, newPath: unprefixednewPath })
     .then(result => {
-        const newPath = this.type + '/' + unprefixednewPath
-        const oldPath = this.type + '/' + unprefixedoldPath
-        
-        this.filesContent[newPath] = this.filesContent[oldPath]
-        delete this.filesContent[oldPath]
-        this.init(() => {
-          this.event.trigger('fileRenamed', [oldPath, newPath, isFolder])
-        })
-        return result
-      }).catch(error => {
-        console.log(error)
-        if (this.error[error.code]) error = this.error[error.code]
-        this.event.trigger('fileRenamedError', [this.error[error.code]])
+      const newPath = this.type + '/' + unprefixednewPath
+      const oldPath = this.type + '/' + unprefixedoldPath
+
+      this.filesContent[newPath] = this.filesContent[oldPath]
+      delete this.filesContent[oldPath]
+      this.init(() => {
+        this.event.trigger('fileRenamed', [oldPath, newPath, isFolder])
       })
+      return result
+    }).catch(error => {
+      console.log(error)
+      if (this.error[error.code]) error = this.error[error.code]
+      this.event.trigger('fileRenamedError', [this.error[error.code]])
+    })
   }
 
   isExternalFolder (path) {
@@ -185,8 +178,8 @@ module.exports = class RemixDProvider {
     var self = this
     if (path[0] === '/') path = path.substring(1)
     if (!path) return callback(null, { [self.type]: { } })
-    path = self.removePrefix(path)
-    self.remixd.dir(path, callback)
+    const unprefixedpath = this.removePrefix(path)
+    this._appManager.call('remixd', 'resolveDirectory', {path: unprefixedpath}).then((result) => callback(null, result)).catch(callback)
   }
 
   async isDirectory (path) {
@@ -200,55 +193,4 @@ module.exports = class RemixDProvider {
 
     return await this._appManager.call('remixd', 'isFile', { path: unprefixedpath })
   }
-}
-
-function remixapi (appManager, remixd) {
-  const read = (path, callback) => {
-    path = '' + (path || '')
-    path = pathtool.join('./', path)
-    appManager.call('remixd', 'get', { path }).then((content) => {
-      callback(null, content)
-    }).catch((error) => {
-      callback(error)
-    })
-  }
-  const write = (path, content, callback) => {
-    path = '' + (path || '')
-    path = pathtool.join('./', path)
-    appManager.call('remixd', 'set', { path, content }).then((result) => {
-      callback(null, result)
-    }).catch((error) => {
-      callback(error)
-    })
-  }
-  const rename = (path, newpath, callback) => {
-    path = '' + (path || '')
-    path = pathtool.join('./', path)
-    appManager.call('remixd', 'rename', { oldPath: path, newPath: newpath }).then((result) => {
-      callback(null, result)
-    }).catch((error) => {
-      callback(error)
-    })
-  }
-  const remove = (path, callback) => {
-    path = '' + (path || '')
-    path = pathtool.join('./', path)
-    appManager.call('remixd', 'remove', { path }).then((result) => {
-      callback(null, result)
-    }).catch((error) => {
-      callback(error)
-    })
-  }
-  const dir = (path, callback) => {
-    path = '' + (path || '')
-    path = pathtool.join('./', path)
-    appManager.call('remixd', 'resolveDirectory', { path }).then((filesList) => {
-      callback(null, filesList)
-    }).catch((error) => {
-      callback(error)
-    })
-  }
-  const exit = () => { remixd.close() }
-  const api = { read, write, rename, remove, dir, exit, event: remixd.event }
-  return api
 }
