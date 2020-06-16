@@ -430,8 +430,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // get the file from gist
   const gistHandler = new GistHandler()
-  const queryParams = new QueryParams()
-  const params = queryParams.get()
   const loadedFromGist = gistHandler.loadFromGist(params, fileManager)
   if (!loadedFromGist) {
     // insert example contracts if there are no files to show
