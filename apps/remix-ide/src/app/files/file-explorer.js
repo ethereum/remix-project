@@ -241,14 +241,7 @@ function fileExplorer (localRegistry, files, menuItems) {
             if (!removeFolder) {
               tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
             } else {
-              const provider = fileManager.currentFileProvider()
-
-              if (provider) {
-                const { type } = provider
-
-                return self.updatePath(type)
-              }
-              self.updatePath('browser')
+              self.updatePath(self.files.type)
             }
           }, () => {})
       }
@@ -292,14 +285,7 @@ function fileExplorer (localRegistry, files, menuItems) {
             if (!removeFile) {
               tooltip(`Failed to remove file ${key}.`)
             } else {
-              const provider = fileManager.currentFileProvider()
-
-              if (provider) {
-                const { type } = provider
-
-                return self.updatePath(type)
-              }
-              self.updatePath('browser')
+              self.updatePath(self.files.type)
             }
           },
           () => {}
