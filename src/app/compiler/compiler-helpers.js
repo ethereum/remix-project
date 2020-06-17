@@ -9,6 +9,7 @@ export const compile = async (compilationTargets, settings) => {
       const compiler = new Compiler(() => {})
       compiler.set('evmVersion', settings.evmVersion)
       compiler.set('optimize', settings.optimize)
+      compiler.set('language', settings.language)
       compiler.loadVersion(canUseWorker(settings.version), urlFromVersion(settings.version))
       compiler.event.register('compilationFinished', (success, compilationData, source) => {
         if (!success) return reject(compilationData)
