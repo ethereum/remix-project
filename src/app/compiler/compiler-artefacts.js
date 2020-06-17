@@ -32,6 +32,10 @@ module.exports = class CompilerArtefacts extends Plugin {
     this.on('lexon', 'compilationFinished', (file, source, languageVersion, data) => {
       this.compilersArtefacts['__last'] = new CompilerAbstract(languageVersion, data, source)
     })
+
+    this.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => {
+      this.compilersArtefacts['__last'] = new CompilerAbstract(languageVersion, data, source)
+    })
   }
 
   addResolvedContract (address, compilerData) {

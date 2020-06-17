@@ -20,6 +20,7 @@ const CompilerContainer = require('./compileTab/compilerContainer.js')
 import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 import publishToStorage from '../../publishToStorage'
+import { compile } from '../compiler/compiler-helpers'
 
 const profile = {
   name: 'solidity',
@@ -31,7 +32,7 @@ const profile = {
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
   version: packageJson.version,
-  methods: ['getCompilationResult', 'compile']
+  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig']
 
 }
 
@@ -60,7 +61,8 @@ class CompileTab extends ViewPlugin {
 
     this.data = {
       contractsDetails: {},
-      eventHandlers: {}
+      eventHandlers: {},
+      loading: false
     }
   }
 
@@ -88,11 +90,13 @@ class CompileTab extends ViewPlugin {
     this.editor.event.register('contentChanged', this.data.eventHandlers.onContentChanged)
 
     this.data.eventHandlers.onLoadingCompiler = () => {
+      this.data.loading = true
       this.emit('statusChanged', {key: 'loading', title: 'loading compiler...', type: 'info'})
     }
     this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
 
     this.data.eventHandlers.onCompilerLoaded = () => {
+      this.data.loading = false
       this.emit('statusChanged', {key: 'none'})
     }
     this.compiler.event.register('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
@@ -198,9 +202,26 @@ class CompileTab extends ViewPlugin {
     return this.compileTabLogic.compiler.state.lastCompilationResult
   }
 
-  // This function is used by remix-plugin
+  /**
+   * compile using @arg fileName.
+   * The module UI will be updated accordingly to the new compilation result.
+   * This function is used by remix-plugin compiler API.
+   * @param {string} fileName to compile
+   */
   compile (fileName) {
+    addTooltip(yo`<div><b>${this.currentRequest.from}</b> is requiring to compile <b>${fileName}</b></div>`)
     return this.compileTabLogic.compileFile(fileName)
+  }
+
+   /**
+   * compile using @arg compilationTargets and @arg settings
+   * The module UI will *not* be updated, the compilation result is returned
+   * This function is used by remix-plugin compiler API.
+   * @param {object} map of source files.
+   * @param {object} settings {evmVersion, optimize, compilerUrl, version, language}
+   */
+  async compileWithParameters (compilationTargets, settings) {
+    return await compile(compilationTargets, settings)
   }
 
   // This function is used for passing the compiler remix-tests
@@ -215,6 +236,28 @@ class CompileTab extends ViewPlugin {
       evmVersion: this.compileTabLogic.evmVersion,
       optimize: this.compileTabLogic.optimize
     }
+  }
+
+  /**
+   * set the compiler configuration
+   * This function is used by remix-plugin compiler API.
+   * @param {object} settings {evmVersion, optimize, compilerUrl, version, language}
+   */
+  setCompilerConfig (settings) {
+    return new Promise((resolve, reject) => {
+      addTooltip(yo`<div><b>${this.currentRequest.from}</b> is updating the <b>Solidity compiler configuration</b>.<pre class="text-left">${JSON.stringify(settings, null, '\t')}</pre></div>`)
+      this.compilerContainer.setConfiguration(settings)
+      // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
+      let timeout = 0
+      const id = setInterval(() => {
+        timeout++
+        console.log(this.data.loading)
+        if (!this.data.loading || timeout > 10) {
+          resolve()
+          clearInterval(id)
+        }
+      }, 200)
+    })
   }
 
   /*********
@@ -261,7 +304,7 @@ class CompileTab extends ViewPlugin {
         <span>Publish on Ipfs</span>
         <img id="ipfsLogo" class="${css.storageLogo} ml-2" src="assets/img/ipfs.webp">
       </button>
-        <button class="btn btn-secondary btn-block" title="Display Contract Details" onclick="${() => { this.details() }}">
+        <button data-id="compilation-details" class="btn btn-secondary btn-block" title="Display Contract Details" onclick="${() => { this.details() }}">
           Compilation Details
         </button>
         <!-- Copy to Clipboard -->
