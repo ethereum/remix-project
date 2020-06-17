@@ -185,6 +185,7 @@
     "nightwatch_local_fileExplorer": "nightwatch ./test-browser/tests/fileExplorer.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_debugger": "nightwatch ./test-browser/tests/debugger.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_editor": "nightwatch ./test-browser/tests/editor.test.js --config nightwatch.js --env chrome ",
+    "nightwatch_local_compiler": "nightwatch ./test-browser/tests/compiler_api.test.js --config nightwatch.js --env chrome ",
     "nightwatch_local_runAndDeploy": "nightwatch ./test-browser/tests/runAndDeploy.js --config nightwatch.js --env chrome-runAndDeploy ",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
