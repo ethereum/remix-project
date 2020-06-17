@@ -13,6 +13,6 @@ services:
     <<: *project-base
     image: remixproject/remix-ide:$TAG
     container_name: remixide-${TAG}
-    build: 
-      context: .
-      dockerfile: Dockerfile.dev
+    ports: 
+      - 8080:80
+      - 65520:65520
