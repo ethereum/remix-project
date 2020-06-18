@@ -116,9 +116,10 @@ class FileProvider {
   }
 
   createDir (path, cb) {
-    var unprefixedpath = this.removePrefix(path)
+    const unprefixedpath = this.removePrefix(path)
     const paths = unprefixedpath.split('/')
-    paths.pop() // last element should the filename
+    const last = paths[paths.length - 1]
+    if (last.indexOf('.') !== -1) paths.pop() // check if the last element is the filename and remove it
     if (paths.length && paths[0] === '') paths.shift()
     let currentCheck = ''
     paths.forEach((value) => {
