@@ -89,6 +89,7 @@ function runTests (browser, testData) {
     .waitForElementVisible('#modal-footer-ok', 2000)
     .pause(2000)
     .click('#modal-footer-ok')
+    .pause(2000)
     .clickLaunchIcon('fileExplorers')
     .waitForElementVisible('[data-path="localhost/folder1"]')
     .click('[data-path="localhost/folder1"]')
