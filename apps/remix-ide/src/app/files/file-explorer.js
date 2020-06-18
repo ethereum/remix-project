@@ -102,9 +102,9 @@ function fileExplorer (localRegistry, files, menuItems) {
 
   function fileAdded (filepath) {
     self.ensureRoot(() => {
-      var folderpath = filepath.split('/').slice(0, -1).join('/')
-
-      var currentTree = self.treeView.nodeAt(folderpath)
+      const folderpath = filepath.split('/').slice(0, -1).join('/')
+      const currentTree = self.treeView.nodeAt(folderpath)
+      
       if (currentTree && self.treeView.isExpanded(folderpath)) {
         self.files.resolveDirectory(folderpath, (error, fileTree) => {
           if (error) console.error(error)
@@ -130,8 +130,11 @@ function fileExplorer (localRegistry, files, menuItems) {
 
   function folderAdded (folderpath) {
     self.ensureRoot(() => {
+      console.log('called: ensureRoot')
       folderpath = folderpath.split('/').slice(0, -1).join('/')
+      console.log('folderpath: ', folderpath)
       self.files.resolveDirectory(folderpath, (error, fileTree) => {
+        console.log('fileTree: ', fileTree)
         if (error) console.error(error)
         if (!fileTree) return
         fileTree = normalize(folderpath, fileTree)
@@ -435,12 +438,12 @@ fileExplorer.prototype.uploadFile = function (event) {
     let files = this.files
     function loadFile () {
       var fileReader = new FileReader()
-      fileReader.onload = function (event) {
+      fileReader.onload = async function (event) {
         if (helper.checkSpecialChars(file.name)) {
           modalDialogCustom.alert('Special characters are not allowed')
           return
         }
-        var success = files.set(name, event.target.result)
+        var success = await files.set(name, event.target.result)
         if (!success) {
           modalDialogCustom.alert('Failed to create file ' + name)
         } else {
