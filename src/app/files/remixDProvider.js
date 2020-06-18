@@ -77,9 +77,11 @@ module.exports = class RemixDProvider {
 
     return this._appManager.call('remixd', 'exists', { path: unprefixedpath })
     .then((result) => {
-      return cb(null, result)
+      if(cb) return cb(null, result)
+      return result
     }).catch((error) => {
-      return cb(error)
+      if(cb) return cb(error)
+      throw new Error(error)
     })
   }
 
@@ -106,15 +108,26 @@ module.exports = class RemixDProvider {
     })
   }
 
-  set (path, content, cb) {
+  async set (path, content, cb) {
     const unprefixedpath = this.removePrefix(path)
-    this._appManager.call('remixd', 'set', {path: unprefixedpath, content: content}).then((result) => {
-      if (cb) return cb(null, result)
+    const exists = await this.exists(path)
+    
 
+    return this._appManager.call('remixd', 'set', { path: unprefixedpath, content: content }).then(async (result) => {
       const path = this.type + '/' + unprefixedpath
-      this.event.trigger('fileChanged', [path])
+
+      if (!exists) {
+        const isDirectory = await this.isDirectory(path)
+
+        if (isDirectory) this.event.trigger('folderAdded', [path])
+        else this.event.trigger('fileAdded', [path])
+      } else {
+        this.event.trigger('fileChanged', [path])
+      }
+      if (cb) return cb(null, result)
     }).catch((error) => {
-      if (cb) cb(error)
+      if (cb) return cb(error)
+      throw new Error(error)
     })
   }
 
@@ -127,7 +140,6 @@ module.exports = class RemixDProvider {
       const unprefixedpath = this.removePrefix(path)
       this._appManager.call('remixd', 'remove', { path: unprefixedpath })
       .then(result => {
-        console.log('result: ', result)
         const path = this.type + '/' + unprefixedpath
 
         delete this.filesContent[path]
@@ -179,7 +191,10 @@ module.exports = class RemixDProvider {
     if (path[0] === '/') path = path.substring(1)
     if (!path) return callback(null, { [self.type]: { } })
     const unprefixedpath = this.removePrefix(path)
-    this._appManager.call('remixd', 'resolveDirectory', {path: unprefixedpath}).then((result) => callback(null, result)).catch(callback)
+    this._appManager.call('remixd', 'resolveDirectory', { path: unprefixedpath }).then((result) => {
+      console.log('result: ', result)
+      callback(null, result)
+    }).catch(callback)
   }
 
   async isDirectory (path) {
