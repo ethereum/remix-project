@@ -1,6 +1,6 @@
 const helper = require('../../../lib/helper.js')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
-
+const remixPath = require('path')
 class TestTabLogic {
 
   constructor (fileManager) {
@@ -8,22 +8,24 @@ class TestTabLogic {
     this.currentPath = 'browser/tests'
   }
 
-  setCurrentPath(path) {
+  setCurrentPath (path) {
+    if (path.indexOf('/') === 0) return
     this.currentPath = path
+    const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
+    fileProvider.exists(path, (e, res) => { if (!res) fileProvider.createDir(path) })
   }
 
   generateTestFile () {
     let fileName = this.fileManager.currentFile()
-    const hasCurrent = !!fileName
-    if (!fileName) fileName = this.currentPath + '/newFile.sol'
+    const hasCurrent = !!fileName && this.fileManager.currentFile().split('.').pop().toLowerCase() === 'sol'
+    if (!hasCurrent) fileName = this.currentPath + '/newFile.sol'
     const fileProvider = this.fileManager.fileProviderOf(this.currentPath)
     if (!fileProvider) return
     const splittedFileName = fileName.split('/')
-    const fileNameToImport = (!hasCurrent) ? fileName : this.currentPath + '/' + splittedFileName[splittedFileName.length - 1]
-    //const fileNameToImport = (!fileName) ? fileName : splittedFileName[splittedFileName.length - 1]
+    let fileNameToImport = (!hasCurrent) ? fileName : this.currentPath + '/' + splittedFileName[splittedFileName.length - 1]
     helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', (error, newFile) => {
       if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-      if (!fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileNameToImport))) return modalDialogCustom.alert('Failed to create test file ' + newFile)
+      if (!fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))) return modalDialogCustom.alert('Failed to create test file ' + newFile)
       this.fileManager.open(newFile)
     })
   }
@@ -48,7 +50,9 @@ class TestTabLogic {
   // @todo(#2758): If currently selected file is compiled and compilation result is available,
   // 'contractName' should be <compiledContractName> + '_testSuite'
   generateTestContractSample (hasCurrent, fileToImport, contractName = 'testSuite') {
-    const comment = hasCurrent ? `import "${fileToImport}";` : '// Import here the file to test.'
+    let relative = remixPath.relative(this.currentPath, remixPath.dirname(fileToImport))
+    if (relative === '') relative = '.'
+    const comment = hasCurrent ? `import "${relative}/${remixPath.basename(fileToImport)}";` : '// Import here the file to test.'
     return `pragma solidity >=0.4.22 <0.7.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 ${comment}

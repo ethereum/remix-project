@@ -33,11 +33,12 @@ module.exports = class TestTab extends ViewPlugin {
     this.runningTestsNumber = 0
     this.readyTestsNumber = 0
     this.areTestsRunning = false
+
     appManager.event.on('activate', (name) => {
-      if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
+      if (name === 'solidity') this.updateRunAction()
     })
     appManager.event.on('deactivate', (name) => {
-      if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
+      if (name === 'solidity') this.updateRunAction()
     })
   }
 
@@ -56,9 +57,6 @@ module.exports = class TestTab extends ViewPlugin {
     })
 
     this.fileManager.events.on('noFileSelected', () => {
-      this.updateGenerateFileAction()
-      this.updateRunAction()
-      this.updateTestFileList()
     })
 
     this.fileManager.events.on('currentFileChanged', (file, provider) => this.updateForNewCurrent(file))
@@ -86,6 +84,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   listTests () {
+    if (!this.data.allTests) return []
     return this.data.allTests.map(
       testFile => this.createSingleTest(testFile)
     )
@@ -281,7 +280,7 @@ module.exports = class TestTab extends ViewPlugin {
       const stopBtnLabel = document.getElementById('runTestsTabStopActionLabel')
       stopBtnLabel.innerText = 'Stop'
       if (this.data.selectedTests.length !== 0) {
-        const runBtn = document.getElemenstById('runTestsTabRunAction')
+        const runBtn = document.getElementById('runTestsTabRunAction')
         runBtn.removeAttribute('disabled')
       }
       this.areTestsRunning = false
@@ -351,9 +350,10 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
-  updateCurrentPath(e) {
+  updateCurrentPath (e) {
     this.testTabLogic.setCurrentPath(e.target.value)
-    // todo check if path exists if not create one.
+    this.updateRunAction()
+    this.updateForNewCurrent()
   }
 
   runTests () {
@@ -401,13 +401,6 @@ module.exports = class TestTab extends ViewPlugin {
         Generate
       </button>
     `
-    if (
-      !currentFile ||
-      (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')
-    ) {
-      //el.setAttribute('disabled', 'disabled')
-      //el.setAttribute('title', 'No solidity file selected')
-    }
     if (!this.generateFileActionElement) {
       this.generateFileActionElement = el
     } else {
@@ -418,13 +411,13 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateRunAction (currentFile) {
     let el = yo`
-      <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => this.runTests()}">
+      <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary" onclick="${() => this.runTests()}">
         <span class="fas fa-play ml-2"></span>
         <label class="${css.labelOnBtn} btn btn-primary p-1 ml-2 m-0">Run</label>
       </button>
     `
-    const isSolidityActive = this.appManager.actives.includes('solidity')
-    if (!currentFile || !isSolidityActive || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
+    const isSolidityActive = this.appManager.isActive('solidity')
+    if (!isSolidityActive || !this.listTests().length) {
       el.setAttribute('disabled', 'disabled')
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
         el.setAttribute('title', 'No solidity file selected')
@@ -458,6 +451,7 @@ module.exports = class TestTab extends ViewPlugin {
     } else {
       yo.update(this.testFilesListElement, el)
     }
+    this.updateRunAction()
     return this.testFilesListElement
   }
 
@@ -489,6 +483,11 @@ module.exports = class TestTab extends ViewPlugin {
     return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
   }
 
+  allPaths () {
+    const paths = ['browser', 'browser/test']
+    return paths
+  }
+
   render () {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="mx-3 mb-2 pb-4 border-top border-primary" hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
@@ -503,11 +502,12 @@ module.exports = class TestTab extends ViewPlugin {
           class="custom-select"
           id="utPath"
           name="utPath"
-          onchange=${(e)=>this.updateCurrentPath(e)}/>
+          style="background-image: var(--primary);"
+          onchange=${(e) => this.updateCurrentPath(e)}/>
           ${this.uiPathList}
       </div>
     `
-    let options = ['browser', 'browser/ll/test']
+    let options = ['browser', 'browser/test'] // this.allPaths()
     options.forEach((path) => {
       this.uiPathList.appendChild(yo`<option>${path}</option>`)
     })
