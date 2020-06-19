@@ -24,7 +24,7 @@ module.exports = class RemixDProvider {
 
     this._appManager.on('remixd', 'folderAdded', (path) => {
       console.log('event listener called')
-      this.event.trigger('folderAdded', [path])
+      this.event.trigger('folderAdded', [this.addPrefix(path)])
     })
 
     this._appManager.on('remixd', 'notified', (data) => {
@@ -182,11 +182,18 @@ module.exports = class RemixDProvider {
     return path
   }
 
+  addPrefix (path) {
+    if (path.indexOf(this.type + '/') === 0) return path
+    if (path[0] === '/') return 'localhost' + path
+    return 'localhost/' + path
+  }
+
   resolveDirectory (path, callback) {
     var self = this
     if (path[0] === '/') path = path.substring(1)
     if (!path) return callback(null, { [self.type]: { } })
     const unprefixedpath = this.removePrefix(path)
+    console.log('unprefixedpath: ', unprefixedpath)
     this._appManager.call('remixd', 'resolveDirectory', { path: unprefixedpath }).then((result) => {
       callback(null, result)
     }).catch(callback)
