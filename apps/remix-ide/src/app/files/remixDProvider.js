@@ -22,6 +22,11 @@ module.exports = class RemixDProvider {
       })
     })
 
+    this._appManager.on('remixd', 'folderAdded', (path) => {
+      console.log('event listener called')
+      this.event.trigger('folderAdded', [path])
+    })
+
     this._appManager.on('remixd', 'notified', (data) => {
       if (data.scope === 'sharedfolder') {
         if (data.name === 'created') {
@@ -110,21 +115,12 @@ module.exports = class RemixDProvider {
 
   async set (path, content, cb) {
     const unprefixedpath = this.removePrefix(path)
-    const exists = await this.exists(path)
-    
 
     return this._appManager.call('remixd', 'set', { path: unprefixedpath, content: content }).then(async (result) => {
+      if (cb) return cb(null, result)
       const path = this.type + '/' + unprefixedpath
 
-      if (!exists) {
-        const isDirectory = await this.isDirectory(path)
-
-        if (isDirectory) this.event.trigger('folderAdded', [path])
-        else this.event.trigger('fileAdded', [path])
-      } else {
-        this.event.trigger('fileChanged', [path])
-      }
-      if (cb) return cb(null, result)
+      this.event.trigger('fileChanged', [path])
     }).catch((error) => {
       if (cb) return cb(error)
       throw new Error(error)
@@ -192,7 +188,6 @@ module.exports = class RemixDProvider {
     if (!path) return callback(null, { [self.type]: { } })
     const unprefixedpath = this.removePrefix(path)
     this._appManager.call('remixd', 'resolveDirectory', { path: unprefixedpath }).then((result) => {
-      console.log('result: ', result)
       callback(null, result)
     }).catch(callback)
   }
