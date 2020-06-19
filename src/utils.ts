@@ -14,7 +14,9 @@ const pathModule = require('path')
  */
 function absolutePath (path: string, sharedFolder:string): string {
   path = normalizePath(path)
-  if (path.indexOf(sharedFolder) !== 0) {
+  const exists = fs.existsSync('/' + path)
+  
+  if (!exists && path.indexOf(sharedFolder) !== 0) {
     path = pathModule.resolve(sharedFolder, path)
   }
   return path

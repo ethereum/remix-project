@@ -94,7 +94,14 @@ export class RemixdClient extends PluginClient {
         }
         this.trackDownStreamUpdate[path] = path
         if (isFolder) {
-          fs.mkdirp(path).then(() => resolve()).catch((e: Error) => reject(e))
+          fs.mkdirp(path).then(() => {
+            const splitPath = path.split('/')
+            splitPath.pop()
+            const parentDir = splitPath.join('/') + '/'
+
+            this.emit('folderAdded', parentDir)
+            resolve()
+          }).catch((e: Error) => reject(e))
         } else {
           fs.ensureFile(path).then(() => {
             fs.writeFile(path, args.content, 'utf8', (error: Error) => {
