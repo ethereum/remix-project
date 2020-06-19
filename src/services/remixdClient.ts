@@ -143,6 +143,7 @@ export class RemixdClient extends PluginClient {
             console.log(error)
             reject(error.message)
           }
+          this.emit('fileRenamed', args.oldPath, args.newPath)
           resolve(true)
         })
       })
