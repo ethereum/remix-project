@@ -35,7 +35,7 @@ export default class staticAnalysisRunner {
     let reports: AnalysisReport[] = []
     // Also provide convenience analysis via the AST walker.
     const walker = new AstWalker()
-    for (let k in compilationResult.sources) {
+    for (const k in compilationResult.sources) {
       walker.walkFull(compilationResult.sources[k].ast, 
         (node: any) => {
         modules.map((item: ModuleObj) => {

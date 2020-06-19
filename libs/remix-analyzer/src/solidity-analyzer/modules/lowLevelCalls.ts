@@ -10,8 +10,8 @@ interface llcNode {
 
 export default class lowLevelCalls implements AnalyzerModule {
   llcNodes: llcNode[] = []
-  name: string = `Low level calls: `
-  description: string = `Should only be used by experienced devs`
+  name = `Low level calls: `
+  description = `Should only be used by experienced devs`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -36,10 +36,11 @@ export default class lowLevelCalls implements AnalyzerModule {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
-    return this.llcNodes.map((item, i) => {
-      let text: string = ''
-      let morehref: string = ''
+    return this.llcNodes.map((item) => {
+      let text = ''
+      let morehref = ''
       switch (item.type) {
         case lowLevelCallTypes.CALL:
           text = `Use of "call": should be avoided whenever possible. 

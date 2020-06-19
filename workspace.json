@@ -69,19 +69,19 @@
     },
     "remix-analyzer": {
       "root": "libs/remix-analyzer",
-      "sourceRoot": "libs/remix-analyzer/",
+      "sourceRoot": "libs/remix-analyzer",
       "projectType": "library",
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "commands": [
-              {
-                "command": "./../../node_modules/.bin/npm-run-all lint"
-              }
+            "linter": "eslint",
+            "config": "libs/remix-analyzer/.eslintrc",
+            "tsConfig": [
+              "libs/remix-analyzer/tsconfig.lib.json"
             ],
-            "cwd": "libs/remix-analyzer"
+            "exclude": ["**/node_modules/**", "libs/remix-analyzer/test/**/*"]
           }
         },
         "test": {
