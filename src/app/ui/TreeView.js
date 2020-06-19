@@ -152,7 +152,6 @@ class TreeView {
   }
 
   nodeAt (path) {
-    console.log('nodeAt path: ', path)
     return this.view.querySelector(`ul[key="${path}"]`)
   }
 
