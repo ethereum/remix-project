@@ -8,10 +8,10 @@ type WrapFunction = ((contracts: ContractHLAst[], isSameName: boolean) => Report
 
 export default class abstractAstView {
   contracts: ContractHLAst[] = []
-  currentContractIndex: number = -1
-  currentFunctionIndex: number = -1
-  currentModifierIndex: number = -1
-  isFunctionNotModifier: boolean = false
+  currentContractIndex = -1
+  currentFunctionIndex = -1
+  currentModifierIndex = -1
+  isFunctionNotModifier = false
   /*
     file1: contract c{}
     file2: import "file1" as x; contract c{}
@@ -20,7 +20,7 @@ export default class abstractAstView {
     Additionally the fullQuallified function names e.g. [contractName].[functionName](param1Type, param2Type, ... ) must be prefixed to
     fully support this and when inheritance is resolved it must include alias resolving e.g x.c = file1.c
   */
-  multipleContractsWithSameName: boolean = false
+  multipleContractsWithSameName = false
 
 /**
  * Builds a higher level AST view. I creates a list with each contract as an object in it.
@@ -102,6 +102,7 @@ export default class abstractAstView {
   }
 
   build_report (wrap: WrapFunction): ReportFunction {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return (compilationResult: CompilationResult) => {
       this.resolveStateVariablesInHierarchy(this.contracts)
       return wrap(this.contracts, this.multipleContractsWithSameName)
