@@ -104,7 +104,7 @@ function fileExplorer (localRegistry, files, menuItems) {
     self.ensureRoot(() => {
       const folderpath = filepath.split('/').slice(0, -1).join('/')
       const currentTree = self.treeView.nodeAt(folderpath)
-      
+
       if (currentTree && self.treeView.isExpanded(folderpath)) {
         self.files.resolveDirectory(folderpath, (error, fileTree) => {
           if (error) console.error(error)
