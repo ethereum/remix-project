@@ -180,6 +180,7 @@ class FileProvider {
               // folder is empty
               window.remixFileSystem.rmdirSync(path, console.log)
             }
+            this.event.trigger('fileRemoved', [this._normalizePath(path)])
           }
         } catch (e) {
           console.log(e)
@@ -222,7 +223,6 @@ class FileProvider {
     window.remixFileSystem.readdir(path, (error, files) => {
       var ret = {}
 
-      console.log('files: ', files)
       if (files) {
         files.forEach(element => {
           const absPath = (path === '/' ? '' : path) + '/' + element

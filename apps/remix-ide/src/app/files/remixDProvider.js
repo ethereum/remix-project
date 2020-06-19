@@ -37,33 +37,6 @@ module.exports = class RemixDProvider {
     this._appManager.on('remixd', 'fileRemoved', (path) => {
       this.event.trigger('fileRemoved', [this.addPrefix(path)])
     })
-
-    this._appManager.on('remixd', 'notified', (data) => {
-      if (data.scope === 'sharedfolder') {
-        if (data.name === 'created') {
-          this.init(() => {
-            this.event.trigger('fileAdded', [this.type + '/' + data.value.path, data.value.isReadOnly, data.value.isFolder])
-          })
-        } else if (data.name === 'removed') {
-          this.init(() => {
-            this.event.trigger('fileRemoved', [this.type + '/' + data.value.path])
-          })
-        } else if (data.name === 'changed') {
-          this._appManager.call('remixd', 'get', {path: data.value}, (error, content) => {
-            if (error) {
-              console.log(error)
-            } else {
-              var path = this.type + '/' + data.value
-              this.filesContent[path] = content
-              this.event.trigger('fileExternallyChanged', [path, content])
-            }
-          })
-        } else if (data.name === 'rootFolderChanged') {
-          // new path has been set, we should reset
-          this.event.trigger('folderAdded', [this.type + '/'])
-        }
-      }
-    })
   }
 
   isConnected () {
@@ -199,7 +172,7 @@ module.exports = class RemixDProvider {
     if (path[0] === '/') path = path.substring(1)
     if (!path) return callback(null, { [self.type]: { } })
     const unprefixedpath = this.removePrefix(path)
-    console.log('unprefixedpath: ', unprefixedpath)
+
     this._appManager.call('remixd', 'resolveDirectory', { path: unprefixedpath }).then((result) => {
       callback(null, result)
     }).catch(callback)
