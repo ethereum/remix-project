@@ -130,11 +130,8 @@ function fileExplorer (localRegistry, files, menuItems) {
 
   function folderAdded (folderpath) {
     self.ensureRoot(() => {
-      console.log('called: ensureRoot')
       folderpath = folderpath.split('/').slice(0, -1).join('/')
-      console.log('folderpath: ', folderpath)
       self.files.resolveDirectory(folderpath, (error, fileTree) => {
-        console.log('fileTree: ', fileTree)
         if (error) console.error(error)
         if (!fileTree) return
         fileTree = normalize(folderpath, fileTree)
