@@ -31,14 +31,16 @@ module.exports = {
     .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
     .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
     .click('*[data-id="testTabGenerateTestFile"]')
-    .waitForElementPresent('*[title="browser/simple_storage_test.sol"]')
+    .waitForElementPresent('*[title="browser/tests/simple_storage_test.sol"]')
     .clickLaunchIcon('fileExplorers')
-    .removeFile('browser/simple_storage_test.sol')
+    .pause(10000)
+    .openFile('browser/tests/simple_storage_test.sol')
+    .removeFile('browser/tests/simple_storage_test.sol')
   },
 
   'Should run simple unit test `simple_storage_test.sol` ': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .addFile('simple_storage_test.sol', sources[0]['browser/simple_storage_test.sol'])
+    .addFile('simple_storage_test.sol', sources[0]['browser/tests/simple_storage_test.sol'])
     .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
     .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
     .click('*[data-id="testTabCheckAllTests"]')
@@ -46,19 +48,19 @@ module.exports = {
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 80000)
     .pause(5000)
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'MyTest (browser/simple_storage_test.sol)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'MyTest (browser/tests/simple_storage_test.sol)')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Initial value should be100')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Value is set200')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Should fail for wrong value200')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Passing: 2')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Failing: 1')
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAIL MyTest (browser/simple_storage_test.sol)')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAIL MyTest (browser/tests/simple_storage_test.sol)')
   },
 
   'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .clickLaunchIcon('fileExplorers')
-    .addFile('ks2b_test.sol', sources[0]['browser/ks2b_test.sol'])
+    .addFile('ks2b_test.sol', sources[0]['browser/tests/ks2b_test.sol'])
     .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
     .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
     .click('*[data-id="testTabCheckAllTests"]')
@@ -66,7 +68,7 @@ module.exports = {
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
     .pause(5000)
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/ks2b_test.sol')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Check project exists')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong project owner')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong sender')
@@ -89,9 +91,9 @@ module.exports = {
     .pause(1000)
     .assert.containsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping')
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
-    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/ks2b_test.sol')
-    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/4_Ballot_test.sol')
-    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/simple_storage_test.sol')
+    .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/ks2b_test.sol')
+    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/4_Ballot_test.sol')
+    .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/simple_storage_test.sol')
     .pause(6000)
     .assert.containsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped')
   },
@@ -100,7 +102,7 @@ module.exports = {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .addFile('compilationError_test.sol', sources[0]['browser/compilationError_test.sol'])
     .clickLaunchIcon('fileExplorers')
-    .openFile('browser/compilationError_test.sol')
+    .openFile('browser/tests/compilationError_test.sol')
     .clickLaunchIcon('solidityUnitTesting')
     .click('*[data-id="testTabCheckAllTests"]')
     .clickElementAtPosition('.singleTestLabel', 3)
@@ -113,9 +115,9 @@ module.exports = {
 
   'Should fail on deploy': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .addFile('deployError_test.sol', sources[0]['browser/deployError_test.sol'])
+    .addFile('deployError_test.sol', sources[0]['browser/tests/deployError_test.sol'])
     .clickLaunchIcon('fileExplorers')
-    .openFile('browser/deployError_test.sol')
+    .openFile('browser/tests/deployError_test.sol')
     .clickLaunchIcon('solidityUnitTesting')
     .click('*[data-id="testTabCheckAllTests"]')
     .clickElementAtPosition('.singleTestLabel', 4)
@@ -127,9 +129,9 @@ module.exports = {
 
   'Should fail when parameters are to method in test contract': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .addFile('methodFailure_test.sol', sources[0]['browser/methodFailure_test.sol'])
+    .addFile('methodFailure_test.sol', sources[0]['browser/tests/methodFailure_test.sol'])
     .clickLaunchIcon('fileExplorers')
-    .openFile('browser/methodFailure_test.sol')
+    .openFile('browser/tests/methodFailure_test.sol')
     .clickLaunchIcon('solidityUnitTesting')
     .click('*[data-id="testTabCheckAllTests"]')
     .clickElementAtPosition('.singleTestLabel', 5)
@@ -157,7 +159,7 @@ function runTests (browser) {
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
     .pause(5000)
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]')
-    .assert.containsText('#solidityUnittestsOutput', 'browser/4_Ballot_test.sol')
+    .assert.containsText('#solidityUnittestsOutput', 'browser/tests/4_Ballot_test.sol')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winning proposal')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value')
     .end()
@@ -186,11 +188,11 @@ var sources = [
       }
         `
     },
-    'browser/simple_storage_test.sol': {
+    'browser/tests/simple_storage_test.sol': {
       content: `
       pragma solidity >=0.4.22 <0.7.0;
       import "remix_tests.sol";
-      import "./simple_storage.sol";
+      import "../simple_storage.sol";
 
       contract MyTest {
         SimpleStorage foo;
@@ -269,14 +271,14 @@ var sources = [
       }
         `
     },
-    'browser/ks2b_test.sol': {
+    'browser/tests/ks2b_test.sol': {
       content: `
       pragma solidity >=0.4.22 <0.6.0;
       pragma experimental ABIEncoderV2;
 
       import "remix_tests.sol"; // this import is automatically injected by Remix.
       import "remix_accounts.sol";
-      import "./ks2a.sol";
+      import "../ks2a.sol";
 
       contract kickstarterTest {
           enum State { Started, Completed }
@@ -339,7 +341,7 @@ var sources = [
       }
         `
     },
-    'browser/deployError_test.sol': {
+    'browser/tests/deployError_test.sol': {
       content: `
       pragma solidity ^0.6.0;
 
@@ -350,7 +352,7 @@ var sources = [
       }
         `
     },
-    'browser/methodFailure_test.sol': {
+    'browser/tests/methodFailure_test.sol': {
       content: `
       pragma solidity ^0.6.0;
 
