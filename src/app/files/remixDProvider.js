@@ -70,10 +70,10 @@ module.exports = class RemixDProvider {
 
     return this._appManager.call('remixd', 'exists', { path: unprefixedpath })
     .then((result) => {
-      if(cb) return cb(null, result)
+      if (cb) return cb(null, result)
       return result
     }).catch((error) => {
-      if(cb) return cb(error)
+      if (cb) return cb(error)
       throw new Error(error)
     })
   }
