@@ -86,8 +86,9 @@ export class RemixdClient extends PluginClient {
         if (this.readOnly) reject('Cannot write file: read-only mode selected')
         const isFolder = args.path.endsWith('/')
         const path = utils.absolutePath(args.path, this.currentSharedFolder)
+        const exists = fs.existsSync(path)
     
-        if (fs.existsSync(path) && !isRealPath(path)) reject()
+        if (exists && !isRealPath(path)) reject()
         if (args.content === 'undefined') { // no !!!!!
           console.log('trying to write "undefined" ! stopping.')
           reject('trying to write "undefined" ! stopping.')
@@ -95,11 +96,12 @@ export class RemixdClient extends PluginClient {
         this.trackDownStreamUpdate[path] = path
         if (isFolder) {
           fs.mkdirp(path).then(() => {
-            const splitPath = path.split('/')
-            splitPath.pop()
-            const parentDir = splitPath.join('/') + '/'
+            let splitPath = args.path.split('/')
+            
+            splitPath = splitPath.filter(dir => dir)
+            const dir = '/' + splitPath.join('/')
 
-            this.emit('folderAdded', parentDir)
+            this.emit('folderAdded', dir)
             resolve()
           }).catch((e: Error) => reject(e))
         } else {
@@ -112,6 +114,11 @@ export class RemixdClient extends PluginClient {
               resolve()
             })
           }).catch((e: Error) => reject(e))
+          if (!exists) {
+            this.emit('fileAdded', args.path)
+          } else {
+            this.emit('fileChanged', args.path)
+          }
         }
       })
     } catch (error) {
@@ -157,6 +164,7 @@ export class RemixdClient extends PluginClient {
             console.log(error)
             reject('Failed to remove file/directory: ' + error)
           }
+          this.emit('fileRemoved', args.path)
           resolve(true)
         })
       })
