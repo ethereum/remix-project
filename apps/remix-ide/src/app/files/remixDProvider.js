@@ -23,8 +23,19 @@ module.exports = class RemixDProvider {
     })
 
     this._appManager.on('remixd', 'folderAdded', (path) => {
-      console.log('event listener called')
       this.event.trigger('folderAdded', [this.addPrefix(path)])
+    })
+
+    this._appManager.on('remixd', 'fileAdded', (path) => {
+      this.event.trigger('fileAdded', [this.addPrefix(path)])
+    })
+
+    this._appManager.on('remixd', 'fileChanged', (path) => {
+      this.event.trigger('fileChanged', [this.addPrefix(path)])
+    })
+
+    this._appManager.on('remixd', 'fileRemoved', (path) => {
+      this.event.trigger('fileRemoved', [this.addPrefix(path)])
     })
 
     this._appManager.on('remixd', 'notified', (data) => {
@@ -65,7 +76,7 @@ module.exports = class RemixDProvider {
   }
 
   init (cb) {
-    if (this._isReady) return cb()
+    if (this._isReady) return cb && cb()
     this._appManager.call('remixd', 'folderIsReadOnly', {})
     .then((result) => {
       this._isReady = true
@@ -118,9 +129,6 @@ module.exports = class RemixDProvider {
 
     return this._appManager.call('remixd', 'set', { path: unprefixedpath, content: content }).then(async (result) => {
       if (cb) return cb(null, result)
-      const path = this.type + '/' + unprefixedpath
-
-      this.event.trigger('fileChanged', [path])
     }).catch((error) => {
       if (cb) return cb(error)
       throw new Error(error)
@@ -140,9 +148,7 @@ module.exports = class RemixDProvider {
 
         delete this.filesContent[path]
         resolve(true)
-        this.init(() => {
-          this.event.trigger('fileRemoved', [path])
-        })
+        this.init()
       }).catch(error => {
         if (error) console.log(error)
         resolve(false)
