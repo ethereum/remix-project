@@ -27,6 +27,7 @@ class TestTabLogic {
       if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
       if (!fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))) return modalDialogCustom.alert('Failed to create test file ' + newFile)
       this.fileManager.open(newFile)
+      this.fileManager.syncEditor(newFile)
     })
   }
 
