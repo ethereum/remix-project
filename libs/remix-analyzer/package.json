@@ -43,7 +43,6 @@
     "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-preset-es2015": "^6.24.0",
     "npm-install-version": "^6.0.2",
-    "standard": "^7.0.1",
     "tape": "^4.6.0",
     "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
