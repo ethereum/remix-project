@@ -141,10 +141,14 @@ function fileExplorer (localRegistry, files, menuItems) {
   }
 
   function fileRemoved (filepath) {
-    var label = self.treeView.labelAt(filepath)
+    const label = self.treeView.labelAt(filepath)
+    filepath = filepath.split('/').slice(0, -1).join('/')
+
     if (label && label.parentElement) {
       label.parentElement.removeChild(label)
     }
+
+    self.updatePath(filepath)
   }
 
   function fileRenamed (oldName, newName, isFolder) {
@@ -240,8 +244,6 @@ function fileExplorer (localRegistry, files, menuItems) {
 
             if (!removeFolder) {
               tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
-            } else {
-              self.updatePath(self.files.type)
             }
           }, () => {})
       }
@@ -284,8 +286,6 @@ function fileExplorer (localRegistry, files, menuItems) {
 
             if (!removeFile) {
               tooltip(`Failed to remove file ${key}.`)
-            } else {
-              self.updatePath(self.files.type)
             }
           },
           () => {}
