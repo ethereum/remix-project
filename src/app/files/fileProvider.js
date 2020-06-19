@@ -98,7 +98,8 @@ class FileProvider {
       return true
     }
     if (!exists && unprefixedpath.indexOf('/') !== -1) {
-      this.createDir(path)
+      // the last element is the filename and we should remove it
+      this.createDir(path.substr(0, path.lastIndexOf('/')))
     }
     try {
       window.remixFileSystem.writeFileSync(unprefixedpath, content)
@@ -118,8 +119,6 @@ class FileProvider {
   createDir (path, cb) {
     const unprefixedpath = this.removePrefix(path)
     const paths = unprefixedpath.split('/')
-    const last = paths[paths.length - 1]
-    if (last.indexOf('.') !== -1) paths.pop() // check if the last element is the filename and remove it
     if (paths.length && paths[0] === '') paths.shift()
     let currentCheck = ''
     paths.forEach((value) => {
