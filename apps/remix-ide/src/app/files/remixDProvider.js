@@ -37,6 +37,10 @@ module.exports = class RemixDProvider {
     this._appManager.on('remixd', 'fileRemoved', (path) => {
       this.event.trigger('fileRemoved', [this.addPrefix(path)])
     })
+
+    this._appManager.on('remixd', 'fileRenamed', (oldPath, newPath) => {
+      this.event.trigger('fileRemoved', [this.addPrefix(oldPath), this.addPrefix(newPath)])
+    })
   }
 
   isConnected () {
