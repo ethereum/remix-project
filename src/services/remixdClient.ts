@@ -86,15 +86,24 @@ export class RemixdClient extends PluginClient {
         if (this.readOnly) reject('Cannot write file: read-only mode selected')
         const isFolder = args.path.endsWith('/')
         const path = utils.absolutePath(args.path, this.currentSharedFolder)
+        const exists = fs.existsSync(path)
     
-        if (fs.existsSync(path) && !isRealPath(path)) reject()
+        if (exists && !isRealPath(path)) reject()
         if (args.content === 'undefined') { // no !!!!!
           console.log('trying to write "undefined" ! stopping.')
           reject('trying to write "undefined" ! stopping.')
         }
         this.trackDownStreamUpdate[path] = path
         if (isFolder) {
-          fs.mkdirp(path).then(() => resolve()).catch((e: Error) => reject(e))
+          fs.mkdirp(path).then(() => {
+            let splitPath = args.path.split('/')
+            
+            splitPath = splitPath.filter(dir => dir)
+            const dir = '/' + splitPath.join('/')
+
+            this.emit('folderAdded', dir)
+            resolve()
+          }).catch((e: Error) => reject(e))
         } else {
           fs.ensureFile(path).then(() => {
             fs.writeFile(path, args.content, 'utf8', (error: Error) => {
@@ -105,6 +114,11 @@ export class RemixdClient extends PluginClient {
               resolve()
             })
           }).catch((e: Error) => reject(e))
+          if (!exists) {
+            this.emit('fileAdded', args.path)
+          } else {
+            this.emit('fileChanged', args.path)
+          }
         }
       })
     } catch (error) {
@@ -129,6 +143,7 @@ export class RemixdClient extends PluginClient {
             console.log(error)
             reject(error.message)
           }
+          this.emit('fileRenamed', args.oldPath, args.newPath)
           resolve(true)
         })
       })
@@ -150,6 +165,7 @@ export class RemixdClient extends PluginClient {
             console.log(error)
             reject('Failed to remove file/directory: ' + error)
           }
+          this.emit('fileRemoved', args.path)
           resolve(true)
         })
       })
