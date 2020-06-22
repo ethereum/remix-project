@@ -136,6 +136,7 @@ function fileExplorer (localRegistry, files, menuItems) {
         if (!fileTree) return
         fileTree = normalize(folderpath, fileTree)
         self.treeView.updateNodeFromJSON(folderpath, fileTree, true)
+        self.treeview.expand(folderpath)
       })
     })
   }
