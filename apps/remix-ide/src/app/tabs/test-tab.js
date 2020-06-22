@@ -494,10 +494,11 @@ module.exports = class TestTab extends ViewPlugin {
     this.testsExecutionStopped = yo`<label class="text-warning h6" data-id="testTabTestsExecutionStopped">The test execution has been stopped</label>`
     this.testsExecutionStoppedError = yo`<label class="text-danger h6" data-id="testTabTestsExecutionStoppedError">The test execution has been stopped because of error(s) in your test file</label>`
     this.uiPathList = yo`<datalist id="utPathList"></datalist>`
+    const placeHolderPath = 'browser/tests'
     const availablePaths = yo`
       <div>
         <input
-          placeholder="browser/tests"
+          placeholder=${placeHolderPath}
           list="utPathList"
           class="custom-select"
           id="utPath"
@@ -544,6 +545,7 @@ module.exports = class TestTab extends ViewPlugin {
       </div>
     `
     this._view.el = el
+    this.testTabLogic.setCurrentPath(placeHolderPath)
     this.updateForNewCurrent(this.fileManager.currentFile())
     return el
   }

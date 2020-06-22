@@ -37,7 +37,6 @@ module.exports = {
     .click('*[data-id="compilerContainerCompileBtn"]')
     .pause(3000)
     .click('*[data-id="verticalIconsKindfileExplorers"]')
-    .openFile('browser/artifacts')
     .openFile('browser/artifacts/Ballot.json')
   },
 
