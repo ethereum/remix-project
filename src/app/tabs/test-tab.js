@@ -33,6 +33,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.runningTestsNumber = 0
     this.readyTestsNumber = 0
     this.areTestsRunning = false
+    this.defaultPath = 'browser/tests'
 
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction()
@@ -351,7 +352,8 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateCurrentPath (e) {
-    this.testTabLogic.setCurrentPath(e.target.value)
+    const newValue = e.target.value == '' ? this.defaultPath : e.target.value
+    this.testTabLogic.setCurrentPath(newValue)
     this.updateRunAction()
     this.updateForNewCurrent()
   }
@@ -494,14 +496,14 @@ module.exports = class TestTab extends ViewPlugin {
     this.testsExecutionStopped = yo`<label class="text-warning h6" data-id="testTabTestsExecutionStopped">The test execution has been stopped</label>`
     this.testsExecutionStoppedError = yo`<label class="text-danger h6" data-id="testTabTestsExecutionStoppedError">The test execution has been stopped because of error(s) in your test file</label>`
     this.uiPathList = yo`<datalist id="utPathList"></datalist>`
-    const placeHolderPath = 'browser/tests'
     const availablePaths = yo`
       <div>
         <input
-          placeholder=${placeHolderPath}
+          placeholder=${this.defaultPath}
           list="utPathList"
           class="custom-select"
           id="utPath"
+          data-id="uiPathInput"
           name="utPath"
           style="background-image: var(--primary);"
           onchange=${(e) => this.updateCurrentPath(e)}/>
@@ -545,7 +547,7 @@ module.exports = class TestTab extends ViewPlugin {
       </div>
     `
     this._view.el = el
-    this.testTabLogic.setCurrentPath(placeHolderPath)
+    this.testTabLogic.setCurrentPath(this.defaultPath)
     this.updateForNewCurrent(this.fileManager.currentFile())
     return el
   }
