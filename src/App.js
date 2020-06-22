@@ -1,24 +1,32 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { RemixClient } from './RemixClient'
 
 function App() {
+  const p = new RemixClient()
+  const openModal = () => {
+    p.openModal()
+  }
+  const clearLocalStorage = () => {
+    localStorage.clear()
+    document.getElementById('accounts').innerHTML = ''
+    document.getElementById('chain').innerHTML = ''
+  }
+  p.internalEvents.on('accountsChanged', (accounts) => {
+    document.getElementById('accounts').innerHTML = JSON.stringify(accounts)
+  })
+
+  p.internalEvents.on('chainChanged', (chain) => {
+    document.getElementById('chain').innerHTML = chain
+  })
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="btn-group mt-5" role="group"> 
+        <button type="button" onClick={openModal} className="btn btn-primary">Connect</button>
+        <button type="button" onClick={clearLocalStorage} className="btn btn-primary">Clear Local Sessions</button>
+      </div>
+      <div><label><b>Accounts: </b></label><label className="ml-1" id="accounts"> - </label></div>
+      <div><label><b>ChainId: </b></label><label className="ml-1" id="chain"> - </label></div>
     </div>
   );
 }
