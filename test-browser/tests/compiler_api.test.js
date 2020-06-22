@@ -76,8 +76,7 @@ const jsCompile = `(async () => {
           optimize: false,
           evmVersion: null,
           language: 'Solidity',
-          version: '0.6.8+commit.0bbfe453',
-          compilerUrl: 'https://solc-bin.ethereum.org/bin/soljson-v0.6.8+commit.0bbfe453.js'
+          version: '0.6.8+commit.0bbfe453'
       }
       const result = await remix.call('solidity', 'compileWithParameters', contract, params)
       console.log('result ', result)
