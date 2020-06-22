@@ -45,7 +45,6 @@ module.exports = {
           .modalFooterCancelClick()
           .executeScript(`remix.loadgist('${gistid}')`)
           .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('browser/gists') } done() })
-          .openFile(`browser/gists/${gistid}`)
           .openFile(`browser/gists/${gistid}/1_Storage.sol`)
           .perform(done)
       }
@@ -86,7 +85,6 @@ module.exports = {
     .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
     .setValue('*[data-id="modalDialogCustomPromptText"]', testData.validGistId)
     .modalFooterOKClick()
-    .openFile(`browser/gists/${testData.validGistId}`)
     .openFile(`browser/gists/${testData.validGistId}/ApplicationRegistry`)
     .waitForElementVisible(`div[title='browser/gists/${testData.validGistId}/ApplicationRegistry']`)
     .assert.containsText(`div[title='browser/gists/${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
