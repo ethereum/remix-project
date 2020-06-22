@@ -218,7 +218,7 @@ class CompileTab extends ViewPlugin {
    * The module UI will *not* be updated, the compilation result is returned
    * This function is used by remix-plugin compiler API.
    * @param {object} map of source files.
-   * @param {object} settings {evmVersion, optimize, compilerUrl, version, language}
+   * @param {object} settings {evmVersion, optimize, version, language}
    */
   async compileWithParameters (compilationTargets, settings) {
     return await compile(compilationTargets, settings)
@@ -241,7 +241,7 @@ class CompileTab extends ViewPlugin {
   /**
    * set the compiler configuration
    * This function is used by remix-plugin compiler API.
-   * @param {object} settings {evmVersion, optimize, compilerUrl, version, language}
+   * @param {object} settings {evmVersion, optimize, version, language}
    */
   setCompilerConfig (settings) {
     return new Promise((resolve, reject) => {
