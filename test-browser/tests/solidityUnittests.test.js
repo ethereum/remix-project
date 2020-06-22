@@ -40,7 +40,7 @@ module.exports = {
 
   'Should run simple unit test `simple_storage_test.sol` ': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .addFile('simple_storage_test.sol', sources[0]['browser/tests/simple_storage_test.sol'])
+    .addFile('tests/simple_storage_test.sol', sources[0]['browser/tests/simple_storage_test.sol'])
     .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
     .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
     .click('*[data-id="testTabCheckAllTests"]')
@@ -60,7 +60,7 @@ module.exports = {
   'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .clickLaunchIcon('fileExplorers')
-    .addFile('ks2b_test.sol', sources[0]['browser/tests/ks2b_test.sol'])
+    .addFile('tests/ks2b_test.sol', sources[0]['browser/tests/ks2b_test.sol'])
     .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
     .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
     .click('*[data-id="testTabCheckAllTests"]')
@@ -100,7 +100,7 @@ module.exports = {
 
   'Should fail on compilation': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .addFile('compilationError_test.sol', sources[0]['browser/compilationError_test.sol'])
+    .addFile('tests/compilationError_test.sol', sources[0]['browser/compilationError_test.sol'])
     .clickLaunchIcon('fileExplorers')
     .openFile('browser/tests/compilationError_test.sol')
     .clickLaunchIcon('solidityUnitTesting')
@@ -115,7 +115,7 @@ module.exports = {
 
   'Should fail on deploy': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .addFile('deployError_test.sol', sources[0]['browser/tests/deployError_test.sol'])
+    .addFile('tests/deployError_test.sol', sources[0]['browser/tests/deployError_test.sol'])
     .clickLaunchIcon('fileExplorers')
     .openFile('browser/tests/deployError_test.sol')
     .clickLaunchIcon('solidityUnitTesting')
@@ -129,7 +129,7 @@ module.exports = {
 
   'Should fail when parameters are to method in test contract': function (browser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .addFile('methodFailure_test.sol', sources[0]['browser/tests/methodFailure_test.sol'])
+    .addFile('tests/methodFailure_test.sol', sources[0]['browser/tests/methodFailure_test.sol'])
     .clickLaunchIcon('fileExplorers')
     .openFile('browser/tests/methodFailure_test.sol')
     .clickLaunchIcon('solidityUnitTesting')
