@@ -227,7 +227,7 @@ contract Ballot {
 
 var ballotTest = `pragma solidity >=0.4.22 <0.7.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
-import "./3_Ballot.sol";
+import "../3_Ballot.sol";
 
 contract BallotTest {
    
@@ -255,6 +255,6 @@ module.exports = {
   storage: { name: '1_Storage.sol', content: storage },
   owner: { name: '2_Owner.sol', content: owner },
   ballot: { name: '3_Ballot.sol', content: ballot },
-  ballot_test: { name: '4_Ballot_test.sol', content: ballotTest },
+  ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
   basic: { name: 'basic.sol', content: basic }
 }
