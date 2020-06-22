@@ -69,7 +69,7 @@ module.exports = class SettingsTab extends ViewPlugin {
 
     // Gist settings
     const token = this.config.get('settings/gist-access-token')
-    const gistAccessToken = yo`<input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" class="border form-control-sm mb-2 ${css.inline}" placeholder="Token">`
+    const gistAccessToken = yo`<input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" class="form-control border form-control-sm mb-2 ${css.inline}" placeholder="Token">`
     if (token) gistAccessToken.value = token
     const removeToken = () => { self.config.set('settings/gist-access-token', ''); gistAccessToken.value = ''; tooltip('Access token removed') }
     const saveToken = () => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }

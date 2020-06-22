@@ -94,7 +94,7 @@ module.exports = {
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/ks2b_test.sol')
     .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/4_Ballot_test.sol')
     .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/simple_storage_test.sol')
-    .pause(6000)
+    .pause(7000)
     .assert.containsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped')
   },
 
@@ -139,6 +139,19 @@ module.exports = {
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', `Method 'add' can not have parameters inside a test contract`)
+  },
+
+  'Changing current path': function (browser) {
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    .addFile('myTests/simple_storage_test.sol', sources[0]['browser/tests/simple_storage_test.sol'])
+    .clickLaunchIcon('solidityUnitTesting')
+    .setValue('*[data-id="uiPathInput"]', 'browser/myTests')
+    .clickElementAtPosition('.singleTestLabel', 0)
+    .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
+    .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
+    .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
+    .clearValue('*[data-id="uiPathInput"]')
+    .setValue('*[data-id="uiPathInput"]', 'browser/tests')
   },
 
   'Solidity Unittests': function (browser) {
