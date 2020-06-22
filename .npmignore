@@ -8,3 +8,4 @@ shared
 tsconfig.json
 nodemon.json
 .eslintrc.json
+/types
