@@ -57,13 +57,13 @@ If you want to run latest changes that are merged into master branch then run:
 
 ```
 docker pull remixproject/remix-ide:latest
-docker run -p 8080:80 remixproject-remix-ide:latest
+docker run -p 8080:80 remixproject/remix-ide:latest
 ```
 
 If you want to run latest remix-live release run.
 ```
 docker pull remixproject/remix-ide:remix_live
-docker run -p 8080:80 remixproject-remix-ide:remix_live
+docker run -p 8080:80 remixproject/remix-ide:remix_live
 ```
 
 ### Run with docker-compose:
