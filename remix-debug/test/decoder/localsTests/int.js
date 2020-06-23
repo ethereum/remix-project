@@ -37,8 +37,8 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
           })
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
             try {
-              let functions1 = callTree.retrieveFunctionsStack(101)
-              let functions2 = callTree.retrieveFunctionsStack(113)
+              let functions1 = callTree.retrieveFunctionsStack(102)
+              let functions2 = callTree.retrieveFunctionsStack(115)
               let functions3 = callTree.retrieveFunctionsStack(13)
 
               st.equals(functions1.length, 1)
@@ -47,10 +47,13 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
 
               st.equals(Object.keys(functions1[0])[0], 'functionDefinition')
               st.equals(Object.keys(functions1[0])[1], 'inputs')
+              st.equals(functions1[0].inputs[0], 'foo')
               st.equals(Object.keys(functions2[0])[0], 'functionDefinition')
               st.equals(Object.keys(functions2[0])[1], 'inputs')
               st.equals(Object.keys(functions2[1])[0], 'functionDefinition')
               st.equals(Object.keys(functions2[1])[1], 'inputs')
+              st.equals(functions2[0].inputs[0], 'asd')
+              st.equals(functions2[1].inputs[0], 'foo')
 
               st.equals(functions1[0].functionDefinition.attributes.name, 'level11')
               st.equals(functions2[0].functionDefinition.attributes.name, 'level12')
@@ -58,11 +61,11 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
 
               st.equals(scopeStarts[0], '')
               st.equals(scopeStarts[13], '1')
-              st.equals(scopeStarts[101], '2')
-              st.equals(scopeStarts[113], '2.1')
-              st.equals(scopeStarts[131], '3')
-              st.equals(scopeStarts[146], '4')
-              st.equals(scopeStarts[158], '4.1')
+              st.equals(scopeStarts[102], '2')
+              st.equals(scopeStarts[115], '2.1')
+              st.equals(scopeStarts[136], '3')
+              st.equals(scopeStarts[153], '4')
+              st.equals(scopeStarts[166], '4.1')
               st.equals(scopes[''].locals['ui8'].type.typeName, 'uint8')
               st.equals(scopes[''].locals['ui16'].type.typeName, 'uint16')
               st.equals(scopes[''].locals['ui32'].type.typeName, 'uint32')
@@ -106,10 +109,10 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
               st.equals(locals['ishrink'].value, '2')
             })
 
-            helper.decodeLocals(st, 105, traceManager, callTree, function (locals) {
+            helper.decodeLocals(st, 106, traceManager, callTree, function (locals) {
               try {
                 st.equals(locals['ui8'].value, '123')
-                st.equals(Object.keys(locals).length, 1)
+                st.equals(Object.keys(locals).length, 2)
               } catch (e) {
                 st.fail(e.message)
               }
