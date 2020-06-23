@@ -82,7 +82,7 @@ tape('SourceMappingDecoder', function (t) {
     st.equal(delegateSrcMap.file, 0)
     st.equal(delegateSrcMap.jump, '-')
 
-    // ballot - function deletegate(address)
+    // TokenSaleChallenge - function test(uint256)
     const tokenSaleChallengeMap = sourceMappingDecoder.atIndex(170, sourceMapping.tokenSaleChallengeSourceMap)
     console.log(tokenSaleChallengeMap)
     st.equal(tokenSaleChallengeMap.start, 211)
