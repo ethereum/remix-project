@@ -7,7 +7,7 @@
   "scripts": {
     "diff": "lerna diff",
     "updated": "lerna updated",
-    "bootstrap": "npm run build-ts-packages; lerna bootstrap",
+    "bootstrap": "lerna bootstrap; npm run build-ts-packages",
     "build-ts-packages": "lerna run --scope 'remix-analyzer' --scope 'remix-astwalker' --scope 'remix-solidity' --scope 'remix-tests' --scope 'remix-url-resolver' build",
     "publish": "npm run build-ts-packages; lerna publish",
     "release": "lerna bootstrap; lerna publish;",
