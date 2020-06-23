@@ -67,7 +67,8 @@ class Blockchain {
 
   getCurrentProvider () {
     const provider = this.getProvider()
-    return this.providers[provider]
+    if (this.providers[provider]) return this.providers[provider]
+    return this.providers.web3 // default to the common type of provider
   }
 
   /** Return the list of accounts */
@@ -285,11 +286,11 @@ class Blockchain {
     this.resetEnvironment()
   }
 
-  addNetwork (customNetwork) {
-    this.executionContext.addProvider(customNetwork)
+  addProvider (provider) {
+    this.executionContext.addProvider(provider)
   }
 
-  removeNetwork (name) {
+  removeProvider (name) {
     this.executionContext.removeProvider(name)
   }
 
