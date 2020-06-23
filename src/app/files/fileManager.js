@@ -194,10 +194,24 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async rename (oldPath, newPath) {
-    await this.__handleExists(oldPath, `Cannot rename ${oldPath}`)
+    await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
     const isFile = await this.isFile(oldPath)
+    const newPathExists = await this.exists(newPath)
+    const provider = this.fileProviderOf(oldPath)
 
-    this.fileRenamedEvent(oldPath, newPath, !isFile)
+    if (isFile) {
+      if (newPathExists) {
+        modalDialogCustom.alert('File already exists.')
+        return
+      }
+      return provider.rename(oldPath, newPath, false)
+    } else {
+      if (newPathExists) {
+        modalDialogCustom.alert('Folder already exists.')
+        return
+      }
+      return provider.rename(oldPath, newPath, true)
+    }
   }
 
   /**

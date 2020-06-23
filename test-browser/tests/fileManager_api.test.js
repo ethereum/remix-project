@@ -62,10 +62,18 @@ module.exports = {
     .addFile('renameFile.js', { content: executeRename })
     .executeScript(`remix.exeCurrent()`)
     .pause(2000)
-    .pause(100000)
-    // .journalLastChildIncludes('pragma solidity >=0.2.0 <0.7.0;')
-    // .end()
+    .waitForElementPresent('[data-id="treeViewLibrowser/old_contract.sol"]')
+    .end()
   },
+
+  // 'Should execute `rename` api from file manager external api': function (browser) {
+  //   browser
+  //   .addFile('renameFile.js', { content: executeRename })
+  //   .executeScript(`remix.exeCurrent()`)
+  //   .pause(2000)
+  //   .waitForElementPresent('[data-id="treeViewLibrowser/new_contract.sol"]')
+  //   .end()
+  // },
 
   tearDown: sauce
 }
@@ -136,7 +144,7 @@ const executeRename = `
   const run = async () => {
     const result = await remix.call('fileManager', 'rename', 'browser/new_contract.sol', 'browser/old_contract.sol')
 
-    console.log(result)
+    console.log('result: ', result)
   }
 
   run()
