@@ -352,7 +352,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateCurrentPath (e) {
-    const newValue = e.target.value == '' ? this.defaultPath : e.target.value
+    const newValue = e.target.value === '' ? this.defaultPath : e.target.value
     this.testTabLogic.setCurrentPath(newValue)
     this.updateRunAction()
     this.updateForNewCurrent()
