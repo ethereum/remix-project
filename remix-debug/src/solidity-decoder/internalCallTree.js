@@ -66,6 +66,7 @@ class InternalCallTree {
     */
     this.sourceLocationTracker.clearCache()
     this.functionCallStack = []
+    this.functionDefinitionsByScope = {}
     this.scopeStarts = {}
     this.variableDeclarationByFile = {}
     this.functionDefinitionByFile = {}
@@ -79,19 +80,47 @@ class InternalCallTree {
     * @param {Int} vmtraceIndex  - index on the vm trace
     */
   findScope (vmtraceIndex) {
-    const scopes = Object.keys(this.scopeStarts)
-    if (!scopes.length) {
-      return null
-    }
-    let scopeId = util.findLowerBoundValue(vmtraceIndex, scopes)
-    scopeId = this.scopeStarts[scopeId]
+    let scopeId = this.findScopeId(vmtraceIndex)
+    if (scopeId !== '' && !scopeId) return null
     let scope = this.scopes[scopeId]
     while (scope.lastStep && scope.lastStep < vmtraceIndex && scope.firstStep > 0) {
-      const matched = scopeId.match(/(.\d|\d)$/)
-      scopeId = scopeId.replace(matched[1], '')
+      scopeId = this.parentScope(scopeId)
       scope = this.scopes[scopeId]
     }
     return scope
+  }
+
+  parentScope (scopeId) {
+    const matched = scopeId.match(/(.\d|\d)$/)
+    return scopeId.replace(matched[1], '')
+  }
+
+  findScopeId (vmtraceIndex) {
+    const scopes = Object.keys(this.scopeStarts)
+    if (!scopes.length) return null
+    const scopeStart = util.findLowerBoundValue(vmtraceIndex, scopes)
+    return this.scopeStarts[scopeStart]
+  }
+
+  retrieveFunctionsStack (vmtraceIndex) {
+    let scope = this.findScope(vmtraceIndex)
+    if (!scope) return []
+    let scopeId = this.scopeStarts[scope.firstStep]
+    let functions = []
+    if (!scopeId) return functions
+    let i = 0
+    while (true) {
+      i += 1
+      if (i > 1000) throw new Error('retrieFunctionStack: recursion too deep')
+      let functionDefinition = this.functionDefinitionsByScope[scopeId]
+      if (functionDefinition !== undefined) {
+        functions.push(functionDefinition)
+      }
+      let parent = this.parentScope(scopeId)
+      if (!parent) break
+      else scopeId = parent
+    }
+    return functions
   }
 
   extractSourceLocation (step) {
@@ -220,6 +249,7 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
   const functionDefinition = resolveFunctionDefinition(tree, step, previousSourceLocation)
   if (functionDefinition && (newLocation && traceHelper.isJumpDestInstruction(tree.traceManager.trace[step - 1]) || functionDefinition.attributes.isConstructor)) {
     tree.functionCallStack.push(step)
+    const functionDefinitionAndInputs = {functionDefinition, inputs: []}
     // means: the previous location was a function definition && JUMPDEST
     // => we are at the beginning of the function and input/output are setup
     tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
@@ -240,7 +270,9 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
                 }
               }
               // input params
-              if (inputs) addParams(inputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, inputs.children.length, -1)
+              if (inputs) {
+                functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, inputs.children.length, -1)
+              }
               // output params
               if (outputs) addParams(outputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, 0, 1)
             }
@@ -248,6 +280,7 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
         })
       }
     })
+    tree.functionDefinitionsByScope[scopeId] = functionDefinitionAndInputs
   }
 }
 
@@ -304,6 +337,7 @@ function extractFunctionDefinitions (ast, astWalker) {
 }
 
 function addParams (parameterList, tree, scopeId, states, contractName, sourceLocation, stackLength, stackPosition, dir) {
+  let params = []
   for (let inputParam in parameterList.children) {
     const param = parameterList.children[inputParam]
     const stackDepth = stackLength + (dir * stackPosition)
@@ -317,9 +351,11 @@ function addParams (parameterList, tree, scopeId, states, contractName, sourceLo
         stackDepth: stackDepth,
         sourceLocation: sourceLocation
       }
+      params.push(attributesName)
     }
     stackPosition += dir
   }
+  return params
 }
 
 module.exports = InternalCallTree
