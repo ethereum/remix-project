@@ -181,7 +181,8 @@ class TxListener {
     * @return {String} - contract name
     */
   resolvedContract (address) {
-    return this._resolvedContracts[address]
+    if (this._resolvedContracts[address]) return this._resolvedContracts[address].name
+    return null
   }
 
   /**
@@ -222,54 +223,53 @@ class TxListener {
   _resolveTx (tx, receipt, cb) {
     const contracts = this._api.contracts()
     if (!contracts) return cb()
-    let contractName
     let fun
+    let contract
     if (!tx.to || tx.to === '0x0') { // testrpc returns 0x0 in that case
       // contract creation / resolve using the creation bytes code
       // if web3: we have to call getTransactionReceipt to get the created address
       // if VM: created address already included
       const code = tx.input
-      contractName = this._tryResolveContract(code, contracts, true)
-      if (contractName) {
+      contract = this._tryResolveContract(code, contracts, true)
+      if (contract) {
         let address = receipt.contractAddress
-        this._resolvedContracts[address] = contractName
-        fun = this._resolveFunction(contractName, contracts, tx, true)
+        this._resolvedContracts[address] = contract
+        fun = this._resolveFunction(contract, tx, true)
         if (this._resolvedTransactions[tx.hash]) {
           this._resolvedTransactions[tx.hash].contractAddress = address
         }
-        return cb(null, {to: null, contractName: contractName, function: fun, creationAddress: address})
+        return cb(null, {to: null, contractName: contract.name, function: fun, creationAddress: address})
       }
       return cb()
     } else {
       // first check known contract, resolve against the `runtimeBytecode` if not known
-      contractName = this._resolvedContracts[tx.to]
-      if (!contractName) {
+      contract = this._resolvedContracts[tx.to]
+      if (!contract) {
         this.executionContext.web3().eth.getCode(tx.to, (error, code) => {
           if (error) return cb(error)
           if (code) {
-            const contractName = this._tryResolveContract(code, contracts, false)
-            if (contractName) {
-              this._resolvedContracts[tx.to] = contractName
-              const fun = this._resolveFunction(contractName, contracts, tx, false)
-              return cb(null, {to: tx.to, contractName: contractName, function: fun})
+            const contract = this._tryResolveContract(code, contracts, false)
+            if (contract) {
+              this._resolvedContracts[tx.to] = contract
+              const fun = this._resolveFunction(contract, tx, false)
+              return cb(null, {to: tx.to, contractName: contract.name, function: fun})
             }
           }
           return cb()
         })
         return
       }
-      if (contractName) {
-        fun = this._resolveFunction(contractName, contracts, tx, false)
-        return cb(null, {to: tx.to, contractName: contractName, function: fun})
+      if (contract) {
+        fun = this._resolveFunction(contract, tx, false)
+        return cb(null, {to: tx.to, contractName: contract.name, function: fun})
       }
       return cb()
     }
   }
 
-  _resolveFunction (contractName, compiledContracts, tx, isCtor) {
-    const contract = txHelper.getContract(contractName, compiledContracts)
+  _resolveFunction (contract, tx, isCtor) {
     if (!contract) {
-      console.log('txListener: cannot resolve ' + contractName)
+      console.log('txListener: cannot resolve contract - contract is null')
       return
     }
     const abi = contract.object.abi
@@ -280,7 +280,7 @@ class TxListener {
         if (methodIdentifiers[fn] === inputData.substring(0, 8)) {
           const fnabi = txHelper.getFunction(abi, fn)
           this._resolvedTransactions[tx.hash] = {
-            contractName: contractName,
+            contractName: contract.name,
             to: tx.to,
             fn: fn,
             params: this._decodeInputParams(inputData.substring(8), fnabi)
@@ -294,7 +294,7 @@ class TxListener {
       // receive function
       if (!inputData && txHelper.getReceiveInterface(abi)) {
         this._resolvedTransactions[tx.hash] = {
-          contractName: contractName,
+          contractName: contract.name,
           to: tx.to,
           fn: '(receive)',
           params: null
@@ -302,7 +302,7 @@ class TxListener {
       } else {
         // fallback function
         this._resolvedTransactions[tx.hash] = {
-          contractName: contractName,
+          contractName: contract.name,
           to: tx.to,
           fn: '(fallback)',
           params: null
@@ -315,7 +315,7 @@ class TxListener {
         params = this._decodeInputParams(inputData.substring(bytecode.length), txHelper.getConstructorInterface(abi))
       }
       this._resolvedTransactions[tx.hash] = {
-        contractName: contractName,
+        contractName: contract.name,
         to: null,
         fn: '(constructor)',
         params: params
@@ -329,7 +329,7 @@ class TxListener {
     txHelper.visitContracts(compiledContracts, (contract) => {
       const bytes = isCreation ? contract.object.evm.bytecode.object : contract.object.evm.deployedBytecode.object
       if (codeUtil.compareByteCode(codeToResolve, '0x' + bytes)) {
-        found = contract.name
+        found = contract
         return true
       }
     })
