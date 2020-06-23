@@ -58,6 +58,8 @@ class VmDebuggerLogic {
 
       this.event.trigger('indexUpdate', [index])
 
+      this.event.trigger('functionsStackUpdate', [this._callTree.retrieveFunctionsStack(index)])
+
       this._traceManager.getCallDataAt(index, (error, calldata) => {
         if (error) {
           // console.log(error)
