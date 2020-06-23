@@ -99,17 +99,13 @@
           }
         },
         "build": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/node:package",
           "options": {
-            "commands": [
-              {
-                "command": "rm -rf ../../dist"
-              },
-              {
-                "command": "./../../node_modules/.bin/npm-run-all build"
-              }
-            ],
-            "cwd": "libs/remix-analyzer"
+            "outputPath": "dist/libs/remix-analyzer",
+            "tsConfig": "libs/remix-analyzer/tsconfig.lib.json",
+            "packageJson": "libs/remix-analyzer/package.json",
+            "main": "libs/remix-analyzer/src/index.ts",
+            "assets": ["libs/remix-analyzer/*.md"]
           }
         }
       }
@@ -201,14 +197,14 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "commands": [
-              {
-                "command": "./../../node_modules/.bin/npm-run-all lint"
-              }
+            "linter": "eslint",
+            "config": "libs/remix-lib/.eslintrc",
+            "files": [
+              "libs/remix-lib/**/*.js"
             ],
-            "cwd": "libs/remix-lib"
+            "exclude": ["**/node_modules/**", "libs/remix-lib/test/**/*"]
           }
         },
         "test": {

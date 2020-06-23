@@ -11,7 +11,9 @@ const createExpressions = function (instructions) {
     expr.functional = false
     if (expr.name === 'JUMPDEST') {
       expr.label = 'label' + (++labels)
+    // eslint-disable-next-line no-empty
     } else if (expr.name.slice(0, 3) === 'DUP') {
+    // eslint-disable-next-line no-empty
     } else if (expr.name.slice(0, 4) === 'SWAP') {
     } else if (expr.out <= 1 && expr.in <= expressions.length) {
       let error = false

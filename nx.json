@@ -19,11 +19,14 @@
     }
   },
   "projects": {
-    "remix-astwalker": {
-      "tags": []
-    },
     "remix-lib": {
       "tags": []
+    },
+    "remix-astwalker": {
+      "tags": [],
+      "implicitDependencies": [
+        "remix-lib"
+      ]
     },
     "remix-analyzer": {
       "tags": [],

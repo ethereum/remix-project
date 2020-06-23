@@ -56,6 +56,7 @@ class TxRunner {
       }
       this.event.trigger('transactionBroadcasted', [resp])
       var listenOnResponse = () => {
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
           const result = await tryTillReceiptAvailable(resp, this.executionContext)
           tx = await tryTillTxAvailable(resp, this.executionContext)
