@@ -1,7 +1,7 @@
 'use strict'
-import { AstWalker } from 'remix-astwalker'
+import { AstWalker } from '@remix-project/remix-astwalker'
 import list from './modules/list'
-import { CompilationResult, AnalyzerModule, AnalysisReportObj, AnalysisReport } from 'types'
+import { CompilationResult, AnalyzerModule, AnalysisReportObj, AnalysisReport } from '../types'
 
 type ModuleObj = {
   name: string
