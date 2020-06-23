@@ -201,6 +201,28 @@ export class RunTab extends LibraryPlugin {
     this.renderDropdown(this.udappUI, this.fileManager, this.compilersArtefacts, this.config, this.editor, this.logCallback)
     this.renderRecorder(this.udappUI, this.fileManager, this.config, this.logCallback)
     this.renderRecorderCard()
+
+    this.on('manager', 'pluginDeactivated', profile => {
+      if (profile.kind === 'provider') this.blockchain.removeProvider(profile.name)
+    })
+    this.on('manager', 'pluginActivated', profile => {
+      if (profile.kind === 'provider') {
+        ((profile, app) => {
+          const web3Provider = {
+            sendAsync (payload, callback) {
+              app.call(profile.name, 'sendAsync', payload)
+                .then(result => {
+                  callback(null, result)
+                })
+                .catch(e => {
+                  callback(e)
+                })
+            }
+          }
+          this.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
+        })(profile, this)
+      }
+    })
     return this.renderContainer()
   }
 }
