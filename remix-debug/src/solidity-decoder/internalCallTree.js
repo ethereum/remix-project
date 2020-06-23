@@ -108,7 +108,10 @@ class InternalCallTree {
     let scopeId = this.scopeStarts[scope.firstStep]
     let functions = []
     if (!scopeId) return functions
+    let i = 0
     while (true) {
+      i += 1
+      if (i > 1000) throw new Error('retrieFunctionStack: recursion too deep')
       let functionDefinition = this.functionDefinitionsByScope[scopeId]
       if (functionDefinition !== undefined) {
         functions.push(functionDefinition)
@@ -268,7 +271,7 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
               }
               // input params
               if (inputs) {
-                functionDefinitionAndInputs.inputs.push(addParams(inputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, inputs.children.length, -1))
+                functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, inputs.children.length, -1)
               }
               // output params
               if (outputs) addParams(outputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, 0, 1)
