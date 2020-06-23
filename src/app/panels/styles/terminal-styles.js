@@ -20,20 +20,7 @@ var css = csjs`
     max-height           : 35px;
     min-height           : 35px;
   }
-  .clear           {
-    margin-right      : 20px;
-    width             : 10px;
-    cursor            : pointer;
-    display           : flex;
-  }
-  .clear:hover              {
-    color             : var(--secondary);
-  }
   .toggleTerminal              {
-    margin-right      : 20px;
-    margin-left       : 2px;
-    font-size         : 14px;
-    font-weight       : bold;
     cursor            : pointer;
   }
   .toggleTerminal:hover              {
@@ -95,9 +82,7 @@ var css = csjs`
     padding-bottom    : 1px;
   }
   .filter                       {
-    padding-right               : 0px;
-    margin-right                : 0px;
-    height                      : 100%;
+    height                      : 80%;
     white-space                 : nowrap;
     overflow                    : hidden;
     text-overflow               : ellipsis;
@@ -126,20 +111,6 @@ var css = csjs`
     border-left       : 1px solid var(--secondary)
     height            : 65%;
   }
-  .listenOnNetworkLabel {
-    white-space       : nowrap;
-  }
-  .pendingTx {
-    border-radius     : 50%;
-    margin-right      : 30px;
-    min-width         : 13px;
-    height            : 13px;
-    display           : flex;
-    justify-content   : center;
-    align-items       : center;
-    font-size         : 14px;
-    user-select       : none;
-  }
   .dragbarHorizontal  {
     position          : absolute;
     top               : 0;
@@ -148,6 +119,9 @@ var css = csjs`
     left              : 0;
     cursor            : ns-resize;
     z-index           : 999;
+  }
+  .listenOnNetwork {
+    min-height: auto;
   }
   .ghostbar           {
     position          : absolute;
