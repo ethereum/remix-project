@@ -114,6 +114,8 @@ tape('SourceMappingDecoder', function (t) {
       file: 4,
       jump: '-'
     }
+    // case: 'file' is not yet assigned, while processing the srcmap (reverse looping) to find 'start', 'length' (etc..), we tumble on -1 for the file.
+    // in that case the step has to be discarded
     result = sourceMappingDecoder.convertOffsetToLineColumn(res, linesbreak)
     st.equal(result.start.line, 7)
     st.equal(result.start.column, 12)
