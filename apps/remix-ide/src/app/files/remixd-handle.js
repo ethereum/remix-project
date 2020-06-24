@@ -69,8 +69,7 @@ export class RemixdHandle extends WebsocketPlugin {
         )
         this.canceled()
       } else {
-        this.locahostProvider.init()
-        this.fileSystemExplorer.ensureRoot()
+        this.locahostProvider.init(_ => this.fileSystemExplorer.ensureRoot())
       }
     }
     if (this.locahostProvider.isConnected()) {
