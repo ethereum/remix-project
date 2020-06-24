@@ -63,17 +63,32 @@ module.exports = {
     .executeScript(`remix.exeCurrent()`)
     .pause(2000)
     .waitForElementPresent('[data-id="treeViewLibrowser/old_contract.sol"]')
-    .end()
   },
 
-  // 'Should execute `rename` api from file manager external api': function (browser) {
-  //   browser
-  //   .addFile('renameFile.js', { content: executeRename })
-  //   .executeScript(`remix.exeCurrent()`)
-  //   .pause(2000)
-  //   .waitForElementPresent('[data-id="treeViewLibrowser/new_contract.sol"]')
-  //   .end()
-  // },
+  'Should execute `mkdir` api from file manager external api': function (browser) {
+    browser
+    .addFile('mkdirFile.js', { content: executeMkdir })
+    .executeScript(`remix.exeCurrent()`)
+    .pause(2000)
+    .waitForElementPresent('[data-id="treeViewLibrowser/Test_Folder"]')
+  },
+
+  'Should execute `readdir` api from file manager external api': function (browser) {
+    browser
+    .addFile('readdirFile.js', { content: executeReaddir })
+    .executeScript(`remix.exeCurrent()`)
+    .pause(2000)
+    .journalLastChildIncludes('Test_Folder isDirectory true')
+  },
+
+  'Should execute `remove` api from file manager external api': function (browser) {
+    browser
+    .addFile('removeFile.js', { content: executeRemove })
+    .executeScript(`remix.exeCurrent()`)
+    .pause(2000)
+    .waitForElementNotVisible('[data-id="treeViewLibrowser/old_contract.sol"]')
+    .end()
+  },
 
   tearDown: sauce
 }
@@ -142,9 +157,33 @@ const executeCopyFile = `
 
 const executeRename = `
   const run = async () => {
-    const result = await remix.call('fileManager', 'rename', 'browser/new_contract.sol', 'browser/old_contract.sol')
+    await remix.call('fileManager', 'rename', 'browser/new_contract.sol', 'browser/old_contract.sol')
+  }
 
-    console.log('result: ', result)
+  run()
+`
+
+const executeMkdir = `
+  const run = async () => {
+    await remix.call('fileManager', 'mkdir', 'browser/Test_Folder/')
+  }
+
+  run()
+`
+
+const executeReaddir = `
+  const run = async () => {
+    const result = await remix.call('fileManager', 'readdir', 'browser/')
+
+    console.log('Test_Folder isDirectory ', result["Test_Folder"].isDirectory)
+  }
+
+  run()
+`
+
+const executeRemove = `
+  const run = async () => {
+    await remix.call('fileManager', 'remove', 'browser/old_contract.sol')
   }
 
   run()
