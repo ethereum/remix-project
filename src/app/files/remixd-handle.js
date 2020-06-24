@@ -37,6 +37,7 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   deactivate () {
+    this.fileSystemExplorer.hide()
     if (super.socket) super.deactivate()
     this.locahostProvider.close((error) => {
       if (error) console.log(error)
@@ -44,6 +45,7 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   activate () {
+    this.fileSystemExplorer.show()
     this.connectToLocalhost()
   }
 
