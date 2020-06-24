@@ -66,6 +66,7 @@ module.exports = class RemixDProvider {
   }
 
   exists (path, cb) {
+    if (!this._isReady) return cb && cb('provider not ready')
     const unprefixedpath = this.removePrefix(path)
 
     return this._appManager.call('remixd', 'exists', { path: unprefixedpath })
@@ -87,6 +88,7 @@ module.exports = class RemixDProvider {
   }
 
   get (path, cb) {
+    if (!this._isReady) return cb && cb('provider not ready')
     var unprefixedpath = this.removePrefix(path)
     this._appManager.call('remixd', 'get', { path: unprefixedpath })
     .then((file) => {
@@ -102,6 +104,7 @@ module.exports = class RemixDProvider {
   }
 
   async set (path, content, cb) {
+    if (!this._isReady) return cb && cb('provider not ready')
     const unprefixedpath = this.removePrefix(path)
 
     return this._appManager.call('remixd', 'set', { path: unprefixedpath, content: content }).then(async (result) => {
@@ -118,6 +121,7 @@ module.exports = class RemixDProvider {
 
   remove (path) {
     return new Promise((resolve, reject) => {
+      if (!this._isReady) return reject('provider not ready')
       const unprefixedpath = this.removePrefix(path)
       this._appManager.call('remixd', 'remove', { path: unprefixedpath })
       .then(result => {
@@ -136,7 +140,7 @@ module.exports = class RemixDProvider {
   rename (oldPath, newPath, isFolder) {
     const unprefixedoldPath = this.removePrefix(oldPath)
     const unprefixednewPath = this.removePrefix(newPath)
-
+    if (!this._isReady) return new Promise((resolve, reject) => reject('provider not ready'))
     return this._appManager.call('remixd', 'rename', { oldPath: unprefixedoldPath, newPath: unprefixednewPath })
     .then(result => {
       const newPath = this.type + '/' + unprefixednewPath
@@ -177,6 +181,7 @@ module.exports = class RemixDProvider {
     if (!path) return callback(null, { [self.type]: { } })
     const unprefixedpath = this.removePrefix(path)
 
+    if (!this._isReady) return callback && callback('provider not ready')
     this._appManager.call('remixd', 'resolveDirectory', { path: unprefixedpath }).then((result) => {
       callback(null, result)
     }).catch(callback)
@@ -184,13 +189,13 @@ module.exports = class RemixDProvider {
 
   async isDirectory (path) {
     const unprefixedpath = this.removePrefix(path)
-
+    if (!this._isReady) throw new Error('provider not ready')
     return await this._appManager.call('remixd', 'isDirectory', {path: unprefixedpath})
   }
 
   async isFile (path) {
     const unprefixedpath = this.removePrefix(path)
-
+    if (!this._isReady) throw new Error('provider not ready')
     return await this._appManager.call('remixd', 'isFile', { path: unprefixedpath })
   }
 }
