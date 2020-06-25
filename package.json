@@ -11,7 +11,7 @@
     "test": "echo \"Error: no test specified\"",
     "start": "./lib/bin/remixd.js",
     "npip": "npip",
-    "lint": "eslint ./src --ext .ts",
+    "lint": "eslint ./src ./bin --ext .ts",
     "build": "tsc -p ./ && chmod +x ./lib/bin/remixd.js",
     "dev": "nodemon"
   },
@@ -34,12 +34,11 @@
   "dependencies": {
     "@remixproject/plugin": "0.3.0-alpha.3",
     "@remixproject/plugin-ws": "0.3.0-alpha.1",
-    "chalk": "^4.0.0",
-    "chokidar": "^2.0.2",
     "commander": "^2.20.3",
-    "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
-    "ws": "^7.3.0"
+    "ws": "^7.3.0",
+    "chokidar": "^2.1.8",
+    "fs-extra": "^3.0.1"
   },
   "python": {
     "execPath": "python3",
@@ -48,6 +47,7 @@
     }
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.1",
     "@types/node": "^14.0.5",
     "@types/ws": "^7.2.4",
     "@typescript-eslint/eslint-plugin": "^3.2.0",

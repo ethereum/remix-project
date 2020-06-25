@@ -1,9 +1,12 @@
 'use strict'
+import { RemixdClient as sharedFolder } from './services/remixdClient'
+import Websocket from './websocket'
+import * as utils from './utils'
 
 module.exports = {
-  Router: require('./router'),
-  utils: require('./utils'),
+  Websocket,
+  utils,
   services: {
-    sharedFolder: require('./services/sharedFolder')
+    sharedFolder
   }
 }
