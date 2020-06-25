@@ -486,8 +486,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   allPaths () {
-    const paths = ['browser', 'browser/test']
-    return paths
+    return this.testTabLogic.allPaths()
   }
 
   render () {
@@ -510,9 +509,12 @@ module.exports = class TestTab extends ViewPlugin {
           ${this.uiPathList}
       </div>
     `
-    let options = ['browser', 'browser/test'] // this.allPaths()
-    options.forEach((path) => {
-      this.uiPathList.appendChild(yo`<option>${path}</option>`)
+    this.allPaths().then((options) => {
+      console.log('options ', options, ' length is ', options.length)
+      options.forEach((path) => {
+        console.log('option ', path)
+        this.uiPathList.appendChild(yo`<option>${path}</option>`)
+      })
     })
 
     this.testsExecutionStopped.hidden = true
@@ -523,7 +525,7 @@ module.exports = class TestTab extends ViewPlugin {
       <div class="${css.testTabView} px-2" id="testView">
         <div class="${css.infoBox}">
           <p class="text-lg"> Test your smart contract in Solidity.</p>
-          <p> Click on "Generate" to generate a sample test file in.</p>
+          <p> Click on "Generate" to generate a sample test file in a:</p>
           ${availablePaths}
         </div>
         <div class="${css.tests}">          
