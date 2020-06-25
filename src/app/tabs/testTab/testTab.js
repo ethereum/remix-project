@@ -1,6 +1,7 @@
 const helper = require('../../../lib/helper.js')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const remixPath = require('path')
+
 class TestTabLogic {
 
   constructor (fileManager) {
@@ -29,6 +30,10 @@ class TestTabLogic {
       this.fileManager.open(newFile)
       this.fileManager.syncEditor(newFile)
     })
+  }
+
+  allPaths () {
+    return this.fileManager.allPaths()
   }
 
   async getTests (cb) {
