@@ -493,6 +493,39 @@ class FileManager extends Plugin {
     return this._deps.filesProviders['browser']
   }
 
+  allPaths () {
+    const dirPaths = []
+
+    const findPaths = (path) => {
+      return new Promise((resolve, reject) => {
+        if (this.isDirectory(path)) {
+          if (!dirPaths.includes(path)) {
+            dirPaths.push(path)
+            console.log('adding .. ', path)
+          }
+
+          this.readdir(path).then((ls) => {
+            const promises = Object.keys(ls).map((item, index) => {
+              const curPath = `browser/${item}`
+              if (ls[item].isDirectory) {
+                return findPaths(curPath)
+              } else {
+                return new Promise((resolve, reject) => { resolve() })
+              }
+            })
+            Promise.all(promises).then(() => { resolve(dirPaths) })
+          })
+        } else {
+          resolve(dirPaths)
+        }
+      })
+    }
+
+    const br = findPaths('browser')
+    const lh = findPaths('localhost')
+    return Promise.all([br, lh])
+  }
+
   saveCurrentFile () {
     var currentFile = this._deps.config.get('currentFile')
     if (currentFile && this.editor.current()) {
