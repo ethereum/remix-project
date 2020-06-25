@@ -1,9 +1,10 @@
 import { PluginClient } from '@remixproject/plugin'
 import { SharedFolderArgs, TrackDownStreamUpdate, WS, Filelist, ResolveDirectory, FileContent } from '../../types'
 import * as utils from '../utils'
+import * as chokidar from 'chokidar'
+import * as fs from 'fs-extra'
 
 const isbinaryfile = require('isbinaryfile')
-const fs = require('fs-extra')
 
 export class RemixdClient extends PluginClient {
   methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'list', 'isDirectory']
@@ -192,6 +193,39 @@ export class RemixdClient extends PluginClient {
     } catch (error) {
       throw new Error(error)
     }
+  }
+
+  setupNotifications (path: string): void {
+    const absPath = utils.absolutePath('./', path)
+
+    if (!isRealPath(absPath)) return
+    const watcher = chokidar.watch(path, { depth: 0, ignorePermissionErrors: true })
+    console.log('setup notifications for ' + path)
+    /* we can't listen on created file / folder
+    watcher.on('add', (f, stat) => {
+      isbinaryfile(f, (error, isBinary) => {
+        if (error) console.log(error)
+        console.log('add', f)
+        this.emit('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: isBinary, isFolder: false })
+      })
+    })
+    watcher.on('addDir', (f, stat) => {
+      this.emit('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: false, isFolder: true })
+    })
+    */
+    watcher.on('change', (f: string) => {
+      if (this.trackDownStreamUpdate[f]) {
+        delete this.trackDownStreamUpdate[f]
+        return
+      }
+      this.emit('changed', utils.relativePath(f, this.currentSharedFolder))
+    })
+    watcher.on('unlink', (f: string) => {
+      this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)
+    })
+    watcher.on('unlinkDir', (f: string) => {
+      this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)
+    })
   }
 }
 
