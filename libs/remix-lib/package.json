@@ -38,7 +38,7 @@
   },
   "scripts": {
     "lint": "standard",
-    "test": "standard && tape ./test/tests.js"
+    "test": "./../../node_modules/.bin/tape ./test/tests.js"
   },
   "repository": {
     "type": "git",

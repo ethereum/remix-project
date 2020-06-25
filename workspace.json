@@ -220,6 +220,16 @@
             ],
             "cwd": "libs/remix-lib"
           }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-lib",
+            "tsConfig": "libs/remix-lib/tsconfig.lib.json",
+            "packageJson": "libs/remix-lib/package.json",
+            "main": "libs/remix-lib/src/index.js",
+            "assets": ["libs/remix-lib/*.md"]
+          }
         }
       }
     },

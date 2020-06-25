@@ -30,11 +30,7 @@ const TraceManager = require('./src/trace/traceManager')
 const UniversalDApp = require('./src/universalDapp')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
-  module.exports = modules()
-}
-
-if (typeof (window) !== 'undefined') {
-  window.remix = modules()
+  exports = modules()
 }
 
 function modules () {
