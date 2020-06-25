@@ -31,6 +31,7 @@ if (program.sharedFolder) {
 
     websocketHandler.start((ws: WS) => {
       sharedFolderClient.setWebSocket(ws)
+      sharedFolderClient.setupNotifications(program.sharedFolder)
       sharedFolderClient.sharedFolder(program.sharedFolder, program.readOnly || false)
     })
     killCallBack.push(websocketHandler.close.bind(websocketHandler))
@@ -41,7 +42,7 @@ if (program.sharedFolder) {
 
 // kill
 function kill () {
-  for (var k in killCallBack) {
+  for (const k in killCallBack) {
     try {
       killCallBack[k]()
     } catch (e) {
