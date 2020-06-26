@@ -64,7 +64,7 @@ class DebuggerTab extends ViewPlugin {
       }
     )
 
-    this.call('manager', 'activatePlugin', 'source-verification')
+    this.call('manager', 'activatePlugin', 'sourcify')
     // this.call('manager', 'activatePlugin', 'udapp')
 
     return this.el
