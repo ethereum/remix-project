@@ -156,7 +156,7 @@ module.exports = {
    * - Source Verifier service for fetching the contract code
    * - Ropsten node for retrieving the trace and storage
    *
-  */
+   */
   'Should debug Ropsten transaction with source highlighting using the source verifier service and MetaMask': function (browser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
