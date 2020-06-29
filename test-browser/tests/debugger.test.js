@@ -70,8 +70,8 @@ module.exports = {
     .assert.containsText('*[data-id="stepdetail"]', 'execution step: 0')
     .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
     .pause(2000)
-    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step: 140')
-    .assert.containsText('*[data-id="stepdetail"]', 'execution step: 140')
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step: 184')
+    .assert.containsText('*[data-id="stepdetail"]', 'execution step: 184')
     .end()
   },
 
