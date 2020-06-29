@@ -5,8 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "lint": "standard",
-    "test": "nyc --reporter=lcov --require ts-node/register tape ./tests/*.ts | tap-spec; nyc report ---reporter=text",
+    "test": "./../../node_modules/.bin/nyc --reporter=lcov --require ts-node/register --require tsconfig-paths/register ./../../node_modules/.bin/tape ./tests/*.ts | ./../../node_modules/.bin/tap-spec; ./../../node_modules/.bin/nyc report ---reporter=text",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -36,7 +35,6 @@
     "@types/tape": "^4.2.33",
     "nyc": "^13.3.0",
     "remix-lib": "0.4.29",
-    "standard": "^14.3.4",
     "tape": "^4.10.1",
     "ts-node": "^8.0.3",
     "typescript": "^3.4.3"

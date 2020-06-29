@@ -37,7 +37,6 @@
     "tape": "^4.6.0"
   },
   "scripts": {
-    "lint": "standard",
     "test": "./../../node_modules/.bin/tape ./test/tests.js"
   },
   "repository": {

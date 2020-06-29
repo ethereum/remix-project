@@ -1,4 +1,3 @@
-'use strict'
 const EventManager = require('./src/eventManager')
 const traceHelper = require('./src/helpers/traceHelper')
 const uiHelper = require('./src/helpers/uiHelper')
@@ -30,7 +29,7 @@ const TraceManager = require('./src/trace/traceManager')
 const UniversalDApp = require('./src/universalDapp')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
-  exports = modules()
+  module.exports = modules()
 }
 
 function modules () {
@@ -64,7 +63,7 @@ function modules () {
       EventsDecoder: EventsDecoder,
       txExecution: txExecution,
       txHelper: txHelper,
-      executionContext: executionContext,
+      executionContext: new executionContext(),
       txFormat: txFormat,
       txListener: txListener,
       txRunner: txRunner,

@@ -326,4 +326,4 @@ const transactionDetailsLinks = {
   'Goerli': 'https://goerli.etherscan.io/tx/'
 }
 
-module.exports = new ExecutionContext()
+module.exports = ExecutionContext
