@@ -104,7 +104,7 @@
             "outputPath": "dist/libs/remix-analyzer",
             "tsConfig": "libs/remix-analyzer/tsconfig.lib.json",
             "packageJson": "libs/remix-analyzer/package.json",
-            "main": "libs/remix-analyzer/src/index.ts",
+            "main": "libs/remix-analyzer/index.ts",
             "assets": ["libs/remix-analyzer/*.md"]
           }
         }
@@ -132,9 +132,6 @@
           "options": {
             "commands": [
               {
-                "command": "rm -rf ../../dist"
-              },
-              {
                 "command": "./../../node_modules/.bin/npm-run-all test"
               }
             ],
@@ -142,17 +139,13 @@
           }
         },
         "build": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/node:package",
           "options": {
-            "commands": [
-              {
-                "command": "rm -rf ../../dist"
-              },
-              {
-                "command": "./../../node_modules/.bin/npm-run-all build"
-              }
-            ],
-            "cwd": "libs/remix-astwalker"
+            "outputPath": "dist/libs/remix-astwalker",
+            "tsConfig": "libs/remix-astwalker/tsconfig.lib.json",
+            "packageJson": "libs/remix-astwalker/package.json",
+            "main": "libs/remix-astwalker/src/index.ts",
+            "assets": ["libs/remix-astwalker/*.md"]
           }
         }
       }
@@ -211,9 +204,6 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              {
-                "command": "rm -rf ../../dist"
-              },
               {
                 "command": "./../../node_modules/.bin/npm-run-all test"
               }
