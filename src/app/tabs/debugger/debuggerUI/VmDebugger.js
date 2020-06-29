@@ -6,6 +6,7 @@ var CodeListView = require('./vmDebugger/CodeListView')
 var CalldataPanel = require('./vmDebugger/CalldataPanel')
 var MemoryPanel = require('./vmDebugger/MemoryPanel')
 var CallstackPanel = require('./vmDebugger/CallstackPanel')
+var FunctionPanel = require('./vmDebugger/FunctionPanel')
 var StackPanel = require('./vmDebugger/StackPanel')
 var StoragePanel = require('./vmDebugger/StoragePanel')
 var StepDetail = require('./vmDebugger/StepDetail')
@@ -47,6 +48,16 @@ function VmDebugger (vmDebuggerLogic) {
 
   this.stackPanel = new StackPanel()
   this.vmDebuggerLogic.event.register('traceManagerStackUpdate', this.stackPanel.update.bind(this.stackPanel))
+
+  this.functionPanel = new FunctionPanel()
+  this.vmDebuggerLogic.event.register('functionsStackUpdate', (stack) => {
+    if (stack === null) return
+    let functions = []
+    for (let func of stack) {
+      functions.push(func.functionDefinition.attributes.name + '(' + func.inputs.join(', ') + ')')
+    }
+    this.functionPanel.update(functions)
+  })
 
   this.storagePanel = new StoragePanel()
   this.vmDebuggerLogic.event.register('traceManagerStorageUpdate', this.storagePanel.update.bind(this.storagePanel))
@@ -107,6 +118,7 @@ function VmDebugger (vmDebuggerLogic) {
 
     self.asmCode.basicPanel.show()
     self.stackPanel.basicPanel.show()
+    self.functionPanel.basicPanel.show()
     self.storagePanel.basicPanel.show()
     self.memoryPanel.basicPanel.show()
     self.calldataPanel.basicPanel.show()
@@ -149,6 +161,7 @@ VmDebugger.prototype.render = function () {
         ${this.solidityLocals.render()}
         ${this.solidityState.render()}
         ${this.stackPanel.render()}
+        ${this.functionPanel.render()}
         ${this.memoryPanel.render()}
         ${this.storagePanel.render()}
         ${this.callstackPanel.render()}
