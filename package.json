@@ -79,7 +79,7 @@
     "yo-yoify": "^3.7.3"
   },
   "dependencies": {
-    "@remixproject/engine": "^0.2.3",
+    "@remixproject/engine": "^0.2.4",
     "http-server": "^0.11.1",
     "standard": "^8.5.0"
   },
