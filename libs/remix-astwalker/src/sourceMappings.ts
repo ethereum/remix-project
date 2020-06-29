@@ -1,6 +1,6 @@
 import { isAstNode, AstWalker } from './astWalker';
 import { AstNode, LineColPosition, LineColRange, Location } from "./types";
-import { util } from "remix-lib";
+import { util } from "@remix-project/remix-lib";
 
 export declare interface SourceMappings {
   // eslint-disable-next-line @typescript-eslint/no-misused-new
