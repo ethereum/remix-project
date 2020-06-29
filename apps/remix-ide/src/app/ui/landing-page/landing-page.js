@@ -163,8 +163,8 @@ export class LandingPage extends ViewPlugin {
     }
     const startSourceVerify = () => {
       this.appManager.ensureActivated('solidity')
-      this.appManager.ensureActivated('source-verification')
-      this.verticalIcons.select('source-verification')
+      this.appManager.ensureActivated('sourcify')
+      this.verticalIcons.select('sourcify')
     }
     const startPluginManager = () => {
       this.appManager.ensureActivated('pluginManager')
@@ -208,7 +208,7 @@ export class LandingPage extends ViewPlugin {
     const pipelineEnv = createEnvButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
     const debuggerEnv = createEnvButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
     const mythXEnv = createEnvButton('assets/img/mythxLogo.webp', 'mythxLogo', 'MythX', startMythX)
-    const sourceVerifyEnv = createEnvButton('assets/img/sourceVerifyLogo.webp', 'sourceVerifyLogo', 'Source Verify', startSourceVerify)
+    const sourceVerifyEnv = createEnvButton('assets/img/sourceVerifyLogo.webp', 'sourceVerifyLogo', 'Sourcify', startSourceVerify)
     const moreEnv = createEnvButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
 
     const invertNum = (globalRegistry.get('themeModule').api.currentTheme().quality === 'dark') ? 1 : 0
