@@ -32,8 +32,12 @@ class TestTabLogic {
     })
   }
 
-  allPaths () {
-    return this.fileManager.allPaths()
+  dirList (path) {
+    return this.fileManager.dirList(path)
+  }
+
+  isRemixDActive () {
+    return this.fileManager.isRemixDActive()
   }
 
   async getTests (cb) {
