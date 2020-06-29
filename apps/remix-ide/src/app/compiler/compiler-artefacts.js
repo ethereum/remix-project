@@ -54,7 +54,7 @@ module.exports = class CompilerArtefacts extends Plugin {
       const contracts = this.compilersArtefactsPerFile[targetFile].getContracts()
       Object.keys(contracts).map((file) => { contractsData[file] = contracts[file] })
     })
-    // making sure we shave last compilation result in there
+    // making sure we save last compilation result in there
     if (this.compilersArtefacts['__last']) {
       const contracts = this.compilersArtefacts['__last'].getContracts()
       Object.keys(contracts).map((file) => { contractsData[file] = contracts[file] })
