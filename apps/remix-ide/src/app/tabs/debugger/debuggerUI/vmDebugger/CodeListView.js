@@ -8,7 +8,7 @@ var csjs = require('csjs-inject')
 var css = csjs`
   .instructions {
     overflow-y: scroll;
-    max-height: 150px;
+    max-height: 100px;
   }
 `
 function CodeListView () {
