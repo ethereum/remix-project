@@ -163,8 +163,8 @@ export class LandingPage extends ViewPlugin {
     }
     const startSourceVerify = () => {
       this.appManager.ensureActivated('solidity')
-      this.appManager.ensureActivated('sourcify')
-      this.verticalIcons.select('sourcify')
+      this.appManager.ensureActivated('source-verification')
+      this.verticalIcons.select('source-verification')
     }
     const startPluginManager = () => {
       this.appManager.ensureActivated('pluginManager')
