@@ -240,9 +240,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const workspace = pluginLoader.get()
   const engine = new Engine(appManager)
   engine.setPluginOption = ({ name, kind }) => {
-    if (kind === 'provider' || name === 'LearnEth') {
-      return {queueTimeout: 60000}
-    }
+    if (kind === 'provider') return {queueTimeout: 60000*4}
+    if (name === 'LearnEth') return {queueTimeout: 60000}
     return {queueTimeout: 10000}
   }
   await engine.onload()
