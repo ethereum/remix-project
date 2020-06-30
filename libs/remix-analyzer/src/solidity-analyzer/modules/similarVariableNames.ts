@@ -3,7 +3,7 @@ import { getDeclaredVariableName, getFullQuallyfiedFuncDefinitionIdent } from '.
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
 import { get } from 'fast-levenshtein'
-import { util } from 'remix-lib'
+import { util } from '@remix-project/remix-lib'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, VisitFunction, ReportFunction, SupportedVersion} from './../../types'
 
 interface SimilarRecord {

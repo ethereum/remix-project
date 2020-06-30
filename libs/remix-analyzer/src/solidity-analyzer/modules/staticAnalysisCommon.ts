@@ -447,7 +447,7 @@ function getUnAssignedTopLevelBinOps (subScope: BlockAstNode | IfStatementAstNod
   if(subScope && subScope.nodeType === 'Block')
     result = subScope.statements.filter(isBinaryOpInExpression)
   // for 'without braces' loops
-  else if (subScope && subScope.nodeType && isSubScopeStatement(subScope)) {
+  else if (subScope && subScope.nodeType && subScope.nodeType !== 'Block' && isSubScopeStatement(subScope)) {
     if (subScope.nodeType === 'IfStatement'){
       if((subScope.trueBody && subScope.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.trueBody)))
         result.push(subScope.trueBody) 
