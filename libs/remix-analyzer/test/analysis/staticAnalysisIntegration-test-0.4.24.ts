@@ -1,8 +1,8 @@
-import { default as test} from "tape"
-import { helpers } from 'remix-lib'
+import * as test from "tape"
+import { helpers } from '@remix-project/remix-lib'
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import { default as StatRunner } from '../../dist/src/solidity-analyzer'
+import { default as StatRunner } from '../../src/solidity-analyzer'
 import * as modules from '../../src/solidity-analyzer/modules/'
 import { CompilationResult, AnalysisReportObj, AnalysisReport } from '../../src/types'
 import { install, require as requireNPMmodule } from 'npm-install-version'

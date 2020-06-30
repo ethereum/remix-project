@@ -69,7 +69,7 @@
     },
     "remix-analyzer": {
       "root": "libs/remix-analyzer",
-      "sourceRoot": "libs/remix-analyzer",
+      "sourceRoot": "libs/remix-analyzer/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -104,7 +104,7 @@
             "outputPath": "dist/libs/remix-analyzer",
             "tsConfig": "libs/remix-analyzer/tsconfig.lib.json",
             "packageJson": "libs/remix-analyzer/package.json",
-            "main": "libs/remix-analyzer/index.ts",
+            "main": "libs/remix-analyzer/src/index.ts",
             "assets": ["libs/remix-analyzer/*.md"]
           }
         }
