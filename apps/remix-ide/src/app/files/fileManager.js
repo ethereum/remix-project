@@ -520,8 +520,6 @@ class FileManager extends Plugin {
     return this.appManager.isActive('remixd')
   }
 
- 
-
   saveCurrentFile () {
     var currentFile = this._deps.config.get('currentFile')
     if (currentFile && this.editor.current()) {
