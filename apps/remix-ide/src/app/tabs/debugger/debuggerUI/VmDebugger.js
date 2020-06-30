@@ -16,15 +16,8 @@ var FullStoragesChangesPanel = require('./vmDebugger/FullStoragesChanges')
 var DropdownPanel = require('./vmDebugger/DropdownPanel')
 
 var css = csjs`
-  .solidityPanel {
-    width: 100%;
-  }
-  .asmCode {
-    width: 100%;
-  }
   .stepDetail {
-    width: 100%;
-    line-height: 2O%;
+    line-height: 20%;
   }
   .vmheadView {
     margin-top:10px;
@@ -142,18 +135,18 @@ function VmDebugger (vmDebuggerLogic) {
 
 VmDebugger.prototype.renderHead = function () {
   this.solidityPanel = yo`
-    <div class="${css.solidityPanel} column" hidden>
-          ${this.functionPanel.render()}
-          ${this.solidityLocals.render()}
-          ${this.solidityState.render()}
+    <div class="${css.solidityPanel} column w-100" hidden>
+      ${this.functionPanel.render()}
+      ${this.solidityLocals.render()}
+      ${this.solidityState.render()}
     </div>
   `
   const headView = yo`
     <div id="vmheadView" class="${css.vmheadView} container">
       <div class="row" >
         ${this.solidityPanel}
-        <div class="${css.asmCode} column">${this.asmCode.render()}</div>
-        <div class="${css.stepDetail} column">${this.stepDetail.render()}</div>
+        <div class="column w-100">${this.asmCode.render()}</div>
+        <div class="${css.stepDetail} column w-100">${this.stepDetail.render()}</div>
       </div>
     </div>
   `
