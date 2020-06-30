@@ -499,22 +499,18 @@ class FileManager extends Plugin {
     const dirPaths = []
     const collectList = (path) => {
       return new Promise((resolve, reject) => {
-        if (this.isDirectory(path)) {
-          this.readdir(path).then((ls) => {
-            const promises = Object.keys(ls).map((item, index) => {
-              const root = (path.indexOf('/') === -1) ? path : path.substr(0, path.indexOf('/'))
-              const curPath = `${root}/${item}` // adding 'browser' or 'localhost'
-              if (ls[item].isDirectory && !dirPaths.includes(curPath)) {
-                dirPaths.push(curPath)
-                resolve(dirPaths)
-              }
-              return new Promise((resolve, reject) => { resolve() })
-            })
-            Promise.all(promises).then(() => { resolve(dirPaths) })
+        this.readdir(path).then((ls) => {
+          const promises = Object.keys(ls).map((item, index) => {
+            const root = (path.indexOf('/') === -1) ? path : path.substr(0, path.indexOf('/'))
+            const curPath = `${root}/${item}` // adding 'browser' or 'localhost'
+            if (ls[item].isDirectory && !dirPaths.includes(curPath)) {
+              dirPaths.push(curPath)
+              resolve(dirPaths)
+            }
+            return new Promise((resolve, reject) => { resolve() })
           })
-        } else {
-          resolve(dirPaths)
-        }
+          Promise.all(promises).then(() => { resolve(dirPaths) })
+        })
       })
     }
     return collectList(path)
@@ -524,39 +520,7 @@ class FileManager extends Plugin {
     return this.appManager.isActive('remixd')
   }
 
-  allPaths () {
-    const dirPaths = []
-
-    const findPaths = (path) => {
-      return new Promise((resolve, reject) => {
-        if (this.isDirectory(path)) {
-          if (!dirPaths.includes(path)) {
-            dirPaths.push(path)
-          }
-
-          this.readdir(path).then((ls) => {
-            const promises = Object.keys(ls).map((item, index) => {
-              const root = (path.indexOf('/') === -1) ? path : path.substr(0, path.indexOf('/'))
-              const curPath = `${root}/${item}` // adding 'browser' or 'localhost'
-              if (ls[item].isDirectory) {
-                return findPaths(curPath)
-              } else {
-                return new Promise((resolve, reject) => { resolve() })
-              }
-            })
-            Promise.all(promises).then(() => { resolve(dirPaths) })
-          })
-        } else {
-          resolve(dirPaths)
-        }
-      })
-    }
-
-    const roots = []
-    roots.push(findPaths('browser'))
-    if (this.appManager.isActive('remixd')) roots.push(findPaths('localhost'))
-    return Promise.all(roots)
-  }
+ 
 
   saveCurrentFile () {
     var currentFile = this._deps.config.get('currentFile')
