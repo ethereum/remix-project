@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@remix-project/remix-analyzer": ["libs/remix-analyzer/index.ts"],
-      "@remix-project/remix-astwalker": ["libs/remix-astwalker/src/index.ts"],
+      "@remix-project/remix-astwalker": ["dist/libs/remix-astwalker/src/index.ts"],
       "@remix-project/remix-debug": ["libs/remix-debug/index.js"],
       "@remix-project/remix-lib": ["libs/remix-lib/index.js"],
       "@remix-project/remix-simulator": ["libs/remix-simulator/index.js"],

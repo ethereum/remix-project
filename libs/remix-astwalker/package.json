@@ -1,5 +1,5 @@
 {
-  "name": "remix-astwalker",
+  "name": "@remix-project/remix-astwalker",
   "version": "0.0.24",
   "description": "Remix sub-module for walking through AST",
   "main": "dist/index.js",

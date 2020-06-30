@@ -25,7 +25,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "standard",
-    "test": "tsc && npm run lint && ts-node node_modules/tape/bin/tape ./test/tests.ts"
+    "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "standard": {
     "ignore": [
