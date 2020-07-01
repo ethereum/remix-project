@@ -1,4 +1,4 @@
-import * as test from "tape"
+import { default as test } from "tape"
 import { helpers } from '@remix-project/remix-lib'
 import { readFileSync } from 'fs'
 import { join } from 'path'
