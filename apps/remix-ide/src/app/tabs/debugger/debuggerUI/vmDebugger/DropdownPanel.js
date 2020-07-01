@@ -87,7 +87,7 @@ DropdownPanel.prototype.update = function (_data, _header) {
   this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
   this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
   if (!this.displayContentOnly) {
-    this.view.querySelector('.title div.btn').style.display = 'block'
+    this.view.querySelector('.title div.btn-sm').style.display = 'block'
     this.view.querySelector('.title span').innerText = _header || ' '
   }
   this.message('')
@@ -108,13 +108,14 @@ DropdownPanel.prototype.render = function (overridestyle, node) {
   }
   overridestyle === undefined ? {} : overridestyle
   var self = this
-  var title = !self.displayContentOnly ? yo`<div class="${css.title} title">
+  var title = !self.displayContentOnly ? yo`<div class="${css.title} py-0 px-1 title">
       <div class="${css.icon} fas fa-caret-right" onclick=${function () { self.toggle() }} ></div>
       <div class="${css.name}" onclick=${function () { self.toggle() }} >${this.name}</div><span class="${css.nameDetail}" onclick=${function () { self.toggle() }} ></span>
-      <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn far fa-clipboard"></div>
+      <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn-sm far fa-clipboard"></div>
     </div>` : yo`<div></div>`
 
-  var contentNode = yo`<div class='dropdownpanel ${css.dropdownpanel}' style='display:none'>
+  var contentNode = yo`
+    <div class='dropdownpanel ${css.dropdownpanel}' style='display:none'>
       <i class="${css.refresh} fas fa-sync" aria-hidden="true"></i>
       <div class='dropdowncontent'>${node || content}</div>
       <div class='dropdownrawcontent' style='display:none'></div>

@@ -22,10 +22,6 @@ var css = csjs`
   .statusMessage {
     margin-left: 15px;
   }
-  .innerShift {
-    padding: 2px;
-    margin-left: 10px;
-  }
 `
 
 class DebuggerUI {
@@ -185,16 +181,16 @@ class DebuggerUI {
   }
 
   render () {
-    this.debuggerPanelsView = yo`<div class="${css.innerShift}"></div>`
-    this.debuggerHeadPanelsView = yo`<div class="${css.innerShift}"></div>`
-    this.stepManagerView = yo`<div class="${css.innerShift}"></div>`
+    this.debuggerPanelsView = yo`<div class="px-2"></div>`
+    this.debuggerHeadPanelsView = yo`<div class="px-2"></div>`
+    this.stepManagerView = yo`<div class="px-2"></div>`
 
     var view = yo`
       <div>
-        <div class="${css.innerShift}">
+        <div class="px-2">
           ${this.txBrowser.render()}
-          ${this.debuggerHeadPanelsView}
           ${this.stepManagerView}
+          ${this.debuggerHeadPanelsView}
         </div>
         <div class="${css.statusMessage}">${this.statusMessage}</div>
         ${this.debuggerPanelsView}
