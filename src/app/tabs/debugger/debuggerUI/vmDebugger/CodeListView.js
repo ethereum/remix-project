@@ -8,7 +8,7 @@ var csjs = require('csjs-inject')
 var css = csjs`
   .instructions {
     overflow-y: scroll;
-    max-height: 100px;
+    max-height: 130px;
   }
 `
 function CodeListView () {
@@ -69,7 +69,7 @@ CodeListView.prototype.renderAssemblyItems = function () {
     var codeView = this.code.map(function (item, i) {
       return yo`<div key=${i} value=${i}><span>${item}</span></div>`
     })
-    return yo`<div class=${css.instructions} id='asmitems' ref='itemsList'>
+    return yo`<div class="pl-3 my-2 small ${css.instructions}" id='asmitems' ref='itemsList'>
       ${codeView}
     </div>`
   }
