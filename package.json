@@ -104,6 +104,14 @@
           "sourceMaps": true,
           "plugins": [
             [
+              "module:module-resolver", {
+              "root": ["."],
+                "alias": {
+                  "@remix-project/remix-analyzer": "libs/remix-analyzer/index.ts"
+                }
+              }
+            ],
+            [
               "module:fast-async",
               {
                 "runtimePattern": null,
@@ -179,6 +187,7 @@
     "babel-eslint": "^10.0.0",
     "babel-plugin-add-module-exports": "^1.0.2",
     "babel-plugin-fast-async": "^6.1.2",
+    "babel-plugin-module-resolver": "^4.0.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-yo-yoify": "^2.0.0",
     "babel-preset-env": "^1.7.0",
