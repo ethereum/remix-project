@@ -3,7 +3,7 @@
   "compilerOptions": {
     "types": ["node"],
     "module": "commonjs",
-    "esModuleInterop": true, 
+    "esModuleInterop": true 
   },
   "include": ["**/*.ts"]
 }
