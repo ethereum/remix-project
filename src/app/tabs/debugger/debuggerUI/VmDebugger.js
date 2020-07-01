@@ -16,11 +16,8 @@ var FullStoragesChangesPanel = require('./vmDebugger/FullStoragesChanges')
 var DropdownPanel = require('./vmDebugger/DropdownPanel')
 
 var css = csjs`
-  .asmCode {
-    width: 100%;
-  }
   .stepDetail {
-    width: 100%;
+    line-height: 20%;
   }
   .vmheadView {
     margin-top:10px;
@@ -127,19 +124,29 @@ function VmDebugger (vmDebuggerLogic) {
 
   this.vmDebuggerLogic.event.register('newCallTree', () => {
     if (!self.view) return
+    self.functionPanel.basicPanel.show()
     self.solidityLocals.basicPanel.show()
     self.solidityState.basicPanel.show()
+    self.solidityPanel.hidden = false
   })
 
   this.vmDebuggerLogic.start()
 }
 
 VmDebugger.prototype.renderHead = function () {
+  this.solidityPanel = yo`
+    <div class="${css.solidityPanel} column w-100" hidden>
+      ${this.functionPanel.render()}
+      ${this.solidityLocals.render()}
+      ${this.solidityState.render()}
+    </div>
+  `
   const headView = yo`
     <div id="vmheadView" class="${css.vmheadView} container">
       <div class="row" >
-        <div class="${css.asmCode} column">${this.asmCode.render()}</div>
-        <div class="${css.stepDetail} column">${this.stepDetail.render()}</div>
+        ${this.solidityPanel}
+        <div class="column w-100">${this.asmCode.render()}</div>
+        <div class="${css.stepDetail} column w-100">${this.stepDetail.render()}</div>
       </div>
     </div>
   `
@@ -158,10 +165,7 @@ VmDebugger.prototype.render = function () {
   const view = yo`
     <div id="vmdebugger" class="pl-2">
       <div>
-        ${this.solidityLocals.render()}
-        ${this.solidityState.render()}
         ${this.stackPanel.render()}
-        ${this.functionPanel.render()}
         ${this.memoryPanel.render()}
         ${this.storagePanel.render()}
         ${this.callstackPanel.render()}
