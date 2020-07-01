@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "types": ["node"],
+    "esModuleInterop": true
   },
   "include": ["**/*.ts"]
 }
