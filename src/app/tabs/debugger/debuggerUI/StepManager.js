@@ -49,10 +49,11 @@ StepManager.prototype.remove = function () {
 }
 
 StepManager.prototype.render = function () {
-  return yo`<div>
-        ${this.slider.render()}
-        ${this.buttonNavigator.render()}
-      </div>`
+  return yo`
+    <div class="py-1">
+      ${this.slider.render()}
+      ${this.buttonNavigator.render()}
+    </div>`
 }
 
 module.exports = StepManager
