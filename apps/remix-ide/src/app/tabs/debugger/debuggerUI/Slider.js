@@ -43,7 +43,7 @@ class Slider {
   render () {
     var self = this
     var view = yo`<div>
-        <input id='slider' data-id="slider" style='width: 100%' type='range' min=0 max=${this.max} value=0
+        <input id='slider' data-id="slider" class='w-100 my-2' type='range' min=0 max=${this.max} value=0
           onchange=${function () { self.onChange() }} oninput=${function () { self.onChange() }} disabled=${this.disabled} />
       </div>`
     if (!this.view) {
