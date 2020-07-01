@@ -86,7 +86,7 @@ module.exports = {
     .addFile('removeFile.js', { content: executeRemove })
     .executeScript(`remix.exeCurrent()`)
     .pause(2000)
-    .waitForElementNotVisible('[data-id="treeViewLibrowser/old_contract.sol"]')
+    .waitForElementNotPresent('[data-id="treeViewLibrowser/old_contract.sol"]')
     .end()
   },
 
