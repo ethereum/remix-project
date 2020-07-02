@@ -30,7 +30,7 @@ module.exports = {
           addressRef = address
         })
         .perform((done) => {
-          browser.verifyCallReturnValue(addressRef, ['0: uint256: 1', '0: uint256: 3456', '0: address: 0xbBF289D846208c16EDc8474705C748aff07732dB'])
+          browser.verifyCallReturnValue(addressRef, ['0:uint256: 1', '0:uint256: 3456', '0:address: 0xbBF289D846208c16EDc8474705C748aff07732dB'])
           .perform(() => done())
         })
         .click('*[data-id="deployAndRunClearInstances"]')

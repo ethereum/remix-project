@@ -25,7 +25,7 @@ function getCompiledContracts (browser, opts, callback) {
       .pause(2000)
       .click('*[data-id="treeViewDivcompiler"]')
       .waitForElementVisible('*[data-id="treeViewLicompiler/version"]')
-      .assert.containsText('*[data-id="treeViewLicompiler/version"]', `version: ${opts.version}`)
+      .assert.containsText('*[data-id="treeViewLicompiler/version"]', `version:\n${opts.version}`)
       .perform(done)
     } else done()
   })
