@@ -257,7 +257,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   editor.event.register('requiringToSaveCurrentfile', () => fileManager.saveCurrentFile())
 
   // ----------------- fileManager servive ----------------------------
-  const fileManager = new FileManager(editor)
+  const fileManager = new FileManager(editor, appManager)
   registry.put({api: fileManager, name: 'filemanager'})
 
   const blockchain = new Blockchain(registry.get('config').api)
@@ -396,7 +396,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
   await appManager.activatePlugin(['mainPanel', 'menuicons'])
-  await appManager.activatePlugin(['home', 'sidePanel', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'scriptRunner', 'terminal', 'fetchAndCompile'])
+  await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
+  await appManager.activatePlugin(['home', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'scriptRunner', 'terminal', 'fetchAndCompile'])
 
   const queryParams = new QueryParams()
   const params = queryParams.get()
