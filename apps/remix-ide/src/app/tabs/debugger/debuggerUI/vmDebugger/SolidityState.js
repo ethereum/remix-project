@@ -26,7 +26,8 @@ SolidityState.prototype.setUpdating = function () {
 
 SolidityState.prototype.render = function () {
   if (this.view) return
-  this.view = yo`<div id='soliditystate' >
+  this.view = yo`
+    <div id='soliditystate' >
       ${this.basicPanel.render()}
     </div>`
   return this.view
