@@ -1,16 +1,13 @@
-import * as test from "tape"
+import test from "tape"
 import { helpers } from '@remix-project/remix-lib'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { default as StatRunner } from '../../src/solidity-analyzer'
 import * as modules from '../../src/solidity-analyzer/modules/'
 import { CompilationResult, AnalysisReportObj, AnalysisReport } from '../../src/types'
-import { install, require as requireNPMmodule } from 'npm-install-version'
-install('solc@0.4.24')
-const solc = requireNPMmodule('solc@0.4.24')
+import solcOrg from 'solc';
 const { compilerInput } = helpers.compiler
 const folder: string = 'solidity-v0.4.24'
-
 
 const testFiles: string[] = [
   'KingOfTheEtherThrone.sol',
@@ -41,13 +38,21 @@ const testFiles: string[] = [
   'forLoopIteratesOverDynamicArray.sol'
 ]
 
-var compilationResults: Record<string, CompilationResult> = {}
+let compilationResults: Record<string, CompilationResult> = {}
 
-testFiles.forEach((fileName) => {
-  const content: string = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
-  // Latest AST is available under 'compileStandardWrapper' under solc for, 0.4.12 <= version < 0.5.0 
-  compilationResults[fileName] = JSON.parse(solc.compileStandardWrapper(compilerInput(content)))
-})
+test('setup', function (t: test.Test) {
+  solcOrg.loadRemoteVersion('v0.4.24+commit.e67f0147', (error, compiler) => {
+    if (error) throw error
+
+    testFiles.forEach((fileName) => {
+      const content: string = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
+      // Latest AST is available under 'compileStandardWrapper' under solc for, 0.4.12 <= version < 0.5.0 
+      compilationResults[fileName] = JSON.parse(compiler.compile(compilerInput(content)))
+    })
+
+    t.end()
+  })
+});
 
 test('Integration test thisLocal module', function (t: test.Test) {
   t.plan(testFiles.length)
