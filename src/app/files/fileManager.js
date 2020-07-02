@@ -38,7 +38,7 @@ const createError = (err) => {
 }
 
 class FileManager extends Plugin {
-  constructor (editor) {
+  constructor (editor, appManager) {
     super(profile)
     this.openedFiles = {} // list all opened files
     this.events = new EventEmitter()
@@ -46,6 +46,7 @@ class FileManager extends Plugin {
     this._components = {}
     this._components.compilerImport = new CompilerImport()
     this._components.registry = globalRegistry
+    this.appManager = appManager
     this.init()
   }
 
@@ -491,6 +492,32 @@ class FileManager extends Plugin {
       return this._deps.filesProviders['localhost']
     }
     return this._deps.filesProviders['browser']
+  }
+
+  // returns the list of directories inside path
+  dirList (path) {
+    const dirPaths = []
+    const collectList = (path) => {
+      return new Promise((resolve, reject) => {
+        this.readdir(path).then((ls) => {
+          const promises = Object.keys(ls).map((item, index) => {
+            const root = (path.indexOf('/') === -1) ? path : path.substr(0, path.indexOf('/'))
+            const curPath = `${root}/${item}` // adding 'browser' or 'localhost'
+            if (ls[item].isDirectory && !dirPaths.includes(curPath)) {
+              dirPaths.push(curPath)
+              resolve(dirPaths)
+            }
+            return new Promise((resolve, reject) => { resolve() })
+          })
+          Promise.all(promises).then(() => { resolve(dirPaths) })
+        })
+      })
+    }
+    return collectList(path)
+  }
+
+  isRemixDActive () {
+    return this.appManager.isActive('remixd')
   }
 
   saveCurrentFile () {
