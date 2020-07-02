@@ -12,7 +12,7 @@ function formatSelf (key, data) {
   if (data.type === 'string') {
     data.self = JSON.stringify(data.self)
   }
-  return yo `<label style='${keyStyle};white-space:pre-wrap;'> ${' ' + key}:<label style=${style}>${' ' + data.self}</label><label style='font-style:italic'> ${data.isProperty || !data.type ? '' : ' ' + data.type}</label></label>`
+  return yo `<label class="mb-0" style='${keyStyle};white-space:pre-wrap;'> ${' ' + key}:<label class="mb-0" style=${style}>${' ' + data.self}</label><label style='font-style:italic'> ${data.isProperty || !data.type ? '' : ' ' + data.type}</label></label>`
 }
 
 function extractData (item, parent, key) {
