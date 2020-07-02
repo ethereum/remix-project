@@ -1,5 +1,4 @@
 'use strict'
-var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 
 var CodeListView = require('./vmDebugger/CodeListView')
@@ -126,19 +125,18 @@ function VmDebugger (vmDebuggerLogic) {
 
 VmDebugger.prototype.renderHead = function () {
   this.solidityPanel = yo`
-    <div class="column w-100" hidden>
+    <div class="w-100" hidden>
       ${this.functionPanel.render()}
       ${this.solidityLocals.render()}
       ${this.solidityState.render()}
     </div>
   `
-  // style here is a temprorary solution. Ui should be refactored
   const headView = yo`
-    <div id="vmheadView" class="mt-1 pr-1" style="padding-left: 7px;">
-      <div class="row px-1">
+    <div id="vmheadView" class="mt-1 px-0">
+      <div class="d-flex flex-column">
         ${this.solidityPanel}
-        <div class="column w-100">${this.asmCode.render()}</div>
-        <div class="column w-100">${this.stepDetail.render()}</div>
+        <div class="w-100">${this.asmCode.render()}</div>
+        <div class="w-100">${this.stepDetail.render()}</div>
       </div>
     </div>
   `
@@ -155,7 +153,7 @@ VmDebugger.prototype.remove = function () {
 
 VmDebugger.prototype.render = function () {
   const view = yo`
-    <div id="vmdebugger" class="pl-1">
+    <div id="vmdebugger" class="px-2">
       <div>
         ${this.stackPanel.render()}
         ${this.memoryPanel.render()}

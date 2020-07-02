@@ -122,7 +122,7 @@ DropdownPanel.prototype.render = function (overridestyle, node) {
       <div class='message' style='display:none'></div>
     </div>`
   var view = yo`
-    <div class="border rounded p-1 m-1 bg-light">
+    <div class="border rounded px-1 mt-1 bg-light">
     <style>
       @-moz-keyframes spin {
         to { -moz-transform: rotate(359deg); }
