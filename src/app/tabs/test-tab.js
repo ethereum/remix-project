@@ -486,13 +486,13 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateDirList () {
-      for (var o of this.uiPathList.querySelectorAll('option')) o.remove()
+    for (var o of this.uiPathList.querySelectorAll('option')) o.remove()
     this.uiPathList.appendChild(yo`<option>browser</option>`)
     if (this.testTabLogic.isRemixDActive()) this.uiPathList.appendChild(yo`<option>localhost</option>`)
     if (!this._view.el) return
-        options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
-      })
-    }
+    this.testTabLogic.dirList(this.inputPath.value).then((options) => {
+      options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
+    })
   }
 
   render () {
@@ -501,18 +501,20 @@ module.exports = class TestTab extends ViewPlugin {
     this.testsExecutionStopped = yo`<label class="text-warning h6" data-id="testTabTestsExecutionStopped">The test execution has been stopped</label>`
     this.testsExecutionStoppedError = yo`<label class="text-danger h6" data-id="testTabTestsExecutionStoppedError">The test execution has been stopped because of error(s) in your test file</label>`
     this.uiPathList = yo`<datalist id="utPathList"></datalist>`
-    const availablePaths = yo`
-      <div>
-        <input
-          placeholder=${this.defaultPath}
-          list="utPathList"
-          class="custom-select"
-          id="utPath"
-          data-id="uiPathInput"
-          name="utPath"
-          style="background-image: var(--primary);"
+    this.inputPath = yo`<input
+      placeholder=${this.defaultPath}
+      list="utPathList"
+      class="custom-select"
+      id="utPath"
+      data-id="uiPathInput"
+      name="utPath"
+      style="background-image: var(--primary);"
       onkeydown=${(e) => { if (e.keyCode === 191) this.updateDirList() }}
       onchange=${(e) => this.updateCurrentPath(e)}/>`
+
+    const availablePaths = yo`
+      <div>
+          ${this.inputPath}
           ${this.uiPathList}
       </div>
     `
