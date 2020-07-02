@@ -485,10 +485,11 @@ module.exports = class TestTab extends ViewPlugin {
     return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
   }
 
-  updateDirList (e) {
-    if (e.keyCode === 191) {
+  updateDirList () {
       for (var o of this.uiPathList.querySelectorAll('option')) o.remove()
-      this.testTabLogic.dirList(this._view.el.getElementsByClassName('custom-select')[0].value).then((options) => {
+    this.uiPathList.appendChild(yo`<option>browser</option>`)
+    if (this.testTabLogic.isRemixDActive()) this.uiPathList.appendChild(yo`<option>localhost</option>`)
+    if (!this._view.el) return
         options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
       })
     }
@@ -510,13 +511,12 @@ module.exports = class TestTab extends ViewPlugin {
           data-id="uiPathInput"
           name="utPath"
           style="background-image: var(--primary);"
-          onkeydown=${(e) => this.updateDirList(e)}
-          onchange=${(e) => this.updateCurrentPath(e)}/>
+      onkeydown=${(e) => { if (e.keyCode === 191) this.updateDirList() }}
+      onchange=${(e) => this.updateCurrentPath(e)}/>`
           ${this.uiPathList}
       </div>
     `
-    this.uiPathList.appendChild(yo`<option>browser</option>`)
-    if (this.testTabLogic.isRemixDActive()) this.uiPathList.appendChild(yo`<option>localhost</option>`)
+    this.updateDirList()
     this.testsExecutionStopped.hidden = true
     this.testsExecutionStoppedError.hidden = true
     this.resultStatistics = this.createResultLabel()
