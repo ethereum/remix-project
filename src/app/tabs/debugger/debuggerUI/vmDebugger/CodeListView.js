@@ -41,11 +41,11 @@ CodeListView.prototype.indexChanged = function (index) {
   }
   let codeView = this.view.querySelector('#asmitems')
   this.itemSelected = codeView.children[index]
-  this.itemSelected.style.setProperty('background-color', 'var(--info)')
-  this.itemSelected.style.setProperty('color', 'var(--light)')
+  this.itemSelected.style.setProperty('border-color', 'var(--primary)')
+  this.itemSelected.style.setProperty('border-style', 'solid')
   this.itemSelected.setAttribute('selected', 'selected')
   if (this.itemSelected.firstChild) {
-    this.itemSelected.firstChild.setAttribute('style', 'margin-left: 2px')
+    //this.itemSelected.firstChild.setAttribute('style', 'margin-left: 2px')
   }
   codeView.scrollTop = this.itemSelected.offsetTop - parseInt(codeView.offsetTop)
 }
@@ -67,9 +67,9 @@ CodeListView.prototype.changed = function (code, address, index) {
 CodeListView.prototype.renderAssemblyItems = function () {
   if (this.code) {
     var codeView = this.code.map(function (item, i) {
-      return yo`<div key=${i} value=${i}><span>${item}</span></div>`
+      return yo`<div class="px-1" key=${i} value=${i}><span>${item}</span></div>`
     })
-    return yo`<div class="pl-3 my-2 small ${css.instructions}" id='asmitems' ref='itemsList'>
+    return yo`<div class="pl-2 my-1 small ${css.instructions}" id='asmitems' ref='itemsList'>
       ${codeView}
     </div>`
   }

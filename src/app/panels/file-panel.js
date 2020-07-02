@@ -64,7 +64,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
     const explorers = yo`
       <div>
-        <div class=${css.treeview} data-id="filePanelFileExplorerTree">${fileExplorer.init()}</div>
+        <div class="pl-2 ${css.treeview}" data-id="filePanelFileExplorerTree">${fileExplorer.init()}</div>
         <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
       </div>
     `
