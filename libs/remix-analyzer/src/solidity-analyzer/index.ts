@@ -1,5 +1,5 @@
 'use strict'
-import { AstWalker } from '@remix-project/remix-astwalker'
+import { AstWalker } from 'remix-astwalker'
 import list from './modules/list'
 import { CompilationResult, AnalyzerModule, AnalysisReportObj, AnalysisReport } from '../types'
 
