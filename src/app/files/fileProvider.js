@@ -98,7 +98,8 @@ class FileProvider {
       return true
     }
     if (!exists && unprefixedpath.indexOf('/') !== -1) {
-      this.createDir(path)
+      // the last element is the filename and we should remove it
+      this.createDir(path.substr(0, path.lastIndexOf('/')))
     }
     try {
       window.remixFileSystem.writeFileSync(unprefixedpath, content)
@@ -116,9 +117,8 @@ class FileProvider {
   }
 
   createDir (path, cb) {
-    var unprefixedpath = this.removePrefix(path)
+    const unprefixedpath = this.removePrefix(path)
     const paths = unprefixedpath.split('/')
-    paths.pop() // last element should the filename
     if (paths.length && paths[0] === '') paths.shift()
     let currentCheck = ''
     paths.forEach((value) => {
@@ -226,7 +226,7 @@ class FileProvider {
       if (files) {
         files.forEach(element => {
           const absPath = (path === '/' ? '' : path) + '/' + element
-          ret[absPath.indexOf('/') === 0 ? absPath.replace('/', '') : absPath] = { isDirectory: window.remixFileSystem.statSync(absPath).isDirectory() }
+          ret[absPath.indexOf('/') === 0 ? absPath.substr(1, absPath.length) : absPath] = { isDirectory: window.remixFileSystem.statSync(absPath).isDirectory() }
           // ^ ret does not accept path starting with '/'
         })
       }
