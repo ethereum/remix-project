@@ -44,9 +44,6 @@ CodeListView.prototype.indexChanged = function (index) {
   this.itemSelected.style.setProperty('border-color', 'var(--primary)')
   this.itemSelected.style.setProperty('border-style', 'solid')
   this.itemSelected.setAttribute('selected', 'selected')
-  if (this.itemSelected.firstChild) {
-    //this.itemSelected.firstChild.setAttribute('style', 'margin-left: 2px')
-  }
   codeView.scrollTop = this.itemSelected.offsetTop - parseInt(codeView.offsetTop)
 }
 
