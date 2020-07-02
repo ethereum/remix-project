@@ -636,7 +636,7 @@ fileExplorer.prototype.renderMenuItems = function () {
           <label
             id=${action}
             data-id="fileExplorerUploadFile${action}"
-            class="${icon} ${css.newFile}"
+            class="${icon} mb-0 ${css.newFile}"
             title="${title}"
           >
             <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onchange=${(event) => {
@@ -647,13 +647,14 @@ fileExplorer.prototype.renderMenuItems = function () {
         `
       } else {
         return yo`
-        <span
-          id=${action}
-          data-id="fileExplorerNewFile${action}"
-          onclick=${(event) => { event.stopPropagation(); this[ action ]() }}
-          class="newFile ${icon} ${css.newFile}"
-          title=${title}>
-        </span>
+          <span
+            id=${action}
+            data-id="fileExplorerNewFile${action}"
+            onclick=${(event) => { event.stopPropagation(); this[ action ]() }}
+            class="newFile ${icon} ${css.newFile}"
+            title=${title}
+          >
+          </span>
         `
       }
     })

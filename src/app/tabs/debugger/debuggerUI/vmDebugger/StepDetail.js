@@ -2,7 +2,8 @@ var yo = require('yo-yo')
 var DropdownPanel = require('./DropdownPanel')
 
 function StepDetail () {
-  this.basicPanel = new DropdownPanel('Step detail', {json: true, displayContentOnly: true})
+  this.basicPanel = new DropdownPanel('Step details', {json: true, displayContentOnly: false})
+  this.basicPanel.show()
   this.detail = { 'vm trace step': '-', 'execution step': '-', 'add memory': '', 'gas': '', 'remaining gas': '-', 'loaded address': '-' }
 }
 
