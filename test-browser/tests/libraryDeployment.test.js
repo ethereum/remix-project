@@ -26,7 +26,7 @@ module.exports = {
           .waitForElementPresent('.instance:nth-of-type(2)')
           .click('.instance:nth-of-type(2) > div > button')
           .perform((done) => {
-            browser.testConstantFunction(addressRef, 'get - call', '', '0: uint256: 45').perform(() => {
+            browser.testConstantFunction(addressRef, 'get - call', '', '0:\nuint256: 45').perform(() => {
               done()
             })
           })
@@ -96,7 +96,7 @@ function checkDeployShouldSucceed (browser, address, callback) {
         .click('.instance:nth-of-type(3) > div > button')
         .perform(() => {
           browser
-            .testConstantFunction(addressRef, 'get - call', '', '0: uint256: 45')
+            .testConstantFunction(addressRef, 'get - call', '', '0:\nuint256: 45')
             .perform(() => { callback() })
         })
 }

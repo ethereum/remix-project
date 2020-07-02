@@ -178,7 +178,7 @@ module.exports = {
     .setValue('*[data-id="debuggerTransactionInput"]', '0x959371506b8f6223d71c709ac2eb2d0158104dca2d76ca949f1662712cf0e6db') // debug tx
     .click('*[data-id="debuggerTransactionStartButton"]')
     .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
-    .assert.containsText('*[data-id="stepdetail"]', 'loaded address: 0x3c943Fb816694d7D1f4C738e3e7823818a88DD6C')
+    .assert.containsText('*[data-id="stepdetail"]', 'loaded address:\n0x3c943Fb816694d7D1f4C738e3e7823818a88DD6C')
     .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x6C3CCC7FBA111707D5A1AAF2758E9D4F4AC5E7B1')
     .end()
   },
