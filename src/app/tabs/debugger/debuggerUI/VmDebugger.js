@@ -108,6 +108,7 @@ function VmDebugger (vmDebuggerLogic) {
     self.functionPanel.basicPanel.show()
     self.storagePanel.basicPanel.show()
     self.memoryPanel.basicPanel.show()
+    self.stepDetail.basicPanel.show()
     self.calldataPanel.basicPanel.show()
     self.callstackPanel.basicPanel.show()
   })
