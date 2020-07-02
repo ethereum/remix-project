@@ -487,6 +487,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateDirList (e) {
     if (e.keyCode === 191) {
+      for (var o of this.uiPathList.querySelectorAll('option')) o.remove()
       this.testTabLogic.dirList(this._view.el.getElementsByClassName('custom-select')[0].value).then((options) => {
         options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
       })
