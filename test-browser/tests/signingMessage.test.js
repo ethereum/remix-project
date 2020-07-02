@@ -38,7 +38,7 @@ module.exports = {
               .pause(5000)
               .verifyCallReturnValue(
                 address,
-                ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'])
+                ['0:address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'])
               .perform(() => {
                 done()
               })
