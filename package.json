@@ -104,14 +104,6 @@
           "sourceMaps": true,
           "plugins": [
             [
-              "module:module-resolver", {
-              "root": ["."],
-                "alias": {
-                  "@remix-project/remix-analyzer": "libs/remix-analyzer/index.ts"
-                }
-              }
-            ],
-            [
               "module:fast-async",
               {
                 "runtimePattern": null,
@@ -178,6 +170,7 @@
     "@types/node": "~8.9.4",
     "@types/react": "16.9.17",
     "@types/react-dom": "16.9.4",
+    "@types/react-router-dom": "5.1.3",
     "@typescript-eslint/eslint-plugin": "^3.3.0",
     "@typescript-eslint/parser": "^3.3.0",
     "ace-mode-move": "0.0.1",
