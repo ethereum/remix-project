@@ -28,10 +28,11 @@ var css = csjs`
   }
   .label_key {
     min-width: 15%;
-    word-break: break-all;
+    max-width: 80%;
+    word-break: break-word;
   }
   .label_value {
-    min-width: 30%;
+    min-width: 10%;
   }
 `
 
@@ -89,7 +90,7 @@ class TreeView {
     var label = yo`
       <div key=${keyPath} data-id="treeViewDiv${keyPath}" class="d-flex flex-row align-items-center">
         ${caret}
-        <span>${self.formatSelf(key, data, li)}</span>
+        <span class="w-100">${self.formatSelf(key, data, li)}</span>
       </div>`
     const expanded = self.expandPath.includes(keyPath)
     li.appendChild(label)
@@ -169,8 +170,8 @@ class TreeView {
 
   formatSelfDefault (key, data) {
     return yo`
-      <div class="d-flex flex-row ${css.label_item}">
-        <label class="font-weight-bold pr-1 ${css.label_key}">${key}:</label> 
+      <div class="d-flex mb-1 flex-row ${css.label_item}">
+        <label class="small font-weight-bold pr-1 ${css.label_key}">${key}:</label> 
         <label class="m-0 ${css.label_value}">${data.self}</label>
       </div>
     `
