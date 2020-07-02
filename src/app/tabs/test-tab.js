@@ -527,7 +527,8 @@ module.exports = class TestTab extends ViewPlugin {
       <div class="${css.testTabView} px-2" id="testView">
         <div class="${css.infoBox}">
           <p class="text-lg"> Test your smart contract in Solidity.</p>
-          <p> Click on "Generate" to generate a sample test file in a:</p>
+          <p> Select directory to load and generate test files.</p>
+          <label>Test directory:</label>
           ${availablePaths}
         </div>
         <div class="${css.tests}">          
