@@ -21,12 +21,17 @@ var css = csjs`
   .caret_tv {
     width: 10px;
     flex-shrink: 0;
+    padding-right: 5px;
   }
-  .label_tv {
-    align-items: center;
+  .label_item {
+    word-break: break-all;
   }
-  .label_tv>span {
-    word-break: break-word;
+  .label_key {
+    min-width: 15%;
+    word-break: break-all;
+  }
+  .label_value {
+    min-width: 30%;
   }
 `
 
@@ -74,7 +79,7 @@ class TreeView {
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
     })
-    return yo`<ul key=${key} data-id="treeViewUl${key}" class="${css.ul_tv} px-2">${children}</ul>`
+    return yo`<ul key=${key} data-id="treeViewUl${key}" class="${css.ul_tv} ml-0 pr-2">${children}</ul>`
   }
 
   formatData (key, data, children, expand, keyPath) {
@@ -82,7 +87,7 @@ class TreeView {
     var li = yo`<li key=${keyPath} data-id="treeViewLi${keyPath}" class=${css.li_tv}></li>`
     var caret = yo`<div class="fas fa-caret-right caret ${css.caret_tv}"></div>`
     var label = yo`
-      <div key=${keyPath} data-id="treeViewDiv${keyPath}" class=${css.label_tv}>
+      <div key=${keyPath} data-id="treeViewDiv${keyPath}" class="d-flex flex-row align-items-center">
         ${caret}
         <span>${self.formatSelf(key, data, li)}</span>
       </div>`
@@ -163,7 +168,12 @@ class TreeView {
   }
 
   formatSelfDefault (key, data) {
-    return yo`<label>${key}: ${data.self}</label>`
+    return yo`
+      <div class="d-flex flex-row ${css.label_item}">
+        <label class="font-weight-bold pr-1 ${css.label_key}">${key}:</label> 
+        <label class="m-0 ${css.label_value}">${data.self}</label>
+      </div>
+    `
   }
 
   extractDataDefault (item, parent, key) {
