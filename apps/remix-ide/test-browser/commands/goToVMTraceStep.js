@@ -17,10 +17,9 @@ function goToVMtraceStep (browser, step, incr, done) {
   browser.execute(function (step) {
     return document.querySelector('#stepdetail').innerHTML
   }, [step], function (result) {
-    if (result.value.indexOf('vm trace step: ' + step) !== -1) {
+    if (result.value.indexOf('vm trace step:') !== -1 && result.value.indexOf(step) !== -1) {
       done()
     } else if (incr > 1000) {
-      console.log(result)
       browser.assert.fail('goToVMtraceStep fails', 'info about error', '')
       done()
     } else {
