@@ -1,15 +1,5 @@
 'use strict'
 
-const basic = `pragma solidity >=0.2.0 <0.7.0;
-
-/**
- * @title Basic contract
- */
-contract Basic {
-    uint someVar;
-    constructor() public {}
-}`
-
 const storage = `pragma solidity >=0.4.22 <0.7.0;
 
 /**
@@ -255,6 +245,5 @@ module.exports = {
   storage: { name: '1_Storage.sol', content: storage },
   owner: { name: '2_Owner.sol', content: owner },
   ballot: { name: '3_Ballot.sol', content: ballot },
-  ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
-  basic: { name: 'basic.sol', content: basic }
+  ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest }
 }
