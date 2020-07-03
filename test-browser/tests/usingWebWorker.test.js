@@ -1,10 +1,19 @@
 'use strict'
-var examples = require('../../src/app/editor/example-contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 
 var sources = [
-  {'browser/basic.sol': {content: examples.basic.content}}
+  {'browser/basic.sol': { content:
+    `pragma solidity >=0.2.0 <0.7.0;
+
+    /**
+     * @title Basic contract
+     */
+    contract Basic {
+        uint someVar;
+        constructor() public {}
+    }`
+  }}
 ]
 
 module.exports = {
@@ -18,7 +27,7 @@ module.exports = {
     browser
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('fileExplorers')
-    .openFile('browser/basic.sol')
+    .addFile('browser/basic.sol', sources[0]['browser/basic.sol'])
     .clickLaunchIcon('solidity')
     .execute(() => {
       document.getElementById('nightlies').checked = true
