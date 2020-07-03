@@ -25,8 +25,7 @@ async function decodeMappingsKeys (web3, storage, corrections, callback) {
         preimage = await getPreimage(web3, '0x' + corrected)
         if (preimage) break
       }
-    } catch (e) {
-    }
+    } catch (e) {} // eslint-disable-line no-empty
     if (preimage) {
       // got preimage!
       // get mapping position (i.e. storage slot), its the last 32 bytes
