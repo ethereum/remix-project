@@ -42,7 +42,7 @@
   "scripts": {
     "build": "mkdirp build; browserify index.js > build/app.js",
     "lint": "standard | notify-error",
-    "test": "standard && tape ./test/tests.js"
+    "test": "./../../node_modules/.bin/tape --require tsconfig-paths/register ./test/tests.js"
   },
   "repository": {
     "type": "git",
