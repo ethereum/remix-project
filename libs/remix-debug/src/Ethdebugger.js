@@ -9,7 +9,7 @@ const stateDecoder = SolidityDecoder.stateDecoder
 const localDecoder = SolidityDecoder.localDecoder
 const InternalCallTree = SolidityDecoder.InternalCallTree
 
-const remixLib = require('remix-lib')
+const remixLib = require('@remix-project/remix-lib')
 const TraceManager = remixLib.trace.TraceManager
 const CodeManager = remixLib.code.CodeManager
 const traceHelper = remixLib.helpers.trace

@@ -1,6 +1,6 @@
 'use strict'
 var vmCall = require('../vmCall')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var traceHelper = remixLib.helpers.trace
 var SolidityProxy = require('../../../src/solidity-decoder/solidityProxy')
 var InternalCallTree = require('../../../src/solidity-decoder/internalCallTree')
