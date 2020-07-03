@@ -1,12 +1,12 @@
 'use strict'
-var yo = require('yo-yo')
-const copy = require('copy-text-to-clipboard')
-var EventManager = require('../../../../../lib/events')
-var TreeView = require('../../../../ui/TreeView') // TODO setup a direct reference to the UI components
+const yo = require('yo-yo')
+const copyToClipboard = require('../../../../ui/copy-to-clipboard')
+const EventManager = require('../../../../../lib/events')
+const TreeView = require('../../../../ui/TreeView') // TODO setup a direct reference to the UI components
 
-var csjs = require('csjs-inject')
+const csjs = require('csjs-inject')
 
-var css = csjs`
+const css = csjs`
   .title {
     display: flex;
     align-items: center;
@@ -23,8 +23,6 @@ var css = csjs`
   }
   .eyeButton {
     margin: 3px;
-  }
-  .eyeButton:hover {
   }
   .dropdownpanel {
     width: 100%;
@@ -87,7 +85,7 @@ DropdownPanel.prototype.update = function (_data, _header) {
   this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
   this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
   if (!this.displayContentOnly) {
-    this.view.querySelector('.title div.btn-sm').style.display = 'block'
+    this.view.querySelector('.title i.fa-copy').style.display = 'block'
     this.view.querySelector('.title span').innerText = _header || ' '
   }
   this.message('')
@@ -101,6 +99,11 @@ DropdownPanel.prototype.setContent = function (node) {
   yo.update(this.view, this.render(null, node))
 }
 
+DropdownPanel.prototype.copyClipboard = function () {
+  const content = this.view.querySelector('.dropdownpanel .dropdownrawcontent')
+  return content.innerText ? content.innerText : content.textContent
+}
+
 DropdownPanel.prototype.render = function (overridestyle, node) {
   var content = yo`<div>Empty</div>`
   if (this.json) {
@@ -108,12 +111,6 @@ DropdownPanel.prototype.render = function (overridestyle, node) {
   }
   overridestyle === undefined ? {} : overridestyle
   var self = this
-  var title = !self.displayContentOnly ? yo`<div class="${css.title} py-0 px-1 title">
-      <div class="${css.icon} fas fa-caret-right" onclick=${function () { self.toggle() }} ></div>
-      <div class="${css.name}" onclick=${function () { self.toggle() }} >${this.name}</div><span class="${css.nameDetail}" onclick=${function () { self.toggle() }} ></span>
-      <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn-sm far fa-clipboard"></div>
-    </div>` : yo`<div></div>`
-
   var contentNode = yo`
     <div class='dropdownpanel ${css.dropdownpanel}' style='display:none'>
       <i class="${css.refresh} fas fa-sync" aria-hidden="true"></i>
@@ -121,6 +118,12 @@ DropdownPanel.prototype.render = function (overridestyle, node) {
       <div class='dropdownrawcontent' style='display:none'></div>
       <div class='message' style='display:none'></div>
     </div>`
+  var title = !self.displayContentOnly ? yo`<div class="${css.title} py-0 px-1 title">
+      <div class="${css.icon} fas fa-caret-right" onclick=${function () { self.toggle() }} ></div>
+      <div class="${css.name}" onclick=${function () { self.toggle() }} >${this.name}</div><span class="${css.nameDetail}" onclick=${function () { self.toggle() }} ></span>
+      ${copyToClipboard(() => this.copyClipboard())}
+    </div>` : yo`<div></div>`
+
   var view = yo`
     <div class="border rounded px-1 mt-1 bg-light">
     <style>
@@ -142,11 +145,6 @@ DropdownPanel.prototype.render = function (overridestyle, node) {
   }
   if (self.displayContentOnly) contentNode.style.display = 'block'
   return view
-}
-
-DropdownPanel.prototype.copyClipboard = function () {
-  var content = this.view.querySelector('.dropdownpanel .dropdownrawcontent')
-  if (content) copy(content.innerText ? content.innerText : content.textContent)
 }
 
 DropdownPanel.prototype.toggle = function () {
