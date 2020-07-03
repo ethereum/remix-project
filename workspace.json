@@ -388,13 +388,14 @@
           "builder": "@nrwl/web:build",
           "options": {
             "outputPath": "dist/apps/remix-ide-js",
-            "index": "apps/remix-ide-js/src/index.html",
+            "index": "apps/remix-ide-js/src/webpack.index.html",
             "main": "apps/remix-ide-js/src/main.js",
             "polyfills": "apps/remix-ide-js/src/polyfills.js",
             "tsConfig": "apps/remix-ide-js/tsconfig.app.json",
             "assets": [
               "apps/remix-ide-js/src/favicon.ico",
-              "apps/remix-ide-js/src/assets"
+              "apps/remix-ide-js/src/assets",
+              "apps/remix-ide-js/src/index.html"
             ],
             "styles": ["apps/remix-ide-js/src/styles.css"],
             "scripts": [],

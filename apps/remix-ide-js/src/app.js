@@ -1,4 +1,4 @@
-'use strict'
+// 'use strict'
 
 var isElectron = require('is-electron')
 var csjs = require('csjs-inject')
