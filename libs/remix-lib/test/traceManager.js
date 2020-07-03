@@ -251,7 +251,7 @@ tape('TraceManager', function (t) {
 
   t.test('TraceManager.getStepCost', function (st) {
     try {
-      const result = this._traceManager.getStepCost(23)
+      const result = traceManager.getStepCost(23)
       console.log(result)
       st.ok(result === '3')
       st.end()
@@ -262,7 +262,7 @@ tape('TraceManager', function (t) {
 
   t.test('TraceManager.getRemainingGas', function (st) {
     try {
-      const result = this._traceManager.getRemainingGas(55)
+      const result = traceManager.getRemainingGas(55)
       console.log(result)
       st.ok(result === '79306')
       st.end()
