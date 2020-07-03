@@ -234,14 +234,14 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "commands": [
-              {
-                "command": "./../../node_modules/.bin/npm-run-all lint"
-              }
+            "linter": "eslint",
+            "config": "libs/remix-simulator/.eslintrc",
+            "files": [
+              "libs/remix-simulator/**/*.js"
             ],
-            "cwd": "libs/remix-simulator"
+            "exclude": ["**/node_modules/**", "libs/remix-simulator/test/**/*"]
           }
         },
         "test": {
@@ -249,13 +249,20 @@
           "options": {
             "commands": [
               {
-                "command": "rm -rf ../../dist"
-              },
-              {
                 "command": "./../../node_modules/.bin/npm-run-all test"
               }
             ],
             "cwd": "libs/remix-simulator"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-simulator",
+            "tsConfig": "libs/remix-simulator/tsconfig.lib.json",
+            "packageJson": "libs/remix-simulator/package.json",
+            "main": "libs/remix-simulator/index.js",
+            "assets": ["libs/remix-simulator/*.md"]
           }
         }
       }
