@@ -54,7 +54,7 @@ module.exports = {
     .addFile('copyFile.js', { content: executeCopyFile })
     .executeScript(`remix.exeCurrent()`)
     .pause(2000)
-    .journalLastChildIncludes('pragma solidity >=0.2.0 <0.7.0;')
+    .journalLastChildIncludes('pragma solidity >=0.4.22 <0.7.0;')
   },
 
   'Should execute `rename` api from file manager external api': function (browser) {
@@ -146,7 +146,7 @@ const executeReadFile = `
 
 const executeCopyFile = `
   const run = async () => {
-    await remix.call('fileManager', 'copyFile', 'browser/basic.sol', 'browser/new_contract.sol')
+    await remix.call('fileManager', 'copyFile', 'browser/3_Ballot.sol', 'browser/new_contract.sol')
     const result = await remix.call('fileManager', 'readFile', 'browser/new_contract.sol')
 
     console.log(result)
