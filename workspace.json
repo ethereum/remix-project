@@ -64,12 +64,16 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc",
-            "tsConfig": [
-              "apps/remix-ide/tsconfig.app.json",
-              "apps/remix-ide/tsconfig.spec.json"
+            "config": "apps/remix-ide/.eslintrc.json",
+            "files": [
+              "apps/remix-ide/**/*.js"
             ],
-            "exclude": ["**/node_modules/**", "!apps/remix-ide/**"]
+            "exclude": ["**/node_modules/**",
+              "apps/remix-ide/build/**/*.js",
+              "apps/remix-ide/src/app/editor/mode-solidity.js",
+              "apps/remix-ide/soljson.js",
+              "apps/remix-ide/assets/js/**/*.js"
+            ]
           }
         },
         "test": {
