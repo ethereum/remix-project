@@ -86,7 +86,7 @@
     "nightwatch_local_runAndDeploy": "nightwatch ./apps/remix-ide/test-browser/tests/runAndDeploy.js --config apps/remix-ide/nightwatch.js --env chrome-runAndDeploy ",
     "onchange": "onchange apps/remix-ide/build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
-    "remixd": "remixd -s ./apps/remix-ide/contracts --remix-ide http://127.0.0.1:8080",
+    "remixd": "remixd -s ./apps/remix-ide/contracts --remix-ide http://127.0.0.1:4200",
     "selenium": "selenium-standalone start",
     "selenium-install": "selenium-standalone install",
     "sourcemap": "exorcist --root ../ apps/remix-ide/build/app.js.map > apps/remix-ide/build/app.js",
