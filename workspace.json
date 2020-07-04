@@ -64,7 +64,7 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/remix-ide/.eslintrc.json",
+            "config": "apps/remix-ide/.eslintrc",
             "files": [
               "apps/remix-ide/**/*.js"
             ],
