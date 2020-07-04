@@ -1,19 +1,19 @@
-import { publish } from './publisher';
+import { publish } from "./publisher";
 
-const open = require('open')
+// tslint:disable-next-line
+const open = require("open");
 
-jest.setTimeout(10000)
+jest.setTimeout(10000);
 
-describe('Publisher tests', () => {
+describe("Publisher tests", () => {
+  test("it can publish", async () => {
+    const result = await publish("hello 123");
 
-    test('it can publish', async () => {
-        const result = await publish("hello 123")
+    expect(result).toBeDefined();
+  });
 
-        expect(result).toBeDefined()
-    })
-
-    test('it can publish html', async () => {
-        const result = await publish(`
+  test("it can publish html", async () => {
+    const result = await publish(`
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -27,14 +27,14 @@ describe('Publisher tests', () => {
                 <div>Content custom</div>
             </body>
             </html>
-        `)
+        `);
 
-        // Uncomment for testing
+    // Uncomment for testing
 
-        // const url = `https://ipfs.io/ipfs/${result}`;
+    // const url = `https://ipfs.io/ipfs/${result}`;
 
-        // await open(url, { app: ['google chrome', '--incognito'] });
+    // await open(url, { app: ['google chrome', '--incognito'] });
 
-        expect(result).toBeDefined()
-    })
-})
+    expect(result).toBeDefined();
+  });
+});
