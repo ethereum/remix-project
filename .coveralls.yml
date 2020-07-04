@@ -1,0 +1,2 @@
+service_name: circleci
+repo_token: $COVERALLS_REPO_TOKEN
