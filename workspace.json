@@ -21,7 +21,8 @@
             ],
             "styles": [],
             "scripts": [],
-            "webpackConfig": "apps/remix-ide/webpack.config.js"
+            "webpackConfig": "apps/remix-ide/webpack.config.js",
+            "maxWorkers": 6
           },
           "configurations": {
             "production": {
