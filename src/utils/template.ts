@@ -2,7 +2,6 @@ import {
   FunctionDocumentation,
   TemplateDoc,
   MethodDoc,
-  ContractDoc,
   ContractDocumentation,
   ParameterDocumentation,
 } from "./types";
@@ -53,14 +52,14 @@ export const template = (
     <div id="ethdoc-viewer">
     
         ${
-          functions.length === 0
-            ? "No contract to display"
-            : renderHeader(name, contractDoc)
-        }
+  functions.length === 0
+    ? "No contract to display"
+    : renderHeader(name, contractDoc)
+  }
 
         ${functions
-          .map(
-            (item) => `
+    .map(
+      (item) => `
             <h6>${item.name} - ${item.type}</h6>
             <hr>
             ${renderParameterDocumentation(item.inputs)}
@@ -72,8 +71,8 @@ export const template = (
             ${renderParameterDocumentation(item.outputs)}
 
             `
-          )
-          .join("\n")}
+    )
+    .join("\n")}
     
     </div>
 `;
@@ -104,7 +103,7 @@ export const renderHeader = (
 ) => `
     <h3>${name} ${
   contractDoc.title ? `<small>: ${contractDoc.title}</small>` : ""
-}</h3>
+  }</h3>
 
     ${contractDoc.notice ? `<p class="lead">${contractDoc.notice}</p>` : ""}
 
@@ -117,8 +116,8 @@ export const renderParameterDocumentation = (
   parameters: ParameterDocumentation[]
 ) => `
         ${
-          parameters.length > 0
-            ? `
+  parameters.length > 0
+    ? `
             <table class="table table-sm table-bordered table-striped">
                 <thead>
                     <tr>
@@ -129,25 +128,25 @@ export const renderParameterDocumentation = (
                 </thead>
                 <tbody>
                     ${parameters.map(
-                      (output) => `<tr>
+      (output) => `<tr>
                                 <td>${output.name}</td>
                                 <td>${output.type}</td>
                                 <td>${output.description}</td>
                                 </tr>`
-                    )}
+    )}
                 </tbody>
             </table>`
-            : "<p>No parameters</p>"
-        }
+    : "<p>No parameters</p>"
+  }
 `;
 
 export const getMethodDetails = (devMethod?: Partial<MethodDoc>) => {
   return !devMethod
     ? "<p><strong>**Add Documentation for the method here**</strong></p>"
     : Object.keys(devMethod)
-        .filter((key) => key !== "params")
-        .map((key) => {
-          (devMethodDocTemplate as any)[key]((devMethod as any)[key]);
-        })
-        .join("\n");
+      .filter((key) => key !== "params")
+      .map((key) => {
+        return (devMethodDocTemplate as any)[key]((devMethod as any)[key]);
+      })
+      .join("\n");
 };
