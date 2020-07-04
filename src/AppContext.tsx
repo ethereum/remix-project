@@ -3,8 +3,7 @@ import {
   PluginApi,
   IRemixApi,
   Api,
-  PluginClient,
-  CompilationResult,
+  PluginClient
 } from "@remixproject/plugin";
 
 import { ContractName, Documentation, PublishedSite } from "./types";
