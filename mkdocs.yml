@@ -1,0 +1,4 @@
+site_name: Remix Ethdoc
+nav:
+    - Home: index.md
+theme: readthedocs
