@@ -2,16 +2,11 @@ import {
   CompilationResult,
   CompiledContract,
   FunctionDescription,
-  ABIDescription,
-  DevMethodDoc,
-  UserMethodDoc,
   ABIParameter,
-  DeveloperDocumentation,
-  UserDocumentation,
+  ABIDescription
 } from "@remixproject/plugin";
 
 import {
-  EthDocumentation,
   FileName,
   Documentation,
   ContractName,
@@ -73,7 +68,7 @@ export const getContractDoc = (name: string, contract: CompiledContract) => {
 export const getContractDocumentation = (contract: CompiledContract) => {
   const methods: MethodsDocumentation = {};
 
-  Object.keys(contract.userdoc.methods).map((item) => {
+  Object.keys(contract.userdoc.methods).forEach((item) => {
     if (contract.devdoc.methods[item]) {
       const finalResult = {
         ...contract.userdoc.methods[item],

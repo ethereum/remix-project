@@ -27,7 +27,7 @@ export const HomeView: React.FC = () => {
     if (isPublishing) {
       publishDocumentation();
     }
-  }, [isPublishing]);
+  }, [isPublishing, htmlDocumentation]);
 
   const displayDocumentation = (
     client: any,
