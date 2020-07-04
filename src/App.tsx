@@ -1,71 +1,88 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef } from "react";
 
 import {
   createIframeClient,
   CompilationFileSources,
   CompilationResult,
-  Status
-} from "@remixproject/plugin"
+  Status,
+} from "@remixproject/plugin";
 
-import { AppContext } from "./AppContext"
-import { Routes } from "./routes"
-import { useLocalStorage } from "./hooks/useLocalStorage"
-import { createDocumentation } from "./utils/utils"
+import { AppContext } from "./AppContext";
+import { Routes } from "./routes";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import { createDocumentation } from "./utils/utils";
 
-import "./App.css"
-import { ContractName, Documentation } from "./types"
+import "./App.css";
+import { ContractName, Documentation } from "./types";
 
-const devMode = { port: 8080 }
+const devMode = { port: 8080 };
 
 export const getNewContractNames = (compilationResult: CompilationResult) => {
-  const compiledContracts = compilationResult.contracts
-  let result: string[] = []
+  const compiledContracts = compilationResult.contracts;
+  let result: string[] = [];
 
   for (const file of Object.keys(compiledContracts)) {
-    const newContractNames = Object.keys(compiledContracts[file])
-    result = [...result, ...newContractNames]
+    const newContractNames = Object.keys(compiledContracts[file]);
+    result = [...result, ...newContractNames];
   }
 
-  return result
-}
+  return result;
+};
 
-const sampleMap = new Map<ContractName, Documentation>()
+const sampleMap = new Map<ContractName, Documentation>();
 
 const App = () => {
-  const [clientInstance, setClientInstance] = useState(undefined as any)
-  const [contracts, setContracts] = useState(sampleMap)
-  const [sites, setSites] = useLocalStorage('sites', [])
-  const clientInstanceRef = useRef(clientInstance)
-  clientInstanceRef.current = clientInstance
-  const contractsRef = useRef(contracts)
-  contractsRef.current = contracts
+  const [clientInstance, setClientInstance] = useState(undefined as any);
+  const [contracts, setContracts] = useState(sampleMap);
+  const [sites, setSites] = useLocalStorage("sites", []);
+  const clientInstanceRef = useRef(clientInstance);
+  clientInstanceRef.current = clientInstance;
+  const contractsRef = useRef(contracts);
+  contractsRef.current = contracts;
 
   useEffect(() => {
-    console.log("Remix EthDoc loading...")
-    const client = createIframeClient({ devMode })
+    console.log("Remix EthDoc loading...");
+    const client = createIframeClient({ devMode });
     const loadClient = async () => {
-      await client.onload()
-      setClientInstance(client)
-      console.log("Remix EthDoc Plugin has been loaded")
+      await client.onload();
+      setClientInstance(client);
+      console.log("Remix EthDoc Plugin has been loaded");
 
-      client.solidity.on("compilationFinished", (fileName: string, source: CompilationFileSources, languageVersion: string, data: CompilationResult) => {
-        console.log("New compilation received")
+      client.solidity.on(
+        "compilationFinished",
+        (
+          fileName: string,
+          source: CompilationFileSources,
+          languageVersion: string,
+          data: CompilationResult
+        ) => {
+          console.log("New compilation received");
 
-        const existingMap = contractsRef.current;
-        const newContractsMapWithDocumentation = createDocumentation(fileName, data)
-        const newMap = new Map([...existingMap, ...newContractsMapWithDocumentation])
+          const existingMap = contractsRef.current;
+          const newContractsMapWithDocumentation = createDocumentation(
+            fileName,
+            data
+          );
+          const newMap = new Map([
+            ...existingMap,
+            ...newContractsMapWithDocumentation,
+          ]);
 
-        console.log("New Map", newMap)
+          console.log("New Map", newMap);
 
-        const status: Status = { key: 'succeed', type: 'success', title: 'New documentation ready' }
-        clientInstanceRef.current.emit('statusChanged', status)
-        setContracts(newMap)
-      })
-    }
+          const status: Status = {
+            key: "succeed",
+            type: "success",
+            title: "New documentation ready",
+          };
+          clientInstanceRef.current.emit("statusChanged", status);
+          setContracts(newMap);
+        }
+      );
+    };
 
-    loadClient()
-  }, [])
-
+    loadClient();
+  }, []);
 
   return (
     <AppContext.Provider
@@ -74,11 +91,12 @@ const App = () => {
         contracts,
         setContracts,
         sites,
-        setSites
-      }}>
+        setSites,
+      }}
+    >
       <Routes />
     </AppContext.Provider>
-  )
-}
+  );
+};
 
-export default App
+export default App;

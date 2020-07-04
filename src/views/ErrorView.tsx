@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 export const ErrorView: React.FC = () => {
   return (
@@ -15,17 +15,14 @@ export const ErrorView: React.FC = () => {
         width="250"
         src="https://res.cloudinary.com/key-solutions/image/upload/v1580400635/solid/error-png.png"
         alt="Error page"
-      ></img>
+      />
       <h5>Sorry, something unexpected happened. </h5>
       <h5>
         Please raise an issue:{" "}
-        <a
-          style={{ color: "red" }}
-          href=""
-        >
+        <a style={{ color: "red" }} href="">
           Here
         </a>
       </h5>
     </div>
-  )
-}
+  );
+};
