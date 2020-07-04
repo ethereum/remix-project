@@ -7,7 +7,7 @@ jobs:
   remix-ide-chrome:
     docker:
       # specify the version you desire here
-      - image: circleci/node:9.11.2-browsers
+      - image: circleci/node:10.18.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
