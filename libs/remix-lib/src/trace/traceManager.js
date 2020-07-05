@@ -140,10 +140,24 @@ TraceManager.prototype.getStackAt = function (stepIndex, callback) {
   }
 }
 
+// TraceManager.prototype.getLastCallChangeSince = function (stepIndex, callback) {
+//   const check = this.checkRequestedStep(stepIndex)
+//   if (check) {
+//     return callback(check, null)
+//   }
+//   const callChange = util.findCall(stepIndex, this.traceCache.callsTree.call)
+//   if (callChange === null) {
+//     callback(null, 0)
+//   } else {
+//     callback(null, callChange)
+//   }
+// }
+
 TraceManager.prototype.getLastCallChangeSince = function (stepIndex) {
-  try {
-    this.checkRequestedStep(stepIndex)
-  } catch (check) {
+  // this.checkRequestedStep(stepIndex)
+  const check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    // return callback(check, null)
     throw new Error(check)
   }
 
@@ -154,16 +168,58 @@ TraceManager.prototype.getLastCallChangeSince = function (stepIndex) {
   return callChange
 }
 
-TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex) {
+// TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex, callback) {
+//   const check = this.checkRequestedStep(stepIndex)
+//   if (check) {
+//     return callback(check, null)
+//   }
+//   this.getLastCallChangeSince(stepIndex, function (error, resp) {
+//     if (error) {
+//       callback(error, null)
+//     } else {
+//       if (resp) {
+//         callback(null, resp.address)
+//       } else {
+//         callback('unable to get current called address. ' + stepIndex + ' does not match with a CALL')
+//       }
+//     }
+//   })
+// }
+
+// TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex) {
+//   const check = this.checkRequestedStep(stepIndex)
+//   if (check) {
+//     // return callback(check, null)
+//     throw new Error(check)
+//   }
+//   try {
+//     const resp = this.getLastCallChangeSince(stepIndex)
+//     if (!resp) {
+//       throw new Error('unable to get current called address. ' + stepIndex + ' does not match with a CALL')
+//     }
+//     return resp.address
+//   } catch (error) {
+//     throw new Error(error)
+//   }
+// }
+
+TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex, callback) {
+  const check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
+  }
+
   try {
-    this.checkRequestedStep(stepIndex)
     const resp = this.getLastCallChangeSince(stepIndex)
     if (!resp) {
-      throw new Error('unable to get current called address. ' + stepIndex + ' does not match with a CALL')
+      // throw new Error('unable to get current called address. ' + stepIndex + ' does not match with a CALL')
+      callback('unable to get current called address. ' + stepIndex + ' does not match with a CALL')
     }
-    return resp.address
+    // return resp.address
+    return callback(null, resp.address)
   } catch (error) {
-    throw new Error(error)
+    // throw new Error(error)
+    return callback(error)
   }
 }
 
