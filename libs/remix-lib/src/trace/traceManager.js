@@ -112,9 +112,9 @@ TraceManager.prototype.buildCallPath = function (stepIndex, callback) {
 }
 
 TraceManager.prototype.getCallStackAt = function (stepIndex) {
-  // this.checkRequestedStep(stepIndex)
-  const check = this.checkRequestedStep(stepIndex)
-  if (check) {
+  try {
+    this.checkRequestedStep(stepIndex)
+  } catch (check) {
     throw new Error(check)
   }
   const call = util.findCall(stepIndex, this.traceCache.callsTree.call)
@@ -154,9 +154,9 @@ TraceManager.prototype.getStackAt = function (stepIndex, callback) {
 // }
 
 TraceManager.prototype.getLastCallChangeSince = function (stepIndex) {
-  // this.checkRequestedStep(stepIndex)
-  const check = this.checkRequestedStep(stepIndex)
-  if (check) {
+  try {
+    this.checkRequestedStep(stepIndex)
+  } catch (check) {
     // return callback(check, null)
     throw new Error(check)
   }
@@ -204,8 +204,9 @@ TraceManager.prototype.getLastCallChangeSince = function (stepIndex) {
 // }
 
 TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex, callback) {
-  const check = this.checkRequestedStep(stepIndex)
-  if (check) {
+  try {
+    this.checkRequestedStep(stepIndex)
+  } catch (check) {
     return callback(check, null)
   }
 
