@@ -45,21 +45,29 @@ function Debugger (options) {
   })
 }
 
-Debugger.prototype.registerAndHighlightCodeItem = function (index) {
+Debugger.prototype.registerAndHighlightCodeItem = async function (index) {
   // register selected code item, highlight the corresponding source location
-  this.debugger.traceManager.getCurrentCalledAddressAt(index, async (error, address) => {
-    if (error) return console.log(error)
+  // this.debugger.traceManager.getCurrentCalledAddressAt(index, async (error, address) => {
+
+  try {
+    const address = this.debugger.traceManager.getCurrentCalledAddressAt(index)
     const compilationResultForAddress = await this.compilationResult(address)
     if (!compilationResultForAddress) return
-    this.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts, (error, rawLocation) => {
-      if (!error && compilationResultForAddress && compilationResultForAddress.data) {
+
+    this.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts).then((rawLocation) => {
+      if (compilationResultForAddress && compilationResultForAddress.data) {
         var lineColumnPos = this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, compilationResultForAddress.source.sources, compilationResultForAddress.data.sources)
         this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation])
       } else {
         this.event.trigger('newSourceLocation', [null])
       }
+    }).catch((_error) => {
+      this.event.trigger('newSourceLocation', [null])
     })
-  })
+    // })
+  } catch (error) {
+    return console.log(error)
+  }
 }
 
 Debugger.prototype.updateWeb3 = function (web3) {
@@ -107,10 +115,8 @@ Debugger.prototype.debugTx = function (tx, loadingCb) {
   this.step_manager = new StepManager(this.debugger, this.debugger.traceManager)
 
   this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
-    this.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
-      if (!error) {
-        this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [sourceLocation])
-      }
+    this.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts).then((sourceLocation) => {
+      this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [sourceLocation])
     })
   })
 
