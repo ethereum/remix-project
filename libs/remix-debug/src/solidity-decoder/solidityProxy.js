@@ -40,25 +40,25 @@ class SolidityProxy {
     * @param {Function} cb  - callback returns (error, contractName)
     */
   contractNameAt (vmTraceIndex, cb) {
-    this.traceManager.getCurrentCalledAddressAt(vmTraceIndex, (error, address) => {
-      if (error) {
-        cb(error)
+    try {
+      const address = this.traceManager.getCurrentCalledAddressAt(vmTraceIndex)
+
+      if (this.cache.contractNameByAddress[address]) {
+        cb(null, this.cache.contractNameByAddress[address])
       } else {
-        if (this.cache.contractNameByAddress[address]) {
-          cb(null, this.cache.contractNameByAddress[address])
-        } else {
-          this.codeManager.getCode(address, (error, code) => {
-            if (error) {
-              cb(error)
-            } else {
-              const contractName = contractNameFromCode(this.contracts, code.bytecode, address)
-              this.cache.contractNameByAddress[address] = contractName
-              cb(null, contractName)
-            }
-          })
-        }
+        this.codeManager.getCode(address, (error, code) => {
+          if (error) {
+            cb(error)
+          } else {
+            const contractName = contractNameFromCode(this.contracts, code.bytecode, address)
+            this.cache.contractNameByAddress[address] = contractName
+            cb(null, contractName)
+          }
+        })
       }
-    })
+    } catch (error) {
+      cb(error)
+    }
   }
 
   /**
@@ -96,13 +96,14 @@ class SolidityProxy {
     * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the state variables
     * @return {Object} - returns state variables of @args vmTraceIndex
     */
-  extractStateVariablesAt (vmtraceIndex, cb) {
-    this.contractNameAt(vmtraceIndex, (error, contractName) => {
-      if (error) {
-        cb(error)
-      } else {
-        cb(null, this.extractStateVariables(contractName))
-      }
+  extractStateVariablesAt (vmtraceIndex) {
+    return new Promise((resolve, reject) => {
+      this.contractNameAt(vmtraceIndex, (error, contractName) => {
+        if (error) {
+          return reject(error)
+        }
+        return resolve(this.extractStateVariables(contractName))
+      })
     })
   }
 
