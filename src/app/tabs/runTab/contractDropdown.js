@@ -101,7 +101,7 @@ class ContractDropdownUI {
       onchange=${() => this.toggleCheckedState.bind()}
       >
     `
-    if (this.ipfsCheckedState) ipfsCheckbox.checked = true
+    if (this.ipfsCheckedState) this.ipfsCheckbox.checked = true
 
     this.deployCheckBox = yo`
       <div class="d-flex py-1 align-items-center custom-control custom-checkbox">
