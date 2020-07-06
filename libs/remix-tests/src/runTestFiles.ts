@@ -17,7 +17,8 @@ import { deployAll } from './deployer'
  * @param opts Options
  */
 
-export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, finalCallback, opts?: Options) {
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, finalCallback: any = () => {}, opts?: Options) {
     opts = opts || {}
     const sourceASTs: any = {}
     const { Signale } = require('signale')
