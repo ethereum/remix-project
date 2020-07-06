@@ -273,7 +273,7 @@ export interface CompilationResult {
   /////////
   export interface AstNode {
     absolutePath?: string
-    exportedSymbols?: Object
+    exportedSymbols?: Record<string, unknown>
     id: number
     nodeType: string
     nodes?: Array<AstNode>
@@ -302,7 +302,7 @@ export interface CompilationResult {
     constant?: boolean
     name?: string
     public?: boolean
-    exportedSymbols?: Object
+    exportedSymbols?: Record<string, unknown>
     argumentTypes?: null
     absolutePath?: string
     [x: string]: any
@@ -325,7 +325,7 @@ export interface CompilationResult {
     /** EVM-related outputs */
     evm: {
       assembly: string
-      legacyAssembly: {}
+      legacyAssembly: Record<string, unknown>
       /** Bytecode and related details. */
       bytecode: BytecodeObject
       deployedBytecode: BytecodeObject
