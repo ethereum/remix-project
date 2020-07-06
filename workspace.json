@@ -78,11 +78,13 @@
           }
         },
         "test": {
-          "builder": "@nrwl/jest:jest",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "jestConfig": "apps/remix-ide/jest.config.js",
-            "tsConfig": "apps/remix-ide/tsconfig.spec.json",
-            "passWithNoTests": true
+            "commands": [
+              {
+                "command": "csslint && node apps/remix-ide/test/index.js"
+              }
+            ]
           }
         }
       }
