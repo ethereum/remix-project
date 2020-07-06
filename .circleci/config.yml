@@ -30,6 +30,8 @@ jobs:
           command: |
             java -version
             sudo apt-get purge --auto-remove java-common
+            apt-get install software-properties-common
+            apt-get update
             add-apt-repository ppa:openjdk-r/ppa
             apt-get update
             apt-get install openjdk-8-jdk
