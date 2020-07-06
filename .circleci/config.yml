@@ -23,9 +23,17 @@ jobs:
     parallelism: 20
     steps:
       - checkout
-      - run: java -version
       - run: npm install
       - run: npm run lint && npm run test && npm run make-mock-compiler
+      - run:
+          name: Download Compatible JAVA Version for Selenium
+          command: |
+            java -version
+            apt-get purge --auto-remove java-common
+            add-apt-repository ppa:openjdk-r/ppa
+            apt-get update
+            apt-get install openjdk-8-jdk
+            java -version
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
