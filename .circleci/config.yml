@@ -30,11 +30,11 @@ jobs:
           command: |
             java -version
             sudo apt-get purge --auto-remove java-common
-            apt-get install software-properties-common
-            apt-get update
-            add-apt-repository ppa:openjdk-r/ppa
-            apt-get update
-            apt-get install openjdk-8-jdk
+            sudo apt-get install software-properties-common
+            sudo apt-get update
+            sudo add-apt-repository ppa:openjdk-r/ppa
+            sudo apt-get update
+            sudo apt-get install openjdk-8-jdk
             java -version
       - run:
           name: Download Selenium
