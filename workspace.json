@@ -72,7 +72,8 @@
               "apps/remix-ide/build/**/*.js",
               "apps/remix-ide/src/app/editor/mode-solidity.js",
               "apps/remix-ide/soljson.js",
-              "apps/remix-ide/assets/js/**/*.js"
+              "apps/remix-ide/assets/js/**/*.js",
+              "apps/remix-ide/src/assets/js/**/*.js"
             ]
           }
         },
