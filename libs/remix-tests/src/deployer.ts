@@ -1,5 +1,5 @@
 import async from 'async'
-import { execution } from 'remix-lib'
+import { execution } from '@remix-project/remix-lib'
 import Web3 from 'web3'
 import { compilationInterface } from 'types'
 
@@ -12,27 +12,27 @@ import { compilationInterface } from 'types'
  */
 
 export function deployAll(compileResult: compilationInterface, web3: Web3, withDoubleGas: boolean, callback) {
-    let compiledObject = {}
-    let contracts = {}
+    const compiledObject = {}
+    const contracts = {}
     let accounts: string[] = []
 
     async.waterfall([
-        function getAccountList(next: Function) {
+        function getAccountList(next) {
             web3.eth.getAccounts((_err, _accounts) => {
                 accounts = _accounts
                 next()
             })
         },
-        function getContractData(next: Function) {
-            for (let contractFile in compileResult) {
-                for (let contractName in compileResult[contractFile]) {
-                    let contract = compileResult[contractFile][contractName]
+        function getContractData(next) {
+            for (const contractFile in compileResult) {
+                for (const contractName in compileResult[contractFile]) {
+                    const contract = compileResult[contractFile][contractName]
 
                     const className = contractName
                     const filename = contractFile
 
-                    let abi = contract.abi
-                    let code = contract.evm.bytecode.object
+                    const abi = contract.abi
+                    const code = contract.evm.bytecode.object
 
                     compiledObject[className] = {}
                     compiledObject[className].abi = abi
@@ -48,11 +48,11 @@ export function deployAll(compileResult: compilationInterface, web3: Web3, withD
             }
             next()
         },
-        function determineContractsToDeploy(next: Function) {
-            let contractsToDeploy: string[] = ['Assert']
-            let allContracts = Object.keys(compiledObject)
+        function determineContractsToDeploy(next) {
+            const contractsToDeploy: string[] = ['Assert']
+            const allContracts = Object.keys(compiledObject)
 
-            for (let contractName of allContracts) {
+            for (const contractName of allContracts) {
                 if (contractName === 'Assert') {
                     continue
                 }
@@ -62,7 +62,7 @@ export function deployAll(compileResult: compilationInterface, web3: Web3, withD
             }
             next(null, contractsToDeploy)
         },
-        function deployContracts(contractsToDeploy: string[], next: Function) {
+        function deployContracts(contractsToDeploy: string[], next) {
             const deployRunner = (deployObject, contractObject, contractName, filename, callback) => {
                 deployObject.estimateGas().then((gasValue) => {
                     const gasBase = Math.ceil(gasValue * 1.2)
@@ -88,30 +88,26 @@ export function deployAll(compileResult: compilationInterface, web3: Web3, withD
             }
 
             async.eachOfLimit(contractsToDeploy, 1, function (contractName, index, nextEach) {
-                let contract = compiledObject[contractName]
-                let encodeDataFinalCallback = (error, contractDeployData) => {
+                const contract = compiledObject[contractName]
+                const encodeDataFinalCallback = (error, contractDeployData) => {
                     if (error) return nextEach(error)
-                    try {
-                        let contractObject = new web3.eth.Contract(contract.abi)
-                        let deployObject = contractObject.deploy({arguments: [], data: '0x' + contractDeployData.dataHex})
+                        const contractObject = new web3.eth.Contract(contract.abi)
+                        const deployObject = contractObject.deploy({arguments: [], data: '0x' + contractDeployData.dataHex})
                         deployRunner(deployObject, contractObject, contractName, contract.filename, (error) => { nextEach(error) })
-                    } catch (e) {
-                        throw e
-                    }
                 }
 
-                let encodeDataStepCallback = (msg) => { console.dir(msg) }
+                const encodeDataStepCallback = (msg) => { console.dir(msg) }
 
-                let encodeDataDeployLibraryCallback = (libData, callback) => {
-                    let abi = compiledObject[libData.data.contractName].abi
-                    let code = compiledObject[libData.data.contractName].code
-                    let libraryObject = new web3.eth.Contract(abi)
-                    let deployObject = libraryObject.deploy({arguments: [], data: '0x' + code})
+                const encodeDataDeployLibraryCallback = (libData, callback) => {
+                    const abi = compiledObject[libData.data.contractName].abi
+                    const code = compiledObject[libData.data.contractName].code
+                    const libraryObject = new web3.eth.Contract(abi)
+                    const deployObject = libraryObject.deploy({arguments: [], data: '0x' + code})
                     deployRunner(deployObject, libraryObject, libData.data.contractName, contract.filename, callback)
                 }
 
-                let funAbi = null // no need to set the abi for encoding the constructor
-                let params = '' // we suppose that the test contract does not have any param in the constructor
+                const funAbi = null // no need to set the abi for encoding the constructor
+                const params = '' // we suppose that the test contract does not have any param in the constructor
                 execution.txFormat.encodeConstructorCallAndDeployLibraries(contractName, contract.raw, compileResult, params, funAbi, encodeDataFinalCallback, encodeDataStepCallback, encodeDataDeployLibraryCallback)
             }, function (err) {
                 if(err) next(err)
