@@ -20,7 +20,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "standard",
-    "test": "tsc && mocha --require ts-node/register tests/*.ts -t 300000",
+    "test": "./../../node_modules/.bin/mocha --require ts-node/register tests/*.ts -t 300000",
     "prepublish": "npm run build"
   },
   "repository": {

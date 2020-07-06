@@ -1,7 +1,7 @@
 import async from 'async'
 import { execution } from '@remix-project/remix-lib'
 import Web3 from 'web3'
-import { compilationInterface } from 'types'
+import { compilationInterface } from './types'
 
 /**
  * @dev Deploy all contracts from compilation result
