@@ -23,7 +23,6 @@ jobs:
     parallelism: 20
     steps:
       - checkout
-      - run: java -version
       - run: npm install
       - run: npm run lint && npm run test && npm run make-mock-compiler
       - run:
