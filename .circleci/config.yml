@@ -29,7 +29,7 @@ jobs:
           name: Download Compatible JAVA Version for Selenium
           command: |
             java -version
-            apt-get purge --auto-remove java-common
+            sudo apt-get purge --auto-remove java-common
             add-apt-repository ppa:openjdk-r/ppa
             apt-get update
             apt-get install openjdk-8-jdk
