@@ -7,7 +7,7 @@ jobs:
   remix-ide-chrome:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.18.0-browsers
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -41,7 +41,7 @@ jobs:
   remix-ide-firefox:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.18.0-browsers
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -81,7 +81,7 @@ jobs:
   remix-ide-run-deploy:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.18.0-browsers
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -113,7 +113,7 @@ jobs:
   deploy-remix-live:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.18.0-browsers
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -142,7 +142,7 @@ jobs:
   deploy-remix-alpha:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.18.0-browsers
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
