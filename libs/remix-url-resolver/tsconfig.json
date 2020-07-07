@@ -1,21 +1,9 @@
 {
-  "compileOnSave": false,
-  "include": ["./src"],
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./src",
-    "outDir": "./dist",
-    "sourceMap": true,
-    "declaration": true,
+    "types": ["node"],
     "module": "commonjs",
-    "strict": true,
-    "noImplicitAny": false,
-    "strictPropertyInitialization": false,
-    "experimentalDecorators": true,
-    "target": "es5",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["dom", "es2018"],
-    "paths": {
-        "remix-url-resolver": ["./"]
-    }
-  }
+    "esModuleInterop": true 
+  },
+  "include": ["**/*.ts"]
 }
