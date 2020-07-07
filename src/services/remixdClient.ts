@@ -236,7 +236,7 @@ function isRealPath (path: string): boolean {
 
   if (!isRealPath) {
     console.log('\x1b[33m%s\x1b[0m', mes)
-    throw new Error(mes)
+    // throw new Error(mes)
   }
   return isRealPath
 }
