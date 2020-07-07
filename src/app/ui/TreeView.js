@@ -104,7 +104,7 @@ class TreeView {
         if (self.isExpanded(keyPath)) {
           if (!self.expandPath.includes(keyPath)) self.expandPath.push(keyPath)
         } else {
-          self.expandPath = self.expandPath.filter(path => path !== keyPath)
+          self.expandPath = self.expandPath.filter(path => !path.startsWith(keyPath))
         }
       }
       label.oncontextmenu = function (event) {
