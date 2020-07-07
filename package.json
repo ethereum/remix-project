@@ -25,7 +25,7 @@
     "start": "nx start",
     "serve": "nx serve",
     "build": "nx build",
-    "build:tslibs": "nx run-many --target=build --projects=remix-analyzer,remix-astwalker,remix-solidity,remix-tests,remix-url-resolver",
+    "build:libs": "nx run-many --target=build --parallel=false --with-deps=true --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver",
     "test": "nx test",
     "test:libs": "nx run-many --target=test --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver",
     "lint": "nx lint",
