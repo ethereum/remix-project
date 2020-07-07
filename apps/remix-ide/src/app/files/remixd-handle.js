@@ -85,7 +85,7 @@ export class RemixdHandle extends WebsocketPlugin {
             try {
               super.activate()
               setTimeout(() => {
-                if (!super.socket) {
+                if (!this.socket) {
                   connection(new Error('Connection with daemon failed.'))
                 } else {
                   connection()
