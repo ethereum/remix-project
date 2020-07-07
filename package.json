@@ -165,6 +165,7 @@
     "@remix-project/remix-solidity": "0.3.30",
     "@remix-project/remix-tests": "0.1.33",
     "@resolver-engine/imports": "^0.3.0",
+    "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
     "@types/node": "~8.9.4",
     "@typescript-eslint/eslint-plugin": "^3.3.0",

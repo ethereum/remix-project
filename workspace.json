@@ -376,14 +376,13 @@
           }
         },
         "build": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/node:package",
           "options": {
-            "commands": [
-              {
-                "command": "./../../node_modules/.bin/npm-run-all build"
-              }
-            ],
-            "cwd": "libs/remix-url-resolver"
+            "outputPath": "dist/libs/remix-url-resolver",
+            "tsConfig": "libs/remix-url-resolver/tsconfig.lib.json",
+            "packageJson": "libs/remix-url-resolver/package.json",
+            "main": "libs/remix-url-resolver/src/index.ts",
+            "assets": ["libs/remix-url-resolver/*.md"]
           }
         }
       }
