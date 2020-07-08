@@ -70,6 +70,17 @@ export class RemixdHandle extends WebsocketPlugin {
         )
         this.canceled()
       } else {
+        const intervalId = setInterval(() => {
+          if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
+            clearInterval(intervalId)
+            console.log(error)
+            modalDialogCustom.alert(
+              'Connection to remixd terminated' +
+              'Please make sure remixd is still running in the background.'
+            )
+            this.canceled()
+          }
+        }, 3000)
         this.locahostProvider.init(_ => this.fileSystemExplorer.ensureRoot())
       }
     }
@@ -85,7 +96,7 @@ export class RemixdHandle extends WebsocketPlugin {
             try {
               super.activate()
               setTimeout(() => {
-                if (!this.socket) {
+                if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
                   connection(new Error('Connection with daemon failed.'))
                 } else {
                   connection()
