@@ -12,7 +12,7 @@ export const compile = async (compilationTargets, settings) => {
       compiler.set('language', settings.language)
       compiler.loadVersion(canUseWorker(settings.version), urlFromVersion(settings.version))
       compiler.event.register('compilationFinished', (success, compilationData, source) => {
-        if (!success) return reject(compilationData)
+        if (!success) return resolve({ compilationData, source })
         resolve(new CompilerAbstract(settings.version, compilationData, source))
       })
       compiler.event.register('compilerLoaded', _ => compiler.compile(compilationTargets, ''))
