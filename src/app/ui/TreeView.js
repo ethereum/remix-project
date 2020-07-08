@@ -80,13 +80,13 @@ class TreeView {
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
     })
-    return yo`<ul key=${key} data-id="treeViewUl${key}" class="${css.ul_tv} ml-0 pr-2">${children}</ul>`
+    return yo`<ul key=${key} data-id="treeViewUl${key}" class="${css.ul_tv} ml-0 px-2">${children}</ul>`
   }
 
   formatData (key, data, children, expand, keyPath) {
     var self = this
     var li = yo`<li key=${keyPath} data-id="treeViewLi${keyPath}" class=${css.li_tv}></li>`
-    var caret = yo`<div class="fas fa-caret-right caret ${css.caret_tv}"></div>`
+    var caret = yo`<div class="px-1 fas fa-caret-right caret ${css.caret_tv}"></div>`
     var label = yo`
       <div key=${keyPath} data-id="treeViewDiv${keyPath}" class="d-flex flex-row align-items-center">
         ${caret}
@@ -95,7 +95,7 @@ class TreeView {
     const expanded = self.expandPath.includes(keyPath)
     li.appendChild(label)
     if (data.children) {
-      var list = yo`<ul key=${keyPath} data-id="treeViewUlList${keyPath}" class=${css.ul_tv}>${children}</ul>`
+      var list = yo`<ul key=${keyPath} data-id="treeViewUlList${keyPath}" class="pl-2 ${css.ul_tv}">${children}</ul>`
       list.style.display = expanded ? 'block' : 'none'
       caret.className = list.style.display === 'none' ? `fas fa-caret-right caret ${css.caret_tv}` : `fas fa-caret-down caret ${css.caret_tv}`
       caret.setAttribute('data-id', `treeViewToggle${keyPath}`)
@@ -104,7 +104,7 @@ class TreeView {
         if (self.isExpanded(keyPath)) {
           if (!self.expandPath.includes(keyPath)) self.expandPath.push(keyPath)
         } else {
-          self.expandPath = self.expandPath.filter(path => path !== keyPath)
+          self.expandPath = self.expandPath.filter(path => !path.startsWith(keyPath))
         }
       }
       label.oncontextmenu = function (event) {
