@@ -20,6 +20,7 @@ var css = csjs`
 
 const profile = {
   name: 'remixd',
+  displayName: 'RemixD',
   url: 'ws://127.0.0.1:65520',
   methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list'],
   events: [],
@@ -57,7 +58,7 @@ export class RemixdHandle extends WebsocketPlugin {
     * connect to localhost if no connection and render the explorer
     * disconnect from localhost if connected and remove the explorer
     *
-    * @param {String} txHash    - hash of the transaction
+    * @param {String} txHash - hash of the transaction
     */
   async connectToLocalhost () {
     let connection = (error) => {
@@ -69,6 +70,17 @@ export class RemixdHandle extends WebsocketPlugin {
         )
         this.canceled()
       } else {
+        const intervalId = setInterval(() => {
+          if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
+            clearInterval(intervalId)
+            console.log(error)
+            modalDialogCustom.alert(
+              'Connection to remixd terminated' +
+              'Please make sure remixd is still running in the background.'
+            )
+            this.canceled()
+          }
+        }, 3000)
         this.locahostProvider.init(_ => this.fileSystemExplorer.ensureRoot())
       }
     }
@@ -83,7 +95,13 @@ export class RemixdHandle extends WebsocketPlugin {
           fn: () => {
             try {
               super.activate()
-              setTimeout(() => { connection() }, 2000)
+              setTimeout(() => {
+                if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
+                  connection(new Error('Connection with daemon failed.'))
+                } else {
+                  connection()
+                }
+              }, 3000)
             } catch (error) {
               connection(error)
             }
