@@ -82,7 +82,7 @@
           "options": {
             "commands": [
               {
-                "command": "csslint && node apps/remix-ide/test/index.js"
+                "command": "csslint"
               }
             ]
           }
