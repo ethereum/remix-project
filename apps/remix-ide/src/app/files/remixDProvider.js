@@ -96,10 +96,10 @@ module.exports = class RemixDProvider {
       if (file.readonly) { this._readOnlyFiles[path] = 1 }
       cb(null, file.content)
     }).catch((error) => {
+      if (error) console.log(error)
       // display the last known content.
       // TODO should perhaps better warn the user that the file is not synced.
-      if (this.filesContent[path]) return cb(null, this.filesContent[path])
-      else cb(error)
+      return cb(null, this.filesContent[path])
     })
   }
 
