@@ -1,13 +1,13 @@
 'use strict'
 
-import solc from 'solc/wrapper'
+import * as solc from 'solc/wrapper'
 import { CompilerInput, MessageToWorker } from './types'
 let compileJSON: ((input: CompilerInput) => string) | null = (input) => { return '' }
 const missingInputs: string[] = []
 
 // 'DedicatedWorkerGlobalScope' object (the Worker global scope) is accessible through the self keyword
 // 'dom' and 'webworker' library files can't be included together https://github.com/microsoft/TypeScript/issues/20595
-export default (self): void => { // eslint-disable-line @typescript-eslint/explicit-module-boundary-types
+export default function (self) { // eslint-disable-line @typescript-eslint/explicit-module-boundary-types
   self.addEventListener('message', (e) => {
     const data: MessageToWorker = e.data
     switch (data.cmd) {
