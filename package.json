@@ -141,6 +141,7 @@
     "http-server": "^0.11.1",
     "npm-install-version": "^6.0.2",
     "time-stamp": "^2.2.0",
+    "webworkify-webpack": "^2.1.5",
     "winston": "^3.3.3"
   },
   "devDependencies": {
@@ -151,7 +152,7 @@
     "@babel/plugin-transform-runtime": "^7.10.4",
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.10.4",
-    "@babel/preset-es2015": "latest",
+    "@babel/preset-es2015": "^7.0.0-beta.53",
     "@babel/preset-es2017": "latest",
     "@babel/preset-stage-0": "^7.0.0",
     "@babel/register": "^7.4.4",
