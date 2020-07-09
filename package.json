@@ -141,7 +141,6 @@
     "http-server": "^0.11.1",
     "npm-install-version": "^6.0.2",
     "time-stamp": "^2.2.0",
-    "webworkify-webpack": "^2.1.5",
     "winston": "^3.3.3"
   },
   "devDependencies": {
@@ -228,14 +227,14 @@
     "nyc": "^13.3.0",
     "onchange": "^3.2.1",
     "prettier": "1.19.1",
-    "@remix-project/remix-analyzer": "0.5.2",
-    "@remix-project/remix-astwalker": "0.0.24",
-    "@remix-project/remix-debug": "0.4.4",
-    "@remix-project/remix-lib": "0.4.29",
-    "@remix-project/remix-simulator": "0.1.9-beta.5",
-    "@remix-project/remix-solidity": "0.3.30",
+    "remix-analyzer": "0.5.2",
+    "remix-astwalker": "0.0.24",
+    "remix-debug": "0.4.4",
+    "remix-lib": "0.4.29",
+    "remix-simulator": "0.1.9-beta.5",
+    "remix-solidity": "0.3.30",
     "remix-tabs": "1.0.48",
-    "@remix-project/remix-tests": "0.1.33",
+    "remix-tests": "0.1.33",
     "remixd": "0.1.8-alpha.16",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
@@ -256,6 +255,7 @@
     "webworkify": "^1.2.1",
     "worker-loader": "^2.0.0",
     "yo-yo": "github:ioedeveloper/yo-yo",
-    "yo-yoify": "^3.7.3"
+    "yo-yoify": "^3.7.3",
+    "webworkify-webpack": "^2.1.5"
   }
 }
