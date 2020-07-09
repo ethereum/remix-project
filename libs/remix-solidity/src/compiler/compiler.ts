@@ -211,7 +211,7 @@ export class Compiler {
    */
 
   loadWorker (url: string): void {
-    this.state.worker = webworkify(require('./compiler-worker.js').default)
+    this.state.worker = webworkify(require('./compiler-worker').default)
     const jobs: Record<'sources', SourceWithTarget> [] = []
 
     this.state.worker.addEventListener('message', (msg: Record <'data', MessageFromWorker>) => {
