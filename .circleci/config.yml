@@ -24,7 +24,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint && npm run test
+      - run: npm run lint
       - run:
           name: Download Compatible JAVA Version for Selenium
           command: |
@@ -66,7 +66,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint && npm run test
+      - run: npm run lint
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
@@ -105,7 +105,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint && npm run test
+      - run: npm run lint
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
@@ -137,7 +137,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint && npm run test
+      - run: npm run lint
       - run: 
           name: Deploy
           command: |
@@ -166,7 +166,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint && npm run test
+      - run: npm run lint
       - run: 
           name: Deploy
           command: |
