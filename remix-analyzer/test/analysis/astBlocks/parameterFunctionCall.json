@@ -1,0 +1,56 @@
+{
+  "argumentTypes": null,
+  "arguments":
+  [
+    {
+      "argumentTypes": null,
+      "id": 216,
+      "name": "internalPureFunc",
+      "nodeType": "Identifier",
+      "overloadedDeclarations": [],
+      "referencedDeclaration": 12,
+      "src": "1636:16:0",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_function_internal_pure$_t_uint256_$returns$_t_uint256_$",
+        "typeString": "function (uint256) pure returns (uint256)"
+      }
+    }
+  ],
+  "expression":
+  {
+    "argumentTypes":
+    [
+      {
+        "typeIdentifier": "t_function_internal_pure$_t_uint256_$returns$_t_uint256_$",
+        "typeString": "function (uint256) pure returns (uint256)"
+      }
+    ],
+    "id": 215,
+    "name": "funcTakesInternalPure",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": 104,
+    "src": "1614:21:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_function_internal_pure$_t_function_internal_pure$_t_uint256_$returns$_t_uint256_$_$returns$_t_uint256_$",
+      "typeString": "function (function (uint256) pure returns (uint256)) pure returns (uint256)"
+    }
+  },
+  "id": 217,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "kind": "functionCall",
+  "lValueRequested": false,
+  "names": [],
+  "nodeType": "FunctionCall",
+  "src": "1614:39:0",
+  "tryCall": false,
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_uint256",
+    "typeString": "uint256"
+  }
+}

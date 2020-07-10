@@ -1,0 +1,260 @@
+{
+  "body":
+  {
+    "id": 20,
+    "nodeType": "Block",
+    "src": "81:58:0",
+    "statements":
+    [
+      {
+        "id": 13,
+        "nodeType": "Break",
+        "src": "95:5:0"
+      },
+      {
+        "assignments":
+        [
+          15
+        ],
+        "declarations":
+        [
+          {
+            "constant": false,
+            "id": 15,
+            "name": "b",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 20,
+            "src": "114:6:0",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName":
+            {
+              "id": 14,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "114:4:0",
+              "typeDescriptions":
+              {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          }
+        ],
+        "id": 17,
+        "initialValue":
+        {
+          "argumentTypes": null,
+          "hexValue": "3432",
+          "id": 16,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": true,
+          "kind": "number",
+          "lValueRequested": false,
+          "nodeType": "Literal",
+          "src": "123:2:0",
+          "subdenomination": null,
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_rational_42_by_1",
+            "typeString": "int_const 42"
+          },
+          "value": "42"
+        },
+        "nodeType": "VariableDeclarationStatement",
+        "src": "114:11:0"
+      },
+      {
+        "expression":
+        {
+          "argumentTypes": null,
+          "id": 18,
+          "name": "b",
+          "nodeType": "Identifier",
+          "overloadedDeclarations": [],
+          "referencedDeclaration": 15,
+          "src": "127:1:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_uint256",
+            "typeString": "uint256"
+          }
+        },
+        "id": 19,
+        "nodeType": "ExpressionStatement",
+        "src": "127:1:0"
+      }
+    ]
+  },
+  "condition":
+  {
+    "argumentTypes": null,
+    "commonType":
+    {
+      "typeIdentifier": "t_uint256",
+      "typeString": "uint256"
+    },
+    "id": 9,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": false,
+    "lValueRequested": false,
+    "leftExpression":
+    {
+      "argumentTypes": null,
+      "id": 7,
+      "name": "a",
+      "nodeType": "Identifier",
+      "overloadedDeclarations": [],
+      "referencedDeclaration": 4,
+      "src": "69:1:0",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_uint256",
+        "typeString": "uint256"
+      }
+    },
+    "nodeType": "BinaryOperation",
+    "operator": "<",
+    "rightExpression":
+    {
+      "argumentTypes": null,
+      "hexValue": "31",
+      "id": 8,
+      "isConstant": false,
+      "isLValue": false,
+      "isPure": true,
+      "kind": "number",
+      "lValueRequested": false,
+      "nodeType": "Literal",
+      "src": "73:1:0",
+      "subdenomination": null,
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_rational_1_by_1",
+        "typeString": "int_const 1"
+      },
+      "value": "1"
+    },
+    "src": "69:5:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_bool",
+      "typeString": "bool"
+    }
+  },
+  "id": 21,
+  "initializationExpression":
+  {
+    "assignments":
+    [
+      4
+    ],
+    "declarations":
+    [
+      {
+        "constant": false,
+        "id": 4,
+        "name": "a",
+        "nodeType": "VariableDeclaration",
+        "overrides": null,
+        "scope": 21,
+        "src": "57:6:0",
+        "stateVariable": false,
+        "storageLocation": "default",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_uint256",
+          "typeString": "uint256"
+        },
+        "typeName":
+        {
+          "id": 3,
+          "name": "uint",
+          "nodeType": "ElementaryTypeName",
+          "src": "57:4:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_uint256",
+            "typeString": "uint256"
+          }
+        },
+        "value": null,
+        "visibility": "internal"
+      }
+    ],
+    "id": 6,
+    "initialValue":
+    {
+      "argumentTypes": null,
+      "hexValue": "30",
+      "id": 5,
+      "isConstant": false,
+      "isLValue": false,
+      "isPure": true,
+      "kind": "number",
+      "lValueRequested": false,
+      "nodeType": "Literal",
+      "src": "66:1:0",
+      "subdenomination": null,
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_rational_0_by_1",
+        "typeString": "int_const 0"
+      },
+      "value": "0"
+    },
+    "nodeType": "VariableDeclarationStatement",
+    "src": "57:10:0"
+  },
+  "loopExpression":
+  {
+    "expression":
+    {
+      "argumentTypes": null,
+      "id": 11,
+      "isConstant": false,
+      "isLValue": false,
+      "isPure": false,
+      "lValueRequested": false,
+      "nodeType": "UnaryOperation",
+      "operator": "++",
+      "prefix": false,
+      "src": "76:3:0",
+      "subExpression":
+      {
+        "argumentTypes": null,
+        "id": 10,
+        "name": "a",
+        "nodeType": "Identifier",
+        "overloadedDeclarations": [],
+        "referencedDeclaration": 4,
+        "src": "76:1:0",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_uint256",
+          "typeString": "uint256"
+        }
+      },
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_uint256",
+        "typeString": "uint256"
+      }
+    },
+    "id": 12,
+    "nodeType": "ExpressionStatement",
+    "src": "76:3:0"
+  },
+  "nodeType": "ForStatement",
+  "src": "52:87:0"
+}

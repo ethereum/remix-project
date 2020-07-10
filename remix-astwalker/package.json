@@ -1,0 +1,45 @@
+{
+  "name": "remix-astwalker",
+  "version": "0.0.25",
+  "description": "Remix sub-module for walking through AST",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "nyc --reporter=lcov --require ts-node/register tape ./tests/*.ts | tap-spec; nyc report ---reporter=text",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix.git"
+  },
+  "keywords": [
+    "Solidity",
+    "AST",
+    "remix"
+  ],
+  "author": "0mkara",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix#readme",
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
+  "dependencies": {
+    "@types/tape": "^4.2.33",
+    "nyc": "^13.3.0",
+    "remix-lib": "0.4.30",
+    "tape": "^4.10.1",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.3"
+  },
+  "devDependencies": {
+    "tap-spec": "^5.0.0"
+  }
+}

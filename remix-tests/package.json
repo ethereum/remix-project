@@ -1,0 +1,70 @@
+{
+  "name": "remix-tests",
+  "version": "0.1.34",
+  "description": "Tool to test Solidity smart contracts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "contributors": [
+    {
+      "name": "Iuri Matias",
+      "email": "iuri@ethereum.org"
+    },
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    }
+  ],
+  "bin": {
+    "remix-tests": "./bin/remix-tests"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc && mocha --require ts-node/register tests/*.ts -t 300000",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix/tree/master/remix-tests"
+  },
+  "author": "Remix Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix/issues"
+  },
+  "standard": {
+    "ignore": [
+      "tests/",
+      "dist/"
+    ]
+  },
+  "homepage": "https://github.com/ethereum/remix/tree/master/remix-tests#readme",
+  "dependencies": {
+    "async": "^2.6.0",
+    "change-case": "^3.0.1",
+    "colors": "^1.1.2",
+    "commander": "^2.13.0",
+    "remix-lib": "0.4.30",
+    "remix-simulator": "0.1.9-beta.6",
+    "remix-solidity": "0.3.31",
+    "signale": "^1.4.0",
+    "web3": "^1.2.4",
+    "winston": "^3.0.0"
+  },
+  "peerDependencies": {
+    "yo-yoify": "^4.3.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.4.5",
+    "@types/async": "^2.4.0",
+    "@types/color-support": "^1.1.0",
+    "@types/colors": "^1.2.1",
+    "@types/commander": "^2.12.2",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.21",
+    "@types/web3": "^1.0.18",
+    "mocha": "^5.1.0",
+    "standard": "^10.0.3",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.3.1"
+  }
+}

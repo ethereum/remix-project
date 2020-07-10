@@ -1,0 +1,93 @@
+{
+  "argumentTypes": null,
+  "arguments":
+  [
+    {
+      "argumentTypes": null,
+      "hexValue": "32",
+      "id": 37,
+      "isConstant": false,
+      "isLValue": false,
+      "isPure": true,
+      "kind": "number",
+      "lValueRequested": false,
+      "nodeType": "Literal",
+      "src": "234:1:0",
+      "subdenomination": null,
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_rational_2_by_1",
+        "typeString": "int_const 2"
+      },
+      "value": "2"
+    },
+    {
+      "argumentTypes": null,
+      "hexValue": "31",
+      "id": 38,
+      "isConstant": false,
+      "isLValue": false,
+      "isPure": true,
+      "kind": "number",
+      "lValueRequested": false,
+      "nodeType": "Literal",
+      "src": "240:1:0",
+      "subdenomination": null,
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_rational_1_by_1",
+        "typeString": "int_const 1"
+      },
+      "value": "1"
+    }
+  ],
+  "expression":
+  {
+    "argumentTypes":
+    [
+      {
+        "typeIdentifier": "t_rational_2_by_1",
+        "typeString": "int_const 2"
+      },
+      {
+        "typeIdentifier": "t_rational_1_by_1",
+        "typeString": "int_const 1"
+      }
+    ],
+    "id": 36,
+    "name": "f",
+    "nodeType": "Identifier",
+    "overloadedDeclarations":
+    [
+      6,
+      14,
+      24
+    ],
+    "referencedDeclaration": 14,
+    "src": "228:1:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$_t_uint256_$returns$__$",
+      "typeString": "function (uint256,uint256)"
+    }
+  },
+  "id": 39,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "kind": "functionCall",
+  "lValueRequested": false,
+  "names":
+  [
+    "y",
+    "x"
+  ],
+  "nodeType": "FunctionCall",
+  "src": "228:15:0",
+  "tryCall": false,
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_tuple$__$",
+    "typeString": "tuple()"
+  }
+}
