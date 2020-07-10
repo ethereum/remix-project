@@ -41,13 +41,17 @@ export const createDocumentation = (
 export const getContractDoc = (name: string, contract: CompiledContract) => {
   const contractDoc: ContractDocumentation = getContractDocumentation(contract);
 
-  const functionsDocumentation = contract.abi.map((def: ABIDescription) => {
+  const onlyFunctions = contract.abi.filter((item) => {
+    return item.type !== "event"
+  })
+
+  const functionsDocumentation = onlyFunctions.map((def: ABIDescription) => {
     if (def.type === "constructor") {
       def.name = "constructor";
       // because "constructor" is a string and not a { notice } object for userdoc we need to do that
       const methodDoc = {
         ...(contract.devdoc.methods.constructor || {}),
-        notice: contract.userdoc.methods.constructor as string,
+        notice: Object.keys(contract.userdoc.methods['constructor']).length > 0 ? contract.userdoc.methods['constructor'] as string : "",
       };
       return getFunctionDocumentation(def, methodDoc);
     } else {
