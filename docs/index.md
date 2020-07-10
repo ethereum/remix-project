@@ -1,17 +1,23 @@
-# Welcome to MkDocs
+# Remix EthDoc Plugin
 
-For full documentation visit [mkdocs.org](https://mkdocs.org).
+The Remix EthDoc plugin allow you to generate HTML documents from solidity smart contracts. It also gives you the capability to publish the generated HTML documents to IPFS.
 
-## Commands
+## Activate
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs help` - Print this help message.
+To be able to work with the plugin go to the plugins section and find EthDoc, then activate it.
 
-## Project layout
+## How to generate documentation
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+To generate HTML documents, the first thing you need to do is to compile smart contracts.
+
+Once the contracts are compiled, go to the EthDoc plugin section and you can select and preview the HTML documents that were generated.
+
+## How to publish
+
+In order to publish an HTML document, you need to first select a generated HTML document and then click the "Publish" button.
+
+Then, you should be redirected to the published version of the HTML document.
+
+## Issues
+
+If you have any issues, please feel free to create an issue in our [Github repository](https://github.com/Machinalabs/remix-ethdoc-plugin/issues).
