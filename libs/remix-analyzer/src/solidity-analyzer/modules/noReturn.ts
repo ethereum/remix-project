@@ -6,8 +6,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLA
   VisitFunction, ReportFunction, ReturnAstNode, AssignmentAstNode, SupportedVersion} from './../../types'
 
 export default class noReturn implements AnalyzerModule {
-  name: string = `No return: `
-  description: string = `Function with 'returns' not returning`
+  name = `No return: `
+  description = `Function with 'returns' not returning`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -21,6 +21,8 @@ export default class noReturn implements AnalyzerModule {
   )
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
 

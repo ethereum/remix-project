@@ -5,8 +5,8 @@ import  AbstractAst from './abstractAstView'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VisitFunction, ReportFunction, SupportedVersion} from './../../types'
 
 export default class selfdestruct implements AnalyzerModule {
-  name: string = `Selfdestruct: `
-  description: string = `Contracts using destructed contract can be broken`
+  name = `Selfdestruct: `
+  description = `Contracts using destructed contract can be broken`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
   version: SupportedVersion = {
@@ -20,12 +20,13 @@ export default class selfdestruct implements AnalyzerModule {
   )
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
 
     contracts.forEach((contract) => {
       contract.functions.forEach((func) => {
-        let hasSelf: boolean = false
+        let hasSelf = false
         func.relevantNodes.forEach((node) => {
           if (isSelfdestructCall(node)) {
             warnings.push({

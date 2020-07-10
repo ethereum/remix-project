@@ -6,8 +6,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class etherTransferInLoop implements AnalyzerModule {
   relevantNodes: ExpressionStatementAstNode[] = []
-  name: string = `Ether transfer in loop: `
-  description: string = `Transferring Ether in a for/while/do-while loop`
+  name = `Ether transfer in loop: `
+  description = `Transferring Ether in a for/while/do-while loop`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -28,7 +28,8 @@ export default class etherTransferInLoop implements AnalyzerModule {
         }
       }
   }
-
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
     return this.relevantNodes.map((node) => {
       return {

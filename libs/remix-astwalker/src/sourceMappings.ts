@@ -1,8 +1,9 @@
 import { isAstNode, AstWalker } from './astWalker';
 import { AstNode, LineColPosition, LineColRange, Location } from "./types";
-import { util } from "remix-lib";
+import { util } from "@remix-project/remix-lib";
 
 export declare interface SourceMappings {
+  // eslint-disable-next-line @typescript-eslint/no-misused-new
   new(): SourceMappings;
 }
 
@@ -67,8 +68,8 @@ export class SourceMappings {
 
     // Create a list of line offsets which will be used to map between
     // character offset and line/column positions.
-    let lineBreaks: Array<number> = [];
-    for (var pos = source.indexOf('\n'); pos >= 0; pos = source.indexOf('\n', pos + 1)) {
+    const lineBreaks: Array<number> = [];
+    for (let pos = source.indexOf('\n'); pos >= 0; pos = source.indexOf('\n', pos + 1)) {
       lineBreaks.push(pos)
     }
     this.lineBreaks = lineBreaks;
@@ -82,10 +83,10 @@ export class SourceMappings {
    */
   nodesAtPosition(astNodeType: string | null, position: Location, ast: AstNode): Array<AstNode> {
     const astWalker = new AstWalker()
-    let found: Array<AstNode> = [];
+    const found: Array<AstNode> = [];
 
     const callback = function(node: AstNode): boolean {
-      let nodeLocation = sourceLocationFromAstNode(node);
+      const nodeLocation = sourceLocationFromAstNode(node);
       if (nodeLocation &&
         nodeLocation.start == position.start &&
         nodeLocation.length == position.length) {
@@ -111,7 +112,7 @@ export class SourceMappings {
     /* FIXME: Looking at AST walker code,
        I don't understand a need to return a boolean. */
     const callback = function(node: AstNode) {
-      let nodeLocation = sourceLocationFromAstNode(node);
+      const nodeLocation = sourceLocationFromAstNode(node);
       if (nodeLocation &&
         nodeLocation.start == sourceLocation.start &&
         nodeLocation.length == sourceLocation.length) {

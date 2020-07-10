@@ -1,5 +1,5 @@
 var tape = require('tape')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var compilerInput = remixLib.helpers.compiler.compilerInput
 var vmCall = require('./vmCall')
 var Debugger = require('../src/Ethdebugger')

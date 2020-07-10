@@ -1,5 +1,5 @@
 {
-  "name": "remix-lib",
+  "name": "@remix-project/remix-lib",
   "version": "0.4.29",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
@@ -37,7 +37,7 @@
     "tape": "^4.6.0"
   },
   "scripts": {
-    "test": "standard && tape ./test/tests.js"
+    "test": "./../../node_modules/.bin/tape ./test/tests.js"
   },
   "repository": {
     "type": "git",

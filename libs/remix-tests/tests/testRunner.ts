@@ -2,12 +2,12 @@ import 'mocha'
 import * as async from 'async'
 import Web3 from 'web3';
 import * as assert from 'assert'
-import { Provider } from 'remix-simulator'
+import { Provider } from '@remix-project/remix-simulator'
 
-import { compileFileOrFiles } from '../dist/compiler'
-import { deployAll } from '../dist/deployer'
-import { runTest, compilationInterface } from '../dist/index'
-import { ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/index'
+import { compileFileOrFiles } from '../src/compiler'
+import { deployAll } from '../src/deployer'
+import { runTest, compilationInterface } from '../src/index'
+import { ResultsInterface, TestCbInterface, ResultCbInterface } from '../src/index'
 
 // deepEqualExcluding allows us to exclude specific keys whose values vary.
 // In this specific test, we'll use this helper to exclude `time` keys.
