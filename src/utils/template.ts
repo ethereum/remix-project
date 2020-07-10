@@ -7,22 +7,24 @@ import {
 } from "./types";
 type HTMLContent = string;
 
-export const htmlTemplate = (content: HTMLContent) => `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-    <meta charset="utf-8" />
-    <meta
-        name="description"
-        content="Web site created with EthDoc"
-    />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    </head>
-    <body>
-        ${content}
-    </body>
-    </html>
-`;
+export const htmlTemplate = (content: HTMLContent) => {
+  return `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta
+      name="description"
+      content="Web site created with EthDoc"
+  />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  </head>
+  <body>
+      ${content}
+  </body>
+  </html>
+`
+};
 
 export const template = (
   name: string,
@@ -69,7 +71,6 @@ export const template = (
             <p>Returns:</p>
            
             ${renderParameterDocumentation(item.outputs)}
-
             `
     )
     .join("\n")}
@@ -77,22 +78,11 @@ export const template = (
     </div>
 `;
 
-// const contractDocTemplate: TemplateDoc<ContractDoc> = {
-//     author: (author: string) => '',//`Author: ${author}`,
-//     details: (details: string) => `<p class="lead text-muted">${details}</p>`,
-//     title: (title: string) => {
-//         return title ?
-//             `<small>${title}</small>`
-//             : ''
-//     },
-//     notice: (notice: string) => `<p class="lead text-muted">${notice}</p>`,
-//     methods: () => '' // Methods is managed by getMethod()
-// }
 const devMethodDocTemplate: Partial<TemplateDoc<MethodDoc>> = {
   author: (author: string) => `<p>Created By ${author}</p>`,
   details: (details: string) => `<p>${details}</p>`,
   return: (value: string) => `<p>Return : ${value}</p>`,
-  notice: (notice: string) => `<p>${notice}</p>`,
+  notice: (notice: string) => notice ? `<p>${notice}</p>` : '',
   // returns: () => '', // Implemented by getParams()
   params: () => "", // Implemented by getParams()
 };
@@ -114,11 +104,9 @@ export const renderHeader = (
 
 export const renderParameterDocumentation = (
   parameters: ParameterDocumentation[]
-) => `
-        ${
+) => `${
   parameters.length > 0
-    ? `
-            <table class="table table-sm table-bordered table-striped">
+    ? `<table class="table table-sm table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -127,18 +115,17 @@ export const renderParameterDocumentation = (
                     </tr>
                 </thead>
                 <tbody>
-                    ${parameters.map(
+    ${parameters.map(
       (output) => `<tr>
-                                <td>${output.name}</td>
-                                <td>${output.type}</td>
-                                <td>${output.description}</td>
-                                </tr>`
-    )}
-                </tbody>
-            </table>`
+        <td>${output.name}</td>
+        <td>${output.type}</td>
+        <td>${output.description}</td>
+        </tr>`
+    ).join("")}
+              </tbody>
+      </table>`
     : "<p>No parameters</p>"
-  }
-`;
+  }`;
 
 export const getMethodDetails = (devMethod?: Partial<MethodDoc>) => {
   return !devMethod
