@@ -5,7 +5,7 @@ import node from "./resources/legacyAST";
 
 tape("ASTWalker Legacy", (t: tape.Test) => {
   t.test("ASTWalker.walk && .walkAST", (st: tape.Test) => {
-    st.plan(19);
+    st.plan(17);
     // New Ast Object
     const astWalker = new AstWalker();
     // EventListener

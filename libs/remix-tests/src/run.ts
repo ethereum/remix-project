@@ -2,7 +2,7 @@ import commander from 'commander'
 import Web3 from 'web3';
 import { runTestFiles } from './runTestFiles'
 import fs from './fileSystem'
-import { Provider } from 'remix-simulator'
+import { Provider } from '@remix-project/remix-simulator'
 import Log from './logger'
 const logger = new Log()
 const log = logger.logger
@@ -47,7 +47,7 @@ commander
             logger.setVerbosity(commander.verbose)
             log.info('verbosity level set to ' + commander.verbose.blue)
         }
-        let web3 = new Web3()
+        const web3 = new Web3()
         const provider = new Provider()
         await provider.init()
         web3.setProvider(provider)
@@ -57,7 +57,7 @@ commander
             process.exit(1)
         }
 
-        let isDirectory = fs.lstatSync(filename).isDirectory()
+        const isDirectory = fs.lstatSync(filename).isDirectory()
         runTestFiles(filename, isDirectory, web3)
     })
 

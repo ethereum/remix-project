@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class deleteFromDynamicArray implements AnalyzerModule {
   relevantNodes: UnaryOperationAstNode[] = []
-  name: string = `Delete from dynamic array: `
-  description: string = `'delete' leaves a gap in array`
+  name = `Delete from dynamic array: `
+  description = `'delete' leaves a gap in array`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -17,6 +17,7 @@ export default class deleteFromDynamicArray implements AnalyzerModule {
     if (isDeleteFromDynamicArray(node) && !isMappingIndexAccess(node.subExpression)) this.relevantNodes.push(node)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
     return this.relevantNodes.map((node) => {
       return {

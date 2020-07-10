@@ -5,8 +5,8 @@ import { ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, Compiled
   FunctionDefinitionAstNode, VariableDeclarationAstNode, SupportedVersion } from './../../types'
 
 export default class gasCosts implements AnalyzerModule {
-  name: string = `Gas costs: `
-  description: string = `Too high gas requirement of functions`
+  name = `Gas costs: `
+  description = `Too high gas requirement of functions`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {

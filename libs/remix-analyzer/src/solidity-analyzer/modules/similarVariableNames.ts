@@ -3,7 +3,7 @@ import { getDeclaredVariableName, getFullQuallyfiedFuncDefinitionIdent } from '.
 import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
 import { get } from 'fast-levenshtein'
-import { util } from 'remix-lib'
+import { util } from '@remix-project/remix-lib'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, VisitFunction, ReportFunction, SupportedVersion} from './../../types'
 
 interface SimilarRecord {
@@ -13,8 +13,8 @@ interface SimilarRecord {
 }
 
 export default class similarVariableNames implements AnalyzerModule {
-  name: string = `Similar variable names: `
-  description: string = `Variable names are too similar`
+  name = `Similar variable names: `
+  description = `Variable names are too similar`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -23,6 +23,7 @@ export default class similarVariableNames implements AnalyzerModule {
 
   abstractAst:AbstractAst = new AbstractAst()
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   visit: VisitFunction = this.abstractAst.build_visit((node: any) => false)
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
@@ -34,11 +35,11 @@ export default class similarVariableNames implements AnalyzerModule {
     contracts.forEach((contract) => {
       contract.functions.forEach((func) => {
         const funcName: string = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
-        let hasModifiersComments: string = ''
+        let hasModifiersComments = ''
         if (hasModifiers) {
           hasModifiersComments = 'Note: Modifiers are currently not considered by this static analysis.'
         }
-        let multipleContractsWithSameNameComments: string = ''
+        let multipleContractsWithSameNameComments = ''
         if (multipleContractsWithSameName) {
           multipleContractsWithSameNameComments = 'Note: Import aliases are currently not supported by this static analysis.'
         }

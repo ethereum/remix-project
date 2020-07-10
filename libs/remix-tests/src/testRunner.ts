@@ -46,7 +46,7 @@ function isPayable(funcABI: FunctionDescription): boolean {
 
 function getOverridedSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>): string | null {
     const fullName: string | null = getFunctionFullName(signature, methodIdentifiers)
-    const senderRegex: RegExp = /#sender: account-+(\d)/g
+    const senderRegex = /#sender: account-+(\d)/g
     const accountIndex: RegExpExecArray | null = fullName && userdoc.methods[fullName] ? senderRegex.exec(userdoc.methods[fullName].notice) : null
     return fullName && accountIndex ? accountIndex[1] : null
 }
@@ -60,7 +60,7 @@ function getOverridedSender (userdoc: UserDocumentation, signature: string, meth
 
 function getProvidedValue (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>): string | null {
     const fullName: string | null = getFunctionFullName(signature, methodIdentifiers)
-    const valueRegex: RegExp = /#value: (\d+)/g
+    const valueRegex = /#value: (\d+)/g
     const value: RegExpExecArray | null = fullName && userdoc.methods[fullName] ? valueRegex.exec(userdoc.methods[fullName].notice) : null
     return fullName && value ? value[1] : null
 }
@@ -129,27 +129,27 @@ function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, 
     const availableFunctions: string[] = getAvailableFunctions(fileAST, testContractName)
     const testFunctionsInterface: FunctionDescription[] = getTestFunctionsInterface(jsonInterface, availableFunctions)
     const specialFunctionsInterface: Record<string, FunctionDescription> = getSpecialFunctionsInterface(jsonInterface)
-    let runList: RunListInterface[] = []
+    const runList: RunListInterface[] = []
 
     if (availableFunctions.includes('beforeAll')) {
-        let func = specialFunctionsInterface['beforeAll']
+        const func = specialFunctionsInterface['beforeAll']
         runList.push({ name: 'beforeAll', inputs: func.inputs, signature: func.signature, type: 'internal', constant: isConstant(func), payable: isPayable(func) })
     }
 
     for (const func of testFunctionsInterface) {
         if (availableFunctions.includes('beforeEach')) {
-            let func = specialFunctionsInterface['beforeEach']
+            const func = specialFunctionsInterface['beforeEach']
             runList.push({ name: 'beforeEach', inputs: func.inputs, signature: func.signature, type: 'internal', constant: isConstant(func), payable: isPayable(func) })
         }
         if(func.name && func.inputs) runList.push({ name: func.name, inputs: func.inputs, signature: func.signature, type: 'test', constant: isConstant(func), payable: isPayable(func) })
         if (availableFunctions.indexOf('afterEach') >= 0) {
-            let func = specialFunctionsInterface['afterEach']
+            const func = specialFunctionsInterface['afterEach']
             runList.push({ name: 'afterEach', inputs: func.inputs, signature: func.signature, type: 'internal', constant: isConstant(func), payable: isPayable(func) })
         }
     }
 
     if (availableFunctions.indexOf('afterAll') >= 0) {
-        let func = specialFunctionsInterface['afterAll']
+        const func = specialFunctionsInterface['afterAll']
         runList.push({ name: 'afterAll', inputs: func.inputs, signature: func.signature, type: 'internal', constant: isConstant(func), payable: isPayable(func) })
     }
 
@@ -157,9 +157,9 @@ function createRunList (jsonInterface: FunctionDescription[], fileAST: AstNode, 
 }
 
 export function runTest (testName: string, testObject: any, contractDetails: CompiledContract, fileAST: AstNode, opts: Options, testCallback: TestCbInterface, resultsCallback: ResultCbInterface): void {
-    let passingNum: number = 0
-    let failureNum: number = 0
-    let timePassed: number = 0
+    let passingNum = 0
+    let failureNum = 0
+    let timePassed = 0
     const isJSONInterfaceAvailable = testObject && testObject.options && testObject.options.jsonInterface
     if(!isJSONInterfaceAvailable)
         return resultsCallback(new Error('Contract interface not available'), { passingNum, failureNum, timePassed })
@@ -229,7 +229,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                 try {
                     const time: number = (Date.now() - startTime) / 1000.0
                     const topic = Web3.utils.sha3('AssertionEvent(bool,string)')
-                    let testPassed: boolean = false
+                    let testPassed = false
 
                     for (const i in receipt.events) {
                         const event = receipt.events[i]

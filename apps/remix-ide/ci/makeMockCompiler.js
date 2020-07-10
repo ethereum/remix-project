@@ -2,7 +2,7 @@
 
 var fs = require('fs')
 var compiler = require('solc')
-var compilerInput = require('remix-solidity').CompilerInput
+var compilerInput = require('@remix-project/remix-solidity').CompilerInput
 var defaultVersion = 'v0.6.6+commit.6c089d02'
 const path = require('path')
 

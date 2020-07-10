@@ -7,8 +7,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 export default class blockTimestamp implements AnalyzerModule {
   warningNowNodes: IdentifierAstNode[] = []
   warningblockTimestampNodes: MemberAccessAstNode[] = []
-  name: string = `Block timestamp: `
-  description: string = `Can be influenced by miners`
+  name = `Block timestamp: `
+  description = `Can be influenced by miners`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -20,15 +20,16 @@ export default class blockTimestamp implements AnalyzerModule {
     else if (node.nodeType === "MemberAccess" && isBlockTimestampAccess(node)) this.warningblockTimestampNodes.push(node)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
-    return this.warningNowNodes.map((item, i) => {
+    return this.warningNowNodes.map((item) => {
       return {
         warning: `Use of "now": "now" does not mean current time. "now" is an alias for "block.timestamp". 
                   "block.timestamp" can be influenced by miners to a certain degree, be careful.`,
         location: item.src,
         more: 'https://solidity.readthedocs.io/en/develop/units-and-global-variables.html?highlight=block.timestamp#block-and-transaction-properties'
       }
-    }).concat(this.warningblockTimestampNodes.map((item, i) => {
+    }).concat(this.warningblockTimestampNodes.map((item) => {
       return {
         warning: `Use of "block.timestamp": "block.timestamp" can be influenced by miners to a certain degree. 
                   That means that a miner can "choose" the block.timestamp, to a certain degree, to change the outcome of a transaction in the mined block.`,

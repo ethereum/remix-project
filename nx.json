@@ -19,8 +19,46 @@
     }
   },
   "projects": {
-    "remix-ide": {
+    "remix-lib": {
       "tags": []
+    },
+    "remix-astwalker": {
+      "tags": [],
+      "implicitDependencies": ["remix-lib"]
+    },
+    "remix-analyzer": {
+      "tags": [],
+      "implicitDependencies": ["remix-astwalker", "remix-lib"]
+    },
+    "remix-debug": {
+      "tags": [],
+      "implicitDependencies": ["remix-lib"]
+    },
+    "remix-simulator": {
+      "tags": [],
+      "implicitDependencies": ["remix-lib"]
+    },
+    "remix-solidity": {
+      "tags": [],
+      "implicitDependencies": ["remix-lib"]
+    },
+    "remix-tests": {
+      "tags": [],
+      "implicitDependencies": ["remix-lib", "remix-simulator", "remix-solidity"]
+    },
+    "remix-url-resolver": {
+      "tags": []
+    },
+    "remix-ide": {
+      "tags": [],
+      "implicitDependencies": [
+        "remix-analyzer",
+        "remix-debug",
+        "remix-lib",
+        "remix-simulator",
+        "remix-solidity",
+        "remix-tests"
+      ]
     }
   }
 }

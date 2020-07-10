@@ -21,7 +21,7 @@
     "commander": "^2.19.0",
     "ethereumjs-util": "^6.2.0",
     "ethereumjs-vm": "4.1.3",
-    "remix-lib": "0.4.29",
+    "@remix-project/remix-lib": "0.4.29",
     "web3": "^1.2.4"
   },
   "devDependencies": {
@@ -42,7 +42,7 @@
   "scripts": {
     "build": "mkdirp build; browserify index.js > build/app.js",
     "lint": "standard | notify-error",
-    "test": "standard && tape ./test/tests.js"
+    "test": "./../../node_modules/.bin/tape --require tsconfig-paths/register ./test/tests.js"
   },
   "repository": {
     "type": "git",

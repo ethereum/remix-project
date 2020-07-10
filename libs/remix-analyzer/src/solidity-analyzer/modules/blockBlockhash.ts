@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class blockBlockhash implements AnalyzerModule {
   warningNodes: FunctionCallAstNode[] = []
-  name: string = `Block hash: `
-  description: string = `Can be influenced by miners`
+  name = `Block hash: `
+  description = `Can be influenced by miners`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -17,8 +17,9 @@ export default class blockBlockhash implements AnalyzerModule {
     if (node.nodeType === 'FunctionCall' && isBlockBlockHashAccess(node)) this.warningNodes.push(node)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
-    return this.warningNodes.map((item, i) => {
+    return this.warningNodes.map((item) => {
       return {
         warning: `Use of "blockhash": "blockhash(uint blockNumber)" is used to access the last 256 block hashes. 
                   A miner computes the block hash by "summing up" the information in the current block mined. 

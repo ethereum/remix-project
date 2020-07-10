@@ -8,7 +8,7 @@ const StorageResolver = require('./src/storage/storageResolver')
 
 const SolidityDecoder = require('./src/solidity-decoder')
 
-const remixLib = require('remix-lib')
+const remixLib = require('@remix-project/remix-lib')
 const BreakpointManager = remixLib.code.BreakpointManager
 
 /*
