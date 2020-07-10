@@ -2,7 +2,7 @@
 
 var test = require('tape')
 
-var Compiler = require('remix-solidity').Compiler
+var Compiler = require('@remix-project/remix-solidity').Compiler
 
 test('compiler.compile smoke', function (t) {
   t.plan(1)

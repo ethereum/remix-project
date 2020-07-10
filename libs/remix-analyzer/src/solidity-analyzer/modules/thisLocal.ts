@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class thisLocal implements AnalyzerModule {
   warningNodes: MemberAccessAstNode[] = []
-  name: string = `This on local calls: `
-  description: string = `Invocation of local functions via 'this'`
+  name = `This on local calls: `
+  description = `Invocation of local functions via 'this'`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -17,8 +17,9 @@ export default class thisLocal implements AnalyzerModule {
     if (node.nodeType === 'MemberAccess' && isThisLocalCall(node)) this.warningNodes.push(node)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
-    return this.warningNodes.map(function (item, i) {
+    return this.warningNodes.map(function (item) {
       return {
         warning: `Use of "this" for local functions: Never use "this" to call functions in the same contract, it only consumes more gas than normal local calls.`,
         location: item.src,

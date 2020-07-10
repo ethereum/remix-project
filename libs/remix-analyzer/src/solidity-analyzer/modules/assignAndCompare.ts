@@ -6,8 +6,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, BlockAstNod
 
 export default class assignAndCompare implements AnalyzerModule {
   warningNodes: ExpressionStatementAstNode[] = []
-  name: string = `Result not used: `
-  description: string = `The result of an operation not used`
+  name = `Result not used: `
+  description = `The result of an operation not used`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -18,8 +18,9 @@ export default class assignAndCompare implements AnalyzerModule {
     if (node?.nodeType && isSubScopeWithTopLevelUnAssignedBinOp(node)) getUnAssignedTopLevelBinOps(node).forEach((n) => this.warningNodes.push(n))
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
-    return this.warningNodes.map((item, i) => {
+    return this.warningNodes.map((item) => {
       return {
         warning: 'A binary operation yields a value that is not used further. This is often caused by confusing assignment (=) and comparison (==).',
         location: item.src

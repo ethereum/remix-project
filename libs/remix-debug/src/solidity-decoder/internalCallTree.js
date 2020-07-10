@@ -1,5 +1,5 @@
 'use strict'
-const remixLib = require('remix-lib')
+const remixLib = require('@remix-project/remix-lib')
 const SourceLocationTracker = remixLib.SourceLocationTracker
 const AstWalker = remixLib.AstWalker
 const EventManager = remixLib.EventManager

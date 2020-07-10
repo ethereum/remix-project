@@ -5,7 +5,7 @@ const txHelper = require('../src/execution/txHelper')
 const util = require('../src/util')
 let compiler = require('solc')
 const compilerInput = require('../src/helpers/compilerHelper').compilerInput
-const executionContext = require('../src/execution/execution-context')
+const executionContext = require('../').execution.executionContext
 const solidityVersion = 'v0.6.0+commit.26b70077'
 
 /* tape *********************************************************** */

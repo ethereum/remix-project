@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class guardConditions implements AnalyzerModule {
   guards: FunctionCallAstNode[] = []
-  name: string = `Guard conditions: `
-  description: string = `Ensure appropriate use of require/assert`
+  name = `Guard conditions: `
+  description = `Ensure appropriate use of require/assert`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -17,6 +17,7 @@ export default class guardConditions implements AnalyzerModule {
     if (isRequireCall(node) || isAssertCall(node)) this.guards.push(node)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
     return this.guards.map((node) => {
       return {

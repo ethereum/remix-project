@@ -1,7 +1,7 @@
 const async = require('async')
 const EventEmitter = require('events')
 var remixTests = require('remix-tests')
-var Compiler = require('remix-solidity').Compiler
+var Compiler = require('@remix-project/remix-solidity').Compiler
 var CompilerImport = require('../../compiler/compiler-imports')
 
 // TODO: move this to the UI

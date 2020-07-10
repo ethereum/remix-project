@@ -4,8 +4,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class inlineAssembly implements AnalyzerModule {
   inlineAssNodes: InlineAssemblyAstNode[] = []
-  name: string = `Inline assembly: `
-  description: string = `Inline assembly used`
+  name = `Inline assembly: `
+  description = `Inline assembly used`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -16,6 +16,7 @@ export default class inlineAssembly implements AnalyzerModule {
     if(node.nodeType === 'InlineAssembly') this.inlineAssNodes.push(node)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
     return this.inlineAssNodes.map((node) => {
       return {
