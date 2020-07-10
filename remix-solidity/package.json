@@ -1,0 +1,88 @@
+{
+  "name": "remix-solidity",
+  "version": "0.3.31",
+  "description": "Tool to load and run Solidity compiler",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "contributors": [
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    },
+    {
+      "name": "Liana Husikyan",
+      "email": "liana@ethdev.com"
+    }
+  ],
+  "dependencies": {
+    "eslint-scope": "^5.0.0",
+    "remix-lib": "0.4.30",
+    "solc": "^0.6.0",
+    "webworkify": "^1.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-transform-object-assign": "^7.2.0",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-es2015": "latest",
+    "@babel/preset-es2017": "latest",
+    "@babel/preset-stage-0": "^7.0.0",
+    "@types/node": "^13.1.1",
+    "babel-eslint": "^10.0.0",
+    "babelify": "^10.0.0",
+    "standard": "^7.0.1",
+    "tape": "^4.6.0",
+    "typescript": "^3.7.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc && tape ./test/tests.js"
+  },
+  "standard": {
+    "ignore": [
+      "node_modules/*"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ethereum/remix/tree/master/remix-solidity"
+  },
+  "author": "Remix Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix/tree/master/remix-solidity#readme",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "plugins": [
+            [
+              "fast-async",
+              {
+                "runtimePatten": null,
+                "compiler": {
+                  "promises": true,
+                  "es7": true,
+                  "noRuntime": true,
+                  "wrapAwait": true
+                }
+              }
+            ],
+            "module:@babel/plugin-transform-object-assign"
+          ]
+        }
+      ],
+      [
+        "babelify",
+        {
+          "presets": [
+            "@babel/preset-env"
+          ]
+        }
+      ]
+    ]
+  }
+}

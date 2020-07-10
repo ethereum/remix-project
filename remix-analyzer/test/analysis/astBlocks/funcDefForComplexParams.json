@@ -1,0 +1,171 @@
+{
+   "nestedStruct": { 
+      "body":
+         { "id": 330, 
+            "nodeType": "Block", 
+            "src": "5031:2:0", 
+            "statements": [] 
+         },
+      "documentation": null,
+      "id": 331,
+      "implemented": true,
+      "kind": "function",
+      "modifiers": [],
+      "name": "testWithArrayOfStruct",
+      "nodeType": "FunctionDefinition",
+      "parameters": { 
+         "id": 328,
+         "nodeType": "ParameterList",
+         "parameters":
+            [ 
+               { 
+               "constant": false,
+               "id": 327,
+               "name": "param",
+               "nodeType": "VariableDeclaration",
+               "scope": 331,
+               "src": "4996:26:0",
+               "stateVariable": false,
+               "storageLocation": "memory",
+               "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_array$_t_struct$_Proposal1_$30_memory_ptr_$dyn_memory_ptr_$dyn_memory_ptr",
+                  "typeString": "struct Ballot.Proposal1[][]"
+               },
+               "typeName": {
+               "baseType": {
+                     "baseType": {
+                        "contractScope": null,
+                        "id": 332,
+                        "name": "Proposal1",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 30,
+                        "src": "4996:9:0",
+                        "typeDescriptions": {
+                           "typeIdentifier": "t_struct$_Proposal1_$30_storage_ptr",
+                           "typeString": "struct Ballot.Proposal1"
+                        }
+                     },
+                     "id": 333,
+                     "length": null,
+                     "nodeType": "ArrayTypeName",
+                     "src": "4996:11:0",
+                     "typeDescriptions": {
+                        "typeIdentifier": "t_array$_t_struct$_Proposal1_$30_storage_$dyn_storage_ptr",
+                        "typeString": "struct Ballot.Proposal1[]"
+                     }
+               },
+               "id": 334,
+               "length": null,
+               "nodeType": "ArrayTypeName",
+               "src": "4996:13:0",
+               "typeDescriptions":  {
+                  "typeIdentifier": "t_array$_t_array$_t_struct$_Proposal1_$30_storage_$dyn_storage_$dyn_storage_ptr",
+                  "typeString": "struct Ballot.Proposal1[][]"
+               },
+               "value": null,
+               "visibility": "internal"
+            }
+         }
+         ],
+      "src": "4995:28:0" 
+      },
+      "returnParameters":
+      { "id": 329,
+         "nodeType": "ParameterList",
+         "parameters": [],
+         "src": "5031:0:0" },
+      "scope": 332,
+      "src": "4964:69:0",
+      "stateMutability": "nonpayable",
+      "superFunction": null,
+      "visibility": "public"
+   },
+   "bytesArray": { 
+      "body":
+      { 
+         "id": 287, 
+         "nodeType": "Block", 
+         "src": "4988:2:0", 
+         "statements": [] 
+      },
+     "documentation": null,
+     "id": 288,
+     "implemented": true,
+     "kind": "function",
+     "modifiers": [],
+     "name": "testWithArray",
+     "nodeType": "FunctionDefinition",
+     "parameters":
+      { "id": 285,
+        "nodeType": "ParameterList",
+        "parameters": [ 
+           { 
+               "constant": false,
+               "id": 284,
+               "name": "param",
+               "nodeType": "VariableDeclaration",
+               "scope": 288,
+               "src": "4957:22:0",
+               "stateVariable": false,
+               "storageLocation": "memory",
+               "typeDescriptions":
+               { "typeIdentifier": "t_array$_t_bytes32_$dyn_memory_ptr",
+                  "typeString": "bytes32[]" },
+               "typeName":
+               { "baseType": "[Object]",
+                  "id": 283,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "4957:9:0",
+                  "typeDescriptions": "[Object]" 
+               },
+               "value": null,
+               "visibility": "internal" 
+               } 
+            ],
+            "src": "4956:24:0" 
+      },
+     "returnParameters":
+      { "id": 286,
+        "nodeType": "ParameterList",
+        "parameters": [],
+        "src": "4988:0:0" },
+     "scope": 289,
+     "src": "4933:57:0",
+     "stateMutability": "nonpayable",
+     "superFunction": null,
+     "visibility": "public" 
+   },
+   "withoutParams" : { 
+      "body":
+         { 
+            "id": 280,
+            "nodeType": "Block",
+            "src": "4864:63:0",
+            "statements": "[ [Object] ]" 
+         },
+      "documentation": null,
+      "id": 281,
+      "implemented": true,
+      "kind": "function",
+      "modifiers": [],
+      "name": "winnerName",
+      "nodeType": "FunctionDefinition",
+      "parameters":
+         { "id": 268,
+            "nodeType": "ParameterList",
+            "parameters": [],
+            "src": "4804:2:0" 
+         },
+      "returnParameters":
+         { "id": 271,
+         "nodeType": "ParameterList",
+         "parameters": "[ [Object] ]",
+         "src": "4839:20:0" 
+         },
+      "scope": 289,
+      "src": "4785:142:0",
+      "stateMutability": "view",
+      "superFunction": null,
+      "visibility": "public" } 
+}

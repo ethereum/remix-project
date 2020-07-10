@@ -1,0 +1,127 @@
+{
+  "node1": {
+    "constant": false,
+    "id": 20,
+    "name": "c",
+    "nodeType": "VariableDeclaration",
+    "overrides": null,
+    "scope": 33,
+    "src": "174:11:0",
+    "stateVariable": true,
+    "storageLocation": "storage",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_struct$_S_$3_storage_ptr",
+      "typeString": "struct C.S"
+    },
+    "typeName":
+    {
+      "contractScope": null,
+      "id": 19,
+      "name": "S",
+      "nodeType": "UserDefinedTypeName",
+      "referencedDeclaration": 3,
+      "src": "174:1:0",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_struct$_S_$3_storage_ptr",
+        "typeString": "struct C.S"
+      }
+    },
+    "value": null,
+    "visibility": "internal"
+  },
+  "node2": {
+    "constant": false,
+    "id": 11,
+    "name": "",
+    "nodeType": "VariableDeclaration",
+    "overrides": null,
+    "scope": 16,
+    "src": "82:29:0",
+    "stateVariable": false,
+    "storageLocation": "storage",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_array$_t_mapping$_t_uint256_$_t_uint256_$_$dyn_storage_ptr",
+      "typeString": "mapping(uint256 => uint256)[]"
+    },
+    "typeName":
+    {
+      "baseType":
+      {
+        "id": 9,
+        "keyType":
+        {
+          "id": 7,
+          "name": "uint",
+          "nodeType": "ElementaryTypeName",
+          "src": "90:4:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_uint256",
+            "typeString": "uint256"
+          }
+        },
+        "nodeType": "Mapping",
+        "src": "82:19:0",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_mapping$_t_uint256_$_t_uint256_$",
+          "typeString": "mapping(uint256 => uint256)"
+        },
+        "valueType":
+        {
+          "id": 8,
+          "name": "uint",
+          "nodeType": "ElementaryTypeName",
+          "src": "96:4:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_uint256",
+            "typeString": "uint256"
+          }
+        }
+      },
+      "id": 10,
+      "length": null,
+      "nodeType": "ArrayTypeName",
+      "src": "82:21:0",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_array$_t_mapping$_t_uint256_$_t_uint256_$_$dyn_storage_ptr",
+        "typeString": "mapping(uint256 => uint256)[]"
+      }
+    }
+  },
+  "node3": {
+    "constant": false,
+    "id": 125,
+    "name": "f",
+    "nodeType": "VariableDeclaration",
+    "overrides": null,
+    "scope": 160,
+    "src": "1005:14:0",
+    "stateVariable": false,
+    "storageLocation": "memory",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_bytes_memory_ptr",
+      "typeString": "bytes"
+    },
+    "typeName":
+    {
+      "id": 124,
+      "name": "bytes",
+      "nodeType": "ElementaryTypeName",
+      "src": "1005:5:0",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_bytes_storage_ptr",
+        "typeString": "bytes"
+      }
+    },
+    "value": null,
+    "visibility": "internal"
+  }
+}
