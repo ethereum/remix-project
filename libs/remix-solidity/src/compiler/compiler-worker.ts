@@ -1,6 +1,6 @@
 'use strict'
 
-import solc from 'solc/wrapper'
+import * as solc from 'solc/wrapper'
 import { CompilerInput, MessageToWorker } from './types'
 let compileJSON: ((input: CompilerInput) => string) | null = (input) => { return '' }
 const missingInputs: string[] = []
