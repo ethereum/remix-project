@@ -1,7 +1,7 @@
 'use strict'
 
 import { update } from 'solc/abi'
-import webworkify from 'webworkify-webpack'
+import * as webworkify from 'webworkify-webpack'
 import compilerInput from './compiler-input'
 import { EventManager } from '@remix-project/remix-lib'
 import { default as txHelper } from './txHelper';
