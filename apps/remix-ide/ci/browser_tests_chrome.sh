@@ -7,7 +7,7 @@ setupRemixd () {
   cd apps/remix-ide/contracts
   echo 'sharing folder: '
   echo $PWD
-  ../../../node_modules/.bin/remixd -s $PWD --remix-ide http://127.0.0.1:8080 &
+  ../../../node_modules/.bin/remixd -s $PWD --remix-ide http://127.0.0.1:4200 &
   cd ../../..
 }
 

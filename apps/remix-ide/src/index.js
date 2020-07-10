@@ -1,6 +1,6 @@
 'use strict'
 
-require('@babel/polyfill')
+// require('@babel/polyfill')
 var App = require('./app.js')
 
 var app = new App({})

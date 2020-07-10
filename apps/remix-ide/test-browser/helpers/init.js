@@ -2,7 +2,7 @@ require('dotenv').config()
 
 module.exports = function (browser, callback, url, preloadPlugins = true) {
   browser
-    .url(url || 'http://127.0.0.1:8080')
+    .url(url || 'http://127.0.0.1:4200')
     .pause(5000)
     .switchBrowserTab(0)
     .injectScript('test-browser/helpers/applytestmode.js', function () {
