@@ -1,0 +1,27 @@
+{
+  "version": "0.2.3",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "lerna": "^2.10.2"
+  },
+  "scripts": {
+    "diff": "lerna diff",
+    "updated": "lerna updated",
+    "bootstrap": "lerna bootstrap; npm run build-ts-packages",
+    "build-ts-packages": "lerna run --scope 'remix-analyzer' --scope 'remix-astwalker' --scope 'remix-solidity' --scope 'remix-tests' --scope 'remix-url-resolver' build",
+    "publish": "npm run build-ts-packages; lerna publish",
+    "release": "lerna bootstrap; lerna publish;",
+    "tag": "gulp; gulp publishTag;",
+    "updateChangelog": "gulp; gulp updateChangelog --prev $previousVersion;",
+    "remove-all-install": "npm run remove-install; npm run remove-install-analyzer; npm run remove-install-astwalker; npm run remove-install-debug; npm run remove-install-lib; npm run remove-install-simulator; npm run remove-install-tests; npm run remove-install-url-resolver; npm run remove-install-solidity;",
+    "remove-install": "rm package-lock.json; rm -rf node_modules",
+    "remove-install-analyzer": "rm remix-analyzer/package-lock.json; rm -rf remix-analyzer/node_modules; rm -rf remix-analyzer/dist",
+    "remove-install-astwalker": "rm remix-astwalker/package-lock.json; rm -rf remix-astwalker/node_modules; rm -rf remix-astwalker/dist",
+    "remove-install-debug": "rm remix-debug/package-lock.json; rm -rf remix-debug/node_modules",
+    "remove-install-lib": "rm remix-lib/package-lock.json; rm -rf remix-lib/node_modules",
+    "remove-install-simulator": "rm remix-simulator/package-lock.json; rm -rf remix-simulator/node_modules",
+    "remove-install-solidity": "rm remix-solidity/package-lock.json; rm -rf remix-solidity/node_modules; rm -rf remix-solidity/dist",
+    "remove-install-tests": "rm remix-tests/package-lock.json; rm -rf remix-tests/node_modules; rm -rf remix-tests/dist",
+    "remove-install-url-resolver": "rm remix-url-resolver/package-lock.json; rm -rf remix-url-resolver/node_modules; rm -rf remix-url-resolver/dist"
+  }
+}

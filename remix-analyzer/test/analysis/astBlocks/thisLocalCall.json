@@ -1,0 +1,52 @@
+{
+  "argumentTypes": null,
+  "arguments": [],
+  "expression":
+  {
+    "argumentTypes": [],
+    "expression":
+    {
+      "argumentTypes": null,
+      "id": 10,
+      "name": "this",
+      "nodeType": "Identifier",
+      "overloadedDeclarations": [],
+      "referencedDeclaration": -28,
+      "src": "99:4:0",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_contract$_C_$26",
+        "typeString": "contract C"
+      }
+    },
+    "id": 11,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": false,
+    "lValueRequested": false,
+    "memberName": "f",
+    "nodeType": "MemberAccess",
+    "referencedDeclaration": 25,
+    "src": "99:6:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_function_external_nonpayable$__$returns$_t_uint256_$_t_uint256_$",
+      "typeString": "function () external returns (uint256,uint256)"
+    }
+  },
+  "id": 12,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "kind": "functionCall",
+  "lValueRequested": false,
+  "names": [],
+  "nodeType": "FunctionCall",
+  "src": "99:8:0",
+  "tryCall": true,
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_tuple$_t_uint256_$_t_uint256_$",
+    "typeString": "tuple(uint256,uint256)"
+  }
+}

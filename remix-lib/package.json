@@ -1,0 +1,92 @@
+{
+  "name": "remix-lib",
+  "version": "0.4.30",
+  "description": "Ethereum IDE and tools for the web",
+  "contributors": [
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    },
+    {
+      "name": "Liana Husikyan",
+      "email": "liana@ethdev.com"
+    }
+  ],
+  "main": "./index.js",
+  "dependencies": {
+    "async": "^2.1.2",
+    "ethereumjs-block": "^2.2.2",
+    "ethereumjs-tx": "^2.1.2",
+    "ethereumjs-util": "^6.2.0",
+    "ethereumjs-vm": "4.1.3",
+    "ethers": "^4.0.40",
+    "events": "^3.0.0",
+    "solc": "^0.6.0",
+    "web3": "^1.2.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-transform-object-assign": "^7.2.0",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-es2015": "latest",
+    "@babel/preset-es2017": "latest",
+    "@babel/preset-stage-0": "^7.0.0",
+    "babel-eslint": "^7.1.1",
+    "babelify": "^10.0.0",
+    "standard": "^7.0.1",
+    "tape": "^4.6.0"
+  },
+  "scripts": {
+    "test": "standard && tape ./test/tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix.git"
+  },
+  "author": "cpp-ethereum team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix#readme",
+  "standard": {
+    "ignore": [
+      "node_modules/*",
+      "build/*",
+      "test/resources/*"
+    ],
+    "parser": "babel-eslint"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "plugins": [
+            [
+              "fast-async",
+              {
+                "runtimePatten": null,
+                "compiler": {
+                  "promises": true,
+                  "es7": true,
+                  "noRuntime": true,
+                  "wrapAwait": true
+                }
+              }
+            ],
+            "module:@babel/plugin-transform-object-assign"
+          ]
+        }
+      ],
+      [
+        "babelify",
+        {
+          "presets": [
+            "@babel/preset-env"
+          ]
+        }
+      ]
+    ]
+  }
+}

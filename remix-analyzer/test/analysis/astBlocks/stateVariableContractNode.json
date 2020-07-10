@@ -1,0 +1,210 @@
+
+  {
+    "abstract": false,
+    "baseContracts": [],
+    "contractDependencies": [],
+    "contractKind": "contract",
+    "documentation": null,
+    "fullyImplemented": true,
+    "id": 17,
+    "linearizedBaseContracts":
+    [
+      17
+    ],
+    "name": "C",
+    "nodeType": "ContractDefinition",
+    "nodes":
+    [
+      {
+        "constant": true,
+        "id": 5,
+        "name": "x",
+        "nodeType": "VariableDeclaration",
+        "overrides": null,
+        "scope": 17,
+        "src": "17:23:0",
+        "stateVariable": true,
+        "storageLocation": "default",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_uint256",
+          "typeString": "uint256"
+        },
+        "typeName":
+        {
+          "id": 1,
+          "name": "uint",
+          "nodeType": "ElementaryTypeName",
+          "src": "17:4:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_uint256",
+            "typeString": "uint256"
+          }
+        },
+        "value":
+        {
+          "argumentTypes": null,
+          "commonType":
+          {
+            "typeIdentifier": "t_rational_1048576_by_1",
+            "typeString": "int_const 1048576"
+          },
+          "id": 4,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": true,
+          "lValueRequested": false,
+          "leftExpression":
+          {
+            "argumentTypes": null,
+            "hexValue": "32",
+            "id": 2,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": true,
+            "kind": "number",
+            "lValueRequested": false,
+            "nodeType": "Literal",
+            "src": "35:1:0",
+            "subdenomination": null,
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_rational_2_by_1",
+              "typeString": "int_const 2"
+            },
+            "value": "2"
+          },
+          "nodeType": "BinaryOperation",
+          "operator": "**",
+          "rightExpression":
+          {
+            "argumentTypes": null,
+            "hexValue": "3230",
+            "id": 3,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": true,
+            "kind": "number",
+            "lValueRequested": false,
+            "nodeType": "Literal",
+            "src": "38:2:0",
+            "subdenomination": null,
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_rational_20_by_1",
+              "typeString": "int_const 20"
+            },
+            "value": "20"
+          },
+          "src": "35:5:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_rational_1048576_by_1",
+            "typeString": "int_const 1048576"
+          }
+        },
+        "visibility": "internal"
+      },
+      {
+        "constant": true,
+        "id": 8,
+        "name": "b",
+        "nodeType": "VariableDeclaration",
+        "overrides": null,
+        "scope": 17,
+        "src": "46:22:0",
+        "stateVariable": true,
+        "storageLocation": "default",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_bool",
+          "typeString": "bool"
+        },
+        "typeName":
+        {
+          "id": 6,
+          "name": "bool",
+          "nodeType": "ElementaryTypeName",
+          "src": "46:4:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_bool",
+            "typeString": "bool"
+          }
+        },
+        "value":
+        {
+          "argumentTypes": null,
+          "hexValue": "74727565",
+          "id": 7,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": true,
+          "kind": "bool",
+          "lValueRequested": false,
+          "nodeType": "Literal",
+          "src": "64:4:0",
+          "subdenomination": null,
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_bool",
+            "typeString": "bool"
+          },
+          "value": "true"
+        },
+        "visibility": "internal"
+      },
+      {
+        "constant": true,
+        "id": 11,
+        "name": "s",
+        "nodeType": "VariableDeclaration",
+        "overrides": null,
+        "scope": 17,
+        "src": "74:24:0",
+        "stateVariable": true,
+        "storageLocation": "default",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_bytes4",
+          "typeString": "bytes4"
+        },
+        "typeName":
+        {
+          "id": 9,
+          "name": "bytes4",
+          "nodeType": "ElementaryTypeName",
+          "src": "74:6:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_bytes4",
+            "typeString": "bytes4"
+          }
+        },
+        "value":
+        {
+          "argumentTypes": null,
+          "hexValue": "6162",
+          "id": 10,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": true,
+          "kind": "string",
+          "lValueRequested": false,
+          "nodeType": "Literal",
+          "src": "94:4:0",
+          "subdenomination": null,
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_stringliteral_67fad3bfa1e0321bd021ca805ce14876e50acac8ca8532eda8cbf924da565160",
+            "typeString": "literal_string \"ab\""
+          },
+          "value": "ab"
+        },
+        "visibility": "internal"
+      }
+    ],
+    "scope": 18,
+    "src": "0:239:0"
+  }
