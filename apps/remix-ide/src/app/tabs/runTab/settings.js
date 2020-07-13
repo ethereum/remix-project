@@ -1,6 +1,6 @@
 const $ = require('jquery')
 const yo = require('yo-yo')
-const remixLib = require('remix-lib')
+const remixLib = require('@remix-project/remix-lib')
 const EventManager = remixLib.EventManager
 const css = require('../styles/run-tab-styles')
 const copyToClipboard = require('../../ui/copy-to-clipboard')
