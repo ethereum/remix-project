@@ -20,10 +20,10 @@ const profile = {
   name: 'fileManager',
   displayName: 'File manager',
   description: 'Service - read/write to any files or folders, require giving permissions',
-  icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNjk2IDM4NHE0MCAwIDY4IDI4dDI4IDY4djEyMTZxMCA0MC0yOCA2OHQtNjggMjhoLTk2MHEtNDAgMC02OC0yOHQtMjgtNjh2LTI4OGgtNTQ0cS00MCAwLTY4LTI4dC0yOC02OHYtNjcycTAtNDAgMjAtODh0NDgtNzZsNDA4LTQwOHEyOC0yOCA3Ni00OHQ4OC0yMGg0MTZxNDAgMCA2OCAyOHQyOCA2OHYzMjhxNjgtNDAgMTI4LTQwaDQxNnptLTU0NCAyMTNsLTI5OSAyOTloMjk5di0yOTl6bS02NDAtMzg0bC0yOTkgMjk5aDI5OXYtMjk5em0xOTYgNjQ3bDMxNi0zMTZ2LTQxNmgtMzg0djQxNnEwIDQwLTI4IDY4dC02OCAyOGgtNDE2djY0MGg1MTJ2LTI1NnEwLTQwIDIwLTg4dDQ4LTc2em05NTYgODA0di0xMTUyaC0zODR2NDE2cTAgNDAtMjggNjh0LTY4IDI4aC00MTZ2NjQwaDg5NnoiLz48L3N2Zz4=',
+  icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -38,7 +38,7 @@ const createError = (err) => {
 }
 
 class FileManager extends Plugin {
-  constructor (editor) {
+  constructor (editor, appManager) {
     super(profile)
     this.openedFiles = {} // list all opened files
     this.events = new EventEmitter()
@@ -46,6 +46,7 @@ class FileManager extends Plugin {
     this._components = {}
     this._components.compilerImport = new CompilerImport()
     this._components.registry = globalRegistry
+    this.appManager = appManager
     this.init()
   }
 
@@ -194,10 +195,24 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async rename (oldPath, newPath) {
-    await this.__handleExists(oldPath, `Cannot rename ${oldPath}`)
+    await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
     const isFile = await this.isFile(oldPath)
+    const newPathExists = await this.exists(newPath)
+    const provider = this.fileProviderOf(oldPath)
 
-    this.fileRenamedEvent(oldPath, newPath, !isFile)
+    if (isFile) {
+      if (newPathExists) {
+        modalDialogCustom.alert('File already exists.')
+        return
+      }
+      return provider.rename(oldPath, newPath, false)
+    } else {
+      if (newPathExists) {
+        modalDialogCustom.alert('Folder already exists.')
+        return
+      }
+      return provider.rename(oldPath, newPath, true)
+    }
   }
 
   /**
@@ -477,6 +492,32 @@ class FileManager extends Plugin {
       return this._deps.filesProviders['localhost']
     }
     return this._deps.filesProviders['browser']
+  }
+
+  // returns the list of directories inside path
+  dirList (path) {
+    const dirPaths = []
+    const collectList = (path) => {
+      return new Promise((resolve, reject) => {
+        this.readdir(path).then((ls) => {
+          const promises = Object.keys(ls).map((item, index) => {
+            const root = (path.indexOf('/') === -1) ? path : path.substr(0, path.indexOf('/'))
+            const curPath = `${root}/${item}` // adding 'browser' or 'localhost'
+            if (ls[item].isDirectory && !dirPaths.includes(curPath)) {
+              dirPaths.push(curPath)
+              resolve(dirPaths)
+            }
+            return new Promise((resolve, reject) => { resolve() })
+          })
+          Promise.all(promises).then(() => { resolve(dirPaths) })
+        })
+      })
+    }
+    return collectList(path)
+  }
+
+  isRemixDActive () {
+    return this.appManager.isActive('remixd')
   }
 
   saveCurrentFile () {

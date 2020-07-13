@@ -11,7 +11,7 @@ var EventManager = require('../../../lib/events')
 
 var globalRegistry = require('../../../global/registry')
 
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 
 var init = remixLib.init
 
@@ -22,17 +22,12 @@ var css = csjs`
   .statusMessage {
     margin-left: 15px;
   }
-  .innerShift {
-    padding: 2px;
-    margin-left: 10px;
-  }
 `
 
 class DebuggerUI {
 
-  constructor (container, blockchain, fetchContractAndCompile) {
-    this.registry = globalRegistry
-    this.blockchain = blockchain
+  constructor (debuggerModule, component, fetchContractAndCompile) {
+    this.debuggerModule = debuggerModule
     this.fetchContractAndCompile = fetchContractAndCompile
     this.event = new EventManager()
 
@@ -48,62 +43,62 @@ class DebuggerUI {
 
     this.view
 
-    container.appendChild(this.render())
+    component.appendChild(this.render())
 
     this.setEditor()
   }
 
   setEditor () {
-    const self = this
-    this.editor = this.registry.get('editor').api
+    this.editor = globalRegistry.get('editor').api
 
-    self.editor.event.register('breakpointCleared', (fileName, row) => {
-      if (self.debugger) self.debugger.breakPointManager.remove({fileName: fileName, row: row})
+    this.editor.event.register('breakpointCleared', (fileName, row) => {
+      if (this.debugger) this.debugger.breakPointManager.remove({fileName: fileName, row: row})
     })
 
-    self.editor.event.register('breakpointAdded', (fileName, row) => {
-      if (self.debugger) self.debugger.breakPointManager.add({fileName: fileName, row: row})
+    this.editor.event.register('breakpointAdded', (fileName, row) => {
+      if (this.debugger) this.debugger.breakPointManager.add({fileName: fileName, row: row})
     })
 
-    self.editor.event.register('contentChanged', function () {
-      if (self.debugger) self.debugger.unload()
+    this.editor.event.register('contentChanged', () => {
+      if (this.debugger) this.debugger.unload()
     })
   }
 
   listenToEvents () {
-    const self = this
-    if (!self.debugger) return
+    if (!this.debugger) return
 
-    this.debugger.event.register('debuggerStatus', function (isActive) {
-      self.sourceHighlighter.currentSourceLocation(null)
-      self.isActive = isActive
+    this.debugger.event.register('debuggerStatus', async (isActive) => {
+      await this.debuggerModule.call('editor', 'discardHighlight')
+      this.isActive = isActive
     })
 
-    this.debugger.event.register('newSourceLocation', async function (lineColumnPos, rawLocation) {
-      const contracts = await self.fetchContractAndCompile(
-        self.currentReceipt.contractAddress || self.currentReceipt.to,
-        self.currentReceipt)
+    this.debugger.event.register('newSourceLocation', async (lineColumnPos, rawLocation) => {
+      const contracts = await this.fetchContractAndCompile(
+        this.currentReceipt.contractAddress || this.currentReceipt.to,
+        this.currentReceipt)
       if (contracts) {
         const path = contracts.getSourceName(rawLocation.file)
-        if (path) self.sourceHighlighter.currentSourceLocationFromfileName(lineColumnPos, path)
+        if (path) {
+          await this.debuggerModule.call('editor', 'discardHighlight')
+          await this.debuggerModule.call('editor', 'highlight', lineColumnPos, path)
+        }
       }
     })
 
-    this.debugger.event.register('debuggerUnloaded', self.unLoad.bind(this))
+    this.debugger.event.register('debuggerUnloaded', () => this.unLoad())
   }
 
   startTxBrowser () {
-    const self = this
     let txBrowser = new TxBrowser()
     this.txBrowser = txBrowser
 
-    txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
-      if (self.debugger) self.debugger.unload()
-      self.startDebugging(blockNumber, txNumber, tx)
+    txBrowser.event.register('requestDebug', (blockNumber, txNumber, tx) => {
+      if (this.debugger) this.debugger.unload()
+      this.startDebugging(blockNumber, txNumber, tx)
     })
 
-    txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
-      if (self.debugger) self.debugger.unload()
+    txBrowser.event.register('unloadRequested', this, (blockNumber, txIndex, tx) => {
+      if (this.debugger) this.debugger.unload()
     })
   }
 
@@ -113,13 +108,13 @@ class DebuggerUI {
 
   getDebugWeb3 () {
     return new Promise((resolve, reject) => {
-      this.blockchain.detectNetwork((error, network) => {
+      this.debuggerModule.blockchain.detectNetwork((error, network) => {
         let web3
         if (error || !network) {
-          web3 = init.web3DebugNode(this.blockchain.web3())
+          web3 = init.web3DebugNode(this.debuggerModule.blockchain.web3())
         } else {
           const webDebugNode = init.web3DebugNode(network.name)
-          web3 = !webDebugNode ? this.blockchain.web3() : webDebugNode
+          web3 = !webDebugNode ? this.debuggerModule.blockchain.web3() : webDebugNode
         }
         init.extendWeb3(web3)
         resolve(web3)
@@ -134,7 +129,7 @@ class DebuggerUI {
     this.currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     this.debugger = new Debugger({
       web3,
-      offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
+      offsetToLineColumnConverter: globalRegistry.get('offsettolinecolumnconverter').api,
       compilationResult: async (address) => {
         try {
           return await this.fetchContractAndCompile(address, this.currentReceipt)
@@ -164,7 +159,7 @@ class DebuggerUI {
       this.currentReceipt = await web3.eth.getTransactionReceipt(hash)
       const debug = new Debugger({
         web3,
-        offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
+        offsetToLineColumnConverter: globalRegistry.get('offsettolinecolumnconverter').api,
         compilationResult: async (address) => {
           try {
             return await this.fetchContractAndCompile(address, this.currentReceipt)
@@ -186,26 +181,28 @@ class DebuggerUI {
   }
 
   render () {
-    this.debuggerPanelsView = yo`<div class="${css.innerShift}"></div>`
-    this.debuggerHeadPanelsView = yo`<div class="${css.innerShift}"></div>`
-    this.stepManagerView = yo`<div class="${css.innerShift}"></div>`
+    this.debuggerPanelsView = yo`<div class="px-2"></div>`
+    this.debuggerHeadPanelsView = yo`<div class="px-2"></div>`
+    this.stepManagerView = yo`<div class="px-2"></div>`
 
-    var view = yo`<div>
-        <div class="${css.innerShift}">
+    var view = yo`
+      <div>
+        <div class="px-2">
           ${this.txBrowser.render()}
-          ${this.debuggerHeadPanelsView}
           ${this.stepManagerView}
+          ${this.debuggerHeadPanelsView}
         </div>
-        <div class="${css.statusMessage}" >${this.statusMessage}</div>
+        <div class="${css.statusMessage}">${this.statusMessage}</div>
         ${this.debuggerPanelsView}
-     </div>`
+      </div>
+    `
     if (!this.view) {
       this.view = view
     }
     return view
   }
 
-  unLoad () {
+  async unLoad () {
     yo.update(this.debuggerHeadPanelsView, yo`<div></div>`)
     yo.update(this.debuggerPanelsView, yo`<div></div>`)
     yo.update(this.stepManagerView, yo`<div></div>`)
@@ -216,6 +213,10 @@ class DebuggerUI {
     this.stepManager = null
     if (this.debugger) delete this.debugger
     this.event.trigger('traceUnloaded')
+  }
+
+  async deleteHighlights () {
+    await this.debuggerModule.call('editor', 'discardHighlight')
   }
 
   renderDebugger () {

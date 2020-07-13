@@ -1,52 +1,71 @@
 const helper = require('../../../lib/helper.js')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
+const remixPath = require('path')
 
 class TestTabLogic {
 
   constructor (fileManager) {
     this.fileManager = fileManager
+    this.currentPath = 'browser/tests'
+  }
+
+  setCurrentPath (path) {
+    if (path.indexOf('/') === 0) return
+    this.currentPath = path
+    const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
+    fileProvider.exists(path, (e, res) => { if (!res) fileProvider.createDir(path) })
   }
 
   generateTestFile () {
-    const path = this.fileManager.currentPath()
-    const fileName = this.fileManager.currentFile()
-    const fileProvider = this.fileManager.fileProviderOf(path)
+    let fileName = this.fileManager.currentFile()
+    const hasCurrent = !!fileName && this.fileManager.currentFile().split('.').pop().toLowerCase() === 'sol'
+    if (!hasCurrent) fileName = this.currentPath + '/newFile.sol'
+    const fileProvider = this.fileManager.fileProviderOf(this.currentPath)
     if (!fileProvider) return
-    helper.createNonClashingNameWithPrefix(fileName, fileProvider, '_test', (error, newFile) => {
+    const splittedFileName = fileName.split('/')
+    let fileNameToImport = (!hasCurrent) ? fileName : this.currentPath + '/' + splittedFileName[splittedFileName.length - 1]
+    helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', (error, newFile) => {
       if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-      const splittedFileName = fileName.split('/')
-      // This is fine for now because test file is created on same path where file to be tested is.
-      // This should be updated to pass complete path, if test file comes from different directory/path
-      const fileNameToImport = splittedFileName[splittedFileName.length - 1]
-      if (!fileProvider.set(newFile, this.generateTestContractSample(fileNameToImport))) return modalDialogCustom.alert('Failed to create test file ' + newFile)
+      if (!fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))) return modalDialogCustom.alert('Failed to create test file ' + newFile)
       this.fileManager.open(newFile)
+      this.fileManager.syncEditor(newFile)
     })
   }
 
+  dirList (path) {
+    return this.fileManager.dirList(path)
+  }
+
+  isRemixDActive () {
+    return this.fileManager.isRemixDActive()
+  }
+
   async getTests (cb) {
-    const path = this.fileManager.currentPath()
-    if (!path) return cb(null, [])
-    const provider = this.fileManager.fileProviderOf(path)
+    if (!this.currentPath) return cb(null, [])
+    const provider = this.fileManager.fileProviderOf(this.currentPath)
     if (!provider) return cb(null, [])
     const tests = []
     let files
     try {
-      files = await this.fileManager.readdir(path)
+      files = await this.fileManager.readdir(this.currentPath)
     } catch (e) {
       cb(e.message)
     }
     for (var file in files) {
       if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
     }
-    cb(null, tests, path)
+    cb(null, tests, this.currentPath)
   }
 
   // @todo(#2758): If currently selected file is compiled and compilation result is available,
   // 'contractName' should be <compiledContractName> + '_testSuite'
-  generateTestContractSample (fileToImport, contractName = 'testSuite') {
+  generateTestContractSample (hasCurrent, fileToImport, contractName = 'testSuite') {
+    let relative = remixPath.relative(this.currentPath, remixPath.dirname(fileToImport))
+    if (relative === '') relative = '.'
+    const comment = hasCurrent ? `import "${relative}/${remixPath.basename(fileToImport)}";` : '// Import here the file to test.'
     return `pragma solidity >=0.4.22 <0.7.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
-import "./${fileToImport}";
+${comment}
 
 // File name has to end with '_test.sol', this file can contain more than one testSuite contracts
 contract ${contractName} {
@@ -65,7 +84,7 @@ contract ${contractName} {
         Assert.notEqual(uint(2), uint(3), "2 should not be equal to 3");
     }
 
-    function checkSuccess2() public view returns (bool) {
+    function checkSuccess2() public pure returns (bool) {
         // Use the return value (true or false) to test the contract
         return true;
     }

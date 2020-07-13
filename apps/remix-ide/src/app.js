@@ -3,9 +3,8 @@
 var isElectron = require('is-electron')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var registry = require('./global/registry')
-var Remixd = require('./lib/remixd')
 var loadFileFromParent = require('./loadFilesFromParent')
 var { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
 var QueryParams = require('./lib/query-params')
@@ -122,6 +121,7 @@ var css = csjs`
 class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
+    self.appManager = new RemixAppManager({})
     self._components = {}
     self._view = {}
     self._view.splashScreen = yo`
@@ -135,7 +135,7 @@ class App {
     document.body.appendChild(self._view.splashScreen)
 
     // setup storage
-    var configStorage = new Storage('config-v0.8:')
+    const configStorage = new Storage('config-v0.8:')
 
     // load app config
     const config = new Config(configStorage)
@@ -145,14 +145,7 @@ class App {
     self._components.filesProviders = {}
     self._components.filesProviders['browser'] = new FileProvider('browser')
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
-
-    var remixd = new Remixd(65520)
-    registry.put({api: remixd, name: 'remixd'})
-    remixd.event.register('system', (message) => {
-      if (message.error) toolTip(message.error)
-    })
-
-    self._components.filesProviders['localhost'] = new RemixDProvider(remixd)
+    self._components.filesProviders['localhost'] = new RemixDProvider(self.appManager)
     registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
     registry.put({api: self._components.filesProviders, name: 'fileproviders'})
 
@@ -235,9 +228,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // APP_MANAGER
-  const appManager = new RemixAppManager({})
-  const workspace = appManager.pluginLoader.get()
+  const appManager = self.appManager
+  const pluginLoader = appManager.pluginLoader
+  const workspace = pluginLoader.get()
   const engine = new Engine(appManager)
+  engine.setPluginOption = ({ name, kind }) => {
+    if (kind === 'provider') return {queueTimeout: 60000 * 4}
+    if (name === 'LearnEth') return {queueTimeout: 60000}
+    return {queueTimeout: 10000}
+  }
   await engine.onload()
 
   // SERVICES
@@ -258,7 +257,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   editor.event.register('requiringToSaveCurrentfile', () => fileManager.saveCurrentFile())
 
   // ----------------- fileManager servive ----------------------------
-  const fileManager = new FileManager(editor)
+  const fileManager = new FileManager(editor, appManager)
   registry.put({api: fileManager, name: 'filemanager'})
 
   const blockchain = new Blockchain(registry.get('config').api)
@@ -397,22 +396,38 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
   await appManager.activatePlugin(['mainPanel', 'menuicons'])
-  await appManager.activatePlugin(['home', 'sidePanel', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'scriptRunner', 'terminal', 'fetchAndCompile'])
+  await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
+  await appManager.activatePlugin(['home', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'scriptRunner', 'terminal', 'fetchAndCompile'])
+
+  const queryParams = new QueryParams()
+  const params = queryParams.get()
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) await appManager.activatePlugin(workspace)
+  if (Array.isArray(workspace)) {
+    try {
+      await appManager.activatePlugin(workspace)
+    } catch (e) {
+      console.error(e)
+    }
+  } else {
+    // activate solidity plugin
+    appManager.ensureActivated('solidity')
+    appManager.ensureActivated('udapp')
+  }
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
-  framingService.start()
+  framingService.start(params)
+
+  // If plugins are loaded from the URL params, we focus on the last one.
+  if (pluginLoader.current === 'queryParams' && Array.isArray(workspace) && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
 
   // get the file list from the parent iframe
   loadFileFromParent(fileManager)
 
   // get the file from gist
   const gistHandler = new GistHandler()
-  const queryParams = new QueryParams()
-  const loadedFromGist = gistHandler.loadFromGist(queryParams.get(), fileManager)
+  const loadedFromGist = gistHandler.loadFromGist(params, fileManager)
   if (!loadedFromGist) {
     // insert example contracts if there are no files to show
     self._components.filesProviders['browser'].resolveDirectory('/', (error, filesList) => {
@@ -428,4 +443,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   if (isElectron()) {
     appManager.activatePlugin('remixd')
   }
+
+  if (params.embed) framingService.embed()
 }

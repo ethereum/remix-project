@@ -1,11 +1,11 @@
 'use strict'
-var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 
 var CodeListView = require('./vmDebugger/CodeListView')
 var CalldataPanel = require('./vmDebugger/CalldataPanel')
 var MemoryPanel = require('./vmDebugger/MemoryPanel')
 var CallstackPanel = require('./vmDebugger/CallstackPanel')
+var FunctionPanel = require('./vmDebugger/FunctionPanel')
 var StackPanel = require('./vmDebugger/StackPanel')
 var StoragePanel = require('./vmDebugger/StoragePanel')
 var StepDetail = require('./vmDebugger/StepDetail')
@@ -13,18 +13,6 @@ var SolidityState = require('./vmDebugger/SolidityState')
 var SolidityLocals = require('./vmDebugger/SolidityLocals')
 var FullStoragesChangesPanel = require('./vmDebugger/FullStoragesChanges')
 var DropdownPanel = require('./vmDebugger/DropdownPanel')
-
-var css = csjs`
-  .asmCode {
-    width: 100%;
-  }
-  .stepDetail {
-    width: 100%;
-  }
-  .vmheadView {
-    margin-top:10px;
-  }
-`
 
 function VmDebugger (vmDebuggerLogic) {
   var self = this
@@ -47,6 +35,16 @@ function VmDebugger (vmDebuggerLogic) {
 
   this.stackPanel = new StackPanel()
   this.vmDebuggerLogic.event.register('traceManagerStackUpdate', this.stackPanel.update.bind(this.stackPanel))
+
+  this.functionPanel = new FunctionPanel()
+  this.vmDebuggerLogic.event.register('functionsStackUpdate', (stack) => {
+    if (stack === null) return
+    let functions = []
+    for (let func of stack) {
+      functions.push(func.functionDefinition.attributes.name + '(' + func.inputs.join(', ') + ')')
+    }
+    this.functionPanel.update(functions)
+  })
 
   this.storagePanel = new StoragePanel()
   this.vmDebuggerLogic.event.register('traceManagerStorageUpdate', this.storagePanel.update.bind(this.storagePanel))
@@ -107,27 +105,39 @@ function VmDebugger (vmDebuggerLogic) {
 
     self.asmCode.basicPanel.show()
     self.stackPanel.basicPanel.show()
+    self.functionPanel.basicPanel.show()
     self.storagePanel.basicPanel.show()
     self.memoryPanel.basicPanel.show()
+    self.stepDetail.basicPanel.show()
     self.calldataPanel.basicPanel.show()
     self.callstackPanel.basicPanel.show()
   })
 
   this.vmDebuggerLogic.event.register('newCallTree', () => {
     if (!self.view) return
+    self.functionPanel.basicPanel.show()
     self.solidityLocals.basicPanel.show()
     self.solidityState.basicPanel.show()
+    self.solidityPanel.hidden = false
   })
 
   this.vmDebuggerLogic.start()
 }
 
 VmDebugger.prototype.renderHead = function () {
+  this.solidityPanel = yo`
+    <div class="w-100" hidden>
+      ${this.functionPanel.render()}
+      ${this.solidityLocals.render()}
+      ${this.solidityState.render()}
+    </div>
+  `
   const headView = yo`
-    <div id="vmheadView" class="${css.vmheadView} container">
-      <div class="row" >
-        <div class="${css.asmCode} column">${this.asmCode.render()}</div>
-        <div class="${css.stepDetail} column">${this.stepDetail.render()}</div>
+    <div id="vmheadView" class="mt-1 px-0">
+      <div class="d-flex flex-column">
+        ${this.solidityPanel}
+        <div class="w-100">${this.asmCode.render()}</div>
+        <div class="w-100">${this.stepDetail.render()}</div>
       </div>
     </div>
   `
@@ -144,10 +154,8 @@ VmDebugger.prototype.remove = function () {
 
 VmDebugger.prototype.render = function () {
   const view = yo`
-    <div id="vmdebugger" class="pl-2">
+    <div id="vmdebugger" class="px-2">
       <div>
-        ${this.solidityLocals.render()}
-        ${this.solidityState.render()}
         ${this.stackPanel.render()}
         ${this.memoryPanel.render()}
         ${this.storagePanel.render()}

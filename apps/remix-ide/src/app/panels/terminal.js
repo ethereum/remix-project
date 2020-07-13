@@ -147,11 +147,11 @@ class Terminal extends Plugin {
 
     self._view.icon = yo`
       <i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize}
-      class="btn btn-secondary btn-sm align-items-center ${css.toggleTerminal} fas fa-angle-double-down" data-id="terminalToggleIcon"></i>`
+      class="mx-2 ${css.toggleTerminal} fas fa-angle-double-down" data-id="terminalToggleIcon"></i>`
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
 
-    self._view.pendingTxCount = yo`<div class=${css.pendingTx} title='Pending Transactions'>0</div>`
+    self._view.pendingTxCount = yo`<div class="mx-2" title='Pending Transactions'>0</div>`
     self._view.inputSearch = yo`<input
       spellcheck="false"
       type="text"
@@ -166,21 +166,22 @@ class Terminal extends Plugin {
         ${self._view.dragbar}
         <div class="${css.menu} border-top border-dark bg-light" data-id="terminalToggleMenu">
           ${self._view.icon}
-          <div class=${css.clear} id="clearConsole" data-id="terminalClearConsole" onclick=${clear}>
+          <div class="mx-2" id="clearConsole" data-id="terminalClearConsole" onclick=${clear}>
             <i class="fas fa-ban" aria-hidden="true" title="Clear console"
             onmouseenter=${hover} onmouseleave=${hover}></i>
           </div>
           ${self._view.pendingTxCount}
           <div class=${css.verticalLine}></div>
-          <div class="form-check">
+          <div class="mx-2 d-flex pb-1 align-items-center ${css.listenOnNetwork} custom-control custom-checkbox">
             <input
+              class="pb-0 form-check-input custom-control-input"
               id="listenNetworkCheck"
               onchange=${listenOnNetwork}
-              type="checkbox" class="form-check-input "
+              type="checkbox"
               title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
             >
             <label
-              class="${css.listenOnNetworkLabel} form-check-label"
+              class="pt-1 form-check-label custom-control-label text-nowrap""
               title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
               for="listenNetworkCheck"
             >

@@ -1,5 +1,5 @@
 import isElectron from 'is-electron'
-import { Plugin } from '@remixproject/engine'
+import { WebsocketPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
@@ -20,14 +20,16 @@ var css = csjs`
 
 const profile = {
   name: 'remixd',
-  methods: [],
+  displayName: 'RemixD',
+  url: 'ws://127.0.0.1:65520',
+  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list'],
   events: [],
   description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',
   version: packageJson.version
 }
 
-export class RemixdHandle extends Plugin {
+export class RemixdHandle extends WebsocketPlugin {
   constructor (fileSystemExplorer, locahostProvider, appManager) {
     super(profile)
     this.fileSystemExplorer = fileSystemExplorer
@@ -36,16 +38,19 @@ export class RemixdHandle extends Plugin {
   }
 
   deactivate () {
+    this.fileSystemExplorer.hide()
+    if (super.socket) super.deactivate()
     this.locahostProvider.close((error) => {
       if (error) console.log(error)
     })
   }
 
   activate () {
+    this.fileSystemExplorer.show()
     this.connectToLocalhost()
   }
 
-  canceled () {
+  async canceled () {
     this.appManager.ensureDeactivated('remixd')
   }
 
@@ -53,9 +58,9 @@ export class RemixdHandle extends Plugin {
     * connect to localhost if no connection and render the explorer
     * disconnect from localhost if connected and remove the explorer
     *
-    * @param {String} txHash    - hash of the transaction
+    * @param {String} txHash - hash of the transaction
     */
-  connectToLocalhost () {
+  async connectToLocalhost () {
     let connection = (error) => {
       if (error) {
         console.log(error)
@@ -65,13 +70,22 @@ export class RemixdHandle extends Plugin {
         )
         this.canceled()
       } else {
-        this.fileSystemExplorer.ensureRoot()
+        const intervalId = setInterval(() => {
+          if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
+            clearInterval(intervalId)
+            console.log(error)
+            modalDialogCustom.alert(
+              'Connection to remixd terminated' +
+              'Please make sure remixd is still running in the background.'
+            )
+            this.canceled()
+          }
+        }, 3000)
+        this.locahostProvider.init(_ => this.fileSystemExplorer.ensureRoot())
       }
     }
     if (this.locahostProvider.isConnected()) {
-      this.locahostProvider.close((error) => {
-        if (error) console.log(error)
-      })
+      this.deactivate()
     } else if (!isElectron()) {
       // warn the user only if he/she is in the browser context
       modalDialog(
@@ -79,7 +93,18 @@ export class RemixdHandle extends Plugin {
         remixdDialog(),
         { label: 'Connect',
           fn: () => {
-            this.locahostProvider.init((error) => connection(error))
+            try {
+              super.activate()
+              setTimeout(() => {
+                if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
+                  connection(new Error('Connection with daemon failed.'))
+                } else {
+                  connection()
+                }
+              }, 3000)
+            } catch (error) {
+              connection(error)
+            }
           }
         },
         { label: 'Cancel',
@@ -89,7 +114,12 @@ export class RemixdHandle extends Plugin {
         }
       )
     } else {
-      this.locahostProvider.init((error) => connection(error))
+      try {
+        super.activate()
+        setTimeout(() => { connection() }, 2000)
+      } catch (error) {
+        connection(error)
+      }
     }
   }
 }

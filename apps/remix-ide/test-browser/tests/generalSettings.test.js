@@ -37,7 +37,6 @@ module.exports = {
     .click('*[data-id="compilerContainerCompileBtn"]')
     .pause(3000)
     .click('*[data-id="verticalIconsKindfileExplorers"]')
-    .openFile('browser/artifacts')
     .openFile('browser/artifacts/Ballot.json')
   },
 
@@ -209,18 +208,6 @@ module.exports = {
     .checkElementStyle(':root', '--danger', remixIdeThemes.darkly.danger)
   },
 
-  'Should load Slate theme': function (browser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="settingsTabThemeSlate"]')
-    .pause(2000)
-    .checkElementStyle(':root', '--primary', remixIdeThemes.slate.primary)
-    .checkElementStyle(':root', '--secondary', remixIdeThemes.slate.secondary)
-    .checkElementStyle(':root', '--success', remixIdeThemes.slate.success)
-    .checkElementStyle(':root', '--info', remixIdeThemes.slate.info)
-    .checkElementStyle(':root', '--warning', remixIdeThemes.slate.warning)
-    .checkElementStyle(':root', '--danger', remixIdeThemes.slate.danger)
-  },
-
   'Should load Superhero theme': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
     .click('*[data-id="settingsTabThemeSuperhero"]')
@@ -333,14 +320,6 @@ var remixIdeThemes = {
     info: '#3498DB',
     warning: '#F39C12',
     danger: '#E74C3C'
-  },
-  slate: {
-    primary: '#3A3F44',
-    secondary: '#7A8288',
-    success: '#62c462',
-    info: '#5bc0de',
-    warning: '#f89406',
-    danger: '#ee5f5b'
   },
   superhero: {
     primary: '#DF691A',
