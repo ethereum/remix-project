@@ -41,7 +41,7 @@ function runTests (browser) {
     .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
       listSelectorContains(['Use of tx.origin',
         'Fallback function of contract TooMuchGas requires too much gas',
-        'TooMuchGas.() : Variables have very similar names test and test1.'],
+        'TooMuchGas.() : Variables have very similar names "test" and "test1".'],
         '#staticanalysisresult .warning',
         browser, function () {
           browser.end()

@@ -108,16 +108,16 @@ Using the Recorder
 The Recorder is a tool used to save a bunch of transactions in a JSON file and
 rerun them later either in the same environment or in another.
 
-Saving to the JSON file ( by default its called senario.json) allows one to easily check the transaction list, tweak input parameters, change linked library, etc...
+Saving to the JSON file ( by default its called scenario.json) allows one to easily check the transaction list, tweak input parameters, change linked library, etc...
 
 There are many use cases for the recorder.  
 
 For instance:
 
 -   After having coded and tested contracts in a constrained
-    environment (like the JavaScript VM), you could then change the environment and redeploy it to a more realistic environment like a test net with an **injected web3** or to a Geth node. By using the generated **senario.json** file, you will be using all the same settings that you used in the Javascript VM.  And this mean that you won't need to click the interface 100 times or whatever to get the state that you achieved originally.  So the recorder could be a tool to protect your sanity.
+    environment (like the JavaScript VM), you could then change the environment and redeploy it to a more realistic environment like a test net with an **injected web3** or to a Geth node. By using the generated **scenario.json** file, you will be using all the same settings that you used in the Javascript VM.  And this mean that you won't need to click the interface 100 times or whatever to get the state that you achieved originally.  So the recorder could be a tool to protect your sanity.
     
-    You can also change the settings in the senario.json file to customize the playback.
+    You can also change the settings in the scenario.json file to customize the playback.
 
 -   Deploying contract does often require more than creating one
     transaction and so the recorder will automate this deployment.
@@ -127,10 +127,10 @@ For instance:
 
 ![](images/a-runtab-recorder.png)
 
-### senario.json
-To create this file in the recorder, you first of course need to have run some transactions.  In the image above - it has a `0` next to **Transactions Recorded**.  So this isn't the right moment to save transactions because - well because there aren't any.  Each time you make a transaction, that number will increment.  Then when you are ready, click the floppy disk icon and the senario.json file will be created.
+### scenario.json
+To create this file in the recorder, you first of course need to have run some transactions.  In the image above - it has a `0` next to **Transactions Recorded**.  So this isn't the right moment to save transactions because - well because there aren't any.  Each time you make a transaction, that number will increment.  Then when you are ready, click the floppy disk icon and the scenario.json file will be created.
 
-The JSON file below is an example of the senario.json file.
+The JSON file below is an example of the scenario.json file.
 
 In it, 3 transactions are executed:
 

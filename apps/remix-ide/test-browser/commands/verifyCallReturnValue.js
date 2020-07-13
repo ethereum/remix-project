@@ -24,7 +24,7 @@ function verifyCallReturnValue (browser, address, checks, done) {
   }, [address], function (result) {
     console.log('verifyCallReturnValue', result)
     for (var k in checks) {
-      browser.assert.equal(result.value[k], checks[k])
+      browser.assert.equal(result.value[k].trim(), checks[k].trim())
     }
     done()
   })

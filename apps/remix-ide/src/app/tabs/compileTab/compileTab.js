@@ -1,6 +1,6 @@
 const async = require('async')
 const EventEmitter = require('events')
-var remixTests = require('remix-tests')
+var remixTests = require('@remix-project/remix-tests')
 var Compiler = require('@remix-project/remix-solidity').Compiler
 var CompilerImport = require('../../compiler/compiler-imports')
 
@@ -68,7 +68,7 @@ class CompileTab {
         const sources = { [target]: { content } }
         this.event.emit('startingCompilation')
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
-        setTimeout(() => this.compiler.compile(sources, target), 100)
+        setTimeout(() => { this.compiler.compile(sources, target); resolve() }, 100)
       })
     })
   }
