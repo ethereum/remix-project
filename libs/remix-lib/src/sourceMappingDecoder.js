@@ -216,6 +216,9 @@ function atIndex (index, mapping) {
     }
     current = current.split(':')
     if (current[2] === '-1') { // if the current step has -1 for the file attribute, we discard it
+       // case: 'file' is not yet assigned, while processing the srcmap (reverse looping) to find 'start', 'length' (etc..), we tumble on -1 for the file.
+       // in that case the step has to be discarded
+      if (ret.file === undefined) ret = {}
       continue
     }
     if (ret.start === undefined && current[0] && current[0] !== '-1' && current[0].length) {

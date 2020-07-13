@@ -21,9 +21,7 @@ export default class noReturn implements AnalyzerModule {
   )
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
+  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean, version: string): ReportObj[] {
     const warnings: ReportObj[] = []
 
     contracts.forEach((contract: ContractHLAst) => {

@@ -26,17 +26,17 @@ contract intLocal {
       int256 i256 = 3434343;
       int i = -32432423423;    
       int32 ishrink = 2;   
-      level11();
-      level12();
-      level11();
+      level11(123);
+      level12(12);
+      level11(123);
     }
     
-    function level11() public {
-      uint8 ui8 = 123;
-      level12();
+    function level11(uint8 foo) public {
+      uint8 ui8 = foo;
+      level12(12);
     }
-    function level12() public {
-      uint8 ui81 = 12;
+    function level12(uint8 asd) public {
+      uint8 ui81 = asd;
     }
   }
 `}
