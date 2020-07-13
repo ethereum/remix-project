@@ -19,7 +19,10 @@ export const ErrorView: React.FC = () => {
       <h5>Sorry, something unexpected happened. </h5>
       <h5>
         Please raise an issue:{" "}
-        <a style={{ color: "red" }} href="https://github.com/Machinalabs/remix-ethdoc-plugin/issues">
+        <a
+          style={{ color: "red" }}
+          href="https://github.com/Machinalabs/remix-ethdoc-plugin/issues"
+        >
           Here
         </a>
       </h5>
