@@ -3,7 +3,7 @@
 import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, 
   WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, 
   MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, 
-  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter } from "../../types"
+  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter, CompiledContract } from "../../types"
 import { util } from '@remix-project/remix-lib'
 
 type SpecialObjDetail = {
@@ -1131,6 +1131,29 @@ function getTypeStringFromComponents(components: ABIParameter[]) {
   return typeString
 }
 
+/**
+ * Get compiler version from compiler contract object
+ * This is used to redirect the user to specific version of Solidity documentation
+ * @param contractFiles compiled contract object
+ */
+function getCompilerVersion(contractFiles: CompiledContractObj): string {
+  // Solidity documentation is not available for these versions
+  const noDocVersions = ['0.4.26', '0.5.16', '0.5.17']
+  let version = 'develop'
+  const fileNames: string[] = Object.keys(contractFiles)
+  const contracts = contractFiles[fileNames[0]]
+  const contractNames: string[] = Object.keys(contracts)
+  const contract: CompiledContract = contracts[contractNames[0]]
+  const metadata = JSON.parse(contract.metadata)
+  const compilerVersion: string = metadata.compiler.version
+  if(!compilerVersion.includes('nightly')) {
+    const solVersion = compilerVersion.split('+commit')[0]
+    if(!noDocVersions.includes(solVersion))
+      version = 'v' + solVersion
+  }
+  return version
+}
+
 const helpers = {
   expressionTypeDescription,
   nodeType,
@@ -1167,6 +1190,7 @@ export {
   getFunctionDefinitionReturnParameterPart,
   getUnAssignedTopLevelBinOps,
   getMethodParamsSplittedTypeDesc,
+  getCompilerVersion,
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray,

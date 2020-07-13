@@ -1,6 +1,6 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
-import { isStringToBytesConversion, isBytesLengthCheck } from './staticAnalysisCommon'
+import { isStringToBytesConversion, isBytesLengthCheck, getCompilerVersion } from './staticAnalysisCommon'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, FunctionCallAstNode, SupportedVersion} from './../../types'
 
 export default class stringBytesLength implements AnalyzerModule {
@@ -22,11 +22,12 @@ export default class stringBytesLength implements AnalyzerModule {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
+    const version = getCompilerVersion(compilationResults.contracts)
     if (this.stringToBytesConversions.length > 0 && this.bytesLengthChecks.length > 0) {
       return [{
         warning: `"bytes" and "string" lengths are not the same since strings are assumed to be UTF-8 encoded (according to the ABI defintion) therefore one character is not nessesarily encoded in one byte of data.`,
         location: this.bytesLengthChecks[0].src,
-        more: 'https://solidity.readthedocs.io/en/develop/abi-spec.html#argument-encoding'
+        more: `https://solidity.readthedocs.io/en/${version}/abi-spec.html#argument-encoding`
       }]
     } else {
       return []

@@ -22,7 +22,7 @@ tape('SourceMappingDecoder', function (t) {
 
   const testSourceMapping = {}
   t.test('sourceMappingDecoder', function (st) {
-    st.plan(32)
+    st.plan(36)
     const sourceMappingDecoder = new SourceMappingDecoder()
     console.log('test decompressAll')
     let result = sourceMappingDecoder.decompressAll(sourceMapping.mapping)
@@ -81,6 +81,14 @@ tape('SourceMappingDecoder', function (t) {
     st.equal(delegateSrcMap.length, 577)
     st.equal(delegateSrcMap.file, 0)
     st.equal(delegateSrcMap.jump, '-')
+
+    // TokenSaleChallenge - function test(uint256)
+    const tokenSaleChallengeMap = sourceMappingDecoder.atIndex(170, sourceMapping.tokenSaleChallengeSourceMap)
+    console.log(tokenSaleChallengeMap)
+    st.equal(tokenSaleChallengeMap.start, 211)
+    st.equal(tokenSaleChallengeMap.length, 48)
+    st.equal(tokenSaleChallengeMap.file, 0)
+    st.equal(tokenSaleChallengeMap.jump, '-')
   })
 
   t.test('sourceMappingLineColumnConverter', function (st) {
@@ -106,6 +114,8 @@ tape('SourceMappingDecoder', function (t) {
       file: 4,
       jump: '-'
     }
+    // case: 'file' is not yet assigned, while processing the srcmap (reverse looping) to find 'start', 'length' (etc..), we tumble on -1 for the file.
+    // in that case the step has to be discarded
     result = sourceMappingDecoder.convertOffsetToLineColumn(res, linesbreak)
     st.equal(result.start.line, 7)
     st.equal(result.start.column, 12)

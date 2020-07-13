@@ -1,10 +1,11 @@
 import { getStateVariableDeclarationsFromContractNode, getInheritsFromName, getContractName,
-  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, getFunctionDefinitionReturnParameterPart } from './staticAnalysisCommon'
+  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, 
+  getFunctionDefinitionReturnParameterPart, getCompilerVersion } from './staticAnalysisCommon'
 import { AstWalker } from '@remix-project/remix-astwalker'
 import { FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode, ContractHLAst, VariableDeclarationAstNode, 
   FunctionHLAst, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult } from '../../types'
 
-type WrapFunction = ((contracts: ContractHLAst[], isSameName: boolean) => ReportObj[])
+type WrapFunction = ((contracts: ContractHLAst[], isSameName: boolean, version: string) => ReportObj[])
 
 export default class abstractAstView {
   contracts: ContractHLAst[] = []
@@ -104,8 +105,9 @@ export default class abstractAstView {
   build_report (wrap: WrapFunction): ReportFunction {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return (compilationResult: CompilationResult) => {
+      const solVersion = getCompilerVersion(compilationResult.contracts)
       this.resolveStateVariablesInHierarchy(this.contracts)
-      return wrap(this.contracts, this.multipleContractsWithSameName)
+      return wrap(this.contracts, this.multipleContractsWithSameName, solVersion)
     }
   }
 

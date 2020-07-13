@@ -1,4 +1,3 @@
-
 class Blocks {
   constructor (executionContext, _options) {
     this.executionContext = executionContext

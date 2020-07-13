@@ -1,4 +1,3 @@
-
 class Filters { 
   constructor(executionContext) {
     this.executionContext = executionContext

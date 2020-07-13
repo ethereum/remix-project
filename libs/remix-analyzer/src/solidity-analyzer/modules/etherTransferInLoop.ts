@@ -1,6 +1,6 @@
 import { default as category } from './categories'
 import { default as algorithm } from './algorithmCategories'
-import { isLoop, isTransfer } from './staticAnalysisCommon'
+import { isLoop, isTransfer, getCompilerVersion } from './staticAnalysisCommon'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, ForStatementAstNode, 
   WhileStatementAstNode, ExpressionStatementAstNode, SupportedVersion} from './../../types'
 
@@ -31,11 +31,12 @@ export default class etherTransferInLoop implements AnalyzerModule {
   
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
+    const version = getCompilerVersion(compilationResults.contracts)
     return this.relevantNodes.map((node) => {
       return {
         warning: `Ether payout should not be done in a loop: Due to the block gas limit, transactions can only consume a certain amount of gas. The number of iterations in a loop can grow beyond the block gas limit which can cause the complete contract to be stalled at a certain point. If required then make sure that number of iterations are low and you trust each address involved.`,
         location: node.src,
-        more: 'https://solidity.readthedocs.io/en/latest/security-considerations.html#gas-limit-and-loops'
+        more: `https://solidity.readthedocs.io/en/${version}/security-considerations.html#gas-limit-and-loops`
       }
     })
   }

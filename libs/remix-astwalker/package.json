@@ -34,7 +34,7 @@
   "dependencies": {
     "@types/tape": "^4.2.33",
     "nyc": "^13.3.0",
-    "remix-lib": "0.4.29",
+    "remix-lib": "0.4.30",
     "tape": "^4.10.1",
     "ts-node": "^8.0.3",
     "typescript": "^3.4.3"
