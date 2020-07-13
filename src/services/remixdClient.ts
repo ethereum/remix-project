@@ -51,7 +51,7 @@ export class RemixdClient extends PluginClient {
         const path = utils.absolutePath(args.path, this.currentSharedFolder)
   
         if (!fs.existsSync(path)) {
-          reject('File not found ' + path)
+          return reject('File not found ' + path)
         }
         if (!isRealPath(path)) return
         isbinaryfile(path, (error: Error, isBinary: boolean) => {
