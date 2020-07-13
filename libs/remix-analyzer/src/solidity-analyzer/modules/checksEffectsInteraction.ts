@@ -1,6 +1,6 @@
 import { default as category } from './categories'
 import { isInteraction, isEffect, isLocalCallGraphRelevantNode, getFullQuallyfiedFuncDefinitionIdent,
-  isWriteOnStateVariable, isStorageVariableDeclaration, getFullQualifiedFunctionCallIdent } from './staticAnalysisCommon'
+  isWriteOnStateVariable, isStorageVariableDeclaration, getFullQualifiedFunctionCallIdent, getCompilerVersion } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
 import  AbstractAst from './abstractAstView'
@@ -25,7 +25,7 @@ export default class checksEffectsInteraction implements AnalyzerModule {
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
     
-  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
+  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean, version: string): ReportObj[] {
     const warnings: ReportObj[] = []
     const hasModifiers: boolean = contracts.some((item) => item.modifiers.length > 0)
     const callGraph: Record<string, ContractCallGraph> = buildGlobalFuncCallGraph(contracts)
@@ -51,7 +51,7 @@ export default class checksEffectsInteraction implements AnalyzerModule {
           warnings.push({
             warning: `Potential violation of Checks-Effects-Interaction pattern in ${funcName}: Could potentially lead to re-entrancy vulnerability. ${comments}`,
             location: func.node['src'],
-            more: 'http://solidity.readthedocs.io/en/develop/security-considerations.html#re-entrancy'
+            more: `https://solidity.readthedocs.io/en/${version}/security-considerations.html#re-entrancy`
           })
         }
       })

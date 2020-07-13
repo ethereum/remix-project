@@ -1,5 +1,5 @@
 import { default as category } from './categories'
-import { isThisLocalCall } from './staticAnalysisCommon'
+import { isThisLocalCall, getCompilerVersion } from './staticAnalysisCommon'
 import { default as algorithm } from './algorithmCategories'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, SupportedVersion} from './../../types'
 
@@ -19,11 +19,12 @@ export default class thisLocal implements AnalyzerModule {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
-    return this.warningNodes.map(function (item) {
+    const version = getCompilerVersion(compilationResults.contracts)
+    return this.warningNodes.map(function (item, i) {
       return {
         warning: `Use of "this" for local functions: Never use "this" to call functions in the same contract, it only consumes more gas than normal local calls.`,
         location: item.src,
-        more: 'http://solidity.readthedocs.io/en/develop/control-structures.html#external-function-calls'
+        more: `https://solidity.readthedocs.io/en/${version}/control-structures.html#external-function-calls`
       }
     })
   }
