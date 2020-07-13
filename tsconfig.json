@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "commonjs",
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2017", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@remix-project/remix-analyzer": ["libs/remix-analyzer/index.ts"],
+      "@remix-project/remix-astwalker": ["libs/remix-astwalker/src/index.ts"],
+      "@remix-project/remix-debug": ["libs/remix-debug/index.js"],
+      "@remix-project/remix-lib": ["libs/remix-lib/index.js"],
+      "@remix-project/remix-simulator": ["libs/remix-simulator/index.js"],
+      "@remix-project/remix-solidity": ["dist/libs/remix-solidity/index.js"],
+      "@remix-project/remix-tests": ["libs/remix-tests/src/index.ts"],
+      "@remix-project/remix-url-resolver": ["libs/remix-url-resolver/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

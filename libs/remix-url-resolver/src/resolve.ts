@@ -27,8 +27,9 @@ export class RemixURLResolver {
   * @params filePath path of the file in github
   */
   async handleGithubCall(root: string, filePath: string) {
+    //eslint-disable-next-line no-useless-catch
     try {
-      let req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath
+      const req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath
       const response: AxiosResponse = await axios.get(req)
       return Buffer.from(response.data.content, 'base64').toString()
     } catch(e) {
@@ -41,6 +42,7 @@ export class RemixURLResolver {
   * @params cleanURL
   */
   async handleHttp(url: string, _: string) {
+  //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
       return response.data
@@ -54,6 +56,7 @@ export class RemixURLResolver {
   * @params cleanURL
   */
   async handleHttps(url: string, _: string) {
+  //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
       return response.data
@@ -71,6 +74,7 @@ export class RemixURLResolver {
   async handleIPFS(url: string) {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
+    //eslint-disable-next-line no-useless-catch
     try {
       const req = 'https://gateway.ipfs.io/' + url
       // If you don't find greeter.sol on ipfs gateway use local
@@ -112,7 +116,7 @@ export class RemixURLResolver {
   }
 
   public async resolve(filePath: string, customHandlers?: Handler[]): Promise<Imported> {
-    var imported: Imported = this.previouslyHandled[filePath]
+    let imported: Imported = this.previouslyHandled[filePath]
     if(imported) {
       return imported
     }

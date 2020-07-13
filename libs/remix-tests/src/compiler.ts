@@ -1,10 +1,10 @@
 import fs from './fileSystem'
 import async from 'async'
 import path from 'path'
-let RemixCompiler = require('remix-solidity').Compiler
+const RemixCompiler = require('@remix-project/remix-solidity').Compiler
 import { SrcIfc, CompilerConfiguration, CompilationErrors } from './types'
 
-function regexIndexOf (inputString: string, regex: RegExp, startpos: number = 0) {
+function regexIndexOf (inputString: string, regex: RegExp, startpos = 0) {
     const indexOf = inputString.substring(startpos).search(regex)
     return (indexOf >= 0) ? (indexOf + (startpos)) : indexOf
 }
@@ -41,8 +41,8 @@ function isRemixTestFile(path: string) {
  * @param isRoot True, If file is a root test contract file which is getting processed, not an imported file
  */
 
-function processFile(filePath: string, sources: SrcIfc, isRoot: boolean = false) {
-    const importRegEx: RegExp = /import ['"](.+?)['"];/g;
+function processFile(filePath: string, sources: SrcIfc, isRoot = false) {
+    const importRegEx = /import ['"](.+?)['"];/g;
     let group: RegExpExecArray| null = null;
     const isFileAlreadyInSources: boolean = Object.keys(sources).includes(filePath)
 
@@ -51,18 +51,18 @@ function processFile(filePath: string, sources: SrcIfc, isRoot: boolean = false)
         return
 
     let content: string = fs.readFileSync(filePath, { encoding: 'utf-8' });
-    const testFileImportRegEx: RegExp = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+    const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
     // import 'remix_tests.sol', if file is a root test contract file and doesn't already have it 
     if (isRoot && filePath.endsWith('_test.sol') && regexIndexOf(content, testFileImportRegEx) < 0) {
-        const includeTestLibs: string = '\nimport \'remix_tests.sol\';\n'
+        const includeTestLibs = '\nimport \'remix_tests.sol\';\n'
         content = includeTestLibs.concat(content)
     }
     sources[filePath] = {content};
     importRegEx.exec(''); // Resetting state of RegEx
 
     // Process each 'import' in file content
-    while (group = importRegEx.exec(content)) {
+    while ((group = importRegEx.exec(content))) {
         const importedFile: string = group[1];
         const importedFilePath: string = path.join(path.dirname(filePath), importedFile);
         processFile(importedFilePath, sources)
@@ -82,7 +82,7 @@ const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' elect
  * TODO: replace this with remix's own compiler code
  */
 
-export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb: Function) {
+export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb): void {
     let compiler: any
     const accounts: string[] = opts.accounts || []
     const sources: SrcIfc = {
@@ -108,18 +108,18 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
             })
         }
         
-    } catch (e) {
+    } catch (e) { // eslint-disable-line no-useless-catch
         throw e
     } finally {
         async.waterfall([
-            function loadCompiler(next: Function) {
+            function loadCompiler(next) {
                 compiler = new RemixCompiler()
                 compiler.onInternalCompilerLoaded()
                 // compiler.event.register('compilerLoaded', this, function (version) {
                 next()
                 // });
             },
-            function doCompilation(next: Function) {
+            function doCompilation(next) {
                 // @ts-ignore
                 compiler.event.register('compilationFinished', this, (success, data, source) => {
                     next(null, data)
@@ -127,9 +127,9 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
                 compiler.compile(sources, filepath)
             }
         ], function (err: Error | null | undefined, result: any) {
-            let error: Error[] = []
+            const error: Error[] = []
             if (result.error) error.push(result.error)
-            let errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
+            const errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
             if (errors.length > 0) {
                 if (!isBrowser) require('signale').fatal(errors)
                 return cb(new CompilationErrors(errors))
@@ -147,7 +147,7 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
  * @param opts Options
  * @param cb Callback
  */
-export function compileContractSources(sources: SrcIfc, compilerConfig: CompilerConfiguration, importFileCb: any, opts: any, cb: Function) {
+export function compileContractSources(sources: SrcIfc, compilerConfig: CompilerConfiguration, importFileCb: any, opts: any, cb): void {
     let compiler, filepath: string
     const accounts: string[] = opts.accounts || []
     // Iterate over sources keys. Inject test libraries. Inject test library import statements.
@@ -156,10 +156,10 @@ export function compileContractSources(sources: SrcIfc, compilerConfig: Compiler
         sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
         sources['remix_accounts.sol'] = { content: writeTestAccountsContract(accounts) }
     }
-    const testFileImportRegEx: RegExp = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+    const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
-    let includeTestLibs: string = '\nimport \'remix_tests.sol\';\n'
-    for (let file in sources) {
+    const includeTestLibs = '\nimport \'remix_tests.sol\';\n'
+    for (const file in sources) {
         const c: string = sources[file].content
         if (file.endsWith('_test.sol') && c && regexIndexOf(c, testFileImportRegEx) < 0) {
             sources[file].content = includeTestLibs.concat(c)
@@ -167,7 +167,7 @@ export function compileContractSources(sources: SrcIfc, compilerConfig: Compiler
     }
 
     async.waterfall([
-        function loadCompiler (next: Function) {
+        function loadCompiler (next) {
             const {currentCompilerUrl, evmVersion, optimize, usingWorker} = compilerConfig
             compiler = new RemixCompiler(importFileCb)
             compiler.set('evmVersion', evmVersion)
@@ -178,7 +178,7 @@ export function compileContractSources(sources: SrcIfc, compilerConfig: Compiler
                 next()
             })
         },
-        function doCompilation (next: Function) {
+        function doCompilation (next) {
             // @ts-ignore
             compiler.event.register('compilationFinished', this, (success, data, source) => {
                 next(null, data)
@@ -186,9 +186,9 @@ export function compileContractSources(sources: SrcIfc, compilerConfig: Compiler
             compiler.compile(sources, filepath)
         }
     ], function (err: Error | null | undefined , result: any) {
-        let error: Error[] = []
+        const error: Error[] = []
         if (result.error) error.push(result.error)
-        let errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
+        const errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
         if (errors.length > 0) {
             if (!isBrowser) require('signale').fatal(errors)
             return cb(new CompilationErrors(errors))

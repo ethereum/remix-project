@@ -3,7 +3,7 @@ var utileth = require('ethereumjs-util')
 var Tx = require('ethereumjs-tx').Transaction
 var Block = require('ethereumjs-block')
 var BN = require('ethereumjs-util').BN
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var EthJSVM = require('ethereumjs-vm').default
 
 function sendTx (vm, from, to, value, data, cb) {

@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class txOrigin implements AnalyzerModule {
   txOriginNodes: MemberAccessAstNode[] = []
-  name: string = `Transaction origin: `
-  description: string = `'tx.origin' used`
+  name = `Transaction origin: `
+  description = `'tx.origin' used`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -18,9 +18,14 @@ export default class txOrigin implements AnalyzerModule {
     
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
+<<<<<<< HEAD:libs/remix-analyzer/src/solidity-analyzer/modules/txOrigin.ts
     const version = getCompilerVersion(compilationResults.contracts)
     return this.txOriginNodes.map((item, i) => {
+=======
+    return this.txOriginNodes.map((item) => {
+>>>>>>> 3ce30ccb299e439bf2f3c0dbb2b69d8476c73c43:remix-analyzer/src/solidity-analyzer/modules/txOrigin.ts
       return {
         warning: `Use of tx.origin: "tx.origin" is useful only in very exceptional cases. 
                   If you use it for authentication, you usually want to replace it by "msg.sender", because otherwise any contract you call can act on your behalf.`,
