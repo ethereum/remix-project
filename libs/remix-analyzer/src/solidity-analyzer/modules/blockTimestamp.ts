@@ -22,12 +22,8 @@ export default class blockTimestamp implements AnalyzerModule {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
-<<<<<<< HEAD:libs/remix-analyzer/src/solidity-analyzer/modules/blockTimestamp.ts
     const version = getCompilerVersion(compilationResults.contracts)
     return this.warningNowNodes.map((item, i) => {
-=======
-    return this.warningNowNodes.map((item) => {
->>>>>>> 3ce30ccb299e439bf2f3c0dbb2b69d8476c73c43:remix-analyzer/src/solidity-analyzer/modules/blockTimestamp.ts
       return {
         warning: `Use of "now": "now" does not mean current time. "now" is an alias for "block.timestamp". 
                   "block.timestamp" can be influenced by miners to a certain degree, be careful.`,
