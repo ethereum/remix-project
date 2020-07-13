@@ -3,14 +3,10 @@ import {
   CompiledContract,
   FunctionDescription,
   ABIParameter,
-  ABIDescription
+  ABIDescription,
 } from "@remixproject/plugin";
 
-import {
-  FileName,
-  Documentation,
-  ContractName,
-} from "../types";
+import { FileName, Documentation, ContractName } from "../types";
 import { template } from "./template";
 import {
   ContractDocumentation,
@@ -42,8 +38,8 @@ export const getContractDoc = (name: string, contract: CompiledContract) => {
   const contractDoc: ContractDocumentation = getContractDocumentation(contract);
 
   const onlyFunctions = contract.abi.filter((item) => {
-    return item.type !== "event"
-  })
+    return item.type !== "event";
+  });
 
   const functionsDocumentation = onlyFunctions.map((def: ABIDescription) => {
     if (def.type === "constructor") {
@@ -51,7 +47,10 @@ export const getContractDoc = (name: string, contract: CompiledContract) => {
       // because "constructor" is a string and not a { notice } object for userdoc we need to do that
       const methodDoc = {
         ...(contract.devdoc.methods.constructor || {}),
-        notice: Object.keys(contract.userdoc.methods['constructor']).length > 0 ? contract.userdoc.methods['constructor'] as string : "",
+        notice:
+          Object.keys(contract.userdoc.methods.constructor).length > 0
+            ? (contract.userdoc.methods.constructor as string)
+            : "",
       };
       return getFunctionDocumentation(def, methodDoc);
     } else {
