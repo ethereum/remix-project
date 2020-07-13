@@ -11,7 +11,7 @@ var EventManager = require('../../../lib/events')
 
 var globalRegistry = require('../../../global/registry')
 
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 
 var init = remixLib.init
 

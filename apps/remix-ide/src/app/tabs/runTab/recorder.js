@@ -1,5 +1,5 @@
 var yo = require('yo-yo')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var EventManager = remixLib.EventManager
 var csjs = require('csjs-inject')
 var css = require('../styles/run-tab-styles')
