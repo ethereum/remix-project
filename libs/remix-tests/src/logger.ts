@@ -42,7 +42,7 @@ class Log {
             )
         })
     }
-    setVerbosity (v: LoggerOptions["level"]) {
+    setVerbosity (v: LoggerOptions["level"]): void {
         this.logger.configure({
             level: v,
             transports: [new winston.transports.Console()],

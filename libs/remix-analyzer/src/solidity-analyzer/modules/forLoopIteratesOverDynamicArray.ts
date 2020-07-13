@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class forLoopIteratesOverDynamicArray implements AnalyzerModule {
   relevantNodes: ForStatementAstNode[] = []
-  name: string = `For loop over dynamic array: `
-  description: string = `Iterations depend on dynamic array's size`
+  name = `For loop over dynamic array: `
+  description = `Iterations depend on dynamic array's size`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -22,7 +22,8 @@ export default class forLoopIteratesOverDynamicArray implements AnalyzerModule {
         this.relevantNodes.push(node)
       }
   }
-
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
     const version = getCompilerVersion(compilationResults.contracts)
     return this.relevantNodes.map((node) => {

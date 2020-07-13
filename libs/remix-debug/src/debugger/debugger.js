@@ -1,6 +1,6 @@
 'use strict'
 const Ethdebugger = require('../Ethdebugger')
-const remixLib = require('remix-lib')
+const remixLib = require('@remix-project/remix-lib')
 const EventManager = remixLib.EventManager
 const traceHelper = remixLib.helpers.trace
 const OffsetToColumnConverter = remixLib.OffsetToColumnConverter

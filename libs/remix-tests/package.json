@@ -1,6 +1,6 @@
 {
-  "name": "remix-tests",
-  "version": "0.1.34",
+  "name": "@remix-project/remix-tests",
+  "version": "0.1.33",
   "description": "Tool to test Solidity smart contracts",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,7 +19,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsc && mocha --require ts-node/register tests/*.ts -t 300000",
+    "lint": "standard",
+    "test": "./../../node_modules/.bin/mocha --require ts-node/register --require tsconfig-paths/register tests/*.ts -t 300000",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -43,9 +44,9 @@
     "change-case": "^3.0.1",
     "colors": "^1.1.2",
     "commander": "^2.13.0",
-    "remix-lib": "0.4.30",
-    "remix-simulator": "0.1.9-beta.6",
-    "remix-solidity": "0.3.31",
+    "@remix-project/remix-lib": "0.4.29",
+    "@remix-project/remix-simulator": "0.1.9-beta.5",
+    "@remix-project/remix-solidity": "0.3.30",
     "signale": "^1.4.0",
     "web3": "^1.2.4",
     "winston": "^3.0.0"

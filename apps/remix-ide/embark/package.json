@@ -1,0 +1,16 @@
+{
+  "name": "embark-remix",
+  "version": "0.0.2",
+  "description": "load remix IDE from embark environment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "remix-ide": "latest",
+    "remixd": "latest",
+    "http-server": "latest"
+  }
+}

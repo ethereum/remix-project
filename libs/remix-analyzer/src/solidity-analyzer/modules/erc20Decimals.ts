@@ -6,8 +6,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, VisitFuncti
   FunctionHLAst, VariableDeclarationAstNode, SupportedVersion} from './../../types'
 
 export default class erc20Decimals implements AnalyzerModule {
-  name: string = `ERC20: `
-  description: string = `'decimals' should be 'uint8'`
+  name = `ERC20: `
+  description = `'decimals' should be 'uint8'`
   category: ModuleCategory = category.ERC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -15,9 +15,12 @@ export default class erc20Decimals implements AnalyzerModule {
   }
 
   abstractAst: AbstractAst = new AbstractAst()
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   visit: VisitFunction = this.abstractAst.build_visit((node: any) => false)
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
     const warnings: ReportObj[] = []
 

@@ -1,7 +1,7 @@
 'use strict'
 
 var vmCall = require('../vmCall')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 
 var TraceManager = remixLib.trace.TraceManager
 var CodeManager = remixLib.code.CodeManager

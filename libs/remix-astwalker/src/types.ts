@@ -37,7 +37,7 @@ export interface AstNode {
   src: string;
 
   absolutePath?: string;
-  exportedSymbols?: Object;
+  exportedSymbols?: Record<string, unknown>;
   nodes?: Array<AstNode>;
   literals?: Array<string>;
   file?: string;
@@ -63,7 +63,7 @@ export interface AstNodeAtt {
   constant?: boolean;
   name?: string;
   public?: boolean;
-  exportedSymbols?: Object;
+  exportedSymbols?: Record<string, unknown>;
   argumentTypes?: null;
   absolutePath?: string;
   [x: string]: any;

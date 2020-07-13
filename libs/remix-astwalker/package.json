@@ -1,11 +1,11 @@
 {
-  "name": "remix-astwalker",
-  "version": "0.0.25",
+  "name": "@remix-project/remix-astwalker",
+  "version": "0.0.24",
   "description": "Remix sub-module for walking through AST",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "test": "nyc --reporter=lcov --require ts-node/register tape ./tests/*.ts | tap-spec; nyc report ---reporter=text",
+    "test": "./../../node_modules/.bin/nyc --reporter=lcov --require ts-node/register --require tsconfig-paths/register ./../../node_modules/.bin/tape ./tests/*.ts | ./../../node_modules/.bin/tap-spec; ./../../node_modules/.bin/nyc report ---reporter=text",
     "prepublish": "npm run build"
   },
   "repository": {

@@ -377,6 +377,7 @@ module.exports = class UniversalDApp {
             if (error && (typeof (error) !== 'string')) {
               if (error.message) error = error.message
               else {
+                // eslint-disable-next-line no-empty
                 try { error = 'error: ' + JSON.stringify(error) } catch (e) {}
               }
             }

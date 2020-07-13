@@ -4,8 +4,8 @@ import { isStringToBytesConversion, isBytesLengthCheck, getCompilerVersion } fro
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, FunctionCallAstNode, SupportedVersion} from './../../types'
 
 export default class stringBytesLength implements AnalyzerModule {
-  name: string = `String length: `
-  description: string = `Bytes length != String length`
+  name = `String length: `
+  description = `Bytes length != String length`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -20,6 +20,7 @@ export default class stringBytesLength implements AnalyzerModule {
     else if (node.nodeType === "MemberAccess" && isBytesLengthCheck(node)) this.bytesLengthChecks.push(node)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
     const version = getCompilerVersion(compilationResults.contracts)
     if (this.stringToBytesConversions.length > 0 && this.bytesLengthChecks.length > 0) {

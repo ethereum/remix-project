@@ -1,4 +1,3 @@
-'use strict'
 const EventManager = require('./src/eventManager')
 const traceHelper = require('./src/helpers/traceHelper')
 const uiHelper = require('./src/helpers/uiHelper')
@@ -33,10 +32,6 @@ if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') 
   module.exports = modules()
 }
 
-if (typeof (window) !== 'undefined') {
-  window.remix = modules()
-}
-
 function modules () {
   return {
     code: {
@@ -68,7 +63,7 @@ function modules () {
       EventsDecoder: EventsDecoder,
       txExecution: txExecution,
       txHelper: txHelper,
-      executionContext: executionContext,
+      executionContext: new executionContext(),
       txFormat: txFormat,
       txListener: txListener,
       txRunner: txRunner,

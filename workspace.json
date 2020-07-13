@@ -1,0 +1,473 @@
+{
+  "version": 1,
+  "projects": {
+    "remix-ide": {
+      "root": "apps/remix-ide",
+      "sourceRoot": "apps/remix-ide/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/remix-ide",
+            "index": "apps/remix-ide/src/webpack.index.html",
+            "main": "apps/remix-ide/src/main.js",
+            "polyfills": "apps/remix-ide/src/polyfills.js",
+            "tsConfig": "apps/remix-ide/tsconfig.app.json",
+            "assets": [
+              "apps/remix-ide/src/assets",
+              "apps/remix-ide/src/index.html"
+            ],
+            "styles": [],
+            "scripts": [],
+            "webpackConfig": "apps/remix-ide/webpack.config.js",
+            "maxWorkers": 6
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/remix-ide/src/environments/environment.js",
+                  "with": "apps/remix-ide/src/environments/environment.prod.js"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "remix-ide:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "remix-ide:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/remix-ide/.eslintrc",
+            "files": [
+              "apps/remix-ide/**/*.js"
+            ],
+            "exclude": ["**/node_modules/**",
+              "apps/remix-ide/build/**/*.js",
+              "apps/remix-ide/src/app/editor/mode-solidity.js",
+              "apps/remix-ide/soljson.js",
+              "apps/remix-ide/assets/js/**/*.js",
+              "apps/remix-ide/src/assets/js/**/*.js"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "csslint && node apps/remix-ide/test/index.js"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "remix-analyzer": {
+      "root": "libs/remix-analyzer",
+      "sourceRoot": "libs/remix-analyzer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-analyzer/.eslintrc",
+            "tsConfig": ["libs/remix-analyzer/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "libs/remix-analyzer/test/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-analyzer"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-analyzer",
+            "tsConfig": "libs/remix-analyzer/tsconfig.lib.json",
+            "packageJson": "libs/remix-analyzer/package.json",
+            "main": "libs/remix-analyzer/src/index.ts",
+            "assets": ["libs/remix-analyzer/*.md"]
+          }
+        }
+      }
+    },
+    "remix-astwalker": {
+      "root": "libs/remix-astwalker",
+      "sourceRoot": "libs/remix-astwalker/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-astwalker/.eslintrc",
+            "tsConfig": ["libs/remix-astwalker/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "libs/remix-astwalker/tests/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-astwalker"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-astwalker",
+            "tsConfig": "libs/remix-astwalker/tsconfig.lib.json",
+            "packageJson": "libs/remix-astwalker/package.json",
+            "main": "libs/remix-astwalker/src/index.ts",
+            "assets": ["libs/remix-astwalker/*.md"]
+          }
+        }
+      }
+    },
+    "remix-debug": {
+      "root": "libs/remix-debug",
+      "sourceRoot": "libs/remix-debug/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-debug/.eslintrc",
+            "files": [
+              "libs/remix-debug/**/*.js"
+            ],
+            "exclude": ["**/node_modules/**", "libs/remix-debug/test/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-debug"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-debug",
+            "tsConfig": "libs/remix-debug/tsconfig.lib.json",
+            "packageJson": "libs/remix-debug/package.json",
+            "main": "libs/remix-debug/index.js",
+            "assets": ["libs/remix-debug/*.md"]
+          }
+        }
+      }
+    },
+    "remix-lib": {
+      "root": "libs/remix-lib",
+      "sourceRoot": "libs/remix-lib/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-lib/.eslintrc",
+            "files": ["libs/remix-lib/**/*.js"],
+            "exclude": ["**/node_modules/**", "libs/remix-lib/test/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-lib"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-lib",
+            "tsConfig": "libs/remix-lib/tsconfig.lib.json",
+            "packageJson": "libs/remix-lib/package.json",
+            "main": "libs/remix-lib/src/index.js",
+            "assets": ["libs/remix-lib/*.md"]
+          }
+        }
+      }
+    },
+    "remix-simulator": {
+      "root": "libs/remix-simulator",
+      "sourceRoot": "libs/remix-simulator/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-simulator/.eslintrc",
+            "files": [
+              "libs/remix-simulator/**/*.js"
+            ],
+            "exclude": ["**/node_modules/**", "libs/remix-simulator/test/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-simulator"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-simulator",
+            "tsConfig": "libs/remix-simulator/tsconfig.lib.json",
+            "packageJson": "libs/remix-simulator/package.json",
+            "main": "libs/remix-simulator/index.js",
+            "assets": ["libs/remix-simulator/*.md"]
+          }
+        }
+      }
+    },
+    "remix-solidity": {
+      "root": "libs/remix-solidity",
+      "sourceRoot": "libs/remix-solidity/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-solidity/.eslintrc",
+            "tsConfig": [
+              "libs/remix-solidity/tsconfig.lib.json"
+            ],
+            "exclude": ["**/node_modules/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-solidity"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-solidity",
+            "tsConfig": "libs/remix-solidity/tsconfig.lib.json",
+            "packageJson": "libs/remix-solidity/package.json",
+            "main": "libs/remix-solidity/src/index.ts",
+            "assets": ["libs/remix-solidity/*.md"]
+          }
+        }
+      }
+    },
+    "remix-tests": {
+      "root": "libs/remix-tests",
+      "sourceRoot": "libs/remix-tests/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-tests/.eslintrc",
+            "tsConfig": [
+              "libs/remix-tests/tsconfig.lib.json"
+            ],
+            "exclude": ["**/node_modules/**", "libs/remix-tests/tests/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-tests"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-tests",
+            "tsConfig": "libs/remix-tests/tsconfig.lib.json",
+            "packageJson": "libs/remix-tests/package.json",
+            "main": "libs/remix-tests/src/index.ts",
+            "assets": ["libs/remix-tests/*.md"]
+          }
+        }
+      }
+    },
+    "remix-url-resolver": {
+      "root": "libs/remix-url-resolver",
+      "sourceRoot": "libs/remix-url-resolver/src/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remix-url-resolver/.eslintrc",
+            "tsConfig": [
+              "libs/remix-url-resolver/tsconfig.lib.json"
+            ],
+            "exclude": ["**/node_modules/**", "libs/remix-url-resolver/tests/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./../../node_modules/.bin/npm-run-all test"
+              }
+            ],
+            "cwd": "libs/remix-url-resolver"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remix-url-resolver",
+            "tsConfig": "libs/remix-url-resolver/tsconfig.lib.json",
+            "packageJson": "libs/remix-url-resolver/package.json",
+            "main": "libs/remix-url-resolver/src/index.ts",
+            "assets": ["libs/remix-url-resolver/*.md"]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/react"
+  },
+  "schematics": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/cypress": {
+      "cypress-project": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/react": {
+      "application": {
+        "style": "css",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "css"
+      },
+      "library": {
+        "style": "css",
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/web": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/node": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nx-plugin": {
+      "plugin": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nest": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/express": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    }
+  },
+  "defaultProject": "remix-ide"
+}
