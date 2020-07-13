@@ -4,7 +4,7 @@ const CompilerImport = require('../compiler/compiler-imports')
 const EventManager = require('../../lib/events')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const tooltip = require('../ui/tooltip')
-const remixLib = require('remix-lib')
+const remixLib = require('@remix-project/remix-lib')
 const Storage = remixLib.Storage
 
 class FileProvider {

@@ -2,7 +2,7 @@ var yo = require('yo-yo')
 var async = require('async')
 var tooltip = require('../ui/tooltip')
 var css = require('./styles/test-tab-styles')
-var remixTests = require('remix-tests')
+var remixTests = require('@remix-project/remix-tests')
 import { ViewPlugin } from '@remixproject/engine'
 import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
 

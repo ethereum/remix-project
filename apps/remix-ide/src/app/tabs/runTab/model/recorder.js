@@ -1,6 +1,6 @@
 var async = require('async')
 var ethutil = require('ethereumjs-util')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var EventManager = remixLib.EventManager
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
