@@ -3,13 +3,8 @@
 import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, 
   WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, 
   MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, 
-<<<<<<< HEAD:libs/remix-analyzer/src/solidity-analyzer/modules/staticAnalysisCommon.ts
-  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter, CompilationResult, CompiledContract } from "types"
-import { util } from 'remix-lib'
-=======
   IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter } from "../../types"
 import { util } from '@remix-project/remix-lib'
->>>>>>> 3ce30ccb299e439bf2f3c0dbb2b69d8476c73c43:remix-analyzer/src/solidity-analyzer/modules/staticAnalysisCommon.ts
 
 type SpecialObjDetail = {
   obj: string

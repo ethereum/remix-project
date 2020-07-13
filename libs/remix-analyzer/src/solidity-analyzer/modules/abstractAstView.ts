@@ -1,11 +1,6 @@
 import { getStateVariableDeclarationsFromContractNode, getInheritsFromName, getContractName,
-<<<<<<< HEAD:libs/remix-analyzer/src/solidity-analyzer/modules/abstractAstView.ts
-  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, getFunctionDefinitionReturnParameterPart, getCompilerVersion } from './staticAnalysisCommon'
-import { AstWalker } from 'remix-astwalker'
-=======
   getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, getFunctionDefinitionReturnParameterPart } from './staticAnalysisCommon'
 import { AstWalker } from '@remix-project/remix-astwalker'
->>>>>>> 3ce30ccb299e439bf2f3c0dbb2b69d8476c73c43:remix-analyzer/src/solidity-analyzer/modules/abstractAstView.ts
 import { FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode, ContractHLAst, VariableDeclarationAstNode, 
   FunctionHLAst, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult } from '../../types'
 
