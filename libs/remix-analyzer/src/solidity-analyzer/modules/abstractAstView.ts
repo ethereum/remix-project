@@ -1,5 +1,6 @@
 import { getStateVariableDeclarationsFromContractNode, getInheritsFromName, getContractName,
-  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, getFunctionDefinitionReturnParameterPart } from './staticAnalysisCommon'
+  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, 
+  getFunctionDefinitionReturnParameterPart, getCompilerVersion } from './staticAnalysisCommon'
 import { AstWalker } from '@remix-project/remix-astwalker'
 import { FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode, ContractHLAst, VariableDeclarationAstNode, 
   FunctionHLAst, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult } from '../../types'

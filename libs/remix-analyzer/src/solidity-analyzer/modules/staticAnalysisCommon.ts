@@ -3,7 +3,7 @@
 import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, 
   WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, 
   MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, 
-  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter } from "../../types"
+  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter, CompiledContract } from "../../types"
 import { util } from '@remix-project/remix-lib'
 
 type SpecialObjDetail = {
