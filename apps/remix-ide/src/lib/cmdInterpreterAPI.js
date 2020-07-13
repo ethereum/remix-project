@@ -1,7 +1,7 @@
 'use strict'
 var yo = require('yo-yo')
 var async = require('async')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var EventManager = require('../lib/events')
 
 var CompilerImport = require('../app/compiler/compiler-imports')

@@ -1,12 +1,11 @@
 
 const yo = require('yo-yo')
-const minixhr = require('minixhr')
 const helper = require('../../../lib/helper')
 const addTooltip = require('../../ui/tooltip')
 const semver = require('semver')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const css = require('../styles/compile-tab-styles')
-import { canUseWorker } from '../../compiler/compiler-utils'
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '../../compiler/compiler-utils'
 
 class CompilerContainer {
 
@@ -24,8 +23,7 @@ class CompilerContainer {
       timeout: 300,
       allversions: null,
       selectedVersion: null,
-      defaultVersion: 'soljson-v0.6.6+commit.6c089d02.js', // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
-      baseurl: 'https://solc-bin.ethereum.org/bin'
+      defaultVersion: 'soljson-v0.6.6+commit.6c089d02.js' // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
     }
   }
 
@@ -320,17 +318,21 @@ class CompilerContainer {
     this.compileIfAutoCompileOn()
   }
 
+  /*
+    The following functions are handlers for internal events.
+  */
+
   onchangeOptimize () {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
     this.compileIfAutoCompileOn()
   }
 
-  onchangeLanguage (event) {
-    this.compileTabLogic.setLanguage(event.target.value)
+  onchangeLanguage () {
+    this.compileTabLogic.setLanguage(this._view.languageSelector.value)
     this.compileIfAutoCompileOn()
   }
 
-  onchangeEvmVersion (_) {
+  onchangeEvmVersion () {
     let s = this._view.evmVersionSelector
     let v = s.value
     if (v === 'default') {
@@ -340,10 +342,42 @@ class CompilerContainer {
     this.compileIfAutoCompileOn()
   }
 
-  onchangeLoadVersion (event) {
+  onchangeLoadVersion () {
     this.data.selectedVersion = this._view.versionSelector.value
     this._updateVersionSelector()
     this._updateLanguageSelector()
+  }
+
+  /*
+    The following functions map with the above event handlers.
+    They are an external API for modifying the compiler configuration.
+  */
+
+  setConfiguration (settings) {
+    this.setLanguage(settings.language)
+    this.setEvmVersion(settings.evmVersion)
+    this.setOptimize(settings.optimize)
+    this.setVersion(settings.version)
+  }
+
+  setOptimize (enabled) {
+    this._view.optimize.checked = enabled
+    this.onchangeOptimize()
+  }
+
+  setLanguage (lang) {
+    this._view.languageSelector.value = lang
+    this.onchangeLanguage()
+  }
+
+  setEvmVersion (version) {
+    this._view.evmVersionSelector.value = version || 'default'
+    this.onchangeEvmVersion()
+  }
+
+  setVersion (version) {
+    this._view.versionSelector.value = `soljson-v${version}.js`
+    this.onchangeLoadVersion()
   }
 
   _shouldBeAdded (version) {
@@ -383,13 +417,13 @@ class CompilerContainer {
       if (this.data.selectedVersion.indexOf('soljson') !== 0 || helper.checkSpecialChars(this.data.selectedVersion)) {
         return console.log('loading ' + this.data.selectedVersion + ' not allowed')
       }
-      url = `${this.data.baseurl}/${this.data.selectedVersion}`
+      url = `${urlFromVersion(this.data.selectedVersion)}`
     }
 
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
-    if (canUseWorker(this.data.selectedVersion)) {
+    if (this.data.selectedVersion !== 'builtin' && canUseWorker(this.data.selectedVersion)) {
       this.compileTabLogic.compiler.loadVersion(true, url)
       this.setVersionText('(loading using worker)')
     } else {
@@ -413,27 +447,42 @@ class CompilerContainer {
     if (this._view.version) this._view.version.innerText = text
   }
 
-  fetchAllVersion (callback) {
-    minixhr(`${this.data.baseurl}/list.json`, (json, event) => {
-      // @TODO: optimise and cache results to improve app loading times #2461
-      var allversions, selectedVersion
-      if (event.type !== 'error') {
-        try {
-          const data = JSON.parse(json)
-          allversions = data.builds.slice().reverse()
-          selectedVersion = this.data.defaultVersion
-          if (this.queryParams.get().version) selectedVersion = this.queryParams.get().version
-        } catch (e) {
-          addTooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
-        }
-      } else {
-        allversions = [{ path: 'builtin', longVersion: 'latest local version' }]
-        selectedVersion = 'builtin'
+  // fetching both normal and wasm builds and creating a [version, baseUrl] map
+  async fetchAllVersion (callback) {
+    let allVersions, selectedVersion, allVersionsWasm
+    // fetch normal builds
+    const binRes = await promisedMiniXhr(`${baseURLBin}/list.json`)
+    // fetch wasm builds
+    const wasmRes = await promisedMiniXhr(`${baseURLWasm}/list.json`)
+    if (binRes.event.type === 'error' && wasmRes.event.type === 'error') {
+      allVersions = [{ path: 'builtin', longVersion: 'latest local version' }]
+      selectedVersion = 'builtin'
+      callback(allVersions, selectedVersion)
+    }
+    try {
+      allVersions = JSON.parse(binRes.json).builds.slice().reverse()
+      selectedVersion = this.data.defaultVersion
+      if (this.queryParams.get().version) selectedVersion = this.queryParams.get().version
+      if (wasmRes.event.type !== 'error') {
+        allVersionsWasm = JSON.parse(wasmRes.json).builds.slice().reverse()
       }
-      callback(allversions, selectedVersion)
-    })
+    } catch (e) {
+      addTooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload. Error: ' + e)
+    }
+    // replace in allVersions those compiler builds which exist in allVersionsWasm with new once
+    if (allVersionsWasm && allVersions) {
+      allVersions.forEach((compiler, index) => {
+        const wasmIndex = allVersionsWasm.findIndex(wasmCompiler => { return wasmCompiler.longVersion === compiler.longVersion })
+        if (wasmIndex !== -1) {
+          allVersions[index] = allVersionsWasm[wasmIndex]
+          pathToURL[compiler.path] = baseURLWasm
+        } else {
+          pathToURL[compiler.path] = baseURLBin
+        }
+      })
+    }
+    callback(allVersions, selectedVersion)
   }
-
   scheduleCompilation () {
     if (!this.config.get('autoCompile')) return
     if (this.data.compileTimeout) window.clearTimeout(this.data.compileTimeout)

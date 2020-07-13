@@ -2,7 +2,7 @@
 var StaticAnalysisRunner = require('remix-analyzer').CodeAnalysis
 var yo = require('yo-yo')
 var $ = require('jquery')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var utils = remixLib.util
 var css = require('./styles/staticAnalysisView-styles')
 var Renderer = require('../../ui/renderer')
@@ -169,7 +169,7 @@ staticAnalysisView.prototype.run = function () {
             <span class="d-flex flex-column">
               <span class="h6 font-weight-bold">${result.name}</span>
               ${item.warning}
-              ${item.more ? yo`<span><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}
+              ${item.more ? yo`<span><a href="${item.more}" target="_blank">more</a></span>` : yo`<span></span>`}
               <span class="" title="Position in ${fileName}">Pos: ${locationString}</span>
             </span>`
           self._components.renderer.error(

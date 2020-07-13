@@ -1,5 +1,5 @@
 var registry = require('../../global/registry')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var yo = require('yo-yo')
 var EventsDecoder = remixLib.execution.EventsDecoder
 var TransactionReceiptResolver = require('../../lib/transactionReceiptResolver')
@@ -32,7 +32,7 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
   const txlistener = blockchain.getTxListener({
     api: {
       contracts: function () {
-        if (compilersArtefacts['__last']) return compilersArtefacts['__last'].getContracts()
+        if (compilersArtefacts['__last']) return compilersArtefacts.getAllContractDatas()
         return null
       },
       resolveReceipt: function (tx, cb) {

@@ -1,11 +1,10 @@
 const ethutil = require('ethereumjs-util')
 import * as packageJson from '../../../package.json'
 import { Plugin } from '@remixproject/engine'
-import { urlFromVersion } from './compiler-utils'
 import { compile } from './compiler-helpers'
 import globalRegistry from '../../global/registry'
 
-import remixLib from 'remix-lib'
+import remixLib from '@remix-project/remix-lib'
 
 const profile = {
   name: 'fetchAndCompile',
@@ -106,10 +105,9 @@ export default class FetchAndCompile extends Plugin {
     // compile
     const settings = {
       version: data.metadata.compiler.version,
-      languageName: data.metadata.language,
+      language: data.metadata.language,
       evmVersion: data.metadata.settings.evmVersion,
-      optimize: data.metadata.settings.optimizer.enabled,
-      compilerUrl: urlFromVersion(data.metadata.compiler.version)
+      optimize: data.metadata.settings.optimizer.enabled
     }
     try {
       setTimeout(_ => this.emit('compiling', settings), 0)

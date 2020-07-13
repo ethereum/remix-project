@@ -31,8 +31,7 @@ module.exports = {
     .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgHash"]')
     .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
     .modalFooterOKClick()
-    .pause(2000)
-    .waitForElementPresent('*[data-id="modalDialogContainer"]')
+    .waitForElementPresent('*[data-id="modalDialogContainer"]', 12000)
     .assert.elementPresent('*[data-id="settingsRemixRunSignMsgHash"]')
     .assert.elementPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
     .modalFooterOKClick()
@@ -145,8 +144,8 @@ module.exports = {
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
-    .pause(2000)
-    .waitForElementPresent('*[data-id="modalDialogContainer"]')
+    .waitForElementPresent('*[data-id="modalDialogContainer"]', 15000)
+    .pause(10000)
     .assert.containsText('*[data-id="modalDialogModalBody"]', 'You are creating a transaction on the main network. Click confirm if you are sure to continue.')
     .modalFooterCancelClick()
   },
@@ -157,7 +156,7 @@ module.exports = {
    * - Source Verifier service for fetching the contract code
    * - Ropsten node for retrieving the trace and storage
    *
-  */
+   */
   'Should debug Ropsten transaction with source highlighting using the source verifier service and MetaMask': function (browser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -179,7 +178,7 @@ module.exports = {
     .setValue('*[data-id="debuggerTransactionInput"]', '0x959371506b8f6223d71c709ac2eb2d0158104dca2d76ca949f1662712cf0e6db') // debug tx
     .click('*[data-id="debuggerTransactionStartButton"]')
     .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
-    .assert.containsText('*[data-id="stepdetail"]', 'loaded address: 0x3c943Fb816694d7D1f4C738e3e7823818a88DD6C')
+    .assert.containsText('*[data-id="stepdetail"]', 'loaded address:\n0x3c943Fb816694d7D1f4C738e3e7823818a88DD6C')
     .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x6C3CCC7FBA111707D5A1AAF2758E9D4F4AC5E7B1')
     .end()
   },

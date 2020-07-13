@@ -2,9 +2,9 @@ var yo = require('yo-yo')
 var async = require('async')
 var tooltip = require('../ui/tooltip')
 var css = require('./styles/test-tab-styles')
-var remixTests = require('remix-tests')
+var remixTests = require('@remix-project/remix-tests')
 import { ViewPlugin } from '@remixproject/engine'
-import { canUseWorker, baseUrl } from '../compiler/compiler-utils'
+import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
 
 const TestTabLogic = require('./testTab/testTab')
 
@@ -13,7 +13,7 @@ const profile = {
   displayName: 'Solidity unit testing',
   methods: ['testFromPath', 'testFromSource'],
   events: [],
-  icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4wUDEhQZ0zbrmQAAAfNJREFUWMPF17lrFVEUx/EPaIKovfAScSndjUtULFQSYhHF0r/Dwsa/RywUiTaWgvaChWsiKkSMZte4o7G5A49x7r0zLy/PA6eZOef3PXebuYfu2xCmcQ9b9NgOYw6rwR9ia6/gR7HQBi/8PjavN/w4FivghV9bT/gwlhLwHzjTVPQ8rqAvE3ciA/+O8abwy/gVBG4lijiJ5czIL64FXvhNbCzFnaoBv9AUPo7fEcEb2BDiTuNTAv4NYxX6u/EIM7GZuZoQXcX1sJk+J2K+YrRCexfetsX9xKVyUB9uZ4r4k3j3BSMR+JvIMv2zQfsxkSkiBj9XAd8ZgRf+vmop+nGnAXwlcs534HUm93FsQ9YtIjby7XiVyZ3BntSpyBWxgrMR+FQG/gF76xzNftxtMO1rgo+G5AdBqLBN4d9eCCyHD1En8Oi0j4UPSBE4hcFSERN4Fz7BZRvEZKcjHynBC5/EQI1lGqgJ3xcTmE4kvswUMRBiUvCPKTg8zQi8QKsirxXe5eD7c1N4ALMZoeelIlrhWSpnNmjXsoM1iihmYhueZGIXcKTp7/hQ6UZb5c+Cp2LmglZHVqeIlC+G2/GarNMiFnGsWzfdpkV0Fd7e5czXgC+FvmDdWq35/wVvbzbnI/DhXvV9Q6W+r6fw9hZsKnjX4H8B0Aamri7CrBsAAAAASUVORK5CYII=',
+  icon: 'assets/img/unitTesting.webp',
   description: 'Fast tool to generate unit tests for your contracts',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/unittesting.html'
@@ -33,11 +33,13 @@ module.exports = class TestTab extends ViewPlugin {
     this.runningTestsNumber = 0
     this.readyTestsNumber = 0
     this.areTestsRunning = false
+    this.defaultPath = 'browser/tests'
+
     appManager.event.on('activate', (name) => {
-      if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
+      if (name === 'solidity') this.updateRunAction()
     })
     appManager.event.on('deactivate', (name) => {
-      if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
+      if (name === 'solidity') this.updateRunAction()
     })
   }
 
@@ -56,9 +58,6 @@ module.exports = class TestTab extends ViewPlugin {
     })
 
     this.fileManager.events.on('noFileSelected', () => {
-      this.updateGenerateFileAction()
-      this.updateRunAction()
-      this.updateTestFileList()
     })
 
     this.fileManager.events.on('currentFileChanged', (file, provider) => this.updateForNewCurrent(file))
@@ -86,6 +85,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   listTests () {
+    if (!this.data.allTests) return []
     return this.data.allTests.map(
       testFile => this.createSingleTest(testFile)
     )
@@ -301,7 +301,7 @@ module.exports = class TestTab extends ViewPlugin {
       let runningTest = {}
       runningTest[path] = { content }
       const {currentVersion, evmVersion, optimize} = this.compileTab.getCurrentCompilerConfig()
-      const currentCompilerUrl = baseUrl + '/' + currentVersion
+      const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
         evmVersion,
@@ -327,7 +327,7 @@ module.exports = class TestTab extends ViewPlugin {
       const runningTest = {}
       runningTest[testFilePath] = { content }
       const {currentVersion, evmVersion, optimize} = this.compileTab.getCurrentCompilerConfig()
-      const currentCompilerUrl = baseUrl + '/' + currentVersion
+      const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
         evmVersion,
@@ -349,6 +349,13 @@ module.exports = class TestTab extends ViewPlugin {
     }).catch((error) => {
       if (error) return
     })
+  }
+
+  updateCurrentPath (e) {
+    const newValue = e.target.value === '' ? this.defaultPath : e.target.value
+    this.testTabLogic.setCurrentPath(newValue)
+    this.updateRunAction()
+    this.updateForNewCurrent()
   }
 
   runTests () {
@@ -386,21 +393,16 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateGenerateFileAction (currentFile) {
-    let el = yo`<button
-      class="btn border w-50"
-      data-id="testTabGenerateTestFile"
-      title="Generate sample test file."
-      onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}"
-    >
-      Generate
-    </button>`
-    if (
-      !currentFile ||
-      (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')
-    ) {
-      el.setAttribute('disabled', 'disabled')
-      el.setAttribute('title', 'No solidity file selected')
-    }
+    let el = yo`
+      <button
+        class="btn border w-50"
+        data-id="testTabGenerateTestFile"
+        title="Generate sample test file."
+        onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}"
+      >
+        Generate
+      </button>
+    `
     if (!this.generateFileActionElement) {
       this.generateFileActionElement = el
     } else {
@@ -411,13 +413,13 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateRunAction (currentFile) {
     let el = yo`
-      <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary"  onclick="${() => this.runTests()}">
+      <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary" onclick="${() => this.runTests()}">
         <span class="fas fa-play ml-2"></span>
         <label class="${css.labelOnBtn} btn btn-primary p-1 ml-2 m-0">Run</label>
       </button>
     `
-    const isSolidityActive = this.appManager.actives.includes('solidity')
-    if (!currentFile || !isSolidityActive || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
+    const isSolidityActive = this.appManager.isActive('solidity')
+    if (!isSolidityActive || !this.listTests().length) {
       el.setAttribute('disabled', 'disabled')
       if (!currentFile || (currentFile && currentFile.split('.').pop().toLowerCase() !== 'sol')) {
         el.setAttribute('title', 'No solidity file selected')
@@ -451,6 +453,7 @@ module.exports = class TestTab extends ViewPlugin {
     } else {
       yo.update(this.testFilesListElement, el)
     }
+    this.updateRunAction()
     return this.testFilesListElement
   }
 
@@ -482,11 +485,40 @@ module.exports = class TestTab extends ViewPlugin {
     return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
   }
 
+  updateDirList () {
+    for (var o of this.uiPathList.querySelectorAll('option')) o.remove()
+    this.uiPathList.appendChild(yo`<option>browser</option>`)
+    if (this.testTabLogic.isRemixDActive()) this.uiPathList.appendChild(yo`<option>localhost</option>`)
+    if (!this._view.el) return
+    this.testTabLogic.dirList(this.inputPath.value).then((options) => {
+      options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
+    })
+  }
+
   render () {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="mx-3 mb-2 pb-4 border-top border-primary" hidden='true' id="solidityUnittestsOutput" data-id="testTabSolidityUnitTestsOutput"></a>`
     this.testsExecutionStopped = yo`<label class="text-warning h6" data-id="testTabTestsExecutionStopped">The test execution has been stopped</label>`
     this.testsExecutionStoppedError = yo`<label class="text-danger h6" data-id="testTabTestsExecutionStoppedError">The test execution has been stopped because of error(s) in your test file</label>`
+    this.uiPathList = yo`<datalist id="utPathList"></datalist>`
+    this.inputPath = yo`<input
+      placeholder=${this.defaultPath}
+      list="utPathList"
+      class="custom-select"
+      id="utPath"
+      data-id="uiPathInput"
+      name="utPath"
+      style="background-image: var(--primary);"
+      onkeydown=${(e) => { if (e.keyCode === 191) this.updateDirList() }}
+      onchange=${(e) => this.updateCurrentPath(e)}/>`
+
+    const availablePaths = yo`
+      <div>
+          ${this.inputPath}
+          ${this.uiPathList}
+      </div>
+    `
+    this.updateDirList()
     this.testsExecutionStopped.hidden = true
     this.testsExecutionStoppedError.hidden = true
     this.resultStatistics = this.createResultLabel()
@@ -495,7 +527,9 @@ module.exports = class TestTab extends ViewPlugin {
       <div class="${css.testTabView} px-2" id="testView">
         <div class="${css.infoBox}">
           <p class="text-lg"> Test your smart contract in Solidity.</p>
-          <p> Click on "Generate" to generate a sample test file.</p>
+          <p> Select directory to load and generate test files.</p>
+          <label>Test directory:</label>
+          ${availablePaths}
         </div>
         <div class="${css.tests}">          
           <div class="d-flex p-2">
@@ -518,6 +552,7 @@ module.exports = class TestTab extends ViewPlugin {
       </div>
     `
     this._view.el = el
+    this.testTabLogic.setCurrentPath(this.defaultPath)
     this.updateForNewCurrent(this.fileManager.currentFile())
     return el
   }

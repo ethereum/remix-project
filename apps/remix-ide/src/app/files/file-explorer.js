@@ -102,10 +102,10 @@ function fileExplorer (localRegistry, files, menuItems) {
 
   function fileAdded (filepath) {
     self.ensureRoot(() => {
-      var folderpath = filepath.split('/').slice(0, -1).join('/')
-
-      var currentTree = self.treeView.nodeAt(folderpath)
-      if (currentTree && self.treeView.isExpanded(folderpath)) {
+      const folderpath = filepath.split('/').slice(0, -1).join('/')
+      const currentTree = self.treeView.nodeAt(folderpath)
+      if (!self.treeView.isExpanded(folderpath)) self.treeView.expand(folderpath)
+      if (currentTree) {
         self.files.resolveDirectory(folderpath, (error, fileTree) => {
           if (error) console.error(error)
           if (!fileTree) return
@@ -136,15 +136,20 @@ function fileExplorer (localRegistry, files, menuItems) {
         if (!fileTree) return
         fileTree = normalize(folderpath, fileTree)
         self.treeView.updateNodeFromJSON(folderpath, fileTree, true)
+        if (!self.treeView.isExpanded(folderpath)) self.treeView.expand(folderpath)
       })
     })
   }
 
   function fileRemoved (filepath) {
-    var label = self.treeView.labelAt(filepath)
+    const label = self.treeView.labelAt(filepath)
+    filepath = filepath.split('/').slice(0, -1).join('/')
+
     if (label && label.parentElement) {
       label.parentElement.removeChild(label)
     }
+
+    self.updatePath(filepath)
   }
 
   function fileRenamed (oldName, newName, isFolder) {
@@ -240,10 +245,6 @@ function fileExplorer (localRegistry, files, menuItems) {
 
             if (!removeFolder) {
               tooltip(`failed to remove ${key}. Make sure the directory is empty before removing it.`)
-            } else {
-              const { type } = fileManager.currentFileProvider()
-
-              self.updatePath(type)
             }
           }, () => {})
       }
@@ -286,9 +287,6 @@ function fileExplorer (localRegistry, files, menuItems) {
 
             if (!removeFile) {
               tooltip(`Failed to remove file ${key}.`)
-            } else {
-              const { type } = fileManager.currentFileProvider()
-              self.updatePath(type)
             }
           },
           () => {}
@@ -438,12 +436,12 @@ fileExplorer.prototype.uploadFile = function (event) {
     let files = this.files
     function loadFile () {
       var fileReader = new FileReader()
-      fileReader.onload = function (event) {
+      fileReader.onload = async function (event) {
         if (helper.checkSpecialChars(file.name)) {
           modalDialogCustom.alert('Special characters are not allowed')
           return
         }
-        var success = files.set(name, event.target.result)
+        var success = await files.set(name, event.target.result)
         if (!success) {
           modalDialogCustom.alert('Failed to create file ' + name)
         } else {
@@ -638,7 +636,7 @@ fileExplorer.prototype.renderMenuItems = function () {
           <label
             id=${action}
             data-id="fileExplorerUploadFile${action}"
-            class="${icon} ${css.newFile}"
+            class="${icon} mb-0 ${css.newFile}"
             title="${title}"
           >
             <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onchange=${(event) => {
@@ -649,13 +647,14 @@ fileExplorer.prototype.renderMenuItems = function () {
         `
       } else {
         return yo`
-        <span
-          id=${action}
-          data-id="fileExplorerNewFile${action}"
-          onclick=${(event) => { event.stopPropagation(); this[ action ]() }}
-          class="newFile ${icon} ${css.newFile}"
-          title=${title}>
-        </span>
+          <span
+            id=${action}
+            data-id="fileExplorerNewFile${action}"
+            onclick=${(event) => { event.stopPropagation(); this[ action ]() }}
+            class="newFile ${icon} ${css.newFile}"
+            title=${title}
+          >
+          </span>
         `
       }
     })
