@@ -16,14 +16,14 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@remix-project/remix-analyzer": ["libs/remix-analyzer/index.ts"],
-      "@remix-project/remix-astwalker": ["libs/remix-astwalker/src/index.ts"],
-      "@remix-project/remix-debug": ["libs/remix-debug/index.js"],
+      "@remix-project/remix-analyzer": ["dist/libs/remix-analyzer/index.js"],
+      "@remix-project/remix-astwalker": ["dist/libs/remix-astwalker/index.js"],
+      "@remix-project/remix-debug": ["dist/libs/remix-debug/index.js"],
       "@remix-project/remix-lib": ["dist/libs/remix-lib/index.js"],
-      "@remix-project/remix-simulator": ["libs/remix-simulator/index.js"],
+      "@remix-project/remix-simulator": ["dist/libs/remix-simulator/index.js"],
       "@remix-project/remix-solidity": ["dist/libs/remix-solidity/index.js"],
-      "@remix-project/remix-tests": ["libs/remix-tests/src/index.ts"],
-      "@remix-project/remix-url-resolver": ["libs/remix-url-resolver/src/index.ts"]
+      "@remix-project/remix-tests": ["dist/libs/remix-tests/index.js"],
+      "@remix-project/remix-url-resolver": ["dist/libs/remix-url-resolver/index.js"]
     }
   },
   "exclude": ["node_modules", "tmp"]
