@@ -1,6 +1,6 @@
 {
   "name": "remixd",
-  "version": "0.2.3-alpha.1",
+  "version": "0.2.3-alpha.4",
   "description": "remix server: allow accessing file system from remix.ethereum.org and start a dev environment (see help section)",
   "main": "./lib/src/index.js",
   "types": "./lib/src/index.d.ts",
@@ -32,13 +32,13 @@
   },
   "homepage": "https://github.com/ethereum/remixd#readme",
   "dependencies": {
-    "@remixproject/plugin": "0.3.0-alpha.3",
-    "@remixproject/plugin-ws": "0.3.0-alpha.1",
-    "commander": "^2.20.3",
-    "isbinaryfile": "^3.0.2",
-    "ws": "^7.3.0",
+    "@remixproject/plugin": "^0.3.0-alpha.8",
+    "@remixproject/plugin-ws": "^0.3.0-alpha.4",
     "chokidar": "^2.1.8",
-    "fs-extra": "^3.0.1"
+    "commander": "^2.20.3",
+    "fs-extra": "^3.0.1",
+    "isbinaryfile": "^3.0.2",
+    "ws": "^7.3.0"
   },
   "python": {
     "execPath": "python3",
