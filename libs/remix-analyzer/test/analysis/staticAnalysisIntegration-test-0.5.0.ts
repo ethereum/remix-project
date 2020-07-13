@@ -1,13 +1,11 @@
-import { default as test} from "tape"
-import { helpers } from 'remix-lib'
+import test from "tape"
+import { helpers } from '@remix-project/remix-lib'
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import { default as StatRunner } from '../../dist/src/solidity-analyzer'
+import { default as StatRunner } from '../../src/solidity-analyzer'
 import * as modules from '../../src/solidity-analyzer/modules/'
+import solc from 'solc';
 import { CompilationResult, AnalysisReportObj, AnalysisReport } from '../../src/types'
-import { install, require as requireNPMmodule } from 'npm-install-version'
-install('solc@0.5.0')
-const solc = requireNPMmodule('solc@0.5.0')
 const { compilerInput } = helpers.compiler
 const folder: string = 'solidity-v0.5'
 
@@ -40,12 +38,23 @@ const testFiles: string[] = [
   'forLoopIteratesOverDynamicArray.sol'
 ]
 
-var compilationResults: Record<string, CompilationResult> = {}
+let compilationResults: Record<string, CompilationResult> = {}
 
-testFiles.forEach((fileName) => {
-  const content = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
-  compilationResults[fileName] = JSON.parse(solc.compile(compilerInput(content)))
-})
+test('setup', function (t) {
+  solc.loadRemoteVersion('v0.5.0+commit.1d4f565a', (error, compiler) => {
+    if (error) throw error
+
+    testFiles.forEach((fileName) => {
+      const content = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
+      compilationResults[fileName] = JSON.parse(compiler.compile(compilerInput(content)))
+    })
+
+    t.end()
+  })
+});
+
+
+
 
 test('Integration test thisLocal module', function (t: test.Test) {
   t.plan(testFiles.length)
@@ -301,7 +310,7 @@ test('Integration test similarVariableNames module', function (t: test.Test) {
 
 test('Integration test blockTimestamp module', function (t: test.Test) {
   t.plan(testFiles.length)
-  const module: any = require('../../dist/src/solidity-analyzer/modules/blockTimestamp').default
+  const module: any = modules.blockTimestamp
   const lengthCheck: Record<string, number> = {
     'KingOfTheEtherThrone.sol': 1,
     'assembly.sol': 0,

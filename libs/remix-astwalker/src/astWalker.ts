@@ -9,7 +9,7 @@ const isObject = function(obj: any): boolean {
   return obj != null && obj.constructor.name === "Object"
 }
 
-export function isAstNode(node: Object): boolean {
+export function isAstNode(node: Record<string, unknown>): boolean {
   return (
     isObject(node) &&
     'id' in node &&
@@ -35,7 +35,7 @@ export function isAstNode(node: Object): boolean {
 export class AstWalker extends EventEmitter {
   manageCallback(
     node: AstNodeLegacy | AstNode,
-    callback: Object | Function
+    callback: Record<string, unknown> | Function // eslint-disable-line @typescript-eslint/ban-types
   ): any {
     // FIXME: we shouldn't be doing this callback determination type on each AST node,
     // since the callback function is set once per walk.
@@ -58,7 +58,8 @@ export class AstWalker extends EventEmitter {
       }
     }
   }
-  walk(ast: AstNodeLegacy | AstNode, callback?: Function | Object) {
+  // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
+  walk(ast: AstNodeLegacy | AstNode, callback?: Function | Record<string, unknown>) {
     if (callback) {
       if (callback instanceof Function) {
         callback = Object({ "*": callback });
@@ -74,8 +75,8 @@ export class AstWalker extends EventEmitter {
           (<AstNodeLegacy>ast).children &&
           (<AstNodeLegacy>ast).children.length > 0
         ) {
-          for (let k in (<AstNodeLegacy>ast).children) {
-            let child = (<AstNodeLegacy>ast).children[k];
+          for (const k in (<AstNodeLegacy>ast).children) {
+            const child = (<AstNodeLegacy>ast).children[k];
             this.walk(child, callback);
           }
         }
@@ -85,8 +86,8 @@ export class AstWalker extends EventEmitter {
           (<AstNode>ast).nodes &&
           (<AstNode>ast).nodes.length > 0
         ) {
-          for (let k in (<AstNode>ast).nodes) {
-            let child = (<AstNode>ast).nodes[k];
+          for (const k in (<AstNode>ast).nodes) {
+            const child = (<AstNode>ast).nodes[k];
             this.walk(child, callback);
           }
         }
@@ -97,8 +98,8 @@ export class AstWalker extends EventEmitter {
           (<AstNodeLegacy>ast).children &&
           (<AstNodeLegacy>ast).children.length > 0
         ) {
-          for (let k in (<AstNodeLegacy>ast).children) {
-            let child = (<AstNodeLegacy>ast).children[k];
+          for (const k in (<AstNodeLegacy>ast).children) {
+            const child = (<AstNodeLegacy>ast).children[k];
             this.emit("node", child);
             this.walk(child);
           }
@@ -106,8 +107,8 @@ export class AstWalker extends EventEmitter {
       }
       if (<AstNode>ast) {
         if ((<AstNode>ast).nodes && (<AstNode>ast).nodes.length > 0) {
-          for (let k in (<AstNode>ast).nodes) {
-            let child = (<AstNode>ast).nodes[k];
+          for (const k in (<AstNode>ast).nodes) {
+            const child = (<AstNode>ast).nodes[k];
             this.emit("node", child);
             this.walk(child);
           }
@@ -115,18 +116,18 @@ export class AstWalker extends EventEmitter {
       }
     }
   }
-
+  // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
   walkFullInternal(ast: AstNode, callback: Function) {
 
     if (isAstNode(ast)) {
       // console.log(`XXX id ${ast.id}, nodeType: ${ast.nodeType}, src: ${ast.src}`);
       callback(ast);
-      for (let k of Object.keys(ast)) {
+      for (const k of Object.keys(ast)) {
         // Possible optimization:
         // if (k in ['id', 'src', 'nodeType']) continue;
         const astItem = ast[k];
         if (Array.isArray(astItem)) {
-          for (let child of astItem) {
+          for (const child of astItem) {
             if (child) {
               this.walkFullInternal(child, callback);
             }
@@ -139,12 +140,13 @@ export class AstWalker extends EventEmitter {
   }
 
   // Normalizes parameter callback and calls walkFullInternal
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   walkFull(ast: AstNode, callback: any) {
     if (!isAstNode(ast)) throw new TypeError("first argument should be an ast");
     return this.walkFullInternal(ast, callback);
   }
 
-
+  // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
   walkAstList(sourcesList: Node, cb?: Function) {
     if (cb) {
       if (sourcesList.ast) {

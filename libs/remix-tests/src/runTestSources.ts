@@ -6,13 +6,13 @@ import { deployAll } from './deployer'
 import { runTest } from './testRunner'
 
 import Web3 from 'web3';
-import { Provider } from 'remix-simulator'
+import { Provider } from '@remix-project/remix-simulator'
 import { FinalResult, SrcIfc, compilationInterface, ASTInterface, Options, 
     TestResultInterface, AstNode, CompilerConfiguration } from './types'
 
 const createWeb3Provider = async function () {
-    let web3 = new Web3()
-    let provider = new Provider()
+    const web3 = new Web3()
+    const provider = new Provider()
     await provider.init()
     web3.setProvider(provider)
     return web3
@@ -28,10 +28,10 @@ const createWeb3Provider = async function () {
  * @param importFileCb Import file callback
  * @param opts Options
  */
-export async function runTestSources(contractSources: SrcIfc, compilerConfig: CompilerConfiguration, testCallback: Function, resultCallback: Function, finalCallback: any, importFileCb: Function, opts: Options) {
+export async function runTestSources(contractSources: SrcIfc, compilerConfig: CompilerConfiguration, testCallback, resultCallback, finalCallback: any, importFileCb, opts: Options) {
     opts = opts || {}
     const sourceASTs: any = {}
-    let web3 = opts.web3 || await createWeb3Provider()
+    const web3 = opts.web3 || await createWeb3Provider()
     let accounts: string[] | null = opts.accounts || null
     async.waterfall([
         function getAccountList (next) {
@@ -66,10 +66,10 @@ export async function runTestSources(contractSources: SrcIfc, compilerConfig: Co
             })
         },
         function determineTestContractsToRun (compilationResult: compilationInterface, contracts: any, next) {
-            let contractsToTest: string[] = []
-            let contractsToTestDetails: any[] = []
+            const contractsToTest: string[] = []
+            const contractsToTestDetails: any[] = []
 
-            for (let filename in compilationResult) {
+            for (const filename in compilationResult) {
                 if (!filename.endsWith('_test.sol')) {
                     continue
                 }
@@ -84,7 +84,7 @@ export async function runTestSources(contractSources: SrcIfc, compilerConfig: Co
             let totalPassing = 0
             let totalFailing = 0
             let totalTime = 0
-            let errors: any[] = []
+            const errors: any[] = []
 
             const _testCallback = function (err: Error | null | undefined, result: TestResultInterface) {
                 if (result.type === 'testFailure') {
@@ -94,7 +94,7 @@ export async function runTestSources(contractSources: SrcIfc, compilerConfig: Co
             }
 
             const _resultsCallback = function (_err, result, cb) {
-                resultCallback(_err, result, () => {})
+                resultCallback(_err, result, () => {}) //eslint-disable-line @typescript-eslint/no-empty-function
                 totalPassing += result.passingNum
                 totalFailing += result.failureNum
                 totalTime += result.timePassed
@@ -114,7 +114,7 @@ export async function runTestSources(contractSources: SrcIfc, compilerConfig: Co
                     return next(err)
                 }
 
-                let finalResults: FinalResult = {
+                const finalResults: FinalResult = {
                     totalPassing: 0,
                     totalFailing: 0,
                     totalTime: 0,

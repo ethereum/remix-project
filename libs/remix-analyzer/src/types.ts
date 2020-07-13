@@ -135,7 +135,7 @@ export interface SourceUnitAstNode {
   nodeType: 'SourceUnit'
   src: string
   absolutePath: string
-  exportedSymbols: object
+  exportedSymbols: Record<string, unknown>
   nodes: Array<AstNode>
 }
 
@@ -250,7 +250,7 @@ export interface FunctionDefinitionAstNode {
   parameters: ParameterListAstNode
   returnParameters: ParameterListAstNode
   modifiers: Array<ModifierInvocationAstNode>
-  body: object | null
+  body: Record<string, unknown> | null
   implemented: boolean
   scope: number
   functionSelector?: string
@@ -273,7 +273,7 @@ export interface VariableDeclarationAstNode {
   typeDescriptions: TypeDescription
   functionSelector?: string
   indexed?: boolean
-  baseFunctions?: object
+  baseFunctions?: Record<string, unknown>
 }
 
 export interface ModifierDefinitionAstNode {
@@ -281,7 +281,7 @@ export interface ModifierDefinitionAstNode {
   nodeType: 'ModifierDefinition'
   src: string
   name: string
-  documentation: object | null
+  documentation: Record<string, unknown> | null
   visibility: string
   parameters: ParameterListAstNode
   virtual: boolean
@@ -303,7 +303,7 @@ export interface EventDefinitionAstNode {
   nodeType: 'EventDefinition'
   src: string
   name: string
-  documentation: object | null
+  documentation: Record<string, unknown> | null
   parameters: ParameterListAstNode
   anonymous: boolean
 }
@@ -391,7 +391,7 @@ export interface IfStatementAstNode {
   id: number
   nodeType: 'IfStatement'
   src: string
-  condition: object
+  condition: Record<string, unknown>
   trueBody: BlockAstNode | ExpressionStatementAstNode
   falseBody: BlockAstNode | ExpressionStatementAstNode
 }
@@ -409,7 +409,7 @@ export interface TryStatementAstNode {
   id: number
   nodeType: 'TryStatement'
   src: string
-  externalCall: object
+  externalCall: Record<string, unknown>
   clauses: Array<TryCatchClauseAstNode>
 }
 
@@ -447,7 +447,7 @@ export interface ReturnAstNode {
   id: number
   nodeType: 'Return'
   src: string
-  expression: object | null
+  expression: Record<string, unknown> | null
   functionReturnParameters: number
 }
 
@@ -469,8 +469,8 @@ export interface VariableDeclarationStatementAstNode {
   nodeType: 'VariableDeclarationStatement'
   src: string
   assignments: Array<number>
-  declarations: Array<object>
-  initialValue: object
+  declarations: Array<Record<string, unknown>>
+  initialValue: Record<string, unknown>
 }
 
 export interface ExpressionStatementAstNode {
@@ -493,9 +493,9 @@ export interface ConditionalAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'Conditional'
   src: string
-  condition: object
-  trueExpression: object
-  falseExpression: object
+  condition: Record<string, unknown>
+  trueExpression: Record<string, unknown>
+  falseExpression: Record<string, unknown>
 }
 
 export interface AssignmentAstNode extends ExpressionAttributes {
@@ -504,7 +504,7 @@ export interface AssignmentAstNode extends ExpressionAttributes {
   src: string
   operator: string
   leftHandSide: any
-  rightHandSide: object
+  rightHandSide: Record<string, unknown>
 }
 
 export interface TupleExpressionAstNode extends ExpressionAttributes {
@@ -512,7 +512,7 @@ export interface TupleExpressionAstNode extends ExpressionAttributes {
   nodeType: 'TupleExpression'
   src: string
   isInlineArray: boolean
-  components: Array<object>
+  components: Array<Record<string, unknown>>
 }
 
 export interface UnaryOperationAstNode extends ExpressionAttributes {
@@ -529,8 +529,8 @@ export interface BinaryOperationAstNode extends ExpressionAttributes {
   nodeType: 'BinaryOperation'
   src: string
   operator: string
-  leftExpression: object
-  rightExpression: object
+  leftExpression: Record<string, unknown>
+  rightExpression: Record<string, unknown>
   commonType: TypeDescription
 }
 
@@ -540,7 +540,7 @@ export interface FunctionCallAstNode extends ExpressionAttributes {
   src: string
   expression: any
   names: Array<any>
-  arguments: object
+  arguments: Record<string, unknown>
   tryCall: boolean
   kind: 'functionCall' | 'typeConversion' | 'structConstructorCall'
 }
@@ -549,9 +549,9 @@ export interface FunctionCallOptionsAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'FunctionCallOptions'
   src: string
-  expression: object
+  expression: Record<string, unknown>
   names: Array<string>
-  options: Array<object>
+  options: Array<Record<string, unknown>>
 }
 
 export interface NewExpressionAstNode extends ExpressionAttributes {
@@ -574,17 +574,17 @@ export interface IndexAccessAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'IndexAccess'
   src: string
-  baseExpression: object
-  indexExpression: object
+  baseExpression: Record<string, unknown>
+  indexExpression: Record<string, unknown>
 }
 
 export interface IndexRangeAccessAstNode extends ExpressionAttributes {
   id: number
   nodeType: 'IndexRangeAccess'
   src: string
-  baseExpression: object
-  startExpression: object
-  endExpression: object
+  baseExpression: Record<string, unknown>
+  startExpression: Record<string, unknown>
+  endExpression: Record<string, unknown>
 }
 
 export interface ElementaryTypeNameExpressionAstNode extends ExpressionAttributes {
@@ -729,7 +729,7 @@ export interface CommonYulAstNode {
   /////////
   export interface AstNode {
     absolutePath?: string
-    exportedSymbols?: object
+    exportedSymbols?: Record<string, unknown>
     id: number
     nodeType: string
     nodes?: Array<AstNode>
@@ -758,7 +758,7 @@ export interface CommonYulAstNode {
     constant?: boolean
     name?: string
     public?: boolean
-    exportedSymbols?: object
+    exportedSymbols?: Record<string, unknown>
     argumentTypes?: null
     absolutePath?: string
     [x: string]: any
@@ -781,7 +781,7 @@ export interface CommonYulAstNode {
     /** EVM-related outputs */
     evm: {
       assembly: string
-      legacyAssembly: {}
+      legacyAssembly: Record<string, unknown>
       /** Bytecode and related details. */
       bytecode: BytecodeObject
       deployedBytecode: BytecodeObject

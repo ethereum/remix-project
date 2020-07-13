@@ -59,7 +59,7 @@ export interface CompilationErrors {
 }
 
 export class CompilationErrors extends Error {
-  constructor(errors) {
+  constructor(errors: Array<any>) {
     const mapError = errors.map((e) => { return e.formattedMessage || e.message })
     super(mapError.join('\n'))
     this.errors = errors
@@ -97,7 +97,7 @@ export interface AstNodeAtt {
   constant?: boolean
   name?: string
   public?: boolean
-  exportedSymbols?: Object
+  exportedSymbols?: Record<string, unknown>
   argumentTypes?: null
   absolutePath?: string
   [x: string]: any
@@ -105,7 +105,7 @@ export interface AstNodeAtt {
 
 export interface AstNode {
   absolutePath?: string
-  exportedSymbols?: Object
+  exportedSymbols?: Record<string, unknown>
   id: number
   nodeType: string
   nodes?: Array<AstNode>
@@ -142,7 +142,7 @@ export interface CompiledContract {
   /** EVM-related outputs */
   evm: {
     assembly: string
-    legacyAssembly: {}
+    legacyAssembly: Record<string, unknown>
     /** Bytecode and related details. */
     bytecode: BytecodeObject
     deployedBytecode: BytecodeObject

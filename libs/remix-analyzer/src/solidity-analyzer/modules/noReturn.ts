@@ -6,8 +6,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLA
   VisitFunction, ReportFunction, ReturnAstNode, AssignmentAstNode, SupportedVersion} from './../../types'
 
 export default class noReturn implements AnalyzerModule {
-  name: string = `No return: `
-  description: string = `Function with 'returns' not returning`
+  name = `No return: `
+  description = `Function with 'returns' not returning`
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -21,7 +21,13 @@ export default class noReturn implements AnalyzerModule {
   )
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
+<<<<<<< HEAD:libs/remix-analyzer/src/solidity-analyzer/modules/noReturn.ts
   private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean, version: string): ReportObj[] {
+=======
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean): ReportObj[] {
+>>>>>>> 3ce30ccb299e439bf2f3c0dbb2b69d8476c73c43:remix-analyzer/src/solidity-analyzer/modules/noReturn.ts
     const warnings: ReportObj[] = []
 
     contracts.forEach((contract: ContractHLAst) => {

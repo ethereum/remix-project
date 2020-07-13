@@ -3,8 +3,13 @@
 import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, 
   WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, 
   MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, 
+<<<<<<< HEAD:libs/remix-analyzer/src/solidity-analyzer/modules/staticAnalysisCommon.ts
   IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter, CompilationResult, CompiledContract } from "types"
 import { util } from 'remix-lib'
+=======
+  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter } from "../../types"
+import { util } from '@remix-project/remix-lib'
+>>>>>>> 3ce30ccb299e439bf2f3c0dbb2b69d8476c73c43:remix-analyzer/src/solidity-analyzer/modules/staticAnalysisCommon.ts
 
 type SpecialObjDetail = {
   obj: string
@@ -160,7 +165,7 @@ const abiNamespace: Record<string, SpecialObjDetail> = {
 }
 
 // #################### Trivial Getters
-
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function getType (node: any): string {
   return node.typeDescriptions.typeString
 }
@@ -370,8 +375,8 @@ function getFunctionDefinitionReturnParameterPart (funcNode: FunctionDefinitionA
 function getFunctionCallTypeParameterType (func: FunctionCallAstNode): string | undefined {
   const type: string = getFunctionCallType(func)
   if (type.startsWith('function (')) {
-    let paramTypes: string = ''
-    let openPar: number = 1
+    let paramTypes = ''
+    let openPar = 1
     for (let x = 10; x < type.length; x++) {
       const c: string = type.charAt(x)
       if (c === '(') openPar++
@@ -447,7 +452,7 @@ function getUnAssignedTopLevelBinOps (subScope: BlockAstNode | IfStatementAstNod
   if(subScope && subScope.nodeType === 'Block')
     result = subScope.statements.filter(isBinaryOpInExpression)
   // for 'without braces' loops
-  else if (subScope && subScope.nodeType && isSubScopeStatement(subScope)) {
+  else if (subScope && subScope.nodeType && subScope.nodeType !== 'Block' && isSubScopeStatement(subScope)) {
     if (subScope.nodeType === 'IfStatement'){
       if((subScope.trueBody && subScope.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.trueBody)))
         result.push(subScope.trueBody) 
@@ -464,6 +469,7 @@ function getUnAssignedTopLevelBinOps (subScope: BlockAstNode | IfStatementAstNod
 
 // #################### Trivial Node Identification
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function isStatement (node: any): boolean {
   return nodeType(node, 'Statement$') || node.nodeType === "Block" || node.nodeType === "Return"
 }
@@ -549,7 +555,7 @@ function isBuiltinFunctionCall (node: FunctionCallAstNode): boolean {
  * @return {bool}
  */
 function isAbiNamespaceCall (node: FunctionCallAstNode): boolean {
-  return Object.keys(abiNamespace).some((key) => abiNamespace.hasOwnProperty(key) && node.expression && isSpecialVariableAccess(node.expression, abiNamespace[key]))
+  return Object.keys(abiNamespace).some((key) => Object.prototype.hasOwnProperty.call(abiNamespace,key) && node.expression && isSpecialVariableAccess(node.expression, abiNamespace[key]))
 }
 
 /**
@@ -975,7 +981,8 @@ function isBytesLengthCheck (node: MemberAccessAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isLoop (node) {
+ // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function isLoop (node: any): boolean {
   return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
           nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
           nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))
@@ -999,26 +1006,32 @@ function isSpecialVariableAccess (node: MemberAccessAstNode, varType: SpecialObj
 
 // #################### Node Identification Primitives
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function expressionTypeDescription (node: any, typeRegex: string): boolean {
   return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function typeDescription (node: any, typeRegex: string): boolean {
   return  new RegExp(typeRegex).test(node.typeDescriptions.typeString)
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function nodeType (node: any, typeRegex: string): boolean {
   return new RegExp(typeRegex).test(node.nodeType)
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function nodeTypeIn (node: any, typeRegex: string[]): boolean {
   return typeRegex.some((typeRegex) => nodeType (node, typeRegex))
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function memName (node: any, memNameRegex: any): boolean {
   return (node && !memNameRegex) || new RegExp(memNameRegex).test(node.name) || new RegExp(memNameRegex).test(node.memberName)
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function operator (node: any, opRegex: string): boolean {
   return new RegExp(opRegex).test(node.operator)
 }
@@ -1069,6 +1082,7 @@ function findFirstSubNodeLTR (node: any, type: string): any {
  *  list of return type names
  * @return {Boolean} isPayable
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function buildFunctionSignature (paramTypes: any[], returnTypes: any[], isPayable: boolean, additionalMods?: any): string {
   return 'function (' + util.concatWithSeperator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((additionalMods) ? ' ' + additionalMods : '') + ((returnTypes.length) ? ' returns (' + util.concatWithSeperator(returnTypes, ',') + ')' : '')
 }
@@ -1093,7 +1107,7 @@ function getMethodParamsSplittedTypeDesc(node: FunctionDefinitionAstNode, contra
                 e.inputs[varIndex]['internalType'] === typeString)
           if(methodABI && methodABI.inputs) {
             const inputs = methodABI.inputs[varIndex]
-            let typeStr = getTypeStringFromComponents(inputs['components'])
+            const typeStr = getTypeStringFromComponents(inputs['components'])
             finalTypeString = typeStr + inputs['type'].replace('tuple', '')
           }
         }
@@ -1106,7 +1120,7 @@ function getMethodParamsSplittedTypeDesc(node: FunctionDefinitionAstNode, contra
 
 function getTypeStringFromComponents(components: ABIParameter[]) {
   let typeString = '('
-  for(var i=0; i < components.length; i++) {
+  for(let i=0; i < components.length; i++) {
     const param = components[i]
     if(param.type.includes('tuple') && param.components && param.components.length > 0){
       typeString = typeString + getTypeStringFromComponents(param.components)

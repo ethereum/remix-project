@@ -1,6 +1,6 @@
 'use strict'
 
-import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph, Context, FunctionCallAstNode } from "types"
+import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph, Context, FunctionCallAstNode } from "../../types"
 import { isLocalCallGraphRelevantNode,  isExternalDirectCall, getFullQualifiedFunctionCallIdent, 
   getFullQuallyfiedFuncDefinitionIdent, getContractName } from './staticAnalysisCommon'
 
@@ -69,7 +69,7 @@ export function analyseCallGraph (callGraph: Record<string, ContractCallGraph>, 
   return analyseCallGraphInternal(callGraph, funcName, context, (a, b) => a || b, nodeCheck, {})
 }
 
-function analyseCallGraphInternal (callGraph: Record<string, ContractCallGraph>, funcName: string, context: Context, combinator: Function, nodeCheck: ((node: any, context: Context) => boolean), visited : Record<string, boolean>): boolean {
+function analyseCallGraphInternal (callGraph: Record<string, ContractCallGraph>, funcName: string, context: Context, combinator, nodeCheck: ((node: any, context: Context) => boolean), visited : Record<string, boolean>): boolean {
   const current: FunctionCallGraph | undefined = resolveCallGraphSymbol(callGraph, funcName)
 
   if (current === undefined || visited[funcName] === true) return true

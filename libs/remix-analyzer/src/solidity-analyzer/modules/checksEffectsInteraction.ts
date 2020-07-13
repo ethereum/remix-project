@@ -9,8 +9,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLA
   InlineAssemblyAstNode, ReportFunction, VisitFunction, FunctionCallGraph, SupportedVersion } from './../../types'
 
 export default class checksEffectsInteraction implements AnalyzerModule {
-  name: string = `Check-effects-interaction: `
-  description: string = `Potential reentrancy bugs`
+  name = `Check-effects-interaction: `
+  description = `Potential reentrancy bugs`
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
   version: SupportedVersion = {
@@ -68,8 +68,8 @@ export default class checksEffectsInteraction implements AnalyzerModule {
   }
 
   private isPotentialVulnerableFunction (func: FunctionHLAst, context: Context): boolean {
-    let isPotentialVulnerable: boolean = false
-    let interaction: boolean = false
+    let isPotentialVulnerable = false
+    let interaction = false
     func.relevantNodes.forEach((node) => {
       if (isInteraction(node)) {
         interaction = true

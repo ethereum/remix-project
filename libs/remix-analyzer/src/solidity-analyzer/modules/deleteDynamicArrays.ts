@@ -5,8 +5,8 @@ import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, Compilation
 
 export default class deleteDynamicArrays implements AnalyzerModule {
   rel: UnaryOperationAstNode[] = []
-  name: string = `Delete dynamic array: `
-  description: string = `Use require/assert to ensure complete deletion`
+  name = `Delete dynamic array: `
+  description = `Use require/assert to ensure complete deletion`
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -17,6 +17,7 @@ export default class deleteDynamicArrays implements AnalyzerModule {
     if (isDeleteOfDynamicArray(node)) this.rel.push(node)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   report (compilationResults: CompilationResult): ReportObj[] {
     const version = getCompilerVersion(compilationResults.contracts)
     return this.rel.map((node) => {
