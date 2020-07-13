@@ -1,6 +1,6 @@
 {
   "name": "remix-ide",
-  "version": "v0.10.2",
+  "version": "v0.10.3",
   "description": "Extendable Web IDE for Ethereum",
   "devDependencies": {
     "@babel/core": "^7.4.5",
