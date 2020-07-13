@@ -48,92 +48,89 @@ describe("Publisher tests", () => {
       expect(template).toBeDefined();
     });
 
-    test('getContractDoc', () => {
-      const template = getContractDoc(
-        'Owner',
-        {
-          ...buildFakeArtifactWithComments(),
-          abi: [
-            {
-              "inputs": [],
-              "stateMutability": "nonpayable",
-              "type": "constructor"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "oldOwner",
-                  "type": "address"
-                },
-                {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "newOwner",
-                  "type": "address"
-                }
-              ],
-              "name": "OwnerSet",
-              "type": "event"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "newOwner",
-                  "type": "address"
-                }
-              ],
-              "name": "changeOwner",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "getOwner",
-              "outputs": [
-                {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            }
-          ] as any,
-          devdoc: {
-            "details": "Set & change owner",
-            "methods": {
-              "changeOwner(address)": {
-                "details": "Change owner",
-                "params": {
-                  "newOwner": "address of new owner"
-                }
+    test("getContractDoc", () => {
+      const template = getContractDoc("Owner", {
+        ...buildFakeArtifactWithComments(),
+        abi: [
+          {
+            inputs: [],
+            stateMutability: "nonpayable",
+            type: "constructor",
+          },
+          {
+            anonymous: false,
+            inputs: [
+              {
+                indexed: true,
+                internalType: "address",
+                name: "oldOwner",
+                type: "address",
               },
-              "constructor": {
-                "details": "Set contract deployer as owner"
+              {
+                indexed: true,
+                internalType: "address",
+                name: "newOwner",
+                type: "address",
               },
-              "getOwner()": {
-                "details": "Return owner address ",
-                "returns": {
-                  "_0": "address of owner"
-                }
-              }
+            ],
+            name: "OwnerSet",
+            type: "event",
+          },
+          {
+            inputs: [
+              {
+                internalType: "address",
+                name: "newOwner",
+                type: "address",
+              },
+            ],
+            name: "changeOwner",
+            outputs: [],
+            stateMutability: "nonpayable",
+            type: "function",
+          },
+          {
+            inputs: [],
+            name: "getOwner",
+            outputs: [
+              {
+                internalType: "address",
+                name: "",
+                type: "address",
+              },
+            ],
+            stateMutability: "view",
+            type: "function",
+          },
+        ] as any,
+        devdoc: {
+          details: "Set & change owner",
+          methods: {
+            "changeOwner(address)": {
+              details: "Change owner",
+              params: {
+                newOwner: "address of new owner",
+              },
             },
-            "title": "Owner"
-          } as any,
-          userdoc: {
-            "methods": {}
-          } as any
-        }
-      )
+            constructor: {
+              details: "Set contract deployer as owner",
+            },
+            "getOwner()": {
+              details: "Return owner address ",
+              returns: {
+                _0: "address of owner",
+              },
+            },
+          },
+          title: "Owner",
+        } as any,
+        userdoc: {
+          methods: {},
+        } as any,
+      });
 
       expect(template).toBeDefined();
-    })
+    });
   });
 
   describe("getFunctionDocumentation", () => {
