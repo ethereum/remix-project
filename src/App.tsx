@@ -47,7 +47,7 @@ const App = () => {
       await client.onload();
       setClientInstance(client);
       console.log("Remix EthDoc Plugin has been loaded");
-      await client.call('manager' as any, 'activatePlugin', "ethdoc-viewer")
+      await client.call("manager" as any, "activatePlugin", "ethdoc-viewer");
       client.solidity.on(
         "compilationFinished",
         (
