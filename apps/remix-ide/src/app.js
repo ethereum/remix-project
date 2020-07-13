@@ -3,7 +3,7 @@
 var isElectron = require('is-electron')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var registry = require('./global/registry')
 var loadFileFromParent = require('./loadFilesFromParent')
 var { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')

@@ -1,7 +1,7 @@
 'use strict'
 
 var solcTranslate = require('solc/translate')
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 var txHelper = remixLib.execution.txHelper
 
 module.exports = (contractName, contract, compiledSource) => {
