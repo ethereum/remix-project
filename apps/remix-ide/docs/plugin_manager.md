@@ -4,7 +4,7 @@ Plugin Manager
 ## Everything is a PLUGIN in Remix
 
 In order to integrate new tools made by us and by ...you into Remix, we've now made everything a plugin.
-This architcture will also allow Remix or just parts of Remix to be integrated into other projects (your's for example).   
+This architecture will also allow Remix or just parts of Remix to be integrated into other projects (your's for example).   
 
 This means that you only load the functionality you need.  
 

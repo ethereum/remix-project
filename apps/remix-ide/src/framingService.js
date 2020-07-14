@@ -8,7 +8,7 @@ export class FramingService {
     this.resizeFeature = resizeFeature
   }
 
-  start () {
+  start (params) {
     this.sidePanel.events.on('toggle', () => {
       this.resizeFeature.panel.clientWidth !== 0 ? this.resizeFeature.hidePanel() : this.resizeFeature.showPanel()
     })
@@ -33,5 +33,13 @@ export class FramingService {
         e.preventDefault()
       }
     })
+
+    if (params.minimizeterminal) this.mainView.minimizeTerminal()
+    if (params.minimizesidepanel) this.resizeFeature.hidePanel()
+  }
+
+  embed () {
+    this.mainView.minimizeTerminal()
+    this.resizeFeature.hidePanel()
   }
 }

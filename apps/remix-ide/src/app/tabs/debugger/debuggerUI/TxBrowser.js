@@ -11,11 +11,6 @@ var css = csjs`
     display: flex;
     flex-direction: column;
   }
-  .txinputs {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
   .txinput {
     width: inherit;
     font-size: small;
@@ -23,15 +18,8 @@ var css = csjs`
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .txbuttons {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
   .txbutton {
     width: inherit;
-  }
-  .txbuttonstart {
   }
   .txbutton:hover {
   }
@@ -110,10 +98,10 @@ TxBrowser.prototype.render = function () {
   var view = yo`
     <div class="${css.container}">
       <div class="${css.txContainer}">
-        <div class="${css.txinputs} p-1 input-group">
+        <div class=" py-1 d-flex justify-content-center w-100 input-group">
           ${this.state.txNumberInput}
         </div>
-        <div class="${css.txbuttons} btn-group p-1">
+        <div class="d-flex justify-content-center w-100 btn-group py-1">
           ${txButton}
         </div>
       </div>

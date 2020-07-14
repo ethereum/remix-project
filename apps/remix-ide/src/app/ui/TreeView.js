@@ -9,7 +9,6 @@ var css = csjs`
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
     -webkit-padding-start: 0px;
-    margin-left: 10px;
   }
   .ul_tv {
     list-style-type: none;
@@ -22,12 +21,18 @@ var css = csjs`
   .caret_tv {
     width: 10px;
     flex-shrink: 0;
+    padding-right: 5px;
   }
-  .label_tv {
-    align-items: center;
+  .label_item {
+    word-break: break-all;
   }
-  .label_tv>span {
+  .label_key {
+    min-width: 15%;
+    max-width: 80%;
     word-break: break-word;
+  }
+  .label_value {
+    min-width: 10%;
   }
 `
 
@@ -75,22 +80,22 @@ class TreeView {
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
     })
-    return yo`<ul key=${key} data-id="treeViewUl${key}" class="${css.ul_tv}">${children}</ul>`
+    return yo`<ul key=${key} data-id="treeViewUl${key}" class="${css.ul_tv} ml-0 px-2">${children}</ul>`
   }
 
   formatData (key, data, children, expand, keyPath) {
     var self = this
     var li = yo`<li key=${keyPath} data-id="treeViewLi${keyPath}" class=${css.li_tv}></li>`
-    var caret = yo`<div class="fas fa-caret-right caret ${css.caret_tv}"></div>`
+    var caret = yo`<div class="px-1 fas fa-caret-right caret ${css.caret_tv}"></div>`
     var label = yo`
-      <div key=${keyPath} data-id="treeViewDiv${keyPath}" class=${css.label_tv}>
+      <div key=${keyPath} data-id="treeViewDiv${keyPath}" class="d-flex flex-row align-items-center">
         ${caret}
-        <span>${self.formatSelf(key, data, li)}</span>
+        <span class="w-100">${self.formatSelf(key, data, li)}</span>
       </div>`
     const expanded = self.expandPath.includes(keyPath)
     li.appendChild(label)
     if (data.children) {
-      var list = yo`<ul key=${keyPath} data-id="treeViewUlList${keyPath}" class=${css.ul_tv}>${children}</ul>`
+      var list = yo`<ul key=${keyPath} data-id="treeViewUlList${keyPath}" class="pl-2 ${css.ul_tv}">${children}</ul>`
       list.style.display = expanded ? 'block' : 'none'
       caret.className = list.style.display === 'none' ? `fas fa-caret-right caret ${css.caret_tv}` : `fas fa-caret-down caret ${css.caret_tv}`
       caret.setAttribute('data-id', `treeViewToggle${keyPath}`)
@@ -99,7 +104,7 @@ class TreeView {
         if (self.isExpanded(keyPath)) {
           if (!self.expandPath.includes(keyPath)) self.expandPath.push(keyPath)
         } else {
-          self.expandPath = self.expandPath.filter(path => path !== keyPath)
+          self.expandPath = self.expandPath.filter(path => !path.startsWith(keyPath))
         }
       }
       label.oncontextmenu = function (event) {
@@ -164,7 +169,12 @@ class TreeView {
   }
 
   formatSelfDefault (key, data) {
-    return yo`<label>${key}: ${data.self}</label>`
+    return yo`
+      <div class="d-flex mb-1 flex-row ${css.label_item}">
+        <label class="small font-weight-bold pr-1 ${css.label_key}">${key}:</label> 
+        <label class="m-0 ${css.label_value}">${data.self}</label>
+      </div>
+    `
   }
 
   extractDataDefault (item, parent, key) {

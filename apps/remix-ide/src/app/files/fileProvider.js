@@ -93,9 +93,13 @@ class FileProvider {
     cb = cb || function () {}
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
-    if (exists && window.remixFileSystem.readFileSync(unprefixedpath, 'utf8') === content) return true
+    if (exists && window.remixFileSystem.readFileSync(unprefixedpath, 'utf8') === content) {
+      cb()
+      return true
+    }
     if (!exists && unprefixedpath.indexOf('/') !== -1) {
-      this.createDir(path)
+      // the last element is the filename and we should remove it
+      this.createDir(path.substr(0, path.lastIndexOf('/')))
     }
     try {
       window.remixFileSystem.writeFileSync(unprefixedpath, content)
@@ -113,9 +117,8 @@ class FileProvider {
   }
 
   createDir (path, cb) {
-    var unprefixedpath = this.removePrefix(path)
+    const unprefixedpath = this.removePrefix(path)
     const paths = unprefixedpath.split('/')
-    paths.pop() // last element should the filename
     if (paths.length && paths[0] === '') paths.shift()
     let currentCheck = ''
     paths.forEach((value) => {
@@ -154,35 +157,38 @@ class FileProvider {
    * @param {*} path is the folder to be removed
    */
   remove (path) {
-    path = this.removePrefix(path)
-    if (window.remixFileSystem.existsSync(path)) {
-      const stat = window.remixFileSystem.statSync(path)
-      try {
-        if (!stat.isDirectory()) {
-          return this.removeFile(path)
-        } else {
-          const items = window.remixFileSystem.readdirSync(path)
-          if (items.length !== 0) {
-            items.forEach((item, index) => {
-              const curPath = `${path}/${item}`
-              if (window.remixFileSystem.statSync(curPath).isDirectory()) { // delete folder
-                this.remove(curPath)
-              } else { // delete file
-                this.removeFile(curPath)
-              }
-            })
-            if (window.remixFileSystem.readdirSync(path).length === 0) window.remixFileSystem.rmdirSync(path, console.log)
+    return new Promise((resolve, reject) => {
+      path = this.removePrefix(path)
+      if (window.remixFileSystem.existsSync(path)) {
+        const stat = window.remixFileSystem.statSync(path)
+        try {
+          if (!stat.isDirectory()) {
+            resolve(this.removeFile(path))
           } else {
-            // folder is empty
-            window.remixFileSystem.rmdirSync(path, console.log)
+            const items = window.remixFileSystem.readdirSync(path)
+            if (items.length !== 0) {
+              items.forEach((item, index) => {
+                const curPath = `${path}/${item}`
+                if (window.remixFileSystem.statSync(curPath).isDirectory()) { // delete folder
+                  this.remove(curPath)
+                } else { // delete file
+                  this.removeFile(curPath)
+                }
+              })
+              if (window.remixFileSystem.readdirSync(path).length === 0) window.remixFileSystem.rmdirSync(path, console.log)
+            } else {
+              // folder is empty
+              window.remixFileSystem.rmdirSync(path, console.log)
+            }
+            this.event.trigger('fileRemoved', [this._normalizePath(path)])
           }
+        } catch (e) {
+          console.log(e)
+          return resolve(false)
         }
-      } catch (e) {
-        console.log(e)
-        return false
       }
-    }
-    return true
+      return resolve(true)
+    })
   }
 
   removeFile (path) {
@@ -216,10 +222,11 @@ class FileProvider {
 
     window.remixFileSystem.readdir(path, (error, files) => {
       var ret = {}
+
       if (files) {
         files.forEach(element => {
           const absPath = (path === '/' ? '' : path) + '/' + element
-          ret[absPath.indexOf('/') === 0 ? absPath.replace('/', '') : absPath] = { isDirectory: window.remixFileSystem.statSync(absPath).isDirectory() }
+          ret[absPath.indexOf('/') === 0 ? absPath.substr(1, absPath.length) : absPath] = { isDirectory: window.remixFileSystem.statSync(absPath).isDirectory() }
           // ^ ret does not accept path starting with '/'
         })
       }

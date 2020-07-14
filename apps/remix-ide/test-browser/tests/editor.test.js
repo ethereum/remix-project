@@ -66,10 +66,12 @@ module.exports = {
     .click('*[data-id="settingsTabThemeDark"]')
     .pause(2000)
     .waitForElementVisible('*[data-id="editorInput"]')
+    /* @todo(#2863) ch for class and not colors
     .checkElementStyle('.ace_keyword', 'color', aceThemes.dark.keyword)
     .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.dark.comment)
     .checkElementStyle('.ace_function', 'color', aceThemes.dark.function)
     .checkElementStyle('.ace_variable', 'color', aceThemes.dark.variable)
+    */
   },
 
   'Should highlight source code': function (browser) {

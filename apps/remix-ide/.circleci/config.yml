@@ -7,7 +7,7 @@ jobs:
   remix-ide-chrome:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.18.0-browsers
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -41,7 +41,7 @@ jobs:
   remix-ide-firefox:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.18.0-browsers
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -81,7 +81,7 @@ jobs:
   remix-ide-run-deploy:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.18.0-browsers
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -113,7 +113,7 @@ jobs:
   deploy-remix-live:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.18.0-browsers
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -139,10 +139,33 @@ jobs:
       - store_artifacts:
           path: ./reports/screenshots
 
+  publish-docker:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.19.0-buster
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+      - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
+    working_directory: ~/remix-ide
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: npm install
+      - run: npm run build
+      - run: ./ci/build_and_publish_docker_images.sh
+
   deploy-remix-alpha:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.18.0-browsers
+      - image: circleci/node:9.11.2-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -175,6 +198,11 @@ workflows:
       - remix-ide-chrome
       - remix-ide-firefox
       - remix-ide-run-deploy
+      - publish-docker:
+          requires:
+            - remix-ide-chrome
+            - remix-ide-firefox
+            - remix-ide-run-deploy
       - deploy-remix-live:          
           requires:
             - remix-ide-chrome

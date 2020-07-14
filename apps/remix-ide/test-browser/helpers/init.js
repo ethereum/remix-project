@@ -11,28 +11,27 @@ module.exports = function (browser, callback, url, preloadPlugins = true) {
           initModules(browser, () => {
             browser.clickLaunchIcon('solidity')
             .pause(2000)
-            .click('*[for="autoCompile"]')
-            .perform(function () {
-              callback()
+            .execute(() => {
+              document.getElementById('autoCompile').click()
             })
           })
-        } else callback()
+        }
       })
+    })
+    .perform(() => {
+      callback()
     })
 }
 
 function initModules (browser, callback) {
   browser.pause(5000)
-    .click('#icon-panel div[plugin="pluginManager"]')
-    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_solidity"] button')
-    .pause(5000)
-    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_udapp"] button')
-    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_solidityStaticAnalysis"] button')
-    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
-    .scrollAndClick('#icon-panel div[plugin="fileExplorers"]')
+    .click('[data-id="verticalIconsKindpluginManager"]')
+    .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityStaticAnalysis"]')
+    .scrollAndClick('[data-id="pluginManagerComponentActivateButtondebugger"]')
+    .scrollAndClick('[data-id="verticalIconsKindfileExplorers"]')
     .clickLaunchIcon('settings')
-    .setValue('#gistaccesstoken', process.env.gist_token)
-    .click('#savegisttoken')
-    .click('#settingsView #Flatly') // e2e tests were initially developed with Flatly. Some tests are failing with the default one (Dark), because the dark theme put uppercase everywhere.
+    .setValue('[data-id="settingsTabGistAccessToken"]', process.env.gist_token)
+    .click('[data-id="settingsTabSaveGistToken"]')
+    .click('[data-id="settingsTabThemeFlatly"]') // e2e tests were initially developed with Flatly. Some tests are failing with the default one (Dark), because the dark theme put uppercase everywhere.
     .perform(() => { callback() })
 }
