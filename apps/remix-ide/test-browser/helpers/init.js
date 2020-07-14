@@ -8,12 +8,11 @@ module.exports = function (browser, callback, url, preloadPlugins = true) {
     .injectScript('test-browser/helpers/applytestmode.js', function () {
       browser.fullscreenWindow(() => {
         if (preloadPlugins) {
+          console.log('preloadPlugins: ', preloadPlugins)
           initModules(browser, () => {
             browser.clickLaunchIcon('solidity')
-            .pause(2000)
-            .execute(() => {
-              document.getElementById('autoCompile').click()
-            })
+            .waitForElementPresent('[for="autoCompile"]')
+            .click('[for="autoCompile"]')
           })
         }
       })
