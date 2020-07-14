@@ -112,20 +112,21 @@
                   "noRuntime": true,
                   "promises": true,
                   "wrapAwait": true
+
                 }
-              }
+              ],
+              [
+                "module:babel-plugin-yo-yoify"
+              ],
+              [
+                "module:@babel/plugin-transform-object-assign"
+              ]
             ],
-            [
-              "module:babel-plugin-yo-yoify"
-            ],
-            [
-              "module:@babel/plugin-transform-object-assign"
+            "presets": [
+              "@babel/preset-env"
             ]
-          ],
-          "presets": [
-            "@babel/preset-env"
-          ]
-        }
+          }
+        ]
       ]
     ]
   },

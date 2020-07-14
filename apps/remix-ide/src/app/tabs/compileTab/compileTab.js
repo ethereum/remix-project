@@ -68,7 +68,7 @@ class CompileTab {
         const sources = { [target]: { content } }
         this.event.emit('startingCompilation')
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
-        setTimeout(() => this.compiler.compile(sources, target), 100)
+        setTimeout(() => { this.compiler.compile(sources, target); resolve() }, 100)
       })
     })
   }

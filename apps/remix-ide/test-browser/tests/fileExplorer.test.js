@@ -22,8 +22,7 @@ module.exports = {
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .setValue('*[data-id="modalDialogCustomPromptText"]', '5_New_contract.sol')
     .modalFooterOKClick()
-    .pause(2000)
-    .waitForElementVisible('*[data-id="treeViewLibrowser/5_New_contract.sol"]')
+    .waitForElementVisible('*[data-id="treeViewLibrowser/5_New_contract.sol"]', 7000)
   },
 
   'Should rename `5_New_contract.sol` to 5_Renamed_Contract.sol': function (browser) {
@@ -82,8 +81,7 @@ module.exports = {
     .click('*[data-id="fileExplorerNewFilepublishToGist"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .modalFooterOKClick()
-    .pause(10000)
-    .waitForElementVisible('*[data-id="modalDialogContainer"]')
+    .waitForElementVisible('*[data-id="modalDialogContainer"]', 7000)
     .modalFooterOKClick()
     .pause(2000)
     .perform((done) => {

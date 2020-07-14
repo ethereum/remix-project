@@ -1,11 +1,12 @@
 import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
+import QueryParams from '../../lib/query-params'
 import * as packageJson from '../../../package.json'
 import yo from 'yo-yo'
 
 const themes = [
   {name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/dvtmp0niu/raw/upload/v1584965247/remix-dark_tmkdla.css'},
-  {name: 'Light', quality: 'light', url: 'https://res.cloudinary.com/dvtmp0niu/raw/upload/v1584966540/remix-light_t0c780.css'},
+  {name: 'Light', quality: 'light', url: 'https://res.cloudinary.com/remix/raw/upload/v1594059208/remix-themes/remix-light_csxus2.css'},
 
   {name: 'Cerulean', quality: 'light', url: 'https://bootswatch.com/4/cerulean/bootstrap.min.css'},
   {name: 'Flatly', quality: 'light', url: 'https://bootswatch.com/4/flatly/bootstrap.min.css'},
@@ -17,7 +18,6 @@ const themes = [
   {name: 'Yeti', quality: 'light', url: 'https://bootswatch.com/4/yeti/bootstrap.min.css'},
   {name: 'Cyborg', quality: 'dark', url: 'https://bootswatch.com/4/cyborg/bootstrap.min.css'},
   {name: 'Darkly', quality: 'dark', url: 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css'},
-  {name: 'Slate', quality: 'light', url: 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/slate/bootstrap.min.css'},
   {name: 'Superhero', quality: 'dark', url: 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/superhero/bootstrap.min.css'}
 ]
 
@@ -38,7 +38,9 @@ export class ThemeModule extends Plugin {
       config: registry.get('config').api
     }
     this.themes = themes.reduce((acc, theme) => ({ ...acc, [theme.name]: theme }), {})
-    this.active = this._deps.config.get('settings/theme') ? this._deps.config.get('settings/theme') : 'Dark'
+    const theme = (new QueryParams()).get().theme
+    this.active = theme || this._deps.config.get('settings/theme') || 'Dark'
+    this.forced = theme !== undefined
   }
 
   /** Return the active theme */
@@ -76,7 +78,7 @@ export class ThemeModule extends Plugin {
     }
     const next = themeName || this.active   // Name
     const nextTheme = this.themes[next] // Theme
-    this._deps.config.set('settings/theme', next)
+    if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName

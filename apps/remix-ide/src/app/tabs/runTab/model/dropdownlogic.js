@@ -34,6 +34,9 @@ class DropdownLogic {
     this.runView.on('lexon', 'compilationFinished', (file, source, languageVersion, data) =>
       broadcastCompilationResult(file, source, languageVersion, data)
     )
+    this.runView.on('yulp', 'compilationFinished', (file, source, languageVersion, data) =>
+      broadcastCompilationResult(file, source, languageVersion, data)
+    )
   }
 
   loadContractFromAddress (address, confirmCb, cb) {

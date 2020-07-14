@@ -9,14 +9,6 @@ module.exports = {
   font: {
     'font-family': 'arial,sans-serif'
   },
-  innerShift: {
-    'padding': '2px',
-    'margin-left': '10px'
-  },
-  container: {
-    'margin': '10px',
-    'padding': '5px'
-  },
   statusMessage: {
     'margin-left': '15px'
   },
