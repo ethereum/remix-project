@@ -1,3 +1,6 @@
+
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
 .idea
 .vscode
 build
@@ -12,3 +15,4 @@ remix
 contracts
 TODO
 .tern-port
+temp_publish_docker

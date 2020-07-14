@@ -43,7 +43,7 @@ module.exports = {
     .setValue('*[data-id="slider"]', 50)
     .pause(2000)
     .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
-    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step: 92')
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
   },
 
   'Should step back and forward transaction': function (browser) {
@@ -51,12 +51,12 @@ module.exports = {
     .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
     .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
     .pause(2000)
-    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step: 91')
-    .assert.containsText('*[data-id="stepdetail"]', 'execution step: 91')
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n91')
+    .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n91')
     .click('*[data-id="buttonNavigatorIntoForward"]')
     .pause(2000)
-    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step: 92')
-    .assert.containsText('*[data-id="stepdetail"]', 'execution step: 92')
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
+    .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n92')
   },
 
   'Should jump through breakpoints': function (browser) {
@@ -66,12 +66,12 @@ module.exports = {
     .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
     .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
     .pause(2000)
-    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step: 0')
-    .assert.containsText('*[data-id="stepdetail"]', 'execution step: 0')
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n0')
+    .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n0')
     .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
     .pause(2000)
-    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step: 140')
-    .assert.containsText('*[data-id="stepdetail"]', 'execution step: 140')
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n184')
+    .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n184')
     .end()
   },
 

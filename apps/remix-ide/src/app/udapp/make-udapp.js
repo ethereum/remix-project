@@ -32,7 +32,7 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
   const txlistener = blockchain.getTxListener({
     api: {
       contracts: function () {
-        if (compilersArtefacts['__last']) return compilersArtefacts['__last'].getContracts()
+        if (compilersArtefacts['__last']) return compilersArtefacts.getAllContractDatas()
         return null
       },
       resolveReceipt: function (tx, cb) {
