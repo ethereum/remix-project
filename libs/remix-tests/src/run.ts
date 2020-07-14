@@ -48,7 +48,7 @@ commander
             log.info('verbosity level set to ' + commander.verbose.blue)
         }
         const web3 = new Web3()
-        const provider = new Provider()
+        const provider: any = new Provider()
         await provider.init()
         web3.setProvider(provider)
 

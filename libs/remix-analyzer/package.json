@@ -1,5 +1,5 @@
 {
-  "name": "remix-analyzer",
+  "name": "@remix-project/remix-analyzer",
   "version": "0.5.3",
   "description": "Tool to perform static analysis on Solidity smart contracts",
   "main": "./dist/index.js",
