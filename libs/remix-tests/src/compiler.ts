@@ -10,7 +10,7 @@ function regexIndexOf (inputString: string, regex: RegExp, startpos = 0) {
 }
 
 function writeTestAccountsContract (accounts: string[]) {
-    const testAccountContract = require('../sol/tests_accounts.sol.js')
+    const testAccountContract = require('../sol/tests_accounts.sol')
     let body = `address[${accounts.length}] memory accounts;`
     if (!accounts.length) body += ';'
     else {
@@ -86,8 +86,8 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
     let compiler: any
     const accounts: string[] = opts.accounts || []
     const sources: SrcIfc = {
-        'tests.sol': { content: require('../sol/tests.sol.js') },
-        'remix_tests.sol': { content: require('../sol/tests.sol.js') },
+        'tests.sol': { content: require('../sol/tests.sol') },
+        'remix_tests.sol': { content: require('../sol/tests.sol') },
         'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
     }
     const filepath: string = (isDirectory ? filename : path.dirname(filename))
