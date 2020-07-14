@@ -14,8 +14,8 @@ const Transactions = require('./methods/transactions.js')
 const generateBlock = require('./genesis.js')
 
 class Provider { 
-  constructor(options) {
-    this.options = options || {}
+  constructor(options = {}) {
+    this.options = options
     // TODO: init executionContext here
     this.executionContext = executionContext
     this.Accounts = new Accounts(this.executionContext)

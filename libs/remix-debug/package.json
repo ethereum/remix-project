@@ -1,5 +1,5 @@
 {
-  "name": "remix-debug",
+  "name": "@remix-project/remix-debug",
   "version": "0.4.5",
   "description": "Tool to debug Ethereum transactions",
   "contributors": [
