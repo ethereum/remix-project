@@ -5,9 +5,12 @@ class TestFunction extends EventEmitter {
   command (txHash, expectedValue) {
     const browser = this.api
     const logs = {}
-    const setLog = (index, value) => { logs[Object.keys(logs)[index]] = value }
+    const setLog = (index, value) => { logs[Object.keys(logs)[index]] = typeof value === 'string' ? value.trim() : value }
 
-    browser.waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
+    browser
+    .waitForElementVisible(`*[data-id="terminalContainer"]`)
+    .click(`*[data-id="terminalContainer"]`)
+    .waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
     .click(`*[data-id="txLogger${txHash}"]`)
     .waitForElementVisible(`*[data-id="txLoggerTable${txHash}"]`)
 
