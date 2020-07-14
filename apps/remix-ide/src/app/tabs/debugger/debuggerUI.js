@@ -3,7 +3,7 @@ var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
 var toaster = require('../../ui/tooltip')
 
-var Debugger = require('remix-debug').TransactionDebugger
+var Debugger = require('@remix-project/remix-debug').TransactionDebugger
 
 var SourceHighlighter = require('../../editor/sourceHighlighter')
 
