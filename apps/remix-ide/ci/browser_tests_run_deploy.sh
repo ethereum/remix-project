@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-
+ 
 setupRemixd () {
   mkdir remixdSharedfolder
   cd apps/remix-ide/contracts
