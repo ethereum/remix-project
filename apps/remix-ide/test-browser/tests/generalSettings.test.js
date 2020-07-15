@@ -4,7 +4,7 @@ const sauce = require('./sauce')
 
 module.exports = {
   before: function (browser, done) {
-    init(browser, done, 'http://127.0.0.1:8080', false)
+    init(browser, done, 'http://127.0.0.1:4200', false)
   },
 
   'Should display settings menu': function (browser) {
@@ -47,7 +47,6 @@ module.exports = {
     .click('*[data-id="settingsTabSaveGistToken"]')
     .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
     .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token saved')
-    .click('*[data-id="tooltipCloseButton"]')
   },
 
   'Should copy github access token to clipboard': function (browser) {
@@ -55,7 +54,6 @@ module.exports = {
     .click('*[data-id="copyToClipboardCopyIcon"]')
     .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
     .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Copied value to clipboard.')
-    .click('*[data-id="tooltipCloseButton"]')
   },
 
   'Should remove github access token': function (browser) {
@@ -64,7 +62,6 @@ module.exports = {
     .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
     .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token removed')
     .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
-    .click('*[data-id="tooltipCloseButton"]')
   },
 
   'Should load dark theme': function (browser) {

@@ -1,0 +1,95 @@
+{
+  "AST":
+  {
+    "nodeType": "YulBlock",
+    "src": "148:83:0",
+    "statements":
+    [
+      {
+        "nodeType": "YulVariableDeclaration",
+        "src": "162:11:0",
+        "value":
+        {
+          "name": "x",
+          "nodeType": "YulIdentifier",
+          "src": "172:1:0"
+        },
+        "variables":
+        [
+          {
+            "name": "c1",
+            "nodeType": "YulTypedName",
+            "src": "166:2:0",
+            "type": ""
+          }
+        ]
+      },
+      {
+        "nodeType": "YulVariableDeclaration",
+        "src": "186:11:0",
+        "value":
+        {
+          "name": "b",
+          "nodeType": "YulIdentifier",
+          "src": "196:1:0"
+        },
+        "variables":
+        [
+          {
+            "name": "c2",
+            "nodeType": "YulTypedName",
+            "src": "190:2:0",
+            "type": ""
+          }
+        ]
+      },
+      {
+        "nodeType": "YulVariableDeclaration",
+        "src": "210:11:0",
+        "value":
+        {
+          "name": "s",
+          "nodeType": "YulIdentifier",
+          "src": "220:1:0"
+        },
+        "variables":
+        [
+          {
+            "name": "c3",
+            "nodeType": "YulTypedName",
+            "src": "214:2:0",
+            "type": ""
+          }
+        ]
+      }
+    ]
+  },
+  "evmVersion": "istanbul",
+  "externalReferences":
+  [
+    {
+      "declaration": 8,
+      "isOffset": false,
+      "isSlot": false,
+      "src": "196:1:0",
+      "valueSize": 1
+    },
+    {
+      "declaration": 11,
+      "isOffset": false,
+      "isSlot": false,
+      "src": "220:1:0",
+      "valueSize": 1
+    },
+    {
+      "declaration": 5,
+      "isOffset": false,
+      "isSlot": false,
+      "src": "172:1:0",
+      "valueSize": 1
+    }
+  ],
+  "id": 14,
+  "nodeType": "InlineAssembly",
+  "src": "139:92:0"
+}

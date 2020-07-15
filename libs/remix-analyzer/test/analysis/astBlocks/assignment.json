@@ -1,0 +1,51 @@
+{
+  "argumentTypes": null,
+  "id": 5,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "lValueRequested": false,
+  "leftHandSide":
+  {
+    "argumentTypes": null,
+    "id": 3,
+    "name": "a",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": 22,
+    "src": "52:1:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_uint256",
+      "typeString": "uint256"
+    }
+  },
+  "nodeType": "Assignment",
+  "operator": "=",
+  "rightHandSide":
+  {
+    "argumentTypes": null,
+    "hexValue": "31",
+    "id": 4,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": true,
+    "kind": "number",
+    "lValueRequested": false,
+    "nodeType": "Literal",
+    "src": "56:5:0",
+    "subdenomination": "wei",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_rational_1_by_1",
+      "typeString": "int_const 1"
+    },
+    "value": "1"
+  },
+  "src": "52:9:0",
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_uint256",
+    "typeString": "uint256"
+  }
+}

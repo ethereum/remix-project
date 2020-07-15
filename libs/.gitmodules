@@ -1,0 +1,3 @@
+[submodule "remixd"]
+	path = remixd
+	url = https://github.com/ethereum/remixd
