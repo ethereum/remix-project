@@ -2,7 +2,7 @@
 // const https = require('https')
 
 module.exports = function sauce (callback) {
-  return callback()
+  if (typeof callback === 'function') return callback()
   /*
   const currentTest = this.client.currentTest
   const username = this.client.options.username

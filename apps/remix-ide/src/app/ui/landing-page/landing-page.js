@@ -202,8 +202,8 @@ export class LandingPage extends ViewPlugin {
       `
     }
     // main
-    const solEnv = createEnvButton('/assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
-    const vyperEnv = createEnvButton('/assets/img/vyperLogo.webp', 'vyperLogo', 'Vyper', startVyper)
+    const solEnv = createEnvButton('assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
+    const vyperEnv = createEnvButton('assets/img/vyperLogo.webp', 'vyperLogo', 'Vyper', startVyper)
     // Featured
     const pipelineEnv = createEnvButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
     const debuggerEnv = createEnvButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)

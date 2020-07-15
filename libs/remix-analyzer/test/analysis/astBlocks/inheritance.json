@@ -1,0 +1,20 @@
+{
+  "arguments": null,
+  "baseName":
+  {
+    "contractScope": null,
+    "id": 19,
+    "name": "A",
+    "nodeType": "UserDefinedTypeName",
+    "referencedDeclaration": 9,
+    "src": "176:1:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_contract$_A_$9",
+      "typeString": "contract A"
+    }
+  },
+  "id": 20,
+  "nodeType": "InheritanceSpecifier",
+  "src": "176:1:0"
+}
