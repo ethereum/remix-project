@@ -4,7 +4,7 @@ import { Plugin } from '@remixproject/engine'
 import { compile } from './compiler-helpers'
 import globalRegistry from '../../global/registry'
 
-import remixLib from 'remix-lib'
+import remixLib from '@remix-project/remix-lib'
 
 const profile = {
   name: 'fetchAndCompile',

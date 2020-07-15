@@ -1,6 +1,6 @@
 'use strict'
 import { canUseWorker, urlFromVersion } from './compiler-utils'
-import { Compiler } from 'remix-solidity'
+import { Compiler } from '@remix-project/remix-solidity'
 import CompilerAbstract from './compiler-abstract'
 
 export const compile = async (compilationTargets, settings) => {

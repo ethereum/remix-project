@@ -4,11 +4,11 @@ set -e
 
 setupRemixd () {
   mkdir remixdSharedfolder
-  cd contracts
+  cd apps/remix-ide/contracts
   echo 'sharing folder: '
   echo $PWD
-  ./../node_modules/remixd/bin/remixd -s $PWD --remix-ide http://127.0.0.1:8080 &
-  cd ..
+  ../../../node_modules/.bin/remixd -s $PWD --remix-ide http://127.0.0.1:4200 &
+  cd ../../..
 }
 
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
@@ -22,7 +22,10 @@ setupRemixd
 sleep 5
 
 npm run nightwatch_parallel || TEST_EXITCODE=1
-npm run nightwatch_local_runAndDeploy || TEST_EXITCODE=1
+TESTFILES=$(circleci tests glob "./test-browser/tests/**/*.test.js" | circleci tests split --split-by=timings)
+for TESTFILE in $TESTFILES; do
+    ./node_modules/.bin/nightwatch --config nightwatch.js --env chrome $TESTFILE || TEST_EXITCODE=1
+done
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]

@@ -1,5 +1,5 @@
 'use strict'
-var SourceMappingDecoder = require('remix-lib').SourceMappingDecoder
+var SourceMappingDecoder = require('@remix-project/remix-lib').SourceMappingDecoder
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../package.json'
 

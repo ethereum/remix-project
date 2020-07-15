@@ -3,7 +3,7 @@ var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
 var toaster = require('../../ui/tooltip')
 
-var Debugger = require('remix-debug').TransactionDebugger
+var Debugger = require('@remix-project/remix-debug').TransactionDebugger
 
 var SourceHighlighter = require('../../editor/sourceHighlighter')
 
@@ -11,7 +11,7 @@ var EventManager = require('../../../lib/events')
 
 var globalRegistry = require('../../../global/registry')
 
-var remixLib = require('remix-lib')
+var remixLib = require('@remix-project/remix-lib')
 
 var init = remixLib.init
 

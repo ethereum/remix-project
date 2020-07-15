@@ -28,11 +28,7 @@ module.exports = {
   'Should rename `5_New_contract.sol` to 5_Renamed_Contract.sol': function (browser) {
     browser
     .waitForElementVisible('*[data-id="treeViewLibrowser/5_New_contract.sol"]')
-    .rightClick('[data-path="browser/5_New_contract.sol"]')
-    .click('*[id="menuitemrename"]')
-    .sendKeys('[data-path="browser/5_New_contract.sol"]', '5_Renamed_Contract.sol')
-    .sendKeys('[data-path="browser/5_New_contract.sol"]', browser.Keys.ENTER)
-    .keys()
+    .renameFile('browser/5_New_contract.sol', '5_Renamed_Contract.sol', 'browser/5_Renamed_Contract.sol')
     .waitForElementVisible('*[data-id="treeViewLibrowser/5_Renamed_Contract.sol"]')
   },
 
