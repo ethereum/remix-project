@@ -7,7 +7,7 @@ jobs:
   remix-ide-chrome:
     docker:
       # specify the version you desire here
-      - image: circleci/node:9.11.2-browsers
+      - image: circleci/node:10.18.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -17,31 +17,39 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
-    working_directory: ~/remix-ide
+      - FILES_TO_PACKAGE: "apps/remix-ide/assets apps/remix-ide/background.js apps/remix-ide/build apps/remix-ide/icon.png apps/remix-ide/index.html apps/remix-ide/manifest.json apps/remix-ide/README.md apps/remix-ide/soljson.js apps/remix-ide/package.json"
+    working_directory: ~/remix-project
 
     parallelism: 20
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint && npm run test && npm run make-mock-compiler
+      - run: npm run lint
+      - run:
+          name: Download Compatible JAVA Version for Selenium
+          command: |
+            java -version
+            sudo apt-get purge --auto-remove java-common
+            sudo apt-get update
+            sudo apt-get install openjdk-8-jdk
+            java -version
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
           background: true
-      - run: ./ci/browser_tests_chrome.sh
+      - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
       - store_test_results:
-          path: ./reports/tests
+          path: ./apps/remix-ide/reports/tests
       - store_artifacts:
-          path: ./reports/screenshots
+          path: ./apps/remix-ide/reports/screenshots
 
   remix-ide-firefox:
     docker:
       # specify the version you desire here
-      - image: circleci/node:9.11.2-browsers
+      - image: circleci/node:10.18.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -51,20 +59,20 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
-    working_directory: ~/remix-ide
+      - FILES_TO_PACKAGE: "apps/remix-ide/assets apps/remix-ide/background.js apps/remix-ide/build apps/remix-ide/icon.png apps/remix-ide/index.html apps/remix-ide/manifest.json apps/remix-ide/README.md apps/remix-ide/soljson.js apps/remix-ide/package.json"
+    working_directory: ~/remix-project
 
     parallelism: 20
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint && npm run test && npm run make-mock-compiler
+      - run: npm run lint
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
           background: true
       - run:
           name: Download Latest Firefox
@@ -72,16 +80,16 @@ jobs:
       - run:
           name: Install Firefox
           command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      - run: ./ci/browser_tests_firefox.sh
+      - run: ./apps/remix-ide/ci/browser_tests_firefox.sh
       - store_test_results:
-          path: ./reports/tests
+          path: ./apps/remix-ide/reports/tests
       - store_artifacts:
-          path: ./reports/screenshots
+          path: ./apps/remix-ide/reports/screenshots
 
   remix-ide-run-deploy:
     docker:
       # specify the version you desire here
-      - image: circleci/node:9.11.2-browsers
+      - image: circleci/node:10.18.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -91,29 +99,29 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
-    working_directory: ~/remix-ide
+      - FILES_TO_PACKAGE: "apps/remix-ide/assets apps/remix-ide/background.js apps/remix-ide/build apps/remix-ide/icon.png apps/remix-ide/index.html apps/remix-ide/manifest.json apps/remix-ide/README.md apps/remix-ide/soljson.js apps/remix-ide/package.json"
+    working_directory: ~/remix-project
 
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint && npm run test && npm run make-mock-compiler
+      - run: npm run lint
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
           background: true
-      - run: ./ci/browser_tests_run_deploy.sh
+      - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_artifacts:
-          path: ./reports/screenshots
+          path: ./apps/remix-ide/reports/screenshots
 
 
   deploy-remix-live:
     docker:
       # specify the version you desire here
-      - image: circleci/node:9.11.2-browsers
+      - image: circleci/node:10.18.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -123,21 +131,21 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
-    working_directory: ~/remix-ide
+      - FILES_TO_PACKAGE: "apps/remix-ide/assets apps/remix-ide/background.js apps/remix-ide/build apps/remix-ide/icon.png apps/remix-ide/index.html apps/remix-ide/manifest.json apps/remix-ide/README.md apps/remix-ide/soljson.js apps/remix-ide/package.json"
+    working_directory: ~/remix-project
 
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint && npm run test && npm run make-mock-compiler
+      - run: npm run lint
       - run: 
           name: Deploy
           command: |
             if [ "${CIRCLE_BRANCH}" == "remix_live" ]; then
-              ./ci/deploy_from_travis_remix-live.sh;
+              ./apps/remix-ide/ci/deploy_from_travis_remix-live.sh;
             fi
       - store_artifacts:
-          path: ./reports/screenshots
+          path: ./apps/remix-ide/reports/screenshots
 
   publish-docker:
     docker:
@@ -165,7 +173,7 @@ jobs:
   deploy-remix-alpha:
     docker:
       # specify the version you desire here
-      - image: circleci/node:9.11.2-browsers
+      - image: circleci/node:10.18.0-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -175,21 +183,21 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js package.json"
-    working_directory: ~/remix-ide
+      - FILES_TO_PACKAGE: "apps/remix-ide/assets apps/remix-ide/background.js apps/remix-ide/build apps/remix-ide/icon.png apps/remix-ide/index.html apps/remix-ide/manifest.json apps/remix-ide/README.md apps/remix-ide/soljson.js apps/remix-ide/package.json"
+    working_directory: ~/remix-project
 
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint && npm run test && npm run make-mock-compiler
+      - run: npm run lint
       - run: 
           name: Deploy
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              ./ci/deploy_from_travis_remix-alpha.sh;
+              ./apps/remix-ide/ci/deploy_from_travis_remix-alpha.sh;
             fi
       - store_artifacts:
-          path: ./reports/screenshots
+          path: ./apps/remix-ide/reports/screenshots
 
 workflows:
   version: 2

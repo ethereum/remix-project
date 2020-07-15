@@ -1,6 +1,6 @@
 {
   "name": "remix-ide",
-  "version": "v0.10.2",
+  "version": "v0.10.3",
   "description": "Extendable Web IDE for Ethereum",
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -62,7 +62,7 @@
     "remix-solidity": "0.3.31",
     "remix-tabs": "1.0.48",
     "remix-tests": "0.1.34",
-    "remixd": "0.2.3-alpha.1",
+    "remixd": "0.2.3-alpha.4",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.17.0",
