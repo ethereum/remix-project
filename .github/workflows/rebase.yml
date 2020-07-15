@@ -21,7 +21,6 @@ name: Automatic Rebase
 jobs:
   rebase:
     name: Rebase
-    if: github.event.issue.pull_request != ''
     runs-on: ubuntu-latest
     steps:
     - name: Checkout the latest code
