@@ -1,7 +1,7 @@
 import fs from './fileSystem'
 import async from 'async'
 import path from 'path'
-const RemixCompiler = require('@remix-project/remix-solidity').Compiler
+import { Compiler as RemixCompiler } from '@remix-project/remix-solidity'
 import { SrcIfc, CompilerConfiguration, CompilationErrors } from './types'
 
 function regexIndexOf (inputString: string, regex: RegExp, startpos = 0) {
