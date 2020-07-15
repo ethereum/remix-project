@@ -16,7 +16,7 @@ export class Compiler {
   event
   state: CompilerState
 
-  constructor (public handleImportCall: (fileurl: string, cb) => void) {
+  constructor (public handleImportCall?: (fileurl: string, cb) => void) {
     this.event = new EventManager()
     this.state = {
       compileJSON: null,
