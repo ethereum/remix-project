@@ -23,7 +23,7 @@ sleep 5
 
 TESTFILES=$(circleci tests glob "./apps/remix-ide/test-browser/tests/**/*.test.js" | circleci tests split --split-by=timings)
 for TESTFILE in $TESTFILES; do
-    ./node_modules/.bin/nightwatch --config nightwatch.js --env chrome $TESTFILE || TEST_EXITCODE=1
+    ./node_modules/.bin/nightwatch --config ./apps/remix-ide/nightwatch.js --env chrome $TESTFILE || TEST_EXITCODE=1
 done
 
 echo "$TEST_EXITCODE"
