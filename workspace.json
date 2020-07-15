@@ -200,7 +200,10 @@
             "tsConfig": "libs/remix-debug/tsconfig.lib.json",
             "packageJson": "libs/remix-debug/package.json",
             "main": "libs/remix-debug/index.js",
-            "assets": ["libs/remix-debug/*.md"]
+            "assets": [
+              { "glob": "rdb", "input": "libs/remix-debug/bin/", "output": "bin/" },
+              { "glob": "*.md", "input": "libs/remix-debug/", "output": "/" }
+            ]
           }
         }
       }
@@ -278,7 +281,10 @@
             "tsConfig": "libs/remix-simulator/tsconfig.lib.json",
             "packageJson": "libs/remix-simulator/package.json",
             "main": "libs/remix-simulator/index.js",
-            "assets": ["libs/remix-simulator/*.md"]
+            "assets": [
+              { "glob": "ethsim", "input": "libs/remix-simulator/bin/", "output": "bin/" },
+              { "glob": "*.md", "input": "libs/remix-simulator/", "output": "/" }
+            ]
           }
         }
       }
@@ -358,7 +364,10 @@
             "tsConfig": "libs/remix-tests/tsconfig.lib.json",
             "packageJson": "libs/remix-tests/package.json",
             "main": "libs/remix-tests/src/index.ts",
-            "assets": ["libs/remix-tests/*.md"]
+            "assets": [
+              { "glob": "remix-tests", "input": "libs/remix-tests/bin/", "output": "bin/" },
+              { "glob": "*.md", "input": "libs/remix-tests/", "output": "/" }
+            ]
           }
         }
       }
