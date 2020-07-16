@@ -6,7 +6,7 @@ class GetInstalledPlugins extends EventEmitter {
 
     browser.waitForElementPresent('[plugin]:not([plugin=""]')
     .perform((done) => {
-      browser.execute(() => {
+      browser.execute(function() {
         const pluginNames = []
         const plugins = document.querySelectorAll('[plugin]:not([plugin=""]')
 
