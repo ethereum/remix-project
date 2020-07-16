@@ -64,6 +64,7 @@
     "nightwatch_local_firefox": "nightwatch --config apps/remix-ide/nightwatch.js --env firefox",
     "nightwatch_local_chrome": "nightwatch --config apps/remix-ide/nightwatch.js --env chrome",
     "nightwatch_local_ballot": "nightwatch ./apps/remix-ide/test-browser/tests/ballot.test.js --config apps/remix-ide/nightwatch.js --env chrome ",
+    "nightwatch_local_usingWorker": "nightwatch ./apps/remix-ide/test-browser/tests/usingWebWorker.test.js --config apps/remix-ide/nightwatch.js --env chrome ",
     "nightwatch_local_libraryDeployment": "nightwatch ./apps/remix-ide/test-browser/tests/libraryDeployment.test.js --config apps/remix-ide/nightwatch.js --env chrome ",
     "nightwatch_local_solidityImport": "nightwatch ./apps/remix-ide/test-browser/tests/solidityImport.test.js --config apps/remix-ide/nightwatch.js --env chrome ",
     "nightwatch_local_recorder": "nightwatch ./apps/remix-ide/test-browser/tests/recorder.test.js --config apps/remix-ide/nightwatch.js --env chrome ",
