@@ -8,10 +8,8 @@ class TestFunction extends EventEmitter {
     const setLog = (index, value) => { logs[Object.keys(logs)[index]] = typeof value === 'string' ? value.trim() : value }
 
     browser
-    .waitForElementVisible(`*[data-id="terminalContainer"]`)
-    .click(`*[data-id="terminalContainer"]`)
-    .waitForElementVisible(`*[data-id="txLogger${txHash}"]`)
-    .click(`*[data-id="txLogger${txHash}"]`)
+    .waitForElementVisible(`[data-id="block_tx${txHash}"]`)
+    .click(`[data-id="block_tx${txHash}"]`)
     .waitForElementVisible(`*[data-id="txLoggerTable${txHash}"]`)
 
     // fetch and format transaction logs as key => pair object
