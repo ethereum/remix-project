@@ -233,7 +233,7 @@
     "onchange": "^3.2.1",
     "prettier": "1.19.1",
     "remix-tabs": "1.0.48",
-    "remixd": "0.1.8-alpha.16",
+    "remixd": "0.2.3-alpha.4",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.17.0",
