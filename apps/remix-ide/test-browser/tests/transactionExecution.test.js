@@ -105,7 +105,7 @@ module.exports = {
         'decoded output': {
           '0': 'uint256: _uret 2343242',
           '1': 'int256: _iret -4324324',
-          '2': 'string: _strret string _ string _  string _  string _  string _  string _  string _  string _  string _  string _'
+          '2': 'string: _strret string _ string _ string _ string _ string _ string _ string _ string _ string _ string _'
         }
       })
         .pause(500)
