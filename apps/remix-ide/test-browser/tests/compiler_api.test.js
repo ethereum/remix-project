@@ -20,7 +20,7 @@ module.exports = {
     .addFile('test_jsCompile.js', { content: jsCompile })
     .executeScript('remix.exeCurrent()')
     .pause(5000)
-    .journalChildIncludes('"languageversion": "0.6.8+commit.0bbfe453"')
+    .journalChildIncludes(`version: '0.6.8+commit.0bbfe453'`)
   },
 
   'Should update the compiler configuration with "setCompilerConfig" API': function (browser) {
@@ -29,7 +29,7 @@ module.exports = {
     .executeScript('remix.exeCurrent()')
     .pause(5000)
     .addFile('test_updateConfiguration.sol', { content: simpleContract })
-    .verifyContracts(['StorageTestUpdateConfiguration'], {wait: 5000, version: '0.6.8+commit.0bbfe453'})
+    .verifyContracts(['StorageTestUpdateConfiguration'], {wait: 5000, version: '0.6.6+commit.6c089d02'})
     .end()
   },
 
