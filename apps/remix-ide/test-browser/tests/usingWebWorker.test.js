@@ -29,7 +29,7 @@ module.exports = {
     .clickLaunchIcon('fileExplorers')
     .addFile('browser/basic.sol', sources[0]['browser/basic.sol'])
     .clickLaunchIcon('solidity')
-    .execute(() => {
+    .execute(function() {
       document.getElementById('nightlies').checked = true
     })
     .noWorkerErrorFor('soljson-v0.3.4+commit.7dab8902.js')
@@ -37,7 +37,7 @@ module.exports = {
     .noWorkerErrorFor('soljson-v0.6.8-nightly.2020.5.14+commit.a6d0067b.js')
     .noWorkerErrorFor('soljson-v0.6.0-nightly.2019.12.17+commit.d13438ee.js')
     .noWorkerErrorFor('soljson-v0.4.26+commit.4563c3fc.js')
-    .execute(() => {
+    .execute(function() {
       document.getElementById('nightlies').checked = false
     })
     .end()
