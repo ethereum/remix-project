@@ -753,6 +753,6 @@ function domTerminalFeatures (self, scopedCommands, blockchain) {
   }
 }
 
-function blockify (el) { return yo`<div class="px-4 ${css.block}">${el}</div>` }
+function blockify (el) { return yo`<div class="px-4 ${css.block}" data-id="block_${el.getAttribute ? el.getAttribute('id') : ''}">${el}</div>` }
 
 module.exports = Terminal
