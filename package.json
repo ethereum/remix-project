@@ -146,7 +146,8 @@
     "npm-install-version": "^6.0.2",
     "signale": "^1.4.0",
     "time-stamp": "^2.2.0",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "merge": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
