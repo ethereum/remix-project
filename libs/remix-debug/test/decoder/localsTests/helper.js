@@ -15,7 +15,14 @@ function decodeLocal (st, index, traceManager, callTree, verifier) {
           callback(error)
         }
       },
-      traceManager.getMemoryAt],
+      function getMemoryAt (stepIndex, callback) {
+        try {
+          const result = traceManager.getMemoryAt(stepIndex)
+          callback(null, result)
+        } catch (error) {
+          callback(error)
+        }
+      }],
       index,
       function (error, result) {
         if (!error) {

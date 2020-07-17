@@ -186,24 +186,22 @@ tape('TraceManager', function (t) {
 
   t.test('TraceManager.getMemoryAt', function (st) {
     st.plan(3)
-    traceManager.getMemoryAt(0, function (error, result) {
+    try {
+      const result = traceManager.getMemoryAt(0)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result.length === 0)
-      }
-    })
+      st.ok(result.length === 0)
+    } catch (error) {
+      st.fail(error)
+    }
 
-    traceManager.getMemoryAt(34, function (error, result) {
+    try {
+      const result = traceManager.getMemoryAt(34)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result.length === 3)
-        st.ok(result[2] === '0000000000000000000000000000000000000000000000000000000000000060')
-      }
-    })
+      st.ok(result.length === 3)
+      st.ok(result[2] === '0000000000000000000000000000000000000000000000000000000000000060')
+    } catch (error) {
+      st.fail(error)
+    }
   })
 
   t.test('TraceManager.getCurrentPC', function (st) {
