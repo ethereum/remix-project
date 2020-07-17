@@ -69,14 +69,14 @@ class VmDebuggerLogic {
         }
       })
 
-      this._traceManager.getMemoryAt(index, (error, memory) => {
-        if (error) {
-          // console.log(error)
-          this.event.trigger('traceManagerMemoryUpdate', [{}])
-        } else if (this.stepManager.currentStepIndex === index) {
+      try {
+        const memory = this._traceManager.getMemoryAt(index)
+        if (this.stepManager.currentStepIndex === index) {
           this.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 16)])
         }
-      })
+      } catch (error) {
+        this.event.trigger('traceManagerMemoryUpdate', [{}])
+      }
 
       try {
         const callstack = this._traceManager.getCallStackAt(index)

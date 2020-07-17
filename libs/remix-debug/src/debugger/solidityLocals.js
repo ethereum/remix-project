@@ -41,7 +41,14 @@ class DebuggerSolidityLocals {
           callback(error)
         }
       },
-      this.traceManager.getMemoryAt,
+      function getMemoryAt (stepIndex, callback) {
+        try {
+          const result = self.traceManager.getMemoryAt(stepIndex)
+          callback(null, result)
+        } catch (error) {
+          callback(error)
+        }
+      },
       function getCurrentCalledAddressAt (stepIndex, next) {
         try {
           const address = this.traceManager.getCurrentCalledAddressAt(stepIndex)
