@@ -193,23 +193,27 @@ function testDebugging (debugManager) {
   // stack
   tape('traceManager.getStackAt 4', (t) => {
     t.plan(1)
-    debugManager.traceManager.getStackAt(4, (error, callstack) => {
-      if (error) return t.end(error)
-      t.equal(JSON.stringify(callstack), JSON.stringify([ '0x0000000000000000000000000000000000000000000000000000000000000000' ]))
-    })
+    try {
+      const callstack = debugManager.traceManager.getStackAt(4)
+      t.equal(JSON.stringify(callstack), JSON.stringify(['0x0000000000000000000000000000000000000000000000000000000000000000']))
+    } catch (error) {
+      return t.end(error)
+    }
   })
 
   tape('traceManager.getStackAt 41', (t) => {
     t.plan(1)
-    debugManager.traceManager.getStackAt(41, (error, callstack) => {
-      if (error) return t.end(error)
+    try {
+      const callstack = debugManager.traceManager.getStackAt(41)
       t.equal(JSON.stringify(callstack), JSON.stringify([
         '0x0000000000000000000000000000000000000000000000000000000000000080',
         '0x0000000000000000000000000000000000000000000000000000000000000020',
         '0x0000000000000000000000000000000000000000000000000000000000000080',
         '0x00000000000000000000000000000000000000000000000000000000000000e0',
         '0x00000000000000000000000000000000000000000000000000000000000000e0']))
-    })
+    } catch (error) {
+      return t.end(error)
+    }
   })
 
   // storage

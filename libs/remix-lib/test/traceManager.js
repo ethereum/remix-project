@@ -96,24 +96,22 @@ tape('TraceManager', function (t) {
 
   t.test('TraceManager.getStackAt', function (st) {
     st.plan(3)
-    traceManager.getStackAt(0, function (error, result) {
+    try {
+      const result = traceManager.getStackAt(0)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result.length === 0)
-      }
-    })
+      st.ok(result.length === 0)
+    } catch (error) {
+      st.fail(error)
+    }
 
-    traceManager.getStackAt(28, function (error, result) {
+    try {
+      const result = traceManager.getStackAt(28)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result.length === 4)
-        st.ok(result[3] === '0x60fe47b1')
-      }
-    })
+      st.ok(result.length === 4)
+      st.ok(result[3] === '0x60fe47b1')
+    } catch (error) {
+      st.fail(error)
+    }
   })
 
   t.test('TraceManager.getLastCallChangeSince', function (st) {
