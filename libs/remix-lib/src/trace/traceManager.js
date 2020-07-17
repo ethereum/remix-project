@@ -170,15 +170,13 @@ TraceManager.prototype.getContractCreationCode = function (token, callback) {
   }
 }
 
-TraceManager.prototype.getMemoryAt = function (stepIndex, callback) {
-  try {
-    this.checkRequestedStep(stepIndex)
-  } catch (check) {
-    return callback(check, null)
-  }
+TraceManager.prototype.getMemoryAt = function (stepIndex) {
+  this.checkRequestedStep(stepIndex)
   const lastChanges = util.findLowerBoundValue(stepIndex, this.traceCache.memoryChanges)
-  if (lastChanges === null) return callback('no memory found', null)
-  callback(null, this.trace[lastChanges].memory)
+  if (lastChanges === null) {
+    throw new Error('no memory found')
+  }
+  return this.trace[lastChanges].memory
 }
 
 TraceManager.prototype.getCurrentPC = function (stepIndex, callback) {
