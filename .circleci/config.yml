@@ -107,6 +107,14 @@ jobs:
       - run: npm install
       - run: npm run lint
       - run:
+          name: Download Compatible JAVA Version for Selenium
+          command: |
+            java -version
+            sudo apt-get purge --auto-remove java-common
+            sudo apt-get update
+            sudo apt-get install openjdk-8-jdk
+            java -version
+      - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
       - run:
