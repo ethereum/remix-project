@@ -47,14 +47,9 @@ class StorageResolver {
       if (error) {
         return callback(error)
       }
-      mappingPreimages.decodeMappingsKeys(this.web3, storage, corrections, (error, mappings) => {
-        if (error) {
-          callback(error)
-        } else {
-          this.preimagesMappingByAddress[address] = mappings
-          callback(null, mappings)
-        }
-      })
+      const mappings = mappingPreimages.decodeMappingsKeys(this.web3, storage, corrections)
+      this.preimagesMappingByAddress[address] = mappings
+      callback(null, mappings)
     })
   }
 

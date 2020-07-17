@@ -118,14 +118,9 @@ class StorageViewer {
     if (this.mappingsLocationChanges) {
       return callback(null, this.mappingsLocationChanges)
     }
-    mappingPreimages.decodeMappingsKeys(this.web3, storageChanges, corrections, (error, mappings) => {
-      if (!error) {
-        this.mappingsLocationChanges = mappings
-        return callback(null, this.mappingsLocationChanges)
-      } else {
-        callback(error)
-      }
-    })
+    const mappings = mappingPreimages.decodeMappingsKeys(this.web3, storageChanges, corrections)
+    this.mappingsLocationChanges = mappings
+    return callback(null, this.mappingsLocationChanges)
   }
 }
 
