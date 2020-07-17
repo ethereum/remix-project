@@ -40,19 +40,15 @@ SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = function
  */
 SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = function (address, vmtraceStepIndex, contracts) {
   return new Promise((resolve, reject) => {
-    extractSourceMap(this, this.codeManager, address, contracts, (error, sourceMap) => {
-      if (!error) {
-        this.codeManager.getInstructionIndex(address, vmtraceStepIndex, (error, index) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve(this.sourceMappingDecoder.atIndex(index, sourceMap))
-          }
-        })
-      } else {
-        reject(error)
-      }
-    })
+    extractSourceMap(this, this.codeManager, address, contracts).then((sourceMap) => {
+      this.codeManager.getInstructionIndex(address, vmtraceStepIndex, (error, index) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(this.sourceMappingDecoder.atIndex(index, sourceMap))
+        }
+      })
+    }).catch(reject)
   })
 }
 
@@ -78,21 +74,23 @@ function getSourceMap (address, code, contracts) {
   return null
 }
 
-function extractSourceMap (self, codeManager, address, contracts, cb) {
-  if (self.sourceMapByAddress[address]) return cb(null, self.sourceMapByAddress[address])
+function extractSourceMap (self, codeManager, address, contracts) {
+  return new Promise((resolve, reject) => {
+    if (self.sourceMapByAddress[address]) return resolve(self.sourceMapByAddress[address])
 
-  codeManager.getCode(address, (error, result) => {
-    if (!error) {
-      const sourceMap = getSourceMap(address, result.bytecode, contracts)
-      if (sourceMap) {
-        if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
-        cb(null, sourceMap)
+    codeManager.getCode(address, (error, result) => {
+      if (!error) {
+        const sourceMap = getSourceMap(address, result.bytecode, contracts)
+        if (sourceMap) {
+          if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
+          resolve(sourceMap)
+        } else {
+          reject('no sourcemap associated with the code ' + address)
+        }
       } else {
-        cb('no sourcemap associated with the code ' + address)
+        reject(error)
       }
-    } else {
-      cb(error)
-    }
+    })
   })
 }
 
