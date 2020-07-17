@@ -90,7 +90,14 @@ Ethdebugger.prototype.extractLocalsAt = function (step, callback) {
 Ethdebugger.prototype.decodeLocalsAt = function (step, sourceLocation, callback) {
   const self = this
   this.traceManager.waterfall([
-    this.traceManager.getStackAt,
+    function getStackAt (stepIndex, callback) {
+      try {
+        const result = self.traceManager.getStackAt(stepIndex)
+        callback(null, result)
+      } catch (error) {
+        callback(error)
+      }
+    },
     this.traceManager.getMemoryAt,
     function getCurrentCalledAddressAt (stepIndex, next) {
       try {
