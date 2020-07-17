@@ -29,7 +29,7 @@ module.exports = {
     .executeScript('remix.exeCurrent()')
     .pause(5000)
     .addFile('test_updateConfiguration.sol', { content: simpleContract })
-    .verifyContracts(['StorageTestUpdateConfiguration'], {wait: 5000, version: '0.6.6+commit.6c089d02'})
+    .verifyContracts(['StorageTestUpdateConfiguration'], {wait: 5000, version: '0.6.8+commit.0bbfe453'})
     .end()
   },
 
