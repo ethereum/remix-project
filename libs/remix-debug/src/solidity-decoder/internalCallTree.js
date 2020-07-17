@@ -270,6 +270,12 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
                 break
               }
             }
+            // input params
+            if (inputs) {
+              functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, inputs.children.length, -1)
+            }
+            // output params
+            if (outputs) addParams(outputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, 0, 1)
           }
           // input params
           if (inputs) {
