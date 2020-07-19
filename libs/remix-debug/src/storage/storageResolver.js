@@ -91,10 +91,8 @@ class StorageResolver {
       if (cached && cached.storage[slotKey]) { // we have the current slot in the cache and maybe the next 1000...
         return resolve(cached.storage)
       }
-      this.storageRangeWeb3Call(tx, address, slotKey, self.maxSize, (error, storage, nextKey) => {
-        if (error) {
-          return reject(error)
-        }
+      this.storageRangeWeb3Call(tx, address, slotKey, self.maxSize).then((result) => {
+        const [storage, nextKey] = result
         if (!storage[slotKey] && slotKey !== self.zeroSlot) { // we don't cache the zero slot (could lead to inconsistency)
           storage[slotKey] = {
             key: slotKey,
@@ -106,7 +104,7 @@ class StorageResolver {
           self.storageByAddress[address].complete = true
         }
         return resolve(storage)
-      })
+      }).catch(reject)
     })
   }
 
@@ -136,25 +134,27 @@ class StorageResolver {
     self.storageByAddress[address].storage = Object.assign(self.storageByAddress[address].storage || {}, storage)
   }
 
-  storageRangeWeb3Call (tx, address, start, maxSize, callback) {
-    if (traceHelper.isContractCreation(address)) {
-      callback(null, {}, null)
-    } else {
-      this.web3.debug.storageRangeAt(
-        tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex,
-        address,
-        start,
-        maxSize,
-        (error, result) => {
-          if (error) {
-            callback(error)
-          } else if (result.storage) {
-            callback(null, result.storage, result.nextKey)
-          } else {
-            callback('the storage has not been provided')
-          }
-        })
-    }
+  storageRangeWeb3Call (tx, address, start, maxSize) {
+    return new Promise((resolve, reject) => {
+      if (traceHelper.isContractCreation(address)) {
+        resolve([{}, null])
+      } else {
+        this.web3.debug.storageRangeAt(
+          tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex,
+          address,
+          start,
+          maxSize,
+          (error, result) => {
+            if (error) {
+              reject(error)
+            } else if (result.storage) {
+              resolve([result.storage, result.nextKey])
+            } else {
+              reject('the storage has not been provided')
+            }
+          })
+      }
+    })
   }
 }
 
