@@ -46,13 +46,9 @@ class StorageViewer {
     if (this.storageChanges[hashed]) {
       return callback(null, this.storageChanges[hashed])
     }
-    this.storageResolver.storageSlot(hashed, this.context.tx, this.context.stepIndex, this.context.address, (error, storage) => {
-      if (error) {
-        callback(error)
-      } else {
-        callback(null, storage)
-      }
-    })
+    this.storageResolver.storageSlot(hashed, this.context.tx, this.context.stepIndex, this.context.address).then((storage) => {
+      callback(null, storage)
+    }).catch(callback)
   }
 
   /**
