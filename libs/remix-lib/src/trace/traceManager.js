@@ -88,15 +88,17 @@ TraceManager.prototype.getAddresses = function () {
   return this.traceCache.addresses
 }
 
-TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
+TraceManager.prototype.getCallDataAt = function (stepIndex) {
   try {
     this.checkRequestedStep(stepIndex)
   } catch (check) {
-    return callback(check, null)
+    throw new Error(check)
   }
   const callDataChange = util.findLowerBoundValue(stepIndex, this.traceCache.callDataChanges)
-  if (callDataChange === null) return callback('no calldata found', null)
-  callback(null, [this.traceCache.callsData[callDataChange]])
+  if (callDataChange === null) {
+    throw new Error('no calldata found')
+  }
+  return [this.traceCache.callsData[callDataChange]]
 }
 
 TraceManager.prototype.buildCallPath = function (stepIndex, callback) {
