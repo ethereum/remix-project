@@ -25,10 +25,8 @@ class StorageResolver {
    * @param {String} - address - lookup address
    * @param {Function} - callback - contains a map: [hashedKey] = {key, hashedKey, value}
    */
-  storageRange (tx, stepIndex, address, callback) {
-    this.storageRangeInternal(this, this.zeroSlot, tx, stepIndex, address).then((result) => {
-      callback(null, result)
-    }).catch(callback)
+  storageRange (tx, stepIndex, address) {
+    return this.storageRangeInternal(this, this.zeroSlot, tx, stepIndex, address)
   }
 
   /**
@@ -41,17 +39,16 @@ class StorageResolver {
    * @param {Array} corrections - used in case the calculated sha3 has been modifyed before SSTORE (notably used for struct in mapping).
    * @return {Function} - callback
    */
-  initialPreimagesMappings (tx, stepIndex, address, corrections, callback) {
-    if (this.preimagesMappingByAddress[address]) {
-      return callback(null, this.preimagesMappingByAddress[address])
-    }
-    this.storageRange(tx, stepIndex, address, (error, storage) => {
-      if (error) {
-        return callback(error)
+  initialPreimagesMappings (tx, stepIndex, address, corrections) {
+    return new Promise((resolve, reject) => {
+      if (this.preimagesMappingByAddress[address]) {
+        return resolve(this.preimagesMappingByAddress[address])
       }
-      const mappings = mappingPreimages.decodeMappingsKeys(this.web3, storage, corrections)
-      this.preimagesMappingByAddress[address] = mappings
-      callback(null, mappings)
+      this.storageRange(tx, stepIndex, address).then((storage) => {
+        const mappings = mappingPreimages.decodeMappingsKeys(this.web3, storage, corrections)
+        this.preimagesMappingByAddress[address] = mappings
+        resolve(mappings)
+      }).catch(reject)
     })
   }
 
