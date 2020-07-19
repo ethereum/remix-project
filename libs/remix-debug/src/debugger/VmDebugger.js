@@ -160,11 +160,9 @@ class VmDebuggerLogic {
     this.traceLength = 0
 
     this.debugger.event.register('newTraceLoaded', (length) => {
-      this._traceManager.getAddresses((error, addresses) => {
-        if (error) return
-        this.event.trigger('traceAddressesUpdate', [addresses])
-        this.addresses = addresses
-      })
+      const addresses = this._traceManager.getAddresses()
+      this.event.trigger('traceAddressesUpdate', [addresses])
+      this.addresses = addresses
 
       this._traceManager.getLength((error, length) => {
         if (error) return
