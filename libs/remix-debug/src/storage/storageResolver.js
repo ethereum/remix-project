@@ -61,10 +61,12 @@ class StorageResolver {
    * @param {String} - address - lookup address
    * @param {Function} - callback - {key, hashedKey, value} -
    */
-  storageSlot (slot, tx, stepIndex, address, callback) {
-    this.storageRangeInternal(this, slot, tx, stepIndex, address).then((storage) => {
-      callback(null, storage[slot] !== undefined ? storage[slot] : null)
-    }).catch(callback)
+  storageSlot (slot, tx, stepIndex, address) {
+    return new Promise((resolve, reject) => {
+      this.storageRangeInternal(this, slot, tx, stepIndex, address).then((storage) => {
+        resolve(storage[slot] !== undefined ? storage[slot] : null)
+      }).catch(reject)
+    })
   }
 
   /**
