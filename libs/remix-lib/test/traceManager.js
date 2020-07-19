@@ -61,14 +61,13 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.getCallData', function (st) {
-    traceManager.getCallDataAt(0, function (error, result) {
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result[0] === '0x60fe47b10000000000000000000000000000000000000000000000000000000000000038')
-        st.end()
-      }
-    })
+    try {
+      const result = traceManager.getCallDataAt(0)
+      st.ok(result[0] === '0x60fe47b10000000000000000000000000000000000000000000000000000000000000038')
+      st.end()
+    } catch (error) {
+      st.fail(error)
+    }
   })
 
   t.test('TraceManager.getCallStackAt', function (st) {
