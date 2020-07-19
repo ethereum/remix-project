@@ -84,8 +84,8 @@ TraceManager.prototype.accumulateStorageChanges = function (index, address, stor
   return this.traceCache.accumulateStorageChanges(index, address, storageOrigin)
 }
 
-TraceManager.prototype.getAddresses = function (callback) {
-  callback(null, this.traceCache.addresses)
+TraceManager.prototype.getAddresses = function () {
+  return this.traceCache.addresses
 }
 
 TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
