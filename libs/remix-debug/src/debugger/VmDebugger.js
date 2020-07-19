@@ -102,13 +102,13 @@ class VmDebuggerLogic {
 
         var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
 
-        storageViewer.storageRange((error, storage) => {
-          if (error) {
-            this.event.trigger('traceManagerStorageUpdate', [{}])
-          } else if (this.stepManager.currentStepIndex === index) {
+        storageViewer.storageRange().then((storage) => {
+          if (this.stepManager.currentStepIndex === index) {
             var header = storageViewer.isComplete(address) ? '[Completely Loaded]' : '[Partially Loaded]'
             this.event.trigger('traceManagerStorageUpdate', [storage, header])
           }
+        }).catch((_error) => {
+          this.event.trigger('traceManagerStorageUpdate', [{}])
         })
       } catch (error) {
       }
@@ -185,11 +185,9 @@ class VmDebuggerLogic {
       for (var k in this.addresses) {
         var address = this.addresses[k]
         var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
-        storageViewer.storageRange((error, result) => {
-          if (!error) {
-            storageJSON[address] = result
-            this.event.trigger('traceStorageUpdate', [storageJSON])
-          }
+        storageViewer.storageRange().then((result) => {
+          storageJSON[address] = result
+          this.event.trigger('traceStorageUpdate', [storageJSON])
         })
       }
     })
