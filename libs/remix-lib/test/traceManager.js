@@ -55,14 +55,9 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.accumulateStorageChanges', function (st) {
-    traceManager.accumulateStorageChanges(110, '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', {}, function (error, result) {
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result['0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563'].value === '0x38')
-        st.end()
-      }
-    })
+    const result = traceManager.accumulateStorageChanges(110, '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', {})
+    st.ok(result['0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563'].value === '0x38')
+    st.end()
   })
 
   t.test('TraceManager.getCallData', function (st) {

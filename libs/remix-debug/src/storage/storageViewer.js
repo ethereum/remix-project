@@ -15,13 +15,7 @@ class StorageViewer {
     this.web3 = this.storageResolver.web3
     this.initialMappingsLocationPromise = null
     this.currentMappingsLocationPromise = null
-    _traceManager.accumulateStorageChanges(this.context.stepIndex, this.context.address, {}, (error, storageChanges) => {
-      if (!error) {
-        this.storageChanges = storageChanges
-      } else {
-        console.log(error)
-      }
-    })
+    this.storageChanges = _traceManager.accumulateStorageChanges(this.context.stepIndex, this.context.address, {})
   }
 
   /**
