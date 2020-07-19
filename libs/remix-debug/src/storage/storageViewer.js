@@ -30,10 +30,12 @@ class StorageViewer {
     *
     * @param {Function} - callback - contains a map: [hashedKey] = {key, hashedKey, value}
     */
-  storageRange (callback) {
-    this.storageResolver.storageRange(this.context.tx, this.context.stepIndex, this.context.address).then((storage) => {
-      callback(null, Object.assign({}, storage, this.storageChanges))
-    }).catch(callback)
+  storageRange () {
+    return new Promise((resolve, reject) => {
+      this.storageResolver.storageRange(this.context.tx, this.context.stepIndex, this.context.address).then((storage) => {
+        resolve(Object.assign({}, storage, this.storageChanges))
+      }).catch(reject)
+    })
   }
 
   /**
