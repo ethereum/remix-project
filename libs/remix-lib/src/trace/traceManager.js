@@ -80,9 +80,8 @@ TraceManager.prototype.getLength = function (callback) {
   }
 }
 
-TraceManager.prototype.accumulateStorageChanges = function (index, address, storageOrigin, callback) {
-  const storage = this.traceCache.accumulateStorageChanges(index, address, storageOrigin)
-  callback(null, storage)
+TraceManager.prototype.accumulateStorageChanges = function (index, address, storageOrigin) {
+  return this.traceCache.accumulateStorageChanges(index, address, storageOrigin)
 }
 
 TraceManager.prototype.getAddresses = function (callback) {
