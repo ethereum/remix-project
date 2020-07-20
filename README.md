@@ -115,7 +115,8 @@ To run the Selenium tests via Nightwatch:
  - Make sure Selenium is installed `npm run selenium-install` # don't need to repeat
  - Run a selenium server `npm run selenium`
  - Run all the tests `npm run nightwatch_local_firefox` or `npm run nightwatch_local_chrome`
- - Or run a specific test case:  
+ - Or run a specific test case: 
+ 
 		- npm run nightwatch_local_ballot
 
         - npm run nightwatch_local_usingWorker
