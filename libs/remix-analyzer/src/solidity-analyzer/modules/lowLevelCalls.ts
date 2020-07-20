@@ -40,8 +40,8 @@ export default class lowLevelCalls implements AnalyzerModule {
   report (compilationResults: CompilationResult): ReportObj[] {
     const version = getCompilerVersion(compilationResults.contracts)
     return this.llcNodes.map((item, i) => {
-      let text: string = ''
-      let morehref: string = ''
+      let text = ''
+      let morehref = ''
       switch (item.type) {
         case lowLevelCallTypes.CALL:
           text = `Use of "call": should be avoided whenever possible. 
