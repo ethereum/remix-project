@@ -103,7 +103,7 @@ module.exports = class TestTab extends ViewPlugin {
 
     if (eChecked) {
       checkAll.checked = true
-      if ((this.readyTestsNumber === this.runningTestsNumber || this.hasBeenStopped) && document.getElementById('runTestsTabStopAction').innerText === 'Stop') {
+      if ((this.readyTestsNumber === this.runningTestsNumber || this.hasBeenStopped) && document.getElementById('runTestsTabStopAction').innerText === ' Stop') {
         runBtn.removeAttribute('disabled')
         runBtn.setAttribute('title', 'Run tests')
       }
