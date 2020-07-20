@@ -109,6 +109,7 @@ class InternalCallTree {
     let functions = []
     if (!scopeId) return functions
     let i = 0
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       i += 1
       if (i > 1000) throw new Error('retrieFunctionStack: recursion too deep')
