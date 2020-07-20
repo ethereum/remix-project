@@ -4,6 +4,29 @@
 #
 version: 2
 jobs:
+  remix-libs:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.18.0-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+
+    parallelism: 20
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run lint:libs
+      - run: npm run build:libs
+      - run: npm run test:libs
+
   remix-ide-chrome:
     docker:
       # specify the version you desire here
@@ -25,6 +48,9 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
       - run:
           name: Download Compatible JAVA Version for Selenium
           command: |
@@ -67,6 +93,9 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
@@ -106,6 +135,9 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
       - run:
           name: Download Compatible JAVA Version for Selenium
           command: |
@@ -146,6 +178,9 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
       - run: 
           name: Deploy
           command: |
@@ -175,6 +210,9 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
       - run: 
           name: Deploy
           command: |
@@ -188,9 +226,16 @@ workflows:
   version: 2
   build_all:
     jobs:
-      - remix-ide-chrome
-      - remix-ide-firefox
-      - remix-ide-run-deploy
+      - remix-libs
+      - remix-ide-chrome:          
+          requires:
+            - remix-libs
+      - remix-ide-firefox:          
+          requires:
+            - remix-libs
+      - remix-ide-run-deploy:          
+          requires:
+            - remix-libs
       - deploy-remix-live:          
           requires:
             - remix-ide-chrome
