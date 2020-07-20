@@ -34,7 +34,7 @@ jobs:
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
+      resource_class: xlarge
       # - image: circleci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
@@ -189,6 +189,29 @@ jobs:
       - store_artifacts:
           path: ./apps/remix-ide/reports/screenshots
 
+  publish-docker:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.19.0-buster
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+      - FILES_TO_PACKAGE: "apps/remix-ide/assets apps/remix-ide/background.js apps/remix-ide/build apps/remix-ide/icon.png apps/remix-ide/index.html apps/remix-ide/manifest.json apps/remix-ide/README.md apps/remix-ide/soljson.js apps/remix-ide/package.json"
+    working_directory: ~/remix-project
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: npm install
+      - run: npm run build
+      - run: ./apps/remix-ide/ci/build_and_publish_docker_images.sh
+
   deploy-remix-alpha:
     docker:
       # specify the version you desire here
@@ -235,6 +258,11 @@ workflows:
       - remix-ide-run-deploy:          
           requires:
             - remix-libs
+      - publish-docker:
+          requires:
+            - remix-ide-chrome
+            - remix-ide-firefox
+            - remix-ide-run-deploy
       - deploy-remix-live:          
           requires:
             - remix-ide-chrome
