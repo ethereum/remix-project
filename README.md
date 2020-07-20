@@ -24,7 +24,7 @@ Note: It contains the latest release of Solidity available at the time of the pa
 Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/installing-node), then
 install [Nx CLI](https://nx.dev/react/cli/overview) globally to enable running **nx executable commands**.
 ```bash
-    npm install -g @nrwl/cli
+npm install -g @nrwl/cli
 ```
 
 clone the github repository (`wget` need to be installed first) :
