@@ -209,6 +209,8 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: npm install
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
       - run: npm run build
       - run: ./apps/remix-ide/ci/build_and_publish_docker_images.sh
 
