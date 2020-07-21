@@ -1,7 +1,7 @@
 {
   "name": "@remix-project/remix-lib",
   "version": "0.4.29",
-  "description": "Ethereum IDE and tools for the web",
+  "description": "Library to various Remix tools",
   "contributors": [
     {
       "name": "Yann Levreau",
@@ -33,7 +33,6 @@
     "@babel/preset-stage-0": "^7.0.0",
     "babel-eslint": "^7.1.1",
     "babelify": "^10.0.0",
-    "standard": "^7.0.1",
     "tape": "^4.6.0"
   },
   "scripts": {
@@ -41,52 +40,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix.git"
+    "url": "git+https://github.com/ethereum/remix-project.git"
   },
-  "author": "cpp-ethereum team",
+  "author": "Remix Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/remix/issues"
+    "url": "https://github.com/ethereum/remix-project/issues"
   },
-  "homepage": "https://github.com/ethereum/remix#readme",
-  "standard": {
-    "ignore": [
-      "node_modules/*",
-      "build/*",
-      "test/resources/*"
-    ],
-    "parser": "babel-eslint"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "plugins": [
-            [
-              "fast-async",
-              {
-                "runtimePatten": null,
-                "compiler": {
-                  "promises": true,
-                  "es7": true,
-                  "noRuntime": true,
-                  "wrapAwait": true
-                }
-              }
-            ],
-            "module:@babel/plugin-transform-object-assign"
-          ]
-        }
-      ],
-      [
-        "babelify",
-        {
-          "presets": [
-            "@babel/preset-env"
-          ]
-        }
-      ]
-    ]
-  }
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-lib#readme"
 }

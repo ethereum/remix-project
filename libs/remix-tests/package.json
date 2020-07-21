@@ -2,8 +2,8 @@
   "name": "@remix-project/remix-tests",
   "version": "0.1.33",
   "description": "Tool to test Solidity smart contracts",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "contributors": [
     {
       "name": "Iuri Matias",
@@ -19,26 +19,18 @@
   },
   "scripts": {
     "build": "tsc",
-    "lint": "standard",
-    "test": "./../../node_modules/.bin/mocha --require ts-node/register --require tsconfig-paths/register tests/*.ts -t 300000",
-    "prepublish": "npm run build"
+    "test": "./../../node_modules/.bin/mocha --require ts-node/register --require tsconfig-paths/register tests/*.ts -t 300000"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix/tree/master/remix-tests"
+    "url": "git+https://github.com/ethereum/remix-project.git"
   },
   "author": "Remix Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/remix/issues"
+    "url": "https://github.com/ethereum/remix-project/issues"
   },
-  "standard": {
-    "ignore": [
-      "tests/",
-      "dist/"
-    ]
-  },
-  "homepage": "https://github.com/ethereum/remix/tree/master/remix-tests#readme",
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-tests#readme",
   "dependencies": {
     "async": "^2.6.0",
     "change-case": "^3.0.1",
@@ -64,7 +56,6 @@
     "@types/node": "^10.12.21",
     "@types/web3": "^1.0.18",
     "mocha": "^5.1.0",
-    "standard": "^10.0.3",
     "ts-node": "^8.0.2",
     "typescript": "^3.3.1"
   }
