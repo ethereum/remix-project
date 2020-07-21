@@ -1,28 +1,27 @@
 {
   "name": "@remix-project/remix-astwalker",
   "version": "0.0.24",
-  "description": "Remix sub-module for walking through AST",
-  "main": "dist/index.js",
+  "description": "Tool to walk through Solidity AST",
+  "main": "./index.js",
   "scripts": {
     "build": "tsc",
-    "test": "./../../node_modules/.bin/nyc --reporter=lcov --require ts-node/register --require tsconfig-paths/register ./../../node_modules/.bin/tape ./tests/*.ts | ./../../node_modules/.bin/tap-spec; ./../../node_modules/.bin/nyc report ---reporter=text",
-    "prepublish": "npm run build"
+    "test": "./../../node_modules/.bin/nyc --reporter=lcov --require ts-node/register --require tsconfig-paths/register ./../../node_modules/.bin/tape ./tests/*.ts | ./../../node_modules/.bin/tap-spec; ./../../node_modules/.bin/nyc report ---reporter=text"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix.git"
+    "url": "git+https://github.com/ethereum/remix-project.git"
   },
   "keywords": [
     "Solidity",
     "AST",
     "remix"
   ],
-  "author": "0mkara",
+  "author": "Remix Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/remix/issues"
+    "url": "https://github.com/ethereum/remix-project/issues"
   },
-  "homepage": "https://github.com/ethereum/remix#readme",
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-astwalker#readme",
   "nyc": {
     "include": [
       "src/**/*.ts"
@@ -34,7 +33,7 @@
   "dependencies": {
     "@types/tape": "^4.2.33",
     "nyc": "^13.3.0",
-    "remix-lib": "0.4.30",
+    "@remix-project/remix-lib": "0.4.30",
     "tape": "^4.10.1",
     "ts-node": "^8.0.3",
     "typescript": "^3.4.3"
