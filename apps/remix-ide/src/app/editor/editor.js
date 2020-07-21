@@ -22,7 +22,7 @@ require('brace/mode/json')
 require('brace/mode/rust')
 require('brace/theme/chrome') // for all light themes
 require('brace/theme/chaos') // for all dark themes
-require('../../../assets/js/editor/darkTheme') // a custom one for remix 'Dark' theme
+require('../../assets/js/editor/darkTheme') // a custom one for remix 'Dark' theme
 
 const css = csjs`
   .ace-editor {
