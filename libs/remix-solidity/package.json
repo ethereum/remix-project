@@ -2,8 +2,8 @@
   "name": "@remix-project/remix-solidity",
   "version": "0.3.30",
   "description": "Tool to load and run Solidity compiler",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "contributors": [
     {
       "name": "Yann Levreau",
@@ -18,7 +18,7 @@
     "eslint-scope": "^5.0.0",
     "@remix-project/remix-lib": "0.4.29",
     "solc": "^0.6.0",
-    "webworkify": "^1.2.1"
+    "webworkify-webpack": "^2.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -30,60 +30,21 @@
     "@types/node": "^13.1.1",
     "babel-eslint": "^10.0.0",
     "babelify": "^10.0.0",
-    "standard": "^7.0.1",
     "tape": "^4.6.0",
     "typescript": "^3.7.4"
   },
   "scripts": {
     "build": "tsc",
-    "lint": "standard",
     "test": "./../../node_modules/.bin/tape ./test/tests.js"
-  },
-  "standard": {
-    "ignore": [
-      "node_modules/*"
-    ]
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ethereum/remix/tree/master/remix-solidity"
+    "url": "git+https://github.com/ethereum/remix-project.git"
   },
   "author": "Remix Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/remix/issues"
+    "url": "https://github.com/ethereum/remix-project/issues"
   },
-  "homepage": "https://github.com/ethereum/remix/tree/master/remix-solidity#readme",
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "plugins": [
-            [
-              "fast-async",
-              {
-                "runtimePatten": null,
-                "compiler": {
-                  "promises": true,
-                  "es7": true,
-                  "noRuntime": true,
-                  "wrapAwait": true
-                }
-              }
-            ],
-            "module:@babel/plugin-transform-object-assign"
-          ]
-        }
-      ],
-      [
-        "babelify",
-        {
-          "presets": [
-            "@babel/preset-env"
-          ]
-        }
-      ]
-    ]
-  }
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-solidity#readme"
 }

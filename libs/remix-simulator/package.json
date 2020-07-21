@@ -26,7 +26,6 @@
     "express-ws": "^4.0.0",
     "merge": "^1.2.0",
     "@remix-project/remix-lib": "0.4.29",
-    "standard": "^10.0.3",
     "time-stamp": "^2.0.0",
     "web3": "^1.2.4"
   },
@@ -39,63 +38,23 @@
     "@babel/preset-stage-0": "^7.0.0",
     "babel-eslint": "^7.1.1",
     "babelify": "^10.0.0",
-    "mocha": "^5.2.0",
-    "standard": "^10.0.3"
+    "mocha": "^5.2.0"
   },
   "scripts": {
-    "lint": "standard",
     "test": "./../../node_modules/.bin/mocha --require tsconfig-paths/register test/"
   },
   "bin": {
     "ethsim": "./bin/ethsim",
     "remix-simulator": "./bin/ethsim"
   },
-  "standard": {
-    "ignore": [
-      "node_modules/*"
-    ],
-    "parser": "babel-eslint"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix.git"
+    "url": "git+https://github.com/ethereum/remix-project.git"
   },
   "author": "remix team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/remix/issues"
+    "url": "https://github.com/ethereum/remix-project/issues"
   },
-  "homepage": "https://github.com/ethereum/remix#readme",
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "plugins": [
-            [
-              "fast-async",
-              {
-                "runtimePatten": null,
-                "compiler": {
-                  "promises": true,
-                  "es7": true,
-                  "noRuntime": true,
-                  "wrapAwait": true
-                }
-              }
-            ],
-            "module:@babel/plugin-transform-object-assign"
-          ]
-        }
-      ],
-      [
-        "babelify",
-        {
-          "presets": [
-            "@babel/preset-env"
-          ]
-        }
-      ]
-    ]
-  }
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-simulator#readme"
 }
