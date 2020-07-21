@@ -8,9 +8,9 @@ To try it out, visit [https://remix.ethereum.org](https://remix.ethereum.org).
 
 https://github.com/ethereum/remix-project/releases also gives others ways to use Remix locally. Please check it out.
 
-Remix consists of many modules and in this repository you will find the Remix IDE (aka. Browser-Solidity).
+Remix consists of many modules and in this repository you will find Remix related apps, libs and plugins. (remix-ide, remix-analyzer, etc.).
 
-![Remix screenshot](https://github.com/ethereum/remix-ide/raw/master/remix_screenshot.png)
+![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix_screenshot.png)
 
 ## Offline Usage
 
@@ -102,7 +102,7 @@ nvm --version
 
 Run the unit tests via: `nx test <project-name>`
 ```bash
-    nx test remix-libs
+    nx test remix-analyzer
 ```
 
 Running unit tests via `nx test` requires at least node v10.0.0
