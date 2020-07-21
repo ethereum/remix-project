@@ -33,65 +33,20 @@
     "@babel/preset-stage-0": "^7.0.0",
     "babel-eslint": "^7.1.1",
     "babelify": "^10.0.0",
-    "notify-error": "^1.2.0",
     "solc": "^0.6.0",
-    "standard": "^7.0.1",
-    "standard-reporter": "^1.0.5",
     "tape": "^4.6.0"
   },
   "scripts": {
-    "build": "mkdirp build; browserify index.js > build/app.js",
-    "lint": "standard | notify-error",
     "test": "./../../node_modules/.bin/tape --require tsconfig-paths/register ./test/tests.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix.git"
+    "url": "git+https://github.com/ethereum/remix-project.git"
   },
-  "author": "cpp-ethereum team",
+  "author": "Remix Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/remix/issues"
+    "url": "https://github.com/ethereum/remix-project/issues"
   },
-  "homepage": "https://github.com/ethereum/remix/tree/master/remix-debug#readme",
-  "standard": {
-    "ignore": [
-      "node_modules/*",
-      "build/*",
-      "test/resources/*"
-    ],
-    "parser": "babel-eslint"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "plugins": [
-            [
-              "fast-async",
-              {
-                "runtimePatten": null,
-                "compiler": {
-                  "promises": true,
-                  "es7": true,
-                  "noRuntime": true,
-                  "wrapAwait": true
-                }
-              }
-            ],
-            "module:@babel/plugin-transform-object-assign"
-          ]
-        }
-      ],
-      [
-        "babelify",
-        {
-          "presets": [
-            "@babel/preset-env"
-          ]
-        }
-      ]
-    ]
-  }
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-debug#readme"
 }

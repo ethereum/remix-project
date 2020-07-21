@@ -2,8 +2,8 @@
   "name": "@remix-project/remix-analyzer",
   "version": "0.5.3",
   "description": "Tool to perform static analysis on Solidity smart contracts",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.js",
+  "types": ".index.d.ts",
   "contributors": [
     {
       "name": "Alex Beregszaszi",
@@ -24,19 +24,11 @@
   },
   "scripts": {
     "build": "tsc",
-    "lint": "standard",
     "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
-  },
-  "standard": {
-    "ignore": [
-      "node_modules/*",
-      "dist/"
-    ],
-    "parser": "babel-eslint"
   },
   "author": "Remix Team",
   "license": "MIT",
-  "homepage": "https://github.com/ethereum/remix/tree/master/remix-analyzer#readme",
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-analyzer#readme",
   "devDependencies": {
     "@types/node": "^13.7.0",
     "babel-eslint": "^7.1.1",
