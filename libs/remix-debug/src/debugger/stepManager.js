@@ -41,11 +41,7 @@ class DebuggerStepManager {
       if (index < 0) return
       if (this.currentStepIndex !== index) return
 
-      this.traceManager.buildCallPath(index, (error, callsPath) => {
-        if (error) {
-          console.log(error)
-          return this.event.trigger('revertWarning', [''])
-        }
+      this.traceManager.buildCallPath(index).then((callsPath) => {
         this.currentCall = callsPath[callsPath.length - 1]
         if (this.currentCall.reverted) {
           let revertedReason = this.currentCall.outofgas ? 'outofgas' : ''
@@ -58,6 +54,9 @@ class DebuggerStepManager {
           this.revertionPoint = parent.return
           this.event.trigger('revertWarning', ['parenthasthrown'])
         }
+        this.event.trigger('revertWarning', [''])
+      }).catch((error) => {
+        console.log(error)
         this.event.trigger('revertWarning', [''])
       })
     })
