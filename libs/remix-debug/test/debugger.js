@@ -239,17 +239,15 @@ function testDebugging (debugManager) {
     t.plan(7)
     try {
       const state = await debugManager.extractStateAt(312)
-      debugManager.decodeStateAt(312, state, (error, decodedState) => {
-        if (error) return t.end(error)
-        console.log(decodedState)
-        t.equal(decodedState['chairperson'].value, '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB')
-        t.equal(decodedState['chairperson'].type, 'address')
-        t.equal(decodedState['proposals'].value[0].value.voteCount.value, '0')
-        t.equal(decodedState['proposals'].value[0].value.voteCount.type, 'uint256')
-        t.equal(decodedState['proposals'].value[0].type, 'struct Ballot.Proposal')
-        t.equal(decodedState['proposals'].length, '0x1')
-        t.equal(decodedState['proposals'].type, 'struct Ballot.Proposal[]')
-      })
+      const decodedState = await debugManager.decodeStateAt(312, state)
+      console.log(decodedState)
+      t.equal(decodedState['chairperson'].value, '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB')
+      t.equal(decodedState['chairperson'].type, 'address')
+      t.equal(decodedState['proposals'].value[0].value.voteCount.value, '0')
+      t.equal(decodedState['proposals'].value[0].value.voteCount.type, 'uint256')
+      t.equal(decodedState['proposals'].value[0].type, 'struct Ballot.Proposal')
+      t.equal(decodedState['proposals'].length, '0x1')
+      t.equal(decodedState['proposals'].type, 'struct Ballot.Proposal[]')
     } catch (error) {
       if (error) return t.end(error)
     }
