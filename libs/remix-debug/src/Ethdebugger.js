@@ -75,20 +75,18 @@ Ethdebugger.prototype.extractLocalsAt = function (step) {
   return this.callTree.findScope(step)
 }
 
-Ethdebugger.prototype.decodeLocalsAt = function (step, sourceLocation, callback) {
+Ethdebugger.prototype.decodeLocalsAt = async function (step, sourceLocation, callback) {
   try {
     const stack = this.traceManager.getStackAt(step)
     const memory = this.traceManager.getMemoryAt(step)
     const address = this.traceManager.getCurrentCalledAddressAt(step)
     try {
       const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
-      localDecoder.solidityLocals(step, this.callTree, stack, memory, storageViewer, sourceLocation).then((locals) => {
-        if (!locals.error) {
-          callback(null, locals)
-        } else {
-          callback(locals.error)
-        }
-      })
+      const locals = await localDecoder.solidityLocals(step, this.callTree, stack, memory, storageViewer, sourceLocation)
+      if (locals.error) {
+        return callback(locals.error)
+      }
+      return callback(null, locals)
     } catch (e) {
       callback(e.message)
     }
