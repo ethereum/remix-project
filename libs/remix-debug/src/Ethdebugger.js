@@ -88,58 +88,25 @@ Ethdebugger.prototype.extractLocalsAt = function (step, callback) {
 }
 
 Ethdebugger.prototype.decodeLocalsAt = function (step, sourceLocation, callback) {
-  const self = this
-  this.traceManager.waterfall([
-    function getStackAt (stepIndex, callback) {
-      try {
-        const result = self.traceManager.getStackAt(stepIndex)
-        callback(null, result)
-      } catch (error) {
-        callback(error)
-      }
-    },
-    function getMemoryAt (stepIndex, callback) {
-      try {
-        const result = self.traceManager.getMemoryAt(stepIndex)
-        callback(null, result)
-      } catch (error) {
-        callback(error)
-      }
-    },
-
-    function getCurrentCalledAddressAt (stepIndex, next) {
-      try {
-        const address = self.traceManager.getCurrentCalledAddressAt(stepIndex)
-        next(null, address)
-      } catch (error) {
-        next(error)
-      }
-    }],
-    step,
-    (error, result) => {
-      if (!error) {
-        const stack = result[0].value
-        const memory = result[1].value
-        try {
-          const storageViewer = new StorageViewer({
-            stepIndex: step,
-            tx: this.tx,
-            address: result[2].value
-          }, this.storageResolver, this.traceManager)
-          localDecoder.solidityLocals(step, this.callTree, stack, memory, storageViewer, sourceLocation).then((locals) => {
-            if (!locals.error) {
-              callback(null, locals)
-            } else {
-              callback(locals.error)
-            }
-          })
-        } catch (e) {
-          callback(e.message)
+  try {
+    const stack = this.traceManager.getStackAt(step)
+    const memory = this.traceManager.getMemoryAt(step)
+    const address = this.traceManager.getCurrentCalledAddressAt(step)
+    try {
+      const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
+      localDecoder.solidityLocals(step, this.callTree, stack, memory, storageViewer, sourceLocation).then((locals) => {
+        if (!locals.error) {
+          callback(null, locals)
+        } else {
+          callback(locals.error)
         }
-      } else {
-        callback(error)
-      }
-    })
+      })
+    } catch (e) {
+      callback(e.message)
+    }
+  } catch (error) {
+    callback(error)
+  }
 }
 
 /* decode state */
