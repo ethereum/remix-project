@@ -100,21 +100,12 @@ Ethdebugger.prototype.extractStateAt = async function (step) {
   return this.solidityProxy.extractStateVariablesAt(step)
 }
 
-Ethdebugger.prototype.decodeStateAt = function (step, stateVars, callback) {
+Ethdebugger.prototype.decodeStateAt = async function (step, stateVars, callback) {
   try {
     const address = this.traceManager.getCurrentCalledAddressAt(step)
-    const storageViewer = new StorageViewer({
-      stepIndex: step,
-      tx: this.tx,
-      address: address
-    }, this.storageResolver, this.traceManager)
-    stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
-      if (!result.error) {
-        callback(null, result)
-      } else {
-        callback(result.error)
-      }
-    })
+    const storageViewer = new StorageViewer({stepIndex: step, tx: this.tx, address: address}, this.storageResolver, this.traceManager)
+    const result = await stateDecoder.decodeState(stateVars, storageViewer)
+    return result
   } catch (error) {
     callback(error)
   }
