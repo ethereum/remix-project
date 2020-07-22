@@ -235,10 +235,10 @@ function testDebugging (debugManager) {
     }
   })
 
-  tape('traceManager.decodeStateAt', (t) => {
+  tape('traceManager.decodeStateAt', async (t) => {
     t.plan(7)
-    debugManager.extractStateAt(312, (error, state) => {
-      if (error) return t.end(error)
+    try {
+      const state = await debugManager.extractStateAt(312)
       debugManager.decodeStateAt(312, state, (error, decodedState) => {
         if (error) return t.end(error)
         console.log(decodedState)
@@ -250,7 +250,9 @@ function testDebugging (debugManager) {
         t.equal(decodedState['proposals'].length, '0x1')
         t.equal(decodedState['proposals'].type, 'struct Ballot.Proposal[]')
       })
-    })
+    } catch (error) {
+      if (error) return t.end(error)
+    }
   })
 
   tape('traceManager.decodeLocalsAt', async (t) => {
