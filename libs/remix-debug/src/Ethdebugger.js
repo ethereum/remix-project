@@ -1,19 +1,15 @@
 'use strict'
 
-const StorageViewer = require('./storage/storageViewer')
-const StorageResolver = require('./storage/storageResolver')
-
-const SolidityDecoder = require('./solidity-decoder')
-const SolidityProxy = SolidityDecoder.SolidityProxy
-const stateDecoder = SolidityDecoder.stateDecoder
-const localDecoder = SolidityDecoder.localDecoder
-const InternalCallTree = SolidityDecoder.InternalCallTree
-
 const remixLib = require('@remix-project/remix-lib')
 const TraceManager = remixLib.trace.TraceManager
 const CodeManager = remixLib.code.CodeManager
 const traceHelper = remixLib.helpers.trace
 const EventManager = remixLib.EventManager
+
+const {SolidityProxy, stateDecoder, localDecoder, InternalCallTree} = require('./solidity-decoder')
+
+const StorageViewer = require('./storage/storageViewer')
+const StorageResolver = require('./storage/storageResolver')
 
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
@@ -58,17 +54,11 @@ Ethdebugger.prototype.resolveStep = function (index) {
 }
 
 Ethdebugger.prototype.setCompilationResult = function (compilationResult) {
-  if (compilationResult && compilationResult.data) {
-    this.solidityProxy.reset(compilationResult.data)
-  } else {
-    this.solidityProxy.reset({})
-  }
+  this.solidityProxy.reset((compilationResult && compilationResult.data) || {})
 }
 
-Ethdebugger.prototype.sourceLocationFromVMTraceIndex = function (address, stepIndex, callback) {
-  this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, stepIndex, this.solidityProxy.contracts).then((rawLocation) => {
-    callback(null, rawLocation)
-  }).catch(callback)
+Ethdebugger.prototype.sourceLocationFromVMTraceIndex = async function (address, stepIndex) {
+  return this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, stepIndex, this.solidityProxy.contracts)
 }
 
 Ethdebugger.prototype.sourceLocationFromInstructionIndex = function (address, instIndex, callback) {
