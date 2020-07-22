@@ -51,27 +51,24 @@ function extractStateDefinitions (contractName, sourcesList, contracts) {
     contracts = extractContractDefinitions(sourcesList)
   }
   const node = contracts.contractsByName[contractName]
-  if (node) {
-    const stateItems = []
-    const stateVar = []
-    const baseContracts = getLinearizedBaseContracts(node.id, contracts.contractsById)
-    baseContracts.reverse()
-    for (let k in baseContracts) {
-      const ctr = baseContracts[k]
-      for (let i in ctr.children) {
-        const item = ctr.children[i]
-        stateItems.push(item)
-        if (item.name === 'VariableDeclaration') {
-          stateVar.push(item)
-        }
+  if (!node) {
+    return null
+  }
+  const stateItems = []
+  const stateVar = []
+  const baseContracts = getLinearizedBaseContracts(node.id, contracts.contractsById)
+  baseContracts.reverse()
+  for (let k in baseContracts) {
+    const ctr = baseContracts[k]
+    for (let i in ctr.children) {
+      const item = ctr.children[i]
+      stateItems.push(item)
+      if (item.name === 'VariableDeclaration') {
+        stateVar.push(item)
       }
     }
-    return {
-      stateDefinitions: stateItems,
-      stateVariables: stateVar
-    }
   }
-  return null
+  return {stateDefinitions: stateItems, stateVariables: stateVar}
 }
 
 /**

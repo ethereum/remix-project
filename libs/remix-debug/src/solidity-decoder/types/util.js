@@ -100,9 +100,8 @@ function extractLocation (type) {
   let match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
   if (match[1] !== '') {
     return match[1].trim()
-  } else {
-    return null
   }
+  return null
 }
 
 function extractLocationFromAstVariable (node) {
@@ -110,9 +109,8 @@ function extractLocationFromAstVariable (node) {
     return node.attributes.storageLocation
   } else if (node.attributes.stateVariable) {
     return 'storage'
-  } else {
-    return 'default' // local variables => storage, function parameters & return values => memory, state => storage
   }
+  return 'default' // local variables => storage, function parameters & return values => memory, state => storage
 }
 
 function normalizeHex (hex) {
