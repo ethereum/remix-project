@@ -167,15 +167,14 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.getContractCreationCode', function (st) { // contract code has been retrieved from the memory
-    traceManager.getContractCreationCode('(Contract Creation - Step 63)', function (error, result) {
+    try {
+      const result = traceManager.getContractCreationCode('(Contract Creation - Step 63)')
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result === '0x60606040526040516020806045833981016040528080519060200190919050505b806001016000600050819055505b50600a80603b6000396000f360606040526008565b00000000000000000000000000000000000000000000000000000000000000002d')
-        st.end()
-      }
-    })
+      st.ok(result === '0x60606040526040516020806045833981016040528080519060200190919050505b806001016000600050819055505b50600a80603b6000396000f360606040526008565b00000000000000000000000000000000000000000000000000000000000000002d')
+      st.end()
+    } catch (error) {
+      st.fail(error)
+    }
   })
 
   t.test('TraceManager.getMemoryAt', function (st) {
