@@ -17,30 +17,32 @@ function TraceManager (options) {
 }
 
 // init section
-TraceManager.prototype.resolveTrace = async function (tx, callback) {
-  this.tx = tx
-  this.init()
-  if (!this.web3) callback('web3 not loaded', false)
-  this.isLoading = true
-  try {
-    const result = await this.getTrace(tx.hash)
+TraceManager.prototype.resolveTrace = async function (tx) {
+  return new Promise(async (resolve, reject) => {
+    this.tx = tx
+    this.init()
+    if (!this.web3) reject('web3 not loaded')
+    this.isLoading = true
+    try {
+      const result = await this.getTrace(tx.hash)
 
-    if (result.structLogs.length > 0) {
-      this.trace = result.structLogs
+      if (result.structLogs.length > 0) {
+        this.trace = result.structLogs
 
-      this.traceAnalyser.analyse(result.structLogs, tx)
+        this.traceAnalyser.analyse(result.structLogs, tx)
+        this.isLoading = false
+        return resolve(true)
+      }
+      var mes = tx.hash + ' is not a contract invocation or contract creation.'
+      console.log(mes)
       this.isLoading = false
-      return callback(null, true)
+      reject(mes)
+    } catch (error) {
+      console.log(error)
+      this.isLoading = false
+      reject(error)
     }
-    var mes = tx.hash + ' is not a contract invocation or contract creation.'
-    console.log(mes)
-    this.isLoading = false
-    callback(mes, false)
-  } catch (error) {
-    console.log(error)
-    this.isLoading = false
-    callback(error, false)
-  }
+  })
 }
 
 TraceManager.prototype.getTrace = function (txHash) {
