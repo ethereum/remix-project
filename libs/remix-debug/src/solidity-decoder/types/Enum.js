@@ -16,14 +16,12 @@ class Enum extends ValueType {
   decodeValue (value) {
     if (!value) {
       return this.enumDef.children[0].attributes.name
-    } else {
-      value = parseInt(value, 16)
-      if (this.enumDef.children.length > value) {
-        return this.enumDef.children[value].attributes.name
-      } else {
-        return 'INVALID_ENUM<' + value + '>'
-      }
     }
+    value = parseInt(value, 16)
+    if (this.enumDef.children.length > value) {
+      return this.enumDef.children[value].attributes.name
+    }
+    return 'INVALID_ENUM<' + value + '>'
   }
 }
 
