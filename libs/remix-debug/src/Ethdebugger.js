@@ -71,8 +71,8 @@ Ethdebugger.prototype.setBreakpointManager = function (breakpointManager) {
 }
 
 /* decode locals */
-Ethdebugger.prototype.extractLocalsAt = function (step, callback) {
-  callback(null, this.callTree.findScope(step))
+Ethdebugger.prototype.extractLocalsAt = function (step) {
+  return this.callTree.findScope(step)
 }
 
 Ethdebugger.prototype.decodeLocalsAt = function (step, sourceLocation, callback) {
