@@ -145,13 +145,14 @@ class VmDebuggerLogic {
         this.event.trigger('traceRemainingGasUpdate', [error])
       }
 
-      this._traceManager.getReturnValue(index, (error, returnValue) => {
-        if (error) {
-          this.event.trigger('traceReturnValueUpdate', [[error]])
-        } else if (this.stepManager.currentStepIndex === index) {
+      try {
+        const returnValue = this._traceManager.getReturnValue(index)
+        if (this.stepManager.currentStepIndex === index) {
           this.event.trigger('traceReturnValueUpdate', [[returnValue]])
         }
-      })
+      } catch (error) {
+        this.event.trigger('traceReturnValueUpdate', [[error]])
+      }
     })
   }
 
