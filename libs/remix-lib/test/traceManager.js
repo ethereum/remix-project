@@ -209,15 +209,14 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.getCurrentStep', function (st) {
-    traceManager.getCurrentStep(66, function (error, result) {
+    try {
+      const result = traceManager.getCurrentStep(66)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result === 2)
-        st.end()
-      }
-    })
+      st.ok(result === 2)
+      st.end()
+    } catch (error) {
+      st.fail(error)
+    }
   })
 
   t.test('TraceManager.getMemExpand', function (st) {

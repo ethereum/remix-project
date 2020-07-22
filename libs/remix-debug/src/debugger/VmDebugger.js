@@ -113,9 +113,12 @@ class VmDebuggerLogic {
       } catch (error) {
       }
 
-      this._traceManager.getCurrentStep(index, (error, step) => {
-        this.event.trigger('traceCurrentStepUpdate', [error, step])
-      })
+      try {
+        const step = this._traceManager.getCurrentStep(index)
+        this.event.trigger('traceCurrentStepUpdate', [null, step])
+      } catch (error) {
+        this.event.trigger('traceCurrentStepUpdate', [error])
+      }
 
       try {
         const addmem = this._traceManager.getMemExpand(index)
