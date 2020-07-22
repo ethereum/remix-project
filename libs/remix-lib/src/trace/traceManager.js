@@ -200,13 +200,13 @@ TraceManager.prototype.getReturnValue = function (stepIndex) {
   return this.traceCache.returnValues[stepIndex]
 }
 
-TraceManager.prototype.getCurrentStep = function (stepIndex, callback) {
+TraceManager.prototype.getCurrentStep = function (stepIndex) {
   try {
     this.checkRequestedStep(stepIndex)
   } catch (check) {
-    return callback(check, null)
+    throw new Error(check)
   }
-  callback(null, this.traceCache.steps[stepIndex])
+  return this.traceCache.steps[stepIndex]
 }
 
 TraceManager.prototype.getMemExpand = function (stepIndex) {
