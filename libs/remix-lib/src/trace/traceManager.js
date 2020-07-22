@@ -163,12 +163,11 @@ TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex) {
   }
 }
 
-TraceManager.prototype.getContractCreationCode = function (token, callback) {
-  if (this.traceCache.contractCreation[token]) {
-    callback(null, this.traceCache.contractCreation[token])
-  } else {
-    callback('no contract creation named ' + token, null)
+TraceManager.prototype.getContractCreationCode = function (token) {
+  if (!this.traceCache.contractCreation[token]) {
+    throw new Error('no contract creation named ' + token)
   }
+  return this.traceCache.contractCreation[token]
 }
 
 TraceManager.prototype.getMemoryAt = function (stepIndex) {

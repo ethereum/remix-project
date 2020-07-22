@@ -63,12 +63,9 @@ CodeManager.prototype.getCode = function (address, cb) {
   if (codes) {
     return cb(null, codes)
   }
-  this.traceManager.getContractCreationCode(address, (error, hexCode) => {
-    if (!error) {
-      codes = this.codeResolver.cacheExecutingCode(address, hexCode)
-      cb(null, codes)
-    }
-  })
+  const hexCode = this.traceManager.getContractCreationCode(address)
+  codes = this.codeResolver.cacheExecutingCode(address, hexCode)
+  cb(null, codes)
 }
 
 /**
