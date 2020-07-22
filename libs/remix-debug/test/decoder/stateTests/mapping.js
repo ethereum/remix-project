@@ -46,7 +46,8 @@ function testMapping (st, vm, privateKey, contractAddress, output, cb) {
                 st.end(error)
               } else {
                 var traceManager = new TraceManager({web3: vm.web3})
-                traceManager.resolveTrace(tx, () => {
+
+                traceManager.resolveTrace(tx).then(() => {
                   var storageViewer = new StorageViewer({
                     stepIndex: 268,
                     tx: tx,
