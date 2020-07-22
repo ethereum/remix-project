@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "types": ["node"],
+    "types": ["node", "jest"],
     "module": "commonjs",
     "esModuleInterop": true 
   },

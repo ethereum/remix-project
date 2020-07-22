@@ -358,6 +358,14 @@
             "cwd": "libs/remix-tests"
           }
         },
+        "test2": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remix-tests/jest.config.js",
+            "tsConfig": "libs/remix-tests/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
         "build": {
           "builder": "@nrwl/node:package",
           "options": {

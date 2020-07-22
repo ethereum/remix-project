@@ -99,7 +99,7 @@ export class Compiler {
 
   onInternalCompilerLoaded (): void {
     if (this.state.worker === null) {
-      const compiler: any = typeof (window) === 'undefined' ? require('solc') : require('solc/wrapper')(window['Module'])
+      const compiler: any = typeof (window) !== 'undefined' && window['Module'] ? require('solc/wrapper')(window['Module']) : require('solc') 
       this.state.compileJSON = (source: SourceWithTarget) => {
         const missingInputs: string[] = []
         const missingInputsCallback = (path: string) => {
