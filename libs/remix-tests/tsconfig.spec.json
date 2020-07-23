@@ -6,7 +6,6 @@
       "types": ["jest", "node"]
     },
     "include": [
-        "**/*.sol",
       "**/*.spec.ts",
       "**/*.spec.tsx",
       "**/*.spec.js",
