@@ -91,6 +91,31 @@
         }
       }
     },
+    "remix-ide-e2e": {
+      "root": "apps/remix-ide-e2e",
+      "sourceRoot": "apps/remix-ide-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "node_modules/.bin/ts-node node_modules/.bin/nightwatch --config apps/remix-ide-e2e/nightwatch.ts apps/remix-ide-e2e/src/tests/sample.test.js --env chrome"
+              }
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/remix-ide-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/remix-ide-e2e/**/*"]
+          }
+        }
+      }
+    },
     "remix-analyzer": {
       "root": "libs/remix-analyzer",
       "sourceRoot": "libs/remix-analyzer/src",
