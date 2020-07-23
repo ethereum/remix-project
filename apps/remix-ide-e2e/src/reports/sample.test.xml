@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="0">
+
+  <testsuite name="sample.test"
+    errors="0" failures="0" hostname="" id="" package="sample.test" skipped="0"
+    tests="0" time="0" timestamp="">
+  
+
+  
+    <system-err>
+        Error: An error occurred while retrieving a new session: &#34;Connection refused to 127.0.0.1:4444&#34;. If the Webdriver/Selenium service is managed by Nightwatch, check if &#34;start_process&#34; is set to &#34;true&#34;.
+       at HttpRequest.EventEmitter.emit (domain.js:448:20)
+       at ClientRequest.EventEmitter.emit (domain.js:448:20)
+       at Socket.socketErrorListener (_http_client.js:392:9)
+       at Socket.EventEmitter.emit (domain.js:448:20)
+    </system-err>
+  
+
+    
+    <error message="An error occurred while retrieving a new session: &#34;Connection refused to 127.0.0.1:4444&#34;. If the Webdriver/Selenium service is managed by Nightwatch, check if &#34;start_process&#34; is set to &#34;true&#34;."><![CDATA[
+      Error: An error occurred while retrieving a new session: &#34;Connection refused to 127.0.0.1:4444&#34;. If the Webdriver/Selenium service is managed by Nightwatch, check if &#34;start_process&#34; is set to &#34;true&#34;.
+    at Selenium2Protocol.handleSessionCreateError (/Users/mac/Public/repos/ethereum/remix-project/node_modules/nightwatch/lib/transport/transport.js:103:15)
+    at HttpRequest.request.on.err (/Users/mac/Public/repos/ethereum/remix-project/node_modules/nightwatch/lib/transport/transport.js:158:32)
+    at HttpRequest.emit (events.js:198:13)
+    at HttpRequest.EventEmitter.emit (domain.js:448:20)
+    at ClientRequest.originalIssuer.on.args (/Users/mac/Public/repos/ethereum/remix-project/node_modules/nightwatch/lib/http/request.js:131:19)
+    at ClientRequest.emit (events.js:203:15)
+    at ClientRequest.EventEmitter.emit (domain.js:448:20)
+    at Socket.socketErrorListener (_http_client.js:392:9)
+    at Socket.emit (events.js:198:13)
+    at Socket.EventEmitter.emit (domain.js:448:20)
+      ]]></error>  
+
+  
+  </testsuite>
+</testsuites>

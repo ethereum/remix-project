@@ -239,7 +239,7 @@
     "tap-spec": "^5.0.0",
     "tape": "^4.13.3",
     "ts-jest": "25.2.1",
-    "ts-node": "~7.0.0",
+    "ts-node": "^7.0.1",
     "tslint": "~6.0.0",
     "typescript": "~3.8.3",
     "uglify-js": "^2.8.16",
