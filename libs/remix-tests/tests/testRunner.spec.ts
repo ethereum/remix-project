@@ -40,7 +40,7 @@ function deepEqualExcluding(a: any, b: any, excludedKeys: string[]) {
 }
 
 let accounts: string[]
-let provider = new Provider()
+let provider: any = new Provider()
 
 async function compileAndDeploy(filename: string, callback: Function) {
   let web3: Web3 = new Web3()
@@ -101,7 +101,7 @@ describe('testRunner', () => {
 
     describe('#runTest', () => {
     describe('test with beforeAll', () => {
-      const filename: string = '../tests/examples_1/simple_storage_test.sol'
+      const filename: string = __dirname + '/examples_1/simple_storage_test.sol'
 
       beforeAll((done) => {
         compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) => {
@@ -122,7 +122,7 @@ describe('testRunner', () => {
       it('should return 6 messages', () => {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
-          { type: 'contract', value: 'MyTest', filename: 'tests/examples_1/simple_storage_test.sol' },
+          { type: 'contract', value: 'MyTest', filename: __dirname + '/examples_1/simple_storage_test.sol' },
           { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' },
           { type: 'testPass', value: 'Initial value should not be200', context: 'MyTest' },
           { type: 'testFailure', value: 'Should trigger one fail', errMsg: 'uint test 1 fails', context: 'MyTest' },
@@ -132,7 +132,7 @@ describe('testRunner', () => {
     })
 
     describe('test with beforeEach', () => {
-      const filename: string = 'tests/examples_2/simple_storage_test.sol'
+      const filename: string = __dirname + '/examples_2/simple_storage_test.sol'
 
       beforeAll(done => {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
@@ -153,7 +153,7 @@ describe('testRunner', () => {
       it('should return 4 messages', () => {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
-          { type: 'contract', value: 'MyTest', filename: 'tests/examples_2/simple_storage_test.sol' },
+          { type: 'contract', value: 'MyTest', filename: __dirname + '/examples_2/simple_storage_test.sol' },
           { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' },
           { type: 'testPass', value: 'Value is set200', context: 'MyTest' }
         ], ['time'])
@@ -162,7 +162,7 @@ describe('testRunner', () => {
 
     // Test string equality
     describe('test string equality', () => {
-      const filename: string = 'tests/examples_3/simple_string_test.sol'
+      const filename: string = __dirname + '/examples_3/simple_string_test.sol'
 
       beforeAll(done => {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
@@ -179,7 +179,7 @@ describe('testRunner', () => {
       it('should return 4 messages', () => {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
-          { type: 'contract', value: 'StringTest', filename: 'tests/examples_3/simple_string_test.sol' },
+          { type: 'contract', value: 'StringTest', filename: __dirname + '/examples_3/simple_string_test.sol' },
           { type: 'testPass', value: 'Initial value should be hello world', context: 'StringTest' },
           { type: 'testPass', value: 'Value should not be hello wordl', context: 'StringTest' }
         ], ['time'])
@@ -188,7 +188,7 @@ describe('testRunner', () => {
 
     // Test multiple directory import in test contract
     describe('test multiple directory import in test contract', () => {
-      const filename: string = 'tests/examples_5/test/simple_storage_test.sol'
+      const filename: string = __dirname + '/examples_5/test/simple_storage_test.sol'
 
       beforeAll(done => {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
@@ -205,7 +205,7 @@ describe('testRunner', () => {
       it('should return 4 messages', () => {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
-          { type: 'contract', value: 'StorageResolveTest', filename: 'tests/examples_5/test/simple_storage_test.sol' },
+          { type: 'contract', value: 'StorageResolveTest', filename: __dirname + '/examples_5/test/simple_storage_test.sol' },
           { type: 'testPass', value: 'Initial value should be100', context: 'StorageResolveTest' },
           { type: 'testPass', value: 'Check if even', context: 'StorageResolveTest' },
           { type: 'testPass', value: 'Check if odd', context: 'StorageResolveTest' }
@@ -215,7 +215,7 @@ describe('testRunner', () => {
 
     //Test signed/unsigned integer weight
     describe('test number weight', () => {
-      const filename: string = 'tests/number/number_test.sol'
+      const filename: string = __dirname + '/number/number_test.sol'
 
       beforeAll(done => {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
@@ -235,7 +235,7 @@ describe('testRunner', () => {
 
     // Test Transaction with custom sender & value
     describe('various sender', () => {
-      const filename: string = 'tests/various_sender/sender_and_value_test.sol'
+      const filename: string = __dirname + '/various_sender/sender_and_value_test.sol'
 
       beforeAll(done => {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
@@ -255,7 +255,7 @@ describe('testRunner', () => {
 
     // Test `runTest` method without sending contract object (should throw error)
     describe('runTest method without contract json interface', () => {
-      const filename: string = 'tests/various_sender/sender_and_value_test.sol'
+      const filename: string = __dirname + '/various_sender/sender_and_value_test.sol'
       const errorCallback: Function = (done) => {
         return (err, _results) => {
           if (err && err.message.includes('Contract interface not available')) { 
