@@ -252,7 +252,7 @@ function run (self, tx, stamp, confirmationCb, gasEstimationForceSend, promptCb,
     self.queusTxs.push({ tx, stamp, callback })
   } else {
     self.pendingTxs[stamp] = tx
-    self.execute(tx, confirmationCb, gasEstimationForceSend, promptCb, (error, result) => {
+    self.execute(tx, confirmationCb, gasEstimationForceSend, promptCb, function(error, result) {
       delete self.pendingTxs[stamp]
       callback(error, result)
       if (self.queusTxs.length) {
