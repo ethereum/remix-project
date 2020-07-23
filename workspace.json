@@ -348,22 +348,10 @@
           }
         },
         "test": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "./../../node_modules/.bin/npm-run-all test"
-              }
-            ],
-            "cwd": "libs/remix-tests"
-          }
-        },
-        "test2": {
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/remix-tests/jest.config.js",
-            "tsConfig": "libs/remix-tests/tsconfig.spec.json",
-            "passWithNoTests": true
+            "tsConfig": "libs/remix-tests/tsconfig.spec.json"
           }
         },
         "build": {
