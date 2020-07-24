@@ -69,7 +69,7 @@ function continueTesting (t, codeManager) {
   t.test('CodeManager.getInstructionIndex', function (st) {
     st.plan(2)
     try {
-      const result = codeManager.newGetInstructionIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 16)
+      const result = codeManager.getInstructionIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 16)
       console.log(result)
       st.ok(result === 25)
     } catch (error) {
@@ -77,7 +77,7 @@ function continueTesting (t, codeManager) {
     }
 
     try {
-      const result = codeManager.newGetInstructionIndex('(Contract Creation - Step 63)', 70)
+      const result = codeManager.getInstructionIndex('(Contract Creation - Step 63)', 70)
       console.log(result)
       st.ok(result === 6)
     } catch (error) {
