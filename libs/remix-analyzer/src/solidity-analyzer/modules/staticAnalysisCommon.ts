@@ -1137,19 +1137,17 @@ function getTypeStringFromComponents(components: ABIParameter[]) {
  * @param contractFiles compiled contract object
  */
 function getCompilerVersion(contractFiles: CompiledContractObj): string {
-  // Solidity documentation is not available for these versions
-  const noDocVersions = ['0.4.26', '0.5.16', '0.5.17']
-  let version = 'develop'
+  let version = 'latest'
   const fileNames: string[] = Object.keys(contractFiles)
   const contracts = contractFiles[fileNames[0]]
   const contractNames: string[] = Object.keys(contracts)
   const contract: CompiledContract = contracts[contractNames[0]]
-  const metadata = JSON.parse(contract.metadata)
-  const compilerVersion: string = metadata.compiler.version
-  if(!compilerVersion.includes('nightly')) {
-    const solVersion = compilerVersion.split('+commit')[0]
-    if(!noDocVersions.includes(solVersion))
-      version = 'v' + solVersion
+  // For some compiler/contract,  metadata is ""
+  if(contract && contract.metadata) {
+    const metadata = JSON.parse(contract.metadata)
+    const compilerVersion: string = metadata.compiler.version
+    if(!compilerVersion.includes('nightly'))
+      version = 'v' + compilerVersion.split('+commit')[0]
   }
   return version
 }
