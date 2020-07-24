@@ -68,22 +68,20 @@ function continueTesting (t, codeManager) {
 
   t.test('CodeManager.getInstructionIndex', function (st) {
     st.plan(2)
-    codeManager.getInstructionIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 16, function (error, result) {
+    try {
+      const result = codeManager.newGetInstructionIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 16)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result === 25)
-      }
-    })
+      st.ok(result === 25)
+    } catch (error) {
+      st.fail(error)
+    }
 
-    codeManager.getInstructionIndex('(Contract Creation - Step 63)', 70, function (error, result) {
+    try {
+      const result = codeManager.newGetInstructionIndex('(Contract Creation - Step 63)', 70)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result === 6)
-      }
-    })
+      st.ok(result === 6)
+    } catch (error) {
+      st.fail(error)
+    }
   })
 }
