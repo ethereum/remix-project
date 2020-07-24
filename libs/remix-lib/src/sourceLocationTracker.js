@@ -78,19 +78,15 @@ function extractSourceMap (self, codeManager, address, contracts) {
   return new Promise((resolve, reject) => {
     if (self.sourceMapByAddress[address]) return resolve(self.sourceMapByAddress[address])
 
-    codeManager.getCode(address, (error, result) => {
-      if (!error) {
-        const sourceMap = getSourceMap(address, result.bytecode, contracts)
-        if (sourceMap) {
-          if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
-          resolve(sourceMap)
-        } else {
-          reject('no sourcemap associated with the code ' + address)
-        }
+    codeManager.getCode(address).then((result) => {
+      const sourceMap = getSourceMap(address, result.bytecode, contracts)
+      if (sourceMap) {
+        if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
+        resolve(sourceMap)
       } else {
-        reject(error)
+        reject('no sourcemap associated with the code ' + address)
       }
-    })
+    }).catch(reject)
   })
 }
 
