@@ -77,13 +77,8 @@ class StorageViewer {
   async mappingsLocation (corrections) {
     if (!this.currentMappingsLocationPromise) {
       this.currentMappingsLocationPromise = new Promise((resolve, reject) => {
-        this.extractMappingsLocationChanges(this.storageChanges, corrections, (error, mappingsLocationChanges) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve(mappingsLocationChanges)
-          }
-        })
+        const mappingsLocationChanges = this.extractMappingsLocationChanges(this.storageChanges, corrections)
+        return resolve(mappingsLocationChanges)
       })
     }
     return this.currentMappingsLocationPromise
@@ -94,13 +89,13 @@ class StorageViewer {
     * @param {Map} storageChanges
     * @param {Array} corrections - used in case the calculated sha3 has been modifyed before SSTORE (notably used for struct in mapping).
     */
-  extractMappingsLocationChanges (storageChanges, corrections, callback) {
+  extractMappingsLocationChanges (storageChanges, corrections) {
     if (this.mappingsLocationChanges) {
-      return callback(null, this.mappingsLocationChanges)
+      return this.mappingsLocationChanges
     }
     const mappings = mappingPreimages.decodeMappingsKeys(this.web3, storageChanges, corrections)
     this.mappingsLocationChanges = mappings
-    return callback(null, this.mappingsLocationChanges)
+    return this.mappingsLocationChanges
   }
 }
 
