@@ -40,20 +40,14 @@ class SolidityProxy {
     * @param {Function} cb  - callback returns (error, contractName)
     */
   async contractNameAt (vmTraceIndex) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const address = this.traceManager.getCurrentCalledAddressAt(vmTraceIndex)
-        if (this.cache.contractNameByAddress[address]) {
-          return resolve(this.cache.contractNameByAddress[address])
-        }
-        const code = await this.codeManager.getCode(address)
-        const contractName = contractNameFromCode(this.contracts, code.bytecode, address)
-        this.cache.contractNameByAddress[address] = contractName
-        resolve(contractName)
-      } catch (error) {
-        reject(error)
-      }
-    })
+    const address = this.traceManager.getCurrentCalledAddressAt(vmTraceIndex)
+    if (this.cache.contractNameByAddress[address]) {
+      return this.cache.contractNameByAddress[address]
+    }
+    const code = await this.codeManager.getCode(address)
+    const contractName = contractNameFromCode(this.contracts, code.bytecode, address)
+    this.cache.contractNameByAddress[address] = contractName
+    return contractName
   }
 
   /**
@@ -91,15 +85,9 @@ class SolidityProxy {
     * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the state variables
     * @return {Object} - returns state variables of @args vmTraceIndex
     */
-  extractStateVariablesAt (vmtraceIndex) {
-    return new Promise((resolve, reject) => {
-      this.contractNameAt(vmtraceIndex, (error, contractName) => {
-        if (error) {
-          return reject(error)
-        }
-        return resolve(this.extractStateVariables(contractName))
-      })
-    })
+  async extractStateVariablesAt (vmtraceIndex) {
+    const contractName = await this.contractNameAt(vmtraceIndex)
+    return this.extractStateVariables(contractName)
   }
 
   /**
@@ -112,10 +100,8 @@ class SolidityProxy {
     const file = this.fileNameFromIndex(sourceLocation.file)
     if (this.sources[file]) {
       return this.sources[file].legacyAST
-    } else {
-      // console.log('AST not found for file id ' + sourceLocation.file)
-      return null
     }
+    return null
   }
 
   /**
