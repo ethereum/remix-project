@@ -4,9 +4,9 @@ const crxFile = fs.readFileSync('apps/remix-ide/test-browser/extensions/chrome/m
 const metamaskExtension = Buffer.from(crxFile).toString('base64')
 
 module.exports = {
-  'src_folders': ['apps/remix-ide-e2e/src/tests'],
-  'output_folder': 'apps/remix-ide-e2e/src/reports',
-  'custom_commands_path': ['apps/remix-ide-e2e/src/commands'],
+  'src_folders': ['dist/apps/remix-ide-e2e/src/tests'],
+  'output_folder': 'dist/apps/remix-ide-e2e/src/reports',
+  'custom_commands_path': ['dist/apps/remix-ide-e2e/src/commands'],
   'custom_assertions_path': '',
   'page_objects_path': '',
   'globals_path': '',
@@ -21,7 +21,7 @@ module.exports = {
       },
       'screenshots': {
         'enabled': true,
-        'path': 'apps/remix-ide-e2e/reports/screenshots',
+        'path': 'dist/apps/remix-ide-e2e/reports/screenshots',
         'on_failure': true,
         'on_error': true
       },
@@ -30,7 +30,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true
       },
-      'exclude': ['apps/remix-ide-e2e/test-browser/tests/runAndDeploy.js']
+      'exclude': ['dist/apps/remix-ide-e2e/test-browser/tests/runAndDeploy.js']
     },
 
     'chrome': {

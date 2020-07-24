@@ -2,8 +2,8 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
       "sourceMap": false,
-      "outDir": "../../dist/out-tsc",
+      "outDir": "../../dist",
       "allowJs": true
     },
-    "include": ["src/**/*.ts", "src/**/*.js"]
+    "include": ["**/*.ts", "**/*.js"]
 }
