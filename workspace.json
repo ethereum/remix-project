@@ -99,11 +99,11 @@
         "e2e": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              {
-                "command": "node_modules/.bin/ts-node node_modules/.bin/nightwatch --config apps/remix-ide-e2e/nightwatch.ts apps/remix-ide-e2e/src/tests/sample.test.js --env chrome"
-              }
-            ]
+              "commands": [
+                "tsc -p apps/remix-ide-e2e/tsconfig.e2e.json"
+              ],
+              "cwd": ".",
+              "parallel": false
           }
         },
         "lint": {
