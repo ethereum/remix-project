@@ -2,14 +2,13 @@
     "rules": {},
     "overrides": [
       {
-        "files": ["src/plugins/index.js"],
+        "files": ["**/*.ts"],
         "rules": {
-          "@typescript-eslint/no-var-requires": "off",
-          "no-undef": "off"
+          "no-undef": "off",
+          "@typescript-eslint/no-var-requires": 0
         }
       }
     ],
     "extends": ["../../.eslintrc"],
     "ignorePatterns": ["!**/*"]
 }
-  
