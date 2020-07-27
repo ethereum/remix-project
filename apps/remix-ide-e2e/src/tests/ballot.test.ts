@@ -1,20 +1,23 @@
 'use strict'
-var examples = require('../../src/app/editor/example-contracts')
-var init = require('../helpers/init')
-var sauce = require('./sauce')
 
-var sources = [
-  {'browser/Untitled.sol': {content: examples.ballot.content}}
+import { NightwatchBrowser, NightwatchCallbackResult } from 'nightwatch'
+import * as init from '../helpers/init'
+
+const examples = require('../../../../../apps/remix-ide/src/app/editor/example-contracts') // reference example-contracts from inside dist directory
+const sauce = require('./sauce')
+
+const sources = [
+  {'browser/Untitled.sol': { content: examples.ballot.content }}
 ]
 
 module.exports = {
-  before: function (browser, done) {
+  before: function (browser: NightwatchBrowser, done: NightwatchCallbackResult<void>) {
     init(browser, done)
   },
   '@sources': function () {
     return sources
   },
-  'Deploy Ballot': function (browser) {
+  'Deploy Ballot': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('solidity')
@@ -34,7 +37,7 @@ module.exports = {
       })
   },
 
-  'Debug Ballot / delegate': function (browser) {
+  'Debug Ballot / delegate': function (browser: NightwatchBrowser) {
     browser.pause(500)
     .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
     .pause(2000)
@@ -47,7 +50,7 @@ module.exports = {
     .checkVariableDebug('soliditylocals', localsCheck)
   },
 
-  'Access Ballot via at address': function (browser) {
+  'Access Ballot via at address': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('udapp')
     .click('*[data-id="universalDappUiUdappClose"]')
     .addFile('ballot.abi', { content: ballotABI })
@@ -66,7 +69,7 @@ module.exports = {
       })
   },
 
-  'Deploy and use Ballot using external web3': function (browser) {
+  'Deploy and use Ballot using external web3': function (browser: NightwatchBrowser) {
     browser
     .click('*[data-id="settingsWeb3Mode"]')
     .modalFooterOKClick()
@@ -86,14 +89,14 @@ module.exports = {
   tearDown: sauce
 }
 
-var localsCheck = {
+const localsCheck = {
   'to': {
     'value': '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB',
     'type': 'address'
   }
 }
 
-var stateCheck = {
+const stateCheck = {
   'chairperson': {
     'value': '0xCA35B7D915458EF540ADE6068DFE2F44E8FA733C',
     'type': 'address',
@@ -148,7 +151,7 @@ var stateCheck = {
   }
 }
 
-var ballotABI = `[
+const ballotABI = `[
 {
   "inputs": [
     {
