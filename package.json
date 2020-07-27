@@ -165,6 +165,7 @@
     "@resolver-engine/imports": "^0.3.0",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
+    "@types/nightwatch": "^1.1.6",
     "@types/node": "~8.9.4",
     "@types/react": "16.9.17",
     "@types/react-dom": "16.9.4",
