@@ -10,6 +10,7 @@ fi
 rm -rf temp_publish_docker
 mkdir temp_publish_docker
 cp -r $FILES_TO_PACKAGE temp_publish_docker
+ls
 
 docker login --username $DOCKER_USER --password $DOCKER_PASS
 docker-compose -f ../../../docker-compose.yaml -f ../../../build.yaml build
