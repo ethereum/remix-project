@@ -13,5 +13,5 @@ cp -r $FILES_TO_PACKAGE temp_publish_docker
 ls
 
 docker login --username $DOCKER_USER --password $DOCKER_PASS
-docker-compose -f ../../../docker-compose.yaml -f ../../../build.yaml build
+docker-compose -f docker-compose.yaml -f build.yaml build
 docker push remixproject/remix-ide:$TAG
