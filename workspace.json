@@ -22,7 +22,7 @@
             "styles": [],
             "scripts": [],
             "webpackConfig": "apps/remix-ide/webpack.config.js",
-            "maxWorkers": 6
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
