@@ -216,6 +216,7 @@ workflows:
             - remix-ide-chrome
             - remix-ide-firefox
             - remix-ide-run-deploy
+            - publish-docker
           filters:
             branches:
               only: remix_live
@@ -224,6 +225,7 @@ workflows:
             - remix-ide-chrome
             - remix-ide-firefox
             - remix-ide-run-deploy
+            - publish-docker
           filters:
             branches:
               only: master
