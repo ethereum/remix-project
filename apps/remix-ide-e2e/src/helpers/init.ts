@@ -2,7 +2,7 @@ import { NightwatchBrowser } from "nightwatch"
 
 require('dotenv').config()
 
-module.exports = function (browser: NightwatchBrowser, callback: CallableFunction, url: string, preloadPlugins = true) {
+export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
     .pause(5000)
@@ -24,7 +24,7 @@ module.exports = function (browser: NightwatchBrowser, callback: CallableFunctio
     })
 }
 
-function initModules (browser, callback) {
+function initModules (browser: NightwatchBrowser, callback: VoidFunction) {
   browser.pause(5000)
     .click('[data-id="verticalIconsKindpluginManager"]')
     .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityStaticAnalysis"]')

@@ -1,17 +1,17 @@
 'use strict'
 
-import { NightwatchBrowser, NightwatchCallbackResult } from 'nightwatch'
-import * as init from '../helpers/init'
+import { NightwatchBrowser } from 'nightwatch'
+import init from '../helpers/init'
+import sauce from './sauce'
 
 const examples = require('../../../../../apps/remix-ide/src/app/editor/example-contracts') // reference example-contracts from inside dist directory
-const sauce = require('./sauce')
 
 const sources = [
   {'browser/Untitled.sol': { content: examples.ballot.content }}
 ]
 
 module.exports = {
-  before: function (browser: NightwatchBrowser, done: NightwatchCallbackResult<void>) {
+  before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
   '@sources': function () {
