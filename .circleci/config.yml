@@ -21,10 +21,10 @@ jobs:
 
     steps:
       - checkout
-      # - run: npm install
-      # - run: npm run lint:libs
-      # - run: npm run build:libs
-      # - run: npm run test:libs
+      - run: npm install
+      - run: npm run lint:libs
+      - run: npm run build:libs
+      - run: npm run test:libs
 
   remix-ide-chrome:
     docker:
@@ -45,29 +45,29 @@ jobs:
     parallelism: 20
     steps:
       - checkout
-      # - run: npm install
-      # - run: npm run lint
-      # - run: npm run build:libs
-      # - run: npm run downloadsolc_root
-      # - run: npm run build
-      # - run:
-      #     name: Download Compatible JAVA Version for Selenium
-      #     command: |
-      #       java -version
-      #       sudo apt-get purge --auto-remove java-common
-      #       sudo apt-get update
-      #       sudo apt-get install openjdk-8-jdk
-      #       java -version
-      # - run:
-      #     name: Download Selenium
-      #     command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
-      # - run:
-      #     name: Start Selenium
-      #     command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
-      #     background: true
-      # - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
-      # - store_test_results:
-      #     path: ./apps/remix-ide/reports/tests
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
+      - run:
+          name: Download Compatible JAVA Version for Selenium
+          command: |
+            java -version
+            sudo apt-get purge --auto-remove java-common
+            sudo apt-get update
+            sudo apt-get install openjdk-8-jdk
+            java -version
+      - run:
+          name: Download Selenium
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
+      - run:
+          name: Start Selenium
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
+          background: true
+      - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
+      - store_test_results:
+          path: ./apps/remix-ide/reports/tests
       - store_artifacts:
           path: ./apps/remix-ide/reports/screenshots
 
@@ -90,25 +90,25 @@ jobs:
     parallelism: 20
     steps:
       - checkout
-      # - run: npm install
-      # - run: npm run lint
-      # - run: npm run build:libs
-      # - run: npm run downloadsolc_root
-      # - run: npm run build
-      # - run:
-      #     name: Download Selenium
-      #     command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
-      # - run:
-      #     name: Start Selenium
-      #     command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
-      #     background: true
-      # - run:
-      #     name: Download Latest Firefox
-      #     command: sudo apt-get purge -y firefox && wget https://sourceforge.net/projects/ubuntuzilla/files/mozilla/apt/pool/main/f/firefox-mozilla-build/firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      # - run:
-      #     name: Install Firefox
-      #     command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      # - run: ./apps/remix-ide/ci/browser_tests_firefox.sh
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
+      - run:
+          name: Download Selenium
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
+      - run:
+          name: Start Selenium
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
+          background: true
+      - run:
+          name: Download Latest Firefox
+          command: sudo apt-get purge -y firefox && wget https://sourceforge.net/projects/ubuntuzilla/files/mozilla/apt/pool/main/f/firefox-mozilla-build/firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
+      - run:
+          name: Install Firefox
+          command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
+      - run: ./apps/remix-ide/ci/browser_tests_firefox.sh
       - store_test_results:
           path: ./apps/remix-ide/reports/tests
       - store_artifacts:
@@ -132,27 +132,27 @@ jobs:
 
     steps:
       - checkout
-      # - run: npm install
-      # - run: npm run lint
-      # - run: npm run build:libs
-      # - run: npm run downloadsolc_root
-      # - run: npm run build
-      # - run:
-      #     name: Download Compatible JAVA Version for Selenium
-      #     command: |
-      #       java -version
-      #       sudo apt-get purge --auto-remove java-common
-      #       sudo apt-get update
-      #       sudo apt-get install openjdk-8-jdk
-      #       java -version
-      # - run:
-      #     name: Download Selenium
-      #     command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
-      # - run:
-      #     name: Start Selenium
-      #     command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
-      #     background: true
-      # - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
+      - run:
+          name: Download Compatible JAVA Version for Selenium
+          command: |
+            java -version
+            sudo apt-get purge --auto-remove java-common
+            sudo apt-get update
+            sudo apt-get install openjdk-8-jdk
+            java -version
+      - run:
+          name: Download Selenium
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
+      - run:
+          name: Start Selenium
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
+          background: true
+      - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_artifacts:
           path: ./apps/remix-ide/reports/screenshots
 
@@ -175,17 +175,17 @@ jobs:
 
     steps:
       - checkout
-      # - run: npm install
-      # - run: npm run lint
-      # - run: npm run build:libs
-      # - run: npm run downloadsolc_root
-      # - run: npm run build
-      # - run: 
-      #     name: Deploy
-      #     command: |
-      #       if [ "${CIRCLE_BRANCH}" == "remix_live" ]; then
-      #         ./apps/remix-ide/ci/deploy_from_travis_remix-live.sh;
-      #       fi
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
+      - run: 
+          name: Deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "remix_live" ]; then
+              ./apps/remix-ide/ci/deploy_from_travis_remix-live.sh;
+            fi
       - store_artifacts:
           path: ./apps/remix-ide/reports/screenshots
 
