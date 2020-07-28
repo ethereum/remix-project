@@ -4,7 +4,13 @@ The Remix EthDoc plugin allow you to generate HTML documents from solidity smart
 
 ## Activate
 
-To be able to work with the plugin go to the plugins section and find EthDoc, then activate it.
+This plugin consist of 2 parts, what is call the EthDoc viewer and the EthdDoc generator. Internally the EthDoc Generator will activate the EthDoc viewer, so you only need to go to the plugins section and find EthDoc, then activate it and automatically EthDoc viewer will be active.
+
+The following image illustrate both sections of the plugin.
+
+![Screenshot](img/ethdoc.png)
+
+The EthDoc viewer appears in a tab in the main area of the Remix Editor and the EthDoc generator will appear in the side panel.
 
 ## How to generate documentation
 
