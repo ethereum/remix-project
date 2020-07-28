@@ -13,11 +13,12 @@ echo "Built website from \`$SHA\`. See https://github.com/ethereum/remix-ide/ fo
 echo "To use an offline copy, download \`remix-$SHA.zip\`." >> README.md
 cp -r $FILES_TO_PACKAGE "./"
 rm -rf dist
+ls
 FILES_TO_DEPLOY="assets index.html main.js polyfills.js runtime.js vendor.js"
 # ZIP the whole directory
-zip -r remix-$SHA.zip $FILES_TO_PACKAGE
+zip -r remix-$SHA.zip $FILES_TO_DEPLOY
 # -f is needed because "build" is part of .gitignore
-git add -f $FILES_TO_PACKAGE remix-$SHA.zip
+git add -f $FILES_TO_DEPLOY remix-$SHA.zip
 git commit -m "Built website from {$SHA}."
 
 git push -f git@github.com:ethereum/remix-live-alpha.git gh-pages
