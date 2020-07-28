@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AppContext } from "../AppContext";
 import { ContractName, Documentation } from "../types";
 import { publish } from "../utils";
@@ -8,10 +8,18 @@ export const HomeView: React.FC = () => {
   const [activeItem, setActiveItem] = useState("");
   const [isPublishing, setIsPublishing] = useState(false);
   const [htmlDocumentation, setHtmlDocumentation] = useState("");
+  const [hasErrorOnPublishing, setHasErrorOnPublishing] = useState(false);
+  const clearMessageFuncRef = useRef(undefined as any);
 
   useEffect(() => {
-    async function publishDocumentation() {
+    let maxNumberOfRetries = 1;
+    let retries = 0;
+
+    const publishDocumentation = async () => {
       try {
+        if (clearMessageFuncRef.current) {
+          clearTimeout(clearMessageFuncRef.current);
+        }
         const hash = await publish(htmlDocumentation);
         console.log("Hash", hash);
         setIsPublishing(false);
@@ -20,11 +28,23 @@ export const HomeView: React.FC = () => {
 
         window.open(url);
       } catch (error) {
-        setIsPublishing(false);
+        if (retries < maxNumberOfRetries) {
+          console.log("Retrying...")
+          retries++;
+          publishDocumentation()
+        } else {
+          setIsPublishing(false);
+          setHasErrorOnPublishing(true)
+
+          clearMessageFuncRef.current = setTimeout(() => {
+            setHasErrorOnPublishing(false)
+          }, 5000);
+        }
       }
     }
 
     if (isPublishing) {
+      setHasErrorOnPublishing(false)
       publishDocumentation();
     }
   }, [isPublishing, htmlDocumentation]);
@@ -89,7 +109,7 @@ export const HomeView: React.FC = () => {
                   Clear
                 </button>
               </div>
-              <div style={{ width: "15em" }}>
+              <div style={{ width: "16em" }}>
                 {activeItem !== "" && (
                   <PublishButton
                     isPublishing={isPublishing}
@@ -100,6 +120,11 @@ export const HomeView: React.FC = () => {
                   />
                 )}
               </div>
+
+              {hasErrorOnPublishing &&
+                <div>
+                  <label>Something unexpected happen, Please try again</label>
+                </div>}
             </div>
           )}
         </div>
@@ -127,14 +152,14 @@ export const PublishButton: React.FC<PublishButtonProps> = ({
       {!isPublishing && "Publish"}
 
       {isPublishing && (
-        <div>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <span
             className="spinner-border spinner-border-sm"
             role="status"
             aria-hidden="true"
-            style={{ marginRight: "0.3em" }}
+            style={{ marginRight: "0.5em" }}
           />
-          Publishing...Please wait
+          <p style={{ margin: "0" }}>Publishing...Please wait</p>
         </div>
       )}
     </button>
