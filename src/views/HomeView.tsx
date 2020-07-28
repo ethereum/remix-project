@@ -12,7 +12,7 @@ export const HomeView: React.FC = () => {
   const clearMessageFuncRef = useRef(undefined as any);
 
   useEffect(() => {
-    let maxNumberOfRetries = 1;
+    const maxNumberOfRetries = 1;
     let retries = 0;
 
     const publishDocumentation = async () => {
@@ -29,22 +29,22 @@ export const HomeView: React.FC = () => {
         window.open(url);
       } catch (error) {
         if (retries < maxNumberOfRetries) {
-          console.log("Retrying...")
+          console.log("Retrying...");
           retries++;
-          publishDocumentation()
+          publishDocumentation();
         } else {
           setIsPublishing(false);
-          setHasErrorOnPublishing(true)
+          setHasErrorOnPublishing(true);
 
           clearMessageFuncRef.current = setTimeout(() => {
-            setHasErrorOnPublishing(false)
+            setHasErrorOnPublishing(false);
           }, 5000);
         }
       }
-    }
+    };
 
     if (isPublishing) {
-      setHasErrorOnPublishing(false)
+      setHasErrorOnPublishing(false);
       publishDocumentation();
     }
   }, [isPublishing, htmlDocumentation]);
@@ -121,10 +121,11 @@ export const HomeView: React.FC = () => {
                 )}
               </div>
 
-              {hasErrorOnPublishing &&
+              {hasErrorOnPublishing && (
                 <div>
                   <label>Something unexpected happen, Please try again</label>
-                </div>}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -152,7 +153,13 @@ export const PublishButton: React.FC<PublishButtonProps> = ({
       {!isPublishing && "Publish"}
 
       {isPublishing && (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <span
             className="spinner-border spinner-border-sm"
             role="status"
