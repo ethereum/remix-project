@@ -11,6 +11,9 @@ git rm --cached -r -f .
 echo "# Automatic build" > README.md
 echo "Built website from \`$SHA\`. See https://github.com/ethereum/remix-ide/ for details." >> README.md
 echo "To use an offline copy, download \`remix-$SHA.zip\`." >> README.md
+cp -r $FILES_TO_PACKAGE "./"
+rm -rf dist
+FILES_TO_DEPLOY="assets index.html main.js polyfills.js runtime.js vendor.js"
 # ZIP the whole directory
 zip -r remix-$SHA.zip $FILES_TO_PACKAGE
 # -f is needed because "build" is part of .gitignore
