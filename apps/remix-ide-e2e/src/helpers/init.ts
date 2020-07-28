@@ -7,17 +7,14 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     .url(url || 'http://127.0.0.1:8080')
     .pause(5000)
     .switchBrowserTab(0)
-    .injectScript('test-browser/helpers/applytestmode.js', function () {
-      browser.fullscreenWindow(() => {
-        if (preloadPlugins) {
-          console.log('preloadPlugins: ', preloadPlugins)
-          initModules(browser, () => {
-            browser.clickLaunchIcon('solidity')
-            .waitForElementPresent('[for="autoCompile"]')
-            .click('[for="autoCompile"]')
-          })
-        }
-      })
+    .fullscreenWindow(() => {
+      if (preloadPlugins) {
+        initModules(browser, () => {
+          browser.clickLaunchIcon('solidity')
+          .waitForElementPresent('[for="autoCompile"]')
+          .click('[for="autoCompile"]')
+        })
+      }
     })
     .perform(() => {
       callback()

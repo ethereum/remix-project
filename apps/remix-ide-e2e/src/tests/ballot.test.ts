@@ -3,8 +3,7 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import sauce from './sauce'
-
-const examples = require('../../../../../apps/remix-ide/src/app/editor/example-contracts') // reference example-contracts from inside dist directory
+import examples from '../examples/example-contracts'
 
 const sources = [
   {'browser/Untitled.sol': { content: examples.ballot.content }}

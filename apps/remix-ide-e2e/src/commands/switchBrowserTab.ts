@@ -6,9 +6,9 @@ const EventEmitter = require('events')
   Switches between browser tabs
 */
 
-class SwitchBrowserTab extends EventEmitter {
-  command (this: NightwatchBrowser, index: number) {
-    this.api.perform((browser: NightwatchBrowser, done: VoidFunction) => {
+export class SwitchBrowserTab extends EventEmitter {
+  command (this: NightwatchBrowser, index: number): NightwatchBrowser {
+    this.api.perform((browser: NightwatchBrowser, done) => {
       browser.windowHandles((result) => {
         browser.switchWindow(result.value[index])
         done()
@@ -18,5 +18,3 @@ class SwitchBrowserTab extends EventEmitter {
     return this
   }
 }
-
-module.exports = SwitchBrowserTab
