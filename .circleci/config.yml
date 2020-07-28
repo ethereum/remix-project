@@ -237,12 +237,7 @@ jobs:
       - run: npm run build:libs
       - run: npm run downloadsolc_root
       - run: npm run build
-      - run: 
-          name: Deploy
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              ./apps/remix-ide/ci/deploy_from_travis_remix-alpha.sh;
-            fi
+      - run: ./apps/remix-ide/ci/deploy_from_travis_remix-alpha.sh
       - store_artifacts:
           path: ./apps/remix-ide/reports/screenshots
 
