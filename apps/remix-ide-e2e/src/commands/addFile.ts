@@ -4,7 +4,7 @@ const EventEmitter = require('events')
 
 export class AddFile extends EventEmitter {
   command (this: NightwatchBrowser, name: string, content: NightwatchContractContent): NightwatchBrowser {
-    this.api.perform((done: VoidFunction) => {
+    this.api.perform((done) => {
       addFile(this.api, name, content, () => {
         done()
         this.emit('complete')

@@ -4,7 +4,7 @@ const EventEmitter = require('events')
 
 export class TestContracts extends EventEmitter {
   command (this: NightwatchBrowser,fileName: string, contractCode: NightwatchContractContent, compiledContractNames: string[]): NightwatchBrowser {
-    this.api.perform((done: VoidFunction) => {
+    this.api.perform((done) => {
       testContracts(this.api, fileName, contractCode, compiledContractNames, () => {
         done()
         this.emit('complete')

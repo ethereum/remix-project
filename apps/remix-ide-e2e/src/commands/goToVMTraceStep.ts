@@ -4,7 +4,7 @@ const EventEmitter = require('events')
 
 export class GoToVmTraceStep extends EventEmitter {
   command (this: NightwatchBrowser, step: number, incr?: number): NightwatchBrowser {
-    this.api.perform((done: VoidFunction) => {
+    this.api.perform((done) => {
       goToVMtraceStep(this.api, step, incr, () => {
         done()
         this.emit('complete')
