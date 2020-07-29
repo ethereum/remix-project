@@ -4,7 +4,7 @@ const EventEmitter = require('events')
 
 export class VerifyContracts extends EventEmitter {
   command (this: NightwatchBrowser,compiledContractNames: string[], opts = { wait: 1000, version: null }): NightwatchBrowser {
-    this.api.perform((done: VoidFunction) => {
+    this.api.perform((done) => {
       verifyContracts(this.api, compiledContractNames, opts, () => {
         done()
         this.emit('complete')
@@ -19,7 +19,7 @@ function getCompiledContracts (browser: NightwatchBrowser, opts: NightwatchVerif
   .clickLaunchIcon('solidity')
   .pause(opts.wait)
   .waitForElementPresent('*[data-id="compiledContracts"] option')
-  .perform((done: VoidFunction) => {
+  .perform((done) => {
     if (opts.version) {
       browser
       .click('*[data-id="compilation-details"]')
