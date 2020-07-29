@@ -68,8 +68,6 @@ const App = () => {
             ...newContractsMapWithDocumentation,
           ]);
 
-          console.log("New Map", newMap);
-
           const status: Status = {
             key: "succeed",
             type: "success",
