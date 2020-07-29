@@ -65,25 +65,23 @@ export const getContractDoc = (name: string, contract: CompiledContract) => {
     }
   });
 
-  return template(name, contractDoc, functionsDocumentation);
+  // console.log("contractDoc", contractDoc)
+  // console.log("functionsDocumentation", functionsDocumentation)
+
+  try {
+    const finalResult = template(name, contractDoc, functionsDocumentation);
+    return finalResult
+
+  } catch (error) {
+    console.log("ERROR", error)
+    return ''
+  }
+
 };
 
 export const getContractDocumentation = (contract: CompiledContract) => {
-  const methods: MethodsDocumentation = {};
-
-  Object.keys(contract.userdoc.methods).forEach((item) => {
-    if (contract.devdoc.methods[item]) {
-      const finalResult = {
-        ...contract.userdoc.methods[item],
-        ...contract.devdoc.methods[item],
-      };
-      methods[item] = finalResult;
-    } else {
-      methods[item] = contract.userdoc.methods[item];
-    }
-  });
-
-  const contractDoc = { ...contract.userdoc, ...contract.devdoc, methods };
+  const methods = { ...contract.userdoc.methods, ...contract.devdoc.methods }
+  const contractDoc = { ...contract.userdoc, ...contract.devdoc, ...methods };
 
   return contractDoc;
 };
