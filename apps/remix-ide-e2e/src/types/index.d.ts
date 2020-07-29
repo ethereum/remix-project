@@ -4,18 +4,23 @@ import { NightwatchBrowser, NightwatchBrowser, NightwatchBrowser } from "nightwa
 
 declare module "nightwatch" {
     export interface NightwatchCustomCommands {
-        clickLaunchIcon(this: NightwatchBrowser, icon: string): NightwatchBrowser,
-        switchBrowserTab(this: NightwatchBrowser, index: number): NightwatchBrowser,
-        scrollAndClick(this: NightwatchBrowser, target: string): NightwatchBrowser,
-        scrollInto(this: NightwatchBrowser, target: string): NightwatchBrowser,
-        testContracts(this: NightwatchBrowser, fileName: string, contractCode: ContractContent, compiledContractNames: string[]): NightwatchBrowser,
-        setEditorValue(this: NightwatchBrowser, value: string, callback?: () => void): NightwatchBrowser,
-        addFile(this: NightwatchBrowser, name: string, content: NightwatchContractContent): NightwatchBrowser,
-        verifyContracts(this: NightwatchBrowser, compiledContractNames: string[]): NightwatchBrowser,
-        selectAccount(this: NightwatchBrowser, account?: string): NightwatchBrowser,
-        clickFunction(this: NightwatchBrowser, fnFullName: string, expectedInput?: NightwatchClickFunctionExpectedInput): NightwatchBrowser,
-        testFunction(this: NightwatchBrowser, txHash: string, expectedInput: NightwatchTestFunctionExpectedInput): NightwatchBrowser,
-        goToVMTraceStep(this: NightwatchBrowser, step: number, incr?: number): NightwatchBrowser
+        clickLaunchIcon(icon: string): NightwatchBrowser,
+        switchBrowserTab(index: number): NightwatchBrowser,
+        scrollAndClick(target: string): NightwatchBrowser,
+        scrollInto(target: string): NightwatchBrowser,
+        testContracts(fileName: string, contractCode: NightwatchContractContent, compiledContractNames: string[]): NightwatchBrowser,
+        setEditorValue(value: string, callback?: () => void): NightwatchBrowser,
+        addFile(name: string, content: NightwatchContractContent): NightwatchBrowser,
+        verifyContracts(compiledContractNames: string[]): NightwatchBrowser,
+        selectAccount(account?: string): NightwatchBrowser,
+        clickFunction(fnFullName: string, expectedInput?: NightwatchClickFunctionExpectedInput): NightwatchBrowser,
+        testFunction(txHash: string, expectedInput: NightwatchTestFunctionExpectedInput): NightwatchBrowser,
+        goToVMTraceStep(step: number, incr?: number): NightwatchBrowser,
+        checkVariableDebug(id: string, debugValue: NightwatchCheckVariableDebugValue): NightwatchBrowser,
+        addAtAddressInstance(address: string, isValidFormat: boolean, isValidChecksum: boolean): NightwatchBrowser,
+        modalFooterOKClick(): NightwatchBrowser,
+        clickInstance(index: number): NightwatchBrowser,
+        journalLastChildIncludes(val: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
@@ -41,4 +46,6 @@ declare module "nightwatch" {
     export interface NightwatchTestFunctionExpectedInput {
         [key: string]: any
     }
+
+    export type NightwatchCheckVariableDebugValue = NightwatchTestFunctionExpectedInput
 }
