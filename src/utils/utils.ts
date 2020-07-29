@@ -13,7 +13,6 @@ import {
   MethodDoc,
   FunctionDocumentation,
   ParameterDocumentation,
-  MethodsDocumentation,
 } from "./types";
 
 export const createDocumentation = (
