@@ -8,7 +8,7 @@ class ModalFooterOKClick extends EventEmitter {
         const elem = document.querySelector('#modal-footer-ok') as HTMLElement
 
         elem.click()
-      }, [], (result) => {
+      }, [], () => {
         done()
         this.emit('complete')
       })
