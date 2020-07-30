@@ -94,11 +94,11 @@ class ContractDropdownUI {
 
     this.ipfsCheckbox = yo`
       <input
-      id="deployAndRunPublishToIPFS"
-      data-id="contractDropdownIpfsCheckbox"
-      class="form-check-input custom-control-input"
-      type="checkbox"
-      onchange=${() => this.toggleCheckedState.bind()}
+        id="deployAndRunPublishToIPFS"
+        data-id="contractDropdownIpfsCheckbox"
+        class="form-check-input custom-control-input"
+        type="checkbox"
+        onchange=${() => this.toggleCheckedState()}
       >
     `
     if (this.ipfsCheckedState) this.ipfsCheckbox.checked = true
