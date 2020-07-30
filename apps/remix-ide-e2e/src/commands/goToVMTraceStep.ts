@@ -1,8 +1,6 @@
 import { NightwatchBrowser } from 'nightwatch'
-
-const EventEmitter = require('events')
-
-export class GoToVmTraceStep extends EventEmitter {
+import EventEmitter from "events"
+class GoToVmTraceStep extends EventEmitter {
   command (this: NightwatchBrowser, step: number, incr?: number): NightwatchBrowser {
     this.api.perform((done) => {
       goToVMtraceStep(this.api, step, incr, () => {
@@ -35,3 +33,5 @@ function goToVMtraceStep (browser: NightwatchBrowser, step: number, incr: number
     }
   })
 }
+
+module.exports = GoToVmTraceStep

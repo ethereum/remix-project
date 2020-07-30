@@ -1,8 +1,7 @@
 import { NightwatchBrowser } from "nightwatch"
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
-
-export class ClickLaunchIcon extends EventEmitter {
+class ClickLaunchIcon extends EventEmitter {
   command (this: NightwatchBrowser, icon: string): NightwatchBrowser {
     this.api.waitForElementVisible('#icon-panel div[plugin="' + icon + '"]').click('#icon-panel div[plugin="' + icon + '"]').perform((done) => {
       done()
@@ -11,3 +10,5 @@ export class ClickLaunchIcon extends EventEmitter {
     return this
   }
 }
+
+module.exports = ClickLaunchIcon

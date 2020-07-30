@@ -1,11 +1,10 @@
 import { NightwatchBrowser } from 'nightwatch'
-
-const EventEmitter = require('events')
+import EventEmitter from "events"
 
 /*
   Check if the last log in the console contains a specific text
 */
-export class JournalLastChildIncludes extends EventEmitter {
+class JournalLastChildIncludes extends EventEmitter {
   command (this: NightwatchBrowser, val: string): NightwatchBrowser {
     this.api
     .waitForElementVisible('*[data-id="terminalJournal"] > div:last-child', 10000)
@@ -18,3 +17,5 @@ export class JournalLastChildIncludes extends EventEmitter {
     return this
   }
 }
+
+module.exports = JournalLastChildIncludes

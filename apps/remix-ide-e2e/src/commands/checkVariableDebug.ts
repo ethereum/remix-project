@@ -1,9 +1,9 @@
 import { NightwatchBrowser, NightwatchCheckVariableDebugValue } from 'nightwatch'
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
 const deepequal = require('deep-equal')
 
-export class CheckVariableDebug extends EventEmitter {
+class CheckVariableDebug extends EventEmitter {
   command (this: NightwatchBrowser, id: string, debugValue: NightwatchCheckVariableDebugValue): NightwatchBrowser {
     this.api.perform((done) => {
       checkDebug(this.api, id, debugValue, () => {
@@ -38,3 +38,5 @@ function checkDebug (browser: NightwatchBrowser, id: string, debugValue: Nightwa
     done()
   })
 }
+
+module.exports = CheckVariableDebug

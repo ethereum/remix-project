@@ -1,8 +1,7 @@
 import { NightwatchBrowser, NightwatchContractContent } from 'nightwatch'
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
-
-export class AddFile extends EventEmitter {
+class AddFile extends EventEmitter {
   command (this: NightwatchBrowser, name: string, content: NightwatchContractContent): NightwatchBrowser {
     this.api.perform((done) => {
       addFile(this.api, name, content, () => {
@@ -36,3 +35,5 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
       done()
     })
 }
+
+module.exports = AddFile

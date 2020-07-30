@@ -1,8 +1,7 @@
 import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
-
-export class addAtAddressInstance extends EventEmitter {
+class addAtAddressInstance extends EventEmitter {
   command (this: NightwatchBrowser, address: string, isValidFormat: boolean, isValidChecksum: boolean): NightwatchBrowser {
     this.api.perform((done) => {
       addInstance(this.api, address, isValidFormat, isValidChecksum, () => {
@@ -33,3 +32,5 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
         })
   })
 }
+
+module.exports = addAtAddressInstance
