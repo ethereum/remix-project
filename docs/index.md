@@ -16,7 +16,7 @@ The EthDoc viewer appears in a tab in the main area of the Remix Editor and the 
 
 To generate HTML documents, the first thing you need to do is to compile smart contracts.
 
-Once the contracts are compiled, go to the EthDoc plugin section and you can select and preview the HTML documents that were generated.
+Once the contracts are compiled, go to the EthDoc Generator in the side panel and click the button to generate the docs. To see the generated docs, click the EthDoc Viewer tab in Remix's Editor.
 
 ## How to publish
 
