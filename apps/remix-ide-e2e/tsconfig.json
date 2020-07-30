@@ -1,7 +1,8 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-      "types": ["node", "nightwatch"]
+      "types": ["node", "nightwatch"],
+      "esModuleInterop": true,
     },
     "include": ["**/*.ts", "**/*.js"]
 }

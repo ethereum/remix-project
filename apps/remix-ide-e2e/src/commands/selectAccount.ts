@@ -1,8 +1,7 @@
 import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
-
-export class SelectAccount extends EventEmitter {
+class SelectAccount extends EventEmitter {
   command (this: NightwatchBrowser, account?: string): NightwatchBrowser {
     if (account) {
       this.api
@@ -14,3 +13,5 @@ export class SelectAccount extends EventEmitter {
     return this
   }
 }
+
+module.exports = SelectAccount

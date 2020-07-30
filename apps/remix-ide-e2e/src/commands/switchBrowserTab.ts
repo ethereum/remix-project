@@ -1,12 +1,11 @@
 import { NightwatchBrowser } from "nightwatch"
-
-const EventEmitter = require('events')
+import EventEmitter from "events"
 
 /*
   Switches between browser tabs
 */
 
-export class SwitchBrowserTab extends EventEmitter {
+class SwitchBrowserTab extends EventEmitter {
   command (this: NightwatchBrowser, index: number): NightwatchBrowser {
     this.api.perform((browser: NightwatchBrowser, done) => {
       browser.windowHandles((result) => {
@@ -18,3 +17,5 @@ export class SwitchBrowserTab extends EventEmitter {
     return this
   }
 }
+
+module.exports = SwitchBrowserTab

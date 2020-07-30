@@ -1,8 +1,7 @@
 import { NightwatchBrowser } from "nightwatch"
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
-
-export class ModalFooterOKClick extends EventEmitter {
+class ModalFooterOKClick extends EventEmitter {
   command (this: NightwatchBrowser): NightwatchBrowser {
     this.api.waitForElementVisible('#modal-footer-ok').perform((client, done) => {
       this.api.execute(function () {
@@ -17,3 +16,5 @@ export class ModalFooterOKClick extends EventEmitter {
     return this
   }
 }
+
+module.exports = ModalFooterOKClick

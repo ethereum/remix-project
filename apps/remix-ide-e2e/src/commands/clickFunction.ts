@@ -1,8 +1,7 @@
 import { NightwatchBrowser, NightwatchClickFunctionExpectedInput } from 'nightwatch'
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
-
-export class ClickFunction extends EventEmitter {
+class ClickFunction extends EventEmitter {
   command (this: NightwatchBrowser, fnFullName: string, expectedInput?: NightwatchClickFunctionExpectedInput): NightwatchBrowser {
     this.api.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
     .perform(function (client, done) {
@@ -23,3 +22,5 @@ export class ClickFunction extends EventEmitter {
     return this
   }
 }
+
+module.exports = ClickFunction
