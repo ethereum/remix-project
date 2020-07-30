@@ -20,7 +20,8 @@ declare module "nightwatch" {
         addAtAddressInstance(address: string, isValidFormat: boolean, isValidChecksum: boolean): NightwatchBrowser,
         modalFooterOKClick(): NightwatchBrowser,
         clickInstance(index: number): NightwatchBrowser,
-        journalLastChildIncludes(val: string): NightwatchBrowser
+        journalLastChildIncludes(val: string): NightwatchBrowser,
+        executeScript(script: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
