@@ -1,12 +1,11 @@
 import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
-
-export class SetEditorValue extends EventEmitter {
+class SetEditorValue extends EventEmitter {
   command (this: NightwatchBrowser, value: string, callback?: VoidFunction): NightwatchBrowser {
     this.api.perform((client, done) => {
       this.api.execute(function (value) {
-        const elem: any = document.querySelector('#modal-footer-ok')
+        const elem: any = document.getElementById('input')
 
         elem.editor.session.setValue(value)
       }, [value], () => {
@@ -20,3 +19,5 @@ export class SetEditorValue extends EventEmitter {
     return this
   }
 }
+
+module.exports = SetEditorValue

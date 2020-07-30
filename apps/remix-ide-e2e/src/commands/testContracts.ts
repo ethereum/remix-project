@@ -1,8 +1,7 @@
 import { NightwatchBrowser, NightwatchContractContent } from 'nightwatch'
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
-
-export class TestContracts extends EventEmitter {
+class TestContracts extends EventEmitter {
   command (this: NightwatchBrowser,fileName: string, contractCode: NightwatchContractContent, compiledContractNames: string[]): NightwatchBrowser {
     this.api.perform((done) => {
       testContracts(this.api, fileName, contractCode, compiledContractNames, () => {
@@ -24,3 +23,5 @@ function testContracts (browser: NightwatchBrowser, fileName: string, contractCo
       callback()
     })
 }
+
+module.exports = TestContracts

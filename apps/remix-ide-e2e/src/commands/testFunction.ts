@@ -1,9 +1,9 @@
 import { NightwatchBrowser, NightwatchTestFunctionExpectedInput } from 'nightwatch'
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
 const deepequal = require('deep-equal')
 
-export class TestFunction extends EventEmitter {
+class TestFunction extends EventEmitter {
   command (this: NightwatchBrowser, txHash: string, expectedValue: NightwatchTestFunctionExpectedInput): NightwatchBrowser {
     const browser = this.api
     const logs = {}
@@ -58,3 +58,5 @@ export class TestFunction extends EventEmitter {
     return this
   }
 }
+
+module.exports = TestFunction

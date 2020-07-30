@@ -1,8 +1,7 @@
 import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
-
-export class scrollAndClick extends EventEmitter {
+class scrollAndClick extends EventEmitter {
   command (this: NightwatchBrowser, target: string): NightwatchBrowser {
     this.api
     .scrollInto(target)
@@ -13,3 +12,5 @@ export class scrollAndClick extends EventEmitter {
     return this
   }
 }
+
+module.exports = scrollAndClick

@@ -1,8 +1,7 @@
 import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from "events"
 
-const EventEmitter = require('events')
-
-export class ClickInstance extends EventEmitter {
+class ClickInstance extends EventEmitter {
   command (this: NightwatchBrowser, index: number): NightwatchBrowser {
     index = index + 2
     const selector = '.instance:nth-of-type(' + index + ') > div > button'
@@ -11,3 +10,5 @@ export class ClickInstance extends EventEmitter {
     return this
   }
 }
+
+module.exports = ClickInstance
