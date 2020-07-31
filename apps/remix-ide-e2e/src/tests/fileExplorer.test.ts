@@ -76,7 +76,7 @@ module.exports = {
   },
 
   'Should publish all explorer files to github gist': function (browser: NightwatchBrowser) {
-    const runtimeBrowser = browser.capabilities.browserName
+    const runtimeBrowser = browser.options.desiredCapabilities.browserName
 
     browser
     .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')

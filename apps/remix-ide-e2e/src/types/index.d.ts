@@ -39,17 +39,16 @@ declare module "nightwatch" {
         testConstantFunction(address: string, fnFullName: string, expectedInput: NightwatchTestConstantFunctionExpectedInput | null, expectedOutput: string): NightwatchBrowser,
         getEditorValue(callback: (content: string) => void): NightwatchBrowser,
         getInstalledPlugins(cb: (plugins: string[]) => void): NightwatchBrowser,
-        verifyCallReturnValue(address: string, checks: string[]): NightwatchBrowser
+        verifyCallReturnValue(address: string, checks: string[]): NightwatchBrowser,
+        testEditorValue(testvalue: string): NightwatchBrowser,
+        removeFile(path: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
         api: this,
         emit: (status: string) => void,
         fullscreenWindow: (result?: any) => this,
-        keys(keysToSend: string, callback?: (this: NightwatchAPI, result: NightwatchCallbackResult<void>) => void): NightwatchBrowser,
-        capabilities: {
-            browserName: string
-        }
+        keys(keysToSend: string, callback?: (this: NightwatchAPI, result: NightwatchCallbackResult<void>) => void): NightwatchBrowser
     }
 
     export interface NightwatchContractContent {
