@@ -1,5 +1,5 @@
 import { NightwatchBrowser } from 'nightwatch'
-import EventEmitter from "events"
+import EventEmitter from 'events'
 
 class OpenFile extends EventEmitter {
   command (this: NightwatchBrowser, name: string) {
