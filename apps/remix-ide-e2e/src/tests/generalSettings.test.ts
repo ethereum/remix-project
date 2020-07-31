@@ -1,8 +1,7 @@
 'use strict'
 import { NightwatchBrowser } from "nightwatch"
-
-const init = require('../helpers/init')
-const sauce = require('./sauce')
+import init from '../helpers/init'
+import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
