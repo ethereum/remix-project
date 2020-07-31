@@ -1,9 +1,9 @@
 'use strict'
 import { NightwatchBrowser } from "nightwatch"
+import init from '../helpers/init'
+import sauce from './sauce'
+import * as path from 'path'
 
-const init = require('../helpers/init')
-const sauce = require('./sauce')
-const path = require('path')
 const testData = {
   testFile1: path.resolve(__dirname + '/editor.test.js'), // eslint-disable-line
   testFile2: path.resolve(__dirname + '/fileExplorer.test.js'), // eslint-disable-line

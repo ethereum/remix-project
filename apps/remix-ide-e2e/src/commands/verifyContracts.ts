@@ -13,7 +13,7 @@ class VerifyContracts extends EventEmitter {
   }
 }
 
-function getCompiledContracts (browser: NightwatchBrowser, opts: NightwatchVerifyContractOpts, callback: CallableFunction) {
+function getCompiledContracts (browser: NightwatchBrowser, opts: NightwatchVerifyContractOpts, callback: (result: NightwatchCallbackResult<any>) => void) {
   browser
   .clickLaunchIcon('solidity')
   .pause(opts.wait)
