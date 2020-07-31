@@ -29,7 +29,8 @@ declare module "nightwatch" {
         openFile(name: string): NightwatchBrowser,
         editorScroll(direction: 'up' | 'down', numberOfTimes: number): NightwatchBrowser,
         renameFile(path: string, newFileName: string, renamedPath: string): NightwatchBrowser,
-        rightClick(cssSelector: string): NightwatchBrowser
+        rightClick(cssSelector: string): NightwatchBrowser,
+        waitForElementContainsText(id: string, value: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
