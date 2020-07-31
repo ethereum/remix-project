@@ -3,6 +3,7 @@
     "compilerOptions": {
       "types": ["node", "nightwatch"],
       "esModuleInterop": true,
+      "strict": true
     },
     "include": ["**/*.ts", "**/*.js"]
 }
