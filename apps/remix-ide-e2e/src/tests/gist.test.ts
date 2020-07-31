@@ -21,7 +21,7 @@ module.exports = {
        - switch to a file in the new gist
       */
     console.log('token', process.env.gist_token)
-    const runtimeBrowser = browser.capabilities.browserName
+    const runtimeBrowser = browser.options.desiredCapabilities.browserName
 
     browser
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)

@@ -17,7 +17,7 @@ module.exports = {
   },
 
   'Should open gitter channel in a new tab when `Gitter Channel Button` is clicked': function (browser: NightwatchBrowser) {
-    const runtimeBrowser = browser.capabilities.browserName
+    const runtimeBrowser = browser.options.desiredCapabilities.browserName
 
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
     .waitForElementVisible('*[data-id="settingsTabGitterChannelButton"]', 5000)
