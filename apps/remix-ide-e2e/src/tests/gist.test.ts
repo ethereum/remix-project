@@ -1,8 +1,8 @@
 'use strict'
 import { NightwatchBrowser } from "nightwatch"
+import init from '../helpers/init'
+import sauce from './sauce'
 
-const init = require('../helpers/init')
-const sauce = require('./sauce')
 const testData = {
   validGistId: '1859c97c6e1efc91047d725d5225888e',
   invalidGistId: '6368b389f9302v32902msk2402'
