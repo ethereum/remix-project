@@ -11,7 +11,7 @@ declare module "nightwatch" {
         testContracts(fileName: string, contractCode: NightwatchContractContent, compiledContractNames: string[]): NightwatchBrowser,
         setEditorValue(value: string, callback?: () => void): NightwatchBrowser,
         addFile(name: string, content: NightwatchContractContent): NightwatchBrowser,
-        verifyContracts(compiledContractNames: string[]): NightwatchBrowser,
+        verifyContracts(compiledContractNames: string[], opts?: { wait: number, version: string }): NightwatchBrowser,
         selectAccount(account?: string): NightwatchBrowser,
         clickFunction(fnFullName: string, expectedInput?: NightwatchClickFunctionExpectedInput): NightwatchBrowser,
         testFunction(txHash: string, expectedInput: NightwatchTestFunctionExpectedInput): NightwatchBrowser,
@@ -21,7 +21,10 @@ declare module "nightwatch" {
         modalFooterOKClick(): NightwatchBrowser,
         clickInstance(index: number): NightwatchBrowser,
         journalLastChildIncludes(val: string): NightwatchBrowser,
-        executeScript(script: string): NightwatchBrowser
+        executeScript(script: string): NightwatchBrowser,
+        clearEditableContent(cssSelector: string): NightwatchBrowser,
+        journalChildIncludes(val: string): NightwatchBrowser,
+        debugTransaction(index: number): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {

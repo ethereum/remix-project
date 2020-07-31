@@ -9,6 +9,5 @@
         }
       }
     ],
-    "extends": ["../../.eslintrc"],
     "ignorePatterns": ["!**/*"]
 }
