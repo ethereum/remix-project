@@ -24,7 +24,9 @@ declare module "nightwatch" {
         executeScript(script: string): NightwatchBrowser,
         clearEditableContent(cssSelector: string): NightwatchBrowser,
         journalChildIncludes(val: string): NightwatchBrowser,
-        debugTransaction(index: number): NightwatchBrowser
+        debugTransaction(index: number): NightwatchBrowser,
+        checkElementStyle(cssSelector: string, styleProperty: string, expectedResult: string): NightwatchBrowser,
+        openFile(name: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
