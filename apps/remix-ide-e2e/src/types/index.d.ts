@@ -43,7 +43,8 @@ declare module "nightwatch" {
         testEditorValue(testvalue: string): NightwatchBrowser,
         removeFile(path: string): NightwatchBrowser,
         switchBrowserWindow(url: string, windowName: string, cb: (browser: NightwatchBrowser, window?: NightwatchCallbackResult<Window>) => void): NightwatchBrowser,
-        setupMetamask(passphrase: string, password: string): NightwatchBrowser
+        setupMetamask(passphrase: string, password: string): NightwatchBrowser,
+        signMessage(msg: string, callback: (hash: { value: string }, signature: { value: string }) => void): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
