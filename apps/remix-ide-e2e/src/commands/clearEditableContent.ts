@@ -13,7 +13,7 @@ class clearEditablecontent extends EventEmitter {
   }
 }
 
-function clearContent (browser, cssSelector, callback) {
+function clearContent (browser: NightwatchBrowser, cssSelector: string, callback: VoidFunction) {
   browser.execute(function (cssSelector) {
     const selection = window.getSelection()
     const range = document.createRange()
