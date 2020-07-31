@@ -38,7 +38,8 @@ declare module "nightwatch" {
         getAddressAtPosition(index: number, cb: (pos: string) => void): NightwatchBrowser,
         testConstantFunction(address: string, fnFullName: string, expectedInput: NightwatchTestConstantFunctionExpectedInput | null, expectedOutput: string): NightwatchBrowser,
         getEditorValue(callback: (content: string) => void): NightwatchBrowser,
-        getInstalledPlugins(cb: (plugins: string[]) => void): NightwatchBrowser
+        getInstalledPlugins(cb: (plugins: string[]) => void): NightwatchBrowser,
+        verifyCallReturnValue(address: string, checks: string[]): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
