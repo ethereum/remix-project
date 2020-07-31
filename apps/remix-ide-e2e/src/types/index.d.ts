@@ -37,13 +37,15 @@ declare module "nightwatch" {
         createContract(inputParams: string): NightwatchBrowser,
         getAddressAtPosition(index: number, cb: (pos: string) => void): NightwatchBrowser,
         testConstantFunction(address: string, fnFullName: string, expectedInput: NightwatchTestConstantFunctionExpectedInput | null, expectedOutput: string): NightwatchBrowser,
-        getEditorValue(callback: (content: string) => void): NightwatchBrowser
+        getEditorValue(callback: (content: string) => void): NightwatchBrowser,
+        getInstalledPlugins(cb: (plugins: string[]) => void): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
         api: this,
         emit: (status: string) => void,
         fullscreenWindow: (result?: any) => this,
+        keys(keysToSend: string, callback?: (this: NightwatchAPI, result: NightwatchCallbackResult<void>) => void): NightwatchBrowser,
         capabilities: {
             browserName: string
         }
