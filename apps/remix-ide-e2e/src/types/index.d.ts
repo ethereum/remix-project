@@ -50,7 +50,8 @@ declare module "nightwatch" {
         notContainsText(cssSelector: string, text: string): NightwatchBrowser,
         sendLowLevelTx(address: string, value: string, callData: string): NightwatchBrowser,
         journalLastChild(val: string): NightwatchBrowser,
-        checkTerminalFilter(filter: string, test: string): NightwatchBrowser
+        checkTerminalFilter(filter: string, test: string): NightwatchBrowser,
+        noWorkerErrorFor(version: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
