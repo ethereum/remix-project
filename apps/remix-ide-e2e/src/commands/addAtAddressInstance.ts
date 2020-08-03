@@ -3,7 +3,7 @@ import EventEmitter from "events"
 
 class addAtAddressInstance extends EventEmitter {
   command (this: NightwatchBrowser, address: string, isValidFormat: boolean, isValidChecksum: boolean): NightwatchBrowser {
-    this.api.perform((done) => {
+    this.api.perform((done: VoidFunction) => {
       addInstance(this.api, address, isValidFormat, isValidChecksum, () => {
         done()
         this.emit('complete')
