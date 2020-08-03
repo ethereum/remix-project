@@ -1,6 +1,5 @@
-import { NightwatchBrowser } from "nightwatch"
-
-const EventEmitter = require('events')
+import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from "events"
 
 /*
   Checks if any child elements of journal (console) contains a matching value.
