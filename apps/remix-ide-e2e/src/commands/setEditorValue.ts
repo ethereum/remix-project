@@ -1,5 +1,5 @@
 import { NightwatchBrowser } from 'nightwatch'
-import EventEmitter from "events"
+import EventEmitter from 'events'
 
 class SetEditorValue extends EventEmitter {
   command (this: NightwatchBrowser, value: string, callback?: VoidFunction): NightwatchBrowser {
