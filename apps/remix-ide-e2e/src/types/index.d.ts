@@ -49,7 +49,8 @@ declare module "nightwatch" {
         clickElementAtPosition(cssSelector: string, index: number): NightwatchBrowser,
         notContainsText(cssSelector: string, text: string): NightwatchBrowser,
         sendLowLevelTx(address: string, value: string, callData: string): NightwatchBrowser,
-        journalLastChild(val: string): NightwatchBrowser
+        journalLastChild(val: string): NightwatchBrowser,
+        checkTerminalFilter(filter: string, test: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
