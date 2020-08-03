@@ -48,14 +48,16 @@ declare module "nightwatch" {
         setSolidityCompilerVersion(version: string): NightwatchBrowser,
         clickElementAtPosition(cssSelector: string, index: number): NightwatchBrowser,
         notContainsText(cssSelector: string, text: string): NightwatchBrowser,
-        sendLowLevelTx(address: string, value: string, callData: string): NightwatchBrowser
+        sendLowLevelTx(address: string, value: string, callData: string): NightwatchBrowser,
+        journalLastChild(val: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
         api: this,
         emit: (status: string) => void,
         fullscreenWindow: (result?: any) => this,
-        keys(keysToSend: string, callback?: (this: NightwatchAPI, result: NightwatchCallbackResult<void>) => void): NightwatchBrowser
+        keys(keysToSend: string, callback?: (this: NightwatchAPI, result: NightwatchCallbackResult<void>) => void): NightwatchBrowser,
+        sendKeys: (selector: string, inputValue: string | string[], callback?: (this: NightwatchAPI, result: NightwatchCallbackResult<void>) => void) => NightwatchBrowser
     }
 
     export interface NightwatchContractContent {
