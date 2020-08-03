@@ -1,7 +1,7 @@
 'use strict'
+import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import sauce from './sauce'
-import { NightwatchBrowser } from 'nightwatch'
 
 const sources = [
   {'browser/basic.sol': { content:
