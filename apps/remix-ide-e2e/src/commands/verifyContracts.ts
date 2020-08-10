@@ -1,4 +1,4 @@
-import { NightwatchBrowser, NightwatchVerifyContractOpts, NightwatchCallbackResult } from 'nightwatch'
+import { NightwatchBrowser, NightwatchCallbackResult } from 'nightwatch'
 import EventEmitter from "events"
 
 class VerifyContracts extends EventEmitter {
@@ -13,7 +13,7 @@ class VerifyContracts extends EventEmitter {
   }
 }
 
-function getCompiledContracts (browser: NightwatchBrowser, opts: NightwatchVerifyContractOpts, callback: (result: NightwatchCallbackResult<any>) => void) {
+function getCompiledContracts (browser: NightwatchBrowser, opts: { wait: number, version?: string }, callback: (result: NightwatchCallbackResult<any>) => void) {
   browser
   .clickLaunchIcon('solidity')
   .pause(opts.wait)
@@ -48,7 +48,7 @@ function getCompiledContracts (browser: NightwatchBrowser, opts: NightwatchVerif
   })
 }
 
-function verifyContracts (browser: NightwatchBrowser, compiledContractNames: string[], opts: NightwatchVerifyContractOpts, callback: VoidFunction) {
+function verifyContracts (browser: NightwatchBrowser, compiledContractNames: string[], opts: { wait: number, version?: string }, callback: VoidFunction) {
   getCompiledContracts(browser, opts, (result: NightwatchCallbackResult<any>) => {
     if (result.value) {
       for (const contract in compiledContractNames) {
