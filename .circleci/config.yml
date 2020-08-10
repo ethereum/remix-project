@@ -213,6 +213,7 @@ jobs:
       - run: npm run downloadsolc_root
       - run: npm run build
       - run: ./apps/remix-ide/ci/build_and_publish_docker_images.sh
+      - run: ./apps/remix-ide/ci/publishIpfs
 
   deploy-remix-alpha:
     docker:
