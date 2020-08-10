@@ -60,10 +60,10 @@ jobs:
             java -version
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
       - store_test_results:
@@ -97,10 +97,10 @@ jobs:
       - run: npm run build
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
           background: true
       - run:
           name: Download Latest Firefox
@@ -147,10 +147,10 @@ jobs:
             java -version
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_artifacts:
