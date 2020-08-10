@@ -11,8 +11,9 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
       if (preloadPlugins) {
         initModules(browser, () => {
           browser.clickLaunchIcon('solidity')
-          .waitForElementPresent('[for="autoCompile"]')
+          .waitForElementVisible('[for="autoCompile"]')
           .click('[for="autoCompile"]')
+          .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
         })
       }
     })
