@@ -181,16 +181,6 @@ To run the Selenium tests via Nightwatch:
 **note that this token should have permission to create a gist.**
 
 
-## Usage as a Chrome Extension
-
-If you would like to use this as a Chrome extension, you must either build it first or pull from the `gh-pages` branch, both described above.
-After that, follow these steps:
-
-- Browse to `chrome://extensions/`
-- Make sure 'Developer mode' has been checked
-- Click 'Load unpacked extension...' to pop up a file-selection dialog
-- Select your `remix-ide` folder
-
 ## Documentation
 
 To see details about how to use Remix for developing and/or debugging Solidity contracts, please see [our documentation page](https://remix-ide.readthedocs.io/en/latest/)
