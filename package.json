@@ -27,7 +27,7 @@
     "build": "nx build",
     "test": "nx test",
     "lint": "nx lint",
-    "e2e": "nx e2e",
+    "e2e": "nx e2e remix-ide-e2e",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",
     "affected:build": "nx affected:build",
