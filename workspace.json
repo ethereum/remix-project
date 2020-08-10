@@ -96,11 +96,19 @@
       "sourceRoot": "apps/remix-ide-e2e/src",
       "projectType": "application",
       "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+              "commands": [
+                "node_modules/.bin/tsc -p apps/remix-ide-e2e/tsconfig.e2e.json"
+              ]
+          }
+        },
         "e2e": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
               "commands": [
-                "TEST_SCRIPT='node_modules/.bin/nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js'; if [ {args.env} != undefined ]; then TEST_SCRIPT=${TEST_SCRIPT}' --env {args.env}'; else TEST_SCRIPT=${TEST_SCRIPT}' --env chrome'; fi; if [ {args.filePath} != undefined ]; then TEST_SCRIPT=${TEST_SCRIPT}' {args.filePath}'; fi; echo $TEST_SCRIPT; node_modules/.bin/tsc -p apps/remix-ide-e2e/tsconfig.e2e.json; eval $TEST_SCRIPT;"
+                "TEST_SCRIPT='node_modules/.bin/nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js'; if [ {args.env} != undefined ]; then TEST_SCRIPT=${TEST_SCRIPT}' --env {args.env}'; else TEST_SCRIPT=${TEST_SCRIPT}' --env chrome'; fi; if [ {args.filePath} != undefined ]; then TEST_SCRIPT=${TEST_SCRIPT}' {args.filePath}'; fi; echo $TEST_SCRIPT; eval $TEST_SCRIPT;"
               ],
               "parallel": false
           }
