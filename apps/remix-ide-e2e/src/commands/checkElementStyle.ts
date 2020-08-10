@@ -20,7 +20,7 @@ function checkStyle (browser: NightwatchBrowser, cssSelector: string, stylePrope
     const value = result.value
 
     if (typeof value === 'string') {
-      browser.assert.equal(value.trim(), expectedResult)
+      browser.assert.equal(value.trim().toLowerCase(), expectedResult.toLowerCase())
     } else {
       browser.assert.fail('Failed with error info :', result.value.toString())
     }
