@@ -18,7 +18,7 @@ function checkStyle (browser, cssSelector, styleProperty, expectedResult, callba
   }, [cssSelector, styleProperty], function (result) {
     const value = result.value
 
-    browser.assert.equal(value.trim(), expectedResult)
+    browser.assert.equal(value.trim().toLowerCase(), expectedResult.toLowerCase())
     callback()
   })
 }
