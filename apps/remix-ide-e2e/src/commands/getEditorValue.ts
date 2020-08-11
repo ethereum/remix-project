@@ -10,7 +10,7 @@ class GetEditorValue extends EventEmitter {
         elem.editor.getValue()
       }, [], (result) => {
         done()
-        callback(typeof result.value === 'string' ? result.value : '')
+        typeof result.value === 'string' && callback(result.value)
         this.emit('complete')
       })
     })
