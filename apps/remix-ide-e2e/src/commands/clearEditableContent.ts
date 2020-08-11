@@ -2,7 +2,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class clearEditablecontent extends EventEmitter {
-  command (this: NightwatchBrowser, cssSelector): NightwatchBrowser {
+  command (this: NightwatchBrowser, cssSelector: string): NightwatchBrowser {
     this.api.perform((done) => {
       clearContent(this.api, cssSelector, () => {
         done()
