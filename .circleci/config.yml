@@ -189,7 +189,7 @@ jobs:
       - store_artifacts:
           path: ./apps/remix-ide/reports/screenshots
 
-  publish-docker:
+  publish:
     docker:
       # specify the version you desire here
       - image: circleci/node:10.19.0-buster
@@ -213,6 +213,7 @@ jobs:
       - run: npm run downloadsolc_root
       - run: npm run build
       - run: ./apps/remix-ide/ci/build_and_publish_docker_images.sh
+      - run: ./apps/remix-ide/ci/publishIpfs
 
   deploy-remix-alpha:
     docker:
@@ -260,7 +261,7 @@ workflows:
       - remix-ide-run-deploy:          
           requires:
             - remix-libs
-      - publish-docker:
+      - publish:
           requires:
             - remix-ide-chrome
             - remix-ide-firefox
