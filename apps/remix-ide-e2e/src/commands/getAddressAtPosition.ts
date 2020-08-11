@@ -4,7 +4,7 @@ import EventEmitter from "events"
 class GetAddressAtPosition extends EventEmitter {
   command (this: NightwatchBrowser, index: number, cb: (pos: string) => void): NightwatchBrowser {
     this.api.perform((done) => {
-      getAddressAtPosition(this.api, index, (pos) => {
+      getAddressAtPosition(this.api, index, (pos: string) => {
         done()
         cb(pos)
         this.emit('complete')
@@ -14,7 +14,7 @@ class GetAddressAtPosition extends EventEmitter {
   }
 }
 
-function getAddressAtPosition (browser: NightwatchBrowser, index: number, callback: (pos: string) => void) {
+function getAddressAtPosition (browser: NightwatchBrowser, index: number, callback: (pos: any) => void) {
   browser.waitForElementPresent('*[data-shared="universalDappUiInstance"]')
   .execute(function (index) {
     const deployedContracts = document.querySelectorAll('*[data-shared="universalDappUiInstance"]')
@@ -22,9 +22,7 @@ function getAddressAtPosition (browser: NightwatchBrowser, index: number, callba
 
     return id.replace('instance', '')
   }, [index], function (result) {
-    const pos = typeof result.value === 'string' ? result.value : null
-
-    callback(pos)
+    callback(result.value)
   })
 }
 
