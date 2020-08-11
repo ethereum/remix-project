@@ -22,7 +22,9 @@ function getAddressAtPosition (browser: NightwatchBrowser, index: number, callba
 
     return id.replace('instance', '')
   }, [index], function (result) {
-    typeof result.value === 'string' && callback(result.value)
+    const pos = typeof result.value === 'string' ? result.value : null
+
+    callback(pos)
   })
 }
 

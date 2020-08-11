@@ -44,7 +44,7 @@ module.exports = {
     .clickLaunchIcon('fileExplorers')
     .openFile('browser/1_Storage.sol')
     .clickLaunchIcon('udapp')
-    .waitForElementVisible('*[data-id="contractDropdownIpfsCheckbox"]')
+    .waitForElementPresent('*[data-id="contractDropdownIpfsCheckbox"]')
     .click('*[data-id="contractDropdownIpfsCheckbox"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
     .pause(5000)
@@ -57,7 +57,7 @@ module.exports = {
     .refresh()
     .openFile('browser/1_Storage.sol')
     .clickLaunchIcon('udapp')
-    .waitForElementVisible('*[data-id="contractDropdownIpfsCheckbox"]')
+    .waitForElementPresent('*[data-id="contractDropdownIpfsCheckbox"]')
     .verify.elementPresent('*[data-id="contractDropdownIpfsCheckbox"]:checked')
     .end()
   },
