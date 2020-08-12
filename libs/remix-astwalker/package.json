@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-astwalker",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "Tool to walk through Solidity AST",
   "main": "./index.js",
   "scripts": {
