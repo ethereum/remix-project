@@ -1,6 +1,6 @@
 'use strict'
 const tape = require('tape')
-const AstWalker = require('../src/astWalker')
+const AstWalker = require('../src/source/astWalker')
 const node = require('./resources/ast')
 
 tape('ASTWalker', function (t) {

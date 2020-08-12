@@ -1,7 +1,7 @@
 'use strict'
 var yo = require('yo-yo')
 var async = require('async')
-var remixLib = require('@remix-project/remix-lib')
+var remixDebug = require('@remix-project/remix-debug')
 var EventManager = require('../lib/events')
 
 var CompilerImport = require('../app/compiler/compiler-imports')
@@ -116,7 +116,7 @@ class CmdInterpreterAPI {
       }
       self.d.goTo = (row) => {
         if (self._deps.editor.current()) {
-          var breakPoint = new remixLib.code.BreakpointManager(self.d, (sourceLocation) => {
+          var breakPoint = new remixDebug.BreakpointManager(self.d, (sourceLocation) => {
             return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file,
               self._deps.compilersArtefacts['__last'].getSourceCode().sources,
               self._deps.compilersArtefacts['__last'].getAsts())

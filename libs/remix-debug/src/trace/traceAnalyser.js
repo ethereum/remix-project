@@ -1,5 +1,5 @@
 'use strict'
-const traceHelper = require('../helpers/traceHelper')
+const traceHelper = require('./traceHelper')
 
 function TraceAnalyser (_cache) {
   this.traceCache = _cache

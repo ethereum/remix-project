@@ -1,6 +1,8 @@
 var tape = require('tape')
 var remixLib = require('@remix-project/remix-lib')
-var compilerInput = remixLib.helpers.compiler.compilerInput
+var compilerInput = require('./helpers/compilerHelper').compilerInput
+var SourceMappingDecoder = require('../src/source/sourceMappingDecoder')
+
 var vmCall = require('./vmCall')
 var Debugger = require('../src/Ethdebugger')
 var compiler = require('solc')
@@ -146,7 +148,7 @@ contract Ballot {
 }
 `
 
-var BreakpointManager = remixLib.code.BreakpointManager
+var BreakpointManager = require('../src/code/breakpointManager')
 
 var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
 var vm = vmCall.initVM(privateKey)
@@ -270,7 +272,7 @@ function testDebugging (debugManager) {
 
   tape('breakPointManager', (t) => {
     t.plan(2)
-    var sourceMappingDecoder = new remixLib.SourceMappingDecoder()
+    var sourceMappingDecoder = new SourceMappingDecoder()
     var breakPointManager = new BreakpointManager(debugManager, (rawLocation) => {
       return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
     })

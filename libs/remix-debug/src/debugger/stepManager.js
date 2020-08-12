@@ -1,5 +1,5 @@
 const remixLib = require('@remix-project/remix-lib')
-const EventManager = remixLib.EventManager
+const EventManager = require('../eventManager')
 const util = remixLib.util
 
 class DebuggerStepManager {

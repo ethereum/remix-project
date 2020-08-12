@@ -1,7 +1,8 @@
 'use strict'
 
 const parseCode = require('./codeUtils').parseCode
-const util = require('../util')
+const remixLib = require('@remix-project/remix-lib')
+const util = remixLib.util
 
 const createExpressions = function (instructions) {
   const expressions = []

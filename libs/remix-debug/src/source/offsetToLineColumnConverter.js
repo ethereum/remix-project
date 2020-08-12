@@ -4,10 +4,9 @@ const SourceMappingDecoder = require('./sourceMappingDecoder')
 function offsetToColumnConverter (compilerEvent) {
   this.lineBreakPositionsByContent = {}
   this.sourceMappingDecoder = new SourceMappingDecoder()
-  var self = this
   if (compilerEvent) {
     compilerEvent.register('compilationFinished', (success, data, source) => {
-      self.clear()
+      this.clear()
     })
   }
 }
