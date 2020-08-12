@@ -1,7 +1,7 @@
 'use strict'
 
 const EventManager = require('../eventManager')
-const helper = require('../helpers/traceHelper')
+const helper = require('../trace/traceHelper')
 
 /**
   * allow to manage breakpoint
@@ -21,7 +21,7 @@ class BreakpointManager {
     this.breakpoints = {}
     this.locationToRowConverter = _locationToRowConverter
     this.previousLine
-    this.jumpToCallback = _jumpToCallback || (() => {})
+    this.jumpToCallback = _jumpToCallback || (() => {}) // eslint-disable-line
   }
 
   /**

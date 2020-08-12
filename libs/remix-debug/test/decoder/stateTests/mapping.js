@@ -1,6 +1,5 @@
-var remixLib = require('@remix-project/remix-lib')
-var compilerInput = remixLib.helpers.compiler.compilerInput
-var TraceManager = remixLib.trace.TraceManager
+var compilerInput = require('../../helpers/compilerHelper').compilerInput
+var TraceManager = require('../../../src/trace/traceManager')
 
 var compiler = require('solc')
 var stateDecoder = require('../../../src/solidity-decoder/stateDecoder')

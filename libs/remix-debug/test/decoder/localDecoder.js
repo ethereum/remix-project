@@ -4,13 +4,12 @@ var compiler = require('solc')
 var intLocal = require('./contracts/intLocal')
 var miscLocal = require('./contracts/miscLocal')
 var structArrayLocal = require('./contracts/structArrayLocal')
-var remixLib = require('@remix-project/remix-lib')
 var vmCall = require('./vmCall')
 var intLocalTest = require('./localsTests/int')
 var miscLocalTest = require('./localsTests/misc')
 var misc2LocalTest = require('./localsTests/misc2')
 var structArrayLocalTest = require('./localsTests/structArray')
-var compilerInput = remixLib.helpers.compiler.compilerInput
+var compilerInput = require('../helpers/compilerHelper').compilerInput
 
 tape('solidity', function (t) {
   t.test('local decoder', function (st) {

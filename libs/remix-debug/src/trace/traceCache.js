@@ -1,5 +1,6 @@
 'use strict'
-const helper = require('../util')
+const remixLib = require('@remix-project/remix-lib')
+const helper = remixLib.util
 
 function TraceCache () {
   this.init()

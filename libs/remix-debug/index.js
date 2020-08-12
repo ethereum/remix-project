@@ -1,4 +1,5 @@
 'use strict'
+const init = require('./src/init')
 const EthDebugger = require('./src/Ethdebugger')
 const TransactionDebugger = require('./src/debugger/debugger')
 const CmdLine = require('./src/cmdline')
@@ -8,8 +9,12 @@ const StorageResolver = require('./src/storage/storageResolver')
 
 const SolidityDecoder = require('./src/solidity-decoder')
 
-const remixLib = require('@remix-project/remix-lib')
-const BreakpointManager = remixLib.code.BreakpointManager
+const BreakpointManager = require('./src/code/breakpointManager')
+
+const SourceMappingDecoder = require('./src/source/sourceMappingDecoder')
+const AstWalker = require('./src/source/astWalker')
+
+const traceHelper = require('./src/trace/traceHelper')
 
 /*
   Use of breakPointManager :
@@ -20,6 +25,10 @@ const BreakpointManager = remixLib.code.BreakpointManager
   this.debugger.setBreakpointManager(breakPointManager)
 */
 module.exports = {
+  init,
+  traceHelper,
+  SourceMappingDecoder,
+  AstWalker,
   EthDebugger: EthDebugger,
   TransactionDebugger: TransactionDebugger,
   /**
@@ -36,4 +45,3 @@ module.exports = {
   },
   CmdLine: CmdLine
 }
-

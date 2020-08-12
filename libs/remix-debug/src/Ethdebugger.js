@@ -1,15 +1,14 @@
 'use strict'
 
-const remixLib = require('@remix-project/remix-lib')
-const TraceManager = remixLib.trace.TraceManager
-const CodeManager = remixLib.code.CodeManager
-const traceHelper = remixLib.helpers.trace
-const EventManager = remixLib.EventManager
-
-const {SolidityProxy, stateDecoder, localDecoder, InternalCallTree} = require('./solidity-decoder')
-
 const StorageViewer = require('./storage/storageViewer')
 const StorageResolver = require('./storage/storageResolver')
+
+const TraceManager = require('./trace/traceManager')
+const CodeManager = require('./code/codeManager')
+const traceHelper = require('./trace/traceHelper')
+const EventManager = require('./eventManager')
+
+const {SolidityProxy, stateDecoder, localDecoder, InternalCallTree} = require('./solidity-decoder')
 
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction

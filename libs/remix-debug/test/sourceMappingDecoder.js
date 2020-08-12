@@ -1,9 +1,9 @@
 'use strict'
 const tape = require('tape')
 const sourceMapping = require('./resources/sourceMapping')
-const SourceMappingDecoder = require('../src/sourceMappingDecoder')
+const SourceMappingDecoder = require('../src/source/sourceMappingDecoder')
 const compiler = require('solc')
-const compilerInput = require('../src/helpers/compilerHelper').compilerInput
+const compilerInput = require('./helpers/compilerHelper').compilerInput
 
 tape('SourceMappingDecoder', function (t) {
   t.test('SourceMappingDecoder.findNodeAtInstructionIndex', function (st) {

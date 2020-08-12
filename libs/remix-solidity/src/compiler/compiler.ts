@@ -3,7 +3,7 @@
 import { update } from 'solc/abi'
 import * as webworkify from 'webworkify-webpack'
 import compilerInput from './compiler-input'
-import { EventManager } from '../lib/eventManager'
+import EventManager from '../lib/eventManager'
 import { default as txHelper } from './txHelper';
 import { Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult, 
         visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError, 

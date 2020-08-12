@@ -3,8 +3,9 @@ const TraceAnalyser = require('./traceAnalyser')
 const TraceCache = require('./traceCache')
 const TraceStepManager = require('./traceStepManager')
 
-const traceHelper = require('../helpers/traceHelper')
-const util = require('../util')
+const traceHelper = require('./traceHelper')
+const remixLib = require('@remix-project/remix-lib')
+const util = remixLib.util
 
 function TraceManager (options) {
   this.web3 = options.web3
