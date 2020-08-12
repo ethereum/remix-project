@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+
+const ipfsClient = require('ipfs-http-client')
+console.log('current folder', process.cwd())
+const folder = process.cwd() + '/temp_publish_docker';
+
+(async () => {
+  const host = 'ipfs.komputing.org' // ethdev berlin ipfs node
+  const ipfs = ipfsClient({ host, port: 443, protocol: 'https' })
+  try {
+    let result = await ipfs.addFromFs(folder, { recursive: true, pin: false })
+    const remoteFolder = result[result.length - 1]
+    console.log('ipfs://' + remoteFolder.hash)
+    console.log('https://ipfsgw.komputing.org/ipfs/' + remoteFolder.hash)
+    console.log('https://gateway.ipfs.io/ipfs/' + remoteFolder.hash)
+  } catch (e) {
+    console.log(e)
+  }
+})()
