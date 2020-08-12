@@ -22,6 +22,9 @@
     "@remix-project/remix-astwalker": "0.0.24",
     "@remix-project/remix-lib": "0.4.29"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"

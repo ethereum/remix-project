@@ -7,6 +7,9 @@
     "build": "tsc",
     "test": "./../../node_modules/.bin/nyc --reporter=lcov --require ts-node/register --require tsconfig-paths/register ./../../node_modules/.bin/tape ./tests/*.ts | ./../../node_modules/.bin/tap-spec; ./../../node_modules/.bin/nyc report ---reporter=text"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ethereum/remix-project.git"

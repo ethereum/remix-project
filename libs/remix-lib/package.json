@@ -38,6 +38,9 @@
   "scripts": {
     "test": "./../../node_modules/.bin/tape ./test/tests.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ethereum/remix-project.git"
