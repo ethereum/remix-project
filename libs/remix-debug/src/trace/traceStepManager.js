@@ -1,7 +1,8 @@
 'use strict'
 
-const traceHelper = require('../helpers/traceHelper')
-const util = require('../util')
+const traceHelper = require('./traceHelper')
+const remixLib = require('@remix-project/remix-lib')
+const util = remixLib.util
 
 function TraceStepManager (_traceAnalyser) {
   this.traceAnalyser = _traceAnalyser

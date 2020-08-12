@@ -1,5 +1,5 @@
 const yo = require('yo-yo')
-const remixLib = require('@remix-project/remix-lib')
+const remixDebug = require('@remix-project/remix-debug')
 const css = require('./styles/debugger-tab-styles')
 import toaster from '../ui/tooltip'
 const DebuggerUI = require('./debugger/debuggerUI')
@@ -59,7 +59,7 @@ class DebuggerTab extends ViewPlugin {
       this,
       this.el.querySelector('#debugger'),
       (address, receipt) => {
-        const target = (address && remixLib.helpers.trace.isContractCreation(address)) ? receipt.contractAddress : address
+        const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
         return this.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', this.blockchain.web3())
       }
     )

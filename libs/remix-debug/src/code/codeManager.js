@@ -1,8 +1,8 @@
 'use strict'
 
 const EventManager = require('../eventManager')
-const traceHelper = require('../helpers/traceHelper')
-const SourceMappingDecoder = require('../sourceMappingDecoder')
+const traceHelper = require('../trace/traceHelper')
+const SourceMappingDecoder = require('../source/sourceMappingDecoder')
 const CodeResolver = require('./codeResolver')
 
 /*

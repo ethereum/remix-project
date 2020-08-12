@@ -1,8 +1,9 @@
 'use strict'
-const EventManager = require('./eventManager')
-const helper = require('./helpers/traceHelper')
+const EventManager = require('../eventManager')
+const helper = require('../trace/traceHelper')
 const SourceMappingDecoder = require('./sourceMappingDecoder')
-const util = require('./util')
+const remixLib = require('@remix-project/remix-lib')
+const util = remixLib.util
 
 /**
  * Process the source code location for the current executing bytecode
