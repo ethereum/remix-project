@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-debug",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Tool to debug Ethereum transactions",
   "contributors": [
     {
@@ -38,6 +38,9 @@
   },
   "scripts": {
     "test": "./../../node_modules/.bin/tape --require tsconfig-paths/register ./test/tests.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "repository": {
     "type": "git",
