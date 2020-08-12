@@ -249,9 +249,13 @@ export class LandingPage extends ViewPlugin {
           </div>
           <div class="file">
             <h4>File</h4>
-            <p class="mb-1 ${css.text}" onclick=${() => createNewFile()}>New File</p>
             <p class="mb-1">
-              <p class="${css.labelIt} ${css.text}">
+              <i class="mr-1 far fa-file"></i>
+              <span class="mb-1 ${css.text}" onclick=${() => createNewFile()}>New File</span>
+            </p>
+            <p class="mb-1">
+              <i class="mr-1 far fa-file-alt"></i>
+              <span class="${css.labelIt} ${css.text}">
                 Open Files
                 <input title="open file" type="file" onchange="${
                   (event) => {
@@ -260,9 +264,12 @@ export class LandingPage extends ViewPlugin {
                     fileExplorer.uploadFile(event)
                   }
                 }" multiple />
-              </p>
+              </span>
             </p>
-            <p class="mb-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</p>
+            <p class="mb-1">
+              <i class="far fa-hdd"></i>
+              <span class="${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
+            </p>
             <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
             <div class="btn-group">
               <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
@@ -287,10 +294,18 @@ export class LandingPage extends ViewPlugin {
           </div>
           <div class="resources">
             <h4>Resources</h4>
-            <p class="mb-1"><a class="${css.text}" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/#">Documentation</a></p>
-            <p class="mb-1"><a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a></p>
-            <p class="mb-1"><a class="${css.text}" target="__blank" href="https://medium.com/remix-ide">Medium Posts</a></p>
-            <p class="mb-1"><a class="${css.text}" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/">Tutorials</a></p>
+            <p class="mb-1">
+              <i class="mr-1 fas fa-book"></i>
+              <a class="${css.text}" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/#">Documentation</a>
+            </p>
+            <p class="mb-1">
+              <i class="mr-1 fab fa-gitter"></i>
+              <a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
+              </p>
+            <p class="mb-1">
+              <i class="mr-1 fab fa-medium"></i>
+              <a class="${css.text}" target="__blank" href="https://medium.com/remix-ide">Medium Posts</a>
+            </p>
           </div>
         </div><!-- end of #col2 -->
       </div><!-- end of hpSections -->
