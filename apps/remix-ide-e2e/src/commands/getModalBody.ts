@@ -6,7 +6,9 @@ class GetModalBody extends EventEmitter {
     this.api.waitForElementVisible('.modal-body')
     .getText('.modal-body', (result) => {
       console.log(result)
-      typeof result.value === 'string' && callback(result.value, () => {
+      const value = typeof result.value === 'string' ? result.value : null
+
+      callback(value, () => {
         this.emit('complete')
       })
     })

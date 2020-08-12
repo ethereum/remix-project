@@ -7,10 +7,12 @@ class GetEditorValue extends EventEmitter {
       this.api.execute(function () {
         const elem: any =  document.getElementById('input')
 
-        elem.editor.getValue()
+        return elem.editor.getValue()
       }, [], (result) => {
         done()
-        typeof result.value === 'string' && callback(result.value)
+        const value = typeof result.value === 'string' ? result.value : null
+
+        callback(value)
         this.emit('complete')
       })
     })
