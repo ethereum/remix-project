@@ -5,7 +5,7 @@ const metamaskExtension = Buffer.from(crxFile).toString('base64')
 
 module.exports = {
   'src_folders': ['dist/apps/remix-ide-e2e/src/tests'],
-  'output_folder': 'dist/apps/remix-ide-e2e/src/reports',
+  'output_folder': 'apps/remix-ide-e2e/src/reports/tests',
   'custom_commands_path': ['dist/apps/remix-ide-e2e/src/commands'],
   'custom_assertions_path': '',
   'page_objects_path': '',
@@ -21,7 +21,7 @@ module.exports = {
       },
       'screenshots': {
         'enabled': true,
-        'path': 'dist/apps/remix-ide-e2e/reports/screenshots',
+        'path': 'apps/remix-ide-e2e/src/reports/screenshots',
         'on_failure': true,
         'on_error': true
       },
@@ -30,7 +30,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true
       },
-      'exclude': ['dist/apps/remix-ide-e2e/test-browser/tests/runAndDeploy.js']
+      'exclude': ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.js']
     },
 
     'chrome': {
