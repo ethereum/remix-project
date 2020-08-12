@@ -23,7 +23,7 @@ sleep 5
 
 npx nx build remix-ide-e2e
 
-TESTFILES=$(circleci tests glob "./apps/remix-ide/test-browser/tests/**/*.test.js" | circleci tests split --split-by=timings)
+TESTFILES=$(circleci tests glob "dist/apps/remix-ide-e2e/src/tests/**/*.test.js" | circleci tests split --split-by=timings)
 for TESTFILE in $TESTFILES; do
     npx nx e2e remix-ide-e2e --filePath=$TESTFILE --env=firefox  || TEST_EXITCODE=1
 done
