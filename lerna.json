@@ -1,23 +1,10 @@
 {
-  "lerna": "2.10.2",
-  "packages": [
-    "remix-debug",
-    "remix-lib",
-    "remix-solidity",
-    "remix-analyzer",
-    "remix-tests",
-    "remix-simulator",
-    "remix-url-resolver",
-    "remix-astwalker"
-  ],
+  "packages": ["dist/libs/**/*"],
+  "version": "independent",
   "command": {
-    "init": {
-      "exact": true
-    },
     "publish": {
-      "exact": true,
-      "skipGit": true
+      "ignoreChanges": ["ignored-file", "*.md"],
+      "message": "remix-libs(release): publish version"
     }
-  },
-  "version": "independent"
+  }
 }

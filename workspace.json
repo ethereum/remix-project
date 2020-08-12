@@ -17,7 +17,8 @@
             "tsConfig": "apps/remix-ide/tsconfig.app.json",
             "assets": [
               "apps/remix-ide/src/assets",
-              "apps/remix-ide/src/index.html"
+              "apps/remix-ide/src/index.html",
+              "apps/remix-ide/src/favicon.ico"
             ],
             "styles": [],
             "scripts": [],

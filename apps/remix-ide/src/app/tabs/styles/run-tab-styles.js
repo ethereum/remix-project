@@ -216,6 +216,9 @@ var css = csjs`
     text-align: center;
     text-transform: uppercase;
   }
+  .checkboxAlign {
+    padding-top: 2px;
+  }
 `
 
 module.exports = css
