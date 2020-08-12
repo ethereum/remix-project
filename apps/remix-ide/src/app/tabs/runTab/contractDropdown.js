@@ -92,19 +92,27 @@ class ContractDropdownUI {
     const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
     this.ipfsCheckedState = savedConfig === 'true' ? true : false // eslint-disable-line
 
-    this.ipfsCheckbox = this.ipfsCheckedState === true
-    ? yo`<input id="deployAndRunPublishToIPFS" data-id="contractDropdownIpfsCheckbox" class="mr-2" checked type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
-    : yo`<input id="deployAndRunPublishToIPFS" data-id="contractDropdownIpfsCheckbox" class="mr-2" type="checkbox" onchange=${this.toggleCheckedState.bind(this)} >`
+    this.ipfsCheckbox = yo`
+      <input
+        id="deployAndRunPublishToIPFS"
+        data-id="contractDropdownIpfsCheckbox"
+        class="form-check-input custom-control-input"
+        type="checkbox"
+        onchange=${() => this.toggleCheckedState()}
+      >
+    `
+    if (this.ipfsCheckedState) this.ipfsCheckbox.checked = true
 
     this.deployCheckBox = yo`
-      <div class="mt-2 d-flex align-items-start">
+      <div class="d-flex py-1 align-items-center custom-control custom-checkbox">
         ${this.ipfsCheckbox}
         <label
           for="deployAndRunPublishToIPFS"
-          class="p-0 m-0"
+          data-id="contractDropdownIpfsCheckboxLabel"
+          class="m-0 form-check-label custom-control-label ${css.checkboxAlign}"
           title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
         >
-          PUBLISH TO IPFS
+          Publish to IPFS
         </label>
       </div>
       `

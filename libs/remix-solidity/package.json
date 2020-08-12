@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-solidity",
-  "version": "0.3.30",
+  "version": "0.3.31",
   "description": "Tool to load and run Solidity compiler",
   "main": "./index.js",
   "types": "./index.d.ts",
@@ -36,6 +36,9 @@
   "scripts": {
     "build": "tsc",
     "test": "./../../node_modules/.bin/tape ./test/tests.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "repository": {
     "type": "git",
