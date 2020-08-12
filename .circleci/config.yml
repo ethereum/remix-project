@@ -67,9 +67,9 @@ jobs:
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
       - store_test_results:
-          path: ./apps/remix-ide/reports/tests
+          path: ./apps/remix-ide-e2e/src/reports/tests
       - store_artifacts:
-          path: ./apps/remix-ide/reports/screenshots
+          path: ./apps/remix-ide-e2e/src/reports/screenshots
 
   remix-ide-firefox:
     docker:
@@ -110,9 +110,9 @@ jobs:
           command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
       - run: ./apps/remix-ide/ci/browser_tests_firefox.sh
       - store_test_results:
-          path: ./apps/remix-ide/reports/tests
+          path: ./apps/remix-ide-e2e/src/reports/tests
       - store_artifacts:
-          path: ./apps/remix-ide/reports/screenshots
+          path: ./apps/remix-ide-e2e/src/reports/screenshots
 
   remix-ide-run-deploy:
     docker:
@@ -153,8 +153,10 @@ jobs:
           command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
+      - store_test_results:
+          path: ./apps/remix-ide-e2e/src/reports/tests
       - store_artifacts:
-          path: ./apps/remix-ide/reports/screenshots
+          path: ./apps/remix-ide-e2e/src/reports/screenshots
 
 
   deploy-remix-live:
@@ -186,8 +188,6 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "remix_live" ]; then
               ./apps/remix-ide/ci/deploy_from_travis_remix-live.sh;
             fi
-      - store_artifacts:
-          path: ./apps/remix-ide/reports/screenshots
 
   publish:
     docker:
@@ -244,8 +244,6 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               ./apps/remix-ide/ci/deploy_from_travis_remix-alpha.sh;
             fi
-      - store_artifacts:
-          path: ./apps/remix-ide/reports/screenshots
 
 workflows:
   version: 2
