@@ -4,7 +4,7 @@ build
 dist
 node_modules
 lint.xml
-test-browser/reports/*
+apps/remix-ide-e2e/reports/*
 babelify-src
 docs/_build
 .DS_Store
