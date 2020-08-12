@@ -1,12 +1,17 @@
 # Release process 
 
 This document includes:
- - how to update remix.ethereum.org.
- - how to update remix-alpha.ethereum.org.
- - how to release remix IDE.
+ - how to publish remix libs to NPM
+ - how to update remix.ethereum.org
+ - how to update remix-alpha.ethereum.org
+ - how to release remix IDE
 
 ## Remix libs release
- - TODO
+ - git fetch origin master
+ - git checkout origin/master
+ - git checkout -b bumpLibsVersion
+ - npm run publish:libs (this command uses lerna)
+ - commit
 
 ## Remix IDE release
 
