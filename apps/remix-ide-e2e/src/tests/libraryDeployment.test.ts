@@ -76,6 +76,9 @@ function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFuncti
     .openFile('browser/Untitled5.sol')
     .selectContract('test') // deploy lib
     .createContract('')
+    .getText('div[class^="terminal"]', (value) => {
+      console.log('value: ', value)
+    })
     .assert.containsText('div[class^="terminal"]', '<address> is not a valid address')
     .perform(() => { callback() })
 }
