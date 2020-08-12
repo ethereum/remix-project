@@ -13,6 +13,7 @@ module.exports = function (browser, callback, url, preloadPlugins = true) {
             browser.clickLaunchIcon('solidity')
             .waitForElementPresent('[for="autoCompile"]')
             .click('[for="autoCompile"]')
+            .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
           })
         }
       })
