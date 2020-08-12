@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-simulator",
-  "version": "0.1.9-beta.6",
+  "version": "0.1.9-beta.7",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -42,6 +42,9 @@
   },
   "scripts": {
     "test": "./../../node_modules/.bin/mocha --require tsconfig-paths/register test/"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "bin": {
     "ethsim": "./bin/ethsim",
