@@ -3,7 +3,6 @@
   "version": "independent",
   "command": {
     "publish": {
-      "skipGit": true,
       "ignoreChanges": ["ignored-file", "*.md"],
       "message": "remix-libs(release): publish version"
     }
