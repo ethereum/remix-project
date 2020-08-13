@@ -309,7 +309,7 @@ export class LandingPage extends ViewPlugin {
             </div><!-- end of #col2 -->
           </div><!-- end of hpSections -->
         </div>
-        <div class="border-left mx-2 ${css.remixHomeTwitter}">
+        <div class="border-left mx-2 bg-secondary ${css.remixHomeTwitter}">
           <a class="twitter-timeline" data-width="400" data-chrome="nofooter transparent" data-tweet-limit="8" href="https://twitter.com/EthereumRemix">
             Tweets by EthereumRemix
           </a>
