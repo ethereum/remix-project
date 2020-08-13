@@ -1,5 +1,5 @@
 const ethutil = require('ethereumjs-util')
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
 import { compile } from './compiler-helpers'
 import globalRegistry from '../../global/registry'
