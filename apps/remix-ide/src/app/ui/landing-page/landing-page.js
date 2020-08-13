@@ -20,7 +20,11 @@ let css = csjs`
     text-decoration: underline;
   }
   .homeContainer {
-    user-select:none;
+    user-select: none;
+    overflow-y: hidden;
+  }
+  .mainContent {
+    flex-grow: 3;
   }
   .thisJumboton {
     padding: 2.5rem 0rem;
@@ -32,13 +36,12 @@ let css = csjs`
     margin:30px;
     padding-right: 90px;
   }
-  .jumboBtnContainer {
-  }
-  .headlineContainer {
-    margin: 0 50px 0 70px;
-  }
   .hpSections {
     min-width: 640px;
+  }
+  .remixHomeTwitter {
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .labelIt {
     margin-bottom: 0;
@@ -122,8 +125,6 @@ export class LandingPage extends ViewPlugin {
         }
       })
     }
-
-    const learnMore = () => { window.open('https://remix-ide.readthedocs.io/en/latest/layout.html', '_blank') }
 
     const startSolidity = () => {
       this.appManager.ensureActivated('solidity')
@@ -211,7 +212,8 @@ export class LandingPage extends ViewPlugin {
     const sourceVerifyEnv = createEnvButton('assets/img/sourceVerifyLogo.webp', 'sourceVerifyLogo', 'Sourcify', startSourceVerify)
     const moreEnv = createEnvButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
 
-    const invertNum = (globalRegistry.get('themeModule').api.currentTheme().quality === 'dark') ? 1 : 0
+    const themeQuality = globalRegistry.get('themeModule').api.currentTheme().quality
+    const invertNum = (themeQuality === 'dark') ? 1 : 0
     solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     vyperEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     pipelineEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
@@ -226,91 +228,95 @@ export class LandingPage extends ViewPlugin {
       document.location.reload()
     }
     const img = yo`<img src="assets/img/sleepingRemiCroped.webp"></img>`
-    const container = yo`<div class="${css.homeContainer} bg-light" data-id="landingPageHomeContainer">
-      <div>
-        <div class="alert alert-info clearfix py-3 ${css.thisJumboton}">
-          <div class="${css.headlineContainer}">
-            <div class="${css.logoContainer}">${img}</div>
-          </div>
-          <div class="${css.jumboBtnContainer} px-5">
-            <button class="btn btn-primary mx-3" href="#" onclick=${() => learnMore()} role="button">Learn more</button>
-            <button class="btn btn-secondary" onclick=${() => switchToPreviousVersion()}>Use previous version</button>
-          </div>
-        </div><!-- end of jumbotron -->
-      </div><!-- end of jumbotron container -->
-      <div class="row ${css.hpSections} mx-4" data-id="landingPageHpSections">
-        <div id="col1" class="col-sm-5">
-          <div class="mb-5">
-            <h4>Environments</h4>
-            <div class="${css.enviroments} pt-2">
-              ${solEnv}
-              ${vyperEnv}
-            </div>
-          </div>
-          <div class="file">
-            <h4>File</h4>
-            <p class="mb-1">
-              <i class="mr-1 far fa-file"></i>
-              <span class="mb-1 ${css.text}" onclick=${() => createNewFile()}>New File</span>
-            </p>
-            <p class="mb-1">
-              <i class="mr-1 far fa-file-alt"></i>
-              <span class="${css.labelIt} ${css.text}">
-                Open Files
-                <input title="open file" type="file" onchange="${
-                  (event) => {
-                    event.stopPropagation()
-                    let fileExplorer = globalRegistry.get('fileexplorer/browser').api
-                    fileExplorer.uploadFile(event)
-                  }
-                }" multiple />
-              </span>
-            </p>
-            <p class="mb-1">
-              <i class="far fa-hdd"></i>
-              <span class="${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
-            </p>
-            <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
-            <div class="btn-group">
-              <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
-              <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'])}">GitHub</button>
-              <button class="btn mx-1 btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
-              <button class="btn mx-1 btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
-              <button class="btn mx-1 btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-solidity/master/contracts/crowdsale/validation/IndividuallyCappedCrowdsale.sol'])}">https</button>
-              <button class="btn mx-1 btn-secondary  text-nowrap" onclick="${() => load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`)}">Resolver-engine</button>
-            </div><!-- end of btn-group -->
-          </div><!-- end of div.file -->
-        </div><!-- end of #col1 -->
-        <div id="col2" class="col-sm-7">
-          <div class="plugins mb-5">
-            <h4>Featured Plugins</h4>
-            <div class="d-flex flex-row pt-2">
-              ${pipelineEnv}
-              ${mythXEnv}
-              ${sourceVerifyEnv}
-              ${debuggerEnv}
-              ${moreEnv}
-            </div>
-          </div>
-          <div class="resources">
-            <h4>Resources</h4>
-            <p class="mb-1">
-              <i class="mr-1 fas fa-book"></i>
-              <a class="${css.text}" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/#">Documentation</a>
-            </p>
-            <p class="mb-1">
-              <i class="mr-1 fab fa-gitter"></i>
-              <a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
-              </p>
-            <p class="mb-1">
-              <i class="mr-1 fab fa-medium"></i>
-              <a class="${css.text}" target="__blank" href="https://medium.com/remix-ide">Medium Posts</a>
-            </p>
-          </div>
-        </div><!-- end of #col2 -->
-      </div><!-- end of hpSections -->
-      </div>`
-
+    const container = yo`
+      <div class="${css.homeContainer} d-flex bg-light" data-id="landingPageHomeContainer">
+        <div class="${css.mainContent}">
+          <div>
+            <span class="${css.text} text-secondary" onclick=${() => switchToPreviousVersion()}>Previous version</span>
+            <div class="border-bottom clearfix py-3 ${css.thisJumboton}">
+              <div class="mx-4 ${css.logoContainer}">${img}</div>
+            </div><!-- end of jumbotron -->
+          </div><!-- end of jumbotron container -->
+          <div class="row ${css.hpSections} mx-4" data-id="landingPageHpSections">
+            <div id="col1" class="col-sm-5">
+              <div class="mb-5">
+                <h4>Environments</h4>
+                <div class="${css.enviroments} pt-2">
+                  ${solEnv}
+                  ${vyperEnv}
+                </div>
+              </div>
+              <div class="file">
+                <h4>File</h4>
+                <p class="mb-1">
+                  <i class="mr-1 far fa-file"></i>
+                  <span class="mb-1 ${css.text}" onclick=${() => createNewFile()}>New File</span>
+                </p>
+                <p class="mb-1">
+                  <i class="mr-1 far fa-file-alt"></i>
+                  <span class="${css.labelIt} ${css.text}">
+                    Open Files
+                    <input title="open file" type="file" onchange="${
+                      (event) => {
+                        event.stopPropagation()
+                        let fileExplorer = globalRegistry.get('fileexplorer/browser').api
+                        fileExplorer.uploadFile(event)
+                      }
+                    }" multiple />
+                  </span>
+                </p>
+                <p class="mb-1">
+                  <i class="far fa-hdd"></i>
+                  <span class="${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
+                </p>
+                <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
+                <div class="btn-group">
+                  <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
+                  <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'])}">GitHub</button>
+                  <button class="btn mx-1 btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
+                  <button class="btn mx-1 btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
+                  <button class="btn mx-1 btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-solidity/master/contracts/crowdsale/validation/IndividuallyCappedCrowdsale.sol'])}">https</button>
+                  <button class="btn mx-1 btn-secondary  text-nowrap" onclick="${() => load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`)}">Resolver-engine</button>
+                </div><!-- end of btn-group -->
+              </div><!-- end of div.file -->
+            </div><!-- end of #col1 -->
+            <div id="col2" class="col-sm-7">
+              <div class="plugins mb-5">
+                <h4>Featured Plugins</h4>
+                <div class="d-flex flex-row pt-2">
+                  ${pipelineEnv}
+                  ${mythXEnv}
+                  ${sourceVerifyEnv}
+                  ${debuggerEnv}
+                  ${moreEnv}
+                </div>
+              </div>
+              <div class="resources">
+                <h4>Resources</h4>
+                <p class="mb-1">
+                  <i class="mr-1 fas fa-book"></i>
+                  <a class="${css.text}" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/#">Documentation</a>
+                </p>
+                <p class="mb-1">
+                  <i class="mr-1 fab fa-gitter"></i>
+                  <a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
+                  </p>
+                <p class="mb-1">
+                  <i class="mr-1 fab fa-medium"></i>
+                  <a class="${css.text}" target="__blank" href="https://medium.com/remix-ide">Medium Posts</a>
+                </p>
+              </div>
+            </div><!-- end of #col2 -->
+          </div><!-- end of hpSections -->
+        </div>
+        <div class="border-left mx-2 ${css.remixHomeTwitter}">
+          <a class="twitter-timeline" data-width="400" data-chrome="nofooter transparent" data-tweet-limit="8" href="https://twitter.com/EthereumRemix">
+            Tweets by EthereumRemix
+          </a>
+          <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        </div>
+      </div>
+    `
     return container
   }
 }
