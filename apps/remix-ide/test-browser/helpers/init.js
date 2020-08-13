@@ -11,8 +11,9 @@ module.exports = function (browser, callback, url, preloadPlugins = true) {
           console.log('preloadPlugins: ', preloadPlugins)
           initModules(browser, () => {
             browser.clickLaunchIcon('solidity')
-            .waitForElementPresent('[for="autoCompile"]')
+            .waitForElementVisible('[for="autoCompile"]')
             .click('[for="autoCompile"]')
+            .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
           })
         }
       })
