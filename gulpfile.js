@@ -37,3 +37,28 @@ task('updateChangelog', async function () {
     fs.writeFileSync(__dirname + '/CHANGELOG.md', data); 
     await Promise.resolve();
 });
+
+/**
+ * @dev Task to sync libs version from 'dist' folder as lerna published from there
+ */
+task('syncLibVersions', async function () {
+    const libs = [
+        'remix-analyzer',
+        'remix-astwalker',
+        'remix-debug',
+        'remix-lib',
+        'remix-simulator',
+        'remix-solidity',
+        'remix-tests',
+        'remix-url-resolver'
+    ]
+
+    libs.forEach(lib => {
+        const distPackageJSON = require(__dirname + '/dist/libs/' + lib + '/package.json')
+        const libVersion = distPackageJSON.version
+        let packageJSON = require(__dirname + '/libs/' + lib + '/package.json')
+        packageJSON.version = libVersion
+        fs.writeFileSync(__dirname + '/libs/' + lib + '/package.json', JSON.stringify(packageJSON, null, 2), 'utf8')
+    })
+    await Promise.resolve();
+});
