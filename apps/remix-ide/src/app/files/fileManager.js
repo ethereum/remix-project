@@ -9,7 +9,7 @@ const toaster = require('../ui/tooltip')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const helper = require('../../lib/helper.js')
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 
 /*
   attach to files event (removed renamed)

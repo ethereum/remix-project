@@ -6,7 +6,7 @@ var modalDialogCustom = require('../modal-dialog-custom')
 var tooltip = require('../tooltip')
 var GistHandler = require('../../../lib/gist-handler')
 var QueryParams = require('../../../lib/query-params.js')
-import * as packageJson from '../../../../package.json'
+import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine'
 
 let css = csjs`
