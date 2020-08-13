@@ -4,7 +4,7 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const ace = require('brace')
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 
 const globalRegistry = require('../../global/registry')
 const SourceHighlighters = require('./SourceHighlighters')

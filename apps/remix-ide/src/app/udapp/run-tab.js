@@ -1,5 +1,5 @@
 import { LibraryPlugin } from '@remixproject/engine'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 
 const $ = require('jquery')
 const yo = require('yo-yo')
