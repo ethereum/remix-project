@@ -25,7 +25,7 @@ This document includes:
  - git checkout origin/master
  - git tag v(version-number)
  - git push --tags
- - github-changes -o ethereum -r remix-ide -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
+ - github-changes -o ethereum -r remix-ide --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
  - publish a release in github using the changelog
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
 
