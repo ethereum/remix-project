@@ -1,5 +1,5 @@
 import { AbstractPanel } from './panel'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 

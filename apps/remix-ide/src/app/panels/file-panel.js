@@ -6,7 +6,7 @@ var globalRegistry = require('../../global/registry')
 var css = require('./styles/file-panel-styles')
 import { ViewPlugin } from '@remixproject/engine'
 
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
