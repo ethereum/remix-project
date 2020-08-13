@@ -18,7 +18,7 @@ const CompileTabLogic = require('./compileTab/compileTab.js')
 const CompilerContainer = require('./compileTab/compilerContainer.js')
 
 import { ViewPlugin } from '@remixproject/engine'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 import publishToStorage from '../../publishToStorage'
 import { compile } from '../compiler/compiler-helpers'
 

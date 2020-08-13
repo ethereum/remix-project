@@ -4,7 +4,7 @@ var EventManager = require('../../lib/events')
 
 import { ViewPlugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'solidityStaticAnalysis',
