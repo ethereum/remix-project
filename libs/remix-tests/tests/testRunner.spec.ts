@@ -160,6 +160,35 @@ describe('testRunner', () => {
       })
     })
 
+    describe('assert library NOTEQUAL method tests', () => {
+      const filename: string = __dirname + '/examples_0/assert_notEqual_test.sol'
+
+      beforeAll((done) => {
+        compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) => {
+          runTest('AssertNotEqualTest', contracts.AssertNotEqualTest, compilationData[filename]['AssertNotEqualTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
+        })
+      })
+
+      afterAll(() => { tests = [] })
+
+      it('should have 1 passing test', () => {
+        assert.equal(results.passingNum, 1)
+      })
+
+      it('should have 1 failing test', () => {
+        assert.equal(results.failureNum, 1)
+      })
+
+      it('should return', () => {
+        deepEqualExcluding(tests, [
+          { type: 'accountList', value: accounts },
+          { type: 'contract', value: 'AssertNotEqualTest', filename: __dirname + '/examples_0/assert_notEqual_test.sol' },
+          { type: 'testPass', value: 'Not equal uint pass test', context: 'AssertNotEqualTest' },
+          { type: 'testFailure', value: 'Not equal uint fail test', errMsg: 'notEqualUintFailTest fails', context: 'AssertNotEqualTest', expected: '1', returned: '1'}
+        ], ['time'])
+      })
+    })
+
     describe('test with beforeAll', () => {
       const filename: string = __dirname + '/examples_1/simple_storage_test.sol'
 
