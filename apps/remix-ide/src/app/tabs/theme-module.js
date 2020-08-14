@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import QueryParams from '../../lib/query-params'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 import yo from 'yo-yo'
 
 const themes = [

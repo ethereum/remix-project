@@ -25,7 +25,7 @@ This document includes:
  - git checkout origin/master
  - git tag v(version-number)
  - git push --tags
- - github-changes -o ethereum -r remix-ide -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
+ - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
  - publish a release in github using the changelog
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
 
@@ -40,7 +40,7 @@ This document includes:
  - git checkout origin/master
  - git tag v(version-number) (with "vx.x.x-beta.1")
  - git push --tags
- - github-changes -o ethereum -r remix-ide -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
+ - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
  - publish a beta release in github using the changelog
  - drop zip file to the beta release (from https://github.com/ethereum/remix-live-alpha)
  

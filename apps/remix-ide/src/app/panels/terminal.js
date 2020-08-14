@@ -1,4 +1,7 @@
 /* global Node, requestAnimationFrame */
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../../../package.json'
+
 var yo = require('yo-yo')
 var javascriptserialize = require('javascript-serialize')
 var jsbeautify = require('js-beautify')
@@ -16,10 +19,6 @@ var TxLogger = require('../../app/ui/txLogger')
 var csjs = require('csjs-inject')
 
 var css = require('./styles/terminal-styles')
-import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../package.json'
-
-var packageV = require('../../../package.json')
 
 var KONSOLES = []
 
@@ -451,7 +450,7 @@ class Terminal extends Plugin {
     self._cmdTemp = ''
 
     var intro = yo`
-      <div><div> - Welcome to Remix ${packageV.version} - </div><br>
+      <div><div> - Welcome to Remix ${packageJson.version} - </div><br>
       <div>You can use this terminal for: </div>
       <ul class=${css2.ul}>
         <li>Checking transactions details and start debugging.</li>

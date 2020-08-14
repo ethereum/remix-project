@@ -4,7 +4,7 @@ const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
 import { ViewPlugin, IframePlugin, WebsocketPlugin } from '@remixproject/engine'
 import { PluginManagerSettings } from './plugin-manager-settings'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 const addToolTip = require('../ui/tooltip')
 
 const css = csjs`
