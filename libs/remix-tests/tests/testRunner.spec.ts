@@ -189,6 +189,35 @@ describe('testRunner', () => {
       })
     })
 
+    describe('assert library GREATERTHAN method tests', () => {
+      const filename: string = __dirname + '/examples_0/assert_greaterThan_test.sol'
+
+      beforeAll((done) => {
+        compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) => {
+          runTest('AssertGreaterThanTest', contracts.AssertGreaterThanTest, compilationData[filename]['AssertGreaterThanTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
+        })
+      })
+
+      afterAll(() => { tests = [] })
+
+      it('should have 1 passing test', () => {
+        assert.equal(results.passingNum, 1)
+      })
+
+      it('should have 1 failing test', () => {
+        assert.equal(results.failureNum, 1)
+      })
+
+      it('should return', () => {
+        deepEqualExcluding(tests, [
+          { type: 'accountList', value: accounts },
+          { type: 'contract', value: 'AssertGreaterThanTest', filename: __dirname + '/examples_0/assert_greaterThan_test.sol' },
+          { type: 'testPass', value: 'Greater than uint pass test', context: 'AssertGreaterThanTest' },
+          { type: 'testFailure', value: 'Greater than uint fail test', errMsg: 'greaterThanUintFailTest fails', context: 'AssertGreaterThanTest', expected: '4', returned: '1'}
+        ], ['time'])
+      })
+    })
+
     describe('test with beforeAll', () => {
       const filename: string = __dirname + '/examples_1/simple_storage_test.sol'
 
