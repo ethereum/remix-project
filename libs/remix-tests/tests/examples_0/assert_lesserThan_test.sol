@@ -1,4 +1,3 @@
-
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 
 contract AssertLesserThanTest {
