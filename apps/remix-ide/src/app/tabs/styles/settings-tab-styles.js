@@ -70,6 +70,12 @@ const css = csjs`
     display: inline;
     width: 32%;
   }
+  .customCheckBox::before, .customCheckBox::after {
+    top: .7em
+  }
+  .text {
+    text-decoration: none;
+  }
 `
 
 module.exports = css
