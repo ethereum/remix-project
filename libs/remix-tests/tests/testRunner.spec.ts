@@ -125,7 +125,7 @@ describe('testRunner', () => {
           { type: 'contract', value: 'MyTest', filename: __dirname + '/examples_1/simple_storage_test.sol' },
           { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' },
           { type: 'testPass', value: 'Initial value should not be200', context: 'MyTest' },
-          { type: 'testFailure', value: 'Should trigger one fail', errMsg: 'uint test 1 fails', context: 'MyTest' },
+          { type: 'testFailure', value: 'Should trigger one fail', errMsg: 'uint test 1 fails', context: 'MyTest', expected: '2', returned: '1'},
           { type: 'testPass', value: 'Should trigger one pass', context: 'MyTest' }
         ], ['time'])
       })
