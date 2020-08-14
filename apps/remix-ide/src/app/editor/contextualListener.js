@@ -6,7 +6,7 @@ const AstWalker = remixLib.AstWalker
 const EventManager = require('../../lib/events')
 const globalRegistry = require('../../global/registry')
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'contextualListener',

@@ -4,7 +4,7 @@ const css = require('./styles/debugger-tab-styles')
 import toaster from '../ui/tooltip'
 const DebuggerUI = require('./debugger/debuggerUI')
 import { ViewPlugin } from '@remixproject/engine'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'debugger',
