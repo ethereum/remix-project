@@ -247,6 +247,10 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                         if (eIndex >= 0) {
                             const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.raw.data)
                             if (!testEvent[0]) {
+                                if(eIndex === 0) { // for 'Assert.ok' method
+                                    testEvent[2] = 'false'
+                                    testEvent[3] = 'true'
+                                }
                                 const resp: TestResultInterface = {
                                   type: 'testFailure',
                                   value: changeCase.sentenceCase(func.name),

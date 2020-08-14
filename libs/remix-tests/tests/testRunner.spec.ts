@@ -100,6 +100,38 @@ describe('testRunner', () => {
     }
 
     describe('#runTest', () => {
+
+      describe('assert library methods test', () => {
+      const filename: string = __dirname + '/examples_0/assert_test.sol'
+
+      beforeAll((done) => {
+        compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) => {
+          runTest('AssertTest', contracts.AssertTest, compilationData[filename]['AssertTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
+        })
+      })
+
+      afterAll(() => { tests = [] })
+
+      it('should have 2 passing test', () => {
+        assert.equal(results.passingNum, 2)
+      })
+
+      it('should have 2 failing test', () => {
+        assert.equal(results.failureNum, 2)
+      })
+
+      it('should return', () => {
+        deepEqualExcluding(tests, [
+          { type: 'accountList', value: accounts },
+          { type: 'contract', value: 'AssertTest', filename: __dirname + '/examples_0/assert_test.sol' },
+          { type: 'testPass', value: 'Ok pass test', context: 'AssertTest' },
+          { type: 'testFailure', value: 'Ok fail test', errMsg: 'okFailTest fails', context: 'AssertTest', expected: 'true', returned: 'false'},
+          { type: 'testPass', value: 'Equal uint pass test', context: 'AssertTest' },
+          { type: 'testFailure', value: 'Equal uint fail test', errMsg: 'equalUintFailTest fails', context: 'AssertTest', expected: '2', returned: '1'}
+        ], ['time'])
+      })
+    })
+
     describe('test with beforeAll', () => {
       const filename: string = __dirname + '/examples_1/simple_storage_test.sol'
 
