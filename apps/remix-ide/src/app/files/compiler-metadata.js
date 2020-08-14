@@ -1,7 +1,7 @@
 'use strict'
 var CompilerAbstract = require('../compiler/compiler-abstract')
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../package.json'
+import * as packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'compilerMetadata',
