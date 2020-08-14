@@ -1,6 +1,7 @@
 import async from 'async'
 import * as changeCase from 'change-case'
 import Web3 from 'web3';
+import assertionEvents from './assertionEvents'
 import { RunListInterface, TestCbInterface, TestResultInterface, ResultCbInterface,
     CompiledContract, AstNode, Options, FunctionDescription, UserDocumentation } from './types'
 
@@ -228,19 +229,8 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             method.send(sendParams).on('receipt', (receipt) => {
                 try {
                     const time: number = (Date.now() - startTime) / 1000.0
-                    const assertionEvents = [
-                        {
-                            name: 'AssertionEvent',
-                            params: ['bool', 'string']
-                        },
-                        {
-                            name: 'AssertionEventUint',
-                            params: ['bool', 'string', 'uint256', 'uint256']
-                        }
-                    ]
                     const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')') )
                     let testPassed = false
-
                     for (const i in receipt.events) {
                         const event = receipt.events[i]
                         const eIndex = assertionEventHashes.indexOf(event.raw.topics[0]) // event name topic will always be at index 0
