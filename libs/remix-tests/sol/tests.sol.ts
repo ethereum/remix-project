@@ -105,9 +105,9 @@ library Assert {
   }
 
   /*----------------- Greater than --------------------*/
-  function greaterThan(uint a, uint b, string memory message) public returns (bool result) {
+  function greaterThan(uint256 a, uint256 b, string memory message) public returns (bool result) {
     result = (a > b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventUint(result, message, a, b);
   }
 
   function greaterThan(int a, int b, string memory message) public returns (bool result) {
