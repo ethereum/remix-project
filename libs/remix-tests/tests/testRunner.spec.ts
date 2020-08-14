@@ -218,6 +218,35 @@ describe('testRunner', () => {
       })
     })
 
+    describe('assert library LESSERTHAN method tests', () => {
+      const filename: string = __dirname + '/examples_0/assert_lesserThan_test.sol'
+
+      beforeAll((done) => {
+        compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) => {
+          runTest('AssertLesserThanTest', contracts.AssertLesserThanTest, compilationData[filename]['AssertLesserThanTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
+        })
+      })
+
+      afterAll(() => { tests = [] })
+
+      it('should have 1 passing test', () => {
+        assert.equal(results.passingNum, 1)
+      })
+
+      it('should have 1 failing test', () => {
+        assert.equal(results.failureNum, 1)
+      })
+
+      it('should return', () => {
+        deepEqualExcluding(tests, [
+          { type: 'accountList', value: accounts },
+          { type: 'contract', value: 'AssertLesserThanTest', filename: __dirname + '/examples_0/assert_lesserThan_test.sol' },
+          { type: 'testPass', value: 'Lesser than uint pass test', context: 'AssertLesserThanTest' },
+          { type: 'testFailure', value: 'Lesser than uint fail test', errMsg: 'lesserThanUintFailTest fails', context: 'AssertLesserThanTest', expected: '2', returned: '4'}
+        ], ['time'])
+      })
+    })
+
     describe('test with beforeAll', () => {
       const filename: string = __dirname + '/examples_1/simple_storage_test.sol'
 

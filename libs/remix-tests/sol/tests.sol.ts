@@ -134,9 +134,9 @@ library Assert {
     emit AssertionEvent(result, message);
   }
   /*----------------- Lesser than --------------------*/
-  function lesserThan(uint a, uint b, string memory message) public returns (bool result) {
+  function lesserThan(uint256 a, uint256 b, string memory message) public returns (bool result) {
     result = (a < b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventUint(result, message, a, b);
   }
 
   function lesserThan(int a, int b, string memory message) public returns (bool result) {
