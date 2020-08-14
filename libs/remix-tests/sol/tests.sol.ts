@@ -8,14 +8,21 @@ library Assert {
     string message
   );
 
+  event AssertionEventUint(
+    bool passed,
+    string message,
+    uint256 returned,
+    uint256 expected
+  );
+
   function ok(bool a, string memory message) public returns (bool result) {
     result = a;
     emit AssertionEvent(result, message);
   }
 
-  function equal(uint a, uint b, string memory message) public returns (bool result) {
+  function equal(uint256 a, uint256 b, string memory message) public returns (bool result) {
     result = (a == b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventUint(result, message, a, b);
   }
 
   function equal(int a, int b, string memory message) public returns (bool result) {

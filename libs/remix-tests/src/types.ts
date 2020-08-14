@@ -26,12 +26,14 @@ export interface ResultsInterface {
     timePassed: number
 }
 export interface TestResultInterface {
-  type: string,
-  value: any,
-  time?: number,
-  context?: string,
+  type: string
+  value: any
+  time?: number
+  context?: string
   errMsg?: string
   filename?: string
+  returned?: string | number
+  expected?: string | number
 }
 export interface TestCbInterface {
   (error: Error | null | undefined, result: TestResultInterface) : void;
