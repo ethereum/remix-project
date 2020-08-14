@@ -228,20 +228,33 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
             method.send(sendParams).on('receipt', (receipt) => {
                 try {
                     const time: number = (Date.now() - startTime) / 1000.0
-                    const topic = Web3.utils.sha3('AssertionEvent(bool,string)')
+                    const assertionEvents = [
+                        {
+                            name: 'AssertionEvent',
+                            params: ['bool', 'string']
+                        },
+                        {
+                            name: 'AssertionEventUint',
+                            params: ['bool', 'string', 'uint256', 'uint256']
+                        }
+                    ]
+                    const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')') )
                     let testPassed = false
 
                     for (const i in receipt.events) {
                         const event = receipt.events[i]
-                        if (event.raw.topics.indexOf(topic) >= 0) {
-                            const testEvent = web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data)
+                        const eIndex = assertionEventHashes.indexOf(event.raw.topics[0]) // event name topic will always be at index 0
+                        if (eIndex >= 0) {
+                            const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.raw.data)
                             if (!testEvent[0]) {
                                 const resp: TestResultInterface = {
                                   type: 'testFailure',
                                   value: changeCase.sentenceCase(func.name),
                                   time: time,
                                   errMsg: testEvent[1],
-                                  context: testName
+                                  context: testName,
+                                  returned: testEvent[2],
+                                  expected: testEvent[3]
                                 };
                                 testCallback(undefined, resp)
                                 failureNum += 1
