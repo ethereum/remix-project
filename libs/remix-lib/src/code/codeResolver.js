@@ -15,24 +15,20 @@ CodeResolver.prototype.clear = function () {
   this.instructionsIndexByBytesOffset = {}
 }
 
-CodeResolver.prototype.resolveCode = function (address, callBack) {
-  const cache = this.getExecutingCodeFromCache(address)
-  if (cache) {
-    return callBack(address, cache)
-  }
-
-  this.loadCode(address, (code) => {
-    callBack(address, this.cacheExecutingCode(address, code))
-  })
-}
-
-CodeResolver.prototype.loadCode = function (address, callback) {
-  this.web3.eth.getCode(address, (error, result) => {
-    if (error) {
-      console.log(error)
-    } else {
-      callback(result)
+CodeResolver.prototype.resolveCode = async function (address) {
+  return new Promise((resolve, reject) => {
+    const cache = this.getExecutingCodeFromCache(address)
+    if (cache) {
+      return resolve(cache)
     }
+
+    this.web3.eth.getCode(address, (error, code) => {
+      if (error) {
+        // return console.log(error)
+        return reject(error)
+      }
+      return resolve(this.cacheExecutingCode(address, code))
+    })
   })
 }
 
@@ -53,14 +49,14 @@ CodeResolver.prototype.formatCode = function (hexCode) {
 }
 
 CodeResolver.prototype.getExecutingCodeFromCache = function (address) {
-  if (this.instructionsByAddress[address]) {
-    return {
-      instructions: this.instructionsByAddress[address],
-      instructionsIndexByBytesOffset: this.instructionsIndexByBytesOffset[address],
-      bytecode: this.bytecodeByAddress[address]
-    }
+  if (!this.instructionsByAddress[address]) {
+    return null
   }
-  return null
+  return {
+    instructions: this.instructionsByAddress[address],
+    instructionsIndexByBytesOffset: this.instructionsIndexByBytesOffset[address],
+    bytecode: this.bytecodeByAddress[address]
+  }
 }
 
 CodeResolver.prototype.getInstructionIndex = function (address, pc) {

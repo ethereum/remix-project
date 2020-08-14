@@ -1,6 +1,5 @@
 'use strict'
 const TraceAnalyser = require('./traceAnalyser')
-const TraceRetriever = require('./traceRetriever')
 const TraceCache = require('./traceCache')
 const TraceStepManager = require('./traceStepManager')
 
@@ -13,43 +12,49 @@ function TraceManager (options) {
   this.trace = null
   this.traceCache = new TraceCache()
   this.traceAnalyser = new TraceAnalyser(this.traceCache)
-  this.traceRetriever = new TraceRetriever({web3: this.web3})
   this.traceStepManager = new TraceStepManager(this.traceAnalyser)
   this.tx
 }
 
 // init section
-TraceManager.prototype.resolveTrace = function (tx, callback) {
+TraceManager.prototype.resolveTrace = async function (tx, callback) {
   this.tx = tx
   this.init()
   if (!this.web3) callback('web3 not loaded', false)
   this.isLoading = true
-  var self = this
-  this.traceRetriever.getTrace(tx.hash, (error, result) => {
-    if (error) {
-      console.log(error)
-      self.isLoading = false
-      callback(error, false)
-    } else {
-      if (result.structLogs.length > 0) {
-        self.trace = result.structLogs
-        self.traceAnalyser.analyse(result.structLogs, tx, function (error, result) {
-          if (error) {
-            self.isLoading = false
-            console.log(error)
-            callback(error, false)
-          } else {
-            self.isLoading = false
-            callback(null, true)
-          }
-        })
-      } else {
-        var mes = tx.hash + ' is not a contract invocation or contract creation.'
-        console.log(mes)
-        self.isLoading = false
-        callback(mes, false)
-      }
+  try {
+    const result = await this.getTrace(tx.hash)
+
+    if (result.structLogs.length > 0) {
+      this.trace = result.structLogs
+
+      this.traceAnalyser.analyse(result.structLogs, tx)
+      this.isLoading = false
+      return callback(null, true)
     }
+    var mes = tx.hash + ' is not a contract invocation or contract creation.'
+    console.log(mes)
+    this.isLoading = false
+    callback(mes, false)
+  } catch (error) {
+    console.log(error)
+    this.isLoading = false
+    callback(error, false)
+  }
+}
+
+TraceManager.prototype.getTrace = function (txHash) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      disableStorage: true,
+      disableMemory: false,
+      disableStack: false,
+      fullStorage: false
+    }
+    this.web3.debug.traceTransaction(txHash, options, function (error, result) {
+      if (error) return reject(error)
+      resolve(result)
+    })
   })
 }
 
@@ -206,28 +211,24 @@ TraceManager.prototype.getCurrentStep = function (stepIndex, callback) {
   callback(null, this.traceCache.steps[stepIndex])
 }
 
-TraceManager.prototype.getMemExpand = function (stepIndex, callback) {
-  const check = this.checkRequestedStep(stepIndex)
-  if (check) {
-    return callback(check, null)
-  }
-  callback(null, this.trace[stepIndex].memexpand ? this.trace[stepIndex].memexpand : '')
+TraceManager.prototype.getMemExpand = function (stepIndex) {
+  return (this.getStepProperty(stepIndex, 'memexpand') || '')
 }
 
-TraceManager.prototype.getStepCost = function (stepIndex, callback) {
-  const check = this.checkRequestedStep(stepIndex)
-  if (check) {
-    return callback(check, null)
-  }
-  callback(null, this.trace[stepIndex].gasCost)
+TraceManager.prototype.getStepCost = function (stepIndex) {
+  return this.getStepProperty(stepIndex, 'gasCost')
 }
 
-TraceManager.prototype.getRemainingGas = function (stepIndex, callback) {
+TraceManager.prototype.getRemainingGas = function (stepIndex) {
+  return this.getStepProperty(stepIndex, 'gas')
+}
+
+TraceManager.prototype.getStepProperty = function (stepIndex, property) {
   const check = this.checkRequestedStep(stepIndex)
   if (check) {
-    return callback(check, null)
+    throw new Error(check)
   }
-  callback(null, this.trace[stepIndex].gas)
+  return this.trace[stepIndex][property]
 }
 
 TraceManager.prototype.isCreationStep = function (stepIndex) {

@@ -117,21 +117,30 @@ class VmDebuggerLogic {
         this.event.trigger('traceCurrentStepUpdate', [error, step])
       })
 
-      this._traceManager.getMemExpand(index, (error, addmem) => {
-        this.event.trigger('traceMemExpandUpdate', [error, addmem])
-      })
+      try {
+        const addmem = this._traceManager.getMemExpand(index)
+        this.event.trigger('traceMemExpandUpdate', [null, addmem])
+      } catch (error) {
+        this.event.trigger('traceMemExpandUpdate', [error])
+      }
 
-      this._traceManager.getStepCost(index, (error, gas) => {
-        this.event.trigger('traceStepCostUpdate', [error, gas])
-      })
+      try {
+        const gas = this._traceManager.getStepCost(index)
+        this.event.trigger('traceStepCostUpdate', [null, gas])
+      } catch (error) {
+        this.event.trigger('traceStepCostUpdate', [error])
+      }
 
       this._traceManager.getCurrentCalledAddressAt(index, (error, address) => {
         this.event.trigger('traceCurrentCalledAddressAtUpdate', [error, address])
       })
 
-      this._traceManager.getRemainingGas(index, (error, remaining) => {
-        this.event.trigger('traceRemainingGasUpdate', [error, remaining])
-      })
+      try {
+        const remaining = this._traceManager.getRemainingGas(index)
+        this.event.trigger('traceRemainingGasUpdate', [null, remaining])
+      } catch (error) {
+        this.event.trigger('traceRemainingGasUpdate', [error])
+      }
 
       this._traceManager.getReturnValue(index, (error, returnValue) => {
         if (error) {
