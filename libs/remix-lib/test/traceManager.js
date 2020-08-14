@@ -239,39 +239,36 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.getMemExpand', function (st) {
-    traceManager.getMemExpand(2, function (error, result) {
+    try {
+      const result = traceManager.getMemExpand(2)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result === '3')
-        st.end()
-      }
-    })
+      st.ok(result === '3')
+      st.end()
+    } catch (error) {
+      st.fail(error)
+    }
   })
 
   t.test('TraceManager.getStepCost', function (st) {
-    traceManager.getStepCost(34, function (error, result) {
+    try {
+      const result = traceManager.getStepCost(23)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result === '3')
-        st.end()
-      }
-    })
+      st.ok(result === '3')
+      st.end()
+    } catch (error) {
+      st.fail(error)
+    }
   })
 
   t.test('TraceManager.getRemainingGas', function (st) {
-    traceManager.getRemainingGas(55, function (error, result) {
+    try {
+      const result = traceManager.getRemainingGas(55)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result === '79306')
-        st.end()
-      }
-    })
+      st.ok(result === '79306')
+      st.end()
+    } catch (error) {
+      st.fail(error)
+    }
   })
 
   t.test('TraceManager.findStepOverBack', function (st) {
