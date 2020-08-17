@@ -351,12 +351,12 @@ export class LandingPage extends ViewPlugin {
         <div class="d-flex">
           <div id="remixIDE_TwitterBlock" class="border-left p-2 mx-0 mb-0 ${css.block} ${css.remixHomeMedia}">
             <input type="radio" name="media" id="remixIDE_TwitterRadio" class="d-none" checked />
-            <label class="mx-1 my-0 btn p-0 text-info fab fa-twitter ${css.cursorStyle}" for="remixIDE_TwitterRadio"></label>
+            <label class="mx-1 mt-0 mb-1 btn p-0 text-info fab fa-twitter ${css.cursorStyle}" for="remixIDE_TwitterRadio"></label>
             ${this.twitterFrame}
           </div>
           <div id="remixIDE_MediumBlock" class="border-left p-2 mx-0 mb-0 ${css.block} ${css.remixHomeMedia}">
             <input type="radio" name="media" id="remixIDE_MediumRadio" class="d-none" />
-            <label class="mx-1 my-0 btn p-0 text-danger fab fa-medium ${css.cursorStyle}" for="remixIDE_MediumRadio"></label>
+            <label class="mx-1 mt-0 mb-1 btn p-0 text-danger fab fa-medium ${css.cursorStyle}" for="remixIDE_MediumRadio"></label>
             <div class="px-2 ${css.media}">
               <div id="medium-widget" class="${css.mediumPanel}">
                 <div
