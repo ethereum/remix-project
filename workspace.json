@@ -352,7 +352,8 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/remix-tests/jest.config.js",
-            "tsConfig": "libs/remix-tests/tsconfig.spec.json"
+            "tsConfig": "libs/remix-tests/tsconfig.spec.json",
+            "maxWorkers": 2
           }
         },
         "build": {
