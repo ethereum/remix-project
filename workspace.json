@@ -385,7 +385,7 @@
           "options": {
             "jestConfig": "libs/remix-tests/jest.config.js",
             "tsConfig": "libs/remix-tests/tsconfig.spec.json",
-            "maxWorkers": 2
+            "runInBand": true
           }
         },
         "build": {
