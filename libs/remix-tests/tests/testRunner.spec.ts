@@ -142,12 +142,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 1 passing test', () => {
-        assert.equal(results.passingNum, 1)
+      it('should have 2 passing test', () => {
+        assert.equal(results.passingNum, 2)
       })
 
-      it('should have 1 failing test', () => {
-        assert.equal(results.failureNum, 1)
+      it('should have 2 failing test', () => {
+        assert.equal(results.failureNum, 2)
       })
 
       it('should return', () => {
@@ -155,7 +155,9 @@ describe('testRunner', () => {
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'AssertEqualTest', filename: __dirname + '/examples_0/assert_equal_test.sol' },
           { type: 'testPass', value: 'Equal uint pass test', context: 'AssertEqualTest' },
-          { type: 'testFailure', value: 'Equal uint fail test', errMsg: 'equalUintFailTest fails', context: 'AssertEqualTest', expected: '2', returned: '1'}
+          { type: 'testFailure', value: 'Equal uint fail test', errMsg: 'equalUintFailTest fails', context: 'AssertEqualTest', expected: '2', returned: '1'},
+          { type: 'testPass', value: 'Equal int pass test', context: 'AssertEqualTest' },
+          { type: 'testFailure', value: 'Equal int fail test', errMsg: 'equalIntFailTest fails', context: 'AssertEqualTest', expected: '2', returned: '-1'}
         ], ['time'])
       })
     })
@@ -171,12 +173,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 1 passing test', () => {
-        assert.equal(results.passingNum, 1)
+      it('should have 2 passing test', () => {
+        assert.equal(results.passingNum, 2)
       })
 
-      it('should have 1 failing test', () => {
-        assert.equal(results.failureNum, 1)
+      it('should have 2 failing test', () => {
+        assert.equal(results.failureNum, 2)
       })
 
       it('should return', () => {
@@ -184,7 +186,9 @@ describe('testRunner', () => {
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'AssertNotEqualTest', filename: __dirname + '/examples_0/assert_notEqual_test.sol' },
           { type: 'testPass', value: 'Not equal uint pass test', context: 'AssertNotEqualTest' },
-          { type: 'testFailure', value: 'Not equal uint fail test', errMsg: 'notEqualUintFailTest fails', context: 'AssertNotEqualTest', expected: '1', returned: '1'}
+          { type: 'testFailure', value: 'Not equal uint fail test', errMsg: 'notEqualUintFailTest fails', context: 'AssertNotEqualTest', expected: '1', returned: '1'},
+          { type: 'testPass', value: 'Not equal int pass test', context: 'AssertNotEqualTest' },
+          { type: 'testFailure', value: 'Not equal int fail test', errMsg: 'notEqualIntFailTest fails', context: 'AssertNotEqualTest', expected: '-2', returned: '-2'}
         ], ['time'])
       })
     })
@@ -200,20 +204,21 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 1 passing test', () => {
-        assert.equal(results.passingNum, 1)
+      it('should have 2 passing test', () => {
+        assert.equal(results.passingNum, 2)
       })
 
-      it('should have 1 failing test', () => {
-        assert.equal(results.failureNum, 1)
+      it('should have 2 failing test', () => {
+        assert.equal(results.failureNum, 2)
       })
-
       it('should return', () => {
         deepEqualExcluding(tests, [
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'AssertGreaterThanTest', filename: __dirname + '/examples_0/assert_greaterThan_test.sol' },
           { type: 'testPass', value: 'Greater than uint pass test', context: 'AssertGreaterThanTest' },
-          { type: 'testFailure', value: 'Greater than uint fail test', errMsg: 'greaterThanUintFailTest fails', context: 'AssertGreaterThanTest', expected: '4', returned: '1'}
+          { type: 'testFailure', value: 'Greater than uint fail test', errMsg: 'greaterThanUintFailTest fails', context: 'AssertGreaterThanTest', expected: '4', returned: '1'},
+          { type: 'testPass', value: 'Greater than int pass test', context: 'AssertGreaterThanTest' },
+          { type: 'testFailure', value: 'Greater than int fail test', errMsg: 'greaterThanIntFailTest fails', context: 'AssertGreaterThanTest', expected: '1', returned: '-1'}
         ], ['time'])
       })
     })
@@ -229,12 +234,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 1 passing test', () => {
-        assert.equal(results.passingNum, 1)
+      it('should have 2 passing test', () => {
+        assert.equal(results.passingNum, 2)
       })
 
-      it('should have 1 failing test', () => {
-        assert.equal(results.failureNum, 1)
+      it('should have 2 failing test', () => {
+        assert.equal(results.failureNum, 2)
       })
 
       it('should return', () => {
@@ -242,7 +247,9 @@ describe('testRunner', () => {
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'AssertLesserThanTest', filename: __dirname + '/examples_0/assert_lesserThan_test.sol' },
           { type: 'testPass', value: 'Lesser than uint pass test', context: 'AssertLesserThanTest' },
-          { type: 'testFailure', value: 'Lesser than uint fail test', errMsg: 'lesserThanUintFailTest fails', context: 'AssertLesserThanTest', expected: '2', returned: '4'}
+          { type: 'testFailure', value: 'Lesser than uint fail test', errMsg: 'lesserThanUintFailTest fails', context: 'AssertLesserThanTest', expected: '2', returned: '4'},
+          { type: 'testPass', value: 'Lesser than int pass test', context: 'AssertLesserThanTest' },
+          { type: 'testFailure', value: 'Lesser than int fail test', errMsg: 'lesserThanIntFailTest fails', context: 'AssertLesserThanTest', expected: '-1', returned: '1'}
         ], ['time'])
       })
     })
