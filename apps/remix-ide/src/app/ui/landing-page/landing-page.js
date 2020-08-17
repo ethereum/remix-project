@@ -284,8 +284,8 @@ export class LandingPage extends ViewPlugin {
     // to retrieve medium posts
     document.body.appendChild(yo`<script src="https://www.retainable.io/assets/retainable/rss-embed/retainable-rss-embed.js"></script>`)
     const container = yo`
-      <div class="${css.homeContainer} d-flex bg-light" data-id="landingPageHomeContainer">
-        <div class="${css.mainContent}">
+      <div class="${css.homeContainer} d-flex" data-id="landingPageHomeContainer">
+        <div class="${css.mainContent} bg-light">
           <div>
             <span class="${css.text} text-secondary" onclick=${() => switchToPreviousVersion()}>Previous version</span>
             <div class="border-bottom clearfix py-3 ${css.thisJumboton}">
@@ -365,12 +365,12 @@ export class LandingPage extends ViewPlugin {
           </div><!-- end of hpSections -->
         </div>
         <div class="d-flex">
-          <div id="remixIDE_TwitterBlock" class="bg-dark border-left p-2 mx-0 mb-0 ${css.block} ${css.remixHomeMedia}">
+          <div id="remixIDE_TwitterBlock" class="border-left p-2 mx-0 mb-0 ${css.block} ${css.remixHomeMedia}">
             <input type="radio" name="media" id="remixIDE_TwitterRadio" class="d-none" checked />
             <label class="mx-1 my-0 btn p-0 text-info fab fa-twitter ${css.cursorStyle}" for="remixIDE_TwitterRadio"></label>
             ${this.twitterFrame}
           </div>
-          <div id="remixIDE_MediumBlock" class="bg-dark border-left p-2 mx-0 mb-0 ${css.block} ${css.remixHomeMedia}">
+          <div id="remixIDE_MediumBlock" class="border-left p-2 mx-0 mb-0 ${css.block} ${css.remixHomeMedia}">
             <input type="radio" name="media" id="remixIDE_MediumRadio" class="d-none" />
             <label class="mx-1 my-0 btn p-0 text-danger fab fa-medium ${css.cursorStyle}" for="remixIDE_MediumRadio"></label>
             <div class="px-2 ${css.media}">
