@@ -139,7 +139,8 @@ Before starting coding, we should ensure all devs / contributors are aware of:
    - identify any blocker.
    - agree on a release date (which can be earlier 1 week after the meeting and not later than 4 weeks after the meeting.
    - add issues that are eligible to get in the release.
-   - remove issues that aren't doable in time or represent a risk.   
+   - remove issues that aren't doable in time or represent a risk.
+   - plan for asking feedback about new features (in social medias).
 
 ---
 
