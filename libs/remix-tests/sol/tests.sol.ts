@@ -15,6 +15,13 @@ library Assert {
     uint256 expected
   );
 
+  event AssertionEventInt(
+    bool passed,
+    string message,
+    int256 returned,
+    int256 expected
+  );
+
   function ok(bool a, string memory message) public returns (bool result) {
     result = a;
     emit AssertionEvent(result, message);
@@ -25,9 +32,9 @@ library Assert {
     emit AssertionEventUint(result, message, a, b);
   }
 
-  function equal(int a, int b, string memory message) public returns (bool result) {
+  function equal(int256 a, int256 b, string memory message) public returns (bool result) {
     result = (a == b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventInt(result, message, a, b);
   }
 
   function equal(bool a, bool b, string memory message) public returns (bool result) {
@@ -67,9 +74,9 @@ library Assert {
     emit AssertionEventUint(result, message, a, b);
   }
 
-  function notEqual(int a, int b, string memory message) public returns (bool result) {
+  function notEqual(int256 a, int256 b, string memory message) public returns (bool result) {
     result = (a != b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventInt(result, message, a, b);
   }
 
   function notEqual(bool a, bool b, string memory message) public returns (bool result) {
@@ -110,9 +117,9 @@ library Assert {
     emit AssertionEventUint(result, message, a, b);
   }
 
-  function greaterThan(int a, int b, string memory message) public returns (bool result) {
+  function greaterThan(int256 a, int256 b, string memory message) public returns (bool result) {
     result = (a > b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventInt(result, message, a, b);
   }
   // TODO: safely compare between uint and int
   function greaterThan(uint a, int b, string memory message) public returns (bool result) {
@@ -139,9 +146,9 @@ library Assert {
     emit AssertionEventUint(result, message, a, b);
   }
 
-  function lesserThan(int a, int b, string memory message) public returns (bool result) {
+  function lesserThan(int256 a, int256 b, string memory message) public returns (bool result) {
     result = (a < b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventInt(result, message, a, b);
   }
   // TODO: safely compare between uint and int
   function lesserThan(uint a, int b, string memory message) public returns (bool result) {
