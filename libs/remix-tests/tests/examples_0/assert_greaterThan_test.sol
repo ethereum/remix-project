@@ -9,4 +9,12 @@ contract AssertGreaterThanTest {
     function greaterThanUintFailTest() public {
         Assert.greaterThan(uint(1), uint(4), "greaterThanUintFailTest fails");
     }
+
+    function greaterThanIntPassTest() public {
+        Assert.greaterThan(int(-1), int(-2), "greaterThanIntPassTest passes");
+    }
+
+    function greaterThanIntFailTest() public {
+        Assert.greaterThan(int(-1), int(1), "greaterThanIntFailTest fails");
+    }
 }
