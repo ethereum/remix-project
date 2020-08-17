@@ -61,9 +61,6 @@ let css = csjs`
     height: 150px;
     opacity: 0.7;
   }
-  .enviroments {
-    display: flex;
-  }
   .envLogo {
     height: 16px;
   }
@@ -184,11 +181,6 @@ export class LandingPage extends ViewPlugin {
       this.appManager.ensureActivated('solidityUnitTesting')
       this.verticalIcons.select('solidity')
     }
-    const startVyper = () => {
-      this.appManager.ensureActivated('vyper')
-      this.appManager.ensureActivated('udapp')
-      this.verticalIcons.select('vyper')
-    }
     /*
     const startWorkshop = () => {
       this.appManager.ensureActivated('box')
@@ -238,14 +230,13 @@ export class LandingPage extends ViewPlugin {
     globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('remixLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('solidityLogo'))
-      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('vyperLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('pipelineLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('debuggerLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('workshopLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('moreLogo'))
     })
 
-    const createEnvButton = (imgPath, envID, envText, callback) => {
+    const createLargeButton = (imgPath, envID, envText, callback) => {
       return yo`
         <button class="btn border-secondary d-flex mr-3 text-nowrap justify-content-center flex-column align-items-center ${css.envButton}" data-id="landingPageStartSolidity" onclick=${() => callback()}>
           <img class="m-2 align-self-center ${css.envLogo}" id=${envID} src="${imgPath}">
@@ -255,19 +246,17 @@ export class LandingPage extends ViewPlugin {
     }
 
     // main
-    const solEnv = createEnvButton('assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
-    const vyperEnv = createEnvButton('assets/img/vyperLogo.webp', 'vyperLogo', 'Vyper', startVyper)
+    const solEnv = createLargeButton('assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
     // Featured
-    const pipelineEnv = createEnvButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
-    const debuggerEnv = createEnvButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
-    const mythXEnv = createEnvButton('assets/img/mythxLogo.webp', 'mythxLogo', 'MythX', startMythX)
-    const sourceVerifyEnv = createEnvButton('assets/img/sourceVerifyLogo.webp', 'sourceVerifyLogo', 'Sourcify', startSourceVerify)
-    const moreEnv = createEnvButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
+    const pipelineEnv = createLargeButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
+    const debuggerEnv = createLargeButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
+    const mythXEnv = createLargeButton('assets/img/mythxLogo.webp', 'mythxLogo', 'MythX', startMythX)
+    const sourceVerifyEnv = createLargeButton('assets/img/sourceVerifyLogo.webp', 'sourceVerifyLogo', 'Sourcify', startSourceVerify)
+    const moreEnv = createLargeButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
 
     const themeQuality = globalRegistry.get('themeModule').api.currentTheme().quality
     const invertNum = (themeQuality === 'dark') ? 1 : 0
     solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    vyperEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     pipelineEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     mythXEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
@@ -286,82 +275,77 @@ export class LandingPage extends ViewPlugin {
     const container = yo`
       <div class="${css.homeContainer} d-flex" data-id="landingPageHomeContainer">
         <div class="${css.mainContent} bg-light">
-          <div>
-            <span class="${css.text} text-secondary" onclick=${() => switchToPreviousVersion()}>Previous version</span>
-            <div class="border-bottom clearfix py-3 ${css.thisJumboton}">
-              <div class="mx-4 ${css.logoContainer}">${img}</div>
-            </div><!-- end of jumbotron -->
-          </div><!-- end of jumbotron container -->
+          <div class="border-bottom clearfix py-3 ${css.thisJumboton}">
+            <div class="mx-4 ${css.logoContainer}">${img}</div>
+          </div>
           <div class="row ${css.hpSections} mx-4" data-id="landingPageHpSections">
-            <div id="col1" class="col-sm-5">
-              <div class="mb-5">
-                <h4>Environments</h4>
-                <div class="${css.enviroments} pt-2">
-                  ${solEnv}
-                  ${vyperEnv}
-                </div>
-              </div>
-              <div class="file">
-                <h4>File</h4>
-                <p class="mb-1">
-                  <i class="mr-1 far fa-file"></i>
-                  <span class="mb-1 ${css.text}" onclick=${() => createNewFile()}>New File</span>
-                </p>
-                <p class="mb-1">
-                  <i class="mr-1 far fa-file-alt"></i>
-                  <span class="${css.labelIt} ${css.text}">
-                    Open Files
-                    <input title="open file" type="file" onchange="${
-                      (event) => {
-                        event.stopPropagation()
-                        let fileExplorer = globalRegistry.get('fileexplorer/browser').api
-                        fileExplorer.uploadFile(event)
-                      }
-                    }" multiple />
-                  </span>
-                </p>
-                <p class="mb-1">
-                  <i class="far fa-hdd"></i>
-                  <span class="${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
-                </p>
-                <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
-                <div class="btn-group">
-                  <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
-                  <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'])}">GitHub</button>
-                  <button class="btn mx-1 btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
-                  <button class="btn mx-1 btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
-                  <button class="btn mx-1 btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-solidity/master/contracts/crowdsale/validation/IndividuallyCappedCrowdsale.sol'])}">https</button>
-                  <button class="btn mx-1 btn-secondary  text-nowrap" onclick="${() => load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`)}">Resolver-engine</button>
-                </div><!-- end of btn-group -->
-              </div><!-- end of div.file -->
-            </div><!-- end of #col1 -->
-            <div id="col2" class="col-sm-7">
+            <div class="ml-3">
               <div class="plugins mb-5">
-                <h4>Featured Plugins</h4>
-                <div class="d-flex flex-row pt-2">
-                  ${pipelineEnv}
-                  ${mythXEnv}
-                  ${sourceVerifyEnv}
-                  ${debuggerEnv}
-                  ${moreEnv}
+              <h4>Featured Plugins</h4>
+              <div class="d-flex flex-row pt-2">
+                ${solEnv}
+                ${pipelineEnv}
+                ${mythXEnv}
+                ${sourceVerifyEnv}
+                ${debuggerEnv}
+                ${moreEnv}
+              </div>
+            </div>
+              <div class="d-flex">
+                <div class="file">
+                  <h4>File</h4>
+                  <p class="mb-1">
+                    <i class="mr-1 far fa-file"></i>
+                    <span class="ml-1 mb-1 ${css.text}" onclick=${() => createNewFile()}>New File</span>
+                  </p>
+                  <p class="mb-1">
+                    <i class="mr-1 far fa-file-alt"></i>
+                    <span class="ml-1 ${css.labelIt} ${css.text}">
+                      Open Files
+                      <input title="open file" type="file" onchange="${
+                        (event) => {
+                          event.stopPropagation()
+                          let fileExplorer = globalRegistry.get('fileexplorer/browser').api
+                          fileExplorer.uploadFile(event)
+                        }
+                      }" multiple />
+                    </span>
+                  </p>
+                  <p class="mb-1">
+                    <i class="far fa-hdd"></i>
+                    <span class="ml-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
+                  </p>
+                  <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
+                  <div class="btn-group">
+                    <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
+                    <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'])}">GitHub</button>
+                    <button class="btn mx-1 btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
+                    <button class="btn mx-1 btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
+                    <button class="btn mx-1 btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-solidity/master/contracts/crowdsale/validation/IndividuallyCappedCrowdsale.sol'])}">https</button>
+                    <button class="btn mx-1 btn-secondary  text-nowrap" onclick="${() => load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`)}">Resolver-engine</button>
+                  </div><!-- end of btn-group -->
+                </div><!-- end of div.file -->
+                <div class="ml-3">
+                  <h4>Resources</h4>
+                  <p class="mb-1">
+                    <i class="mr-1 fas fa-book"></i>
+                    <a class="${css.text}" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/#">Documentation</a>
+                  </p>
+                  <p class="mb-1">
+                    <i class="mr-1 fab fa-gitter"></i>
+                    <a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
+                    </p>
+                  <p class="mb-1">
+                    <i class="mr-1 fab fa-medium"></i>
+                    <a class="${css.text}" target="__blank" href="https://medium.com/remix-ide">Medium Posts</a>
+                  </p>
+                  <p>
+                    <i class="fab fa-ethereum"></i>
+                    <span class="ml-2 ${css.text}" onclick=${() => switchToPreviousVersion()}>Old experience</span>
+                  </p>
                 </div>
               </div>
-              <div class="resources">
-                <h4>Resources</h4>
-                <p class="mb-1">
-                  <i class="mr-1 fas fa-book"></i>
-                  <a class="${css.text}" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/#">Documentation</a>
-                </p>
-                <p class="mb-1">
-                  <i class="mr-1 fab fa-gitter"></i>
-                  <a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
-                  </p>
-                <p class="mb-1">
-                  <i class="mr-1 fab fa-medium"></i>
-                  <a class="${css.text}" target="__blank" href="https://medium.com/remix-ide">Medium Posts</a>
-                </p>
-              </div>
-            </div><!-- end of #col2 -->
+            </div>
           </div><!-- end of hpSections -->
         </div>
         <div class="d-flex">
