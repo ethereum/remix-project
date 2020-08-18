@@ -70,14 +70,6 @@ const css = csjs`
     display: inline;
     width: 32%;
   }
-  .customCheckBox::before, .customCheckBox::after {
-    top: .7em
-  }
-  .customRadio::before, .customRadio::after {
-    -moz-border-radius: 50%;
-    -webkit-border-radius: 50%;
-    border-radius: 50%;
-  }
   .text, .text:hover {
     text-decoration: none;
   }

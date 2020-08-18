@@ -82,19 +82,15 @@ module.exports = class SettingsTab extends ViewPlugin {
     const gistRemoveToken = yo`<button class="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onclick=${() => removeToken()}>Remove</button>`
     this._view.gistToken = yo`<div class="text-secondary mb-0 h6">${gistAccessToken}<div class="d-flex justify-content-end pt-2">${copyToClipboard(() => gistAccessToken.value)}${gistAddToken}${gistRemoveToken}</div></div>`
     this._view.optionVM = yo`<input onchange=${onchangeOption} class="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox">`
-    this._view.optionVMLabel = yo`<label class="form-check-label custom-control-label align-middle ${css.customCheckBox}" for="alwaysUseVM">Always use Ethereum VM at Load</label>`
+    this._view.optionVMLabel = yo`<label class="form-check-label custom-control-label align-middle" for="alwaysUseVM">Always use Ethereum VM at Load</label>`
     if (this.config.get('settings/always-use-vm') === undefined) this.config.set('settings/always-use-vm', true)
-    if (this.config.get('settings/always-use-vm')) {
-      this._view.optionVM.setAttribute('checked', '')
-      this._view.optionVMLabel.classList.remove("text-dark")
-    } else this._view.optionVMLabel.classList.add("text-dark")
+    if (this.config.get('settings/always-use-vm')) this._view.optionVM.setAttribute('checked', '')
+    elementStateChanged(self._view.optionVMLabel, !this.config.get('settings/always-use-vm'))
 
     this._view.textWrap = yo`<input id="editorWrap" class="custom-control-input" type="checkbox" onchange=${textWrapEvent}>`
-    this._view.textWrapLabel = yo`<label class="form-check-label custom-control-label align-middle ${css.customCheckBox}" for="editorWrap">Text Wrap</label>`
-    if (this.config.get('settings/text-wrap')) {
-      this._view.textWrap.setAttribute('checked', '')
-      this._view.textWrapLabel.classList.remove("text-dark")
-    } else this._view.textWrapLabel.classList.add("text-dark")
+    this._view.textWrapLabel = yo`<label class="form-check-label custom-control-label align-middle" for="editorWrap">Text Wrap</label>`
+    if (this.config.get('settings/text-wrap')) this._view.textWrap.setAttribute('checked', '')
+    elementStateChanged(self._view.textWrapLabel, !this.config.get('settings/text-wrap'))
 
     const warnText = `Transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it.
     This mode allows to provide the passphrase in the Remix interface without having to unlock the account.
@@ -103,18 +99,14 @@ module.exports = class SettingsTab extends ViewPlugin {
 
     this._view.personal = yo`<input onchange=${onchangePersonal} id="personal" type="checkbox" class="custom-control-input">`
     this._view.warnPersonalMode = yo`<i class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
-    this._view.personalLabel = yo`<label class="form-check-label custom-control-label align-middle ${css.customCheckBox}" for="personal"> ${this._view.warnPersonalMode} Enable Personal Mode for web3 provider. ${warnText}></label>`
-    if (this.config.get('settings/personal-mode')) {
-      this._view.personal.setAttribute('checked', '')
-      this._view.personalLabel.classList.remove("text-dark")
-    } else this._view.personalLabel.classList.add("text-dark")
+    this._view.personalLabel = yo`<label class="form-check-label custom-control-label align-middle" for="personal"> ${this._view.warnPersonalMode} Enable Personal Mode for web3 provider. ${warnText}></label>`
+    if (this.config.get('settings/personal-mode')) this._view.personal.setAttribute('checked', '')
+    elementStateChanged(self._view.personalLabel, !this.config.get('settings/personal-mode'))
 
     this._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" class="custom-control-input">`
-    this._view.generateContractMetadataLabel = yo`<label class="form-check-label custom-control-label align-middle ${css.customCheckBox}" for="generatecontractmetadata">Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.</label>`
-    if (this.config.get('settings/generate-contract-metadata')) {
-      this._view.generateContractMetadata.setAttribute('checked', '')
-      this._view.generateContractMetadataLabel.classList.remove("text-dark")
-    } else this._view.generateContractMetadataLabel.classList.add("text-dark")
+    this._view.generateContractMetadataLabel = yo`<label class="form-check-label custom-control-label align-middle " for="generatecontractmetadata">Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.</label>`
+    if (this.config.get('settings/generate-contract-metadata')) this._view.generateContractMetadata.setAttribute('checked', '')
+    elementStateChanged(self._view.generateContractMetadataLabel, !this.config.get('settings/generate-contract-metadata'))   
 
     this._view.pluginInput = yo`<textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>`
 
@@ -172,26 +164,35 @@ module.exports = class SettingsTab extends ViewPlugin {
       const isChecked = self.config.get('settings/generate-contract-metadata')
       
       self.config.set('settings/generate-contract-metadata', !isChecked)
-      isChecked ? self._view.generateContractMetadataLabel.classList.add("text-dark") : self._view.generateContractMetadataLabel.classList.remove("text-dark")
+      elementStateChanged(self._view.generateContractMetadataLabel, isChecked)
     }
     function onchangeOption (event) {
       const isChecked = self.config.get('settings/always-use-vm')
 
       self.config.set('settings/always-use-vm', !isChecked)
-      isChecked ? self._view.optionVMLabel.classList.add("text-dark") : self._view.optionVMLabel.classList.remove("text-dark")
+      elementStateChanged(self._view.optionVMLabel, isChecked)
     }
     function textWrapEvent (event) {
       const isChecked = self.config.get('settings/text-wrap')
 
       self.config.set('settings/text-wrap', !isChecked)
-      isChecked ? self._view.textWrapLabel.classList.add("text-dark") : self._view.textWrapLabel.classList.remove("text-dark")
+      elementStateChanged(self._view.textWrapLabel, isChecked)
       self.editor.resize(!isChecked)
     }
     function onchangePersonal (event) {
       const isChecked = self.config.get('settings/personal-mode')
 
       self.config.set('settings/personal-mode', !isChecked)
-      isChecked ? self._view.personalLabel.classList.add("text-dark") : self._view.personalLabel.classList.remove("text-dark")
+      elementStateChanged(self._view.personalLabel, isChecked)
+    }
+    function elementStateChanged(el, isChanged){
+      if (isChanged) {
+        el.classList.remove("text-dark")
+        el.classList.add("text-secondary")
+      } else {
+        el.classList.add("text-dark")
+        el.classList.remove("text-secondary")
+      }
     }
 
     this._deps.themeModule.switchTheme()
