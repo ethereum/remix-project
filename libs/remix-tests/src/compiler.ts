@@ -82,8 +82,15 @@ const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' elect
  * TODO: replace this with remix's own compiler code
  */
 
+let compiler
 export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb): void {
-    let compiler: any
+    console.log('compileFileOrFiles')
+    if (!compiler) {
+        console.log('instanciate compiler')
+        compiler = new RemixCompiler()
+        console.log('done')
+        compiler.onInternalCompilerLoaded()
+    }
     const accounts: string[] = opts.accounts || []
     const sources: SrcIfc = {
         'tests.sol': { content: require('../sol/tests.sol') },
@@ -113,8 +120,6 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
     } finally {
         async.waterfall([
             function loadCompiler(next) {
-                compiler = new RemixCompiler()
-                compiler.onInternalCompilerLoaded()
                 // compiler.event.register('compilerLoaded', this, function (version) {
                 next()
                 // });
@@ -122,9 +127,13 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
             function doCompilation(next) {
                 // @ts-ignore
                 compiler.event.register('compilationFinished', this, (success, data, source) => {
+                    console.log('compilationFinished')
+                    compiler.event.unregisterObject('compilationFinished', this)
                     next(null, data)
                 })
+                console.log('before compile')
                 compiler.compile(sources, filepath)
+                console.log('after compile')
             }
         ], function (err: Error | null | undefined, result: any) {
             const error: Error[] = []

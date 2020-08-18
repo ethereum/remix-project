@@ -28,6 +28,14 @@ eventManager.prototype.unregister = function (eventName, obj, func) {
   }
 }
 
+eventManager.prototype.unregisterObject = function (eventName, obj) {
+  for (let reg in this.registered[eventName]) {
+    if (this.registered[eventName][reg].obj === obj) {
+      this.registered[eventName].splice(reg, 1)
+    }
+  }
+}
+
 /*
    * Register a new listener.
    * Note that if obj is a function, the function registration will be associated with the dummy object {}
