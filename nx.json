@@ -59,6 +59,10 @@
         "remix-solidity",
         "remix-tests"
       ]
+    },
+    "remix-ide-e2e": {
+      "tags": [],
+      "implicitDependencies": ["remix-ide"]
     }
   }
 }
