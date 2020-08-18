@@ -5,7 +5,7 @@ import * as packageJson from '../../../../../package.json'
 import yo from 'yo-yo'
 
 const themes = [
-  {name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/dvtmp0niu/raw/upload/v1584965247/remix-dark_tmkdla.css'},
+  {name: 'Dark', quality: 'dark', url: './assets/css/dark.css'},
   {name: 'Light', quality: 'light', url: 'https://res.cloudinary.com/remix/raw/upload/v1594059208/remix-themes/remix-light_csxus2.css'},
 
   {name: 'Cerulean', quality: 'light', url: 'https://bootswatch.com/4/cerulean/bootstrap.min.css'},
