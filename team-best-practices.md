@@ -15,11 +15,11 @@ Related links:
  - Remix live: https://remix.ethereum.org
  - Remix alpha live: https://remix-alpha.ethereum.org
  - Remix beta live: https://remix-beta.ethereum.org
- - Remix-ide NPM module: https://www.npmjs.com/package/remix-ide
- - Remix-lib NPM module: https://www.npmjs.com/package/remix-lib
- - Remix-tests NPM module: https://www.npmjs.com/package/remix-test
- - Remix-solidity NPM module: https://www.npmjs.com/package/remix-solidity
- - Remix-debug NPM module: https://www.npmjs.com/package/remix-debug
+ - Remix-lib NPM module: https://www.npmjs.com/package/@remix-project/remix-lib
+ - Remix-tests NPM module: https://www.npmjs.com/package/@remix-project/remix-test
+ - Remix-solidity NPM module: https://www.npmjs.com/package/@remix-project/remix-solidity
+ - Remix-debug NPM module: https://www.npmjs.com/package/@remix-project/remix-debug
+ - Remix-tests NPM module: https://www.npmjs.com/package/@remix-project/remix-tests
  - Remix documentation: http://remix-ide.readthedocs.io/en/latest/
  - General gitter channel: https://gitter.im/ethereum/remix
  - Dev gitter channel: https://gitter.im/ethereum/remix-dev
