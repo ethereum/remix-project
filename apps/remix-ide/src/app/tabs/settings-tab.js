@@ -104,7 +104,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     elementStateChanged(self._view.personalLabel, !this.config.get('settings/personal-mode'))
 
     this._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" class="custom-control-input">`
-    this._view.generateContractMetadataLabel = yo`<label class="form-check-label custom-control-label align-middle " for="generatecontractmetadata">Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.</label>`
+    this._view.generateContractMetadataLabel = yo`<label class="form-check-label custom-control-label align-middle" data-id="settingsTabGenerateContractMetadataLabel" for="generatecontractmetadata">Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.</label>`
     if (this.config.get('settings/generate-contract-metadata')) this._view.generateContractMetadata.setAttribute('checked', '')
     elementStateChanged(self._view.generateContractMetadataLabel, !this.config.get('settings/generate-contract-metadata'))   
 
