@@ -352,8 +352,7 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/remix-tests/jest.config.js",
-            "tsConfig": "libs/remix-tests/tsconfig.spec.json",
-            "runInBand": true
+            "tsConfig": "libs/remix-tests/tsconfig.spec.json"
           }
         },
         "build": {
