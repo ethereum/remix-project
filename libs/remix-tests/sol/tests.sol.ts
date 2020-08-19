@@ -22,6 +22,13 @@ library Assert {
     int256 expected
   );
 
+  event AssertionEventBool(
+    bool passed,
+    string message,
+    bool returned,
+    bool expected
+  );
+
   function ok(bool a, string memory message) public returns (bool result) {
     result = a;
     emit AssertionEvent(result, message);
@@ -39,7 +46,7 @@ library Assert {
 
   function equal(bool a, bool b, string memory message) public returns (bool result) {
     result = (a == b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventBool(result, message, a, b);
   }
 
   // TODO: only for certain versions of solc
@@ -81,7 +88,7 @@ library Assert {
 
   function notEqual(bool a, bool b, string memory message) public returns (bool result) {
     result = (a != b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventBool(result, message, a, b);
   }
 
   // TODO: only for certain versions of solc
