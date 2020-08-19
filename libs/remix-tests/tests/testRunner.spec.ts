@@ -76,6 +76,7 @@ async function compileAndDeploy(filename: string, callback: Function) {
   })
 }
 
+// Use `export NODE_OPTIONS="--max-old-space-size=2048"` if there is a JavaScript heap out of memory issue
 
 describe('testRunner', () => {
     let tests: any[] = [], results: ResultsInterface;
@@ -142,12 +143,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 2 passing test', () => {
-        assert.equal(results.passingNum, 2)
+      it('should have 3 passing test', () => {
+        assert.equal(results.passingNum, 3)
       })
 
-      it('should have 2 failing test', () => {
-        assert.equal(results.failureNum, 2)
+      it('should have 3 failing test', () => {
+        assert.equal(results.failureNum, 3)
       })
 
       it('should return', () => {
@@ -157,7 +158,9 @@ describe('testRunner', () => {
           { type: 'testPass', value: 'Equal uint pass test', context: 'AssertEqualTest' },
           { type: 'testFailure', value: 'Equal uint fail test', errMsg: 'equalUintFailTest fails', context: 'AssertEqualTest', expected: '2', returned: '1'},
           { type: 'testPass', value: 'Equal int pass test', context: 'AssertEqualTest' },
-          { type: 'testFailure', value: 'Equal int fail test', errMsg: 'equalIntFailTest fails', context: 'AssertEqualTest', expected: '2', returned: '-1'}
+          { type: 'testFailure', value: 'Equal int fail test', errMsg: 'equalIntFailTest fails', context: 'AssertEqualTest', expected: '2', returned: '-1'},
+          { type: 'testPass', value: 'Equal bool pass test', context: 'AssertEqualTest' },
+          { type: 'testFailure', value: 'Equal bool fail test', errMsg: 'equalBoolFailTest fails', context: 'AssertEqualTest', expected: false, returned: true}
         ], ['time'])
       })
     })
@@ -173,12 +176,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 2 passing test', () => {
-        assert.equal(results.passingNum, 2)
+      it('should have 3 passing test', () => {
+        assert.equal(results.passingNum, 3)
       })
 
-      it('should have 2 failing test', () => {
-        assert.equal(results.failureNum, 2)
+      it('should have 3 failing test', () => {
+        assert.equal(results.failureNum, 3)
       })
 
       it('should return', () => {
@@ -188,7 +191,9 @@ describe('testRunner', () => {
           { type: 'testPass', value: 'Not equal uint pass test', context: 'AssertNotEqualTest' },
           { type: 'testFailure', value: 'Not equal uint fail test', errMsg: 'notEqualUintFailTest fails', context: 'AssertNotEqualTest', expected: '1', returned: '1'},
           { type: 'testPass', value: 'Not equal int pass test', context: 'AssertNotEqualTest' },
-          { type: 'testFailure', value: 'Not equal int fail test', errMsg: 'notEqualIntFailTest fails', context: 'AssertNotEqualTest', expected: '-2', returned: '-2'}
+          { type: 'testFailure', value: 'Not equal int fail test', errMsg: 'notEqualIntFailTest fails', context: 'AssertNotEqualTest', expected: '-2', returned: '-2'},
+          { type: 'testPass', value: 'Not equal bool pass test', context: 'AssertNotEqualTest' },
+          { type: 'testFailure', value: 'Not equal bool fail test', errMsg: 'notEqualBoolFailTest fails', context: 'AssertNotEqualTest', expected: true, returned: true}
         ], ['time'])
       })
     })
