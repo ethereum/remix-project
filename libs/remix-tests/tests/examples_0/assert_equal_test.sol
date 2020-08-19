@@ -17,4 +17,12 @@ contract AssertEqualTest {
     function equalIntFailTest() public {
         Assert.equal(-1, 2, "equalIntFailTest fails");
     }
+
+    function equalBoolPassTest() public {
+        Assert.equal(true, true, "equalBoolPassTest passes");
+    }
+
+    function equalBoolFailTest() public {
+        Assert.equal(true, false, "equalBoolFailTest fails");
+    }
 }
