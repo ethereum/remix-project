@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "./../../node_modules/.bin/jest"
+    "test": "node --expose-gc ./../../node_modules/.bin/jest --runInBand --logHeapUsage "
   },
   "publishConfig": {
     "access": "public"
