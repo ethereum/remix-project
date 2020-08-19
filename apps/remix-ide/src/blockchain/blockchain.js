@@ -104,7 +104,7 @@ class Blockchain {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
     const constructor = selectedContract.getConstructorInterface()
     txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
-      if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+      if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + (error.message ? error.message : error))
 
       statusCb(`creation of ${selectedContract.name} pending...`)
       this.createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb)
@@ -121,7 +121,7 @@ class Blockchain {
     this.runTx({ data: data, useCall: false }, confirmationCb, continueCb, promptCb,
       (error, txResult, address) => {
         if (error) {
-          return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
+          return finalCb(`creation of ${selectedContract.name} errored: ${(error.message ? error.message : error)}`)
         }
         if (txResult.result.status && txResult.result.status === '0x0') {
           return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
