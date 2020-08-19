@@ -10,6 +10,10 @@ const assertionEvents = [
     {
         name: 'AssertionEventInt',
         params: ['bool', 'string', 'int256', 'int256']
+    },
+    {
+        name: 'AssertionEventBool',
+        params: ['bool', 'string', 'bool', 'bool']
     }
 ]
 
