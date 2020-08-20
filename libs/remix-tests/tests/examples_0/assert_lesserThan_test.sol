@@ -17,4 +17,12 @@ contract AssertLesserThanTest {
     function lesserThanIntFailTest() public {
         Assert.lesserThan(int(1), int(-1), "lesserThanIntFailTest fails");
     }
+
+    function lesserThanUintIntPassTest() public {
+        Assert.lesserThan(uint(1), int(2), "lesserThanUintIntPassTest passes");
+    }
+
+    function lesserThanUintIntFailTest() public {
+        Assert.lesserThan(uint(-1), int(-1), "lesserThanUintIntFailTest fails");
+    }
 }
