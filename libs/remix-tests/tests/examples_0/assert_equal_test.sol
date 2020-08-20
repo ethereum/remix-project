@@ -45,4 +45,12 @@ contract AssertEqualTest {
         bytes32 r = 0x72656d6979000000000000000000000000000000000000000000000000000000;
         Assert.equal(r, e, "equalBytes32FailTest fails");
     }
+
+    function equalStringPassTest() public {
+        Assert.equal(string("remix"), string("remix"), "equalStringPassTest passes");
+    }
+
+    function equalStringFailTest() public {
+        Assert.equal(string("remix"), string("remix-tests"), "equalStringFailTest fails");
+    }
 }
