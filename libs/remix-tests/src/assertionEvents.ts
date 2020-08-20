@@ -22,6 +22,10 @@ const assertionEvents = [
     {
         name: 'AssertionEventBytes32',
         params: ['bool', 'string', 'bytes32', 'bytes32']
+    },
+    {
+        name: 'AssertionEventString',
+        params: ['bool', 'string', 'string', 'string']
     }
 ]
 
