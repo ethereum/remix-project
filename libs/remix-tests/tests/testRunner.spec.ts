@@ -143,12 +143,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 5 passing test', () => {
-        assert.equal(results.passingNum, 5)
+      it('should have 6 passing test', () => {
+        assert.equal(results.passingNum, 6)
       })
 
-      it('should have 5 failing test', () => {
-        assert.equal(results.failureNum, 5)
+      it('should have 6 failing test', () => {
+        assert.equal(results.failureNum, 6)
       })
 
       it('should return', () => {
@@ -164,7 +164,9 @@ describe('testRunner', () => {
           { type: 'testPass', value: 'Equal address pass test', context: 'AssertEqualTest' },
           { type: 'testFailure', value: 'Equal address fail test', errMsg: 'equalAddressFailTest fails', context: 'AssertEqualTest', expected: '0x1c6637567229159d1eFD45f95A6675e77727E013', returned: '0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9'},
           { type: 'testPass', value: 'Equal bytes32 pass test', context: 'AssertEqualTest' },
-          { type: 'testFailure', value: 'Equal bytes32 fail test', errMsg: 'equalBytes32FailTest fails', context: 'AssertEqualTest', expected: '0x72656d6978000000000000000000000000000000000000000000000000000000', returned: '0x72656d6979000000000000000000000000000000000000000000000000000000'}
+          { type: 'testFailure', value: 'Equal bytes32 fail test', errMsg: 'equalBytes32FailTest fails', context: 'AssertEqualTest', expected: '0x72656d6978000000000000000000000000000000000000000000000000000000', returned: '0x72656d6979000000000000000000000000000000000000000000000000000000'},
+          { type: 'testPass', value: 'Equal string pass test', context: 'AssertEqualTest' },
+          { type: 'testFailure', value: 'Equal string fail test', errMsg: 'equalStringFailTest fails', context: 'AssertEqualTest', expected: 'remix-tests', returned: 'remix'}
         ], ['time'])
       })
     })
@@ -180,12 +182,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 5 passing test', () => {
-        assert.equal(results.passingNum, 5)
+      it('should have 6 passing test', () => {
+        assert.equal(results.passingNum, 6)
       })
 
-      it('should have 5 failing test', () => {
-        assert.equal(results.failureNum, 5)
+      it('should have 6 failing test', () => {
+        assert.equal(results.failureNum, 6)
       })
 
       it('should return', () => {
@@ -201,7 +203,9 @@ describe('testRunner', () => {
           { type: 'testPass', value: 'Not equal address pass test', context: 'AssertNotEqualTest' },
           { type: 'testFailure', value: 'Not equal address fail test', errMsg: 'notEqualAddressFailTest fails', context: 'AssertNotEqualTest', expected: 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, returned: 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9},
           { type: 'testPass', value: 'Not equal bytes32 pass test', context: 'AssertNotEqualTest' },
-          { type: 'testFailure', value: 'Not equal bytes32 fail test', errMsg: 'notEqualBytes32FailTest fails', context: 'AssertNotEqualTest', expected: '0x72656d6978000000000000000000000000000000000000000000000000000000', returned: '0x72656d6978000000000000000000000000000000000000000000000000000000'}
+          { type: 'testFailure', value: 'Not equal bytes32 fail test', errMsg: 'notEqualBytes32FailTest fails', context: 'AssertNotEqualTest', expected: '0x72656d6978000000000000000000000000000000000000000000000000000000', returned: '0x72656d6978000000000000000000000000000000000000000000000000000000'},
+          { type: 'testPass', value: 'Not equal string pass test', context: 'AssertNotEqualTest' },
+          { type: 'testFailure', value: 'Not equal string fail test', errMsg: 'notEqualStringFailTest fails', context: 'AssertNotEqualTest', expected: 'remix', returned: 'remix'},
         ], ['time'])
       })
     })
