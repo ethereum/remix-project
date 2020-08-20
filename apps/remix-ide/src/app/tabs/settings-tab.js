@@ -57,7 +57,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     if (themes) {
       return yo`<div class="card-text themes-container">
         ${themes.map((aTheme) => {
-          let el = yo`<div class="radio custom-control custom-radio ${css.frow} form-check ${css.crow}">
+          let el = yo`<div class="radio custom-control custom-radio mb-1 form-check ${css.crow}">
           <input type="radio" onchange=${event => { onswitchTheme(event, aTheme.name) }} class="align-middle custom-control-input" name="theme" id="${aTheme.name}" data-id="settingsTabTheme${aTheme.name}">
           <label class="form-check-label custom-control-label" data-id="settingsTabThemeLabel${aTheme.name}" for="${aTheme.name}">${aTheme.name} (${aTheme.quality})</label>
         </div>`
@@ -117,19 +117,19 @@ module.exports = class SettingsTab extends ViewPlugin {
       <div class="${css.info} border-top">
         <div class="card-body">
           <h6 class="${css.title} card-title">General settings</h6>
-          <div class="mt-2 custom-control custom-checkbox ${css.frow}">
+          <div class="mt-2 custom-control custom-checkbox mb-1">
             ${this._view.generateContractMetadata}
             ${this._view.generateContractMetadataLabel}
           </div>
-          <div class="fmt-2 custom-control custom-checkbox ${css.frow}">
+          <div class="fmt-2 custom-control custom-checkbox mb-1">
             ${this._view.optionVM}
             ${this._view.optionVMLabel}
           </div>
-          <div class="mt-2 custom-control custom-checkbox ${css.frow}">
+          <div class="mt-2 custom-control custom-checkbox mb-1">
             ${this._view.textWrap}
             ${this._view.textWrapLabel}
           </div>
-          <div class="custom-control custom-checkbox ${css.frow}">
+          <div class="custom-control custom-checkbox mb-1">
             ${this._view.personal}>
             ${this._view.personalLabel}
           </div>
