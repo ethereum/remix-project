@@ -45,4 +45,12 @@ contract AssertNotEqualTest {
         bytes32 r = 0x72656d6978000000000000000000000000000000000000000000000000000000;
         Assert.notEqual(r, e, "notEqualBytes32FailTest fails");
     }
+
+    function notEqualStringPassTest() public {
+        Assert.notEqual(string("remix"), string("remix-tests"), "notEqualStringPassTest passes");
+    }
+
+    function notEqualStringFailTest() public {
+        Assert.notEqual(string("remix"), string("remix"), "notEqualStringFailTest fails");
+    }
 }

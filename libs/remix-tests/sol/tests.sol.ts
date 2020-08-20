@@ -43,6 +43,13 @@ library Assert {
     bytes32 expected
   );
 
+  event AssertionEventString(
+    bool passed,
+    string message,
+    string returned,
+    string expected
+  );
+
   function ok(bool a, string memory message) public returns (bool result) {
     result = a;
     emit AssertionEvent(result, message);
@@ -87,7 +94,7 @@ library Assert {
 
   function equal(string memory a, string memory b, string memory message) public returns (bool result) {
      result = (keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b)));
-     emit AssertionEvent(result, message);
+     emit AssertionEventString(result, message, a, b);
   }
 
   function notEqual(uint256 a, uint256 b, string memory message) public returns (bool result) {
@@ -129,7 +136,7 @@ library Assert {
 
   function notEqual(string memory a, string memory b, string memory message) public returns (bool result) {
     result = (keccak256(abi.encodePacked(a)) != keccak256(abi.encodePacked(b)));
-    emit AssertionEvent(result, message);
+    emit AssertionEventString(result, message, a, b);
   }
 
   /*----------------- Greater than --------------------*/
