@@ -221,12 +221,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 2 passing test', () => {
-        assert.equal(results.passingNum, 2)
+      it('should have 3 passing test', () => {
+        assert.equal(results.passingNum, 3)
       })
 
-      it('should have 2 failing test', () => {
-        assert.equal(results.failureNum, 2)
+      it('should have 3 failing test', () => {
+        assert.equal(results.failureNum, 3)
       })
       it('should return', () => {
         deepEqualExcluding(tests, [
@@ -235,7 +235,9 @@ describe('testRunner', () => {
           { type: 'testPass', value: 'Greater than uint pass test', context: 'AssertGreaterThanTest' },
           { type: 'testFailure', value: 'Greater than uint fail test', errMsg: 'greaterThanUintFailTest fails', context: 'AssertGreaterThanTest', expected: '4', returned: '1'},
           { type: 'testPass', value: 'Greater than int pass test', context: 'AssertGreaterThanTest' },
-          { type: 'testFailure', value: 'Greater than int fail test', errMsg: 'greaterThanIntFailTest fails', context: 'AssertGreaterThanTest', expected: '1', returned: '-1'}
+          { type: 'testFailure', value: 'Greater than int fail test', errMsg: 'greaterThanIntFailTest fails', context: 'AssertGreaterThanTest', expected: '1', returned: '-1'},
+          { type: 'testPass', value: 'Greater than uint int pass test', context: 'AssertGreaterThanTest' },
+          { type: 'testFailure', value: 'Greater than uint int fail test', errMsg: 'greaterThanUintIntFailTest fails', context: 'AssertGreaterThanTest', expected: '2', returned: '1'}
         ], ['time'])
       })
     })
@@ -251,12 +253,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 2 passing test', () => {
-        assert.equal(results.passingNum, 2)
+      it('should have 3 passing test', () => {
+        assert.equal(results.passingNum, 3)
       })
 
-      it('should have 2 failing test', () => {
-        assert.equal(results.failureNum, 2)
+      it('should have 3 failing test', () => {
+        assert.equal(results.failureNum, 3)
       })
 
       it('should return', () => {
@@ -266,7 +268,9 @@ describe('testRunner', () => {
           { type: 'testPass', value: 'Lesser than uint pass test', context: 'AssertLesserThanTest' },
           { type: 'testFailure', value: 'Lesser than uint fail test', errMsg: 'lesserThanUintFailTest fails', context: 'AssertLesserThanTest', expected: '2', returned: '4'},
           { type: 'testPass', value: 'Lesser than int pass test', context: 'AssertLesserThanTest' },
-          { type: 'testFailure', value: 'Lesser than int fail test', errMsg: 'lesserThanIntFailTest fails', context: 'AssertLesserThanTest', expected: '-1', returned: '1'}
+          { type: 'testFailure', value: 'Lesser than int fail test', errMsg: 'lesserThanIntFailTest fails', context: 'AssertLesserThanTest', expected: '-1', returned: '1'},
+          { type: 'testPass', value: 'Lesser than uint int pass test', context: 'AssertLesserThanTest' },
+          { type: 'testFailure', value: 'Lesser than uint int fail test', errMsg: 'lesserThanUintIntFailTest fails', context: 'AssertLesserThanTest', expected: '-1', returned: '115792089237316195423570985008687907853269984665640564039457584007913129639935'}
         ], ['time'])
       })
     })
