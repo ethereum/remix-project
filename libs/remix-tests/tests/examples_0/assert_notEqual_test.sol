@@ -25,4 +25,12 @@ contract AssertNotEqualTest {
     function notEqualBoolFailTest() public {
         Assert.notEqual(true, true, "notEqualBoolFailTest fails");
     }
+
+    function notEqualAddressPassTest() public {
+        Assert.notEqual(0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, 0x1c6637567229159d1eFD45f95A6675e77727E013, "notEqualAddressPassTest passes");
+    }
+
+    function notEqualAddressFailTest() public {
+        Assert.notEqual(0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, "notEqualAddressFailTest fails");
+    }
 }
