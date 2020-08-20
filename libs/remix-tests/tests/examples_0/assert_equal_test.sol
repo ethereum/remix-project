@@ -25,4 +25,12 @@ contract AssertEqualTest {
     function equalBoolFailTest() public {
         Assert.equal(true, false, "equalBoolFailTest fails");
     }
+
+    function equalAddressPassTest() public {
+        Assert.equal(0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, "equalAddressPassTest passes");
+    }
+
+    function equalAddressFailTest() public {
+        Assert.equal(0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, 0x1c6637567229159d1eFD45f95A6675e77727E013, "equalAddressFailTest fails");
+    }
 }

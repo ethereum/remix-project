@@ -29,6 +29,13 @@ library Assert {
     bool expected
   );
 
+  event AssertionEventAddress(
+    bool passed,
+    string message,
+    address returned,
+    address expected
+  );
+
   function ok(bool a, string memory message) public returns (bool result) {
     result = a;
     emit AssertionEvent(result, message);
@@ -63,7 +70,7 @@ library Assert {
 
   function equal(address a, address b, string memory message) public returns (bool result) {
     result = (a == b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventAddress(result, message, a, b);
   }
 
   function equal(bytes32 a, bytes32 b, string memory message) public returns (bool result) {
@@ -105,7 +112,7 @@ library Assert {
 
   function notEqual(address a, address b, string memory message) public returns (bool result) {
     result = (a != b);
-    emit AssertionEvent(result, message);
+    emit AssertionEventAddress(result, message, a, b);
   }
 
   function notEqual(bytes32 a, bytes32 b, string memory message) public returns (bool result) {
