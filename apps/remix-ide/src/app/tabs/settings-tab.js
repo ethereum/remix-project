@@ -115,7 +115,7 @@ module.exports = class SettingsTab extends ViewPlugin {
 
     this._view.config.general = yo`
       <div class="${css.info} border-top">
-        <div class="card-body">
+        <div class="card-body px-3 pt-3 pb-2">
           <h6 class="${css.title} card-title">General settings</h6>
           <div class="mt-2 custom-control custom-checkbox mb-1">
             ${this._view.generateContractMetadata}
@@ -138,7 +138,7 @@ module.exports = class SettingsTab extends ViewPlugin {
       `
     this._view.gistToken = yo`
       <div class="${css.info} border-top">
-        <div class="card-body">
+        <div class="card-body px-3 pt-3 pb-2">
           <h6 class="${css.title} card-title">Github Access Token</h6>
           <p class="">Manage the access token used to publish to Gist and retrieve Github contents.</p>
           <p class="">Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only 'create gist' permission.</p>
@@ -148,7 +148,7 @@ module.exports = class SettingsTab extends ViewPlugin {
       </div>`
     this._view.config.themes = yo`
       <div class="${css.info} border-top">
-        <div class="card-body">
+        <div class="card-body px-3 pt-3 pb-2">
           <h6 class="${css.title} card-title">Themes</h6>
             ${this._view.themesCheckBoxes}
         </div>
