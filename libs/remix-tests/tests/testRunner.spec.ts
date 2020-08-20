@@ -143,12 +143,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 3 passing test', () => {
-        assert.equal(results.passingNum, 3)
+      it('should have 4 passing test', () => {
+        assert.equal(results.passingNum, 4)
       })
 
-      it('should have 3 failing test', () => {
-        assert.equal(results.failureNum, 3)
+      it('should have 4 failing test', () => {
+        assert.equal(results.failureNum, 4)
       })
 
       it('should return', () => {
@@ -160,7 +160,9 @@ describe('testRunner', () => {
           { type: 'testPass', value: 'Equal int pass test', context: 'AssertEqualTest' },
           { type: 'testFailure', value: 'Equal int fail test', errMsg: 'equalIntFailTest fails', context: 'AssertEqualTest', expected: '2', returned: '-1'},
           { type: 'testPass', value: 'Equal bool pass test', context: 'AssertEqualTest' },
-          { type: 'testFailure', value: 'Equal bool fail test', errMsg: 'equalBoolFailTest fails', context: 'AssertEqualTest', expected: false, returned: true}
+          { type: 'testFailure', value: 'Equal bool fail test', errMsg: 'equalBoolFailTest fails', context: 'AssertEqualTest', expected: false, returned: true},
+          { type: 'testPass', value: 'Equal address pass test', context: 'AssertEqualTest' },
+          { type: 'testFailure', value: 'Equal address fail test', errMsg: 'equalAddressFailTest fails', context: 'AssertEqualTest', expected: '0x1c6637567229159d1eFD45f95A6675e77727E013', returned: '0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9'}
         ], ['time'])
       })
     })
@@ -176,12 +178,12 @@ describe('testRunner', () => {
 
       afterAll(() => { tests = [] })
 
-      it('should have 3 passing test', () => {
-        assert.equal(results.passingNum, 3)
+      it('should have 4 passing test', () => {
+        assert.equal(results.passingNum, 4)
       })
 
-      it('should have 3 failing test', () => {
-        assert.equal(results.failureNum, 3)
+      it('should have 4 failing test', () => {
+        assert.equal(results.failureNum, 4)
       })
 
       it('should return', () => {
@@ -193,7 +195,9 @@ describe('testRunner', () => {
           { type: 'testPass', value: 'Not equal int pass test', context: 'AssertNotEqualTest' },
           { type: 'testFailure', value: 'Not equal int fail test', errMsg: 'notEqualIntFailTest fails', context: 'AssertNotEqualTest', expected: '-2', returned: '-2'},
           { type: 'testPass', value: 'Not equal bool pass test', context: 'AssertNotEqualTest' },
-          { type: 'testFailure', value: 'Not equal bool fail test', errMsg: 'notEqualBoolFailTest fails', context: 'AssertNotEqualTest', expected: true, returned: true}
+          { type: 'testFailure', value: 'Not equal bool fail test', errMsg: 'notEqualBoolFailTest fails', context: 'AssertNotEqualTest', expected: true, returned: true},
+          { type: 'testPass', value: 'Not equal address pass test', context: 'AssertNotEqualTest' },
+          { type: 'testFailure', value: 'Not equal address fail test', errMsg: 'notEqualAddressFailTest fails', context: 'AssertNotEqualTest', expected: 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, returned: 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9}
         ], ['time'])
       })
     })
