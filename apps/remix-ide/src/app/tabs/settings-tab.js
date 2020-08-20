@@ -140,9 +140,9 @@ module.exports = class SettingsTab extends ViewPlugin {
       <div class="${css.info} border-top">
         <div class="card-body px-3 pt-3 pb-2">
           <h6 class="${css.title} card-title">Github Access Token</h6>
-          <p class="">Manage the access token used to publish to Gist and retrieve Github contents.</p>
+          <p class="mb-1">Manage the access token used to publish to Gist and retrieve Github contents.</p>
           <p class="">Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only 'create gist' permission.</p>
-          <p class="${css.crowNoFlex}"><a class="text-primary ${css.text}" target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
+          <p class="${css.crowNoFlex} mb-1"><a class="text-primary ${css.text}" target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
           <div class="${css.crowNoFlex}"><label>TOKEN:</label>${this._view.gistToken}</div>
         </div>
       </div>`
