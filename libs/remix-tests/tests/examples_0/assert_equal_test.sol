@@ -33,4 +33,16 @@ contract AssertEqualTest {
     function equalAddressFailTest() public {
         Assert.equal(0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, 0x1c6637567229159d1eFD45f95A6675e77727E013, "equalAddressFailTest fails");
     }
+
+    function equalBytes32PassTest() public {
+        bytes32 e = 0x72656d6978000000000000000000000000000000000000000000000000000000;
+        bytes32 r = 0x72656d6978000000000000000000000000000000000000000000000000000000;
+        Assert.equal(r, e, "equalBytes32PassTest passes");
+    }
+
+    function equalBytes32FailTest() public {
+        bytes32 e = 0x72656d6978000000000000000000000000000000000000000000000000000000;
+        bytes32 r = 0x72656d6979000000000000000000000000000000000000000000000000000000;
+        Assert.equal(r, e, "equalBytes32FailTest fails");
+    }
 }

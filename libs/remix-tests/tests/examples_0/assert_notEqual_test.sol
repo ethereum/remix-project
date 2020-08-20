@@ -33,4 +33,16 @@ contract AssertNotEqualTest {
     function notEqualAddressFailTest() public {
         Assert.notEqual(0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, "notEqualAddressFailTest fails");
     }
+
+    function notEqualBytes32PassTest() public {
+        bytes32 e = 0x72656d6978000000000000000000000000000000000000000000000000000000;
+        bytes32 r = 0x72656d6979000000000000000000000000000000000000000000000000000000;
+        Assert.notEqual(r, e, "notEqualBytes32PassTest fails");
+    }
+
+    function notEqualBytes32FailTest() public {
+        bytes32 e = 0x72656d6978000000000000000000000000000000000000000000000000000000;
+        bytes32 r = 0x72656d6978000000000000000000000000000000000000000000000000000000;
+        Assert.notEqual(r, e, "notEqualBytes32FailTest fails");
+    }
 }
