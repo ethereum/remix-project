@@ -53,8 +53,15 @@ library Assert {
   event AssertionEventUintInt(
     bool passed,
     string message,
-    uint returned,
-    int expected
+    uint256 returned,
+    int256 expected
+  );
+
+  event AssertionEventIntUint(
+    bool passed,
+    string message,
+    int256 returned,
+    uint256 expected
   );
 
   function ok(bool a, string memory message) public returns (bool result) {
@@ -166,14 +173,14 @@ library Assert {
     }
     emit AssertionEventUintInt(result, message, a, b);
   }
-  function greaterThan(int a, uint b, string memory message) public returns (bool result) {
+  function greaterThan(int256 a, uint256 b, string memory message) public returns (bool result) {
     if(a < int(0)) {
       // int is negative uint "b" always greater
       result = false;
     } else {
       result = (uint(a) > b);
     }
-    emit AssertionEvent(result, message);
+    emit AssertionEventIntUint(result, message, a, b);
   }
   /*----------------- Lesser than --------------------*/
   function lesserThan(uint256 a, uint256 b, string memory message) public returns (bool result) {
@@ -196,14 +203,14 @@ library Assert {
     emit AssertionEventUintInt(result, message, a, b);
   }
 
-  function lesserThan(int a, uint b, string memory message) public returns (bool result) {
+  function lesserThan(int256 a, uint256 b, string memory message) public returns (bool result) {
     if(a < int(0)) {
       // int is negative int "a" always lesser
       result = true;
     } else {
       result = (uint(a) < b);
     }
-    emit AssertionEvent(result, message);
+    emit AssertionEventIntUint(result, message, a, b);
   }
 }
 `
