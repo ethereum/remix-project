@@ -18,6 +18,10 @@ const assertionEvents = [
     {
         name: 'AssertionEventAddress',
         params: ['bool', 'string', 'address', 'address']
+    },
+    {
+        name: 'AssertionEventBytes32',
+        params: ['bool', 'string', 'bytes32', 'bytes32']
     }
 ]
 
