@@ -14,6 +14,10 @@ const assertionEvents = [
     {
         name: 'AssertionEventBool',
         params: ['bool', 'string', 'bool', 'bool']
+    },
+    {
+        name: 'AssertionEventAddress',
+        params: ['bool', 'string', 'address', 'address']
     }
 ]
 
