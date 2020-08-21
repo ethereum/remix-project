@@ -242,7 +242,8 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
           }
         }
       })
-    } catch (_error) {
+    } catch (error) {
+      console.log(error)
     }
   }
   // we check here if we are at the beginning inside a new function.
@@ -277,7 +278,8 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
           // output params
           if (outputs) addParams(outputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, 0, 1)
         }
-      } catch (_error) {
+      } catch (error) {
+        console.log(error)
       }
     })
 
