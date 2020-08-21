@@ -5,12 +5,14 @@ library Assert {
 
   event AssertionEvent(
     bool passed,
-    string message
+    string message,
+    string methodName
   );
 
   event AssertionEventUint(
     bool passed,
     string message,
+    string methodName,
     uint256 returned,
     uint256 expected
   );
@@ -18,6 +20,7 @@ library Assert {
   event AssertionEventInt(
     bool passed,
     string message,
+    string methodName,
     int256 returned,
     int256 expected
   );
@@ -25,6 +28,7 @@ library Assert {
   event AssertionEventBool(
     bool passed,
     string message,
+    string methodName,
     bool returned,
     bool expected
   );
@@ -32,6 +36,7 @@ library Assert {
   event AssertionEventAddress(
     bool passed,
     string message,
+    string methodName,
     address returned,
     address expected
   );
@@ -39,6 +44,7 @@ library Assert {
   event AssertionEventBytes32(
     bool passed,
     string message,
+    string methodName,
     bytes32 returned,
     bytes32 expected
   );
@@ -46,6 +52,7 @@ library Assert {
   event AssertionEventString(
     bool passed,
     string message,
+    string methodName,
     string returned,
     string expected
   );
@@ -53,6 +60,7 @@ library Assert {
   event AssertionEventUintInt(
     bool passed,
     string message,
+    string methodName,
     uint256 returned,
     int256 expected
   );
@@ -60,28 +68,29 @@ library Assert {
   event AssertionEventIntUint(
     bool passed,
     string message,
+    string methodName,
     int256 returned,
     uint256 expected
   );
 
   function ok(bool a, string memory message) public returns (bool result) {
     result = a;
-    emit AssertionEvent(result, message);
+    emit AssertionEvent(result, message, "ok");
   }
 
   function equal(uint256 a, uint256 b, string memory message) public returns (bool result) {
     result = (a == b);
-    emit AssertionEventUint(result, message, a, b);
+    emit AssertionEventUint(result, message, "equal", a, b);
   }
 
   function equal(int256 a, int256 b, string memory message) public returns (bool result) {
     result = (a == b);
-    emit AssertionEventInt(result, message, a, b);
+    emit AssertionEventInt(result, message, "equal", a, b);
   }
 
   function equal(bool a, bool b, string memory message) public returns (bool result) {
     result = (a == b);
-    emit AssertionEventBool(result, message, a, b);
+    emit AssertionEventBool(result, message, "equal", a, b);
   }
 
   // TODO: only for certain versions of solc
@@ -98,32 +107,32 @@ library Assert {
 
   function equal(address a, address b, string memory message) public returns (bool result) {
     result = (a == b);
-    emit AssertionEventAddress(result, message, a, b);
+    emit AssertionEventAddress(result, message, "equal", a, b);
   }
 
   function equal(bytes32 a, bytes32 b, string memory message) public returns (bool result) {
     result = (a == b);
-    emit AssertionEventBytes32(result, message, a, b);
+    emit AssertionEventBytes32(result, message, "equal", a, b);
   }
 
   function equal(string memory a, string memory b, string memory message) public returns (bool result) {
      result = (keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b)));
-     emit AssertionEventString(result, message, a, b);
+     emit AssertionEventString(result, message, "equal", a, b);
   }
 
   function notEqual(uint256 a, uint256 b, string memory message) public returns (bool result) {
     result = (a != b);
-    emit AssertionEventUint(result, message, a, b);
+    emit AssertionEventUint(result, message, "notEqual", a, b);
   }
 
   function notEqual(int256 a, int256 b, string memory message) public returns (bool result) {
     result = (a != b);
-    emit AssertionEventInt(result, message, a, b);
+    emit AssertionEventInt(result, message, "notEqual", a, b);
   }
 
   function notEqual(bool a, bool b, string memory message) public returns (bool result) {
     result = (a != b);
-    emit AssertionEventBool(result, message, a, b);
+    emit AssertionEventBool(result, message, "notEqual", a, b);
   }
 
   // TODO: only for certain versions of solc
@@ -140,28 +149,28 @@ library Assert {
 
   function notEqual(address a, address b, string memory message) public returns (bool result) {
     result = (a != b);
-    emit AssertionEventAddress(result, message, a, b);
+    emit AssertionEventAddress(result, message, "notEqual", a, b);
   }
 
   function notEqual(bytes32 a, bytes32 b, string memory message) public returns (bool result) {
     result = (a != b);
-    emit AssertionEventBytes32(result, message, a, b);
+    emit AssertionEventBytes32(result, message, "notEqual", a, b);
   }
 
   function notEqual(string memory a, string memory b, string memory message) public returns (bool result) {
     result = (keccak256(abi.encodePacked(a)) != keccak256(abi.encodePacked(b)));
-    emit AssertionEventString(result, message, a, b);
+    emit AssertionEventString(result, message, "notEqual", a, b);
   }
 
   /*----------------- Greater than --------------------*/
   function greaterThan(uint256 a, uint256 b, string memory message) public returns (bool result) {
     result = (a > b);
-    emit AssertionEventUint(result, message, a, b);
+    emit AssertionEventUint(result, message, "greaterThan", a, b);
   }
 
   function greaterThan(int256 a, int256 b, string memory message) public returns (bool result) {
     result = (a > b);
-    emit AssertionEventInt(result, message, a, b);
+    emit AssertionEventInt(result, message, "greaterThan", a, b);
   }
   // TODO: safely compare between uint and int
   function greaterThan(uint256 a, int256 b, string memory message) public returns (bool result) {
@@ -171,7 +180,7 @@ library Assert {
     } else {
       result = (a > uint(b));
     }
-    emit AssertionEventUintInt(result, message, a, b);
+    emit AssertionEventUintInt(result, message, "greaterThan", a, b);
   }
   function greaterThan(int256 a, uint256 b, string memory message) public returns (bool result) {
     if(a < int(0)) {
@@ -180,17 +189,17 @@ library Assert {
     } else {
       result = (uint(a) > b);
     }
-    emit AssertionEventIntUint(result, message, a, b);
+    emit AssertionEventIntUint(result, message, "greaterThan", a, b);
   }
   /*----------------- Lesser than --------------------*/
   function lesserThan(uint256 a, uint256 b, string memory message) public returns (bool result) {
     result = (a < b);
-    emit AssertionEventUint(result, message, a, b);
+    emit AssertionEventUint(result, message, "lesserThan", a, b);
   }
 
   function lesserThan(int256 a, int256 b, string memory message) public returns (bool result) {
     result = (a < b);
-    emit AssertionEventInt(result, message, a, b);
+    emit AssertionEventInt(result, message, "lesserThan", a, b);
   }
   // TODO: safely compare between uint and int
   function lesserThan(uint256 a, int256 b, string memory message) public returns (bool result) {
@@ -200,7 +209,7 @@ library Assert {
     } else {
       result = (a < uint(b));
     }
-    emit AssertionEventUintInt(result, message, a, b);
+    emit AssertionEventUintInt(result, message, "lesserThan", a, b);
   }
 
   function lesserThan(int256 a, uint256 b, string memory message) public returns (bool result) {
@@ -210,7 +219,7 @@ library Assert {
     } else {
       result = (uint(a) < b);
     }
-    emit AssertionEventIntUint(result, message, a, b);
+    emit AssertionEventIntUint(result, message, "lesserThan", a, b);
   }
 }
 `
