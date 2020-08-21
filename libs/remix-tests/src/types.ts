@@ -32,6 +32,7 @@ export interface TestResultInterface {
   context?: string
   errMsg?: string
   filename?: string
+  assertMethod?: string
   returned?: string | number
   expected?: string | number
 }

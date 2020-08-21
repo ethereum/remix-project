@@ -126,7 +126,7 @@ describe('testRunner', () => {
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'AssertOkTest', filename: __dirname + '/examples_0/assert_ok_test.sol' },
           { type: 'testPass', value: 'Ok pass test', context: 'AssertOkTest' },
-          { type: 'testFailure', value: 'Ok fail test', errMsg: 'okFailTest fails', context: 'AssertOkTest', expected: 'true', returned: 'false'},
+          { type: 'testFailure', value: 'Ok fail test', errMsg: 'okFailTest fails', context: 'AssertOkTest', assertMethod: 'ok', expected: 'true', returned: 'false'},
           
         ], ['time'])
       })
@@ -156,17 +156,17 @@ describe('testRunner', () => {
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'AssertEqualTest', filename: __dirname + '/examples_0/assert_equal_test.sol' },
           { type: 'testPass', value: 'Equal uint pass test', context: 'AssertEqualTest' },
-          { type: 'testFailure', value: 'Equal uint fail test', errMsg: 'equalUintFailTest fails', context: 'AssertEqualTest', expected: '2', returned: '1'},
+          { type: 'testFailure', value: 'Equal uint fail test', errMsg: 'equalUintFailTest fails', context: 'AssertEqualTest', assertMethod: 'equal', expected: '2', returned: '1'},
           { type: 'testPass', value: 'Equal int pass test', context: 'AssertEqualTest' },
-          { type: 'testFailure', value: 'Equal int fail test', errMsg: 'equalIntFailTest fails', context: 'AssertEqualTest', expected: '2', returned: '-1'},
+          { type: 'testFailure', value: 'Equal int fail test', errMsg: 'equalIntFailTest fails', context: 'AssertEqualTest', assertMethod: 'equal', expected: '2', returned: '-1'},
           { type: 'testPass', value: 'Equal bool pass test', context: 'AssertEqualTest' },
-          { type: 'testFailure', value: 'Equal bool fail test', errMsg: 'equalBoolFailTest fails', context: 'AssertEqualTest', expected: false, returned: true},
+          { type: 'testFailure', value: 'Equal bool fail test', errMsg: 'equalBoolFailTest fails', context: 'AssertEqualTest', assertMethod: 'equal', expected: false, returned: true},
           { type: 'testPass', value: 'Equal address pass test', context: 'AssertEqualTest' },
-          { type: 'testFailure', value: 'Equal address fail test', errMsg: 'equalAddressFailTest fails', context: 'AssertEqualTest', expected: '0x1c6637567229159d1eFD45f95A6675e77727E013', returned: '0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9'},
+          { type: 'testFailure', value: 'Equal address fail test', errMsg: 'equalAddressFailTest fails', context: 'AssertEqualTest', assertMethod: 'equal', expected: '0x1c6637567229159d1eFD45f95A6675e77727E013', returned: '0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9'},
           { type: 'testPass', value: 'Equal bytes32 pass test', context: 'AssertEqualTest' },
-          { type: 'testFailure', value: 'Equal bytes32 fail test', errMsg: 'equalBytes32FailTest fails', context: 'AssertEqualTest', expected: '0x72656d6978000000000000000000000000000000000000000000000000000000', returned: '0x72656d6979000000000000000000000000000000000000000000000000000000'},
+          { type: 'testFailure', value: 'Equal bytes32 fail test', errMsg: 'equalBytes32FailTest fails', context: 'AssertEqualTest', assertMethod: 'equal', expected: '0x72656d6978000000000000000000000000000000000000000000000000000000', returned: '0x72656d6979000000000000000000000000000000000000000000000000000000'},
           { type: 'testPass', value: 'Equal string pass test', context: 'AssertEqualTest' },
-          { type: 'testFailure', value: 'Equal string fail test', errMsg: 'equalStringFailTest fails', context: 'AssertEqualTest', expected: 'remix-tests', returned: 'remix'}
+          { type: 'testFailure', value: 'Equal string fail test', errMsg: 'equalStringFailTest fails', context: 'AssertEqualTest', assertMethod: 'equal', expected: 'remix-tests', returned: 'remix'}
         ], ['time'])
       })
     })
@@ -195,17 +195,17 @@ describe('testRunner', () => {
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'AssertNotEqualTest', filename: __dirname + '/examples_0/assert_notEqual_test.sol' },
           { type: 'testPass', value: 'Not equal uint pass test', context: 'AssertNotEqualTest' },
-          { type: 'testFailure', value: 'Not equal uint fail test', errMsg: 'notEqualUintFailTest fails', context: 'AssertNotEqualTest', expected: '1', returned: '1'},
+          { type: 'testFailure', value: 'Not equal uint fail test', errMsg: 'notEqualUintFailTest fails', context: 'AssertNotEqualTest', assertMethod: 'notEqual', expected: '1', returned: '1'},
           { type: 'testPass', value: 'Not equal int pass test', context: 'AssertNotEqualTest' },
-          { type: 'testFailure', value: 'Not equal int fail test', errMsg: 'notEqualIntFailTest fails', context: 'AssertNotEqualTest', expected: '-2', returned: '-2'},
+          { type: 'testFailure', value: 'Not equal int fail test', errMsg: 'notEqualIntFailTest fails', context: 'AssertNotEqualTest', assertMethod: 'notEqual', expected: '-2', returned: '-2'},
           { type: 'testPass', value: 'Not equal bool pass test', context: 'AssertNotEqualTest' },
-          { type: 'testFailure', value: 'Not equal bool fail test', errMsg: 'notEqualBoolFailTest fails', context: 'AssertNotEqualTest', expected: true, returned: true},
+          { type: 'testFailure', value: 'Not equal bool fail test', errMsg: 'notEqualBoolFailTest fails', context: 'AssertNotEqualTest', assertMethod: 'notEqual', expected: true, returned: true},
           { type: 'testPass', value: 'Not equal address pass test', context: 'AssertNotEqualTest' },
-          { type: 'testFailure', value: 'Not equal address fail test', errMsg: 'notEqualAddressFailTest fails', context: 'AssertNotEqualTest', expected: 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, returned: 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9},
+          { type: 'testFailure', value: 'Not equal address fail test', errMsg: 'notEqualAddressFailTest fails', context: 'AssertNotEqualTest', assertMethod: 'notEqual', expected: 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, returned: 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9},
           { type: 'testPass', value: 'Not equal bytes32 pass test', context: 'AssertNotEqualTest' },
-          { type: 'testFailure', value: 'Not equal bytes32 fail test', errMsg: 'notEqualBytes32FailTest fails', context: 'AssertNotEqualTest', expected: '0x72656d6978000000000000000000000000000000000000000000000000000000', returned: '0x72656d6978000000000000000000000000000000000000000000000000000000'},
+          { type: 'testFailure', value: 'Not equal bytes32 fail test', errMsg: 'notEqualBytes32FailTest fails', context: 'AssertNotEqualTest', assertMethod: 'notEqual', expected: '0x72656d6978000000000000000000000000000000000000000000000000000000', returned: '0x72656d6978000000000000000000000000000000000000000000000000000000'},
           { type: 'testPass', value: 'Not equal string pass test', context: 'AssertNotEqualTest' },
-          { type: 'testFailure', value: 'Not equal string fail test', errMsg: 'notEqualStringFailTest fails', context: 'AssertNotEqualTest', expected: 'remix', returned: 'remix'},
+          { type: 'testFailure', value: 'Not equal string fail test', errMsg: 'notEqualStringFailTest fails', context: 'AssertNotEqualTest', assertMethod: 'notEqual', expected: 'remix', returned: 'remix'},
         ], ['time'])
       })
     })
@@ -233,13 +233,13 @@ describe('testRunner', () => {
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'AssertGreaterThanTest', filename: __dirname + '/examples_0/assert_greaterThan_test.sol' },
           { type: 'testPass', value: 'Greater than uint pass test', context: 'AssertGreaterThanTest' },
-          { type: 'testFailure', value: 'Greater than uint fail test', errMsg: 'greaterThanUintFailTest fails', context: 'AssertGreaterThanTest', expected: '4', returned: '1'},
+          { type: 'testFailure', value: 'Greater than uint fail test', errMsg: 'greaterThanUintFailTest fails', context: 'AssertGreaterThanTest', assertMethod: 'greaterThan', expected: '4', returned: '1'},
           { type: 'testPass', value: 'Greater than int pass test', context: 'AssertGreaterThanTest' },
-          { type: 'testFailure', value: 'Greater than int fail test', errMsg: 'greaterThanIntFailTest fails', context: 'AssertGreaterThanTest', expected: '1', returned: '-1'},
+          { type: 'testFailure', value: 'Greater than int fail test', errMsg: 'greaterThanIntFailTest fails', context: 'AssertGreaterThanTest', assertMethod: 'greaterThan', expected: '1', returned: '-1'},
           { type: 'testPass', value: 'Greater than uint int pass test', context: 'AssertGreaterThanTest' },
-          { type: 'testFailure', value: 'Greater than uint int fail test', errMsg: 'greaterThanUintIntFailTest fails', context: 'AssertGreaterThanTest', expected: '2', returned: '1'},
+          { type: 'testFailure', value: 'Greater than uint int fail test', errMsg: 'greaterThanUintIntFailTest fails', context: 'AssertGreaterThanTest', assertMethod: 'greaterThan', expected: '2', returned: '1'},
           { type: 'testPass', value: 'Greater than int uint pass test', context: 'AssertGreaterThanTest' },
-          { type: 'testFailure', value: 'Greater than int uint fail test', errMsg: 'greaterThanIntUintFailTest fails', context: 'AssertGreaterThanTest', expected: '115792089237316195423570985008687907853269984665640564039457584007913129639836', returned: '100'}
+          { type: 'testFailure', value: 'Greater than int uint fail test', errMsg: 'greaterThanIntUintFailTest fails', context: 'AssertGreaterThanTest', assertMethod: 'greaterThan', expected: '115792089237316195423570985008687907853269984665640564039457584007913129639836', returned: '100'}
         ], ['time'])
       })
     })
@@ -268,13 +268,13 @@ describe('testRunner', () => {
           { type: 'accountList', value: accounts },
           { type: 'contract', value: 'AssertLesserThanTest', filename: __dirname + '/examples_0/assert_lesserThan_test.sol' },
           { type: 'testPass', value: 'Lesser than uint pass test', context: 'AssertLesserThanTest' },
-          { type: 'testFailure', value: 'Lesser than uint fail test', errMsg: 'lesserThanUintFailTest fails', context: 'AssertLesserThanTest', expected: '2', returned: '4'},
+          { type: 'testFailure', value: 'Lesser than uint fail test', errMsg: 'lesserThanUintFailTest fails', context: 'AssertLesserThanTest', assertMethod: 'lesserThan', expected: '2', returned: '4'},
           { type: 'testPass', value: 'Lesser than int pass test', context: 'AssertLesserThanTest' },
-          { type: 'testFailure', value: 'Lesser than int fail test', errMsg: 'lesserThanIntFailTest fails', context: 'AssertLesserThanTest', expected: '-1', returned: '1'},
+          { type: 'testFailure', value: 'Lesser than int fail test', errMsg: 'lesserThanIntFailTest fails', context: 'AssertLesserThanTest', assertMethod: 'lesserThan', expected: '-1', returned: '1'},
           { type: 'testPass', value: 'Lesser than uint int pass test', context: 'AssertLesserThanTest' },
-          { type: 'testFailure', value: 'Lesser than uint int fail test', errMsg: 'lesserThanUintIntFailTest fails', context: 'AssertLesserThanTest', expected: '-1', returned: '115792089237316195423570985008687907853269984665640564039457584007913129639935'},
+          { type: 'testFailure', value: 'Lesser than uint int fail test', errMsg: 'lesserThanUintIntFailTest fails', context: 'AssertLesserThanTest', assertMethod: 'lesserThan', expected: '-1', returned: '115792089237316195423570985008687907853269984665640564039457584007913129639935'},
           { type: 'testPass', value: 'Lesser than int uint pass test', context: 'AssertLesserThanTest' },
-          { type: 'testFailure', value: 'Lesser than int uint fail test', errMsg: 'lesserThanIntUintFailTest fails', context: 'AssertLesserThanTest', expected: '1', returned: '1'},
+          { type: 'testFailure', value: 'Lesser than int uint fail test', errMsg: 'lesserThanIntUintFailTest fails', context: 'AssertLesserThanTest', assertMethod: 'lesserThan', expected: '1', returned: '1'},
         ], ['time'])
       })
     })
@@ -304,7 +304,7 @@ describe('testRunner', () => {
           { type: 'contract', value: 'MyTest', filename: __dirname + '/examples_1/simple_storage_test.sol' },
           { type: 'testPass', value: 'Initial value should be100', context: 'MyTest' },
           { type: 'testPass', value: 'Initial value should not be200', context: 'MyTest' },
-          { type: 'testFailure', value: 'Should trigger one fail', errMsg: 'uint test 1 fails', context: 'MyTest', expected: '2', returned: '1'},
+          { type: 'testFailure', value: 'Should trigger one fail', errMsg: 'uint test 1 fails', context: 'MyTest', assertMethod: 'equal', expected: '2', returned: '1'},
           { type: 'testPass', value: 'Should trigger one pass', context: 'MyTest' }
         ], ['time'])
       })
