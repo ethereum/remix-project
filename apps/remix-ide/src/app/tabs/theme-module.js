@@ -5,11 +5,11 @@ import * as packageJson from '../../../../../package.json'
 import yo from 'yo-yo'
 
 const themes = [
-  {name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597333008/remix-themes/remix-dark_safzil.css'},
-  {name: 'Light', quality: 'light', url: 'https://res.cloudinary.com/remix/raw/upload/v1594059208/remix-themes/remix-light_csxus2.css'},
-  {name: 'Midcentury', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597701728/remix-themes/remix-midcentury_f1jx60.css'},
-  {name: 'BackToBlack', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597701728/remix-themes/remix-black_elanrp.css'},
-  {name: 'Candy', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597701728/remix-themes/remix-candy_xba3u2.css'},
+  {name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-dark_tvx1s2.css'},
+  {name: 'Light', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-light_powaqg.css'},
+  {name: 'Midcentury', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014334/remix-themes/PR365/remix-midcentury_hrzph3.css'},
+  {name: 'Black', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014334/remix-themes/PR365/remix-black_undtds.css'},
+  {name: 'Candy', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014799/remix-themes/PR365/remix-candy_ikhg4m.css'},
 
   {name: 'Cerulean', quality: 'light', url: 'https://bootswatch.com/4/cerulean/bootstrap.min.css'},
   {name: 'Flatly', quality: 'light', url: 'https://bootswatch.com/4/flatly/bootstrap.min.css'},
