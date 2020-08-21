@@ -111,6 +111,7 @@ class VmDebuggerLogic {
           }
         })
       } catch (error) {
+        console.log(error)
       }
 
       this._traceManager.getCurrentStep(index, (error, step) => {
