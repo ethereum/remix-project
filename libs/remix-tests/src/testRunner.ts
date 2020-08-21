@@ -237,9 +237,9 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                         if (eIndex >= 0) {
                             const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.raw.data)
                             if (!testEvent[0]) {
-                                if(eIndex === 0) { // for 'Assert.ok' method
-                                    testEvent[2] = 'false'
-                                    testEvent[3] = 'true'
+                                if(testEvent[2] === 'ok') { // for 'Assert.ok' method
+                                    testEvent[3] = 'false'
+                                    testEvent[4] = 'true'
                                 }
                                 const resp: TestResultInterface = {
                                   type: 'testFailure',
@@ -247,8 +247,9 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                                   time: time,
                                   errMsg: testEvent[1],
                                   context: testName,
-                                  returned: testEvent[2],
-                                  expected: testEvent[3]
+                                  assertMethod: testEvent[2],
+                                  returned: testEvent[3],
+                                  expected: testEvent[4]
                                 };
                                 testCallback(undefined, resp)
                                 failureNum += 1
