@@ -151,7 +151,9 @@
     "commander": "^2.20.3",
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
-    "ws": "^7.3.0"
+    "ws": "^7.3.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -271,6 +273,9 @@
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-standard": "4.0.1",
     "nodemon": "^2.0.4",
-    "@types/jest": "25.1.4"
+    "@types/jest": "25.1.4",
+    "@babel/preset-typescript": "7.9.0",
+    "@babel/preset-react": "7.9.4",
+    "babel-jest": "25.1.0"
   }
 }

@@ -492,7 +492,7 @@
           "builder": "@nrwl/node:package",
           "options": {
             "outputPath": "dist/libs/remixd",
-            "tsConfig": "libs/remixd/tsconfig.lib.json",
+            "tsConfig": "libs/remixd/tsconfig.lib.js on",
             "packageJson": "libs/remixd/package.json",
             "main": "libs/remixd/src/index.ts",
             "assets": ["libs/remixd/*.md", "libs/remixd/src/origins.json"]
