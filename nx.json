@@ -66,6 +66,9 @@
     },
     "remixd": {
       "tags": []
+    },
+    "debugger-ui": {
+      "tags": []
     }
   }
 }
