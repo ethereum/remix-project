@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom'
+import { Slider } from '@remix-project/debugger-ui'
 var TxBrowser = require('./debuggerUI/TxBrowser')
 var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
@@ -272,6 +275,7 @@ class DebuggerUI {
     yo.update(this.debuggerHeadPanelsView, this.vmDebugger.renderHead())
     yo.update(this.debuggerPanelsView, this.vmDebugger.render())
     yo.update(this.stepManagerView, this.stepManager.render())
+    ReactDOM.render(<Slider event={this.event} />, document.getElementById('slider-ui'))  
   }
 
 }
