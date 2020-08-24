@@ -34,7 +34,7 @@ class Provider {
   }
 
   async init () {
-    await this.Accounts.init()
+    await this.Accounts.resetAccounts()
     this.Transactions.init(this.Accounts.accounts)
   }
 
