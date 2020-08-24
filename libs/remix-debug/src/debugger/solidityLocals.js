@@ -34,7 +34,7 @@ class DebuggerSolidityLocals {
     this.traceManager.waterfall([
       this.traceManager.getStackAt,
       this.traceManager.getMemoryAt,
-      function getCurrentCalledAddressAt (stepIndex, next) {
+      (stepIndex, next) => {
         try {
           const address = this.traceManager.getCurrentCalledAddressAt(stepIndex)
           next(null, address)
