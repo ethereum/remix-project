@@ -42,7 +42,7 @@ function renameFile (browser: NightwatchBrowser, path: string, newFileName: stri
         })
       })
       .click('body') // blur
-      .waitForElementVisible('#modal-footer-ok', 10000)
+      .waitForElementVisible('#modal-footer-ok', 100000)
       .pause(2000)
       .click('#modal-footer-ok')
       .waitForElementNotPresent('[data-path="' + path + '"]')
