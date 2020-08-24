@@ -25,13 +25,8 @@ let css = csjs`
     overflow-y: hidden;
   }
   .mainContent {
+    overflow-y: auto;
     flex-grow: 3;
-  }
-  .thisJumboton {
-    padding: 2.5rem 0rem;
-    margin-bottom: 4rem;
-    display: flex;
-    align-items: center;
   }
   .hpLogoContainer {
     margin:30px;
@@ -275,7 +270,7 @@ export class LandingPage extends ViewPlugin {
     const container = yo`
       <div class="${css.homeContainer} d-flex" data-id="landingPageHomeContainer">
         <div class="${css.mainContent} bg-light">
-          <div class="border-bottom clearfix py-3 ${css.thisJumboton}">
+          <div class="border-bottom clearfix py-3 align-items-center mb-4">
             <div class="mx-4 ${css.logoContainer}">${img}</div>
           </div>
           <div class="row ${css.hpSections} mx-4" data-id="landingPageHpSections">
