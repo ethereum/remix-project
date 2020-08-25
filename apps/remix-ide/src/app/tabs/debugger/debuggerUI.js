@@ -22,6 +22,26 @@ var css = csjs`
   .statusMessage {
     margin-left: 15px;
   }
+
+  .debuggerConfig {
+    display: flex;
+    align-items: center;
+  }
+
+  .debuggerConfig label {
+    margin: 0;
+  }
+
+  .debuggerSection {
+    padding: 12px 24px 16px;
+  }
+
+  .debuggerLabel {
+    margin-bottom: 2px;
+    font-size: 11px;
+    line-height: 12px;
+    text-transform: uppercase;
+  }
 `
 
 class DebuggerUI {
@@ -32,7 +52,9 @@ class DebuggerUI {
     this.event = new EventManager()
 
     this.isActive = false
-
+    this.opt = {
+      debugWithGeneratedSources: false
+    }
     this.sourceHighlighter = new SourceHighlighter()
 
     this.startTxBrowser()
@@ -72,12 +94,29 @@ class DebuggerUI {
       this.isActive = isActive
     })
 
-    this.debugger.event.register('newSourceLocation', async (lineColumnPos, rawLocation) => {
+    this.debugger.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources) => {
+      if (!lineColumnPos) return
       const contracts = await this.fetchContractAndCompile(
         this.currentReceipt.contractAddress || this.currentReceipt.to,
         this.currentReceipt)
       if (contracts) {
-        const path = contracts.getSourceName(rawLocation.file)
+        let path = contracts.getSourceName(rawLocation.file)
+        if (!path) {
+          // check in generated sources
+          for (const source of generatedSources) {
+            if (source.id === rawLocation.file) {
+              path = `.debugger/generated-sources/${source.name}`
+              let content
+              try {
+                content = await this.debuggerModule.call('fileManager', 'getFile', path, source.contents)
+              } catch (e) {}
+              if (content !== source.contents) {
+                await this.debuggerModule.call('fileManager', 'setFile', path, source.contents)
+              }
+              break
+            }
+          }
+        }
         if (path) {
           await this.debuggerModule.call('editor', 'discardHighlight')
           await this.debuggerModule.call('editor', 'highlight', lineColumnPos, path)
@@ -137,7 +176,8 @@ class DebuggerUI {
           console.error(e)
         }
         return null
-      }
+      },
+      debugWithGeneratedSources: this.opt.debugWithGeneratedSources
     })
 
     this.listenToEvents()
@@ -167,7 +207,8 @@ class DebuggerUI {
             console.error(e)
           }
           return null
-        }
+        },
+        debugWithGeneratedSources: false
       })
       debug.debugger.traceManager.traceRetriever.getTrace(hash, (error, trace) => {
         if (error) return reject(error)
@@ -186,12 +227,18 @@ class DebuggerUI {
     this.stepManagerView = yo`<div class="px-2"></div>`
 
     var view = yo`
-      <div>
+      <div>        
         <div class="px-2">
+          <div class="mt-3">
+            <p class="mt-2 ${css.debuggerLabel}">Debugger Configuration</p>
+              <div class="mt-2 ${css.debuggerConfig} custom-control custom-checkbox">
+              <input class="custom-control-input" id="debugGeneratedSourcesInput" onchange=${(event) => { this.opt.debugWithGeneratedSources = event.target.checked }} type="checkbox" title="Debug with generated sources">
+              <label data-id="debugGeneratedSourcesLabel" class="form-check-label custom-control-label" for="debugGeneratedSourcesInput">Debug Generated sources if available (>= Solidity 0.7.2)</label>
+            </div>            
+          </div>       
           ${this.txBrowser.render()}
           ${this.stepManagerView}
-          ${this.debuggerHeadPanelsView}
-        </div>
+          ${this.debuggerHeadPanelsView}          
         <div class="${css.statusMessage}">${this.statusMessage}</div>
         ${this.debuggerPanelsView}
       </div>
