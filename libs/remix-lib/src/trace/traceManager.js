@@ -101,7 +101,7 @@ TraceManager.prototype.getCallDataAt = function (stepIndex) {
   return [this.traceCache.callsData[callDataChange]]
 }
 
-TraceManager.prototype.buildCallPath = function (stepIndex) {
+TraceManager.prototype.buildCallPath = async function (stepIndex) {
   try {
     this.checkRequestedStep(stepIndex)
   } catch (check) {
