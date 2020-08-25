@@ -12,7 +12,7 @@ const isObject = function(obj: any): boolean {
 export function isAstNode(node: Record<string, unknown>): boolean {
   return (
     isObject(node) &&
-    'id' in node &&
+    // 'id' in node &&
     'nodeType' in node &&
     'src' in node
   )
