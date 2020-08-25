@@ -111,6 +111,7 @@ class VmDebuggerLogic {
           this.event.trigger('traceManagerStorageUpdate', [{}])
         })
       } catch (error) {
+        this.event.trigger('traceManagerStorageUpdate', [{}])
       }
 
       try {
