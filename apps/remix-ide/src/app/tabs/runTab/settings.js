@@ -158,13 +158,13 @@ class SettingsUI {
 
     const addProvider = (network) => {
       selectExEnv.appendChild(yo`<option
-        title="Manually added environment: ${network.url}"
+        title="provider name: ${network.name}"
         value="${network.name}"
         name="executionContext"
       >
         ${network.name}
       </option>`)
-      addTooltip(yo`<span><b>${network.name}</b> provider added ${network.url ? `- ${network.url}` : ''}</span>`)
+      addTooltip(yo`<span><b>${network.name}</b> provider added</span>`)
     }
 
     const removeProvider = (name) => {
@@ -243,7 +243,10 @@ class SettingsUI {
         this.onPersonalChange()
       }
         break
-      default:
+      default: {
+        plusBtn.classList.add(css.disableMouseEvents)
+        plusTitle.title = `Unfortunately it's not possible to create an account using an external wallet (${this.selectExEnv.value}).`
+      }
     }
   }
 
