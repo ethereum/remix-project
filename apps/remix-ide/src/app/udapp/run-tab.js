@@ -202,27 +202,28 @@ export class RunTab extends LibraryPlugin {
     this.renderRecorder(this.udappUI, this.fileManager, this.config, this.logCallback)
     this.renderRecorderCard()
 
-    this.on('manager', 'pluginDeactivated', profile => {
-      if (profile.kind === 'provider') this.blockchain.removeProvider(profile.name)
-    })
-    this.on('manager', 'pluginActivated', profile => {
+    const addPluginProvider = (profile) => {
       if (profile.kind === 'provider') {
         ((profile, app) => {
           const web3Provider = {
-            sendAsync (payload, callback) {
-              app.call(profile.name, 'sendAsync', payload)
-                .then(result => {
-                  callback(null, result)
-                })
-                .catch(e => {
-                  callback(e)
-                })
+            async sendAsync (payload, callback) {
+              try {
+                const result = await app.call(profile.name, 'sendAsync', payload)
+                callback(null, result)
+              } catch (e) {
+                callback(e)
+              }
             }
           }
-          this.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
+          app.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
         })(profile, this)
       }
-    })
+    }
+    const removePluginProvider = (profile) => {
+      if (profile.kind === 'provider') this.blockchain.removeProvider(profile.displayName)
+    }
+    this.on('manager', 'pluginActivated', addPluginProvider.bind(this))
+    this.on('manager', 'pluginDeactivated', removePluginProvider.bind(this))
     return this.renderContainer()
   }
 }
