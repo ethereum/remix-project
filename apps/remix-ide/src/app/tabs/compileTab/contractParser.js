@@ -43,7 +43,7 @@ var getDetails = function (contractName, contract, source) {
   }
 
   if (source && contract.assembly !== null) {
-    detail['Assembly'] = solcTranslate.prettyPrintLegacyAssemblyJSON(contract.evm.legacyAssembly, source.content)
+    detail.Assembly = solcTranslate.prettyPrintLegacyAssemblyJSON(contract.evm.legacyAssembly, source.content)
   }
 
   return detail
@@ -69,9 +69,9 @@ var gethDeploy = function (contractName, jsonInterface, bytecode) {
 
   contractName = contractName.replace(/[:./]/g, '_')
   code += 'var ' + contractName + 'Contract = new web3.eth.Contract(' + JSON.stringify(jsonInterface).replace('\n', '') + ');' +
-    '\nvar ' + contractName + ' = ' + contractName + 'Contract.deploy({'
-    "\n     data: '0x" + bytecode + "', " +
-    "\n     arguments: [";
+    '\nvar ' + contractName + ' = ' + contractName + 'Contract.deploy({' +
+  "\n     data: '0x" + bytecode + "', " +
+    '\n     arguments: ['
 
   funABI.inputs.forEach(function (inp) {
     code += '\n          ' + inp.name + ','
@@ -102,20 +102,20 @@ var formatGasEstimates = function (data) {
   var ret = {}
   var fun
   if ('creation' in data) {
-    ret['Creation'] = data.creation
+    ret.Creation = data.creation
   }
 
   if ('external' in data) {
-    ret['External'] = {}
+    ret.External = {}
     for (fun in data.external) {
-      ret['External'][fun] = gasToText(data.external[fun])
+      ret.External[fun] = gasToText(data.external[fun])
     }
   }
 
   if ('internal' in data) {
-    ret['Internal'] = {}
+    ret.Internal = {}
     for (fun in data.internal) {
-      ret['Internal'][fun] = gasToText(data.internal[fun])
+      ret.Internal[fun] = gasToText(data.internal[fun])
     }
   }
   return ret

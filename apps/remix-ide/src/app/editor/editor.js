@@ -1,10 +1,11 @@
 'use strict'
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../../../package.json'
+
 const EventManager = require('../../lib/events')
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const ace = require('brace')
-import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
 
 const globalRegistry = require('../../global/registry')
 const SourceHighlighters = require('./SourceHighlighters')
@@ -52,7 +53,6 @@ const profile = {
 }
 
 class Editor extends Plugin {
-
   constructor (opts = {}, themeModule) {
     super(profile)
     // Dependancies
@@ -63,9 +63,9 @@ class Editor extends Plugin {
     }
 
     this._themes = {
-      'light': 'chrome',
-      'dark': 'chaos',
-      'remixDark': 'remixDark'
+      light: 'chrome',
+      dark: 'chaos',
+      remixDark: 'remixDark'
     }
     themeModule.events.on('themeChanged', (theme) => {
       this.setTheme(theme.name === 'Dark' ? 'remixDark' : theme.quality)
@@ -110,7 +110,7 @@ class Editor extends Plugin {
     // shortcuts for "Ctrl-"" and "Ctrl+"" to increase/decrease font size of the editor
     this.editor.commands.addCommand({
       name: 'increasefontsizeEqual',
-      bindKey: {win: 'Ctrl-=', mac: 'Command-='},
+      bindKey: { win: 'Ctrl-=', mac: 'Command-=' },
       exec: (editor) => {
         this.editorFontSize(1)
       },
@@ -119,7 +119,7 @@ class Editor extends Plugin {
 
     this.editor.commands.addCommand({
       name: 'increasefontsizePlus',
-      bindKey: {win: 'Ctrl-+', mac: 'Command-+'},
+      bindKey: { win: 'Ctrl-+', mac: 'Command-+' },
       exec: (editor) => {
         this.editorFontSize(1)
       },
@@ -128,7 +128,7 @@ class Editor extends Plugin {
 
     this.editor.commands.addCommand({
       name: 'decreasefontsize',
-      bindKey: {win: 'Ctrl--', mac: 'Command--'},
+      bindKey: { win: 'Ctrl--', mac: 'Command--' },
       exec: (editor) => {
         this.editorFontSize(-1)
       },
@@ -263,12 +263,12 @@ class Editor extends Plugin {
    * @param {string} path Path of the file
    */
   _getMode (path) {
-    if (!path) return this.modes['txt']
+    if (!path) return this.modes.txt
     const root = path.split('#')[0].split('?')[0]
     let ext = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
     if (ext) ext = ext[0]
     else ext = 'txt'
-    return ext && this.modes[ext] ? this.modes[ext] : this.modes['txt']
+    return ext && this.modes[ext] ? this.modes[ext] : this.modes.txt
   }
 
   /**
@@ -316,7 +316,7 @@ class Editor extends Plugin {
    * @param {number} incr The amount of pixels to add to the font.
    */
   editorFontSize (incr) {
-    let newSize = this.editor.getFontSize() + incr
+    const newSize = this.editor.getFontSize() + incr
     if (newSize >= 6) {
       this.editor.setFontSize(newSize)
     }

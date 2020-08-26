@@ -1,7 +1,6 @@
 const { EventEmitter } = require('events')
 
 class PluginUdapp {
-
   constructor (blockchain) {
     this.blockchain = blockchain
     this.events = new EventEmitter()
@@ -29,7 +28,6 @@ class PluginUdapp {
   pendingTransactionsCount () {
     return this.blockchain.pendingTransactionsCount()
   }
-
 }
 
 module.exports = PluginUdapp

@@ -12,7 +12,7 @@ function GistHandler (_window) {
     if (!cb) cb = () => {}
     var loadingFromGist = false
     var gistId
-    if (params['gist'] === '') {
+    if (params.gist === '') {
       loadingFromGist = true
       modalDialogCustom.prompt('Load a Gist', 'Enter the ID of the Gist or URL you would like to load.', null, (target) => {
         if (target !== '') {
@@ -26,7 +26,7 @@ function GistHandler (_window) {
       })
       return loadingFromGist
     } else {
-      gistId = params['gist']
+      gistId = params.gist
       loadingFromGist = !!gistId
     }
     if (loadingFromGist) {
@@ -53,7 +53,7 @@ function GistHandler (_window) {
           modalDialogCustom.alert(`Gist load error: ${error || data.message}`)
           return
         }
-        let obj = {}
+        const obj = {}
         Object.keys(data.files).forEach((element) => {
           obj['/gists/' + gistId + '/' + element] = data.files[element]
         })

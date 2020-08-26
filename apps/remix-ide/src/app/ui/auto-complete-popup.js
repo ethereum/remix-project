@@ -26,7 +26,7 @@ class AutoCompletePopup {
       _options: []
     }
     self._components = {}
-    self._view
+    self._view = null
     self._startingElement = 0
     self._elementsToShow = 4
     self._selectedElement = 0
@@ -36,7 +36,7 @@ class AutoCompletePopup {
 
   render () {
     var self = this
-    let autoComplete = yo`
+    const autoComplete = yo`
       <div class="${css.popup} alert alert-secondary">
         <div>
           ${self.data._options.map((item, index) => {
@@ -69,7 +69,7 @@ class AutoCompletePopup {
     function handleListSize (autoComplete) {
       if (self.data._options.length >= self._startingElement) {
         for (let i = self._startingElement; i < (self._elementsToShow + self._startingElement); i++) {
-          let el = autoComplete.querySelectorAll('.item')[i]
+          const el = autoComplete.querySelectorAll('.item')[i]
           if (el) {
             el.classList.remove(css.listHandlerHide)
             el.classList.add(css.listHandlerShow)
@@ -136,8 +136,8 @@ class AutoCompletePopup {
       // enter || tab and autocompletion is off, just returning false
       return false
     }
-    let textList = inputString.split(' ')
-    let autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
+    const textList = inputString.split(' ')
+    const autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
     if (inputString.length >= 2) {
       // more than 2 letters, start completion
       this.data._options = []

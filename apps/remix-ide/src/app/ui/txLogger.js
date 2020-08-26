@@ -159,7 +159,7 @@ class TxLogger {
     }, { activate: true })
 
     this.txListener.event.register('newBlock', (block) => {
-      if (!block.transactions || block.transactions && !block.transactions.length) {
+      if (!block.transactions || (block.transactions && !block.transactions.length)) {
         this.logEmptyBlock({ block: block })
       }
     })
@@ -190,8 +190,8 @@ function log (self, tx, receipt) {
   var resolvedTransaction = self.txListener.resolvedTransaction(tx.hash)
   if (resolvedTransaction) {
     var compiledContracts = null
-    if (self._deps.compilersArtefacts['__last']) {
-      compiledContracts = self._deps.compilersArtefacts['__last'].getContracts()
+    if (self._deps.compilersArtefacts.__last) {
+      compiledContracts = self._deps.compilersArtefacts.__last.getContracts()
     }
     self.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
       if (!error) {
@@ -207,13 +207,13 @@ function log (self, tx, receipt) {
 function renderKnownTransaction (self, data, blockchain) {
   var from = data.tx.from
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
-  var obj = {from, to}
+  var obj = { from, to }
   var txType = 'knownTx'
   var tx = yo`
     <span id="tx${data.tx.hash}" data-id="txLogger${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt, txType)}
-        ${context(self, {from, to, data}, blockchain)}
+        ${context(self, { from, to, data }, blockchain)}
         <div class=${css.buttons}>
           <button class="${css.debug} btn btn-primary btn-sm" data-shared="txLoggerDebugButton" data-id="txLoggerDebugButton${data.tx.hash}" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
@@ -228,7 +228,7 @@ function renderCall (self, data) {
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
-  var obj = {from, to}
+  var obj = { from, to }
   var txType = 'call'
   var tx = yo`
     <span id="tx${data.tx.hash}">
@@ -253,13 +253,13 @@ function renderCall (self, data) {
 function renderUnknownTransaction (self, data, blockchain) {
   var from = data.tx.from
   var to = data.tx.to
-  var obj = {from, to}
+  var obj = { from, to }
   var txType = 'unknown' + (data.tx.isCall ? 'Call' : 'Tx')
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt || data.tx, txType)}
-        ${context(self, {from, to, data}, blockchain)}
+        ${context(self, { from, to, data }, blockchain)}
         <div class=${css.buttons}>
           <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
@@ -444,7 +444,7 @@ function createTable (opts) {
   if (opts.from) table.appendChild(from)
 
   var toHash
-  var data = opts.data  // opts.data = data.tx
+  var data = opts.data // opts.data = data.tx
   if (data.to) {
     toHash = opts.to + ' ' + data.to
   } else {

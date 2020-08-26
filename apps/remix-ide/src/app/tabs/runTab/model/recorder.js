@@ -16,7 +16,7 @@ class Recorder {
     self.event = new EventManager()
     self.blockchain = blockchain
     self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
-    
+
     this.blockchain.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
       var { from, to, value } = tx
@@ -285,10 +285,10 @@ class Recorder {
         json = JSON.parse(json)
       } catch (e) {
         return cb('A scenario file is required. It must be json formatted')
-      }      
+      }
     }
 
-    try {      
+    try {
       var txArray = json.transactions || []
       var accounts = json.accounts || []
       var options = json.options || {}
@@ -304,8 +304,7 @@ class Recorder {
 
     this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, (abi, address, contractName) => {
       cb(null, abi, address, contractName)
-    })    
-    
+    })
   }
 }
 

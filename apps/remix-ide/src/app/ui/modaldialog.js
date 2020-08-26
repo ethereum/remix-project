@@ -6,10 +6,10 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   let agreed = true
   let footerIsActive = false
   opts = opts || {}
-  var container = document.querySelector(`.modal`)
+  var container = document.querySelector('.modal')
   if (!container) {
     document.querySelector('body').appendChild(html(opts))
-    container = document.querySelector(`.modal`)
+    container = document.querySelector('.modal')
     incomingModal = false
   } else incomingModal = true
 
@@ -24,8 +24,8 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   cancelDiv.innerHTML = (cancel && cancel.label !== undefined) ? cancel.label : 'Cancel'
   cancelDiv.style.display = cancelDiv.innerHTML === '' ? 'none' : 'inline-block'
 
-  var modal = document.querySelector(`.modal-body`)
-  var modalTitle = document.querySelector(`.modal-header h6`)
+  var modal = document.querySelector('.modal-body')
+  var modalTitle = document.querySelector('.modal-header h6')
 
   modalTitle.innerHTML = ''
   if (title) modalTitle.innerText = title
@@ -116,7 +116,7 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   closeDiv.addEventListener('click', cancelListener)
   document.addEventListener('keydown', modalKeyEvent)
 
-  let modalDialog = document.getElementById('modal-dialog')
+  const modalDialog = document.getElementById('modal-dialog')
   if (modalDialog) {
     modalDialog.addEventListener('click', (e) => {
       footerIsActive = document.activeElement === modalDialog
@@ -141,8 +141,8 @@ function html (opts) {
         </div>
         <div class="modal-body ${css.modalBody}" data-id="modalDialogModalBody"> - </div>
         <div class="modal-footer" data-id="modalDialogModalFooter" autofocus>
-          <span id="modal-footer-ok" class="${css['modalFooterOk']} modal-ok btn btn-sm btn-light" tabindex='5'>OK</span>
-          <span id="modal-footer-cancel" class="${css['modalFooterCancel']} modal-cancel btn btn-sm btn-light" tabindex='10' data-dismiss="modal">Cancel</span>
+          <span id="modal-footer-ok" class="${css.modalFooterOk} modal-ok btn btn-sm btn-light" tabindex='5'>OK</span>
+          <span id="modal-footer-cancel" class="${css.modalFooterCancel} modal-cancel btn btn-sm btn-light" tabindex='10' data-dismiss="modal">Cancel</span>
         </div>
       </div>
     </div>

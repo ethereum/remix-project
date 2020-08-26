@@ -2,14 +2,14 @@
 
 import yo from 'yo-yo'
 import async from 'async'
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../../../package.json'
 const EventEmitter = require('events')
 const globalRegistry = require('../../global/registry')
 const CompilerImport = require('../compiler/compiler-imports')
 const toaster = require('../ui/tooltip')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const helper = require('../../lib/helper.js')
-import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
 
 /*
   attach to files event (removed renamed)
@@ -50,7 +50,7 @@ class FileManager extends Plugin {
     this.init()
   }
 
-    /**
+  /**
    * Emit error if path doesn't exist
    * @param {string} path path of the file/directory
    * @param {string} message message to display if path doesn't exist.
@@ -124,7 +124,7 @@ class FileManager extends Plugin {
     return result
   }
 
-    /**
+  /**
    * Verify if the path provided is a directory
    * @param {string} path path of the directory
    * @returns {boolean} true if path is a directory.
@@ -468,7 +468,7 @@ class FileManager extends Plugin {
     }
     if (file) return _openFile(file)
     else {
-      var browserProvider = this._deps.filesProviders['browser']
+      var browserProvider = this._deps.filesProviders.browser
       browserProvider.resolveDirectory('browser', (error, filesProvider) => {
         if (error) console.error(error)
         var fileList = Object.keys(filesProvider)
@@ -489,9 +489,9 @@ class FileManager extends Plugin {
 
   fileProviderOf (file) {
     if (file.indexOf('localhost') === 0) {
-      return this._deps.filesProviders['localhost']
+      return this._deps.filesProviders.localhost
     }
-    return this._deps.filesProviders['browser']
+    return this._deps.filesProviders.browser
   }
 
   // returns the list of directories inside path
@@ -563,17 +563,17 @@ class FileManager extends Plugin {
       }
 
       helper.createNonClashingName(file, self._deps.filesProviders[fileProvider],
-      (error, name) => {
-        if (error) {
-          modalDialogCustom.alert('Unexpected error loading the file ' + error)
-        } else if (helper.checkSpecialChars(name)) {
-          modalDialogCustom.alert('Special characters are not allowed')
-        } else {
-          self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
-          self.syncEditor(fileProvider + name)
-        }
-        callback()
-      })
+        (error, name) => {
+          if (error) {
+            modalDialogCustom.alert('Unexpected error loading the file ' + error)
+          } else if (helper.checkSpecialChars(name)) {
+            modalDialogCustom.alert('Special characters are not allowed')
+          } else {
+            self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+            self.syncEditor(fileProvider + name)
+          }
+          callback()
+        })
     }, (error) => {
       if (callback) callback(error)
     })

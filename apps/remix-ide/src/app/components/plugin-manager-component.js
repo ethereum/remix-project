@@ -1,10 +1,10 @@
+import { ViewPlugin, IframePlugin, WebsocketPlugin } from '@remixproject/engine'
+import { PluginManagerSettings } from './plugin-manager-settings'
+import * as packageJson from '../../../../../package.json'
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
-import { ViewPlugin, IframePlugin, WebsocketPlugin } from '@remixproject/engine'
-import { PluginManagerSettings } from './plugin-manager-settings'
-import * as packageJson from '../../../../../package.json'
 const addToolTip = require('../ui/tooltip')
 
 const css = csjs`
@@ -71,7 +71,6 @@ const profile = {
 }
 
 class PluginManagerComponent extends ViewPlugin {
-
   constructor (appManager, engine) {
     super(profile)
     this.event = new EventEmitter()
@@ -172,12 +171,12 @@ class PluginManagerComponent extends ViewPlugin {
     }
 
     // Filter all active and inactive modules that are not required
-    const {actives, inactives} = this.appManager.getAll()
+    const { actives, inactives } = this.appManager.getAll()
       .filter(isFiltered)
       .filter(isNotRequired)
       .filter(isNotHome)
       .sort(sortByName)
-      .reduce(({actives, inactives}, profile) => {
+      .reduce(({ actives, inactives }, profile) => {
         return this.isActive(profile.name)
           ? { actives: [...actives, profile], inactives }
           : { inactives: [...inactives, profile], actives }

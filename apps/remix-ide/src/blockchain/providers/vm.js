@@ -3,10 +3,9 @@ const { BN, privateToAddress, stripHexPrefix, hashPersonalMessage } = require('e
 const RemixSimulator = require('@remix-project/remix-simulator')
 
 class VMProvider {
-
   constructor (executionContext) {
     this.executionContext = executionContext
-    this.RemixSimulatorProvider = new RemixSimulator.Provider({executionContext: this.executionContext})
+    this.RemixSimulatorProvider = new RemixSimulator.Provider({ executionContext: this.executionContext })
     this.RemixSimulatorProvider.init()
     this.web3 = new Web3(this.RemixSimulatorProvider)
     this.accounts = {}
