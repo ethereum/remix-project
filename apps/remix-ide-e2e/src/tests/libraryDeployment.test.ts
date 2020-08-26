@@ -41,7 +41,7 @@ module.exports = {
     browser.click('*[data-id="deployAndRunClearInstances"]')
       .pause(5000)
       .clickLaunchIcon('settings')
-      .click('#generatecontractmetadata')
+      .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
       .clickLaunchIcon('solidity')
       .click('#compileTabView button[title="Compile"]') // that should generate the JSON artefact
       .verifyContracts(['test'])
