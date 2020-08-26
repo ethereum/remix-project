@@ -64,8 +64,8 @@ module.exports = {
   'Should load syntax highlighter for ace dark theme': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
     .click('*[data-id="verticalIconsKindsettings"]')
-    .waitForElementVisible('*[data-id="settingsTabThemeDark"]')
-    .click('*[data-id="settingsTabThemeDark"]')
+    .waitForElementVisible('*[data-id="settingsTabThemeLabelDark"]')
+    .click('*[data-id="settingsTabThemeLabelDark"]')
     .pause(2000)
     .waitForElementVisible('*[data-id="editorInput"]')
     /* @todo(#2863) ch for class and not colors

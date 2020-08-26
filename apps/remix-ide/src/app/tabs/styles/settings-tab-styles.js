@@ -5,7 +5,6 @@ const css = csjs`
     padding: 2%;
   }
   .info {
-    margin-bottom: .6rem;
     word-break: break-word;
     font-size: .8rem;
   }
@@ -69,6 +68,9 @@ const css = csjs`
   .inline {
     display: inline;
     width: 32%;
+  }
+  .text, .text:hover {
+    text-decoration: none;
   }
 `
 

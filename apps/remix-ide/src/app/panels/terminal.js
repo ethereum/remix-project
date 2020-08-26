@@ -171,9 +171,9 @@ class Terminal extends Plugin {
           </div>
           ${self._view.pendingTxCount}
           <div class=${css.verticalLine}></div>
-          <div class="mx-2 d-flex pb-1 align-items-center ${css.listenOnNetwork} custom-control custom-checkbox">
+          <div class="pt-1 h-80 mx-3 align-items-center ${css.listenOnNetwork} custom-control custom-checkbox">
             <input
-              class="pb-0 form-check-input custom-control-input"
+              class="custom-control-input"
               id="listenNetworkCheck"
               onchange=${listenOnNetwork}
               type="checkbox"
