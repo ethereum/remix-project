@@ -10,7 +10,7 @@ var modal = require('./modal-dialog-custom')
  */
 module.exports = function addTooltip (tooltipText, action, opts) {
   action = action || function () { return yo`<div></div>` }
-  let t = new Toaster()
+  const t = new Toaster()
   return t.render(tooltipText, action(t), opts)
 }
 
@@ -24,7 +24,7 @@ class Toaster {
     animation(this.tooltip, css.animateTop.className)
   }
 
- /**
+  /**
   * Force resolve the promise to close
   * the toaster ignoring timeout
   */
@@ -64,9 +64,9 @@ class Toaster {
         over()
         resolve()
       }
-      let button = tooltipText.length > 201 ? yo`
+      const button = tooltipText.length > 201 ? yo`
       <button class="btn btn-secondary btn-sm mx-3" style="white-space: nowrap;" onclick=${() => showFullMessage()}>Show full message</button>
-      ` : ``
+      ` : ''
 
       this.tooltip = yo`
         <div data-shared="tooltipPopup" class="${css.tooltip} alert alert-info p-2"  onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
@@ -79,7 +79,7 @@ class Toaster {
             <button data-id="tooltipCloseButton" class="fas fa-times btn-info mx-1 p-0" onclick=${() => closeTheToaster(this)}></button>
           </span>
         </div>`
-      let timeOut = () => {
+      const timeOut = () => {
         return setTimeout(() => {
           if (this.id) {
             this.hide()
@@ -87,13 +87,13 @@ class Toaster {
           }
         }, opts.time)
       }
-      let over = () => {
+      const over = () => {
         if (this.id) {
           clearTimeout(this.id)
           this.id = null
         }
       }
-      let out = () => {
+      const out = () => {
         if (!this.id) this.id = timeOut()
       }
       this.id = timeOut()
@@ -103,16 +103,17 @@ class Toaster {
   }
 }
 
-let defaultOptions = (opts) => {
+const defaultOptions = (opts) => {
   opts = opts || {}
   return {
     time: opts.time || 7000
   }
 }
 
-let animation = (tooltip, anim) => {
+const animation = (tooltip, anim) => {
   tooltip.classList.remove(css.animateTop.className)
   tooltip.classList.remove(css.animateBottom.className)
+  // eslint-disable-next-line
   void tooltip.offsetWidth // trick for restarting the animation
   tooltip.classList.add(anim)
 }

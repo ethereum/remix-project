@@ -1,3 +1,5 @@
+import publishToStorage from '../../../publishToStorage'
+
 var yo = require('yo-yo')
 var css = require('../styles/run-tab-styles')
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
@@ -6,8 +8,6 @@ var EventManager = remixLib.EventManager
 var confirmDialog = require('../../ui/confirmDialog')
 var modalDialog = require('../../ui/modaldialog')
 var MultiParamManager = require('../../ui/multiParamManager')
-
-import publishToStorage from '../../../publishToStorage'
 
 class ContractDropdownUI {
   constructor (blockchain, dropdownLogic, logCallback, runView) {
@@ -48,9 +48,9 @@ class ContractDropdownUI {
 
   listenToContextChange () {
     this.blockchain.event.register('contextChanged', () => {
-      this.blockchain.updateNetwork((err, {name} = {}) => {
+      this.blockchain.updateNetwork((err, { name } = {}) => {
         if (err) {
-          console.log(`can't detect network`)
+          console.log('can\'t detect network')
           return
         }
         this.exEnvironment = this.blockchain.getProvider()
@@ -119,7 +119,7 @@ class ContractDropdownUI {
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel} mt-2">or</div>`
 
-    let el = yo`
+    const el = yo`
       <div class="${css.container}" data-id="contractDropdownContainer">
         <label class="${css.settingsLabel}">Contract</label>
         <div class="${css.subcontainer}">
@@ -211,16 +211,17 @@ class ContractDropdownUI {
         The transaction execution will likely fail. Do you want to force sending? <br>
         ${msg}
         </div>`,
-          {
-            label: 'Send Transaction',
-            fn: () => {
-              continueTxExecution()
-            }}, {
-              label: 'Cancel Transaction',
-              fn: () => {
-                cancelCb()
-              }
-            })
+        {
+          label: 'Send Transaction',
+          fn: () => {
+            continueTxExecution()
+          }
+        }, {
+          label: 'Cancel Transaction',
+          fn: () => {
+            cancelCb()
+          }
+        })
       } else {
         continueTxExecution()
       }
@@ -261,18 +262,19 @@ class ContractDropdownUI {
       return modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
       More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
       </div>`,
-        {
-          label: 'Force Send',
-          fn: () => {
-            this.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
-          }}, {
-            label: 'Cancel',
-            fn: () => {
-              this.logCallback(`creation of ${selectedContract.name} canceled by user.`)
-            }
-          })
+      {
+        label: 'Force Send',
+        fn: () => {
+          this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
+        }
+      }, {
+        label: 'Cancel',
+        fn: () => {
+          this.logCallback(`creation of ${selectedContract.name} canceled by user.`)
+        }
+      })
     }
-    this.deployContract(selectedContract, args, contractMetadata, compilerContracts, {continueCb, promptCb, statusCb, finalCb}, confirmationCb)
+    this.deployContract(selectedContract, args, contractMetadata, compilerContracts, { continueCb, promptCb, statusCb, finalCb }, confirmationCb)
   }
 
   deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
@@ -294,7 +296,8 @@ class ContractDropdownUI {
       const content = confirmDialog(tx, amount, gasEstimation, null, this.blockchain.determineGasFees(tx), this.blockchain.determineGasPrice.bind(this.blockchain))
 
       modalDialog('Confirm transaction', content,
-        { label: 'Confirm',
+        {
+          label: 'Confirm',
           fn: () => {
             this.blockchain.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
             // TODO: check if this is check is still valid given the refactor
@@ -304,12 +307,13 @@ class ContractDropdownUI {
               var gasPrice = this.blockchain.toWei(content.querySelector('#gasprice').value, 'gwei')
               continueTxExecution(gasPrice)
             }
-          }}, {
-            label: 'Cancel',
-            fn: () => {
-              return cancelCb('Transaction canceled by user.')
-            }
           }
+        }, {
+          label: 'Cancel',
+          fn: () => {
+            return cancelCb('Transaction canceled by user.')
+          }
+        }
       )
     }
 

@@ -1,4 +1,9 @@
 /* global */
+import { ViewPlugin } from '@remixproject/engine'
+import * as packageJson from '../../../../../package.json'
+import publishToStorage from '../../publishToStorage'
+import { compile } from '../compiler/compiler-helpers'
+
 const EventEmitter = require('events')
 const $ = require('jquery')
 const yo = require('yo-yo')
@@ -16,11 +21,6 @@ var css = require('./styles/compile-tab-styles')
 
 const CompileTabLogic = require('./compileTab/compileTab.js')
 const CompilerContainer = require('./compileTab/compilerContainer.js')
-
-import { ViewPlugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
-import publishToStorage from '../../publishToStorage'
-import { compile } from '../compiler/compiler-helpers'
 
 const profile = {
   name: 'solidity',
@@ -41,7 +41,6 @@ const profile = {
 // - methods: ['getCompilationResult']
 
 class CompileTab extends ViewPlugin {
-
   constructor (editor, config, renderer, fileProvider, fileManager) {
     super(profile)
     this.events = new EventEmitter()
@@ -85,19 +84,19 @@ class CompileTab extends ViewPlugin {
 
   listenToEvents () {
     this.data.eventHandlers.onContentChanged = () => {
-      this.emit('statusChanged', {key: 'edited', title: 'the content has changed, needs recompilation', type: 'info'})
+      this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
     }
     this.editor.event.register('contentChanged', this.data.eventHandlers.onContentChanged)
 
     this.data.eventHandlers.onLoadingCompiler = () => {
       this.data.loading = true
-      this.emit('statusChanged', {key: 'loading', title: 'loading compiler...', type: 'info'})
+      this.emit('statusChanged', { key: 'loading', title: 'loading compiler...', type: 'info' })
     }
     this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
 
     this.data.eventHandlers.onCompilerLoaded = () => {
       this.data.loading = false
-      this.emit('statusChanged', {key: 'none'})
+      this.emit('statusChanged', { key: 'none' })
     }
     this.compiler.event.register('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
 
@@ -105,7 +104,7 @@ class CompileTab extends ViewPlugin {
       if (this._view.errorContainer) {
         this._view.errorContainer.innerHTML = ''
       }
-      this.emit('statusChanged', {key: 'loading', title: 'compiling...', type: 'info'})
+      this.emit('statusChanged', { key: 'loading', title: 'compiling...', type: 'info' })
     }
     this.compileTabLogic.event.on('startingCompilation', this.data.eventHandlers.onStartingCompilation)
 
@@ -130,7 +129,7 @@ class CompileTab extends ViewPlugin {
             title: `compilation finished successful with warning${data.errors.length > 1 ? 's' : ''}`,
             type: 'warning'
           })
-        } else this.emit('statusChanged', {key: 'succeed', title: 'compilation successful', type: 'success'})
+        } else this.emit('statusChanged', { key: 'succeed', title: 'compilation successful', type: 'success' })
         // Store the contracts
         this.data.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
@@ -142,24 +141,24 @@ class CompileTab extends ViewPlugin {
         })
       } else {
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + data.error ? 1 : 0)
-        this.emit('statusChanged', {key: count, title: `compilation failed with ${count} error${count.length > 1 ? 's' : ''}`, type: 'error'})
+        this.emit('statusChanged', { key: count, title: `compilation failed with ${count} error${count.length > 1 ? 's' : ''}`, type: 'error' })
       }
       // Update contract Selection
-      let contractMap = {}
+      const contractMap = {}
       if (success) this.compiler.visitContracts((contract) => { contractMap[contract.name] = contract })
-      let contractSelection = this.contractSelection(contractMap)
+      const contractSelection = this.contractSelection(contractMap)
       yo.update(this._view.contractSelection, contractSelection)
 
-      if (data['error']) {
+      if (data.error) {
         this.renderer.error(
-          data['error'].formattedMessage || data['error'],
+          data.error.formattedMessage || data.error,
           this._view.errorContainer,
-          {type: data['error'].severity || 'error'}
+          { type: data.error.severity || 'error' }
         )
-        if (data['error'].mode === 'panic') {
+        if (data.error.mode === 'panic') {
           return modalDialogCustom.alert(yo`
             <div><i class="fas fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
-            The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br>
+            The compiler returned with the following internal error: <br> <b>${data.error.formattedMessage}.<br>
             The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet.
             It is heavily recommended to use another browser not affected by this issue (Firefox is known to not be affected).</b><br>
             Please join <a href="https://gitter.im/ethereum/remix" target="blank" >remix gitter channel</a> for more information.</div>`)
@@ -169,10 +168,10 @@ class CompileTab extends ViewPlugin {
         data.errors.forEach((err) => {
           if (this.config.get('hideWarnings')) {
             if (err.severity !== 'warning') {
-              this.renderer.error(err.formattedMessage, this._view.errorContainer, {type: err.severity})
+              this.renderer.error(err.formattedMessage, this._view.errorContainer, { type: err.severity })
             }
           } else {
-            this.renderer.error(err.formattedMessage, this._view.errorContainer, {type: err.severity})
+            this.renderer.error(err.formattedMessage, this._view.errorContainer, { type: err.severity })
           }
         })
       }
@@ -280,18 +279,18 @@ class CompileTab extends ViewPlugin {
       name: key,
       file: getFileName(contractMap[key].file)
     })) : []
-    let selectEl = yo`
+    const selectEl = yo`
       <select
         onchange="${e => this.selectContract(e.target.value)}"
         data-id="compiledContracts" id="compiledContracts" class="custom-select"
       >
-        ${contractList.map(({name, file}) => yo`<option value="${name}">${name} (${file})</option>`)}
+        ${contractList.map(({ name, file }) => yo`<option value="${name}">${name} (${file})</option>`)}
       </select>
     `
     // define swarm logo
 
-    let result = contractList.length
-    ? yo`<section class="${css.compilerSection} pt-3">
+    const result = contractList.length
+      ? yo`<section class="${css.compilerSection} pt-3">
       <!-- Select Compiler Version -->
       <div class="mb-3">
         <label class="${css.compilerLabel} form-check-label" for="compiledContracts">Contract</label>
@@ -326,7 +325,7 @@ class CompileTab extends ViewPlugin {
         </div>
       </div>
     </section>`
-    : yo`<section class="${css.container} clearfix"><article class="px-2 mt-2 pb-0 d-flex">
+      : yo`<section class="${css.container} clearfix"><article class="px-2 mt-2 pb-0 d-flex">
       <span class="mt-2 mx-3 w-100 alert alert-warning" role="alert">No Contract Compiled Yet</span>
     </article></section>`
 
@@ -342,6 +341,7 @@ class CompileTab extends ViewPlugin {
   contractCompiledSuccess () {
     return yo`<div></div>`
   }
+
   // TODO : Add error alert when compilation failed
   contractCompiledError () {
     return yo`<div></div>`
@@ -357,18 +357,18 @@ class CompileTab extends ViewPlugin {
 
   details () {
     const help = {
-      'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
-      'Opcodes': 'Assembly opcodes describing the contract',
+      Assembly: 'Assembly opcodes describing the contract including corresponding solidity source code',
+      Opcodes: 'Assembly opcodes describing the contract',
       'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
-      'bytecode': 'Bytecode being executed during contract creation',
-      'functionHashes': 'List of declared function and their corresponding hash',
-      'gasEstimates': 'Gas estimation for each function call',
-      'metadata': 'Contains all informations related to the compilation',
-      'metadataHash': 'Hash representing all metadata information',
-      'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
-      'name': 'Name of the compiled contract',
-      'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
-      'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
+      bytecode: 'Bytecode being executed during contract creation',
+      functionHashes: 'List of declared function and their corresponding hash',
+      gasEstimates: 'Gas estimation for each function call',
+      metadata: 'Contains all informations related to the compilation',
+      metadataHash: 'Hash representing all metadata information',
+      abi: 'ABI: describing all the functions (input/output params, scope, ...)',
+      name: 'Name of the compiled contract',
+      swarmLocation: 'Swarm url where all metadata information can be found (contract needs to be published first)',
+      web3Deploy: 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
     if (!this.selectedContract) throw new Error('No contract compiled yet')
     const contractProperties = this.data.contractsDetails[this.selectedContract]
@@ -396,7 +396,7 @@ class CompileTab extends ViewPlugin {
             ret.children = item.map((item, index) => ({ key: index, value: item }))
             ret.self = ''
           } else if (item instanceof Object) {
-            ret.children = Object.keys(item).map((key) => ({key: key, value: item[key]}))
+            ret.children = Object.keys(item).map((key) => ({ key: key, value: item[key] }))
             ret.self = ''
           } else {
             ret.self = item

@@ -38,7 +38,6 @@ function notAllowWarning (from, to, method) {
 }
 
 export class PermissionHandler {
-
   constructor () {
     this.permissions = this._getFromLocal()
     this.currentVersion = 1
@@ -130,8 +129,8 @@ export class PermissionHandler {
         return false
       }
       return hash === from.hash
-        ? true  // Allow
-        : this.openPermission(from, to, method, message)  // New version of a plugin
+        ? true // Allow
+        : this.openPermission(from, to, method, message) // New version of a plugin
     } catch (err) {
       throw new Error(err)
     }
@@ -157,7 +156,7 @@ export class PermissionHandler {
     const rememberSwitch = remember
       ? yo`<input type="checkbox" onchange="${switchMode}" checkbox class="form-check-input" id="remember" data-id="permissionHandlerRememberChecked">`
       : yo`<input type="checkbox" onchange="${switchMode}" class="form-check-input" id="remember" data-id="permissionHandlerRememberUnchecked">`
-    const text = `"${fromName}" ${(remember ? `has changed and` : ``)} would like to access to "${method}" of "${toName}"`
+    const text = `"${fromName}" ${(remember ? 'has changed and' : '')} would like to access to "${method}" of "${toName}"`
     const imgFrom = yo`<img id="permissionModalImagesFrom" src="${from.icon}" />`
     const imgTo = yo`<img id="permissionModalImagesTo" src="${to.icon}" />`
     const pluginsImages = yo`
@@ -176,7 +175,7 @@ export class PermissionHandler {
         <h6>Description</h6>
         <p>${message}</p>
       </div>
-    ` : ``
+    ` : ''
     return yo`
       <section class="${css.permission}">
         ${pluginsImages}

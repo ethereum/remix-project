@@ -1,10 +1,10 @@
-const ethutil = require('ethereumjs-util')
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
 import { compile } from './compiler-helpers'
 import globalRegistry from '../../global/registry'
 
 import remixLib from '@remix-project/remix-lib'
+const ethutil = require('ethereumjs-util')
 
 const profile = {
   name: 'fetchAndCompile',
@@ -13,7 +13,6 @@ const profile = {
 }
 
 export default class FetchAndCompile extends Plugin {
-
   constructor () {
     super(profile)
     this.unresolvedAddresses = []
@@ -86,12 +85,12 @@ export default class FetchAndCompile extends Plugin {
 
     // set the solidity contract code using metadata
     await this.call('fileManager', 'setFile', `${targetPath}/${name}/${contractAddress}/metadata.json`, JSON.stringify(data.metadata, null, '\t'))
-    let compilationTargets = {}
+    const compilationTargets = {}
     for (let file in data.metadata.sources) {
       const urls = data.metadata.sources[file].urls
-      for (let url of urls) {
+      for (const url of urls) {
         if (url.includes('ipfs')) {
-          let stdUrl = `ipfs://${url.split('/')[2]}`
+          const stdUrl = `ipfs://${url.split('/')[2]}`
           const source = await this.call('contentImport', 'resolve', stdUrl)
           file = file.replace('browser/', '') // should be fixed in the remix IDE end.
           const path = `${targetPath}/${name}/${contractAddress}/${file}`

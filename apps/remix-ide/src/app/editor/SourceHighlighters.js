@@ -2,12 +2,12 @@
 const SourceHighlighter = require('./sourceHighlighter')
 
 class SourceHighlighters {
-
   constructor () {
     this.highlighters = {}
   }
 
   highlight (position, filePath, hexColor, from) {
+    // eslint-disable-next-line
     try {
       if (!this.highlighters[from]) this.highlighters[from] = []
       const sourceHighlight = new SourceHighlighter()
@@ -27,6 +27,7 @@ class SourceHighlighters {
 
   // highlights all locations for @from plugin
   highlightAllFrom (from) {
+    // eslint-disable-next-line
     try {
       if (!this.highlighters[from]) return
       const sourceHighlight = new SourceHighlighter()

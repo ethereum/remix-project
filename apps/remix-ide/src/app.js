@@ -1,4 +1,24 @@
 'use strict'
+import { basicLogo } from './app/ui/svgLogo'
+
+import { RunTab, makeUdapp } from './app/udapp'
+
+import PanelsResize from './lib/panels-resize'
+import { Engine } from '@remixproject/engine'
+import { RemixAppManager } from './remixAppManager'
+import { FramingService } from './framingService'
+import { MainView } from './app/panels/main-view'
+import { ThemeModule } from './app/tabs/theme-module'
+import { NetworkModule } from './app/tabs/network-module'
+import { Web3ProviderModule } from './app/tabs/web3-provider'
+import { SidePanel } from './app/components/side-panel'
+import { HiddenPanel } from './app/components/hidden-panel'
+import { VerticalIcons } from './app/components/vertical-icons'
+import { LandingPage } from './app/ui/landing-page/landing-page'
+import { MainPanel } from './app/components/main-panel'
+import FetchAndCompile from './app/compiler/compiler-sourceVerifier-fetchAndCompile'
+
+import migrateFileSystem from './migrateFileSystem'
 
 var isElectron = require('is-electron')
 var csjs = require('csjs-inject')
@@ -36,26 +56,6 @@ const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const ContextualListener = require('./app/editor/contextualListener')
-import { basicLogo } from './app/ui/svgLogo'
-
-import { RunTab, makeUdapp } from './app/udapp'
-
-import PanelsResize from './lib/panels-resize'
-import { Engine } from '@remixproject/engine'
-import { RemixAppManager } from './remixAppManager'
-import { FramingService } from './framingService'
-import { MainView } from './app/panels/main-view'
-import { ThemeModule } from './app/tabs/theme-module'
-import { NetworkModule } from './app/tabs/network-module'
-import { Web3ProviderModule } from './app/tabs/web3-provider'
-import { SidePanel } from './app/components/side-panel'
-import { HiddenPanel } from './app/components/hidden-panel'
-import { VerticalIcons } from './app/components/vertical-icons'
-import { LandingPage } from './app/ui/landing-page/landing-page'
-import { MainPanel } from './app/components/main-panel'
-import FetchAndCompile from './app/compiler/compiler-sourceVerifier-fetchAndCompile'
-
-import migrateFileSystem from './migrateFileSystem'
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -139,17 +139,17 @@ class App {
 
     // load app config
     const config = new Config(configStorage)
-    registry.put({api: config, name: 'config'})
+    registry.put({ api: config, name: 'config' })
 
     // load file system
     self._components.filesProviders = {}
-    self._components.filesProviders['browser'] = new FileProvider('browser')
-    registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
-    self._components.filesProviders['localhost'] = new RemixDProvider(self.appManager)
-    registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
-    registry.put({api: self._components.filesProviders, name: 'fileproviders'})
+    self._components.filesProviders.browser = new FileProvider('browser')
+    registry.put({ api: self._components.filesProviders.browser, name: 'fileproviders/browser' })
+    self._components.filesProviders.localhost = new RemixDProvider(self.appManager)
+    registry.put({ api: self._components.filesProviders.localhost, name: 'fileproviders/localhost' })
+    registry.put({ api: self._components.filesProviders, name: 'fileproviders' })
 
-    migrateFileSystem(self._components.filesProviders['browser'])
+    migrateFileSystem(self._components.filesProviders.browser)
   }
 
   init () {
@@ -205,7 +205,7 @@ async function run () {
     modalDialogCustom.alert('This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.')
   } else if (window.location.hostname === 'remix-alpha.ethereum.org' ||
   (window.location.hostname === 'ethereum.github.io' && window.location.pathname.indexOf('/remix-live-alpha') === 0)) {
-    modalDialogCustom.alert(`Welcome to the Remix alpha instance. Please use it to try out latest features. But use preferably https://remix.ethereum.org for any production work.`)
+    modalDialogCustom.alert('Welcome to the Remix alpha instance. Please use it to try out latest features. But use preferably https://remix.ethereum.org for any production work.')
   } else if (window.location.protocol.indexOf('http') === 0 &&
   window.location.hostname !== 'remix.ethereum.org' &&
   window.location.hostname !== 'localhost' &&
@@ -233,9 +233,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const workspace = pluginLoader.get()
   const engine = new Engine(appManager)
   engine.setPluginOption = ({ name, kind }) => {
-    if (kind === 'provider') return {queueTimeout: 60000 * 2}
-    if (name === 'LearnEth') return {queueTimeout: 60000}
-    return {queueTimeout: 10000}
+    if (kind === 'provider') return { queueTimeout: 60000 * 2 }
+    if (name === 'LearnEth') return { queueTimeout: 60000 }
+    return { queueTimeout: 10000 }
   }
   await engine.onload()
 
@@ -244,7 +244,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const contentImport = new CompilerImport()
   // ----------------- theme servive ---------------------------------
   const themeModule = new ThemeModule(registry)
-  registry.put({api: themeModule, name: 'themeModule'})
+  registry.put({ api: themeModule, name: 'themeModule' })
   themeModule.initTheme(() => {
     setTimeout(() => {
       document.body.removeChild(self._view.splashScreen)
@@ -253,12 +253,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
   // ----------------- editor servive ----------------------------
   const editor = new Editor({}, themeModule) // wrapper around ace editor
-  registry.put({api: editor, name: 'editor'})
+  registry.put({ api: editor, name: 'editor' })
   editor.event.register('requiringToSaveCurrentfile', () => fileManager.saveCurrentFile())
 
   // ----------------- fileManager servive ----------------------------
   const fileManager = new FileManager(editor, appManager)
-  registry.put({api: fileManager, name: 'filemanager'})
+  registry.put({ api: fileManager, name: 'filemanager' })
 
   const blockchain = new Blockchain(registry.get('config').api)
   const pluginUdapp = new PluginUDapp(blockchain)
@@ -267,7 +267,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
   // ----------------- compilation result service (can keep track of compilation results) ----------------------------
   const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
-  registry.put({api: compilersArtefacts, name: 'compilersartefacts'})
+  registry.put({ api: compilersArtefacts, name: 'compilersartefacts' })
 
   // service which fetch contract artifacts from sourve-verify, put artifacts in remix and compile it
   const fetchAndCompile = new FetchAndCompile()
@@ -277,7 +277,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const web3Provider = new Web3ProviderModule(blockchain)
   // ----------------- convert offset to line/column service -----------
   const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
-  registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
+  registry.put({ api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter' })
 
   // -------------------Terminal----------------------------------------
 
@@ -296,7 +296,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   )
   makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
 
-  const contextualListener = new ContextualListener({editor})
+  const contextualListener = new ContextualListener({ editor })
 
   engine.register([
     contentImport,
@@ -327,7 +327,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const hiddenPanel = new HiddenPanel()
   const pluginManagerComponent = new PluginManagerComponent(appManager, engine)
   const filePanel = new FilePanel(appManager)
-  let settings = new SettingsTab(
+  const settings = new SettingsTab(
     registry.get('config').api,
     editor,
     appManager
@@ -367,7 +367,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     registry.get('compilersartefacts').api,
     networkModule,
     mainview,
-    registry.get('fileproviders/browser').api,
+    registry.get('fileproviders/browser').api
   )
   const analysis = new AnalysisTab(registry)
   const debug = new DebuggerTab(
@@ -407,7 +407,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const params = queryParams.get()
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) {    
+  if (Array.isArray(workspace)) {
     appManager.activatePlugin(workspace).then(() => {
       try {
         if (params.deactivate) {
@@ -416,7 +416,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       } catch (e) {
         console.log(e)
       }
-      
+
       // If plugins are loaded from the URL params, we focus on the last one.
       if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
 
@@ -430,7 +430,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
           }, 5000)
         }
       }
-    }).catch(console.error)    
+    }).catch(console.error)
   } else {
     // activate solidity plugin
     appManager.ensureActivated('solidity')
@@ -449,10 +449,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const loadedFromGist = gistHandler.loadFromGist(params, fileManager)
   if (!loadedFromGist) {
     // insert example contracts if there are no files to show
-    self._components.filesProviders['browser'].resolveDirectory('/', (error, filesList) => {
+    self._components.filesProviders.browser.resolveDirectory('/', (error, filesList) => {
       if (error) console.error(error)
       if (Object.keys(filesList).length === 0) {
-        for (let file in examples) {
+        for (const file in examples) {
           fileManager.writeFile(examples[file].name, examples[file].content)
         }
       }

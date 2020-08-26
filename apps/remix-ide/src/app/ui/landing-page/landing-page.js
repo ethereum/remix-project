@@ -1,16 +1,16 @@
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine'
 
-let yo = require('yo-yo')
-let csjs = require('csjs-inject')
-let globalRegistry = require('../../../global/registry')
-let CompilerImport = require('../../compiler/compiler-imports')
+const yo = require('yo-yo')
+const csjs = require('csjs-inject')
+const globalRegistry = require('../../../global/registry')
+const CompilerImport = require('../../compiler/compiler-imports')
 var modalDialogCustom = require('../modal-dialog-custom')
 var tooltip = require('../tooltip')
 var GistHandler = require('../../../lib/gist-handler')
 var QueryParams = require('../../../lib/query-params.js')
 
-let css = csjs`
+const css = csjs`
   .text {
     cursor: pointer;
     font-weight: normal;
@@ -106,7 +106,6 @@ const profile = {
 }
 
 export class LandingPage extends ViewPlugin {
-
   constructor (appManager, verticalIcons) {
     super(profile)
     this.profile = profile
@@ -184,7 +183,7 @@ export class LandingPage extends ViewPlugin {
   }
 
   onThemeChanged (themeQuality) {
-    let twitterFrame = yo`
+    const twitterFrame = yo`
       <div class="px-2 ${css.media}">
         <a class="twitter-timeline"
           data-width="350"
@@ -211,10 +210,11 @@ export class LandingPage extends ViewPlugin {
       this.mediumPanel.classList.toggle('d-block')
     }
   }
+
   render () {
-    let load = (service, item, examples, info) => {
-      let compilerImport = new CompilerImport()
-      let fileProviders = globalRegistry.get('fileproviders').api
+    const load = (service, item, examples, info) => {
+      const compilerImport = new CompilerImport()
+      const fileProviders = globalRegistry.get('fileproviders').api
       const msg = yo`
         <div class="p-2">
           <span>Enter the ${item} you would like to load.</span>
@@ -231,7 +231,7 @@ export class LandingPage extends ViewPlugin {
               if (error) {
                 modalDialogCustom.alert(error)
               } else {
-                fileProviders['browser'].addExternal(type + '/' + cleanUrl, content, url)
+                fileProviders.browser.addExternal(type + '/' + cleanUrl, content, url)
                 this.verticalIcons.select('fileExplorers')
               }
             }
@@ -282,14 +282,14 @@ export class LandingPage extends ViewPlugin {
     }
 
     const createNewFile = () => {
-      let fileExplorer = globalRegistry.get('fileexplorer/browser').api
+      const fileExplorer = globalRegistry.get('fileexplorer/browser').api
       fileExplorer.createNewFile()
     }
     const connectToLocalhost = () => {
       this.appManager.ensureActivated('remixd')
     }
     const importFromGist = () => {
-      this.gistHandler.loadFromGist({gist: ''}, globalRegistry.get('filemanager').api)
+      this.gistHandler.loadFromGist({ gist: '' }, globalRegistry.get('filemanager').api)
       this.verticalIcons.select('fileExplorers')
     }
 
@@ -333,9 +333,9 @@ export class LandingPage extends ViewPlugin {
     sourceVerifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
 
-    let switchToPreviousVersion = () => {
+    const switchToPreviousVersion = () => {
       const query = new QueryParams()
-      query.update({appVersion: '0.7.7'})
+      query.update({ appVersion: '0.7.7' })
       document.location.reload()
     }
     const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
@@ -380,7 +380,7 @@ export class LandingPage extends ViewPlugin {
                           <input title="open file" type="file" onchange="${
                             (event) => {
                               event.stopPropagation()
-                              let fileExplorer = globalRegistry.get('fileexplorer/browser').api
+                              const fileExplorer = globalRegistry.get('fileexplorer/browser').api
                               fileExplorer.uploadFile(event)
                             }
                           }" multiple />

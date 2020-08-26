@@ -10,7 +10,6 @@ const helper = require('../../../lib/helper.js')
 const globalRegistry = require('../../../global/registry')
 
 class SettingsUI {
-
   constructor (blockchain, networkModule) {
     this.blockchain = blockchain
     this.event = new EventManager()
@@ -181,7 +180,7 @@ class SettingsUI {
     this.blockchain.event.register('removeProvider', name => removeProvider(name))
 
     selectExEnv.addEventListener('change', (event) => {
-      let context = selectExEnv.options[selectExEnv.selectedIndex].value
+      const context = selectExEnv.options[selectExEnv.selectedIndex].value
       this.blockchain.changeExecutionContext(context, () => {
         modalDialogCustom.prompt('External node request', this.web3ProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
           this.blockchain.setProviderFromEndpoint(target, context, (alertMsg) => {
@@ -229,22 +228,23 @@ class SettingsUI {
 
   updatePlusButton () {
     // enable/disable + button
-    let plusBtn = document.getElementById('remixRunPlus')
-    let plusTitle = document.getElementById('remixRunPlusWraper')
+    const plusBtn = document.getElementById('remixRunPlus')
+    const plusTitle = document.getElementById('remixRunPlusWraper')
     switch (this.selectExEnv.value) {
-      case 'injected': {
+      case 'injected':
         plusBtn.classList.add(css.disableMouseEvents)
         plusTitle.title = "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
-      }
+
         break
-      case 'vm': {
+      case 'vm':
         plusBtn.classList.remove(css.disableMouseEvents)
         plusTitle.title = 'Create a new account'
-      }
+
         break
-      case 'web3': {
+
+      case 'web3':
         this.onPersonalChange()
-      }
+
         break
       default: {
         plusBtn.classList.add(css.disableMouseEvents)
@@ -254,8 +254,8 @@ class SettingsUI {
   }
 
   onPersonalChange () {
-    let plusBtn = document.getElementById('remixRunPlus')
-    let plusTitle = document.getElementById('remixRunPlusWraper')
+    const plusBtn = document.getElementById('remixRunPlus')
+    const plusTitle = document.getElementById('remixRunPlusWraper')
     if (!this._deps.config.get('settings/personal-mode')) {
       plusBtn.classList.add(css.disableMouseEvents)
       plusTitle.title = 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
@@ -291,10 +291,10 @@ class SettingsUI {
         return addTooltip(`Cannot get account list: ${err}`)
       }
 
-      var signMessageDialog = { 'title': 'Sign a message', 'text': 'Enter a message to sign', 'inputvalue': 'Message to sign' }
+      var signMessageDialog = { title: 'Sign a message', text: 'Enter a message to sign', inputvalue: 'Message to sign' }
       var $txOrigin = this.el.querySelector('#txorigin')
       if (!$txOrigin.selectedOptions[0] && (this.blockchain.isInjectedWeb3() || this.blockchain.isWeb3Provider())) {
-        return addTooltip(`Account list is empty, please make sure the current provider is properly connected to remix`)
+        return addTooltip('Account list is empty, please make sure the current provider is properly connected to remix')
       }
 
       var account = $txOrigin.selectedOptions[0].value
@@ -332,12 +332,12 @@ class SettingsUI {
   }
 
   updateNetwork () {
-    this.blockchain.updateNetwork((err, {id, name} = {}) => {
+    this.blockchain.updateNetwork((err, { id, name } = {}) => {
       if (err) {
         this.netUI.innerHTML = 'can\'t detect network '
         return
       }
-      let network = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
+      const network = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
       this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
     })
     this.fillAccountsList()
@@ -368,7 +368,6 @@ class SettingsUI {
       txOrigin.setAttribute('value', accounts[0])
     })
   }
-
 }
 
 module.exports = SettingsUI

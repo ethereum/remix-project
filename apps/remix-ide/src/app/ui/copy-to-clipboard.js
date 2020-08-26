@@ -23,7 +23,7 @@ module.exports = function copyToClipboard (getContent, tip = 'Copy value to clip
       addTooltip(e.message)
       return
     }
-    if (copiableContent) {   // module `copy` keeps last copied thing in the memory, so don't show tooltip if nothing is copied, because nothing was added to memory
+    if (copiableContent) { // module `copy` keeps last copied thing in the memory, so don't show tooltip if nothing is copied, because nothing was added to memory
       try {
         if (typeof copiableContent !== 'string') {
           copiableContent = JSON.stringify(copiableContent, null, '\t')

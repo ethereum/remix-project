@@ -35,6 +35,7 @@ class Dropdown {
     self._api = opts.api
     self._events = opts.events
   }
+
   render () {
     var self = this
     if (self._view.el) return self._view.el
@@ -49,7 +50,7 @@ class Dropdown {
         ${self._view.selected}
         <div class="${css.options} bg-light" style="display: none;}">
           ${self.data._options.map(label => {
-            let index = self.data._elements.length
+            const index = self.data._elements.length
             var input = yo`
               <input
                 data-idx=${index}
@@ -99,7 +100,7 @@ class Dropdown {
           var label = self.data._dependencies[changed][dep]
           var el = self.data._elements[self.data._options.indexOf(label)]
           el.checked = !el.checked
-          emit({currentTarget: el, type: 'changeDependencies'})
+          emit({ currentTarget: el, type: 'changeDependencies' })
         }
       }
     }

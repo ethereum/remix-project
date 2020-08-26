@@ -1,10 +1,10 @@
+import { ViewPlugin } from '@remixproject/engine'
+import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
 var yo = require('yo-yo')
 var async = require('async')
 var tooltip = require('../ui/tooltip')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('@remix-project/remix-tests')
-import { ViewPlugin } from '@remixproject/engine'
-import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
 
 const TestTabLogic = require('./testTab/testTab')
 
@@ -72,7 +72,7 @@ module.exports = class TestTab extends ViewPlugin {
       this.data.allTests = tests
       this.data.selectedTests = [...this.data.allTests]
       this.updateTestFileList(tests)
-      if (!this.testsOutput) return
+      if (!this.testsOutput) return // eslint-disable-line
     })
   }
 
@@ -99,7 +99,7 @@ module.exports = class TestTab extends ViewPlugin {
     let selectedTests = this.data.selectedTests
     selectedTests = eChecked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
     this.data.selectedTests = selectedTests
-    let checkAll = this._view.el.querySelector('[id="checkAllTests"]')
+    const checkAll = this._view.el.querySelector('[id="checkAllTests"]')
     const runBtn = document.getElementById('runTestsTabRunAction')
 
     if (eChecked) {
@@ -192,7 +192,7 @@ module.exports = class TestTab extends ViewPlugin {
       } else {
         const preposition = result.assertMethod === 'equal' || result.assertMethod === 'notEqual' ? 'to' : ''
         const method = result.assertMethod === 'ok' ? '' : result.assertMethod
-        const expected = result.assertMethod === 'ok' ? `'true'` : result.expected
+        const expected = result.assertMethod === 'ok' ? '\'true\'' : result.expected
         this.testsOutput.appendChild(yo`
           <div
             class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
@@ -266,17 +266,17 @@ module.exports = class TestTab extends ViewPlugin {
   updateFinalResult (_errors, result, filename) {
     ++this.readyTestsNumber
     this.testsOutput.hidden = false
-    if (!result && (_errors || _errors.errors || Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))) {
+    if (!result && (_errors && (_errors.errors || (Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage))))) {
       this.testCallback({ type: 'contract', filename })
       this.setHeader(false)
     }
     if (_errors && _errors.errors) {
-      _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, {type: err.severity}))
+      _errors.errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, { type: err.severity }))
     } else if (_errors && Array.isArray(_errors) && (_errors[0].message || _errors[0].formattedMessage)) {
-      _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, {type: err.severity}))
+      _errors.forEach((err) => this.renderer.error(err.formattedMessage || err.message, this.testsOutput, { type: err.severity }))
     } else if (_errors && !_errors.errors && !Array.isArray(_errors)) {
       // To track error like this: https://github.com/ethereum/remix/pull/1438
-      this.renderer.error(_errors.formattedMessage || _errors.message, this.testsOutput, {type: 'error'})
+      this.renderer.error(_errors.formattedMessage || _errors.message, this.testsOutput, { type: 'error' })
     }
     yo.update(this.resultStatistics, this.createResultLabel())
     if (result) {
@@ -358,9 +358,9 @@ module.exports = class TestTab extends ViewPlugin {
   */
   testFromSource (content, path = 'browser/unit_test.sol') {
     return new Promise((resolve, reject) => {
-      let runningTest = {}
+      const runningTest = {}
       runningTest[path] = { content }
-      const {currentVersion, evmVersion, optimize, runs} = this.compileTab.getCurrentCompilerConfig()
+      const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCurrentCompilerConfig()
       const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
@@ -387,7 +387,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.fileManager.readFile(testFilePath).then((content) => {
       const runningTests = {}
       runningTests[testFilePath] = { content }
-      const {currentVersion, evmVersion, optimize, runs} = this.compileTab.getCurrentCompilerConfig()
+      const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCurrentCompilerConfig()
       const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
@@ -409,7 +409,7 @@ module.exports = class TestTab extends ViewPlugin {
         }
       )
     }).catch((error) => {
-      if (error) return
+      if (error) return // eslint-disable-line
     })
   }
 
@@ -455,7 +455,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateGenerateFileAction (currentFile) {
-    let el = yo`
+    const el = yo`
       <button
         class="btn border w-50"
         data-id="testTabGenerateTestFile"
@@ -474,7 +474,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateRunAction (currentFile) {
-    let el = yo`
+    const el = yo`
       <button id="runTestsTabRunAction" title="Run tests" data-id="testTabRunTestsTabRunAction" class="w-50 btn btn-primary" onclick="${() => this.runTests()}">
         <span class="fas fa-play ml-2"></span>
         <label class="${css.labelOnBtn} btn btn-primary p-1 ml-2 m-0">Run</label>
@@ -509,7 +509,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateTestFileList (tests) {
     const testsMessage = (tests && tests.length ? this.listTests() : 'No test file available')
-    let el = yo`<div class="${css.testList} py-2 mt-0 border-bottom">${testsMessage}</div>`
+    const el = yo`<div class="${css.testList} py-2 mt-0 border-bottom">${testsMessage}</div>`
     if (!this.testFilesListElement) {
       this.testFilesListElement = el
     } else {
@@ -618,5 +618,4 @@ module.exports = class TestTab extends ViewPlugin {
     this.updateForNewCurrent(this.fileManager.currentFile())
     return el
   }
-
 }

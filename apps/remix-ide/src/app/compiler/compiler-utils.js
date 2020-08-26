@@ -26,7 +26,7 @@ export function canUseWorker (selectedVersion) {
   const isNightly = selectedVersion.includes('nightly')
   return browserSupportWorker() && (
     semver.gt(version, '0.6.3') ||
-    semver.gt(version, '0.3.6') && !isNightly
+    (semver.gt(version, '0.3.6') && !isNightly)
   )
 }
 

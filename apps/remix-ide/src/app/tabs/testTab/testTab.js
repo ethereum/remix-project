@@ -3,7 +3,6 @@ const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const remixPath = require('path')
 
 class TestTabLogic {
-
   constructor (fileManager) {
     this.fileManager = fileManager
     this.currentPath = 'browser/tests'
@@ -23,7 +22,7 @@ class TestTabLogic {
     const fileProvider = this.fileManager.fileProviderOf(this.currentPath)
     if (!fileProvider) return
     const splittedFileName = fileName.split('/')
-    let fileNameToImport = (!hasCurrent) ? fileName : this.currentPath + '/' + splittedFileName[splittedFileName.length - 1]
+    const fileNameToImport = (!hasCurrent) ? fileName : this.currentPath + '/' + splittedFileName[splittedFileName.length - 1]
     helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', (error, newFile) => {
       if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
       if (!fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))) return modalDialogCustom.alert('Failed to create test file ' + newFile)
@@ -106,7 +105,6 @@ contract ${contractName} {
 }
 `
   }
-
 }
 
 module.exports = TestTabLogic

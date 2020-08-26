@@ -32,7 +32,6 @@ const profile = {
 }
 
 export class RunTab extends LibraryPlugin {
-
   constructor (blockchain, pluginUDapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView, fileProvider) {
     super(pluginUDapp, profile)
     this.event = new EventManager()

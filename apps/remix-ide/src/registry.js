@@ -4,6 +4,7 @@ module.exports = class registry {
   constructor () {
     this.state = {}
   }
+
   put ({ api, name }) {
     // const serveruid = moduleID() + '.' + (name || '')
     if (this.state[name]) return this.state[name]
@@ -14,6 +15,7 @@ module.exports = class registry {
     this.state[name] = { server }
     return server
   }
+
   get (name) {
     // const clientuid = moduleID()
     const state = this.state[name]

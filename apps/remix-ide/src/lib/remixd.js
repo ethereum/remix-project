@@ -91,7 +91,7 @@ class Remixd {
       return yo`<div>Connection to Remixd closed. Localhost connection not available anymore.</div>`
     }
     if (this.connected) {
-      modalDialog('Lost connection to Remixd!', remixdDialog(), {}, {label: ''})
+      modalDialog('Lost connection to Remixd!', remixdDialog(), {}, { label: '' })
     }
     this.connected = false
     this.socket = null
@@ -113,7 +113,7 @@ class Remixd {
           resolve(data.id)
         } else {
           callback && typeof callback === 'function' && callback('Socket not ready. state:' + this.socket.readyState)
-          reject('Socket not ready. state:' + this.socket.readyState)
+          reject(new Error('Socket not ready. state:' + this.socket.readyState))
         }
       })
     })

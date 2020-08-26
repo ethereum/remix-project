@@ -18,7 +18,6 @@ const profile = {
 }
 
 export class HiddenPanel extends AbstractPanel {
-
   constructor () {
     super(profile)
   }

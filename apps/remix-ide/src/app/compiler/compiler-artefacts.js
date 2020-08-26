@@ -28,22 +28,22 @@ module.exports = class CompilerArtefacts extends Plugin {
     }
 
     this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts['__last'] = new CompilerAbstract(languageVersion, data, source)
+      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
 
     this.on('vyper', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts['__last'] = new CompilerAbstract(languageVersion, data, source)
+      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
 
     this.on('lexon', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts['__last'] = new CompilerAbstract(languageVersion, data, source)
+      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
 
     this.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts['__last'] = new CompilerAbstract(languageVersion, data, source)
+      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
   }
@@ -55,8 +55,8 @@ module.exports = class CompilerArtefacts extends Plugin {
       Object.keys(contracts).map((file) => { contractsData[file] = contracts[file] })
     })
     // making sure we save last compilation result in there
-    if (this.compilersArtefacts['__last']) {
-      const contracts = this.compilersArtefacts['__last'].getContracts()
+    if (this.compilersArtefacts.__last) {
+      const contracts = this.compilersArtefacts.__last.getContracts()
       Object.keys(contracts).map((file) => { contractsData[file] = contracts[file] })
     }
     return contractsData

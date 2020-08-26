@@ -31,15 +31,17 @@ class CmdInterpreterAPI {
       'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm, ipfs or raw http',
       'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.',
       'remix.exeCurrent()': 'Run the script currently displayed in the editor',
-      'remix.help()': 'Display this help message',
+      'remix.help()': 'Display this help message'
     }
   }
+
   log () { arguments[0] != null ? this._components.terminal.commands.html(arguments[0]) : this._components.terminal.commands.html(arguments[1]) }
   loadgist (id, cb) {
     const self = this
-    self._components.gistHandler.loadFromGist({gist: id}, this._deps.fileManager)
+    self._components.gistHandler.loadFromGist({ gist: id }, this._deps.fileManager)
     if (cb) cb()
   }
+
   loadurl (url, cb) {
     const self = this
     self._components.fileImport.import(url,
@@ -77,9 +79,11 @@ class CmdInterpreterAPI {
         }
       })
   }
+
   exeCurrent (cb) {
     return this.execute(undefined, cb)
   }
+
   execute (file, cb) {
     const self = this
 
@@ -117,6 +121,7 @@ class CmdInterpreterAPI {
       _execute(content, cb)
     })
   }
+
   help (cb) {
     const self = this
     var help = yo`<div></div>`

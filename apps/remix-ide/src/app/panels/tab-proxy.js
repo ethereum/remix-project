@@ -93,10 +93,11 @@ export class TabProxy {
       }
     })
   }
+
   updateImgStyles () {
     const images = this._view.filetabs.getElementsByClassName('image')
     if (images.length !== 0) {
-      for (let element of images) {
+      for (const element of images) {
         globalRegistry.get('themeModule').api.fixInvert(element)
       };
     }
@@ -147,8 +148,8 @@ export class TabProxy {
     const tabPath = slash.reverse()
     const tempTitle = []
 
-    if(!title) {
-      for(let i = 0; i < tabPath.length; i++) {
+    if (!title) {
+      for (let i = 0; i < tabPath.length; i++) {
         tempTitle.push(tabPath[i])
         const formatPath = [...tempTitle].reverse()
         const index = this.loadedTabs.findIndex(({ title }) => title === formatPath.join('/'))
@@ -179,7 +180,7 @@ export class TabProxy {
               tooltip: duplicateTabName
             })
           }
-          break;
+          break
         }
       }
     } else {

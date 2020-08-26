@@ -2,7 +2,6 @@ const Web3 = require('web3')
 const { stripHexPrefix, hashPersonalMessage } = require('ethereumjs-util')
 
 class InjectedProvider {
-
   constructor (executionContext) {
     this.executionContext = executionContext
   }

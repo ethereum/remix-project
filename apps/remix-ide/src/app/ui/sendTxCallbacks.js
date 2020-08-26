@@ -8,7 +8,7 @@ const Web3 = require('web3')
 
 module.exports = {
   getCallBacksWithContext: (udappUI, blockchain) => {
-    let callbacks = {}
+    const callbacks = {}
     callbacks.confirmationCb = confirmationCb
     callbacks.continueCb = continueCb
     callbacks.promptCb = promptCb
@@ -46,7 +46,7 @@ const promptCb = function (okCb, cancelCb) {
 }
 
 const confirmationCb = function (network, tx, gasEstimation, continueTxExecution, cancelCb) {
-  let self = this
+  const self = this
   if (network.name !== 'Main') {
     return continueTxExecution(null)
   }
@@ -84,7 +84,8 @@ const confirmationCb = function (network, tx, gasEstimation, continueTxExecution
   modalDialog(
     'Confirm transaction',
     content,
-    { label: 'Confirm',
+    {
+      label: 'Confirm',
       fn: () => {
         self.blockchain.config.setUnpersistedProperty(
           'doNotShowTransactionConfirmationAgain',

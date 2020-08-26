@@ -1,12 +1,12 @@
-const yo = require('yo-yo')
-const css = require('./styles/debugger-tab-styles')
 import toaster from '../ui/tooltip'
-import { DebuggerUI } from '@remix-ui/debugger-ui'
+import { DebuggerUI } from '@remix-ui/debugger-ui' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine'
 import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import * as packageJson from '../../../../../package.json'
-import React from 'react'
+import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
+const yo = require('yo-yo')
+const css = require('./styles/debugger-tab-styles')
 
 const profile = {
   name: 'debugger',
@@ -73,7 +73,7 @@ class DebuggerTab extends ViewPlugin {
   renderComponent () {
     ReactDOM.render(
       <DebuggerUI debuggerModule={this} />
-    , this.el)
+      , this.el)
   }
 
   deactivate () {

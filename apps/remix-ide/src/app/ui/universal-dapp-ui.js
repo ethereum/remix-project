@@ -18,7 +18,7 @@ var txCallBacks = require('./sendTxCallbacks')
 function UniversalDAppUI (blockchain, logCallback) {
   this.blockchain = blockchain
   this.logCallback = logCallback
-  this.compilerData = {contractsDetails: {}}
+  this.compilerData = { contractsDetails: {} }
 }
 
 function decodeResponseToTreeView (response, fnabi) {
@@ -51,7 +51,7 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
 // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
 // this returns a DOM element
 UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
-  let self = this
+  const self = this
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   address = ethJSUtil.toChecksumAddress(address)
   var instance = yo`<div class="instance run-instance border-dark ${css.instance} ${css.hidesub}" id="instance${address}" data-shared="universalDappUiInstance"></div>`
@@ -100,8 +100,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   function toggleClass (e) {
     $(instance).toggleClass(`${css.hidesub} bg-light`)
     // e.currentTarget.querySelector('i')
-    e.currentTarget.querySelector('i').classList.toggle(`fa-angle-right`)
-    e.currentTarget.querySelector('i').classList.toggle(`fa-angle-down`)
+    e.currentTarget.querySelector('i').classList.toggle('fa-angle-right')
+    e.currentTarget.querySelector('i').classList.toggle('fa-angle-down')
   }
 
   instance.appendChild(title)
@@ -179,7 +179,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     }
     let calldata = calldataInput.value
     if (calldata) {
-      if (calldata.length < 2 || calldata.length < 4 && helper.is0XPrefixed(calldata)) {
+      if (calldata.length < 4 && helper.is0XPrefixed(calldata)) {
         return setLLIError('The calldata should be a valid hexadecimal value with size of at least one byte.')
       } else {
         if (helper.is0XPrefixed(calldata)) {
@@ -194,7 +194,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       }
     }
 
-    if (!receive && !fallback) return setLLIError(`Both 'receive' and 'fallback' functions are not defined`)
+    if (!receive && !fallback) return setLLIError('Both \'receive\' and \'fallback\' functions are not defined')
 
     // we have to put the right function ABI:
     // if receive is defined and that there is no calldata => receive function is called
@@ -202,7 +202,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     if (receive && !calldata) args.funABI = receive
     else if (fallback) args.funABI = fallback
 
-    if (!args.funABI) return setLLIError(`Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers`)
+    if (!args.funABI) return setLLIError('Please define a \'Fallback\' function to send calldata and a either \'Receive\' or payable \'Fallback\' to send ethers')
     self.runTransaction(false, args, null, calldataInput.value, null)
   }
 
@@ -213,7 +213,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 // TODO this is used by renderInstance when a new instance is displayed.
 // this returns a DOM element.
 UniversalDAppUI.prototype.getCallButton = function (args) {
-  let self = this
+  const self = this
   var outputOverride = yo`<div class=${css.value}></div>` // show return value
   const isConstant = args.funABI.constant !== undefined ? args.funABI.constant : false
   const lookupOnly = args.funABI.stateMutability === 'view' || args.funABI.stateMutability === 'pure' || isConstant

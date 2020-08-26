@@ -1,11 +1,11 @@
+import { ViewPlugin } from '@remixproject/engine'
+import * as packageJson from '../../../../../package.json'
 const yo = require('yo-yo')
 const globalRegistry = require('../../global/registry')
 const tooltip = require('../ui/tooltip')
 const copyToClipboard = require('../ui/copy-to-clipboard')
 const EventManager = require('../../lib/events')
 const css = require('./styles/settings-tab-styles')
-import { ViewPlugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'settings',
@@ -50,14 +50,14 @@ module.exports = class SettingsTab extends ViewPlugin {
   }
 
   createThemeCheckies () {
-    let themes = this._deps.themeModule.getThemes()
+    const themes = this._deps.themeModule.getThemes()
     const onswitchTheme = (event, name) => {
       this._deps.themeModule.switchTheme(name)
     }
     if (themes) {
       return yo`<div class="card-text themes-container">
         ${themes.map((aTheme) => {
-          let el = yo`<div class="radio custom-control custom-radio mb-1 form-check ${css.crow}">
+          const el = yo`<div class="radio custom-control custom-radio mb-1 form-check ${css.crow}">
           <input type="radio" onchange=${event => { onswitchTheme(event, aTheme.name) }} class="align-middle custom-control-input" name="theme" id="${aTheme.name}" data-id="settingsTabTheme${aTheme.name}">
           <label class="form-check-label custom-control-label" data-id="settingsTabThemeLabel${aTheme.name}" for="${aTheme.name}">${aTheme.name} (${aTheme.quality})</label>
         </div>`
@@ -188,11 +188,11 @@ module.exports = class SettingsTab extends ViewPlugin {
     }
     function elementStateChanged (el, isChanged) {
       if (isChanged) {
-        el.classList.remove("text-dark")
-        el.classList.add("text-secondary")
+        el.classList.remove('text-dark')
+        el.classList.add('text-secondary')
       } else {
-        el.classList.add("text-dark")
-        el.classList.remove("text-secondary")
+        el.classList.add('text-dark')
+        el.classList.remove('text-secondary')
       }
     }
 

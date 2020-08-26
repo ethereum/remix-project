@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
+import { HostPlugin } from '@remixproject/engine'
 const csjs = require('csjs-inject')
 const yo = require('yo-yo')
-import { HostPlugin } from '@remixproject/engine'
 
 const css = csjs`
   .plugins        {
@@ -27,7 +27,6 @@ const css = csjs`
 
 /** Abstract class used for hosting the view of a plugin */
 export class AbstractPanel extends HostPlugin {
-
   constructor (profile) {
     super(profile)
     this.events = new EventEmitter()
@@ -109,4 +108,3 @@ export class AbstractPanel extends HostPlugin {
     this.showContent(name)
   }
 }
-

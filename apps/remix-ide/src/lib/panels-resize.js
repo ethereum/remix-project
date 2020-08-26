@@ -86,4 +86,3 @@ export default class PanelsResize {
     this.panel.style.display = 'flex'
   }
 }
-

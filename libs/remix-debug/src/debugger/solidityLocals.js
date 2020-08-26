@@ -4,7 +4,6 @@ const localDecoder = require('../solidity-decoder/localDecoder')
 const StorageViewer = require('../storage/storageViewer')
 
 class DebuggerSolidityLocals {
-
   constructor (tx, _stepManager, _traceManager, _internalTreeCall) {
     this.event = new EventManager()
     this.stepManager = _stepManager
@@ -57,33 +56,33 @@ class DebuggerSolidityLocals {
           next(error)
         }
       }],
-      this.stepManager.currentStepIndex,
-      (error, result) => {
-        if (error) {
-          return error
-        }
-        var stack = result[0].value
-        var memory = result[1].value
-        try {
-          var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
-          localDecoder.solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation, cursor).then((locals) => {
-            if (!cursor) {
-              if (!locals.error) {
-                this.event.trigger('solidityLocals', [locals])
-              }
-              if (!Object.keys(locals).length) {
-                this.event.trigger('solidityLocalsMessage', ['no locals'])
-              }
-            } else {
-              if (!locals.error) {
-                this.event.trigger('solidityLocalsLoadMoreCompleted', [locals])
-              }
+    this.stepManager.currentStepIndex,
+    (error, result) => {
+      if (error) {
+        return error
+      }
+      var stack = result[0].value
+      var memory = result[1].value
+      try {
+        var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
+        localDecoder.solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation, cursor).then((locals) => {
+          if (!cursor) {
+            if (!locals.error) {
+              this.event.trigger('solidityLocals', [locals])
             }
-          })
-        } catch (e) {
-          this.event.trigger('solidityLocalsMessage', [e.message])
-        }
-      })
+            if (!Object.keys(locals).length) {
+              this.event.trigger('solidityLocalsMessage', ['no locals'])
+            }
+          } else {
+            if (!locals.error) {
+              this.event.trigger('solidityLocalsLoadMoreCompleted', [locals])
+            }
+          }
+        })
+      } catch (e) {
+        this.event.trigger('solidityLocalsMessage', [e.message])
+      }
+    })
   }
 
   decodeMore (cursor) {
@@ -94,7 +93,6 @@ class DebuggerSolidityLocals {
       this.decode(this._sourceLocation, cursor)
     }, 500)
   }
-
 }
 
 module.exports = DebuggerSolidityLocals

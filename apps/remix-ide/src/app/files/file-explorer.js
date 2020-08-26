@@ -25,21 +25,25 @@ function fileExplorer (localRegistry, files, menuItems, plugin) {
   this.focusElement = null
   // path currently focused on
   this.focusPath = null
-  let allItems =
+  const allItems =
     [
-      { action: 'createNewFile',
+      {
+        action: 'createNewFile',
         title: 'Create New File',
         icon: 'fas fa-plus-circle'
       },
-      { action: 'publishToGist',
+      {
+        action: 'publishToGist',
         title: 'Publish all [browser] explorer files to a github gist',
         icon: 'fab fa-github'
       },
-      { action: 'uploadFile',
+      {
+        action: 'uploadFile',
         title: 'Add Local file to the Browser Storage Explorer',
         icon: 'far fa-folder-open'
       },
-      { action: 'updateGist',
+      {
+        action: 'updateGist',
         title: 'Update the current [gist] explorer',
         icon: 'fab fa-github'
       }
@@ -213,7 +217,7 @@ function fileExplorer (localRegistry, files, menuItems, plugin) {
     if (self.files.readonly) return
     if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
-    let actions = {}
+    const actions = {}
     const provider = self._deps.fileManager.fileProviderOf(key)
     actions['Create File'] = () => self.createNewFile(key)
     actions['Create Folder'] = () => self.createNewFolder(key)
@@ -229,16 +233,16 @@ function fileExplorer (localRegistry, files, menuItems, plugin) {
       } */
     } else {
       const folderPath = extractExternalFolder(key)
-      actions['Rename'] = () => {
+      actions.Rename = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
       }
-      actions['Delete'] = () => {
+      actions.Delete = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
         const currentFoldername = extractNameFromKey(key)
 
-        modalDialogCustom.confirm(`Confirm to delete folder`, `Are you sure you want to delete ${currentFoldername} folder?`,
+        modalDialogCustom.confirm('Confirm to delete folder', `Are you sure you want to delete ${currentFoldername} folder?`,
           async () => {
             const fileManager = self._deps.fileManager
             const removeFolder = await fileManager.remove(key)
@@ -266,21 +270,21 @@ function fileExplorer (localRegistry, files, menuItems, plugin) {
   self.treeView.event.register('leafRightClick', function (key, data, label, event) {
     if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
-    let actions = {}
+    const actions = {}
     const provider = self._deps.fileManager.fileProviderOf(key)
     if (!provider.isExternalFolder(key)) {
       actions['Create Folder'] = () => self.createNewFolder(self._deps.fileManager.extractPathOf(key))
-      actions['Rename'] = () => {
+      actions.Rename = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('span[data-path="' + key + '"]')
         if (name) editModeOn(name)
       }
-      actions['Delete'] = () => {
+      actions.Delete = () => {
         if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
         const currentFilename = extractNameFromKey(key)
 
         modalDialogCustom.confirm(
-          `Delete file`, `Are you sure you want to delete ${currentFilename} file?`,
+          'Delete file', `Are you sure you want to delete ${currentFilename} file?`,
           async () => {
             const fileManager = self._deps.fileManager
             const removeFile = await fileManager.remove(key)
@@ -293,7 +297,7 @@ function fileExplorer (localRegistry, files, menuItems, plugin) {
         )
       }
       if (key.endsWith('.js')) {
-        actions['Run'] = async () => {
+        actions.Run = async () => {
           provider.get(key, (error, content) => {
             if (error) return console.log(error)
             plugin.call('scriptRunner', 'execute', content)
@@ -358,7 +362,7 @@ function fileExplorer (localRegistry, files, menuItems, plugin) {
   }
 
   function editModeOff (event) {
-    let label = this
+    const label = this
 
     const isFolder = label.className.indexOf('folder') !== -1
     function rename () {
@@ -438,10 +442,10 @@ fileExplorer.prototype.uploadFile = function (event) {
   // a file and then just use `files.add`. The file explorer will
   // pick that up via the 'fileAdded' event from the files module.
 
-  let self = this
+  const self = this
 
   ;[...event.target.files].forEach((file) => {
-    let files = this.files
+    const files = this.files
     function loadFile () {
       var fileReader = new FileReader()
       fileReader.onload = async function (event) {
@@ -471,7 +475,7 @@ fileExplorer.prototype.uploadFile = function (event) {
 }
 
 fileExplorer.prototype.toGist = function (id) {
-  let proccedResult = function (error, data) {
+  const proccedResult = function (error, data) {
     if (error) {
       modalDialogCustom.alert('Failed to manage gist: ' + error)
       console.log('Failed to manage gist: ' + error)
@@ -568,7 +572,7 @@ fileExplorer.prototype.toGist = function (id) {
 
 // return all the files, except the temporary/readonly ones..
 fileExplorer.prototype.packageFiles = function (filesProvider, directory, callback) {
-  let ret = {}
+  const ret = {}
   filesProvider.resolveDirectory(directory, (error, files) => {
     if (error) callback(error)
     else {
@@ -593,7 +597,7 @@ fileExplorer.prototype.packageFiles = function (filesProvider, directory, callba
 }
 
 fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
-  let self = this
+  const self = this
   modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
     if (!input) input = 'New file'
     helper.createNonClashingName(parentFolder + '/' + input, self.files, async (error, newName) => {
@@ -614,7 +618,7 @@ fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
 }
 
 fileExplorer.prototype.createNewFolder = function (parentFolder) {
-  let self = this
+  const self = this
   modalDialogCustom.prompt('Create new folder', '', 'New folder', (input) => {
     if (!input) {
       return tooltip('Failed to create folder. The name can not be empty')
@@ -638,7 +642,7 @@ fileExplorer.prototype.createNewFolder = function (parentFolder) {
 fileExplorer.prototype.renderMenuItems = function () {
   let items = ''
   if (this.menuItems) {
-    items = this.menuItems.map(({action, title, icon}) => {
+    items = this.menuItems.map(({ action, title, icon }) => {
       if (action === 'uploadFile') {
         return yo`
           <label
@@ -658,7 +662,7 @@ fileExplorer.prototype.renderMenuItems = function () {
           <span
             id=${action}
             data-id="fileExplorerNewFile${action}"
-            onclick=${(event) => { event.stopPropagation(); this[ action ]() }}
+            onclick=${(event) => { event.stopPropagation(); this[action]() }}
             class="newFile ${icon} ${css.newFile}"
             title=${title}
           >

@@ -7,7 +7,6 @@ var remixLib = require('@remix-project/remix-lib')
 var txFormat = remixLib.execution.txFormat
 
 class MultiParamManager {
-
   /**
     *
     * @param {bool} lookupOnly
@@ -25,8 +24,8 @@ class MultiParamManager {
     this.inputs = inputs
     this.title = title
     this.evmBC = evmBC
-    this.basicInputField
-    this.multiFields
+    this.basicInputField = null
+    this.multiFields = null
     this.isDeploy = isDeploy
   }
 
@@ -126,7 +125,7 @@ class MultiParamManager {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
     }
     const width = this.isDeploy ? '' : 'w-50'
-    let funcButton = yo`<button onclick=${() => onClick()} class="${css.instanceButton} ${width} btn btn-sm" data-id="multiParamManagerFuncButton">${title}</button>`
+    const funcButton = yo`<button onclick=${() => onClick()} class="${css.instanceButton} ${width} btn btn-sm" data-id="multiParamManagerFuncButton">${title}</button>`
     this.contractActionsContainerSingle = yo`
     <div class="${css.contractActionsContainerSingle} pt-2">
       ${funcButton}

@@ -1,5 +1,4 @@
 export class FramingService {
-
   constructor (sidePanel, verticalIcon, mainView, resizeFeature) {
     this.sidePanel = sidePanel
     this.verticalIcon = verticalIcon
@@ -13,7 +12,7 @@ export class FramingService {
       this.resizeFeature.panel.clientWidth !== 0 ? this.resizeFeature.hidePanel() : this.resizeFeature.showPanel()
     })
     this.sidePanel.events.on('showing', () => {
-      this.resizeFeature.panel.clientWidth === 0 ? this.resizeFeature.showPanel() : ''
+      if (this.resizeFeature.panel.clientWidth === 0) this.resizeFeature.showPanel()
     })
     this.mainPanel.events.on('toggle', () => {
       this.resizeFeature.showPanel()

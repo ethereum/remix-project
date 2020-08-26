@@ -1,10 +1,10 @@
+import * as packageJson from '../../../../../package.json'
+import { basicLogo } from '../ui/svgLogo'
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var helper = require('../../lib/helper')
-let globalRegistry = require('../../global/registry')
+const globalRegistry = require('../../global/registry')
 const { Plugin } = require('@remixproject/engine')
-import * as packageJson from '../../../../../package.json'
-import { basicLogo } from '../ui/svgLogo'
 
 const EventEmitter = require('events')
 
@@ -18,7 +18,6 @@ const profile = {
 
 // TODO merge with side-panel.js. VerticalIcons should not be a plugin
 export class VerticalIcons extends Plugin {
-
   constructor (appManager) {
     super(profile)
     this.events = new EventEmitter()
@@ -27,7 +26,7 @@ export class VerticalIcons extends Plugin {
     this.iconKind = {}
     this.iconStatus = {}
 
-    let themeModule = globalRegistry.get('themeModule').api
+    const themeModule = globalRegistry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme) => {
       this.onThemeChanged(theme.quality)
     })
@@ -49,7 +48,7 @@ export class VerticalIcons extends Plugin {
     const types = ['error', 'warning', 'success', 'info', '']
     const fn = (status) => {
       if (!types.includes(status.type) && status.type) throw new Error(`type should be ${keys.join()}`)
-      if (status.key === undefined) throw new Error(`status key should be defined`)
+      if (status.key === undefined) throw new Error('status key should be defined')
 
       if (typeof status.key === 'string' && (!keys.includes(status.key))) {
         throw new Error('key should contain either number or ' + keys.join())
@@ -64,7 +63,7 @@ export class VerticalIcons extends Plugin {
    * Add an icon to the map
    * @param {ModuleProfile} profile The profile of the module
    */
-  addIcon ({kind, name, icon, displayName, tooltip}) {
+  addIcon ({ kind, name, icon, displayName, tooltip }) {
     let title = (tooltip || displayName || name)
     title = title.replace(/^\w/, c => c.toUpperCase())
     this.icons[name] = yo`
@@ -114,7 +113,7 @@ export class VerticalIcons extends Plugin {
   setIconStatus (name, status) {
     const el = this.icons[name]
     if (!el) return
-    let statusEl = el.querySelector('span')
+    const statusEl = el.querySelector('span')
     if (statusEl) {
       el.removeChild(statusEl)
     }
@@ -131,7 +130,7 @@ export class VerticalIcons extends Plugin {
     if (status.type === 'error') {
       type = 'danger' // to use with bootstrap
     } else type = helper.checkSpecialChars(status.type) ? '' : status.type
-    let title = helper.checkSpecialChars(status.title) ? '' : status.title
+    const title = helper.checkSpecialChars(status.title) ? '' : status.title
 
     el.appendChild(yo`<span
       title="${title}"
@@ -148,7 +147,7 @@ export class VerticalIcons extends Plugin {
    * Remove an icon from the map
    * @param {ModuleProfile} profile The profile of the module
    */
-  removeIcon ({kind, name}) {
+  removeIcon ({ kind, name }) {
     if (this.icons[name]) this.iconKind[kind || 'none'].removeChild(this.icons[name])
   }
 
@@ -157,15 +156,15 @@ export class VerticalIcons extends Plugin {
    */
   removeActive () {
     // reset filters
-    const images = this.view.querySelectorAll(`.image`)
+    const images = this.view.querySelectorAll('.image')
     images.forEach(function (im) {
       im.style.setProperty('filter', 'invert(0.5)')
     })
 
     // remove active
-    const currentActive = this.view.querySelector(`.active`)
+    const currentActive = this.view.querySelector('.active')
     if (currentActive) {
-      currentActive.classList.remove(`active`)
+      currentActive.classList.remove('active')
     }
   }
 
@@ -180,8 +179,8 @@ export class VerticalIcons extends Plugin {
     const brightness = themeType === 'dark' ? '150' : '0' // should be >100 for icons with color
     const nextActive = this.view.querySelector(`[plugin="${name}"]`)
     if (nextActive) {
-      let image = nextActive.querySelector('.image')
-      nextActive.classList.add(`active`)
+      const image = nextActive.querySelector('.image')
+      nextActive.classList.add('active')
       image.style.setProperty('filter', `invert(${invert}) grayscale(1) brightness(${brightness}%)`)
     }
   }
@@ -215,15 +214,15 @@ export class VerticalIcons extends Plugin {
 
   onThemeChanged (themeType) {
     const invert = themeType === 'dark' ? 1 : 0
-    const active = this.view.querySelector(`.active`)
+    const active = this.view.querySelector('.active')
     if (active) {
-      let image = active.querySelector('.image')
+      const image = active.querySelector('.image')
       image.style.setProperty('filter', `invert(${invert})`)
     }
   }
 
   render () {
-    let home = yo`
+    const home = yo`
       <div
         class="${css.homeIcon}"
         onclick="${(e) => {
@@ -235,26 +234,26 @@ export class VerticalIcons extends Plugin {
         ${basicLogo()}
       </div>
     `
-    this.iconKind['fileexplorer'] = yo`<div id='fileExplorerIcons' data-id="verticalIconsFileExplorerIcons"></div>`
-    this.iconKind['compiler'] = yo`<div id='compileIcons'></div>`
-    this.iconKind['udapp'] = yo`<div id='runIcons'></div>`
-    this.iconKind['testing'] = yo`<div id='testingIcons'></div>`
-    this.iconKind['analysis'] = yo`<div id='analysisIcons'></div>`
-    this.iconKind['debugging'] = yo`<div id='debuggingIcons' data-id="verticalIconsDebuggingIcons"></div>`
-    this.iconKind['none'] = yo`<div id='otherIcons'></div>`
-    this.iconKind['settings'] = yo`<div id='settingsIcons' data-id="verticalIconsSettingsIcons"></div>`
+    this.iconKind.fileexplorer = yo`<div id='fileExplorerIcons' data-id="verticalIconsFileExplorerIcons"></div>`
+    this.iconKind.compiler = yo`<div id='compileIcons'></div>`
+    this.iconKind.udapp = yo`<div id='runIcons'></div>`
+    this.iconKind.testing = yo`<div id='testingIcons'></div>`
+    this.iconKind.analysis = yo`<div id='analysisIcons'></div>`
+    this.iconKind.debugging = yo`<div id='debuggingIcons' data-id="verticalIconsDebuggingIcons"></div>`
+    this.iconKind.none = yo`<div id='otherIcons'></div>`
+    this.iconKind.settings = yo`<div id='settingsIcons' data-id="verticalIconsSettingsIcons"></div>`
 
     this.view = yo`
       <div class=${css.icons}>
         ${home}
-        ${this.iconKind['fileexplorer']}
-        ${this.iconKind['compiler']}
-        ${this.iconKind['udapp']}
-        ${this.iconKind['testing']}
-        ${this.iconKind['analysis']}
-        ${this.iconKind['debugging']}
-        ${this.iconKind['none']}
-        ${this.iconKind['settings']}
+        ${this.iconKind.fileexplorer}
+        ${this.iconKind.compiler}
+        ${this.iconKind.udapp}
+        ${this.iconKind.testing}
+        ${this.iconKind.analysis}
+        ${this.iconKind.debugging}
+        ${this.iconKind.none}
+        ${this.iconKind.settings}
       </div>
     `
     return this.view

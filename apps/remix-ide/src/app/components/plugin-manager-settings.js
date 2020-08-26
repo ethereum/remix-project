@@ -44,13 +44,12 @@ const css = csjs`
 `
 
 export class PluginManagerSettings {
-
   openDialog () {
     const fromLocal = window.localStorage.getItem('plugins/permissions')
     this.permissions = JSON.parse(fromLocal || '{}')
     this.currentSetting = this.settings()
     modalDialog('Plugin Manager Permissions', this.currentSetting,
-      { fn: () => this.onValidation() },
+      { fn: () => this.onValidation() }
     )
   }
 
@@ -138,5 +137,4 @@ export class PluginManagerSettings {
       <button onclick="${() => this.openDialog()}" class="btn btn-primary settings-button" data-id="pluginManagerPermissionsButton">Permissions</button>
     </footer>`
   }
-
 }

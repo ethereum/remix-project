@@ -51,15 +51,15 @@ module.exports = class LocalPlugin {
     return profile
   }
 
-  updateName ({target}) {
+  updateName ({ target }) {
     this.profile.name = target.value
   }
 
-  updateUrl ({target}) {
+  updateUrl ({ target }) {
     this.profile.url = target.value
   }
 
-  updateDisplayName ({target}) {
+  updateDisplayName ({ target }) {
     this.profile.displayName = target.value
   }
 
