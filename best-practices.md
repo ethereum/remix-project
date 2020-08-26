@@ -1,7 +1,7 @@
 # Current "Best Practice" Conventions
 
 
-- Please use [JS Standard Style](https://standardjs.com/) as a coding style guide.
+- Coding style is defined in [.eslintrc](https://github.com/ethereum/remix-project/blob/master/apps/remix-ide/.eslintrc).
 - `ES6 class` rather than ES5 to create class.
 - CSS declaration using `csjs-inject`.
 - CSS files: 
