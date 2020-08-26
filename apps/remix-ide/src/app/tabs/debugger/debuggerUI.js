@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom'
-import { Slider } from '@remix-project/debugger-ui'
+import { StepManager } from '@remix-project/debugger-ui'
 var TxBrowser = require('./debuggerUI/TxBrowser')
 var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
@@ -229,7 +229,7 @@ class DebuggerUI {
   render () {
     this.debuggerPanelsView = yo`<div class="px-2"></div>`
     this.debuggerHeadPanelsView = yo`<div class="px-2"></div>`
-    this.stepManagerView = yo`<div class="px-2"></div>`
+    this.stepManagerView = yo`<div id="stepManager-ui" class="px-2"></div>`
 
     var view = yo`
       <div>
@@ -274,8 +274,7 @@ class DebuggerUI {
   renderDebugger () {
     yo.update(this.debuggerHeadPanelsView, this.vmDebugger.renderHead())
     yo.update(this.debuggerPanelsView, this.vmDebugger.render())
-    yo.update(this.stepManagerView, this.stepManager.render())
-    ReactDOM.render(<Slider event={this.event} />, document.getElementById('slider-ui'))  
+    ReactDOM.render(<StepManager stepManager={this.debugger.step_manager} />, document.getElementById('stepManager-ui'))
   }
 
 }

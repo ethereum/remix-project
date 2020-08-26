@@ -1,4 +1,3 @@
-import Slider from './lib/slider'
-import * as debuggerUI from './lib/debugger-ui'
+import StepManager from './lib/step-manager/step-manager'
 
-export { Slider, debuggerUI }
+export { StepManager }
