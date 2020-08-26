@@ -51,7 +51,7 @@ class DebuggerSolidityLocals {
       },
       function getCurrentCalledAddressAt (stepIndex, next) {
         try {
-          const address = this.traceManager.getCurrentCalledAddressAt(stepIndex)
+          const address = self.traceManager.getCurrentCalledAddressAt(stepIndex)
           next(null, address)
         } catch (error) {
           next(error)
