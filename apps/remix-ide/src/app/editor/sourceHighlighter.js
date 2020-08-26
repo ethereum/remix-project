@@ -22,7 +22,7 @@ class SourceHighlighter {
   currentSourceLocation (lineColumnPos, location) {
     if (this.statementMarker) this._deps.editor.removeMarker(this.statementMarker, this.source)
     if (this.fullLineMarker) this._deps.editor.removeMarker(this.fullLineMarker, this.source)
-    let lastCompilationResult = this._deps.compilerArtefacts['__last']
+    const lastCompilationResult = this._deps.compilerArtefacts.__last
     if (location && location.file !== undefined && lastCompilationResult) {
       const path = lastCompilationResult.getSourceName(location.file)
       if (path) {
@@ -40,7 +40,7 @@ class SourceHighlighter {
     if (lineColumnPos) {
       this.source = filePath
       this.style = style || 'var(--info)'
-      //if (!this.source) this.source = this._deps.fileManager.currentFile()
+      // if (!this.source) this.source = this._deps.fileManager.currentFile()
       if (this._deps.fileManager.currentFile() !== this.source) {
         await this._deps.fileManager.open(this.source)
         this.source = this._deps.fileManager.currentFile()

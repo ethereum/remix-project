@@ -61,7 +61,7 @@ export class RemixdHandle extends WebsocketPlugin {
     * @param {String} txHash - hash of the transaction
     */
   async connectToLocalhost () {
-    let connection = (error) => {
+    const connection = (error) => {
       if (error) {
         console.log(error)
         modalDialogCustom.alert(
@@ -91,7 +91,8 @@ export class RemixdHandle extends WebsocketPlugin {
       modalDialog(
         'Connect to localhost',
         remixdDialog(),
-        { label: 'Connect',
+        {
+          label: 'Connect',
           fn: () => {
             try {
               super.activate()
@@ -107,7 +108,8 @@ export class RemixdHandle extends WebsocketPlugin {
             }
           }
         },
-        { label: 'Cancel',
+        {
+          label: 'Cancel',
           fn: () => {
             this.canceled()
           }

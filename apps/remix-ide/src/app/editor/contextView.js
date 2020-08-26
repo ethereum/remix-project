@@ -25,9 +25,9 @@ class ContextView {
       config: this._components.registry.get('config').api,
       fileManager: this._components.registry.get('filemanager').api
     }
-    this._view
-    this._nodes
-    this._current
+    this._view = null
+    this._nodes = null
+    this._current = null
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.previousElement = null
     this.contextualListener.event.register('contextChanged', nodes => {
@@ -98,7 +98,7 @@ class ContextView {
         this.editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
       }
     }
-    let lastCompilationResult = this._deps.compilersArtefacts['__last']
+    const lastCompilationResult = this._deps.compilersArtefacts.__last
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
       const lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(
         position,

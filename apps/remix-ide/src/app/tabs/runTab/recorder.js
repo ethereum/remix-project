@@ -1,11 +1,11 @@
+import { Plugin } from '@remixproject/engine'
+
+import * as packageJson from '../../../../../../package.json'
 var yo = require('yo-yo')
 var remixLib = require('@remix-project/remix-lib')
 var EventManager = remixLib.EventManager
-import { Plugin } from '@remixproject/engine'
 var csjs = require('csjs-inject')
 var css = require('../styles/run-tab-styles')
-
-import * as packageJson from '../../../../../../package.json'
 
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var modalDialog = require('../../ui/modaldialog')
@@ -20,7 +20,6 @@ const profile = {
 }
 
 class RecorderUI extends Plugin {
-
   constructor (blockchain, fileManager, recorder, logCallBack, config) {
     super(profile)
     this.fileManager = fileManager
@@ -51,8 +50,7 @@ class RecorderUI extends Plugin {
     }
   }
 
- 
-  runScenario (file) {    
+  runScenario (file) {
     if (!file) return modalDialogCustom.alert('Unable to run scenerio, no specified scenario file')
     var continueCb = (error, continueTxExecution, cancelCb) => {
       if (error) {
@@ -61,16 +59,17 @@ class RecorderUI extends Plugin {
         The transaction execution will likely fail. Do you want to force sending? <br>
         ${msg}
         </div>`,
-          {
-            label: 'Send Transaction',
-            fn: () => {
-              continueTxExecution()
-            }}, {
-              label: 'Cancel Transaction',
-              fn: () => {
-                cancelCb()
-              }
-            })
+        {
+          label: 'Send Transaction',
+          fn: () => {
+            continueTxExecution()
+          }
+        }, {
+          label: 'Cancel Transaction',
+          fn: () => {
+            cancelCb()
+          }
+        })
       } else {
         continueTxExecution()
       }
@@ -94,8 +93,8 @@ class RecorderUI extends Plugin {
         }
 
         this.event.trigger('newScenario', [abi, address, contractName])
-      })      
-    }).catch((error) => modalDialogCustom.alert(error))    
+      })
+    }).catch((error) => modalDialogCustom.alert(error))
   }
 
   getConfirmationCb (modalDialog, confirmDialog) {
@@ -108,7 +107,8 @@ class RecorderUI extends Plugin {
       const content = confirmDialog(tx, amount, gasEstimation, null, this.blockchain.determineGasFees(tx), this.blockchain.determineGasPrice.bind(this.blockchain))
 
       modalDialog('Confirm transaction', content,
-        { label: 'Confirm',
+        {
+          label: 'Confirm',
           fn: () => {
             this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
             // TODO: check if this is check is still valid given the refactor
@@ -118,12 +118,13 @@ class RecorderUI extends Plugin {
               var gasPrice = this.blockchain.toWei(content.querySelector('#gasprice').value, 'gwei')
               continueTxExecution(gasPrice)
             }
-          }}, {
-            label: 'Cancel',
-            fn: () => {
-              return cancelCb('Transaction canceled by user.')
-            }
           }
+        }, {
+          label: 'Cancel',
+          fn: () => {
+            return cancelCb('Transaction canceled by user.')
+          }
+        }
       )
     }
 
@@ -155,7 +156,6 @@ class RecorderUI extends Plugin {
       })
     })
   }
-
 }
 
 module.exports = RecorderUI

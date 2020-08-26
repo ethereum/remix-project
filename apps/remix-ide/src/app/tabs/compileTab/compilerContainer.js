@@ -1,14 +1,13 @@
 
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '../../compiler/compiler-utils'
 const yo = require('yo-yo')
 const helper = require('../../../lib/helper')
 const addTooltip = require('../../ui/tooltip')
 const semver = require('semver')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const css = require('../styles/compile-tab-styles')
-import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '../../compiler/compiler-utils'
 
 class CompilerContainer {
-
   constructor (compileTabLogic, editor, config, queryParams) {
     this._view = {}
     this.compileTabLogic = compileTabLogic
@@ -127,7 +126,7 @@ class CompilerContainer {
   }
 
   _disableCompileBtn (shouldDisable) {
-    let btn = document.getElementById('compileBtn')
+    const btn = document.getElementById('compileBtn')
     if (!btn) return
     if (shouldDisable) {
       btn.classList.add('disabled')
@@ -230,7 +229,7 @@ class CompilerContainer {
         <option>homestead</option>
       </select>`
     if (this.compileTabLogic.evmVersion) {
-      let s = this._view.evmVersionSelector
+      const s = this._view.evmVersionSelector
       let i
       for (i = 0; i < s.options.length; i++) {
         if (s.options[i].value === this.compileTabLogic.evmVersion) {
@@ -363,7 +362,7 @@ class CompilerContainer {
   }
 
   onchangeEvmVersion () {
-    let s = this._view.evmVersionSelector
+    const s = this._view.evmVersionSelector
     let v = s.value
     if (v === 'default') {
       v = null
@@ -527,12 +526,12 @@ class CompilerContainer {
     }
     callback(allVersions, selectedVersion, isURL)
   }
+
   scheduleCompilation () {
     if (!this.config.get('autoCompile')) return
     if (this.data.compileTimeout) window.clearTimeout(this.data.compileTimeout)
     this.data.compileTimeout = window.setTimeout(() => this.compileIfAutoCompileOn(), this.data.timeout)
   }
-
 }
 
 module.exports = CompilerContainer

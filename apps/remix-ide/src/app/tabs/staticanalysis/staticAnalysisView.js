@@ -99,7 +99,7 @@ staticAnalysisView.prototype.selectedModules = function () {
   const selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
   var toRun = []
   for (var i = 0; i < selected.length; i++) {
-    toRun.push(selected[i].attributes['index'].value)
+    toRun.push(selected[i].attributes.index.value)
   }
   return toRun
 }
@@ -128,11 +128,10 @@ staticAnalysisView.prototype.run = function () {
           groupedModules[key].forEach((el) => {
             if (el.name === result.name) {
               moduleName = groupedModules[key][0].categoryDisplayName
-              return
             }
           })
         })
-        let alreadyExistedEl = this.view.querySelector(`[id="staticAnalysisModule${moduleName}"]`)
+        const alreadyExistedEl = this.view.querySelector(`[id="staticAnalysisModule${moduleName}"]`)
         if (!alreadyExistedEl) {
           warningContainer.append(`
             <div class="mb-4" name="staticAnalysisModules" id="staticAnalysisModule${moduleName}">
@@ -292,7 +291,7 @@ module.exports = staticAnalysisView
 function preProcessModules (arr) {
   return arr.map((Item, i) => {
     const itemObj = new Item()
-    itemObj['_index'] = i
+    itemObj._index = i
     itemObj.categoryDisplayName = itemObj.category.displayName
     itemObj.categoryId = itemObj.category.id
     return itemObj
