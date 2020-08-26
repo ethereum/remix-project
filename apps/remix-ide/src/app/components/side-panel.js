@@ -26,6 +26,7 @@ const css = csjs`
     display: flex;
     align-items: center;
     padding: 16px 24px 15px;
+    justify-content: space-between;
   }
   .icons i {
     height: 80%;
