@@ -2,7 +2,7 @@ var EventManager = require('../../../../lib/events')
 var yo = require('yo-yo')
 
 var ButtonNavigator = require('./ButtonNavigator')
-// var Slider = require('./Slider')
+var Slider = require('./Slider')
 
 function StepManager (stepManager) {
   this.event = new EventManager()
@@ -13,8 +13,9 @@ function StepManager (stepManager) {
 }
 
 StepManager.prototype.startSlider = function () {
-  this.event.register('sliderMoved', this.stepManager.jumpTo.bind(this.stepManager))
-  // this.stepManager.event.register('traceLengthChanged', this.slider.setSliderLength.bind(this.slider))
+  this.slider = new Slider()
+  this.slider.event.register('sliderMoved', this.stepManager.jumpTo.bind(this.stepManager))
+  this.stepManager.event.register('traceLengthChanged', this.slider.setSliderLength.bind(this.slider))
 }
 
 StepManager.prototype.startButtonNavigator = function () {
@@ -33,16 +34,16 @@ StepManager.prototype.startButtonNavigator = function () {
 }
 
 StepManager.prototype.updateStep = function (step, stepState, jumpOutDisabled) {
-  // if (!this.slider) return
-  // this.slider.setValue(step)
+  if (!this.slider) return
+  this.slider.setValue(step)
   this.buttonNavigator.stepChanged(stepState, jumpOutDisabled)
   this.event.trigger('stepChanged', [step])
 }
 
 StepManager.prototype.remove = function () {
   // used to stop listenning on event. bad and should be "refactored"
-  // this.slider.view = null
-  // this.slider = null
+  this.slider.view = null
+  this.slider = null
   this.buttonNavigator.view = null
   this.buttonNavigator = null
 }
@@ -50,7 +51,7 @@ StepManager.prototype.remove = function () {
 StepManager.prototype.render = function () {
   return yo`
     <div class="py-1">
-      <div id="slider-ui"></div>
+      ${this.slider.render()}
       ${this.buttonNavigator.render()}
     </div>`
 }
