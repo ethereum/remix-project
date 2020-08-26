@@ -80,35 +80,36 @@ TraceManager.prototype.getLength = function (callback) {
   }
 }
 
-TraceManager.prototype.accumulateStorageChanges = function (index, address, storageOrigin, callback) {
-  const storage = this.traceCache.accumulateStorageChanges(index, address, storageOrigin)
-  callback(null, storage)
+TraceManager.prototype.accumulateStorageChanges = function (index, address, storageOrigin) {
+  return this.traceCache.accumulateStorageChanges(index, address, storageOrigin)
 }
 
-TraceManager.prototype.getAddresses = function (callback) {
-  callback(null, this.traceCache.addresses)
+TraceManager.prototype.getAddresses = function () {
+  return this.traceCache.addresses
 }
 
-TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
+TraceManager.prototype.getCallDataAt = function (stepIndex) {
   try {
     this.checkRequestedStep(stepIndex)
   } catch (check) {
-    return callback(check, null)
+    throw new Error(check)
   }
   const callDataChange = util.findLowerBoundValue(stepIndex, this.traceCache.callDataChanges)
-  if (callDataChange === null) return callback('no calldata found', null)
-  callback(null, [this.traceCache.callsData[callDataChange]])
+  if (callDataChange === null) {
+    throw new Error('no calldata found')
+  }
+  return [this.traceCache.callsData[callDataChange]]
 }
 
-TraceManager.prototype.buildCallPath = function (stepIndex, callback) {
+TraceManager.prototype.buildCallPath = async function (stepIndex) {
   try {
     this.checkRequestedStep(stepIndex)
   } catch (check) {
-    return callback(check, null)
+    throw new Error(check)
   }
   const callsPath = util.buildCallPath(stepIndex, this.traceCache.callsTree.call)
-  if (callsPath === null) return callback('no call path built', null)
-  callback(null, callsPath)
+  if (callsPath === null) throw new Error('no call path built')
+  return callsPath
 }
 
 TraceManager.prototype.getCallStackAt = function (stepIndex) {
@@ -124,19 +125,14 @@ TraceManager.prototype.getCallStackAt = function (stepIndex) {
   return call.callStack
 }
 
-TraceManager.prototype.getStackAt = function (stepIndex, callback) {
-  try {
-    this.checkRequestedStep(stepIndex)
-  } catch (check) {
-    return callback(check, null)
-  }
-  let stack
+TraceManager.prototype.getStackAt = function (stepIndex) {
+  this.checkRequestedStep(stepIndex)
   if (this.trace[stepIndex] && this.trace[stepIndex].stack) { // there's always a stack
-    stack = this.trace[stepIndex].stack.slice(0)
+    let stack = this.trace[stepIndex].stack.slice(0)
     stack.reverse()
-    callback(null, stack)
+    return stack
   } else {
-    callback('no stack found', null)
+    throw new Error('no stack found')
   }
 }
 
@@ -167,54 +163,50 @@ TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex) {
   }
 }
 
-TraceManager.prototype.getContractCreationCode = function (token, callback) {
-  if (this.traceCache.contractCreation[token]) {
-    callback(null, this.traceCache.contractCreation[token])
-  } else {
-    callback('no contract creation named ' + token, null)
+TraceManager.prototype.getContractCreationCode = function (token) {
+  if (!this.traceCache.contractCreation[token]) {
+    throw new Error('no contract creation named ' + token)
   }
+  return this.traceCache.contractCreation[token]
 }
 
-TraceManager.prototype.getMemoryAt = function (stepIndex, callback) {
-  try {
-    this.checkRequestedStep(stepIndex)
-  } catch (check) {
-    return callback(check, null)
-  }
+TraceManager.prototype.getMemoryAt = function (stepIndex) {
+  this.checkRequestedStep(stepIndex)
   const lastChanges = util.findLowerBoundValue(stepIndex, this.traceCache.memoryChanges)
-  if (lastChanges === null) return callback('no memory found', null)
-  callback(null, this.trace[lastChanges].memory)
-}
-
-TraceManager.prototype.getCurrentPC = function (stepIndex, callback) {
-  try {
-    this.checkRequestedStep(stepIndex)
-  } catch (check) {
-    return callback(check, null)
+  if (lastChanges === null) {
+    throw new Error('no memory found')
   }
-  callback(null, this.trace[stepIndex].pc)
+  return this.trace[lastChanges].memory
 }
 
-TraceManager.prototype.getReturnValue = function (stepIndex, callback) {
+TraceManager.prototype.getCurrentPC = function (stepIndex) {
   try {
     this.checkRequestedStep(stepIndex)
   } catch (check) {
-    return callback(check, null)
+    throw new Error(check)
+  }
+  return this.trace[stepIndex].pc
+}
+
+TraceManager.prototype.getReturnValue = function (stepIndex) {
+  try {
+    this.checkRequestedStep(stepIndex)
+  } catch (check) {
+    throw new Error(check)
   }
   if (!this.traceCache.returnValues[stepIndex]) {
-    callback('current step is not a return step')
-  } else {
-    callback(null, this.traceCache.returnValues[stepIndex])
+    throw new Error('current step is not a return step')
   }
+  return this.traceCache.returnValues[stepIndex]
 }
 
-TraceManager.prototype.getCurrentStep = function (stepIndex, callback) {
+TraceManager.prototype.getCurrentStep = function (stepIndex) {
   try {
     this.checkRequestedStep(stepIndex)
   } catch (check) {
-    return callback(check, null)
+    throw new Error(check)
   }
-  callback(null, this.traceCache.steps[stepIndex])
+  return this.traceCache.steps[stepIndex]
 }
 
 TraceManager.prototype.getMemExpand = function (stepIndex) {

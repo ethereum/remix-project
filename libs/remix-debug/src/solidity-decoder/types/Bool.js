@@ -10,10 +10,9 @@ class Bool extends ValueType {
   decodeValue (value) {
     if (!value) {
       return false
-    } else {
-      value = util.extractHexByteSlice(value, this.storageBytes, 0)
-      return value !== '00'
     }
+    value = util.extractHexByteSlice(value, this.storageBytes, 0)
+    return value !== '00'
   }
 }
 
