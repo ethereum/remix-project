@@ -20,7 +20,7 @@ function mapVerbosity (v: number) {
     }
     return levels[v]
 }
-const version = require('../../../package.json').version
+const version = require('../package.json').version
 
 commander.version(version)
 
