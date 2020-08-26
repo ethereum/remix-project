@@ -193,23 +193,27 @@ function testDebugging (debugManager) {
   // stack
   tape('traceManager.getStackAt 4', (t) => {
     t.plan(1)
-    debugManager.traceManager.getStackAt(4, (error, callstack) => {
-      if (error) return t.end(error)
-      t.equal(JSON.stringify(callstack), JSON.stringify([ '0x0000000000000000000000000000000000000000000000000000000000000000' ]))
-    })
+    try {
+      const callstack = debugManager.traceManager.getStackAt(4)
+      t.equal(JSON.stringify(callstack), JSON.stringify(['0x0000000000000000000000000000000000000000000000000000000000000000']))
+    } catch (error) {
+      return t.end(error)
+    }
   })
 
   tape('traceManager.getStackAt 41', (t) => {
     t.plan(1)
-    debugManager.traceManager.getStackAt(41, (error, callstack) => {
-      if (error) return t.end(error)
+    try {
+      const callstack = debugManager.traceManager.getStackAt(41)
       t.equal(JSON.stringify(callstack), JSON.stringify([
         '0x0000000000000000000000000000000000000000000000000000000000000080',
         '0x0000000000000000000000000000000000000000000000000000000000000020',
         '0x0000000000000000000000000000000000000000000000000000000000000080',
         '0x00000000000000000000000000000000000000000000000000000000000000e0',
         '0x00000000000000000000000000000000000000000000000000000000000000e0']))
-    })
+    } catch (error) {
+      return t.end(error)
+    }
   })
 
   // storage
@@ -220,9 +224,11 @@ function testDebugging (debugManager) {
       const address = debugManager.traceManager.getCurrentCalledAddressAt(38)
       console.log(address)
       var storageView = debugManager.storageViewAt(196, address)
-      storageView.storageRange((error, storage) => {
-        if (error) return t.end(error)
+
+      storageView.storageRange().then((storage) => {
         t.equal(JSON.stringify(storage), JSON.stringify({ '0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563': { key: '0x0000000000000000000000000000000000000000000000000000000000000000', value: '0x0000000000000000000000004b0897b0513fdc7c541b6d9d7e929c4e5364d2db' } }))
+      }).catch((error) => {
+        if (error) return t.end(error)
       })
     } catch (error) {
       return t.end(error)

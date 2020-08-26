@@ -60,23 +60,23 @@ class VmDebuggerLogic {
 
       this.event.trigger('functionsStackUpdate', [this._callTree.retrieveFunctionsStack(index)])
 
-      this._traceManager.getCallDataAt(index, (error, calldata) => {
-        if (error) {
-          // console.log(error)
-          this.event.trigger('traceManagerCallDataUpdate', [{}])
-        } else if (this.stepManager.currentStepIndex === index) {
+      try {
+        const calldata = this._traceManager.getCallDataAt(index)
+        if (this.stepManager.currentStepIndex === index) {
           this.event.trigger('traceManagerCallDataUpdate', [calldata])
         }
-      })
+      } catch (error) {
+        this.event.trigger('traceManagerCallDataUpdate', [{}])
+      }
 
-      this._traceManager.getMemoryAt(index, (error, memory) => {
-        if (error) {
-          // console.log(error)
-          this.event.trigger('traceManagerMemoryUpdate', [{}])
-        } else if (this.stepManager.currentStepIndex === index) {
+      try {
+        const memory = this._traceManager.getMemoryAt(index)
+        if (this.stepManager.currentStepIndex === index) {
           this.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 16)])
         }
-      })
+      } catch (error) {
+        this.event.trigger('traceManagerMemoryUpdate', [{}])
+      }
 
       try {
         const callstack = this._traceManager.getCallStackAt(index)
@@ -87,14 +87,14 @@ class VmDebuggerLogic {
         this.event.trigger('traceManagerCallStackUpdate', [{}])
       }
 
-      this._traceManager.getStackAt(index, (error, callstack) => {
-        if (error) {
-          // console.log(error)
-          this.event.trigger('traceManagerStackUpdate', [{}])
-        } else if (this.stepManager.currentStepIndex === index) {
+      try {
+        const callstack = this._traceManager.getStackAt(index)
+        if (this.stepManager.currentStepIndex === index) {
           this.event.trigger('traceManagerStackUpdate', [callstack])
         }
-      })
+      } catch (error) {
+        this.event.trigger('traceManagerStackUpdate', [{}])
+      }
 
       try {
         const address = this._traceManager.getCurrentCalledAddressAt(index)
@@ -102,21 +102,24 @@ class VmDebuggerLogic {
 
         var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
 
-        storageViewer.storageRange((error, storage) => {
-          if (error) {
-            this.event.trigger('traceManagerStorageUpdate', [{}])
-          } else if (this.stepManager.currentStepIndex === index) {
+        storageViewer.storageRange().then((storage) => {
+          if (this.stepManager.currentStepIndex === index) {
             var header = storageViewer.isComplete(address) ? '[Completely Loaded]' : '[Partially Loaded]'
             this.event.trigger('traceManagerStorageUpdate', [storage, header])
           }
+        }).catch((_error) => {
+          this.event.trigger('traceManagerStorageUpdate', [{}])
         })
       } catch (error) {
-        console.log(error)
+        this.event.trigger('traceManagerStorageUpdate', [{}])
       }
 
-      this._traceManager.getCurrentStep(index, (error, step) => {
-        this.event.trigger('traceCurrentStepUpdate', [error, step])
-      })
+      try {
+        const step = this._traceManager.getCurrentStep(index)
+        this.event.trigger('traceCurrentStepUpdate', [null, step])
+      } catch (error) {
+        this.event.trigger('traceCurrentStepUpdate', [error])
+      }
 
       try {
         const addmem = this._traceManager.getMemExpand(index)
@@ -146,13 +149,14 @@ class VmDebuggerLogic {
         this.event.trigger('traceRemainingGasUpdate', [error])
       }
 
-      this._traceManager.getReturnValue(index, (error, returnValue) => {
-        if (error) {
-          this.event.trigger('traceReturnValueUpdate', [[error]])
-        } else if (this.stepManager.currentStepIndex === index) {
+      try {
+        const returnValue = this._traceManager.getReturnValue(index)
+        if (this.stepManager.currentStepIndex === index) {
           this.event.trigger('traceReturnValueUpdate', [[returnValue]])
         }
-      })
+      } catch (error) {
+        this.event.trigger('traceReturnValueUpdate', [[error]])
+      }
     })
   }
 
@@ -161,11 +165,9 @@ class VmDebuggerLogic {
     this.traceLength = 0
 
     this.debugger.event.register('newTraceLoaded', (length) => {
-      this._traceManager.getAddresses((error, addresses) => {
-        if (error) return
-        this.event.trigger('traceAddressesUpdate', [addresses])
-        this.addresses = addresses
-      })
+      const addresses = this._traceManager.getAddresses()
+      this.event.trigger('traceAddressesUpdate', [addresses])
+      this.addresses = addresses
 
       this._traceManager.getLength((error, length) => {
         if (error) return
@@ -186,11 +188,9 @@ class VmDebuggerLogic {
       for (var k in this.addresses) {
         var address = this.addresses[k]
         var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
-        storageViewer.storageRange((error, result) => {
-          if (!error) {
-            storageJSON[address] = result
-            this.event.trigger('traceStorageUpdate', [storageJSON])
-          }
+        storageViewer.storageRange().then((result) => {
+          storageJSON[address] = result
+          this.event.trigger('traceStorageUpdate', [storageJSON])
         })
       }
     })

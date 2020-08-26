@@ -15,13 +15,7 @@ class StorageViewer {
     this.web3 = this.storageResolver.web3
     this.initialMappingsLocationPromise = null
     this.currentMappingsLocationPromise = null
-    _traceManager.accumulateStorageChanges(this.context.stepIndex, this.context.address, {}, (error, storageChanges) => {
-      if (!error) {
-        this.storageChanges = storageChanges
-      } else {
-        console.log(error)
-      }
-    })
+    this.storageChanges = _traceManager.accumulateStorageChanges(this.context.stepIndex, this.context.address, {})
   }
 
   /**
@@ -30,13 +24,11 @@ class StorageViewer {
     *
     * @param {Function} - callback - contains a map: [hashedKey] = {key, hashedKey, value}
     */
-  storageRange (callback) {
-    this.storageResolver.storageRange(this.context.tx, this.context.stepIndex, this.context.address, (error, storage) => {
-      if (error) {
-        callback(error)
-      } else {
-        callback(null, Object.assign({}, storage, this.storageChanges))
-      }
+  storageRange () {
+    return new Promise((resolve, reject) => {
+      this.storageResolver.storageRange(this.context.tx, this.context.stepIndex, this.context.address).then((storage) => {
+        resolve(Object.assign({}, storage, this.storageChanges))
+      }).catch(reject)
     })
   }
 
@@ -50,13 +42,9 @@ class StorageViewer {
     if (this.storageChanges[hashed]) {
       return callback(null, this.storageChanges[hashed])
     }
-    this.storageResolver.storageSlot(hashed, this.context.tx, this.context.stepIndex, this.context.address, (error, storage) => {
-      if (error) {
-        callback(error)
-      } else {
-        callback(null, storage)
-      }
-    })
+    this.storageResolver.storageSlot(hashed, this.context.tx, this.context.stepIndex, this.context.address).then((storage) => {
+      callback(null, storage)
+    }).catch(callback)
   }
 
   /**
@@ -76,15 +64,7 @@ class StorageViewer {
     */
   async initialMappingsLocation (corrections) {
     if (!this.initialMappingsLocationPromise) {
-      this.initialMappingsLocationPromise = new Promise((resolve, reject) => {
-        this.storageResolver.initialPreimagesMappings(this.context.tx, this.context.stepIndex, this.context.address, corrections, (error, initialMappingsLocation) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve(initialMappingsLocation)
-          }
-        })
-      })
+      this.initialMappingsLocationPromise = this.storageResolver.initialPreimagesMappings(this.context.tx, this.context.stepIndex, this.context.address, corrections)
     }
     return this.initialMappingsLocationPromise
   }
@@ -118,14 +98,9 @@ class StorageViewer {
     if (this.mappingsLocationChanges) {
       return callback(null, this.mappingsLocationChanges)
     }
-    mappingPreimages.decodeMappingsKeys(this.web3, storageChanges, corrections, (error, mappings) => {
-      if (!error) {
-        this.mappingsLocationChanges = mappings
-        return callback(null, this.mappingsLocationChanges)
-      } else {
-        callback(error)
-      }
-    })
+    const mappings = mappingPreimages.decodeMappingsKeys(this.web3, storageChanges, corrections)
+    this.mappingsLocationChanges = mappings
+    return callback(null, this.mappingsLocationChanges)
   }
 }
 
