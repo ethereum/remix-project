@@ -51,7 +51,7 @@ class Terminal extends Plugin {
     self._components.cmdInterpreter = new CommandInterpreterAPI(this, null, self.blockchain)
     self._components.autoCompletePopup = new AutoCompletePopup(self._opts)
     self._components.autoCompletePopup.event.register('handleSelect', function (input) {
-      let textList = self._view.input.innerText.split(' ')
+      const textList = self._view.input.innerText.split(' ')
       textList.pop()
       textList.push(input)
       self._view.input.innerText = textList
@@ -90,33 +90,38 @@ class Terminal extends Plugin {
     if (opts.shell) self._shell = opts.shell // ???
     register(self)
   }
+
   onActivation () {
     this.on('scriptRunner', 'log', (msg) => {
-      this.commands['log'].apply(this.commands, msg.data)
+      this.commands.log.apply(this.commands, msg.data)
     })
     this.on('scriptRunner', 'info', (msg) => {
-      this.commands['info'].apply(this.commands, msg.data)
+      this.commands.info.apply(this.commands, msg.data)
     })
     this.on('scriptRunner', 'warn', (msg) => {
-      this.commands['warn'].apply(this.commands, msg.data)
+      this.commands.warn.apply(this.commands, msg.data)
     })
     this.on('scriptRunner', 'error', (msg) => {
-      this.commands['error'].apply(this.commands, msg.data)
+      this.commands.error.apply(this.commands, msg.data)
     })
   }
+
   onDeactivation () {
     this.off('scriptRunner', 'log')
     this.off('scriptRunner', 'info')
     this.off('scriptRunner', 'warn')
     this.off('scriptRunner', 'error')
   }
+
   logHtml (html) {
-    var command = this.commands['html']
+    var command = this.commands.html
     if (typeof command === 'function') command(html)
   }
+
   focus () {
     if (this._view.input) this._view.input.focus()
   }
+
   render () {
     var self = this
     if (self._view.el) return self._view.el
@@ -311,7 +316,7 @@ class Terminal extends Plugin {
         event.key === 'ArrowRight' ||
         event.key === 'Esc' ||
         event.key === 'Escape'
-        ) return
+      ) return
 
       refocus()
     }
@@ -538,6 +543,7 @@ class Terminal extends Plugin {
       }
     }
   }
+
   putCursor2End (editable) {
     var range = document.createRange()
     range.selectNode(editable)
@@ -565,6 +571,7 @@ class Terminal extends Plugin {
 
     editable.focus()
   }
+
   updateJournal (filterEvent) {
     var self = this
     var commands = self.data.activeFilters.commands
@@ -605,6 +612,7 @@ class Terminal extends Plugin {
       self._view.journal.appendChild(df)
     })
   }
+
   _appendItem (item) {
     var self = this
     var { el, gidx } = item
@@ -618,12 +626,14 @@ class Terminal extends Plugin {
     }
     if (self.data.activeFilters.commands[item.cmd]) self._jobs.push(el)
   }
+
   scroll2bottom () {
     var self = this
     setTimeout(function () {
       self._view.term.scrollTop = self._view.term.scrollHeight
     }, 0)
   }
+
   _blocksRenderer (mode) {
     if (mode === 'html') {
       return function logger (args, scopedCommands, append) {
@@ -634,7 +644,8 @@ class Terminal extends Plugin {
       log: 'text-info',
       info: 'text-info',
       warn: 'text-warning',
-      error: 'text-danger' }[mode] // defaults
+      error: 'text-danger'
+    }[mode] // defaults
 
     if (mode) {
       const filterUndefined = (el) => el !== undefined && el !== null
@@ -653,6 +664,7 @@ class Terminal extends Plugin {
       throw new Error('mode is not supported')
     }
   }
+
   _scopeCommands (append) {
     var self = this
     var scopedCommands = {}
@@ -665,9 +677,11 @@ class Terminal extends Plugin {
     })
     return scopedCommands
   }
+
   registerFilter (commandName, filterFn) {
     this.data.filterFns[commandName] = filterFn
   }
+
   registerCommand (name, command, opts) {
     var self = this
     name = String(name)
@@ -713,6 +727,7 @@ class Terminal extends Plugin {
     }
     return self.commands[name]
   }
+
   async _shell (script, scopedCommands, done) { // default shell
     if (script.indexOf('remix:') === 0) {
       return done(null, 'This type of command has been deprecated and is not functionning anymore. Please run remix.help() to list available commands.')

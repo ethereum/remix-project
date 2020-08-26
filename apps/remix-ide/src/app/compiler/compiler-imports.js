@@ -1,11 +1,11 @@
 'use strict'
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../../../package.json'
 const globalRegistry = require('../../global/registry')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')()
 var resolver = require('@resolver-engine/imports').ImportsEngine()
 var request = require('request')
-import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'contentImport',
@@ -79,12 +79,12 @@ module.exports = class CompilerImports extends Plugin {
       {
         url
       },
-    (err, r, data) => {
-      if (err) {
-        return cb(err || 'Unknown transport error')
-      }
-      cb(null, data, cleanUrl)
-    })
+      (err, r, data) => {
+        if (err) {
+          return cb(err || 'Unknown transport error')
+        }
+        cb(null, data, cleanUrl)
+      })
   }
 
   handlers () {
@@ -112,7 +112,7 @@ module.exports = class CompilerImports extends Plugin {
 
   import (url, force, loadingCb, cb) {
     if (typeof force !== 'boolean') {
-      let temp = loadingCb
+      const temp = loadingCb
       loadingCb = force
       cb = temp
       force = false
@@ -156,19 +156,19 @@ module.exports = class CompilerImports extends Plugin {
     if (found) return
 
     resolver
-    .resolve(url)
-    .then(result => {
-      return resolver.require(url)
-    })
-    .then(result => {
-      if (url.indexOf(result.provider + ':') === 0) {
-        url = url.substring(result.provider.length + 1) // remove the github prefix
-      }
-      cb(null, result.source, url, result.provider, result.url)
-    })
-    .catch(err => {
-      err
-      cb('Unable to import "' + url + '": File not found')
-    })
+      .resolve(url)
+      .then(result => {
+        return resolver.require(url)
+      })
+      .then(result => {
+        if (url.indexOf(result.provider + ':') === 0) {
+          url = url.substring(result.provider.length + 1) // remove the github prefix
+        }
+        cb(null, result.source, url, result.provider, result.url)
+      })
+      .catch(err => {
+        console.error(err)
+        cb('Unable to import "' + url + '": File not found')
+      })
   }
 }

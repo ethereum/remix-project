@@ -4,11 +4,11 @@ var yo = require('yo-yo')
 var EventsDecoder = remixLib.execution.EventsDecoder
 
 const transactionDetailsLinks = {
-  'Main': 'https://www.etherscan.io/tx/',
-  'Rinkeby': 'https://rinkeby.etherscan.io/tx/',
-  'Ropsten': 'https://ropsten.etherscan.io/tx/',
-  'Kovan': 'https://kovan.etherscan.io/tx/',
-  'Goerli': 'https://goerli.etherscan.io/tx/'
+  Main: 'https://www.etherscan.io/tx/',
+  Rinkeby: 'https://rinkeby.etherscan.io/tx/',
+  Ropsten: 'https://ropsten.etherscan.io/tx/',
+  Kovan: 'https://kovan.etherscan.io/tx/',
+  Goerli: 'https://goerli.etherscan.io/tx/'
 }
 
 function txDetailsLink (network, hash) {
@@ -26,7 +26,7 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
   })
 
   // ----------------- Tx listener -----------------
-  let _transactionReceipts = {}
+  const _transactionReceipts = {}
   const transactionReceiptResolver = (tx, cb) => {
     if (_transactionReceipts[tx.hash]) {
       return cb(null, _transactionReceipts[tx.hash])
@@ -43,19 +43,19 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
   const txlistener = blockchain.getTxListener({
     api: {
       contracts: function () {
-        if (compilersArtefacts['__last']) return compilersArtefacts.getAllContractDatas()
+        if (compilersArtefacts.__last) return compilersArtefacts.getAllContractDatas()
         return null
       },
       resolveReceipt: transactionReceiptResolver
     }
   })
 
-  registry.put({api: txlistener, name: 'txlistener'})
+  registry.put({ api: txlistener, name: 'txlistener' })
   blockchain.startListening(txlistener)
 
   const eventsDecoder = new EventsDecoder({
     resolveReceipt: transactionReceiptResolver
   })
   txlistener.startListening()
-  registry.put({api: eventsDecoder, name: 'eventsDecoder'})
+  registry.put({ api: eventsDecoder, name: 'eventsDecoder' })
 }

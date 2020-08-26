@@ -58,9 +58,11 @@ module.exports =
       this.el = el
       return el
     }
+
     setTitle (title) {
       this.el.querySelector('.title span').innerHTML = title
     }
+
     minimize () {
       this.isMaximised = false
       this.content.style.display = 'none'
@@ -68,6 +70,7 @@ module.exports =
       this.el.style.width = '150px'
       this.el.querySelector('.title').style.width = '146px'
     }
+
     maximise () {
       this.content.style.display = 'block'
       var body = document.querySelector('body')
@@ -78,13 +81,14 @@ module.exports =
       this.el.style.left = this.isMaximised ? '0%' : '50%'
       this.el.querySelector('.title').style.width = 'inherit'
     }
+
     close () {
       if (this.closeCb) this.closeCb()
       if (this.el.parentElement) {
         this.el.parentElement.removeChild(this.el)
       }
     }
-}
+  }
 
 function dragElement (elmnt) {
   var pos1 = 0

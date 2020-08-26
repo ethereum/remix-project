@@ -11,6 +11,7 @@ module.exports = class Card {
     self._view = {}
     self.event = new EventManager()
   }
+
   render () {
     const self = this
     if (self._view.el) return self._view.el
@@ -50,7 +51,6 @@ module.exports = class Card {
 
     return self._view.el
   }
-
 }
 
 const css = csjs`
