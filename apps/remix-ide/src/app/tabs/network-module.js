@@ -61,11 +61,8 @@ export class NetworkModule extends Plugin {
 
   /** Add a custom network to the list of available networks */
   addNetwork (network) { // { name, url }
-    if (network.url === 'ipc') {
-      this.blockchain.addProvider({ name: network.name, provider: new Web3.providers.IpcProvider() })
-    } else {
-      this.blockchain.addProvider({ name: network.name, provider: new Web3.providers.HttpProvider(network.url) })
-    }
+    const provider = network.url === 'ipc' ? new Web3.providers.IpcProvider() : new Web3.providers.HttpProvider(network.url)
+    this.blockchain.addProvider({ name: network.name, provider })
   }
 
   /** Remove a network to the list of availble networks */
