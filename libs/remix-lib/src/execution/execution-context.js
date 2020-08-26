@@ -110,7 +110,6 @@ function ExecutionContext () {
 
   let executionContext = null
 
-  this.currentProviderName = null
   this.blockGasLimitDefault = 4300000
   this.blockGasLimit = this.blockGasLimitDefault
   this.customNetWorks = {}
@@ -175,7 +174,7 @@ function ExecutionContext () {
 
   this.removeProvider = (name) => {
     if (name && this.customNetWorks[name]) {
-      if (this.currentProviderName === name) this.setContext('vm', null)
+      if (executionContext === name) this.setContext('vm', null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
@@ -211,7 +210,6 @@ function ExecutionContext () {
     if (!infoCb) infoCb = () => {}
     if (context === 'vm') {
       executionContext = context
-      this.currentProviderName = context
       vms[currentFork].stateManager.revert(() => {
         vms[currentFork].stateManager.checkpoint(() => {})
       })
@@ -226,7 +224,6 @@ function ExecutionContext () {
       } else {
         this.askPermission()
         executionContext = context
-        this.currentProviderName = context
         web3.setProvider(injectedProvider)
         this._updateBlockGasLimit()
         this.event.trigger('contextChanged', ['injected'])
@@ -286,7 +283,6 @@ function ExecutionContext () {
     web3.eth.net.isListening((err, isConnected) => {
       if (!err && isConnected) {
         executionContext = context
-        this.currentProviderName = context
         self._updateBlockGasLimit()
         self.event.trigger('contextChanged', [context])
         self.event.trigger('web3EndpointChanged')
