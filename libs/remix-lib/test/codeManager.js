@@ -23,12 +23,10 @@ tape('CodeManager', function (t) {
       const contractCode = web3.eth.getCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
       codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', contractCode) // so a call to web3 is not necessary
       const tx = web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
-      traceManager.resolveTrace(tx, function (error, result) {
-        if (error) {
-          t.fail(' - traceManager.resolveTrace - failed ' + result)
-        } else {
-          continueTesting(t, codeManager)
-        }
+      traceManager.resolveTrace(tx).then(() => {
+        continueTesting(t, codeManager)
+      }).catch(() => {
+        t.fail(' - traceManager.resolveTrace - failed ')
       })
     }
   })
@@ -70,22 +68,20 @@ function continueTesting (t, codeManager) {
 
   t.test('CodeManager.getInstructionIndex', function (st) {
     st.plan(2)
-    codeManager.getInstructionIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 16, function (error, result) {
+    try {
+      const result = codeManager.getInstructionIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 16)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result === 25)
-      }
-    })
+      st.ok(result === 25)
+    } catch (error) {
+      st.fail(error)
+    }
 
-    codeManager.getInstructionIndex('(Contract Creation - Step 63)', 70, function (error, result) {
+    try {
+      const result = codeManager.getInstructionIndex('(Contract Creation - Step 63)', 70)
       console.log(result)
-      if (error) {
-        st.fail(error)
-      } else {
-        st.ok(result === 6)
-      }
-    })
+      st.ok(result === 6)
+    } catch (error) {
+      st.fail(error)
+    }
   })
 }

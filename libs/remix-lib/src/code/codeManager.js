@@ -53,19 +53,18 @@ CodeManager.prototype.resolveStep = function (stepIndex, tx) {
  * @param {String} address - address of the contract to get the code from
  * @param {Function} cb - callback function, return the bytecode
  */
-CodeManager.prototype.getCode = function (address, cb) {
+CodeManager.prototype.getCode = async function (address) {
   if (!traceHelper.isContractCreation(address)) {
-    return this.codeResolver.resolveCode(address).then((code) => {
-      cb(null, code)
-    })
+    const code = await this.codeResolver.resolveCode(address)
+    return code
   }
   var codes = this.codeResolver.getExecutingCodeFromCache(address)
   if (codes) {
-    return cb(null, codes)
+    return codes
   }
   const hexCode = this.traceManager.getContractCreationCode(address)
   codes = this.codeResolver.cacheExecutingCode(address, hexCode)
-  cb(null, codes)
+  return codes
 }
 
 /**
@@ -94,14 +93,14 @@ CodeManager.prototype.getFunctionFromStep = function (stepIndex, sourceMap, ast)
  * @param {String} step - vm trace step
  * @param {Function} callback - instruction index
  */
-CodeManager.prototype.getInstructionIndex = function (address, step, callback) {
+CodeManager.prototype.getInstructionIndex = function (address, step) {
   try {
     const pc = this.traceManager.getCurrentPC(step)
     const itemIndex = this.codeResolver.getInstructionIndex(address, pc)
-    callback(null, itemIndex)
+    return itemIndex
   } catch (error) {
     console.log(error)
-    return callback('Cannot retrieve current PC for ' + step, null)
+    throw new Error('Cannot retrieve current PC for ' + step)
   }
 }
 
@@ -120,21 +119,21 @@ CodeManager.prototype.getFunctionFromPC = function (address, pc, sourceMap, ast)
 }
 
 function retrieveCodeAndTrigger (codeMananger, address, stepIndex, tx) {
-  codeMananger.getCode(address, (error, result) => {
-    if (error) {
-      return console.log(error)
-    }
+  codeMananger.getCode(address).then((result) => {
     retrieveIndexAndTrigger(codeMananger, address, stepIndex, result.instructions)
+  }).catch((error) => {
+    return console.log(error)
   })
 }
 
 function retrieveIndexAndTrigger (codeMananger, address, step, code) {
-  codeMananger.getInstructionIndex(address, step, (error, result) => {
-    if (error) {
-      return console.log(error)
-    }
-    codeMananger.event.trigger('changed', [code, address, result])
-  })
+  let result
+  try {
+    result = codeMananger.getInstructionIndex(address, step)
+  } catch (error) {
+    return console.log(error)
+  }
+  codeMananger.event.trigger('changed', [code, address, result])
 }
 
 module.exports = CodeManager

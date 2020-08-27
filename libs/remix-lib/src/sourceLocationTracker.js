@@ -22,12 +22,9 @@ function SourceLocationTracker (_codeManager) {
  * @param {Object} contractDetails - AST of compiled contracts
  * @param {Function} cb - callback function
  */
-SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = function (address, index, contracts) {
-  return new Promise((resolve, reject) => {
-    extractSourceMap(this, this.codeManager, address, contracts).then((sourceMap) => {
-      resolve(this.sourceMappingDecoder.atIndex(index, sourceMap))
-    }).catch(reject)
-  })
+SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = async function (address, index, contracts) {
+  const sourceMap = await extractSourceMap(this, this.codeManager, address, contracts)
+  return this.sourceMappingDecoder.atIndex(index, sourceMap)
 }
 
 /**
@@ -38,18 +35,10 @@ SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = function
  * @param {Object} contractDetails - AST of compiled contracts
  * @param {Function} cb - callback function
  */
-SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = function (address, vmtraceStepIndex, contracts) {
-  return new Promise((resolve, reject) => {
-    extractSourceMap(this, this.codeManager, address, contracts).then((sourceMap) => {
-      this.codeManager.getInstructionIndex(address, vmtraceStepIndex, (error, index) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(this.sourceMappingDecoder.atIndex(index, sourceMap))
-        }
-      })
-    }).catch(reject)
-  })
+SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = async function (address, vmtraceStepIndex, contracts) {
+  const sourceMap = await extractSourceMap(this, this.codeManager, address, contracts)
+  const index = this.codeManager.getInstructionIndex(address, vmtraceStepIndex)
+  return this.sourceMappingDecoder.atIndex(index, sourceMap)
 }
 
 SourceLocationTracker.prototype.clearCache = function () {
@@ -78,19 +67,15 @@ function extractSourceMap (self, codeManager, address, contracts) {
   return new Promise((resolve, reject) => {
     if (self.sourceMapByAddress[address]) return resolve(self.sourceMapByAddress[address])
 
-    codeManager.getCode(address, (error, result) => {
-      if (!error) {
-        const sourceMap = getSourceMap(address, result.bytecode, contracts)
-        if (sourceMap) {
-          if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
-          resolve(sourceMap)
-        } else {
-          reject('no sourcemap associated with the code ' + address)
-        }
+    codeManager.getCode(address).then((result) => {
+      const sourceMap = getSourceMap(address, result.bytecode, contracts)
+      if (sourceMap) {
+        if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
+        resolve(sourceMap)
       } else {
-        reject(error)
+        reject('no sourcemap associated with the code ' + address)
       }
-    })
+    }).catch(reject)
   })
 }
 

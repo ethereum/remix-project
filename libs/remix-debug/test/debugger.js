@@ -235,37 +235,34 @@ function testDebugging (debugManager) {
     }
   })
 
-  tape('traceManager.decodeStateAt', (t) => {
+  tape('traceManager.decodeStateAt', async (t) => {
     t.plan(7)
-    debugManager.extractStateAt(312, (error, state) => {
+    try {
+      const state = await debugManager.extractStateAt(312)
+      const decodedState = await debugManager.decodeStateAt(312, state)
+      console.log(decodedState)
+      t.equal(decodedState['chairperson'].value, '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB')
+      t.equal(decodedState['chairperson'].type, 'address')
+      t.equal(decodedState['proposals'].value[0].value.voteCount.value, '0')
+      t.equal(decodedState['proposals'].value[0].value.voteCount.type, 'uint256')
+      t.equal(decodedState['proposals'].value[0].type, 'struct Ballot.Proposal')
+      t.equal(decodedState['proposals'].length, '0x1')
+      t.equal(decodedState['proposals'].type, 'struct Ballot.Proposal[]')
+    } catch (error) {
       if (error) return t.end(error)
-      debugManager.decodeStateAt(312, state, (error, decodedState) => {
-        if (error) return t.end(error)
-        console.log(decodedState)
-        t.equal(decodedState['chairperson'].value, '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB')
-        t.equal(decodedState['chairperson'].type, 'address')
-        t.equal(decodedState['proposals'].value[0].value.voteCount.value, '0')
-        t.equal(decodedState['proposals'].value[0].value.voteCount.type, 'uint256')
-        t.equal(decodedState['proposals'].value[0].type, 'struct Ballot.Proposal')
-        t.equal(decodedState['proposals'].length, '0x1')
-        t.equal(decodedState['proposals'].type, 'struct Ballot.Proposal[]')
-      })
-    })
+    }
   })
 
-  tape('traceManager.decodeLocalsAt', (t) => {
+  tape('traceManager.decodeLocalsAt', async (t) => {
     t.plan(1)
     const tested = JSON.parse('{"proposalNames":{"value":[{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"}],"length":"0x1","type":"bytes32[]"},"p":{"value":"45","type":"uint256"},"addressLocal":{"value":"0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB","type":"address"},"i":{"value":"2","type":"uint256"},"proposalsLocals":{"value":[{"value":{"name":{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"},"voteCount":{"value":"0","type":"uint256"}},"type":"struct Ballot.Proposal"}],"length":"0x1","type":"struct Ballot.Proposal[]"}}')
     try {
       const address = debugManager.traceManager.getCurrentCalledAddressAt(330)
-      debugManager.sourceLocationFromVMTraceIndex(address, 330, (error, location) => {
+      const location = await debugManager.sourceLocationFromVMTraceIndex(address, 330)
+      debugManager.decodeLocalsAt(330, location, (error, decodedlocals) => {
         if (error) return t.end(error)
-        debugManager.decodeLocalsAt(330, location, (error, decodedlocals) => {
-          if (error) return t.end(error)
-          t.equal(JSON.stringify(decodedlocals), JSON.stringify(tested))
-        })
+        t.equal(JSON.stringify(decodedlocals), JSON.stringify(tested))
       })
-      // })
     } catch (error) {
       return t.end(error)
     }

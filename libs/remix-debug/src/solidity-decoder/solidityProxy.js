@@ -39,25 +39,15 @@ class SolidityProxy {
     * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the executed contract name
     * @param {Function} cb  - callback returns (error, contractName)
     */
-  contractNameAt (vmTraceIndex) {
-    return new Promise((resolve, reject) => {
-      try {
-        const address = this.traceManager.getCurrentCalledAddressAt(vmTraceIndex)
-        if (this.cache.contractNameByAddress[address]) {
-          return resolve(this.cache.contractNameByAddress[address])
-        }
-        this.codeManager.getCode(address, (error, code) => {
-          if (error) {
-            return reject(error)
-          }
-          const contractName = contractNameFromCode(this.contracts, code.bytecode, address)
-          this.cache.contractNameByAddress[address] = contractName
-          resolve(contractName)
-        })
-      } catch (error) {
-        reject(error)
-      }
-    })
+  async contractNameAt (vmTraceIndex) {
+    const address = this.traceManager.getCurrentCalledAddressAt(vmTraceIndex)
+    if (this.cache.contractNameByAddress[address]) {
+      return this.cache.contractNameByAddress[address]
+    }
+    const code = await this.codeManager.getCode(address)
+    const contractName = contractNameFromCode(this.contracts, code.bytecode, address)
+    this.cache.contractNameByAddress[address] = contractName
+    return contractName
   }
 
   /**
@@ -95,12 +85,9 @@ class SolidityProxy {
     * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the state variables
     * @return {Object} - returns state variables of @args vmTraceIndex
     */
-  extractStateVariablesAt (vmtraceIndex) {
-    return new Promise((resolve, reject) => {
-      this.contractNameAt(vmtraceIndex).then((contractName) => {
-        resolve(this.extractStateVariables(contractName))
-      }).catch(reject)
-    })
+  async extractStateVariablesAt (vmtraceIndex) {
+    const contractName = await this.contractNameAt(vmtraceIndex)
+    return this.extractStateVariables(contractName)
   }
 
   /**
@@ -113,10 +100,8 @@ class SolidityProxy {
     const file = this.fileNameFromIndex(sourceLocation.file)
     if (this.sources[file]) {
       return this.sources[file].legacyAST
-    } else {
-      // console.log('AST not found for file id ' + sourceLocation.file)
-      return null
     }
+    return null
   }
 
   /**
