@@ -81,6 +81,30 @@ class BreakpointManager {
     *
     */
   async jump (fromStep, direction, defaultToLimit, trace) {
+    if (!this.locationToRowConverter) {
+      console.log('row converter not provided')
+      return
+    }
+
+    function depthChange (step, trace) {
+      return trace[step].depth !== trace[step - 1].depth
+    }
+
+    function hitLine (currentStep, sourceLocation, previousSourceLocation, self) {
+      // isJumpDestInstruction -> returning from a internal function call
+      // depthChange -> returning from an external call
+      // sourceLocation.start <= previousSourceLocation.start && ... -> previous src is contained in the current one
+      if ((helper.isJumpDestInstruction(self.debugger.traceManager.trace[currentStep]) && previousSourceLocation.jump === 'o') ||
+        depthChange(currentStep, self.debugger.traceManager.trace) ||
+        (sourceLocation.start <= previousSourceLocation.start &&
+        sourceLocation.start + sourceLocation.length >= previousSourceLocation.start + previousSourceLocation.length)) {
+        return false
+      }
+      self.event.trigger('breakpointStep', [currentStep])
+      self.event.trigger('breakpointHit', [sourceLocation, currentStep])
+      return true
+    }
+
     let sourceLocation
     let previousSourceLocation
     let currentStep = fromStep + direction
