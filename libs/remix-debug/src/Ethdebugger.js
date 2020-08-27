@@ -1,19 +1,15 @@
 'use strict'
 
-const StorageViewer = require('./storage/storageViewer')
-const StorageResolver = require('./storage/storageResolver')
-
-const SolidityDecoder = require('./solidity-decoder')
-const SolidityProxy = SolidityDecoder.SolidityProxy
-const stateDecoder = SolidityDecoder.stateDecoder
-const localDecoder = SolidityDecoder.localDecoder
-const InternalCallTree = SolidityDecoder.InternalCallTree
-
 const remixLib = require('@remix-project/remix-lib')
 const TraceManager = remixLib.trace.TraceManager
 const CodeManager = remixLib.code.CodeManager
 const traceHelper = remixLib.helpers.trace
 const EventManager = remixLib.EventManager
+
+const {SolidityProxy, stateDecoder, localDecoder, InternalCallTree} = require('./solidity-decoder')
+
+const StorageViewer = require('./storage/storageViewer')
+const StorageResolver = require('./storage/storageResolver')
 
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
@@ -58,23 +54,15 @@ Ethdebugger.prototype.resolveStep = function (index) {
 }
 
 Ethdebugger.prototype.setCompilationResult = function (compilationResult) {
-  if (compilationResult && compilationResult.data) {
-    this.solidityProxy.reset(compilationResult.data)
-  } else {
-    this.solidityProxy.reset({})
-  }
+  this.solidityProxy.reset((compilationResult && compilationResult.data) || {})
 }
 
-Ethdebugger.prototype.sourceLocationFromVMTraceIndex = function (address, stepIndex, callback) {
-  this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, stepIndex, this.solidityProxy.contracts).then((rawLocation) => {
-    callback(null, rawLocation)
-  }).catch(callback)
+Ethdebugger.prototype.sourceLocationFromVMTraceIndex = async function (address, stepIndex) {
+  return this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, stepIndex, this.solidityProxy.contracts)
 }
 
-Ethdebugger.prototype.sourceLocationFromInstructionIndex = function (address, instIndex, callback) {
-  this.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, instIndex, this.solidityProxy.contracts).then((rawLocation) => {
-    callback(null, rawLocation)
-  }).catch(callback)
+Ethdebugger.prototype.sourceLocationFromInstructionIndex = async function (address, instIndex, callback) {
+  return this.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, instIndex, this.solidityProxy.contracts)
 }
 
 /* breakpoint */
@@ -83,98 +71,48 @@ Ethdebugger.prototype.setBreakpointManager = function (breakpointManager) {
 }
 
 /* decode locals */
-Ethdebugger.prototype.extractLocalsAt = function (step, callback) {
-  callback(null, this.callTree.findScope(step))
+Ethdebugger.prototype.extractLocalsAt = function (step) {
+  return this.callTree.findScope(step)
 }
 
-Ethdebugger.prototype.decodeLocalsAt = function (step, sourceLocation, callback) {
-  const self = this
-  this.traceManager.waterfall([
-    function getStackAt (stepIndex, callback) {
-      try {
-        const result = self.traceManager.getStackAt(stepIndex)
-        callback(null, result)
-      } catch (error) {
-        callback(error)
+Ethdebugger.prototype.decodeLocalsAt = async function (step, sourceLocation, callback) {
+  try {
+    const stack = this.traceManager.getStackAt(step)
+    const memory = this.traceManager.getMemoryAt(step)
+    const address = this.traceManager.getCurrentCalledAddressAt(step)
+    try {
+      const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
+      const locals = await localDecoder.solidityLocals(step, this.callTree, stack, memory, storageViewer, sourceLocation)
+      if (locals.error) {
+        return callback(locals.error)
       }
-    },
-    function getMemoryAt (stepIndex, callback) {
-      try {
-        const result = self.traceManager.getMemoryAt(stepIndex)
-        callback(null, result)
-      } catch (error) {
-        callback(error)
-      }
-    },
-
-    function getCurrentCalledAddressAt (stepIndex, next) {
-      try {
-        const address = self.traceManager.getCurrentCalledAddressAt(stepIndex)
-        next(null, address)
-      } catch (error) {
-        next(error)
-      }
-    }],
-    step,
-    (error, result) => {
-      if (!error) {
-        const stack = result[0].value
-        const memory = result[1].value
-        try {
-          const storageViewer = new StorageViewer({
-            stepIndex: step,
-            tx: this.tx,
-            address: result[2].value
-          }, this.storageResolver, this.traceManager)
-          localDecoder.solidityLocals(step, this.callTree, stack, memory, storageViewer, sourceLocation).then((locals) => {
-            if (!locals.error) {
-              callback(null, locals)
-            } else {
-              callback(locals.error)
-            }
-          })
-        } catch (e) {
-          callback(e.message)
-        }
-      } else {
-        callback(error)
-      }
-    })
+      return callback(null, locals)
+    } catch (e) {
+      callback(e.message)
+    }
+  } catch (error) {
+    callback(error)
+  }
 }
 
 /* decode state */
-Ethdebugger.prototype.extractStateAt = function (step, callback) {
-  this.solidityProxy.extractStateVariablesAt(step).then((stateVars) => {
-    callback(null, stateVars)
-  }).catch(callback)
+Ethdebugger.prototype.extractStateAt = async function (step) {
+  return this.solidityProxy.extractStateVariablesAt(step)
 }
 
-Ethdebugger.prototype.decodeStateAt = function (step, stateVars, callback) {
+Ethdebugger.prototype.decodeStateAt = async function (step, stateVars, callback) {
   try {
     const address = this.traceManager.getCurrentCalledAddressAt(step)
-    const storageViewer = new StorageViewer({
-      stepIndex: step,
-      tx: this.tx,
-      address: address
-    }, this.storageResolver, this.traceManager)
-    stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
-      if (!result.error) {
-        callback(null, result)
-      } else {
-        callback(result.error)
-      }
-    })
+    const storageViewer = new StorageViewer({stepIndex: step, tx: this.tx, address: address}, this.storageResolver, this.traceManager)
+    const result = await stateDecoder.decodeState(stateVars, storageViewer)
+    return result
   } catch (error) {
     callback(error)
   }
 }
 
 Ethdebugger.prototype.storageViewAt = function (step, address) {
-  return new StorageViewer({
-    stepIndex: step,
-    tx: this.tx,
-    address: address
-  }, this.storageResolver, this.traceManager)
+  return new StorageViewer({stepIndex: step, tx: this.tx, address: address}, this.storageResolver, this.traceManager)
 }
 
 Ethdebugger.prototype.updateWeb3 = function (web3) {
@@ -192,21 +130,18 @@ Ethdebugger.prototype.debug = function (tx) {
   if (this.traceManager.isLoading) {
     return
   }
-  if (!tx.to) {
-    tx.to = traceHelper.contractCreationToken('0')
-  }
+  tx.to = tx.to || traceHelper.contractCreationToken('0')
   this.tx = tx
-  this.traceManager.resolveTrace(tx, async (error, result) => {
-    if (result) {
-      this.setCompilationResult(await this.compilationResult(tx.to))
-      this.event.trigger('newTraceLoaded', [this.traceManager.trace])
-      if (this.breakpointManager && this.breakpointManager.hasBreakpoint()) {
-        this.breakpointManager.jumpNextBreakpoint(false)
-      }
-      this.storageResolver = new StorageResolver({web3: this.traceManager.web3})
-    } else {
-      this.statusMessage = error ? error.message : 'Trace not loaded'
+
+  this.traceManager.resolveTrace(tx).then(async (result) => {
+    this.setCompilationResult(await this.compilationResult(tx.to))
+    this.event.trigger('newTraceLoaded', [this.traceManager.trace])
+    if (this.breakpointManager && this.breakpointManager.hasBreakpoint()) {
+      this.breakpointManager.jumpNextBreakpoint(false)
     }
+    this.storageResolver = new StorageResolver({web3: this.traceManager.web3})
+  }).catch((error) => {
+    this.statusMessage = error ? error.message : 'Trace not loaded'
   })
 }
 

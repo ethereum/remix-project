@@ -109,12 +109,10 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
               cb()
             })
           })
-          traceManager.resolveTrace(tx, (error, result) => {
-            if (error) {
-              st.fail(error)
-            } else {
-              debuggerEvent.trigger('newTraceLoaded', [traceManager.trace])
-            }
+          traceManager.resolveTrace(tx).then(() => {
+            debuggerEvent.trigger('newTraceLoaded', [traceManager.trace])
+          }).catch((error) => {
+            st.fail(error)
           })
         }
       })

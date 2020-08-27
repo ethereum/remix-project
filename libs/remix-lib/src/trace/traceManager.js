@@ -17,10 +17,10 @@ function TraceManager (options) {
 }
 
 // init section
-TraceManager.prototype.resolveTrace = async function (tx, callback) {
+TraceManager.prototype.resolveTrace = async function (tx) {
   this.tx = tx
   this.init()
-  if (!this.web3) callback('web3 not loaded', false)
+  if (!this.web3) throw new Error('web3 not loaded')
   this.isLoading = true
   try {
     const result = await this.getTrace(tx.hash)
@@ -30,16 +30,16 @@ TraceManager.prototype.resolveTrace = async function (tx, callback) {
 
       this.traceAnalyser.analyse(result.structLogs, tx)
       this.isLoading = false
-      return callback(null, true)
+      return true
     }
     var mes = tx.hash + ' is not a contract invocation or contract creation.'
     console.log(mes)
     this.isLoading = false
-    callback(mes, false)
+    throw new Error(mes)
   } catch (error) {
     console.log(error)
     this.isLoading = false
-    callback(error, false)
+    throw new Error(error)
   }
 }
 
