@@ -106,7 +106,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
                 } else if (result.type === 'testPass') {
                     signale.result(result.value)
                 } else if (result.type === 'testFailure') {
-                    signale.result(result.value.red)
+                    signale.error(result.value.red)
                     errors.push(result)
                 }
             }
