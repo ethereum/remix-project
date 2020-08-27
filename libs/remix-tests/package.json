@@ -39,9 +39,9 @@
     "change-case": "^3.0.1",
     "colors": "^1.1.2",
     "commander": "^2.13.0",
-    "@remix-project/remix-lib": "0.4.29",
-    "@remix-project/remix-simulator": "0.1.9-beta.5",
-    "@remix-project/remix-solidity": "0.3.30",
+    "@remix-project/remix-lib": "0.4.30",
+    "@remix-project/remix-simulator": "0.1.9-beta.7",
+    "@remix-project/remix-solidity": "0.3.31",
     "signale": "^1.4.0",
     "web3": "^1.2.4",
     "winston": "^3.0.0"
