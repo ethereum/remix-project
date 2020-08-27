@@ -129,7 +129,7 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
         ], function (err: Error | null | undefined, result: any) {
             const error: Error[] = []
             if (result.error) error.push(result.error)
-            const errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
+            const errors = (result.errors || error).filter((e) => (e.type === 'Error' || e.severity === 'error'))
             if (errors.length > 0) {
                 if (!isBrowser) require('signale').fatal(errors)
                 return cb(new CompilationErrors(errors))
