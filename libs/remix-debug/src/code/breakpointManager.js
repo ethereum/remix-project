@@ -29,7 +29,10 @@ class BreakpointManager {
     *
     */
   async jumpNextBreakpoint (fromStep, defaultToLimit) {
-    this.jump(fromStep || 0, 1, defaultToLimit)
+    if (!this.locationToRowConverter) {
+      return console.log('row converter not provided')
+    }
+    this.jump(fromStep || 0, 1, defaultToLimit, this.debugger.traceManager.trace)
   }
 
   /**
@@ -38,7 +41,29 @@ class BreakpointManager {
     *
     */
   async jumpPreviousBreakpoint (fromStep, defaultToLimit) {
-    this.jump(fromStep || 0, -1, defaultToLimit)
+    if (!this.locationToRowConverter) {
+      return console.log('row converter not provided')
+    }
+    this.jump(fromStep || 0, -1, defaultToLimit, this.debugger.traceManager.trace)
+  }
+
+  depthChange (step, trace) {
+    return trace[step].depth !== trace[step - 1].depth
+  }
+
+  hitLine(currentStep, sourceLocation, previousSourceLocation, trace) {
+    // isJumpDestInstruction -> returning from a internal function call
+    // depthChange -> returning from an external call
+    // sourceLocation.start <= previousSourceLocation.start && ... -> previous src is contained in the current one
+    if ((helper.isJumpDestInstruction(trace[currentStep]) && previousSourceLocation.jump === 'o') ||
+      this.depthChange(currentStep, trace) ||
+      (sourceLocation.start <= previousSourceLocation.start &&
+        sourceLocation.start + sourceLocation.length >= previousSourceLocation.start + previousSourceLocation.length)) {
+      return false
+    }
+    this.event.trigger('breakpointStep', [currentStep])
+    this.event.trigger('breakpointHit', [sourceLocation, currentStep])
+    return true
   }
 
    /**
@@ -47,55 +72,30 @@ class BreakpointManager {
     * @param {Bool} defaultToLimit - if true jump to the limit (end if direction is 1, beginning if direction is -1) of the trace if no more breakpoint found
     *
     */
-  async jump (fromStep, direction, defaultToLimit) {
-    if (!this.locationToRowConverter) {
-      console.log('row converter not provided')
-      return
-    }
-
-    function depthChange (step, trace) {
-      return trace[step].depth !== trace[step - 1].depth
-    }
-
-    function hitLine (currentStep, sourceLocation, previousSourceLocation, self) {
-      // isJumpDestInstruction -> returning from a internal function call
-      // depthChange -> returning from an external call
-      // sourceLocation.start <= previousSourceLocation.start && ... -> previous src is contained in the current one
-      if ((helper.isJumpDestInstruction(self.debugger.traceManager.trace[currentStep]) && previousSourceLocation.jump === 'o') ||
-        depthChange(currentStep, self.debugger.traceManager.trace) ||
-        (sourceLocation.start <= previousSourceLocation.start &&
-        sourceLocation.start + sourceLocation.length >= previousSourceLocation.start + previousSourceLocation.length)) {
-        return false
-      }
-      self.event.trigger('breakpointStep', [currentStep])
-      self.event.trigger('breakpointHit', [sourceLocation, currentStep])
-      return true
-    }
-
+  async jump (fromStep, direction, defaultToLimit, trace) {
     let sourceLocation
     let previousSourceLocation
     let currentStep = fromStep + direction
     let lineHadBreakpoint = false
-    while (currentStep > 0 && currentStep < this.debugger.traceManager.trace.length) {
+    while (currentStep > 0 && currentStep < trace.length) {
       try {
         previousSourceLocation = sourceLocation
         sourceLocation = await this.debugger.callTree.extractSourceLocation(currentStep)
       } catch (e) {
-        console.log('cannot jump to breakpoint ' + e)
-        return
+        return console.log('cannot jump to breakpoint ' + e)
       }
       let lineColumn = await this.locationToRowConverter(sourceLocation)
       if (this.previousLine !== lineColumn.start.line) {
         if (direction === -1 && lineHadBreakpoint) { // TODO : improve this when we will build the correct structure before hand
           lineHadBreakpoint = false
-          if (hitLine(currentStep + 1, previousSourceLocation, sourceLocation, this)) {
+          if (this.hitLine(currentStep + 1, previousSourceLocation, sourceLocation, trace)) {
             return
           }
         }
         this.previousLine = lineColumn.start.line
         if (this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line)) {
           lineHadBreakpoint = true
-          if (direction === 1 && hitLine(currentStep, sourceLocation, previousSourceLocation, this)) {
+          if (direction === 1 && this.hitLine(currentStep, sourceLocation, previousSourceLocation, trace)) {
             return
           }
         }
@@ -107,9 +107,9 @@ class BreakpointManager {
       return
     }
     if (direction === -1) {
-      self.event.trigger('breakpointStep', [0])
+      this.event.trigger('breakpointStep', [0])
     } else if (direction === 1) {
-      self.event.trigger('breakpointStep', [this.debugger.traceManager.trace.length - 1])
+      this.event.trigger('breakpointStep', [trace.length - 1])
     }
   }
 
