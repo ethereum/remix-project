@@ -1,5 +1,6 @@
 import commander from 'commander'
 import Web3 from 'web3';
+import path from 'path'
 import { runTestFiles } from './runTestFiles'
 import fs from './fileSystem'
 import { Provider } from '@remix-project/remix-simulator'
@@ -20,7 +21,7 @@ function mapVerbosity (v: number) {
     }
     return levels[v]
 }
-const version = require('../../../package.json').version
+const version = require('../package.json').version
 
 commander.version(version)
 
@@ -58,7 +59,7 @@ commander
         }
 
         const isDirectory = fs.lstatSync(filename).isDirectory()
-        runTestFiles(filename, isDirectory, web3)
+        runTestFiles(path.resolve(filename), isDirectory, web3)
     })
 
 if (!process.argv.slice(2).length) {
