@@ -15,19 +15,17 @@ module.exports = {
     * @param {String} contractbyteCode
     */
   encodeData: function (funABI, values, contractbyteCode) {
-    let encoded
     let encodedHex
     try {
-      encoded = helper.encodeParams(funABI, values)
+      let encoded = helper.encodeParams(funABI, values)
       encodedHex = encoded.toString('hex')
     } catch (e) {
       return { error: 'cannot encode arguments' }
     }
     if (contractbyteCode) {
       return { data: '0x' + contractbyteCode + encodedHex.replace('0x', '') }
-    } else {
-      return { data: helper.encodeFunctionId(funABI) + encodedHex.replace('0x', '') }
     }
+    return { data: helper.encodeFunctionId(funABI) + encodedHex.replace('0x', '') }
   },
 
   /**
@@ -99,14 +97,12 @@ module.exports = {
     this.encodeParams(params, funAbi, (error, encodedParam) => {
       if (error) return callback(error)
       let bytecodeToDeploy = contract.evm.bytecode.object
-      if (bytecodeToDeploy.indexOf('_') >= 0) {
-        if (linkLibraries && linkReferences) {
-          for (let libFile in linkLibraries) {
-            for (let lib in linkLibraries[libFile]) {
-              const address = linkLibraries[libFile][lib]
-              if (!ethJSUtil.isValidAddress(address)) return callback(address + ' is not a valid address. Please check the provided address is valid.')
-              bytecodeToDeploy = this.linkLibraryStandardFromlinkReferences(lib, address.replace('0x', ''), bytecodeToDeploy, linkReferences)
-            }
+      if ((bytecodeToDeploy.indexOf('_') >= 0) && linkLibraries && linkReferences) {
+        for (let libFile in linkLibraries) {
+          for (let lib in linkLibraries[libFile]) {
+            const address = linkLibraries[libFile][lib]
+            if (!ethJSUtil.isValidAddress(address)) return callback(address + ' is not a valid address. Please check the provided address is valid.')
+            bytecodeToDeploy = this.linkLibraryStandardFromlinkReferences(lib, address.replace('0x', ''), bytecodeToDeploy, linkReferences)
           }
         }
       }
@@ -289,10 +285,9 @@ module.exports = {
       return callback(null, contract.evm.bytecode.object)
     }
     if (contract.evm.bytecode.linkReferences && Object.keys(contract.evm.bytecode.linkReferences).length) {
-      this.linkBytecodeStandard(contract, contracts, callback, callbackStep, callbackDeployLibrary)
-    } else {
-      this.linkBytecodeLegacy(contract, contracts, callback, callbackStep, callbackDeployLibrary)
+      return this.linkBytecodeStandard(contract, contracts, callback, callbackStep, callbackDeployLibrary)
     }
+    this.linkBytecodeLegacy(contract, contracts, callback, callbackStep, callbackDeployLibrary)
   },
 
   deployLibrary: function (libraryName, libraryShortName, library, contracts, callback, callbackStep, callbackDeployLibrary) {
@@ -302,25 +297,24 @@ module.exports = {
     }
     const bytecode = library.evm.bytecode.object
     if (bytecode.indexOf('_') >= 0) {
-      this.linkBytecode(library, contracts, (err, bytecode) => {
+      return this.linkBytecode(library, contracts, (err, bytecode) => {
         if (err) callback(err)
         else {
           library.evm.bytecode.object = bytecode
           this.deployLibrary(libraryName, libraryShortName, library, contracts, callback, callbackStep, callbackDeployLibrary)
         }
       }, callbackStep, callbackDeployLibrary)
-    } else {
-      callbackStep(`creation of library ${libraryName} pending...`)
-      const data = {dataHex: bytecode, funAbi: {type: 'constructor'}, funArgs: [], contractBytecode: bytecode, contractName: libraryShortName}
-      callbackDeployLibrary({ data: data, useCall: false }, (err, txResult) => {
-        if (err) {
-          return callback(err)
-        }
-        const address = txResult.result.createdAddress || txResult.result.contractAddress
-        library.address = address
-        callback(err, address)
-      })
     }
+    callbackStep(`creation of library ${libraryName} pending...`)
+    const data = { dataHex: bytecode, funAbi: { type: 'constructor' }, funArgs: [], contractBytecode: bytecode, contractName: libraryShortName }
+    callbackDeployLibrary({ data: data, useCall: false }, (err, txResult) => {
+      if (err) {
+        return callback(err)
+      }
+      const address = txResult.result.createdAddress || txResult.result.contractAddress
+      library.address = address
+      callback(err, address)
+    })
   },
 
   linkLibraryStandardFromlinkReferences: function (libraryName, address, bytecode, linkReferences) {
