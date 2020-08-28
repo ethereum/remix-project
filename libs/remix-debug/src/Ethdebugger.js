@@ -46,6 +46,7 @@ Ethdebugger.prototype.setManagers = function () {
   this.storageResolver = null
 
   this.callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
+  this.event.trigger('managersChanged')
 }
 
 Ethdebugger.prototype.resolveStep = function (index) {
