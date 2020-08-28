@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import './step-manager.css'
 import Slider from '../slider/slider'
 import ButtonNavigator from '../button-navigator/button-navigator'
 
