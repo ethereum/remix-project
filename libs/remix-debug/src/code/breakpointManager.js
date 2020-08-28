@@ -15,12 +15,20 @@ class BreakpointManager {
     * @param {Object} _debugger - type of EthDebugger
     * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
     */
-  constructor (_debugger, _locationToRowConverter) {
+  constructor ({traceManager, callTree, solidityProxy, locationToRowConverter}) {
     this.event = new EventManager()
-    this.debugger = _debugger
+    this.traceManager = traceManager
+    this.callTree = callTree
+    this.solidityProxy = solidityProxy
     this.breakpoints = {}
-    this.locationToRowConverter = _locationToRowConverter
+    this.locationToRowConverter = locationToRowConverter
     this.previousLine
+  }
+
+  setManagers({traceManager, callTree, solidityProxy}) {
+    this.traceManager = traceManager
+    this.callTree = callTree
+    this.solidityProxy = solidityProxy
   }
 
   /**
@@ -32,7 +40,7 @@ class BreakpointManager {
     if (!this.locationToRowConverter) {
       return console.log('row converter not provided')
     }
-    this.jump(fromStep || 0, 1, defaultToLimit, this.debugger.traceManager.trace)
+    this.jump(fromStep || 0, 1, defaultToLimit, this.traceManager.trace)
   }
 
   /**
@@ -44,7 +52,7 @@ class BreakpointManager {
     if (!this.locationToRowConverter) {
       return console.log('row converter not provided')
     }
-    this.jump(fromStep || 0, -1, defaultToLimit, this.debugger.traceManager.trace)
+    this.jump(fromStep || 0, -1, defaultToLimit, this.traceManager.trace)
   }
 
   depthChange (step, trace) {
@@ -80,7 +88,7 @@ class BreakpointManager {
     while (currentStep > 0 && currentStep < trace.length) {
       try {
         previousSourceLocation = sourceLocation
-        sourceLocation = await this.debugger.callTree.extractSourceLocation(currentStep)
+        sourceLocation = await this.callTree.extractSourceLocation(currentStep)
       } catch (e) {
         return console.log('cannot jump to breakpoint ' + e)
       }
@@ -121,7 +129,7 @@ class BreakpointManager {
     * @return {Bool} return true if the given @arg fileIndex @arg line refers to a breakpoint
     */
   hasBreakpointAtLine (fileIndex, line) {
-    const filename = this.debugger.solidityProxy.fileNameFromIndex(fileIndex)
+    const filename = this.solidityProxy.fileNameFromIndex(fileIndex)
     if (!(filename && this.breakpoints[filename])) {
       return false
     }
