@@ -45,11 +45,7 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
   blockchain.startListening(txlistener)
 
   const eventsDecoder = new EventsDecoder({
-    api: {
-      resolveReceipt: function (tx, cb) {
-        transactionReceiptResolver.resolve(tx, cb)
-      }
-    }
+    resolveReceipt: transactionReceiptResolver.resolve.bind(transactionReceiptResolver)
   })
   txlistener.startListening()
   registry.put({api: eventsDecoder, name: 'eventsDecoder'})
