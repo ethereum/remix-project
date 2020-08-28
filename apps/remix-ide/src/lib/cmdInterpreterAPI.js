@@ -116,11 +116,12 @@ class CmdInterpreterAPI {
       }
       self.d.goTo = (row) => {
         if (self._deps.editor.current()) {
-          var breakPoint = new remixDebug.BreakpointManager(self.d, (sourceLocation) => {
+          const {traceManager, callTree, solidityProxy} = self.d
+          var breakPoint = new remixDebug.BreakpointManager({traceManager, callTree, solidityProxy, locationToRowConverter: async (sourceLocation) => {
             return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file,
               self._deps.compilersArtefacts['__last'].getSourceCode().sources,
               self._deps.compilersArtefacts['__last'].getAsts())
-          })
+          }})
           breakPoint.event.register('breakpointHit', (sourceLocation, currentStep) => {
             self.log(null, 'step index ' + currentStep)
             self.highlight(sourceLocation)
