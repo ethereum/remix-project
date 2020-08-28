@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom'
 import { StepManager } from '@remix-project/debugger-ui'
 var TxBrowser = require('./debuggerUI/TxBrowser')
-var StepManagerUI = require('./debuggerUI/StepManager')
+// var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
 var toaster = require('../../ui/tooltip')
 
@@ -61,7 +61,7 @@ class DebuggerUI {
     this.sourceHighlighter = new SourceHighlighter()
 
     this.startTxBrowser()
-    this.stepManager = null
+    // this.stepManager = null
 
     this.statusMessage = ''
     this.currentReceipt
@@ -187,7 +187,7 @@ class DebuggerUI {
 
     this.listenToEvents()
     this.debugger.debug(blockNumber, txNumber, tx, () => {
-      this.stepManager = new StepManagerUI(this.debugger.step_manager)
+      // this.stepManager = new StepManagerUI(this.debugger.step_manager)
       this.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
       this.txBrowser.setState({ blockNumber, txNumber, debugging: true })
       this.renderDebugger()
@@ -259,10 +259,10 @@ class DebuggerUI {
     yo.update(this.debuggerPanelsView, yo`<div></div>`)
     yo.update(this.stepManagerView, yo`<div></div>`)
     if (this.vmDebugger) this.vmDebugger.remove()
-    if (this.stepManager) this.stepManager.remove()
+    // if (this.stepManager) this.stepManager.remove()
     if (this.txBrowser) this.txBrowser.setState({debugging: false})
     this.vmDebugger = null
-    this.stepManager = null
+    // this.stepManager = null
     if (this.debugger) delete this.debugger
     this.event.trigger('traceUnloaded')
   }
