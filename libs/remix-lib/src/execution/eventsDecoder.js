@@ -7,8 +7,8 @@ const txHelper = require('./txHelper')
   *
   */
 class EventsDecoder {
-  constructor (opt = {}) {
-    this._api = opt.api
+  constructor ({resolveReceipt}) {
+    this.resolveReceipt = resolveReceipt
   }
 
 /**
@@ -20,7 +20,7 @@ class EventsDecoder {
   */
   parseLogs (tx, contractName, compiledContracts, cb) {
     if (tx.isCall) return cb(null, { decoded: [], raw: [] })
-    this._api.resolveReceipt(tx, (error, receipt) => {
+    this.resolveReceipt(tx, (error, receipt) => {
       if (error) return cb(error)
       this._decodeLogs(tx, receipt, contractName, compiledContracts, cb)
     })
