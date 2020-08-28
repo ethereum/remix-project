@@ -77,20 +77,19 @@ class TxRunner {
     }
   }
 
-  execute (args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+  execute(args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
     let data = args.data
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data
     }
 
     if (!this.executionContext.isVM()) {
-      this.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, gasEstimationForceSend, promptCb, callback)
-    } else {
-      try {
-        this.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, callback)
-      } catch (e) {
-        callback(e, null)
-      }
+      return this.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, gasEstimationForceSend, promptCb, callback)
+    }
+    try {
+      this.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, callback)
+    } catch (e) {
+      callback(e, null)
     }
   }
 
@@ -224,9 +223,8 @@ async function tryTillReceiptAvailable (txhash, executionContext) {
         // Try again with a bit of delay if error or if result still null
         await pause()
         return resolve(await tryTillReceiptAvailable(txhash, executionContext))
-      } else {
-        return resolve(receipt)
       }
+      return resolve(receipt)
     })
   })
 }
@@ -238,29 +236,27 @@ async function tryTillTxAvailable (txhash, executionContext) {
         // Try again with a bit of delay if error or if result still null
         await pause()
         return resolve(await tryTillTxAvailable(txhash, executionContext))
-      } else {
-        return resolve(tx)
       }
+      return resolve(tx)
     })
   })
 }
 
 async function pause () { return new Promise((resolve, reject) => { setTimeout(resolve, 500) }) }
 
-function run (self, tx, stamp, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+function run(self, tx, stamp, confirmationCb, gasEstimationForceSend, promptCb, callback) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
-    self.queusTxs.push({ tx, stamp, callback })
-  } else {
-    self.pendingTxs[stamp] = tx
-    self.execute(tx, confirmationCb, gasEstimationForceSend, promptCb, function(error, result) {
-      delete self.pendingTxs[stamp]
-      callback(error, result)
-      if (self.queusTxs.length) {
-        const next = self.queusTxs.pop()
-        run(self, next.tx, next.stamp, next.callback)
-      }
-    })
+    return self.queusTxs.push({ tx, stamp, callback })
   }
+  self.pendingTxs[stamp] = tx
+  self.execute(tx, confirmationCb, gasEstimationForceSend, promptCb, function (error, result) {
+    delete self.pendingTxs[stamp]
+    callback(error, result)
+    if (self.queusTxs.length) {
+      const next = self.queusTxs.pop()
+      run(self, next.tx, next.stamp, next.callback)
+    }
+  })
 }
 
 module.exports = TxRunner
