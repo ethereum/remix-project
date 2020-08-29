@@ -51,7 +51,8 @@ module.exports = class UniversalDApp {
       this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
     }
     // TODO: most params here can be refactored away in txRunner
-    this.txRunner = new TxRunner(this.accounts, {
+    this.txRunner = new TxRunner({
+      vmaccounts: this.accounts,
       // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
       config: this.config,
       // TODO: to refactor, TxRunner already has access to executionContext
@@ -60,8 +61,9 @@ module.exports = class UniversalDApp {
       },
       personalMode: () => {
         return this.executionContext.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
-      }
-    }, this.executionContext)
+      },
+      executionContext: this.executionContext
+    })
     this.txRunner.event.register('transactionBroadcasted', (txhash) => {
       this.executionContext.detectNetwork((error, network) => {
         if (error || !network) return
