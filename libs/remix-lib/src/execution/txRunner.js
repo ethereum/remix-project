@@ -7,11 +7,13 @@ const defaultExecutionContext = require('./execution-context')
 const EventManager = require('../eventManager')
 
 class TxRunner {
-  constructor (vmaccounts, api, executionContext) {
+  constructor ({vmaccounts, config, personalMode, detectNetwork, executionContext}) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
     this.executionContext = executionContext || defaultExecutionContext
-    this._api = api
+    this.config = config
+    this.personalMode = personalMode
+    this.detectNetwork = detectNetwork
     this.blockNumber = 0
     this.runAsync = true
     if (this.executionContext.isVM()) {
@@ -33,9 +35,9 @@ class TxRunner {
     run(this, args, timestamp, confirmationCb, gasEstimationForceSend, promptCb, cb)
   }
 
-  _executeTx (tx, gasPrice, api, promptCb, callback) {
+  _executeTx (tx, gasPrice, personalMode, promptCb, callback) {
     if (gasPrice) tx.gasPrice = this.executionContext.web3().utils.toHex(gasPrice)
-    if (api.personalMode()) {
+    if (personalMode) {
       promptCb(
         (value) => {
           this._sendTransaction(this.executionContext.web3().personal.sendTransaction, tx, value, callback)
@@ -180,18 +182,18 @@ class TxRunner {
         // callback is called whenever no error
         tx.gas = !gasEstimation ? gasLimit : gasEstimation
 
-        if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
-          return this._executeTx(tx, null, this._api, promptCb, callback)
+        if (this.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
+          return this._executeTx(tx, null, this.personalMode, promptCb, callback)
         }
 
-        this._api.detectNetwork((err, network) => {
+        this.detectNetwork((err, network) => {
           if (err) {
             console.log(err)
             return
           }
 
           confirmCb(network, tx, tx.gas, (gasPrice) => {
-            return this._executeTx(tx, gasPrice, this._api, promptCb, callback)
+            return this._executeTx(tx, gasPrice, this.personalMode, promptCb, callback)
           }, (error) => {
             callback(error)
           })

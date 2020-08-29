@@ -2,7 +2,6 @@ const remixLib = require('@remix-project/remix-lib')
 const txFormat = remixLib.execution.txFormat
 const txExecution = remixLib.execution.txExecution
 const typeConversion = remixLib.execution.typeConversion
-const Txlistener = remixLib.execution.txListener
 const TxRunner = remixLib.execution.txRunner
 const txHelper = remixLib.execution.txHelper
 const EventManager = remixLib.EventManager
@@ -28,15 +27,17 @@ class Blockchain {
     this.events = new EventEmitter()
     this.config = config
 
-    this.txRunner = new TxRunner({}, {
+    this.txRunner = new TxRunner({
+      vmaccounts: {},
       config: config,
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
       },
       personalMode: () => {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
-      }
-    }, this.executionContext)
+      },
+      executionContext: this.executionContext
+    })
     this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
 
     this.networkcallid = 0
