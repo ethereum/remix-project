@@ -31,57 +31,10 @@ class TxListener {
     this._listenOnNetwork = false
     this._loopId = null
     this.init()
-    this.executionContext.event.register('contextChanged', (context) => {
-      if (this._isListening) {
-        this.stopListening()
-        this.startListening()
-      }
-    })
+    this.executionContext.event.register('contextChanged', this.restart.bind(this))
 
-    this.udapp.register('callExecuted', (error, from, to, data, lookupOnly, txResult) => {
-      if (error) return
-      // we go for that case if
-      // in VM mode
-      // in web3 mode && listen remix txs only
-      if (!this._isListening) return // we don't listen
-      if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
-
-      const call = {
-        from: from,
-        to: to,
-        input: data,
-        hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
-        isCall: true,
-        returnValue: this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result),
-        envMode: this.executionContext.getProvider()
-      }
-
-      addExecutionCosts(txResult, call)
-      this._resolveTx(call, call, (error, resolvedData) => {
-        if (!error) {
-          this.event.trigger('newCall', [call])
-        }
-      })
-    })
-
-    this.udapp.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
-      if (error) return
-      if (lookupOnly) return
-      // we go for that case if
-      // in VM mode
-      // in web3 mode && listen remix txs only
-      if (!this._isListening) return // we don't listen
-      if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
-      this.executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
-        if (error) return console.log(error)
-
-        addExecutionCosts(txResult, tx)
-        tx.envMode = this.executionContext.getProvider()
-        tx.status = txResult.result.status // 0x0 or 0x1
-        this._resolve([tx], () => {
-        })
-      })
-    })
+    this.udapp.register('callExecuted', this.onCallExecuted.bind(this))
+    this.udapp.register('transactionExecuted', this.onTransactionExecuted.bind(this))
 
     function addExecutionCosts (txResult, tx) {
       if (txResult && txResult.result) {
@@ -92,6 +45,58 @@ class TxListener {
         if (txResult.result.gasUsed) tx.transactionCost = txResult.result.gasUsed.toString(10)
       }
     }
+  }
+
+  restart() {
+    if (this._isListening) {
+      this.stopListening()
+      this.startListening()
+    }
+  }
+
+  onCallExecuted(error, from, to, data, lookupOnly, txResult) {
+    if (error) return
+    // we go for that case if
+    // in VM mode
+    // in web3 mode && listen remix txs only
+    if (!this._isListening) return // we don't listen
+    if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
+
+    const call = {
+      from: from,
+      to: to,
+      input: data,
+      hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
+      isCall: true,
+      returnValue: this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result),
+      envMode: this.executionContext.getProvider()
+    }
+
+    addExecutionCosts(txResult, call)
+    this._resolveTx(call, call, (error, resolvedData) => {
+      if (!error) {
+        this.event.trigger('newCall', [call])
+      }
+    })
+  }
+
+  onTransactionExecuted(error, from, to, data, lookupOnly, txResult) {
+    if (error) return
+    if (lookupOnly) return
+    // we go for that case if
+    // in VM mode
+    // in web3 mode && listen remix txs only
+    if (!this._isListening) return // we don't listen
+    if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
+    this.executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
+      if (error) return console.log(error)
+
+      addExecutionCosts(txResult, tx)
+      tx.envMode = this.executionContext.getProvider()
+      tx.status = txResult.result.status // 0x0 or 0x1
+      this._resolve([tx], () => {
+      })
+    })
   }
 
   /**
@@ -222,7 +227,7 @@ class TxListener {
     })
   }
 
-  _resolveTx (tx, receipt, cb) {
+  _resolveTx(tx, receipt, cb) {
     const contracts = this.contracts()
     if (!contracts) return cb()
     let fun
@@ -240,33 +245,32 @@ class TxListener {
         if (this._resolvedTransactions[tx.hash]) {
           this._resolvedTransactions[tx.hash].contractAddress = address
         }
-        return cb(null, {to: null, contractName: contract.name, function: fun, creationAddress: address})
-      }
-      return cb()
-    } else {
-      // first check known contract, resolve against the `runtimeBytecode` if not known
-      contract = this._resolvedContracts[tx.to]
-      if (!contract) {
-        this.executionContext.web3().eth.getCode(tx.to, (error, code) => {
-          if (error) return cb(error)
-          if (code) {
-            const contract = this._tryResolveContract(code, contracts, false)
-            if (contract) {
-              this._resolvedContracts[tx.to] = contract
-              const fun = this._resolveFunction(contract, tx, false)
-              return cb(null, {to: tx.to, contractName: contract.name, function: fun})
-            }
-          }
-          return cb()
-        })
-        return
-      }
-      if (contract) {
-        fun = this._resolveFunction(contract, tx, false)
-        return cb(null, {to: tx.to, contractName: contract.name, function: fun})
+        return cb(null, { to: null, contractName: contract.name, function: fun, creationAddress: address })
       }
       return cb()
     }
+    // first check known contract, resolve against the `runtimeBytecode` if not known
+    contract = this._resolvedContracts[tx.to]
+    if (!contract) {
+      this.executionContext.web3().eth.getCode(tx.to, (error, code) => {
+        if (error) return cb(error)
+        if (code) {
+          const contract = this._tryResolveContract(code, contracts, false)
+          if (contract) {
+            this._resolvedContracts[tx.to] = contract
+            const fun = this._resolveFunction(contract, tx, false)
+            return cb(null, { to: tx.to, contractName: contract.name, function: fun })
+          }
+        }
+        return cb()
+      })
+      return
+    }
+    if (contract) {
+      fun = this._resolveFunction(contract, tx, false)
+      return cb(null, { to: tx.to, contractName: contract.name, function: fun })
+    }
+    return cb()
   }
 
   _resolveFunction (contract, tx, isCtor) {
