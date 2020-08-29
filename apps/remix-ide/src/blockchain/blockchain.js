@@ -296,8 +296,8 @@ class Blockchain {
   resetEnvironment () {
     this.getCurrentProvider().resetEnvironment()
     // TODO: most params here can be refactored away in txRunner
-    // this.txRunner = new TxRunner(this.providers.vm.accounts, {
-    this.txRunner = new TxRunner(this.providers.vm.RemixSimulatorProvider.Accounts.accounts, {
+    this.txRunner = new TxRunner({
+      vmaccounts: this.providers.vm.RemixSimulatorProvider.Accounts.accounts,
       // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
       config: this.config,
       // TODO: to refactor, TxRunner already has access to executionContext
@@ -306,8 +306,9 @@ class Blockchain {
       },
       personalMode: () => {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
-      }
-    }, this.executionContext)
+      },
+      executionContext: this.executionContext
+    })
     this.txRunner.event.register('transactionBroadcasted', (txhash) => {
       this.executionContext.detectNetwork((error, network) => {
         if (error || !network) return
