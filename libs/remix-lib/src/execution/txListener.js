@@ -18,11 +18,13 @@ const txHelper = require('./txHelper')
   */
 class TxListener {
 
-  constructor (opt, executionContext) {
+  constructor ({contracts, resolveReceipt, udapp, executionContext}) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
     this.executionContext = executionContext || defaultExecutionContext
-    this._api = opt.api
+    this.contracts = contracts
+    this.resolveReceipt = resolveReceipt
+    this.udapp = udapp
     this._resolvedTransactions = {}
     this._resolvedContracts = {}
     this._isListening = false
@@ -36,7 +38,7 @@ class TxListener {
       }
     })
 
-    opt.event.udapp.register('callExecuted', (error, from, to, data, lookupOnly, txResult) => {
+    this.udapp.register('callExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
       // we go for that case if
       // in VM mode
@@ -62,7 +64,7 @@ class TxListener {
       })
     })
 
-    opt.event.udapp.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
+    this.udapp.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
       if (lookupOnly) return
       // we go for that case if
@@ -204,7 +206,7 @@ class TxListener {
 
   _resolve (transactions, callback) {
     async.each(transactions, (tx, cb) => {
-      this._api.resolveReceipt(tx, (error, receipt) => {
+      this.resolveReceipt(tx, (error, receipt) => {
         if (error) return cb(error)
         this._resolveTx(tx, receipt, (error, resolvedData) => {
           if (error) cb(error)
@@ -221,7 +223,7 @@ class TxListener {
   }
 
   _resolveTx (tx, receipt, cb) {
-    const contracts = this._api.contracts()
+    const contracts = this.contracts()
     if (!contracts) return cb()
     let fun
     let contract

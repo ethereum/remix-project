@@ -230,15 +230,6 @@ class Blockchain {
     return this.executionContext.web3()
   }
 
-  getTxListener (opts) {
-    opts.event = {
-      // udapp: this.udapp.event
-      udapp: this.event
-    }
-    const txlistener = new Txlistener(opts, this.executionContext)
-    return txlistener
-  }
-
   runOrCallContractMethod (contractName, contractAbi, funABI, value, address, callType, lookupOnly, logMsg, logCallback, outputCb, confirmationCb, continueCb, promptCb) {
     // contractsDetails is used to resolve libraries
     txFormat.buildData(contractName, contractAbi, {}, false, funABI, callType, (error, data) => {

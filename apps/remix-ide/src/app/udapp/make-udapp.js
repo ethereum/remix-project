@@ -2,6 +2,7 @@ var registry = require('../../global/registry')
 var remixLib = require('@remix-project/remix-lib')
 var yo = require('yo-yo')
 var EventsDecoder = remixLib.execution.EventsDecoder
+var Txlistener = remixLib.execution.txListener
 var TransactionReceiptResolver = require('../../lib/transactionReceiptResolver')
 
 const transactionDetailsLinks = {
@@ -29,15 +30,17 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
   // ----------------- Tx listener -----------------
   const transactionReceiptResolver = new TransactionReceiptResolver(blockchain)
 
-  const txlistener = blockchain.getTxListener({
-    api: {
-      contracts: function () {
-        if (compilersArtefacts['__last']) return compilersArtefacts.getAllContractDatas()
-        return null
-      },
-      resolveReceipt: transactionReceiptResolver.resolve.bind(transactionReceiptResolver)
-    }
-  })
+  const opts = {
+    contracts: function () {
+      if (compilersArtefacts['__last']) return compilersArtefacts.getAllContractDatas()
+      return null
+    },
+    resolveReceipt: transactionReceiptResolver.resolve.bind(transactionReceiptResolver),
+    udapp: blockchain.event,
+    executionContext: blockchain.executionContext
+  }
+
+  const txlistener = new Txlistener(opts)
 
   registry.put({api: txlistener, name: 'txlistener'})
   blockchain.startListening(txlistener)
