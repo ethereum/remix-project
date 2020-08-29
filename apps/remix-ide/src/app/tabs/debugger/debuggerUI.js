@@ -169,9 +169,11 @@ class DebuggerUI {
           return null
         }
       })
-      debug.debugger.traceManager.traceRetriever.getTrace(hash, (error, trace) => {
-        if (error) return reject(error)
-        resolve(trace)
+
+      const options = {disableStorage: true, disableMemory: false, disableStack: false, fullStorage: false}
+      web3.debug.traceTransaction(hash, options, function (error, result) {
+        if (error) { return reject(error) }
+        resolve(result)
       })
     })
   }
