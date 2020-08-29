@@ -272,10 +272,10 @@ function testDebugging (debugManager) {
 
   tape('breakPointManager', (t) => {
     t.plan(2)
-    var sourceMappingDecoder = new SourceMappingDecoder()
+    var offsetToColumnConverter = new remixLib.OffsetToColumnConverter()
     const {traceManager, callTree, solidityProxy} = debugManager
     var breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy, locationToRowConverter: async (rawLocation) => {
-      return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
+      return offsetToColumnConverter.convertOffsetToLineColumn(rawLocation, offsetToColumnConverter.getLinebreakPositions(ballot))
     }})
 
     breakPointManager.event.register('managersChanged', () => {

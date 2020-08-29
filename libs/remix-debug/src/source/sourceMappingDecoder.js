@@ -1,6 +1,4 @@
 'use strict'
-const remixLib = require('@remix-project/remix-lib')
-const util = remixLib.util
 const AstWalker = require('./astWalker')
 
 /**
@@ -68,37 +66,6 @@ SourceMappingDecoder.prototype.decompressAll = function (mapping) {
 }
 
 /**
-  * Retrieve line/column position of each source char
-  *
-  * @param {String} source - contract source code
-  * @return {Array} returns an array containing offset of line breaks
-  */
-SourceMappingDecoder.prototype.getLinebreakPositions = function (source) {
-  const ret = []
-  for (let pos = source.indexOf('\n'); pos >= 0; pos = source.indexOf('\n', pos + 1)) {
-    ret.push(pos)
-  }
-  return ret
-}
-
-/**
- * Retrieve the line/column position for the given source mapping
- *
- * @param {Object} sourceLocation - object containing attributes {source} and {length}
- * @param {Array} lineBreakPositions - array returned by the function 'getLinebreakPositions'
- * @return {Object} returns an object {start: {line, column}, end: {line, column}} (line/column count start at 0)
- */
-SourceMappingDecoder.prototype.convertOffsetToLineColumn = function (sourceLocation, lineBreakPositions) {
-  if (sourceLocation.start >= 0 && sourceLocation.length >= 0) {
-    return {
-      start: convertFromCharPosition(sourceLocation.start, lineBreakPositions),
-      end: convertFromCharPosition(sourceLocation.start + sourceLocation.length, lineBreakPositions)
-    }
-  }
-  return {start: null, end: null}
-}
-
-/**
  * Retrieve the first @arg astNodeType that include the source map at arg instIndex
  *
  * @param {String} astNodeType - node type that include the source map instIndex
@@ -107,16 +74,6 @@ SourceMappingDecoder.prototype.convertOffsetToLineColumn = function (sourceLocat
  * @param {Object} ast - ast given by the compilation result
  */
 SourceMappingDecoder.prototype.findNodeAtInstructionIndex = findNodeAtInstructionIndex
-
-function convertFromCharPosition (pos, lineBreakPositions) {
-  let line = util.findLowerBound(pos, lineBreakPositions)
-  if (lineBreakPositions[line] !== pos) {
-    line = line + 1
-  }
-  const beginColumn = line === 0 ? 0 : (lineBreakPositions[line - 1] + 1)
-  const column = pos - beginColumn
-  return {line, column}
-}
 
 function sourceLocationFromAstNode (astNode) {
   if (astNode.src) {

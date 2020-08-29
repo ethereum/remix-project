@@ -1,7 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../package.json'
-var SourceMappingDecoder = require('@remix-project/remix-debug').SourceMappingDecoder
+const {OffsetToLineColumnConverter} = require('@remix-project/remix-lib')
 
 const profile = {
   name: 'offsetToLineColumnConverter',
@@ -14,7 +14,7 @@ export class OffsetToLineColumnConverter extends Plugin {
   constructor () {
     super(profile)
     this.lineBreakPositionsByContent = {}
-    this.sourceMappingDecoder = new SourceMappingDecoder()
+    this.offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   }
 
   offsetToLineColumn (rawLocation, file, sources, asts) {
@@ -22,18 +22,18 @@ export class OffsetToLineColumnConverter extends Plugin {
       const sourcesArray = Object.keys(sources)
       if (!asts && file === 0 && sourcesArray.length === 1) {
         // if we don't have ast, we process the only one available content
-        this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[sourcesArray[0]].content)
+        this.lineBreakPositionsByContent[file] = this.offsetToLineColumnConverter.getLinebreakPositions(sources[sourcesArray[0]].content)
       } else {
         for (var filename in asts) {
           const source = asts[filename]
           if (source.id === file) {
-            this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[filename].content)
+            this.lineBreakPositionsByContent[file] = this.offsetToLineColumnConverter.getLinebreakPositions(sources[filename].content)
             break
           }
         }
       }
     }
-    return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
+    return this.offsetToLineColumnConverter.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
   }
 
   clear () {

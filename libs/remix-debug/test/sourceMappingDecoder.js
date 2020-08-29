@@ -1,7 +1,8 @@
 'use strict'
 const tape = require('tape')
 const sourceMapping = require('./resources/sourceMapping')
-const SourceMappingDecoder = require('../src/source/sourceMappingDecoder')
+const SourceMappingDecoder = require('../src/sourceMappingDecoder')
+const OffsetToLineColumnConverter = require('../src/offsetToLineColumnConverter')
 const compiler = require('solc')
 const compilerInput = require('./helpers/compilerHelper').compilerInput
 
@@ -93,16 +94,16 @@ tape('SourceMappingDecoder', function (t) {
 
   t.test('sourceMappingLineColumnConverter', function (st) {
     st.plan(14)
-    const sourceMappingDecoder = new SourceMappingDecoder()
-    const linesbreak = sourceMappingDecoder.getLinebreakPositions(sourceMapping.source)
+    const offsetToColumnConverter = new OffsetToLineColumnConverter()
+    const linesbreak = offsetToColumnConverter.getLinebreakPositions(sourceMapping.source)
     st.equal(linesbreak[0], 16)
     st.equal(linesbreak[5], 84)
-    let result = sourceMappingDecoder.convertOffsetToLineColumn(testSourceMapping[21], linesbreak)
+    let result = offsetToColumnConverter.convertOffsetToLineColumn(testSourceMapping[21], linesbreak)
     st.equal(result.start.line, 0)
     st.equal(result.start.column, 0)
     st.equal(result.end.line, 15)
     st.equal(result.end.column, 1)
-    result = sourceMappingDecoder.convertOffsetToLineColumn(testSourceMapping[82], linesbreak)
+    result = offsetToColumnConverter.convertOffsetToLineColumn(testSourceMapping[82], linesbreak)
     st.equal(result.start.line, 7)
     st.equal(result.start.column, 12)
     st.equal(result.end.line, 7)
@@ -116,7 +117,7 @@ tape('SourceMappingDecoder', function (t) {
     }
     // case: 'file' is not yet assigned, while processing the srcmap (reverse looping) to find 'start', 'length' (etc..), we tumble on -1 for the file.
     // in that case the step has to be discarded
-    result = sourceMappingDecoder.convertOffsetToLineColumn(res, linesbreak)
+    result = offsetToColumnConverter.convertOffsetToLineColumn(res, linesbreak)
     st.equal(result.start.line, 7)
     st.equal(result.start.column, 12)
     st.equal(result.end.line, 7)
