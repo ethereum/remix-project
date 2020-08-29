@@ -72,10 +72,9 @@ function extractSourceMap (self, codeManager, address, contracts) {
       const sourceMap = getSourceMap(address, result.bytecode, contracts)
       if (sourceMap) {
         if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
-        resolve(sourceMap)
-      } else {
-        reject('no sourcemap associated with the code ' + address)
+        return resolve(sourceMap)
       }
+      reject('no sourcemap associated with the code ' + address)
     }).catch(reject)
   })
 }

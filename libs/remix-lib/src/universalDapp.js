@@ -93,17 +93,16 @@ module.exports = class UniversalDApp {
       if (!this.config.get('settings/personal-mode')) {
         return cb('Not running in personal mode')
       }
-      passwordPromptCb((passphrase) => {
+      return passwordPromptCb((passphrase) => {
         this.executionContext.web3().personal.newAccount(passphrase, cb)
       })
-    } else {
-      let privateKey
-      do {
-        privateKey = crypto.randomBytes(32)
-      } while (!isValidPrivate(privateKey))
-      this._addAccount(privateKey, '0x56BC75E2D63100000')
-      cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
     }
+    let privateKey
+    do {
+      privateKey = crypto.randomBytes(32)
+    } while (!isValidPrivate(privateKey))
+    this._addAccount(privateKey, '0x56BC75E2D63100000')
+    cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
   }
 
   /** Add an account to the list of account (only for Javascript VM) */
@@ -112,22 +111,23 @@ module.exports = class UniversalDApp {
       throw new Error('_addAccount() cannot be called in non-VM mode')
     }
 
-    if (this.accounts) {
-      privateKey = Buffer.from(privateKey, 'hex')
-      const address = privateToAddress(privateKey)
-
-      // FIXME: we don't care about the callback, but we should still make this proper
-      let stateManager = this.executionContext.vm().stateManager
-      stateManager.getAccount(address, (error, account) => {
-        if (error) return console.log(error)
-        account.balance = balance || '0xf00000000000000001'
-        stateManager.putAccount(address, account, function cb (error) {
-          if (error) console.log(error)
-        })
-      })
-
-      this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
+    if (!this.accounts) {
+      return
     }
+    privateKey = Buffer.from(privateKey, 'hex')
+    const address = privateToAddress(privateKey)
+
+    // FIXME: we don't care about the callback, but we should still make this proper
+    let stateManager = this.executionContext.vm().stateManager
+    stateManager.getAccount(address, (error, account) => {
+      if (error) return console.log(error)
+      account.balance = balance || '0xf00000000000000001'
+      stateManager.putAccount(address, account, function cb(error) {
+        if (error) console.log(error)
+      })
+    })
+
+    this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
   }
 
   /** Return the list of accounts */
@@ -173,40 +173,36 @@ module.exports = class UniversalDApp {
   }
 
   /** Get the balance of an address */
-  getBalance (address, cb) {
+  getBalance(address, cb) {
     address = stripHexPrefix(address)
 
     if (!this.executionContext.isVM()) {
-      this.executionContext.web3().eth.getBalance(address, (err, res) => {
+      return this.executionContext.web3().eth.getBalance(address, (err, res) => {
         if (err) {
-          cb(err)
-        } else {
-          cb(null, res.toString(10))
+          return cb(err)
         }
-      })
-    } else {
-      if (!this.accounts) {
-        return cb('No accounts?')
-      }
-
-      this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, res) => {
-        if (err) {
-          cb('Account not found')
-        } else {
-          cb(null, new BN(res.balance).toString(10))
-        }
+        cb(null, res.toString(10))
       })
     }
+    if (!this.accounts) {
+      return cb('No accounts?')
+    }
+
+    this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, res) => {
+      if (err) {
+        return cb('Account not found')
+      }
+      cb(null, new BN(res.balance).toString(10))
+    })
   }
 
   /** Get the balance of an address, and convert wei to ether */
   getBalanceInEther (address, callback) {
     this.getBalance(address, (error, balance) => {
       if (error) {
-        callback(error)
-      } else {
-        callback(null, this.executionContext.web3().utils.fromWei(balance, 'ether'))
+        return callback(error)
       }
+      callback(null, this.executionContext.web3().utils.fromWei(balance, 'ether'))
     })
   }
 
@@ -221,10 +217,7 @@ module.exports = class UniversalDApp {
     * @param {Function} callback    - callback.
     */
   createContract (data, confirmationCb, continueCb, promptCb, callback) {
-    this.runTx({data: data, useCall: false}, confirmationCb, continueCb, promptCb, (error, txResult) => {
-      // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
-      callback(error, txResult)
-    })
+    this.runTx({data: data, useCall: false}, confirmationCb, continueCb, promptCb, callback)
   }
 
   /**
@@ -237,10 +230,7 @@ module.exports = class UniversalDApp {
     */
   callFunction (to, data, funAbi, confirmationCb, continueCb, promptCb, callback) {
     const useCall = funAbi.stateMutability === 'view' || funAbi.stateMutability === 'pure'
-    this.runTx({to, data, useCall}, confirmationCb, continueCb, promptCb, (error, txResult) => {
-      // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
-      callback(error, txResult)
-    })
+    this.runTx({to, data, useCall}, confirmationCb, continueCb, promptCb, callback)
   }
 
    /**
@@ -251,10 +241,7 @@ module.exports = class UniversalDApp {
     * @param {Function} callback    - callback.
     */
   sendRawTransaction (to, data, confirmationCb, continueCb, promptCb, callback) {
-    this.runTx({to, data, useCall: false}, confirmationCb, continueCb, promptCb, (error, txResult) => {
-      // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
-      callback(error, txResult)
-    })
+    this.runTx({to, data, useCall: false}, confirmationCb, continueCb, promptCb, callback)
   }
 
   context () {

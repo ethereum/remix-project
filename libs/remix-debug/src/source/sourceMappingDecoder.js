@@ -94,12 +94,8 @@ SourceMappingDecoder.prototype.convertOffsetToLineColumn = function (sourceLocat
       start: convertFromCharPosition(sourceLocation.start, lineBreakPositions),
       end: convertFromCharPosition(sourceLocation.start + sourceLocation.length, lineBreakPositions)
     }
-  } else {
-    return {
-      start: null,
-      end: null
-    }
   }
+  return {start: null, end: null}
 }
 
 /**
@@ -119,10 +115,7 @@ function convertFromCharPosition (pos, lineBreakPositions) {
   }
   const beginColumn = line === 0 ? 0 : (lineBreakPositions[line - 1] + 1)
   const column = pos - beginColumn
-  return {
-    line: line,
-    column: column
-  }
+  return {line, column}
 }
 
 function sourceLocationFromAstNode (astNode) {
@@ -155,12 +148,10 @@ function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
       if (astNodeType === node.name) {
         found = node
         return false
-      } else {
-        return true
       }
-    } else {
-      return false
+      return true
     }
+    return false
   }
   astWalker.walk(ast.legacyAST, callback)
   return found
@@ -181,9 +172,8 @@ function nodesAtPosition (astNodeType, position, ast) {
         if (astNodeType) return false
       }
       return true
-    } else {
-      return false
     }
+    return false
   }
   astWalker.walk(ast.legacyAST, callback)
   return found
