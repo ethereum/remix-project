@@ -63,9 +63,14 @@ function processTx (executionContext, accounts, payload, isCall, callback) {
 
   executionContext.init(api.config)
 
-  // let txRunner = new TxRunner(accounts, api)
   if (!txRunnerInstance) {
-    txRunnerInstance = new TxRunner(accounts, api, executionContext)
+    txRunnerInstance = new TxRunner({
+      vmaccounts: accounts,
+      config: api.config,
+      personalMode: api.personalMode,
+      detectNetwork: api.detectNetwork,
+      executionContext
+    })
   }
   txRunnerInstance.vmaccounts = accounts
   let { from, to, data, value, gas } = payload.params[0]

@@ -18,15 +18,17 @@ module.exports = class UniversalDApp {
     this.executionContext = executionContext || defaultExecutionContext
     this.config = config
 
-    this.txRunner = new TxRunner({}, {
+    this.txRunner = new TxRunner({
+      vmaccounts: {},
       config: config,
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
       },
       personalMode: () => {
         return this.executionContext.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
-      }
-    }, this.executionContext)
+      },
+      executionContext: this.executionContext
+    })
     this.accounts = {}
     this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
   }
