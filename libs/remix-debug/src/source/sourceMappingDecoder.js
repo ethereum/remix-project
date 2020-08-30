@@ -17,7 +17,7 @@ function nodesAtPosition (astNodeType, position, ast) {
   const callback = {}
   const found = []
   callback['*'] = function (node) {
-    var nodeLocation = sourceLocationFromAstNode(node)
+    var nodeLocation = decode(node.src)
     if (!nodeLocation) {
       return
     }
@@ -93,7 +93,7 @@ function atIndex (index, mapping) {
  * @return {Object} returns the decompressed source mapping {start, length, file}
  */
 function decode (value) {
-  if (!value) return
+  if (!value) return null
   const [start, length, file] = value.split(':')
   return { start: parseInt(start), length: parseInt(length), file: parseInt(file) }
 }
@@ -134,18 +134,12 @@ function findNodeAtInstructionIndex (astNodeType, instIndex, sourceMap, ast) {
   return findNodeAtSourceLocation(astNodeType, sourceLocation, ast)
 }
 
-function sourceLocationFromAstNode (astNode) {
-  if (!astNode.src) return null
-  const split = astNode.src.split(':')
-  return { start: parseInt(split[0]), length: parseInt(split[1]), file: parseInt(split[2]) }
-}
-
 function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
   const astWalker = new AstWalker()
   const callback = {}
   let found = null
   callback['*'] = function (node) {
-    const nodeLocation = sourceLocationFromAstNode(node)
+    const nodeLocation = decode(node.src)
     if (!nodeLocation) {
       return true
     }
@@ -162,4 +156,4 @@ function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
   return found
 }
 
-module.exports = { nodesAtPosition, atIndex, decode, decompressAll, findNodeAtInstructionIndex, sourceLocationFromAstNode, findNodeAtSourceLocation }
+module.exports = { nodesAtPosition, atIndex, decode, decompressAll, findNodeAtInstructionIndex, findNodeAtSourceLocation }
