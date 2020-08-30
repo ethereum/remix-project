@@ -1,8 +1,8 @@
 'use strict'
 const yo = require('yo-yo')
 const remixDebug = require('@remix-project/remix-debug')
-const SourceMappingDecoder = remixDebug.SourceMappingDecoder
 const globalRegistry = require('../../global/registry')
+const {decode} = remixDebug.SourceMappingDecoder
 
 const css = require('./styles/contextView-styles')
 
@@ -28,7 +28,6 @@ class ContextView {
     this._view
     this._nodes
     this._current
-    this.sourceMappingDecoder = new SourceMappingDecoder()
     this.previousElement = null
     this.contextualListener.event.register('contextChanged', nodes => {
       this.show()
@@ -147,7 +146,7 @@ class ContextView {
 
     const jumpTo = () => {
       if (node && node.src) {
-        const position = this.sourceMappingDecoder.decode(node.src)
+        const position = decode(node.src)
         if (position) {
           this._jumpToInternal(position)
         }

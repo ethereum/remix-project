@@ -1,7 +1,7 @@
 'use strict'
 const tape = require('tape')
 const sourceMapping = require('./resources/sourceMapping')
-const SourceMappingDecoder = require('../src/sourceMappingDecoder')
+const {findNodeAtInstructionIndex, decompressAll, atIndex} = require('../src/sourceMappingDecoder')
 const OffsetToLineColumnConverter = require('../src/offsetToLineColumnConverter')
 const compiler = require('solc')
 const compilerInput = require('./helpers/compilerHelper').compilerInput
@@ -10,10 +10,9 @@ tape('SourceMappingDecoder', function (t) {
   t.test('SourceMappingDecoder.findNodeAtInstructionIndex', function (st) {
     let output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
-    const sourceMappingDecoder = new SourceMappingDecoder()
-    let node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
+    let node = findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
     st.equal(node, null)
-    node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 80, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
+    node = findNodeAtInstructionIndex('FunctionDefinition', 80, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
     st.notEqual(node, null)
     if (node) {
       st.equal(node.attributes.name, 'f1')
@@ -24,9 +23,8 @@ tape('SourceMappingDecoder', function (t) {
   const testSourceMapping = {}
   t.test('sourceMappingDecoder', function (st) {
     st.plan(36)
-    const sourceMappingDecoder = new SourceMappingDecoder()
     console.log('test decompressAll')
-    let result = sourceMappingDecoder.decompressAll(sourceMapping.mapping)
+    let result = decompressAll(sourceMapping.mapping)
     st.equal(result[0].start, 0)
     st.equal(result[0].length, 205)
     st.equal(result[0].file, 4)
@@ -51,7 +49,7 @@ tape('SourceMappingDecoder', function (t) {
     testSourceMapping['last'] = result[last]
 
     console.log('test decompress')
-    result = sourceMappingDecoder.atIndex(22, sourceMapping.mapping)
+    result = atIndex(22, sourceMapping.mapping)
     console.log(result)
     st.equal(result.start, 55)
     st.equal(result.length, 74)
@@ -59,7 +57,7 @@ tape('SourceMappingDecoder', function (t) {
     st.equal(result.jump, '-')
     testSourceMapping[22] = result
 
-    result = sourceMappingDecoder.atIndex(82, sourceMapping.mapping)
+    result = atIndex(82, sourceMapping.mapping)
     console.log(result)
     st.equal(result.start, 103)
     st.equal(result.length, 2)
@@ -67,7 +65,7 @@ tape('SourceMappingDecoder', function (t) {
     st.equal(result.jump, '-')
     testSourceMapping[82] = result
 
-    result = sourceMappingDecoder.atIndex(85, sourceMapping.mapping)
+    result = atIndex(85, sourceMapping.mapping)
     console.log(result)
     st.equal(result.start, 99)
     st.equal(result.length, 6)
@@ -76,7 +74,7 @@ tape('SourceMappingDecoder', function (t) {
     testSourceMapping[85] = result
 
     // ballot - function deletegate(address)
-    const delegateSrcMap = sourceMappingDecoder.atIndex(64, sourceMapping.ballotSourceMap)
+    const delegateSrcMap = atIndex(64, sourceMapping.ballotSourceMap)
     console.log(delegateSrcMap)
     st.equal(delegateSrcMap.start, 712)
     st.equal(delegateSrcMap.length, 577)
@@ -84,7 +82,7 @@ tape('SourceMappingDecoder', function (t) {
     st.equal(delegateSrcMap.jump, '-')
 
     // TokenSaleChallenge - function test(uint256)
-    const tokenSaleChallengeMap = sourceMappingDecoder.atIndex(170, sourceMapping.tokenSaleChallengeSourceMap)
+    const tokenSaleChallengeMap = atIndex(170, sourceMapping.tokenSaleChallengeSourceMap)
     console.log(tokenSaleChallengeMap)
     st.equal(tokenSaleChallengeMap.start, 211)
     st.equal(tokenSaleChallengeMap.length, 48)

@@ -2,11 +2,8 @@
 const AstWalker = require('./astWalker')
 
 /**
- * Decompress the source mapping given by solc-bin.js
+ * Utils to decompress the source mapping given by solc-bin.js
  */
-function SourceMappingDecoder () {
-  // s:l:f:j
-}
 
 /**
  * get a list of nodes that are at the given @arg position
@@ -15,105 +12,6 @@ function SourceMappingDecoder () {
  * @param {Int} position     - cursor position
  * @return {Object} ast object given by the compiler
  */
-SourceMappingDecoder.prototype.nodesAtPosition = nodesAtPosition
-
-/**
- * Decode the source mapping for the given @arg index
- *
- * @param {Integer} index      - source mapping index to decode
- * @param {String} mapping     - compressed source mapping given by solc-bin
- * @return {Object} returns the decompressed source mapping for the given index {start, length, file, jump}
- */
-SourceMappingDecoder.prototype.atIndex = atIndex
-
-/**
- * Decode the given @arg value
- *
- * @param {string} value      - source location to decode ( should be start:length:file )
- * @return {Object} returns the decompressed source mapping {start, length, file}
- */
-SourceMappingDecoder.prototype.decode = function (value) {
-  if (value) {
-    value = value.split(':')
-    return {
-      start: parseInt(value[0]),
-      length: parseInt(value[1]),
-      file: parseInt(value[2])
-    }
-  }
-}
-
-/**
- * Decode the source mapping for the given compressed mapping
- *
- * @param {String} mapping     - compressed source mapping given by solc-bin
- * @return {Array} returns the decompressed source mapping. Array of {start, length, file, jump}
- */
-SourceMappingDecoder.prototype.decompressAll = function (mapping) {
-  const map = mapping.split(';')
-  const ret = []
-  for (let k in map) {
-    const compressed = map[k].split(':')
-    const sourceMap = {
-      start: compressed[0] ? parseInt(compressed[0]) : ret[ret.length - 1].start,
-      length: compressed[1] ? parseInt(compressed[1]) : ret[ret.length - 1].length,
-      file: compressed[2] ? parseInt(compressed[2]) : ret[ret.length - 1].file,
-      jump: compressed[3] ? compressed[3] : ret[ret.length - 1].jump
-    }
-    ret.push(sourceMap)
-  }
-  return ret
-}
-
-/**
- * Retrieve the first @arg astNodeType that include the source map at arg instIndex
- *
- * @param {String} astNodeType - node type that include the source map instIndex
- * @param {String} instIndex - instruction index used to retrieve the source map
- * @param {String} sourceMap - source map given by the compilation result
- * @param {Object} ast - ast given by the compilation result
- */
-SourceMappingDecoder.prototype.findNodeAtInstructionIndex = findNodeAtInstructionIndex
-
-function sourceLocationFromAstNode (astNode) {
-  if (astNode.src) {
-    const split = astNode.src.split(':')
-    return {
-      start: parseInt(split[0]),
-      length: parseInt(split[1]),
-      file: parseInt(split[2])
-    }
-  }
-  return null
-}
-
-function findNodeAtInstructionIndex (astNodeType, instIndex, sourceMap, ast) {
-  const sourceLocation = atIndex(instIndex, sourceMap)
-  return findNodeAtSourceLocation(astNodeType, sourceLocation, ast)
-}
-
-function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
-  const astWalker = new AstWalker()
-  const callback = {}
-  let found = null
-  callback['*'] = function (node) {
-    const nodeLocation = sourceLocationFromAstNode(node)
-    if (!nodeLocation) {
-      return true
-    }
-    if (nodeLocation.start <= sourceLocation.start && nodeLocation.start + nodeLocation.length >= sourceLocation.start + sourceLocation.length) {
-      if (astNodeType === node.name) {
-        found = node
-        return false
-      }
-      return true
-    }
-    return false
-  }
-  astWalker.walk(ast.legacyAST, callback)
-  return found
-}
-
 function nodesAtPosition (astNodeType, position, ast) {
   const astWalker = new AstWalker()
   const callback = {}
@@ -149,7 +47,7 @@ function nodesAtPosition (astNodeType, position, ast) {
  *
  *  @param Int index - index in the bytecode to decode source mapping from
  *  @param Array mapping - source maps returned by the compiler. e.g 121:3741:0:-:0;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;121:3741:0;;;;;;;
- *  @return Object { start, length, file, jump }
+ * @return {Object} returns the decompressed source mapping for the given index {start, length, file, jump}
  */
 function atIndex (index, mapping) {
   let ret = {}
@@ -188,4 +86,80 @@ function atIndex (index, mapping) {
   return ret
 }
 
-module.exports = SourceMappingDecoder
+/**
+ * Decode the given @arg value
+ *
+ * @param {string} value      - source location to decode ( should be start:length:file )
+ * @return {Object} returns the decompressed source mapping {start, length, file}
+ */
+function decode (value) {
+  if (!value) return
+  const [start, length, file] = value.split(':')
+  return { start: parseInt(start), length: parseInt(length), file: parseInt(file) }
+}
+
+/**
+ * Decode the source mapping for the given compressed mapping
+ *
+ * @param {String} mapping     - compressed source mapping given by solc-bin
+ * @return {Array} returns the decompressed source mapping. Array of {start, length, file, jump}
+ */
+// TODO: unused and can be removed, need to discuss
+function decompressAll (mapping) {
+  const map = mapping.split(';')
+  const ret = []
+  for (let k in map) {
+    const compressed = map[k].split(':')
+    const sourceMap = {
+      start: compressed[0] ? parseInt(compressed[0]) : ret[ret.length - 1].start,
+      length: compressed[1] ? parseInt(compressed[1]) : ret[ret.length - 1].length,
+      file: compressed[2] ? parseInt(compressed[2]) : ret[ret.length - 1].file,
+      jump: compressed[3] ? compressed[3] : ret[ret.length - 1].jump
+    }
+    ret.push(sourceMap)
+  }
+  return ret
+}
+
+/**
+ * Retrieve the first @arg astNodeType that include the source map at arg instIndex
+ *
+ * @param {String} astNodeType - node type that include the source map instIndex
+ * @param {String} instIndex - instruction index used to retrieve the source map
+ * @param {String} sourceMap - source map given by the compilation result
+ * @param {Object} ast - ast given by the compilation result
+ */
+function findNodeAtInstructionIndex (astNodeType, instIndex, sourceMap, ast) {
+  const sourceLocation = atIndex(instIndex, sourceMap)
+  return findNodeAtSourceLocation(astNodeType, sourceLocation, ast)
+}
+
+function sourceLocationFromAstNode (astNode) {
+  if (!astNode.src) return null
+  const split = astNode.src.split(':')
+  return { start: parseInt(split[0]), length: parseInt(split[1]), file: parseInt(split[2]) }
+}
+
+function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
+  const astWalker = new AstWalker()
+  const callback = {}
+  let found = null
+  callback['*'] = function (node) {
+    const nodeLocation = sourceLocationFromAstNode(node)
+    if (!nodeLocation) {
+      return true
+    }
+    if (nodeLocation.start <= sourceLocation.start && nodeLocation.start + nodeLocation.length >= sourceLocation.start + sourceLocation.length) {
+      if (astNodeType === node.name) {
+        found = node
+        return false
+      }
+      return true
+    }
+    return false
+  }
+  astWalker.walk(ast.legacyAST, callback)
+  return found
+}
+
+module.exports = { nodesAtPosition, atIndex, decode, decompressAll, findNodeAtInstructionIndex, sourceLocationFromAstNode, findNodeAtSourceLocation }

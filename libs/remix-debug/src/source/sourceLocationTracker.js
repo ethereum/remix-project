@@ -1,7 +1,7 @@
 'use strict'
 const EventManager = require('../eventManager')
 const helper = require('../trace/traceHelper')
-const SourceMappingDecoder = require('./sourceMappingDecoder')
+const {atIndex} = require('./sourceMappingDecoder')
 const remixLib = require('@remix-project/remix-lib')
 const util = remixLib.util
 
@@ -11,7 +11,6 @@ const util = remixLib.util
 function SourceLocationTracker (_codeManager) {
   this.codeManager = _codeManager
   this.event = new EventManager()
-  this.sourceMappingDecoder = new SourceMappingDecoder()
   this.sourceMapByAddress = {}
 }
 
@@ -25,7 +24,7 @@ function SourceLocationTracker (_codeManager) {
  */
 SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = async function (address, index, contracts) {
   const sourceMap = await extractSourceMap(this, this.codeManager, address, contracts)
-  return this.sourceMappingDecoder.atIndex(index, sourceMap)
+  return atIndex(index, sourceMap)
 }
 
 /**
@@ -39,7 +38,7 @@ SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = async fu
 SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = async function (address, vmtraceStepIndex, contracts) {
   const sourceMap = await extractSourceMap(this, this.codeManager, address, contracts)
   const index = this.codeManager.getInstructionIndex(address, vmtraceStepIndex)
-  return this.sourceMappingDecoder.atIndex(index, sourceMap)
+  return atIndex(index, sourceMap)
 }
 
 SourceLocationTracker.prototype.clearCache = function () {
