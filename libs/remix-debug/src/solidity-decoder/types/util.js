@@ -2,20 +2,6 @@
 const ethutil = require('ethereumjs-util')
 const BN = require('ethereumjs-util').BN
 
-module.exports = {
-  readFromStorage: readFromStorage,
-  decodeIntFromHex: decodeIntFromHex,
-  extractHexValue: extractHexValue,
-  extractHexByteSlice: extractHexByteSlice,
-  toBN: toBN,
-  add: add,
-  sub: sub,
-  extractLocation: extractLocation,
-  removeLocation: removeLocation,
-  normalizeHex: normalizeHex,
-  extractLocationFromAstVariable: extractLocationFromAstVariable
-}
-
 function decodeIntFromHex (value, byteLength, signed) {
   let bigNumber = new BN(value, 16)
   if (signed) {
@@ -24,21 +10,17 @@ function decodeIntFromHex (value, byteLength, signed) {
   return bigNumber.toString(10)
 }
 
-function readFromStorage (slot, storageResolver) {
+function readFromStorage(slot, storageResolver) {
   const hexSlot = '0x' + normalizeHex(ethutil.bufferToHex(slot))
   return new Promise((resolve, reject) => {
     storageResolver.storageSlot(hexSlot, (error, slot) => {
       if (error) {
         return reject(error)
-      } else {
-        if (!slot) {
-          slot = {
-            key: slot,
-            value: ''
-          }
-        }
-        return resolve(normalizeHex(slot.value))
       }
+      if (!slot) {
+        slot = { key: slot, value: '' }
+      }
+      return resolve(normalizeHex(slot.value))
     })
   })
 }
@@ -120,3 +102,5 @@ function normalizeHex (hex) {
   }
   return hex
 }
+
+module.exports = {readFromStorage, decodeIntFromHex, extractHexValue, extractHexByteSlice, toBN, add, sub, extractLocation, removeLocation, normalizeHex, extractLocationFromAstVariable}

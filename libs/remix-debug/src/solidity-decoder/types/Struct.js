@@ -22,10 +22,7 @@ class Struct extends RefType {
         ret[item.name] = '<decoding failed - ' + e.message + '>'
       }
     }
-    return {
-      value: ret,
-      type: this.typeName
-    }
+    return {value: ret, type: this.typeName}
   }
 
   decodeFromMemoryInternal (offset, memory) {
@@ -36,10 +33,7 @@ class Struct extends RefType {
       ret[item.name] = member
       offset += 32
     })
-    return {
-      value: ret,
-      type: this.typeName
-    }
+    return {value: ret, type: this.typeName}
   }
 }
 
