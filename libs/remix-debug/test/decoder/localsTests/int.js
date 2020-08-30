@@ -25,7 +25,7 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
       var traceManager = new TraceManager({ web3: vm.web3 })
       var codeManager = new CodeManager(traceManager)
       codeManager.clear()
-      var solidityProxy = new SolidityProxy({ traceManager, getCode: codeManager.getCode.bind(codeManager) })
+      var solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), getCode: codeManager.getCode.bind(codeManager) })
       solidityProxy.reset(compilationResult)
       var debuggerEvent = new EventManager()
       var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
