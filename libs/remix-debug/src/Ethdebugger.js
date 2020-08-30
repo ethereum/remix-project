@@ -33,7 +33,7 @@ function Ethdebugger (opts) {
 
   this.traceManager = new TraceManager({web3: this.web3})
   this.codeManager = new CodeManager(this.traceManager)
-  this.solidityProxy = new SolidityProxy({traceManager: this.traceManager, getCode: this.codeManager.getCode.bind(this.codeManager)})
+  this.solidityProxy = new SolidityProxy({getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), getCode: this.codeManager.getCode.bind(this.codeManager)})
   this.storageResolver = null
 
   this.callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
@@ -42,7 +42,7 @@ function Ethdebugger (opts) {
 Ethdebugger.prototype.setManagers = function () {
   this.traceManager = new TraceManager({web3: this.web3})
   this.codeManager = new CodeManager(this.traceManager)
-  this.solidityProxy = new SolidityProxy({traceManager: this.traceManager, getCode: this.codeManager.getCode.bind(this.codeManager)})
+  this.solidityProxy = new SolidityProxy({getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), getCode: this.codeManager.getCode.bind(this.codeManager)})
   this.storageResolver = null
 
   this.callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
