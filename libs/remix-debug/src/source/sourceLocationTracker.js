@@ -63,19 +63,19 @@ function getSourceMap (address, code, contracts) {
   return null
 }
 
-function extractSourceMap (self, codeManager, address, contracts) {
-  return new Promise((resolve, reject) => {
-    if (self.sourceMapByAddress[address]) return resolve(self.sourceMapByAddress[address])
+async function extractSourceMap(self, codeManager, address, contracts) {
+  if (self.sourceMapByAddress[address]) return self.sourceMapByAddress[address]
 
-    codeManager.getCode(address).then((result) => {
-      const sourceMap = getSourceMap(address, result.bytecode, contracts)
-      if (sourceMap) {
-        if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
-        return resolve(sourceMap)
-      }
-      reject('no sourcemap associated with the code ' + address)
-    }).catch(reject)
-  })
+  try {
+    const result = await codeManager.getCode(address)
+    const sourceMap = getSourceMap(address, result.bytecode, contracts)
+    if (sourceMap) {
+      if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
+      return sourceMap
+    }
+  } catch (_error) {
+    reject('no sourcemap associated with the code ' + address)
+  }
 }
 
 module.exports = SourceLocationTracker
