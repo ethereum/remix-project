@@ -16,10 +16,7 @@ class DynamicByteArray extends RefType {
       value = await util.extractHexValue(location, storageResolver, this.storageBytes)
     } catch (e) {
       console.log(e)
-      return {
-        value: '<decoding failed - ' + e.message + '>',
-        type: this.typeName
-      }
+      return {value: '<decoding failed - ' + e.message + '>', type: this.typeName}
     }
     const bn = new BN(value, 16)
     if (bn.testn(0)) {
@@ -31,10 +28,7 @@ class DynamicByteArray extends RefType {
         currentSlot = await util.readFromStorage(dataPos, storageResolver)
       } catch (e) {
         console.log(e)
-        return {
-          value: '<decoding failed - ' + e.message + '>',
-          type: this.typeName
-        }
+        return {value: '<decoding failed - ' + e.message + '>', type: this.typeName}
       }
       while (length.gt(ret.length) && ret.length < 32000) {
         currentSlot = currentSlot.replace('0x', '')
@@ -44,24 +38,13 @@ class DynamicByteArray extends RefType {
           currentSlot = await util.readFromStorage(dataPos, storageResolver)
         } catch (e) {
           console.log(e)
-          return {
-            value: '<decoding failed - ' + e.message + '>',
-            type: this.typeName
-          }
+          return {value: '<decoding failed - ' + e.message + '>', type: this.typeName}
         }
       }
-      return {
-        value: '0x' + ret.replace(/(00)+$/, ''),
-        length: '0x' + length.toString(16),
-        type: this.typeName
-      }
+      return {value: '0x' + ret.replace(/(00)+$/, ''), length: '0x' + length.toString(16), type: this.typeName}
     } else {
       var size = parseInt(value.substr(value.length - 2, 2), 16) / 2
-      return {
-        value: '0x' + value.substr(0, size * 2),
-        length: '0x' + size.toString(16),
-        type: this.typeName
-      }
+      return {value: '0x' + value.substr(0, size * 2), length: '0x' + size.toString(16), type: this.typeName}
     }
   }
 
@@ -69,11 +52,7 @@ class DynamicByteArray extends RefType {
     offset = 2 * offset
     let length = memory.substr(offset, 64)
     length = 2 * parseInt(length, 16)
-    return {
-      length: '0x' + length.toString(16),
-      value: '0x' + memory.substr(offset + 64, length),
-      type: this.typeName
-    }
+    return {length: '0x' + length.toString(16), value: '0x' + memory.substr(offset + 64, length), type: this.typeName}
   }
 }
 
