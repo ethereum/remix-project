@@ -64,8 +64,4 @@ async function solidityState (storageResolver, astList, contractName) {
   }
 }
 
-module.exports = {
-  solidityState: solidityState,
-  extractStateVariables: extractStateVariables,
-  decodeState: decodeState
-}
+module.exports = {solidityState, extractStateVariables, decodeState}

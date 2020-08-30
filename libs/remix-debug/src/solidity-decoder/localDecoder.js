@@ -35,6 +35,4 @@ function formatMemory (memory) {
   return memory
 }
 
-module.exports = {
-  solidityLocals: solidityLocals
-}
+module.exports = {solidityLocals}
