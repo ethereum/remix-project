@@ -25,13 +25,12 @@ function decodeLocal (st, index, traceManager, callTree, verifier) {
       }],
       index,
       function (error, result) {
-        if (!error) {
-          localDecoder.solidityLocals(index, callTree, result[0].value, result[1].value, {}, {start: 5000}).then((locals) => {
-            verifier(locals)
-          })
-        } else {
-          st.fail(error)
+        if (error) {
+          return st.fail(error)
         }
+        localDecoder.solidityLocals(index, callTree, result[0].value, result[1].value, {}, { start: 5000 }).then((locals) => {
+          verifier(locals)
+        })
       })
   } catch (e) {
     st.fail(e.message)
