@@ -1,5 +1,5 @@
 const astHelper = require('./astHelper')
-const decodeInfo = require('./decodeInfo')
+const {computeOffsets} = require('./decodeInfo')
 
 /**
   * decode the contract state storage
@@ -40,7 +40,7 @@ function extractStateVariables (contractName, sourcesList) {
     return []
   }
   const types = states[contractName].stateVariables
-  const offsets = decodeInfo.computeOffsets(types, states, contractName, 'storage')
+  const offsets = computeOffsets(types, states, contractName, 'storage')
   if (!offsets) {
     return [] // TODO should maybe return an error
   }
