@@ -10,9 +10,8 @@ class Address extends ValueType {
   decodeValue (value) {
     if (!value) {
       return '0x0000000000000000000000000000000000000000'
-    } else {
-      return '0x' + util.extractHexByteSlice(value, this.storageBytes, 0).toUpperCase()
     }
+    return '0x' + util.extractHexByteSlice(value, this.storageBytes, 0).toUpperCase()
   }
 }
 

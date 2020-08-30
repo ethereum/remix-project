@@ -28,20 +28,13 @@ class Mapping extends RefType {
     const mappingPreimages = await storageResolver.mappingsLocation(corrections)
     let ret = await this.decodeMappingsLocation(mappingPreimages, location, storageResolver) // fetch mapping storage changes
     ret = Object.assign({}, this.initialDecodedState, ret) // merge changes
-    return {
-      value: ret,
-      type: this.typeName
-    }
+    return {value: ret, type: this.typeName}
   }
 
   decodeFromMemoryInternal (offset, memory) {
     // mappings can only exist in storage and not in memory
     // so this should never be called
-    return {
-      value: '<not implemented>',
-      length: '0x',
-      type: this.typeName
-    }
+    return {value: '<not implemented>', length: '0x', type: this.typeName}
   }
 
   async decodeMappingsLocation (preimages, location, storageResolver) {
