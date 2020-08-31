@@ -36,34 +36,42 @@ commander.command('help').description('output usage information').action(functio
 // get current version
 commander
     .option('-v, --verbose <level>', 'run with verbosity', mapVerbosity)
-    .action(async (filename) => {
-        if(!filename.endsWith('_test.sol')){
+    .action(async (testsPath) => {
+        
+        // Check if path exists
+        if (!fs.existsSync(testsPath)) {
+            console.error(testsPath + ' not found')
+            process.exit(1)
+        }
+
+        // Check if path is for a directory
+        const isDirectory = fs.lstatSync(testsPath).isDirectory()
+
+        // If path is for a file, file name must have `_test.sol` suffix
+        if(!isDirectory && !testsPath.endsWith('_test.sol')) {
             log.error('Test filename should end with "_test.sol"')
             process.exit()
         }
+
         // Console message
         console.log(colors.white('\n\t👁\t:: Running remix-tests - Unit testing for solidity ::\t👁\n'))
-        // set logger verbosity
+        
+        // Set logger verbosity
         if (commander.verbose) {
             logger.setVerbosity(commander.verbose)
             log.info('verbosity level set to ' + commander.verbose.blue)
         }
+
         const web3 = new Web3()
         const provider: any = new Provider()
         await provider.init()
         web3.setProvider(provider)
 
-        if (!fs.existsSync(filename)) {
-            console.error(filename + ' not found')
-            process.exit(1)
-        }
-
-        const isDirectory = fs.lstatSync(filename).isDirectory()
-        runTestFiles(path.resolve(filename), isDirectory, web3)
+        runTestFiles(path.resolve(testsPath), isDirectory, web3)
     })
 
 if (!process.argv.slice(2).length) {
-    log.error('Please specify a filename')
+    log.error('Please specify a file or directory path')
     process.exit()
 }
 
