@@ -46,9 +46,7 @@ function createVm (hardfork) {
     hardfork
   })
   vm.blockchain.validate = false
-  const web3vm = new remixLib.vm.Web3VMProvider()
-  web3vm.setVM(vm)
-  return { vm, web3vm, stateManager: vm.stateManager }
+  return { vm, stateManager: vm.stateManager }
 }
 
 /*
@@ -68,17 +66,9 @@ function initVM (st, privateKey) {
     })
   })
 
-  var web3Providers = new remixLib.vm.Web3Providers()
-  web3Providers.addVM('VM', vm)
-  web3Providers.get('VM', function (error, obj) {
-    if (error) {
-      var mes = 'provider TEST not defined'
-      console.log(mes)
-      st.fail(mes)
-    } else {
-      vm.web3 = obj
-    }
-  })
+  var web3Provider = new remixLib.vm.Web3VMProvider()
+  web3Provider.setVM(vm)
+  vm.web3 = web3Provider
   return vm
 }
 

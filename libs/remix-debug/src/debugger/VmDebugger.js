@@ -1,5 +1,5 @@
 const remixLib = require('@remix-project/remix-lib')
-const EventManager = remixLib.EventManager
+const EventManager = require('../eventManager')
 const ui = remixLib.helpers.ui
 const StorageResolver = require('../storage/storageResolver')
 const StorageViewer = require('../storage/storageViewer')

@@ -1,8 +1,8 @@
 'use strict'
-const remixLib = require('@remix-project/remix-lib')
+const remixdebug = require('@remix-project/remix-debug')
 const csjs = require('csjs-inject')
-const SourceMappingDecoder = remixLib.SourceMappingDecoder
-const AstWalker = remixLib.AstWalker
+const SourceMappingDecoder = remixdebug.SourceMappingDecoder
+const AstWalker = remixdebug.AstWalker
 const EventManager = require('../../lib/events')
 const globalRegistry = require('../../global/registry')
 import { Plugin } from '@remixproject/engine'

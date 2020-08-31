@@ -1,18 +1,17 @@
 const util = require('../util')
 const uiutil = require('../helpers/uiHelper')
-const traceHelper = require('../helpers/traceHelper')
 const ethutil = require('ethereumjs-util')
 const Web3 = require('web3')
 
 function web3VmProvider () {
   this.web3 = new Web3()
-  this.vm
+  this.vm = null
   this.vmTraces = {}
   this.txs = {}
   this.txsReceipt = {}
-  this.processingHash
-  this.processingAddress
-  this.processingIndex
+  this.processingHash = null
+  this.processingAddress = null
+  this.processingIndex = null
   this.previousDepth = 0
   this.incr = 0
   this.eth = {}
@@ -26,7 +25,7 @@ function web3VmProvider () {
   this.debug.storageRangeAt = (...args) => this.storageRangeAt(...args)
   this.debug.preimage = (...args) => this.preimage(...args)
   this.providers = { 'HttpProvider': function (url) {} }
-  this.currentProvider = {'host': 'vm provider'}
+  this.currentProvider = { 'host': 'vm provider' }
   this.storageCache = {}
   this.lastProcessedStorageTxHash = {}
   this.sha3Preimages = {}
@@ -168,9 +167,9 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     error: data.error === false ? undefined : data.error
   }
   self.vmTraces[self.processingHash].structLogs.push(step)
-  if (traceHelper.newContextStorage(step)) {
+  if (step.op === 'CREATE' || step.op === 'CALL') {
     if (step.op === 'CREATE') {
-      this.processingAddress = traceHelper.contractCreationToken(this.processingIndex)
+      this.processingAddress = '(Contract Creation - Step ' + this.processingIndex + ')'
       this.storageCache[this.processingHash][this.processingAddress] = {}
       this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
     } else {
@@ -184,7 +183,7 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
       }
     }
   }
-  if (previousopcode && traceHelper.isSHA3Instruction(previousopcode)) {
+  if (previousopcode && previousopcode.op === 'SHA3') {
     const preimage = getSha3Input(previousopcode.stack, previousopcode.memory)
     const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
     self.sha3Preimages[imageHash] = {
