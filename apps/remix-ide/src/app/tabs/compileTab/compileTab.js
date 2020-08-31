@@ -1,156 +1,122 @@
-const async = require('async')
-const EventEmitter = require('events')
-var remixTests = require('@remix-project/remix-tests')
-var Compiler = require('@remix-project/remix-solidity').Compiler
-var CompilerImport = require('../../compiler/compiler-imports')
+'use strict'
 
-// TODO: move this to the UI
-const addTooltip = require('../../ui/tooltip')
+var solcTranslate = require('solc/translate')
+var remixLib = require('@remix-project/remix-lib')
+var txHelper = remixLib.execution.txHelper
 
-class CompileTab {
-
-  constructor (queryParams, fileManager, editor, config, fileProvider) {
-    this.event = new EventEmitter()
-    this.queryParams = queryParams
-    this.compilerImport = new CompilerImport()
-    this.compiler = new Compiler((url, cb) => this.importFileCb(url, cb))
-    this.fileManager = fileManager
-    this.editor = editor
-    this.config = config
-    this.fileProvider = fileProvider
-  }
-
-  init () {
-    this.optimize = this.queryParams.get().optimize
-    this.optimize = this.optimize === 'true'
-    this.queryParams.update({ optimize: this.optimize })
-    this.compiler.set('optimize', this.optimize)
-
-    this.evmVersion = this.queryParams.get().evmVersion
-    if (this.evmVersion === 'undefined' || this.evmVersion === 'null' || !this.evmVersion) {
-      this.evmVersion = null
-    }
-    this.queryParams.update({ evmVersion: this.evmVersion })
-    this.compiler.set('evmVersion', this.evmVersion)
-  }
-
-  setOptimize (newOptimizeValue) {
-    this.optimize = newOptimizeValue
-    this.queryParams.update({ optimize: this.optimize })
-    this.compiler.set('optimize', this.optimize)
-  }
-
-  setEvmVersion (newEvmVersion) {
-    this.evmVersion = newEvmVersion
-    this.queryParams.update({ evmVersion: this.evmVersion })
-    this.compiler.set('evmVersion', this.evmVersion)
-  }
-
-  /**
-   * Set the compiler to using Solidity or Yul (default to Solidity)
-   * @params lang {'Solidity' | 'Yul'} ...
-   */
-  setLanguage (lang) {
-    this.compiler.set('language', lang)
-  }
-
-  /**
-   * Compile a specific file of the file manager
-   * @param {string} target the path to the file to compile
-   */
-  compileFile (target) {
-    if (!target) throw new Error('No target provided for compiliation')
-    const provider = this.fileManager.fileProviderOf(target)
-    if (!provider) throw new Error(`cannot compile ${target}. Does not belong to any explorer`)
-    return new Promise((resolve, reject) => {
-      provider.get(target, (error, content) => {
-        if (error) return reject(error)
-        const sources = { [target]: { content } }
-        this.event.emit('startingCompilation')
-        // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
-        setTimeout(() => { this.compiler.compile(sources, target); resolve() }, 100)
-      })
-    })
-  }
-
-  runCompiler () {
-    try {
-      this.fileManager.saveCurrentFile()
-      this.editor.clearAnnotations()
-      var currentFile = this.config.get('currentFile')
-      return this.compileFile(currentFile)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  importExternal (url, cb) {
-    this.compilerImport.import(url,
-
-      // TODO: move to an event that is generated, the UI shouldn't be here
-      (loadingMsg) => { addTooltip(loadingMsg) },
-      (error, content, cleanUrl, type, url) => {
-        if (error) return cb(error)
-
-        if (this.fileProvider) {
-          this.fileProvider.addExternal(type + '/' + cleanUrl, content, url)
-        }
-        cb(null, content)
-      })
-  }
-
-  /**
-    * import the content of @arg url.
-    * first look in the browser localstorage (browser explorer) or locahost explorer. if the url start with `browser/*` or  `localhost/*`
-    * then check if the @arg url is located in the localhost, in the node_modules or installed_contracts folder
-    * then check if the @arg url match any external url
-    *
-    * @param {String} url  - URL of the content. can be basically anything like file located in the browser explorer, in the localhost explorer, raw HTTP, github address etc...
-    * @param {Function} cb  - callback
-    */
-  importFileCb (url, filecb) {
-    if (url.indexOf('remix_tests.sol') !== -1) return filecb(null, remixTests.assertLibCode)
-
-    var provider = this.fileManager.fileProviderOf(url)
-    if (provider) {
-      if (provider.type === 'localhost' && !provider.isConnected()) {
-        return filecb(`file provider ${provider.type} not available while trying to resolve ${url}`)
-      }
-      provider.exists(url, (error, exist) => {
-        if (error) return filecb(error)
-        if (!exist && provider.type === 'localhost') return filecb(`not found ${url}`)
-
-        /*
-          if the path is absolute and the file does not exist, we can stop here
-          Doesn't make sense to try to resolve "localhost/node_modules/localhost/node_modules/<path>" and we'll end in an infinite loop.
-        */
-        if (!exist && url.startsWith('browser/')) return filecb(`not found ${url}`)
-        if (!exist && url.startsWith('localhost/')) return filecb(`not found ${url}`)
-
-        if (exist) return provider.get(url, filecb)
-
-        // try to resolve localhost modules (aka truffle imports) - e.g from the node_modules folder
-        const localhostProvider = this.fileManager.getProvider('localhost')
-        if (localhostProvider.isConnected()) {
-          var splitted = /([^/]+)\/(.*)$/g.exec(url)
-          return async.tryEach([
-            (cb) => { this.importFileCb('localhost/installed_contracts/' + url, cb) },
-            (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
-            (cb) => { this.importFileCb('localhost/node_modules/' + url, cb) },
-            (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
-            (error, result) => {
-              if (error) return this.importExternal(url, filecb)
-              filecb(null, result)
-            }
-          )
-        } else {
-          // try to resolve external content
-          this.importExternal(url, filecb)
-        }
-      })
-    }
-  }
-
+module.exports = (contractName, contract, compiledSource) => {
+  return getDetails(contractName, contract, compiledSource)
 }
 
-module.exports = CompileTab
+var getDetails = function (contractName, contract, source) {
+  var detail = {}
+  detail.name = contractName
+  detail.metadata = contract.metadata
+  if (contract.evm.bytecode.object) {
+    detail.bytecode = contract.evm.bytecode.object
+  }
+
+  detail.abi = contract.abi
+
+  if (contract.evm.bytecode.object) {
+    detail.bytecode = contract.evm.bytecode
+    detail.web3Deploy = gethDeploy(contractName.toLowerCase(), contract.abi, contract.evm.bytecode.object)
+
+    detail.metadataHash = retrieveMetadataHash(contract.evm.bytecode.object)
+    if (detail.metadataHash) {
+      detail.swarmLocation = 'bzzr://' + detail.metadataHash
+    }
+  }
+
+  detail.functionHashes = {}
+  for (var fun in contract.evm.methodIdentifiers) {
+    detail.functionHashes[contract.evm.methodIdentifiers[fun]] = fun
+  }
+
+  detail.gasEstimates = formatGasEstimates(contract.evm.gasEstimates)
+
+  detail.devdoc = contract.devdoc
+  detail.userdoc = contract.userdoc
+
+  if (contract.evm.deployedBytecode && contract.evm.deployedBytecode.object.length > 0) {
+    detail['Runtime Bytecode'] = contract.evm.deployedBytecode
+  }
+
+  if (source && contract.assembly !== null) {
+    detail['Assembly'] = solcTranslate.prettyPrintLegacyAssemblyJSON(contract.evm.legacyAssembly, source.content)
+  }
+
+  return detail
+}
+
+var retrieveMetadataHash = function (bytecode) {
+  var match = /a165627a7a72305820([0-9a-f]{64})0029$/.exec(bytecode)
+  if (!match) {
+    match = /a265627a7a72305820([0-9a-f]{64})6c6578706572696d656e74616cf50037$/.exec(bytecode)
+  }
+  if (match) {
+    return match[1]
+  }
+}
+
+var gethDeploy = function (contractName, jsonInterface, bytecode) {
+  var code = ''
+  var funABI = txHelper.getConstructorInterface(jsonInterface)
+
+  funABI.inputs.forEach(function (inp) {
+    code += 'var ' + inp.name + ' = /* var of type ' + inp.type + ' here */ ;\n'
+  })
+
+  contractName = contractName.replace(/[:./]/g, '_')
+  code += 'var ' + contractName + 'Contract = new web3.eth.Contract(' + JSON.stringify(jsonInterface).replace('\n', '') + ');' +
+    '\nvar ' + contractName + ' = ' + contractName + 'Contract.deploy({'
+    "\n     data: '0x" + bytecode + "', " +
+    "\n     arguments: [";
+
+  funABI.inputs.forEach(function (inp) {
+    code += '\n          ' + inp.name + ','
+  })
+
+  code += '\n     ]' +
+    '\n}).send({' +
+    '\n     from: web3.eth.accounts[0], ' +
+    "\n     gas: '4700000'" +
+    '\n   }, function (e, contract){' +
+    '\n    console.log(e, contract);' +
+    "\n    if (typeof contract.address !== 'undefined') {" +
+    "\n         console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);" +
+    '\n    }' +
+    '\n })'
+
+  return code
+}
+
+var formatGasEstimates = function (data) {
+  if (!data) return {}
+  if (data.creation === undefined && data.external === undefined && data.internal === undefined) return {}
+
+  var gasToText = function (g) {
+    return g === null ? 'unknown' : g
+  }
+
+  var ret = {}
+  var fun
+  if ('creation' in data) {
+    ret['Creation'] = data.creation
+  }
+
+  if ('external' in data) {
+    ret['External'] = {}
+    for (fun in data.external) {
+      ret['External'][fun] = gasToText(data.external[fun])
+    }
+  }
+
+  if ('internal' in data) {
+    ret['Internal'] = {}
+    for (fun in data.internal) {
+      ret['Internal'][fun] = gasToText(data.internal[fun])
+    }
+  }
+  return ret
+}
