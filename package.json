@@ -175,6 +175,7 @@
     "ace-mode-move": "0.0.1",
     "ace-mode-solidity": "^0.1.0",
     "ace-mode-zokrates": "^1.0.0",
+    "ace-mode-lexon": "^1.*.*",
     "async": "^2.1.2",
     "babel-eslint": "^10.0.0",
     "babel-plugin-add-module-exports": "^1.0.2",
