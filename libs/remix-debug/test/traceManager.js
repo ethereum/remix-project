@@ -1,32 +1,18 @@
 'use strict'
 const TraceManager = require('../src/trace/traceManager')
 const tape = require('tape')
-const Web3Providers = require('../src/web3Provider/web3Providers')
 const web3Test = require('./resources/testWeb3')
-
-let web3 = null
 
 tape('TraceManager', function (t) {
   let traceManager
 
   t.test('TraceManager.init', function (st) {
-    const web3Providers = new Web3Providers()
-    web3Providers.addProvider('TEST', web3Test)
-    web3Providers.get('TEST', function (error, obj) {
-      if (error) {
-        const mes = 'provider TEST not defined'
-        console.log(mes)
-        st.fail(mes)
-      } else {
-        web3 = obj
-        traceManager = new TraceManager({web3: web3})
-        st.end()
-      }
-    })
+    traceManager = new TraceManager({web3: web3Test})
+    st.end()
   })
 
   t.test('TraceManager.resolveTrace', function (st) {
-    const tx = web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+    const tx = web3Test.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     traceManager.resolveTrace(tx).then(() => {
       st.end()
     }).catch(() => {

@@ -1,5 +1,6 @@
 'use strict'
-const ui = require('./uiHelper')
+const remixLib = require('@remix-project/remix-lib')
+const ui = remixLib.helpers.ui
 
 module.exports = {
   // vmTraceIndex has to point to a CALL, CODECALL, ...

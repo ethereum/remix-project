@@ -2,8 +2,7 @@
 /**
  * Crawl the given AST through the function walk(ast, callback)
  */
-function AstWalker () {
-}
+function AstWalker () {} // eslint-disable-line
 
 /**
  * visit all the AST nodes

@@ -1,11 +1,12 @@
 'use strict'
 const remixLib = require('@remix-project/remix-lib')
-const SourceLocationTracker = remixLib.SourceLocationTracker
-const AstWalker = remixLib.AstWalker
-const EventManager = remixLib.EventManager
+const SourceLocationTracker = require('../source/sourceLocationTracker')
+const AstWalker = require('../source/astWalker')
+const EventManager = require('../eventManager')
+
 const decodeInfo = require('./decodeInfo')
 const util = remixLib.util
-const traceHelper = remixLib.helpers.trace
+const traceHelper = require('../trace/traceHelper')
 const typesUtil = require('./types/util.js')
 
 /**

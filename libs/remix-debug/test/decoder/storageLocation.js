@@ -3,8 +3,7 @@ var tape = require('tape')
 var compiler = require('solc')
 var stateDecoder = require('../../src/solidity-decoder/stateDecoder')
 var contracts = require('./contracts/miscContracts')
-var remixLib = require('@remix-project/remix-lib')
-var compilerInput = remixLib.helpers.compiler.compilerInput
+var compilerInput = require('../helpers/compilerHelper').compilerInput
 
 tape('solidity', function (t) {
   t.test('storage location', function (st) {
