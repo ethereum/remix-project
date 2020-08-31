@@ -145,9 +145,11 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
                 console.log('')
 
                 errors.forEach((error, index) => {
-                    console.log('  ' + (index + 1) + ') ' + error.context + ' ' + error.value)
+                    console.log('  ' + (index + 1) + ') ' + colors.bold(error.context + ': ') + error.value)
                     console.log('')
                     console.log(colors.red('\t error: ' + error.errMsg))
+                    console.log(colors.green('\t expected value to be '+ error.assertMethod + ' to: ' + error.expected))
+                    console.log(colors.red('\t returned: ' + error.returned))
                 })
                 console.log('')
 
