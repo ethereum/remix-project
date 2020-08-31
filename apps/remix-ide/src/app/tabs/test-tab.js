@@ -152,7 +152,16 @@ module.exports = class TestTab extends ViewPlugin {
       this.testsOutput.appendChild(yo`
         <div class="${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0" id="UTContext${result.context}">
           <span> ✘ ${result.value}</span>
-          <span>"${result.errMsg}"</span>
+          <span class="text-dark">Error Message:</span>
+          <span class="pb-2">"${result.errMsg}"</span>
+          <span class="text-dark">Asserttion:</span>
+          <div class="d-flex flex-wrap">
+            <span>The value should be </div>
+            <div class="px-1 font-weight-bold">'${result.assertMethod}'</div>
+            <div>(to): ${result.expected}</div>
+          </div>
+            <span class="text-dark">The result is:</span>
+            <span>${result.returned}</span>
         </div>
       `)
     }
