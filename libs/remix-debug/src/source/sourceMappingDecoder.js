@@ -1,5 +1,6 @@
 'use strict'
-const util = require('./util')
+const remixLib = require('@remix-project/remix-lib')
+const util = remixLib.util
 const AstWalker = require('./astWalker')
 
 /**

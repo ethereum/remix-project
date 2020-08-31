@@ -16,7 +16,6 @@
   ],
   "dependencies": {
     "eslint-scope": "^5.0.0",
-    "@remix-project/remix-lib": "0.4.30",
     "solc": "^0.6.0",
     "webworkify-webpack": "^2.1.5"
   },

@@ -1,14 +1,10 @@
 const Web3 = require('web3')
 const Debugger = require('../debugger/debugger.js')
-const ContextManager = require('./contextManager.js')
 import EventManager from 'events'
-const remixLib = require('@remix-project/remix-lib')
-const executionContext = remixLib.execution.executionContext
 
 class CmdLine {
 
   constructor () {
-    this.executionContext = executionContext
     this.events = new EventManager()
     this.lineColumnPos = null
     this.rawLocation = null
@@ -32,21 +28,10 @@ class CmdLine {
   }
 
   initDebugger (cb) {
-    this.contextManager = new ContextManager(this.executionContext)
-
     this.debugger = new Debugger({
-      web3: this.contextManager.getWeb3(),
+      web3: this.web3,
       compilationResult: () => { return this.compilation.compilationResult }
     })
-
-    this.contextManager.event.register('providerChanged', () => {
-      this.debugger.updateWeb3(this.contextManager.getWeb3())
-    })
-
-    this.contextManager.initProviders()
-
-    this.contextManager.addProvider('debugger_web3', this.web3)
-    this.contextManager.switchProvider('debugger_web3', cb)
   }
 
   getSource () {

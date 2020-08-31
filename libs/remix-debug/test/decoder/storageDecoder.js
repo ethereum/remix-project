@@ -3,8 +3,7 @@ var tape = require('tape')
 var compiler = require('solc')
 var stateDecoder = require('../../src/solidity-decoder/stateDecoder')
 var MockStorageResolver = require('./mockStorageResolver')
-var remixLib = require('@remix-project/remix-lib')
-var compilerInput = remixLib.helpers.compiler.compilerInput
+var compilerInput = require('../helpers/compilerHelper').compilerInput
 var testMappingStorage = require('./stateTests/mapping')
 
 tape('solidity', function (t) {

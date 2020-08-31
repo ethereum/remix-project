@@ -11,9 +11,9 @@ var EventManager = require('../../../lib/events')
 
 var globalRegistry = require('../../../global/registry')
 
-var remixLib = require('@remix-project/remix-lib')
+var remixDebug = require('@remix-project/remix-debug')
 
-var init = remixLib.init
+var init = remixDebug.init
 
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')

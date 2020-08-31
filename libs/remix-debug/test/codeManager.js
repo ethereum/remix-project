@@ -1,34 +1,19 @@
 'use strict'
 const tape = require('tape')
-const Web3Providers = require('../src/web3Provider/web3Providers')
 const TraceManager = require('../src/trace/traceManager')
 const CodeManager = require('../src/code/codeManager')
 const web3Test = require('./resources/testWeb3')
 
-let web3 = null
-
 tape('CodeManager', function (t) {
-  let codeManager
-  const web3Providers = new Web3Providers()
-  web3Providers.addProvider('TEST', web3Test)
-  web3Providers.get('TEST', function (error, obj) {
-    if (error) {
-      const mes = 'provider TEST not defined'
-      console.log(mes)
-      t.fail(mes)
-    } else {
-      web3 = obj
-      const traceManager = new TraceManager({web3: web3})
-      codeManager = new CodeManager(traceManager)
-      const contractCode = web3.eth.getCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
-      codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', contractCode) // so a call to web3 is not necessary
-      const tx = web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
-      traceManager.resolveTrace(tx).then(() => {
-        continueTesting(t, codeManager)
-      }).catch(() => {
-        t.fail(' - traceManager.resolveTrace - failed ')
-      })
-    }
+  const traceManager = new TraceManager({web3: web3Test})
+  let codeManager = new CodeManager(traceManager)
+  const contractCode = web3Test.eth.getCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
+  codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', contractCode) // so a call to web3 is not necessary
+  const tx = web3Test.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+  traceManager.resolveTrace(tx).then(() => {
+    continueTesting(t, codeManager)
+  }).catch(() => {
+    t.fail(' - traceManager.resolveTrace - failed ')
   })
 })
 
@@ -61,7 +46,7 @@ function continueTesting (t, codeManager) {
         }
       }
     })
-    const tx = web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+    const tx = web3Test.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     codeManager.resolveStep(0, tx)
     codeManager.resolveStep(70, tx)
   })
