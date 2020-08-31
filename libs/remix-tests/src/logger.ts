@@ -34,7 +34,7 @@ class Log {
     logger: Logger;
     constructor () {
         this.logger = winston.createLogger({
-            level: 'error',
+            level: 'info',
             transports: [new winston.transports.Console()],
             format: winston.format.combine(
                 winston.format.colorize({ all: true }),
