@@ -37,10 +37,10 @@ commander.command('help').description('output usage information').action(functio
 commander
     .option('-v, --verbose <level>', 'run with verbosity', mapVerbosity)
     .action(async (testsPath) => {
-        
+
         // Check if path exists
         if (!fs.existsSync(testsPath)) {
-            console.error(testsPath + ' not found')
+            log.error(testsPath + ' not found')
             process.exit(1)
         }
 

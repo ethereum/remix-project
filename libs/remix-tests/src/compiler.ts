@@ -103,19 +103,19 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
             }
         } else {
             // walkSync only if it is a directory
-            let solFileCount = 0;
+            let testFileCount = 0;
             fs.walkSync(filepath, (foundpath: string) => {
                 // only process .sol files
-                if (foundpath.split('.').pop() === 'sol') {
-                    solFileCount++;
+                if (foundpath.split('.').pop() === 'sol' && foundpath.endsWith('_test.sol')) {
+                    testFileCount++;
                     processFile(foundpath, sources, true)
                 }
             })
-            if(solFileCount > 0) {
-                log.info(`${solFileCount} Solidity files found`)
+            if(testFileCount > 0) {
+                log.info(`${testFileCount} Solidity test file${testFileCount===1?'':'s'} found`)
             }
             else {
-                log.error(`No Solidity files found`)
+                log.error(`No Solidity test file found. Make sure your test file ends with '_test.sol'`)
                 process.exit()
             }
         }
