@@ -1,3 +1,6 @@
+import * as packageJson from '../../../../../../package.json'
+import { ViewPlugin } from '@remixproject/engine'
+
 let yo = require('yo-yo')
 let csjs = require('csjs-inject')
 let globalRegistry = require('../../../global/registry')
@@ -6,8 +9,6 @@ var modalDialogCustom = require('../modal-dialog-custom')
 var tooltip = require('../tooltip')
 var GistHandler = require('../../../lib/gist-handler')
 var QueryParams = require('../../../lib/query-params.js')
-import * as packageJson from '../../../../../../package.json'
-import { ViewPlugin } from '@remixproject/engine'
 
 let css = csjs`
   .text {
@@ -39,7 +40,7 @@ let css = csjs`
   .hpSections {
     min-width: 640px;
   }
-  .remixHomeTwitter {
+  .remixHomeMedia {
     overflow-x: hidden;
     overflow-y: auto;
   }
@@ -66,12 +67,26 @@ let css = csjs`
   .envLogo {
     height: 16px;
   }
-  .envLabel {
+  .cursorStyle {
     cursor: pointer;
   }
   .envButton {
     width: 120px;
     height: 70px;
+  }
+  .block input[type='radio']:checked ~ .media{
+    width: auto;
+    display: block;
+    transition: .5s ease-in;
+  }
+  .media{
+    width: 0;
+    display: none;
+    overflow: hidden;
+    transition: .5s ease-out;
+  }
+  .mediumPanel {
+    width: 400px;
   }
 }
 `
@@ -95,6 +110,42 @@ export class LandingPage extends ViewPlugin {
     this.appManager = appManager
     this.verticalIcons = verticalIcons
     this.gistHandler = new GistHandler()
+    const themeQuality = globalRegistry.get('themeModule').api.currentTheme().quality
+    this.twitterFrame = yo`
+      <div class="px-2 ${css.media}">
+        <a class="twitter-timeline"
+          data-width="400"
+          data-theme="${themeQuality}"
+          data-chrome="nofooter noheader transparent"
+          data-tweet-limit="8"
+          href="https://twitter.com/EthereumRemix"
+        >
+        </a>
+        <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+      </div>
+    `
+    globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
+      console.log("theme is ", theme.quality)
+      this.onThemeChanged(theme.quality)
+    })
+  }
+
+  onThemeChanged (themeQuality) {
+    console.log("themes in listener is", themeQuality)
+    let twitterFrame = yo`
+      <div class="px-2 ${css.media}">
+        <a class="twitter-timeline"
+          data-width="400"
+          data-theme="${themeQuality}"
+          data-chrome="nofooter noheader transparent"
+          data-tweet-limit="8"
+          href="https://twitter.com/EthereumRemix"
+        >
+        </a>
+        <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+      </div>
+    `
+    yo.update(this.twitterFrame, twitterFrame)
   }
 
   render () {
@@ -184,7 +235,7 @@ export class LandingPage extends ViewPlugin {
       this.verticalIcons.select('fileExplorers')
     }
 
-    globalRegistry.get('themeModule').api.events.on('themeChanged', () => {
+    globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('remixLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('solidityLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('vyperLogo'))
@@ -198,10 +249,11 @@ export class LandingPage extends ViewPlugin {
       return yo`
         <button class="btn border-secondary d-flex mr-3 text-nowrap justify-content-center flex-column align-items-center ${css.envButton}" data-id="landingPageStartSolidity" onclick=${() => callback()}>
           <img class="m-2 align-self-center ${css.envLogo}" id=${envID} src="${imgPath}">
-          <label class="text-uppercase text-dark ${css.envLabel}">${envText}</label>
+          <label class="text-uppercase text-dark ${css.cursorStyle}">${envText}</label>
         </button>
       `
     }
+
     // main
     const solEnv = createEnvButton('assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
     const vyperEnv = createEnvButton('assets/img/vyperLogo.webp', 'vyperLogo', 'Vyper', startVyper)
@@ -228,6 +280,9 @@ export class LandingPage extends ViewPlugin {
       document.location.reload()
     }
     const img = yo`<img src="assets/img/sleepingRemiCroped.webp"></img>`
+
+    // to retrieve medium posts
+    document.body.appendChild(yo`<script src="https://www.retainable.io/assets/retainable/rss-embed/retainable-rss-embed.js"></script>`)
     const container = yo`
       <div class="${css.homeContainer} d-flex bg-light" data-id="landingPageHomeContainer">
         <div class="${css.mainContent}">
@@ -309,11 +364,30 @@ export class LandingPage extends ViewPlugin {
             </div><!-- end of #col2 -->
           </div><!-- end of hpSections -->
         </div>
-        <div class="border-left mx-2 bg-secondary ${css.remixHomeTwitter}">
-          <a class="twitter-timeline" data-width="400" data-chrome="nofooter transparent" data-tweet-limit="8" href="https://twitter.com/EthereumRemix">
-            Tweets by EthereumRemix
-          </a>
-          <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        <div class="d-flex">
+          <div id="remixIDE_TwitterBlock" class="bg-dark border-left p-2 mx-0 mb-0 ${css.block} ${css.remixHomeMedia}">
+            <input type="radio" name="media" id="remixIDE_TwitterRadio" class="d-none" checked />
+            <label class="mx-1 my-0 btn p-0 text-info fab fa-twitter ${css.cursorStyle}" for="remixIDE_TwitterRadio"></label>
+            ${this.twitterFrame}
+          </div>
+          <div id="remixIDE_MediumBlock" class="bg-dark border-left p-2 mx-0 mb-0 ${css.block} ${css.remixHomeMedia}">
+            <input type="radio" name="media" id="remixIDE_MediumRadio" class="d-none" />
+            <label class="mx-1 my-0 btn p-0 text-danger fab fa-medium ${css.cursorStyle}" for="remixIDE_MediumRadio"></label>
+            <div class="px-2 ${css.media}">
+              <div id="medium-widget" class="${css.mediumPanel}">
+                <div
+                  id="retainable-rss-embed"
+                  data-rss="https://medium.com/feed/remix-ide"
+                  data-maxcols="1"
+                  data-layout="grid"
+                  data-poststyle="external"
+                  data-readmore="More..."
+                  data-buttonclass="btn mb-3"
+                  data-offset="-100">
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     `
