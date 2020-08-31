@@ -1,6 +1,9 @@
 import fs from './fileSystem'
 import async from 'async'
 import path from 'path'
+import Log from './logger'
+const logger = new Log()
+const log = logger.logger
 import { Compiler as RemixCompiler } from '@remix-project/remix-solidity'
 import { SrcIfc, CompilerConfiguration, CompilationErrors } from './types'
 
@@ -100,12 +103,21 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
             }
         } else {
             // walkSync only if it is a directory
+            let solFileCount = 0;
             fs.walkSync(filepath, (foundpath: string) => {
                 // only process .sol files
                 if (foundpath.split('.').pop() === 'sol') {
+                    solFileCount++;
                     processFile(foundpath, sources, true)
                 }
             })
+            if(solFileCount > 0) {
+                log.info(`${solFileCount} Solidity files found`)
+            }
+            else {
+                log.error(`No Solidity files found`)
+                process.exit()
+            }
         }
         
     } catch (e) { // eslint-disable-line no-useless-catch
