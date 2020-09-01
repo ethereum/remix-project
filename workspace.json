@@ -509,6 +509,60 @@
           }
         }
       }
+    },
+    "remix-ui-tree-view": {
+      "root": "libs/remix-ui/tree-view",
+      "sourceRoot": "libs/remix-ui/tree-view/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-ui/tree-view/tsconfig.lib.json",
+              "libs/remix-ui/tree-view/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/tree-view/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remix-ui/tree-view/jest.config.js",
+            "tsConfig": "libs/remix-ui/tree-view/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "remix-ui-debugger-ui": {
+      "root": "libs/remix-ui/debugger-ui",
+      "sourceRoot": "libs/remix-ui/debugger-ui/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-ui/debugger-ui/tsconfig.lib.json",
+              "libs/remix-ui/debugger-ui/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/debugger-ui/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remix-ui/debugger-ui/jest.config.js",
+            "tsConfig": "libs/remix-ui/debugger-ui/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

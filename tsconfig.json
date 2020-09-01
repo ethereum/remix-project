@@ -25,7 +25,9 @@
       "@remix-project/remix-tests": ["dist/libs/remix-tests/src/index.js"],
       "@remix-project/remix-url-resolver": ["dist/libs/remix-url-resolver/index.js"],
       "@remix-project/remixd": ["dist/libs/remixd/index.js"],
-      "@remix-project/debugger-ui": ["libs/debugger-ui/src/index.ts"]
+      "@remix-project/debugger-ui": ["libs/debugger-ui/src/index.ts"],
+      "@remix-ui/tree-view": ["libs/remix-ui/tree-view/src/index.ts"],
+      "@remix-ui/debugger-ui": ["libs/remix-ui/debugger-ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
