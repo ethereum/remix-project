@@ -9,6 +9,16 @@ const defaultExecutionContext = require('./execution-context')
 const txFormat = require('./txFormat')
 const txHelper = require('./txHelper')
 
+function addExecutionCosts(txResult, tx) {
+  if (txResult && txResult.result) {
+    if (txResult.result.execResult) {
+      tx.returnValue = txResult.result.execResult.returnValue
+      if (txResult.result.execResult.gasUsed) tx.executionCost = txResult.result.execResult.gasUsed.toString(10)
+    }
+    if (txResult.result.gasUsed) tx.transactionCost = txResult.result.gasUsed.toString(10)
+  }
+}
+
 /**
   * poll web3 each 2s if web3
   * listen on transaction executed event if VM
@@ -35,16 +45,6 @@ class TxListener {
 
     this.udapp.register('callExecuted', this.onCallExecuted.bind(this))
     this.udapp.register('transactionExecuted', this.onTransactionExecuted.bind(this))
-
-    function addExecutionCosts (txResult, tx) {
-      if (txResult && txResult.result) {
-        if (txResult.result.execResult) {
-          tx.returnValue = txResult.result.execResult.returnValue
-          if (txResult.result.execResult.gasUsed) tx.executionCost = txResult.result.execResult.gasUsed.toString(10)
-        }
-        if (txResult.result.gasUsed) tx.transactionCost = txResult.result.gasUsed.toString(10)
-      }
-    }
   }
 
   restart() {
