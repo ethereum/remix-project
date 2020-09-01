@@ -1,12 +1,32 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import AssemblyItems from './assembly-items'
 import './styles/dropdown-panel.css'
 import EventManager from '../../../../../apps/remix-ide/src/lib/events'
 import TreeView from '../../../../../apps/remix-ide/src/app/ui/TreeView'
 import copyToClipboard from '../../../../../apps/remix-ide/src/app/ui/copy-to-clipboard'
 
-export const DropdownPanel = ({ name, opts, node }) => {
+export interface DropdownPanelProps {
+    dropdownName: string,
+    opts: {
+        json: boolean,
+        displayContentOnly?: boolean,
+        css?: {
+            [key: string]: string
+        }
+    },
+    codeView?: string[],
+    index?: number,
+    calldata?: {
+        [key: string]: string
+    },
+    header?: string
+}
+
+export const DropdownPanel = (props: DropdownPanelProps) => {
+    const { dropdownName, opts, codeView, index, calldata, header } = props
     const event = new EventManager()
     const treeView = new TreeView(opts)
+    const dropdownRawEl = useRef(null)
     const [state, setState] = useState({
         header: '',
         json: opts.json,
@@ -30,7 +50,10 @@ export const DropdownPanel = ({ name, opts, node }) => {
         },
         showRefreshIcon: false
     })
-    const dropdownRawEl = useRef(null)
+
+    useEffect(() => {
+        update(calldata, header)
+    }, [calldata, header])
 
     const handleToggle = () => {
         setState(prevState => {
@@ -149,7 +172,7 @@ export const DropdownPanel = ({ name, opts, node }) => {
     const title = !state.displayContentOnly ? 
     <div className="py-0 px-1 title">
         <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div>
-        <div className="name" onClick={handleToggle}>{name}</div><span className="nameDetail" onClick={handleToggle}></span>
+        <div className="name" onClick={handleToggle}>{dropdownName}</div><span className="nameDetail" onClick={handleToggle}></span>
         {copyToClipboard(() => copyClipboard())}
     </div> : <div></div>
     
@@ -167,7 +190,9 @@ export const DropdownPanel = ({ name, opts, node }) => {
             { title }
             <div className='dropdownpanel' style={{ display: state.toggleDropdown ? 'block' : 'none' }}>
                 <i className="refresh fas fa-sync" style={{ display: state.showRefreshIcon ? 'inline-block' : 'none' }} aria-hidden="true"></i>
-                <div className='dropdowncontent' style={{ display: state.dropdownContent.display }}>{node || content }</div>
+                <div className='dropdowncontent' style={{ display: state.dropdownContent.display }}>
+                    { codeView ? <AssemblyItems codeView={codeView} index={index} /> : content }
+                </div>
                 <div className='dropdownrawcontent' style={{ display: state.dropdownRawContent.display }} ref={ dropdownRawEl }></div>
                 <div className='message' style={{ display: state.message.display }}></div>
             </div>
