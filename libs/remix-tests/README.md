@@ -7,14 +7,23 @@
 
 `remix-tests` is a tool to test Solidity smart contracts. It works underneath Remix IDE plugin "Solidity Unit Testing" which is used to write and run test cases for a contract. Tests are written in Solidity itself. `remix-tests` can be used as CLI and a library too.
 
+To know more about Remix IDE `Solidity Unit Testing Plugin`, visit [Remix IDE official documentation](https://remix-ide.readthedocs.io/en/latest/unittesting.html).
+
 ### Installation
-As a dev dependency:
+* As a dev dependency:
 
-`npm install --save-dev remix-tests`
+`npm install --save-dev @remix-project/remix-tests`
 
-As a global NPM module to use as CLI:
+* As a global NPM module to use as CLI:
 
-`npm -g install remix-tests`
+`npm -g install @remix-project/remix-tests`
+
+To confirm installation, run:
+```
+$ remix-tests --version
+0.1.34
+```
+Version should be same as on NPM.
 
 ### Test structure
 remix-tests provides and injects a built-in assert library for testing purpose.
@@ -29,6 +38,8 @@ remix-tests provides and injects a built-in assert library for testing purpose.
 | `Assert.greaterThan()` | `uint`, `int` |
 | `Assert.lesserThan()` | `uint`, `int` |
 
+Examples to understand the use of assert library methods can be found [here in tests](tests/examples_0).
+
 #### Available special functions:
 Apart from above, library provides some special functions as:
 
@@ -37,19 +48,20 @@ Apart from above, library provides some special functions as:
 * `afterEach()` - runs after each test
 * `afterAll()` - runs after all tests
 
+Example to understand the use of special methods can be found [here in tests](tests/various_sender/sender_and_value_test.sol).
 
 #### Use a different sender `msg.sender`
 
 It is quite common that a contract need to be tested in different situation.
 Especially being able to set before hand the sender account (`msg.sender`) used for a specific tests suite enable quite a lot a new test use cases.
-please checkout this [test contract](https://github.com/ethereum/remix/blob/master/remix-tests/tests/various_sender/sender_test.sol) for an example.
+please checkout this [test contract](tests/various_sender/sender_and_value_test.sol) for an example.
 Note that `TestsAccounts` is filled with all the accounts available in `web3.eth.accounts()`.
 
 ### How to use
 
 #### As command line interface
 
-* To run all files inside `examples` directory
+* To run all test files inside `examples` directory
 ```
 $ remix-tests examples/
 ``` 
@@ -116,28 +128,53 @@ contract MyTest {
 Running `simple_storage_test.sol` file will output as:
 
 ```
+
+	👁	:: Running remix-tests - Unit testing for solidity ::	👁
+
+[14:58:43] payload method is  eth_accounts
+[14:58:49] payload method is  eth_accounts
+[14:58:49] payload method is  eth_estimateGas
+[14:58:49] payload method is  eth_gasPrice
+[14:58:49] payload method is  eth_sendTransaction
+[14:58:49] payload method is  eth_getTransactionReceipt
+[14:58:49] payload method is  eth_getCode
+'creation of library remix_tests.sol:Assert pending...'
+[14:58:49] payload method is  eth_estimateGas
+[14:58:49] payload method is  eth_gasPrice
+[14:58:49] payload method is  eth_sendTransaction
+[14:58:49] payload method is  eth_getTransactionReceipt
+[14:58:49] payload method is  eth_getCode
+[14:58:49] payload method is  eth_estimateGas
+[14:58:49] payload method is  eth_gasPrice
+[14:58:49] payload method is  eth_sendTransaction
+[14:58:49] payload method is  eth_getTransactionReceipt
+[14:58:49] payload method is  eth_getCode
+
 	◼  MyTest
-[19:15:02] payload method is  eth_gasPrice
-[19:15:02] payload method is  eth_sendTransaction
-[19:15:02] payload method is  eth_getTransactionReceipt
-[19:15:02] payload method is  eth_gasPrice
-[19:15:02] payload method is  eth_sendTransaction
-[19:15:02] payload method is  eth_getTransactionReceipt
+[14:58:49] payload method is  eth_gasPrice
+[14:58:49] payload method is  eth_sendTransaction
+[14:58:50] payload method is  eth_getTransactionReceipt
+[14:58:50] payload method is  eth_gasPrice
+[14:58:50] payload method is  eth_sendTransaction
+[14:58:50] payload method is  eth_getTransactionReceipt
 	✓  Initial value should be100
-[19:15:02] payload method is  eth_gasPrice
-[19:15:02] payload method is  eth_sendTransaction
-[19:15:02] payload method is  eth_getTransactionReceipt
-[19:15:02] payload method is  eth_gasPrice
-[19:15:02] payload method is  eth_sendTransaction
-[19:15:02] payload method is  eth_getTransactionReceipt
+[14:58:50] payload method is  eth_gasPrice
+[14:58:50] payload method is  eth_sendTransaction
+[14:58:50] payload method is  eth_getTransactionReceipt
+[14:58:50] payload method is  eth_gasPrice
+[14:58:50] payload method is  eth_sendTransaction
+[14:58:50] payload method is  eth_getTransactionReceipt
 	✓  Value is set200
-[19:15:02] payload method is  eth_gasPrice
-[19:15:02] payload method is  eth_sendTransaction
-[19:15:02] payload method is  eth_getTransactionReceipt
-[19:15:02] payload method is  eth_gasPrice
-[19:15:02] payload method is  eth_sendTransaction
-[19:15:02] payload method is  eth_getTransactionReceipt
+[14:58:50] payload method is  eth_gasPrice
+[14:58:50] payload method is  eth_sendTransaction
+[14:58:50] payload method is  eth_getTransactionReceipt
+[14:58:50] payload method is  eth_gasPrice
+[14:58:50] payload method is  eth_sendTransaction
+[14:58:50] payload method is  eth_getTransactionReceipt
 	✓  Value is not set200
+
+
+3 passing (0s)
 ```
 
 :point_right: remix-test can also be used for continuous integration testing. See example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [Travis build](https://travis-ci.org/su-squares/ethereum-contract/builds/446186067) 
@@ -146,7 +183,7 @@ Running `simple_storage_test.sol` file will output as:
 
 Import library:
 ```Javascript
-const RemixTests = require('remix-tests');
+const remixTests = require('@remix-project/remix-tests');
 ```
 
 Run a single test object:
@@ -191,14 +228,14 @@ remixTests.runTestSources(contractSources: SrcIfc, versionUrl: string, usingWork
 7. `importCb(url, cb)` - Callback to resolve imported files
 8. `opts` - Custom options
 
-For more details, see parameters' type definitions [here](https://github.com/ethereum/remix/blob/master/remix-tests/src/types.ts).
+For more details, see parameters' type definitions [here](src/types.ts).
 
 ## Contribute
 
 Please feel free to open an issue or a pull request. 
 
-In case you want to add a code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix/blob/master/CONTRIBUTING.md). Reach us in [Gitter](https://gitter.im/ethereum/remix) in case of any queries.
+In case you want to add a code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md). Reach us in [Gitter](https://gitter.im/ethereum/remix) in case of any queries.
 
 ## License
 
-[MIT](LICENSE.md) © 2018 Remix Team
+[MIT](LICENSE.md) © 2018-20 Remix Team
