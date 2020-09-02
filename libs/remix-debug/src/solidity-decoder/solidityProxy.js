@@ -99,7 +99,7 @@ class SolidityProxy {
   ast (sourceLocation) {
     const file = this.fileNameFromIndex(sourceLocation.file)
     if (this.sources[file]) {
-      return this.sources[file].legacyAST
+      return this.sources[file].ast
     }
     return null
   }
