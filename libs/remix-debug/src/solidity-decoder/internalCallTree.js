@@ -216,20 +216,20 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
   // using the vm trace step, the current source location and the ast,
   // we check if the current vm trace step target a new ast node of type VariableDeclaration
   // that way we know that there is a new local variable from here.
-  if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.attributes.name]) {
+  if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.name]) {
     try {
       const stack = tree.traceManager.getStackAt(step)
       // the stack length at this point is where the value of the new local variable will be stored.
       // so, either this is the direct value, or the offset in memory. That depends on the type.
       tree.solidityProxy.contractNameAt(step).then((contractName) => {
-        if (variableDeclaration.attributes.name !== '') {
+        if (variableDeclaration.name !== '') {
           var states = tree.solidityProxy.extractStatesDefinitions()
           var location = typesUtil.extractLocationFromAstVariable(variableDeclaration)
           location = location === 'default' ? 'storage' : location
             // we push the new local variable in our tree
-          tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
-            name: variableDeclaration.attributes.name,
-            type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName, location),
+          tree.scopes[scopeId].locals[variableDeclaration.name] = {
+            name: variableDeclaration.name,
+            type: decodeInfo.parseType(variableDeclaration.typeDescriptions.typeString, states, contractName, location),
             stackDepth: stack.length,
             sourceLocation: sourceLocation
           }
@@ -242,7 +242,7 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
   // we check here if we are at the beginning inside a new function.
   // if that is the case, we have to add to locals tree the inputs and output params
   const functionDefinition = resolveFunctionDefinition(tree, step, previousSourceLocation)
-  if (functionDefinition && (newLocation && traceHelper.isJumpDestInstruction(tree.traceManager.trace[step - 1]) || functionDefinition.attributes.isConstructor)) {
+  if (functionDefinition && (newLocation && traceHelper.isJumpDestInstruction(tree.traceManager.trace[step - 1]) || functionDefinition.kind === 'constructor')) {
     tree.functionCallStack.push(step)
     const functionDefinitionAndInputs = {functionDefinition, inputs: []}
     // means: the previous location was a function definition && JUMPDEST
@@ -252,11 +252,11 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
       try {
         const stack = tree.traceManager.getStackAt(step)
         var states = tree.solidityProxy.extractStatesDefinitions()
-        if (functionDefinition.children && functionDefinition.children.length) {
+        if (functionDefinition.parameters && functionDefinition.parameters.length) {
           let inputs
           let outputs
-          for (const element of functionDefinition.children) {
-            if (element.name === 'ParameterList') {
+          for (const element of functionDefinition.parameters) {
+            if (element.nodeType === 'ParameterList') {
               if (!inputs) inputs = element
               else {
                 outputs = element
@@ -266,7 +266,7 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
           }
           // input params
           if (inputs) {
-            functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, inputs.children.length, -1)
+            functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, inputs.parameters.length, -1)
           }
           // output params
           if (outputs) addParams(outputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, 0, 1)
@@ -313,7 +313,7 @@ function resolveFunctionDefinition (tree, step, sourceLocation) {
 function extractVariableDeclarations (ast, astWalker) {
   const ret = {}
   astWalker.walk(ast, (node) => {
-    if (node.name === 'VariableDeclaration') {
+    if (node.nodeType === 'VariableDeclaration') {
       ret[node.src] = node
     }
     return true
@@ -324,7 +324,7 @@ function extractVariableDeclarations (ast, astWalker) {
 function extractFunctionDefinitions (ast, astWalker) {
   const ret = {}
   astWalker.walk(ast, (node) => {
-    if (node.name === 'FunctionDefinition') {
+    if (node.nodeType === 'FunctionDefinition') {
       ret[node.src] = node
     }
     return true
@@ -334,16 +334,16 @@ function extractFunctionDefinitions (ast, astWalker) {
 
 function addParams (parameterList, tree, scopeId, states, contractName, sourceLocation, stackLength, stackPosition, dir) {
   let params = []
-  for (let inputParam in parameterList.children) {
-    const param = parameterList.children[inputParam]
+  for (let inputParam in parameterList.parameters) {
+    const param = parameterList.parameters[inputParam]
     const stackDepth = stackLength + (dir * stackPosition)
     if (stackDepth >= 0) {
       let location = typesUtil.extractLocationFromAstVariable(param)
       location = location === 'default' ? 'memory' : location
-      const attributesName = param.attributes.name === '' ? `$${inputParam}` : param.attributes.name
+      const attributesName = param.name === '' ? `$${inputParam}` : param.name
       tree.scopes[scopeId].locals[attributesName] = {
         name: attributesName,
-        type: decodeInfo.parseType(param.attributes.type, states, contractName, location),
+        type: decodeInfo.parseType(param.typeDescriptions.typeString, states, contractName, location),
         stackDepth: stackDepth,
         sourceLocation: sourceLocation
       }
