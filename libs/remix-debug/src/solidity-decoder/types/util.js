@@ -105,9 +105,9 @@ function extractLocation (type) {
 }
 
 function extractLocationFromAstVariable (node) {
-  if (node.attributes.storageLocation !== 'default') {
-    return node.attributes.storageLocation
-  } else if (node.attributes.stateVariable) {
+  if (node.storageLocation !== 'default') {
+    return node.storageLocation
+  } else if (node.stateVariable) {
     return 'storage'
   }
   return 'default' // local variables => storage, function parameters & return values => memory, state => storage

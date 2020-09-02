@@ -15,10 +15,10 @@ function extractContractDefinitions (sourcesList) {
   }
   const walker = new AstWalker()
   for (let k in sourcesList) {
-    walker.walk(sourcesList[k].legacyAST, { 'ContractDefinition': (node) => {
+    walker.walk(sourcesList[k].ast, { 'ContractDefinition': (node) => {
       ret.contractsById[node.id] = node
       ret.sourcesByContract[node.id] = k
-      ret.contractsByName[k + ':' + node.attributes.name] = node
+      ret.contractsByName[k + ':' + node.name] = node
       return false
     }})
   }
@@ -33,7 +33,7 @@ function extractContractDefinitions (sourcesList) {
   * @return {Array} - array of base contracts in derived to base order as AST nodes.
   */
 function getLinearizedBaseContracts (id, contractsById) {
-  return contractsById[id].attributes.linearizedBaseContracts.map(function (id) { return contractsById[id] })
+  return contractsById[id].linearizedBaseContracts.map(function (id) { return contractsById[id] })
 }
 
 /**
@@ -59,10 +59,10 @@ function extractStateDefinitions (contractName, sourcesList, contracts) {
   baseContracts.reverse()
   for (let k in baseContracts) {
     const ctr = baseContracts[k]
-    for (let i in ctr.children) {
-      const item = ctr.children[i]
+    for (let i in ctr.nodes) {
+      const item = ctr.nodes[i]
       stateItems.push(item)
-      if (item.name === 'VariableDeclaration') {
+      if (item.nodeType === 'VariableDeclaration') {
         stateVar.push(item)
       }
     }
@@ -83,7 +83,7 @@ function extractStatesDefinitions (sourcesList, contracts) {
   }
   const ret = {}
   for (let contract in contracts.contractsById) {
-    const name = contracts.contractsById[contract].attributes.name
+    const name = contracts.contractsById[contract].name
     const source = contracts.sourcesByContract[contract]
     const fullName = source + ':' + name
     const state = extractStateDefinitions(fullName, sourcesList, contracts)

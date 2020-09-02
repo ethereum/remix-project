@@ -216,7 +216,7 @@ function getEnum (type, stateDefinitions, contractName) {
   const state = stateDefinitions[contractName]
   if (state) {
     for (let dec of state.stateDefinitions) {
-      if (dec.attributes && dec.attributes.name && type === contractName + '.' + dec.attributes.name) {
+      if (dec && dec.name && type === contractName + '.' + dec.name) {
         return dec
       }
     }
@@ -243,7 +243,7 @@ function getStructMembers (type, stateDefinitions, contractName, location) {
   const state = stateDefinitions[contractName]
   if (state) {
     for (let dec of state.stateDefinitions) {
-      if (dec.name === 'StructDefinition' && type === contractName + '.' + dec.attributes.name) {
+      if (dec.nodeType === 'StructDefinition' && type === contractName + '.' + dec.name) {
         const offsets = computeOffsets(dec.children, stateDefinitions, contractName, location)
         if (!offsets) {
           return null
@@ -332,25 +332,25 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
   }
   for (var i in types) {
     var variable = types[i]
-    var type = parseType(variable.attributes.type, stateDefinitions, contractName, location)
+    var type = parseType(variable.typeDescriptions.typeString, stateDefinitions, contractName, location)
     if (!type) {
-      console.log('unable to retrieve decode info of ' + variable.attributes.type)
+      console.log('unable to retrieve decode info of ' + variable.typeDescriptions.typeString)
       return null
     }
-    if (!variable.attributes.constant && storagelocation.offset + type.storageBytes > 32) {
+    if (!variable.constant && storagelocation.offset + type.storageBytes > 32) {
       storagelocation.slot++
       storagelocation.offset = 0
     }
     ret.push({
-      name: variable.attributes.name,
+      name: variable.name,
       type: type,
-      constant: variable.attributes.constant,
+      constant: variable.constant,
       storagelocation: {
-        offset: variable.attributes.constant ? 0 : storagelocation.offset,
-        slot: variable.attributes.constant ? 0 : storagelocation.slot
+        offset: variable.constant ? 0 : storagelocation.offset,
+        slot: variable.constant ? 0 : storagelocation.slot
       }
     })
-    if (!variable.attributes.constant) {
+    if (!variable.constant) {
       if (type.storageSlots === 1 && storagelocation.offset + type.storageBytes <= 32) {
         storagelocation.offset += type.storageBytes
       } else {
