@@ -41,7 +41,7 @@ function VmDebugger (vmDebuggerLogic) {
     if (stack === null) return
     let functions = []
     for (let func of stack) {
-      functions.push(func.functionDefinition.attributes.name + '(' + func.inputs.join(', ') + ')')
+      functions.push(func.functionDefinition.name + '(' + func.inputs.join(', ') + ')')
     }
     this.functionPanel.update(functions)
   })
