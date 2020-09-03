@@ -152,7 +152,7 @@ function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
       return true
     }
     if (nodeLocation.start <= sourceLocation.start && nodeLocation.start + nodeLocation.length >= sourceLocation.start + sourceLocation.length) {
-      if (astNodeType === node.name) {
+      if (astNodeType === node.nodeType) {
         found = node
         return false
       } else {
@@ -162,7 +162,7 @@ function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
       return false
     }
   }
-  astWalker.walk(ast.legacyAST, callback)
+  astWalker.walk(ast.ast, callback)
   return found
 }
 
@@ -176,7 +176,7 @@ function nodesAtPosition (astNodeType, position, ast) {
       return
     }
     if (nodeLocation.start <= position && nodeLocation.start + nodeLocation.length >= position) {
-      if (!astNodeType || astNodeType === node.name) {
+      if (!astNodeType || astNodeType === node.nodeType) {
         found.push(node)
         if (astNodeType) return false
       }
@@ -185,7 +185,7 @@ function nodesAtPosition (astNodeType, position, ast) {
       return false
     }
   }
-  astWalker.walk(ast.legacyAST, callback)
+  astWalker.walk(ast.ast, callback)
   return found
 }
 
