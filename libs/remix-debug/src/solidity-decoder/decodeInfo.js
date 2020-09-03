@@ -244,7 +244,7 @@ function getStructMembers (type, stateDefinitions, contractName, location) {
   if (state) {
     for (let dec of state.stateDefinitions) {
       if (dec.nodeType === 'StructDefinition' && type === contractName + '.' + dec.name) {
-        const offsets = computeOffsets(dec.children, stateDefinitions, contractName, location)
+        const offsets = computeOffsets(dec.members, stateDefinitions, contractName, location)
         if (!offsets) {
           return null
         }
