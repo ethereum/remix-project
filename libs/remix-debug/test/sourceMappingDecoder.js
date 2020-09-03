@@ -15,7 +15,7 @@ tape('SourceMappingDecoder', function (t) {
     node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 80, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
     st.notEqual(node, null)
     if (node) {
-      st.equal(node.attributes.name, 'f1')
+      st.equal(node.name, 'f1')
     }
     st.end()
   })
