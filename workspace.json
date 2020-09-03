@@ -54,7 +54,14 @@
           "builder": "@nrwl/web:dev-server",
           "options": {
             "buildTarget": "remix-ide:build",
-            "port": 8080
+            "port": 8080,
+            "exclude": ["**/node_modules/**",
+              "apps/remix-ide/build/**/*.js",
+              "apps/remix-ide/src/app/editor/mode-solidity.js",
+              "apps/remix-ide/soljson.js",
+              "apps/remix-ide/js/**/*.js",
+              "apps/remix-ide/src/assets/js/**/*.js"
+            ]
           },
           "configurations": {
             "production": {
