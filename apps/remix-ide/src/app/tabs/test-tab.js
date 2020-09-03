@@ -149,25 +149,35 @@ module.exports = class TestTab extends ViewPlugin {
         </div>
       `)
     } else if (result.type === 'testFailure') {
-      const preposition = result.assertMethod === 'equal' || result.assertMethod === 'notEqual' ? 'to' : ''
-      const method = result.assertMethod === 'ok' ? '' : result.assertMethod
-      const expected = result.assertMethod === 'ok' ? `'true'` : result.expected
-      this.testsOutput.appendChild(yo`
+      if (!result.assertMethod) {
+        this.testsOutput.appendChild(yo`
         <div class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0" id="UTContext${result.context}">
           <span> ✘ ${result.value}</span>
           <span class="text-dark">Error Message:</span>
-          <span class="pb-2">"${result.errMsg}"</span>
-          <span class="text-dark">Asserttion:</span>
-          <div class="d-flex flex-wrap">
-            <span>Expected value should be</span>
-            <div class="mx-1 font-weight-bold">${method}</div>
-            <div>${preposition} ${expected}</div>
-          </div>
-          <span class="text-dark">Received value:</span>
-          <span>${result.returned}</span>
-          <span class="text-dark text-sm pb-2">Skipping the rest...</span>
+          <span class="pb-2 text-break">"${result.errMsg}"</span>
         </div>
       `)
+      } else {
+        const preposition = result.assertMethod === 'equal' || result.assertMethod === 'notEqual' ? 'to' : ''
+        const method = result.assertMethod === 'ok' ? '' : result.assertMethod
+        const expected = result.assertMethod === 'ok' ? `'true'` : result.expected
+        this.testsOutput.appendChild(yo`
+          <div class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0" id="UTContext${result.context}">
+            <span> ✘ ${result.value}</span>
+            <span class="text-dark">Error Message:</span>
+            <span class="pb-2 text-break">"${result.errMsg}"</span>
+            <span class="text-dark">Asserttion:</span>
+            <div class="d-flex flex-wrap">
+              <span>Expected value should be</span>
+              <div class="mx-1 font-weight-bold">${method}</div>
+              <div>${preposition} ${expected}</div>
+            </div>
+            <span class="text-dark">Received value:</span>
+            <span>${result.returned}</span>
+            <span class="text-dark text-sm pb-2">Skipping the rest...</span>
+          </div>
+        `)
+      }
     }
   }
 
