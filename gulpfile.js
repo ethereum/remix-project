@@ -55,10 +55,7 @@ task('syncLibVersions', async function () {
 
     libs.forEach(lib => {
         const distPackageJSON = require(__dirname + '/dist/libs/' + lib + '/package.json')
-        const libVersion = distPackageJSON.version
-        let packageJSON = require(__dirname + '/libs/' + lib + '/package.json')
-        packageJSON.version = libVersion
-        fs.writeFileSync(__dirname + '/libs/' + lib + '/package.json', JSON.stringify(packageJSON, null, 2), 'utf8')
+        fs.writeFileSync(__dirname + '/libs/' + lib + '/package.json', JSON.stringify(distPackageJSON, null, 2), 'utf8')
     })
     await Promise.resolve();
 });
