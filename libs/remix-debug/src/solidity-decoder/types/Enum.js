@@ -4,7 +4,7 @@ const ValueType = require('./ValueType')
 class Enum extends ValueType {
   constructor (enumDef) {
     let storageBytes = 0
-    let length = enumDef.children.length
+    let length = enumDef.members.length
     while (length > 1) {
       length = length / 256
       storageBytes++
@@ -15,11 +15,11 @@ class Enum extends ValueType {
 
   decodeValue (value) {
     if (!value) {
-      return this.enumDef.children[0].attributes.name
+      return this.enumDef.members[0].name
     }
     value = parseInt(value, 16)
-    if (this.enumDef.children.length > value) {
-      return this.enumDef.children[value].attributes.name
+    if (this.enumDef.members.length > value) {
+      return this.enumDef.members[value].name
     }
     return 'INVALID_ENUM<' + value + '>'
   }
