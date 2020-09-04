@@ -1,31 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react'
 import AssemblyItems from './assembly-items'
+/* eslint-disable-next-line */
+import { TreeView, TreeViewItem } from '../../../../tree-view/src/index'
+import useExtractData from '../../hooks/extract-data'
+import { ExtractData, ExtractFunc, DropdownPanelProps } from '../../types'
+
+
 import './styles/dropdown-panel.css'
 import EventManager from '../../../../../apps/remix-ide/src/lib/events'
-import TreeView from '../../../../../apps/remix-ide/src/app/ui/TreeView'
 import copyToClipboard from '../../../../../apps/remix-ide/src/app/ui/copy-to-clipboard'
 
-export interface DropdownPanelProps {
-    dropdownName: string,
-    opts: {
-        json: boolean,
-        displayContentOnly?: boolean,
-        css?: {
-            [key: string]: string
-        }
-    },
-    codeView?: string[],
-    index?: number,
-    calldata?: {
-        [key: string]: string
-    },
-    header?: string
-}
-
 export const DropdownPanel = (props: DropdownPanelProps) => {
-    const { dropdownName, opts, codeView, index, calldata, header } = props
+    const { dropdownName, opts, codeView, index, calldata, header, extractFunc } = props
+    const data = useExtractData(calldata, extractFunc)
     const event = new EventManager()
-    const treeView = new TreeView(opts)
     const dropdownRawEl = useRef(null)
     const [state, setState] = useState({
         header: '',
@@ -112,7 +100,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         })
     }
 
-    const update = function (data, header) {
+    const update = function (calldata, header) {
         setState(prevState => {
             return {
                 ...prevState,
@@ -122,7 +110,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                     display: 'none'
                 },
                 dropdownRawContent: {
-                    innerText: JSON.stringify(data, null, '\t'),
+                    innerText: JSON.stringify(calldata, null, '\t'),
                     display: 'block'
                 }
             }
@@ -140,9 +128,6 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
             })
         }
         message('')
-        if (state.json) {
-          treeView.update(data)
-        }
     }
 
     const hide = () => {

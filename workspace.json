@@ -469,7 +469,7 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {
+        "lint": { 
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
