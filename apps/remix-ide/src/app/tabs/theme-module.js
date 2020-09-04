@@ -7,18 +7,14 @@ import yo from 'yo-yo'
 const themes = [
   {name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-dark_tvx1s2.css'},
   {name: 'Light', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-light_powaqg.css'},
+  {name: 'Midcentury', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014334/remix-themes/PR365/remix-midcentury_hrzph3.css'},
+  {name: 'Black', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014334/remix-themes/PR365/remix-black_undtds.css'},
+  {name: 'Candy', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014799/remix-themes/PR365/remix-candy_ikhg4m.css'},
 
   {name: 'Cerulean', quality: 'light', url: 'https://bootswatch.com/4/cerulean/bootstrap.min.css'},
   {name: 'Flatly', quality: 'light', url: 'https://bootswatch.com/4/flatly/bootstrap.min.css'},
-  {name: 'Lumen', quality: 'light', url: 'https://bootswatch.com/4/lumen/bootstrap.min.css'},
-  {name: 'Minty', quality: 'light', url: 'https://bootswatch.com/4/minty/bootstrap.min.css'},
-  {name: 'Pulse', quality: 'light', url: 'https://bootswatch.com/4/pulse/bootstrap.min.css'},
-  {name: 'Sandstone', quality: 'light', url: 'https://bootswatch.com/4/sandstone/bootstrap.min.css'},
   {name: 'Spacelab', quality: 'light', url: 'https://bootswatch.com/4/spacelab/bootstrap.min.css'},
-  {name: 'Yeti', quality: 'light', url: 'https://bootswatch.com/4/yeti/bootstrap.min.css'},
-  {name: 'Cyborg', quality: 'dark', url: 'https://bootswatch.com/4/cyborg/bootstrap.min.css'},
-  {name: 'Darkly', quality: 'dark', url: 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css'},
-  {name: 'Superhero', quality: 'dark', url: 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/superhero/bootstrap.min.css'}
+  {name: 'Cyborg', quality: 'dark', url: 'https://bootswatch.com/4/cyborg/bootstrap.min.css'}
 ]
 
 const profile = {
