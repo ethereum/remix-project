@@ -252,18 +252,18 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
       try {
         const stack = tree.traceManager.getStackAt(step)
         var states = tree.solidityProxy.extractStatesDefinitions()
-        if (functionDefinition.parameters && functionDefinition.parameters.length) {
-          let inputs
-          let outputs
-          for (const element of functionDefinition.parameters) {
-            if (element.nodeType === 'ParameterList') {
-              if (!inputs) inputs = element
-              else {
-                outputs = element
-                break
-              }
-            }
-          }
+        if (functionDefinition.parameters) {
+          let inputs = functionDefinition.parameters
+          let outputs = functionDefinition.returnParameters
+          // for (const element of functionDefinition.parameters) {
+          //   if (element.nodeType === 'ParameterList') {
+          //     if (!inputs) inputs = element
+          //     else {
+          //       outputs = element
+          //       break
+          //     }
+          //   }
+          // }
           // input params
           if (inputs) {
             functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractName, previousSourceLocation, stack.length, inputs.parameters.length, -1)
@@ -335,6 +335,7 @@ function extractFunctionDefinitions (ast, astWalker) {
 function addParams (parameterList, tree, scopeId, states, contractName, sourceLocation, stackLength, stackPosition, dir) {
   let params = []
   for (let inputParam in parameterList.parameters) {
+    console.log('parameterList.parameters------>', parameterList.parameters)
     const param = parameterList.parameters[inputParam]
     const stackDepth = stackLength + (dir * stackPosition)
     if (stackDepth >= 0) {
