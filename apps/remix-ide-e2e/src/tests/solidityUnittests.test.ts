@@ -172,7 +172,7 @@ function runTests (browser: NightwatchBrowser) {
     .pause(500)
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
-    .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]',7000)
+    .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 7000)
     .assert.containsText('#solidityUnittestsOutput', 'browser/tests/4_Ballot_test.sol')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winning proposal')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value')

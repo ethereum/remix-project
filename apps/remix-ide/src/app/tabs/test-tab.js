@@ -144,7 +144,7 @@ module.exports = class TestTab extends ViewPlugin {
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
       this.testsOutput.appendChild(yo`
-        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="bg-light mb-2 ${css.testPass} ${css.testLog} text-success border-0">
+        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="${css.testPass} ${css.testLog} bg-light mb-2 text-success border-0">
           ✓ ${result.value}
         </div>
       `)
