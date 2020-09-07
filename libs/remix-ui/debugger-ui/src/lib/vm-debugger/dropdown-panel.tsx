@@ -3,15 +3,17 @@ import AssemblyItems from './assembly-items'
 /* eslint-disable-next-line */
 import { TreeView, TreeViewItem } from '../../../../tree-view/src/index'
 import useExtractData from '../../hooks/extract-data'
-import { ExtractData, ExtractFunc, DropdownPanelProps } from '../../types'
+import { DropdownPanelProps, ExtractData } from '../../types'
 
 
 import './styles/dropdown-panel.css'
-import EventManager from '../../../../../apps/remix-ide/src/lib/events'
-import copyToClipboard from '../../../../../apps/remix-ide/src/app/ui/copy-to-clipboard'
+/* eslint-disable-next-line */
+import EventManager from '../../../../../../apps/remix-ide/src/lib/events'
+/* eslint-disable-next-line */
+import copyToClipboard from '../../../../../../apps/remix-ide/src/app/ui/copy-to-clipboard'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
-    const { dropdownName, opts, codeView, index, calldata, header, extractFunc } = props
+    const { dropdownName, opts, codeView, index, calldata, header, extractFunc, formatSelfFunc } = props
     const data = useExtractData(calldata, extractFunc)
     const event = new EventManager()
     const dropdownRawEl = useRef(null)
@@ -150,9 +152,46 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         event.trigger('show', [])
     }
 
-    let content = <div>Empty</div>
+    const formatSelfDefault = (key: string, data: ExtractData) => {
+        return (
+            <div className="d-flex mb-1 flex-row label_item">
+                <label className="small font-weight-bold pr-1 label_key">{key}:</label> 
+                <label className="m-0 label_value">{data.self}</label>
+            </div>
+        )
+    }
+
+    const renderData = (item: ExtractData, key: string) => {
+        const children = (item.children || []).map((child) => {
+            const childKey = key + '/' + child.key
+
+            return (
+                <TreeViewItem key={childKey} label={ formatSelfFunc ? formatSelfFunc(childKey, item) : formatSelfDefault(childKey, item)}>
+                    { renderData(child.value, childKey) }
+                </TreeViewItem>
+            )
+        })
+
+        if (children && children.length > 0 ) {
+            return (
+                <TreeView key={key}>
+                    { children }
+                </TreeView>
+            )
+        } else {
+            return <TreeViewItem key={key} label={ formatSelfFunc ? formatSelfFunc(key, item) : formatSelfDefault(key, item) } />
+        }
+    }
+
+    let content: JSX.Element | JSX.Element[] = <div>Empty</div>
     if (state.json) {
-        content = treeView.render({}, null)
+        content = data.map(item => {
+            return (
+                <TreeView key={item.key}>
+                    { renderData(item.data, item.key) }
+                </TreeView>
+            )
+        })
     }
     const title = !state.displayContentOnly ? 
     <div className="py-0 px-1 title">

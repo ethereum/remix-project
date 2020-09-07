@@ -1,9 +1,32 @@
 import React, { useState, useEffect } from 'react'
 import { ExtractData, ExtractFunc } from '../types'
 
-export const useExtractData = (json, extractFunc?): Array<{ [key: string]: ExtractData }> => {
+export const useExtractData = (json, extractFunc?: ExtractFunc): Array<{ key: string, data: ExtractData }> => {
     const [data, setData] = useState(null)
-    const extractDataDefault = (item, parent?) => {
+
+    useEffect(() => {
+        const data: Array<{ key: string, data: ExtractData }> = Object.keys(json).map((innerKey) => {
+            if (extractFunc) {
+                return {
+                    key: innerKey,
+                    data : extractFunc(json[innerKey], json) 
+                }
+            } else {
+                return {
+                    key: innerKey,
+                    data: extractDataDefault(json[innerKey], json)
+                }
+            }
+        })
+
+        setData(data)
+
+        return () => {
+            setData(null)
+        }
+    }, [json, extractFunc])
+
+    const extractDataDefault: ExtractFunc = (item, parent?) => {
         const ret: ExtractData = {}
 
         if (item instanceof Array) {
@@ -28,22 +51,6 @@ export const useExtractData = (json, extractFunc?): Array<{ [key: string]: Extra
         }
         return ret
     }
-
-    useEffect(() => {
-        const data: Array<{ [key: string]: ExtractData }> = Object.keys(json).map((innerKey) => {
-            if (extractFunc) {
-                return { [innerKey]: extractFunc(json[innerKey], json) }
-            } else {
-                return { [innerKey]: extractDataDefault(json[innerKey], json) }
-            }
-        })
-
-        setData(data)
-
-        return () => {
-            setData(null)
-        }
-    }, [json, extractFunc])
 
     return data
 }
