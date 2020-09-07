@@ -65,7 +65,6 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
               st.equals(scopeStarts[136], '3')
               st.equals(scopeStarts[153], '4')
               st.equals(scopeStarts[166], '4.1')
-              console.log('----------->', scopes[''])
               st.equals(scopes[''].locals['ui8'].type.typeName, 'uint8')
               st.equals(scopes[''].locals['ui16'].type.typeName, 'uint16')
               st.equals(scopes[''].locals['ui32'].type.typeName, 'uint32')

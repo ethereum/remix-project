@@ -335,7 +335,6 @@ function extractFunctionDefinitions (ast, astWalker) {
 function addParams (parameterList, tree, scopeId, states, contractName, sourceLocation, stackLength, stackPosition, dir) {
   let params = []
   for (let inputParam in parameterList.parameters) {
-    console.log('parameterList.parameters------>', parameterList.parameters)
     const param = parameterList.parameters[inputParam]
     const stackDepth = stackLength + (dir * stackPosition)
     if (stackDepth >= 0) {
