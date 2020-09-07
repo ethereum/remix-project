@@ -34,7 +34,7 @@ class SettingsUI {
 
     setInterval(() => {
       this.updateAccountBalances()
-    }, 10 * 1000)
+    }, 1000)
 
     this.accountListCallId = 0
     this.loadedAccounts = {}
@@ -145,7 +145,7 @@ class SettingsUI {
 
     setInterval(() => {
       this.updateNetwork()
-    }, 5000)
+    }, 1000)
 
     this.el = el
 
