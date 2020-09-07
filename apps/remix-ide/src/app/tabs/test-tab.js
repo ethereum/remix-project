@@ -166,7 +166,7 @@ module.exports = class TestTab extends ViewPlugin {
             <span> ✘ ${result.value}</span>
             <span class="text-dark">Error Message:</span>
             <span class="pb-2 text-break">"${result.errMsg}"</span>
-            <span class="text-dark">Asserttion:</span>
+            <span class="text-dark">Assertion:</span>
             <div class="d-flex flex-wrap">
               <span>Expected value should be</span>
               <div class="mx-1 font-weight-bold">${method}</div>
@@ -174,7 +174,7 @@ module.exports = class TestTab extends ViewPlugin {
             </div>
             <span class="text-dark">Received value:</span>
             <span>${result.returned}</span>
-            <span class="text-dark text-sm pb-2">Skipping the rest...</span>
+            <span class="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
           </div>
         `)
       }
