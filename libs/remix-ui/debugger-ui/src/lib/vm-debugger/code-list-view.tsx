@@ -1,15 +1,22 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import DropdownPanel from './dropdown-panel'
-import EventManager from '../../../../../apps/remix-ide/src/lib/events'
+/* eslint-disable-next-line */
+import EventManager from '../../../../../../apps/remix-ide/src/lib/events'
 
-export const CodeListView = ({ vmDebuggerLogic }) => {
+export const CodeListView = ({ vmDebuggerLogic, asm }) => {
   const event = new EventManager()
   const [state, setState] = useState({
-    code: '',
+    code: [],
     address: '',
     itemSelected: null,
     index: null
   })
+
+  useEffect(() => {
+    const { code, address, index } = asm
+
+    changed(code, address, index)
+  }, [asm])
 
   const indexChanged = (index) => {
     if(index < 0) return
@@ -19,10 +26,6 @@ export const CodeListView = ({ vmDebuggerLogic }) => {
         index
       }
     })
-  }
-
-  const reset = () => {
-    changed([], '', -1)
   }
 
   const changed = (code, address, index) => {
@@ -36,7 +39,6 @@ export const CodeListView = ({ vmDebuggerLogic }) => {
         address
       }
     })
-    this.basicPanel.setContent(this.renderAssemblyItems())
     indexChanged(index)
   }
 

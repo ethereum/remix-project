@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import { TreeViewItemProps } from '../../types'
 
 import './tree-view-item.css'
 
-export const TreeViewItem = ({ key, children, label, ...otherProps }) => {
+export const TreeViewItem = (props: TreeViewItemProps) => {
+  const { key, children, label, ...otherProps } = props
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
@@ -15,7 +17,7 @@ export const TreeViewItem = ({ key, children, label, ...otherProps }) => {
       </div>
     { isExpanded ? children : null }
     </li>
-  );
-};
+  )
+}
 
-export default TreeViewItem;
+export default TreeViewItem
