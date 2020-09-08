@@ -215,6 +215,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                     }
                     testCallback(undefined, resp)
                     failureNum += 1
+                    timePassed += time
                 }
                 next()
             })
@@ -253,6 +254,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                                 };
                                 testCallback(undefined, resp)
                                 failureNum += 1
+                                timePassed += time
                                 return next()
                             }
                             testPassed = true
@@ -268,6 +270,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                         }
                         testCallback(undefined, resp)
                         passingNum += 1
+                        timePassed += time
                     }
 
                     return next()
@@ -286,6 +289,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                   };
                   testCallback(undefined, resp)
                   failureNum += 1
+                  timePassed += time
                 return next()
             })
         }
