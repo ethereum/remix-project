@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import AssemblyItems from './assembly-items'
-/* eslint-disable-next-line */
-import { TreeView, TreeViewItem } from '../../../../tree-view/src/index'
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import useExtractData from '../../hooks/extract-data'
 import { DropdownPanelProps, ExtractData } from '../../types'
 
