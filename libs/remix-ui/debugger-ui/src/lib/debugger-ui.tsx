@@ -1,6 +1,7 @@
 import React from 'react'
+import TxBrowser from './tx-browser/tx-browser'
 import StepManager from './step-manager/step-manager'
-import 
+import VmDebugger from './vm-debugger/vm-debugger'
 
 const DebuggerUI = () => {
   return (
