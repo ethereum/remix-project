@@ -62,6 +62,7 @@
     "eslint-plugin-standard": "4.0.1",
     "nodemon": "^2.0.4",
     "ts-node": "^8.10.1",
+    "tslib": "^2.0.1",
     "typescript": "^3.9.3"
   }
 }
