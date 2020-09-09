@@ -125,7 +125,7 @@ class ContextView {
   _render (node, nodeAtCursorPosition) {
     if (!node) return yo`<div></div>`
     let references = this.contextualListener.referencesOf(node)
-    const type = node && node.typeDescriptions.typeString ? node.typeDescriptions.typeString : node.name
+    const type = node.typeDescriptions && node.typeDescriptions.typeString ? node.typeDescriptions.typeString : node.nodeType
     references = `${references ? references.length : '0'} reference(s)`
 
     let ref = 0
