@@ -125,7 +125,7 @@ class ContextView {
   _render (node, nodeAtCursorPosition) {
     if (!node) return yo`<div></div>`
     let references = this.contextualListener.referencesOf(node)
-    const type = (node.attributes && node.attributes.type) ? node.attributes.type : node.name
+    const type = node && node.typeDescriptions.typeString ? node.typeDescriptions.typeString : node.name
     references = `${references ? references.length : '0'} reference(s)`
 
     let ref = 0
@@ -155,7 +155,7 @@ class ContextView {
     }
 
     const showGasEstimation = () => {
-      if (node.name === 'FunctionDefinition') {
+      if (node.nodeType === 'FunctionDefinition') {
         const result = this.contextualListener.gasEstimation(node)
         const executionCost = ' Execution cost: ' + result.executionCost + ' gas'
         const codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
@@ -172,7 +172,7 @@ class ContextView {
     return yo`
       <div class=${css.line}>${showGasEstimation()}
         <div title=${type} class=${css.type}>${type}</div>
-        <div title=${node.attributes.name} class=${css.name}>${node.attributes.name}</div>
+        <div title=${node.name} class=${css.name}>${node.name}</div>
         <i class="fas fa-share ${css.jump}" aria-hidden="true" onclick=${jumpTo}></i>
         <span class=${css.referencesnb}>${references}</span>
         <i data-action='previous' class="fas fa-chevron-up ${css.jump}" aria-hidden="true" onclick=${jump}></i>
@@ -183,12 +183,12 @@ class ContextView {
 }
 
 function isDefinition (node) {
-  return node.name === 'ContractDefinition' ||
-  node.name === 'FunctionDefinition' ||
-  node.name === 'ModifierDefinition' ||
-  node.name === 'VariableDeclaration' ||
-  node.name === 'StructDefinition' ||
-  node.name === 'EventDefinition'
+  return node.nodeType === 'ContractDefinition' ||
+  node.nodeType === 'FunctionDefinition' ||
+  node.nodeType === 'ModifierDefinition' ||
+  node.nodeType === 'VariableDeclaration' ||
+  node.nodeType === 'StructDefinition' ||
+  node.nodeType === 'EventDefinition'
 }
 
 module.exports = ContextView

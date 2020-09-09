@@ -65,8 +65,8 @@ class ContextualListener extends Plugin {
   }
 
   declarationOf (node) {
-    if (node.attributes && node.attributes.referencedDeclaration) {
-      return this._index['FlatReferences'][node.attributes.referencedDeclaration]
+    if (node && node.referencedDeclaration) {
+      return this._index['FlatReferences'][node.referencedDeclaration]
     }
     return null
   }
@@ -99,17 +99,17 @@ class ContextualListener extends Plugin {
     if (compilationResult && compilationResult.sources) {
       const callback = {}
       callback['*'] = (node) => {
-        if (node && node.attributes && node.attributes.referencedDeclaration) {
-          if (!this._index['Declarations'][node.attributes.referencedDeclaration]) {
-            this._index['Declarations'][node.attributes.referencedDeclaration] = []
+        if (node && node.referencedDeclaration) {
+          if (!this._index['Declarations'][node.referencedDeclaration]) {
+            this._index['Declarations'][node.referencedDeclaration] = []
           }
-          this._index['Declarations'][node.attributes.referencedDeclaration].push(node)
+          this._index['Declarations'][node.referencedDeclaration].push(node)
         }
         this._index['FlatReferences'][node.id] = node
         return true
       }
       for (const s in compilationResult.sources) {
-        this.astWalker.walk(compilationResult.sources[s].legacyAST, callback)
+        this.astWalker.walk(compilationResult.sources[s].ast, callback)
       }
     }
   }
@@ -136,7 +136,7 @@ class ContextualListener extends Plugin {
           background-color: var(--info);
         }
         `
-      if (node.children && node.children.length) {
+      if (node.nodes && node.nodes.length) {
         // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
         lineColumn = {
           start: {
@@ -167,9 +167,9 @@ class ContextualListener extends Plugin {
         }
       }
     }
-    if (node.attributes && node.attributes.referencedDeclaration) {
-      highlights(node.attributes.referencedDeclaration)
-      const current = this._index['FlatReferences'][node.attributes.referencedDeclaration]
+    if (node && node.referencedDeclaration) {
+      highlights(node.referencedDeclaration)
+      const current = this._index['FlatReferences'][node.referencedDeclaration]
       this._highlight(current, compilationResult)
     } else {
       highlights(node.id)
@@ -190,10 +190,10 @@ class ContextualListener extends Plugin {
   gasEstimation (node) {
     this._loadContractInfos(node)
     let executionCost, codeDepositCost
-    if (node.name === 'FunctionDefinition') {
-      const visibility = node.attributes.visibility
-      if (!node.attributes.isConstructor) {
-        const fnName = node.attributes.name
+    if (node.nodeType === 'FunctionDefinition') {
+      const visibility = node.visibility
+      if (!node.kind === 'constructor') {
+        const fnName = node.name
         const fn = fnName + this._getInputParams(node)
         if (visibility === 'public' || visibility === 'external') {
           executionCost = this.estimationObj.external[fn]
@@ -212,9 +212,9 @@ class ContextualListener extends Plugin {
 
   _loadContractInfos (node) {
     for (const i in this.nodes) {
-      if (this.nodes[i].id === node.attributes.scope) {
+      if (this.nodes[i].id === node.scope) {
         const contract = this.nodes[i]
-        this.contract = this.results.data.contracts[this.results.source.target][contract.attributes.name]
+        this.contract = this.results.data.contracts[this.results.source.target][contract.name]
         this.estimationObj = this.contract.evm.gasEstimates
         this.creationCost = this.estimationObj.creation.totalCost
         this.codeDepositCost = this.estimationObj.creation.codeDepositCost
@@ -224,18 +224,18 @@ class ContextualListener extends Plugin {
 
   _getInputParams (node) {
     const params = []
-    let target
-    for (const i in node.children) {
-      if (node.children[i].name === 'ParameterList') {
-        target = node.children[i]
-        break
-      }
-    }
+    let target = node.parameters
+    // for (const i in node.children) {
+    //   if (node.children[i].name === 'ParameterList') {
+    //     target = node.children[i]
+    //     break
+    //   }
+    // }
     if (target) {
-      const children = target.children
+      const children = target.parameters
       for (const j in children) {
-        if (children[j].name === 'VariableDeclaration') {
-          params.push(children[j].attributes.type)
+        if (children[j].nodeType === 'VariableDeclaration') {
+          params.push(children[j].typeDescriptions.typeString)
         }
       }
     }
