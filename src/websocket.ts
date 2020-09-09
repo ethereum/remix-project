@@ -2,7 +2,7 @@ import * as WS from 'ws'
 import * as http from 'http'
 import { WebsocketOpt, SharedFolderClient } from '../types'
 
-const { buildWebsocketClient } = require('@remixproject/plugin-ws')
+const { createClient } = require('@remixproject/plugin-ws')
 
 export default class WebSocket {
   server: http.Server
@@ -37,7 +37,7 @@ export default class WebSocket {
       const { sharedFolder } = this
 
       this.connection = ws
-      buildWebsocketClient(ws, sharedFolder)
+      createClient(ws, sharedFolder)
       if(callback) callback(ws)
     })
   }
