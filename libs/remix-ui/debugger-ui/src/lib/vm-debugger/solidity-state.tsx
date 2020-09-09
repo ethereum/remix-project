@@ -3,7 +3,7 @@ import DropdownPanel from './dropdown-panel'
 import { extractData } from '../../utils/solidityTypeFormatter'
 import { ExtractData } from '../../types'
 
-export const SolidityState = () => {
+export const SolidityState = ({ calldata, message }) => {
     const formatSelf = (key: string, data: ExtractData) => {
         let color = 'var(--primary)'
         if (data.isArray || data.isStruct || data.isMapping) {
@@ -36,7 +36,7 @@ export const SolidityState = () => {
     return (
         <div id='soliditylocals' data-id='solidityLocals'>
             {
-                <DropdownPanel dropdownName='Solidity State' opts={{ json: true }} formatSelfFunc={formatSelf} extractFunc={extractData} />
+                <DropdownPanel dropdownName='Solidity State' dropdownMessage={message} opts={{ json: true }} calldata={calldata} formatSelfFunc={formatSelf} extractFunc={extractData} />
             }
         </div>
     )

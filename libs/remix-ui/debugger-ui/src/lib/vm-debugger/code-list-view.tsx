@@ -3,7 +3,7 @@ import DropdownPanel from './dropdown-panel'
 /* eslint-disable-next-line */
 import EventManager from '../../../../../../apps/remix-ide/src/lib/events'
 
-export const CodeListView = ({ vmDebuggerLogic, asm }) => {
+export const CodeListView = ({ asm }) => {
   const event = new EventManager()
   const [state, setState] = useState({
     code: [],

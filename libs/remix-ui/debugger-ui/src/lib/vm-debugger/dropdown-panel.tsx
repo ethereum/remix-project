@@ -13,7 +13,7 @@ import EventManager from '../../../../../../apps/remix-ide/src/lib/events'
 import copyToClipboard from '../../../../../../apps/remix-ide/src/app/ui/copy-to-clipboard'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
-    const { dropdownName, opts, codeView, index, calldata, header, extractFunc, formatSelfFunc } = props
+    const { dropdownName, dropdownMessage, opts, codeView, index, calldata, header, extractFunc, formatSelfFunc } = props
     const data = useExtractData(calldata, extractFunc)
     const event = new EventManager()
     const dropdownRawEl = useRef(null)
@@ -44,6 +44,10 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     useEffect(() => {
         update(calldata, header)
     }, [calldata, header])
+
+    useEffect(() => {
+        message(dropdownMessage)
+    }, [dropdownMessage])
 
     const handleToggle = () => {
         setState(prevState => {
