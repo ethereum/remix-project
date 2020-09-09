@@ -27,6 +27,11 @@ module.exports = {
     .pause(3000)
     .click('*[data-id="verticalIconsKindfileExplorers"]')
     .openFile('browser/artifacts/Ballot.json')
+    .openFile('browser/artifacts/Ballot_metadata.json')
+    .getEditorValue((content) => {
+      const metadata = JSON.parse(content)
+      browser.assert.equal(metadata.language, 'Solidity')
+    })
   },
 
   'Should add new github access token': function (browser: NightwatchBrowser) {
