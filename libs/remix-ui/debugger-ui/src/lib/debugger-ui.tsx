@@ -24,7 +24,9 @@ const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
     currentReceipt: {
       contractAddress: null,
       to: null
-    }
+    },
+    blockNumber: null,
+    txNumber: null
   })
 
   useEffect(() => {
@@ -103,6 +105,19 @@ const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
     })
   }
 
+  const unLoad  = async () => {
+    // yo.update(this.debuggerHeadPanelsView, yo`<div></div>`)
+    // yo.update(this.debuggerPanelsView, yo`<div></div>`)
+    // yo.update(this.stepManagerView, yo`<div></div>`)
+    if (this.vmDebugger) this.vmDebugger.remove()
+    if (this.stepManager) this.stepManager.remove()
+    if (this.txBrowser) this.txBrowser.setState({debugging: false})
+    this.vmDebugger = null
+    this.stepManager = null
+    if (this.debugger) delete this.debugger
+    this.event.trigger('traceUnloaded')
+  }
+
   const startDebugging = async (blockNumber, txNumber, tx) => {
     if (state.debugger) unLoad()
 
@@ -125,13 +140,20 @@ const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
     })
     listenToEvents()
     state.debugger.debug(blockNumber, txNumber, tx, () => {
-      this.stepManager = new StepManagerUI(this.debugger.step_manager)
-      this.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
-      this.txBrowser.setState({ blockNumber, txNumber, debugging: true })
+      // this.stepManager = new StepManagerUI(this.debugger.step_manager)
+      // this.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
+      setState(prevState => {
+        return {
+          ...prevState,
+          blockNumber,
+          txNumber,
+          debugging: true
+        }
+      })
       this.renderDebugger()
     }).catch((error) => {
-      toaster(error)
-      this.unLoad()
+      toaster(error, null, null)
+      unLoad()
     })
 }
 
