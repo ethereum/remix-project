@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import './tx-browser.css'
-import EventManager from '../../../../../apps/remix-ide/src/lib/events'
+import EventManager from '../../../../../../apps/remix-ide/src/lib/events'
 
 export const TxBrowser = () => {
   const event = new EventManager()
