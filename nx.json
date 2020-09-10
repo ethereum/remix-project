@@ -75,6 +75,9 @@
     },
     "remix-ui-debugger-ui": {
       "tags": []
+    },
+    "remix-ui-utils": {
+      "tags": []
     }
   }
 }

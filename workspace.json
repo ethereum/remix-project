@@ -563,6 +563,33 @@
           }
         }
       }
+    },
+    "remix-ui-utils": {
+      "root": "libs/remix-ui/utils",
+      "sourceRoot": "libs/remix-ui/utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-ui/utils/tsconfig.lib.json",
+              "libs/remix-ui/utils/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/utils/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remix-ui/utils/jest.config.js",
+            "tsConfig": "libs/remix-ui/utils/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
