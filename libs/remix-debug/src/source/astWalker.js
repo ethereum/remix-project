@@ -21,10 +21,11 @@ AstWalker.prototype.walk = function (ast, callback) {
   if (!('*' in callback)) {
     callback['*'] = function () { return true }
   }
-  if(ast) {
+  if (ast) {
     const nodes = ast.nodes || (ast.body && ast.body.statements) || ast.declarations || []
-    if(ast.body && ast.initializationExpression) // 'for' loop handling
+    if (ast.body && ast.initializationExpression) { // 'for' loop handling
       nodes.push(ast.initializationExpression)
+    }
     if (manageCallBack(ast, callback) && nodes && nodes.length > 0) {
       for (let k in nodes) {
         const child = nodes[k]
