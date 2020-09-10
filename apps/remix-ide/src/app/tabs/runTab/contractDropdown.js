@@ -249,7 +249,7 @@ class ContractDropdownUI {
 
     let contractMetadata
     try {
-      contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name)
+      contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name, selectedContract.contract.file)
     } catch (error) {
       return statusCb(`creation of ${selectedContract.name} errored: ` + (error.message ? error.message : error))
     }
