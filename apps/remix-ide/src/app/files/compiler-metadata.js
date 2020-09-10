@@ -24,6 +24,10 @@ class CompilerMetadata extends Plugin {
     return path + '/' + this.innerPath + '/' + contractName + '.json'
   }
 
+  _MetadataFileName(path, contractName) {
+    return path + '/' + this.innerPath + '/' + contractName + '_metadata' + '.json'
+  }
+
   onActivation () {
     var self = this
     this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
@@ -36,6 +40,7 @@ class CompilerMetadata extends Plugin {
           if (contract.file !== source.target) return
 
           var fileName = self._JSONFileName(path, contract.name)
+          var metadataFileName = self._MetadataFileName(path, contract.name)
           provider.get(fileName, (error, content) => {
             if (!error) {
               content = content || '{}'
@@ -50,6 +55,8 @@ class CompilerMetadata extends Plugin {
               self.networks.forEach((network) => {
                 deploy[network] = self._syncContext(contract, deploy[network] || {})
               })
+
+              provider.set(metadataFileName, JSON.stringify(JSON.parse(contract.object.metadata), null, '\t'))
 
               var data = {
                 deploy,
