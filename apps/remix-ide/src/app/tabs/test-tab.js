@@ -144,17 +144,40 @@ module.exports = class TestTab extends ViewPlugin {
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
       this.testsOutput.appendChild(yo`
-        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="${css.testPass} ${css.testLog} text-success border-0">
+        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="${css.testPass} ${css.testLog} bg-light mb-2 text-success border-0">
           ✓ ${result.value}
         </div>
       `)
     } else if (result.type === 'testFailure') {
-      this.testsOutput.appendChild(yo`
-        <div class="${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0" id="UTContext${result.context}">
+      if (!result.assertMethod) {
+        this.testsOutput.appendChild(yo`
+        <div class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0" id="UTContext${result.context}">
           <span> ✘ ${result.value}</span>
-          <span>"${result.errMsg}"</span>
+          <span class="text-dark">Error Message:</span>
+          <span class="pb-2 text-break">"${result.errMsg}"</span>
         </div>
       `)
+      } else {
+        const preposition = result.assertMethod === 'equal' || result.assertMethod === 'notEqual' ? 'to' : ''
+        const method = result.assertMethod === 'ok' ? '' : result.assertMethod
+        const expected = result.assertMethod === 'ok' ? `'true'` : result.expected
+        this.testsOutput.appendChild(yo`
+          <div class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0" id="UTContext${result.context}">
+            <span> ✘ ${result.value}</span>
+            <span class="text-dark">Error Message:</span>
+            <span class="pb-2 text-break">"${result.errMsg}"</span>
+            <span class="text-dark">Assertion:</span>
+            <div class="d-flex flex-wrap">
+              <span>Expected value should be</span>
+              <div class="mx-1 font-weight-bold">${method}</div>
+              <div>${preposition} ${expected}</div>
+            </div>
+            <span class="text-dark">Received value:</span>
+            <span>${result.returned}</span>
+            <span class="text-dark text-sm pb-2">Skipping the remaining tests of the function.</span>
+          </div>
+        `)
+      }
     }
   }
 
