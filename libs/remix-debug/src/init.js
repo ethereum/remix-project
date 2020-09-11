@@ -68,7 +68,7 @@ module.exports = {
 }
 
 const web3DebugNodes = {
-  'Main': 'https://archive.komputing.org/',
+  'Main': 'https://archive.komputing.org',
   'Rinkeby': 'https://remix-rinkeby.ethdevops.io',
   'Ropsten': 'https://remix-ropsten.ethdevops.io',
   'Goerli': 'https://remix-goerli.ethdevops.io',
