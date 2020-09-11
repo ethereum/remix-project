@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import TxBrowser from './tx-browser/tx-browser'
 import StepManager from './step-manager/step-manager'
 import VmDebugger from './vm-debugger/vm-debugger'
+import VmDebuggerHead from './vm-debugger/vm-debugger-head'
 import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 /* eslint-disable-next-line */
 import toaster from '../../../../../apps/remix-ide/src/app/ui/tooltip'
@@ -13,7 +14,7 @@ import EventManager from '../../../../../apps/remix-ide/src/lib/events'
 import globalRegistry from '../../../../../apps/remix-ide/src/global/registry'
 import './debugger-ui.css'
 
-const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
+export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash, getTraceHash, removeHighlights }) => {
   const event = new EventManager()
   const sourceHighlighter = new SourceHighlighter()
   const init = remixDebug.init
@@ -26,7 +27,13 @@ const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
       to: null
     },
     blockNumber: null,
-    txNumber: null
+    txNumber: null,
+    visibility: {
+      vmDebugger: false,
+      stepManager: false,
+      txBrowser: false
+    },
+    debugging: false
   })
 
   useEffect(() => {
@@ -37,22 +44,35 @@ const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
         if (state.debugger) state.debugger.breakPointManager.remove({fileName: fileName, row: row})
       })
   
-      this.editor.event.register('breakpointAdded', (fileName, row) => {
+      editor.event.register('breakpointAdded', (fileName, row) => {
         if (state.debugger) state.debugger.breakPointManager.add({fileName: fileName, row: row})
       })
   
-      this.editor.event.register('contentChanged', () => {
+      editor.event.register('contentChanged', () => {
         if (state.debugger) state.debugger.unload()
       })
     }
 
     setEditor()
+    return unLoad()
   }, [])
 
-  const listenToEvents = () => {
-    if (!state.debugger) return
+  useEffect(() => {
+    debug(debugHash)
+  }, [debugHash])
 
-    state.debugger.event.register('debuggerStatus', async (isActive) => {
+  useEffect(() => {
+    getTrace(getTraceHash)
+  }, [getTraceHash])
+
+  useEffect(() => {
+    if (removeHighlights) deleteHighlights()
+  }, [removeHighlights])
+
+  const listenToEvents = (debuggerInstance) => {
+    if (!debuggerInstance) return
+
+    debuggerInstance.event.register('debuggerStatus', async (isActive) => {
       await debuggerModule.call('editor', 'discardHighlight')
       setState(prevState => {
         return {
@@ -62,7 +82,7 @@ const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
       })
     })
 
-    state.debugger.event.register('newSourceLocation', async (lineColumnPos, rawLocation) => {
+    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation) => {
       const contracts = await fetchContractAndCompile(
         state.currentReceipt.contractAddress || state.currentReceipt.to,
         state.currentReceipt)
@@ -77,7 +97,14 @@ const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
       }
     })
 
-    // state.debugger.event.register('debuggerUnloaded', () => this.unLoad())
+    debuggerInstance.event.register('debuggerUnloaded', () => unLoad())
+
+    setState(prevState => {
+      return {
+        ...prevState,
+        debugger: debuggerInstance
+      }
+    })
   }
 
   const requestDebug = (blockNumber, txNumber, tx) => {
@@ -89,7 +116,11 @@ const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
     if (state.debugger) state.debugger.unload()
   }
 
-  const getDebugWeb3 = () => {
+  const isDebuggerActive = () => {
+    return state.isActive
+  }
+
+  const getDebugWeb3 = (): Promise<any> => {
     return new Promise((resolve, reject) => {
       debuggerModule.blockchain.detectNetwork((error, network) => {
         let web3
@@ -105,41 +136,44 @@ const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
     })
   }
 
-  const unLoad  = async () => {
+  const unLoad = () => {
     // yo.update(this.debuggerHeadPanelsView, yo`<div></div>`)
     // yo.update(this.debuggerPanelsView, yo`<div></div>`)
     // yo.update(this.stepManagerView, yo`<div></div>`)
-    if (this.vmDebugger) this.vmDebugger.remove()
-    if (this.stepManager) this.stepManager.remove()
-    if (this.txBrowser) this.txBrowser.setState({debugging: false})
-    this.vmDebugger = null
-    this.stepManager = null
-    if (this.debugger) delete this.debugger
-    this.event.trigger('traceUnloaded')
+    setState(prevState => {
+      const { visibility } = prevState
+      return {
+        ...prevState,
+        debugger: null,
+        debugging: false,
+        visibility: {
+          ...visibility,
+          vmDebugger: false,
+          stepManager: false
+        }
+      }
+    })
+    event.trigger('traceUnloaded', [])
   }
 
   const startDebugging = async (blockNumber, txNumber, tx) => {
     if (state.debugger) unLoad()
 
-    const web3 = await this.getDebugWeb3()
-    setState({
-      ...state,
-      currentReceipt: await web3.eth.getTransactionReceipt(txNumber),
-      debugger: new Debugger({
-        web3,
-        offsetToLineColumnConverter: globalRegistry.get('offsettolinecolumnconverter').api,
-        compilationResult: async (address) => {
-          try {
-            return await fetchContractAndCompile(address, this.currentReceipt)
-          } catch (e) {
-            console.error(e)
-          }
-          return null
+    const web3 = await getDebugWeb3()
+    const currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
+    const debuggerInstance = new Debugger({
+      web3,
+      offsetToLineColumnConverter: globalRegistry.get('offsettolinecolumnconverter').api,
+      compilationResult: async (address) => {
+        try {
+          return await fetchContractAndCompile(address, currentReceipt)
+        } catch (e) {
+          console.error(e)
         }
-      })
+        return null
+      }
     })
-    listenToEvents()
-    state.debugger.debug(blockNumber, txNumber, tx, () => {
+    debuggerInstance.debug(blockNumber, txNumber, tx, () => {
       // this.stepManager = new StepManagerUI(this.debugger.step_manager)
       // this.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
       setState(prevState => {
@@ -147,20 +181,71 @@ const DebuggerUI = ({ debuggerModule, component, fetchContractAndCompile }) => {
           ...prevState,
           blockNumber,
           txNumber,
-          debugging: true
+          debugging: true,
+          currentReceipt
         }
       })
-      this.renderDebugger()
+      listenToEvents(debuggerInstance)
+      // this.renderDebugger()
     }).catch((error) => {
       toaster(error, null, null)
       unLoad()
     })
 }
 
+const debug = (txHash) => {
+  startDebugging(null, txHash, null)
+}
+
+const getTrace = (hash) => {
+  return new Promise(async (resolve, reject) => { /* eslint-disable-line */
+    const web3 = await getDebugWeb3()
+    const currentReceipt = await web3.eth.getTransactionReceipt(hash)
+
+    setState(prevState => {
+      return {
+        ...prevState,
+        currentReceipt
+      }
+    })
+
+    const debug = new Debugger({
+      web3,
+      offsetToLineColumnConverter: globalRegistry.get('offsettolinecolumnconverter').api,
+      compilationResult: async (address) => {
+        try {
+          return await fetchContractAndCompile(address, state.currentReceipt)
+        } catch (e) {
+          console.error(e)
+        }
+        return null
+      }
+    })
+    debug.debugger.traceManager.traceRetriever.getTrace(hash, (error, trace) => {
+      if (error) return reject(error)
+      resolve(trace)
+    })
+  })
+}
+
+const deleteHighlights = async () => {
+  await debuggerModule.call('editor', 'discardHighlight')
+}
+
+// this.debuggerPanelsView = yo`<div class="px-2"></div>`
+// this.debuggerHeadPanelsView = yo`<div class="px-2"></div>`
+// this.stepManagerView = yo`<div class="px-2"></div>`
+
   return (
-    <div>
-      <h1>Welcome to debugger-ui!</h1>
-    </div>
+      <div>
+        <div className="px-2">
+          <TxBrowser requestDebug={requestDebug} unloadRequested={unloadRequested} />
+          {/* <StepManager stepManager={state.debugger.step_manager} />
+          <VmDebuggerHead vmDebuggerLogic={state.debugger.vmDebuggerLogic} /> */}
+        </div>
+        {/* <div className="statusMessage">{state.statusMessage}</div>
+        <VmDebugger vmDebuggerLogic={state.debugger.vmDebuggerLogic} /> */}
+      </div>
   )
 }
 
