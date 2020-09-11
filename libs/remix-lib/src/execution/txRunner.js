@@ -177,6 +177,10 @@ class TxRunner {
       })
     }
     this.executionContext.web3().eth.estimateGas(tx, (err, gasEstimation) => {
+      if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
+        // // @todo(#378) this should be removed when https://github.com/WalletConnect/walletconnect-monorepo/issues/334 is fixed
+        err = 'Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'
+      }
       gasEstimationForceSend(err, () => {
         // callback is called whenever no error
         tx.gas = !gasEstimation ? gasLimit : gasEstimation

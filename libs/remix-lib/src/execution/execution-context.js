@@ -174,13 +174,14 @@ function ExecutionContext () {
 
   this.removeProvider = (name) => {
     if (name && this.customNetWorks[name]) {
+      if (executionContext === name) this.setContext('vm', null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
   }
 
   this.addProvider = (network) => {
-    if (network && network.name && network.url) {
+    if (network && network.name && !this.customNetWorks[network.name]) {
       this.customNetWorks[network.name] = network
       this.event.trigger('addProvider', [network])
     }
@@ -205,7 +206,8 @@ function ExecutionContext () {
 
   this.executionContextChange = (context, endPointUrl, confirmCb, infoCb, cb) => {
     if (!cb) cb = () => {}
-
+    if (!confirmCb) confirmCb = () => {}
+    if (!infoCb) infoCb = () => {}
     if (context === 'vm') {
       executionContext = context
       vms[currentFork].stateManager.revert(() => {
@@ -234,8 +236,11 @@ function ExecutionContext () {
     }
 
     if (this.customNetWorks[context]) {
-      var provider = this.customNetWorks[context]
-      setProviderFromEndpoint(provider.url, 'web3', () => { cb() })
+      var network = this.customNetWorks[context]
+      this.setProviderFromEndpoint(network.provider, network.name, (error) => {
+        if (error) infoCb(error)
+        cb()
+      })
     }
   }
 
@@ -269,29 +274,25 @@ function ExecutionContext () {
 
   // TODO: remove this when this function is moved
   const self = this
-  // TODO: not used here anymore and needs to be moved
-  function setProviderFromEndpoint (endpoint, context, cb) {
+
+  this.setProviderFromEndpoint = (endpoint, context, cb) => {
     const oldProvider = web3.currentProvider
 
-    if (endpoint === 'ipc') {
-      web3.setProvider(new web3.providers.IpcProvider())
-    } else {
-      web3.setProvider(new web3.providers.HttpProvider(endpoint))
-    }
+    web3.setProvider(endpoint)
+
     web3.eth.net.isListening((err, isConnected) => {
       if (!err && isConnected) {
         executionContext = context
         self._updateBlockGasLimit()
-        self.event.trigger('contextChanged', ['web3'])
+        self.event.trigger('contextChanged', [context])
         self.event.trigger('web3EndpointChanged')
         cb()
       } else {
         web3.setProvider(oldProvider)
-        cb('Not possible to connect to the Web3 provider. Make sure the provider is running and a connection is open (via IPC or RPC).')
+        cb('Not possible to connect to the Web3 provider. Make sure the provider is running, a connection is open (via IPC or RPC) or that the provider plugin is properly configured.')
       }
     })
   }
-  this.setProviderFromEndpoint = setProviderFromEndpoint
 
   this.txDetailsLink = (network, hash) => {
     if (transactionDetailsLinks[network]) {

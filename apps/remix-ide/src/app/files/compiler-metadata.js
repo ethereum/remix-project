@@ -97,10 +97,20 @@ class CompilerMetadata extends Plugin {
   }
 
   // TODO: is only called by dropdownLogic and can be moved there
-  deployMetadataOf (contractName) {
+  deployMetadataOf (contractName, fileLocation) {
     return new Promise((resolve, reject) => {
-      var provider = this.fileManager.currentFileProvider()
-      var path = this.fileManager.currentPath()
+      var provider
+      let path
+      if (fileLocation) {
+        provider = this.fileManager.fileProviderOf(fileLocation)
+        path = fileLocation.split('/')
+        path.pop()
+        path = path.join('/')
+      } else {
+        provider = this.fileManager.currentFileProvider()
+        path = this.fileManager.currentPath()
+      }
+
       if (provider && path) {
         this.blockchain.detectNetwork((err, { id, name } = {}) => {
           if (err) {
