@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import './tx-browser.css'
 import EventManager from '../../../../../../apps/remix-ide/src/lib/events'
 
-export const TxBrowser = () => {
+export const TxBrowser = ({ requestDebug, unloadRequested }) => {
   const event = new EventManager()
   const [state, setState] = useState({
     txNumber: undefined,
@@ -13,21 +13,12 @@ export const TxBrowser = () => {
     if (state.debugging) {
       unload()
     } else {
-      event.trigger('requestDebug', [undefined, state.txNumber])
+      requestDebug(undefined, state.txNumber)
     }
   }
   
   const unload = () => {
-    event.trigger('unloadRequested', [])
-  }
-
-  const updateTxN = (ev) => {
-    setState(prevState => {
-      return {
-        ...prevState,
-        txNumber: ev.target.value
-      }
-    })
+    unloadRequested()
   }
 
   const txInputChanged = (e) => {
@@ -50,12 +41,11 @@ export const TxBrowser = () => {
       <div className="txContainer">
         <div className="py-1 d-flex justify-content-center w-100 input-group">
           <input
-            value={state.txNumber || ''}
+            defaultValue={state.txNumber || ''}
             className="form-control m-0 css.txinput"
             id='txinput'
-            onKeyUp={updateTxN}
             type='text'
-            onInput={txInputChanged}
+            onChange={txInputChanged}
             placeholder={'Transaction hash, should start with 0x'}
             data-id="debuggerTransactionInput"
             disabled={state.debugging}
