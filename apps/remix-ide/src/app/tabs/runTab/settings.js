@@ -34,7 +34,7 @@ class SettingsUI {
 
     setInterval(() => {
       this.updateAccountBalances()
-    }, 10 * 1000)
+    }, 1000)
 
     this.accountListCallId = 0
     this.loadedAccounts = {}
@@ -145,7 +145,7 @@ class SettingsUI {
 
     setInterval(() => {
       this.updateNetwork()
-    }, 5000)
+    }, 1000)
 
     this.el = el
 
@@ -156,24 +156,26 @@ class SettingsUI {
   setDropdown (selectExEnv) {
     this.selectExEnv = selectExEnv
 
-    this.blockchain.event.register('addProvider', (network) => {
+    const addProvider = (network) => {
       selectExEnv.appendChild(yo`<option
-        title="Manually added environment: ${network.url}"
+        title="provider name: ${network.name}"
         value="${network.name}"
         name="executionContext"
       >
         ${network.name}
       </option>`)
-      addTooltip(`${network.name} [${network.url}] added`)
-    })
+      addTooltip(yo`<span><b>${network.name}</b> provider added</span>`)
+    }
 
-    this.blockchain.event.register('removeProvider', (name) => {
+    const removeProvider = (name) => {
       var env = selectExEnv.querySelector(`option[value="${name}"]`)
       if (env) {
         selectExEnv.removeChild(env)
-        addTooltip(`${name} removed`)
+        addTooltip(yo`<span><b>${name}</b> provider removed</span>`)
       }
-    })
+    }
+    this.blockchain.event.register('addProvider', provider => addProvider(provider))
+    this.blockchain.event.register('removeProvider', name => removeProvider(name))
 
     selectExEnv.addEventListener('change', (event) => {
       let context = selectExEnv.options[selectExEnv.selectedIndex].value
@@ -241,7 +243,10 @@ class SettingsUI {
         this.onPersonalChange()
       }
         break
-      default:
+      default: {
+        plusBtn.classList.add(css.disableMouseEvents)
+        plusTitle.title = `Unfortunately it's not possible to create an account using an external wallet (${this.selectExEnv.value}).`
+      }
     }
   }
 
