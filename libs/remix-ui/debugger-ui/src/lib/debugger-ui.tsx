@@ -69,23 +69,18 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
     if (removeHighlights) deleteHighlights()
   }, [removeHighlights])
 
-  const listenToEvents = (debuggerInstance) => {
+  const listenToEvents = (debuggerInstance, currentReceipt) => {
     if (!debuggerInstance) return
 
     debuggerInstance.event.register('debuggerStatus', async (isActive) => {
       await debuggerModule.call('editor', 'discardHighlight')
-      setState(prevState => {
-        return {
-          ...prevState,
-          isActive
-        }
-      })
+      setState({ ...state, isActive })
     })
 
     debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation) => {
       const contracts = await fetchContractAndCompile(
-        state.currentReceipt.contractAddress || state.currentReceipt.to,
-        state.currentReceipt)
+        currentReceipt.contractAddress || currentReceipt.to,
+        currentReceipt)
 
       if (contracts) {
         const path = contracts.getSourceName(rawLocation.file)
@@ -98,13 +93,6 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
     })
 
     debuggerInstance.event.register('debuggerUnloaded', () => unLoad())
-
-    setState(prevState => {
-      return {
-        ...prevState,
-        debugger: debuggerInstance
-      }
-    })
   }
 
   const requestDebug = (blockNumber, txNumber, tx) => {
@@ -142,6 +130,7 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
     // yo.update(this.stepManagerView, yo`<div></div>`)
     setState(prevState => {
       const { visibility } = prevState
+
       return {
         ...prevState,
         debugger: null,
@@ -176,16 +165,17 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
     debuggerInstance.debug(blockNumber, txNumber, tx, () => {
       // this.stepManager = new StepManagerUI(this.debugger.step_manager)
       // this.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
+      listenToEvents(debuggerInstance, currentReceipt)
       setState(prevState => {
         return {
           ...prevState,
           blockNumber,
           txNumber,
           debugging: true,
-          currentReceipt
+          currentReceipt,
+          debugger: debuggerInstance
         }
       })
-      listenToEvents(debuggerInstance)
       // this.renderDebugger()
     }).catch((error) => {
       toaster(error, null, null)
@@ -202,12 +192,7 @@ const getTrace = (hash) => {
     const web3 = await getDebugWeb3()
     const currentReceipt = await web3.eth.getTransactionReceipt(hash)
 
-    setState(prevState => {
-      return {
-        ...prevState,
-        currentReceipt
-      }
-    })
+    setState({ ...state, currentReceipt })
 
     const debug = new Debugger({
       web3,
@@ -239,9 +224,9 @@ const deleteHighlights = async () => {
   return (
       <div>
         <div className="px-2">
-          <TxBrowser requestDebug={requestDebug} unloadRequested={unloadRequested} />
-          {/* <StepManager stepManager={state.debugger.step_manager} />
-          <VmDebuggerHead vmDebuggerLogic={state.debugger.vmDebuggerLogic} /> */}
+          <TxBrowser requestDebug={requestDebug} unloadRequested={unloadRequested} transactionNumber={state.txNumber} />
+          <StepManager stepManager={state.debugger ? state.debugger.step_manager : null} />
+          {/*<VmDebuggerHead vmDebuggerLogic={state.debugger.vmDebuggerLogic} /> */}
         </div>
         {/* <div className="statusMessage">{state.statusMessage}</div>
         <VmDebugger vmDebuggerLogic={state.debugger.vmDebuggerLogic} /> */}

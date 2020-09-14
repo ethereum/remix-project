@@ -61,6 +61,15 @@ class DebuggerTab extends ViewPlugin {
       toaster(yo`<div><b>Source verification plugin not activated or not available.</b> continuing <i>without</i> source code debugging.</div>`)
     })
 
+    this.renderComponent()
+
+    this.call('manager', 'activatePlugin', 'source-verification').catch(e => console.log(e.message))
+    // this.call('manager', 'activatePlugin', 'udapp')
+
+    return this.el
+  }
+
+  renderComponent () {
     ReactDOM.render(
       <DebuggerUI 
         debuggerModule={this} 
@@ -73,11 +82,6 @@ class DebuggerTab extends ViewPlugin {
         getTraceHash={this.getTraceHash}
       />
     , this.el)
-
-    this.call('manager', 'activatePlugin', 'source-verification').catch(e => console.log(e.message))
-    // this.call('manager', 'activatePlugin', 'udapp')
-
-    return this.el
   }
 
   deactivate () {
@@ -87,10 +91,12 @@ class DebuggerTab extends ViewPlugin {
 
   debug (hash) {
     this.debugHash = hash
+    this.renderComponent()
   }
 
   getTrace (hash) {
     this.getTraceHash = hash
+    this.renderComponent()
   }
 
   // debugger () {
