@@ -83,6 +83,7 @@ let css = csjs`
     width: 400px;
     transition: .5s ease-out;
     z-index: 1000;
+  }
 }
 `
 
