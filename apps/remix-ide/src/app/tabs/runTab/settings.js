@@ -46,7 +46,10 @@ class SettingsUI {
     accounts.each((index, account) => {
       this.blockchain.getBalanceInEther(account.value, (err, balance) => {
         if (err) return
-        account.innerText = helper.shortenAddress(account.value, balance)
+        const updated = helper.shortenAddress(account.value, balance)
+        if (updated !== account.innerText) { // check if the balance has been updated and update UI accordingly.
+          account.innerText = updated
+        }
       })
     })
   }
