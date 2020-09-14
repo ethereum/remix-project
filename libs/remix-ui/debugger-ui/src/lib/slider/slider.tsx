@@ -25,12 +25,7 @@ export const Slider = ({ stepManager, sliderLength, sliderValue }) => {
   }, [sliderValue])
 
   const setValue = (value) => {
-    setState(prevState => {
-      return {
-        ...prevState,
-        currentValue: value
-      }
-    })
+    setState({ ...state, currentValue: value })
   }
 
   const handleChange = (e) => {
@@ -56,7 +51,7 @@ export const Slider = ({ stepManager, sliderLength, sliderValue }) => {
             type='range'
             min={0}
             max={state.max}
-            value={state.currentValue}
+            defaultValue={state.currentValue}
             onChange={handleChange}
             disabled={state.disabled}
         />

@@ -1,13 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './tx-browser.css'
-import EventManager from '../../../../../../apps/remix-ide/src/lib/events'
 
-export const TxBrowser = ({ requestDebug, unloadRequested }) => {
-  const event = new EventManager()
+export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber }) => {
   const [state, setState] = useState({
     txNumber: undefined,
     debugging: false
   })
+
+  useEffect(() => {
+    setState(prevState => {
+      return {
+        ...prevState,
+        txNumber: transactionNumber
+      }
+    })
+  }, [transactionNumber])
 
   const handleSubmit = () => {
     if (state.debugging) {
