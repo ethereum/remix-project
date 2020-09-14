@@ -40,8 +40,8 @@ class EventsDecoder {
     const eventABI = {}
     const abi = new ethers.utils.Interface(contract.abi)
     for (let e in abi.events) {
-      const event = abi.events[e]
-      eventABI[event.topic.replace('0x', '')] = { event: event.name, inputs: event.inputs, object: event, abi: abi }
+      const event = abi.getEvent(e)
+      eventABI[abi.getEventTopic(e).replace('0x', '')] = { event: event.name, inputs: event.inputs, object: event, abi: abi }
     }
     return eventABI
   }
@@ -57,14 +57,21 @@ class EventsDecoder {
   _event (hash, eventsABI) {
     for (let k in eventsABI) {
       if (eventsABI[k][hash]) {
-        return eventsABI[k][hash]
+        let event = eventsABI[k][hash]
+        for (let input of event.inputs) {
+          if (input.type === 'function') {
+            input.type = 'bytes24'
+            input.baseType = 'bytes24'
+          }
+        }
+        return event
       }
     }
     return null
   }
 
   _stringifyBigNumber (value) {
-    return value._ethersType === 'BigNumber' ? value.toString() : value
+    return value._isBigNumber ? value.toString() : value
   }
 
   _stringifyEvent (value) {
@@ -89,8 +96,8 @@ class EventsDecoder {
       if (eventAbi) {
         const decodedlog = eventAbi.abi.parseLog(log)
         const decoded = {}
-        for (const v in decodedlog.values) {
-          decoded[v] = this._stringifyEvent(decodedlog.values[v])
+        for (const v in decodedlog.args) {
+          decoded[v] = this._stringifyEvent(decodedlog.args[v])
         }
         events.push({ from: log.address, topic: topicId, event: eventAbi.event, args: decoded })
       } else {
