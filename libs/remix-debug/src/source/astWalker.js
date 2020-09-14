@@ -21,7 +21,7 @@ AstWalker.prototype.walk = function (ast, callback) {
   if (!('*' in callback)) {
     callback['*'] = function () { return true }
   }
-  if(ast){
+  if(ast) {
     const nodes = ast.nodes || (ast.body && ast.body.statements) || ast.declarations || []
     if(ast.body && ast.initializationExpression) // 'for' loop handling
       nodes.push(ast.initializationExpression)
