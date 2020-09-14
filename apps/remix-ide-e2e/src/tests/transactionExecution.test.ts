@@ -119,34 +119,30 @@ module.exports = {
             '1': 'bytes8[4]: _b8ret 0x1234000000000000,0x1234000000000000,0x1234000000000000,0x1234000000000000'
           },
           logs: [
-            {
-              'from': '0x8c1ed7e19abaa9f23c476da86dc1577f1ef401f5',
-              'topic': '0xd30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f',
-              'event': 'event1',
-              'args': {
-                '0': '-123',
-                '1': '123',
-                '2': {
-                  'hash': '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658',
-                  'type': 'Indexed'
-                },
-                '3': '0x12340000',
-                '4': 'test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ',
-                '_i': '-123',
-                '_u': '123',
-                '_str': {
-                  'hash': '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658',
-                  'type': 'Indexed'
-                },
-                '_b': '0x12340000',
-                '_notIndexed': 'test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ',
-                'length': 5
-              }
-            }
-          ]
+            {"from":"0x8c1ed7e19abaa9f23c476da86dc1577f1ef401f5",
+            "topic":"0xd30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f",
+            "event":"event1",
+            "args":{
+              "0":"-123",
+              "1":"123",
+              "2":{
+                "_isIndexed":true,
+                "hash":"0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
+              },
+              "3":"0x12340000",
+              "4":"test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test "}
+            }]
         })
       .click('*[data-id="deployAndRunClearInstances"]')
-      .end()
+  },
+
+  'Should Compile and Deploy a contract which has an event declaring a function as parameter': function (browser: NightwatchBrowser) {
+    browser.testContracts('eventFunctionInput.sol', sources[3]['browser/eventFunctionInput.sol'], ['C'])
+        .clickLaunchIcon('udapp')
+        .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
+        .click('#runTabView button[class^="instanceButton"]')
+        .waitForElementPresent('.instance:nth-of-type(2)')
+        .end()
   },
 
   tearDown: sauce
@@ -207,5 +203,11 @@ const sources = [
         _b8ret = _b8;
         emit event1(-123, 123, "test", hex"1234", "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ");
     }
+}`}},
+// https://github.com/ethereum/remix-project/issues/404
+{'browser/eventFunctionInput.sol': {content: `
+pragma solidity >= 0.7.0;
+contract C {
+    event Test(function() external);
 }`}}
 ]

@@ -48,9 +48,9 @@ class TestFunction extends EventEmitter {
         const equal: boolean = deepequal(logs[key], expectedValue[key])
 
         if (!equal) {
-          browser.assert.fail(`Expected ${expectedValue[key]} but got ${logs[key]}`)
+          browser.assert.fail(`Expected ${JSON.stringify(expectedValue[key])} but got ${JSON.stringify(logs[key])}`)
         } else {
-          browser.assert.ok(true, `Expected value matched returned value ${expectedValue[key]}`)
+          browser.assert.ok(true, `Expected value matched returned value ${JSON.stringify(expectedValue[key])}`)
         }
       })
       this.emit('complete')
