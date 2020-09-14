@@ -37,6 +37,9 @@ let css = csjs`
    height: 2em;
    width: 2em;
   }
+  .mediaBadge:focus {
+    outline: none;
+  }
   .logoImg {
     height: 10em;
   }
@@ -49,7 +52,7 @@ let css = csjs`
     max-height: 570px;
   }
   .panels {
-    box-shadow: 5px 5px 15px 0px;
+    box-shadow: 0px 0px 8px 0px;
   }
   .labelIt {
     margin-bottom: 0;
@@ -80,11 +83,6 @@ let css = csjs`
     width: 400px;
     transition: .5s ease-out;
     z-index: 1000;
-  }
-
-  .mediaMedium {
-    width: 400px;
-  }
 }
 `
 
