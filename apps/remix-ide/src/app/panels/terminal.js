@@ -633,14 +633,17 @@ class Terminal extends Plugin {
       error: 'text-danger' }[mode] // defaults
 
     if (mode) {
+      const filterUndefined = (el) => el !== undefined && el !== null
       return function logger (args, scopedCommands, append) {
-        var types = args.map(type)
-        var values = javascriptserialize.apply(null, args).map(function (val, idx) {
+        var types = args.filter(filterUndefined).map(type)
+        var values = javascriptserialize.apply(null, args.filter(filterUndefined)).map(function (val, idx) {
           if (typeof args[idx] === 'string') val = args[idx]
           if (types[idx] === 'element') val = jsbeautify.html(val)
           return val
         })
+        if (values.length) {
         append(yo`<span class="${mode}" >${values}</span>`)
+      }
       }
     } else {
       throw new Error('mode is not supported')
