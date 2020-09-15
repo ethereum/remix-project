@@ -475,6 +475,20 @@ class Terminal extends Plugin {
 
     return self._view.el
 
+    function wrapScript (script) {
+      return `
+        try {
+          const ret = ${script};
+          if (ret instanceof Promise) {
+            ret.then((result) => { console.log(result) }).catch((error) => { console.log(error) })
+          } else {
+            console.log(ret)
+          }   
+        } catch (e) {
+          console.log(error)
+        }
+        `
+    }
     function change (event) {
       if (self._components.autoCompletePopup.handleAutoComplete(
         event,
@@ -494,7 +508,7 @@ class Terminal extends Plugin {
           self._view.input.innerText = '\n'
           if (script.length) {
             self._cmdHistory.unshift(script)
-            self.commands.script(script)
+            self.commands.script(wrapScript(script))
           }
           self._components.autoCompletePopup.removeAutoComplete()
         }
