@@ -35,12 +35,11 @@
     "@remixproject/plugin": "0.3.0-beta.5",
     "@remixproject/plugin-api": "0.3.0-beta.5",
     "@remixproject/plugin-utils": "0.3.0-beta.5",
-    "@remixproject/plugin-ws": "0.3.0-beta.5",
+    "@remixproject/plugin-ws": "^0.3.0-beta.8",
     "chokidar": "^2.1.8",
     "commander": "^2.20.3",
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
-    "tslib": "^2.0.1",
     "ws": "^7.3.0"
   },
   "python": {
