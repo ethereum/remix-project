@@ -43,7 +43,7 @@ const allCommands = [
 
   {'web3.eth.clearSubscriptions();': 'Resets subscriptions.'},
   {'web3.eth.Contract(jsonInterface[, address][, options])': 'The web3.eth.Contract object makes it easy to interact with smart contracts on the ethereum blockchain.'},
-  {'web3.eth.accounts.create([entropy]);': 'The web3.eth.accounts contains functions to generate Ethereum accounts and sign transactions and data.'}
+  {'web3.eth.accounts.create([entropy]);': 'The web3.eth.accounts contains functions to generate Ethereum accounts and sign transactions and data.'},
   {'web3.eth.getAccounts();': 'Retrieve the list of accounts'},
   {'web3.eth.accounts.privateKeyToAccount(privateKey [, ignoreLength ]);': 'Get the account from the private key'},
   {'web3.eth.accounts.signTransaction(tx, privateKey [, callback]);': 'Sign Transaction'},
