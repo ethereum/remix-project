@@ -404,7 +404,7 @@ export class LandingPage extends ViewPlugin {
                 ${this.badgeTwitter}
                 ${this.badgeMedium}
               </div>
-              <div class="d-flex bg-light ${css.panels}">
+              <div class="mr-3 d-flex bg-light ${css.panels}">
                 ${this.mediumPanel}
                 ${this.twitterPanel}
               </div>
