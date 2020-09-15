@@ -16,7 +16,7 @@ const globalRegistry = require('../../global/registry')
 const queryParams = new QueryParams()
 let MENU_HANDLE
 
-function fileExplorer (localRegistry, files, menuItems) {
+function fileExplorer (localRegistry, files, menuItems, plugin) {
   var self = this
   this.events = new EventManager()
   // file provider backend
@@ -291,6 +291,14 @@ function fileExplorer (localRegistry, files, menuItems) {
           },
           () => {}
         )
+      }
+      if (key.endsWith('.js')) {
+        actions['Run Script'] = async () => {
+          provider.get(key, (error, content) => {
+            if (error) return console.log(error)
+            plugin.call('scriptRunner', 'execute', content)
+          })
+        }
       }
     }
     MENU_HANDLE = contextMenu(event, actions)
