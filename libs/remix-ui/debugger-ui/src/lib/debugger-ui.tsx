@@ -27,7 +27,7 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
       to: null
     },
     blockNumber: null,
-    txNumber: null,
+    txNumber: '',
     visibility: {
       vmDebugger: false,
       stepManager: false,
@@ -74,7 +74,9 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
 
     debuggerInstance.event.register('debuggerStatus', async (isActive) => {
       await debuggerModule.call('editor', 'discardHighlight')
-      setState({ ...state, isActive })
+      setState( prevState => {
+        return { ...prevState, isActive }
+      })
     })
 
     debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation) => {
@@ -192,7 +194,9 @@ const getTrace = (hash) => {
     const web3 = await getDebugWeb3()
     const currentReceipt = await web3.eth.getTransactionReceipt(hash)
 
-    setState({ ...state, currentReceipt })
+    setState(prevState => {
+      return { ...prevState, currentReceipt }
+    })
 
     const debug = new Debugger({
       web3,
@@ -224,7 +228,7 @@ const deleteHighlights = async () => {
   return (
       <div>
         <div className="px-2">
-          <TxBrowser requestDebug={requestDebug} unloadRequested={unloadRequested} transactionNumber={state.txNumber} />
+          <TxBrowser requestDebug={requestDebug} unloadRequested={unloadRequested} transactionNumber={state.txNumber} debugging={state.debugging} />
           <StepManager stepManager={state.debugger ? state.debugger.step_manager : null} />
           {/*<VmDebuggerHead vmDebuggerLogic={state.debugger.vmDebuggerLogic} /> */}
         </div>

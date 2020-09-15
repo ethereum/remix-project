@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import './tx-browser.css'
 
-export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber }) => {
+export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, debugging }) => {
   const [state, setState] = useState({
-    txNumber: undefined,
-    debugging: false
+    txNumber: ''
   })
 
   useEffect(() => {
@@ -17,7 +16,7 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber }) 
   }, [transactionNumber])
 
   const handleSubmit = () => {
-    if (state.debugging) {
+    if (debugging) {
       unload()
     } else {
       requestDebug(undefined, state.txNumber)
@@ -44,30 +43,30 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber }) 
   }
 
   return (
-    <div className="container">
+    <div className="container px-0">
       <div className="txContainer">
         <div className="py-1 d-flex justify-content-center w-100 input-group">
           <input
-            defaultValue={state.txNumber || ''}
-            className="form-control m-0 css.txinput"
+            value={state.txNumber}
+            className="form-control m-0 txinput"
             id='txinput'
             type='text'
             onChange={txInputChanged}
             placeholder={'Transaction hash, should start with 0x'}
             data-id="debuggerTransactionInput"
-            disabled={state.debugging}
+            disabled={debugging}
           />
         </div>
         <div className="d-flex justify-content-center w-100 btn-group py-1">
         <button
           className="btn btn-primary btn-sm txbutton"
           id="load"
-          title={state.debugging ? 'Stop debugging' : 'Start debugging'}
+          title={debugging ? 'Stop debugging' : 'Start debugging'}
           onClick={handleSubmit}
           data-id="debuggerTransactionStartButton"
-          disabled={!state.txNumber ? true : !state.debugging ? false : true }
+          disabled={!state.txNumber ? true : !debugging ? true : false }
         >
-          { state.debugging ? 'Stop' : 'Start' } debugging
+          { debugging ? 'Stop' : 'Start' } debugging
         </button>
         </div>
       </div>
