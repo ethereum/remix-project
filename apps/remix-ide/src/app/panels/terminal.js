@@ -447,7 +447,7 @@ class Terminal extends Plugin {
       <div><div> - Welcome to Remix ${packageJson.version} - </div><br>
       <div>You can use this terminal for: </div>
       <ul class=${css2.ul}>
-        <li>Checking transactions details and start debugging.</li>
+        <li>Check transactions details and start debugging.</li>
         <li>Running JavaScript scripts. The following libraries are accessible:
           <ul class=${css2.ul}>
             <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
@@ -456,9 +456,10 @@ class Terminal extends Plugin {
             <li>remix (run remix.help() for more info)</li>
           </ul>
         </li>
-        <li>Executing common command to interact with the Remix interface (see list of commands above). Note that these commands can also be included and run from a JavaScript script.</li>
-        <li>Use exports/.register(key, obj)/.remove(key)/.clear() to register and reuse object across script executions.</li>
       </ul>
+      <i> - Directly input a script in the command line interface </i>
+      <i> - Select a Javascript file in the file explorer and run \`remix.execute()\` </i>
+      <i> - Right click on a JavaScript file in the file explorer and click \`Run Script\` </i>
       </div>
     `
 
