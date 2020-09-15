@@ -5,12 +5,9 @@ import * as packageJson from '../../../../../package.json'
 var yo = require('yo-yo')
 var javascriptserialize = require('javascript-serialize')
 var jsbeautify = require('js-beautify')
-var ethers = require('ethers')
 var type = require('component-type')
 var vm = require('vm')
 var EventManager = require('../../lib/events')
-var Web3 = require('web3')
-var swarmgw = require('swarmgw')()
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
@@ -90,9 +87,6 @@ class Terminal extends Plugin {
     self.registerFilter('warn', basicFilter)
     self.registerFilter('error', basicFilter)
     self.registerFilter('script', basicFilter)
-
-    self._jsSandboxContext = {}
-    self._jsSandboxRegistered = {}
 
     if (opts.shell) self._shell = opts.shell // ???
     register(self)
@@ -707,9 +701,8 @@ class Terminal extends Plugin {
       // for all the other case, we use the Code Executor plugin
       var context = domTerminalFeatures(self, scopedCommands, self.blockchain)
       try {
-        var cmds = vm.createContext(Object.assign(self._jsSandboxContext, context, self._jsSandboxRegistered))
+        var cmds = vm.createContext(context)
         var result = vm.runInContext(script, cmds)
-        self._jsSandboxContext = Object.assign(cmds, context)
         return done(null, result)
       } catch (error) {
         return done(error.message)
@@ -726,29 +719,7 @@ class Terminal extends Plugin {
 
 function domTerminalFeatures (self, scopedCommands, blockchain) {
   return {
-    swarmgw,
-    ethers,
-    remix: self._components.cmdInterpreter,
-    web3: new Web3(blockchain.web3().currentProvider),
-    console: {
-      log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
-      info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
-      warn: function () { scopedCommands.warn.apply(scopedCommands, arguments) },
-      error: function () { scopedCommands.error.apply(scopedCommands, arguments) }
-    },
-    setTimeout: (fn, time) => {
-      return setTimeout(() => { self._shell('(' + fn.toString() + ')()', scopedCommands, () => {}) }, time)
-    },
-    setInterval: (fn, time) => {
-      return setInterval(() => { self._shell('(' + fn.toString() + ')()', scopedCommands, () => {}) }, time)
-    },
-    clearTimeout: clearTimeout,
-    clearInterval: clearInterval,
-    exports: {
-      register: (key, obj) => { self._jsSandboxRegistered[key] = obj },
-      remove: (key) => { delete self._jsSandboxRegistered[key] },
-      clear: () => { self._jsSandboxRegistered = {} }
-    }
+    remix: self._components.cmdInterpreter
   }
 }
 
