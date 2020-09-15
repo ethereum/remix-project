@@ -54,7 +54,7 @@ module.exports = class Filepanel extends ViewPlugin {
     }
 
     function createProvider (key, menuItems) {
-      return new FileExplorer(self._components.registry, self._deps.fileProviders[key], menuItems)
+      return new FileExplorer(self._components.registry, self._deps.fileProviders[key], menuItems, self)
     }
 
     var fileExplorer = createProvider('browser', ['createNewFile', 'publishToGist', canUpload ? 'uploadFile' : ''])
