@@ -140,13 +140,13 @@ class BreakpointManager {
     * @return {Bool} true if breapoint registered
     */
   hasBreakpoint () {
-    return false
-    // for (let k in this.breakpoints) {
-    //   if (this.breakpoints[k].length) {
-    //     return true
-    //   }
-    // }
     // return false
+    for (let k in this.breakpoints) {
+      if (this.breakpoints[k].length) {
+        return true
+      }
+    }
+    return false
   }
 
   /**
