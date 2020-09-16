@@ -1,5 +1,5 @@
 'use strict'
-const AstWalker = require('../source/astWalker')
+const { AstWalker } = require('@remix-project/remix-astwalker')
 
 /**
   * return all contract definitions of the given @astList
@@ -15,12 +15,13 @@ function extractContractDefinitions (sourcesList) {
   }
   const walker = new AstWalker()
   for (let k in sourcesList) {
-    walker.walk(sourcesList[k].ast, { 'ContractDefinition': (node) => {
-      ret.contractsById[node.id] = node
-      ret.sourcesByContract[node.id] = k
-      ret.contractsByName[k + ':' + node.name] = node
-      return false
-    }})
+    walker.walkFull(sourcesList[k].ast, (node) => {
+      if (node.nodeType === 'ContractDefinition') {
+        ret.contractsById[node.id] = node
+        ret.sourcesByContract[node.id] = k
+        ret.contractsByName[k + ':' + node.name] = node
+      }
+    })
   }
   return ret
 }

@@ -1,6 +1,5 @@
 'use strict'
 
-require('./astwalker.js')
 require('./traceManager.js')
 require('./codeManager.js')
 require('./disassembler.js')

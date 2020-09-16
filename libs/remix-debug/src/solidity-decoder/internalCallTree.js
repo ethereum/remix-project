@@ -1,7 +1,7 @@
 'use strict'
+const { AstWalker } = require('@remix-project/remix-astwalker')
 const remixLib = require('@remix-project/remix-lib')
 const SourceLocationTracker = require('../source/sourceLocationTracker')
-const AstWalker = require('../source/astWalker')
 const EventManager = require('../eventManager')
 
 const decodeInfo = require('./decodeInfo')
@@ -312,22 +312,20 @@ function resolveFunctionDefinition (tree, step, sourceLocation) {
 
 function extractVariableDeclarations (ast, astWalker) {
   const ret = {}
-  astWalker.walk(ast, (node) => {
+  astWalker.walkFull(ast, (node) => {
     if (node.nodeType === 'VariableDeclaration') {
       ret[node.src] = node
     }
-    return true
   })
   return ret
 }
 
 function extractFunctionDefinitions (ast, astWalker) {
   const ret = {}
-  astWalker.walk(ast, (node) => {
+  astWalker.walkFull(ast, (node) => {
     if (node.nodeType === 'FunctionDefinition') {
       ret[node.src] = node
     }
-    return true
   })
   return ret
 }

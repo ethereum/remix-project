@@ -22,6 +22,7 @@
     "ethereumjs-util": "^6.2.0",
     "ethereumjs-vm": "4.1.3",
     "@remix-project/remix-lib": "0.4.30",
+    "@remix-project/remix-astwalker": "0.0.25",
     "web3": "^1.2.4"
   },
   "devDependencies": {
