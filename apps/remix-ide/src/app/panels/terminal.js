@@ -74,7 +74,6 @@ class Terminal extends Plugin {
     self.registerCommand('error', self._blocksRenderer('error'), { activate: true })
     self.registerCommand('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
-      scopedCommands.log(`> ${script}`)
       self._shell(script, scopedCommands, function (error, output) {
         if (error) scopedCommands.error(error)
         else if (output) scopedCommands.log(output)
