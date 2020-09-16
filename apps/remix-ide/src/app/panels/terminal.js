@@ -481,6 +481,7 @@ class Terminal extends Plugin {
     return self._view.el
 
     function wrapScript (script) {
+      if (script.startsWith('remix.')) return script
       return `
         try {
           const ret = ${script};
@@ -490,7 +491,7 @@ class Terminal extends Plugin {
             console.log(ret)
           }   
         } catch (e) {
-          console.log(error)
+          console.log(e.message)
         }
         `
     }
