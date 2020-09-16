@@ -56,6 +56,7 @@
     "npm-run-all": "^4.0.2",
     "onchange": "^3.2.1",
     "remix-analyzer": "0.5.3",
+    "remix-astwalker": "0.0.25",
     "remix-debug": "0.4.5",
     "remix-lib": "0.4.30",
     "remix-simulator": "0.1.9-beta.6",
