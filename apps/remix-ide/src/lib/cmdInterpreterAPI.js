@@ -1,16 +1,12 @@
 'use strict'
 var yo = require('yo-yo')
 var async = require('async')
-var remixDebug = require('@remix-project/remix-debug')
 var EventManager = require('../lib/events')
 
 var CompilerImport = require('../app/compiler/compiler-imports')
 var toolTip = require('../app/ui/tooltip')
 var globalRegistry = require('../global/registry')
 var SourceHighlighter = require('../app/editor/sourceHighlighter')
-var RemixDebug = require('@remix-project/remix-debug').EthDebugger
-var TreeView = require('../app/ui/TreeView') // TODO setup a direct reference to the UI components
-var solidityTypeFormatter = require('../app/tabs/debugger/debuggerUI/vmDebugger/utils/SolidityTypeFormatter')
 var GistHandler = require('./gist-handler')
 
 class CmdInterpreterAPI {
