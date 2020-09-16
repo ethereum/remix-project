@@ -140,7 +140,9 @@
     "npm-install-version": "^6.0.2",
     "signale": "^1.4.0",
     "time-stamp": "^2.2.0",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -251,6 +253,10 @@
     "webworkify-webpack": "^2.1.5",
     "worker-loader": "^2.0.0",
     "yo-yo": "github:ioedeveloper/yo-yo",
-    "yo-yoify": "^3.7.3"
+    "yo-yoify": "^3.7.3",
+    "@types/jest": "25.1.4",
+    "@babel/preset-typescript": "7.9.0",
+    "@babel/preset-react": "7.9.4",
+    "babel-jest": "25.1.0"
   }
 }
