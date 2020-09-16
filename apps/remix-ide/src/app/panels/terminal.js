@@ -448,7 +448,14 @@ class Terminal extends Plugin {
       <div>You can use this terminal for: </div>
       <ul class=${css2.ul}>
         <li>Check transactions details and start debugging.</li>
-        <li>Running JavaScript scripts. The following libraries are accessible:
+        <li>Execute JavaScript scripts:
+          <br />
+          <i> - Directly input a script in the command line interface </i>
+          <br />
+          <i> - Select a Javascript file in the file explorer and run \`remix.execute()\` in the command line interface  </i>
+          <br />
+          <i> - Right click on a JavaScript file in the file explorer and click \`Run Script\` </i>
+        The following libraries are accessible:
           <ul class=${css2.ul}>
             <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
             <li><a target="_blank" href="https://docs.ethers.io/ethers.js/html/">ethers.js</a> </li>
@@ -457,9 +464,7 @@ class Terminal extends Plugin {
           </ul>
         </li>
       </ul>
-      <i> - Directly input a script in the command line interface </i>
-      <i> - Select a Javascript file in the file explorer and run \`remix.execute()\` </i>
-      <i> - Right click on a JavaScript file in the file explorer and click \`Run Script\` </i>
+      
       </div>
     `
 
@@ -642,8 +647,8 @@ class Terminal extends Plugin {
           return val
         })
         if (values.length) {
-        append(yo`<span class="${mode}" >${values}</span>`)
-      }
+          append(yo`<span class="${mode}" >${values}</span>`)
+        }
       }
     } else {
       throw new Error('mode is not supported')
