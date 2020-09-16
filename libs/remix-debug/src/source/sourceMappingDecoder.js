@@ -1,7 +1,7 @@
 'use strict'
+const { AstWalker } = require('@remix-project/remix-astwalker')
 const remixLib = require('@remix-project/remix-lib')
 const util = remixLib.util
-const AstWalker = require('./astWalker')
 
 /**
  * Decompress the source mapping given by solc-bin.js
@@ -144,33 +144,26 @@ function findNodeAtInstructionIndex (astNodeType, instIndex, sourceMap, ast) {
 
 function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
   const astWalker = new AstWalker()
-  const callback = {}
   let found = null
-  callback['*'] = function (node) {
+  const callback = function (node) {
     const nodeLocation = sourceLocationFromAstNode(node)
     if (!nodeLocation) {
-      return true
+      return
     }
     if (nodeLocation.start <= sourceLocation.start && nodeLocation.start + nodeLocation.length >= sourceLocation.start + sourceLocation.length) {
       if (astNodeType === node.nodeType) {
         found = node
-        return false
-      } else {
-        return true
       }
-    } else {
-      return false
     }
   }
-  astWalker.walk(ast.ast, callback)
+  astWalker.walkFull(ast.ast, callback)
   return found
 }
 
 function nodesAtPosition (astNodeType, position, ast) {
   const astWalker = new AstWalker()
-  const callback = {}
   const found = []
-  callback['*'] = function (node) {
+  const callback = function (node) {
     var nodeLocation = sourceLocationFromAstNode(node)
     if (!nodeLocation) {
       return
@@ -178,14 +171,10 @@ function nodesAtPosition (astNodeType, position, ast) {
     if (nodeLocation.start <= position && nodeLocation.start + nodeLocation.length >= position) {
       if (!astNodeType || astNodeType === node.nodeType) {
         found.push(node)
-        if (astNodeType) return false
       }
-      return true
-    } else {
-      return false
     }
   }
-  astWalker.walk(ast.ast, callback)
+  astWalker.walkFull(ast.ast, callback)
   return found
 }
 

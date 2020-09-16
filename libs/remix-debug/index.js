@@ -12,7 +12,6 @@ const SolidityDecoder = require('./src/solidity-decoder')
 const BreakpointManager = require('./src/code/breakpointManager')
 
 const SourceMappingDecoder = require('./src/source/sourceMappingDecoder')
-const AstWalker = require('./src/source/astWalker')
 
 const traceHelper = require('./src/trace/traceHelper')
 
@@ -28,7 +27,6 @@ module.exports = {
   init,
   traceHelper,
   SourceMappingDecoder,
-  AstWalker,
   EthDebugger: EthDebugger,
   TransactionDebugger: TransactionDebugger,
   /**
