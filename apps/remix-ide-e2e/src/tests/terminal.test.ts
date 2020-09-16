@@ -42,14 +42,6 @@ module.exports = {
     .journalChildIncludes('remix.help()')
   },
 
-  'Should execute remix.debugHelp() command': function (browser: NightwatchBrowser) {
-    browser
-    .waitForElementVisible('*[data-id="terminalCli"]')
-    .executeScript('remix.debugHelp()')
-    .journalChildIncludes('Here are some examples of scripts that can be run (using remix.exeCurrent() or directly from the console)')
-    .journalChildIncludes('Please see https://www.npmjs.com/package/remix-debug for more informations')
-  },
-
   'Async/Await Script': function (browser: NightwatchBrowser) {
     browser
     .addFile('asyncAwait.js', { content: asyncAwait })
