@@ -3,13 +3,12 @@ import AssemblyItems from './assembly-items'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import useExtractData from '../../hooks/extract-data'
 import { DropdownPanelProps, ExtractData } from '../../types'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 
 
 import './styles/dropdown-panel.css'
 /* eslint-disable-next-line */
 import EventManager from '../../../../../../apps/remix-ide/src/lib/events'
-/* eslint-disable-next-line */
-import copyToClipboard from '../../../../../../apps/remix-ide/src/app/ui/copy-to-clipboard'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
     const { dropdownName, dropdownMessage, opts, codeView, index, calldata, header, extractFunc, formatSelfFunc } = props
@@ -120,7 +119,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                 }
             }
         })
-        if (!this.displayContentOnly) {
+        if (!state.displayContentOnly) {
         //   this.view.querySelector('.title i.fa-copy').style.display = 'block'
             setState(prevState => {
                 return {
@@ -188,7 +187,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
 
     let content: JSX.Element | JSX.Element[] = <div>Empty</div>
     if (state.json) {
-        content = data.map(item => {
+        content = (data).map(item => {
             return (
                 <TreeView key={item.key}>
                     { renderData(item.data, item.key) }
@@ -200,7 +199,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     <div className="py-0 px-1 title">
         <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div>
         <div className="name" onClick={handleToggle}>{dropdownName}</div><span className="nameDetail" onClick={handleToggle}></span>
-        {copyToClipboard(() => copyClipboard())}
+        <CopyToClipboard getContent={copyClipboard} />
     </div> : <div></div>
     
     if (state.displayContentOnly) {

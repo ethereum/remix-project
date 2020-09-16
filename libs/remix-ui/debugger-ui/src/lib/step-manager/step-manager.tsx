@@ -11,8 +11,10 @@ export const StepManager = ({ stepManager }) => {
   })
 
   useEffect(() => {
-    stepManager && stepManager.event.register('revertWarning', setRevertWarning)
-    stepManager && stepManager.event.register('stepChanged', updateStep)
+    if (stepManager) {
+      stepManager.event.register('revertWarning', setRevertWarning)
+      stepManager.event.register('stepChanged', updateStep)
+    }
   }, [stepManager])
 
   const setRevertWarning = (warning) => {

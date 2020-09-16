@@ -35,80 +35,82 @@ export const VmDebuggerHead = ({ vmDebuggerLogic }) => {
   })
 
   useEffect(() => {
-    vmDebuggerLogic.event.register('codeManagerChanged', (code, address, index) => {
-      setAsm({ code, address, index })
-    })
-    vmDebuggerLogic.event.register('traceUnloaded', () => {
-      setAsm({ code: [], address: '', index: -1 })
-    })
-    vmDebuggerLogic.event.register('functionsStackUpdate', (stack) => {
-      if (stack === null) return
-      const functions = []
-  
-      for (const func of stack) {
-        functions.push(func.functionDefinition.attributes.name + '(' + func.inputs.join(', ') + ')')
-      }
-      setFunctionPanel(functions)
-    })
-    vmDebuggerLogic.event.register('traceUnloaded', () => {
-      setStepDetail({ key: null, value: null, reset: true })
-    })
-    vmDebuggerLogic.event.register('newTraceLoaded', () => {
-      setStepDetail({ key: null, value: null, reset: true })
-    })
-    vmDebuggerLogic.event.register('traceCurrentStepUpdate', (error, step) => {
-      setStepDetail({ key: 'execution step', value: (error ? '-' : step), reset: false })
-    })
-    vmDebuggerLogic.event.register('traceMemExpandUpdate', (error, addmem) => {
-      setStepDetail({ key: 'add memory', value: (error ? '-' : addmem), reset: false })
-    })
-    vmDebuggerLogic.event.register('traceStepCostUpdate', (error, gas) => {
-      setStepDetail({ key: 'gas', value: (error ? '-' : gas), reset: false })
-    })
-    vmDebuggerLogic.event.register('traceCurrentCalledAddressAtUpdate', (error, address) => {
-      setStepDetail({ key: 'loaded address', value: (error ? '-' : address), reset: false })
-    })
-    vmDebuggerLogic.event.register('traceRemainingGasUpdate', (error, remainingGas) => {
-      setStepDetail({ key: 'remaining gas', value: (error ? '-' : remainingGas), reset: false })
-    })
-    vmDebuggerLogic.event.register('indexUpdate', (index) => {
-      setStepDetail({ key: 'vm trace step', value: index, reset: false })
-    })
-    vmDebuggerLogic.event.register('solidityState', (calldata) => {
-      setSolidityState({ ...solidityState, calldata })
-    })
-    vmDebuggerLogic.event.register('solidityStateMessage', (message) => {
-      setSolidityState({ ...solidityState, message })
-    })
-    vmDebuggerLogic.event.register('solidityLocals', (calldata) => {
-      setSolidityLocals({ ...solidityState, calldata })
-    })
-    vmDebuggerLogic.event.register('solidityLocalsMessage', (message) => {
-      setSolidityLocals({ ...solidityState, message })
-    })
-    vmDebuggerLogic.event.register('newTrace', () => {
-      setPanelVisibility({
-        functionPanel: true,
-        stepDetail: true,
-        solidityState: true,
-        solidityLocals: true,
-        returnValuesPanel: true,
-        fullStoragesChangesPanel: true
+    if (vmDebuggerLogic) {
+      vmDebuggerLogic.event.register('codeManagerChanged', (code, address, index) => {
+        setAsm({ code, address, index })
       })
-    })
-    vmDebuggerLogic.start()
-  }, [])
+      vmDebuggerLogic.event.register('traceUnloaded', () => {
+        setAsm({ code: [], address: '', index: -1 })
+      })
+      vmDebuggerLogic.event.register('functionsStackUpdate', (stack) => {
+        if (stack === null) return
+        const functions = []
+    
+        for (const func of stack) {
+          functions.push(func.functionDefinition.attributes.name + '(' + func.inputs.join(', ') + ')')
+        }
+        setFunctionPanel(functions)
+      })
+      vmDebuggerLogic.event.register('traceUnloaded', () => {
+        setStepDetail({ key: null, value: null, reset: true })
+      })
+      vmDebuggerLogic.event.register('newTraceLoaded', () => {
+        setStepDetail({ key: null, value: null, reset: true })
+      })
+      vmDebuggerLogic.event.register('traceCurrentStepUpdate', (error, step) => {
+        setStepDetail({ key: 'execution step', value: (error ? '-' : step), reset: false })
+      })
+      vmDebuggerLogic.event.register('traceMemExpandUpdate', (error, addmem) => {
+        setStepDetail({ key: 'add memory', value: (error ? '-' : addmem), reset: false })
+      })
+      vmDebuggerLogic.event.register('traceStepCostUpdate', (error, gas) => {
+        setStepDetail({ key: 'gas', value: (error ? '-' : gas), reset: false })
+      })
+      vmDebuggerLogic.event.register('traceCurrentCalledAddressAtUpdate', (error, address) => {
+        setStepDetail({ key: 'loaded address', value: (error ? '-' : address), reset: false })
+      })
+      vmDebuggerLogic.event.register('traceRemainingGasUpdate', (error, remainingGas) => {
+        setStepDetail({ key: 'remaining gas', value: (error ? '-' : remainingGas), reset: false })
+      })
+      vmDebuggerLogic.event.register('indexUpdate', (index) => {
+        setStepDetail({ key: 'vm trace step', value: index, reset: false })
+      })
+      vmDebuggerLogic.event.register('solidityState', (calldata) => {
+        setSolidityState({ ...solidityState, calldata })
+      })
+      vmDebuggerLogic.event.register('solidityStateMessage', (message) => {
+        setSolidityState({ ...solidityState, message })
+      })
+      vmDebuggerLogic.event.register('solidityLocals', (calldata) => {
+        setSolidityLocals({ ...solidityState, calldata })
+      })
+      vmDebuggerLogic.event.register('solidityLocalsMessage', (message) => {
+        setSolidityLocals({ ...solidityState, message })
+      })
+      vmDebuggerLogic.event.register('newTrace', () => {
+        setPanelVisibility({
+          functionPanel: true,
+          stepDetail: true,
+          solidityState: true,
+          solidityLocals: true,
+          returnValuesPanel: true,
+          fullStoragesChangesPanel: true
+        })
+      })
+      vmDebuggerLogic.start()
+    }
+  }, [vmDebuggerLogic])
 
   return (
     <div id="vmheadView" className="mt-1 px-0">
       <div className="d-flex flex-column">
-        <div className="w-100" hidden>
-          <FunctionPanel calldata={functionPanel} />
-          <SolidityLocals calldata={solidityLocals.calldata} message={solidityLocals.message} />
-          <SolidityState calldata={solidityState.calldata} message={solidityState.message} />
+        <div className="w-100">
+          <FunctionPanel calldata={functionPanel || {}} />
+          {/* <SolidityLocals calldata={solidityLocals.calldata} message={solidityLocals.message} /> */}
+          {/* <SolidityState calldata={solidityState.calldata} message={solidityState.message} /> */}
         </div>
-        <div className="w-100"><CodeListView asm={asm} /></div>
-        <div className="w-100"><StepDetail detail={stepDetail} /></div>
+        {/* <div className="w-100"><CodeListView asm={asm} /></div> */}
+        {/* <div className="w-100"><StepDetail detail={stepDetail} /></div> */}
       </div>
     </div>
   )
