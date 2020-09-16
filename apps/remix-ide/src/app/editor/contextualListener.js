@@ -1,8 +1,8 @@
 'use strict'
 const remixdebug = require('@remix-project/remix-debug')
+const { AstWalker } = require('@remix-project/remix-astwalker')
 const csjs = require('csjs-inject')
 const SourceMappingDecoder = remixdebug.SourceMappingDecoder
-const AstWalker = remixdebug.AstWalker
 const EventManager = require('../../lib/events')
 const globalRegistry = require('../../global/registry')
 import { Plugin } from '@remixproject/engine'
@@ -97,8 +97,7 @@ class ContextualListener extends Plugin {
 
   _buildIndex (compilationResult, source) {
     if (compilationResult && compilationResult.sources) {
-      const callback = {}
-      callback['*'] = (node) => {
+      const callback = (node) => {
         if (node && node.referencedDeclaration) {
           if (!this._index['Declarations'][node.referencedDeclaration]) {
             this._index['Declarations'][node.referencedDeclaration] = []
@@ -106,10 +105,9 @@ class ContextualListener extends Plugin {
           this._index['Declarations'][node.referencedDeclaration].push(node)
         }
         this._index['FlatReferences'][node.id] = node
-        return true
       }
       for (const s in compilationResult.sources) {
-        this.astWalker.walk(compilationResult.sources[s].ast, callback)
+        this.astWalker.walkFull(compilationResult.sources[s].ast, callback)
       }
     }
   }
