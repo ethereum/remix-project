@@ -35,16 +35,11 @@ module.exports = {
     browser
     .waitForElementVisible('*[data-id="terminalCli"]')
     .executeScript('remix.help()')
-    .journalChildIncludes('remix.call(message: {name, key, payload})')
-    .journalChildIncludes('remix.getFile(path)')
-    .journalChildIncludes('remix.debug(hash)')
     .journalChildIncludes('remix.loadgist(id)')
     .journalChildIncludes('remix.loadurl(url)')
-    .journalChildIncludes('remix.setproviderurl(url)')
     .journalChildIncludes('remix.execute(filepath)')
     .journalChildIncludes('remix.exeCurrent()')
     .journalChildIncludes('remix.help()')
-    .journalChildIncludes('remix.debugHelp()')
   },
 
   'Should execute remix.debugHelp() command': function (browser: NightwatchBrowser) {
