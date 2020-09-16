@@ -190,26 +190,27 @@ const debug = (txHash) => {
 }
 
 const getTrace = (hash) => {
+  if (!hash) return
   return new Promise(async (resolve, reject) => { /* eslint-disable-line */
     const web3 = await getDebugWeb3()
     const currentReceipt = await web3.eth.getTransactionReceipt(hash)
-
-    setState(prevState => {
-      return { ...prevState, currentReceipt }
-    })
-
     const debug = new Debugger({
       web3,
       offsetToLineColumnConverter: globalRegistry.get('offsettolinecolumnconverter').api,
       compilationResult: async (address) => {
         try {
-          return await fetchContractAndCompile(address, state.currentReceipt)
+          return await fetchContractAndCompile(address, currentReceipt)
         } catch (e) {
           console.error(e)
         }
         return null
       }
     })
+
+    setState(prevState => {
+      return { ...prevState, currentReceipt }
+    })
+
     debug.debugger.traceManager.traceRetriever.getTrace(hash, (error, trace) => {
       if (error) return reject(error)
       resolve(trace)
@@ -228,9 +229,9 @@ const deleteHighlights = async () => {
   return (
       <div>
         <div className="px-2">
-          <TxBrowser requestDebug={requestDebug} unloadRequested={unloadRequested} transactionNumber={state.txNumber} debugging={state.debugging} />
-          <StepManager stepManager={state.debugger ? state.debugger.step_manager : null} />
-          {/*<VmDebuggerHead vmDebuggerLogic={state.debugger.vmDebuggerLogic} /> */}
+          <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } transactionNumber={ state.txNumber } debugging={ state.debugging } />
+          <StepManager stepManager={ state.debugger ? state.debugger.step_manager : null } />
+          <VmDebuggerHead vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } />
         </div>
         {/* <div className="statusMessage">{state.statusMessage}</div>
         <VmDebugger vmDebuggerLogic={state.debugger.vmDebuggerLogic} /> */}
