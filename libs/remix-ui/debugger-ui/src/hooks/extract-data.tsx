@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ExtractData, ExtractFunc } from '../types'
 
 export const useExtractData = (json, extractFunc?: ExtractFunc): Array<{ key: string, data: ExtractData }> => {
-    const [data, setData] = useState(null)
+    const [data, setData] = useState([])
 
     useEffect(() => {
         const data: Array<{ key: string, data: ExtractData }> = Object.keys(json).map((innerKey) => {

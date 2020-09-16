@@ -78,6 +78,9 @@
     },
     "remix-ui-utils": {
       "tags": []
+    },
+    "remix-ui-clipboard": {
+      "tags": []
     }
   }
 }
