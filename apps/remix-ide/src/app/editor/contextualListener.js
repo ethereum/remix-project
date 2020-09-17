@@ -190,7 +190,7 @@ class ContextualListener extends Plugin {
     let executionCost, codeDepositCost
     if (node.nodeType === 'FunctionDefinition') {
       const visibility = node.visibility
-      if (!node.kind === 'constructor') {
+      if (node.kind !== 'constructor') {
         const fnName = node.name
         const fn = fnName + this._getInputParams(node)
         if (visibility === 'public' || visibility === 'external') {
