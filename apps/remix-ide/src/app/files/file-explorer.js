@@ -293,7 +293,7 @@ function fileExplorer (localRegistry, files, menuItems, plugin) {
         )
       }
       if (key.endsWith('.js')) {
-        actions['Run Script'] = async () => {
+        actions['Run'] = async () => {
           provider.get(key, (error, content) => {
             if (error) return console.log(error)
             plugin.call('scriptRunner', 'execute', content)
