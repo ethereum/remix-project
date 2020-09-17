@@ -130,7 +130,7 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
 
 function html (opts) {
   return yo`
-  <div id="modal-dialog" data-id="modalDialogContainer" class="modal" tabindex="-1" role="dialog">
+  <div id="modal-dialog" data-id="modalDialogContainer" data-backdrop="static" data-keyboard="false" class="modal" tabindex="-1" role="dialog">
     <div id="modal-background" class="modal-dialog" role="document">
       <div class="modal-content ${css.modalContent} ${opts.class}">
         <div class="modal-header">
