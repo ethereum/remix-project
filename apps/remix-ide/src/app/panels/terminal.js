@@ -444,20 +444,20 @@ class Terminal extends Plugin {
 
     var intro = yo`
       <div><div> - Welcome to Remix ${packageJson.version} - </div><br>
-      <div>You can use this terminal for: </div>
+      <div>You can use this terminal to: </div>
       <ul class=${css2.ul}>
         <li>Check transactions details and start debugging.</li>
         <li>Execute JavaScript scripts:
           <br />
-          <i> - Directly input a script in the command line interface </i>
+          <i> - Input a script directly in the command line interface </i>
           <br />
-          <i> - Select a Javascript file in the file explorer and run \`remix.execute()\` in the command line interface  </i>
+          <i> - Select a Javascript file in the file explorer and then run \`remix.execute()\` or \`remix.exeCurrent()\`  in the command line interface  </i>
           <br />
-          <i> - Right click on a JavaScript file in the file explorer and click \`Run Script\` </i>
+          <i> - Right click on a JavaScript file in the file explorer and then click \`Run\` </i>
         The following libraries are accessible:
           <ul class=${css2.ul}>
             <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
-            <li><a target="_blank" href="https://docs.ethers.io/ethers.js/html/">ethers.js</a> </li>
+            <li><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
             <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
             <li>remix (run remix.help() for more info)</li>
           </ul>
