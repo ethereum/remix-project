@@ -23,7 +23,7 @@ module.exports = {
     .addFile('test_jsCompile.js', { content: jsCompile })
     .executeScript('remix.exeCurrent()')
     .pause(5000)
-    .journalChildIncludes(`version: '0.6.8+commit.0bbfe453'`)
+    .journalChildIncludes(`"languageversion": "0.6.8+commit.0bbfe453"`)
   },
 
   'Should update the compiler configuration with "setCompilerConfig" API': function (browser: NightwatchBrowser) {

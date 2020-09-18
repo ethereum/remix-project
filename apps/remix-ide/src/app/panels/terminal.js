@@ -5,12 +5,9 @@ import * as packageJson from '../../../../../package.json'
 var yo = require('yo-yo')
 var javascriptserialize = require('javascript-serialize')
 var jsbeautify = require('js-beautify')
-var ethers = require('ethers')
 var type = require('component-type')
 var vm = require('vm')
 var EventManager = require('../../lib/events')
-var Web3 = require('web3')
-var swarmgw = require('swarmgw')()
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
@@ -77,7 +74,6 @@ class Terminal extends Plugin {
     self.registerCommand('error', self._blocksRenderer('error'), { activate: true })
     self.registerCommand('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
-      scopedCommands.log(`> ${script}`)
       self._shell(script, scopedCommands, function (error, output) {
         if (error) scopedCommands.error(error)
         else if (output) scopedCommands.log(output)
@@ -90,9 +86,6 @@ class Terminal extends Plugin {
     self.registerFilter('warn', basicFilter)
     self.registerFilter('error', basicFilter)
     self.registerFilter('script', basicFilter)
-
-    self._jsSandboxContext = {}
-    self._jsSandboxRegistered = {}
 
     if (opts.shell) self._shell = opts.shell // ???
     register(self)
@@ -451,20 +444,26 @@ class Terminal extends Plugin {
 
     var intro = yo`
       <div><div> - Welcome to Remix ${packageJson.version} - </div><br>
-      <div>You can use this terminal for: </div>
+      <div>You can use this terminal to: </div>
       <ul class=${css2.ul}>
-        <li>Checking transactions details and start debugging.</li>
-        <li>Running JavaScript scripts. The following libraries are accessible:
+        <li>Check transactions details and start debugging.</li>
+        <li>Execute JavaScript scripts:
+          <br />
+          <i> - Input a script directly in the command line interface </i>
+          <br />
+          <i> - Select a Javascript file in the file explorer and then run \`remix.execute()\` or \`remix.exeCurrent()\`  in the command line interface  </i>
+          <br />
+          <i> - Right click on a JavaScript file in the file explorer and then click \`Run\` </i>
+        The following libraries are accessible:
           <ul class=${css2.ul}>
             <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
-            <li><a target="_blank" href="https://docs.ethers.io/ethers.js/html/">ethers.js</a> </li>
+            <li><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
             <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
             <li>remix (run remix.help() for more info)</li>
           </ul>
         </li>
-        <li>Executing common command to interact with the Remix interface (see list of commands above). Note that these commands can also be included and run from a JavaScript script.</li>
-        <li>Use exports/.register(key, obj)/.remove(key)/.clear() to register and reuse object across script executions.</li>
       </ul>
+      
       </div>
     `
 
@@ -481,6 +480,21 @@ class Terminal extends Plugin {
 
     return self._view.el
 
+    function wrapScript (script) {
+      if (script.startsWith('remix.')) return script
+      return `
+        try {
+          const ret = ${script};
+          if (ret instanceof Promise) {
+            ret.then((result) => { console.log(result) }).catch((error) => { console.log(error) })
+          } else {
+            console.log(ret)
+          }   
+        } catch (e) {
+          console.log(e.message)
+        }
+        `
+    }
     function change (event) {
       if (self._components.autoCompletePopup.handleAutoComplete(
         event,
@@ -500,7 +514,7 @@ class Terminal extends Plugin {
           self._view.input.innerText = '\n'
           if (script.length) {
             self._cmdHistory.unshift(script)
-            self.commands.script(script)
+            self.commands.script(wrapScript(script))
           }
           self._components.autoCompletePopup.removeAutoComplete()
         }
@@ -624,14 +638,17 @@ class Terminal extends Plugin {
       error: 'text-danger' }[mode] // defaults
 
     if (mode) {
+      const filterUndefined = (el) => el !== undefined && el !== null
       return function logger (args, scopedCommands, append) {
-        var types = args.map(type)
-        var values = javascriptserialize.apply(null, args).map(function (val, idx) {
+        var types = args.filter(filterUndefined).map(type)
+        var values = javascriptserialize.apply(null, args.filter(filterUndefined)).map(function (val, idx) {
           if (typeof args[idx] === 'string') val = args[idx]
           if (types[idx] === 'element') val = jsbeautify.html(val)
           return val
         })
-        append(yo`<span class="${mode}" >${values}</span>`)
+        if (values.length) {
+          append(yo`<span class="${mode}" >${values}</span>`)
+        }
       }
     } else {
       throw new Error('mode is not supported')
@@ -707,9 +724,8 @@ class Terminal extends Plugin {
       // for all the other case, we use the Code Executor plugin
       var context = domTerminalFeatures(self, scopedCommands, self.blockchain)
       try {
-        var cmds = vm.createContext(Object.assign(self._jsSandboxContext, context, self._jsSandboxRegistered))
+        var cmds = vm.createContext(context)
         var result = vm.runInContext(script, cmds)
-        self._jsSandboxContext = Object.assign(cmds, context)
         return done(null, result)
       } catch (error) {
         return done(error.message)
@@ -726,29 +742,7 @@ class Terminal extends Plugin {
 
 function domTerminalFeatures (self, scopedCommands, blockchain) {
   return {
-    swarmgw,
-    ethers,
-    remix: self._components.cmdInterpreter,
-    web3: new Web3(blockchain.web3().currentProvider),
-    console: {
-      log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
-      info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
-      warn: function () { scopedCommands.warn.apply(scopedCommands, arguments) },
-      error: function () { scopedCommands.error.apply(scopedCommands, arguments) }
-    },
-    setTimeout: (fn, time) => {
-      return setTimeout(() => { self._shell('(' + fn.toString() + ')()', scopedCommands, () => {}) }, time)
-    },
-    setInterval: (fn, time) => {
-      return setInterval(() => { self._shell('(' + fn.toString() + ')()', scopedCommands, () => {}) }, time)
-    },
-    clearTimeout: clearTimeout,
-    clearInterval: clearInterval,
-    exports: {
-      register: (key, obj) => { self._jsSandboxRegistered[key] = obj },
-      remove: (key) => { delete self._jsSandboxRegistered[key] },
-      clear: () => { self._jsSandboxRegistered = {} }
-    }
+    remix: self._components.cmdInterpreter
   }
 }
 
