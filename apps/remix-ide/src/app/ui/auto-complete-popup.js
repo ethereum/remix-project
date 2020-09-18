@@ -192,7 +192,7 @@ class AutoCompletePopup {
     this.opts.appManager.event.on('activate', async (profile) => {
       if (!profile.methods) return
       profile.methods.forEach((method) => {
-        const key = `remix.call({name: '${profile.name}', key:'${method}', payload: []}).then((result) => { console.log(result) }).catch((error) => { console.log(error) })`
+        const key = `remix.call('${profile.name}', '${method}')`
         const keyValue = {}
         keyValue[key] = `call ${profile.name} - ${method}`
         if (this.extraCommands.includes(keyValue)) return
