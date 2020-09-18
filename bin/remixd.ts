@@ -68,10 +68,11 @@ import * as path from 'path'
 
   async function isValidOrigin (origin: string): Promise<any> {
     const domain = getDomain(origin)
+    const gistUrl = 'https://gist.githubusercontent.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173/raw/3367e019335746b73288e3710af2922d4c8ef5a3/origins.json'
   
     if (!domain) return
     try {
-      const { data } = await Axios.get('https://gist.githubusercontent.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173/raw/3367e019335746b73288e3710af2922d4c8ef5a3/origins.json') as { data: string[] }
+      const { data } = await Axios.get(gistUrl)
   
       try {
         await fs.writeJSON(path.resolve(__dirname + '/origins.json'), { data })
