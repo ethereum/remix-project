@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\"",
-    "start": "./lib/bin/remixd.js -s ./shared --remix-ide https://remix.ethereum.org/",
+    "start": "./lib/bin/remixd.js",
     "npip": "npip",
     "lint": "eslint ./src ./bin --ext .ts",
     "build": "tsc -p ./ && chmod +x ./lib/bin/remixd.js",
