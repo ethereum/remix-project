@@ -1,6 +1,7 @@
 import * as WS from 'ws'
 import * as http from 'http'
 import { WebsocketOpt, SharedFolderClient } from '../types'
+import { getDomain } from './utils'
 
 const { createClient } = require('@remixproject/plugin-ws')
 
@@ -52,5 +53,7 @@ export default class WebSocket {
 }
 
 function originIsAllowed (origin: string, self: WebSocket): boolean {
-  return origin === self.opt.remixIdeUrl
+  console.log('origin: ', origin)
+  console.log('self.opt.remixIdeUrl: ', self.opt.remixIdeUrl)
+  return origin === self.opt.remixIdeUrl || origin === getDomain(self.opt.remixIdeUrl)
 }
