@@ -76,4 +76,16 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
   return ret
 }
 
-export { absolutePath, relativePath, walkSync, resolveDirectory }
+/**
+ * returns the absolute path of the given @arg url
+ *
+ * @param {String} url - Remix-IDE URL instance
+ * @return {String} extracted domain name from url
+ */
+function getDomain(url: string) {
+  const domainMatch = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/img)
+
+  return domainMatch ? domainMatch[0] : null
+}
+
+export { absolutePath, relativePath, walkSync, resolveDirectory, getDomain }
