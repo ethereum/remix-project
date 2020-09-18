@@ -6,16 +6,11 @@ const allPrograms = [
 ]
 
 const allCommands = [
-  {'remix.debug(hash)': 'Start debugging a transaction.'},
-  {'remix.debugHelp()': 'Display help message for debugging'},
   {'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.'},
   {'remix.exeCurrent()': 'Run the script currently displayed in the editor.'},
-  {'remix.getFile(path)': 'Returns the content of the file located at the given path'},
   {'remix.help()': 'Display this help message.'},
   {'remix.loadgist(id)': 'Load a gist in the file explorer.'},
   {'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm or ipfs.'},
-  {'remix.setFile(path, content)': 'set the content of the file located at the given path'},
-  {'remix.setproviderurl(url)': 'Change the current provider to Web3 provider and set the url endpoint.'},
 
   {'swarmgw.get(url, cb)': 'Download files from Swarm via https://swarm-gateways.net/'},
   {'swarmgw.put(content, cb)': 'Upload files to Swarm via https://swarm-gateways.net/'},
@@ -30,8 +25,7 @@ const allCommands = [
   {'ethers.utils.RLP': 'This encoding method is used internally for several aspects of Ethereum, such as encoding transactions and determining contract addresses.'},
   {'ethers.Wallet': 'A wallet manages a private/public key pair which is used to cryptographically sign transactions and prove ownership on the Ethereum network.'},
   {'ethers.version': 'Contains the version of the ethers container object.'},
-
-  {'web3.bzz': 'Bzz module for interacting with the swarm network.'},
+  
   {'web3.eth': 'Eth module for interacting with the Ethereum network.'},
   {'web3.eth.accounts': 'The web3.eth.accounts contains functions to generate Ethereum accounts and sign transactions and data.'},
   {'web3.eth.abi': 'The web3.eth.abi functions let you de- and encode parameters to ABI (Application Binary Interface) for function calls to the EVM (Ethereum Virtual Machine).'},
@@ -49,7 +43,12 @@ const allCommands = [
 
   {'web3.eth.clearSubscriptions();': 'Resets subscriptions.'},
   {'web3.eth.Contract(jsonInterface[, address][, options])': 'The web3.eth.Contract object makes it easy to interact with smart contracts on the ethereum blockchain.'},
-  {'web3.eth.accounts.create([entropy]);': 'The web3.eth.accounts contains functions to generate Ethereum accounts and sign transactions and data.'}
+  {'web3.eth.accounts.create([entropy]);': 'The web3.eth.accounts contains functions to generate Ethereum accounts and sign transactions and data.'},
+  {'web3.eth.getAccounts();': 'Retrieve the list of accounts'},
+  {'web3.eth.accounts.privateKeyToAccount(privateKey [, ignoreLength ]);': 'Get the account from the private key'},
+  {'web3.eth.accounts.signTransaction(tx, privateKey [, callback]);': 'Sign Transaction'},
+  {'web3.eth.accounts.recoverTransaction(rawTransaction);': 'Sign Transaction'},
+  {'web3.eth.accounts.hashMessage(message);': 'Hash message'},
 ]
 
 module.exports = {
