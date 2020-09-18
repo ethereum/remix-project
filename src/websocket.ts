@@ -53,7 +53,5 @@ export default class WebSocket {
 }
 
 function originIsAllowed (origin: string, self: WebSocket): boolean {
-  console.log('origin: ', origin)
-  console.log('self.opt.remixIdeUrl: ', self.opt.remixIdeUrl)
   return origin === self.opt.remixIdeUrl || origin === getDomain(self.opt.remixIdeUrl)
 }
