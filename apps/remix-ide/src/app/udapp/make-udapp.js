@@ -46,7 +46,7 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
         if (compilersArtefacts['__last']) return compilersArtefacts.getAllContractDatas()
         return null
       },
-      resolveReceipt: transactionReceiptResolver.resolve.bind(transactionReceiptResolver)
+      resolveReceipt: transactionReceiptResolver
     }
   })
 
