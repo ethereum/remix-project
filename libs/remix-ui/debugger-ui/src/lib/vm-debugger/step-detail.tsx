@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import DropdownPanel from './dropdown-panel'
 
 export interface StepDetailProps {
-    detail: {
+    stepDetail: {
         key: string,
         value: string,
         reset: boolean
@@ -10,43 +10,39 @@ export interface StepDetailProps {
 } 
 
 export const StepDetail = (props: StepDetailProps) => {
-    const { detail } = props
-    const [state, setState] = useState({
-        detail: {
-            'vm trace step': '-',
-            'execution step': '-',
-            'add memory': '',
-            'gas': '',
-            'remaining gas': '-',
-            'loaded address': '-'
-        }
+    const { stepDetail } = props
+    const [detail, setDetail] = useState({
+        'vm trace step': '-',
+        'execution step': '-',
+        'add memory': '',
+        'gas': '',
+        'remaining gas': '-',
+        'loaded address': '-'
     })
 
     useEffect(() => {
-        updateField(detail.key, detail.value, detail.reset)
-    }, [detail])
+        updateField(stepDetail.key, stepDetail.value, stepDetail.reset)
+    }, [stepDetail])
 
     const updateField = (key, value, reset) => {
+        if (!key) return
+
         if (reset) {
-            setState(() => {
+            setDetail(() => {
                 return {
-                    detail: {
-                        'vm trace step': '-',
-                        'execution step': '-',
-                        'add memory': '',
-                        'gas': '',
-                        'remaining gas': '-',
-                        'loaded address': '-'
-                    }
+                    'vm trace step': '-',
+                    'execution step': '-',
+                    'add memory': '',
+                    'gas': '',
+                    'remaining gas': '-',
+                    'loaded address': '-'
                 }
             })
         } else {
-            setState(prevState => {
-                const { detail } = prevState
-    
-                detail[key] = value
+            setDetail(prevDetail => {
                 return {
-                    detail
+                    ...prevDetail,
+                    [key]: value
                 }
             })
         }
@@ -54,7 +50,7 @@ export const StepDetail = (props: StepDetailProps) => {
 
     return (
         <div id='stepdetail' data-id="stepdetail">
-            <DropdownPanel dropdownName='Step details' opts={{ json: true }} calldata={ state.detail } />
+            <DropdownPanel dropdownName='Step details' opts={{ json: true }} calldata={ detail } />
         </div>
     )
 }
