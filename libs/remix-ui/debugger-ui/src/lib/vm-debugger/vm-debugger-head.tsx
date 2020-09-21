@@ -47,7 +47,9 @@ export const VmDebuggerHead = ({ vmDebuggerLogic }) => {
         const functions = []
     
         for (const func of stack) {
-          functions.push(func.functionDefinition.attributes.name + '(' + func.inputs.join(', ') + ')')
+          const functionDefinitionName = func.functionDefinition.name || func.functionDefinition.attributes.name
+
+          functions.push(functionDefinitionName + '(' + func.inputs.join(', ') + ')')
         }
         setFunctionPanel(functions)
       })
@@ -82,10 +84,10 @@ export const VmDebuggerHead = ({ vmDebuggerLogic }) => {
         setSolidityState({ ...solidityState, message })
       })
       vmDebuggerLogic.event.register('solidityLocals', (calldata) => {
-        setSolidityLocals({ ...solidityState, calldata })
+        setSolidityLocals({ ...solidityLocals, calldata })
       })
       vmDebuggerLogic.event.register('solidityLocalsMessage', (message) => {
-        setSolidityLocals({ ...solidityState, message })
+        setSolidityLocals({ ...solidityLocals, message })
       })
       vmDebuggerLogic.event.register('newTrace', () => {
         setPanelVisibility({
@@ -106,10 +108,10 @@ export const VmDebuggerHead = ({ vmDebuggerLogic }) => {
       <div className="d-flex flex-column">
         <div className="w-100">
           <FunctionPanel calldata={functionPanel || {}} />
-          {/* <SolidityLocals calldata={solidityLocals.calldata} message={solidityLocals.message} /> */}
-          {/* <SolidityState calldata={solidityState.calldata} message={solidityState.message} /> */}
+          <SolidityLocals calldata={solidityLocals.calldata || {}} message={solidityLocals.message} />
+          <SolidityState calldata={solidityState.calldata || {}} message={solidityState.message} />
         </div>
-        {/* <div className="w-100"><CodeListView asm={asm} /></div> */}
+        <div className="w-100"><CodeListView asm={asm} /></div>
         {/* <div className="w-100"><StepDetail detail={stepDetail} /></div> */}
       </div>
     </div>
