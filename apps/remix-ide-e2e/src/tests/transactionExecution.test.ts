@@ -23,7 +23,7 @@ module.exports = {
         .clickFunction('f - transact (not payable)')
         .testFunction('0x38bb944fa4709ed9e163d6c670259f97284b4defd916d512a2fcc3f35bb53e03',
       {
-        status: '0x1 Transaction mined and execution succeed',
+        status: 'true Transaction mined and execution succeed',
         'transaction hash': '0x38bb944fa4709ed9e163d6c670259f97284b4defd916d512a2fcc3f35bb53e03',
         'decoded output': { '0': 'uint256: 8' }
       })
@@ -32,7 +32,7 @@ module.exports = {
         .clickFunction('g - transact (not payable)')
         .testFunction('0xab4f794ca0b531f27fc6eace623666b440facbf20e77615a057d728c67b500f0',
       {
-        status: '0x1 Transaction mined and execution succeed',
+        status: 'true Transaction mined and execution succeed',
         'transaction hash': '0xab4f794ca0b531f27fc6eace623666b440facbf20e77615a057d728c67b500f0',
         'decoded output': {
           '0': 'uint256: 345',
@@ -53,7 +53,7 @@ module.exports = {
       .clickFunction('retunValues1 - transact (not payable)')
       .testFunction('0x09c6716a67f0f8c7a0ca2b3ddf59c25982da856a95aefd640b767f9b9feee39d',
       {
-        status: '0x1 Transaction mined and execution succeed',
+        status: 'true Transaction mined and execution succeed',
         'transaction hash': '0x09c6716a67f0f8c7a0ca2b3ddf59c25982da856a95aefd640b767f9b9feee39d',
         'decoded output': {
           '0': 'bool: _b true',
@@ -65,7 +65,7 @@ module.exports = {
       .clickFunction('retunValues2 - transact (not payable)')
       .testFunction('0xe884953e0695399d60914af3e1ea2dad59fe41f3c0c20665c130fa40dd0fb6bf',
       {
-        status: '0x1 Transaction mined and execution succeed',
+        status: 'true Transaction mined and execution succeed',
         'transaction hash': '0xe884953e0695399d60914af3e1ea2dad59fe41f3c0c20665c130fa40dd0fb6bf',
         'decoded output': {
           '0': 'bytes1: _b 0x12',
@@ -83,7 +83,7 @@ module.exports = {
       .clickFunction('retunValues3 - transact (not payable)')
       .testFunction('0xb4108649d5e65a4a0776d6ac98c2c356540a7e99d641705a82352a845d467eb5',
       {
-        status: '0x1 Transaction mined and execution succeed',
+        status: 'true Transaction mined and execution succeed',
         'transaction hash': '0xb4108649d5e65a4a0776d6ac98c2c356540a7e99d641705a82352a845d467eb5',
         'decoded output': {
           '0': 'uint8: _en 2',
@@ -101,7 +101,7 @@ module.exports = {
         .clickFunction('inputValue1 - transact (not payable)', {types: 'uint256 _u, int256 _i, string _str', values: '"2343242", "-4324324", "string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"'})
         .testFunction('0xe9678b5486674a0425301a1d7e925c22cfb9f7f7ec6242697d742009f7ef5b97',
       {
-        status: '0x1 Transaction mined and execution succeed',
+        status: 'true Transaction mined and execution succeed',
         'transaction hash': '0xe9678b5486674a0425301a1d7e925c22cfb9f7f7ec6242697d742009f7ef5b97',
         'decoded output': {
           '0': 'uint256: _uret 2343242',
@@ -112,26 +112,29 @@ module.exports = {
         .pause(500)
         .clickFunction('inputValue2 - transact (not payable)', {types: 'uint256[3] _n, bytes8[4] _b8', values: '[1,2,3], ["0x1234000000000000", "0x1234000000000000","0x1234000000000000","0x1234000000000000"]'})
         .testFunction('0x21724b08c3699bda8375803f8dc842194aea370f2aac284e55144b452dca321f', {
-          status: '0x1 Transaction mined and execution succeed',
+          status: 'true Transaction mined and execution succeed',
           'transaction hash': '0x21724b08c3699bda8375803f8dc842194aea370f2aac284e55144b452dca321f',
           'decoded output': {
             '0': 'uint256[3]: _nret 1,2,3',
             '1': 'bytes8[4]: _b8ret 0x1234000000000000,0x1234000000000000,0x1234000000000000,0x1234000000000000'
           },
           logs: [
-            {"from":"0x8c1ed7e19abaa9f23c476da86dc1577f1ef401f5",
-            "topic":"0xd30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f",
-            "event":"event1",
-            "args":{
-              "0":"-123",
-              "1":"123",
-              "2":{
-                "_isIndexed":true,
-                "hash":"0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
-              },
-              "3":"0x12340000",
-              "4":"test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test "}
-            }]
+            {
+              'from': '0x8c1eD7e19abAa9f23c476dA86Dc1577F1Ef401f5',
+              'topic': '0xd30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f',
+              'event': 'event1',
+              'args': {
+                '0': '-123',
+                '1': '123',
+                '2': {
+                  "_isIndexed":true,
+                  'hash': '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658'                  
+                },
+                '3': '0x12340000',
+                '4': 'test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test '                            
+              }
+            }
+          ]
         })
       .click('*[data-id="deployAndRunClearInstances"]')
   },
