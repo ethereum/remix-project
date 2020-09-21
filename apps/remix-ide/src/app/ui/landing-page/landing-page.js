@@ -166,8 +166,8 @@ export class LandingPage extends ViewPlugin {
   }
 
   adjustRightPanel () {
-    this.twitterPanel.style.maxHeight = Math.max(window.innerHeight - 130, 200) + 'px'
-    this.mediumPanel.style.maxHeight = Math.max(window.innerHeight - 130, 200) + 'px'
+    this.twitterPanel.style.maxHeight = Math.max(window.innerHeight - 150, 200) + 'px'
+    this.mediumPanel.style.maxHeight = Math.max(window.innerHeight - 150, 200) + 'px'
   }
 
   onThemeChanged (themeQuality) {
