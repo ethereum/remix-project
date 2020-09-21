@@ -38,7 +38,7 @@ export const useExtractData = (json, extractFunc?: ExtractFunc): Array<{ key: st
             ret.isLeaf = false
         } else if (item instanceof Object) {
             ret.children = Object.keys(item).map((key) => {
-            return {key: key, value: item[key]}
+                return {key: key, value: item[key]}
             })
             ret.self = 'Object'
             ret.isNode = true
