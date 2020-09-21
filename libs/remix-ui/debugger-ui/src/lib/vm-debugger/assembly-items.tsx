@@ -18,12 +18,10 @@ export const AssemblyItems = ({ codeView, index }) => {
         let currentItem = refs.current[selectedItem] ? refs.current[selectedItem] : null
     
         if (currentItem) {
-            if (selectedItem) {
-                currentItem.removeAttribute('selected')
-                currentItem.removeAttribute('style')
-                if (currentItem.firstChild) {
-                    currentItem.firstChild.removeAttribute('style')
-                }
+            currentItem.removeAttribute('selected')
+            currentItem.removeAttribute('style')
+            if (currentItem.firstChild) {
+                currentItem.firstChild.removeAttribute('style')
             }
             const codeView = asmItemsRef.current
 
