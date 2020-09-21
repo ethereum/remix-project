@@ -5,7 +5,7 @@ import StepDetail from './step-detail'
 import SolidityState from './solidity-state'
 import SolidityLocals from './solidity-locals'
 
-export const VmDebuggerHead = ({ vmDebuggerLogic }) => {
+export const VmDebuggerHead = ({ vmDebuggerLogic, ready }) => {
   const [panelVisibility, setPanelVisibility] = useState({
     functionPanel: true,
     stepDetail: true,
@@ -99,7 +99,7 @@ export const VmDebuggerHead = ({ vmDebuggerLogic }) => {
           fullStoragesChangesPanel: true
         })
       })
-      vmDebuggerLogic.start()
+      ready()
     }
   }, [vmDebuggerLogic])
 
@@ -118,4 +118,4 @@ export const VmDebuggerHead = ({ vmDebuggerLogic }) => {
   )
 }
 
-export default VmDebuggerHead;
+export default VmDebuggerHead
