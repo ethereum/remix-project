@@ -48,7 +48,7 @@ module.exports = {
     .click('*[data-id="Deploy - transact (not payable)"]')
     .pause(5000)
     .testFunction('0xc39ee005c1e1368c84f02e458de4b41dbb966631a8714d15ef8362dada249ede', {
-      status: '0x1 Transaction mined and execution succeed',
+      status: 'true Transaction mined and execution succeed',
       'transaction hash': '0xc39ee005c1e1368c84f02e458de4b41dbb966631a8714d15ef8362dada249ede'
     })
   },
@@ -61,7 +61,7 @@ module.exports = {
     .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
     .pause(5000)
     .testFunction('0xfe718871ee0b4d03cdcac0e12e5b164efaf7e23ba952c07db76e62692867019b', {
-      status: '0x1 Transaction mined and execution succeed',
+      status: 'true Transaction mined and execution succeed',
       'transaction hash': '0xfe718871ee0b4d03cdcac0e12e5b164efaf7e23ba952c07db76e62692867019b'
     })
   },
