@@ -2,11 +2,10 @@ import React, { useState, useRef, useEffect } from 'react'
 import './styles/assembly-items.css'
 
 export const AssemblyItems = ({ codeView, index }) => {
-    console.log('codeView: ', codeView)
     const [state, setState] = useState({
-        selectedItem: null
+        selectedItem: 0
     })
-    const refs = useRef(codeView.map(React.createRef))
+    const refs = useRef({})
     const asmItemsRef = useRef(null)
 
     useEffect(() => {
@@ -16,10 +15,7 @@ export const AssemblyItems = ({ codeView, index }) => {
     const indexChanged = (index) => {
         if (index < 0) return
         const { selectedItem } = state
-        console.log('selectedItem: ', selectedItem)
-        console.log('refs: ', refs)
-        console.log('refs.current: ', refs.current)
-        let currentItem = refs.current[selectedItem] ? refs.current[selectedItem].current : null
+        let currentItem = refs.current[selectedItem] ? refs.current[selectedItem] : null
     
         if (currentItem) {
             if (selectedItem) {
@@ -30,8 +26,6 @@ export const AssemblyItems = ({ codeView, index }) => {
                 }
             }
             const codeView = asmItemsRef.current
-            console.log('asmItemsRef: ', asmItemsRef)
-            console.log('asmItemsRef.current: ', asmItemsRef.current)
 
             currentItem = codeView.children[index]
             currentItem.style.setProperty('border-color', 'var(--primary)')
@@ -54,7 +48,7 @@ export const AssemblyItems = ({ codeView, index }) => {
                     <div className="pl-2 my-1 small instructions" id='asmitems' ref={asmItemsRef}>
                         { 
                             codeView.map((item, i) => {
-                                return <div className="px-1" key={i} ref={refs.current[i]}><span>{item}</span></div>
+                                return <div className="px-1" key={i} ref={ref => refs.current[i] = ref}><span>{item}</span></div>
                             })
                         }
                     </div>

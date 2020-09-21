@@ -112,7 +112,7 @@ export const VmDebuggerHead = ({ vmDebuggerLogic }) => {
           <SolidityState calldata={solidityState.calldata || {}} message={solidityState.message} />
         </div>
         <div className="w-100"><CodeListView asm={asm} /></div>
-        {/* <div className="w-100"><StepDetail detail={stepDetail} /></div> */}
+        <div className="w-100"><StepDetail stepDetail={stepDetail} /></div>
       </div>
     </div>
   )
