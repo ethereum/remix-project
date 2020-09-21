@@ -64,10 +64,10 @@ export const VmDebugger = ({ vmDebuggerLogic, ready }) => {
     <div id="vmdebugger" className="px-2">
       <div>
         <StackPanel calldata={stackPanel || {}} />
-        {/* <MemoryPanel calldata={memoryPanel} /> */}
-        {/* <StoragePanel storage={storagePanel.calldata} header={storagePanel.header} /> */}
-        {/* <CallstackPanel calldata={callStackPanel} /> */}
-        {/* <CalldataPanel calldata={calldataPanel} /> */}
+        <MemoryPanel calldata={memoryPanel || {}} />
+        <StoragePanel storage={storagePanel.calldata || {}} header={storagePanel.header} />
+        <CallstackPanel calldata={callStackPanel || {}} />
+        <CalldataPanel calldata={calldataPanel || {}} />
       </div>
     </div>
   )
