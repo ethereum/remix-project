@@ -29,7 +29,7 @@ let css = csjs`
     flex-grow: 3;
   }
   .hpLogoContainer {
-    margin:30px;
+    margin: 30px;
     padding-right: 90px;
   }
   .mediaBadge {
@@ -44,12 +44,16 @@ let css = csjs`
     height: 10em;
   }
   .hpSections {
-    min-width: 640px;
+  }
+  .rightPanel {
+    right: 0;
+    position: absolute;
+    z-index: 1000;
   }
   .remixHomeMedia {
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 570px;
+    max-height: 720px;
   }
   .panels {
     box-shadow: 0px 0px 17px -7px;
@@ -107,6 +111,7 @@ export class LandingPage extends ViewPlugin {
     this.verticalIcons = verticalIcons
     this.gistHandler = new GistHandler()
     const themeQuality = globalRegistry.get('themeModule').api.currentTheme().quality
+    window.addEventListener('resize', () => this.adjustRightPanel())
     this.twitterFrame = yo`
       <div class="px-2 ${css.media}">
         <a class="twitter-timeline"
@@ -153,10 +158,16 @@ export class LandingPage extends ViewPlugin {
         </div>
       </div>
     `
+    this.adjustRightPanel()
     globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
       console.log("theme is ", theme.quality)
       this.onThemeChanged(theme.quality)
     })
+  }
+
+  adjustRightPanel () {
+    this.twitterPanel.style.maxHeight = Math.max(window.innerHeight - 130, 200) + 'px'
+    this.mediumPanel.style.maxHeight = Math.max(window.innerHeight - 130, 200) + 'px'
   }
 
   onThemeChanged (themeQuality) {
@@ -399,7 +410,7 @@ export class LandingPage extends ViewPlugin {
                 </div>
               </div><!-- end of hpSections -->
             </div>
-            <div class="d-flex flex-column">
+            <div class="d-flex flex-column ${css.rightPanel}">
               <div class="d-flex pr-2 py-2 align-self-end">
                 ${this.badgeTwitter}
                 ${this.badgeMedium}
