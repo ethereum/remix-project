@@ -17,17 +17,15 @@ export interface DropdownPanelProps {
     dropdownMessage?: string,
     opts: {
         json: boolean,
-        displayContentOnly?: boolean,
         css?: {
             [key: string]: string
         }
     },
-    codeView?: string[],
-    index?: number,
     calldata?: {
         [key: string]: string
     },
     header?: string,
+    loading?: boolean
     extractFunc?: ExtractFunc,
     formatSelfFunc?: FormatSelfFunc
 }

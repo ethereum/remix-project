@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import DropdownPanel from './dropdown-panel'
-/* eslint-disable-next-line */
-import EventManager from '../../../../../../apps/remix-ide/src/lib/events'
+import AssemblyItems from './assembly-items'
 
 export const CodeListView = ({ asm }) => {
-  const event = new EventManager()
   const [state, setState] = useState({
     code: [],
     address: '',
@@ -40,11 +37,11 @@ export const CodeListView = ({ asm }) => {
       }
     })
     indexChanged(index)
-  }
+  } 
 
   return (
     <div id='asmcodes'>
-      <DropdownPanel dropdownName='Instructions' opts={{ json: false, displayContentOnly: true }} codeView={state.code} index={state.index} />
+      <AssemblyItems codeView={state.code || []} index={state.index} />
     </div>
   )
 }

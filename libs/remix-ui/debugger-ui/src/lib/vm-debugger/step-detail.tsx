@@ -54,7 +54,7 @@ export const StepDetail = (props: StepDetailProps) => {
 
     return (
         <div id='stepdetail' data-id="stepdetail">
-            <DropdownPanel dropdownName='Step details' opts={{ json: true, displayContentOnly: false }} calldata={ state.detail } />
+            <DropdownPanel dropdownName='Step details' opts={{ json: true }} calldata={ state.detail } />
         </div>
     )
 }
