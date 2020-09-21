@@ -86,7 +86,7 @@ class ContextView {
         }
       }
     }
-    if (!this._current || !previous || previous.id !== this._current.id) {
+    if (!this._current || !previous || previous.id !== this._current.id || (this.previousElement && !this.previousElement.children.length)) {
       this.previousElement = this._render(this._current, last)
     }
     return this.previousElement
