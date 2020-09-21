@@ -28,10 +28,9 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
     },
     blockNumber: null,
     txNumber: '',
-    visibility: {
+    ready: {
       vmDebugger: false,
-      stepManager: false,
-      txBrowser: false
+      vmDebuggerHead: false
     },
     debugging: false
   })
@@ -130,20 +129,20 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
     // yo.update(this.debuggerHeadPanelsView, yo`<div></div>`)
     // yo.update(this.debuggerPanelsView, yo`<div></div>`)
     // yo.update(this.stepManagerView, yo`<div></div>`)
-    setState(prevState => {
-      const { visibility } = prevState
+    // setState(prevState => {
+    //   const { visibility } = prevState
 
-      return {
-        ...prevState,
-        debugger: null,
-        debugging: false,
-        visibility: {
-          ...visibility,
-          vmDebugger: false,
-          stepManager: false
-        }
-      }
-    })
+    //   return {
+    //     ...prevState,
+    //     debugger: null,
+    //     debugging: false,
+    //     visibility: {
+    //       ...visibility,
+    //       vmDebugger: false,
+    //       stepManager: false
+    //     }
+    //   }
+    // })
     event.trigger('traceUnloaded', [])
   }
 
@@ -222,6 +221,34 @@ const deleteHighlights = async () => {
   await debuggerModule.call('editor', 'discardHighlight')
 }
 
+const vmDebuggerReady = () => {
+  setState(prevState => {
+    return {
+      ...prevState,
+      ready: {
+        ...prevState.ready,
+        vmDebugger: true
+      }
+    }
+  })
+}
+
+const vmDebuggerHeadReady = () => {
+  setState(prevState => {
+    return {
+      ...prevState,
+      ready: {
+        ...prevState.ready,
+        vmDebuggerHead: true
+      }
+    }
+  })
+}
+
+if (state.ready.vmDebugger && state.ready.vmDebuggerHead) {
+  state.debugger.vmDebuggerLogic.start()
+}
+
 // this.debuggerPanelsView = yo`<div class="px-2"></div>`
 // this.debuggerHeadPanelsView = yo`<div class="px-2"></div>`
 // this.stepManagerView = yo`<div class="px-2"></div>`
@@ -231,10 +258,10 @@ const deleteHighlights = async () => {
         <div className="px-2">
           <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } transactionNumber={ state.txNumber } debugging={ state.debugging } />
           <StepManager stepManager={ state.debugger ? state.debugger.step_manager : null } />
-          <VmDebuggerHead vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } />
+          <VmDebuggerHead vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } ready={vmDebuggerHeadReady} />
         </div>
-        {/* <div className="statusMessage">{state.statusMessage}</div>
-        <VmDebugger vmDebuggerLogic={state.debugger.vmDebuggerLogic} /> */}
+        <div className="statusMessage">{ state.statusMessage }</div>
+        <VmDebugger vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } ready={vmDebuggerReady} />
       </div>
   )
 }
