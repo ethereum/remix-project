@@ -9,13 +9,10 @@ import toaster from '../../../../../apps/remix-ide/src/app/ui/tooltip'
 /* eslint-disable-next-line */
 import SourceHighlighter from '../../../../../apps/remix-ide/src/app/editor/sourceHighlighter'
 /* eslint-disable-next-line */
-import EventManager from '../../../../../apps/remix-ide/src/lib/events'
-/* eslint-disable-next-line */
 import globalRegistry from '../../../../../apps/remix-ide/src/global/registry'
 import './debugger-ui.css'
 
 export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash, getTraceHash, removeHighlights }) => {
-  const event = new EventManager()
   const sourceHighlighter = new SourceHighlighter()
   const init = remixDebug.init
   const [state, setState] = useState({
@@ -143,7 +140,7 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
     //     }
     //   }
     // })
-    event.trigger('traceUnloaded', [])
+    // event.trigger('traceUnloaded', [])
   }
 
   const startDebugging = async (blockNumber, txNumber, tx) => {
