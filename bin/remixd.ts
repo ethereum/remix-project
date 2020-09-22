@@ -27,9 +27,11 @@ import * as path from 'path'
   }
   const isValid = await isValidOrigin(program.remixIde)
 
+  /* Allow unsupported domains for users running remixd without fetched origin.json file. */
   if (!isValid) {
     console.log('\x1b[33m%s\x1b[0m', '[WARN] You are using IDE from an unsupported origin.')
     console.log('\x1b[33m%s\x1b[0m', 'Check https://gist.github.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173 for list of all supported origins.\n')
+    // return
   }
   console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + program.remixIde + ' to connect to that instance')
 
