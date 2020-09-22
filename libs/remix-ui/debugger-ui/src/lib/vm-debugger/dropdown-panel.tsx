@@ -6,13 +6,10 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 
 
 import './styles/dropdown-panel.css'
-/* eslint-disable-next-line */
-import EventManager from '../../../../../../apps/remix-ide/src/lib/events'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
     const { dropdownName, dropdownMessage, opts, calldata, header, loading, extractFunc, formatSelfFunc } = props
     const data = useExtractData(calldata, extractFunc)
-    const event = new EventManager()
     const dropdownRawEl = useRef(null)
     const [state, setState] = useState({
         header: '',
@@ -26,14 +23,11 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
             innerText: '',
             display: 'none'
         },
-        dropdownRawContent: {
-            innerText: '',
-            display: 'none'
-        },
         title: {
             innerText: '',
             display: 'none'
         },
+        copiableContent: '',
         updating: false
     })
 
@@ -51,8 +45,6 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
 
     const handleToggle = () => {
         setState(prevState => {
-            if (prevState.toggleDropdown) event.trigger('hide', [])
-            else event.trigger('show', [])
             return {
                 ...prevState,
                 toggleDropdown: !prevState.toggleDropdown
@@ -86,14 +78,11 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                     innerText: '',
                     display: 'none'
                 },
-                dropdownRawContent: {
-                    ...prevState.dropdownRawContent,
-                    display: 'none'
-                },
                 dropdownContent: {
                     ...prevState.dropdownContent,
                     display: 'none'
                 },
+                copiableContent: '',
                 updating: true
             }
         })
@@ -107,33 +96,10 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                     ...prevState.dropdownContent,
                     display: 'block'
                 },
-                dropdownRawContent: {
-                    innerText: JSON.stringify(calldata, null, '\t'),
-                    display: 'block'
-                },
+                copiableContent: JSON.stringify(calldata, null, '\t'),
                 updating: false
             }
         })
-    }
-
-    const hide = () => {
-        setState(prevState => {
-            return {
-                ...prevState,
-                toggleDropdown: false
-            }
-        })
-        event.trigger('hide', [])
-    } 
-      
-    const show = () => {
-        setState(prevState => {
-            return {
-                ...prevState,
-                toggleDropdown: true
-            }
-        })
-        event.trigger('show', [])
     }
 
     const formatSelfDefault = (key: string, data: ExtractData) => {
@@ -180,7 +146,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     const title = <div className="py-0 px-1 title">
         <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div>
 <div className="name" onClick={handleToggle}>{dropdownName}</div><span className="nameDetail" onClick={handleToggle}>{ header }</span>
-        <CopyToClipboard getContent={copyClipboard} />
+        <CopyToClipboard content={state.copiableContent} />
     </div>
 
     return (
@@ -191,7 +157,6 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                 <div className='dropdowncontent' style={{ display: state.dropdownContent.display }}>
                     { content }
                 </div>
-                <div className='dropdownrawcontent' style={{ display: state.dropdownRawContent.display }} ref={ dropdownRawEl }></div>
                 <div className='message' style={{ display: state.message.display }}>{ state.message.innerText }</div>
             </div>
         </div>

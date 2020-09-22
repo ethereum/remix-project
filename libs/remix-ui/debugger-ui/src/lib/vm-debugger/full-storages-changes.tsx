@@ -1,5 +1,5 @@
 import React from 'react'
-import Dropdown, { DropdownPanel } from './dropdown-panel'
+import { DropdownPanel } from './dropdown-panel'
 
 export const FullStoragesChanges = ({ storageData }) => {
     return (
