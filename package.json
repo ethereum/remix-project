@@ -209,7 +209,7 @@
     "ganache-cli": "^6.8.1",
     "gists": "^1.0.1",
     "gulp": "^4.0.2",
-    "ipfs-http-client": "35.1.1",
+    "ipfs-http-client": "^47.0.1",
     "ipfs-mini": "^1.1.5",
     "is-electron": "^2.2.0",
     "javascript-serialize": "^1.6.1",
