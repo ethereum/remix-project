@@ -23,17 +23,17 @@ import * as path from 'path'
   const killCallBack: Array<Function> = []
 
   if (!program.remixIde) {
-    console.log('\x1b[31m%s\x1b[0m', '[ERR] URL Remix IDE instance has to be provided.')
+    console.log('\x1b[33m%s\x1b[0m', '[WARN] You can only connect to remixd from one of the supported origins.')
+  } else {
+    const isValid = await isValidOrigin(program.remixIde)
+    /* Allow unsupported origins and display warning. */
+    if (!isValid) {
+      console.log('\x1b[33m%s\x1b[0m', '[WARN] You are using IDE from an unsupported origin.')
+      console.log('\x1b[33m%s\x1b[0m', 'Check https://gist.github.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173 for list of all supported origins.\n')
+      // return
+    }
+    console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + program.remixIde + ' to connect to that instance')
   }
-  const isValid = await isValidOrigin(program.remixIde)
-
-  /* Allow unsupported domains for users running remixd without fetched origin.json file. */
-  if (!isValid) {
-    console.log('\x1b[33m%s\x1b[0m', '[WARN] You are using IDE from an unsupported origin.')
-    console.log('\x1b[33m%s\x1b[0m', 'Check https://gist.github.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173 for list of all supported origins.\n')
-    // return
-  }
-  console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + program.remixIde + ' to connect to that instance')
 
   if (program.sharedFolder) {
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
