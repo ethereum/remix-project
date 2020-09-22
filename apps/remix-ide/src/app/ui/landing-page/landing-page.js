@@ -29,7 +29,7 @@ let css = csjs`
     flex-grow: 3;
   }
   .hpLogoContainer {
-    margin:30px;
+    margin: 30px;
     padding-right: 90px;
   }
   .mediaBadge {
@@ -44,12 +44,16 @@ let css = csjs`
     height: 10em;
   }
   .hpSections {
-    min-width: 640px;
+  }
+  .rightPanel {
+    right: 0;
+    position: absolute;
+    z-index: 1000;
   }
   .remixHomeMedia {
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 570px;
+    max-height: 720px;
   }
   .panels {
     box-shadow: 0px 0px 17px -7px;
@@ -107,6 +111,8 @@ export class LandingPage extends ViewPlugin {
     this.verticalIcons = verticalIcons
     this.gistHandler = new GistHandler()
     const themeQuality = globalRegistry.get('themeModule').api.currentTheme().quality
+    window.addEventListener('resize', () => this.adjustMediaPanel())
+    window.addEventListener('click', (e) => this.hideMediaPanel(e))
     this.twitterFrame = yo`
       <div class="px-2 ${css.media}">
         <a class="twitter-timeline"
@@ -153,10 +159,27 @@ export class LandingPage extends ViewPlugin {
         </div>
       </div>
     `
+    this.adjustMediaPanel()
     globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
       console.log("theme is ", theme.quality)
       this.onThemeChanged(theme.quality)
     })
+  }
+
+  adjustMediaPanel () {
+    this.twitterPanel.style.maxHeight = Math.max(window.innerHeight - 150, 200) + 'px'
+    this.mediumPanel.style.maxHeight = Math.max(window.innerHeight - 150, 200) + 'px'
+  }
+
+  hideMediaPanel (e) {
+    const mediaPanelsTitle = document.getElementById('remixIDEMediaPanelsTitle')
+    const mediaPanels = document.getElementById('remixIDEMediaPanels')
+    if (!mediaPanelsTitle.contains(e.target) && !mediaPanels.contains(e.target)) {
+      this.mediumPanel.classList.remove('d-block')
+      this.mediumPanel.classList.add('d-none')
+      this.twitterPanel.classList.remove('d-block')
+      this.twitterPanel.classList.add('d-none')
+    }
   }
 
   onThemeChanged (themeQuality) {
@@ -399,12 +422,12 @@ export class LandingPage extends ViewPlugin {
                 </div>
               </div><!-- end of hpSections -->
             </div>
-            <div class="d-flex flex-column">
-              <div class="d-flex pr-2 py-2 align-self-end">
+            <div class="d-flex flex-column ${css.rightPanel}">
+              <div class="d-flex pr-2 py-2 align-self-end"  id="remixIDEMediaPanelsTitle">
                 ${this.badgeTwitter}
                 ${this.badgeMedium}
               </div>
-              <div class="mr-3 d-flex bg-light ${css.panels}">
+              <div class="mr-3 d-flex bg-light ${css.panels}" id="remixIDEMediaPanels">
                 ${this.mediumPanel}
                 ${this.twitterPanel}
               </div>
