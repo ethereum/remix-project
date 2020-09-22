@@ -16,7 +16,7 @@
       "email": "iuri.matias@gmail.com"
     }
   ],
-  "main": "index.js.js",
+  "main": "index.js",
   "dependencies": {
     "@remix-project/remix-astwalker": "^0.0.26",
     "@remix-project/remix-lib": "^0.4.31",
@@ -55,6 +55,6 @@
     "url": "https://github.com/ethereum/remix-project/issues"
   },
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-debug#readme",
-  "typings": "index.js.d.ts",
+  "typings": "index.d.ts",
   "gitHead": "832387514c359d9b29fe0fb9ae0444a58b9c4253"
 }
