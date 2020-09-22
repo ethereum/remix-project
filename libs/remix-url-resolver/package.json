@@ -1,8 +1,8 @@
 {
   "name": "@remix-project/remix-url-resolver",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Solidity import url resolver engine",
-  "main": "./index.js",
+  "main": "index.js",
   "types": "./index.d.ts",
   "scripts": {
     "build": "tsc",
@@ -39,5 +39,7 @@
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typescript": "^3.1.6"
-  }
+  },
+  "typings": "index.d.ts",
+  "gitHead": "832387514c359d9b29fe0fb9ae0444a58b9c4253"
 }

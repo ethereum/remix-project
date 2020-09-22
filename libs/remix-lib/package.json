@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-lib",
-  "version": "0.4.30",
+  "version": "0.4.31",
   "description": "Library to various Remix tools",
   "contributors": [
     {
@@ -12,7 +12,7 @@
       "email": "liana@ethdev.com"
     }
   ],
-  "main": "./index.js",
+  "main": "src/index.js.js",
   "dependencies": {
     "async": "^2.1.2",
     "ethereumjs-block": "^2.2.2",
@@ -50,5 +50,7 @@
   "bugs": {
     "url": "https://github.com/ethereum/remix-project/issues"
   },
-  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-lib#readme"
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-lib#readme",
+  "typings": "src/index.js.d.ts",
+  "gitHead": "832387514c359d9b29fe0fb9ae0444a58b9c4253"
 }
