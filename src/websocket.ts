@@ -53,5 +53,24 @@ export default class WebSocket {
 }
 
 function originIsAllowed (origin: string, self: WebSocket): boolean {
-  return origin === self.opt.remixIdeUrl || origin === getDomain(self.opt.remixIdeUrl)
+  if (self.opt.remixIdeUrl) {
+    if (self.opt.remixIdeUrl.endsWith('/')) self.opt.remixIdeUrl = self.opt.remixIdeUrl.slice(0, -1)
+    return origin === self.opt.remixIdeUrl || origin === getDomain(self.opt.remixIdeUrl)
+  } else {
+    try {
+      const origins = require('../bin/origins.json')
+      const domain = getDomain(origin)
+      const { data } = origins
+      
+      if (data.includes(origin) || data.includes(domain)) {
+        self.opt.remixIdeUrl = origin
+        console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + self.opt.remixIdeUrl + ' to connect to that instance')
+        return true
+      } else {
+        return false
+      }
+    } catch (e) {
+      return false
+    }
+  }
 }
