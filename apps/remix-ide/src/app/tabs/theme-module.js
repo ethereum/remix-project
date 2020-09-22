@@ -35,7 +35,8 @@ export class ThemeModule extends Plugin {
     }
     this.themes = themes.reduce((acc, theme) => ({ ...acc, [theme.name]: theme }), {})
     const theme = (new QueryParams()).get().theme
-    this.active = theme || this._deps.config.get('settings/theme') || 'Dark'
+    const currentSetting = this._deps.config.get('settings/theme')
+    this.active = theme || (currentSetting && this.themes[currentSetting]) || 'Dark'
     this.forced = theme !== undefined
   }
 
