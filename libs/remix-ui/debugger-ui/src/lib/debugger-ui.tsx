@@ -45,7 +45,7 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
       })
   
       editor.event.register('contentChanged', () => {
-        if (state.debugger) state.debugger.unload()
+        unLoad()
       })
     }
 
@@ -94,12 +94,11 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
   }
 
   const requestDebug = (blockNumber, txNumber, tx) => {
-    if (state.debugger) state.debugger.unload()
     startDebugging(blockNumber, txNumber, tx)
   }
 
   const unloadRequested = (blockNumber, txIndex, tx) => {
-    if (state.debugger) state.debugger.unload()
+    unLoad()
   }
 
   const isDebuggerActive = () => {
@@ -123,29 +122,28 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
   }
 
   const unLoad = () => {
-    // yo.update(this.debuggerHeadPanelsView, yo`<div></div>`)
-    // yo.update(this.debuggerPanelsView, yo`<div></div>`)
-    // yo.update(this.stepManagerView, yo`<div></div>`)
-    // setState(prevState => {
-    //   const { visibility } = prevState
-
-    //   return {
-    //     ...prevState,
-    //     debugger: null,
-    //     debugging: false,
-    //     visibility: {
-    //       ...visibility,
-    //       vmDebugger: false,
-    //       stepManager: false
-    //     }
-    //   }
-    // })
-    // event.trigger('traceUnloaded', [])
+    if (state.debugger) state.debugger.unload()
+    setState(prevState => {
+      return {
+        ...prevState,
+        isActive: false,
+        statusMessage: '',
+        debugger: null,
+        currentReceipt: {
+          contractAddress: null,
+          to: null
+        },
+        blockNumber: null,
+        ready: {
+          vmDebugger: false,
+          vmDebuggerHead: false
+        },
+        debugging: false
+      }
+    })
   }
 
   const startDebugging = async (blockNumber, txNumber, tx) => {
-    if (state.debugger) unLoad()
-
     const web3 = await getDebugWeb3()
     const currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     const debuggerInstance = new Debugger({
@@ -254,11 +252,11 @@ if (state.ready.vmDebugger && state.ready.vmDebuggerHead) {
       <div>
         <div className="px-2">
           <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } transactionNumber={ state.txNumber } debugging={ state.debugging } />
-          <StepManager stepManager={ state.debugger ? state.debugger.step_manager : null } />
-          <VmDebuggerHead vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } ready={vmDebuggerHeadReady} />
+  { state.debugging && <StepManager stepManager={ state.debugger ? state.debugger.step_manager : null } /> }
+  { state.debugging && <VmDebuggerHead vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } ready={vmDebuggerHeadReady} /> }
         </div>
-        <div className="statusMessage">{ state.statusMessage }</div>
-        <VmDebugger vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } ready={vmDebuggerReady} />
+  { state.debugging && <div className="statusMessage">{ state.statusMessage }</div> }
+  { state.debugging && <VmDebugger vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } ready={vmDebuggerReady} /> }
       </div>
   )
 }

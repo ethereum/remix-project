@@ -27,7 +27,7 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
     unloadRequested()
   }
 
-  const txInputChanged = (e) => {
+  const txInputChanged = (value) => {
     // todo check validation of txnumber in the input element, use
     // required
     // oninvalid="setCustomValidity('Please provide a valid transaction number, must start with 0x and have length of 22')"
@@ -37,7 +37,7 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
     setState(prevState => {
       return {
         ...prevState,
-        txNumber: e.target.value
+        txNumber: value
       }
     })
   }
@@ -51,7 +51,7 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
             className="form-control m-0 txinput"
             id='txinput'
             type='text'
-            onChange={txInputChanged}
+            onChange={({ target: { value } }) => txInputChanged(value)}
             placeholder={'Transaction hash, should start with 0x'}
             data-id="debuggerTransactionInput"
             disabled={debugging}
@@ -64,7 +64,7 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
           title={debugging ? 'Stop debugging' : 'Start debugging'}
           onClick={handleSubmit}
           data-id="debuggerTransactionStartButton"
-          disabled={!state.txNumber ? true : !debugging ? true : false }
+          disabled={!state.txNumber ? true : false }
         >
           { debugging ? 'Stop' : 'Start' } debugging
         </button>
