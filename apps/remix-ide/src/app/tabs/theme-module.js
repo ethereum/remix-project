@@ -34,10 +34,12 @@ export class ThemeModule extends Plugin {
       config: registry.get('config').api
     }
     this.themes = themes.reduce((acc, theme) => ({ ...acc, [theme.name]: theme }), {})
-    const theme = (new QueryParams()).get().theme
-    const currentTheme = this.themes[this._deps.config.get('settings/theme')] ? this._deps.config.get('settings/theme') : null
-    this.active = theme || currentTheme || 'Dark'
-    this.forced = theme !== undefined
+    const queryTheme = (new QueryParams()).get().theme
+    queryTheme = this.themes[queryTheme] ? queryTheme : null
+    const currentTheme = this._deps.config.get('settings/theme')
+    currentTheme = this.themes[currentTheme] ? currentTheme : null
+    this.active = queryTheme || currentTheme || 'Dark'
+    this.forced = queryTheme !== undefined
   }
 
   /** Return the active theme */
