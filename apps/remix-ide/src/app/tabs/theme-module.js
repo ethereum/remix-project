@@ -34,9 +34,9 @@ export class ThemeModule extends Plugin {
       config: registry.get('config').api
     }
     this.themes = themes.reduce((acc, theme) => ({ ...acc, [theme.name]: theme }), {})
-    const queryTheme = (new QueryParams()).get().theme
+    let queryTheme = (new QueryParams()).get().theme
     queryTheme = this.themes[queryTheme] ? queryTheme : null
-    const currentTheme = this._deps.config.get('settings/theme')
+    let currentTheme = this._deps.config.get('settings/theme')
     currentTheme = this.themes[currentTheme] ? currentTheme : null
     this.active = queryTheme || currentTheme || 'Dark'
     this.forced = queryTheme !== undefined
