@@ -56,7 +56,13 @@ class CompilerMetadata extends Plugin {
                 deploy[network] = self._syncContext(contract, deploy[network] || {})
               })
 
-              provider.set(metadataFileName, JSON.stringify(JSON.parse(contract.object.metadata), null, '\t'))
+              let parsedMetadata
+              try {
+                parsedMetadata = JSON.parse(contract.object.metadata)      
+              } catch (e) {
+                console.log(e)
+              }
+              if (parsedMetadata) provider.set(metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
 
               var data = {
                 deploy,
