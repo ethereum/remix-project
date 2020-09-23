@@ -36,6 +36,7 @@
     "@remixproject/plugin-api": "0.3.0-beta.5",
     "@remixproject/plugin-utils": "0.3.0-beta.5",
     "@remixproject/plugin-ws": "^0.3.0-beta.8",
+    "axios": "^0.20.0",
     "chokidar": "^2.1.8",
     "commander": "^2.20.3",
     "fs-extra": "^3.0.1",
@@ -49,6 +50,7 @@
     }
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/fs-extra": "^9.0.1",
     "@types/node": "^14.0.5",
     "@types/ws": "^7.2.4",
