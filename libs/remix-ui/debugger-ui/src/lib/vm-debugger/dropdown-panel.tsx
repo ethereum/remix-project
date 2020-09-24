@@ -12,10 +12,10 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     const data = useExtractData(calldata, extractFunc)
     const [state, setState] = useState({
         header: '',
-        toggleDropdown: true,
+        toggleDropdown: false,
         message: {
-            innerText: '',
-            display: 'none'
+            innerText: 'No data available.',
+            display: 'block'
         },
         dropdownContent: {
             innerText: '',
@@ -83,6 +83,11 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     }
 
     const update = function (calldata) {
+        let isEmpty = !calldata ? true : false
+
+        if(calldata && Array.isArray(calldata) && calldata.length === 0) isEmpty = true
+        else if(calldata && Object.keys(calldata).length === 0 && calldata.constructor === Object) isEmpty = true
+
         setState(prevState => {
             return {
                 ...prevState,
@@ -91,7 +96,12 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                     display: 'block'
                 },
                 copiableContent: JSON.stringify(calldata, null, '\t'),
-                updating: false
+                message: {
+                    innerText: isEmpty ? 'No data available' : '',
+                    display: isEmpty ? 'block' : 'none'
+                },
+                updating: false,
+                toggleDropdown: !isEmpty
             }
         })
     }

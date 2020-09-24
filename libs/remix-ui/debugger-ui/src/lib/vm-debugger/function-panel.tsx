@@ -4,7 +4,7 @@ import DropdownPanel from './dropdown-panel'
 export const FunctionPanel = ({ calldata }) => {
     return (
         <div id="FunctionPanel">
-            <DropdownPanel dropdownName='Function Stack' calldata={calldata} />
+            <DropdownPanel dropdownName='Function Stack' calldata={calldata || {}} />
         </div>
     )
 }

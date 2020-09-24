@@ -1,10 +1,10 @@
 import React from 'react'
 import DropdownPanel from './dropdown-panel'
 
-export const StoragePanel = ({ storage, header }) => {
+export const StoragePanel = ({ calldata, header }) => {
     return (
         <div id='storagepanel'>
-            <DropdownPanel dropdownName='Storage' calldata={storage} header={header} />
+            <DropdownPanel dropdownName='Storage' calldata={calldata || {}} header={header} />
         </div>
     )
 }
