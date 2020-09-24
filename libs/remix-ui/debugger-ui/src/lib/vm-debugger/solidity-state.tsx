@@ -36,7 +36,7 @@ export const SolidityState = ({ calldata, message }) => {
     return (
         <div id='soliditylocals' data-id='solidityLocals'>
             {
-                <DropdownPanel dropdownName='Solidity State' dropdownMessage={message} opts={{ json: true }} calldata={calldata} formatSelfFunc={formatSelf} extractFunc={extractData} />
+                <DropdownPanel dropdownName='Solidity State' dropdownMessage={message} calldata={calldata} formatSelfFunc={formatSelf} extractFunc={extractData} />
             }
         </div>
     )

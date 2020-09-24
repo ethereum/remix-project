@@ -1,10 +1,10 @@
 import React from 'react'
 import { DropdownPanel } from './dropdown-panel'
 
-export const FullStoragesChanges = ({ storageData }) => {
+export const FullStoragesChanges = ({ calldata }) => {
     return (
         <div id='fullstorageschangespanel'>
-            <DropdownPanel dropdownName='Full Storages Changes' opts={{ json: true }} calldata={ storageData } />
+            <DropdownPanel dropdownName='Full Storages Changes' calldata={ calldata } />
         </div>
     )
 }

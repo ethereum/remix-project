@@ -44,7 +44,7 @@ export const ButtonNavigation = ({ stepManager, revertedReason, stepState, jumpO
         jumpPreviousBreakpointDisabled: stepState === 'initial',
         intoForwardDisabled: stepState === 'end',
         overForwardDisabled: stepState === 'end',
-        jumpNextBreakpointDisabled: jumpOutDisabled ? jumpOutDisabled : stepState === 'end',
+        jumpNextBreakpointDisabled: stepState === 'end',
         jumpOutDisabled: jumpOutDisabled ? jumpOutDisabled : true
       }
     })

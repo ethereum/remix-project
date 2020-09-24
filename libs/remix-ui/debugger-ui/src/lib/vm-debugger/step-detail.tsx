@@ -50,7 +50,7 @@ export const StepDetail = (props: StepDetailProps) => {
 
     return (
         <div id='stepdetail' data-id="stepdetail">
-            <DropdownPanel dropdownName='Step details' opts={{ json: true }} calldata={ detail } />
+            <DropdownPanel dropdownName='Step details' calldata={ detail } />
         </div>
     )
 }
