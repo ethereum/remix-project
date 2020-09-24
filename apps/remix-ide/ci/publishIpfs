@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const all = require('it-all')
 const IpfsHttpClient = require('ipfs-http-client')
 const { globSource } = IpfsHttpClient
 console.log('current folder', process.cwd())
@@ -11,11 +10,7 @@ const folder = process.cwd() + '/temp_publish_docker';
   const ipfs = IpfsHttpClient({ host, port: 443, protocol: 'https' })
   try {
     let result = await ipfs.add(globSource(folder, { recursive: true}), { pin: false })
-    console.log('result ====>', result)
-    const remoteFolder = result
-    // const remoteFolder = result[result.length - 1]
-    console.log('remoteFolder ====>', remoteFolder)
-    const hash = remoteFolder.cid.toString()
+    const hash = result.cid.toString()
     console.log('ipfs://' + hash)
     console.log('https://ipfsgw.komputing.org/ipfs/' + hash)
     console.log('https://gateway.ipfs.io/ipfs/' + hash)
