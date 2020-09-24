@@ -163,7 +163,7 @@ module.exports = class SettingsTab extends ViewPlugin {
 
     function onchangeGenerateContractMetadata (event) {
       const isChecked = self.config.get('settings/generate-contract-metadata')
-      
+
       self.config.set('settings/generate-contract-metadata', !isChecked)
       elementStateChanged(self._view.generateContractMetadataLabel, isChecked)
     }
@@ -186,7 +186,7 @@ module.exports = class SettingsTab extends ViewPlugin {
       self.config.set('settings/personal-mode', !isChecked)
       elementStateChanged(self._view.personalLabel, isChecked)
     }
-    function elementStateChanged(el, isChanged){
+    function elementStateChanged (el, isChanged) {
       if (isChanged) {
         el.classList.remove("text-dark")
         el.classList.add("text-secondary")

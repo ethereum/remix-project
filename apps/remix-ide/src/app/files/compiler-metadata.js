@@ -24,7 +24,7 @@ class CompilerMetadata extends Plugin {
     return path + '/' + this.innerPath + '/' + contractName + '.json'
   }
 
-  _MetadataFileName(path, contractName) {
+  _MetadataFileName (path, contractName) {
     return path + '/' + this.innerPath + '/' + contractName + '_metadata' + '.json'
   }
 
@@ -58,7 +58,7 @@ class CompilerMetadata extends Plugin {
 
               let parsedMetadata
               try {
-                parsedMetadata = JSON.parse(contract.object.metadata)      
+                parsedMetadata = JSON.parse(contract.object.metadata)
               } catch (e) {
                 console.log(e)
               }

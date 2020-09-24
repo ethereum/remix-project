@@ -25,7 +25,7 @@ const allCommands = [
   {'ethers.utils.RLP': 'This encoding method is used internally for several aspects of Ethereum, such as encoding transactions and determining contract addresses.'},
   {'ethers.Wallet': 'A wallet manages a private/public key pair which is used to cryptographically sign transactions and prove ownership on the Ethereum network.'},
   {'ethers.version': 'Contains the version of the ethers container object.'},
-  
+
   {'web3.eth': 'Eth module for interacting with the Ethereum network.'},
   {'web3.eth.accounts': 'The web3.eth.accounts contains functions to generate Ethereum accounts and sign transactions and data.'},
   {'web3.eth.abi': 'The web3.eth.abi functions let you de- and encode parameters to ABI (Application Binary Interface) for function calls to the EVM (Ethereum Virtual Machine).'},
