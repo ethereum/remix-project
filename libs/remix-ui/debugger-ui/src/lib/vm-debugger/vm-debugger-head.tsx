@@ -89,9 +89,9 @@ export const VmDebuggerHead = ({ vmDebuggerLogic, ready }) => {
     <div id="vmheadView" className="mt-1 px-0">
       <div className="d-flex flex-column">
         <div className="w-100">
-          <FunctionPanel calldata={functionPanel || {}} />
-          <SolidityLocals calldata={solidityLocals.calldata || {}} message={solidityLocals.message} />
-          <SolidityState calldata={solidityState.calldata || {}} message={solidityState.message} />
+          <FunctionPanel calldata={functionPanel} />
+          <SolidityLocals calldata={solidityLocals.calldata} message={solidityLocals.message} />
+          <SolidityState calldata={solidityState.calldata} message={solidityState.message} />
         </div>
         <div className="w-100"><CodeListView asm={asm} /></div>
         <div className="w-100"><StepDetail stepDetail={stepDetail} /></div>
