@@ -84,6 +84,24 @@ function getAvailableFunctions (fileAST: AstNode, testContractName: string): str
     return funcList;
 }
 
+function getAssertMethodLocation (fileAST: AstNode, testContractName: string, functionName: string, assertMethod: string): string {
+    let location
+    if(fileAST.nodes && fileAST.nodes.length > 0) {
+        const contractAST: AstNode = fileAST.nodes.find(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
+        if(contractAST && contractAST.nodes) {
+            const funcNode: AstNode = contractAST.nodes.find(node => (node.name === functionName && node.nodeType === "FunctionDefinition"))
+            const expressions = funcNode.body.statements.filter(s => s.nodeType === 'ExpressionStatement' && s.expression.nodeType === 'FunctionCall')
+            const assetExpression = expressions.find(e => e.expression.expression
+                                                    && e.expression.expression.nodeType === 'MemberAccess' 
+                                                    && e.expression.expression.memberName === assertMethod
+                                                    && e.expression.expression.expression.name === 'Assert'
+                                                )
+            location = assetExpression.expression.src
+        }
+    }
+    return location
+}
+
 /**
  * @dev returns ABI of passed method list from passed interface
  * @param jsonInterface Json Interface
@@ -238,19 +256,22 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                         if (eIndex >= 0) {
                             const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.raw.data)
                             if (!testEvent[0]) {
-                                if(testEvent[2] === 'ok') { // for 'Assert.ok' method
+                                const assertMethod = testEvent[2]
+                                if(assertMethod === 'ok') { // for 'Assert.ok' method
                                     testEvent[3] = 'false'
                                     testEvent[4] = 'true'
                                 }
+                                const location = getAssertMethodLocation(fileAST, testName, func.name, assertMethod)
                                 const resp: TestResultInterface = {
                                   type: 'testFailure',
                                   value: changeCase.sentenceCase(func.name),
                                   time: time,
                                   errMsg: testEvent[1],
                                   context: testName,
-                                  assertMethod: testEvent[2],
+                                  assertMethod,
                                   returned: testEvent[3],
-                                  expected: testEvent[4]
+                                  expected: testEvent[4],
+                                  location
                                 };
                                 testCallback(undefined, resp)
                                 failureNum += 1
