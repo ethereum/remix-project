@@ -9,11 +9,13 @@ const folder = process.cwd() + '/temp_publish_docker';
   const host = 'ipfs.komputing.org' // ethdev berlin ipfs node
   const ipfs = IpfsHttpClient({ host, port: 443, protocol: 'https' })
   try {
-    let result = await ipfs.add(globSource(folder, { recursive: true, pin: false }))
+    let result = await ipfs.add(globSource(folder, { recursive: true}), { pin: false })
     const remoteFolder = result[result.length - 1]
-    console.log('ipfs://' + remoteFolder.hash)
-    console.log('https://ipfsgw.komputing.org/ipfs/' + remoteFolder.hash)
-    console.log('https://gateway.ipfs.io/ipfs/' + remoteFolder.hash)
+    console.log('remoteFolder ====>', remoteFolder)
+    const hash = remoteFolder.cid.toString()
+    console.log('ipfs://' + hash)
+    console.log('https://ipfsgw.komputing.org/ipfs/' + hash)
+    console.log('https://gateway.ipfs.io/ipfs/' + hash)
   } catch (e) {
     console.log(e)
   }
