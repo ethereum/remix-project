@@ -35,6 +35,7 @@ export interface TestResultInterface {
   assertMethod?: string
   returned?: string | number
   expected?: string | number
+  location?: string
 }
 export interface TestCbInterface {
   (error: Error | null | undefined, result: TestResultInterface) : void;
