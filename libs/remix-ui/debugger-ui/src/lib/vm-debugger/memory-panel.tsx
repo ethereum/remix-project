@@ -3,7 +3,7 @@ import DropdownPanel from './dropdown-panel'
 
 export const MemoryPanel = ({ calldata }) => {
     return (
-        <DropdownPanel  dropdownName='Memory' calldata={calldata} />
+        <DropdownPanel  dropdownName='Memory' calldata={calldata || {}} />
     )
 }
 

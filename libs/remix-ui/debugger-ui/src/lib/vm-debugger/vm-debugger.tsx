@@ -52,13 +52,13 @@ export const VmDebugger = ({ vmDebuggerLogic, ready }) => {
   return (
     <div id="vmdebugger" className="px-2">
       <div>
-        <StackPanel calldata={stackPanel || {}} />
-        <MemoryPanel calldata={memoryPanel || {}} />
-        <StoragePanel storage={storagePanel.calldata || {}} header={storagePanel.header} />
-        <CallstackPanel calldata={callStackPanel || {}} />
-        <CalldataPanel calldata={calldataPanel || {}} />
+        <StackPanel calldata={stackPanel} />
+        <MemoryPanel calldata={memoryPanel} />
+        <StoragePanel calldata={storagePanel.calldata} header={storagePanel.header} />
+        <CallstackPanel calldata={callStackPanel} />
+        <CalldataPanel calldata={calldataPanel} />
         <ReturnValuesPanel dropdownName="Return Value" calldata={returnValuesPanel || {}} />
-        <FullStoragesChangesPanel calldata={fullStoragesChangesPanel || {}} />
+        <FullStoragesChangesPanel calldata={fullStoragesChangesPanel} />
       </div>
     </div>
   )
