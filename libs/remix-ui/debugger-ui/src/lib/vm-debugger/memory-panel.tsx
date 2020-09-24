@@ -3,13 +3,7 @@ import DropdownPanel from './dropdown-panel'
 
 export const MemoryPanel = ({ calldata }) => {
     return (
-        <DropdownPanel  dropdownName='Memory' opts={{
-            json: true,
-            css: {
-              'font-family': 'monospace'
-            }}} 
-            calldata={calldata}
-        />
+        <DropdownPanel  dropdownName='Memory' calldata={calldata} />
     )
 }
 

@@ -4,16 +4,10 @@ import MemoryPanel from './memory-panel'
 import CallstackPanel from './callstack-panel'
 import StackPanel from './stack-panel'
 import StoragePanel from './storage-panel'
+import ReturnValuesPanel from './dropdown-panel'
+import FullStoragesChangesPanel from './full-storages-changes'
 
 export const VmDebugger = ({ vmDebuggerLogic, ready }) => {
-  const [panelVisibility, setPanelVisibility] = useState({
-    asmCode: true,
-    stackPanel: true,
-    storagePanel: true,
-    memoryPanel: true,
-    calldataPanel: true,
-    callstackPanel: true,
-  })
   const [calldataPanel, setCalldataPanel] = useState(null)
   const [memoryPanel, setMemoryPanel] = useState(null)
   const [callStackPanel, setCallStackPanel] = useState(null)
@@ -22,6 +16,8 @@ export const VmDebugger = ({ vmDebuggerLogic, ready }) => {
     calldata: null,
     header: null
   })
+  const [returnValuesPanel, setReturnValuesPanel] = useState(null)
+  const [fullStoragesChangesPanel, setFullStoragesChangesPanel] = useState(null)
 
   useEffect(() => {
     if (vmDebuggerLogic) {
@@ -40,22 +36,15 @@ export const VmDebugger = ({ vmDebuggerLogic, ready }) => {
       vmDebuggerLogic.event.register('traceManagerStorageUpdate', (calldata, header) => {
         setStoragePanel({ calldata, header })
       })
-      vmDebuggerLogic.event.register('newTrace', () => {
-        setPanelVisibility({
-          asmCode: true,
-          stackPanel: true,
-          storagePanel: true,
-          memoryPanel: true,
-          calldataPanel: true,
-          callstackPanel: true,
-        })
+      vmDebuggerLogic.event.register('traceReturnValueUpdate', (calldata) => {
+        setReturnValuesPanel(calldata)
       })
-      // vmDebuggerLogic.event.register('newCallTree', () => {
-      //   setPanelVisibility({
-      //     ...panelVisibility,
-      //     solidityPanel: false
-      //   })
-      // })
+      vmDebuggerLogic.event.register('traceAddressesUpdate', (calldata) => {
+        setFullStoragesChangesPanel({})
+      })
+      vmDebuggerLogic.event.register('traceStorageUpdate', (calldata) => {
+        setFullStoragesChangesPanel(calldata)
+      })
       ready()
     }
   }, [vmDebuggerLogic])
@@ -68,6 +57,8 @@ export const VmDebugger = ({ vmDebuggerLogic, ready }) => {
         <StoragePanel storage={storagePanel.calldata || {}} header={storagePanel.header} />
         <CallstackPanel calldata={callStackPanel || {}} />
         <CalldataPanel calldata={calldataPanel || {}} />
+        <ReturnValuesPanel dropdownName="Return Value" calldata={returnValuesPanel || {}} />
+        <FullStoragesChangesPanel calldata={fullStoragesChangesPanel || {}} />
       </div>
     </div>
   )
