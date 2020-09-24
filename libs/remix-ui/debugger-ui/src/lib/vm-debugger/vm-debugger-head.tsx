@@ -6,14 +6,6 @@ import SolidityState from './solidity-state'
 import SolidityLocals from './solidity-locals'
 
 export const VmDebuggerHead = ({ vmDebuggerLogic, ready }) => {
-  const [panelVisibility, setPanelVisibility] = useState({
-    functionPanel: true,
-    stepDetail: true,
-    solidityState: true,
-    solidityLocals: true,
-    returnValuesPanel: true,
-    fullStoragesChangesPanel: true
-  })
   const [asm, setAsm] = useState({
     code: null,
     address: null,
@@ -88,16 +80,6 @@ export const VmDebuggerHead = ({ vmDebuggerLogic, ready }) => {
       })
       vmDebuggerLogic.event.register('solidityLocalsMessage', (message) => {
         setSolidityLocals({ ...solidityLocals, message })
-      })
-      vmDebuggerLogic.event.register('newTrace', () => {
-        setPanelVisibility({
-          functionPanel: true,
-          stepDetail: true,
-          solidityState: true,
-          solidityLocals: true,
-          returnValuesPanel: true,
-          fullStoragesChangesPanel: true
-        })
       })
       ready()
     }

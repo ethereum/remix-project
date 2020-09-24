@@ -5,15 +5,10 @@ import VmDebugger from './vm-debugger/vm-debugger'
 import VmDebuggerHead from './vm-debugger/vm-debugger-head'
 import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 /* eslint-disable-next-line */
-import toaster from '../../../../../apps/remix-ide/src/app/ui/tooltip'
-/* eslint-disable-next-line */
-import SourceHighlighter from '../../../../../apps/remix-ide/src/app/editor/sourceHighlighter'
-/* eslint-disable-next-line */
 import globalRegistry from '../../../../../apps/remix-ide/src/global/registry'
 import './debugger-ui.css'
 
 export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash, getTraceHash, removeHighlights }) => {
-  const sourceHighlighter = new SourceHighlighter()
   const init = remixDebug.init
   const [state, setState] = useState({
     isActive: false,
@@ -144,6 +139,7 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
   }
 
   const startDebugging = async (blockNumber, txNumber, tx) => {
+    if (state.debugger) unLoad()
     const web3 = await getDebugWeb3()
     const currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     const debuggerInstance = new Debugger({
@@ -159,8 +155,6 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
       }
     })
     debuggerInstance.debug(blockNumber, txNumber, tx, () => {
-      // this.stepManager = new StepManagerUI(this.debugger.step_manager)
-      // this.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
       listenToEvents(debuggerInstance, currentReceipt)
       setState(prevState => {
         return {
@@ -172,9 +166,8 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
           debugger: debuggerInstance
         }
       })
-      // this.renderDebugger()
     }).catch((error) => {
-      toaster(error, null, null)
+      // toaster(error, null, null)
       unLoad()
     })
 }
@@ -243,10 +236,6 @@ const vmDebuggerHeadReady = () => {
 if (state.ready.vmDebugger && state.ready.vmDebuggerHead) {
   state.debugger.vmDebuggerLogic.start()
 }
-
-// this.debuggerPanelsView = yo`<div class="px-2"></div>`
-// this.debuggerHeadPanelsView = yo`<div class="px-2"></div>`
-// this.stepManagerView = yo`<div class="px-2"></div>`
 
   return (
       <div>

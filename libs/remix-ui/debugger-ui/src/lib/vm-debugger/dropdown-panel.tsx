@@ -8,12 +8,10 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
-    const { dropdownName, dropdownMessage, opts, calldata, header, loading, extractFunc, formatSelfFunc } = props
+    const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc } = props
     const data = useExtractData(calldata, extractFunc)
-    const dropdownRawEl = useRef(null)
     const [state, setState] = useState({
         header: '',
-        json: opts.json,
         toggleDropdown: true,
         message: {
             innerText: '',
@@ -50,10 +48,6 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                 toggleDropdown: !prevState.toggleDropdown
             }
         })
-    }
-
-    const copyClipboard = () => {
-        return dropdownRawEl.current.innerText ? dropdownRawEl.current.innerText : dropdownRawEl.current.textContent
     }
 
     const message = (message) => {
@@ -133,29 +127,23 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         }
     }
 
-    let content: JSX.Element | JSX.Element[] = <div>Empty</div>
-    if (state.json) {
-        content = (data).map((item, index) => {
-            return (
-                <TreeView id={item.key} key={index}>
-                    { renderData(item.data, item.key) }
-                </TreeView>
-            )
-        })
-    }
-    const title = <div className="py-0 px-1 title">
-        <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div>
-<div className="name" onClick={handleToggle}>{dropdownName}</div><span className="nameDetail" onClick={handleToggle}>{ header }</span>
-        <CopyToClipboard content={state.copiableContent} />
-    </div>
-
     return (
         <div className="border rounded px-1 mt-1 bg-light">
-            { title }
+            <div className="py-0 px-1 title">
+                <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div>
+                <div className="name" onClick={handleToggle}>{dropdownName}</div><span className="nameDetail" onClick={handleToggle}>{ header }</span>
+                <CopyToClipboard content={state.copiableContent} />
+            </div>
             <div className='dropdownpanel' style={{ display: state.toggleDropdown ? 'block' : 'none' }}>
                 <i className="refresh fas fa-sync" style={{ display: state.updating ? 'inline-block' : 'none' }} aria-hidden="true"></i>
                 <div className='dropdowncontent' style={{ display: state.dropdownContent.display }}>
-                    { content }
+                    { data.map((item, index) => {
+                        return (
+                            <TreeView id={item.key} key={index}>
+                                { renderData(item.data, item.key) }
+                            </TreeView>
+                        )
+                    }) }
                 </div>
                 <div className='message' style={{ display: state.message.display }}>{ state.message.innerText }</div>
             </div>

@@ -15,12 +15,6 @@ export type ExtractFunc = (json: any, parent?: any) => ExtractData
 export interface DropdownPanelProps {
     dropdownName: string,
     dropdownMessage?: string,
-    opts: {
-        json: boolean,
-        css?: {
-            [key: string]: string
-        }
-    },
     calldata?: {
         [key: string]: string
     },
