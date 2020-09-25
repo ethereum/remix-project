@@ -96,7 +96,7 @@ function getAssertMethodLocation (fileAST: AstNode, testContractName: string, fu
                                                     && e.expression.expression.memberName === assertMethod
                                                     && e.expression.expression.expression.name === 'Assert'
                                                 )
-            location = assetExpression.expression.src
+            location = assetExpression && assetExpression.expression && assetExpression.expression.src
         }
     }
     return location
