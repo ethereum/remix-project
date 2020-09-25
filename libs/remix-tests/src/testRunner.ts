@@ -90,7 +90,13 @@ function getAssertMethodLocation (fileAST: AstNode, testContractName: string, fu
         const contractAST: AstNode = fileAST.nodes.find(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
         if(contractAST && contractAST.nodes) {
             const funcNode: AstNode = contractAST.nodes.find(node => (node.name === functionName && node.nodeType === "FunctionDefinition"))
-            const expressions = funcNode.body.statements.filter(s => s.nodeType === 'ExpressionStatement' && s.expression.nodeType === 'FunctionCall')
+            // Check if statement nodeType is 'ExpressionStatement', for example:
+            // Assert.equal(foo.get(), 100, "initial value is not correct");
+            // Check if statement nodeType is 'Return', for example:
+            // return Assert.equal(foo.get(), 100, "initial value is not correct");
+            const expressions = funcNode.body.statements.filter(s => 
+                                                    (s.nodeType === 'ExpressionStatement' || s.nodeType === 'Return') 
+                                                    && s.expression.nodeType === 'FunctionCall')
             const assetExpression = expressions.find(e => e.expression.expression
                                                     && e.expression.expression.nodeType === 'MemberAccess' 
                                                     && e.expression.expression.memberName === assertMethod
