@@ -13,9 +13,12 @@ export const VmDebuggerHead = ({ vmDebuggerLogic, ready }) => {
   })
   const [functionPanel, setFunctionPanel] = useState(null)
   const [stepDetail, setStepDetail] = useState({
-    key: null,
-    value: null,
-    reset: false
+    'vm trace step': '-',
+    'execution step': '-',
+    'add memory': '',
+    'gas': '',
+    'remaining gas': '-',
+    'loaded address': '-'
   })
   const [solidityState, setSolidityState] = useState({
     calldata: null,
@@ -29,10 +32,14 @@ export const VmDebuggerHead = ({ vmDebuggerLogic, ready }) => {
   useEffect(() => {
     if (vmDebuggerLogic) {
       vmDebuggerLogic.event.register('codeManagerChanged', (code, address, index) => {
-        setAsm({ code, address, index })
+        setAsm(() => {
+          return { code, address, index }
+        })
       })
       vmDebuggerLogic.event.register('traceUnloaded', () => {
-        setAsm({ code: [], address: '', index: -1 })
+        setAsm(() => {
+          return { code: [], address: '', index: -1 }
+        })
       })
       vmDebuggerLogic.event.register('functionsStackUpdate', (stack) => {
         if (stack === null) return
@@ -43,43 +50,67 @@ export const VmDebuggerHead = ({ vmDebuggerLogic, ready }) => {
 
           functions.push(functionDefinitionName + '(' + func.inputs.join(', ') + ')')
         }
-        setFunctionPanel(functions)
+        setFunctionPanel(() => functions)
       })
       vmDebuggerLogic.event.register('traceUnloaded', () => {
-        setStepDetail({ key: null, value: null, reset: true })
+        setStepDetail(() => {
+          return { 'vm trace step': '-', 'execution step': '-', 'add memory': '', 'gas': '', 'remaining gas': '-', 'loaded address': '-' }
+        })
       })
       vmDebuggerLogic.event.register('newTraceLoaded', () => {
-        setStepDetail({ key: null, value: null, reset: true })
+        setStepDetail(() => {
+          return { 'vm trace step': '-', 'execution step': '-', 'add memory': '', 'gas': '', 'remaining gas': '-', 'loaded address': '-' }
+        })
       })
       vmDebuggerLogic.event.register('traceCurrentStepUpdate', (error, step) => {
-        setStepDetail({ key: 'execution step', value: (error ? '-' : step), reset: false })
+        setStepDetail(prevState => {
+          return { ...prevState, 'execution step': (error ? '-' : step) }
+        })
       })
       vmDebuggerLogic.event.register('traceMemExpandUpdate', (error, addmem) => {
-        setStepDetail({ key: 'add memory', value: (error ? '-' : addmem), reset: false })
+        setStepDetail(prevState => {
+          return { ...prevState, 'add memory': (error ? '-' : addmem) }
+        })
       })
       vmDebuggerLogic.event.register('traceStepCostUpdate', (error, gas) => {
-        setStepDetail({ key: 'gas', value: (error ? '-' : gas), reset: false })
+        setStepDetail(prevState => {
+          return { ...prevState, 'gas': (error ? '-' : gas) }
+        })
       })
       vmDebuggerLogic.event.register('traceCurrentCalledAddressAtUpdate', (error, address) => {
-        setStepDetail({ key: 'loaded address', value: (error ? '-' : address), reset: false })
+        setStepDetail(prevState => {
+          return { ...prevState, 'loaded address': (error ? '-' : address) }
+        })
       })
       vmDebuggerLogic.event.register('traceRemainingGasUpdate', (error, remainingGas) => {
-        setStepDetail({ key: 'remaining gas', value: (error ? '-' : remainingGas), reset: false })
+        setStepDetail(prevState => {
+          return { ...prevState, 'remaining gas': (error ? '-' : remainingGas) }
+        })
       })
       vmDebuggerLogic.event.register('indexUpdate', (index) => {
-        setStepDetail({ key: 'vm trace step', value: index, reset: false })
+        setStepDetail(prevState => {
+          return { ...prevState, 'vm trace step': index }
+        })
       })
       vmDebuggerLogic.event.register('solidityState', (calldata) => {
-        setSolidityState({ ...solidityState, calldata })
+        setSolidityState(() => {
+          return { ...solidityState, calldata }
+        })
       })
       vmDebuggerLogic.event.register('solidityStateMessage', (message) => {
-        setSolidityState({ ...solidityState, message })
+        setSolidityState(() => {
+          return { ...solidityState, message }
+        })
       })
       vmDebuggerLogic.event.register('solidityLocals', (calldata) => {
-        setSolidityLocals({ ...solidityLocals, calldata })
+        setSolidityLocals(() => {
+          return { ...solidityLocals, calldata }
+        })
       })
       vmDebuggerLogic.event.register('solidityLocalsMessage', (message) => {
-        setSolidityLocals({ ...solidityLocals, message })
+        setSolidityLocals(() => {
+          return { ...solidityLocals, message }
+        })
       })
       ready()
     }
