@@ -39,6 +39,36 @@ function isPayable(funcABI: FunctionDescription): boolean {
 }
 
 /**
+ * @dev Check node name
+ * @param node AST node
+ * @param name name
+ */
+
+function isNodeName(node: AstNode, name: string): boolean {
+    return node.name === name
+}
+
+/**
+ * @dev Check node type
+ * @param node AST node
+ * @param type type
+ */
+
+function isNodeType(node: AstNode, type: string): boolean {
+    return node.nodeType === type
+}
+
+/**
+ * @dev Check if node type is from the typesList
+ * @param node AST node to be checked
+ * @param typesList list of types
+ */
+
+function isNodeTypeIn(node: AstNode, typesList: string[]): boolean {
+    return typesList.includes(node.nodeType)
+}
+
+/**
  * @dev Get overrided sender provided using natspec
  * @param userdoc method user documentaion
  * @param signature signature
@@ -75,9 +105,9 @@ function getProvidedValue (userdoc: UserDocumentation, signature: string, method
 function getAvailableFunctions (fileAST: AstNode, testContractName: string): string[] {
     let funcList: string[] = []
     if(fileAST.nodes && fileAST.nodes.length > 0) {
-        const contractAST: AstNode[] = fileAST.nodes.filter(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
+        const contractAST: AstNode[] = fileAST.nodes.filter(node => isNodeName(node, testContractName) && isNodeType(node, 'ContractDefinition'))
         if(contractAST.length > 0 && contractAST[0].nodes) {
-            const funcNodes: AstNode[] = contractAST[0].nodes.filter(node => ((node.kind === "function" && node.nodeType === "FunctionDefinition") || (node.nodeType === "FunctionDefinition")))
+            const funcNodes: AstNode[] = contractAST[0].nodes.filter(node => ((node.kind === "function" && isNodeType(node, 'FunctionDefinition')) || isNodeType(node, 'FunctionDefinition')))
             funcList = funcNodes.map(node => node.name)
         }
     }
@@ -85,27 +115,24 @@ function getAvailableFunctions (fileAST: AstNode, testContractName: string): str
 }
 
 function getAssertMethodLocation (fileAST: AstNode, testContractName: string, functionName: string, assertMethod: string): string {
-    let location
-    if(fileAST.nodes && fileAST.nodes.length > 0) {
-        const contractAST: AstNode = fileAST.nodes.find(node => node.name === testContractName && node.nodeType === 'ContractDefinition')
-        if(contractAST && contractAST.nodes) {
-            const funcNode: AstNode = contractAST.nodes.find(node => (node.name === functionName && node.nodeType === "FunctionDefinition"))
-            // Check if statement nodeType is 'ExpressionStatement', for example:
+    if(fileAST.nodes?.length) {
+        const contractAST: AstNode = fileAST.nodes.find(node => isNodeName(node, testContractName) && isNodeType(node, 'ContractDefinition'))
+        if(contractAST?.nodes?.length) {
+            const funcNode: AstNode = contractAST.nodes.find(node => isNodeName(node, functionName) && isNodeType(node, 'FunctionDefinition'))
+            // Check if statement nodeType is 'ExpressionStatement' or 'Return', for examples:
             // Assert.equal(foo.get(), 100, "initial value is not correct");
-            // Check if statement nodeType is 'Return', for example:
             // return Assert.equal(foo.get(), 100, "initial value is not correct");
             const expressions = funcNode.body.statements.filter(s => 
-                                                    (s.nodeType === 'ExpressionStatement' || s.nodeType === 'Return') 
-                                                    && s.expression.nodeType === 'FunctionCall')
+                                                    isNodeTypeIn(s, ['ExpressionStatement', 'Return'])
+                                                    && isNodeType(s.expression, 'FunctionCall'))
             const assetExpression = expressions.find(e => e.expression.expression
-                                                    && e.expression.expression.nodeType === 'MemberAccess' 
+                                                    && isNodeType(e.expression.expression, 'MemberAccess') 
                                                     && e.expression.expression.memberName === assertMethod
-                                                    && e.expression.expression.expression.name === 'Assert'
+                                                    && isNodeName(e.expression.expression.expression, 'Assert')
                                                 )
-            location = assetExpression && assetExpression.expression && assetExpression.expression.src
+            return assetExpression?.expression?.src
         }
     }
-    return location
 }
 
 /**
