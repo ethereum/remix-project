@@ -22,28 +22,32 @@ export const VmDebugger = ({ vmDebuggerLogic, ready }) => {
   useEffect(() => {
     if (vmDebuggerLogic) {
       vmDebuggerLogic.event.register('traceManagerCallDataUpdate', (calldata) => {
-        setCalldataPanel(calldata)
+        setCalldataPanel(() => calldata)
       })
       vmDebuggerLogic.event.register('traceManagerMemoryUpdate', (calldata) => {
-        setMemoryPanel(calldata)
+        setMemoryPanel(() => calldata)
       })
       vmDebuggerLogic.event.register('traceManagerCallStackUpdate', (calldata) => {
-        setCallStackPanel(calldata)
+        setCallStackPanel(() => calldata)
       })
       vmDebuggerLogic.event.register('traceManagerStackUpdate', (calldata) => {
-        setStackPanel(calldata)
+        setStackPanel(() => calldata)
       })
       vmDebuggerLogic.event.register('traceManagerStorageUpdate', (calldata, header) => {
-        setStoragePanel({ calldata, header })
+        setStoragePanel(() => {
+          return { calldata, header }
+        })
       })
       vmDebuggerLogic.event.register('traceReturnValueUpdate', (calldata) => {
-        setReturnValuesPanel(calldata)
+        setReturnValuesPanel(() => calldata)
       })
       vmDebuggerLogic.event.register('traceAddressesUpdate', (calldata) => {
-        setFullStoragesChangesPanel({})
+        setFullStoragesChangesPanel(() => {
+          return {}
+        })
       })
       vmDebuggerLogic.event.register('traceStorageUpdate', (calldata) => {
-        setFullStoragesChangesPanel(calldata)
+        setFullStoragesChangesPanel(() => calldata)
       })
       ready()
     }
