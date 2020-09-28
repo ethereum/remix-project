@@ -23,6 +23,7 @@ export class Compiler {
       worker: null,
       currentVersion: null,
       optimize: false,
+      runs: 200,
       evmVersion: null,
       language: 'Solidity',
       compilationStartTime: null,
@@ -109,7 +110,8 @@ export class Compiler {
         let result: CompilationResult = {}
         try {
           if(source && source.sources) {
-            const input = compilerInput(source.sources, {optimize: this.state.optimize, evmVersion: this.state.evmVersion, language: this.state.language})
+            const {optimize, runs, evmVersion, language} = this.state
+            const input = compilerInput(source.sources, {optimize, runs, evmVersion, language})
             result = JSON.parse(compiler.compile(input, { import: missingInputsCallback }))
           }
         } catch (exception) {
@@ -247,15 +249,12 @@ export class Compiler {
 
     this.state.compileJSON = (source: SourceWithTarget) => {
       if(source && source.sources) {
+        const {optimize, runs, evmVersion, language} = this.state
         jobs.push({sources: source})
         this.state.worker.postMessage({
           cmd: 'compile', 
           job: jobs.length - 1, 
-          input: compilerInput(source.sources, {
-                      optimize: this.state.optimize, 
-                      evmVersion: this.state.evmVersion, 
-                      language: this.state.language
-                  })
+          input: compilerInput(source.sources, {optimize, runs, evmVersion, language})
         })
       }
     }
