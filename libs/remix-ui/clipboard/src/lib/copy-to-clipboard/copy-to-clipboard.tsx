@@ -33,7 +33,7 @@ export const CopyToClipboard = ({ content, tip='Copy', icon='fa-copy', ...otherP
             { message }
         </Tooltip>
       }>
-        <i className={`far ${icon} ml-1 p-2`} data-id="copyToClipboardCopyIcon" aria-hidden="true"
+        <i className={`far ${icon} ml-1 p-2`} aria-hidden="true"
           {...otherProps}
         ></i>
       </OverlayTrigger>

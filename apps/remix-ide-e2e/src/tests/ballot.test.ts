@@ -45,8 +45,8 @@ module.exports = {
     .pause(2000)
     .goToVMTraceStep(79)
     .pause(1000)
-    .checkVariableDebug('soliditystate', stateCheck)
-    .checkVariableDebug('soliditylocals', localsCheck)
+    // .checkVariableDebug('soliditystate', stateCheck)
+    // .checkVariableDebug('soliditylocals', localsCheck)
   },
 
   'Access Ballot via at address': function (browser: NightwatchBrowser) {
