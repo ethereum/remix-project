@@ -1,0 +1,88 @@
+{
+  "argumentTypes": null,
+  "arguments":
+  [
+    {
+      "argumentTypes": null,
+      "hexValue": "616263",
+      "id": 15,
+      "isConstant": false,
+      "isLValue": false,
+      "isPure": true,
+      "kind": "string",
+      "lValueRequested": false,
+      "nodeType": "Literal",
+      "src": "115:5:0",
+      "subdenomination": null,
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_stringliteral_4e03657aea45a94fc7d47ba826c8d667c0d1e6e33a64a036ec44f58fa12d6c45",
+        "typeString": "literal_string \"abc\""
+      },
+      "value": "abc"
+    },
+    {
+      "argumentTypes": null,
+      "hexValue": "38",
+      "id": 16,
+      "isConstant": false,
+      "isLValue": false,
+      "isPure": true,
+      "kind": "number",
+      "lValueRequested": false,
+      "nodeType": "Literal",
+      "src": "125:1:0",
+      "subdenomination": null,
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_rational_8_by_1",
+        "typeString": "int_const 8"
+      },
+      "value": "8"
+    }
+  ],
+  "expression":
+  {
+    "argumentTypes":
+    [
+      {
+        "typeIdentifier": "t_stringliteral_4e03657aea45a94fc7d47ba826c8d667c0d1e6e33a64a036ec44f58fa12d6c45",
+        "typeString": "literal_string \"abc\""
+      },
+      {
+        "typeIdentifier": "t_rational_8_by_1",
+        "typeString": "int_const 8"
+      }
+    ],
+    "id": 14,
+    "name": "e",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": 6,
+    "src": "109:1:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_function_event_nonpayable$_t_uint256_$_t_string_memory_ptr_$returns$__$",
+      "typeString": "function (uint256,string memory)"
+    }
+  },
+  "id": 17,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "kind": "functionCall",
+  "lValueRequested": false,
+  "names":
+  [
+    "b",
+    "a"
+  ],
+  "nodeType": "FunctionCall",
+  "src": "109:19:0",
+  "tryCall": false,
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_tuple$__$",
+    "typeString": "tuple()"
+  }
+}

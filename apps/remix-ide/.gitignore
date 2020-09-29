@@ -1,0 +1,15 @@
+.idea
+.vscode
+build
+node_modules
+docs/_build
+reports
+soljson.js
+soljson.js.*
+npm-debug.log*
+remix
+.DS_Store
+contracts
+TODO
+.tern-port
+temp_publish_docker

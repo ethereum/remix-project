@@ -1,0 +1,61 @@
+{
+  "argumentTypes": null,
+  "arguments":
+  [
+    {
+      "argumentTypes": null,
+      "hexValue": "33",
+      "id": 6,
+      "isConstant": false,
+      "isLValue": false,
+      "isPure": true,
+      "kind": "number",
+      "lValueRequested": false,
+      "nodeType": "Literal",
+      "src": "79:1:0",
+      "subdenomination": null,
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_rational_3_by_1",
+        "typeString": "int_const 3"
+      },
+      "value": "3"
+    }
+  ],
+  "expression":
+  {
+    "argumentTypes":
+    [
+      {
+        "typeIdentifier": "t_rational_3_by_1",
+        "typeString": "int_const 3"
+      }
+    ],
+    "id": 5,
+    "name": "blockhash",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": -5,
+    "src": "69:9:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_function_blockhash_view$_t_uint256_$returns$_t_bytes32_$",
+      "typeString": "function (uint256) view returns (bytes32)"
+    }
+  },
+  "id": 7,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "kind": "functionCall",
+  "lValueRequested": false,
+  "names": [],
+  "nodeType": "FunctionCall",
+  "src": "69:12:0",
+  "tryCall": false,
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_bytes32",
+    "typeString": "bytes32"
+  }
+}

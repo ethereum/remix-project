@@ -1,0 +1,31 @@
+{
+  "name": "Solidity",
+  "description": "Realtime compiler and runtime",
+  "update_url": "https://remix.ethereum.org",
+  "version": "1.1",
+  "manifest_version": 2,
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+
+  "icons": {
+    "32": "icon.png"
+  },
+
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "https://ajax.googleapis.com/",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+
+  "content_security_policy": "script-src 'self' https://solc-bin.ethereum.org/; object-src 'self'"
+}
