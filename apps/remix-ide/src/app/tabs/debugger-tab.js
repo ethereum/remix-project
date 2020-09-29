@@ -86,6 +86,7 @@ class DebuggerTab extends ViewPlugin {
 
   deactivate () {
     this.removeHighlights = true
+    this.renderComponent()
     super.deactivate()
   }
 
