@@ -140,7 +140,17 @@
     "npm-install-version": "^6.0.2",
     "signale": "^1.4.0",
     "time-stamp": "^2.2.0",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "@remixproject/plugin": "0.3.0-beta.5",
+    "@remixproject/plugin-api": "0.3.0-beta.5",
+    "@remixproject/plugin-utils": "0.3.0-beta.5",
+    "@remixproject/plugin-ws": "^0.3.0-beta.8",
+    "axios": "^0.20.0",
+    "chokidar": "^2.1.8",
+    "commander": "^2.20.3",
+    "fs-extra": "^3.0.1",
+    "isbinaryfile": "^3.0.2",
+    "ws": "^7.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -251,6 +261,15 @@
     "webworkify-webpack": "^2.1.5",
     "worker-loader": "^2.0.0",
     "yo-yo": "github:ioedeveloper/yo-yo",
-    "yo-yoify": "^3.7.3"
+    "yo-yoify": "^3.7.3",
+    "@types/axios": "^0.14.0",
+    "@types/fs-extra": "^9.0.1",
+    "@types/ws": "^7.2.4",
+    "eslint-config-standard": "14.1.1",
+    "eslint-plugin-import": "2.20.2",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-standard": "4.0.1",
+    "nodemon": "^2.0.4"
   }
 }
