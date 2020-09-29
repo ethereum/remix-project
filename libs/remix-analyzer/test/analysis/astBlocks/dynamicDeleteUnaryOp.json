@@ -1,0 +1,28 @@
+{ "argumentTypes": null,
+    "id": 74,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": false,
+    "lValueRequested": false,
+    "nodeType": "UnaryOperation",
+    "operator": "delete",
+    "prefix": true,
+    "src": "627:12:0",
+    "subExpression":
+     { "argumentTypes": null,
+       "id": 73,
+       "name": "users",
+       "nodeType": "Identifier",
+       "overloadedDeclarations": [],
+       "referencedDeclaration": 4,
+       "src": "634:5:0",
+       "typeDescriptions": { 
+           "typeIdentifier": "t_array$_t_uint256_$dyn_storage",
+            "typeString": "uint256[] storage ref" 
+            } 
+        },
+    "typeDescriptions": { 
+        "typeIdentifier": "t_tuple$__$", 
+        "typeString": "tuple()" 
+        } 
+    }

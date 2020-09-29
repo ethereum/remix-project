@@ -1,0 +1,52 @@
+{
+  "name": "@remix-project/remix-astwalker",
+  "version": "0.0.26",
+  "description": "Tool to walk through Solidity AST",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "./../../node_modules/.bin/nyc --reporter=lcov --require ts-node/register --require tsconfig-paths/register ./../../node_modules/.bin/tape ./tests/*.ts | ./../../node_modules/.bin/tap-spec; ./../../node_modules/.bin/nyc report ---reporter=text"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix-project.git"
+  },
+  "keywords": [
+    "Solidity",
+    "AST",
+    "remix"
+  ],
+  "author": "Remix Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix-project/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-astwalker#readme",
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
+  "dependencies": {
+    "@remix-project/remix-lib": "^0.4.31",
+    "@types/tape": "^4.2.33",
+    "ethereumjs-block": "^2.2.2",
+    "ethereumjs-tx": "^2.1.2",
+    "ethereumjs-vm": "4.1.3",
+    "nyc": "^13.3.0",
+    "tape": "^4.10.1",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.3"
+  },
+  "devDependencies": {
+    "tap-spec": "^5.0.0"
+  },
+  "typings": "index.d.ts",
+  "gitHead": "832387514c359d9b29fe0fb9ae0444a58b9c4253"
+}

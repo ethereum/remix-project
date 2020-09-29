@@ -1,0 +1,10 @@
+{
+  "packages": ["dist/libs/**/*"],
+  "version": "independent",
+  "command": {
+    "publish": {
+      "ignoreChanges": ["ignored-file", "*.md"],
+      "message": "remix-libs(release): publish version"
+    }
+  }
+}

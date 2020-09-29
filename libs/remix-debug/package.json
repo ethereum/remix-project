@@ -1,0 +1,60 @@
+{
+  "name": "@remix-project/remix-debug",
+  "version": "0.4.7",
+  "description": "Tool to debug Ethereum transactions",
+  "contributors": [
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    },
+    {
+      "name": "Liana Husikyan",
+      "email": "liana@ethdev.com"
+    },
+    {
+      "name": "Iuri Matias",
+      "email": "iuri.matias@gmail.com"
+    }
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "@remix-project/remix-astwalker": "^0.0.26",
+    "@remix-project/remix-lib": "^0.4.31",
+    "commander": "^2.19.0",
+    "ethereumjs-block": "^2.2.2",
+    "ethereumjs-tx": "^2.1.2",
+    "ethereumjs-util": "^6.2.0",
+    "ethereumjs-vm": "4.1.3",
+    "web3": "^1.2.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-transform-object-assign": "^7.2.0",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-es2015": "latest",
+    "@babel/preset-es2017": "latest",
+    "@babel/preset-stage-0": "^7.0.0",
+    "babel-eslint": "^7.1.1",
+    "babelify": "^10.0.0",
+    "solc": "^0.6.0",
+    "tape": "^4.6.0"
+  },
+  "scripts": {
+    "test": "./../../node_modules/.bin/tape --require tsconfig-paths/register ./test/tests.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix-project.git"
+  },
+  "author": "Remix Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix-project/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-debug#readme",
+  "typings": "index.d.ts",
+  "gitHead": "832387514c359d9b29fe0fb9ae0444a58b9c4253"
+}

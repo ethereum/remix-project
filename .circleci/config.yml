@@ -1,0 +1,282 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  remix-libs:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.18.0-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run lint:libs
+      - run: npm run build:libs
+      - run: npm run test:libs
+
+  remix-ide-chrome:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.18.0-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+      - FILES_TO_PACKAGE: "dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main.js dist/apps/remix-ide/polyfills.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor.js dist/apps/remix-ide/favicon.ico"
+    working_directory: ~/remix-project
+
+    parallelism: 20
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
+      - run:
+          name: Download Compatible JAVA Version for Selenium
+          command: |
+            java -version
+            sudo apt-get purge --auto-remove java-common
+            sudo apt-get update
+            sudo apt-get install openjdk-8-jdk
+            java -version
+      - run:
+          name: Download Selenium
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+      - run:
+          name: Start Selenium
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          background: true
+      - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
+
+  remix-ide-firefox:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.18.0-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+      - FILES_TO_PACKAGE: "dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main.js dist/apps/remix-ide/polyfills.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor.js dist/apps/remix-ide/favicon.ico"
+    working_directory: ~/remix-project
+
+    parallelism: 20
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
+      - run:
+          name: Download Selenium
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+      - run:
+          name: Start Selenium
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          background: true
+      - run:
+          name: Download Latest Firefox
+          command: sudo apt-get purge -y firefox && wget https://sourceforge.net/projects/ubuntuzilla/files/mozilla/apt/pool/main/f/firefox-mozilla-build/firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
+      - run:
+          name: Install Firefox
+          command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
+      - run: ./apps/remix-ide/ci/browser_tests_firefox.sh
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
+
+  remix-ide-run-deploy:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.18.0-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+      - FILES_TO_PACKAGE: "dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main.js dist/apps/remix-ide/polyfills.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor.js dist/apps/remix-ide/favicon.ico"
+    working_directory: ~/remix-project
+
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
+      - run:
+          name: Download Compatible JAVA Version for Selenium
+          command: |
+            java -version
+            sudo apt-get purge --auto-remove java-common
+            sudo apt-get update
+            sudo apt-get install openjdk-8-jdk
+            java -version
+      - run:
+          name: Download Selenium
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+      - run:
+          name: Start Selenium
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          background: true
+      - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
+
+
+  deploy-remix-live:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.18.0-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+      - FILES_TO_PACKAGE: "dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main.js dist/apps/remix-ide/polyfills.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor.js dist/apps/remix-ide/favicon.ico"
+    working_directory: ~/remix-project
+
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
+      - run: 
+          name: Deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "remix_live" ]; then
+              ./apps/remix-ide/ci/deploy_from_travis_remix-live.sh;
+            fi
+
+  publish:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.19.0-buster
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+      - FILES_TO_PACKAGE: "dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main.js dist/apps/remix-ide/polyfills.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor.js dist/apps/remix-ide/favicon.ico"
+    working_directory: ~/remix-project
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: npm install
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
+      - run: ./apps/remix-ide/ci/build_and_publish_docker_images.sh
+      - run: ./apps/remix-ide/ci/publishIpfs
+
+  deploy-remix-alpha:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.18.0-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+    resource_class: xlarge
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+      - FILES_TO_PACKAGE: "dist/apps/remix-ide/assets dist/apps/remix-ide/index.html dist/apps/remix-ide/main.js dist/apps/remix-ide/polyfills.js dist/apps/remix-ide/runtime.js dist/apps/remix-ide/vendor.js dist/apps/remix-ide/favicon.ico"
+    working_directory: ~/remix-project
+
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build:libs
+      - run: npm run downloadsolc_root
+      - run: npm run build
+      - run: 
+          name: Deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ./apps/remix-ide/ci/deploy_from_travis_remix-alpha.sh;
+            fi
+
+workflows:
+  version: 2
+  build_all:
+    jobs:
+      - remix-libs
+      - remix-ide-chrome:          
+          requires:
+            - remix-libs
+      - remix-ide-firefox:          
+          requires:
+            - remix-libs
+      - remix-ide-run-deploy:          
+          requires:
+            - remix-libs
+      - publish:
+          requires:
+            - remix-ide-chrome
+            - remix-ide-firefox
+            - remix-ide-run-deploy
+      - deploy-remix-live:          
+          requires:
+            - remix-ide-chrome
+            - remix-ide-firefox
+            - remix-ide-run-deploy
+          filters:
+            branches:
+              only: remix_live
+      - deploy-remix-alpha:          
+          requires:
+            - remix-ide-chrome
+            - remix-ide-firefox
+            - remix-ide-run-deploy
+          filters:
+            branches:
+              only: master
