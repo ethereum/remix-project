@@ -446,6 +446,46 @@
           }
         }
       }
+    },
+    "remixd": {
+      "root": "libs/remixd",
+      "sourceRoot": "libs/remixd/src/",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/remixd/.eslintrc",
+            "tsConfig": [
+              "libs/remixd/tsconfig.lib.json"
+            ],
+            "files": [
+              "libs/remixd/src/**/*.ts",
+              "libs/remixd/bin/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remixd/jest.config.js",
+            "tsConfig": "libs/remixd/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remixd",
+            "tsConfig": "libs/remixd/tsconfig.lib.json",
+            "packageJson": "libs/remixd/package.json",
+            "main": "libs/remixd/src/index.ts",
+            "assets": ["libs/remixd/*.md"]
+          }
+        }
+      }
     }
   },
   "cli": {

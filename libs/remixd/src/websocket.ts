@@ -8,7 +8,6 @@ const { createClient } = require('@remixproject/plugin-ws')
 export default class WebSocket {
   server: http.Server
   wsServer: WS.Server
-  connection: WS
 
   constructor (public port: number, public opt: WebsocketOpt, public sharedFolder: SharedFolderClient) {}
 
@@ -37,7 +36,6 @@ export default class WebSocket {
     this.wsServer.on('connection', (ws) => {
       const { sharedFolder } = this
 
-      this.connection = ws
       createClient(ws, sharedFolder)
       if(callback) callback(ws)
     })
