@@ -1,0 +1,52 @@
+{
+  "argumentTypes": null,
+  "arguments": [],
+  "expression":
+  {
+    "argumentTypes": [],
+    "expression":
+    {
+      "argumentTypes": null,
+      "id": 10,
+      "name": "super",
+      "nodeType": "Identifier",
+      "overloadedDeclarations": [],
+      "referencedDeclaration": -25,
+      "src": "162:5:0",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_super$_B_$17",
+        "typeString": "contract super B"
+      }
+    },
+    "id": 12,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": false,
+    "lValueRequested": false,
+    "memberName": "x",
+    "nodeType": "MemberAccess",
+    "referencedDeclaration": 4,
+    "src": "162:7:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_function_internal_pure$__$returns$__$",
+      "typeString": "function () pure"
+    }
+  },
+  "id": 13,
+  "isConstant": false,
+  "isLValue": false,
+  "isPure": false,
+  "kind": "functionCall",
+  "lValueRequested": false,
+  "names": [],
+  "nodeType": "FunctionCall",
+  "src": "162:9:0",
+  "tryCall": false,
+  "typeDescriptions":
+  {
+    "typeIdentifier": "t_tuple$__$",
+    "typeString": "tuple()"
+  }
+}

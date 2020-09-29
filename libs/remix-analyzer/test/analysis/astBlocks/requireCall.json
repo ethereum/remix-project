@@ -1,0 +1,115 @@
+{
+    "argumentTypes": null,
+    "arguments":
+    [
+      {
+        "argumentTypes": null,
+        "commonType":
+        {
+          "typeIdentifier": "t_uint256",
+          "typeString": "uint256"
+        },
+        "id": 8,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": false,
+        "lValueRequested": false,
+        "leftExpression":
+        {
+          "argumentTypes": null,
+          "expression":
+          {
+            "argumentTypes": null,
+            "id": 5,
+            "name": "msg",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": -15,
+            "src": "56:3:0",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_magic_message",
+              "typeString": "msg"
+            }
+          },
+          "id": 6,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": false,
+          "lValueRequested": false,
+          "memberName": "value",
+          "nodeType": "MemberAccess",
+          "referencedDeclaration": null,
+          "src": "56:9:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_uint256",
+            "typeString": "uint256"
+          }
+        },
+        "nodeType": "BinaryOperation",
+        "operator": ">=",
+        "rightExpression":
+        {
+          "argumentTypes": null,
+          "id": 7,
+          "name": "_amount",
+          "nodeType": "Identifier",
+          "overloadedDeclarations": [],
+          "referencedDeclaration": 2,
+          "src": "69:7:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_uint256",
+            "typeString": "uint256"
+          }
+        },
+        "src": "56:20:0",
+        "typeDescriptions":
+        {
+          "typeIdentifier": "t_bool",
+          "typeString": "bool"
+        }
+      }
+    ],
+    "expression":
+    {
+      "argumentTypes":
+      [
+        {
+          "typeIdentifier": "t_bool",
+          "typeString": "bool"
+        }
+      ],
+      "id": 4,
+      "name": "require",
+      "nodeType": "Identifier",
+      "overloadedDeclarations":
+      [
+        -18,
+        -18
+      ],
+      "referencedDeclaration": -18,
+      "src": "48:7:0",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
+        "typeString": "function (bool) pure"
+      }
+    },
+    "id": 9,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": false,
+    "kind": "functionCall",
+    "lValueRequested": false,
+    "names": [],
+    "nodeType": "FunctionCall",
+    "src": "48:29:0",
+    "tryCall": false,
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_tuple$__$",
+      "typeString": "tuple()"
+    }
+  }

@@ -1,0 +1,96 @@
+{
+  "body":
+  {
+    "id": 10,
+    "nodeType": "Block",
+    "src": "113:2:0",
+    "statements": []
+  },
+  "condition":
+  {
+    "argumentTypes": null,
+    "expression":
+    {
+      "argumentTypes": null,
+      "components":
+      [
+        {
+          "argumentTypes": null,
+          "id": 13,
+          "isConstant": false,
+          "isLValue": false,
+          "isPure": false,
+          "lValueRequested": false,
+          "leftHandSide":
+          {
+            "argumentTypes": null,
+            "id": 11,
+            "name": "c",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": 8,
+            "src": "123:1:0",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_struct$_S_$3_storage_ptr",
+              "typeString": "struct C.S storage pointer"
+            }
+          },
+          "nodeType": "Assignment",
+          "operator": "=",
+          "rightHandSide":
+          {
+            "argumentTypes": null,
+            "id": 12,
+            "name": "s",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": 5,
+            "src": "127:1:0",
+            "typeDescriptions":
+            {
+              "typeIdentifier": "t_struct$_S_$3_storage",
+              "typeString": "struct C.S storage ref"
+            }
+          },
+          "src": "123:5:0",
+          "typeDescriptions":
+          {
+            "typeIdentifier": "t_struct$_S_$3_storage_ptr",
+            "typeString": "struct C.S storage pointer"
+          }
+        }
+      ],
+      "id": 14,
+      "isConstant": false,
+      "isInlineArray": false,
+      "isLValue": false,
+      "isPure": false,
+      "lValueRequested": false,
+      "nodeType": "TupleExpression",
+      "src": "122:7:0",
+      "typeDescriptions":
+      {
+        "typeIdentifier": "t_struct$_S_$3_storage_ptr",
+        "typeString": "struct C.S storage pointer"
+      }
+    },
+    "id": 15,
+    "isConstant": false,
+    "isLValue": true,
+    "isPure": false,
+    "lValueRequested": false,
+    "memberName": "f",
+    "nodeType": "MemberAccess",
+    "referencedDeclaration": 2,
+    "src": "122:9:0",
+    "typeDescriptions":
+    {
+      "typeIdentifier": "t_bool",
+      "typeString": "bool"
+    }
+  },
+  "id": 16,
+  "nodeType": "DoWhileStatement",
+  "src": "110:23:0"
+}

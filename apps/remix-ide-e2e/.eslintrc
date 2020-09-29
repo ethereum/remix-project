@@ -1,0 +1,14 @@
+{
+    "rules": {},
+    "overrides": [
+      {
+        "files": ["**/*.ts"],
+        "rules": {
+          "no-undef": "off",
+          "@typescript-eslint/no-var-requires": 0
+        }
+      }
+    ],
+    "extends": ["../../.eslintrc"],
+    "ignorePatterns": ["!**/*"]
+}
