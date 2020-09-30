@@ -1,17 +1,15 @@
 import * as WS from 'ws'
 import * as http from 'http'
-import { WebsocketOpt, SharedFolderClient } from '../types'
+import { WebsocketOpt, SharedFolderClient } from './types'
 import { getDomain } from './utils'
-
-const { createClient } = require('@remixproject/plugin-ws')
-
+import { createClient } from '@remixproject/plugin-ws'
 export default class WebSocket {
   server: http.Server
   wsServer: WS.Server
 
   constructor (public port: number, public opt: WebsocketOpt, public sharedFolder: SharedFolderClient) {}
 
-  start (callback?: Function): void {
+  start (callback?: (ws: WS) => void): void {
     this.server = http.createServer((request, response) => {
       console.log((new Date()) + ' Received request for ' + request.url)
       response.writeHead(404)
@@ -20,7 +18,7 @@ export default class WebSocket {
     const loopback = '127.0.0.1'
 
     this.server.listen(this.port, loopback, function () {
-      console.log((new Date()) + ' Remixd is listening on ' + loopback + ':65520')
+      console.log((new Date()) + ' remixd is listening on ' + loopback + ':65520')
     })
     this.wsServer = new WS.Server({
       server: this.server,
@@ -36,7 +34,7 @@ export default class WebSocket {
     this.wsServer.on('connection', (ws) => {
       const { sharedFolder } = this
 
-      createClient(ws, sharedFolder)
+      createClient(ws, sharedFolder as any)
       if(callback) callback(ws)
     })
   }
@@ -56,6 +54,7 @@ function originIsAllowed (origin: string, self: WebSocket): boolean {
     return origin === self.opt.remixIdeUrl || origin === getDomain(self.opt.remixIdeUrl)
   } else {
     try {
+      // eslint-disable-next-line
       const origins = require('../bin/origins.json')
       const domain = getDomain(origin)
       const { data } = origins

@@ -1,15 +1,14 @@
 #!/usr/bin/env node
-import WebSocket from '../src/websocket'
-import * as servicesList from '../src/serviceList'
-import { WS } from '../types/index'
-import { getDomain } from '../src/utils'
+import WebSocket from '../websocket'
+import * as servicesList from '../serviceList'
+import * as WS from 'ws'
+import { getDomain } from '../utils'
 import Axios from 'axios'
 import * as fs from 'fs-extra'
 import * as path from 'path'
+import * as program from 'commander'
 
 (async () => {
-  const program = require('commander')
-  
   program
   .usage('-s <shared folder>')
   .description('Provide a two-way connection between the local computer and Remix IDE')
@@ -19,7 +18,7 @@ import * as path from 'path'
   .on('--help', function(){
     console.log('\nExample:\n\n    remixd -s ./ --remix-ide http://localhost:8080')
   }).parse(process.argv)
-
+  // eslint-disable-next-line
   const killCallBack: Array<Function> = []
 
   if (!program.remixIde) {
@@ -85,6 +84,7 @@ import * as path from 'path'
       return data.includes(origin) ? data.includes(origin) : data.includes(domain)
     } catch (e) {
       try {
+        // eslint-disable-next-line
         const origins = require('./origins.json')
         const { data } = origins
         

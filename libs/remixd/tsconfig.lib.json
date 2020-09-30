@@ -1,11 +1,13 @@
-{   
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-      /* Basic Options */
-      "target": "es6",                          /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
-      "declaration": true,                   /* Generates corresponding '.d.ts' file. */
-      "strict": true,                         /* Enable all strict type-checking options. */
-      "strictPropertyInitialization": false  /* Enable strict checking of property initialization in classes. */
-    },
-    "include": ["bin", "src", "bin/origins.json"]
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "../../dist/out-tsc",
+    "declaration": true,
+    "rootDir": "./src",
+    "types": ["node"]
+  },
+  "exclude": ["**/*.spec.ts"],
+  "include": ["bin", "src", "bin/origins.json"]
 }

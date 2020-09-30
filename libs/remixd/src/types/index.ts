@@ -1,4 +1,4 @@
-import * as ServiceList from '../src/serviceList'
+import * as ServiceList from '../serviceList'
 import * as Websocket from 'ws'
 
 type ServiceListKeys = keyof typeof ServiceList;

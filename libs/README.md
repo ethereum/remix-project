@@ -22,7 +22,7 @@ Remix is built out of several different modules. Here is the brief description.
 + [`remix-lib`](remix-lib/README.md): Common place for libraries being used across multiple modules
 + [`remix-tests`](remix-tests/README.md): Unit test Solidity smart contracts. It works as a plugin & as CLI both
 + [`remix-url-resolver`](remix-url-resolver/README.md): Provide helpers for resolving the content from external URL ( including github, swarm, ipfs etc.).
-+ [`remixd`](https://github.com/ethereum/remixd/tree/master): Allow accessing local filesystem from Remix IDE by running a daemon
++ [`remixd`](remixd/README.md): Allow accessing local filesystem from Remix IDE by running a daemon
 
 Each module generally has their own npm package and test suite, as well as basic documentation in their respective `README`s. Usage of modules as plugin is well documented **[here](https://remix-ide.readthedocs.io/en/latest/index.html)**.
 
