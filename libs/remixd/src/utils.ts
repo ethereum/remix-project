@@ -1,10 +1,7 @@
-import { ResolveDirectory, Filelist } from '../types'
-
-const fs = require('fs-extra')
-const path = require('path')
-const isbinaryfile = require('isbinaryfile')
-const pathModule = require('path')
-
+import { ResolveDirectory, Filelist } from './types'
+import * as fs from 'fs-extra'
+import * as isbinaryfile from 'isbinaryfile'
+import * as pathModule from 'path'
 /**
  * returns the absolute path of the given @arg path
  *
@@ -45,7 +42,7 @@ function walkSync (dir: string, filelist: Filelist, sharedFolder: string): Filel
 
   filelist = filelist || {}
   files.forEach(function (file) {
-    const subElement = path.join(dir, file)
+    const subElement = pathModule.join(dir, file)
 
     if (!fs.lstatSync(subElement).isSymbolicLink()) {
       if (fs.statSync(subElement).isDirectory()) {
@@ -65,7 +62,7 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
   const files: string[] = fs.readdirSync(dir)
 
   files.forEach(function (file) {
-    const subElement = path.join(dir, file)
+    const subElement = pathModule.join(dir, file)
 
     if (!fs.lstatSync(subElement).isSymbolicLink()) {
       const relative: string = relativePath(subElement, sharedFolder)
@@ -83,6 +80,7 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
  * @return {String} extracted domain name from url
  */
 function getDomain(url: string) {
+  // eslint-disable-next-line
   const domainMatch = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/img)
 
   return domainMatch ? domainMatch[0] : null

@@ -1,10 +1,10 @@
 import { PluginClient } from '@remixproject/plugin'
-import { SharedFolderArgs, TrackDownStreamUpdate, WS, Filelist, ResolveDirectory, FileContent } from '../../types'
+import { SharedFolderArgs, TrackDownStreamUpdate, Filelist, ResolveDirectory, FileContent } from '../types'
+import * as WS from 'ws'
 import * as utils from '../utils'
 import * as chokidar from 'chokidar'
 import * as fs from 'fs-extra'
-
-const isbinaryfile = require('isbinaryfile')
+import * as isbinaryfile from 'isbinaryfile'
 
 export class RemixdClient extends PluginClient {
   methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'list', 'isDirectory']
