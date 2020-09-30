@@ -403,12 +403,22 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const params = queryParams.get()
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) {
-    try {
-      await appManager.activatePlugin(workspace)
-    } catch (e) {
-      console.error(e)
-    }
+  if (Array.isArray(workspace)) {    
+    appManager.activatePlugin(workspace).then(() => {
+      // If plugins are loaded from the URL params, we focus on the last one.
+      if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
+
+      if (params.plugincall) {
+        const callDetails = params.plugincall.split('//')
+        if (callDetails.length > 1) {
+          toolTip(`initiating ${callDetails[0]} ...`)
+          // @todo(remove the timeout when activatePlugin is on 0.3.0)
+          setTimeout(() => {
+            appManager.call(...callDetails).catch(console.error)
+          }, 5000)
+        }
+      }
+    }).catch(console.error)    
   } else {
     // activate solidity plugin
     appManager.ensureActivated('solidity')
@@ -418,9 +428,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
   framingService.start(params)
-
-  // If plugins are loaded from the URL params, we focus on the last one.
-  if (pluginLoader.current === 'queryParams' && Array.isArray(workspace) && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
 
   // get the file list from the parent iframe
   loadFileFromParent(fileManager)
