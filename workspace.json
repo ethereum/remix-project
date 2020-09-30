@@ -464,7 +464,8 @@
             "files": [
               "libs/remixd/src/**/*.ts",
               "libs/remixd/bin/**/*.ts"
-            ]
+            ],
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
