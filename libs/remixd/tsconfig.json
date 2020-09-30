@@ -1,9 +1,13 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "types": ["node"],
-    "module": "commonjs",
-    "esModuleInterop": true 
-  },
-  "include": ["**/*.ts"]
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }
