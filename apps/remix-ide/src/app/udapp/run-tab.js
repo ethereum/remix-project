@@ -169,10 +169,10 @@ export class RunTab extends LibraryPlugin {
   render () {
     this.udappUI = new UniversalDAppUI(this.blockchain, this.logCallback)
     this.blockchain.resetAndInit(this.config, {
-      getAddress: (cb) => {
-        cb(null, $('#txorigin').val())
+      getAddress: () => {
+        return $('#txorigin').val()
       },
-      getValue: (cb) => {
+      getValue: () => {
         try {
           const number = document.querySelector('#value').value
           const select = document.getElementById('unit')
@@ -182,16 +182,16 @@ export class RunTab extends LibraryPlugin {
           if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
             unit = selectedUnit
           }
-          cb(null, Web3.utils.toWei(number, unit))
+          return Web3.utils.toWei(number, unit)
         } catch (e) {
-          cb(e)
+          throw new Error(e)
         }
       },
-      getGasLimit: (cb) => {
+      getGasLimit: () => {
         try {
-          cb(null, '0x' + new ethJSUtil.BN($('#gasLimit').val(), 10).toString(16))
+          return '0x' + new ethJSUtil.BN($('#gasLimit').val(), 10).toString(16)
         } catch (e) {
-          cb(e.message)
+          throw new Error(e.message)
         }
       }
     })

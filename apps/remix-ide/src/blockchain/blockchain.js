@@ -1,14 +1,7 @@
 const remixLib = require('@remix-project/remix-lib')
-const txFormat = remixLib.execution.txFormat
-const txExecution = remixLib.execution.txExecution
-const typeConversion = remixLib.execution.typeConversion
-const Txlistener = remixLib.execution.txListener
-const TxRunner = remixLib.execution.txRunner
-const txHelper = remixLib.execution.txHelper
+const {txFormat, txExecution, typeConversion, txHelper, txListener: Txlistener, txRunner: TxRunner, executionContext} = remixLib.execution
 const EventManager = remixLib.EventManager
-const executionContext = remixLib.execution.executionContext
 const Web3 = require('web3')
-
 const async = require('async')
 const { EventEmitter } = require('events')
 
@@ -390,7 +383,7 @@ class Blockchain {
     async.waterfall([
       function getGasLimit (next) {
         if (self.transactionContextAPI.getGasLimit) {
-          return self.transactionContextAPI.getGasLimit(next)
+          return next(null, self.transactionContextAPI.getGasLimit())
         }
         next(null, 3000000)
       },
@@ -401,18 +394,22 @@ class Blockchain {
         if (args.useCall || !self.transactionContextAPI.getValue) {
           return next(null, 0, gasLimit)
         }
-        self.transactionContextAPI.getValue(function (err, value) {
-          next(err, value, gasLimit)
-        })
+        try {
+          const value = self.transactionContextAPI.getValue()
+          next(null, value, gasLimit)
+        } catch (e) {
+          next(e)
+        }
       },
       function getAccount (value, gasLimit, next) {
         if (args.from) {
           return next(null, args.from, value, gasLimit)
         }
         if (self.transactionContextAPI.getAddress) {
-          return self.transactionContextAPI.getAddress(function (err, address) {
-            next(err, address, value, gasLimit)
-          })
+          return next(null, self.transactionContextAPI.getAddress(), value, gasLimit)
+          // return self.transactionContextAPI.getAddress(function (err, address) {
+            // next(err, address, value, gasLimit)
+          // })
         }
         self.getAccounts(function (err, accounts) {
           const address = accounts[0]
