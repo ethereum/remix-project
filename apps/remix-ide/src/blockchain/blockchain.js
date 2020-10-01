@@ -381,28 +381,23 @@ class Blockchain {
     if (self.transactionContextAPI.getGasLimit) {
       gasLimit = self.transactionContextAPI.getGasLimit()
     }
+    let value = 0
+
+    if (args.value) {
+      value = args.value
+    } else if (args.useCall || !self.transactionContextAPI.getValue) {
+      value = 0
+    } else {
+      value = self.transactionContextAPI.getValue()
+    }
 
     async.waterfall([
-      function queryValue (next) {
-        if (args.value) {
-          return next(null, args.value)
-        }
-        if (args.useCall || !self.transactionContextAPI.getValue) {
-          return next(null, 0)
-        }
-        try {
-          const value = self.transactionContextAPI.getValue()
-          next(null, value)
-        } catch (e) {
-          next(e)
-        }
-      },
-      function getAccount (value, next) {
+      function getAccount (next) {
         if (args.from) {
-          return next(null, args.from, value)
+          return next(null, args.from)
         }
         if (self.transactionContextAPI.getAddress) {
-          return next(null, self.transactionContextAPI.getAddress(), value)
+          return next(null, self.transactionContextAPI.getAddress())
         }
         self.getAccounts(function (err, accounts) {
           let address = accounts[0]
@@ -412,11 +407,11 @@ class Blockchain {
           if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
             return next('Invalid account selected')
           }
-          next(null, address, value)
+          next(null, address)
         })
       },
-      function runTransaction (fromAddress, value, next) {
-        const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit, timestamp: args.data.timestamp }
+      function runTransaction (fromAddress, next) {
+        const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value, gasLimit, timestamp: args.data.timestamp }
         const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
         let timestamp = Date.now()
         if (tx.timestamp) {
