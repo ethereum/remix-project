@@ -58,62 +58,43 @@ export class AstWalker extends EventEmitter {
       }
     }
   }
+
+  getASTNodeChildren(ast: AstNode): AstNode[] {
+    const nodes = ast.nodes || (ast.body && ast.body.statements) || ast.declarations || []
+    if (ast.body && ast.initializationExpression) { // 'for' loop handling
+      nodes.push(ast.initializationExpression)
+    }
+    return nodes
+  }
+  
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
-  walk(ast: AstNodeLegacy | AstNode, callback?: Function | Record<string, unknown>) {
-    if (callback) {
-      if (callback instanceof Function) {
-        callback = Object({ "*": callback });
-      }
-      if (!("*" in callback)) {
-        callback["*"] = function() {
-          return true;
-        };
-      }
-      if (<AstNodeLegacy>ast) {
-        if (
-          this.manageCallback(<AstNodeLegacy>ast, callback) &&
-          (<AstNodeLegacy>ast).children &&
-          (<AstNodeLegacy>ast).children.length > 0
-        ) {
-          for (const k in (<AstNodeLegacy>ast).children) {
-            const child = (<AstNodeLegacy>ast).children[k];
+  walk(ast: AstNode, callback?: Function | Record<string, unknown>) {
+    if (ast) {
+      const children: AstNode[] = this.getASTNodeChildren(ast)
+      if (callback) {
+        if (callback instanceof Function) {
+          callback = Object({ "*": callback });
+        }
+        if (!("*" in callback)) {
+          callback["*"] = function() {
+            return true;
+          };
+        }
+        if (this.manageCallback(ast, callback) && children?.length) {
+          for (const k in children) {
+            const child = children[k];
             this.walk(child, callback);
           }
         }
-      } else if (<AstNode>ast) {
-        if (
-          this.manageCallback(<AstNode>ast, callback) &&
-          (<AstNode>ast).nodes &&
-          (<AstNode>ast).nodes.length > 0
-        ) {
-          for (const k in (<AstNode>ast).nodes) {
-            const child = (<AstNode>ast).nodes[k];
-            this.walk(child, callback);
+        } else {
+          if (children?.length) {
+            for (const k in children) {
+              const child = children[k];
+              this.emit("node", child);
+              this.walk(child);
+            }
           }
         }
-      }
-    } else {
-      if (<AstNodeLegacy>ast) {
-        if (
-          (<AstNodeLegacy>ast).children &&
-          (<AstNodeLegacy>ast).children.length > 0
-        ) {
-          for (const k in (<AstNodeLegacy>ast).children) {
-            const child = (<AstNodeLegacy>ast).children[k];
-            this.emit("node", child);
-            this.walk(child);
-          }
-        }
-      }
-      if (<AstNode>ast) {
-        if ((<AstNode>ast).nodes && (<AstNode>ast).nodes.length > 0) {
-          for (const k in (<AstNode>ast).nodes) {
-            const child = (<AstNode>ast).nodes[k];
-            this.emit("node", child);
-            this.walk(child);
-          }
-        }
-      }
     }
   }
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
@@ -151,14 +132,10 @@ export class AstWalker extends EventEmitter {
     if (cb) {
       if (sourcesList.ast) {
         this.walk(sourcesList.ast, cb);
-      } else {
-        this.walk(sourcesList.legacyAST, cb);
       }
     } else {
       if (sourcesList.ast) {
         this.walk(sourcesList.ast);
-      } else {
-        this.walk(sourcesList.legacyAST);
       }
     }
   }
