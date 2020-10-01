@@ -59,11 +59,37 @@ export class AstWalker extends EventEmitter {
     }
   }
 
+  normalizeNodes(nodes: AstNode[]): AstNode[] {
+    // TODO: If any element in nodes is array, extract its members in nodes and delete it
+    // TODO: Traverse through nodes to check deplicate nodes using id field
+    return nodes
+  }
+
   getASTNodeChildren(ast: AstNode): AstNode[] {
-    const nodes = ast.nodes || (ast.body && ast.body.statements) || ast.declarations || []
-    if (ast.body && ast.initializationExpression) { // 'for' loop handling
-      nodes.push(ast.initializationExpression)
-    }
+    const nodes = ast.nodes                       // for ContractDefinition
+              || (ast.body && ast.body.statements) // // for FunctionDefinition
+              || ast.members                      // for StructDefinition, EnumDefinition
+              || ast.overrides                    // for OverrideSpecifier
+              || ast.parameters                   // for ParameterList
+              || ast.declarations 
+              || []
+
+    if (ast.body && ast.overrides && ast.parameters && ast.returnParameters && ast.modifiers) { // for FunctionDefinition
+      nodes.push(ast.overrides)
+      nodes.push(ast.parameters)
+      nodes.push(ast.returnParameters)
+      nodes.push(ast.modifiers)
+    } else if(ast.overrides && ast.typeName) { // for VariableDeclaration
+        nodes.push(ast.typeName)
+    } else if (ast.body && ast.overrides && ast.parameters) { // for ModifierDefinition
+        nodes.push(ast.overrides)
+        nodes.push(ast.parameters)
+    } else if (ast.modifierName && ast.arguments) { // for ModifierInvocation
+        nodes.push(ast.modifierName)
+        nodes.push(ast.arguments)
+    } else if (ast.body && ast.initializationExpression) { // for ForStatement
+        nodes.push(ast.initializationExpression)
+    } 
     return nodes
   }
   
