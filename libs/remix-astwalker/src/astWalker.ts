@@ -60,18 +60,25 @@ export class AstWalker extends EventEmitter {
   }
 
   normalizeNodes(nodes: AstNode[]): AstNode[] {
-    // TODO: If any element in nodes is array, extract its members in nodes and delete it
-    // TODO: Traverse through nodes to check deplicate nodes using id field
+    // TODO: Traverse through nodes to check:
+    // 1. If value exists for element
+    // 2. If any element in nodes is array, extract its members in nodes and delete it
+    // 3. duplicate nodes using id field
     return nodes
   }
 
   getASTNodeChildren(ast: AstNode): AstNode[] {
-    const nodes = ast.nodes                       // for ContractDefinition
-              || (ast.body && ast.body.statements) // // for FunctionDefinition
-              || ast.members                      // for StructDefinition, EnumDefinition
-              || ast.overrides                    // for OverrideSpecifier
-              || ast.parameters                   // for ParameterList
-              || ast.declarations 
+    const nodes = ast.nodes           // for ContractDefinition
+              || ast.body             // for FunctionDefinition, ModifierDefinition, WhileStatement, DoWhileStatement, ForStatement
+              || ast.statements       // for Block, YulBlock
+              || ast.members          // for StructDefinition, EnumDefinition
+              || ast.overrides        // for OverrideSpecifier
+              || ast.parameters       // for ParameterList, EventDefinition
+              || ast.declarations     // for VariableDeclarationStatement
+              || ast.expression       // for Return, ExpressionStatement, FunctionCall, FunctionCallOptions, MemberAccess
+              || ast.components       // for TupleExpression
+              || ast.subExpression    // for UnaryOperation
+              || ast.eventCall        // for EmitStatement
               || []
 
     if (ast.body && ast.overrides && ast.parameters && ast.returnParameters && ast.modifiers) { // for FunctionDefinition
@@ -79,7 +86,7 @@ export class AstWalker extends EventEmitter {
       nodes.push(ast.parameters)
       nodes.push(ast.returnParameters)
       nodes.push(ast.modifiers)
-    } else if(ast.overrides && ast.typeName) { // for VariableDeclaration
+    } else if(ast.typeName) { // for VariableDeclaration, NewExpression, ElementaryTypeNameExpression
         nodes.push(ast.typeName)
     } else if (ast.body && ast.overrides && ast.parameters) { // for ModifierDefinition
         nodes.push(ast.overrides)
@@ -87,9 +94,52 @@ export class AstWalker extends EventEmitter {
     } else if (ast.modifierName && ast.arguments) { // for ModifierInvocation
         nodes.push(ast.modifierName)
         nodes.push(ast.arguments)
-    } else if (ast.body && ast.initializationExpression) { // for ForStatement
+    } else if (ast.parameterTypes && ast.returnParameterTypes) { // for ModifierInvocation
+        nodes.push(ast.parameterTypes)
+        nodes.push(ast.returnParameterTypes)
+    } else if (ast.keyType && ast.valueType) { // for Mapping
+        nodes.push(ast.keyType)
+        nodes.push(ast.valueType)
+    } else if (ast.baseType && ast.length) { // for ArrayTypeName
+        nodes.push(ast.baseType)
+        nodes.push(ast.length)
+    } else if (ast.AST) { // for InlineAssembly
+        nodes.push(ast.AST)
+    } else if (ast.condition && (ast.trueBody || ast.falseBody || ast.body)) { // for IfStatement, WhileStatement, DoWhileStatement
+        nodes.push(ast.condition)
+        nodes.push(ast.trueBody)
+        nodes.push(ast.falseBody)
+    } else if (ast.parameters && ast.block) { // for TryCatchClause
+        nodes.push(ast.block)
+    } else if (ast.externalCall && ast.clauses) { // for TryStatement
+        nodes.push(ast.externalCall)
+        nodes.push(ast.clauses)
+    } else if (ast.body && ast.condition && ast.initializationExpression && ast.loopExpression) { // for ForStatement
+        nodes.push(ast.condition)
         nodes.push(ast.initializationExpression)
-    } 
+        nodes.push(ast.loopExpression)
+    } else if (ast.declarations && ast.initialValue) { // for VariableDeclarationStatement
+        nodes.push(ast.initialValue)
+    } else if (ast.condition && (ast.trueExpression || ast.falseExpression)) { // for Conditional
+        nodes.push(ast.condition)
+        nodes.push(ast.trueExpression)
+        nodes.push(ast.falseExpression)
+    } else if (ast.leftHandSide && ast.rightHandSide) { // for Assignment
+        nodes.push(ast.leftHandSide)
+        nodes.push(ast.rightHandSide)
+    } else if (ast.leftExpression && ast.rightExpression) { // for BinaryOperation
+        nodes.push(ast.leftExpression)
+        nodes.push(ast.rightExpression)
+    } else if (ast.expression && (ast.arguments || ast.options)) { // for FunctionCall, FunctionCallOptions
+        nodes.push(ast.arguments ? ast.arguments : ast.options)
+    } else if (ast.baseExpression && (ast.indexExpression || (ast.startExpression && ast.endExpression))) { // for IndexAccess, IndexRangeAccess
+        nodes.push(ast.baseExpression)
+        if(ast.indexExpression) nodes.push(ast.indexExpression)
+        else {
+          nodes.push(ast.startExpression)
+          nodes.push(ast.endExpression)
+        }
+    }
     return nodes
   }
   
