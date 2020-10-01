@@ -309,36 +309,32 @@ module.exports = class UniversalDApp {
 
   runTx (args, confirmationCb, continueCb, promptCb, cb) {
     const self = this
+    let gasLimit = 3000000
+    if (self.transactionContextAPI.getGasLimit) {
+      gasLimit = self.transactionContextAPI.getGasLimit()
+    }
+
     async.waterfall([
-      function getGasLimit (next) {
-        if (self.transactionContextAPI.getGasLimit) {
-          return next(null, self.transactionContextAPI.getGasLimit())
-        }
-        next(null, 3000000)
-      },
-      function queryValue (gasLimit, next) {
+      function queryValue (next) {
         if (args.value) {
-          return next(null, args.value, gasLimit)
+          return next(null, args.value)
         }
         if (args.useCall || !self.transactionContextAPI.getValue) {
-          return next(null, 0, gasLimit)
+          return next(null, 0)
         }
         try {
           const value = self.transactionContextAPI.getValue()
-          next(null, value, gasLimit)
+          next(null, value)
         } catch (e) {
           next(e)
         }
       },
-      function getAccount (value, gasLimit, next) {
+      function getAccount (value, next) {
         if (args.from) {
-          return next(null, args.from, value, gasLimit)
+          return next(null, args.from, value)
         }
         if (self.transactionContextAPI.getAddress) {
-          return next(null, self.transactionContextAPI.getAddress(), value, gasLimit)
-          // return self.transactionContextAPI.getAddress(function (err, address) {
-            // next(err, address, value, gasLimit)
-          // })
+          return next(null, self.transactionContextAPI.getAddress(), value)
         }
         self.getAccounts(function (err, accounts) {
           let address = accounts[0]
@@ -348,11 +344,11 @@ module.exports = class UniversalDApp {
           if (self.executionContext.isVM() && !self.accounts[address]) {
             return next('Invalid account selected')
           }
-          next(null, address, value, gasLimit)
+          next(null, address, value)
         })
       },
-      function runTransaction (fromAddress, value, gasLimit, next) {
-        const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit, timestamp: args.data.timestamp }
+      function runTransaction (fromAddress, value, next) {
+        const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit, timestamp: args.data.timestamp }
         const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
         let timestamp = Date.now()
         if (tx.timestamp) {
