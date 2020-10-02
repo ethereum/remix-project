@@ -6,7 +6,7 @@ setupRemixd () {
   cd apps/remix-ide/contracts
   echo 'sharing folder: '
   echo $PWD
-  npx nx serve remixd --folder=./ --remixide=http://127.0.0.1:8080 &
+  npm run remixd &
   cd ../../..
 }
 
