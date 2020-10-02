@@ -1,4 +1,4 @@
-// Type definitiosn for the things we need from remix-lib
+// Type definitions for the things we need from remix-lib
 
 declare module "remix-lib" {
   export module util {
