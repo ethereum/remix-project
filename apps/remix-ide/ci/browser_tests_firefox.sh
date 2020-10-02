@@ -8,8 +8,10 @@ TEST_EXITCODE=0
 
 npm run ganache-cli &
 npm run serve &
-echo 'sharing folder: apps/remix-ide/contracts' &
-npm run remixd
+echo 'sharing folder: ' &
+echo $PWD &
+echo '/apps/remix-ide/contracts' &
+npm run remixd &
 
 sleep 5
 
