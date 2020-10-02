@@ -60,11 +60,23 @@ export class AstWalker extends EventEmitter {
   }
 
   normalizeNodes(nodes: AstNode[]): AstNode[] {
-    // TODO: Traverse through nodes to check:
-    // 1. If value exists for element
-    // 2. If any element in nodes is array, extract its members in nodes and delete it
-    // 3. duplicate nodes using id field
-    return nodes
+    // Remove null, undefined and empty elements if any
+    nodes = nodes.filter(e => e)
+
+    // If any element in nodes is array, extract its members
+    let objNodes = []
+    nodes.forEach(x => { 
+      if (Array.isArray(x)) objNodes.push(...x)
+      else objNodes.push(x)
+    });
+    
+    // Filter duplicate nodes using id field
+    let normalizedNodes = []
+    objNodes.forEach((element, index) => {
+      const firstIndex = normalizedNodes.findIndex(e => e.id === element.id)
+      if(firstIndex == -1) normalizedNodes.push(element)
+    })
+    return normalizedNodes
   }
 
   getASTNodeChildren(ast: AstNode): AstNode[] {
@@ -140,7 +152,7 @@ export class AstWalker extends EventEmitter {
           nodes.push(ast.endExpression)
         }
     }
-    return nodes
+    return this.normalizeNodes(nodes)
   }
   
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
