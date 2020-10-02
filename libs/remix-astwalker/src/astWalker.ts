@@ -64,15 +64,15 @@ export class AstWalker extends EventEmitter {
     nodes = nodes.filter(e => e)
 
     // If any element in nodes is array, extract its members
-    let objNodes = []
+    const objNodes = []
     nodes.forEach(x => { 
       if (Array.isArray(x)) objNodes.push(...x)
       else objNodes.push(x)
     });
     
     // Filter duplicate nodes using id field
-    let normalizedNodes = []
-    objNodes.forEach((element, index) => {
+    const normalizedNodes = []
+    objNodes.forEach((element) => {
       const firstIndex = normalizedNodes.findIndex(e => e.id === element.id)
       if(firstIndex == -1) normalizedNodes.push(element)
     })
