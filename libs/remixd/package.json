@@ -2,17 +2,17 @@
   "name": "remixd",
   "version": "0.2.4-alpha.0",
   "description": "remix server: allow accessing file system from remix.ethereum.org and start a dev environment (see help section)",
-  "main": "./lib/src/index.js",
-  "types": "./lib/src/index.d.ts",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "bin": {
-    "remixd": "./lib/bin/remixd.js"
+    "remixd": "./bin/remixd.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\"",
-    "start": "./lib/bin/remixd.js",
+    "start": "./bin/remixd.js",
     "npip": "npip",
     "lint": "eslint ./src ./bin --ext .ts",
-    "build": "tsc -p ./ && chmod +x ./lib/bin/remixd.js",
+    "build": "tsc -p ./ && chmod +x ./bin/remixd.js",
     "dev": "nodemon"
   },
   "repository": {

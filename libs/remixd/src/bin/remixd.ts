@@ -50,6 +50,8 @@ import * as program from 'commander'
     } catch(error) {
       throw new Error(error)
     }
+  } else {
+    console.log('\x1b[31m%s\x1b[0m', '[ERR] No valid shared folder provided.')
   }
 
   // kill
@@ -76,7 +78,7 @@ import * as program from 'commander'
       const { data } = await Axios.get(gistUrl)
   
       try {
-        await fs.writeJSON(path.resolve(__dirname + '/origins.json'), { data })
+        await fs.writeJSON(path.resolve(__dirname + '/../origins.json'), { data })
       } catch (e) {
         console.error(e)
       }
@@ -85,7 +87,7 @@ import * as program from 'commander'
     } catch (e) {
       try {
         // eslint-disable-next-line
-        const origins = require('./origins.json')
+        const origins = require('../origins.json')
         const { data } = origins
         
         return data.includes(origin) ? data.includes(origin) : data.includes(domain)
