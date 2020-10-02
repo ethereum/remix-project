@@ -2,21 +2,14 @@
 
 set -e
 
-setupRemixd () {
-  cd apps/remix-ide/contracts
-  echo 'sharing folder: '
-  echo $PWD
-  npm run remixd &
-  cd ../../..
-}
-
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 npm run ganache-cli &
 npm run serve &
-setupRemixd
+echo 'sharing folder: apps/remix-ide/contracts' &
+npm run remixd
 
 sleep 5
 
