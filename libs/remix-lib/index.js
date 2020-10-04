@@ -16,8 +16,6 @@ const txRunner = require('./src/execution/txRunner')
 const ExecutionContext = require('./src/execution/execution-context')
 const typeConversion = require('./src/execution/typeConversion')
 
-const UniversalDApp = require('./src/universalDapp')
-
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
 }
@@ -45,7 +43,6 @@ function modules () {
       txListener: txListener,
       txRunner: txRunner,
       typeConversion: typeConversion
-    },
-    UniversalDApp: UniversalDApp
+    }
   }
 }
