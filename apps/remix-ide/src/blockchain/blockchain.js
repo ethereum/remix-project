@@ -391,9 +391,10 @@ class Blockchain {
       value = self.transactionContextAPI.getValue()
     }
 
-    let from = args.from
+    let from
 
     if (args.from) {
+      from = args.from
     } else if (self.transactionContextAPI.getAddress) {
       from = self.transactionContextAPI.getAddress()
     } else {
