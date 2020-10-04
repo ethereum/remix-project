@@ -421,10 +421,7 @@ class Blockchain {
       function runTransaction (next) {
         const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from, value, gasLimit, timestamp: args.data.timestamp }
         const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
-        let timestamp = Date.now()
-        if (tx.timestamp) {
-          timestamp = tx.timestamp
-        }
+        let timestamp = tx.timestamp || Date.now()
 
         self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
         self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
@@ -435,13 +432,7 @@ class Blockchain {
             const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
             self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad, rawAddress])
 
-            if (error && (typeof (error) !== 'string')) {
-              if (error.message) error = error.message
-              else {
-                try { error = 'error: ' + JSON.stringify(error) } catch (e) {}
-              }
-            }
-            next(error, result)
+            next(null, result)
           }
         )
       }
