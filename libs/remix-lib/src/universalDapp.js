@@ -323,9 +323,10 @@ module.exports = class UniversalDApp {
       value = self.transactionContextAPI.getValue()
     }
 
-    let from = args.from
+    let from
 
     if (args.from) {
+      from = args.from
     } else if (self.transactionContextAPI.getAddress) {
       from = self.transactionContextAPI.getAddress()
     } else {
@@ -334,9 +335,9 @@ module.exports = class UniversalDApp {
 
         let address = accounts[0]
 
-        if (!address) return next('No accounts available')
+        if (!address) throw new Error('No accounts available')
         if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
-          return next('Invalid account selected')
+          throw new Error('Invalid account selected')
         }
         from = address
       } catch (err) {
