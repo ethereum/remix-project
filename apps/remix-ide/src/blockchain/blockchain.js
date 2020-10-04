@@ -374,7 +374,7 @@ class Blockchain {
     })
   }
 
-  runTx (args, confirmationCb, continueCb, promptCb, cb) {
+  async runTx (args, confirmationCb, continueCb, promptCb, cb) {
     const self = this
 
     let gasLimit = 3000000
@@ -391,27 +391,30 @@ class Blockchain {
       value = self.transactionContextAPI.getValue()
     }
 
-    async.waterfall([
-      function getAccount (next) {
-        if (args.from) {
-          return next(null, args.from)
-        }
-        if (self.transactionContextAPI.getAddress) {
-          return next(null, self.transactionContextAPI.getAddress())
-        }
-        self.getAccounts(function (err, accounts) {
-          let address = accounts[0]
+    let from = args.from
 
-          if (err) return next(err)
-          if (!address) return next('No accounts available')
-          if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
-            return next('Invalid account selected')
-          }
-          next(null, address)
-        })
-      },
-      function runTransaction (fromAddress, next) {
-        const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value, gasLimit, timestamp: args.data.timestamp }
+    if (args.from) {
+    } else if (self.transactionContextAPI.getAddress) {
+      from = self.transactionContextAPI.getAddress()
+    } else {
+      try {
+        let accounts = await self.getAccounts()
+
+        let address = accounts[0]
+
+        if (!address) return next('No accounts available')
+        if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
+          return next('Invalid account selected')
+        }
+        from = address
+      } catch (err) {
+        from = 0
+      }
+    }
+
+    async.waterfall([
+      function runTransaction (next) {
+        const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from, value, gasLimit, timestamp: args.data.timestamp }
         const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
         let timestamp = Date.now()
         if (tx.timestamp) {
