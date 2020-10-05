@@ -258,7 +258,7 @@ function run (self, tx, stamp, confirmationCb, gasEstimationForceSend, promptCb,
     self.pendingTxs[stamp] = tx
     self.execute(tx, confirmationCb, gasEstimationForceSend, promptCb, function(error, result) {
       delete self.pendingTxs[stamp]
-      callback(error, result)
+      if (callback && typeof callback === 'function') callback(error, result)
       if (self.queusTxs.length) {
         const next = self.queusTxs.pop()
         run(self, next.tx, next.stamp, next.callback)
