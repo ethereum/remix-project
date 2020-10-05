@@ -135,13 +135,13 @@ class PluginLoader {
     this.loaders['queryParams'] = {
       set: () => {},
       get: () => {
-        const { plugins } = queryParams.get()
-        if (!plugins) return []
-        return plugins.split(',')
+        const { activate } = queryParams.get()
+        if (!activate) return []
+        return activate.split(',')
       }
     }
 
-    this.current = queryParams.get()['plugins'] ? 'queryParams' : 'localStorage'
+    this.current = queryParams.get()['activate'] ? 'queryParams' : 'localStorage'
   }
 
   set (plugin, actives) {
