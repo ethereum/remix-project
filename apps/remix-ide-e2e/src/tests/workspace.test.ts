@@ -5,7 +5,7 @@ import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp&plugincall=fileManager//open//3_Ballot.sol&deactivateplugins=home', false)
+    init(browser, done, 'http://127.0.0.1:8080?activate=solidity,udapp&call=fileManager//open//3_Ballot.sol&deactivate=home', false)
   },
 
   'CheckSolidityActivatedAndUDapp': function (browser: NightwatchBrowser) {
