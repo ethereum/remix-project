@@ -6,6 +6,7 @@ import legacyNode from "./resources/legacyAST";
 tape("New ASTWalker", (t: tape.Test) => {
   // New Ast Object
   const astWalker = new AstWalker();
+  const latestAST = node.ast
   t.test("ASTWalker.walk && .walkastList", (st: tape.Test) => {
     st.plan(24);
     // EventListener
@@ -52,11 +53,41 @@ tape("New ASTWalker", (t: tape.Test) => {
     });
     st.end();
   });
+
+  // t.test("ASTWalker.getASTNodeChildren", (st: tape.Test) => {
+  //   st.plan(11);
+  //   st.equal(node.ast.nodeType, 'SourceUnit')
+
+  //   let subNodes1 = astWalker.getASTNodeChildren(node.ast)
+
+  //   st.equal(subNodes1.length, 3)
+  //   st.equal(subNodes1[0].nodeType, 'PragmaDirective')
+  //   st.equal(subNodes1[1].nodeType, 'ImportDirective')
+  //   st.equal(subNodes1[2].nodeType, 'ContractDefinition')
+
+  //   let subNodes2 = astWalker.getASTNodeChildren(subNodes1[0])
+  //   st.equal(subNodes2.length, 0)
+
+  //   subNodes2 = astWalker.getASTNodeChildren(subNodes1[1])
+  //   st.equal(subNodes2.length, 0)
+  //   console.log('subNodes-1-->', subNodes1[2])
+
+  //   subNodes2 = astWalker.getASTNodeChildren(subNodes1[2])
+  //   console.log('subNodes-3-->', subNodes2)
+  //   st.equal(subNodes2.length, 4)
+  //   st.equal(subNodes2[1].nodeType, 'VariableDeclaration')
+  //   st.equal(subNodes2[2].nodeType, 'FunctionDefinition')
+  //   st.equal(subNodes2[3].nodeType, 'FunctionDefinition')
+
+  //   st.end();
+  // });
+
   t.test("ASTWalkFull", (st: tape.Test) => {
     const astNodeCount = 26;
     st.plan(2 + astNodeCount);
     let count: number = 0;
-    astWalker.walkFull(node.ast, (node: AstNode) => {
+    astWalker.walkFull(latestAST, (node: AstNode) => {
+      // console.log('nodes inside walkfull-------------------------->>>', node)
       st.ok(isAstNode(node), "passed an ast node");
       count += 1;
     });

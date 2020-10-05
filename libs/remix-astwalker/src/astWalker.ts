@@ -80,6 +80,7 @@ export class AstWalker extends EventEmitter {
   }
 
   getASTNodeChildren(ast: AstNode): AstNode[] {
+
     let nodes = ast.nodes             // for ContractDefinition
               || ast.body             // for FunctionDefinition, ModifierDefinition, WhileStatement, DoWhileStatement, ForStatement
               || ast.statements       // for Block, YulBlock
@@ -100,11 +101,13 @@ export class AstWalker extends EventEmitter {
       nodes = tempArr
     }
 
-    if (ast.body && ast.overrides && ast.parameters && ast.returnParameters && ast.modifiers) { // for FunctionDefinition
-      nodes.push(ast.overrides)
-      nodes.push(ast.parameters)
-      nodes.push(ast.returnParameters)
-      nodes.push(ast.modifiers)
+    if(ast.nodes && ast.baseContracts?.length) { // for ContractDefinition
+        nodes.push(...ast.baseContracts)
+    } else if (ast.body && ast.overrides && ast.parameters && ast.returnParameters && ast.modifiers) { // for FunctionDefinition
+        nodes.push(ast.overrides)
+        nodes.push(ast.parameters)
+        nodes.push(ast.returnParameters)
+        nodes.push(ast.modifiers)
     } else if(ast.typeName) { // for VariableDeclaration, NewExpression, ElementaryTypeNameExpression
         nodes.push(ast.typeName)
     } else if (ast.body && ast.overrides && ast.parameters) { // for ModifierDefinition
@@ -194,7 +197,6 @@ export class AstWalker extends EventEmitter {
   }
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
   walkFullInternal(ast: AstNode, callback: Function) {
-
     if (isAstNode(ast)) {
       // console.log(`XXX id ${ast.id}, nodeType: ${ast.nodeType}, src: ${ast.src}`);
       callback(ast);
