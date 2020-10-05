@@ -69,7 +69,7 @@ export default class FetchAndCompile extends Plugin {
     }
 
     let name = network.name.toLowerCase()
-    name === 'main' ? 'mainnet' : name // source-verifier api expect "mainnet" and not "main"
+    name = name === 'main' ? 'mainnet' : name // source-verifier api expect "mainnet" and not "main"
     let data
     try {
       data = await this.call('source-verification', 'fetchByNetwork', contractAddress, name.toLowerCase())
