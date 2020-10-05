@@ -5,7 +5,7 @@ import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp&plugincall=fileManager//open//3_Ballot.sol', false)
+    init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp&plugincall=fileManager//open//3_Ballot.sol&deactivateplugins=home', false)
   },
 
   'CheckSolidityActivatedAndUDapp': function (browser: NightwatchBrowser) {
@@ -20,7 +20,12 @@ module.exports = {
     .pause(5000)
     .getEditorValue((content) => {
       browser.assert.ok(content.indexOf('contract Ballot {') != -1, 'content doesn\'t include Ballot contract')
-    })
+    })    
+  },
+
+  'Home page should be deactivated': function (browser: NightwatchBrowser) {
+    browser
+    .waitForElementNotPresent('[data-id="landingPageHomeContainer"]')
     .end()
   },
   
