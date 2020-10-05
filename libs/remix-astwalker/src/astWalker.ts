@@ -80,7 +80,7 @@ export class AstWalker extends EventEmitter {
   }
 
   getASTNodeChildren(ast: AstNode): AstNode[] {
-    const nodes = ast.nodes           // for ContractDefinition
+    let nodes = ast.nodes             // for ContractDefinition
               || ast.body             // for FunctionDefinition, ModifierDefinition, WhileStatement, DoWhileStatement, ForStatement
               || ast.statements       // for Block, YulBlock
               || ast.members          // for StructDefinition, EnumDefinition
@@ -92,6 +92,13 @@ export class AstWalker extends EventEmitter {
               || ast.subExpression    // for UnaryOperation
               || ast.eventCall        // for EmitStatement
               || []
+    
+    // If 'nodes' is not an array, convert it into one, for example: ast.body 
+    if(nodes && !Array.isArray(nodes)) {
+      const tempArr = []
+      tempArr.push(nodes)
+      nodes = tempArr
+    }
 
     if (ast.body && ast.overrides && ast.parameters && ast.returnParameters && ast.modifiers) { // for FunctionDefinition
       nodes.push(ast.overrides)
