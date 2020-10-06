@@ -57,7 +57,7 @@ tape("New ASTWalker", (t: tape.Test) => {
 
   t.test("ASTWalker.getASTNodeChildren", (st: tape.Test) => {
     const latestAST = JSON.parse(JSON.stringify(latestASTNode))
-    st.plan(14);
+    st.plan(26);
     st.equal(latestAST.nodeType, 'SourceUnit')
 
     let subNodes1 = astWalker.getASTNodeChildren(latestAST)
@@ -81,11 +81,35 @@ tape("New ASTWalker", (t: tape.Test) => {
     st.equal(subNodes2[3].nodeType, 'InheritanceSpecifier')
 
     let subNodes3 = astWalker.getASTNodeChildren(subNodes2[0])
-
     st.equal(subNodes3.length, 1)
     st.equal(subNodes3[0].nodeType, 'ElementaryTypeName')
 
+    let subNodes4 = astWalker.getASTNodeChildren(subNodes3[0])
+    st.equal(subNodes4.length, 0)
+
     subNodes3 = astWalker.getASTNodeChildren(subNodes2[1])
+    st.equal(subNodes3.length, 1)
+    st.equal(subNodes3[0].nodeType, 'Block')
+
+    subNodes4 = astWalker.getASTNodeChildren(subNodes3[0])
+    st.equal(subNodes4.length, 1)
+    st.equal(subNodes4[0].nodeType, 'ExpressionStatement')
+
+    let subNodes5 = astWalker.getASTNodeChildren(subNodes4[0])
+    st.equal(subNodes5.length, 1)
+    st.equal(subNodes5[0].nodeType, 'Assignment')
+
+    let subNodes6 = astWalker.getASTNodeChildren(subNodes5[0])
+
+    st.equal(subNodes6.length, 2)
+    st.equal(subNodes6[0].nodeType, 'Identifier')
+    st.equal(subNodes6[1].nodeType, 'Identifier')
+
+    let subNodes7 = astWalker.getASTNodeChildren(subNodes6[0])
+    st.equal(subNodes7.length, 0)
+
+    subNodes7 = astWalker.getASTNodeChildren(subNodes6[1])
+    st.equal(subNodes7.length, 0)
 
     st.end();
   });
