@@ -374,7 +374,7 @@ class Blockchain {
     })
   }
 
-  async runTx (args, confirmationCb, continueCb, promptCb, cb) {
+  async runTx(args, confirmationCb, continueCb, promptCb, cb) {
     const self = this
 
     let gasLimit = 3000000
@@ -403,9 +403,9 @@ class Blockchain {
 
         let address = accounts[0]
 
-        if (!address) return next('No accounts available')
+        if (!address) throw new Error('No accounts available')
         if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
-          return next('Invalid account selected')
+          throw new Error('Invalid account selected')
         }
         from = address
       } catch (err) {
@@ -413,49 +413,40 @@ class Blockchain {
       }
     }
 
-    async.waterfall([
-      function runTransaction (next) {
-        const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from, value, gasLimit, timestamp: args.data.timestamp }
-        const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
-        let timestamp = tx.timestamp || Date.now()
+    const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from, value, gasLimit, timestamp: args.data.timestamp }
+    const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
+    let timestamp = tx.timestamp || Date.now()
 
-        self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
-        self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
-          function (error, result) {
-            if (error) return next(error)
+    self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
+    self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
+      function (error, result) {
+        if (error) return cb(error)
 
-            const rawAddress = self.executionContext.isVM() ? result.result.createdAddress : result.result.contractAddress
-            let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
-            self.event.trigger(eventName, [null, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad, rawAddress])
+        const rawAddress = self.executionContext.isVM() ? result.result.createdAddress : result.result.contractAddress
+        let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
+        self.event.trigger(eventName, [null, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad, rawAddress])
 
-            next(null, result)
+        let txResult = result
+
+        const isVM = self.executionContext.isVM()
+        if (isVM) {
+          const vmError = txExecution.checkVMError(txResult)
+          if (vmError.error) {
+            return cb(vmError.message)
           }
-        )
-      }
-    ],
-    (error, txResult) => {
-      if (error) {
-        return cb(error)
-      }
-
-      const isVM = this.executionContext.isVM()
-      if (isVM) {
-        const vmError = txExecution.checkVMError(txResult)
-        if (vmError.error) {
-          return cb(vmError.message)
         }
-      }
 
-      let address = null
-      let returnValue = null
-      if (txResult && txResult.result) {
-        address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-        // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
-        returnValue = (txResult.result.execResult && isVM) ? txResult.result.execResult.returnValue : txResult.result
-      }
+        let address = null
+        let returnValue = null
+        if (txResult && txResult.result) {
+          address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
+          // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
+          returnValue = (txResult.result.execResult && isVM) ? txResult.result.execResult.returnValue : txResult.result
+        }
 
-      cb(error, txResult, address, returnValue)
-    })
+        cb(null, txResult, address, returnValue)
+      }
+    )
   }
 
 }
