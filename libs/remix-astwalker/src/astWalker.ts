@@ -100,6 +100,9 @@ export class AstWalker extends EventEmitter {
       tempArr.push(nodes)
       nodes = tempArr
     }
+    
+    // To break object referencing
+    nodes = [...nodes]
 
     if(ast.nodes && ast.baseContracts?.length) { // for ContractDefinition
         nodes.push(...ast.baseContracts)
