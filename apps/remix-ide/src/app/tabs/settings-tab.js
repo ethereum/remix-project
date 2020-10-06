@@ -37,6 +37,8 @@ module.exports = class SettingsTab extends ViewPlugin {
       optionVMLabel: null,
       personal: null,
       personalLabel: null,
+      useMatomoAnalytics: null,
+      useMatomoAnalyticsLabel: null,
       warnPersonalMode: null,
       generateContractMetadata: null,
       generateContractMetadataLabel: null,
@@ -117,6 +119,17 @@ module.exports = class SettingsTab extends ViewPlugin {
     if (this.config.get('settings/personal-mode')) this._view.personal.setAttribute('checked', '')
     elementStateChanged(self._view.personalLabel, !this.config.get('settings/personal-mode'))
 
+    this._view.useMatomoAnalytics = yo`<input onchange=${onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" class="custom-control-input">`
+    this._view.useMatomoAnalyticsMode = yo`<i class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
+    this._view.useMatomoAnalyticsLabel = yo`
+      <label class="form-check-label custom-control-label align-middle" for="settingsMatomoAnalytics">
+        <span>${this._view.useMatomoAnalyticsMode} Enable Matomo Analytics. The statystics we are collecting is helping to improve plugins usage. We choose Matomo Analytics which is </span>
+        <a target="_blank" href="https://matomo.org/free-software">open source</a>
+      </label>
+    `
+    if (this.config.get('settings/matomo-analytics')) this._view.useMatomoAnalytics.setAttribute('checked', '')
+    elementStateChanged(self._view.personalLabel, !this.config.get('settings/matomo-analytics'))
+
     this._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" class="custom-control-input">`
     this._view.generateContractMetadataLabel = yo`<label class="form-check-label custom-control-label align-middle" data-id="settingsTabGenerateContractMetadataLabel" for="generatecontractmetadata">Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.</label>`
     if (this.config.get('settings/generate-contract-metadata') === undefined) this.config.set('settings/generate-contract-metadata', true)
@@ -147,6 +160,10 @@ module.exports = class SettingsTab extends ViewPlugin {
           <div class="custom-control custom-checkbox mb-1">
             ${this._view.personal}>
             ${this._view.personalLabel}
+          </div>
+          <div class="custom-control custom-checkbox mb-1">
+            ${this._view.useMatomoAnalytics}>
+            ${this._view.useMatomoAnalyticsLabel}
           </div>
         </div>
       </div>
@@ -200,6 +217,13 @@ module.exports = class SettingsTab extends ViewPlugin {
       self.config.set('settings/personal-mode', !isChecked)
       elementStateChanged(self._view.personalLabel, isChecked)
     }
+    function onchangeMatomoAnalytics () {
+      const isChecked = self.config.get('settings/matomo-analytics')
+
+      self.config.set('settings/matomo-analytics', !isChecked)
+      elementStateChanged(self._view.useMatomoAnalyticsLabel, isChecked)
+    }
+
     function elementStateChanged (el, isChanged) {
       if (isChanged) {
         el.classList.remove('text-dark')
