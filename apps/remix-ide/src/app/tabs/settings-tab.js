@@ -122,7 +122,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this._view.useMatomoAnalytics = yo`<input onchange=${onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" class="custom-control-input">`
     this._view.useMatomoAnalyticsMode = yo`<i class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
     this._view.useMatomoAnalyticsLabel = yo`
-      <label class="form-check-label custom-control-label align-middle" for="settingsMatomoAnalytics">
+      <label class="form-check-label custom-control-label text-secondary align-middle" for="settingsMatomoAnalytics">
         <span>${this._view.useMatomoAnalyticsMode} Enable Matomo Analytics. The statystics we are collecting is helping to improve plugins usage. We choose Matomo Analytics which is </span>
         <a target="_blank" href="https://matomo.org/free-software">open source</a>
       </label>
