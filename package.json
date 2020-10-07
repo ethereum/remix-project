@@ -199,7 +199,7 @@
     "eslint": "6.8.0",
     "eslint-config-prettier": "^6.11.0",
     "ethereumjs-util": "^6.2.0",
-    "ethers": "^4.0.27",
+    "ethers": "^5.0.13",
     "events": "^3.0.0",
     "execr": "^1.0.1",
     "exorcist": "^0.4.0",
