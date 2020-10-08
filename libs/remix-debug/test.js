@@ -19,7 +19,7 @@ var inputJson = {
     },
     outputSelection: {
       '*': {
-        '': [ 'legacyAST' ],
+        '': [ 'ast' ],
         '*': [ 'abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
       }
     }
