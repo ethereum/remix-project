@@ -246,7 +246,7 @@ linkBytecodeStandard: function (contract, contracts, callback, callbackStep, cal
           if (hexAddress.slice(0, 2) === '0x') {
               hexAddress = hexAddress.slice(2)
             }
-            contractBytecode = this.linkLibraryStandard(libName, hexAddress, contractBytecode, contract)
+            contractBytecode = this.linkLibraryStandardFromlinkReferences(libName, hexAddress, contractBytecode, contract.evm.bytecode.linkReferences)
             cbLibDeployed()
           }, callbackStep, callbackDeployLibrary)
         } else {
@@ -300,10 +300,9 @@ linkBytecodeStandard: function (contract, contracts, callback, callbackStep, cal
       return callback(null, contract.evm.bytecode.object)
     }
     if (contract.evm.bytecode.linkReferences && Object.keys(contract.evm.bytecode.linkReferences).length) {
-      this.linkBytecodeStandard(contract, contracts, callback, callbackStep, callbackDeployLibrary)
-    } else {
-      this.linkBytecodeLegacy(contract, contracts, callback, callbackStep, callbackDeployLibrary)
+      return this.linkBytecodeStandard(contract, contracts, callback, callbackStep, callbackDeployLibrary)
     }
+    this.linkBytecodeLegacy(contract, contracts, callback, callbackStep, callbackDeployLibrary)
   },
 
   deployLibrary: function (libraryName, libraryShortName, library, contracts, callback, callbackStep, callbackDeployLibrary) {
@@ -343,10 +342,6 @@ linkBytecodeStandard: function (contract, contracts, callback, callbackStep, cal
       }
     }
     return bytecode
-  },
-
-  linkLibraryStandard: function (libraryName, address, bytecode, contract) {
-    return this.linkLibraryStandardFromlinkReferences(libraryName, address, bytecode, contract.evm.bytecode.linkReferences)
   },
 
   setLibraryAddress: function (address, bytecodeToLink, positions) {
