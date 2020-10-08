@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { AstNodeLegacy, Node, AstNode } from "./index";
+import { Node, AstNode } from "./index";
 
 export declare interface AstWalker {
   new(): EventEmitter;
@@ -34,16 +34,16 @@ export function isAstNode(node: Record<string, unknown>): boolean {
  */
 export class AstWalker extends EventEmitter {
   manageCallback(
-    node: AstNodeLegacy | AstNode,
+    node: AstNode,
     callback: Record<string, unknown> | Function // eslint-disable-line @typescript-eslint/ban-types
   ): any {
     // FIXME: we shouldn't be doing this callback determination type on each AST node,
     // since the callback function is set once per walk.
     // Better would be to store the right one as a variable and
     // return that.
-    if (<AstNodeLegacy>node) {
-      if ((<AstNodeLegacy>node).name in callback) {
-        return callback[(<AstNodeLegacy>node).name](node);
+    if (node) {
+      if ((node).name in callback) {
+        return callback[(node).name](node);
       } else {
         return callback["*"](node);
       }
