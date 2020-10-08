@@ -142,6 +142,8 @@ tape('abiEncoderV2InvalidTuple - (TxFormat.buildData) - should throw error for i
 function testInvalidTupleInput (st, params) {
   txFormat.buildData('abiEncoderV2InvalidTuple', context.contract, context.output.contracts, true, context.contract.abi[2], params, (error, data) => {
     if (error) {
+      console.dir("=========")
+      console.dir(error)
       return st.ok(error.includes('Error encoding arguments: Error: invalid tuple params'), 'should fail because of invalid tuple input')
     }
   }, () => {}, () => {})
