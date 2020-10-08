@@ -79,6 +79,10 @@ contract structArrayLocal {
         arrayStruct.b[1] = -23;
         arrayStruct.b[2] = -3;
         arrayStruct.c = enumdef.three;
+        bytes32[] memory dynamic = new bytes32[](2);
+        
+        dynamic[0] = 0x7465737400000000000000000000000000000000000000000000000000000000;
+        dynamic[1] = 0x7465737400000000000000000000000000000000000000000000000000000000;
     }
 }
 `}

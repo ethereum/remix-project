@@ -72,7 +72,7 @@ class ArrayType extends RefType {
     return {value: ret, length: '0x' + size.toString(16), type: this.typeName}
   }
 
-  decodeFromMemoryInternal (offset, memory) {
+  decodeFromMemoryInternal (offset, memory, skip) {
     const ret = []
     let length = this.arraySize
     if (this.arraySize === 'dynamic') {
@@ -80,12 +80,28 @@ class ArrayType extends RefType {
       length = parseInt(length, 16)
       offset = offset + 32
     }
-    for (var k = 0; k < length; k++) {
+    if (isNaN(length)) {
+      return {
+        value: '<decoding failed - length is NaN>',
+        type: this.typeName
+      }
+    }
+    let limit = length
+    if (!skip) skip = 0
+    if (skip) offset = offset + (32 * skip)
+    if ((length - skip) > 500) limit = 500
+    for (var k = 0; k < limit; k++) {
       var contentOffset = offset
       ret.push(this.underlyingType.decodeFromMemory(contentOffset, memory))
       offset += 32
     }
-    return {value: ret, length: '0x' + length.toString(16), type: this.typeName}
+    return {
+      value: ret,
+      length: '0x' + length.toString(16),
+      type: this.typeName,
+      cursor: skip + limit,
+      hasNext: length > (skip + limit)
+    }
   }
 }
 
