@@ -70,6 +70,7 @@ class FileProvider {
   }
 
   _exists (path) {
+    path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     return path === this.type ? true : window.remixFileSystem.existsSync(unprefixedpath)
   }
@@ -148,6 +149,7 @@ class FileProvider {
   }
 
   isFile (path) {
+    path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     path = this.removePrefix(path)
     return window.remixFileSystem.statSync(path).isFile()
   }
