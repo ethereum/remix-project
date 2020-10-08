@@ -230,31 +230,28 @@ module.exports = {
     }
   },
 
-atAddress: function () {},
+  atAddress: function () {},
 
-linkBytecodeStandard: function (contract, contracts, callback, callbackStep, callbackDeployLibrary) {
-  let contractBytecode = contract.evm.bytecode.object
-  asyncJS.eachOfSeries(contract.evm.bytecode.linkReferences, (libs, file, cbFile) => {
-    asyncJS.eachOfSeries(contract.evm.bytecode.linkReferences[file], (libRef, libName, cbLibDeployed) => {
-      const library = contracts[file][libName]
-      if (library) {
+  linkBytecodeStandard: function (contract, contracts, callback, callbackStep, callbackDeployLibrary) {
+    let contractBytecode = contract.evm.bytecode.object
+    asyncJS.eachOfSeries(contract.evm.bytecode.linkReferences, (libs, file, cbFile) => {
+      asyncJS.eachOfSeries(contract.evm.bytecode.linkReferences[file], (libRef, libName, cbLibDeployed) => {
+        const library = contracts[file][libName]
+        if (!library) {
+          cbLibDeployed('Cannot find compilation data of library ' + libName)
+        }
         this.deployLibrary(file + ':' + libName, libName, library, contracts, (error, address) => {
           if (error) {
             return cbLibDeployed(error)
           }
           let hexAddress = address.toString('hex')
           if (hexAddress.slice(0, 2) === '0x') {
-              hexAddress = hexAddress.slice(2)
-            }
-            contractBytecode = this.linkLibraryStandardFromlinkReferences(libName, hexAddress, contractBytecode, contract.evm.bytecode.linkReferences)
-            cbLibDeployed()
-          }, callbackStep, callbackDeployLibrary)
-        } else {
-          cbLibDeployed('Cannot find compilation data of library ' + libName)
-        }
-      }, (error) => {
-        cbFile(error)
-      })
+            hexAddress = hexAddress.slice(2)
+          }
+          contractBytecode = this.linkLibraryStandardFromlinkReferences(libName, hexAddress, contractBytecode, contract.evm.bytecode.linkReferences)
+          cbLibDeployed()
+        }, callbackStep, callbackDeployLibrary)
+      }, cbFile)
     }, (error) => {
       if (error) {
         callbackStep(error)
@@ -345,12 +342,13 @@ linkBytecodeStandard: function (contract, contracts, callback, callbackStep, cal
   },
 
   setLibraryAddress: function (address, bytecodeToLink, positions) {
-    if (positions) {
-      for (let pos of positions) {
-        const regpos = bytecodeToLink.match(new RegExp(`(.{${2 * pos.start}})(.{${2 * pos.length}})(.*)`))
-        if (regpos) {
-          bytecodeToLink = regpos[1] + address + regpos[3]
-        }
+    if (!positions) {
+      return bytecodeToLink
+    }
+    for (let pos of positions) {
+      const regpos = bytecodeToLink.match(new RegExp(`(.{${2 * pos.start}})(.{${2 * pos.length}})(.*)`))
+      if (regpos) {
+        bytecodeToLink = regpos[1] + address + regpos[3]
       }
     }
     return bytecodeToLink
