@@ -17,7 +17,7 @@ function compilerInput (contracts) {
       },
       outputSelection: {
         '*': {
-          '': [ 'legacyAST', 'ast' ],
+          '': [ 'ast' ],
           '*': [ 'abi', 'metadata', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
         }
       }
