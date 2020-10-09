@@ -223,8 +223,7 @@ export class AstWalker extends EventEmitter {
   // Normalizes parameter callback and calls walkFullInternal
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   walkFull(ast: AstNode, callback: any) {
-    if (!isAstNode(ast)) throw new TypeError("first argument should be an ast");
-    return this.walkFullInternal(ast, callback);
+    if (isAstNode(ast)) return this.walkFullInternal(ast, callback);
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
