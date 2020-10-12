@@ -38,7 +38,7 @@ function VmDebugger (vmDebuggerLogic) {
 
   this.functionPanel = new FunctionPanel()
   this.vmDebuggerLogic.event.register('functionsStackUpdate', (stack) => {
-    if (stack === null) return
+    if (stack === null || stack.length === 0) return
     let functions = []
     for (let func of stack) {
       functions.push(func.functionDefinition.name + '(' + func.inputs.join(', ') + ')')
