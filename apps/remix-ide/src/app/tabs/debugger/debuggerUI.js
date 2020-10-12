@@ -233,7 +233,7 @@ class DebuggerUI {
             <p class="mt-2 ${css.debuggerLabel}">Debugger Configuration</p>
               <div class="mt-2 ${css.debuggerConfig} custom-control custom-checkbox">
               <input class="custom-control-input" id="debugGeneratedSourcesInput" onchange=${(event) => { this.opt.debugWithGeneratedSources = event.target.checked }} type="checkbox" title="Debug with generated sources">
-              <label data-id="debugGeneratedSourcesLabel" class="form-check-label custom-control-label" for="debugGeneratedSourcesInput">Debug Generated sources if available (>= Solidity 0.7.2)</label>
+              <label data-id="debugGeneratedSourcesLabel" class="form-check-label custom-control-label" for="debugGeneratedSourcesInput">Debug Generated sources if available (from Solidity 0.7.2)</label>
             </div>            
           </div>       
           ${this.txBrowser.render()}

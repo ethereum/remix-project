@@ -1,6 +1,6 @@
 import tape from "tape";
 import {
-  AstNode, isAstNode,
+  AstNode, isAstNode ,
   LineColPosition, lineColPositionFromOffset,
   LineColRange, Location,
   SourceMappings, sourceLocationFromAstNode,
