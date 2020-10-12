@@ -15,6 +15,7 @@ class DebuggerSolidityLocals {
   }
 
   init (sourceLocation) {
+    this._sourceLocation = sourceLocation
     var decodeTimeout = null
     if (!this.storageResolver) {
       return this.event.trigger('solidityLocalsMessage', ['storage not ready'])
@@ -28,7 +29,7 @@ class DebuggerSolidityLocals {
     }, 500)
   }
 
-  decode (sourceLocation) {
+  decode (sourceLocation, cursor) {
     const self = this
     this.event.trigger('solidityLocalsMessage', [''])
     this.traceManager.waterfall([
@@ -65,18 +66,35 @@ class DebuggerSolidityLocals {
         var memory = result[1].value
         try {
           var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
-          localDecoder.solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
-            if (!locals.error) {
-              this.event.trigger('solidityLocals', [locals])
-            }
-            if (!Object.keys(locals).length) {
-              this.event.trigger('solidityLocalsMessage', ['no locals'])
+          localDecoder.solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation, cursor).then((locals) => {
+            if (!cursor) {
+              if (!locals.error) {
+                this.event.trigger('solidityLocals', [locals])
+              }
+              if (!Object.keys(locals).length) {
+                this.event.trigger('solidityLocalsMessage', ['no locals'])
+              }
+            } else {
+              if (!locals.error) {
+                this.event.trigger('solidityLocalsLoadMoreCompleted', [locals])
+              }
             }
           })
         } catch (e) {
           this.event.trigger('solidityLocalsMessage', [e.message])
         }
       })
+  }
+
+  decodeMore () {
+    console.log('called and works!')
+    let decodeTimeout = null
+    if (!this.storageResolver) return this.event.trigger('solidityLocalsMessage', ['storage not ready'])
+    if (decodeTimeout) window.clearTimeout(decodeTimeout)
+    this.event.trigger('solidityLocalsUpdating')
+    decodeTimeout = setTimeout(() => {
+      this.decode(this._sourceLocation)
+    }, 500)
   }
 
 }

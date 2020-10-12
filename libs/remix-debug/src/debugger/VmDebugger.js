@@ -228,6 +228,7 @@ class VmDebuggerLogic {
 
   listenToSolidityLocalsEvents () {
     this.event.register('sourceLocationChanged', this.debuggerSolidityLocals.init.bind(this.debuggerSolidityLocals))
+    this.event.register('solidityLocalsLoadMore', this.debuggerSolidityLocals.decodeMore.bind(this.debuggerSolidityLocals))
     this.debuggerSolidityLocals.event.register('solidityLocals', (state) => {
       this.event.trigger('solidityLocals', [state])
     })
