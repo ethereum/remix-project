@@ -34,6 +34,9 @@ var css = csjs`
   .label_value {
     min-width: 10%;
   }
+  .cursor_pointer {
+    cursor: pointer;
+  }
 `
 
 var EventManager = require('../../lib/events')
@@ -49,6 +52,7 @@ class TreeView {
     this.event = new EventManager()
     this.extractData = opts.extractData || this.extractDataDefault
     this.formatSelf = opts.formatSelf || this.formatSelfDefault
+    this.loadMore = opts.loadMore
     this.view = null
     this.expandPath = []
   }
@@ -111,6 +115,9 @@ class TreeView {
         self.event.trigger('nodeRightClick', [keyPath, data, label, event])
       }
       li.appendChild(list)
+      if (data.hasNext) {
+        list.appendChild(yo`<li><span class="w-100 text-primary ${css.cursor_pointer}" onclick="${() => self.loadMore(data.cursor)}">Load more</span></li>`)
+      }
     } else {
       caret.style.visibility = 'hidden'
       label.oncontextmenu = function (event) {
