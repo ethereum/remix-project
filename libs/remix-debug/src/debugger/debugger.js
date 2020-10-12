@@ -53,7 +53,7 @@ Debugger.prototype.registerAndHighlightCodeItem = async function (index) {
     const compilationResultForAddress = await this.compilationResult(address)
     if (!compilationResultForAddress) return
 
-    this.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts).then((rawLocation) => {
+    this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts).then((rawLocation) => {
       if (compilationResultForAddress && compilationResultForAddress.data) {
         var lineColumnPos = this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, compilationResultForAddress.source.sources, compilationResultForAddress.data.sources)
         this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation])
@@ -114,7 +114,7 @@ Debugger.prototype.debugTx = function (tx, loadingCb) {
   this.step_manager = new StepManager(this.debugger, this.debugger.traceManager)
 
   this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
-    this.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts).then((sourceLocation) => {
+    this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts).then((sourceLocation) => {
       this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [sourceLocation])
     })
   })
