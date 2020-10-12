@@ -52,7 +52,8 @@ class Transactions{
         'cumulativeGasUsed': Web3.utils.toHex(receipt.gas),
         'contractAddress': receipt.contractAddress,
         'logs': receipt.logs,
-        'status': receipt.status
+        'status': receipt.status,
+        'to': receipt.to
       }
 
       if (r.blockNumber === '0x') {

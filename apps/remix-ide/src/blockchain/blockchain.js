@@ -228,6 +228,11 @@ class Blockchain {
   }
 
   web3 () {
+    // @todo(https://github.com/ethereum/remix-project/issues/431)
+    const isVM = this.getProvider() === 'vm'
+    if (isVM) {
+      return this.providers.vm.web3
+    }
     return this.executionContext.web3()
   }
 

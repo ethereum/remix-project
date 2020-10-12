@@ -91,10 +91,12 @@ function createVm (hardfork) {
 }
 
 const vms = {
+  /*
   byzantium: createVm('byzantium'),
   constantinople: createVm('constantinople'),
   petersburg: createVm('petersburg'),
   istanbul: createVm('istanbul'),
+  */
   muirGlacier: createVm('muirGlacier')
 }
 
