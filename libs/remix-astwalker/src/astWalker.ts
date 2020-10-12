@@ -12,7 +12,15 @@ const isObject = function(obj: any): boolean {
 export function isAstNode(node: Record<string, unknown>): boolean {
   return (
     isObject(node) &&
-    // 'id' in node &&
+    'id' in node &&
+    'nodeType' in node &&
+    'src' in node
+  )
+}
+
+export function isYulAstNode(node: Record<string, unknown>): boolean {
+  return (
+    isObject(node) &&
     'nodeType' in node &&
     'src' in node
   )
@@ -200,7 +208,7 @@ export class AstWalker extends EventEmitter {
   }
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
   walkFullInternal(ast: AstNode, callback: Function) {
-    if (isAstNode(ast)) {
+    if (isAstNode(ast) || isYulAstNode(ast)) {
       // console.log(`XXX id ${ast.id}, nodeType: ${ast.nodeType}, src: ${ast.src}`);
       callback(ast);
       for (const k of Object.keys(ast)) {
@@ -223,7 +231,7 @@ export class AstWalker extends EventEmitter {
   // Normalizes parameter callback and calls walkFullInternal
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   walkFull(ast: AstNode, callback: any) {
-    if (isAstNode(ast)) return this.walkFullInternal(ast, callback);
+    if (isAstNode(ast) || isYulAstNode(ast)) return this.walkFullInternal(ast, callback);
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
