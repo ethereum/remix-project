@@ -82,10 +82,11 @@ function VmDebugger (vmDebuggerLogic) {
   this.vmDebuggerLogic.event.register('solidityStateMessage', this.solidityState.setMessage.bind(this.solidityState))
   this.vmDebuggerLogic.event.register('solidityStateUpdating', this.solidityState.setUpdating.bind(this.solidityState))
 
-  this.solidityLocals = new SolidityLocals()
+  this.solidityLocals = new SolidityLocals(vmDebuggerLogic)
   this.vmDebuggerLogic.event.register('solidityLocals', this.solidityLocals.update.bind(this.solidityLocals))
   this.vmDebuggerLogic.event.register('solidityLocalsMessage', this.solidityLocals.setMessage.bind(this.solidityLocals))
   this.vmDebuggerLogic.event.register('solidityLocalsUpdating', this.solidityLocals.setUpdating.bind(this.solidityLocals))
+  this.vmDebuggerLogic.event.register('solidityLocalsLoadMoreCompleted', this.solidityLocals.loadMore.bind(this.solidityLocals))
 
   this.returnValuesPanel = new DropdownPanel('Return Value', {json: true})
   this.returnValuesPanel.data = {}
