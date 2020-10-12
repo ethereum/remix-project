@@ -80,7 +80,7 @@ class BreakpointManager {
     while (currentStep > 0 && currentStep < this.debugger.traceManager.trace.length) {
       try {
         previousSourceLocation = sourceLocation
-        sourceLocation = await this.debugger.callTree.extractSourceLocation(currentStep)
+        sourceLocation = await this.debugger.callTree.extractValidSourceLocation(currentStep)
       } catch (e) {
         console.log('cannot jump to breakpoint ' + e)
         return
