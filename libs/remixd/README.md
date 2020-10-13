@@ -1,11 +1,11 @@
 # Remixd
 
-`remixd` is a tool that intend to be used with [Remix IDE](http://github.com/ethereum/browser-solidity) (aka. Browser-Solidity). It allows a websocket connection between
+`remixd` is a tool that intend to be used with [Remix IDE](https://github.com/ethereum/remix-project) (aka. Browser-Solidity). It allows a websocket connection between
 `Remix IDE` (web application) and the local computer.
 
-Practically Remix IDE make available a folder shared by `remixd`.
+Practically Remix IDE makes available a folder shared by `remixd`.
 
-More details are explained in this [tutorial](http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html).
+More details are explained in this [tutorial](https://remix-ide.readthedocs.io/en/latest/remixd.html).
 
 Alternatively `remixd` can be used to setup a development environment that can be used with other popular frameworks like Embark, Truffle, Ganache, etc..
 
@@ -13,7 +13,7 @@ Alternatively `remixd` can be used to setup a development environment that can b
 
 ## INSTALLATION
 
-`npm install -g remixd`
+`npm install -g @remix-project/remixd`
 
 ## HELP SECTION
 
