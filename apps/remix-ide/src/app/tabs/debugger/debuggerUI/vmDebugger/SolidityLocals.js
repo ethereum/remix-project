@@ -3,18 +3,18 @@ var EventManager = require('../../../../../lib/events')
 var DropdownPanel = require('./DropdownPanel')
 var solidityTypeFormatter = require('./utils/SolidityTypeFormatter')
 var yo = require('yo-yo')
+var deepequal = require('deep-equal')
 
 class SolidityLocals {
 
-  constructor (vmDebuggerLogic) {
+  constructor () {
     this.event = new EventManager()
     this.basicPanel = new DropdownPanel('Solidity Locals', {
       json: true,
       formatSelf: solidityTypeFormatter.formatSelf,
       extractData: solidityTypeFormatter.extractData,
       loadMore: (cursor) => {
-        console.log('cursor: ', cursor)
-        vmDebuggerLogic.event.trigger('solidityLocalsLoadMore', [cursor])
+        this.event.trigger('solidityLocalsLoadMore', [cursor])
       }
     })
     this.view
@@ -41,9 +41,14 @@ class SolidityLocals {
   }
 
   mergeLocals (locals1, locals2) {
-    console.log('locals1: ', locals1)
-    console.log('locals2: ', locals2)
-    return {}
+    Object.keys(locals2).map(item => {
+      if (!deepequal(locals2[item], locals1[item])) {
+        if (locals2[item].cursor) {
+          locals2[item].value = [...locals2[item].value, ...locals1[item].value]
+        }
+      }
+    })
+    return locals2
   }
 
   render () {
