@@ -122,7 +122,7 @@ export interface CompilerInput {
     //
     outputSelection?: {
         '*': {
-          '': [ 'legacyAST', 'ast' ],
+          '': [ 'ast' ],
           '*': [ 'abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly' ]
         }
     }
@@ -266,8 +266,6 @@ export interface CompilationResult {
     id: number
     /** The AST object */
     ast: AstNode
-    /** The legacy AST object */
-    legacyAST: AstNodeLegacy
   }
   
   /////////
@@ -286,14 +284,6 @@ export interface CompilationResult {
     sourceUnit?: number
     symbolAliases?: Array<string>
     [x: string]: any
-  }
-  
-  export interface AstNodeLegacy {
-    id: number
-    name: string
-    src: string
-    children?: Array<AstNodeLegacy>
-    attributes?: AstNodeAtt
   }
   
   export interface AstNodeAtt {

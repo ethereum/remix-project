@@ -36,8 +36,7 @@ module.exports = {
   encodeFunctionId: function (funABI) {
     if (funABI.type === 'fallback' || funABI.type === 'receive') return '0x'
     let abi = new ethers.utils.Interface([funABI])
-    abi = abi.functions[funABI.name]
-    return abi.sighash
+    return abi.getSighash(funABI.name)
   },
 
   sortAbiFunction: function (contractabi) {
