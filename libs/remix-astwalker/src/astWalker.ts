@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { AstNodeLegacy, Node, AstNode } from "./index";
+import { Node, AstNode } from "./index";
 
 export declare interface AstWalker {
   new(): EventEmitter;
@@ -34,16 +34,16 @@ export function isAstNode(node: Record<string, unknown>): boolean {
  */
 export class AstWalker extends EventEmitter {
   manageCallback(
-    node: AstNodeLegacy | AstNode,
+    node: AstNode,
     callback: Record<string, unknown> | Function // eslint-disable-line @typescript-eslint/ban-types
   ): any {
     // FIXME: we shouldn't be doing this callback determination type on each AST node,
     // since the callback function is set once per walk.
     // Better would be to store the right one as a variable and
     // return that.
-    if (<AstNodeLegacy>node) {
-      if ((<AstNodeLegacy>node).name in callback) {
-        return callback[(<AstNodeLegacy>node).name](node);
+    if (node) {
+      if ((node).name in callback) {
+        return callback[(node).name](node);
       } else {
         return callback["*"](node);
       }
@@ -58,67 +58,148 @@ export class AstWalker extends EventEmitter {
       }
     }
   }
+
+  normalizeNodes(nodes: AstNode[]): AstNode[] {
+    // Remove null, undefined and empty elements if any
+    nodes = nodes.filter(e => e)
+
+    // If any element in nodes is array, extract its members
+    const objNodes = []
+    nodes.forEach(x => { 
+      if (Array.isArray(x)) objNodes.push(...x)
+      else objNodes.push(x)
+    });
+    
+    // Filter duplicate nodes using id field
+    const normalizedNodes = []
+    objNodes.forEach((element) => {
+      const firstIndex = normalizedNodes.findIndex(e => e.id === element.id)
+      if(firstIndex == -1) normalizedNodes.push(element)
+    })
+    return normalizedNodes
+  }
+
+  getASTNodeChildren(ast: AstNode): AstNode[] {
+
+    let nodes = ast.nodes             // for ContractDefinition
+              || ast.body             // for FunctionDefinition, ModifierDefinition, WhileStatement, DoWhileStatement, ForStatement
+              || ast.statements       // for Block, YulBlock
+              || ast.members          // for StructDefinition, EnumDefinition
+              || ast.overrides        // for OverrideSpecifier
+              || ast.parameters       // for ParameterList, EventDefinition
+              || ast.declarations     // for VariableDeclarationStatement
+              || ast.expression       // for Return, ExpressionStatement, FunctionCall, FunctionCallOptions, MemberAccess
+              || ast.components       // for TupleExpression
+              || ast.subExpression    // for UnaryOperation
+              || ast.eventCall        // for EmitStatement
+              || []
+    
+    // If 'nodes' is not an array, convert it into one, for example: ast.body 
+    if(nodes && !Array.isArray(nodes)) {
+      const tempArr = []
+      tempArr.push(nodes)
+      nodes = tempArr
+    }
+    
+    // To break object referencing
+    nodes = [...nodes]
+
+    if(ast.nodes && ast.baseContracts?.length) { // for ContractDefinition
+        nodes.push(...ast.baseContracts)
+    } else if (ast.body && ast.overrides && ast.parameters && ast.returnParameters && ast.modifiers) { // for FunctionDefinition
+        nodes.push(ast.overrides)
+        nodes.push(ast.parameters)
+        nodes.push(ast.returnParameters)
+        nodes.push(ast.modifiers)
+    } else if(ast.typeName) { // for VariableDeclaration, NewExpression, ElementaryTypeNameExpression
+        nodes.push(ast.typeName)
+    } else if (ast.body && ast.overrides && ast.parameters) { // for ModifierDefinition
+        nodes.push(ast.overrides)
+        nodes.push(ast.parameters)
+    } else if (ast.modifierName && ast.arguments) { // for ModifierInvocation
+        nodes.push(ast.modifierName)
+        nodes.push(ast.arguments)
+    } else if (ast.parameterTypes && ast.returnParameterTypes) { // for ModifierInvocation
+        nodes.push(ast.parameterTypes)
+        nodes.push(ast.returnParameterTypes)
+    } else if (ast.keyType && ast.valueType) { // for Mapping
+        nodes.push(ast.keyType)
+        nodes.push(ast.valueType)
+    } else if (ast.baseType && ast.length) { // for ArrayTypeName
+        nodes.push(ast.baseType)
+        nodes.push(ast.length)
+    } else if (ast.AST) { // for InlineAssembly
+        nodes.push(ast.AST)
+    } else if (ast.condition && (ast.trueBody || ast.falseBody || ast.body)) { // for IfStatement, WhileStatement, DoWhileStatement
+        nodes.push(ast.condition)
+        nodes.push(ast.trueBody)
+        nodes.push(ast.falseBody)
+    } else if (ast.parameters && ast.block) { // for TryCatchClause
+        nodes.push(ast.block)
+    } else if (ast.externalCall && ast.clauses) { // for TryStatement
+        nodes.push(ast.externalCall)
+        nodes.push(ast.clauses)
+    } else if (ast.body && ast.condition && ast.initializationExpression && ast.loopExpression) { // for ForStatement
+        nodes.push(ast.condition)
+        nodes.push(ast.initializationExpression)
+        nodes.push(ast.loopExpression)
+    } else if (ast.declarations && ast.initialValue) { // for VariableDeclarationStatement
+        nodes.push(ast.initialValue)
+    } else if (ast.condition && (ast.trueExpression || ast.falseExpression)) { // for Conditional
+        nodes.push(ast.condition)
+        nodes.push(ast.trueExpression)
+        nodes.push(ast.falseExpression)
+    } else if (ast.leftHandSide && ast.rightHandSide) { // for Assignment
+        nodes.push(ast.leftHandSide)
+        nodes.push(ast.rightHandSide)
+    } else if (ast.leftExpression && ast.rightExpression) { // for BinaryOperation
+        nodes.push(ast.leftExpression)
+        nodes.push(ast.rightExpression)
+    } else if (ast.expression && (ast.arguments || ast.options)) { // for FunctionCall, FunctionCallOptions
+        nodes.push(ast.arguments ? ast.arguments : ast.options)
+    } else if (ast.baseExpression && (ast.indexExpression || (ast.startExpression && ast.endExpression))) { // for IndexAccess, IndexRangeAccess
+        nodes.push(ast.baseExpression)
+        if(ast.indexExpression) nodes.push(ast.indexExpression)
+        else {
+          nodes.push(ast.startExpression)
+          nodes.push(ast.endExpression)
+        }
+    }
+    return this.normalizeNodes(nodes)
+  }
+  
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
-  walk(ast: AstNodeLegacy | AstNode, callback?: Function | Record<string, unknown>) {
-    if (callback) {
-      if (callback instanceof Function) {
-        callback = Object({ "*": callback });
-      }
-      if (!("*" in callback)) {
-        callback["*"] = function() {
-          return true;
-        };
-      }
-      if (<AstNodeLegacy>ast) {
-        if (
-          this.manageCallback(<AstNodeLegacy>ast, callback) &&
-          (<AstNodeLegacy>ast).children &&
-          (<AstNodeLegacy>ast).children.length > 0
-        ) {
-          for (const k in (<AstNodeLegacy>ast).children) {
-            const child = (<AstNodeLegacy>ast).children[k];
+  walk(ast: AstNode, callback?: Function | Record<string, unknown>) {
+    if (ast) {
+      const children: AstNode[] = this.getASTNodeChildren(ast)
+      if (callback) {
+        if (callback instanceof Function) {
+          callback = Object({ "*": callback });
+        }
+        if (!("*" in callback)) {
+          callback["*"] = function() {
+            return true;
+          };
+        }
+        if (this.manageCallback(ast, callback) && children?.length) {
+          for (const k in children) {
+            const child = children[k];
             this.walk(child, callback);
           }
         }
-      } else if (<AstNode>ast) {
-        if (
-          this.manageCallback(<AstNode>ast, callback) &&
-          (<AstNode>ast).nodes &&
-          (<AstNode>ast).nodes.length > 0
-        ) {
-          for (const k in (<AstNode>ast).nodes) {
-            const child = (<AstNode>ast).nodes[k];
-            this.walk(child, callback);
+        } else {
+          if (children?.length) {
+            for (const k in children) {
+              const child = children[k];
+              this.emit("node", child);
+              this.walk(child);
+            }
           }
         }
-      }
-    } else {
-      if (<AstNodeLegacy>ast) {
-        if (
-          (<AstNodeLegacy>ast).children &&
-          (<AstNodeLegacy>ast).children.length > 0
-        ) {
-          for (const k in (<AstNodeLegacy>ast).children) {
-            const child = (<AstNodeLegacy>ast).children[k];
-            this.emit("node", child);
-            this.walk(child);
-          }
-        }
-      }
-      if (<AstNode>ast) {
-        if ((<AstNode>ast).nodes && (<AstNode>ast).nodes.length > 0) {
-          for (const k in (<AstNode>ast).nodes) {
-            const child = (<AstNode>ast).nodes[k];
-            this.emit("node", child);
-            this.walk(child);
-          }
-        }
-      }
     }
   }
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
   walkFullInternal(ast: AstNode, callback: Function) {
-
     if (isAstNode(ast)) {
       // console.log(`XXX id ${ast.id}, nodeType: ${ast.nodeType}, src: ${ast.src}`);
       callback(ast);
@@ -142,8 +223,7 @@ export class AstWalker extends EventEmitter {
   // Normalizes parameter callback and calls walkFullInternal
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   walkFull(ast: AstNode, callback: any) {
-    if (!isAstNode(ast)) throw new TypeError("first argument should be an ast");
-    return this.walkFullInternal(ast, callback);
+    if (isAstNode(ast)) return this.walkFullInternal(ast, callback);
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
@@ -151,14 +231,10 @@ export class AstWalker extends EventEmitter {
     if (cb) {
       if (sourcesList.ast) {
         this.walk(sourcesList.ast, cb);
-      } else {
-        this.walk(sourcesList.legacyAST, cb);
       }
     } else {
       if (sourcesList.ast) {
         this.walk(sourcesList.ast);
-      } else {
-        this.walk(sourcesList.legacyAST);
       }
     }
   }
