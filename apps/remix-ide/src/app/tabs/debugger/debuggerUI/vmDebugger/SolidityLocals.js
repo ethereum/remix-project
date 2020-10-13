@@ -3,7 +3,6 @@ var EventManager = require('../../../../../lib/events')
 var DropdownPanel = require('./DropdownPanel')
 var solidityTypeFormatter = require('./utils/SolidityTypeFormatter')
 var yo = require('yo-yo')
-var deepequal = require('deep-equal')
 
 class SolidityLocals {
 
@@ -27,9 +26,8 @@ class SolidityLocals {
   }
 
   loadMore (data) {
-    const mergedLocals = this.mergeLocals(data, this._data)
-
-    this.basicPanel.update(mergedLocals)
+    this._data = this.mergeLocals(data, this._data)
+    this.basicPanel.update(this._data)
   }
 
   setMessage (message) {
@@ -42,9 +40,10 @@ class SolidityLocals {
 
   mergeLocals (locals1, locals2) {
     Object.keys(locals2).map(item => {
-      if (!deepequal(locals2[item], locals1[item])) {
-        if (locals2[item].cursor) {
-          locals2[item].value = [...locals2[item].value, ...locals1[item].value]
+      if (locals2[item].cursor && (parseInt(locals2[item].cursor) < parseInt(locals1[item].cursor))) {
+        locals2[item] = {
+          ...locals1[item],
+          value: [...locals2[item].value, ...locals1[item].value]
         }
       }
     })
