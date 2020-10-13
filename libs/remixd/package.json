@@ -1,5 +1,5 @@
 {
-  "name": "remixd",
+  "name": "@remix-project/remixd",
   "version": "0.2.4-alpha.0",
   "description": "remix server: allow accessing file system from remix.ethereum.org and start a dev environment (see help section)",
   "main": "./index.js",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remixd.git"
+    "url": "git+https://github.com/ethereum/remix-project.git"
   },
   "keywords": [
     "remix",
@@ -25,12 +25,12 @@
     "ethereum",
     "solidity"
   ],
-  "author": "cpp ethereum team",
+  "author": "Remix Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/remixd/issues"
+    "url": "https://github.com/ethereum/remix-project/issues"
   },
-  "homepage": "https://github.com/ethereum/remixd#readme",
+  "homepage": "https://github.com/ethereum/remix-project#readme",
   "dependencies": {
     "@remixproject/plugin": "0.3.0-beta.5",
     "@remixproject/plugin-api": "0.3.0-beta.5",
