@@ -72,7 +72,28 @@ module.exports = {
     .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
     .pause(2000)
     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n184')
-    .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n184')
+    .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n184')    
+  },
+
+  'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
+    browser
+    .clickLaunchIcon('solidity')
+    .setSolidityCompilerVersion('soljson-v0.6.12+commit.27d51765.js')
+    .clickLaunchIcon('udapp')    
+    .testContracts('externalImport.sol', sources[1]['browser/externalImport.sol'], ['ERC20'])
+    .selectContract('ERC20')
+    .createContract('"tokenName", "symbol"')
+    .debugTransaction(2)
+    .pause(2000)
+    .goToVMTraceStep(10)
+    .getEditorValue((content) => {
+      browser.assert.ok(content.indexOf(`constructor (string memory name, string memory symbol) public {
+        _name = name;
+        _symbol = symbol;
+        _decimals = 18;
+    }`) != -1, 
+    'current displayed content is not from the ERC20 source code')
+    })
     .end()
   },
 
@@ -112,5 +133,10 @@ const sources = [
     }
         `
     }
+  },
+  {
+    'browser/externalImport.sol': {content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol"; contract test7 {}'}
   }
 ]
+
+

@@ -24,7 +24,6 @@ export interface LineColRange {
 
 export interface Node {
   ast?: AstNode;
-  legacyAST?: AstNodeLegacy;
   source?: string;
   id?: number;
 }
@@ -45,14 +44,6 @@ export interface AstNode {
   sourceUnit?: number;
   symbolAliases?: Array<string>;
   [x: string]: any;
-}
-
-export interface AstNodeLegacy {
-  id: number;    // This is unique across all nodes in an AST tree
-  name: string;  // This corresponds to "nodeType" in ASTNode
-  src: string;
-  children?: Array<AstNodeLegacy>;  // This corresponds to "nodes" in ASTNode
-  attributes?: AstNodeAtt;
 }
 
 export interface AstNodeAtt {

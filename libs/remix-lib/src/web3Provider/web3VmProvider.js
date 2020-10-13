@@ -72,9 +72,9 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
   }
   let tx = {}
   tx.hash = self.processingHash
-  tx.from = util.hexConvert(data.getSenderAddress())
+  tx.from = ethutil.toChecksumAddress(util.hexConvert(data.getSenderAddress()))
   if (data.to && data.to.length) {
-    tx.to = util.hexConvert(data.to)
+    tx.to = ethutil.toChecksumAddress(util.hexConvert(data.to))
   }
   this.processingAddress = tx.to
   tx.data = util.hexConvert(data.data)
@@ -128,8 +128,8 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
 
   if (data.createdAddress) {
     const address = util.hexConvert(data.createdAddress)
-    self.vmTraces[self.processingHash].return = address
-    self.txsReceipt[self.processingHash].contractAddress = address
+    self.vmTraces[self.processingHash].return = ethutil.toChecksumAddress(address)
+    self.txsReceipt[self.processingHash].contractAddress = ethutil.toChecksumAddress(address)
   } else if (data.execResult.returnValue) {
     self.vmTraces[self.processingHash].return = util.hexConvert(data.execResult.returnValue)
   } else {
@@ -196,6 +196,7 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
 }
 
 web3VmProvider.prototype.getCode = function (address, cb) {
+  address = ethutil.toChecksumAddress(address)
   const account = ethutil.toBuffer(address)
   this.vm.stateManager.getContractCode(account, (error, result) => {
     cb(error, util.hexConvert(result))
@@ -219,6 +220,7 @@ web3VmProvider.prototype.traceTransaction = function (txHash, options, cb) {
 
 web3VmProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, maxLength, cb) { // txIndex is the hash in the case of the VM
   // we don't use the range params here
+  address = ethutil.toChecksumAddress(address)
 
   if (txIndex === 'latest') {
     txIndex = this.lastProcessedStorageTxHash[address]
