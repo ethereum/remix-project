@@ -454,16 +454,15 @@ class Terminal extends Plugin {
           <i> - Select a Javascript file in the file explorer and then run \`remix.execute()\` or \`remix.exeCurrent()\`  in the command line interface  </i>
           <br />
           <i> - Right click on a JavaScript file in the file explorer and then click \`Run\` </i>
-        The following libraries are accessible:
-          <ul class=${css2.ul}>
-            <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
-            <li><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
-            <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
-            <li>remix (run remix.help() for more info)</li>
-          </ul>
         </li>
       </ul>
-      
+      <div>The following libraries are accessible:</div>
+      <ul class=${css2.ul}>
+        <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
+        <li><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
+        <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
+        <li>remix (run remix.help() for more info)</li>
+      </ul>
       </div>
     `
 
