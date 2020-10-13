@@ -86,14 +86,12 @@ class DebuggerSolidityLocals {
       })
   }
 
-  decodeMore () {
-    console.log('called and works!')
+  decodeMore (cursor) {
     let decodeTimeout = null
     if (!this.storageResolver) return this.event.trigger('solidityLocalsMessage', ['storage not ready'])
     if (decodeTimeout) window.clearTimeout(decodeTimeout)
-    this.event.trigger('solidityLocalsUpdating')
     decodeTimeout = setTimeout(() => {
-      this.decode(this._sourceLocation)
+      this.decode(this._sourceLocation, cursor)
     }, 500)
   }
 

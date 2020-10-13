@@ -53,7 +53,6 @@ function extractData (item, parent, key) {
     ret.self = item.value
     ret.type = item.type
   }
-  if(ret.hasNext) console.log('return value: ', ret)
   return ret
 }
 
