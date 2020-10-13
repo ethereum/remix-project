@@ -82,7 +82,7 @@ function VmDebugger (vmDebuggerLogic) {
   this.vmDebuggerLogic.event.register('solidityStateMessage', this.solidityState.setMessage.bind(this.solidityState))
   this.vmDebuggerLogic.event.register('solidityStateUpdating', this.solidityState.setUpdating.bind(this.solidityState))
 
-  this.solidityLocals = new SolidityLocals(vmDebuggerLogic)
+  this.solidityLocals = new SolidityLocals()
   this.solidityLocals.event.register('solidityLocalsLoadMore', (cursor) => {
     this.vmDebuggerLogic.event.trigger('solidityLocalsLoadMore', [cursor])
   })
