@@ -61,6 +61,9 @@ let css = csjs`
   .labelIt {
     margin-bottom: 0;
   }
+  .bigLabelSize {
+    font-size: 13px;
+  }
   .seeAll {
     margin-top: 7px;
     white-space: nowrap;
@@ -374,7 +377,7 @@ export class LandingPage extends ViewPlugin {
                       </p>
                       <p class="mb-1">
                         <i class="mr-1 far fa-file-alt"></i>
-                        <span class="ml-1 ${css.labelIt} ${css.text}">
+                        <label class="ml-1 ${css.labelIt} ${css.bigLabelSize} ${css.text}">
                           Open Files
                           <input title="open file" type="file" onchange="${
                             (event) => {
@@ -383,7 +386,7 @@ export class LandingPage extends ViewPlugin {
                               fileExplorer.uploadFile(event)
                             }
                           }" multiple />
-                        </span>
+                        </label>
                       </p>
                       <p class="mb-1">
                         <i class="far fa-hdd"></i>
