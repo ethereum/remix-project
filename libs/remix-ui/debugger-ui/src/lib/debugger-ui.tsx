@@ -28,6 +28,7 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
   })
 
   useEffect(() => {
+    console.log('perfomanceCheck <=> setEditor')
     const setEditor = () => {
       const editor = globalRegistry.get('editor').api
 
@@ -49,14 +50,17 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
   }, [])
 
   useEffect(() => {
+    console.log('perfomanceCheck <=> debug')
     debug(debugHash)
   }, [debugHash])
 
   useEffect(() => {
+    console.log('perfomanceCheck <=> getTrace')
     getTrace(getTraceHash)
   }, [getTraceHash])
 
   useEffect(() => {
+    console.log('perfomanceCheck <=> deleteHighlights')
     if (removeHighlights) deleteHighlights()
   }, [removeHighlights])
 
