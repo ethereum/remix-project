@@ -7,6 +7,7 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
   })
 
   useEffect(() => {
+    console.log('perfomanceCheck <=> transactionNumber')
     setState(prevState => {
       return {
         ...prevState,

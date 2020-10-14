@@ -10,6 +10,7 @@ export const CodeListView = ({ asm }) => {
   })
 
   useEffect(() => {
+    console.log('perfomanceCheck <=> changed')
     const { code, address, index } = asm
 
     changed(code, address, index)
