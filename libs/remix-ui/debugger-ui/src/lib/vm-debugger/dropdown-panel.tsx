@@ -30,14 +30,17 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     })
 
     useEffect(() => {
+        console.log('perfomanceCheck <=> update')
         update(calldata)
     }, [calldata])
 
     useEffect(() => {
+        console.log('perfomanceCheck <=> message')
         message(dropdownMessage)
     }, [dropdownMessage])
 
     useEffect(() => {
+        console.log('perfomanceCheck <=> setLoading')
         if (loading && !state.updating) setLoading()
     }, [loading])
 

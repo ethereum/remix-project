@@ -11,6 +11,7 @@ export const StepManager = ({ stepManager }) => {
   })
 
   useEffect(() => {
+    console.log('perfomanceCheck <=> setRevertWarning/updateStep')
     if (stepManager) {
       stepManager.event.register('revertWarning', setRevertWarning)
       stepManager.event.register('stepChanged', updateStep)
