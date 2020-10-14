@@ -86,10 +86,10 @@ class ArrayType extends RefType {
         type: this.typeName
       }
     }
-    let limit = length
     if (!skip) skip = 0
     if (skip) offset = offset + (32 * skip)
-    if ((length - skip) > 100) limit = 100
+    let limit = length - skip
+    if (limit > 100) limit = 100
     for (var k = 0; k < limit; k++) {
       var contentOffset = offset
       ret.push(this.underlyingType.decodeFromMemory(contentOffset, memory))
