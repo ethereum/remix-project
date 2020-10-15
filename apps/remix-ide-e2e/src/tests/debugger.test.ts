@@ -16,7 +16,7 @@ module.exports = {
   'Should launch debugger': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['browser/blah.sol'])
     .clickLaunchIcon('udapp')
-    .waitForElementPresent('*[title="Deploy - transact (not payable)"]')
+    .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 50000)
     .click('*[title="Deploy - transact (not payable)"]')
     .debugTransaction(0)
     .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER')
@@ -42,7 +42,7 @@ module.exports = {
     .waitForElementVisible('*[data-id="slider"]')
     .click('*[data-id="slider"]')
     .setValue('*[data-id="slider"]', '50')
-    .pause(2000)
+    .pause(5000)
     .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
   },
