@@ -116,7 +116,7 @@ class TreeView {
       }
       li.appendChild(list)
       if (data.hasNext) {
-        list.appendChild(yo`<li><span class="w-100 text-primary ${css.cursor_pointer}" onclick="${() => self.loadMore(data.cursor)}">Load more</span></li>`)
+        list.appendChild(yo`<li><span class="w-100 text-primary ${css.cursor_pointer}" data-id="treeViewLoadMore" onclick="${() => self.loadMore(data.cursor)}">Load more</span></li>`)
       }
     } else {
       caret.style.visibility = 'hidden'
