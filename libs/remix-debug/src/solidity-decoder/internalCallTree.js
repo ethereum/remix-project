@@ -163,11 +163,11 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
 
   function includedSource (source, included) {
     return (included.start !== -1 &&
-        included.length !== -1 &&
-        included.file !== -1 &&
-        included.start >= source.start &&
-        included.start + included.length <= source.start + source.length &&
-        included.file === source.file)
+      included.length !== -1 &&
+      included.file !== -1 &&
+      included.start >= source.start &&
+      included.start + included.length <= source.start + source.length &&
+      included.file === source.file)
   }
 
   let currentSourceLocation = { start: -1, length: -1, file: -1 }
