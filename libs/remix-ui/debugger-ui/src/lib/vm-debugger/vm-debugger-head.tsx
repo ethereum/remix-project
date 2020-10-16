@@ -30,6 +30,7 @@ export const VmDebuggerHead = ({ vmDebuggerLogic, ready }) => {
   })
 
   useEffect(() => {
+    console.log('vmDebuggerLogicHead: ', vmDebuggerLogic)
     if (vmDebuggerLogic) {
       vmDebuggerLogic.event.register('codeManagerChanged', (code, address, index) => {
         setAsm(() => {
@@ -42,13 +43,11 @@ export const VmDebuggerHead = ({ vmDebuggerLogic, ready }) => {
         })
       })
       vmDebuggerLogic.event.register('functionsStackUpdate', (stack) => {
-        if (stack === null) return
+        if (stack === null || stack.length === 0) return
         const functions = []
     
         for (const func of stack) {
-          const functionDefinitionName = func.functionDefinition.name || func.functionDefinition.attributes.name
-
-          functions.push(functionDefinitionName + '(' + func.inputs.join(', ') + ')')
+          functions.push(func.functionDefinition.name + '(' + func.inputs.join(', ') + ')')
         }
         setFunctionPanel(() => functions)
       })

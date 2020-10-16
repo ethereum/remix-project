@@ -1,5 +1,4 @@
 const yo = require('yo-yo')
-const remixDebug = require('@remix-project/remix-debug')
 const css = require('./styles/debugger-tab-styles')
 import toaster from '../ui/tooltip'
 import { DebuggerUI } from '@remix-ui/debugger-ui'
@@ -71,16 +70,7 @@ class DebuggerTab extends ViewPlugin {
 
   renderComponent () {
     ReactDOM.render(
-      <DebuggerUI 
-        debuggerModule={this} 
-        fetchContractAndCompile={(address, receipt) => {
-          const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
-
-          return this.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', this.blockchain.web3())
-        }}
-        debugHash={this.debugHash}
-        getTraceHash={this.getTraceHash}
-      />
+      <DebuggerUI debuggerModule={this} />
     , this.el)
   }
 

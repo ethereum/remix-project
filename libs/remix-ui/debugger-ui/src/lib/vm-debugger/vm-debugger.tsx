@@ -20,6 +20,7 @@ export const VmDebugger = ({ vmDebuggerLogic, ready }) => {
   const [fullStoragesChangesPanel, setFullStoragesChangesPanel] = useState(null)
 
   useEffect(() => {
+    console.log('vmDebuggerLogic: ', vmDebuggerLogic)
     if (vmDebuggerLogic) {
       vmDebuggerLogic.event.register('traceManagerCallDataUpdate', (calldata) => {
         setCalldataPanel(() => calldata)
