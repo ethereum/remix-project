@@ -6,7 +6,6 @@ export const Slider = ({ stepManager, sliderValue }) => {
   })
 
   useEffect(() => {
-    console.log('perfomanceCheck <=> sliderValue')
     setValue(sliderValue)
   }, [sliderValue])
 

@@ -13,7 +13,6 @@ export const ButtonNavigation = ({ stepManager, revertedReason, stepState, jumpO
   })
 
   useEffect(() => {
-    console.log('perfomanceCheck <=> stepChanged')
     stepChanged(stepState, jumpOutDisabled)
   }, [stepState, jumpOutDisabled])
 

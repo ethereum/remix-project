@@ -8,7 +8,7 @@ import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remi
 import globalRegistry from '../../../../../apps/remix-ide/src/global/registry'
 import './debugger-ui.css'
 
-export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash, getTraceHash, removeHighlights }) => {
+export const DebuggerUI = ({ debuggerModule }) => {
   const init = remixDebug.init
   const [state, setState] = useState({
     isActive: false,
@@ -28,7 +28,6 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
   })
 
   useEffect(() => {
-    console.log('perfomanceCheck <=> setEditor')
     const setEditor = () => {
       const editor = globalRegistry.get('editor').api
 
@@ -50,19 +49,22 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
   }, [])
 
   useEffect(() => {
-    console.log('perfomanceCheck <=> debug')
-    debug(debugHash)
-  }, [debugHash])
+    debug(debuggerModule.debugHash)
+  }, [debuggerModule.debugHash])
 
   useEffect(() => {
-    console.log('perfomanceCheck <=> getTrace')
-    getTrace(getTraceHash)
-  }, [getTraceHash])
+    getTrace(debuggerModule.getTraceHash)
+  }, [debuggerModule.getTraceHash])
 
   useEffect(() => {
-    console.log('perfomanceCheck <=> deleteHighlights')
-    if (removeHighlights) deleteHighlights()
-  }, [removeHighlights])
+    if (debuggerModule.removeHighlights) deleteHighlights()
+  }, [debuggerModule.removeHighlights])
+
+  const fetchContractAndCompile = (address, receipt) => {
+    const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
+
+    return debuggerModule.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', debuggerModule.blockchain.web3())
+  }
 
   const listenToEvents = (debuggerInstance, currentReceipt) => {
     if (!debuggerInstance) return
@@ -144,6 +146,7 @@ export const DebuggerUI = ({ debuggerModule, fetchContractAndCompile, debugHash,
 
   const startDebugging = async (blockNumber, txNumber, tx) => {
     if (state.debugger) unLoad()
+    if (!txNumber) return
     const web3 = await getDebugWeb3()
     const currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     const debuggerInstance = new Debugger({

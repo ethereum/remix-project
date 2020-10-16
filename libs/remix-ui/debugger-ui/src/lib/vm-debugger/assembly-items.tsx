@@ -9,7 +9,6 @@ export const AssemblyItems = ({ codeView, index }) => {
     const asmItemsRef = useRef(null)
 
     useEffect(() => {
-        console.log('perfomanceCheck <=> indexChanged')
         indexChanged(index)
     }, [index])
 
