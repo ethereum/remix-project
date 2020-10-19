@@ -118,13 +118,13 @@ export class RunTab extends LibraryPlugin {
   renderRecorder (udappUI, fileManager, config, logCallback) {
     this.recorderCount = yo`<span>0</span>`
 
-    const recorder = new Recorder(this.blockchain, fileManager)
+    const recorder = new Recorder(this.blockchain)
     recorder.event.register('recorderCountChange', (count) => {
       this.recorderCount.innerText = count
     })
     this.event.register('clearInstance', recorder.clearAll.bind(recorder))
 
-    this.recorderInterface = new RecorderUI(this.blockchain, recorder, logCallback, config)
+    this.recorderInterface = new RecorderUI(this.blockchain, fileManager, recorder, logCallback, config)
 
     this.recorderInterface.event.register('newScenario', (abi, address, contractName) => {
       var noInstancesText = this.noInstancesText

@@ -18,7 +18,8 @@ const profile = {
 
 class RecorderUI extends Plugin {
 
-  constructor (blockchain, recorder, logCallBack, config) {
+  constructor (blockchain, fileManager, recorder, logCallBack, config) {
+    this.fileManager = fileManager
     this.blockchain = blockchain
     this.recorder = recorder
     this.logCallBack = logCallBack
@@ -76,14 +77,16 @@ class RecorderUI extends Plugin {
 
     const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
 
-    // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
-    this.recorder.runScenario(file, continueCb, promptCb, alertCb, confirmationCb, this.logCallBack, (error, abi, address, contractName) => {
-      if (error) {
-        return modalDialogCustom.alert(error)
-      }
+    this.fileManager.readFile(file).then((json) => {
+      // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
+      this.recorder.runScenario(json, continueCb, promptCb, alertCb, confirmationCb, this.logCallBack, (error, abi, address, contractName) => {
+        if (error) {
+          return modalDialogCustom.alert(error)
+        }
 
-      this.event.trigger('newScenario', [abi, address, contractName])
-    })
+        this.event.trigger('newScenario', [abi, address, contractName])
+      })      
+    }).catch((error) => cb(error))    
   }
 
   getConfirmationCb (modalDialog, confirmDialog) {
@@ -119,7 +122,7 @@ class RecorderUI extends Plugin {
   }
 
   triggerRecordButton () {
-    this.recorder.saveScenario(
+    this.saveScenario(
       (path, cb) => {
         modalDialogCustom.prompt('Save transactions as scenario', 'Transactions will be saved in a file under ' + path, 'scenario.json', cb)
       },
@@ -127,6 +130,21 @@ class RecorderUI extends Plugin {
         if (error) return modalDialogCustom.alert(error)
       }
     )
+  }
+
+  saveScenario (promptCb, cb) {
+    var txJSON = JSON.stringify(this.getAll(), null, 2)
+    var path = this.fileManager.currentPath()
+    promptCb(path, input => {
+      var fileProvider = this.fileManager.fileProviderOf(path)
+      if (!fileProvider) return
+      var newFile = path + '/' + input
+      helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
+        if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
+        if (!fileProvider.set(newFile, txJSON)) return cb('Failed to create file ' + newFile)
+        this.fileManager.open(newFile)
+      })
+    })
   }
 
 }
