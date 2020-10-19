@@ -37,7 +37,7 @@ class InjectedProvider {
   signMessage (message, account, _passphrase, cb) {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
-      this.executionContext.web3().eth.sign(message, account, (error, signedData) => {
+      this.executionContext.web3().eth.personal.sign(message, account, (error, signedData) => {
         cb(error, '0x' + messageHash.toString('hex'), signedData)
       })
     } catch (e) {
