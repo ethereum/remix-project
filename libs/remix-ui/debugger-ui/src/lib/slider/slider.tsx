@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 
-export const Slider = ({ stepManager, sliderValue }) => {
+export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
+  console.log('slider: >--+>')
   const [state, setState] = useState({
-    currentValue: ''
+    currentValue: 0
   })
 
   useEffect(() => {
@@ -14,7 +15,7 @@ export const Slider = ({ stepManager, sliderValue }) => {
     setState(prevState => {
       return { ...prevState, currentValue: value }
     })
-    stepManager && stepManager.jumpTo(value)
+    jumpTo && jumpTo(value)
   }
 
   const handleChange = (e) => {
@@ -30,10 +31,10 @@ export const Slider = ({ stepManager, sliderValue }) => {
             className='w-100 my-0'
             type='range'
             min={0}
-            max={stepManager ? stepManager.traceLength - 1 : 0}
+            max={traceLength ? traceLength - 1 : 0}
             value={state.currentValue}
             onChange={handleChange}
-            disabled={stepManager ? stepManager.traceLength === 0 : true}
+            disabled={traceLength ? traceLength === 0 : true}
         />
     </div>
   )
