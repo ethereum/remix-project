@@ -3,6 +3,19 @@ import Slider from '../slider/slider'
 import ButtonNavigator from '../button-navigator/button-navigator'
 
 export const StepManager = ({ stepManager }) => {
+  const { jumpTo, traceLength, stepOverBack, stepIntoBack, stepIntoForward, stepOverForward, jumpOut, jumpPreviousBreakpoint, jumpNextBreakpoint, jumpToException } = stepManager
+  
+  if (stepManager) {
+    jumpTo.bind(stepManager)
+    stepOverBack.bind(stepManager)
+    stepIntoBack.bind(stepManager)
+    stepIntoForward.bind(stepManager)
+    stepOverForward.bind(stepManager)
+    jumpOut.bind(stepManager)
+    jumpPreviousBreakpoint.bind(stepManager)
+    jumpNextBreakpoint.bind(stepManager)
+    jumpToException.bind(stepManager)
+  }
   const [state, setState] = useState({
     sliderValue: 0,
     revertWarning: '',
@@ -28,15 +41,24 @@ export const StepManager = ({ stepManager }) => {
       return { ...prevState, sliderValue: step, stepState, jumpOutDisabled }
     })
   }
-
   const { sliderValue, revertWarning, stepState, jumpOutDisabled } = state
-  const jumpTo = stepManager ? stepManager.jumpTo.bind(stepManager) : null
-  const traceLength = stepManager ? stepManager.traceLength : null
 
   return (
     <div className="py-1">
       <Slider jumpTo={jumpTo} sliderValue={sliderValue} traceLength={traceLength} />
-      <ButtonNavigator stepManager={stepManager} revertedReason={revertWarning} stepState={stepState} jumpOutDisabled={jumpOutDisabled} />
+      <ButtonNavigator 
+        stepIntoBack={stepIntoBack}
+        stepIntoForward={stepIntoForward}
+        stepOverBack={stepOverBack}
+        stepOverForward={stepOverForward}
+        revertedReason={revertWarning}
+        stepState={stepState}
+        jumpOutDisabled={jumpOutDisabled}
+        jumpOut={jumpOut}
+        jumpNextBreakpoint={jumpNextBreakpoint}
+        jumpPreviousBreakpoint={jumpPreviousBreakpoint}
+        jumpToException={jumpToException}
+      />
     </div>
   )
 }
