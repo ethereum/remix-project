@@ -151,6 +151,7 @@ class InternalCallTree {
 
 async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
   let subScope = 1
+  
   tree.scopeStarts[step] = scopeId
   tree.scopes[scopeId] = { firstStep: step, locals: {}, isCreation }
 

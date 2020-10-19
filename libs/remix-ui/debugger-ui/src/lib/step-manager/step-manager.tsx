@@ -30,10 +30,12 @@ export const StepManager = ({ stepManager }) => {
   }
 
   const { sliderValue, revertWarning, stepState, jumpOutDisabled } = state
+  const jumpTo = stepManager ? stepManager.jumpTo.bind(stepManager) : null
+  const traceLength = stepManager ? stepManager.traceLength : null
 
   return (
     <div className="py-1">
-      <Slider stepManager={stepManager} sliderValue={sliderValue} />
+      <Slider jumpTo={jumpTo} sliderValue={sliderValue} traceLength={traceLength} />
       <ButtonNavigator stepManager={stepManager} revertedReason={revertWarning} stepState={stepState} jumpOutDisabled={jumpOutDisabled} />
     </div>
   )

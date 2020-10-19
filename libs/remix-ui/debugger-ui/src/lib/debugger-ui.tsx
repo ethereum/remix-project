@@ -9,6 +9,7 @@ import globalRegistry from '../../../../../apps/remix-ide/src/global/registry'
 import './debugger-ui.css'
 
 export const DebuggerUI = ({ debuggerModule }) => {
+  console.log('debuggerModule: ', debuggerModule)
   const init = remixDebug.init
   const [state, setState] = useState({
     isActive: false,
