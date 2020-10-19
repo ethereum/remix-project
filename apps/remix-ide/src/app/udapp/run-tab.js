@@ -118,7 +118,7 @@ export class RunTab extends LibraryPlugin {
   renderRecorder (udappUI, fileManager, config, logCallback) {
     this.recorderCount = yo`<span>0</span>`
 
-    const recorder = new Recorder(this.blockchain, fileManager, config)
+    const recorder = new Recorder(this.blockchain, fileManager)
     recorder.event.register('recorderCountChange', (count) => {
       this.recorderCount.innerText = count
     })
