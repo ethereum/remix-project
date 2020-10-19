@@ -165,7 +165,7 @@ const sources = [
             project.state = State.Started;
             project.goal = goal;
         }
-    }
+    } 
         `
     }
   },
