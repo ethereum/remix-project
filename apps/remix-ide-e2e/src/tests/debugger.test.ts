@@ -156,7 +156,7 @@ const sources = [
 
         constructor() public {
 
-        }    
+        }
 
         function createProject(string memory name, uint goal) public {
             Project storage project = projects[projects.length];
