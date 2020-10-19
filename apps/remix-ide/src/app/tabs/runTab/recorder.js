@@ -1,10 +1,9 @@
 var yo = require('yo-yo')
-var remixLib = require('@remix-project/remix-lib')
 import { Plugin } from '@remixproject/engine'
 var csjs = require('csjs-inject')
 var css = require('../styles/run-tab-styles')
 
-import * as packageJson from '../../../../../package.json'
+import * as packageJson from '../../../../package.json'
 
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var modalDialog = require('../../ui/modaldialog')
@@ -19,6 +18,7 @@ const profile = {
 class RecorderUI extends Plugin {
 
   constructor (blockchain, fileManager, recorder, logCallBack, config) {
+    super(profile)
     this.fileManager = fileManager
     this.blockchain = blockchain
     this.recorder = recorder
