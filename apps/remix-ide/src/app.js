@@ -231,14 +231,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const appManager = self.appManager
   const pluginLoader = appManager.pluginLoader
   const workspace = pluginLoader.get()
-  const engine = new Engine(appManager)
+  const engine = new Engine()
   engine.setPluginOption = ({ name, kind }) => {
     if (kind === 'provider') return { queueTimeout: 60000 * 2 }
     if (name === 'LearnEth') return { queueTimeout: 60000 }
     return { queueTimeout: 10000 }
   }
-  await engine.onload()
-
+  engine.register(appManager)
+  
   // SERVICES
   // ----------------- import content servive ------------------------
   const contentImport = new CompilerImport()
@@ -401,17 +401,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
   await appManager.activatePlugin(['mainPanel', 'menuicons'])
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
-  await appManager.activatePlugin(['home', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'scriptRunner', 'terminal', 'fetchAndCompile'])
+  await appManager.activatePlugin(['home', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile'])
 
   const queryParams = new QueryParams()
   const params = queryParams.get()
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) {
-    appManager.activatePlugin(workspace).then(() => {
+  if (Array.isArray(workspace)) {    
+    appManager.activatePlugin(workspace).then(async () => {
       try {
         if (params.deactivate) {
-          appManager.deactivatePlugin(params.deactivate.split(','))
+          await appManager.deactivatePlugin(params.deactivate.split(','))
         }
       } catch (e) {
         console.log(e)
@@ -425,9 +425,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         if (callDetails.length > 1) {
           toolTip(`initiating ${callDetails[0]} ...`)
           // @todo(remove the timeout when activatePlugin is on 0.3.0)
-          setTimeout(() => {
-            appManager.call(...callDetails).catch(console.error)
-          }, 5000)
+          appManager.call(...callDetails).catch(console.error)
         }
       }
     }).catch(console.error)
