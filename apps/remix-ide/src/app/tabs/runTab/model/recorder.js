@@ -12,14 +12,13 @@ var helper = require('../../../../lib/helper.js')
   *
   */
 class Recorder {
-  constructor (blockchain, fileManager, config) {
+  constructor (blockchain, fileManager) {
     var self = this
     self.event = new EventManager()
     self.blockchain = blockchain
     self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
     this.fileManager = fileManager
-    this.config = config
-
+    
     this.blockchain.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
       var { from, to, value } = tx
@@ -279,15 +278,14 @@ class Recorder {
     return address
   }
 
-  runScenario (continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
-    var currentFile = this.config.get('currentFile')
-    this.fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
-      if (error) {
-        return cb('Invalid Scenario File ' + error)
-      }
-      if (!currentFile.match('.json$')) {
-        return cb('A scenario file is required. Please make sure a scenario file is currently displayed in the editor. The file must be of type JSON. Use the "Save Transactions" Button to generate a new Scenario File.')
-      }
+  runScenario (file, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
+    if (!file) {
+      return cb('file must be defined')
+    }
+    if (!file.match('.json$')) {
+      return cb('A scenario file is required. Please make sure a scenario file is currently displayed in the editor. The file must be of type JSON. Use the "Save Transactions" Button to generate a new Scenario File.')
+    }
+    this.fileManager.readFile(file).then((json) => {      
       try {
         var obj = JSON.parse(json)
         var txArray = obj.transactions || []
@@ -306,7 +304,7 @@ class Recorder {
       this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, (abi, address, contractName) => {
         cb(null, abi, address, contractName)
       })
-    })
+    }).catch((error) => cb(error)) 
   }
 
   saveScenario (promptCb, cb) {

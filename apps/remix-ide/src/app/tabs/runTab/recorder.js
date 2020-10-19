@@ -1,21 +1,28 @@
 var yo = require('yo-yo')
 var remixLib = require('@remix-project/remix-lib')
-var EventManager = remixLib.EventManager
+import { Plugin } from '@remixproject/engine'
 var csjs = require('csjs-inject')
 var css = require('../styles/run-tab-styles')
+
+import * as packageJson from '../../../../../package.json'
 
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var modalDialog = require('../../ui/modaldialog')
 var confirmDialog = require('../../ui/confirmDialog')
 
-class RecorderUI {
+const profile = {
+  name: 'recorder',
+  methods: ['runScenario'],
+  version: packageJson.version
+}
+
+class RecorderUI extends Plugin {
 
   constructor (blockchain, recorder, logCallBack, config) {
     this.blockchain = blockchain
     this.recorder = recorder
     this.logCallBack = logCallBack
-    this.config = config
-    this.event = new EventManager()
+    this.config = config    
   }
 
   render () {
@@ -34,7 +41,9 @@ class RecorderUI {
     this.runButton.onclick = this.runScenario.bind(this)
   }
 
-  runScenario () {
+ 
+  runScenario (file) {
+    file = file || this.config.get('currentFile')
     var continueCb = (error, continueTxExecution, cancelCb) => {
       if (error) {
         var msg = typeof error !== 'string' ? error.message : error
@@ -68,7 +77,7 @@ class RecorderUI {
     const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
 
     // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
-    this.recorder.runScenario(continueCb, promptCb, alertCb, confirmationCb, this.logCallBack, (error, abi, address, contractName) => {
+    this.recorder.runScenario(file, continueCb, promptCb, alertCb, confirmationCb, this.logCallBack, (error, abi, address, contractName) => {
       if (error) {
         return modalDialogCustom.alert(error)
       }
