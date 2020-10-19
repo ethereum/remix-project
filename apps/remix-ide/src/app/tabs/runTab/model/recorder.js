@@ -12,12 +12,11 @@ var helper = require('../../../../lib/helper.js')
   *
   */
 class Recorder {
-  constructor (blockchain, fileManager) {
+  constructor (blockchain) {
     var self = this
     self.event = new EventManager()
     self.blockchain = blockchain
     self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
-    this.fileManager = fileManager
     
     this.blockchain.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
@@ -278,50 +277,37 @@ class Recorder {
     return address
   }
 
-  runScenario (file, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
-    if (!file) {
-      return cb('file must be defined')
+  runScenario (json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
+    if (!json) {
+      return cb('a json content must be provided')
     }
-    if (!file.match('.json$')) {
-      return cb('A scenario file is required. Please make sure a scenario file is currently displayed in the editor. The file must be of type JSON. Use the "Save Transactions" Button to generate a new Scenario File.')
-    }
-    this.fileManager.readFile(file).then((json) => {      
+    if (typeof json === 'string') {
       try {
-        var obj = JSON.parse(json)
-        var txArray = obj.transactions || []
-        var accounts = obj.accounts || []
-        var options = obj.options || {}
-        var abis = obj.abis || {}
-        var linkReferences = obj.linkReferences || {}
+        json = JSON.parse(json)
       } catch (e) {
-        return cb('Invalid Scenario File, please try again')
-      }
+        return cb('A scenario file is required. It must be json formatted')
+      }      
+    }
 
-      if (!txArray.length) {
-        return
-      }
+    try {      
+      var txArray = json.transactions || []
+      var accounts = json.accounts || []
+      var options = json.options || {}
+      var abis = json.abis || {}
+      var linkReferences = json.linkReferences || {}
+    } catch (e) {
+      return cb('Invalid Scenario File. Please try again')
+    }
 
-      this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, (abi, address, contractName) => {
-        cb(null, abi, address, contractName)
-      })
-    }).catch((error) => cb(error)) 
+    if (!txArray.length) {
+      return
+    }
+
+    this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, (abi, address, contractName) => {
+      cb(null, abi, address, contractName)
+    })    
+    
   }
-
-  saveScenario (promptCb, cb) {
-    var txJSON = JSON.stringify(this.getAll(), null, 2)
-    var path = this.fileManager.currentPath()
-    promptCb(path, input => {
-      var fileProvider = this.fileManager.fileProviderOf(path)
-      if (!fileProvider) return
-      var newFile = path + '/' + input
-      helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
-        if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
-        if (!fileProvider.set(newFile, txJSON)) return cb('Failed to create file ' + newFile)
-        this.fileManager.open(newFile)
-      })
-    })
-  }
-
 }
 
 module.exports = Recorder
