@@ -44,6 +44,7 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
     .click('*[data-id="pluginManagerComponentPluginManager"]')
     .scrollAndClick('*[data-id="pluginManagerComponentActivateButtondebugger"]')
+    .pause(2000)
     .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
     .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonvyper"]')
     .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
@@ -54,8 +55,11 @@ module.exports = {
   'Should deactivate plugins': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
     .click('*[data-id="pluginManagerComponentPluginManager"]')
-    .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
+    .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
+    .pause(2000)
+    .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')   
     .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
+    .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
     .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
     .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]')
   },
