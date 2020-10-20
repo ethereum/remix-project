@@ -369,8 +369,8 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
 }
 
 module.exports = {
-  parseType: parseType,
-  computeOffsets: computeOffsets,
+  parseType,
+  computeOffsets,
   Uint: uint,
   Address: address,
   Bool: bool,

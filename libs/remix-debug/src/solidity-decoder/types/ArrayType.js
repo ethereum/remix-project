@@ -69,11 +69,7 @@ class ArrayType extends RefType {
         currentLocation.offset = 0
       }
     }
-    return {
-      value: ret,
-      length: '0x' + size.toString(16),
-      type: this.typeName
-    }
+    return {value: ret, length: '0x' + size.toString(16), type: this.typeName}
   }
 
   decodeFromMemoryInternal (offset, memory) {
@@ -89,11 +85,7 @@ class ArrayType extends RefType {
       ret.push(this.underlyingType.decodeFromMemory(contentOffset, memory))
       offset += 32
     }
-    return {
-      value: ret,
-      length: '0x' + length.toString(16),
-      type: this.typeName
-    }
+    return {value: ret, length: '0x' + length.toString(16), type: this.typeName}
   }
 }
 
