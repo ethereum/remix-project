@@ -91,6 +91,10 @@ export class SidePanel extends AbstractPanel {
     })
   }
 
+  focus (name) {
+    this.emit('focusChanged', name)
+  }
+
   removeView (profile) {
     super.removeView(profile)
     this.verticalIcons.unlinkContent(profile)
