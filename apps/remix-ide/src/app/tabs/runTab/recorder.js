@@ -1,16 +1,29 @@
 var yo = require('yo-yo')
 var remixLib = require('@remix-project/remix-lib')
 var EventManager = remixLib.EventManager
+import { Plugin } from '@remixproject/engine'
 var csjs = require('csjs-inject')
 var css = require('../styles/run-tab-styles')
+
+import * as packageJson from '../../../../package.json'
 
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var modalDialog = require('../../ui/modaldialog')
 var confirmDialog = require('../../ui/confirmDialog')
 
-class RecorderUI {
+var helper = require('../../../lib/helper.js')
 
-  constructor (blockchain, recorder, logCallBack, config) {
+const profile = {
+  name: 'recorder',
+  methods: ['runScenario'],
+  version: packageJson.version
+}
+
+class RecorderUI extends Plugin {
+
+  constructor (blockchain, fileManager, recorder, logCallBack, config) {
+    super(profile)
+    this.fileManager = fileManager
     this.blockchain = blockchain
     this.recorder = recorder
     this.logCallBack = logCallBack
@@ -31,10 +44,16 @@ class RecorderUI {
         onclick=${this.triggerRecordButton.bind(this)} title="Save Transactions" aria-hidden="true">
       </i>`
 
-    this.runButton.onclick = this.runScenario.bind(this)
+    this.runButton.onclick = () => {
+      const file = this.config.get('currentFile')
+      if (!file) return modalDialogCustom.alert('A scenario file has to be selected')
+      this.runScenario(file)
+    }
   }
 
-  runScenario () {
+ 
+  runScenario (file) {    
+    if (!file) return modalDialogCustom.alert('Unable to run scenerio, no specified scenario file')
     var continueCb = (error, continueTxExecution, cancelCb) => {
       if (error) {
         var msg = typeof error !== 'string' ? error.message : error
@@ -67,14 +86,16 @@ class RecorderUI {
 
     const confirmationCb = this.getConfirmationCb(modalDialog, confirmDialog)
 
-    // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
-    this.recorder.runScenario(continueCb, promptCb, alertCb, confirmationCb, this.logCallBack, (error, abi, address, contractName) => {
-      if (error) {
-        return modalDialogCustom.alert(error)
-      }
+    this.fileManager.readFile(file).then((json) => {
+      // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
+      this.recorder.runScenario(json, continueCb, promptCb, alertCb, confirmationCb, this.logCallBack, (error, abi, address, contractName) => {
+        if (error) {
+          return modalDialogCustom.alert(error)
+        }
 
-      this.event.trigger('newScenario', [abi, address, contractName])
-    })
+        this.event.trigger('newScenario', [abi, address, contractName])
+      })      
+    }).catch((error) => modalDialogCustom.alert(error))    
   }
 
   getConfirmationCb (modalDialog, confirmDialog) {
@@ -110,7 +131,7 @@ class RecorderUI {
   }
 
   triggerRecordButton () {
-    this.recorder.saveScenario(
+    this.saveScenario(
       (path, cb) => {
         modalDialogCustom.prompt('Save transactions as scenario', 'Transactions will be saved in a file under ' + path, 'scenario.json', cb)
       },
@@ -118,6 +139,21 @@ class RecorderUI {
         if (error) return modalDialogCustom.alert(error)
       }
     )
+  }
+
+  saveScenario (promptCb, cb) {
+    var txJSON = JSON.stringify(this.recorder.getAll(), null, 2)
+    var path = this.fileManager.currentPath()
+    promptCb(path, input => {
+      var fileProvider = this.fileManager.fileProviderOf(path)
+      if (!fileProvider) return
+      var newFile = path + '/' + input
+      helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
+        if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
+        if (!fileProvider.set(newFile, txJSON)) return cb('Failed to create file ' + newFile)
+        this.fileManager.open(newFile)
+      })
+    })
   }
 
 }
