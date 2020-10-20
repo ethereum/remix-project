@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
 export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
-  console.log('slider: >--+>')
   const [state, setState] = useState({
     currentValue: 0
   })
