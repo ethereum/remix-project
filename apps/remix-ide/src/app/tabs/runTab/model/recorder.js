@@ -4,7 +4,6 @@ var remixLib = require('@remix-project/remix-lib')
 var EventManager = remixLib.EventManager
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
-var helper = require('../../../../lib/helper.js')
 
 /**
   * Record transaction as long as the user create them.
