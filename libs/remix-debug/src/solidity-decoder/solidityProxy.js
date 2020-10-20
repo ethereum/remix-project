@@ -6,11 +6,11 @@ const astHelper = require('./astHelper')
 const util = remixLib.util
 
 class SolidityProxy {
-  constructor (traceManager, codeManager) {
+  constructor ({getCurrentCalledAddressAt, getCode}) {
     this.cache = new Cache()
     this.reset({})
-    this.traceManager = traceManager
-    this.codeManager = codeManager
+    this.getCurrentCalledAddressAt = getCurrentCalledAddressAt
+    this.getCode = getCode
   }
 
   /**
@@ -40,11 +40,11 @@ class SolidityProxy {
     * @param {Function} cb  - callback returns (error, contractName)
     */
   async contractNameAt (vmTraceIndex) {
-    const address = this.traceManager.getCurrentCalledAddressAt(vmTraceIndex)
+    const address = this.getCurrentCalledAddressAt(vmTraceIndex)
     if (this.cache.contractNameByAddress[address]) {
       return this.cache.contractNameByAddress[address]
     }
-    const code = await this.codeManager.getCode(address)
+    const code = await this.getCode(address)
     const contractName = contractNameFromCode(this.contracts, code.bytecode, address)
     this.cache.contractNameByAddress[address] = contractName
     return contractName
