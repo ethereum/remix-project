@@ -6,6 +6,10 @@ web3Override.debug = {}
 var data = init.readFile(require('path').resolve(__dirname, 'testWeb3.json'))
 data = JSON.parse(data)
 
+var traceWithABIEncoder = init.readFile(require('path').resolve(__dirname, 'traceWithABIEncoder.json'))
+traceWithABIEncoder = 
+
+data.testTraces['0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd53'] = JSON.parse(traceWithABIEncoder)
 web3Override.eth.getCode = function (address, callback) {
   if (callback) {
     callback(null, data.testCodes[address])
