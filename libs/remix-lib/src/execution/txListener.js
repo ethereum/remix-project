@@ -90,16 +90,6 @@ class TxListener {
         })
       })
     })
-
-    function addExecutionCosts (txResult, tx) {
-      if (txResult && txResult.result) {
-        if (txResult.result.execResult) {
-          tx.returnValue = txResult.result.execResult.returnValue
-          if (txResult.result.execResult.gasUsed) tx.executionCost = txResult.result.execResult.gasUsed.toString(10)
-        }
-        if (txResult.result.gasUsed) tx.transactionCost = txResult.result.gasUsed.toString(10)
-      }
-    }
   }
 
   /**
