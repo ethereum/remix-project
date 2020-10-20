@@ -123,14 +123,16 @@ class ContextualListener extends Plugin {
   }
 
   _highlightInternal (position, node) {
+    console.log('highlighting______', node)
+    if (node.nodeType == 'Block') return
     let lastCompilationResult = this._deps.compilersArtefacts['__last']
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0) {
       let lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, lastCompilationResult.getSourceCode().sources, lastCompilationResult.getAsts())
       const css = csjs`
         .highlightref_fullLine {
-          position:absolute;
-          z-index:2;
-          opacity: 0.4;
+          position: absolute;
+          z-index: 2;
+          opacity: 0.1;
           background-color: var(--info);
         }
         `

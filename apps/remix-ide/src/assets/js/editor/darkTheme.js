@@ -50,7 +50,7 @@ ace.define("ace/theme/remixDark",["require","exports","module","ace/lib/dom"], f
   border: 1px solid #FCE94F;\
   }\
   .ace-remixDark .ace_marker-layer .ace_active-line {\
-  background: #363950;\
+  background: #262843;\
   }\
   .ace-remixDark .ace_gutter-active-line {\
   background-color: #363950;\
