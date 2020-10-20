@@ -21,12 +21,20 @@ function Debugger (options) {
     compilationResult: this.compilationResult
   })
 
-  this.breakPointManager = new BreakpointManager(this.debugger, async (sourceLocation) => {
+  const {traceManager, callTree, solidityProxy} = this.debugger
+  this.breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy, locationToRowConverter: async (sourceLocation) => {
     const compilationResult = await this.compilationResult()
     if (!compilationResult) return { start: null, end: null }
     return this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationResult.source.sources, compilationResult.data.sources)
-  }, (step) => {
-    this.event.trigger('breakpointStep', [step])
+  }})
+
+  this.breakPointManager.event.register('managersChanged', () => {
+    const {traceManager, callTree, solidityProxy} = this.debugger
+    this.breakPointManager.setManagers({traceManager, callTree, solidityProxy})
+  })
+
+  this.breakPointManager.event.register('breakpointStep', (step) => {
+    this.step_manager.jumpTo(step)
   })
 
   this.debugger.setBreakpointManager(this.breakPointManager)
@@ -37,10 +45,6 @@ function Debugger (options) {
 
   this.debugger.event.register('traceUnloaded', this, () => {
     this.event.trigger('debuggerStatus', [false])
-  })
-
-  this.event.register('breakpointStep', (step) => {
-    this.step_manager.jumpTo(step)
   })
 }
 

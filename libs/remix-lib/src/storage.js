@@ -27,10 +27,8 @@ function Storage (prefix) {
   this.remove = function (name) {
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(prefix + name)
-      return true
-    } else {
-      return true
     }
+    return true
   }
 
   this.rename = function (originalName, newName) {
@@ -46,9 +44,8 @@ function Storage (prefix) {
     // NOTE: this is a workaround for some browsers
     if (typeof window !== 'undefined') {
       return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined })
-    } else {
-      return []
     }
+    return []
   }
 
   this.keys = function () {
