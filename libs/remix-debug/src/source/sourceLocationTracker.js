@@ -3,6 +3,7 @@ const EventManager = require('../eventManager')
 const helper = require('../trace/traceHelper')
 const SourceMappingDecoder = require('./sourceMappingDecoder')
 const remixLib = require('@remix-project/remix-lib')
+const { map } = require('jquery')
 const util = remixLib.util
 
 /**
@@ -16,12 +17,11 @@ function SourceLocationTracker (_codeManager) {
 }
 
 /**
- * Return the source location associated with the given @arg index
+ * Return the source location associated with the given @arg index (instruction index)
  *
  * @param {String} address - contract address from which the source location is retrieved
  * @param {Int} index - index in the instruction list from where the source location is retrieved
  * @param {Object} contractDetails - AST of compiled contracts
- * @param {Function} cb - callback function
  */
 SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = async function (address, index, contracts) {
   const sourceMap = await extractSourceMap(this, this.codeManager, address, contracts)
@@ -29,17 +29,33 @@ SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = async fu
 }
 
 /**
- * Return the source location associated with the given @arg pc
+ * Return the source location associated with the given @arg vmTraceIndex
  *
  * @param {String} address - contract address from which the source location is retrieved
  * @param {Int} vmtraceStepIndex - index of the current code in the vmtrace
  * @param {Object} contractDetails - AST of compiled contracts
- * @param {Function} cb - callback function
  */
-SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = async function (address, vmtraceStepIndex, contracts) {
+SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = async function (address, vmtraceStepIndex, contracts) {  
   const sourceMap = await extractSourceMap(this, this.codeManager, address, contracts)
   const index = this.codeManager.getInstructionIndex(address, vmtraceStepIndex)
   return this.sourceMappingDecoder.atIndex(index, sourceMap)
+}
+
+/**
+ * Return a valid source location associated with the given @arg vmTraceIndex
+ *
+ * @param {String} address - contract address from which the source location is retrieved
+ * @param {Int} vmtraceStepIndex - index of the current code in the vmtrace
+ * @param {Object} contractDetails - AST of compiled contracts
+ */
+SourceLocationTracker.prototype.getValidSourceLocationFromVMTraceIndex = async function (address, vmtraceStepIndex, contracts) {
+  let map = { file: -1}
+  while (vmtraceStepIndex >= 0 && map.file === -1) {
+    map = await this.getSourceLocationFromVMTraceIndex(address, vmtraceStepIndex, contracts)
+    vmtraceStepIndex = vmtraceStepIndex - 1    
+  }
+  console.log(map, vmtraceStepIndex)
+  return map
 }
 
 SourceLocationTracker.prototype.clearCache = function () {
@@ -52,7 +68,7 @@ function getSourceMap (address, code, contracts) {
   for (let file in contracts) {
     for (let contract in contracts[file]) {
       const bytecode = contracts[file][contract].evm.bytecode
-      const deployedBytecode = contracts[file][contract].evm.deployedBytecode
+      const deployedBytecode = contracts[file][contract].evm.deployedBytecode     
       if (!deployedBytecode) continue
 
       bytes = isCreation ? bytecode.object : deployedBytecode.object
