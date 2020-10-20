@@ -1,4 +1,6 @@
 var yo = require('yo-yo')
+var remixLib = require('@remix-project/remix-lib')
+var EventManager = remixLib.EventManager
 import { Plugin } from '@remixproject/engine'
 var csjs = require('csjs-inject')
 var css = require('../styles/run-tab-styles')
@@ -8,6 +10,8 @@ import * as packageJson from '../../../../package.json'
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var modalDialog = require('../../ui/modaldialog')
 var confirmDialog = require('../../ui/confirmDialog')
+
+var helper = require('../../../lib/helper.js')
 
 const profile = {
   name: 'recorder',
@@ -23,7 +27,8 @@ class RecorderUI extends Plugin {
     this.blockchain = blockchain
     this.recorder = recorder
     this.logCallBack = logCallBack
-    this.config = config    
+    this.config = config
+    this.event = new EventManager()
   }
 
   render () {
@@ -39,12 +44,16 @@ class RecorderUI extends Plugin {
         onclick=${this.triggerRecordButton.bind(this)} title="Save Transactions" aria-hidden="true">
       </i>`
 
-    this.runButton.onclick = this.runScenario.bind(this)
+    this.runButton.onclick = () => {
+      const file = this.config.get('currentFile')
+      if (!file) return modalDialogCustom.alert('A scenario file has to be selected')
+      this.runScenario(file)
+    }
   }
 
  
-  runScenario (file) {
-    file = file || this.config.get('currentFile')
+  runScenario (file) {    
+    if (!file) return modalDialogCustom.alert('Unable to run scenerio, no specified scenario file')
     var continueCb = (error, continueTxExecution, cancelCb) => {
       if (error) {
         var msg = typeof error !== 'string' ? error.message : error
@@ -86,7 +95,7 @@ class RecorderUI extends Plugin {
 
         this.event.trigger('newScenario', [abi, address, contractName])
       })      
-    }).catch((error) => cb(error))    
+    }).catch((error) => modalDialogCustom.alert(error))    
   }
 
   getConfirmationCb (modalDialog, confirmDialog) {
@@ -133,7 +142,7 @@ class RecorderUI extends Plugin {
   }
 
   saveScenario (promptCb, cb) {
-    var txJSON = JSON.stringify(this.getAll(), null, 2)
+    var txJSON = JSON.stringify(this.recorder.getAll(), null, 2)
     var path = this.fileManager.currentPath()
     promptCb(path, input => {
       var fileProvider = this.fileManager.fileProviderOf(path)
