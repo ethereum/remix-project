@@ -33,7 +33,7 @@ function checkDebug (browser: NightwatchBrowser, id: string, debugValue: Nightwa
     }
     const equal = deepequal(debugValue, value)
     if (!equal) {
-      browser.assert.fail('checkDebug on ' + id, 'info about error\n ' + JSON.stringify(debugValue) + '\n ' + JSON.stringify(value), '')
+      browser.assert.fail(JSON.stringify(value), 'info about error\n ' + JSON.stringify(debugValue) + '\n ' + JSON.stringify(value), '')
     }
     done()
   })

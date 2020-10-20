@@ -60,6 +60,10 @@ Ethdebugger.prototype.sourceLocationFromVMTraceIndex = async function (address, 
   return this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, stepIndex, this.solidityProxy.contracts)
 }
 
+Ethdebugger.prototype.getValidSourceLocationFromVMTraceIndex = async function (address, stepIndex) {
+  return this.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, stepIndex, this.solidityProxy.contracts)
+}
+
 Ethdebugger.prototype.sourceLocationFromInstructionIndex = async function (address, instIndex, callback) {
   return this.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, instIndex, this.solidityProxy.contracts)
 }
