@@ -9,7 +9,6 @@ import globalRegistry from '../../../../../apps/remix-ide/src/global/registry'
 import './debugger-ui.css'
 
 export const DebuggerUI = ({ debuggerModule }) => {
-  console.log('debuggerModule: ', debuggerModule)
   const init = remixDebug.init
   const [state, setState] = useState({
     isActive: false,
@@ -21,10 +20,6 @@ export const DebuggerUI = ({ debuggerModule }) => {
     },
     blockNumber: null,
     txNumber: '',
-    ready: {
-      vmDebugger: false,
-      vmDebuggerHead: false
-    },
     debugging: false
   })
 
@@ -217,43 +212,32 @@ const deleteHighlights = async () => {
   await debuggerModule.call('editor', 'discardHighlight')
 }
 
-const vmDebuggerReady = () => {
-  setState(prevState => {
-    return {
-      ...prevState,
-      ready: {
-        ...prevState.ready,
-        vmDebugger: true
-      }
-    }
-  })
+const stepManager = {
+  jumpTo: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpTo.bind(state.debugger.step_manager) : null,
+  stepOverBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverBack.bind(state.debugger.step_manager) : null,
+  stepIntoBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoBack.bind(state.debugger.step_manager) : null,
+  stepIntoForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoForward.bind(state.debugger.step_manager) : null,
+  stepOverForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverForward.bind(state.debugger.step_manager) : null,
+  jumpOut: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpOut.bind(state.debugger.step_manager) : null,
+  jumpPreviousBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpPreviousBreakpoint.bind(state.debugger.step_manager) : null,
+  jumpNextBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpNextBreakpoint.bind(state.debugger.step_manager) : null,
+  jumpToException: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpToException.bind(state.debugger.step_manager) : null,
+  traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
+  registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null,
 }
-
-const vmDebuggerHeadReady = () => {
-  setState(prevState => {
-    return {
-      ...prevState,
-      ready: {
-        ...prevState.ready,
-        vmDebuggerHead: true
-      }
-    }
-  })
-}
-
-if (state.ready.vmDebugger && state.ready.vmDebuggerHead) {
-  state.debugger.vmDebuggerLogic.start()
+const vmDebuggerHead = {
+  registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null
 }
 
   return (
       <div>
         <div className="px-2">
           <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } transactionNumber={ state.txNumber } debugging={ state.debugging } />
-  { state.debugging && <StepManager stepManager={ state.debugger ? state.debugger.step_manager : null } /> }
-  { state.debugging && <VmDebuggerHead vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } ready={vmDebuggerHeadReady} /> }
+  { state.debugging && <StepManager stepManager={ stepManager } /> }
+  { state.debugging && <VmDebuggerHead vmDebuggerHead={ vmDebuggerHead } /> }
         </div>
-  { state.debugging && <div className="statusMessage">{ state.statusMessage }</div> }
-  { state.debugging && <VmDebugger vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } ready={vmDebuggerReady} /> }
+  {/* { state.debugging && <div className="statusMessage">{ state.statusMessage }</div> }
+  { state.debugging && <VmDebugger vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } ready={vmDebuggerReady} /> } */}
       </div>
   )
 }

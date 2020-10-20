@@ -2,20 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Slider from '../slider/slider'
 import ButtonNavigator from '../button-navigator/button-navigator'
 
-export const StepManager = ({ stepManager }) => {
-  const { jumpTo, traceLength, stepOverBack, stepIntoBack, stepIntoForward, stepOverForward, jumpOut, jumpPreviousBreakpoint, jumpNextBreakpoint, jumpToException } = stepManager
-  
-  if (stepManager) {
-    jumpTo.bind(stepManager)
-    stepOverBack.bind(stepManager)
-    stepIntoBack.bind(stepManager)
-    stepIntoForward.bind(stepManager)
-    stepOverForward.bind(stepManager)
-    jumpOut.bind(stepManager)
-    jumpPreviousBreakpoint.bind(stepManager)
-    jumpNextBreakpoint.bind(stepManager)
-    jumpToException.bind(stepManager)
-  }
+export const StepManager = ({ stepManager, stepManager: { jumpTo, traceLength, stepIntoBack, stepIntoForward, stepOverBack, stepOverForward, jumpOut, jumpNextBreakpoint, jumpPreviousBreakpoint, jumpToException, registerEvent } }) => {
   const [state, setState] = useState({
     sliderValue: 0,
     revertWarning: '',
@@ -24,11 +11,9 @@ export const StepManager = ({ stepManager }) => {
   })
 
   useEffect(() => {
-    if (stepManager) {
-      stepManager.event.register('revertWarning', setRevertWarning)
-      stepManager.event.register('stepChanged', updateStep)
-    }
-  }, [stepManager])
+    registerEvent && registerEvent('revertWarning', setRevertWarning)
+    registerEvent && registerEvent('stepChanged', updateStep)
+  }, [registerEvent])
 
   const setRevertWarning = (warning) => {
     setState(prevState => {

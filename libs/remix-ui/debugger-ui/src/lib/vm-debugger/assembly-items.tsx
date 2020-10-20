@@ -3,7 +3,8 @@ import './styles/assembly-items.css'
 
 export const AssemblyItems = ({ codeView, index }) => {
     const [state, setState] = useState({
-        selectedItem: 0
+        selectedItem: 0,
+        opCode: []
     })
     const refs = useRef({})
     const asmItemsRef = useRef(null)
@@ -11,6 +12,10 @@ export const AssemblyItems = ({ codeView, index }) => {
     useEffect(() => {
         indexChanged(index)
     }, [index])
+
+    useEffect(() => {
+        opCodeChanged(codeView)
+    }, [codeView])
 
     const indexChanged = (index) => {
         if (index < 0) return
@@ -39,15 +44,24 @@ export const AssemblyItems = ({ codeView, index }) => {
         }
     }
 
+    const opCodeChanged = (codeView) => {
+        setState(prevState => {
+            return {
+                ...prevState,
+                opCode: codeView
+            }
+        })
+    }
+
     return (
         <div className="border rounded px-1 mt-1 bg-light">
             <div className='dropdownpanel'>
                 <div className='dropdowncontent'>
                     <div className="pl-2 my-1 small instructions" id='asmitems' ref={asmItemsRef}>
-                        { 
-                            codeView.map((item, i) => {
-                                return <div className="px-1" key={i} ref={ref => refs.current[i] = ref}><span>{item}</span></div>
-                            })
+                        {
+                            // state.opCode.map((item, i) => {
+                            //     return <div className="px-1" key={i} ref={ref => refs.current[i] = ref}><span>{item}</span></div>
+                            // })
                         }
                     </div>
                 </div>

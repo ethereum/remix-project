@@ -1,7 +1,13 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import DropdownPanel from './dropdown-panel'
 
-export const FunctionPanel = ({ calldata }) => {
+export const FunctionPanel = ({ data }) => {
+    const [calldata, setCalldata] = useState(null)
+
+    useEffect(() => {
+        setCalldata(data)
+    }, [data])
+
     return (
         <div id="FunctionPanel">
             <DropdownPanel dropdownName='Function Stack' calldata={calldata || {}} />
