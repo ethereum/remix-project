@@ -109,7 +109,9 @@ class DebuggerUI {
               let content
               try {
                 content = await this.debuggerModule.call('fileManager', 'getFile', path, source.contents)
-              } catch (e) {}
+              } catch (e) {
+                console.log('unable to fetch generated sources, the file probably doesn\'t exist yet', e)
+              }
               if (content !== source.contents) {
                 await this.debuggerModule.call('fileManager', 'setFile', path, source.contents)
               }
