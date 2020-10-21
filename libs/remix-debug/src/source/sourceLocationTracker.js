@@ -9,7 +9,10 @@ const util = remixLib.util
 /**
  * Process the source code location for the current executing bytecode
  */
-function SourceLocationTracker (_codeManager) {
+function SourceLocationTracker (_codeManager, { debugWithGeneratedSources }) {
+  this.opts = {
+    debugWithGeneratedSources: debugWithGeneratedSources || false
+  }
   this.codeManager = _codeManager
   this.event = new EventManager()
   this.sourceMappingDecoder = new SourceMappingDecoder()
@@ -25,7 +28,7 @@ function SourceLocationTracker (_codeManager) {
  */
 SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = async function (address, index, contracts) {
   const sourceMap = await extractSourceMap(this, this.codeManager, address, contracts)
-  return this.sourceMappingDecoder.atIndex(index, sourceMap)
+  return this.sourceMappingDecoder.atIndex(index, sourceMap.map)
 }
 
 /**
@@ -38,7 +41,19 @@ SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = async fu
 SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = async function (address, vmtraceStepIndex, contracts) {  
   const sourceMap = await extractSourceMap(this, this.codeManager, address, contracts)
   const index = this.codeManager.getInstructionIndex(address, vmtraceStepIndex)
-  return this.sourceMappingDecoder.atIndex(index, sourceMap)
+  return this.sourceMappingDecoder.atIndex(index, sourceMap.map)
+}
+
+/**
+ * Returns the generated sources from a specific @arg address
+ *
+ * @param {String} address - contract address from which has generated sources
+ * @param {Object} generatedSources - Object containing the sourceid, ast and the source code.
+ */
+SourceLocationTracker.prototype.getGeneratedSourcesFromAddress = function (address) {
+  if (!this.opts.debugWithGeneratedSources) return null
+  if (this.sourceMapByAddress[address]) return this.sourceMapByAddress[address].generatedSources
+  return null
 }
 
 /**
@@ -73,7 +88,9 @@ function getSourceMap (address, code, contracts) {
 
       bytes = isCreation ? bytecode.object : deployedBytecode.object
       if (util.compareByteCode(code, '0x' + bytes)) {
-        return isCreation ? bytecode.sourceMap : deployedBytecode.sourceMap
+        const generatedSources = isCreation ? bytecode.generatedSources : deployedBytecode.generatedSources
+        const map = isCreation ? bytecode.sourceMap : deployedBytecode.sourceMap
+        return { generatedSources, map }
       }
     }
   }
