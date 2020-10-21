@@ -8,7 +8,6 @@ export const SolidityLocals = ({ data, message }) => {
     const [calldata, setCalldata] = useState(null)
 
     useEffect(() => {
-        console.log('data: ', data)
         if (!deepequal(calldata, data)) setCalldata(data)
     }, [data])
 

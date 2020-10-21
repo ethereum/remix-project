@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { DropdownPanelProps, ExtractData, ExtractFunc } from '../../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
@@ -57,7 +57,8 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         },
         copiableContent: '',
         updating: false,
-        data: null
+        data: null,
+        expandPath: []
     })
 
     useEffect(() => {
@@ -79,6 +80,14 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                 toggleDropdown: !prevState.toggleDropdown
             }
         })
+    }
+
+    const handleExpand = (keyPath) => {
+        if (!state.expandPath.includes(keyPath)) {
+            state.expandPath.push(keyPath)
+        } else {
+            state.expandPath = state.expandPath.filter(path => !path.startsWith(keyPath))
+        }
     }
 
     const message = (message) => {
@@ -148,14 +157,14 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
 
         if (children && children.length > 0 ) {
             return (
-                <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) }>
+                <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) } handleClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)}>
                     <TreeView id={`treeView${key}`} key={keyPath}>
                         { children }
                     </TreeView>
                 </TreeViewItem>
             )
         } else {
-            return <TreeViewItem id={key.toString()} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) } />
+            return <TreeViewItem id={key.toString()} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) } handleClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)} />
         }
     }
 
