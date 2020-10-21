@@ -42,7 +42,6 @@ module.exports = {
     .waitForElementVisible('*[data-id="slider"]')
     .click('*[data-id="slider"]')
     .setValue('*[data-id="slider"]', '50')
-    .pause(2000)
     .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
   },
@@ -130,6 +129,25 @@ module.exports = {
     .goToVMTraceStep(717)
     .pause(5000)
     .checkVariableDebug('soliditylocals', localVariable_step717_ABIEncoder) // all locals should be initiaed
+  },
+
+  'Should load more solidity locals array': function (browser: NightwatchBrowser) {
+    browser.addFile('locals.sol', sources[3]['browser/locals.sol'])
+    .clickLaunchIcon('udapp')
+    .createContract('')
+    .clickInstance(3)
+    .clickFunction('t - transact (not payable)')
+    .pause(2000)
+    .debugTransaction(6)
+    .waitForElementVisible('*[data-id="slider"]')
+    .click('*[data-id="slider"]')
+    .setValue('*[data-id="slider"]', '5000')
+    .waitForElementPresent('*[data-id="treeViewTogglearray"]')
+    .click('*[data-id="treeViewTogglearray"]')
+    .waitForElementPresent('*[data-id="treeViewLoadMore"]')
+    .click('*[data-id="treeViewLoadMore"]')
+    .assert.containsText('*[data-id="solidityLocals"]', '149: 0 uint256')
+    .notContainsText('*[data-id="solidityLocals"]', '150: 0 uint256')
     .end()
   },
 
@@ -157,7 +175,7 @@ const sources = [
 
         constructor() public {
 
-        }    
+        }
 
         function createProject(string memory name, uint goal) public {
             Project storage project = projects[projects.length];
@@ -166,7 +184,7 @@ const sources = [
             project.state = State.Started;
             project.goal = goal;
         }
-    }
+    } 
         `
     }
   },
@@ -194,6 +212,21 @@ const sources = [
     }
 }
     `}
+  },
+  {
+    'browser/locals.sol': {
+      content: `
+    pragma solidity ^0.6.0;
+    contract test {
+      function t () public {
+          uint[] memory array = new uint[](150);
+          for (uint k = 0; k < 150; k++) {
+              array[k] = k;
+          }
+      }
+    }
+        `
+    }
   }
 ]
 
