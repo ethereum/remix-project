@@ -105,7 +105,7 @@ class DebuggerUI {
           // check in generated sources
           for (const source of generatedSources) {
             if (source.id === rawLocation.file) {
-              path = `.debugger/generated-sources/${source.name}`
+              path = `browser/.debugger/generated-sources/${source.name}`
               let content
               try {
                 content = await this.debuggerModule.call('fileManager', 'getFile', path, source.contents)
