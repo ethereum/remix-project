@@ -116,8 +116,8 @@ export const VmDebuggerHead = ({ vmDebuggerHead: { registerEvent } }) => {
       <div className="d-flex flex-column">
         <div className="w-100">
           <FunctionPanel data={functionPanel} />
-          {/* <SolidityLocals calldata={solidityLocals.calldata} message={solidityLocals.message} />
-          <SolidityState calldata={solidityState.calldata} message={solidityState.message} /> */}
+          <SolidityLocals data={solidityLocals.calldata} message={solidityLocals.message} />
+          {/* <SolidityState calldata={solidityState.calldata} message={solidityState.message} /> */}
         </div>
         {/* <div className="w-100"><CodeListView asm={asm} /></div>
         <div className="w-100"><StepDetail stepDetail={stepDetail} /></div> */}

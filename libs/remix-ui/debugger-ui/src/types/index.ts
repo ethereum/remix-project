@@ -24,4 +24,4 @@ export interface DropdownPanelProps {
     formatSelfFunc?: FormatSelfFunc
 }
 
-export type FormatSelfFunc = (key: string, data: ExtractData) => JSX.Element
+export type FormatSelfFunc = (key: string | number, data: ExtractData) => JSX.Element

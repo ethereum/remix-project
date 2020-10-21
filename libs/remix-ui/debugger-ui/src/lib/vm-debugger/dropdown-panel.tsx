@@ -1,15 +1,45 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
-import useExtractData from '../../hooks/extract-data'
-import { DropdownPanelProps, ExtractData } from '../../types'
+import { DropdownPanelProps, ExtractData, ExtractFunc } from '../../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-
-
+import { default as deepequal } from 'deep-equal'
 import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
     const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc } = props
-    const data = useExtractData(calldata, extractFunc)
+    const extractDataDefault: ExtractFunc = (item, parent?) => {
+        const ret: ExtractData = {}
+
+        if (item instanceof Array) {
+            ret.children = item.map((item, index) => {
+            return {key: index, value: item}
+            })
+            ret.self = 'Array'
+            ret.isNode = true
+            ret.isLeaf = false
+        } else if (item instanceof Object) {
+            ret.children = Object.keys(item).map((key) => {
+                return {key: key, value: item[key]}
+            })
+            ret.self = 'Object'
+            ret.isNode = true
+            ret.isLeaf = false
+        } else {
+            ret.self = item
+            ret.children = null
+            ret.isNode = false
+            ret.isLeaf = true
+        }
+        return ret
+    }
+    const formatSelfDefault = (key: string | number, data: ExtractData) => {
+        return (
+            <div className="d-flex mb-1 flex-row label_item">
+                <label className="small font-weight-bold pr-1 label_key">{key}:</label> 
+                <label className="m-0 label_value">{data.self}</label>
+            </div>
+        )
+    }
     const [state, setState] = useState({
         header: '',
         toggleDropdown: false,
@@ -26,11 +56,12 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
             display: 'none'
         },
         copiableContent: '',
-        updating: false
+        updating: false,
+        data: null
     })
 
     useEffect(() => {
-        update(calldata)
+        if (!deepequal(state.data, calldata)) update(calldata)
     }, [calldata])
 
     useEffect(() => {
@@ -101,39 +132,30 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                     display: isEmpty ? 'block' : 'none'
                 },
                 updating: false,
-                toggleDropdown: !isEmpty
+                toggleDropdown: !isEmpty,
+                data: calldata
             }
         })
     }
 
-    const formatSelfDefault = (key: string, data: ExtractData) => {
-        return (
-            <div className="d-flex mb-1 flex-row label_item">
-                <label className="small font-weight-bold pr-1 label_key">{key}:</label> 
-                <label className="m-0 label_value">{data.self}</label>
-            </div>
-        )
-    }
-
-    const renderData = (item: ExtractData, key: string) => {
-        const children = (item.children || []).map((child, index) => {
-            const childKey = key + '/' + child.key
-
+    const renderData = (item: ExtractData, parent, key: string | number, keyPath: string) => {
+        const data = extractFunc ? extractFunc(item, parent) : extractDataDefault(item, parent)
+        const children = (data.children || []).map((child) => {
             return (
-                <TreeViewItem id={childKey} key={index} label={ formatSelfFunc ? formatSelfFunc(childKey, item) : formatSelfDefault(childKey, item)}>
-                    { renderData(child.value, childKey) }
-                </TreeViewItem>
+                renderData(child.value, data, child.key, keyPath + '/' + child.key)
             )
         })
 
         if (children && children.length > 0 ) {
             return (
-                <TreeView id={key}>
-                    { children }
-                </TreeView>
+                <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) }>
+                    <TreeView id={`treeView${key}`} key={keyPath}>
+                        { children }
+                    </TreeView>
+                </TreeViewItem>
             )
         } else {
-            return <TreeViewItem id={key} label={ formatSelfFunc ? formatSelfFunc(key, item) : formatSelfDefault(key, item) } />
+            return <TreeViewItem id={key.toString()} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) } />
         }
     }
 
@@ -149,13 +171,14 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
             <div className='dropdownpanel' style={{ display: state.toggleDropdown ? 'block' : 'none' }}>
                 <i className="refresh fas fa-sync" style={{ display: state.updating ? 'inline-block' : 'none' }} aria-hidden="true"></i>
                 <div className='dropdowncontent' style={{ display: state.dropdownContent.display }}>
-                    { data.map((item, index) => {
-                        return (
-                            <TreeView id={item.key} key={index}>
-                                { renderData(item.data, item.key) }
-                            </TreeView>
-                        )
-                    }) }
+                    {
+                        state.data &&
+                        <TreeView id="treeView">
+                            {
+                                Object.keys(state.data).map((innerkey) => renderData(state.data[innerkey], state.data, innerkey, innerkey))
+                            }
+                        </TreeView>
+                    }
                 </div>
                 <div className='message' style={{ display: state.message.display }}>{ state.message.innerText }</div>
             </div>
