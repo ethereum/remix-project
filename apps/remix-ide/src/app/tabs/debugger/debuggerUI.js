@@ -229,7 +229,7 @@ class DebuggerUI {
     this.stepManagerView = yo`<div class="px-2"></div>`
 
     var view = yo`
-      <div>        
+      <div>
         <div class="px-2">
           <div class="mt-3">
             <p class="mt-2 ${css.debuggerLabel}">Debugger Configuration</p>
