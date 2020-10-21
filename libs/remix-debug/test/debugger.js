@@ -1,4 +1,5 @@
 var tape = require('tape')
+var deepequal = require('deep-equal')
 var remixLib = require('@remix-project/remix-lib')
 var compilerInput = require('./helpers/compilerHelper').compilerInput
 var SourceMappingDecoder = require('../src/source/sourceMappingDecoder')
@@ -263,7 +264,8 @@ function testDebugging (debugManager) {
       const location = await debugManager.sourceLocationFromVMTraceIndex(address, 330)
       debugManager.decodeLocalsAt(330, location, (error, decodedlocals) => {
         if (error) return t.end(error)
-        t.equal(JSON.stringify(decodedlocals), JSON.stringify(tested))
+        
+        t.ok(deepequal(decodedlocals, tested), `locals does not match. expected: ${JSON.stringify(tested)} - current: ${decodedlocals}`)
       })
     } catch (error) {
       return t.end(error)

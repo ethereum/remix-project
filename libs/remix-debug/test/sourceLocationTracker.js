@@ -23,7 +23,7 @@ tape('SourceLocationTracker', function (t) {
 
     traceManager.resolveTrace(tx).then(async () => {     
 
-      const sourceLocationTracker = new SourceLocationTracker(codeManager)
+      const sourceLocationTracker = new SourceLocationTracker(codeManager, {debugWithGeneratedSources: false})
       
       try {
         const map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
@@ -54,7 +54,7 @@ tape('SourceLocationTracker', function (t) {
 
     traceManager.resolveTrace(tx).then(async () => {     
 
-      const sourceLocationTracker = new SourceLocationTracker(codeManager)
+      const sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: false })
       
       try {
         let map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
