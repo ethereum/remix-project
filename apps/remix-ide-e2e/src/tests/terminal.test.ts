@@ -80,7 +80,7 @@ const asyncAwait = `
             resolve("Promise Resolved")
         }, 5000)
     })
-  }
+  } 
 
   var run = async () => {
     console.log('Waiting Promise')

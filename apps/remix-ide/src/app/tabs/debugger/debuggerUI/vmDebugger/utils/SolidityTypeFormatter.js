@@ -34,6 +34,8 @@ function extractData (item, parent, key) {
     })
     ret.isArray = true
     ret.self = parent.isArray ? '' : item.type
+    ret.cursor = item.cursor
+    ret.hasNext = item.hasNext
   } else if (item.type.indexOf('struct') === 0) {
     ret.children = Object.keys((item.value || {})).map(function (key) {
       return {key: key, value: item.value[key]}
