@@ -1,9 +1,16 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import DropdownPanel from './dropdown-panel'
 import { extractData } from '../../utils/solidityTypeFormatter'
 import { ExtractData } from '../../types'
+import { default as deepequal } from 'deep-equal'
 
-export const SolidityLocals = ({ calldata, message }) => {
+export const SolidityLocals = ({ data, message }) => {
+    const [calldata, setCalldata] = useState(null)
+
+    useEffect(() => {
+        console.log('data: ', data)
+        if (!deepequal(calldata, data)) setCalldata(data)
+    }, [data])
 
     const formatSelf = (key: string, data: ExtractData) => {
         let color = 'var(--primary)'
@@ -20,6 +27,9 @@ export const SolidityLocals = ({ calldata, message }) => {
             color = 'var(--teal)'
         } else if (data.self == 0x0) { // eslint-disable-line
             color = 'var(--gray)'
+        }
+        if (data.type === 'string') {
+            data.self = JSON.stringify(data.self)
         }
         return (
             <label className='mb-0' style={{ color: data.isProperty ? 'var(--info)' : '', whiteSpace: 'pre-wrap' }}>

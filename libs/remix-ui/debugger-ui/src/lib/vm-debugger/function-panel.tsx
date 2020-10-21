@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import DropdownPanel from './dropdown-panel'
+import { default as deepequal } from 'deep-equal'
 
 export const FunctionPanel = ({ data }) => {
     const [calldata, setCalldata] = useState(null)
 
     useEffect(() => {
-        setCalldata(data)
+        if (!deepequal(calldata, data)) setCalldata(data)
     }, [data])
 
     return (
