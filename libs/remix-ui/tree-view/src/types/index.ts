@@ -6,5 +6,7 @@ export interface TreeViewProps {
 export interface TreeViewItemProps {
     children?: React.ReactNode,
     id: string,
-    label: string | number | React.ReactNode
+    label: string | number | React.ReactNode,
+    expand?: boolean,
+    handleClick?: (e) => void
 }
