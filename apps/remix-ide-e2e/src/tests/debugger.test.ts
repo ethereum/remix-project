@@ -147,7 +147,27 @@ module.exports = {
     .waitForElementPresent('*[data-id="treeViewLoadMore"]')
     .click('*[data-id="treeViewLoadMore"]')
     .assert.containsText('*[data-id="solidityLocals"]', '149: 0 uint256')
-    .notContainsText('*[data-id="solidityLocals"]', '150: 0 uint256')
+    .notContainsText('*[data-id="solidityLocals"]', '150: 0 uint256')    
+  },
+
+  'Should debug using generated sources': function (browser: NightwatchBrowser) {
+    browser
+    .clickLaunchIcon('solidity')
+    .setSolidityCompilerVersion('soljson-v0.7.2+commit.51b20bc0.js')
+    .clickLaunchIcon('udapp')    
+    .testContracts('withGeneratedSources.sol', sources[4]['browser/withGeneratedSources.sol'], ['A'])
+    .createContract('')
+    .clickInstance(4)
+    .clickFunction('f - transact (not payable)', {types: 'uint256[] ', values: '[]'})
+    .debugTransaction(8)
+    .pause(2000)
+    .click('*[data-id="debuggerTransactionStartButton"]') // stop debugging
+    .click('*[data-id="debugGeneratedSourcesLabel"]') // select debug with generated sources
+    .click('*[data-id="debuggerTransactionStartButton"]') // start debugging
+    .pause(2000)
+    .getEditorValue((content) => {
+      browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32) { revert(0, 0) }') != -1, 'current displayed content is not a generated source')
+    })
     .end()
   },
 
@@ -226,6 +246,17 @@ const sources = [
       }
     }
         `
+    }
+  },
+  {
+    'browser/withGeneratedSources.sol': {
+      content: `
+      // SPDX-License-Identifier: GPL-3.0
+      pragma experimental ABIEncoderV2; 
+      contract A { 
+        function f(uint[] memory) public returns (uint256) { } 
+      }
+      `
     }
   }
 ]
