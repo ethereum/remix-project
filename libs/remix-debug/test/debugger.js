@@ -8,7 +8,7 @@ var vmCall = require('./vmCall')
 var Debugger = require('../src/Ethdebugger')
 var compiler = require('solc')
 
-var ballot = `pragma solidity >=0.4.22 <0.7.0;
+var ballot = `pragma solidity >=0.4.22 <0.8.0;
 
 /** 
  * @title Ballot
@@ -40,7 +40,7 @@ contract Ballot {
      * @dev Create a new ballot to choose one of 'proposalNames'.
      * @param proposalNames names of proposals
      */
-    constructor(bytes32[] memory proposalNames) public {
+    constructor(bytes32[] memory proposalNames) {
         uint p = 45;
         chairperson = msg.sender;
         address addressLocal = msg.sender; // copy of state variable
