@@ -5,14 +5,14 @@ import sauce from './sauce'
 
 const sources = [
   {'browser/basic.sol': { content:
-    `pragma solidity >=0.2.0 <0.7.0;
+    `pragma solidity >=0.2.0 <0.8.0;
 
     /**
      * @title Basic contract
      */
     contract Basic {
         uint someVar;
-        constructor() public {}
+        constructor() {}
     }`
   }}
 ]
