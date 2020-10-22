@@ -179,7 +179,7 @@ const remixIdeThemes = {
     secondary: '#555',
     success: '#77B300',
     info: '#93C',
-    warning: '#FF8800',
-    danger: '#CC0000'
+    warning: '#F80',
+    danger: '#C00'
   }
 }
