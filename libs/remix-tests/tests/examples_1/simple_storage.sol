@@ -1,8 +1,8 @@
-pragma solidity >= 0.5.0 < 0.7.0;
+pragma solidity >= 0.5.0 < 0.8.0;
 contract SimpleStorage {
   uint public storedData;
 
-  constructor() public {
+  constructor() {
     storedData = 100;
   }
 

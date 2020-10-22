@@ -178,7 +178,7 @@ const sources = [
   {
     'browser/blah.sol': {
       content: `
-    pragma solidity >=0.4.22 <0.6.0;
+    pragma solidity >=0.4.22 <0.8.0;
 
     contract Kickstarter {
 
@@ -193,7 +193,7 @@ const sources = [
 
         Project[] public projects;    
 
-        constructor() public {
+        constructor() {
 
         }
 
@@ -236,7 +236,7 @@ const sources = [
   {
     'browser/locals.sol': {
       content: `
-    pragma solidity ^0.6.0;
+    pragma solidity ^0.7.0;
     contract test {
       function t () public {
           uint[] memory array = new uint[](150);
