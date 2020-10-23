@@ -58,13 +58,16 @@ class TxListener {
         from: from,
         to: to,
         input: data,
-        hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
+        // hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
+        hash: 'call' + (from || '') + to + "123",
         isCall: true,
-        returnValue: this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result),
+        // returnValue: this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result),
+        // returnValue: ethJSUtil.toBuffer(txResult),
+        returnValue: txResult,
         envMode: this.executionContext.getProvider()
       }
 
-      addExecutionCosts(txResult, call)
+      // addExecutionCosts(txResult, call) // not needed in a call
       this._resolveTx(call, call, (error, resolvedData) => {
         if (!error) {
           this.event.trigger('newCall', [call])

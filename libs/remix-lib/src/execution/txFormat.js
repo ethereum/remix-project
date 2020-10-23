@@ -359,6 +359,15 @@ module.exports = {
   },
 
   decodeResponse: function (response, fnabi) {
+    console.trace("decode Response")
+    console.dir(response)
+    console.dir(fnabi)
+
+    // TODO: temporary, need to take into account multiple outputs
+    if (fnabi.constant) {
+      return [response]
+    }
+
     // Only decode if there supposed to be fields
     if (fnabi.outputs && fnabi.outputs.length > 0) {
       try {
