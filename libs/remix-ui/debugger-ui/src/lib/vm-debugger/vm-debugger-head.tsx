@@ -119,8 +119,8 @@ export const VmDebuggerHead = ({ vmDebuggerHead: { registerEvent } }) => {
           <SolidityLocals data={solidityLocals.calldata} message={solidityLocals.message} />
           {/* <SolidityState calldata={solidityState.calldata} message={solidityState.message} /> */}
         </div>
-        {/* <div className="w-100"><CodeListView asm={asm} /></div>
-        <div className="w-100"><StepDetail stepDetail={stepDetail} /></div> */}
+        <div className="w-100"><CodeListView registerEvent={registerEvent} /></div>
+        {/* <div className="w-100"><StepDetail stepDetail={stepDetail} /></div> */}
       </div>
     </div>
   )

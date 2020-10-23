@@ -1,5 +1,6 @@
 {
   "rules": {
+    "no-case-declarations": "off",
     "array-callback-return": "warn",
     "dot-location": ["warn", "property"],
     "eqeqeq": ["warn", "smart"],
