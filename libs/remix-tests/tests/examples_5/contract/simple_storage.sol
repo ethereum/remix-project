@@ -1,4 +1,4 @@
-pragma solidity >= 0.5.0 < 0.8.0;
+pragma solidity >= 0.5.0 < 0.7.0;
 
 import "../../examples_4/SafeMath.sol";
 import "../lib/EvenOdd.sol";
@@ -7,7 +7,7 @@ contract SimpleStorage is EvenOdd{
   using SafeMath for uint256;
   uint public storedData;
 
-  constructor() {
+  constructor() public {
     storedData = 100;
   }
 
