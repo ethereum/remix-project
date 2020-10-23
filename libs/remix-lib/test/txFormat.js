@@ -376,7 +376,7 @@ const nestedArrayContract = `contract nestedArrayContractTest {
   }
 }`
 
-const deploySimpleLib = `pragma solidity >= 0.5.0 < 0.8.0;
+const deploySimpleLib = `pragma solidity >= 0.5.0 < 0.7.0;
 
 library lib1 {
     function getEmpty () public {
@@ -397,14 +397,14 @@ contract testContractLinkLibrary {
  }
  }`
 
-const encodeFunctionCall = `pragma solidity >= 0.5.0 < 0.8.0;
+const encodeFunctionCall = `pragma solidity >= 0.5.0 < 0.7.0;
 
 contract testContractLinkLibrary {
     function get (uint _p, string memory _o) public {
     }
  }`
 
-const fallbackAndReceiveFunction = `pragma solidity >= 0.5.0 < 0.8.0;
+const fallbackAndReceiveFunction = `pragma solidity >= 0.5.0 < 0.7.0;
 
 contract fallbackAndReceiveFunctionContract {
     function get (uint _p, string memory _o) public {
