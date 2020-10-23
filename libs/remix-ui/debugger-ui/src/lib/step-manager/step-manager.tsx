@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Slider from '../slider/slider'
 import ButtonNavigator from '../button-navigator/button-navigator'
 
-export const StepManager = ({ stepManager, stepManager: { jumpTo, traceLength, stepIntoBack, stepIntoForward, stepOverBack, stepOverForward, jumpOut, jumpNextBreakpoint, jumpPreviousBreakpoint, jumpToException, registerEvent } }) => {
+export const StepManager = ({ stepManager: { jumpTo, traceLength, stepIntoBack, stepIntoForward, stepOverBack, stepOverForward, jumpOut, jumpNextBreakpoint, jumpPreviousBreakpoint, jumpToException, registerEvent } }) => {
   const [state, setState] = useState({
     sliderValue: 0,
     revertWarning: '',

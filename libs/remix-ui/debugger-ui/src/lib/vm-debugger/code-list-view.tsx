@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import AssemblyItems from './assembly-items'
 
-export const CodeListView = ({ asm }) => {
+export const CodeListView = ({ registerEvent }) => {
   const [state, setState] = useState({
     code: [],
     address: '',
     itemSelected: null,
     index: null
   })
-
-  useEffect(() => {
-    const { code, address, index } = asm
-
-    changed(code, address, index)
-  }, [asm])
 
   const indexChanged = (index) => {
     if(index < 0) return
@@ -41,7 +35,7 @@ export const CodeListView = ({ asm }) => {
 
   return (
     <div id='asmcodes'>
-      <AssemblyItems codeView={state.code || []} index={state.index} />
+      <AssemblyItems registerEvent={registerEvent} />
     </div>
   )
 }
