@@ -26,6 +26,18 @@ class VMProvider {
     this.accounts = {}
   }
 
+  callMethod (address, abi, methodName, outputCb) {
+    return new Promise((resolve, reject) => {
+      // TODO: should use selected account
+      this.getAccounts((error, accounts) => {
+        console.dir("accounts")
+        console.dir(accounts)
+        const contract = new this.web3.eth.Contract(abi, address, { from: accounts[0] })
+        contract.methods[methodName].apply(contract.methods[methodName], []).call().then(resolve).catch(reject)
+      })
+    })
+  }
+
   // TODO: is still here because of the plugin API
   // can be removed later when we update the API
   createVMAccount (newAccount) {

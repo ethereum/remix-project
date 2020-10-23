@@ -19,6 +19,8 @@ module.exports = {
 }
 
 const continueCb = function (error, continueTxExecution, cancelCb) {
+  console.dir("=== continueCb")
+  console.dir(arguments)
   if (error) {
     const msg = typeof error !== 'string' ? error.message : error
     modalDialog(
@@ -42,10 +44,14 @@ const continueCb = function (error, continueTxExecution, cancelCb) {
 }
 
 const promptCb = function (okCb, cancelCb) {
+  console.dir("=== promptCb")
+  console.dir(arguments)
   modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
 }
 
 const confirmationCb = function (network, tx, gasEstimation, continueTxExecution, cancelCb) {
+  console.dir("=== confirmationCb")
+  console.dir(arguments)
   let self = this
   if (network.name !== 'Main') {
     return continueTxExecution(null)

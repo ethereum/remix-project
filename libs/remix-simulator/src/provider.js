@@ -39,7 +39,7 @@ class Provider {
   }
 
   sendAsync (payload, callback) {
-    log.info('payload method is ', payload.method)
+    // log.info('payload method is ', payload.method)
 
     const method = this.methods[payload.method]
     if (this.options.logDetails) {

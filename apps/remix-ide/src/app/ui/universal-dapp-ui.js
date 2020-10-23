@@ -231,18 +231,36 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
 }
 
 UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, inputsValues, outputOverride) {
+  console.dir("======")
+  console.dir("runTransaction")
+  console.dir(arguments)
   const functionName = args.funABI.type === 'function' ? args.funABI.name : `(${args.funABI.type})`
   const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${args.contractName}.${functionName}`
 
   const callbacksInContext = txCallBacks.getCallBacksWithContext(this, this.blockchain)
 
   const outputCb = (returnValue) => {
+    console.dir("== outputCb")
+    console.dir(returnValue)
     if (outputOverride) {
+      // if (lookupOnly) {
+        // outputOverride.innerHTML = ''
+        // return outputOverride.appendChild(returnValue)
+      // }
       const decoded = decodeResponseToTreeView(returnValue, args.funABI)
       outputOverride.innerHTML = ''
       outputOverride.appendChild(decoded)
     }
   }
+
+  // TODO: if lookupOnly then call contract
+  if (lookupOnly) {
+    const {address, contractABI} = args
+    const methodName = args.funABI.name
+    this.logCallback("call to " + args.contractName + "." + methodName)
+    return this.blockchain.callMethod(address, contractABI, methodName, outputCb)
+  }
+
   const params = args.funABI.type !== 'fallback' ? inputsValues : ''
   this.blockchain.runOrCallContractMethod(
     args.contractName,
@@ -253,7 +271,14 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
     params,
     lookupOnly,
     logMsg,
-    this.logCallback,
+    // this.logCallback,
+    (a,b,c) => {
+      console.dir("=== logCallback")
+      console.dir(a)
+      console.dir(b)
+      console.dir(c)
+      return this.logCallback(a,b,c)
+    },
     outputCb,
     callbacksInContext.confirmationCb.bind(callbacksInContext),
     callbacksInContext.continueCb.bind(callbacksInContext),
