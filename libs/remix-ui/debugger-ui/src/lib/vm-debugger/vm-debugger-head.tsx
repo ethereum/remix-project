@@ -5,7 +5,7 @@ import StepDetail from './step-detail'
 import SolidityState from './solidity-state'
 import SolidityLocals from './solidity-locals'
 
-export const VmDebuggerHead = ({ vmDebuggerHead: { registerEvent } }) => {
+export const VmDebuggerHead = ({ vmDebugger: { registerEvent } }) => {
   const [asm, setAsm] = useState({
     code: null,
     address: null,
@@ -117,10 +117,10 @@ export const VmDebuggerHead = ({ vmDebuggerHead: { registerEvent } }) => {
         <div className="w-100">
           <FunctionPanel data={functionPanel} />
           <SolidityLocals data={solidityLocals.calldata} message={solidityLocals.message} />
-          {/* <SolidityState calldata={solidityState.calldata} message={solidityState.message} /> */}
+          <SolidityState calldata={solidityState.calldata} message={solidityState.message} />
         </div>
         <div className="w-100"><CodeListView registerEvent={registerEvent} /></div>
-        {/* <div className="w-100"><StepDetail stepDetail={stepDetail} /></div> */}
+        <div className="w-100"><StepDetail stepDetail={stepDetail} /></div>
       </div>
     </div>
   )
