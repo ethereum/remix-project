@@ -76,9 +76,11 @@ class TxListener {
       this.executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
         if (error) return console.log(error)
 
-        addExecutionCosts(txResult, tx)
+        // addExecutionCosts(txResult, tx)
+        tx.transactionCost = txResult.cumulativeGasUsed
         tx.envMode = this.executionContext.getProvider()
-        tx.status = txResult.result.status // 0x0 or 0x1
+        // tx.status = txResult.result.status // 0x0 or 0x1
+        tx.status = txResult.status // 0x0 or 0x1
         this._resolve([tx], () => {
         })
       })
