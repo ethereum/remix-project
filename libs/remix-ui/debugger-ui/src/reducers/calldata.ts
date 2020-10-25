@@ -21,7 +21,7 @@ export const reducer = (state = initialState, action: Action) => {
       };
     case 'FETCH_CALLDATA_SUCCESS':
       return {
-          opCodes: action.payload,
+          calldata: action.payload,
           isRequesting: false,
           isSuccessful: true,
           hasError: null

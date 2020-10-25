@@ -225,7 +225,7 @@ const stepManager = {
   traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
   registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null,
 }
-const vmDebuggerHead = {
+const vmDebugger = {
   registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null
 }
 
@@ -234,10 +234,10 @@ const vmDebuggerHead = {
         <div className="px-2">
           <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } transactionNumber={ state.txNumber } debugging={ state.debugging } />
   { state.debugging && <StepManager stepManager={ stepManager } /> }
-  { state.debugging && <VmDebuggerHead vmDebuggerHead={ vmDebuggerHead } /> }
+  { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
         </div>
-  {/* { state.debugging && <div className="statusMessage">{ state.statusMessage }</div> }
-  { state.debugging && <VmDebugger vmDebuggerLogic={ state.debugger ? state.debugger.vmDebuggerLogic : null } ready={vmDebuggerReady} /> } */}
+  { state.debugging && <div className="statusMessage">{ state.statusMessage }</div> }
+  { state.debugging && <VmDebugger vmDebugger={ vmDebugger } /> }
       </div>
   )
 }
