@@ -287,7 +287,9 @@ class Blockchain {
     // self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
 
     // return this.getCurrentProvider().callMethod(address, abi, methodName, (returnValue) => {
-    const returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, params.split(","))
+    const inputs = (params === "" ? [] : params.split(","))
+
+    const returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, inputs)
 
     console.dir("====================")
     console.dir([null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, address])
@@ -301,7 +303,7 @@ class Blockchain {
     // })
   }
 
-  async callMethod (address, abi, methodName, outputCb) {
+  async callMethod (address, abi, methodName, params, outputCb) {
     const self = this
 
     let gasLimit = 3000000
@@ -347,11 +349,12 @@ class Blockchain {
     // const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
     const payLoad = {}
     let timestamp = tx.timestamp || Date.now()
+    const inputs = (params === "" ? [] : params.split(","))
 
     // self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
 
     // return this.getCurrentProvider().callMethod(address, abi, methodName, (returnValue) => {
-    const returnValue = await this.getCurrentProvider().callMethod(address, abi, methodName)
+    const returnValue = await this.getCurrentProvider().callMethod(address, abi, methodName, inputs)
 
     console.dir("====================")
     console.dir([null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, address])
