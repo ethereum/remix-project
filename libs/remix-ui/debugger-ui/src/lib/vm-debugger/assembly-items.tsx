@@ -5,7 +5,7 @@ import './styles/assembly-items.css'
 export const AssemblyItems = ({ registerEvent }) => {
     const [assemblyItems, dispatch] = useReducer(reducer, initialState)
     const [selectedItem, setSelectedItem] = useState(0)
-    const [scrollHeight, setScrollHeight] = useState(null)
+    // const [index, setIndex] = useState(assemblyItems.opCodes.index)
     const refs = useRef({})
     const asmItemsRef = useRef(null)
 
@@ -16,16 +16,10 @@ export const AssemblyItems = ({ registerEvent }) => {
     }, [])
 
     useEffect(() => {
-        indexChanged(assemblyItems.index)
-    }, [assemblyItems.index])
-
-    useEffect(() => {
-        if (asmItemsRef.current.scrollTop > scrollHeight) {
-            console.log('scrolling up')
-        } else if (asmItemsRef.current.scrollTop < scrollHeight) {
-            console.log('scrolling down')
+        if (selectedItem !== assemblyItems.index) {
+            indexChanged(assemblyItems.index)
         }
-    }, [asmItemsRef.current.scrollTop])
+    }, [assemblyItems.index])
 
     const indexChanged = (index: number) => {
         if (index < 0) return
@@ -47,18 +41,21 @@ export const AssemblyItems = ({ registerEvent }) => {
             setSelectedItem(index)
         }
     }
+    
+    // const handleScroll = () => {
+    //     const codeView = asmItemsRef.current
 
-    const onScroll = () => {
-
-    }
-
-
+    //     if (codeView.scrollTop === 0) {
+    //         dispatch({ type: 'FETCH_PREV_OPCODES', payload: {} })
+    //         codeView.scrollTop = 0
+    //     }
+    // }
 
     return (
         <div className="border rounded px-1 mt-1 bg-light">
             <div className='dropdownpanel'>
                 <div className='dropdowncontent'>
-                    <div className="pl-2 my-1 small instructions" id='asmitems' ref={asmItemsRef} onScroll={() => setScrollHeight(asmItemsRef.current.scrollTop)}>
+                    <div className="pl-2 my-1 small instructions" id='asmitems' ref={asmItemsRef}>
                         {
                             assemblyItems.display.map((item, i) => {
                                 return <div className="px-1" key={i} ref={ref => refs.current[i] = ref}><span>{item}</span></div>
