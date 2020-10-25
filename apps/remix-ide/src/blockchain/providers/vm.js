@@ -25,6 +25,19 @@ class VMProvider {
     this.accounts = {}
   }
 
+  sendMethod (address, abi, methodName, params, outputCb) {
+    return new Promise((resolve, reject) => {
+      // TODO: should use selected account
+      this.getAccounts((error, accounts) => {
+        console.dir("accounts")
+        console.dir(accounts)
+        console.dir(params)
+        const contract = new this.web3.eth.Contract(abi, address, { from: accounts[0] })
+        contract.methods[methodName].apply(contract.methods[methodName], params).send().then(resolve).catch(reject)
+      })
+    })
+  }
+
   callMethod (address, abi, methodName, outputCb) {
     return new Promise((resolve, reject) => {
       // TODO: should use selected account

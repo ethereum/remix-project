@@ -259,30 +259,38 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
     const methodName = args.funABI.name
     this.logCallback("call to " + args.contractName + "." + methodName)
     return this.blockchain.callMethod(address, contractABI, methodName, outputCb)
+  } else {
+    const {address, contractABI} = args
+    const methodName = args.funABI.name
+    const params = args.funABI.type !== 'fallback' ? inputsValues : ''
+    this.logCallback("transact to " + args.contractName + "." + methodName)
+    return this.blockchain.sendMethod(address, contractABI, methodName, params, outputCb)
   }
 
-  const params = args.funABI.type !== 'fallback' ? inputsValues : ''
-  this.blockchain.runOrCallContractMethod(
-    args.contractName,
-    args.contractAbi,
-    args.funABI,
-    inputsValues,
-    args.address,
-    params,
-    lookupOnly,
-    logMsg,
-    // this.logCallback,
-    (a,b,c) => {
-      console.dir("=== logCallback")
-      console.dir(a)
-      console.dir(b)
-      console.dir(c)
-      return this.logCallback(a,b,c)
-    },
-    outputCb,
-    callbacksInContext.confirmationCb.bind(callbacksInContext),
-    callbacksInContext.continueCb.bind(callbacksInContext),
-    callbacksInContext.promptCb.bind(callbacksInContext))
+  // debugger
+
+  // const params = args.funABI.type !== 'fallback' ? inputsValues : ''
+  // this.blockchain.runOrCallContractMethod(
+  //   args.contractName,
+  //   args.contractAbi,
+  //   args.funABI,
+  //   inputsValues,
+  //   args.address,
+  //   params,
+  //   lookupOnly,
+  //   logMsg,
+  //   // this.logCallback,
+  //   (a,b,c) => {
+  //     console.dir("=== logCallback")
+  //     console.dir(a)
+  //     console.dir(b)
+  //     console.dir(c)
+  //     return this.logCallback(a,b,c)
+  //   },
+  //   outputCb,
+  //   callbacksInContext.confirmationCb.bind(callbacksInContext),
+  //   callbacksInContext.continueCb.bind(callbacksInContext),
+  //   callbacksInContext.promptCb.bind(callbacksInContext))
 }
 
 module.exports = UniversalDAppUI

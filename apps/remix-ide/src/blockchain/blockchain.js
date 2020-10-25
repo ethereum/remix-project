@@ -237,6 +237,70 @@ class Blockchain {
     return txlistener
   }
 
+  async sendMethod (address, abi, methodName, params, outputCb) {
+    const self = this
+
+    let gasLimit = 3000000
+    if (self.transactionContextAPI.getGasLimit) {
+      gasLimit = self.transactionContextAPI.getGasLimit()
+    }
+    let value = 0
+
+    // if (args.value) {
+    //   value = args.value
+    // } else if (args.useCall || !self.transactionContextAPI.getValue) {
+    //   value = 0
+    // } else {
+    //   value = self.transactionContextAPI.getValue()
+    // }
+
+    let from
+
+    // if (args.from) {
+      // from = args.from
+    // } else if (self.transactionContextAPI.getAddress) {
+    if (self.transactionContextAPI.getAddress) {
+      from = self.transactionContextAPI.getAddress()
+    } else {
+      try {
+        let accounts = await self.getAccounts()
+
+        let address = accounts[0]
+
+        if (!address) throw new Error('No accounts available')
+        if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
+          throw new Error('Invalid account selected')
+        }
+        from = address
+      } catch (err) {
+        from = 0
+      }
+    }
+
+    // const tx = { to: address, data: args.data.dataHex, useCall: true, from, value, gasLimit, timestamp: args.data.timestamp }
+    // const tx = { to: address, data: args.data.dataHex, useCall: true, from, value, gasLimit, timestamp: Date.now() }
+    const tx = { to: address, data: "0x123", useCall: false, from, value, gasLimit, timestamp: Date.now() }
+    // const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
+    const payLoad = {}
+    let timestamp = tx.timestamp || Date.now()
+
+    // self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
+
+    // return this.getCurrentProvider().callMethod(address, abi, methodName, (returnValue) => {
+    const returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, params.split(","))
+
+    console.dir("====================")
+    console.dir([null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, address])
+    console.dir("====================")
+
+    // self.event.trigger('callExecuted', [null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, rawAddress])
+    console.dir('triggering transactionExecuted')
+    self.event.trigger('transactionExecuted', [null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, address])
+    // this.event.trigger('callExecuted', [])
+    outputCb(returnValue)
+    // })
+  }
+
   async callMethod (address, abi, methodName, outputCb) {
     const self = this
 
