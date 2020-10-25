@@ -363,9 +363,41 @@ module.exports = {
     console.dir(response)
     console.dir(fnabi)
 
+    // debugger
+
     // TODO: temporary, need to take into account multiple outputs
     if (fnabi.constant) {
-      return [response]
+      let outputs = response.split(",")
+
+      if (fnabi.outputs && fnabi.outputs.length > 0) {
+        try {
+          let i
+
+          const outputTypes = []
+          for (i = 0; i < fnabi.outputs.length; i++) {
+            const type = fnabi.outputs[i].type
+            outputTypes.push(type.indexOf('tuple') === 0 ? helper.makeFullTypeDefinition(fnabi.outputs[i]) : type)
+          }
+
+          if (!response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
+          // decode data
+          // const abiCoder = new ethers.utils.AbiCoder()
+          // const decodedObj = abiCoder.decode(outputTypes, response)
+
+          const json = {}
+          for (i = 0; i < outputTypes.length; i++) {
+            const name = fnabi.outputs[i].name
+            json[i] = outputTypes[i] + ': ' + (name ? name + ' ' + outputs[i] : outputs[i])
+          }
+
+          return json
+        } catch (e) {
+          return { error: 'Failed to decode output: ' + e }
+        }
+      }
+      return {}
+
+      // return [response]
     }
 
     // Only decode if there supposed to be fields
