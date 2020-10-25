@@ -257,8 +257,9 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
   if (lookupOnly) {
     const {address, contractABI} = args
     const methodName = args.funABI.name
+    const params = args.funABI.type !== 'fallback' ? inputsValues : ''
     this.logCallback("call to " + args.contractName + "." + methodName)
-    return this.blockchain.callMethod(address, contractABI, methodName, outputCb)
+    return this.blockchain.callMethod(address, contractABI, methodName, params, outputCb)
   } else {
     const {address, contractABI} = args
     const methodName = args.funABI.name
