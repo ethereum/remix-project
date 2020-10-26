@@ -69,7 +69,6 @@ SourceLocationTracker.prototype.getValidSourceLocationFromVMTraceIndex = async f
     map = await this.getSourceLocationFromVMTraceIndex(address, vmtraceStepIndex, contracts)
     vmtraceStepIndex = vmtraceStepIndex - 1    
   }
-  console.log(map, vmtraceStepIndex)
   return map
 }
 
