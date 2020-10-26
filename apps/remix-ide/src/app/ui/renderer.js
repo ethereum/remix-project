@@ -125,12 +125,4 @@ Renderer.prototype.error = function (message, container, opt) {
   })
 }
 
-function parseRegExError (err) {
-  return {
-    errFile: err[1],
-    errLine: parseInt(err[2], 10) - 1,
-    errCol: err[3] ? parseInt(err[3], 10) : 0
-  }
-}
-
 module.exports = Renderer
