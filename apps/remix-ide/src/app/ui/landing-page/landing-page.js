@@ -164,7 +164,6 @@ export class LandingPage extends ViewPlugin {
     `
     this.adjustMediaPanel()
     globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
-      console.log("theme is ", theme.quality)
       this.onThemeChanged(theme.quality)
     })
   }
@@ -177,6 +176,7 @@ export class LandingPage extends ViewPlugin {
   hideMediaPanel (e) {
     const mediaPanelsTitle = document.getElementById('remixIDEMediaPanelsTitle')
     const mediaPanels = document.getElementById('remixIDEMediaPanels')
+    if (!mediaPanelsTitle || !mediaPanels) return
     if (!mediaPanelsTitle.contains(e.target) && !mediaPanels.contains(e.target)) {
       this.mediumPanel.classList.remove('d-block')
       this.mediumPanel.classList.add('d-none')
@@ -186,7 +186,6 @@ export class LandingPage extends ViewPlugin {
   }
 
   onThemeChanged (themeQuality) {
-    console.log("themes in listener is", themeQuality)
     let twitterFrame = yo`
       <div class="px-2 ${css.media}">
         <a class="twitter-timeline"
@@ -204,7 +203,6 @@ export class LandingPage extends ViewPlugin {
   }
 
   showMediaPanel (e) {
-    console.log(e)
     if (e.target.id === 'remixIDEHomeTwitterbtn') {
       this.mediumPanel.classList.remove('d-block')
       this.mediumPanel.classList.add('d-none')
