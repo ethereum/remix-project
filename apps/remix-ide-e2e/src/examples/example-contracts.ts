@@ -1,6 +1,6 @@
 'use strict'
 
-const storage = `pragma solidity >=0.4.22 <0.8.0;
+const storage = `pragma solidity >=0.7.0 <0.8.0;
 
 /**
  * @title Storage
@@ -27,7 +27,7 @@ contract Storage {
     }
 }`
 
-const owner = `pragma solidity >=0.4.22 <0.8.0;
+const owner = `pragma solidity >=0.7.0 <0.8.0;
 
 /**
  * @title Owner
@@ -77,7 +77,7 @@ contract Owner {
     }
 }`
 
-const ballot = `pragma solidity >=0.4.22 <0.8.0;
+const ballot = `pragma solidity >=0.7.0 <0.8.0;
 
 /** 
  * @title Ballot
@@ -215,7 +215,7 @@ contract Ballot {
 }
 `
 
-const ballot_0_4_11 = `pragma solidity >=0.4.10 <0.8.0;
+const ballot_0_4_11 = `pragma solidity >=0.4.10 <0.7.0;
 contract Ballot {
 
     struct Voter {
