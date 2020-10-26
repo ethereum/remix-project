@@ -16,7 +16,7 @@ module.exports = {
   'Should launch debugger': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['browser/blah.sol'])
     .clickLaunchIcon('udapp')
-    .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 35000)
+    .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 45000)
     .click('*[title="Deploy - transact (not payable)"]')
     .debugTransaction(0)
     .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER')
@@ -43,7 +43,7 @@ module.exports = {
     .click('*[data-id="slider"]')
     .setValue('*[data-id="slider"]', '50')
     .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
-    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n91')
   },
 
   'Should step back and forward transaction': function (browser: NightwatchBrowser) {
@@ -51,12 +51,12 @@ module.exports = {
     .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
     .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
     .pause(2000)
-    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n91')
-    .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n91')
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n90')
+    .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n90')
     .click('*[data-id="buttonNavigatorIntoForward"]')
     .pause(2000)
-    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
-    .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n92')
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n91')
+    .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n91')
   },
 
   'Should jump through breakpoints': function (browser: NightwatchBrowser) {
@@ -78,8 +78,10 @@ module.exports = {
     browser
     .clickLaunchIcon('solidity')
     .setSolidityCompilerVersion('soljson-v0.6.12+commit.27d51765.js')
-    .clickLaunchIcon('udapp')    
+    .pause(2000)
+    .clickLaunchIcon('udapp')
     .testContracts('externalImport.sol', sources[1]['browser/externalImport.sol'], ['ERC20'])
+    .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 35000)  
     .selectContract('ERC20')
     .createContract('"tokenName", "symbol"')
     .debugTransaction(2)
@@ -135,6 +137,7 @@ module.exports = {
     browser.addFile('locals.sol', sources[3]['browser/locals.sol'])
     .clickLaunchIcon('udapp')
     .createContract('')
+    .pause(2000)
     .clickInstance(3)
     .clickFunction('t - transact (not payable)')
     .pause(2000)
@@ -154,7 +157,8 @@ module.exports = {
     browser
     .clickLaunchIcon('solidity')
     .setSolidityCompilerVersion('soljson-v0.7.2+commit.51b20bc0.js')
-    .clickLaunchIcon('udapp')    
+    .clickLaunchIcon('udapp')
+    .pause(2000)
     .testContracts('withGeneratedSources.sol', sources[4]['browser/withGeneratedSources.sol'], ['A'])
     .createContract('')
     .clickInstance(4)
