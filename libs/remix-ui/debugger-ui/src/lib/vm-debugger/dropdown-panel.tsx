@@ -7,7 +7,7 @@ import { initialState, reducer } from '../../reducers/calldata'
 import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
-    const [calldata, dispatch] = useReducer(reducer, initialState)
+    const [data, dispatch] = useReducer(reducer, initialState)
     const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc } = props
     const extractDataDefault: ExtractFunc = (item, parent?) => {
         const ret: ExtractData = {}
