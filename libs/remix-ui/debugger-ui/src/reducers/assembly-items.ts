@@ -34,8 +34,8 @@ export const reducer = (state = initialState, action: Action) => {
       const opCodes = action.payload.address === state.opCodes.address ? { 
         ...state.opCodes, index: action.payload.index 
       } : deepEqual(action.payload.code, state.opCodes.code) ? state.opCodes : action.payload
-      const top = opCodes.index - 10 > 0 ? opCodes.index - 10 : 0
-      const bottom = opCodes.index + 10 < opCodes.code.length ? opCodes.index + 10 : opCodes.code.length
+      const top = opCodes.index - 3 > 0 ? opCodes.index - 3 : 0
+      const bottom = opCodes.index + 4 < opCodes.code.length ? opCodes.index + 4 : opCodes.code.length
       const display =  opCodes.code.slice(top, bottom)
 
       return {
