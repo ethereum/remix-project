@@ -19,6 +19,30 @@ class InjectedProvider {
   resetEnvironment () {
   }
 
+  sendMethod (address, abi, methodName, params, outputCb) {
+    return new Promise((resolve, reject) => {
+      // TODO: should use selected account
+      this.getAccounts((error, accounts) => {
+        const contract = new this.executionContext.web3().eth.Contract(abi, address, { from: accounts[0] })
+        contract.methods[methodName].apply(contract.methods[methodName], params).send().then(resolve).catch(reject)
+      })
+    })
+  }
+
+  callMethod (address, abi, methodName, params, outputCb) {
+    return new Promise((resolve, reject) => {
+      // TODO: should use selected account
+      this.getAccounts((error, accounts) => {
+        const contract = new this.executionContext.web3().eth.Contract(abi, address, { from: accounts[0] })
+        contract.methods[methodName].apply(contract.methods[methodName], params).call().then(resolve).catch(reject)
+      })
+    })
+  }
+
+  async getTransaction(transactionHash) {
+    return this.executionContext.web3().eth.getTransaction(transactionHash)
+  }
+
   getBalanceInEther (address, cb) {
     address = stripHexPrefix(address)
     this.executionContext.web3().eth.getBalance(address, (err, res) => {
