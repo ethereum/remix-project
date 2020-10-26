@@ -178,8 +178,8 @@ const remixIdeThemes = {
     primary: '#2A9FD6',
     secondary: '#555',
     success: '#77B300',
-    info: '#9933CC',
-    warning: '#FF8800',
-    danger: '#CC0000'
+    info: '#93C',
+    warning: '#F80',
+    danger: '#C00'
   }
 }
