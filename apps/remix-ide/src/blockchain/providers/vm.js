@@ -30,9 +30,6 @@ class VMProvider {
     return new Promise((resolve, reject) => {
       // TODO: should use selected account
       this.getAccounts((error, accounts) => {
-        console.dir("accounts")
-        console.dir(accounts)
-        console.dir(params)
         const contract = new this.web3.eth.Contract(abi, address, { from: accounts[0] })
         contract.methods[methodName].apply(contract.methods[methodName], params).send().then(resolve).catch(reject)
       })
@@ -43,8 +40,6 @@ class VMProvider {
     return new Promise((resolve, reject) => {
       // TODO: should use selected account
       this.getAccounts((error, accounts) => {
-        console.dir("accounts")
-        console.dir(accounts)
         const contract = new this.web3.eth.Contract(abi, address, { from: accounts[0] })
         contract.methods[methodName].apply(contract.methods[methodName], params).call().then(resolve).catch(reject)
       })
