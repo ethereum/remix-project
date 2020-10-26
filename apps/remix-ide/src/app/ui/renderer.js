@@ -81,18 +81,24 @@ Renderer.prototype.error = function (message, container, opt) {
     text = message.innerText
   }
 
-  var errLocation = text.match(/^([^:]*):([0-9]*):(([0-9]*):)? /)
-  if ((!opt.errFile || !opt.errCol || !opt.errLine) && errLocation) {
-    errLocation = parseRegExError(errLocation)
-    opt.errFile = errLocation.errFile
-    opt.errLine = errLocation.errLine
-    opt.errCol = errLocation.errCol
-  }
+  // ^ e.g:
+  // browser/gm.sol: Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.6.12
+  // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0/contracts/introspection/IERC1820Registry.sol:3:1: ParserError: Source file requires different compiler version (current compiler is 0.7.4+commit.3f05b770.Emscripten.clang) - note that nightly builds are considered to be strictly less than the released version
 
-  if (!opt.noAnnotations && errLocation) {
-    this._error(errLocation.errFile, {
-      row: errLocation.errLine,
-      column: errLocation.errCol,
+  // extract line / column
+  let position =  text.match(/^(.*?):([0-9]*?):([0-9]*?)?/)
+  opt.errLine = position ? parseInt(position[2]) - 1 : -1
+  opt.errCol = position ? parseInt(position[3]) : -1
+    
+
+  // extract file
+  position = text.match(/^(https:.*?|http:.*?|.*?):/)
+  opt.errFile = position ? position[1] : ''
+  
+  if (!opt.noAnnotations && opt.errFile) {
+    this._error(opt.errFile, {
+      row: opt.errLine,
+      column: opt.errCol,
       text: text,
       type: opt.type
     })
@@ -107,7 +113,7 @@ Renderer.prototype.error = function (message, container, opt) {
   $error.click((ev) => {
     if (opt.click) {
       opt.click(message)
-    } else if (opt.errFile && opt.errLine && opt.errCol) {
+    } else if (opt.errFile !== undefined && opt.errLine !== undefined && opt.errCol !== undefined) {
       this._errorClick(opt.errFile, opt.errLine, opt.errCol)
     }
   })
@@ -117,14 +123,6 @@ Renderer.prototype.error = function (message, container, opt) {
     $error.remove()
     return false
   })
-}
-
-function parseRegExError (err) {
-  return {
-    errFile: err[1],
-    errLine: parseInt(err[2], 10) - 1,
-    errCol: err[4] ? parseInt(err[4], 10) : 0
-  }
 }
 
 module.exports = Renderer
