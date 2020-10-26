@@ -16,7 +16,7 @@ module.exports = {
   'Should launch debugger': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['browser/blah.sol'])
     .clickLaunchIcon('udapp')
-    .waitForElementPresent('*[title="Deploy - transact (not payable)"]')
+    .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 35000)
     .click('*[title="Deploy - transact (not payable)"]')
     .debugTransaction(0)
     .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER')
@@ -178,7 +178,7 @@ const sources = [
   {
     'browser/blah.sol': {
       content: `
-    pragma solidity >=0.4.22 <0.7.0;
+    pragma solidity >=0.7.0 <0.8.0;
 
     contract Kickstarter {
 
@@ -193,7 +193,7 @@ const sources = [
 
         Project[] public projects;    
 
-        constructor() public {
+        constructor() {
 
         }
 
