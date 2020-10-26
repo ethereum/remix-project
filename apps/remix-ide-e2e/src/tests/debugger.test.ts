@@ -16,7 +16,7 @@ module.exports = {
   'Should launch debugger': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['browser/blah.sol'])
     .clickLaunchIcon('udapp')
-    .waitForElementPresent('*[title="Deploy - transact (not payable)"]')
+    .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 45000)
     .click('*[title="Deploy - transact (not payable)"]')
     .debugTransaction(0)
     .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER')
@@ -78,8 +78,10 @@ module.exports = {
     browser
     .clickLaunchIcon('solidity')
     .setSolidityCompilerVersion('soljson-v0.6.12+commit.27d51765.js')
-    .clickLaunchIcon('udapp')    
+    .pause(2000)
+    .clickLaunchIcon('udapp')
     .testContracts('externalImport.sol', sources[1]['browser/externalImport.sol'], ['ERC20'])
+    .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 35000)  
     .selectContract('ERC20')
     .createContract('"tokenName", "symbol"')
     .debugTransaction(2)
@@ -134,7 +136,9 @@ module.exports = {
   'Should load more solidity locals array': function (browser: NightwatchBrowser) {
     browser.addFile('locals.sol', sources[3]['browser/locals.sol'])
     .clickLaunchIcon('udapp')
+    .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 40000) 
     .createContract('')
+    .pause(2000)
     .clickInstance(3)
     .clickFunction('t - transact (not payable)')
     .pause(2000)
@@ -154,7 +158,8 @@ module.exports = {
     browser
     .clickLaunchIcon('solidity')
     .setSolidityCompilerVersion('soljson-v0.7.2+commit.51b20bc0.js')
-    .clickLaunchIcon('udapp')    
+    .clickLaunchIcon('udapp')
+    .pause(2000)
     .testContracts('withGeneratedSources.sol', sources[4]['browser/withGeneratedSources.sol'], ['A'])
     .createContract('')
     .clickInstance(4)
@@ -178,7 +183,7 @@ const sources = [
   {
     'browser/blah.sol': {
       content: `
-    pragma solidity >=0.4.22 <0.6.0;
+    pragma solidity >=0.7.0 <0.8.0;
 
     contract Kickstarter {
 
@@ -193,7 +198,7 @@ const sources = [
 
         Project[] public projects;    
 
-        constructor() public {
+        constructor() {
 
         }
 
@@ -236,7 +241,7 @@ const sources = [
   {
     'browser/locals.sol': {
       content: `
-    pragma solidity ^0.6.0;
+    pragma solidity ^0.7.0;
     contract test {
       function t () public {
           uint[] memory array = new uint[](150);

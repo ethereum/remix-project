@@ -1,6 +1,6 @@
 'use strict'
 
-const storage = `pragma solidity >=0.4.22 <0.7.0;
+const storage = `pragma solidity >=0.7.0 <0.8.0;
 
 /**
  * @title Storage
@@ -27,7 +27,7 @@ contract Storage {
     }
 }`
 
-const owner = `pragma solidity >=0.4.22 <0.7.0;
+const owner = `pragma solidity >=0.7.0 <0.8.0;
 
 /**
  * @title Owner
@@ -54,7 +54,7 @@ contract Owner {
     /**
      * @dev Set contract deployer as owner
      */
-    constructor() public {
+    constructor() {
         owner = msg.sender; // 'msg.sender' is sender of current call, contract deployer for a constructor
         emit OwnerSet(address(0), owner);
     }
@@ -77,7 +77,7 @@ contract Owner {
     }
 }`
 
-const ballot = `pragma solidity >=0.4.22 <0.7.0;
+const ballot = `pragma solidity >=0.7.0 <0.8.0;
 
 /** 
  * @title Ballot
@@ -109,7 +109,7 @@ contract Ballot {
      * @dev Create a new ballot to choose one of 'proposalNames'.
      * @param proposalNames names of proposals
      */
-    constructor(bytes32[] memory proposalNames) public {
+    constructor(bytes32[] memory proposalNames) {
         chairperson = msg.sender;
         voters[chairperson].weight = 1;
 
@@ -215,7 +215,7 @@ contract Ballot {
 }
 `
 
-var ballotTest = `pragma solidity >=0.4.22 <0.7.0;
+var ballotTest = `pragma solidity >=0.7.0 <0.8.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 import "../3_Ballot.sol";
 
