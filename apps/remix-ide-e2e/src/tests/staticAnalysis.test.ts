@@ -6,12 +6,12 @@ import sauce from './sauce'
 const sources = [
   {
     'browser/Untitled.sol': {content: `
-pragma solidity >=0.4.22 <0.7.0;
+pragma solidity >=0.6.0 <0.8.0;
 contract test1 { address test = tx.origin; }
 contract test2 {}
 contract TooMuchGas {
   uint x;
-  function() external { 
+  fallback() external { 
       x++;
     uint test;
     uint test1;
@@ -36,6 +36,7 @@ function runTests (browser: NightwatchBrowser) {
   browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
+    .pause(10000)
     .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TooMuchGas', 'test1', 'test2'])
     .clickLaunchIcon('solidityStaticAnalysis')
     .click('#staticanalysisView button')
