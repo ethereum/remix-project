@@ -51,6 +51,10 @@ class VMProvider {
     })
   }
 
+  async getTransaction(transactionHash) {
+    return this.web3.eth.getTransaction(transactionHash)
+  }
+
   // TODO: is still here because of the plugin API
   // can be removed later when we update the API
   createVMAccount (newAccount) {

@@ -233,6 +233,9 @@ class Blockchain {
     return txlistener
   }
 
+  // TODO: use https://web3js.readthedocs.io/en/v1.3.0/web3-eth.html?highlight=getTransaction#gettransaction
+  // to get inputs and other params
+
   async sendMethod (address, abi, methodName, params, outputCb) {
     const self = this
 
@@ -287,16 +290,11 @@ class Blockchain {
 
     const returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, inputs)
 
-    console.dir("====================")
-    console.dir([null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, address])
-    console.dir("====================")
+    const receipt = await this.getCurrentProvider().getTransaction(returnValue.transactionHash)
 
-    // self.event.trigger('callExecuted', [null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, rawAddress])
     console.dir('triggering transactionExecuted')
-    self.event.trigger('transactionExecuted', [null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, address])
-    // this.event.trigger('callExecuted', [])
+    self.event.trigger('transactionExecuted', [null, receipt.from, receipt.to, receipt.input, tx.useCall, returnValue, timestamp, payLoad, address])
     outputCb(returnValue)
-    // })
   }
 
   async callMethod (address, abi, methodName, params, outputCb) {
