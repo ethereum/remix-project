@@ -87,8 +87,8 @@ Renderer.prototype.error = function (message, container, opt) {
 
   // extract line / column
   let position =  text.match(/^(.*?):([0-9]*?):([0-9]*?)?/)
-  opt.errLine = position ? position[2] : -1
-  opt.errCol = position ? position[3] : -1
+  opt.errLine = position ? parseInt(position[2]) - 1 : -1
+  opt.errCol = position ? parseInt(position[3]) : -1
     
 
   // extract file
