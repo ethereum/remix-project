@@ -44,12 +44,12 @@ module.exports = {
     .addFile('Greet.sol', sources[0]['browser/Greet.sol'])
     .clickLaunchIcon('udapp')
     .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
-    .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
+    .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]', 45000)
     .click('*[data-id="Deploy - transact (not payable)"]')
     .pause(5000)
-    .testFunction('0xc39ee005c1e1368c84f02e458de4b41dbb966631a8714d15ef8362dada249ede', {
+    .testFunction('0x82f6c88a909b49d6cc003fb302a6e0184c3f08e942b62e1c95dec326d4c6020b', {
       status: 'true Transaction mined and execution succeed',
-      'transaction hash': '0xc39ee005c1e1368c84f02e458de4b41dbb966631a8714d15ef8362dada249ede'
+      'transaction hash': '0x82f6c88a909b49d6cc003fb302a6e0184c3f08e942b62e1c95dec326d4c6020b'
     })
   },
 
@@ -191,7 +191,7 @@ const sources = [
     'browser/Greet.sol': {
       content:
       `
-      pragma solidity ^0.6.0;
+      pragma solidity ^0.7.0;
       contract helloWorld {
           string public message;
           
