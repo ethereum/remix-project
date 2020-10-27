@@ -5,7 +5,6 @@ import './styles/assembly-items.css'
 export const AssemblyItems = ({ registerEvent }) => {
     const [assemblyItems, dispatch] = useReducer(reducer, initialState)
     const [selectedItem, setSelectedItem] = useState(0)
-    // const [index, setIndex] = useState(assemblyItems.opCodes.index)
     const refs = useRef({})
     const asmItemsRef = useRef(null)
 
@@ -41,15 +40,6 @@ export const AssemblyItems = ({ registerEvent }) => {
             setSelectedItem(index)
         }
     }
-    
-    // const handleScroll = () => {
-    //     const codeView = asmItemsRef.current
-
-    //     if (codeView.scrollTop === 0) {
-    //         dispatch({ type: 'FETCH_PREV_OPCODES', payload: {} })
-    //         codeView.scrollTop = 0
-    //     }
-    // }
 
     return (
         <div className="border rounded px-1 mt-1 bg-light">
