@@ -131,10 +131,14 @@ module.exports = {
     .goToVMTraceStep(717)
     .pause(5000)
     .checkVariableDebug('soliditylocals', localVariable_step717_ABIEncoder) // all locals should be initiaed
+    .clickLaunchIcon('udapp')
+    .clickInstance(2)
   },
 
   'Should load more solidity locals array': function (browser: NightwatchBrowser) {
-    browser.addFile('locals.sol', sources[3]['browser/locals.sol'])
+    browser
+    .clickLaunchIcon('solidity')
+    .testContracts('locals.sol', sources[3]['browser/locals.sol'], ['testLocals'])
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 40000) 
     .createContract('')
@@ -241,15 +245,15 @@ const sources = [
   {
     'browser/locals.sol': {
       content: `
-    pragma solidity ^0.7.0;
-    contract test {
-      function t () public {
-          uint[] memory array = new uint[](150);
-          for (uint k = 0; k < 150; k++) {
-              array[k] = k;
-          }
+      pragma solidity ^0.7.0;
+      contract testLocals {
+        function t () public {
+            uint[] memory array = new uint[](150);
+            for (uint k = 0; k < 150; k++) {
+                array[k] = k;
+            }
+        }
       }
-    }
         `
     }
   },
