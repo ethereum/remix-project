@@ -75,14 +75,31 @@ export const DebuggerUI = ({ debuggerModule }) => {
       })
     })
 
-    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation) => {
+    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources) => {
       const contracts = await fetchContractAndCompile(
         currentReceipt.contractAddress || currentReceipt.to,
         currentReceipt)
 
       if (contracts) {
-        const path = contracts.getSourceName(rawLocation.file)
-
+        let path = contracts.getSourceName(rawLocation.file)
+        if (!path) {
+          // check in generated sources
+          for (const source of generatedSources) {
+            if (source.id === rawLocation.file) {
+              path = `browser/.debugger/generated-sources/${source.name}`
+              let content
+              try {
+                content = await debuggerModule.call('fileManager', 'getFile', path, source.contents)
+              } catch (e) {
+                console.log('unable to fetch generated sources, the file probably doesn\'t exist yet', e)
+              }
+              if (content !== source.contents) {
+                await debuggerModule.call('fileManager', 'setFile', path, source.contents)
+              }
+              break
+            }
+          }
+        }
         if (path) {
           await debuggerModule.call('editor', 'discardHighlight')
           await debuggerModule.call('editor', 'highlight', lineColumnPos, path)
