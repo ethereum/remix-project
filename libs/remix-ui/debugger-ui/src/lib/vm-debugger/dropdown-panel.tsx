@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useReducer } from 'react'
+import React, { useState, useEffect } from 'react'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { DropdownPanelProps, ExtractData, ExtractFunc } from '../../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { default as deepequal } from 'deep-equal'
-import { initialState, reducer } from '../../reducers/calldata'
 import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
-    const [data, dispatch] = useReducer(reducer, initialState)
     const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc } = props
     const extractDataDefault: ExtractFunc = (item, parent?) => {
         const ret: ExtractData = {}
