@@ -1,3 +1,16 @@
 .statusMessage {
-    margin-left: 15px;
-  }
+  margin-left: 15px;
+}
+.debuggerLabel {
+  margin-bottom: 2px;
+  font-size: 11px;
+  line-height: 12px;
+  text-transform: uppercase;
+}
+.debuggerConfig {
+  display: flex;
+  align-items: center;
+}
+.debuggerConfig label {
+  margin: 0;
+}
