@@ -20,7 +20,10 @@ export const DebuggerUI = ({ debuggerModule }) => {
     },
     blockNumber: null,
     txNumber: '',
-    debugging: false
+    debugging: false,
+    opt: {
+      debugWithGeneratedSources: false
+    }
   })
 
   useEffect(() => {
@@ -155,7 +158,8 @@ export const DebuggerUI = ({ debuggerModule }) => {
           console.error(e)
         }
         return null
-      }
+      },
+      debugWithGeneratedSources: state.opt.debugWithGeneratedSources
     })
     debuggerInstance.debug(blockNumber, txNumber, tx, () => {
       listenToEvents(debuggerInstance, currentReceipt)
@@ -194,7 +198,8 @@ const getTrace = (hash) => {
           console.error(e)
         }
         return null
-      }
+      },
+      debugWithGeneratedSources: false
     })
 
     setState(prevState => {
@@ -232,6 +237,17 @@ const vmDebugger = {
   return (
       <div>
         <div className="px-2">
+          <div className="mt-3">
+            <p className="mt-2 debuggerLabel">Debugger Configuration</p>
+            <div className="mt-2 debuggerConfig custom-control custom-checkbox">
+              <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={(event) => {
+                setState(prevState => {
+                  return { ...prevState, opt: { debugWithGeneratedSources: event.target.checked }}
+                })
+              }} type="checkbox" title="Debug with generated sources" />
+              <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Debug generated sources if available (from Solidity v0.7.2)</label>
+            </div>
+          </div>
           <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } transactionNumber={ state.txNumber } debugging={ state.debugging } />
   { state.debugging && <StepManager stepManager={ stepManager } /> }
   { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
