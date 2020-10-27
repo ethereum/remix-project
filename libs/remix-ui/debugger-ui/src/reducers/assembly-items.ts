@@ -57,20 +57,6 @@ export const reducer = (state = initialState, action: Action) => {
           hasError: action.payload
       };
     }
-    // case 'FETCH_PREV_OPCODES': {
-    //   const top = state.top - 10 > 0 ? state.top - 10 : 0
-    //   const display =  state.opCodes.code.slice(top, state.bottom)
-
-    //   return {
-    //     ...state,
-    //       display,
-    //       index: display.findIndex(code => code === state.opCodes.code[state.opCodes.index]),
-    //       top,
-    //       isRequesting: false,
-    //       isSuccessful: true,
-    //       hasError: null
-    //   };
-    // }
     default:
       throw new Error();
   }
