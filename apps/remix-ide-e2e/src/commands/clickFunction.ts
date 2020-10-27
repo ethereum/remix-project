@@ -14,7 +14,7 @@ class ClickFunction extends EventEmitter {
         done()
       })
     })
-    .click('.instance button[title="' + fnFullName + '"]')
+    .scrollAndClick('.instance button[title="' + fnFullName + '"]')
     .pause(2000)
     .perform(() => {
       this.emit('complete')
