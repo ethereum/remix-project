@@ -123,7 +123,6 @@ class ContextualListener extends Plugin {
   }
 
   _highlightInternal (position, node) {
-    console.log('highlighting______', node)
     if (node.nodeType == 'Block') return
     let lastCompilationResult = this._deps.compilersArtefacts['__last']
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0) {
