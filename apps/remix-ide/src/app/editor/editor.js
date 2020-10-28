@@ -200,6 +200,10 @@ class Editor extends Plugin {
     this.on('sidePanel', 'focusChanged', (name) => this.sourceHighlighters.hideHighlightsExcept(name))
   }
 
+  onDeactivation () {
+    this.off('sidePanel', 'focusChanged')
+  }
+
   highlight (position, filePath, hexColor) {
     const { from } = this.currentRequest
     this.sourceHighlighters.highlight(position, filePath, hexColor, from)
