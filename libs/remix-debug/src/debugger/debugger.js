@@ -18,15 +18,24 @@ function Debugger (options) {
 
   this.debugger = new Ethdebugger({
     web3: options.web3,
-    compilationResult: this.compilationResult
+    debugWithGeneratedSources: options.debugWithGeneratedSources,
+    compilationResult: this.compilationResult,
   })
 
-  this.breakPointManager = new BreakpointManager(this.debugger, async (sourceLocation) => {
+  const {traceManager, callTree, solidityProxy} = this.debugger
+  this.breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy, locationToRowConverter: async (sourceLocation) => {
     const compilationResult = await this.compilationResult()
     if (!compilationResult) return { start: null, end: null }
     return this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationResult.source.sources, compilationResult.data.sources)
-  }, (step) => {
-    this.event.trigger('breakpointStep', [step])
+  }})
+
+  this.breakPointManager.event.register('managersChanged', () => {
+    const {traceManager, callTree, solidityProxy} = this.debugger
+    this.breakPointManager.setManagers({traceManager, callTree, solidityProxy})
+  })
+
+  this.breakPointManager.event.register('breakpointStep', (step) => {
+    this.step_manager.jumpTo(step)
   })
 
   this.debugger.setBreakpointManager(this.breakPointManager)
@@ -37,10 +46,6 @@ function Debugger (options) {
 
   this.debugger.event.register('traceUnloaded', this, () => {
     this.event.trigger('debuggerStatus', [false])
-  })
-
-  this.event.register('breakpointStep', (step) => {
-    this.step_manager.jumpTo(step)
   })
 }
 
@@ -53,10 +58,19 @@ Debugger.prototype.registerAndHighlightCodeItem = async function (index) {
     const compilationResultForAddress = await this.compilationResult(address)
     if (!compilationResultForAddress) return
 
-    this.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts).then((rawLocation) => {
+    this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts).then((rawLocation) => {
       if (compilationResultForAddress && compilationResultForAddress.data) {
-        var lineColumnPos = this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, compilationResultForAddress.source.sources, compilationResultForAddress.data.sources)
-        this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation])
+        const generatedSources = this.debugger.callTree.sourceLocationTracker.getGeneratedSourcesFromAddress(address)
+        const astSources = Object.assign({}, compilationResultForAddress.data.sources)
+        const sources = Object.assign({}, compilationResultForAddress.source.sources)
+        if (generatedSources) {
+          for (const genSource of generatedSources) {
+            astSources[genSource.name] = { id: genSource.id, ast: genSource.ast }
+            sources[genSource.name] = { content: genSource.contents }
+          }
+        }
+        var lineColumnPos = this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
+        this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources])
       } else {
         this.event.trigger('newSourceLocation', [null])
       }
@@ -114,7 +128,7 @@ Debugger.prototype.debugTx = function (tx, loadingCb) {
   this.step_manager = new StepManager(this.debugger, this.debugger.traceManager)
 
   this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
-    this.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts).then((sourceLocation) => {
+    this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts).then((sourceLocation) => {
       this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [sourceLocation])
     })
   })

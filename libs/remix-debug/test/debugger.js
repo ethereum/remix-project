@@ -1,4 +1,5 @@
 var tape = require('tape')
+var deepequal = require('deep-equal')
 var remixLib = require('@remix-project/remix-lib')
 var compilerInput = require('./helpers/compilerHelper').compilerInput
 var SourceMappingDecoder = require('../src/source/sourceMappingDecoder')
@@ -257,13 +258,14 @@ function testDebugging (debugManager) {
 
   tape('traceManager.decodeLocalsAt', async (t) => {
     t.plan(1)
-    const tested = JSON.parse('{"proposalNames":{"value":[{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"}],"length":"0x1","type":"bytes32[]"},"p":{"value":"45","type":"uint256"},"addressLocal":{"value":"0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB","type":"address"},"i":{"value":"2","type":"uint256"},"proposalsLocals":{"value":[{"value":{"name":{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"},"voteCount":{"value":"0","type":"uint256"}},"type":"struct Ballot.Proposal"}],"length":"0x1","type":"struct Ballot.Proposal[]"}}')
+    const tested = JSON.parse('{"proposalNames":{"value":[{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"}],"length":"0x1","type":"bytes32[]","cursor":1,"hasNext":false},"p":{"value":"45","type":"uint256"},"addressLocal":{"value":"0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB","type":"address"},"i":{"value":"2","type":"uint256"},"proposalsLocals":{"value":[{"value":{"name":{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"},"voteCount":{"value":"0","type":"uint256"}},"type":"struct Ballot.Proposal"}],"length":"0x1","type":"struct Ballot.Proposal[]"}}')
     try {
       const address = debugManager.traceManager.getCurrentCalledAddressAt(330)
       const location = await debugManager.sourceLocationFromVMTraceIndex(address, 330)
       debugManager.decodeLocalsAt(330, location, (error, decodedlocals) => {
         if (error) return t.end(error)
-        t.equal(JSON.stringify(decodedlocals), JSON.stringify(tested))
+        
+        t.ok(deepequal(decodedlocals, tested), `locals does not match. expected: ${JSON.stringify(tested)} - current: ${decodedlocals}`)
       })
     } catch (error) {
       return t.end(error)
@@ -273,8 +275,14 @@ function testDebugging (debugManager) {
   tape('breakPointManager', (t) => {
     t.plan(2)
     var sourceMappingDecoder = new SourceMappingDecoder()
-    var breakPointManager = new BreakpointManager(debugManager, (rawLocation) => {
+    const {traceManager, callTree, solidityProxy} = debugManager
+    var breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy, locationToRowConverter: async (rawLocation) => {
       return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
+    }})
+
+    breakPointManager.event.register('managersChanged', () => {
+      const {traceManager, callTree, solidityProxy} = debugManager
+      breakPointManager.setManagers({traceManager, callTree, solidityProxy})
     })
 
     breakPointManager.add({fileName: 'test.sol', row: 38})

@@ -51,10 +51,9 @@ function getPreimage (web3, key) {
   return new Promise((resolve, reject) => {
     web3.debug.preimage(key.indexOf('0x') === 0 ? key : '0x' + key, (error, preimage) => {
       if (error) {
-        resolve(null)
-      } else {
-        resolve(preimage)
+        return resolve(null)
       }
+      resolve(preimage)
     })
   })
 }

@@ -55,7 +55,8 @@
           "options": {
             "buildTarget": "remix-ide:build",
             "port": 8080,
-            "exclude": ["**/node_modules/**",
+            "exclude": [
+              "**/node_modules/**",
               "apps/remix-ide/build/**/*.js",
               "apps/remix-ide/src/app/editor/mode-solidity.js",
               "apps/remix-ide/soljson.js",
@@ -74,9 +75,7 @@
           "options": {
             "linter": "eslint",
             "config": "apps/remix-ide/.eslintrc",
-            "files": [
-              "apps/remix-ide/src/**/*.js"
-            ],
+            "files": ["apps/remix-ide/src/**/*.js"],
             "exclude": [
               "**/node_modules/**",
               "apps/remix-ide/src/app/editor/mode-solidity.js",
@@ -104,18 +103,18 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-              "commands": [
-                "node_modules/.bin/tsc -p apps/remix-ide-e2e/tsconfig.e2e.json"
-              ]
+            "commands": [
+              "node_modules/.bin/tsc -p apps/remix-ide-e2e/tsconfig.e2e.json"
+            ]
           }
         },
         "e2e": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-              "commands": [
-                "TEST_SCRIPT='node_modules/.bin/nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js'; if [ {args.env} != undefined ]; then TEST_SCRIPT=${TEST_SCRIPT}' --env {args.env}'; else TEST_SCRIPT=${TEST_SCRIPT}' --env chrome'; fi; if [ {args.filePath} != undefined ]; then TEST_SCRIPT=${TEST_SCRIPT}' {args.filePath}'; fi; eval $TEST_SCRIPT;"
-              ],
-              "parallel": false
+            "commands": [
+              "TEST_SCRIPT='node_modules/.bin/nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js'; if [ {args.env} != undefined ]; then TEST_SCRIPT=${TEST_SCRIPT}' --env {args.env}'; else TEST_SCRIPT=${TEST_SCRIPT}' --env chrome'; fi; if [ {args.filePath} != undefined ]; then TEST_SCRIPT=${TEST_SCRIPT}' {args.filePath}'; fi; eval $TEST_SCRIPT;"
+            ],
+            "parallel": false
           }
         },
         "lint": {
@@ -215,9 +214,7 @@
           "options": {
             "linter": "eslint",
             "config": "libs/remix-debug/.eslintrc",
-            "files": [
-              "libs/remix-debug/**/*.js"
-            ],
+            "files": ["libs/remix-debug/**/*.js"],
             "exclude": ["**/node_modules/**", "libs/remix-debug/test/**/*"]
           }
         },
@@ -240,8 +237,16 @@
             "packageJson": "libs/remix-debug/package.json",
             "main": "libs/remix-debug/index.js",
             "assets": [
-              { "glob": "rdb", "input": "libs/remix-debug/bin/", "output": "bin/" },
-              { "glob": "*.md", "input": "libs/remix-debug/", "output": "/" }
+              {
+                "glob": "rdb",
+                "input": "libs/remix-debug/bin/",
+                "output": "bin/"
+              },
+              {
+                "glob": "*.md",
+                "input": "libs/remix-debug/",
+                "output": "/"
+              }
             ]
           }
         }
@@ -296,9 +301,7 @@
           "options": {
             "linter": "eslint",
             "config": "libs/remix-simulator/.eslintrc",
-            "files": [
-              "libs/remix-simulator/**/*.js"
-            ],
+            "files": ["libs/remix-simulator/**/*.js"],
             "exclude": ["**/node_modules/**", "libs/remix-simulator/test/**/*"]
           }
         },
@@ -321,8 +324,16 @@
             "packageJson": "libs/remix-simulator/package.json",
             "main": "libs/remix-simulator/index.js",
             "assets": [
-              { "glob": "ethsim", "input": "libs/remix-simulator/bin/", "output": "bin/" },
-              { "glob": "*.md", "input": "libs/remix-simulator/", "output": "/" }
+              {
+                "glob": "ethsim",
+                "input": "libs/remix-simulator/bin/",
+                "output": "bin/"
+              },
+              {
+                "glob": "*.md",
+                "input": "libs/remix-simulator/",
+                "output": "/"
+              }
             ]
           }
         }
@@ -339,9 +350,7 @@
           "options": {
             "linter": "eslint",
             "config": "libs/remix-solidity/.eslintrc",
-            "tsConfig": [
-              "libs/remix-solidity/tsconfig.lib.json"
-            ],
+            "tsConfig": ["libs/remix-solidity/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**"]
           }
         },
@@ -379,9 +388,7 @@
           "options": {
             "linter": "eslint",
             "config": "libs/remix-tests/.eslintrc",
-            "tsConfig": [
-              "libs/remix-tests/tsconfig.lib.json"
-            ],
+            "tsConfig": ["libs/remix-tests/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "libs/remix-tests/tests/**/*"]
           }
         },
@@ -400,8 +407,16 @@
             "packageJson": "libs/remix-tests/package.json",
             "main": "libs/remix-tests/src/index.ts",
             "assets": [
-              { "glob": "remix-tests", "input": "libs/remix-tests/bin/", "output": "bin/" },
-              { "glob": "*.md", "input": "libs/remix-tests/", "output": "/" }
+              {
+                "glob": "remix-tests",
+                "input": "libs/remix-tests/bin/",
+                "output": "bin/"
+              },
+              {
+                "glob": "*.md",
+                "input": "libs/remix-tests/",
+                "output": "/"
+              }
             ]
           }
         }
@@ -418,10 +433,11 @@
           "options": {
             "linter": "eslint",
             "config": "libs/remix-url-resolver/.eslintrc",
-            "tsConfig": [
-              "libs/remix-url-resolver/tsconfig.lib.json"
-            ],
-            "exclude": ["**/node_modules/**", "libs/remix-url-resolver/tests/**/*"]
+            "tsConfig": ["libs/remix-url-resolver/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "libs/remix-url-resolver/tests/**/*"
+            ]
           }
         },
         "test": {
@@ -443,6 +459,53 @@
             "packageJson": "libs/remix-url-resolver/package.json",
             "main": "libs/remix-url-resolver/src/index.ts",
             "assets": ["libs/remix-url-resolver/*.md"]
+          }
+        }
+      }
+    },
+    "remixd": {
+      "root": "libs/remixd",
+      "sourceRoot": "libs/remixd/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remixd/tsconfig.lib.json",
+              "libs/remixd/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/remixd/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/remixd/jest.config.js",
+            "tsConfig": "libs/remixd/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/remixd",
+            "tsConfig": "libs/remixd/tsconfig.lib.json",
+            "packageJson": "libs/remixd/package.json",
+            "main": "libs/remixd/src/index.ts",
+            "assets": ["libs/remixd/*.md", "libs/remixd/src/origins.json"]
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "SERVE_SCRIPT='chmod +x dist/libs/remixd/bin/remixd.js; dist/libs/remixd/bin/remixd.js '; if [ {args.folder} != undefined ]; then SERVE_SCRIPT=${SERVE_SCRIPT}' -s {args.folder}'; fi; if [ {args.remixide} != undefined ]; then SERVE_SCRIPT=${SERVE_SCRIPT}' --remix-ide {args.remixide}'; fi; eval $SERVE_SCRIPT;"
+              }
+            ]
           }
         }
       }

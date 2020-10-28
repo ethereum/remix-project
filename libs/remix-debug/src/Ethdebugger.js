@@ -26,6 +26,7 @@ const {SolidityProxy, stateDecoder, localDecoder, InternalCallTree} = require('.
 function Ethdebugger (opts) {
   this.compilationResult = opts.compilationResult || function (contractAddress) { return null }
   this.web3 = opts.web3
+  this.opts = opts
 
   this.event = new EventManager()
 
@@ -33,19 +34,30 @@ function Ethdebugger (opts) {
 
   this.traceManager = new TraceManager({web3: this.web3})
   this.codeManager = new CodeManager(this.traceManager)
-  this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
+  this.solidityProxy = new SolidityProxy({getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), getCode: this.codeManager.getCode.bind(this.codeManager)})
   this.storageResolver = null
 
-  this.callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
+  const includeLocalVariables = true
+  this.callTree = new InternalCallTree(this.event, 
+      this.traceManager,
+      this.solidityProxy,
+      this.codeManager, 
+      { ...opts, includeLocalVariables})
 }
 
 Ethdebugger.prototype.setManagers = function () {
   this.traceManager = new TraceManager({web3: this.web3})
   this.codeManager = new CodeManager(this.traceManager)
-  this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
+  this.solidityProxy = new SolidityProxy({getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), getCode: this.codeManager.getCode.bind(this.codeManager)})
   this.storageResolver = null
+  const includeLocalVariables = true
 
-  this.callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
+  this.callTree = new InternalCallTree(this.event, 
+      this.traceManager, 
+      this.solidityProxy, 
+      this.codeManager, 
+      { ...this.opts, includeLocalVariables})
+  this.event.trigger('managersChanged')
 }
 
 Ethdebugger.prototype.resolveStep = function (index) {
@@ -58,6 +70,10 @@ Ethdebugger.prototype.setCompilationResult = function (compilationResult) {
 
 Ethdebugger.prototype.sourceLocationFromVMTraceIndex = async function (address, stepIndex) {
   return this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, stepIndex, this.solidityProxy.contracts)
+}
+
+Ethdebugger.prototype.getValidSourceLocationFromVMTraceIndex = async function (address, stepIndex) {
+  return this.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, stepIndex, this.solidityProxy.contracts)
 }
 
 Ethdebugger.prototype.sourceLocationFromInstructionIndex = async function (address, instIndex, callback) {

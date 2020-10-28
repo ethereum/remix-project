@@ -57,8 +57,22 @@ module.exports = {
     browser
           .addFile('Untitled7.sol', sources[6]['browser/Untitled7.sol'])
           .clickLaunchIcon('fileExplorers')
-          .verifyContracts(['test11', 'ERC20', 'SafeMath'], {wait: 10000})
-          .end()
+          .verifyContracts(['test11', 'ERC20', 'SafeMath'], {wait: 10000})            
+  },
+  
+  'Test switch to a github import from a solidity warning': function (browser: NightwatchBrowser) {
+    browser
+          .setSolidityCompilerVersion('soljson-v0.7.4+commit.3f05b770.js')
+          .addFile('Untitled8.sol', sources[7]['browser/Untitled8.sol'])
+          .clickLaunchIcon('fileExplorers')
+          .clickLaunchIcon('solidity')
+          .waitForElementPresent('[data-id="compiledErrors"] div:nth-child(3)')
+          .click('[data-id="compiledErrors"] div:nth-child(3)') // select the second warning which point to ERC20 code
+          .getEditorValue((content) => {
+            browser.assert.ok(content.indexOf(`contract ERC20 is Context, IERC20`) != -1, 
+          'current displayed content should be from the ERC20 source code')
+          })     
+          .end()          
   },
   tearDown: sauce
 }
@@ -85,5 +99,8 @@ const sources = [
   },
   {
     'browser/Untitled7.sol': {content: 'import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"; contract test11 {}'}
+  },
+  {
+    'browser/Untitled8.sol': {content: 'import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"; contract test12 {}'}
   }
 ]

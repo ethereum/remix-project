@@ -63,6 +63,9 @@
     "remix-ide-e2e": {
       "tags": [],
       "implicitDependencies": ["remix-ide"]
+    },
+    "remixd": {
+      "tags": []
     }
   }
 }

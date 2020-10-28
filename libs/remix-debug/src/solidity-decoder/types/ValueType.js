@@ -19,16 +19,10 @@ class ValueType {
   async decodeFromStorage (location, storageResolver) {
     try {
       var value = await util.extractHexValue(location, storageResolver, this.storageBytes)
-      return {
-        value: this.decodeValue(value),
-        type: this.typeName
-      }
+      return {value: this.decodeValue(value), type: this.typeName}
     } catch (e) {
       console.log(e)
-      return {
-        value: '<decoding failed - ' + e.message + '>',
-        type: this.typeName
-      }
+      return {value: '<decoding failed - ' + e.message + '>', type: this.typeName}
     }
   }
 
@@ -47,10 +41,7 @@ class ValueType {
     } else {
       value = this.decodeValue(stack[stack.length - 1 - stackDepth].replace('0x', ''))
     }
-    return {
-      value: value,
-      type: this.typeName
-    }
+    return {value, type: this.typeName}
   }
 
   /**
@@ -62,10 +53,7 @@ class ValueType {
     */
   decodeFromMemory (offset, memory) {
     let value = memory.substr(2 * offset, 64)
-    return {
-      value: this.decodeValue(value),
-      type: this.typeName
-    }
+    return {value: this.decodeValue(value), type: this.typeName}
   }
 }
 
