@@ -39,6 +39,7 @@ class SourceHighlighter {
     this.source = null
     if (lineColumnPos) {
       this.source = filePath
+      if (!this.source) this.source = this._deps.fileManager.currentFile()
       if (this._deps.fileManager.currentFile() !== this.source) {
         await this._deps.fileManager.open(this.source)
         this.source = this._deps.fileManager.currentFile()
