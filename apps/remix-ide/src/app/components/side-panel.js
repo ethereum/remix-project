@@ -112,6 +112,7 @@ export class SidePanel extends AbstractPanel {
   async showContent (name) {
     super.showContent(name)
     this.renderHeader()
+    this.focus(name)
   }
 
   /** The header of the side panel */
