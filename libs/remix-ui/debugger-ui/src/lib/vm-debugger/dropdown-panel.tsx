@@ -6,7 +6,7 @@ import { default as deepequal } from 'deep-equal'
 import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
-    const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc } = props
+    const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc, loadMore } = props
     const extractDataDefault: ExtractFunc = (item, parent?) => {
         const ret: ExtractData = {}
 
@@ -157,14 +157,15 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
 
         if (children && children.length > 0 ) {
             return (
-                <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) } handleClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)}>
+                <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) } onClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)}>
                     <TreeView id={`treeView${key}`} key={keyPath}>
                         { children }
+                        { data.hasNext && <TreeViewItem id={`treeViewLoadMore`} className="cursor_pointer" label="Load more" onClick={() => { loadMore(data.cursor) }} /> }
                     </TreeView>
                 </TreeViewItem>
             )
         } else {
-            return <TreeViewItem id={key.toString()} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) } handleClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)} />
+            return <TreeViewItem id={key.toString()} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) } onClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)} />
         }
     }
 

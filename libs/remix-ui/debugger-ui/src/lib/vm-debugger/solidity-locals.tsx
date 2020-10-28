@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react'
 import DropdownPanel from './dropdown-panel'
 import { extractData } from '../../utils/solidityTypeFormatter'
 import { ExtractData } from '../../types'
-import { default as deepequal } from 'deep-equal'
 
-export const SolidityLocals = ({ data, message }) => {
+export const SolidityLocals = ({ data, updatedData, message, triggerEvent }) => {
     const [calldata, setCalldata] = useState(null)
 
     useEffect(() => {
-        if (!deepequal(calldata, data)) setCalldata(data)
+        data && setCalldata(data)
     }, [data])
+
+    useEffect(() => {
+        updatedData && mergeLocals(updatedData, calldata)
+    }, [updatedData])
 
     const formatSelf = (key: string, data: ExtractData) => {
         let color = 'var(--primary)'
@@ -43,9 +46,32 @@ export const SolidityLocals = ({ data, message }) => {
         )
     }
 
+    const mergeLocals = (locals1, locals2) => {
+        Object.keys(locals2).map(item => {
+          if (locals2[item].cursor && (parseInt(locals2[item].cursor) < parseInt(locals1[item].cursor))) {
+            locals2[item] = {
+              ...locals1[item],
+              value: [...locals2[item].value, ...locals1[item].value]
+            }
+          }
+        })
+        setCalldata(() => locals2)
+    }
+
+    const loadMore = (cursor) => {
+        triggerEvent('solidityLocalsLoadMore', [cursor])
+    }
+
     return (
         <div id='soliditylocals' data-id="solidityLocals">
-            <DropdownPanel dropdownName='Solidity Locals' calldata={calldata || {}}  extractFunc={extractData} formatSelfFunc={formatSelf} />
+            <DropdownPanel 
+                dropdownName='Solidity Locals'
+                dropdownMessage={message}
+                calldata={calldata || {}}
+                extractFunc={extractData}
+                formatSelfFunc={formatSelf}
+                loadMore={loadMore}
+            />
         </div>
     )
 }

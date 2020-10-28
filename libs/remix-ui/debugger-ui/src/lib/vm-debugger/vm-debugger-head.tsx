@@ -5,12 +5,7 @@ import StepDetail from './step-detail'
 import SolidityState from './solidity-state'
 import SolidityLocals from './solidity-locals'
 
-export const VmDebuggerHead = ({ vmDebugger: { registerEvent } }) => {
-  const [asm, setAsm] = useState({
-    code: null,
-    address: null,
-    index: null
-  })
+export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) => {
   const [functionPanel, setFunctionPanel] = useState(null)
   const [stepDetail, setStepDetail] = useState({
     'vm trace step': '-',
@@ -28,18 +23,9 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent } }) => {
     calldata: null,
     message: null,
   })
+  const [updatedSolidityLocals, setUpdatedSolidityLocals] = useState(null)
 
   useEffect(() => {
-    registerEvent && registerEvent('codeManagerChanged', (code, address, index) => {
-      setAsm(() => {
-        return { code, address, index }
-      })
-    })
-    registerEvent && registerEvent('traceUnloaded', () => {
-      setAsm(() => {
-        return { code: [], address: '', index: -1 }
-      })
-    })
     registerEvent && registerEvent('functionsStackUpdate', (stack) => {
       if (stack === null || stack.length === 0) return
       const functions = []
@@ -100,6 +86,7 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent } }) => {
       })
     })
     registerEvent && registerEvent('solidityLocals', (calldata) => {
+      console.log('solidityLocals: ', calldata)
       setSolidityLocals(() => {
         return { ...solidityLocals, calldata }
       })
@@ -109,6 +96,9 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent } }) => {
         return { ...solidityLocals, message }
       })
     })
+    registerEvent && registerEvent('solidityLocalsLoadMoreCompleted', (updatedCalldata) => {
+      setUpdatedSolidityLocals(() => updatedCalldata)
+    })
   }, [registerEvent])
 
   return (
@@ -116,7 +106,7 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent } }) => {
       <div className="d-flex flex-column">
         <div className="w-100">
           <FunctionPanel data={functionPanel} />
-          <SolidityLocals data={solidityLocals.calldata} message={solidityLocals.message} />
+          <SolidityLocals data={solidityLocals.calldata} updatedData={updatedSolidityLocals} message={solidityLocals.message} triggerEvent={triggerEvent} />
           <SolidityState calldata={solidityState.calldata} message={solidityState.message} />
         </div>
         <div className="w-100"><CodeListView registerEvent={registerEvent} /></div>

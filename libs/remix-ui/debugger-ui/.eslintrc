@@ -1,5 +1,6 @@
 {
   "rules": {
+    "@typescript-eslint/ban-types": "off",
     "no-case-declarations": "off",
     "array-callback-return": "warn",
     "dot-location": ["warn", "property"],
