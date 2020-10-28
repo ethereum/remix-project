@@ -7,7 +7,9 @@ export interface ExtractData {
     isStruct?: boolean,
     isMapping?: boolean,
     type?: string,
-    isProperty?: boolean
+    isProperty?: boolean,
+    hasNext?: boolean,
+    cursor?: number
 }
 
 export type ExtractFunc = (json: any, parent?: any) => ExtractData
@@ -21,7 +23,8 @@ export interface DropdownPanelProps {
     header?: string,
     loading?: boolean
     extractFunc?: ExtractFunc,
-    formatSelfFunc?: FormatSelfFunc
+    formatSelfFunc?: FormatSelfFunc,
+    loadMore?: Function
 }
 
 export type FormatSelfFunc = (key: string | number, data: ExtractData) => JSX.Element
