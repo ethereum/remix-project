@@ -85,9 +85,9 @@ tape('SourceMappingDecoder', function (t) {
     // TokenSaleChallenge - function test(uint256)
     const tokenSaleChallengeMap = sourceMappingDecoder.atIndex(170, sourceMapping.tokenSaleChallengeSourceMap)
     console.log(tokenSaleChallengeMap)
-    st.equal(tokenSaleChallengeMap.start, 211)
-    st.equal(tokenSaleChallengeMap.length, 48)
-    st.equal(tokenSaleChallengeMap.file, 0)
+    st.equal(tokenSaleChallengeMap.start, 45)
+    st.equal(tokenSaleChallengeMap.length, 16)
+    st.equal(tokenSaleChallengeMap.file, -1)
     st.equal(tokenSaleChallengeMap.jump, '-')
   })
 

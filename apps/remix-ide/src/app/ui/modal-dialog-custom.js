@@ -15,12 +15,14 @@ module.exports = {
   },
   promptPassphraseCreation: function (ok, cancel) {
     var text = 'Please provide a Passphrase for the account creation'
-    var input = yo`<div>
-      <input id="prompt1" type="password" name='prompt_text' class="${css['prompt_text']}" >
-      <br>
-      <br>
-      <input id="prompt2" type="password" name='prompt_text' class="${css['prompt_text']}" >
-    </div>`
+    var input = yo`
+      <div>
+        <input id="prompt1" type="password" name='prompt_text' class="${css['prompt_text']}" oninput="${(e) => validateInput(e)}">
+        <br>
+        <br>
+        <input id="prompt2" type="password" name='prompt_text' class="${css['prompt_text']}" oninput="${(e) => validateInput(e)}">
+      </div>
+    `
     return modal(null, yo`<div>${text}<div>${input}</div></div>`,
       {
         fn: () => {
@@ -42,7 +44,16 @@ module.exports = {
   },
   promptMulti: function ({ title, text, inputValue }, ok, cancel) {
     if (!inputValue) inputValue = ''
-    var input = yo`<textarea id="prompt_text" data-id="modalDialogCustomPromptText" class=${css.prompt_text} rows="4" cols="50"></textarea>`
+    const input = yo`
+      <textarea
+        id="prompt_text"
+        data-id="modalDialogCustomPromptText"
+        class=${css.prompt_text}
+        rows="4"
+        cols="50"
+        oninput="${(e) => validateInput(e)}"
+      ></textarea>
+    `
     return modal(title, yo`<div>${text}<div>${input}</div></div>`,
       {
         fn: () => { if (typeof ok === 'function') ok(document.getElementById('prompt_text').value) }
@@ -64,10 +75,34 @@ module.exports = {
   }
 }
 
+const validateInput = (e) => {
+  console.log('validation from ', e)
+  if (!document.getElementById('modal-footer-ok')) return
+
+  if (e.target.value === '') {
+    document.getElementById('modal-footer-ok').classList.add('disabled')
+    document.getElementById('modal-footer-ok').style.pointerEvents = 'none'
+  } else {
+    document.getElementById('modal-footer-ok').classList.remove('disabled')
+    document.getElementById('modal-footer-ok').style.pointerEvents = 'auto'
+  }
+}
+
 function prompt (title, text, hidden, inputValue, ok, cancel, focus) {
   if (!inputValue) inputValue = ''
   var type = hidden ? 'password' : 'text'
-  var input = yo`<input type=${type} name='prompt_text' id='prompt_text' class="${css['prompt_text']} form-control" value='${inputValue}' data-id="modalDialogCustomPromptText">`
+  var input = yo`
+    <input
+      type=${type}
+      name='prompt_text'
+      id='prompt_text'
+      class="${css['prompt_text']} form-control"
+      value='${inputValue}'
+      data-id="modalDialogCustomPromptText"
+      oninput="${(e) => validateInput(e)}"
+    >
+  `
+
   modal(title, yo`<div>${text}<div>${input}</div></div>`,
     {
       fn: () => { if (typeof ok === 'function') ok(document.getElementById('prompt_text').value) }

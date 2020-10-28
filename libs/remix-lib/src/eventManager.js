@@ -44,10 +44,7 @@ eventManager.prototype.register = function (eventName, obj, func) {
     func = obj
     obj = this.anonymous
   }
-  this.registered[eventName].push({
-    obj: obj,
-    func: func
-  })
+  this.registered[eventName].push({obj, func})
 }
 
 /*

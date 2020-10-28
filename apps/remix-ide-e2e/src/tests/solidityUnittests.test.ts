@@ -90,7 +90,7 @@ module.exports = {
     .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
     .pause(5000)
     .click('*[data-id="testTabRunTestsTabStopAction"]')
-    .pause(1000)
+    // .pause(1000)
     .assert.containsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping')
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
     .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/ks2b_test.sol')
@@ -172,7 +172,7 @@ function runTests (browser: NightwatchBrowser) {
     .pause(500)
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
-    .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 7000)
+    .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 10000)
     .assert.containsText('#solidityUnittestsOutput', 'browser/tests/4_Ballot_test.sol')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winning proposal')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value')
@@ -183,12 +183,12 @@ const sources = [
   {
     'browser/simple_storage.sol': {
       content: `
-      pragma solidity >=0.4.22 <0.7.0;
+      pragma solidity >=0.4.22 <0.8.0;
 
       contract SimpleStorage {
         uint public storedData;
       
-        constructor() public {
+        constructor() {
           storedData = 100;
         }
       
@@ -204,7 +204,7 @@ const sources = [
     },
     'browser/tests/simple_storage_test.sol': {
       content: `
-      pragma solidity >=0.4.22 <0.7.0;
+      pragma solidity >=0.4.22 <0.8.0;
       import "remix_tests.sol";
       import "../simple_storage.sol";
 
@@ -233,7 +233,7 @@ const sources = [
     },
     'browser/ks2a.sol': {
       content: `
-      pragma solidity >=0.4.22 <0.6.0;
+      pragma solidity >=0.4.22 <0.8.0;
       contract Kickstarter {
           enum State { Started, Completed }
       
@@ -246,14 +246,14 @@ const sources = [
               State state;
               mapping(address => uint) funders; // added
           }
-      
+          uint numProjects;
           Project[] public projects;
       
-          constructor() public {
+          constructor() {
           }
       
           function createProject(string memory name, uint goal) public {
-              projects.length++; // new line
+              projects.push(); // new line
               Project storage project = projects[projects.length - 1];
               project.name = name;
               project.goal = goal;
@@ -287,7 +287,7 @@ const sources = [
     },
     'browser/tests/ks2b_test.sol': {
       content: `
-      pragma solidity >=0.4.22 <0.6.0;
+      pragma solidity >=0.4.22 <0.8.0;
       pragma experimental ABIEncoderV2;
 
       import "remix_tests.sol"; // this import is automatically injected by Remix.
@@ -336,7 +336,7 @@ const sources = [
           }
 
           function checkProjectIsFundable () public {
-              kickstarter.fundProject.value(120000)(0);
+              kickstarter.fundProject{value:120000}(0);
               (address owner, string memory name, uint goal, uint fundsAvailable, uint amountContributed, Kickstarter.State state) = kickstarter.projects(0);
               Assert.equal(amountContributed, 120000, "contributed amount is incorrect");
           }
@@ -346,7 +346,7 @@ const sources = [
     },
     'browser/compilationError_test.sol': {
       content: `
-      pragma solidity ^0.6.1;
+      pragma solidity ^0.7.0;
       
       contract failOnCompilation {
         fallback() {
@@ -357,10 +357,10 @@ const sources = [
     },
     'browser/tests/deployError_test.sol': {
       content: `
-      pragma solidity ^0.6.0;
+      pragma solidity ^0.7.0;
 
       contract failingDeploy {
-          constructor() public {
+          constructor() {
               revert('Deploy Failed');
           }
       }
@@ -368,7 +368,7 @@ const sources = [
     },
     'browser/tests/methodFailure_test.sol': {
       content: `
-      pragma solidity ^0.6.0;
+      pragma solidity ^0.7.0;
 
       contract methodfailure {
         function add(uint a, uint b) public {
