@@ -174,6 +174,7 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
       this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
     } else {
       this.processingAddress = uiutil.normalizeHexAddress(step.stack[step.stack.length - 2])
+      this.processingAddress = ethutil.toChecksumAddress(this.processingAddress)
       if (!self.storageCache[self.processingHash][this.processingAddress]) {
         const account = ethutil.toBuffer(this.processingAddress)
         self.vm.stateManager.dumpStorage(account, function (storage) {
