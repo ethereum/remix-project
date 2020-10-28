@@ -1,8 +1,8 @@
 'use strict'
 const codeUtils = require('./codeUtils')
 
-function CodeResolver (options) {
-  this.web3 = options.web3
+function CodeResolver ({getCode}) {
+  this.getCode = getCode
 
   this.bytecodeByAddress = {} // bytes code by contract addesses
   this.instructionsByAddress = {} // assembly items instructions list by contract addesses
@@ -16,20 +16,13 @@ CodeResolver.prototype.clear = function () {
 }
 
 CodeResolver.prototype.resolveCode = async function (address) {
-  return new Promise((resolve, reject) => {
-    const cache = this.getExecutingCodeFromCache(address)
-    if (cache) {
-      return resolve(cache)
-    }
+  const cache = this.getExecutingCodeFromCache(address)
+  if (cache) {
+    return cache
+  }
 
-    this.web3.eth.getCode(address, (error, code) => {
-      if (error) {
-        // return console.log(error)
-        return reject(error)
-      }
-      return resolve(this.cacheExecutingCode(address, code))
-    })
-  })
+  const code = await this.getCode(address)
+  return this.cacheExecutingCode(address, code)
 }
 
 CodeResolver.prototype.cacheExecutingCode = function (address, hexCode) {
@@ -41,11 +34,8 @@ CodeResolver.prototype.cacheExecutingCode = function (address, hexCode) {
 }
 
 CodeResolver.prototype.formatCode = function (hexCode) {
-  const code = codeUtils.nameOpCodes(Buffer.from(hexCode.substring(2), 'hex'))
-  return {
-    code: code[0],
-    instructionsIndexByBytesOffset: code[1]
-  }
+  const [code, instructionsIndexByBytesOffset] = codeUtils.nameOpCodes(Buffer.from(hexCode.substring(2), 'hex'))
+  return {code, instructionsIndexByBytesOffset}
 }
 
 CodeResolver.prototype.getExecutingCodeFromCache = function (address) {

@@ -6,11 +6,11 @@ const astHelper = require('./astHelper')
 const util = remixLib.util
 
 class SolidityProxy {
-  constructor (traceManager, codeManager) {
+  constructor ({getCurrentCalledAddressAt, getCode}) {
     this.cache = new Cache()
     this.reset({})
-    this.traceManager = traceManager
-    this.codeManager = codeManager
+    this.getCurrentCalledAddressAt = getCurrentCalledAddressAt
+    this.getCode = getCode
   }
 
   /**
@@ -39,15 +39,15 @@ class SolidityProxy {
     * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the executed contract name
     * @param {Function} cb  - callback returns (error, contractName)
     */
-  async contractNameAt (vmTraceIndex) {
-    const address = this.traceManager.getCurrentCalledAddressAt(vmTraceIndex)
-    if (this.cache.contractNameByAddress[address]) {
-      return this.cache.contractNameByAddress[address]
+  async contractObjectAt (vmTraceIndex) {
+    const address = this.getCurrentCalledAddressAt(vmTraceIndex)
+    if (this.cache.contractObjectByAddress[address]) {
+      return this.cache.contractObjectByAddress[address]
     }
-    const code = await this.codeManager.getCode(address)
-    const contractName = contractNameFromCode(this.contracts, code.bytecode, address)
-    this.cache.contractNameByAddress[address] = contractName
-    return contractName
+    const code = await this.getCode(address)
+    const contract = contractObjectFromCode(this.contracts, code.bytecode, address)
+    this.cache.contractObjectByAddress[address] = contract
+    return contract
   }
 
   /**
@@ -86,8 +86,8 @@ class SolidityProxy {
     * @return {Object} - returns state variables of @args vmTraceIndex
     */
   async extractStateVariablesAt (vmtraceIndex) {
-    const contractName = await this.contractNameAt(vmtraceIndex)
-    return this.extractStateVariables(contractName)
+    const contract = await this.contractObjectAt(vmtraceIndex)
+    return this.extractStateVariables(contract.name)
   }
 
   /**
@@ -96,9 +96,13 @@ class SolidityProxy {
     * @param {Object} sourceLocation  - source location containing the 'file' to retrieve the AST from
     * @return {Object} - AST of the current file
     */
-  ast (sourceLocation) {
+  ast (sourceLocation, generatedSources) {
     const file = this.fileNameFromIndex(sourceLocation.file)
-    if (this.sources[file]) {
+    if (!file && generatedSources && generatedSources.length) {
+      for (const source of generatedSources) {
+        if (source.id === sourceLocation.file) return source.ast
+      }
+    } else if (this.sources[file]) {
       return this.sources[file].ast
     }
     return null
@@ -115,13 +119,13 @@ class SolidityProxy {
   }
 }
 
-function contractNameFromCode (contracts, code, address) {
+function contractObjectFromCode (contracts, code, address) {
   const isCreation = traceHelper.isContractCreation(address)
   for (let file in contracts) {
     for (let contract in contracts[file]) {
       const bytecode = isCreation ? contracts[file][contract].evm.bytecode.object : contracts[file][contract].evm.deployedBytecode.object
       if (util.compareByteCode(code, '0x' + bytecode)) {
-        return contract
+        return { name: contract, contract: contracts[file][contract] }
       }
     }
   }
@@ -133,7 +137,7 @@ class Cache {
     this.reset()
   }
   reset () {
-    this.contractNameByAddress = {}
+    this.contractObjectByAddress = {}
     this.stateVariablesByContractName = {}
     this.contractDeclarations = null
     this.statesDefinitions = null

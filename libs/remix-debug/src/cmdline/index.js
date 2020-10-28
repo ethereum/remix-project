@@ -79,6 +79,7 @@ class CmdLine {
     this.txHash = txNumber
     this.debugger.debug(null, txNumber, null, () => {
       this.debugger.event.register('newSourceLocation', (lineColumnPos, rawLocation) => {
+        if (!lineColumnPos) return
         this.lineColumnPos = lineColumnPos
         this.rawLocation = rawLocation
         this.events.emit('source', [lineColumnPos, rawLocation])

@@ -19,12 +19,9 @@ class RefType {
     * @param {Object} - storageResolver
     * @return {Object} decoded value
     */
-  async decodeFromStack (stackDepth, stack, memory, storageResolver) {
+  async decodeFromStack (stackDepth, stack, memory, storageResolver, cursor) {
     if (stack.length - 1 < stackDepth) {
-      return {
-        error: '<decoding failed - stack underflow ' + stackDepth + '>',
-        type: this.typeName
-      }
+      return {error: '<decoding failed - stack underflow ' + stackDepth + '>', type: this.typeName}
     }
     let offset = stack[stack.length - 1 - stackDepth]
     if (this.isInStorage()) {
@@ -33,19 +30,13 @@ class RefType {
         return await this.decodeFromStorage({ offset: 0, slot: offset }, storageResolver)
       } catch (e) {
         console.log(e)
-        return {
-          error: '<decoding failed - ' + e.message + '>',
-          type: this.typeName
-        }
+        return {error: '<decoding failed - ' + e.message + '>', type: this.typeName}
       }
     } else if (this.isInMemory()) {
       offset = parseInt(offset, 16)
-      return this.decodeFromMemoryInternal(offset, memory)
+      return this.decodeFromMemoryInternal(offset, memory, cursor)
     } else {
-      return {
-        error: '<decoding failed - no decoder for ' + this.location + '>',
-        type: this.typeName
-      }
+      return {error: '<decoding failed - no decoder for ' + this.location + '>', type: this.typeName}
     }
   }
 

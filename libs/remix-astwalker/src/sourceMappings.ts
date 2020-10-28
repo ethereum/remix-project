@@ -1,4 +1,4 @@
-import { isAstNode, AstWalker } from './astWalker';
+import { isAstNode, isYulAstNode, AstWalker } from './astWalker';
 import { AstNode, LineColPosition, LineColRange, Location } from "./types";
 import { util } from "@remix-project/remix-lib";
 
@@ -31,7 +31,7 @@ export function lineColPositionFromOffset(offset: number, lineBreaks: Array<numb
  * @param astNode  The object to convert.
  */
 export function sourceLocationFromAstNode(astNode: AstNode): Location | null {
-  if (isAstNode(astNode) && astNode.src) {
+  if (isAstNode(astNode) && isYulAstNode(astNode) && astNode.src) {
     return sourceLocationFromSrc(astNode.src)
   }
   return null;

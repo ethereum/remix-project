@@ -2,7 +2,6 @@ var registry = require('../../global/registry')
 var remixLib = require('@remix-project/remix-lib')
 var yo = require('yo-yo')
 var EventsDecoder = remixLib.execution.EventsDecoder
-var TransactionReceiptResolver = require('../../lib/transactionReceiptResolver')
 
 const transactionDetailsLinks = {
   'Main': 'https://www.etherscan.io/tx/',
@@ -27,7 +26,19 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
   })
 
   // ----------------- Tx listener -----------------
-  const transactionReceiptResolver = new TransactionReceiptResolver(blockchain)
+  let _transactionReceipts = {}
+  const transactionReceiptResolver = (tx, cb) => {
+    if (_transactionReceipts[tx.hash]) {
+      return cb(null, _transactionReceipts[tx.hash])
+    }
+    blockchain.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+      if (error) {
+        return cb(error)
+      }
+      _transactionReceipts[tx.hash] = receipt
+      cb(null, receipt)
+    })
+  }
 
   const txlistener = blockchain.getTxListener({
     api: {
@@ -35,9 +46,7 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
         if (compilersArtefacts['__last']) return compilersArtefacts.getAllContractDatas()
         return null
       },
-      resolveReceipt: function (tx, cb) {
-        transactionReceiptResolver.resolve(tx, cb)
-      }
+      resolveReceipt: transactionReceiptResolver
     }
   })
 
@@ -45,11 +54,7 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
   blockchain.startListening(txlistener)
 
   const eventsDecoder = new EventsDecoder({
-    api: {
-      resolveReceipt: function (tx, cb) {
-        transactionReceiptResolver.resolve(tx, cb)
-      }
-    }
+    resolveReceipt: transactionReceiptResolver
   })
   txlistener.startListening()
   registry.put({api: eventsDecoder, name: 'eventsDecoder'})

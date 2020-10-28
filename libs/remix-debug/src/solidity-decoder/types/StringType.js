@@ -39,11 +39,7 @@ function format (decoded) {
   }
   let value = decoded.value
   value = value.replace('0x', '').replace(/(..)/g, '%$1')
-  const ret = {
-    length: decoded.length,
-    raw: decoded.value,
-    type: 'string'
-  }
+  const ret = {length: decoded.length, raw: decoded.value, type: 'string'}
   try {
     ret.value = decodeURIComponent(value)
   } catch (e) {
