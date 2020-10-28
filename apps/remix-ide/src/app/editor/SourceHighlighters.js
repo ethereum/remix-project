@@ -32,8 +32,8 @@ class SourceHighlighters {
       for (const index in this.highlighters[from]) {
         sourceHighlight.currentSourceLocationFromfileName(
           this.highlighters[from][index].position,
-          this.highlighters[from][index].filePath,
-          this.highlighters[from][index].hexColor
+          this.highlighters[from][index].source,
+          this.highlighters[from][index].style
         )
         this.highlighters[from][index] = sourceHighlight
       }

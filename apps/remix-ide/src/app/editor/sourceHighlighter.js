@@ -39,7 +39,8 @@ class SourceHighlighter {
     this.source = null
     if (lineColumnPos) {
       this.source = filePath
-      if (!this.source) this.source = this._deps.fileManager.currentFile()
+      this.style = style || 'var(--info)'
+      //if (!this.source) this.source = this._deps.fileManager.currentFile()
       if (this._deps.fileManager.currentFile() !== this.source) {
         await this._deps.fileManager.open(this.source)
         this.source = this._deps.fileManager.currentFile()
@@ -50,16 +51,16 @@ class SourceHighlighter {
           position:absolute;
           z-index:20;
           opacity: 0.3;
-          background-color: ${style || 'var(--info)'};
+          background-color: ${this.style};
         }
         .highlightcode_fullLine {
           position:absolute;
           z-index:20;
           opacity: 0.5;
-          background-color: ${style || 'var(--info)'};
+          background-color: ${this.style};
         }
         .customBackgroundColor {
-          background-color: ${style || 'var(--info)'};
+          background-color: ${this.style};
         }
         `
 
