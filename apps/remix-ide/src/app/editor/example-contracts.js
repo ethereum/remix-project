@@ -1,6 +1,8 @@
 'use strict'
 
-const storage = `pragma solidity >=0.7.0 <0.8.0;
+const storage = `// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.8.0;
 
 /**
  * @title Storage
@@ -27,7 +29,9 @@ contract Storage {
     }
 }`
 
-const owner = `pragma solidity >=0.7.0 <0.8.0;
+const owner = `// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.8.0;
 
 /**
  * @title Owner
@@ -77,7 +81,9 @@ contract Owner {
     }
 }`
 
-const ballot = `pragma solidity >=0.7.0 <0.8.0;
+const ballot = `// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.8.0;
 
 /** 
  * @title Ballot
@@ -215,7 +221,9 @@ contract Ballot {
 }
 `
 
-var ballotTest = `pragma solidity >=0.7.0 <0.8.0;
+var ballotTest = `// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.8.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 import "../3_Ballot.sol";
 
