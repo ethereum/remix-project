@@ -44,7 +44,7 @@ module.exports = {
     .setValue('*[data-id="slider"]', '50')
     .pause(2000)
     .click('*[data-id="dropdownPanelSolidityLocals"]')
-    .assert.containsText('*[data-id="solidityLocals"]', 'No data available')
+    .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
   },
 

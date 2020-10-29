@@ -27,23 +27,6 @@ export const DebuggerUI = ({ debuggerModule }) => {
   })
 
   useEffect(() => {
-    const setEditor = () => {
-      const editor = globalRegistry.get('editor').api
-
-      editor.event.register('breakpointCleared', (fileName, row) => {
-        if (state.debugger) state.debugger.breakPointManager.remove({fileName: fileName, row: row})
-      })
-  
-      editor.event.register('breakpointAdded', (fileName, row) => {
-        if (state.debugger) state.debugger.breakPointManager.add({fileName: fileName, row: row})
-      })
-  
-      editor.event.register('contentChanged', () => {
-        unLoad()
-      })
-    }
-
-    setEditor()
     return unLoad()
   }, [])
 
@@ -58,6 +41,30 @@ export const DebuggerUI = ({ debuggerModule }) => {
   useEffect(() => {
     if (debuggerModule.removeHighlights) deleteHighlights()
   }, [debuggerModule.removeHighlights])
+
+  useEffect(() => {
+    const setEditor = () => {
+      const editor = globalRegistry.get('editor').api
+
+      editor.event.register('breakpointCleared', (fileName, row) => {
+        if (state.debugger) state.debugger.breakPointManager.remove({fileName: fileName, row: row})
+      })
+  
+      editor.event.register('breakpointAdded', (fileName, row) => {
+        console.log('breakpoint triggerred!')
+        if (state.debugger) {
+          console.log('breakpoint added!')
+          state.debugger.breakPointManager.add({fileName: fileName, row: row})
+        }
+      })
+  
+      editor.event.register('contentChanged', () => {
+        unLoad()
+      })
+    }
+
+    setEditor()
+  }, [state.debugger])
 
   const fetchContractAndCompile = (address, receipt) => {
     const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
