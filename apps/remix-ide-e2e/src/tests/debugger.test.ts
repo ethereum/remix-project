@@ -155,9 +155,11 @@ module.exports = {
     .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
     .click('*[data-id="treeViewDivtreeViewItemarray"]')
     .waitForElementPresent('*[data-id="treeViewLoadMore"]')
+    .assert.containsText('*[data-id="solidityLocals"]', '9: 9 uint256')
+    .notContainsText('*[data-id="solidityLocals"]', '10: 10 uint256')
     .click('*[data-id="treeViewLoadMore"]')
-    .assert.containsText('*[data-id="solidityLocals"]', '9: 0 uint256')
-    .notContainsText('*[data-id="solidityLocals"]', '10: 0 uint256')    
+    .assert.containsText('*[data-id="solidityLocals"]', '10: 10 uint256')
+    .notContainsText('*[data-id="solidityLocals"]', '20: 20 uint256')
   },
 
   'Should debug using generated sources': function (browser: NightwatchBrowser) {
