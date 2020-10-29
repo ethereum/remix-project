@@ -16,6 +16,7 @@ class SelectContract extends EventEmitter {
 function selectContract (browser: NightwatchBrowser, contractName: string, callback: VoidFunction) {
   browser.clickLaunchIcon('settings').clickLaunchIcon('udapp')
   .setValue('#runTabView select[class^="contractNames"]', contractName).perform(() => {
+    console.log('Done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     callback()
   })
 }
