@@ -171,7 +171,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                 <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) } onClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)}>
                     <TreeView id={`treeView${key}`} key={keyPath}>
                         { children }
-                        { data.hasNext && <TreeViewItem id={`treeViewLoadMore`} className="cursor_pointer" label="Load more" onClick={() => { triggerEvent(loadMoreEvent, [data.cursor]) }} /> }
+                        { data.hasNext && <TreeViewItem id={`treeViewLoadMore`} data-id={`treeViewLoadMore`} className="cursor_pointer" label="Load more" onClick={() => { triggerEvent(loadMoreEvent, [data.cursor]) }} /> }
                     </TreeView>
                 </TreeViewItem>
             )
