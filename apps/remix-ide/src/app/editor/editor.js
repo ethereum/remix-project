@@ -198,10 +198,12 @@ class Editor extends Plugin {
 
   onActivation () {
     this.on('sidePanel', 'focusChanged', (name) => this.sourceHighlighters.hideHighlightsExcept(name))
+    this.on('sidePanel', 'pluginDisabled', (name) => this.sourceHighlighters.discardHighlight(name))
   }
 
   onDeactivation () {
     this.off('sidePanel', 'focusChanged')
+    this.off('sidePanel', 'pluginDisabled')
   }
 
   highlight (position, filePath, hexColor) {

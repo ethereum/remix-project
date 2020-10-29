@@ -42,7 +42,6 @@ class SourceHighlighters {
     }
   }
 
-
   discardHighlight (from) {
     if (this.highlighters[from]) {
       for (const index in this.highlighters[from]) this.highlighters[from][index].currentSourceLocation(null)
