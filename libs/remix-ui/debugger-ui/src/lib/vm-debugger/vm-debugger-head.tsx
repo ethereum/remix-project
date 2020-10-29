@@ -23,7 +23,6 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
     calldata: null,
     message: null,
   })
-  const [updatedSolidityLocals, setUpdatedSolidityLocals] = useState(null)
 
   useEffect(() => {
     registerEvent && registerEvent('functionsStackUpdate', (stack) => {
@@ -86,7 +85,6 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
       })
     })
     registerEvent && registerEvent('solidityLocals', (calldata) => {
-      console.log('solidityLocals: ', calldata)
       setSolidityLocals(() => {
         return { ...solidityLocals, calldata }
       })
@@ -96,9 +94,6 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
         return { ...solidityLocals, message }
       })
     })
-    registerEvent && registerEvent('solidityLocalsLoadMoreCompleted', (updatedCalldata) => {
-      setUpdatedSolidityLocals(() => updatedCalldata)
-    })
   }, [registerEvent])
 
   return (
@@ -106,7 +101,7 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
       <div className="d-flex flex-column">
         <div className="w-100">
           <FunctionPanel data={functionPanel} />
-          <SolidityLocals data={solidityLocals.calldata} updatedData={updatedSolidityLocals} message={solidityLocals.message} triggerEvent={triggerEvent} />
+          <SolidityLocals data={solidityLocals.calldata} message={solidityLocals.message} registerEvent={registerEvent} triggerEvent={triggerEvent} />
           <SolidityState calldata={solidityState.calldata} message={solidityState.message} />
         </div>
         <div className="w-100"><CodeListView registerEvent={registerEvent} /></div>

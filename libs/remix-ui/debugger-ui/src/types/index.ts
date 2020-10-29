@@ -21,10 +21,13 @@ export interface DropdownPanelProps {
         [key: string]: string
     },
     header?: string,
-    loading?: boolean
+    loading?: boolean,
     extractFunc?: ExtractFunc,
     formatSelfFunc?: FormatSelfFunc,
-    loadMore?: Function
+    registerEvent?: Function,
+    triggerEvent?: Function,
+    loadMoreEvent?: string,
+    loadMoreCompletedEvent?: string
 }
 
 export type FormatSelfFunc = (key: string | number, data: ExtractData) => JSX.Element
