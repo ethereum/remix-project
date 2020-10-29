@@ -51,9 +51,7 @@ export const DebuggerUI = ({ debuggerModule }) => {
       })
   
       editor.event.register('breakpointAdded', (fileName, row) => {
-        console.log('breakpoint triggerred!')
         if (state.debugger) {
-          console.log('breakpoint added!')
           state.debugger.breakPointManager.add({fileName: fileName, row: row})
         }
       })
