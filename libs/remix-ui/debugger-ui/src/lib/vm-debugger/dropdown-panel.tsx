@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { DropdownPanelProps, ExtractData, ExtractFunc } from '../../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { default as deepequal } from 'deep-equal'
+import { initialState, reducer } from '../../reducers/calldata'
 import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
-    const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc, loadMore } = props
+    const [calldataObj, dispatch] = useReducer(reducer, initialState)
+    const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc, registerEvent, triggerEvent, loadMoreEvent, loadMoreCompletedEvent } = props
     const extractDataDefault: ExtractFunc = (item, parent?) => {
         const ret: ExtractData = {}
 
@@ -57,13 +58,23 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         },
         copiableContent: '',
         updating: false,
-        data: null,
-        expandPath: []
+        expandPath: [],
+        data: null
     })
 
     useEffect(() => {
-        if (!deepequal(state.data, calldata)) update(calldata)
+        registerEvent && registerEvent(loadMoreCompletedEvent, (updatedCalldata) => {
+            dispatch({ type: 'UPDATE_CALLDATA_SUCCESS', payload: updatedCalldata })
+        })
+    }, [])
+
+    useEffect(() => {
+        dispatch({ type: 'FETCH_CALLDATA_SUCCESS', payload: calldata })
     }, [calldata])
+
+    useEffect(() => {
+        update(calldata)
+    }, [calldataObj.calldata])
 
     useEffect(() => {
         message(dropdownMessage)
@@ -160,7 +171,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                 <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={ formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data) } onClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)}>
                     <TreeView id={`treeView${key}`} key={keyPath}>
                         { children }
-                        { data.hasNext && <TreeViewItem id={`treeViewLoadMore`} className="cursor_pointer" label="Load more" onClick={() => { loadMore(data.cursor) }} /> }
+                        { data.hasNext && <TreeViewItem id={`treeViewLoadMore`} className="cursor_pointer" label="Load more" onClick={() => { triggerEvent(loadMoreEvent, [data.cursor]) }} /> }
                     </TreeView>
                 </TreeViewItem>
             )
