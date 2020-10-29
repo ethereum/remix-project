@@ -54,7 +54,7 @@ module.exports = {
     .pause(2000)
     .goToVMTraceStep(20)
     .pause(1000)
-    .checkVariableDebug('callstackpanel', ["0x692a70D2e424a56D2C6C27aA97D1a86395877b3A"])
+    // .checkVariableDebug('callstackpanel', ["0x692a70D2e424a56D2C6C27aA97D1a86395877b3A"])
   },
 
   'Access Ballot via at address': function (browser: NightwatchBrowser) {
