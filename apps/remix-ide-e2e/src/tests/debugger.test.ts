@@ -158,7 +158,8 @@ module.exports = {
     .assert.containsText('*[data-id="solidityLocals"]', '9: 9 uint256')
     .notContainsText('*[data-id="solidityLocals"]', '10: 10 uint256')
     .click('*[data-id="treeViewLoadMore"]')
-    .assert.containsText('*[data-id="solidityLocals"]', '10: 10 uint256')
+    .pause(2000)
+    .assert.containsText('*[data-id="solidityLocals"]', '19: 19 uint256')
     .notContainsText('*[data-id="solidityLocals"]', '20: 20 uint256')
   },
 
