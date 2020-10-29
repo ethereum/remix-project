@@ -3,16 +3,12 @@ import DropdownPanel from './dropdown-panel'
 import { extractData } from '../../utils/solidityTypeFormatter'
 import { ExtractData } from '../../types'
 
-export const SolidityLocals = ({ data, updatedData, message, triggerEvent }) => {
+export const SolidityLocals = ({ data, message, registerEvent, triggerEvent }) => {
     const [calldata, setCalldata] = useState(null)
 
     useEffect(() => {
         data && setCalldata(data)
     }, [data])
-
-    useEffect(() => {
-        updatedData && mergeLocals(updatedData, calldata)
-    }, [updatedData])
 
     const formatSelf = (key: string, data: ExtractData) => {
         let color = 'var(--primary)'
@@ -46,22 +42,6 @@ export const SolidityLocals = ({ data, updatedData, message, triggerEvent }) => 
         )
     }
 
-    const mergeLocals = (locals1, locals2) => {
-        Object.keys(locals2).map(item => {
-          if (locals2[item].cursor && (parseInt(locals2[item].cursor) < parseInt(locals1[item].cursor))) {
-            locals2[item] = {
-              ...locals1[item],
-              value: [...locals2[item].value, ...locals1[item].value]
-            }
-          }
-        })
-        setCalldata(() => locals2)
-    }
-
-    const loadMore = (cursor) => {
-        triggerEvent('solidityLocalsLoadMore', [cursor])
-    }
-
     return (
         <div id='soliditylocals' data-id="solidityLocals">
             <DropdownPanel 
@@ -70,7 +50,10 @@ export const SolidityLocals = ({ data, updatedData, message, triggerEvent }) => 
                 calldata={calldata || {}}
                 extractFunc={extractData}
                 formatSelfFunc={formatSelf}
-                loadMore={loadMore}
+                registerEvent={registerEvent}
+                triggerEvent={triggerEvent}
+                loadMoreEvent='solidityLocalsLoadMore'
+                loadMoreCompletedEvent='solidityLocalsLoadMoreCompleted'
             />
         </div>
     )
