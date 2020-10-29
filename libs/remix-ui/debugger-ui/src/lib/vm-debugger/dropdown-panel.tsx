@@ -201,6 +201,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                         </TreeView>
                     }
                 </div>
+                <div className='dropdownrawcontent' hidden={true}>{ state.copiableContent }</div>
                 <div className='message' style={{ display: state.message.display }}>{ state.message.innerText }</div>
             </div>
         </div>
