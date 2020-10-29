@@ -152,12 +152,12 @@ module.exports = {
     .waitForElementVisible('*[data-id="slider"]')
     .click('*[data-id="slider"]')
     .setValue('*[data-id="slider"]', '5000')
-    .waitForElementPresent('*[data-id="treeViewTogglearray"]')
-    .click('*[data-id="treeViewTogglearray"]')
+    .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
+    .click('*[data-id="treeViewDivtreeViewItemarray"]')
     .waitForElementPresent('*[data-id="treeViewLoadMore"]')
     .click('*[data-id="treeViewLoadMore"]')
-    .assert.containsText('*[data-id="solidityLocals"]', '149: 0 uint256')
-    .notContainsText('*[data-id="solidityLocals"]', '150: 0 uint256')    
+    .assert.containsText('*[data-id="solidityLocals"]', '9: 0 uint256')
+    .notContainsText('*[data-id="solidityLocals"]', '10: 0 uint256')    
   },
 
   'Should debug using generated sources': function (browser: NightwatchBrowser) {
