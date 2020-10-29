@@ -263,9 +263,9 @@ const vmDebugger = {
           <div className="mt-3">
             <p className="mt-2 debuggerLabel">Debugger Configuration</p>
             <div className="mt-2 debuggerConfig custom-control custom-checkbox">
-              <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={(event) => {
+              <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
                 setState(prevState => {
-                  return { ...prevState, opt: { debugWithGeneratedSources: event.target.checked }}
+                  return { ...prevState, opt: { debugWithGeneratedSources: checked }}
                 })
               }} type="checkbox" title="Debug with generated sources" />
               <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Debug generated sources if available (from Solidity v0.7.2)</label>
