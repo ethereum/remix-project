@@ -5,7 +5,7 @@ import { Plugin } from '@remixproject/engine'
 var csjs = require('csjs-inject')
 var css = require('../styles/run-tab-styles')
 
-import * as packageJson from '../../../../package.json'
+import * as packageJson from '../../../../../../package.json'
 
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var modalDialog = require('../../ui/modaldialog')
