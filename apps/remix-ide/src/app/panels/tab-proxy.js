@@ -159,13 +159,18 @@ export class TabProxy {
             const duplicateTabName = this.loadedTabs.find(({ title }) => title === formatPath.join('/')).name
             const duplicateTabPath = duplicateTabName.split('/')
             const duplicateTabFormatPath = [...duplicateTabPath].reverse()
-            const duplicateTab = document.querySelector(`[title="${duplicateTabName}"] > span`)
-            const duplicateTitle = duplicateTabFormatPath.slice(0, titleLength).reverse().join('/')
+            const duplicateTabTitle = duplicateTabFormatPath.slice(0, titleLength).reverse().join('/')
 
-            duplicateTab.innerHTML = duplicateTitle
             this.loadedTabs.push({
               name: duplicateTabName,
-              title: duplicateTitle
+              title: duplicateTabTitle
+            })
+            this._view.filetabs.removeTab(duplicateTabName)
+            this._view.filetabs.addTab({
+              id: duplicateTabName,
+              title: duplicateTabTitle,
+              icon,
+              tooltip: duplicateTabName
             })
           }
           break;
@@ -192,6 +197,7 @@ export class TabProxy {
     this._view.filetabs.removeTab(name)
     delete this._handlers[name]
     this.switchToActiveTab()
+    this.loadedTabs = this.loadedTabs.filter(tab => tab.name !== name)
   }
 
   addHandler (type, fn) {
