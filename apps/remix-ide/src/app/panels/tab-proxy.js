@@ -14,6 +14,7 @@ export class TabProxy {
     this.data = {}
     this._view = {}
     this._handlers = {}
+    this.loadedTabs = []
 
     globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
     // update invert for all icons
@@ -136,9 +137,47 @@ export class TabProxy {
     if (this._handlers[name]) return
 
     var slash = name.split('/')
-    if (!title) {
-      title = name.indexOf('/') !== -1 ? slash[slash.length - 1] : name
+    const tabPath = slash.reverse()
+    const tempTitle = []
+
+    for(let i = 0; i < tabPath.length; i++) {
+      tempTitle.push(tabPath[i])
+      const formatPath = [...tempTitle].reverse()
+
+      if(!title) {
+        const index = this.loadedTabs.findIndex(({ title }) => title === formatPath.join('/'))
+
+        if (index === -1) {
+          title = formatPath.join('/')
+          const titleLength = formatPath.length
+          this.loadedTabs.push({
+            name,
+            title
+          })
+          formatPath.shift()
+          if (formatPath.length > 0) {
+            const duplicateTabName = this.loadedTabs.find(({ title }) => title === formatPath.join('/')).name
+            const duplicateTabPath = duplicateTabName.split('/')
+            const duplicateTabFormatPath = [...duplicateTabPath].reverse()
+            const duplicateTab = document.querySelector(`[title="${duplicateTabName}"] > span`)
+            const duplicateTitle = duplicateTabFormatPath.slice(0, titleLength).reverse().join('/')
+
+            duplicateTab.innerHTML = duplicateTitle
+            this.loadedTabs.push({
+              name: duplicateTabName,
+              title: duplicateTitle
+            })
+          }
+          break;
+        }
+      } else {
+        this.loadedTabs.push({
+          name,
+          title
+        })
+      }
     }
+
     this._view.filetabs.addTab({
       id: name,
       title,
