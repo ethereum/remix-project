@@ -65,6 +65,7 @@ class TestTabLogic {
     const comment = hasCurrent ? `import "${relative}/${remixPath.basename(fileToImport)}";` : '// Import here the file to test.'
     return `pragma solidity >=0.4.22 <0.8.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
+import "remix_accounts.sol";
 ${comment}
 
 // File name has to end with '_test.sol', this file can contain more than one testSuite contracts
@@ -91,6 +92,16 @@ contract ${contractName} {
     
     function checkFailure() public {
         Assert.equal(uint(1), uint(2), "1 is not equal to 2");
+    }
+
+    /// Custom Transaction Context
+    /// See more: https://remix-ide.readthedocs.io/en/latest/unittesting.html#customization
+    /// #sender: account-1
+    /// #value: 100
+    function checkSenderAndValue() public payable {
+        // account index varies 0-9, value is in wei
+        Assert.equal(msg.sender, TestsAccounts.getAccount(1), "Invalid sender");
+        Assert.equal(msg.value, 100, "Invalid value");
     }
 }
 `
