@@ -20,7 +20,7 @@ const profile = {
 }
 
 module.exports = class TestTab extends ViewPlugin {
-  constructor (fileManager, filePanel, compileTab, appManager, renderer) {
+  constructor (fileManager, offsetToLineColumnConverter, filePanel, compileTab, appManager, renderer) {
     super(profile)
     this.compileTab = compileTab
     this._view = { el: null }
@@ -34,6 +34,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.readyTestsNumber = 0
     this.areTestsRunning = false
     this.defaultPath = 'browser/tests'
+    this.offsetToLineColumnConverter =  offsetToLineColumnConverter
 
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction()
@@ -125,6 +126,28 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
+  async discardHighlight () {
+    await this.call('editor', 'discardHighlight')
+  }
+
+  async highlightLocation (location, fileName) {
+    if (location) {
+      var split = location.split(':')
+      var file = split[2]
+      location = {
+        start: parseInt(split[0]),
+        length: parseInt(split[1])
+      }
+      location = this.offsetToLineColumnConverter.offsetToLineColumn(
+        location,
+        parseInt(file),
+        fileName
+      )
+      await this.call('editor', 'discardHighlight')
+      await this.call('editor', 'highlight', location, fileName)
+    }
+  }
+
   testCallback (result) {
     this.testsOutput.hidden = false
     if (result.type === 'contract') {
@@ -144,14 +167,23 @@ module.exports = class TestTab extends ViewPlugin {
       this.testsOutput.appendChild(this.outputHeader)
     } else if (result.type === 'testPass') {
       this.testsOutput.appendChild(yo`
-        <div id="${this.runningTestFileName}" data-id="testTabSolidityUnitTestsOutputheader" class="${css.testPass} ${css.testLog} bg-light mb-2 text-success border-0">
+        <div
+          id="${this.runningTestFileName}"
+          data-id="testTabSolidityUnitTestsOutputheader"
+          class="${css.testPass} ${css.testLog} bg-light mb-2 text-success border-0"
+          onclick=${() => this.discardHighlight()}
+        >
           ✓ ${result.value}
         </div>
       `)
     } else if (result.type === 'testFailure') {
       if (!result.assertMethod) {
         this.testsOutput.appendChild(yo`
-        <div class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0" id="UTContext${result.context}">
+        <div
+          class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
+          id="UTContext${result.context}"
+          onclick=${() => this.highlightLocation(result.location, this.rawFileName)}
+        >
           <span> ✘ ${result.value}</span>
           <span class="text-dark">Error Message:</span>
           <span class="pb-2 text-break">"${result.errMsg}"</span>
@@ -162,7 +194,11 @@ module.exports = class TestTab extends ViewPlugin {
         const method = result.assertMethod === 'ok' ? '' : result.assertMethod
         const expected = result.assertMethod === 'ok' ? `'true'` : result.expected
         this.testsOutput.appendChild(yo`
-          <div class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0" id="UTContext${result.context}">
+          <div
+            class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
+            id="UTContext${result.context}"
+            onclick=${() => this.highlightLocation(result.location, this.rawFileName)}
+          >
             <span> ✘ ${result.value}</span>
             <span class="text-dark">Error Message:</span>
             <span class="pb-2 text-break">"${result.errMsg}"</span>

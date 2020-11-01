@@ -373,6 +373,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const debug = new DebuggerTab(blockchain)
   const test = new TestTab(
     registry.get('filemanager').api,
+    registry.get('offsettolinecolumnconverter').api,
     filePanel,
     compileTab,
     appManager,
