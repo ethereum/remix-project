@@ -2,11 +2,12 @@ import { execution }  from '@remix-project/remix-lib'
 const TxExecution = execution.txExecution
 const TxRunner = execution.txRunner
 
-function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
+function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback, events) {
   const finalCallback = function (err, result) {
     if (err) {
       return callback(err)
     }
+    events.emit("VMCall", result)
     const returnValue = result.result.execResult.returnValue.toString('hex')
     const toReturn = `0x${returnValue || '0'}`
     return callback(null, toReturn)
@@ -39,7 +40,7 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
 
 let txRunnerInstance
 
-export function processTx (executionContext, accounts, payload, isCall, callback) {
+export function processTx (executionContext, accounts, payload, isCall, callback, events) {
   const api = {
     logMessage: (msg) => {
     },
@@ -87,7 +88,7 @@ export function processTx (executionContext, accounts, payload, isCall, callback
   }
 
   if (isCall) {
-    runCall(payload, from, to, data, value, gas, txRunnerInstance, callbacks, callback)
+    runCall(payload, from, to, data, value, gas, txRunnerInstance, callbacks, callback, events)
   } else if (to) {
     runTx(payload, from, to, data, value, gas, txRunnerInstance, callbacks, callback)
   } else {

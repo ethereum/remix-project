@@ -8,6 +8,7 @@ export class Transactions {
 
   constructor (executionContext) {
     this.executionContext = executionContext
+    this.events = new EventEmitter()
   }
 
   init (accounts) {
@@ -33,7 +34,7 @@ export class Transactions {
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = toChecksumAddress(payload.params[0].from)
     }
-    processTx(this.executionContext, this.accounts, payload, false, cb)
+    processTx(this.executionContext, this.accounts, payload, false, cb, this.events)
   }
 
   eth_getTransactionReceipt (payload, cb) {
@@ -92,7 +93,7 @@ export class Transactions {
 
     payload.params[0].value = undefined
 
-    processTx(this.executionContext, this.accounts, payload, true, cb)
+    processTx(this.executionContext, this.accounts, payload, true, cb, this.events)
   }
 
   eth_getTransactionCount (payload, cb) {
