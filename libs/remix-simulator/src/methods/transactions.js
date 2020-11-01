@@ -1,12 +1,14 @@
 const Web3 = require('web3')
+const EventEmitter = require('events').EventEmitter
 const ethJSUtil = require('ethereumjs-util')
 const processTx = require('./txProcess.js')
 const BN = ethJSUtil.BN
 
 class Transactions{
-  
+
   constructor(executionContext) {
     this.executionContext = executionContext
+    this.events = new EventEmitter()
   }
 
   init (accounts) {
@@ -32,7 +34,7 @@ class Transactions{
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = ethJSUtil.toChecksumAddress(payload.params[0].from)
     }
-    processTx(this.executionContext, this.accounts, payload, false, cb)
+    processTx(this.executionContext, this.accounts, payload, false, cb, this.events)
   }
 
   eth_getTransactionReceipt (payload, cb) {
@@ -90,7 +92,7 @@ class Transactions{
 
     payload.params[0].value = undefined
 
-    processTx(this.executionContext, this.accounts, payload, true, cb)
+    processTx(this.executionContext, this.accounts, payload, true, cb, this.events)
   }
 
   eth_getTransactionCount (payload, cb) {

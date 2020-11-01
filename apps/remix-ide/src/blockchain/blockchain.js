@@ -347,15 +347,17 @@ class Blockchain {
 
     // self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
 
+    if (this.getCurrentProvider().RemixSimulatorProvider) {
+      this.getCurrentProvider().RemixSimulatorProvider.events.once("VMCall", (txResult) => {
+        self.event.trigger('callExecuted', [null, tx.from, tx.to, tx.data, tx.useCall, txResult, timestamp, payLoad, address])
+      })
+    }
+
     // return this.getCurrentProvider().callMethod(address, abi, methodName, (returnValue) => {
     const returnValue = await this.getCurrentProvider().callMethod(address, abi, methodName, inputs)
 
-    console.dir("====================")
-    console.dir([null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, address])
-    console.dir("====================")
-
     // self.event.trigger('callExecuted', [null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, rawAddress])
-    self.event.trigger('callExecuted', [null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, address])
+    // self.event.trigger('callExecuted', [null, tx.from, tx.to, tx.data, tx.useCall, returnValue, timestamp, payLoad, address])
     // this.event.trigger('callExecuted', [])
     outputCb(returnValue)
     // })

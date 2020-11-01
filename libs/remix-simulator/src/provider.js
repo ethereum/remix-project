@@ -20,6 +20,7 @@ class Provider {
     this.executionContext = executionContext
     this.Accounts = new Accounts(this.executionContext)
     this.Transactions = new Transactions(this.executionContext)
+    this.events = this.Transactions.events
 
     this.methods = {}
     this.methods = merge(this.methods, this.Accounts.methods())
