@@ -130,7 +130,7 @@ module.exports = class TestTab extends ViewPlugin {
     await this.call('editor', 'discardHighlight')
   }
 
-  async highlightLocation (location, fileName) {
+  async highlightLocation (location, runningTest, fileName) {
     if (location) {
       var split = location.split(':')
       var file = split[2]
@@ -141,14 +141,14 @@ module.exports = class TestTab extends ViewPlugin {
       location = this.offsetToLineColumnConverter.offsetToLineColumn(
         location,
         parseInt(file),
-        fileName
+        runningTest
       )
       await this.call('editor', 'discardHighlight')
       await this.call('editor', 'highlight', location, fileName)
     }
   }
 
-  testCallback (result) {
+  testCallback (result, runningTest) {
     this.testsOutput.hidden = false
     if (result.type === 'contract') {
       this.testSuite = result.value
@@ -182,7 +182,7 @@ module.exports = class TestTab extends ViewPlugin {
         <div
           class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
           id="UTContext${result.context}"
-          onclick=${() => this.highlightLocation(result.location, this.rawFileName)}
+          onclick=${() => this.highlightLocation(result.location, runningTest, this.rawFileName)}
         >
           <span> ✘ ${result.value}</span>
           <span class="text-dark">Error Message:</span>
@@ -197,7 +197,7 @@ module.exports = class TestTab extends ViewPlugin {
           <div
             class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
             id="UTContext${result.context}"
-            onclick=${() => this.highlightLocation(result.location, this.rawFileName)}
+            onclick=${() => this.highlightLocation(result.location,  runningTest, this.rawFileName)}
           >
             <span> ✘ ${result.value}</span>
             <span class="text-dark">Error Message:</span>
@@ -397,7 +397,7 @@ module.exports = class TestTab extends ViewPlugin {
       remixTests.runTestSources(
         runningTest,
         compilerConfig,
-        (result) => this.testCallback(result),
+        (result) => this.testCallback(result, runningTest),
         (_err, result, cb) => this.resultsCallback(_err, result, cb),
         (error, result) => {
           this.updateFinalResult(error, result, testFilePath)
