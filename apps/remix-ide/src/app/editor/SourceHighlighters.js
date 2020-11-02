@@ -25,6 +25,7 @@ class SourceHighlighters {
     }
   }
 
+  // highlights all locations for @from plugin
   highlightAllFrom (from) {
     try {
       if (!this.highlighters[from]) return
