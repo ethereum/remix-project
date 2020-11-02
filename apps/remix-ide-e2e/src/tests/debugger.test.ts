@@ -42,6 +42,8 @@ module.exports = {
     .waitForElementVisible('*[data-id="slider"]')
     .click('*[data-id="slider"]')
     .setValue('*[data-id="slider"]', '50')
+    .pause(2000)
+    .click('*[data-id="dropdownPanelSolidityLocals"]')
     .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
   },
@@ -150,12 +152,11 @@ module.exports = {
     .waitForElementVisible('*[data-id="slider"]')
     .click('*[data-id="slider"]')
     .setValue('*[data-id="slider"]', '5000')
-    .waitForElementPresent('*[data-id="treeViewTogglearray"]')
-    .click('*[data-id="treeViewTogglearray"]')
-    .waitForElementPresent('*[data-id="treeViewLoadMore"]')
-    .click('*[data-id="treeViewLoadMore"]')
-    .assert.containsText('*[data-id="solidityLocals"]', '149: 0 uint256')
-    .notContainsText('*[data-id="solidityLocals"]', '150: 0 uint256')    
+    .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
+    .click('*[data-id="treeViewDivtreeViewItemarray"]')
+    .waitForElementPresent('*[data-id="treeViewDivtreeViewLoadMore"]')
+    .assert.containsText('*[data-id="solidityLocals"]', '9: 9 uint256')
+    .notContainsText('*[data-id="solidityLocals"]', '10: 10 uint256')
   },
 
   'Should debug using generated sources': function (browser: NightwatchBrowser) {
@@ -188,7 +189,7 @@ const sources = [
     'browser/blah.sol': {
       content: `
     pragma solidity >=0.7.0 <0.8.0;
-
+ 
     contract Kickstarter {
 
         enum State { Started, Completed }

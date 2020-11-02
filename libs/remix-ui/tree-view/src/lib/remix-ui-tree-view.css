@@ -1,0 +1,32 @@
+.li_tv {
+    list-style-type: none;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 0px;
+  }
+  .ul_tv {
+    list-style-type: none;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 0px;
+  }
+  .caret_tv {
+    width: 10px;
+    flex-shrink: 0;
+    padding-right: 5px;
+  }
+  .label_item {
+    word-break: break-all;
+  }
+  .label_key {
+    min-width: 15%;
+    max-width: 80%;
+    word-break: break-word;
+  }
+  .label_value {
+    min-width: 10%;
+  }
