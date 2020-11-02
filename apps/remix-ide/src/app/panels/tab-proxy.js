@@ -14,6 +14,7 @@ export class TabProxy {
     this.data = {}
     this._view = {}
     this._handlers = {}
+    this.loadedTabs = []
 
     globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
     // update invert for all icons
@@ -136,9 +137,52 @@ export class TabProxy {
     if (this._handlers[name]) return
 
     var slash = name.split('/')
-    if (!title) {
-      title = name.indexOf('/') !== -1 ? slash[slash.length - 1] : name
+    const tabPath = slash.reverse()
+    const tempTitle = []
+
+    for(let i = 0; i < tabPath.length; i++) {
+      tempTitle.push(tabPath[i])
+      const formatPath = [...tempTitle].reverse()
+
+      if(!title) {
+        const index = this.loadedTabs.findIndex(({ title }) => title === formatPath.join('/'))
+
+        if (index === -1) {
+          title = formatPath.join('/')
+          const titleLength = formatPath.length
+          this.loadedTabs.push({
+            name,
+            title
+          })
+          formatPath.shift()
+          if (formatPath.length > 0) {
+            const duplicateTabName = this.loadedTabs.find(({ title }) => title === formatPath.join('/')).name
+            const duplicateTabPath = duplicateTabName.split('/')
+            const duplicateTabFormatPath = [...duplicateTabPath].reverse()
+            const duplicateTabTitle = duplicateTabFormatPath.slice(0, titleLength).reverse().join('/')
+
+            this.loadedTabs.push({
+              name: duplicateTabName,
+              title: duplicateTabTitle
+            })
+            this._view.filetabs.removeTab(duplicateTabName)
+            this._view.filetabs.addTab({
+              id: duplicateTabName,
+              title: duplicateTabTitle,
+              icon,
+              tooltip: duplicateTabName
+            })
+          }
+          break;
+        }
+      } else {
+        this.loadedTabs.push({
+          name,
+          title
+        })
+      }
     }
+
     this._view.filetabs.addTab({
       id: name,
       title,
@@ -153,6 +197,7 @@ export class TabProxy {
     this._view.filetabs.removeTab(name)
     delete this._handlers[name]
     this.switchToActiveTab()
+    this.loadedTabs = this.loadedTabs.filter(tab => tab.name !== name)
   }
 
   addHandler (type, fn) {
