@@ -140,11 +140,10 @@ export class TabProxy {
     const tabPath = slash.reverse()
     const tempTitle = []
 
-    for(let i = 0; i < tabPath.length; i++) {
-      tempTitle.push(tabPath[i])
-      const formatPath = [...tempTitle].reverse()
-
-      if(!title) {
+    if(!title) {
+      for(let i = 0; i < tabPath.length; i++) {
+        tempTitle.push(tabPath[i])
+        const formatPath = [...tempTitle].reverse()
         const index = this.loadedTabs.findIndex(({ title }) => title === formatPath.join('/'))
 
         if (index === -1) {
@@ -175,12 +174,12 @@ export class TabProxy {
           }
           break;
         }
-      } else {
-        this.loadedTabs.push({
-          name,
-          title
-        })
       }
+    } else {
+      this.loadedTabs.push({
+        name,
+        title
+      })
     }
 
     this._view.filetabs.addTab({
