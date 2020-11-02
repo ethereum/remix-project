@@ -123,7 +123,7 @@ class ContextualListener extends Plugin {
   }
 
   _highlightInternal (position, node) {
-    if (node.nodeType == 'Block') return
+    if (node.nodeType === 'Block') return
     let lastCompilationResult = this._deps.compilersArtefacts['__last']
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0) {
       let lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, lastCompilationResult.getSourceCode().sources, lastCompilationResult.getAsts())
