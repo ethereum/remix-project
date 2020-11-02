@@ -130,7 +130,7 @@ module.exports = class TestTab extends ViewPlugin {
     await this.call('editor', 'discardHighlight')
   }
 
-  async highlightLocation (location, runningTest, fileName) {
+  async highlightLocation (location, runningTests, fileName) {
     if (location) {
       var split = location.split(':')
       var file = split[2]
@@ -141,14 +141,14 @@ module.exports = class TestTab extends ViewPlugin {
       location = this.offsetToLineColumnConverter.offsetToLineColumn(
         location,
         parseInt(file),
-        runningTest
+        runningTests
       )
       await this.call('editor', 'discardHighlight')
       await this.call('editor', 'highlight', location, fileName)
     }
   }
 
-  testCallback (result, runningTest) {
+  testCallback (result, runningTests) {
     this.testsOutput.hidden = false
     if (result.type === 'contract') {
       this.testSuite = result.value
@@ -182,7 +182,7 @@ module.exports = class TestTab extends ViewPlugin {
         <div
           class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
           id="UTContext${result.context}"
-          onclick=${() => this.highlightLocation(result.location, runningTest, this.rawFileName)}
+          onclick=${() => this.highlightLocation(result.location, runningTests, this.rawFileName)}
         >
           <span> ✘ ${result.value}</span>
           <span class="text-dark">Error Message:</span>
@@ -197,7 +197,7 @@ module.exports = class TestTab extends ViewPlugin {
           <div
             class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
             id="UTContext${result.context}"
-            onclick=${() => this.highlightLocation(result.location,  runningTest, this.rawFileName)}
+            onclick=${() => this.highlightLocation(result.location,  runningTests, this.rawFileName)}
           >
             <span> ✘ ${result.value}</span>
             <span class="text-dark">Error Message:</span>
@@ -384,8 +384,8 @@ module.exports = class TestTab extends ViewPlugin {
     }
     this.resultStatistics.hidden = false
     this.fileManager.readFile(testFilePath).then((content) => {
-      const runningTest = {}
-      runningTest[testFilePath] = { content }
+      const runningTests = {}
+      runningTests[testFilePath] = { content }
       const {currentVersion, evmVersion, optimize} = this.compileTab.getCurrentCompilerConfig()
       const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
@@ -395,9 +395,9 @@ module.exports = class TestTab extends ViewPlugin {
         usingWorker: canUseWorker(currentVersion)
       }
       remixTests.runTestSources(
-        runningTest,
+        runningTests,
         compilerConfig,
-        (result) => this.testCallback(result, runningTest),
+        (result) => this.testCallback(result, runningTests),
         (_err, result, cb) => this.resultsCallback(_err, result, cb),
         (error, result) => {
           this.updateFinalResult(error, result, testFilePath)
