@@ -83,13 +83,13 @@ class ArrayType extends RefType {
     if (isNaN(length)) {
       return {
         value: '<decoding failed - length is NaN>',
-        type: this.typeName
+        type: 'Error'
       }
     }
     if (!skip) skip = 0
     if (skip) offset = offset + (32 * skip)
     let limit = length - skip
-    if (limit > 100) limit = 100
+    if (limit > 10) limit = 10
     for (var k = 0; k < limit; k++) {
       var contentOffset = offset
       ret.push(this.underlyingType.decodeFromMemory(contentOffset, memory))

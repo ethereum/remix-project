@@ -2,7 +2,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from "events"
 class GoToVmTraceStep extends EventEmitter {
   command (this: NightwatchBrowser, step: number, incr?: number): NightwatchBrowser {
-    goToVMtraceStep(this.api, step, incr, () => {        
+    goToVMtraceStep(this.api, step, incr, () => {      
       this.emit('complete')
     })
     return this
