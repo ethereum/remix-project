@@ -1,4 +1,4 @@
-pragma solidity >=0.4.22 <0.7.0;
+pragma solidity >=0.4.22 <0.8.0;
 import "remix_tests.sol";
 import "./SafeMath.sol";
 import "./SafeMathProxy.sol";
