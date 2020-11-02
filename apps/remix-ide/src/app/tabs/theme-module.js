@@ -77,7 +77,7 @@ export class ThemeModule extends Plugin {
     }
     const next = themeName || this.active   // Name
     const nextTheme = this.themes[next] // Theme
-    if (!this.forced) this._deps.config.set('settings/theme', next)
+    this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName
