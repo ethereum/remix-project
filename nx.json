@@ -66,6 +66,18 @@
     },
     "remixd": {
       "tags": []
+    },
+    "remix-ui-tree-view": {
+      "tags": []
+    },
+    "remix-ui-debugger-ui": {
+      "tags": []
+    },
+    "remix-ui-utils": {
+      "tags": []
+    },
+    "remix-ui-clipboard": {
+      "tags": []
     }
   }
 }
