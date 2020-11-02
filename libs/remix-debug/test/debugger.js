@@ -8,7 +8,7 @@ var vmCall = require('./vmCall')
 var Debugger = require('../src/Ethdebugger')
 var compiler = require('solc')
 
-var ballot = `pragma solidity >=0.4.22 <0.7.0;
+var ballot = `pragma solidity >=0.4.22 <0.8.0;
 
 /** 
  * @title Ballot
@@ -258,7 +258,7 @@ function testDebugging (debugManager) {
 
   tape('traceManager.decodeLocalsAt', async (t) => {
     t.plan(1)
-    const tested = JSON.parse('{"proposalNames":{"value":[{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"}],"length":"0x1","type":"bytes32[]","cursor":1,"hasNext":false},"p":{"value":"45","type":"uint256"},"addressLocal":{"value":"0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB","type":"address"},"i":{"value":"2","type":"uint256"},"proposalsLocals":{"value":[{"value":{"name":{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"},"voteCount":{"value":"0","type":"uint256"}},"type":"struct Ballot.Proposal"}],"length":"0x1","type":"struct Ballot.Proposal[]"}}')
+    const tested = JSON.parse('{"proposalNames":{"value":[{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"}],"length":"0x1","type":"bytes32[]","cursor":1,"hasNext":false}}')
     try {
       const address = debugManager.traceManager.getCurrentCalledAddressAt(330)
       const location = await debugManager.sourceLocationFromVMTraceIndex(address, 330)
