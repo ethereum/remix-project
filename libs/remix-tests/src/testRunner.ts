@@ -250,6 +250,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                     const resp: TestResultInterface = {
                       type: 'testPass',
                       value: changeCase.sentenceCase(func.name),
+                      filename: testObject.filename,
                       time: time,
                       context: testName
                     }
@@ -260,6 +261,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                     const resp: TestResultInterface = {
                       type: 'testFailure',
                       value: changeCase.sentenceCase(func.name),
+                      filename: testObject.filename,
                       time: time,
                       errMsg: 'function returned false',
                       context: testName
@@ -298,6 +300,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                                 const resp: TestResultInterface = {
                                   type: 'testFailure',
                                   value: changeCase.sentenceCase(func.name),
+                                  filename: testObject.filename,
                                   time: time,
                                   errMsg: testEvent[1],
                                   context: testName,
@@ -319,6 +322,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                         const resp: TestResultInterface = {
                           type: 'testPass',
                           value: changeCase.sentenceCase(func.name),
+                          filename: testObject.filename,
                           time: time,
                           context: testName
                         }
@@ -337,6 +341,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                 const resp: TestResultInterface = {
                     type: 'testFailure',
                     value: changeCase.sentenceCase(func.name),
+                    filename: testObject.filename,
                     time: time,
                     errMsg: err.message,
                     context: testName
