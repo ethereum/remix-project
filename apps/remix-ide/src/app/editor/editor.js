@@ -189,12 +189,21 @@ class Editor extends Plugin {
     this.editor.on('changeSession', () => {
       this._onChange()
       this.event.trigger('sessionSwitched', [])
-
       this.editor.getSession().on('change', () => {
         this._onChange()
         this.event.trigger('contentChanged', [])
       })
     })
+  }
+
+  onActivation () {
+    this.on('sidePanel', 'focusChanged', (name) => this.sourceHighlighters.hideHighlightsExcept(name))
+    this.on('sidePanel', 'pluginDisabled', (name) => this.sourceHighlighters.discardHighlight(name))
+  }
+
+  onDeactivation () {
+    this.off('sidePanel', 'focusChanged')
+    this.off('sidePanel', 'pluginDisabled')
   }
 
   highlight (position, filePath, hexColor) {
