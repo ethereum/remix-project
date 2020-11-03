@@ -1,0 +1,42 @@
+{
+      "name": "remix-theia",
+      "publisher": "theia",
+      "keywords": [
+        "remix-theia"
+      ],
+      "version": "0.3.0",
+      "license": "none",
+      
+      "files": [
+        "src"
+      ],
+      "activationEvents": [
+        "*"
+      ],
+      "dependencies": {
+        "@remixproject/plugin-theia": "next"
+      },
+      "devDependencies": {
+        "@theia/cli": "^1.7.0",
+        "@theia/plugin": "next",
+        "@theia/plugin-packager": "latest",
+        "rimraf": "2.6.2",
+        "typescript-formatter": "7.2.2",
+        "typescript": "~3.8.3"
+      },
+      "scripts": {
+        "prepare": "npm run clean && npm run build",
+        "clean": "rimraf lib",
+        "format-code": "tsfmt -r",
+        "watch": "tsc -watch",
+        "compile": "tsc", 
+        "build": "npm run format-code && npm run compile && theia-plugin pack"
+      },
+      "engines": {
+        "theiaPlugin": "next"
+      },
+      "theiaPlugin": {
+            "backend": "src/remix-theia-backend.js",
+            "frontend": "../../../dist/examples/example/example-theia-frontend/dist/example-theia-frontend-frontend.js"
+      }
+}
