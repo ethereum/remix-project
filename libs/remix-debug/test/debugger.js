@@ -258,13 +258,12 @@ function testDebugging (debugManager) {
 
   tape('traceManager.decodeLocalsAt', async (t) => {
     t.plan(1)
-    const tested = JSON.parse('{"proposalNames":{"value":[{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"}],"length":"0x1","type":"bytes32[]","cursor":1,"hasNext":false}}')
+    const tested = JSON.parse('{"proposalNames":{"value":[{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"}],"length":"0x1","type":"bytes32[]","cursor":1,"hasNext":false},"p":{"value":"45","type":"uint256"},"addressLocal":{"value":"0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB","type":"address"},"i":{"value":"2","type":"uint256"},"proposalsLocals":{"value":[{"value":{"name":{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"},"voteCount":{"value":"0","type":"uint256"}},"type":"struct Ballot.Proposal"}],"length":"0x1","type":"struct Ballot.Proposal[]"}}')
     try {
-      const address = debugManager.traceManager.getCurrentCalledAddressAt(330)
-      const location = await debugManager.sourceLocationFromVMTraceIndex(address, 330)
-      debugManager.decodeLocalsAt(330, location, (error, decodedlocals) => {
+      const address = debugManager.traceManager.getCurrentCalledAddressAt(327)
+      const location = await debugManager.sourceLocationFromVMTraceIndex(address, 327)
+      debugManager.decodeLocalsAt(327, location, (error, decodedlocals) => {
         if (error) return t.end(error)
-        
         t.ok(deepequal(decodedlocals, tested), `locals does not match. expected: ${JSON.stringify(tested)} - current: ${decodedlocals}`)
       })
     } catch (error) {
