@@ -85,7 +85,7 @@ const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' elect
  * TODO: replace this with remix's own compiler code
  */
 
-export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb): void {
+export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, compilerConfig: CompilerConfiguration, cb): void {
     let compiler: any
     const accounts: string[] = opts.accounts || []
     const sources: SrcIfc = {
@@ -125,7 +125,11 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
     } finally {
         async.waterfall([
             function loadCompiler(next) {
+                const {currentCompilerUrl, evmVersion, optimize, usingWorker} = compilerConfig
                 compiler = new RemixCompiler()
+                compiler.set('evmVersion', evmVersion)
+                compiler.set('optimize', optimize)
+                // compiler.loadVersion(usingWorker, currentCompilerUrl)
                 compiler.onInternalCompilerLoaded()
                 // compiler.event.register('compilerLoaded', this, function (version) {
                 next()

@@ -4,6 +4,7 @@ import path from 'path'
 import { runTestFiles } from './runTestFiles'
 import fs from './fileSystem'
 import { Provider } from '@remix-project/remix-simulator'
+import { CompilerConfiguration } from './types'
 import Log from './logger'
 const logger = new Log()
 const log = logger.logger
@@ -21,6 +22,15 @@ function mapVerbosity (v: number) {
     }
     return levels[v]
 }
+
+function mapOptimize (v: string) {
+        const optimize = {
+                'true': true,
+                'false': false
+        }
+        return optimize[v];
+}
+
 const version = require('../package.json').version
 
 commander.version(version)
@@ -36,6 +46,7 @@ commander.command('help').description('output usage information').action(functio
 // get current version
 commander
     .option('-v, --verbose <level>', 'run with verbosity', mapVerbosity)
+    .option('-o, --optimize <bool>', 'run compiler optimization', mapOptimize)
     .action(async (testsPath) => {
 
         // Check if path exists
@@ -67,7 +78,13 @@ commander
         await provider.init()
         web3.setProvider(provider)
 
-        runTestFiles(path.resolve(testsPath), isDirectory, web3)
+        const compilerConfig = {} as CompilerConfiguration
+        if (commander.optimize) {
+                compilerConfig.optimize = commander.optimize
+                log.info('compiler optimization set to ' + compilerConfig.optimize)
+        }
+
+        runTestFiles(path.resolve(testsPath), isDirectory, web3, compilerConfig)
     })
 
 if (!process.argv.slice(2).length) {
