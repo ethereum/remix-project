@@ -200,6 +200,7 @@ class CompilerContainer {
       placeholder="200"
       type="number"
       title="Number of optimisation runs."
+      onchange=${() => this.onchangeRuns()}
     >`
     if (this.compileTabLogic.optimize) this._view.runs.removeAttribute('disabled')
     else {
@@ -343,10 +344,16 @@ class CompilerContainer {
 
   onchangeOptimize () {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
-    if (this.compileTabLogic.optimize) this._view.runs.removeAttribute('disabled')
-    else {
+    if (this.compileTabLogic.optimize) {
+      this._view.runs.removeAttribute('disabled')
+    } else {
       this._view.runs.setAttribute('disabled', '')
     }
+    this.compileIfAutoCompileOn()
+  }
+
+  onchangeRuns () {
+    this.compileTabLogic.setRuns(this._view.runs.value)
     this.compileIfAutoCompileOn()
   }
 
@@ -391,6 +398,7 @@ class CompilerContainer {
 
   setRuns (value) {
     this._view.runs.value = value
+    this.onchangeRuns()
   }
 
   setLanguage (lang) {

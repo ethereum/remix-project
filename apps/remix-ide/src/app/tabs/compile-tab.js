@@ -221,7 +221,7 @@ class CompileTab extends ViewPlugin {
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
   async compileWithParameters (compilationTargets, settings) {
-    const res = await compile(compilationTargets, settings)
+    let res = await compile(compilationTargets, settings)
     return res
   }
 
