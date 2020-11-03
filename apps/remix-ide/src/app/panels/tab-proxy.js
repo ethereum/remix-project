@@ -2,8 +2,15 @@ var yo = require('yo-yo')
 var $ = require('jquery')
 const EventEmitter = require('events')
 const globalRegistry = require('../../global/registry')
+const csjs = require('csjs-inject')
 
 require('remix-tabs')
+
+const css = csjs`
+  .remix_tabs div[title]{
+    display: flex;
+  }
+`
 
 export class TabProxy {
   constructor (fileManager, editor, appManager) {
@@ -140,11 +147,10 @@ export class TabProxy {
     const tabPath = slash.reverse()
     const tempTitle = []
 
-    for(let i = 0; i < tabPath.length; i++) {
-      tempTitle.push(tabPath[i])
-      const formatPath = [...tempTitle].reverse()
-
-      if(!title) {
+    if(!title) {
+      for(let i = 0; i < tabPath.length; i++) {
+        tempTitle.push(tabPath[i])
+        const formatPath = [...tempTitle].reverse()
         const index = this.loadedTabs.findIndex(({ title }) => title === formatPath.join('/'))
 
         if (index === -1) {
@@ -175,12 +181,12 @@ export class TabProxy {
           }
           break;
         }
-      } else {
-        this.loadedTabs.push({
-          name,
-          title
-        })
       }
+    } else {
+      this.loadedTabs.push({
+        name,
+        title
+      })
     }
 
     this._view.filetabs.addTab({
@@ -213,7 +219,7 @@ export class TabProxy {
   }
 
   renderTabsbar () {
-    this._view.filetabs = yo`<remix-tabs></remix-tabs>`
+    this._view.filetabs = yo`<remix-tabs class=${css.remix_tabs}></remix-tabs>`
     this._view.filetabs.addEventListener('tabClosed', (event) => {
       if (this._handlers[event.detail]) this._handlers[event.detail].close()
       this.event.emit('tabCountChanged', this._view.filetabs.tabs.length)
