@@ -48,7 +48,7 @@ let css = csjs`
   .rightPanel {
     right: 0;
     position: absolute;
-    z-index: 1000;
+    z-index: 3;
   }
   .remixHomeMedia {
     overflow-y: auto;
