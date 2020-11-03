@@ -182,7 +182,7 @@ module.exports = class TestTab extends ViewPlugin {
         <div
           class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
           id="UTContext${result.context}"
-          onclick=${() => this.highlightLocation(result.location, runningTests, this.rawFileName)}
+          onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
         >
           <span> ✘ ${result.value}</span>
           <span class="text-dark">Error Message:</span>
@@ -197,7 +197,7 @@ module.exports = class TestTab extends ViewPlugin {
           <div
             class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
             id="UTContext${result.context}"
-            onclick=${() => this.highlightLocation(result.location,  runningTests, this.rawFileName)}
+            onclick=${() => this.highlightLocation(result.location,  runningTests, result.filename)}
           >
             <span> ✘ ${result.value}</span>
             <span class="text-dark">Error Message:</span>
