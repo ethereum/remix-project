@@ -353,7 +353,7 @@ class CompilerContainer {
   }
 
   onchangeRuns () {
-    this.compileTabLogic.setRuns(this._view.runs.value)
+    this.compileTabLogic.setRuns(parseInt(this._view.runs.value))
     this.compileIfAutoCompileOn()
   }
 
@@ -397,8 +397,10 @@ class CompilerContainer {
   }
 
   setRuns (value) {
-    this._view.runs.value = value
-    this.onchangeRuns()
+    if (value) {
+      this._view.runs.value = value
+      this.onchangeRuns()
+    }
   }
 
   setLanguage (lang) {
