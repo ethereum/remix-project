@@ -2,7 +2,6 @@ const yo = require('yo-yo')
 const css = require('./styles/debugger-tab-styles')
 import toaster from '../ui/tooltip'
 import { DebuggerUI } from '@remix-ui/debugger-ui'
-// const DebuggerUI = require('./debugger/debuggerUI')
 import { ViewPlugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import React from 'react'
