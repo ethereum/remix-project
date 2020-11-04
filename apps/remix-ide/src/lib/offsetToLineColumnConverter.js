@@ -36,6 +36,19 @@ export class OffsetToLineColumnConverter extends Plugin {
     return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
   }
 
+  offsetToLineColumnWithContent (rawLocation, file, sources, content) {
+    if (!this.lineBreakPositionsByContent[file]) {
+      const sourcesArray = Object.keys(sources)
+      if (content === '' || (file === 0 && sourcesArray.length === 1)) {
+        // if we don't have ast, we process the only one available content (applicable also for compiler older than 0.4.12)
+        this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[sourcesArray[0]].content)
+      } else {
+        this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(content)
+      }
+    }
+    return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
+  }
+
   clear () {
     this.lineBreakPositionsByContent = {}
   }
