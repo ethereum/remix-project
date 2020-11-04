@@ -154,7 +154,8 @@ staticAnalysisView.prototype.run = function () {
               start: parseInt(split[0]),
               length: parseInt(split[1])
             }
-            location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(location,
+            location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(
+              location,
               parseInt(file),
               self.lastCompilationSource.sources,
               self.lastCompilationResult.sources

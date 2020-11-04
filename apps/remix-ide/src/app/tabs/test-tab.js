@@ -138,10 +138,11 @@ module.exports = class TestTab extends ViewPlugin {
         start: parseInt(split[0]),
         length: parseInt(split[1])
       }
-      location = this.offsetToLineColumnConverter.offsetToLineColumn(
+      location = this.offsetToLineColumnConverter.offsetToLineColumnWithContent(
         location,
         parseInt(file),
-        runningTests
+        runningTests,
+        runningTests[fileName].content
       )
       await this.call('editor', 'discardHighlight')
       await this.call('editor', 'highlight', location, fileName)
@@ -197,7 +198,7 @@ module.exports = class TestTab extends ViewPlugin {
           <div
             class="bg-light mb-2 ${css.testFailure} ${css.testLog} d-flex flex-column text-danger border-0"
             id="UTContext${result.context}"
-            onclick=${() => this.highlightLocation(result.location,  runningTests, result.filename)}
+            onclick=${() => this.highlightLocation(result.location, runningTests, result.filename)}
           >
             <span> ✘ ${result.value}</span>
             <span class="text-dark">Error Message:</span>
