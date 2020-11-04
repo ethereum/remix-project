@@ -81,6 +81,7 @@ export const DebuggerUI = ({ debuggerModule }) => {
     })
 
     debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources) => {
+      if (!lineColumnPos) return
       const contracts = await fetchContractAndCompile(
         currentReceipt.contractAddress || currentReceipt.to,
         currentReceipt)
