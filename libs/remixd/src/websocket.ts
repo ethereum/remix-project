@@ -1,13 +1,13 @@
 import * as WS from 'ws'
 import * as http from 'http'
-import { WebsocketOpt, SharedFolderClient } from './types'
+import { WebsocketOpt, SharedFolderClient } from './types' // eslint-disable-line
 import { getDomain } from './utils'
 import { createClient } from '@remixproject/plugin-ws'
 export default class WebSocket {
   server: http.Server
   wsServer: WS.Server
 
-  constructor (public port: number, public opt: WebsocketOpt, public sharedFolder: SharedFolderClient) {}
+  constructor (public port: number, public opt: WebsocketOpt, public sharedFolder: SharedFolderClient) {} //eslint-disable-line
 
   start (callback?: (ws: WS) => void): void {
     this.server = http.createServer((request, response) => {
@@ -35,7 +35,7 @@ export default class WebSocket {
       const { sharedFolder } = this
 
       createClient(ws, sharedFolder as any)
-      if(callback) callback(ws)
+      if (callback) callback(ws)
     })
   }
 
@@ -58,7 +58,7 @@ function originIsAllowed (origin: string, self: WebSocket): boolean {
       const origins = require('./origins.json')
       const domain = getDomain(origin)
       const { data } = origins
-      
+
       if (data.includes(origin) || data.includes(domain)) {
         self.opt.remixIdeUrl = origin
         console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + self.opt.remixIdeUrl + ' to connect to that instance')

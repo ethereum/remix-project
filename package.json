@@ -43,7 +43,7 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "lint:libs": "nx run-many --target=lint --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd",
+    "lint:libs": "nx run-many --target=lint --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd,remix-ui-tree-view,remix-ui-debugger-ui,remix-ui-utils,remix-ui-clipboard",
     "build:libs": "nx run-many --target=build --parallel=false --with-deps=true --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd",
     "test:libs": "nx run-many --target=test --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd",
     "publish:libs": "npm run build:libs; lerna publish --skip-git; npm run bumpVersion:libs",
@@ -182,7 +182,6 @@
     "@types/axios": "^0.14.0",
     "@types/chai": "^4.2.11",
     "@types/fs-extra": "^9.0.1",
-    "@types/jest": "25.1.4",
     "@types/mocha": "^7.0.2",
     "@types/nightwatch": "^1.1.6",
     "@types/node": "~8.9.4",
@@ -279,4 +278,4 @@
     "yo-yo": "github:ioedeveloper/yo-yo",
     "yo-yoify": "^3.7.3"
   }
-}
+} 
