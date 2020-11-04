@@ -1,3 +1,1 @@
-import { RemixdClient as sharedfolder } from './services/remixdClient'
-
-export { sharedfolder }
+export { RemixdClient as Sharedfolder } from './services/remixdClient'

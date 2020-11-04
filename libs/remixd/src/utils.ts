@@ -1,4 +1,4 @@
-import { ResolveDirectory, Filelist } from './types'
+import { ResolveDirectory, Filelist } from './types' // eslint-disable-line
 import * as fs from 'fs-extra'
 import * as isbinaryfile from 'isbinaryfile'
 import * as pathModule from 'path'
@@ -49,7 +49,7 @@ function walkSync (dir: string, filelist: Filelist, sharedFolder: string): Filel
         filelist = walkSync(subElement, filelist, sharedFolder)
       } else {
         const relative = relativePath(subElement, sharedFolder)
-        
+
         filelist[relative] = isbinaryfile.sync(subElement)
       }
     }
@@ -79,7 +79,7 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
  * @param {String} url - Remix-IDE URL instance
  * @return {String} extracted domain name from url
  */
-function getDomain(url: string) {
+function getDomain (url: string) {
   // eslint-disable-next-line
   const domainMatch = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/img)
 

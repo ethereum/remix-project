@@ -47,6 +47,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
+      - run: npm run lint remix-ide-e2e
       - run: npm run build:libs
       - run: npm run downloadsolc_root
       - run: npm run build
@@ -84,6 +85,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
+      - run: npm run lint remix-ide-e2e
       - run: npm run build:libs
       - run: npm run downloadsolc_root
       - run: npm run build
@@ -126,6 +128,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
+      - run: npm run lint remix-ide-e2e
       - run: npm run build:libs
       - run: npm run downloadsolc_root
       - run: npm run build
