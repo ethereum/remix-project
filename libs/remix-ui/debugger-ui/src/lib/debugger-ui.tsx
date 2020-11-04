@@ -268,7 +268,7 @@ const vmDebugger = {
                   return { ...prevState, opt: { debugWithGeneratedSources: checked }}
                 })
               }} type="checkbox" title="Debug with generated sources" />
-              <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Debug generated sources if available (from Solidity v0.7.2)</label>
+              <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (from Solidity v0.7.2)</label>
             </div>
           </div>
           <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } transactionNumber={ state.txNumber } debugging={ state.debugging } />
