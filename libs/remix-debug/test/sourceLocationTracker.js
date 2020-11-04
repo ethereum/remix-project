@@ -63,12 +63,17 @@ tape('SourceLocationTracker', function (t) {
         st.equal(map.start, 35)
 
         map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
-        st.equal(map.file, 1)
+        st.equal(map.file, 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
 
         map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
-        st.equal(map.file, 1)
+        st.equal(map.file, 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
         st.equal(map.start, 1293)
         st.equal(map.length, 32)
+
+        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 36, output.contracts)
+        st.equal(map.file, 0) // 0 refers to the initial solidity code. see source below (ABIEncoderV2)
+        st.equal(map.start, 303)
+        st.equal(map.length, 448)
       } catch (e) {
         console.log(e)
       }
