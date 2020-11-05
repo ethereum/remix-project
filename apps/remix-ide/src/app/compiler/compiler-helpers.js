@@ -4,7 +4,7 @@ import { Compiler } from '@remix-project/remix-solidity'
 import CompilerAbstract from './compiler-abstract'
 
 export const compile = async (compilationTargets, settings) => {
-  let res = await (() => {
+  const res = await (() => {
     return new Promise((resolve, reject) => {
       const compiler = new Compiler(() => {})
       compiler.set('evmVersion', settings.evmVersion)
