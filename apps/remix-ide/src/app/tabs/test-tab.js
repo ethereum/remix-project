@@ -141,10 +141,8 @@ module.exports = class TestTab extends ViewPlugin {
       location = this.offsetToLineColumnConverter.offsetToLineColumnWithContent(
         location,
         parseInt(file),
-        runningTests,
         runningTests[fileName].content
       )
-      this.fileManager.open(fileName)
       await this.call('editor', 'discardHighlight')
       await this.call('editor', 'highlight', location, fileName)
     }
