@@ -30,7 +30,7 @@ module.exports = {
     browser
     .addFile('test_jsCompileWithOptimization.js', { content: jsCompileWithOptimization })
     .executeScript('remix.exeCurrent()')
-    .pause(5000)
+    .pause(10000)
     .journalChildIncludes(`\"optimizer\":{\"enabled\":true,\"runs\":300}`)
   },
 
