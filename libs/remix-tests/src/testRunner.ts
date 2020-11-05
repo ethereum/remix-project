@@ -294,7 +294,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                                 const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.raw.data)
                                 if (!testEvent[0]) {
                                     const assertMethod = testEvent[2]
-                                    if(assertMethod === 'ok') { // for 'Assert.ok' method
+                                    if (assertMethod === 'ok') { // for 'Assert.ok' method
                                         testEvent[3] = 'false'
                                         testEvent[4] = 'true'
                                     }
