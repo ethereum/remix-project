@@ -60,10 +60,10 @@ jobs:
       #       java -version
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --version=2.45.0 --baseURL=https://selenium-release.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone install --version=6.20.1 --baseURL=https://selenium-release.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --version=2.45.0
+          command: ./node_modules/.bin/selenium-standalone start --version=6.20.1
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
       - store_test_results:
