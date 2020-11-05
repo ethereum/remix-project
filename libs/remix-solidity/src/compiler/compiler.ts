@@ -52,7 +52,7 @@ export class Compiler {
    * @param value value of key in CompilerState
    */
 
-  set <K extends keyof CompilerState>(key: K, value: CompilerState[K]): void {    
+  set <K extends keyof CompilerState>(key: K, value: CompilerState[K]): void {
     this.state[key] = value
     if (key === 'runs') this.state['runs'] = parseInt(value)
   }
