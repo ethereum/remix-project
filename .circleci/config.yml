@@ -54,7 +54,7 @@ jobs:
           name: Download Compatible JAVA Version for Selenium
           command: |
             java -version
-            sudo apt-get update
+            sudo rm -rf /var/lib/apt/lists/* && sudo apt update
             sudo apt-get install openjdk-8-jdk
             java -version
       - run:
@@ -140,7 +140,7 @@ jobs:
           name: Download Compatible JAVA Version for Selenium
           command: |
             java -version
-            sudo apt-get update
+            sudo rm -rf /var/lib/apt/lists/* && sudo apt update
             sudo apt-get install openjdk-8-jdk
             java -version
       - run:
