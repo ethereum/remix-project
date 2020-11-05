@@ -286,35 +286,38 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
                     const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')') )
                     let testPassed = false
                     for (const i in receipt.events) {
-                        const event = receipt.events[i]
-                        const eIndex = assertionEventHashes.indexOf(event.raw.topics[0]) // event name topic will always be at index 0
-                        if (eIndex >= 0) {
-                            const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.raw.data)
-                            if (!testEvent[0]) {
-                                const assertMethod = testEvent[2]
-                                if(assertMethod === 'ok') { // for 'Assert.ok' method
-                                    testEvent[3] = 'false'
-                                    testEvent[4] = 'true'
+                        let events = receipt.events[i]
+                        if (!Array.isArray(events)) events = [events]
+                        for (const event of events) {
+                            const eIndex = assertionEventHashes.indexOf(event.raw.topics[0]) // event name topic will always be at index 0
+                            if (eIndex >= 0) {
+                                const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.raw.data)
+                                if (!testEvent[0]) {
+                                    const assertMethod = testEvent[2]
+                                    if (assertMethod === 'ok') { // for 'Assert.ok' method
+                                        testEvent[3] = 'false'
+                                        testEvent[4] = 'true'
+                                    }
+                                    const location = getAssertMethodLocation(fileAST, testName, func.name, assertMethod)
+                                    const resp: TestResultInterface = {
+                                    type: 'testFailure',
+                                    value: changeCase.sentenceCase(func.name),
+                                    filename: testObject.filename,
+                                    time: time,
+                                    errMsg: testEvent[1],
+                                    context: testName,
+                                    assertMethod,
+                                    returned: testEvent[3],
+                                    expected: testEvent[4],
+                                    location
+                                    };
+                                    testCallback(undefined, resp)
+                                    failureNum += 1
+                                    timePassed += time
+                                    return next()
                                 }
-                                const location = getAssertMethodLocation(fileAST, testName, func.name, assertMethod)
-                                const resp: TestResultInterface = {
-                                  type: 'testFailure',
-                                  value: changeCase.sentenceCase(func.name),
-                                  filename: testObject.filename,
-                                  time: time,
-                                  errMsg: testEvent[1],
-                                  context: testName,
-                                  assertMethod,
-                                  returned: testEvent[3],
-                                  expected: testEvent[4],
-                                  location
-                                };
-                                testCallback(undefined, resp)
-                                failureNum += 1
-                                timePassed += time
-                                return next()
+                                testPassed = true
                             }
-                            testPassed = true
                         }
                     }
 
