@@ -39,7 +39,7 @@ export class ThemeModule extends Plugin {
     let currentTheme = this._deps.config.get('settings/theme')
     currentTheme = this.themes[currentTheme] ? currentTheme : null
     this.active = queryTheme || currentTheme || 'Dark'
-    this.forced = queryTheme !== undefined
+    this.forced = !!queryTheme
   }
 
   /** Return the active theme */
@@ -77,7 +77,7 @@ export class ThemeModule extends Plugin {
     }
     const next = themeName || this.active   // Name
     const nextTheme = this.themes[next] // Theme
-    this._deps.config.set('settings/theme', next)
+    if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName
