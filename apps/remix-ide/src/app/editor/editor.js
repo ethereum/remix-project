@@ -191,6 +191,7 @@ class Editor extends Plugin {
       this.event.trigger('sessionSwitched', [])
       this.editor.getSession().on('change', () => {
         this._onChange()
+        this.sourceHighlighters.discardAllHighlights()
         this.event.trigger('contentChanged', [])
       })
     })

@@ -50,6 +50,12 @@ class SourceHighlighters {
     this.highlighters[from] = []
   }
 
+  discardAllHighlights () {
+    for (const from in this.highlighters) {
+      this.discardHighlight(from)
+    }
+  }
+
   hideHighlightsExcept (toStay) {
     for (const highlighter in this.highlighters) {
       for (const index in this.highlighters[highlighter]) {
