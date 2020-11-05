@@ -55,7 +55,7 @@ jobs:
           command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start
+          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
       - store_test_results:
@@ -89,10 +89,10 @@ jobs:
       - run: npm run build
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --version=3.8.1 --baseURL=https://selenium-release.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start
+          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
           background: true
       - run:
           name: Download Latest Firefox
@@ -134,7 +134,7 @@ jobs:
           command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start
+          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_test_results:
