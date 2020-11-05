@@ -50,14 +50,14 @@ jobs:
       - run: npm run build:libs
       - run: npm run downloadsolc_root
       - run: npm run build
-      - run:
-          name: Download Compatible JAVA Version for Selenium
-          command: |
-            java -version
-            sudo apt-get purge --auto-remove java-common
-            # sudo apt-get update
-            sudo apt-get install openjdk-8-jdk
-            java -version
+      # - run:
+      #     name: Download Compatible JAVA Version for Selenium
+      #     command: |
+      #       java -version
+      #       sudo apt-get purge --auto-remove java-common
+      #       sudo apt-get update
+      #       sudo apt-get install openjdk-8-jdk
+      #       java -version
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
@@ -137,14 +137,14 @@ jobs:
       - run: npm run build:libs
       - run: npm run downloadsolc_root
       - run: npm run build
-      - run:
-          name: Download Compatible JAVA Version for Selenium
-          command: |
-            java -version
-            sudo apt-get purge --auto-remove java-common
-            sudo apt-get update
-            sudo apt-get install openjdk-8-jdk
-            java -version
+      # - run:
+      #     name: Download Compatible JAVA Version for Selenium
+      #     command: |
+      #       java -version
+      #       sudo apt-get purge --auto-remove java-common
+      #       sudo apt-get update
+      #       sudo apt-get install openjdk-8-jdk
+      #       java -version
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
