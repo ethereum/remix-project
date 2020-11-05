@@ -21,10 +21,10 @@ jobs:
 
     steps:
       - checkout
-      # - run: npm install
-      # - run: npm run lint:libs
-      # - run: npm run build:libs
-      # - run: npm run test:libs
+      - run: npm install
+      - run: npm run lint:libs
+      - run: npm run build:libs
+      - run: npm run test:libs
 
   remix-ide-chrome:
     docker:
@@ -50,20 +50,12 @@ jobs:
       - run: npm run build:libs
       - run: npm run downloadsolc_root
       - run: npm run build
-      # - run:
-      #     name: Download Compatible JAVA Version for Selenium
-      #     command: |
-      #       java -version
-      #       sudo apt-get purge --auto-remove java-common
-      #       sudo apt-get update
-      #       sudo apt-get install openjdk-8-jdk
-      #       java -version
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+          command: ./node_modules/.bin/selenium-standalone start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
       - store_test_results:
@@ -97,10 +89,10 @@ jobs:
       - run: npm run build
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone install --version=3.8.1 --baseURL=https://selenium-release.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone start
           background: true
       - run:
           name: Download Latest Firefox
@@ -137,20 +129,12 @@ jobs:
       - run: npm run build:libs
       - run: npm run downloadsolc_root
       - run: npm run build
-      # - run:
-      #     name: Download Compatible JAVA Version for Selenium
-      #     command: |
-      #       java -version
-      #       sudo apt-get purge --auto-remove java-common
-      #       sudo apt-get update
-      #       sudo apt-get install openjdk-8-jdk
-      #       java -version
       - run:
           name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
       - run:
           name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+          command: ./node_modules/.bin/selenium-standalone start
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_run_deploy.sh
       - store_test_results:
