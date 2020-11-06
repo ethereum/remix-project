@@ -393,6 +393,16 @@ function txDetails (e, tx, data, obj) {
   }
 }
 
+function convertStatus(status) {
+  if (status === true) {
+    return "0x1"
+  }
+  if (status === false) {
+    return "0x0"
+  }
+  return status
+}
+
 function createTable (opts) {
   var table = yo`<table class="${css.txTable}" id="txTable" data-id="txLoggerTable${opts.hash}"></table>`
   if (!opts.isCall) {
@@ -409,7 +419,7 @@ function createTable (opts) {
     table.appendChild(yo`
       <tr class="${css.tr}">
         <td class="${css.td}" data-shared="key_${opts.hash}"> status </td>
-        <td class="${css.td}" data-id="txLoggerTableStatus${opts.hash}" data-shared="pair_${opts.hash}">${opts.status}${msg}</td>
+        <td class="${css.td}" data-id="txLoggerTableStatus${opts.hash}" data-shared="pair_${opts.hash}">${convertStatus(opts.status)}${msg}</td>
       </tr>`)
   }
 
