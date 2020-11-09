@@ -516,7 +516,7 @@ fileExplorer.prototype.toGist = function (id) {
         )
       } else {
         const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
-          queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
+          queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs' + queryParams.get().runs + '&gist='
         const gists = new Gists({ token: tokenAccess })
 
         if (id) {

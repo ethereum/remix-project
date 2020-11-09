@@ -37,10 +37,10 @@ function gatherCompilationResults (dir, compilationResult, solcSnapshot) {
   return compilationResult
 }
 
-function compile (solcSnapshot, source, optimization, addCompilationResult) {
+function compile (solcSnapshot, source, optimization, runs, addCompilationResult) {
   var missingInputs = []
   try {
-    var input = compilerInput(source, {optimize: optimization})
+    var input = compilerInput(source, {optimize: optimization, runs: runs})
     var result = solcSnapshot.compileStandardWrapper(input, function (path) {
       missingInputs.push(path)
     })
