@@ -360,13 +360,14 @@ module.exports = class TestTab extends ViewPlugin {
     return new Promise((resolve, reject) => {
       let runningTest = {}
       runningTest[path] = { content }
-      const {currentVersion, evmVersion, optimize} = this.compileTab.getCurrentCompilerConfig()
+      const {currentVersion, evmVersion, optimize, runs} = this.compileTab.getCurrentCompilerConfig()
       const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
         evmVersion,
         optimize,
-        usingWorker: canUseWorker(currentVersion)
+        usingWorker: canUseWorker(currentVersion),
+        runs
       }
       remixTests.runTestSources(runningTest, compilerConfig, () => {}, () => {}, (error, result) => {
         if (error) return reject(error)
@@ -386,13 +387,14 @@ module.exports = class TestTab extends ViewPlugin {
     this.fileManager.readFile(testFilePath).then((content) => {
       const runningTests = {}
       runningTests[testFilePath] = { content }
-      const {currentVersion, evmVersion, optimize} = this.compileTab.getCurrentCompilerConfig()
+      const {currentVersion, evmVersion, optimize, runs} = this.compileTab.getCurrentCompilerConfig()
       const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
         evmVersion,
         optimize,
-        usingWorker: canUseWorker(currentVersion)
+        usingWorker: canUseWorker(currentVersion),
+        runs
       }
       remixTests.runTestSources(
         runningTests,

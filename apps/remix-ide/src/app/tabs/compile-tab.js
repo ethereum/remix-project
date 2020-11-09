@@ -213,15 +213,16 @@ class CompileTab extends ViewPlugin {
     return this.compileTabLogic.compileFile(fileName)
   }
 
-   /**
+  /**
    * compile using @arg compilationTargets and @arg settings
    * The module UI will *not* be updated, the compilation result is returned
    * This function is used by remix-plugin compiler API.
    * @param {object} map of source files.
-   * @param {object} settings {evmVersion, optimize, version, language}
+   * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
   async compileWithParameters (compilationTargets, settings) {
-    return await compile(compilationTargets, settings)
+    const res = await compile(compilationTargets, settings)
+    return res
   }
 
   // This function is used for passing the compiler remix-tests
@@ -234,14 +235,15 @@ class CompileTab extends ViewPlugin {
     return {
       currentVersion: this.compilerContainer.data.selectedVersion,
       evmVersion: this.compileTabLogic.evmVersion,
-      optimize: this.compileTabLogic.optimize
+      optimize: this.compileTabLogic.optimize,
+      runs: this.compileTabLogic.runs
     }
   }
 
   /**
    * set the compiler configuration
    * This function is used by remix-plugin compiler API.
-   * @param {object} settings {evmVersion, optimize, version, language}
+   * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
   setCompilerConfig (settings) {
     return new Promise((resolve, reject) => {

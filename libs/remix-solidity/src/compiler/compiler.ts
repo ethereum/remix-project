@@ -54,6 +54,7 @@ export class Compiler {
 
   set <K extends keyof CompilerState>(key: K, value: CompilerState[K]): void {
     this.state[key] = value
+    if (key === 'runs') this.state['runs'] = parseInt(value)
   }
 
   /**
