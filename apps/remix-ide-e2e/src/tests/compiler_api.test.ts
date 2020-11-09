@@ -26,6 +26,14 @@ module.exports = {
     .journalChildIncludes(`"languageversion": "0.6.8+commit.0bbfe453"`)
   },
 
+  'Should compile using "compileWithParamaters" API with optimization On': function (browser: NightwatchBrowser) {
+    browser
+    .addFile('test_jsCompileWithOptimization.js', { content: jsCompileWithOptimization })
+    .executeScript('remix.exeCurrent()')
+    .pause(10000)
+    .journalChildIncludes(`\\"optimizer\\":{\\"enabled\\":true,\\"runs\\":300}`)
+  },
+
   'Should update the compiler configuration with "setCompilerConfig" API': function (browser: NightwatchBrowser) {
     browser
     .addFile('test_updateConfiguration.js', { content: updateConfiguration })
@@ -77,6 +85,26 @@ const jsCompile = `(async () => {
       console.log('compile')
       const params = {
           optimize: false,
+          evmVersion: null,
+          language: 'Solidity',
+          version: '0.6.8+commit.0bbfe453'
+      }
+      const result = await remix.call('solidity', 'compileWithParameters', contract, params)
+      console.log('result ', result)
+  } catch (e) {
+      console.log(e.message)
+  }
+})()`
+
+const jsCompileWithOptimization = `(async () => {
+  try {
+      const contract = {
+          "storage.sol": {content : \`${simpleContract}\` }
+      }
+      console.log('compile')
+      const params = {
+          optimize: true,
+          runs: 300,
           evmVersion: null,
           language: 'Solidity',
           version: '0.6.8+commit.0bbfe453'
