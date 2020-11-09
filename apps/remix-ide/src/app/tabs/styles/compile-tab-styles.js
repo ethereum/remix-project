@@ -43,6 +43,9 @@ const css = csjs`
     display: flex;
     align-items: center;
   }
+  .runs {
+    width: 40%;
+  }
   .hideWarningsContainer {
     display: flex;
     align-items: center;
