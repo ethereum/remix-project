@@ -107,7 +107,8 @@ export default class FetchAndCompile extends Plugin {
       version: data.metadata.compiler.version,
       language: data.metadata.language,
       evmVersion: data.metadata.settings.evmVersion,
-      optimize: data.metadata.settings.optimizer.enabled
+      optimize: data.metadata.settings.optimizer.enabled,
+      runs: data.metadata.settings.runs
     }
     try {
       setTimeout(_ => this.emit('compiling', settings), 0)
