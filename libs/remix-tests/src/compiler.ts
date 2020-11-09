@@ -180,10 +180,11 @@ export function compileContractSources(sources: SrcIfc, compilerConfig: Compiler
 
     async.waterfall([
         function loadCompiler (next) {
-            const {currentCompilerUrl, evmVersion, optimize, usingWorker} = compilerConfig
+            const {currentCompilerUrl, evmVersion, optimize, runs, usingWorker} = compilerConfig
             compiler = new RemixCompiler(importFileCb)
             compiler.set('evmVersion', evmVersion)
             compiler.set('optimize', optimize)
+            compiler.set('runs', runs)
             compiler.loadVersion(usingWorker, currentCompilerUrl)
             // @ts-ignore
             compiler.event.register('compilerLoaded', this, (version) => {
