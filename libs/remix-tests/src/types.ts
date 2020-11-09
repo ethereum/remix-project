@@ -53,7 +53,8 @@ export interface CompilerConfiguration {
   currentCompilerUrl: string,
   evmVersion: string, 
   optimize: boolean, 
-  usingWorker: boolean
+  usingWorker: boolean,
+  runs: number
 }
 
 export interface CompilationErrors {
