@@ -185,13 +185,27 @@ class CompilerContainer {
 
     this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fas fa-exclamation-triangle" aria-hidden="true"></i>`
     this._view.compileIcon = yo`<i class="fas fa-sync ${css.icon}" aria-hidden="true"></i>`
-    this._view.autoCompile = yo`<input class="${css.autocompile} custom-control-input" onchange=${this.updateAutoCompile.bind(this)} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile">`
-    this._view.hideWarningsBox = yo`<input class="${css.autocompile} custom-control-input" onchange=${this.hideWarnings.bind(this)} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
+    this._view.autoCompile = yo`<input class="${css.autocompile} custom-control-input" onchange=${() => this.updateAutoCompile()} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile">`
+    this._view.hideWarningsBox = yo`<input class="${css.autocompile} custom-control-input" onchange=${() => this.hideWarnings()} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
     if (this.data.autoCompile) this._view.autoCompile.setAttribute('checked', '')
     if (this.data.hideWarnings) this._view.hideWarningsBox.setAttribute('checked', '')
 
-    this._view.optimize = yo`<input onchange=${this.onchangeOptimize.bind(this)} class="custom-control-input" id="optimize" type="checkbox">`
+    this._view.optimize = yo`<input onchange=${() => this.onchangeOptimize()} class="custom-control-input" id="optimize" type="checkbox">`
     if (this.compileTabLogic.optimize) this._view.optimize.setAttribute('checked', '')
+
+    this._view.runs = yo`<input
+      onkeypress="return event.charCode >= 48"
+      min="1"
+      class="custom-select ml-2 w-50"
+      id="runs"
+      placeholder="200"
+      type="number"
+      title="Number of optimisation runs."
+    >`
+    if (this.compileTabLogic.optimize) this._view.runs.removeAttribute('disabled')
+    else {
+      this._view.runs.setAttribute('disabled', '')
+    }
 
     this._view.versionSelector = yo`
       <select onchange="${this.onchangeLoadVersion.bind(this)}" class="custom-select" id="versionSelector" disabled>
@@ -267,8 +281,11 @@ class CompilerContainer {
                 <label class="form-check-label custom-control-label" for="autoCompile">Auto compile</label>
               </div>
               <div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox">
-                ${this._view.optimize}
-                <label class="form-check-label custom-control-label" for="optimize">Enable optimization</label>
+                <div class="justify-content-between align-items-center d-flex">
+                  ${this._view.optimize}
+                  <label class="form-check-label custom-control-label" for="optimize">Enable optimization</label>
+                  ${this._view.runs}
+                </div>
               </div>
               <div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox">
                 ${this._view.hideWarningsBox}
@@ -327,6 +344,10 @@ class CompilerContainer {
 
   onchangeOptimize () {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
+    if (this.compileTabLogic.optimize) this._view.runs.removeAttribute('disabled')
+    else {
+      this._view.runs.setAttribute('disabled', '')
+    }
     this.compileIfAutoCompileOn()
   }
 
@@ -360,12 +381,17 @@ class CompilerContainer {
     this.setLanguage(settings.language)
     this.setEvmVersion(settings.evmVersion)
     this.setOptimize(settings.optimize)
+    this.setRuns(settings.runs)
     this.setVersion(settings.version)
   }
 
   setOptimize (enabled) {
     this._view.optimize.checked = enabled
     this.onchangeOptimize()
+  }
+
+  setRuns (value) {
+    this._view.runs.value = value
   }
 
   setLanguage (lang) {
