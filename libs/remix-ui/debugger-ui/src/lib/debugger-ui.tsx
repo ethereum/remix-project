@@ -5,11 +5,9 @@ import VmDebugger from './vm-debugger/vm-debugger'
 import VmDebuggerHead from './vm-debugger/vm-debugger-head'
 import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 /* eslint-disable-next-line */
-import globalRegistry from '../../../../../apps/remix-ide/src/global/registry'
 import './debugger-ui.css'
 
 export const DebuggerUI = ({ debuggerModule }) => {
-  const init = remixDebug.init
   const [state, setState] = useState({
     isActive: false,
     statusMessage: '',
@@ -33,10 +31,6 @@ export const DebuggerUI = ({ debuggerModule }) => {
   useEffect(() => {
     debug(debuggerModule.debugHash)
   }, [debuggerModule.debugHash])
-
-  useEffect(() => {
-    getTrace(debuggerModule.getTraceHash)
-  }, [debuggerModule.getTraceHash])
 
   useEffect(() => {
     if (debuggerModule.removeHighlights) deleteHighlights()
@@ -64,12 +58,6 @@ export const DebuggerUI = ({ debuggerModule }) => {
     setEditor()
   }, [state.debugger])
 
-  const fetchContractAndCompile = (address, receipt) => {
-    const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
-
-    return debuggerModule.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', debuggerModule.blockchain.web3())
-  }
-
   const listenToEvents = (debuggerInstance, currentReceipt) => {
     if (!debuggerInstance) return
 
@@ -82,7 +70,7 @@ export const DebuggerUI = ({ debuggerModule }) => {
 
     debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources) => {
       if (!lineColumnPos) return
-      const contracts = await fetchContractAndCompile(
+      const contracts = await debuggerModule.fetchContractAndCompile(
         currentReceipt.contractAddress || currentReceipt.to,
         currentReceipt)
 
@@ -128,22 +116,6 @@ export const DebuggerUI = ({ debuggerModule }) => {
     return state.isActive
   }
 
-  const getDebugWeb3 = (): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      debuggerModule.blockchain.detectNetwork((error, network) => {
-        let web3
-        if (error || !network) {
-          web3 = init.web3DebugNode(debuggerModule.blockchain.web3())
-        } else {
-          const webDebugNode = init.web3DebugNode(network.name)
-          web3 = !webDebugNode ? debuggerModule.blockchain.web3() : webDebugNode
-        }
-        init.extendWeb3(web3)
-        resolve(web3)
-      })
-    })
-  }
-
   const unLoad = () => {
     if (state.debugger) state.debugger.unload()
     setState(prevState => {
@@ -169,14 +141,14 @@ export const DebuggerUI = ({ debuggerModule }) => {
   const startDebugging = async (blockNumber, txNumber, tx) => {
     if (state.debugger) unLoad()
     if (!txNumber) return
-    const web3 = await getDebugWeb3()
+    const web3 = await debuggerModule.getDebugWeb3()
     const currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     const debuggerInstance = new Debugger({
       web3,
       offsetToLineColumnConverter: debuggerModule.offsettolinecolumnconverter,
       compilationResult: async (address) => {
         try {
-          return await fetchContractAndCompile(address, currentReceipt)
+          return await debuggerModule.fetchContractAndCompile(address, currentReceipt)
         } catch (e) {
           console.error(e)
         }
@@ -206,35 +178,7 @@ const debug = (txHash) => {
   startDebugging(null, txHash, null)
 }
 
-const getTrace = (hash) => {
-  if (!hash) return
-  return new Promise(async (resolve, reject) => { /* eslint-disable-line */
-    const web3 = await getDebugWeb3()
-    const currentReceipt = await web3.eth.getTransactionReceipt(hash)
-    const debug = new Debugger({
-      web3,
-      offsetToLineColumnConverter: globalRegistry.get('offsettolinecolumnconverter').api,
-      compilationResult: async (address) => {
-        try {
-          return await fetchContractAndCompile(address, currentReceipt)
-        } catch (e) {
-          console.error(e)
-        }
-        return null
-      },
-      debugWithGeneratedSources: false
-    })
 
-    setState(prevState => {
-      return { ...prevState, currentReceipt }
-    })
-
-    debug.debugger.traceManager.traceRetriever.getTrace(hash, (error, trace) => {
-      if (error) return reject(error)
-      resolve(trace)
-    })
-  })
-}
 
 const deleteHighlights = async () => {
   await debuggerModule.call('editor', 'discardHighlight')
