@@ -3,6 +3,7 @@ const css = require('./styles/debugger-tab-styles')
 import toaster from '../ui/tooltip'
 import { DebuggerUI } from '@remix-ui/debugger-ui'
 import { ViewPlugin } from '@remixproject/engine'
+import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import * as packageJson from '../../../../../package.json'
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -85,9 +86,56 @@ class DebuggerTab extends ViewPlugin {
     this.renderComponent()
   }
 
+  getDebugWeb3 () {
+    return new Promise((resolve, reject) => {
+      this.blockchain.detectNetwork((error, network) => {
+        let web3
+        if (error || !network) {
+          web3 = remixDebug.init.web3DebugNode(this.blockchain.web3())
+        } else {
+          const webDebugNode = remixDebug.init.web3DebugNode(network.name)
+          web3 = !webDebugNode ? this.blockchain.web3() : webDebugNode
+        }
+        remixDebug.init.extendWeb3(web3)
+        resolve(web3)
+      })
+    })
+  }
+
   getTrace (hash) {
-    this.getTraceHash = hash
-    this.renderComponent()
+    if (!hash) return
+    return new Promise(async (resolve, reject) => { /* eslint-disable-line */
+      const web3 = await this.getDebugWeb3()
+      const currentReceipt = await web3.eth.getTransactionReceipt(hash)
+      const debug = new Debugger({
+        web3,
+        offsetToLineColumnConverter: this.offsettolinecolumnconverter,
+        compilationResult: async (address) => {
+          try {
+            return await this.fetchContractAndCompile(address, currentReceipt)
+          } catch (e) {
+            console.error(e)
+          }
+          return null
+        },
+        debugWithGeneratedSources: false
+      })
+  
+      setState(prevState => {
+        return { ...prevState, currentReceipt }
+      })
+  
+      debug.debugger.traceManager.traceRetriever.getTrace(hash, (error, trace) => {
+        if (error) return reject(error)
+        resolve(trace)
+      })
+    })
+  }
+
+  fetchContractAndCompile (address, receipt) {
+    const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
+
+    return debuggerModule.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', debuggerModule.blockchain.web3())
   }
 
   // debugger () {
