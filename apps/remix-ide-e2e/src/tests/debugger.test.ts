@@ -178,6 +178,14 @@ module.exports = {
     .getEditorValue((content) => {
       browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32) { revert(0, 0) }') != -1, 'current displayed content is not a generated source')
     })
+  },
+
+  'Should call the debugger api: getTrace': function (browser: NightwatchBrowser) {
+    browser
+    .addFile('test_jsCompileWithOptimization.js', { content: jsDebug })
+    .executeScript('remix.exeCurrent()')
+    .pause(3000)
+    .journalChildIncludes(`{ "gas": "0x2dc6c0", "return": "0x", "structLogs":`)
     .end()
   },
 
@@ -335,3 +343,12 @@ const localVariable_step717_ABIEncoder = {
       "type": "bytes"
   }
 }
+
+const jsDebug = `(async () => {    
+  try {
+      const result = await remix.call('debugger', 'getTrace', '0xb175c3c9a9cd6bee3b6cc8be3369a945ac9611516005f8cba27a43486ff2bc50')
+      console.log('result ', result)
+  } catch (e) {
+      console.log(e.message)
+  }
+})()`
