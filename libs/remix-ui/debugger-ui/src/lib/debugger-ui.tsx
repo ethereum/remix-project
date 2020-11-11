@@ -29,7 +29,9 @@ export const DebuggerUI = ({ debuggerModule }) => {
   }, [])
 
   useEffect(() => {
-    debug(debuggerModule.debugHash)
+    if (debuggerModule.debugHash) {
+      debug(debuggerModule.debugHash)
+    }
   }, [debuggerModule.debugHash])
 
   useEffect(() => {
