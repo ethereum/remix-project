@@ -31,6 +31,7 @@ class DebuggerTab extends ViewPlugin {
     this.blockchain = blockchain
     this.debugHash = null
     this.removeHighlights = false
+    this.debugHashRequest = 0
   }
 
   render () {
@@ -82,8 +83,8 @@ class DebuggerTab extends ViewPlugin {
   }
 
   debug (hash) {
-    this.debugHash = '' // so we can trigger a debug using the same hash 2 times in a row. that's needs to be improved
     this.debugHash = hash
+    this.debugHashRequest++// so we can trigger a debug using the same hash 2 times in a row. that's needs to be improved
     this.renderComponent()
   }
 
