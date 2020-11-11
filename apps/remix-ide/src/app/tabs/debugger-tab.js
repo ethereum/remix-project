@@ -22,12 +22,13 @@ const profile = {
 
 class DebuggerTab extends ViewPlugin {
 
-  constructor (blockchain) {
-    super(profile)
+  constructor (blockchain, editor, offsettolinecolumnconverter) {
+    super(profile)    
     this.el = null
+    this.editor = editor
+    this.offsetToLineColumnConverter = offsettolinecolumnconverter
     this.blockchain = blockchain
     this.debugHash = null
-    this.getTraceHash = null
     this.removeHighlights = false
   }
 

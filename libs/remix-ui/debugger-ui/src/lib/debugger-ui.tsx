@@ -44,7 +44,7 @@ export const DebuggerUI = ({ debuggerModule }) => {
 
   useEffect(() => {
     const setEditor = () => {
-      const editor = globalRegistry.get('editor').api
+      const editor = debuggerModule.editor
 
       editor.event.register('breakpointCleared', (fileName, row) => {
         if (state.debugger) state.debugger.breakPointManager.remove({fileName: fileName, row: row})
@@ -173,7 +173,7 @@ export const DebuggerUI = ({ debuggerModule }) => {
     const currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     const debuggerInstance = new Debugger({
       web3,
-      offsetToLineColumnConverter: globalRegistry.get('offsettolinecolumnconverter').api,
+      offsetToLineColumnConverter: debuggerModule.offsettolinecolumnconverter,
       compilationResult: async (address) => {
         try {
           return await fetchContractAndCompile(address, currentReceipt)
