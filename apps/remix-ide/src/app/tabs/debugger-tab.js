@@ -23,11 +23,11 @@ const profile = {
 
 class DebuggerTab extends ViewPlugin {
 
-  constructor (blockchain, editor, offsettolinecolumnconverter) {
+  constructor (blockchain, editor, offsetToLineColumnConverter) {
     super(profile)    
     this.el = null
     this.editor = editor
-    this.offsetToLineColumnConverter = offsettolinecolumnconverter
+    this.offsetToLineColumnConverter = offsetToLineColumnConverter
     this.blockchain = blockchain
     this.debugHash = null
     this.removeHighlights = false
@@ -112,7 +112,7 @@ class DebuggerTab extends ViewPlugin {
         const currentReceipt = await web3.eth.getTransactionReceipt(hash)
         const debug = new Debugger({
           web3,
-          offsetToLineColumnConverter: this.offsettolinecolumnconverter,
+          offsetToLineColumnConverter: this.offsetToLineColumnConverter,
           compilationResult: async (address) => {
             try {
               return await this.fetchContractAndCompile(address, currentReceipt)
