@@ -147,7 +147,7 @@ export const DebuggerUI = ({ debuggerModule }) => {
     const currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     const debuggerInstance = new Debugger({
       web3,
-      offsetToLineColumnConverter: debuggerModule.offsettolinecolumnconverter,
+      offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
       compilationResult: async (address) => {
         try {
           return await debuggerModule.fetchContractAndCompile(address, currentReceipt)
