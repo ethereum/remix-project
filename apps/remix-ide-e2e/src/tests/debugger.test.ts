@@ -182,10 +182,19 @@ module.exports = {
 
   'Should call the debugger api: getTrace': function (browser: NightwatchBrowser) {
     browser
-    .addFile('test_jsCompileWithOptimization.js', { content: jsDebug })
+    .addFile('test_jsGetTrace.js', { content: jsGetTrace })
     .executeScript('remix.exeCurrent()')
     .pause(3000)
-    .journalChildIncludes(`{ "gas": "0x2dc6c0", "return": "0x", "structLogs":`)
+    .journalChildIncludes(`{ "gas": "0x2dc6c0", "return": "0x", "structLogs":`)    
+  },
+
+  'Should call the debugger api: debug': function (browser: NightwatchBrowser) {
+    browser
+    .addFile('test_jsDebug.js', { content: jsDebug })
+    .executeScript('remix.exeCurrent()')
+    .pause(3000)
+    .clickLaunchIcon('debugger')
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
     .end()
   },
 
@@ -344,9 +353,18 @@ const localVariable_step717_ABIEncoder = {
   }
 }
 
-const jsDebug = `(async () => {    
+const jsGetTrace = `(async () => {    
   try {
       const result = await remix.call('debugger', 'getTrace', '0xb175c3c9a9cd6bee3b6cc8be3369a945ac9611516005f8cba27a43486ff2bc50')
+      console.log('result ', result)
+  } catch (e) {
+      console.log(e.message)
+  }
+})()`
+
+const jsDebug = `(async () => {    
+  try {
+      const result = await remix.call('debugger', 'debug', '0xb175c3c9a9cd6bee3b6cc8be3369a945ac9611516005f8cba27a43486ff2bc50')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
