@@ -32,7 +32,7 @@ export const DebuggerUI = ({ debuggerModule }) => {
     if (debuggerModule.debugHash) {
       debug(debuggerModule.debugHash)
     }
-  }, [debuggerModule.debugHash])
+  }, [debuggerModule.debugHashRequest])
 
   useEffect(() => {
     if (debuggerModule.removeHighlights) deleteHighlights()
