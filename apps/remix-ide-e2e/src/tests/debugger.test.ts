@@ -178,6 +178,7 @@ module.exports = {
     .getEditorValue((content) => {
       browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32) { revert(0, 0) }') != -1, 'current displayed content is not a generated source')
     })
+    .click('*[data-id="debuggerTransactionStartButton"]')
   },
 
   'Should call the debugger api: getTrace': function (browser: NightwatchBrowser) {
@@ -194,7 +195,10 @@ module.exports = {
     .executeScript('remix.exeCurrent()')
     .pause(3000)
     .clickLaunchIcon('debugger')
-    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
+    .pause(1000)
+    .goToVMTraceStep(5)
+    .pause(1000)
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n5')
     .end()
   },
 
