@@ -82,6 +82,7 @@ class DebuggerTab extends ViewPlugin {
   }
 
   debug (hash) {
+    this.debugHash = '' // so we can trigger a debug using the same hash 2 times in a row. that's needs to be improved
     this.debugHash = hash
     this.renderComponent()
   }
@@ -105,37 +106,34 @@ class DebuggerTab extends ViewPlugin {
   getTrace (hash) {
     if (!hash) return
     return new Promise(async (resolve, reject) => { /* eslint-disable-line */
-      const web3 = await this.getDebugWeb3()
-      const currentReceipt = await web3.eth.getTransactionReceipt(hash)
-      const debug = new Debugger({
-        web3,
-        offsetToLineColumnConverter: this.offsettolinecolumnconverter,
-        compilationResult: async (address) => {
-          try {
-            return await this.fetchContractAndCompile(address, currentReceipt)
-          } catch (e) {
-            console.error(e)
-          }
-          return null
-        },
-        debugWithGeneratedSources: false
-      })
-  
-      setState(prevState => {
-        return { ...prevState, currentReceipt }
-      })
-  
-      debug.debugger.traceManager.traceRetriever.getTrace(hash, (error, trace) => {
-        if (error) return reject(error)
-        resolve(trace)
-      })
+      try {
+        const web3 = await this.getDebugWeb3()
+        const currentReceipt = await web3.eth.getTransactionReceipt(hash)
+        const debug = new Debugger({
+          web3,
+          offsetToLineColumnConverter: this.offsettolinecolumnconverter,
+          compilationResult: async (address) => {
+            try {
+              return await this.fetchContractAndCompile(address, currentReceipt)
+            } catch (e) {
+              console.error(e)
+            }
+            return null
+          },
+          debugWithGeneratedSources: false
+        })
+      
+        resolve(await debug.debugger.traceManager.getTrace(hash))    
+      } catch (e) {
+        reject(e)
+      }      
     })
   }
 
   fetchContractAndCompile (address, receipt) {
     const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
 
-    return debuggerModule.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', debuggerModule.blockchain.web3())
+    return this.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', this.blockchain.web3())
   }
 
   // debugger () {
