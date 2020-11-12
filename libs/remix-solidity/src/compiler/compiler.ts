@@ -7,7 +7,8 @@ import EventManager from '../lib/eventManager'
 import { default as txHelper } from './txHelper';
 import { Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult, 
         visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError, 
-        gatherImportsCallbackInterface } from './types'
+        gatherImportsCallbackInterface, 
+        isFunctionDescription } from './types'
 
 /*
   trigger compilationFinished, compilerLoaded, compilationStarted, compilationDuration
@@ -335,8 +336,18 @@ export class Compiler {
           'type': 'fallback'
         })
       }
-      if(data && data.contracts && this.state.currentVersion)
-        data.contracts[contract.file][contract.name].abi = update(this.truncateVersion(this.state.currentVersion), contract.object.abi)
+      if(data && data.contracts && this.state.currentVersion) {
+        const version = this.truncateVersion(this.state.currentVersion)
+        data.contracts[contract.file][contract.name].abi = update(version, contract.object.abi)
+        // if "constant" , payable must not be true and stateMutability must be view.
+        // see https://github.com/ethereum/solc-js/issues/500
+        for (const item of data.contracts[contract.file][contract.name].abi) {
+          if (isFunctionDescription(item) && item.constant) {
+            item.payable = false
+            item.stateMutability = 'view';
+          }          
+        }
+      }        
     })
     return data
   }
