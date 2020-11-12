@@ -104,31 +104,29 @@ class DebuggerTab extends ViewPlugin {
     })
   }
 
-  getTrace (hash) {
+  async getTrace (hash) {
     if (!hash) return
-    return new Promise(async (resolve, reject) => { /* eslint-disable-line */
-      try {
-        const web3 = await this.getDebugWeb3()
-        const currentReceipt = await web3.eth.getTransactionReceipt(hash)
-        const debug = new Debugger({
-          web3,
-          offsetToLineColumnConverter: this.offsetToLineColumnConverter,
-          compilationResult: async (address) => {
-            try {
-              return await this.fetchContractAndCompile(address, currentReceipt)
-            } catch (e) {
-              console.error(e)
-            }
-            return null
-          },
-          debugWithGeneratedSources: false
-        })
-      
-        resolve(await debug.debugger.traceManager.getTrace(hash))    
-      } catch (e) {
-        reject(e)
-      }      
-    })
+    try {
+      const web3 = await this.getDebugWeb3()
+      const currentReceipt = await web3.eth.getTransactionReceipt(hash)
+      const debug = new Debugger({
+        web3,
+        offsetToLineColumnConverter: this.offsetToLineColumnConverter,
+        compilationResult: async (address) => {
+          try {
+            return await this.fetchContractAndCompile(address, currentReceipt)
+          } catch (e) {
+            console.error(e)
+          }
+          return null
+        },
+        debugWithGeneratedSources: false
+      })
+    
+      return await debug.debugger.traceManager.getTrace(hash)
+    } catch (e) {
+      throw e
+    }
   }
 
   fetchContractAndCompile (address, receipt) {
