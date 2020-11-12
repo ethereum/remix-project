@@ -292,7 +292,7 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
         //   }
         // }
         // input params
-        if (inputs) {
+        if (inputs && inputs.parameters) {
           functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractObj.name, previousSourceLocation, stack.length, inputs.parameters.length, -1)
         }
         // output params
