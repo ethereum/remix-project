@@ -142,7 +142,11 @@ function retrieveIndexAndTrigger (codeMananger, address, step, code) {
   } catch (error) {
     return console.log(error)
   }
-  codeMananger.event.trigger('changed', [code, address, result])
+  try {
+    codeMananger.event.trigger('changed', [code, address, result])
+  } catch (e) {
+    console.log('dispatching event failed', e)
+  }  
 }
 
 module.exports = CodeManager

@@ -178,6 +178,33 @@ module.exports = {
     .getEditorValue((content) => {
       browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32) { revert(0, 0) }') != -1, 'current displayed content is not a generated source')
     })
+    .click('*[data-id="debuggerTransactionStartButton"]')
+  },
+
+  'Should call the debugger api: getTrace': function (browser: NightwatchBrowser) {
+    browser
+    .addFile('test_jsGetTrace.js', { content: jsGetTrace })
+    .executeScript('remix.exeCurrent()')
+    .pause(3000)
+    .journalChildIncludes(`{ "gas": "0x2dc6c0", "return": "0x", "structLogs":`)    
+  },
+
+  'Should call the debugger api: debug': function (browser: NightwatchBrowser) {
+    browser
+    .addFile('test_jsDebug.js', { content: jsDebug })
+    .executeScript('remix.exeCurrent()')
+    .pause(3000)
+    .clickLaunchIcon('debugger')
+    .waitForElementVisible('*[data-id="slider"]')
+    .click('*[data-id="slider"]')
+    .setValue('*[data-id="slider"]', '5')
+    .pause(1000)
+    /*
+      setting the slider to 5 leads to "vm trace step: 91" for chrome and "vm trace step: 92" for firefox
+      => There is something going wrong with the nightwatch API here.
+      As we are only testing if debugger is active, this is ok to keep that for now.
+    */
+    .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n9')
     .end()
   },
 
@@ -335,3 +362,21 @@ const localVariable_step717_ABIEncoder = {
       "type": "bytes"
   }
 }
+
+const jsGetTrace = `(async () => {    
+  try {
+      const result = await remix.call('debugger', 'getTrace', '0xb175c3c9a9cd6bee3b6cc8be3369a945ac9611516005f8cba27a43486ff2bc50')
+      console.log('result ', result)
+  } catch (e) {
+      console.log(e.message)
+  }
+})()`
+
+const jsDebug = `(async () => {    
+  try {
+      const result = await remix.call('debugger', 'debug', '0xb175c3c9a9cd6bee3b6cc8be3369a945ac9611516005f8cba27a43486ff2bc50')
+      console.log('result ', result)
+  } catch (e) {
+      console.log(e.message)
+  }
+})()`
