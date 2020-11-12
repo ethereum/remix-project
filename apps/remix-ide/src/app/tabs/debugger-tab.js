@@ -3,6 +3,7 @@ const css = require('./styles/debugger-tab-styles')
 import toaster from '../ui/tooltip'
 import { DebuggerUI } from '@remix-ui/debugger-ui'
 import { ViewPlugin } from '@remixproject/engine'
+import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import * as packageJson from '../../../../../package.json'
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -22,13 +23,15 @@ const profile = {
 
 class DebuggerTab extends ViewPlugin {
 
-  constructor (blockchain) {
+  constructor (blockchain, editor, offsetToLineColumnConverter) {
     super(profile)
     this.el = null
+    this.editor = editor
+    this.offsetToLineColumnConverter = offsetToLineColumnConverter
     this.blockchain = blockchain
     this.debugHash = null
-    this.getTraceHash = null
     this.removeHighlights = false
+    this.debugHashRequest = 0
   }
 
   render () {
@@ -81,12 +84,55 @@ class DebuggerTab extends ViewPlugin {
 
   debug (hash) {
     this.debugHash = hash
+    this.debugHashRequest++ // so we can trigger a debug using the same hash 2 times in a row. that's needs to be improved
     this.renderComponent()
   }
 
-  getTrace (hash) {
-    this.getTraceHash = hash
-    this.renderComponent()
+  getDebugWeb3 () {
+    return new Promise((resolve, reject) => {
+      this.blockchain.detectNetwork((error, network) => {
+        let web3
+        if (error || !network) {
+          web3 = remixDebug.init.web3DebugNode(this.blockchain.web3())
+        } else {
+          const webDebugNode = remixDebug.init.web3DebugNode(network.name)
+          web3 = !webDebugNode ? this.blockchain.web3() : webDebugNode
+        }
+        remixDebug.init.extendWeb3(web3)
+        resolve(web3)
+      })
+    })
+  }
+
+  async getTrace (hash) {
+    if (!hash) return
+    try {
+      const web3 = await this.getDebugWeb3()
+      const currentReceipt = await web3.eth.getTransactionReceipt(hash)
+      const debug = new Debugger({
+        web3,
+        offsetToLineColumnConverter: this.offsetToLineColumnConverter,
+        compilationResult: async (address) => {
+          try {
+            return await this.fetchContractAndCompile(address, currentReceipt)
+          } catch (e) {
+            console.error(e)
+          }
+          return null
+        },
+        debugWithGeneratedSources: false
+      })
+    
+      return await debug.debugger.traceManager.getTrace(hash)
+    } catch (e) {
+      throw e
+    }
+  }
+
+  fetchContractAndCompile (address, receipt) {
+    const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
+
+    return this.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', this.blockchain.web3())
   }
 
   // debugger () {
