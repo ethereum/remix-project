@@ -354,6 +354,12 @@ export interface CompilationResult {
   /////////
   export type ABIDescription = FunctionDescription | EventDescription
   
+  export const isFunctionDescription = (item: ABIDescription): item is FunctionDescription =>
+  (item as FunctionDescription).stateMutability !== undefined;
+
+  export const isEventDescription = (item: ABIDescription): item is EventDescription =>
+  (item as EventDescription).type === 'event';
+  
   export interface FunctionDescription {
     /** Type of the method. default is 'function' */
     type?: 'function' | 'constructor' | 'fallback' | 'receive'
