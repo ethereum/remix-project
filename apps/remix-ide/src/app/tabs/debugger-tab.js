@@ -24,7 +24,7 @@ const profile = {
 class DebuggerTab extends ViewPlugin {
 
   constructor (blockchain, editor, offsetToLineColumnConverter) {
-    super(profile)    
+    super(profile)
     this.el = null
     this.editor = editor
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
@@ -84,7 +84,7 @@ class DebuggerTab extends ViewPlugin {
 
   debug (hash) {
     this.debugHash = hash
-    this.debugHashRequest++// so we can trigger a debug using the same hash 2 times in a row. that's needs to be improved
+    this.debugHashRequest++ // so we can trigger a debug using the same hash 2 times in a row. that's needs to be improved
     this.renderComponent()
   }
 
