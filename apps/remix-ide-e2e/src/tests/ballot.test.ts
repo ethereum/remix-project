@@ -16,6 +16,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
+
   'Deploy Ballot': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -39,7 +40,7 @@ module.exports = {
 
   'Debug Ballot / delegate': function (browser: NightwatchBrowser) {
     browser.pause(500)
-    .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
+    .click('*[data-id="txLoggerDebugButton0x3aab7292cc494979c2e6f34f5d15fe94273251b84348348fe9556c89e5d181f4"]')
     .pause(2000)
     // .clickLaunchIcon('debugger')
     .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
@@ -49,6 +50,10 @@ module.exports = {
     .checkVariableDebug('soliditystate', stateCheck)
     .checkVariableDebug('soliditylocals', localsCheck)
   },
+
+  // ["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]
+  // 0x692a70d2e424a56d2c6c27aa97d1a86395877b3a
+  // 0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db
 
   'Access Ballot via at address': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('udapp')
@@ -61,13 +66,30 @@ module.exports = {
     .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
     .click('*[data-id="universalDappUiTitleExpander"]')
     .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
-    .testFunction('0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
+    // .pause(90000)
+    .pause(1000)
+    .testFunction('0x7a417bd1a54ec473353f291734f23b13a061630a488e04a80334bd2973ee6602',
       {
-        status: '0x0 Transaction mined but execution failed',
-        'transaction hash': '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
+        // status: '0x0 Transaction mined but execution failed',
+        status: 'Status not available at the moment',
+        // 'transaction hash': '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
+        'transaction hash': '0x7a417bd1a54ec473353f291734f23b13a061630a488e04a80334bd2973ee6602',
         'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+        // 'decoded input': { 'address to': '0x692a70d2e424a56d2c6c27aa97d1a86395877b3a' }
       })
   },
+
+//  status	 Status not available at the moment
+//  transaction hash	0x7a417bd1a54ec473353f291734f23b13a061630a488e04a80334bd2973ee6602 
+//  from	0x5b38da6a701c568545dcfcb03fcb875f56beddc4 
+//  to	Ballot.delegate(address) 0x692a70d2e424a56d2c6c27aa97d1a86395877b3a 
+//  gas	3000000 gas 
+//  hash	0x7a417bd1a54ec473353f291734f23b13a061630a488e04a80334bd2973ee6602 
+//  input	0x5c1...4d2db 
+//  decoded input	{ "address to": "0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB" } 
+//  decoded output	 - 
+//  logs	[]  
+//  value	0 wei 
 
   'Deploy and use Ballot using external web3': function (browser: NightwatchBrowser) {
     browser

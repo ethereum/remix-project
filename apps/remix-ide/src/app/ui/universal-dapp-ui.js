@@ -240,6 +240,7 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
   const callbacksInContext = txCallBacks.getCallBacksWithContext(this, this.blockchain)
 
   const outputCb = (returnValue) => {
+    // debugger
     console.dir("== outputCb")
     console.dir(returnValue)
     if (outputOverride) {

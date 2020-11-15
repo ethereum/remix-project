@@ -41,6 +41,7 @@ export class RunTab extends LibraryPlugin {
     this.fileManager = fileManager
     this.editor = editor
     this.logCallback = (msg) => { mainView.getTerminal().logHtml(msg) }
+    // this.logCallback = (msg) => { console.dir(msg) }
     this.filePanel = filePanel
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule

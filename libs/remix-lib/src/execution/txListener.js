@@ -59,9 +59,9 @@ class TxListener {
 
       // addExecutionCosts(txResult, call) // not needed in a call
       this._resolveTx(call, call, (error, resolvedData) => {
-        if (!error) {
+        // if (!error) {
           this.event.trigger('newCall', [call])
-        }
+        // }
       })
     })
 
@@ -73,8 +73,17 @@ class TxListener {
       // in web3 mode && listen remix txs only
       if (!this._isListening) return // we don't listen
       if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
-      this.executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
-        if (error) return console.log(error)
+
+      let txHash = txResult.transactionHash
+      if (!txHash) {
+        txHash = Object.values(JSON.parse("{" + txResult.message.replace("Transaction has been reverted by the EVM:", '"Transaction has been reverted by the EVM":') + "}"))[0].transactionHash
+      }
+
+      this.executionContext.web3().eth.getTransaction(txHash, (error, tx) => {
+
+        if (error) {
+          return console.log(error)
+        }
 
         // addExecutionCosts(txResult, tx)
         tx.transactionCost = txResult.cumulativeGasUsed
