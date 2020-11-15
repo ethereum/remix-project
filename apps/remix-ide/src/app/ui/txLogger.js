@@ -134,6 +134,7 @@ class TxLogger {
     }
 
     this.logKnownTX = this.terminal.registerCommand('knownTransaction', (args, cmds, append) => {
+      // debugger
       var data = args[0]
       var el
       if (data.tx.isCall) {
@@ -146,6 +147,7 @@ class TxLogger {
     }, { activate: true, filterFn: filterTx })
 
     this.logUnknownTX = this.terminal.registerCommand('unknownTransaction', (args, cmds, append) => {
+      // debugger
       // triggered for transaction AND call
       var data = args[0]
       var el = renderUnknownTransaction(this, data, blockchain)
@@ -153,6 +155,7 @@ class TxLogger {
     }, { activate: false, filterFn: filterTx })
 
     this.logEmptyBlock = this.terminal.registerCommand('emptyBlock', (args, cmds, append) => {
+      // debugger
       var data = args[0]
       var el = renderEmptyBlock(this, data)
       append(el)
@@ -165,10 +168,12 @@ class TxLogger {
     })
 
     this.txListener.event.register('newTransaction', (tx, receipt) => {
+      // debugger
       log(this, tx, receipt)
     })
 
     this.txListener.event.register('newCall', (tx) => {
+      // debugger
       log(this, tx, null)
     })
 
@@ -205,6 +210,7 @@ function log (self, tx, receipt) {
 }
 
 function renderKnownTransaction (self, data, blockchain) {
+  console.trace("renderKnownTransaction")
   var from = data.tx.from
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = { from, to }
@@ -225,6 +231,7 @@ function renderKnownTransaction (self, data, blockchain) {
 }
 
 function renderCall (self, data) {
+  console.trace("renderCall")
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
@@ -251,6 +258,7 @@ function renderCall (self, data) {
 }
 
 function renderUnknownTransaction (self, data, blockchain) {
+  console.trace("renderUnknownTransaction")
   var from = data.tx.from
   var to = data.tx.to
   var obj = { from, to }
@@ -400,10 +408,14 @@ function convertStatus(status) {
   if (status === false) {
     return "0x0"
   }
-  return status
+  // return status
+  return ""
 }
 
 function createTable (opts) {
+  // debugger
+  console.trace("---------------------")
+  console.dir(opts)
   var table = yo`<table class="${css.txTable}" id="txTable" data-id="txLoggerTable${opts.hash}"></table>`
   if (!opts.isCall) {
     var msg = ''

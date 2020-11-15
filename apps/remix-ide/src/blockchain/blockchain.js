@@ -292,13 +292,32 @@ class Blockchain {
     // return this.getCurrentProvider().callMethod(address, abi, methodName, (returnValue) => {
     const inputs = (params === "" ? [] : params.split(","))
 
-    const returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, inputs)
+    let returnValue
+    try {
+      returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, inputs)
+      const receipt = await this.getCurrentProvider().getTransaction(returnValue.transactionHash)
+      // debugger
+      console.dir('triggering transactionExecuted')
+      self.event.trigger('transactionExecuted', [null, receipt.from, receipt.to, receipt.input, tx.useCall, returnValue, timestamp, payLoad, address])
+      outputCb(returnValue)
+    } catch (err) {
+      const txHash = Object.values(JSON.parse("{" + err.message.replace("Transaction has been reverted by the EVM:", '"Transaction has been reverted by the EVM":') + "}"))[0].transactionHash
+      const receipt = await this.getCurrentProvider().getTransaction(txHash)
+      self.event.trigger('transactionExecuted', [null, receipt.from, receipt.to, receipt.input, tx.useCall, err, timestamp, payLoad, address])
+      outputCb({
+        "transactionHash": receipt.hash,
+        "transactionIndex": receipt.transactionIndex,
+        "blockHash": receipt.blockHash,
+        "blockNumber": receipt.blockNumber,
+        "gasUsed": receipt.gas,
+        "cumulativeGasUsed": receipt.gas,
+        "contractAddress": address,
+        "status": "0x0",
+        "events": {}
+      })
 
-    const receipt = await this.getCurrentProvider().getTransaction(returnValue.transactionHash)
-
-    console.dir('triggering transactionExecuted')
-    self.event.trigger('transactionExecuted', [null, receipt.from, receipt.to, receipt.input, tx.useCall, returnValue, timestamp, payLoad, address])
-    outputCb(returnValue)
+      // ["blockHash", "blockNumber", "from", "gas", "gasPrice", "hash", "input", "value", "to", "transactionIndex", "nonce"]
+    }
   }
 
   async callMethod (address, abi, methodName, params, outputCb) {

@@ -5,6 +5,9 @@ const TxRunner = execution.txRunner
 function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback, events) {
   const finalCallback = function (err, result) {
     if (err) {
+      console.dir("-------> error <--------")
+      console.dir(err)
+      console.dir("-------> error <--------")
       return callback(err)
     }
     events.emit("VMCall", result)
