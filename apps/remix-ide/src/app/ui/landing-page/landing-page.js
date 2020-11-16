@@ -131,13 +131,11 @@ export class LandingPage extends ViewPlugin {
     `
     this.badgeTwitter = yo`<button
       class="btn-info p-2 m-1 border rounded-circle ${css.mediaBadge} fab fa-twitter"
-      src="assets/img/sleepingRemiCroped.webp"
       id="remixIDEHomeTwitterbtn"
       onclick=${(e) => this.showMediaPanel(e)}
     ></button>`
     this.badgeMedium = yo`<button
       class="btn-danger p-2 m-1 border rounded-circle ${css.mediaBadge} fab fa-medium"
-      src="assets/img/sleepingRemiCroped.webp"
       id="remixIDEHomeMediumbtn"
       onclick=${(e) => this.showMediaPanel(e)}
     ></button>`
@@ -340,8 +338,8 @@ export class LandingPage extends ViewPlugin {
       query.update({appVersion: '0.7.7'})
       document.location.reload()
     }
-    const img = yo`<img class=${css.logoImg} src="assets/img/sleepingRemiCroped.webp"></img>`
-
+    const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
+    let playRemi = async () => { await document.getElementById('remiAudio').play() }
     // to retrieve medium posts
     document.body.appendChild(yo`<script src="https://www.retainable.io/assets/retainable/rss-embed/retainable-rss-embed.js"></script>`)
     const container = yo`
@@ -350,9 +348,11 @@ export class LandingPage extends ViewPlugin {
           <div class="d-flex justify-content-between">
             <div class="d-flex flex-column">
               <div class="border-bottom d-flex justify-content-between clearfix py-3 mb-4">
-                <div class="mx-4 w-100">${img}</div>
+                <div class="mx-4 w-100">
+                  ${img}
+                  <audio id="remiAudio" muted=false src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"></audio>
+                </div>
               </div>
-
               <div class="row ${css.hpSections} mx-4" data-id="landingPageHpSections">
                 <div class="ml-3">
                   <div class="plugins mb-5">
