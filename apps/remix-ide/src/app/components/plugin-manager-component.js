@@ -153,7 +153,7 @@ class PluginManagerComponent extends ViewPlugin {
       }
       const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
       this.engine.register(plugin)
-      this.appManager.activatePlugin(plugin.name)
+      await this.appManager.activatePlugin(plugin.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
       console.log(`Cannot create Plugin : ${err.message}`)
