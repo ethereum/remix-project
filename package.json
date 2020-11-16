@@ -129,7 +129,7 @@
   "dependencies": {
     "@remixproject/engine": "^0.3.3",
     "@remixproject/engine-web": "^0.3.3",
-    "@remixproject/plugin": "^0.3.2",
+    "@remixproject/plugin": "^0.3.3",
     "@remixproject/plugin-api": "^0.3.2",
     "@remixproject/plugin-utils": "^0.3.2",
     "@remixproject/plugin-webview": "^0.3.3",
