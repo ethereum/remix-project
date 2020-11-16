@@ -33,7 +33,6 @@ export class RemixAppManager extends PluginManager {
   }
 
   async canDeactivatePlugin (from, to) {
-    console.log('canDeactivatePlugin', from, to)
     if (requiredModules.includes(name)) return false
     return from.name === 'manager'
   }
@@ -71,9 +70,7 @@ export class RemixAppManager extends PluginManager {
     this.event.emit('deactivate', plugin)
   }
 
-  onRegistration () {
-    console.log('manager has been registered')
-  }
+  onRegistration () {}
 
   async ensureActivated (apiName) {
     await this.activatePlugin(apiName)
