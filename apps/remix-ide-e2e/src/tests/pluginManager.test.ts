@@ -6,7 +6,7 @@ import sauce from './sauce'
 const testData = {
   pluginName: 'remixIde',
   pluginDisplayName: 'Remix IDE',
-  pluginUrl: 'https://remix-project.org/'
+  pluginUrl: 'https://zokrates-remix-plugin.netlify.app/'
 }
 
 module.exports = {
