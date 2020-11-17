@@ -2,7 +2,6 @@ var yo = require('yo-yo')
 var css = require('./styles/plugin-tab-styles')
 
 class PluginTab {
-
   constructor (json) {
     this.el = null
     this.data = { json }
@@ -18,7 +17,6 @@ class PluginTab {
 
     return this.el
   }
-
 }
 
 module.exports = PluginTab

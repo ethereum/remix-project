@@ -19,7 +19,6 @@ const InjectedProvider = require('./providers/injected.js')
 const NodeProvider = require('./providers/node.js')
 
 class Blockchain {
-
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor (config) {
     this.event = new EventManager()
@@ -201,7 +200,7 @@ class Blockchain {
       if (err) {
         return cb(err)
       }
-      cb(null, {id, name})
+      cb(null, { id, name })
     })
   }
 
@@ -259,7 +258,7 @@ class Blockchain {
       if (funABI.type === 'fallback') data.dataHex = value
 
       const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
-      this.runTx({to: address, data, useCall}, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
+      this.runTx({ to: address, data, useCall }, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
         if (error) {
           return logCallback(`${logMsg} errored: ${error} `)
         }
@@ -416,7 +415,7 @@ class Blockchain {
           })
         }
         self.getAccounts(function (err, accounts) {
-          let address = accounts[0]
+          const address = accounts[0]
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
@@ -441,7 +440,7 @@ class Blockchain {
             if (error) return next(error)
 
             const rawAddress = self.executionContext.isVM() ? result.result.createdAddress : result.result.contractAddress
-            let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
+            const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
             self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad, rawAddress])
 
             if (error && (typeof (error) !== 'string')) {
@@ -479,7 +478,6 @@ class Blockchain {
       cb(error, txResult, address, returnValue)
     })
   }
-
 }
 
 module.exports = Blockchain

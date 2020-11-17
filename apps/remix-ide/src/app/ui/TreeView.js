@@ -47,7 +47,6 @@ var EventManager = require('../../lib/events')
  *  - trigger `nodeClick` and `leafClick`
  */
 class TreeView {
-
   constructor (opts) {
     this.event = new EventManager()
     this.extractData = opts.extractData || this.extractDataDefault
@@ -188,14 +187,14 @@ class TreeView {
     var ret = {}
     if (item instanceof Array) {
       ret.children = item.map((item, index) => {
-        return {key: index, value: item}
+        return { key: index, value: item }
       })
       ret.self = 'Array'
       ret.isNode = true
       ret.isLeaf = false
     } else if (item instanceof Object) {
       ret.children = Object.keys(item).map((key) => {
-        return {key: key, value: item[key]}
+        return { key: key, value: item[key] }
       })
       ret.self = 'Object'
       ret.isNode = true

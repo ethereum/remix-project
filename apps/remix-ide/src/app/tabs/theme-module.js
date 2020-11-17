@@ -5,16 +5,16 @@ import * as packageJson from '../../../../../package.json'
 import yo from 'yo-yo'
 
 const themes = [
-  {name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-dark_tvx1s2.css'},
-  {name: 'Light', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-light_powaqg.css'},
-  {name: 'Midcentury', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014334/remix-themes/PR365/remix-midcentury_hrzph3.css'},
-  {name: 'Black', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014334/remix-themes/PR365/remix-black_undtds.css'},
-  {name: 'Candy', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014799/remix-themes/PR365/remix-candy_ikhg4m.css'},
+  { name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-dark_tvx1s2.css' },
+  { name: 'Light', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-light_powaqg.css' },
+  { name: 'Midcentury', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014334/remix-themes/PR365/remix-midcentury_hrzph3.css' },
+  { name: 'Black', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014334/remix-themes/PR365/remix-black_undtds.css' },
+  { name: 'Candy', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014799/remix-themes/PR365/remix-candy_ikhg4m.css' },
 
-  {name: 'Cerulean', quality: 'light', url: 'https://bootswatch.com/4/cerulean/bootstrap.min.css'},
-  {name: 'Flatly', quality: 'light', url: 'https://bootswatch.com/4/flatly/bootstrap.min.css'},
-  {name: 'Spacelab', quality: 'light', url: 'https://bootswatch.com/4/spacelab/bootstrap.min.css'},
-  {name: 'Cyborg', quality: 'dark', url: 'https://bootswatch.com/4/cyborg/bootstrap.min.css'}
+  { name: 'Cerulean', quality: 'light', url: 'https://bootswatch.com/4/cerulean/bootstrap.min.css' },
+  { name: 'Flatly', quality: 'light', url: 'https://bootswatch.com/4/flatly/bootstrap.min.css' },
+  { name: 'Spacelab', quality: 'light', url: 'https://bootswatch.com/4/spacelab/bootstrap.min.css' },
+  { name: 'Cyborg', quality: 'dark', url: 'https://bootswatch.com/4/cyborg/bootstrap.min.css' }
 ]
 
 const profile = {
@@ -26,7 +26,6 @@ const profile = {
 }
 
 export class ThemeModule extends Plugin {
-
   constructor (registry) {
     super(profile)
     this.events = new EventEmitter()
@@ -75,7 +74,7 @@ export class ThemeModule extends Plugin {
     if (themeName && !Object.keys(this.themes).includes(themeName)) {
       throw new Error(`Theme ${themeName} doesn't exist`)
     }
-    const next = themeName || this.active   // Name
+    const next = themeName || this.active // Name
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)

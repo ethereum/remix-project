@@ -1,6 +1,6 @@
 import { PluginClient } from '@remixproject/plugin'
-import { SharedFolderArgs, TrackDownStreamUpdate, Filelist, ResolveDirectory, FileContent } from '../types'
-import * as WS from 'ws'
+import { SharedFolderArgs, TrackDownStreamUpdate, Filelist, ResolveDirectory, FileContent } from '../types' // eslint-disable-line
+import * as WS from 'ws' // eslint-disable-line
 import * as utils from '../utils'
 import * as chokidar from 'chokidar'
 import * as fs from 'fs-extra'
@@ -49,9 +49,9 @@ export class RemixdClient extends PluginClient {
     try {
       return new Promise((resolve, reject) => {
         const path = utils.absolutePath(args.path, this.currentSharedFolder)
-  
+
         if (!fs.existsSync(path)) {
-          return reject('File not found ' + path)
+          return reject(new Error('File not found ' + path))
         }
         if (!isRealPath(path)) return
         isbinaryfile(path, (error: Error, isBinary: boolean) => {
@@ -76,7 +76,7 @@ export class RemixdClient extends PluginClient {
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
       return fs.existsSync(path)
-    } catch(error) {
+    } catch (error) {
       throw new Error(error)
     }
   }
@@ -84,21 +84,21 @@ export class RemixdClient extends PluginClient {
   set (args: SharedFolderArgs): Promise<void> {
     try {
       return new Promise((resolve, reject) => {
-        if (this.readOnly) reject('Cannot write file: read-only mode selected')
+        if (this.readOnly) reject(new Error('Cannot write file: read-only mode selected'))
         const isFolder = args.path.endsWith('/')
         const path = utils.absolutePath(args.path, this.currentSharedFolder)
         const exists = fs.existsSync(path)
-    
-        if (exists && !isRealPath(path)) reject()
+
+        if (exists && !isRealPath(path)) reject(new Error(''))
         if (args.content === 'undefined') { // no !!!!!
           console.log('trying to write "undefined" ! stopping.')
-          reject('trying to write "undefined" ! stopping.')
+          reject(new Error('trying to write "undefined" ! stopping.'))
         }
         this.trackDownStreamUpdate[path] = path
         if (isFolder) {
           fs.mkdirp(path).then(() => {
             let splitPath = args.path.split('/')
-            
+
             splitPath = splitPath.filter(dir => dir)
             const dir = '/' + splitPath.join('/')
 
@@ -130,14 +130,14 @@ export class RemixdClient extends PluginClient {
   rename (args: SharedFolderArgs): Promise<boolean> {
     try {
       return new Promise((resolve, reject) => {
-        if (this.readOnly) reject('Cannot rename file: read-only mode selected')
+        if (this.readOnly) reject(new Error('Cannot rename file: read-only mode selected'))
         const oldpath = utils.absolutePath(args.oldPath, this.currentSharedFolder)
-    
+
         if (!fs.existsSync(oldpath)) {
-          reject('File not found ' + oldpath)
+          reject(new Error('File not found ' + oldpath))
         }
         const newpath = utils.absolutePath(args.newPath, this.currentSharedFolder)
-    
+
         if (!isRealPath(oldpath)) return
         fs.move(oldpath, newpath, (error: Error) => {
           if (error) {
@@ -156,15 +156,15 @@ export class RemixdClient extends PluginClient {
   remove (args: SharedFolderArgs): Promise<boolean> {
     try {
       return new Promise((resolve, reject) => {
-        if (this.readOnly) reject('Cannot remove file: read-only mode selected')
+        if (this.readOnly) reject(new Error('Cannot remove file: read-only mode selected'))
         const path = utils.absolutePath(args.path, this.currentSharedFolder)
-    
-        if (!fs.existsSync(path)) reject('File not found ' + path)
+
+        if (!fs.existsSync(path)) reject(new Error('File not found ' + path))
         if (!isRealPath(path)) return
         return fs.remove(path, (error: Error) => {
           if (error) {
             console.log(error)
-            reject('Failed to remove file/directory: ' + error)
+            reject(new Error('Failed to remove file/directory: ' + error))
           }
           this.emit('fileRemoved', args.path)
           resolve(true)
