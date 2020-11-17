@@ -339,7 +339,7 @@ export class LandingPage extends ViewPlugin {
       document.location.reload()
     }
     const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
-    let playRemi = async () => { await document.getElementById('remiAudio').play() }
+    const playRemi = async () => { await document.getElementById('remiAudio').play() }
     // to retrieve medium posts
     document.body.appendChild(yo`<script src="https://www.retainable.io/assets/retainable/rss-embed/retainable-rss-embed.js"></script>`)
     const container = yo`
