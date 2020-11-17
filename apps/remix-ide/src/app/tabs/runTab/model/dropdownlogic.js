@@ -18,11 +18,11 @@ class DropdownLogic {
 
   // TODO: can be moved up; the event in contractDropdown will have to refactored a method instead
   listenToCompilationEvents () {
-    let broadcastCompilationResult = (file, source, languageVersion, data) => {
+    const broadcastCompilationResult = (file, source, languageVersion, data) => {
       // TODO check whether the tab is configured
-      let compiler = new CompilerAbstract(languageVersion, data, source)
+      const compiler = new CompilerAbstract(languageVersion, data, source)
       this.compilersArtefacts[languageVersion] = compiler
-      this.compilersArtefacts['__last'] = compiler
+      this.compilersArtefacts.__last = compiler
       this.event.trigger('newlyCompiled', [true, data, source, compiler, languageVersion, file])
     }
     this.runView.on('solidity', 'compilationFinished', (file, source, languageVersion, data) =>
@@ -102,9 +102,8 @@ class DropdownLogic {
   }
 
   getCompilerContracts () {
-    return this.compilersArtefacts['__last'].getData().contracts
+    return this.compilersArtefacts.__last.getData().contracts
   }
-
 }
 
 module.exports = DropdownLogic

@@ -1,7 +1,7 @@
 'use strict'
-var CompilerAbstract = require('../compiler/compiler-abstract')
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+var CompilerAbstract = require('../compiler/compiler-abstract')
 
 const profile = {
   name: 'compilerMetadata',
@@ -32,7 +32,7 @@ class CompilerMetadata extends Plugin {
     var self = this
     this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
       if (!self.config.get('settings/generate-contract-metadata')) return
-      let compiler = new CompilerAbstract(languageVersion, data, source)
+      const compiler = new CompilerAbstract(languageVersion, data, source)
       var provider = self.fileManager.currentFileProvider()
       var path = self.fileManager.currentPath()
       if (provider && path) {
@@ -84,8 +84,8 @@ class CompilerMetadata extends Plugin {
   }
 
   _syncContext (contract, metadata) {
-    var linkReferences = metadata['linkReferences']
-    var autoDeployLib = metadata['autoDeployLib']
+    var linkReferences = metadata.linkReferences
+    var autoDeployLib = metadata.autoDeployLib
     if (!linkReferences) linkReferences = {}
     if (autoDeployLib === undefined) autoDeployLib = true
 
@@ -97,8 +97,8 @@ class CompilerMetadata extends Plugin {
         }
       }
     }
-    metadata['linkReferences'] = linkReferences
-    metadata['autoDeployLib'] = autoDeployLib
+    metadata.linkReferences = linkReferences
+    metadata.autoDeployLib = autoDeployLib
     return metadata
   }
 
@@ -138,7 +138,7 @@ class CompilerMetadata extends Plugin {
           }
         })
       } else {
-        reject(`Please select the folder in the file explorer where the metadata of ${contractName} can be found`)
+        reject(new Error(`Please select the folder in the file explorer where the metadata of ${contractName} can be found`))
       }
     })
   }

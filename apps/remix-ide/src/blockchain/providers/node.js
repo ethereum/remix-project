@@ -3,7 +3,6 @@ const { stripHexPrefix, hashPersonalMessage } = require('ethereumjs-util')
 const Personal = require('web3-eth-personal')
 
 class NodeProvider {
-
   constructor (executionContext, config) {
     this.executionContext = executionContext
     this.config = config

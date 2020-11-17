@@ -17,10 +17,10 @@ module.exports = {
     var text = 'Please provide a Passphrase for the account creation'
     var input = yo`
       <div>
-        <input id="prompt1" type="password" name='prompt_text' class="${css['prompt_text']}" oninput="${(e) => validateInput(e)}">
+        <input id="prompt1" type="password" name='prompt_text' class="${css.prompt_text}" oninput="${(e) => validateInput(e)}">
         <br>
         <br>
-        <input id="prompt2" type="password" name='prompt_text' class="${css['prompt_text']}" oninput="${(e) => validateInput(e)}">
+        <input id="prompt2" type="password" name='prompt_text' class="${css.prompt_text}" oninput="${(e) => validateInput(e)}">
       </div>
     `
     return modal(null, yo`<div>${text}<div>${input}</div></div>`,
@@ -96,7 +96,7 @@ function prompt (title, text, hidden, inputValue, ok, cancel, focus) {
       type=${type}
       name='prompt_text'
       id='prompt_text'
-      class="${css['prompt_text']} form-control"
+      class="${css.prompt_text} form-control"
       value='${inputValue}'
       data-id="modalDialogCustomPromptText"
       oninput="${(e) => validateInput(e)}"
