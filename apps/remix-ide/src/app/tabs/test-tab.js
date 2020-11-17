@@ -1,4 +1,4 @@
-import { ViewPlugin } from '@remixproject/engine'
+import { ViewPlugin } from '@remixproject/engine-web'
 import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
 var yo = require('yo-yo')
 var async = require('async')

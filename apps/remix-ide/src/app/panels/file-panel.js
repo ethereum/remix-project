@@ -1,4 +1,4 @@
-import { ViewPlugin } from '@remixproject/engine'
+import { ViewPlugin } from '@remixproject/engine-web'
 
 import * as packageJson from '../../../../../package.json'
 var yo = require('yo-yo')

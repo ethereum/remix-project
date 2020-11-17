@@ -1,4 +1,4 @@
-import { ViewPlugin } from '@remixproject/engine'
+import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 const yo = require('yo-yo')
 const globalRegistry = require('../../global/registry')

@@ -1,5 +1,5 @@
 import * as packageJson from '../../../../../../package.json'
-import { ViewPlugin } from '@remixproject/engine'
+import { ViewPlugin } from '@remixproject/engine-web'
 
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')

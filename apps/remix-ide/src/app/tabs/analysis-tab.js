@@ -1,4 +1,4 @@
-import { ViewPlugin } from '@remixproject/engine'
+import { ViewPlugin } from '@remixproject/engine-web'
 import { EventEmitter } from 'events'
 import * as packageJson from '../../../../../package.json'
 

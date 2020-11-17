@@ -1,5 +1,5 @@
 /* global */
-import { ViewPlugin } from '@remixproject/engine'
+import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import publishToStorage from '../../publishToStorage'
 import { compile } from '../compiler/compiler-helpers'

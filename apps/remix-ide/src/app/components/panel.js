@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import { HostPlugin } from '@remixproject/engine'
+import { HostPlugin } from '@remixproject/engine-web'
 const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 
