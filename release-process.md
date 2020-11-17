@@ -34,7 +34,7 @@ This document includes:
  - git fetch origin remix_beta
  - git checkout origin/remix_beta
  - git checkout -b bumpVersion
- - update package.json version
+ - update package.json version (remove the tag `beta`)
  - remove package-lock.json version and generate a new one with `npm install`
  - merge PR to origin/remix_beta
  - git fetch origin remix_beta
@@ -44,6 +44,15 @@ This document includes:
  - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
  - publish a release in github using the changelog
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
+ - move to next section `Remix IDE bump dev branch (master)` for bumping the master branch.
+ 
+## Remix IDE bump dev branch (master)
+
+ - git checkout master (checkout master branch)
+ - git checkout -b bumpDevVersion
+ - update package.json version: bump the version and add the tag `dev` if not already present.
+ - remove package-lock.json version and generate a new one with `npm install`
+ - merge PR to origin/master
 
 ## Remix-ide beta release
  - git fetch origin master
