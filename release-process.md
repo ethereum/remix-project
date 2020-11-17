@@ -65,7 +65,7 @@ This document includes:
 This is not strictly speaking a release. Updating the remix site is done through the Travis build:
 
  - git co -b remix_live origin/remix_live
- - git reset --hard -master-commit-hash-
+ - git reset --hard -master-commit-hash- (or remix_beta-commit-hash-)
  - git push -f origin remix_live
 
  CircleCI will build automaticaly and remix.ethereum.org will be updated
