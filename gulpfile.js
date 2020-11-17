@@ -50,7 +50,8 @@ task('syncLibVersions', async function () {
         'remix-simulator',
         'remix-solidity',
         'remix-tests',
-        'remix-url-resolver'
+        'remix-url-resolver',
+        'remixd'
     ]
 
     libs.forEach(lib => {
