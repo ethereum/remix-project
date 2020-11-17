@@ -3,8 +3,7 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
-import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
-import { ViewPlugin } from '@remixproject/engine'
+import { IframePlugin, ViewPlugin, WebsocketPlugin } from '@remixproject/engine-web'
 import { PluginManagerSettings } from './plugin-manager-settings'
 import * as packageJson from '../../../../../package.json'
 const addToolTip = require('../ui/tooltip')
