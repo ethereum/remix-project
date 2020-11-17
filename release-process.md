@@ -29,6 +29,22 @@ This document includes:
  - publish a release in github using the changelog
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
 
+## Remix IDE release from beta
+
+ - git fetch origin remix_beta
+ - git checkout origin/remix_beta
+ - git checkout -b bumpVersion
+ - update package.json version
+ - remove package-lock.json version and generate a new one with `npm install`
+ - merge PR to origin/remix_beta
+ - git fetch origin remix_beta
+ - git checkout origin/remix_beta
+ - git tag v(version-number)
+ - git push --tags
+ - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
+ - publish a release in github using the changelog
+ - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
+
 ## Remix-ide beta release
  - git fetch origin master
  - git checkout origin/master
