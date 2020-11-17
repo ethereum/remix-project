@@ -4,7 +4,6 @@ import { basicLogo } from './app/ui/svgLogo'
 import { RunTab, makeUdapp } from './app/udapp'
 
 import PanelsResize from './lib/panels-resize'
-import { Engine } from '@remixproject/engine'
 import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
 import { FramingService } from './framingService'
@@ -234,7 +233,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const workspace = pluginLoader.get()
   const engine = new RemixEngine()
   engine.register(appManager)
-  
+
   // SERVICES
   // ----------------- import content servive ------------------------
   const contentImport = new CompilerImport()
@@ -403,7 +402,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const params = queryParams.get()
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) {    
+  if (Array.isArray(workspace)) {
     appManager.activatePlugin(workspace).then(async () => {
       try {
         if (params.deactivate) {
