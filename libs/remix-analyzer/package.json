@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-analyzer",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "Tool to perform static analysis on Solidity smart contracts",
   "main": "index.js",
   "types": ".index.d.ts",
@@ -46,5 +46,5 @@
     "typescript": "^3.7.5"
   },
   "typings": "index.d.ts",
-  "gitHead": "832387514c359d9b29fe0fb9ae0444a58b9c4253"
+  "gitHead": "ba6b2b226349d035146bd6deb120fef3d499ed16"
 }
