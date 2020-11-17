@@ -34,7 +34,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.readyTestsNumber = 0
     this.areTestsRunning = false
     this.defaultPath = 'browser/tests'
-    this.offsetToLineColumnConverter =  offsetToLineColumnConverter
+    this.offsetToLineColumnConverter = offsetToLineColumnConverter
 
     appManager.event.on('activate', (name) => {
       if (name === 'solidity') this.updateRunAction()

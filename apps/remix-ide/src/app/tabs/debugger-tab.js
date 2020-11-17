@@ -22,7 +22,6 @@ const profile = {
 }
 
 class DebuggerTab extends ViewPlugin {
-
   constructor (blockchain, editor, offsetToLineColumnConverter) {
     super(profile)
     this.el = null
@@ -106,27 +105,22 @@ class DebuggerTab extends ViewPlugin {
 
   async getTrace (hash) {
     if (!hash) return
-    try {
-      const web3 = await this.getDebugWeb3()
-      const currentReceipt = await web3.eth.getTransactionReceipt(hash)
-      const debug = new Debugger({
-        web3,
-        offsetToLineColumnConverter: this.offsetToLineColumnConverter,
-        compilationResult: async (address) => {
-          try {
-            return await this.fetchContractAndCompile(address, currentReceipt)
-          } catch (e) {
-            console.error(e)
-          }
-          return null
-        },
-        debugWithGeneratedSources: false
-      })
-    
-      return await debug.debugger.traceManager.getTrace(hash)
-    } catch (e) {
-      throw e
-    }
+    const web3 = await this.getDebugWeb3()
+    const currentReceipt = await web3.eth.getTransactionReceipt(hash)
+    const debug = new Debugger({
+      web3,
+      offsetToLineColumnConverter: this.offsetToLineColumnConverter,
+      compilationResult: async (address) => {
+        try {
+          return await this.fetchContractAndCompile(address, currentReceipt)
+        } catch (e) {
+          console.error(e)
+        }
+        return null
+      },
+      debugWithGeneratedSources: false
+    })
+    return await debug.debugger.traceManager.getTrace(hash)
   }
 
   fetchContractAndCompile (address, receipt) {
