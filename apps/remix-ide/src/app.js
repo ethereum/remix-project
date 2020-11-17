@@ -5,6 +5,7 @@ import { RunTab, makeUdapp } from './app/udapp'
 
 import PanelsResize from './lib/panels-resize'
 import { Engine } from '@remixproject/engine'
+import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
 import { FramingService } from './framingService'
 import { MainView } from './app/panels/main-view'
@@ -231,12 +232,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const appManager = self.appManager
   const pluginLoader = appManager.pluginLoader
   const workspace = pluginLoader.get()
-  const engine = new Engine()
-  engine.setPluginOption = ({ name, kind }) => {
-    if (kind === 'provider') return { queueTimeout: 60000 * 2 }
-    if (name === 'LearnEth') return { queueTimeout: 60000 }
-    return { queueTimeout: 10000 }
-  }
+  const engine = new RemixEngine()
   engine.register(appManager)
   
   // SERVICES
