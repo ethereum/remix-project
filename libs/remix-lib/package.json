@@ -12,7 +12,7 @@
       "email": "liana@ethdev.com"
     }
   ],
-  "main": "src/index.js.js",
+  "main": "index.js",
   "dependencies": {
     "async": "^2.1.2",
     "ethereumjs-block": "^2.2.2",
@@ -51,6 +51,6 @@
     "url": "https://github.com/ethereum/remix-project/issues"
   },
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-lib#readme",
-  "typings": "src/index.js.d.ts",
+  "typings": "index.d.ts",
   "gitHead": "ba6b2b226349d035146bd6deb120fef3d499ed16"
 }

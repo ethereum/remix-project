@@ -12,7 +12,7 @@
       "email": "yann@ethdev.com"
     }
   ],
-  "main": "index.js.js",
+  "main": "index.js",
   "dependencies": {
     "@remix-project/remix-lib": "^0.4.31",
     "ansi-gray": "^0.1.1",
@@ -62,6 +62,6 @@
     "url": "https://github.com/ethereum/remix-project/issues"
   },
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-simulator#readme",
-  "typings": "index.js.d.ts",
+  "typings": "index.d.ts",
   "gitHead": "ba6b2b226349d035146bd6deb120fef3d499ed16"
 }
