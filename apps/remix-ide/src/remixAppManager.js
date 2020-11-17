@@ -16,7 +16,7 @@ export function isNative (name) {
 }
 
 export function canActivate (name) {
-  return ['manager', 'debugger', 'ethdoc'].includes(name)
+  return ['ethdoc'].includes(name) || isNative(name)
 }
 
 export class RemixAppManager extends PluginManager {
@@ -33,7 +33,7 @@ export class RemixAppManager extends PluginManager {
   }
 
   async canDeactivatePlugin (from, to) {
-    if (requiredModules.includes(name)) return false
+    if (requiredModules.includes(to.name)) return false
     return from.name === 'manager'
   }
 
