@@ -112,7 +112,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "TEST_SCRIPT='node_modules/.bin/nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js'; if [ {args.env} != undefined ]; then TEST_SCRIPT=${TEST_SCRIPT}' --env {args.env}'; else TEST_SCRIPT=${TEST_SCRIPT}' --env chrome'; fi; if [ {args.filePath} != undefined ]; then TEST_SCRIPT=${TEST_SCRIPT}' {args.filePath}'; fi; eval $TEST_SCRIPT;"
+              "node apps/remix-ide-e2e/script.js"
             ],
             "parallel": false
           }
