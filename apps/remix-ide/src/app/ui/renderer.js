@@ -86,15 +86,14 @@ Renderer.prototype.error = function (message, container, opt) {
   // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0/contracts/introspection/IERC1820Registry.sol:3:1: ParserError: Source file requires different compiler version (current compiler is 0.7.4+commit.3f05b770.Emscripten.clang) - note that nightly builds are considered to be strictly less than the released version
 
   // extract line / column
-  let position =  text.match(/^(.*?):([0-9]*?):([0-9]*?)?/)
+  let position = text.match(/^(.*?):([0-9]*?):([0-9]*?)?/)
   opt.errLine = position ? parseInt(position[2]) - 1 : -1
   opt.errCol = position ? parseInt(position[3]) : -1
-    
 
   // extract file
   position = text.match(/^(https:.*?|http:.*?|.*?):/)
   opt.errFile = position ? position[1] : ''
-  
+
   if (!opt.noAnnotations && opt.errFile) {
     this._error(opt.errFile, {
       row: opt.errLine,
@@ -106,7 +105,7 @@ Renderer.prototype.error = function (message, container, opt) {
 
   var $pre = $(opt.useSpan ? yo`<span></span>` : yo`<pre></pre>`).html(message)
 
-  let classList = opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning'
+  const classList = opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning'
   var $error = $(yo`<div class="sol ${opt.type} ${classList}"><div class="close" data-id="renderer"><i class="fas fa-times"></i></div></div>`).prepend($pre)
   $(container).append($error)
 

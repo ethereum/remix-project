@@ -1,12 +1,12 @@
+import { ViewPlugin } from '@remixproject/engine'
+
+import * as packageJson from '../../../../../package.json'
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 var FileExplorer = require('../files/file-explorer')
 var { RemixdHandle } = require('../files/remixd-handle.js')
 var globalRegistry = require('../../global/registry')
 var css = require('./styles/file-panel-styles')
-import { ViewPlugin } from '@remixproject/engine'
-
-import * as packageJson from '../../../../../package.json'
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
@@ -41,7 +41,6 @@ const profile = {
 }
 
 module.exports = class Filepanel extends ViewPlugin {
-
   constructor (appManager) {
     super(profile)
     var self = this
@@ -60,7 +59,7 @@ module.exports = class Filepanel extends ViewPlugin {
     var fileExplorer = createProvider('browser', ['createNewFile', 'publishToGist', canUpload ? 'uploadFile' : ''])
     var fileSystemExplorer = createProvider('localhost')
 
-    self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'], appManager)
+    self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders.localhost, appManager)
 
     const explorers = yo`
       <div>
@@ -85,22 +84,21 @@ module.exports = class Filepanel extends ViewPlugin {
     self.event = event
     var element = template()
     fileExplorer.ensureRoot()
-    self._deps.fileProviders['localhost'].event.register('connecting', (event) => {
+    self._deps.fileProviders.localhost.event.register('connecting', (event) => {
     })
 
-    self._deps.fileProviders['localhost'].event.register('connected', (event) => {
+    self._deps.fileProviders.localhost.event.register('connected', (event) => {
       fileSystemExplorer.show()
     })
 
-    self._deps.fileProviders['localhost'].event.register('errored', (event) => {
+    self._deps.fileProviders.localhost.event.register('errored', (event) => {
       fileSystemExplorer.hide()
     })
 
-    self._deps.fileProviders['localhost'].event.register('closed', (event) => {
+    self._deps.fileProviders.localhost.event.register('closed', (event) => {
       fileSystemExplorer.hide()
     })
 
     self.render = function render () { return element }
   }
 }
-

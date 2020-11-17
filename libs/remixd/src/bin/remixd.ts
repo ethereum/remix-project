@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import WebSocket from '../websocket'
 import * as servicesList from '../serviceList'
-import * as WS from 'ws'
+import * as WS from 'ws' // eslint-disable-line
 import { getDomain } from '../utils'
 import Axios from 'axios'
 import * as fs from 'fs-extra'
@@ -10,14 +10,14 @@ import * as program from 'commander'
 
 (async () => {
   program
-  .usage('-s <shared folder>')
-  .description('Provide a two-way connection between the local computer and Remix IDE')
-  .option('--remix-ide  <url>', 'URL of remix instance allowed to connect to this web sockect connection')
-  .option('-s, --shared-folder <path>', 'Folder to share with Remix IDE')
-  .option('--read-only', 'Treat shared folder as read-only (experimental)')
-  .on('--help', function(){
-    console.log('\nExample:\n\n    remixd -s ./ --remix-ide http://localhost:8080')
-  }).parse(process.argv)
+    .usage('-s <shared folder>')
+    .description('Provide a two-way connection between the local computer and Remix IDE')
+    .option('--remix-ide  <url>', 'URL of remix instance allowed to connect to this web sockect connection')
+    .option('-s, --shared-folder <path>', 'Folder to share with Remix IDE')
+    .option('--read-only', 'Treat shared folder as read-only (experimental)')
+    .on('--help', function () {
+      console.log('\nExample:\n\n    remixd -s ./ --remix-ide http://localhost:8080')
+    }).parse(process.argv)
   // eslint-disable-next-line
   const killCallBack: Array<Function> = []
 
@@ -38,7 +38,7 @@ import * as program from 'commander'
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolic links are not forwarded to Remix IDE\n')
     try {
-      const sharedFolderClient = new servicesList['sharedfolder']()
+      const sharedFolderClient = new servicesList.Sharedfolder()
       const websocketHandler = new WebSocket(65520, { remixIdeUrl: program.remixIde }, sharedFolderClient)
 
       websocketHandler.start((ws: WS) => {
@@ -47,7 +47,7 @@ import * as program from 'commander'
         sharedFolderClient.sharedFolder(program.sharedFolder, program.readOnly || false)
       })
       killCallBack.push(websocketHandler.close.bind(websocketHandler))
-    } catch(error) {
+    } catch (error) {
       throw new Error(error)
     }
   } else {
@@ -64,7 +64,7 @@ import * as program from 'commander'
       }
     }
   }
-  
+
   process.on('SIGINT', kill) // catch ctrl-c
   process.on('SIGTERM', kill) // catch kill
   process.on('exit', kill)
@@ -73,23 +73,23 @@ import * as program from 'commander'
     if (!origin) return false
     const domain = getDomain(origin)
     const gistUrl = 'https://gist.githubusercontent.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173/raw/3367e019335746b73288e3710af2922d4c8ef5a3/origins.json'
-  
+
     try {
       const { data } = await Axios.get(gistUrl)
-  
+
       try {
-        await fs.writeJSON(path.resolve(__dirname + '/../origins.json'), { data })
+        await fs.writeJSON(path.resolve(path.join(__dirname, '..', 'origins.json')), { data })
       } catch (e) {
         console.error(e)
       }
-  
+
       return data.includes(origin) ? data.includes(origin) : data.includes(domain)
     } catch (e) {
       try {
         // eslint-disable-next-line
         const origins = require('../origins.json')
         const { data } = origins
-        
+
         return data.includes(origin) ? data.includes(origin) : data.includes(domain)
       } catch (e) {
         return false

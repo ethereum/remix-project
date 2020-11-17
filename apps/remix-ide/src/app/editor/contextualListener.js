@@ -1,12 +1,13 @@
 'use strict'
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../../../package.json'
+
 const remixdebug = require('@remix-project/remix-debug')
 const { AstWalker } = require('@remix-project/remix-astwalker')
 const csjs = require('csjs-inject')
 const SourceMappingDecoder = remixdebug.SourceMappingDecoder
 const EventManager = require('../../lib/events')
 const globalRegistry = require('../../global/registry')
-import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'contextualListener',
@@ -54,8 +55,8 @@ class ContextualListener extends Plugin {
     })
 
     setInterval(() => {
-      if (this._deps.compilersArtefacts['__last'] && this._deps.compilersArtefacts['__last'].languageversion.indexOf('soljson') === 0) {
-        this._highlightItems(this.editor.getCursorPosition(), this._deps.compilersArtefacts['__last'], this._deps.config.get('currentFile'))
+      if (this._deps.compilersArtefacts.__last && this._deps.compilersArtefacts.__last.languageversion.indexOf('soljson') === 0) {
+        this._highlightItems(this.editor.getCursorPosition(), this._deps.compilersArtefacts.__last, this._deps.config.get('currentFile'))
       }
     }, 1000)
   }
@@ -66,13 +67,13 @@ class ContextualListener extends Plugin {
 
   declarationOf (node) {
     if (node && node.referencedDeclaration) {
-      return this._index['FlatReferences'][node.referencedDeclaration]
+      return this._index.FlatReferences[node.referencedDeclaration]
     }
     return null
   }
 
   referencesOf (node) {
-    return this._index['Declarations'][node.id]
+    return this._index.Declarations[node.id]
   }
 
   _highlightItems (cursorPosition, compilationResult, file) {
@@ -99,12 +100,12 @@ class ContextualListener extends Plugin {
     if (compilationResult && compilationResult.sources) {
       const callback = (node) => {
         if (node && node.referencedDeclaration) {
-          if (!this._index['Declarations'][node.referencedDeclaration]) {
-            this._index['Declarations'][node.referencedDeclaration] = []
+          if (!this._index.Declarations[node.referencedDeclaration]) {
+            this._index.Declarations[node.referencedDeclaration] = []
           }
-          this._index['Declarations'][node.referencedDeclaration].push(node)
+          this._index.Declarations[node.referencedDeclaration].push(node)
         }
-        this._index['FlatReferences'][node.id] = node
+        this._index.FlatReferences[node.id] = node
       }
       for (const s in compilationResult.sources) {
         this.astWalker.walkFull(compilationResult.sources[s].ast, callback)
@@ -116,7 +117,7 @@ class ContextualListener extends Plugin {
     if (!node) return
     const position = this.sourceMappingDecoder.decode(node.src)
     const eventId = this._highlightInternal(position, node)
-    let lastCompilationResult = this._deps.compilersArtefacts['__last']
+    const lastCompilationResult = this._deps.compilersArtefacts.__last
     if (eventId && lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0) {
       this._activeHighlights.push({ eventId, position, fileTarget: lastCompilationResult.getSourceName(position.file), nodeId: node.id })
     }
@@ -124,7 +125,7 @@ class ContextualListener extends Plugin {
 
   _highlightInternal (position, node) {
     if (node.nodeType === 'Block') return
-    let lastCompilationResult = this._deps.compilersArtefacts['__last']
+    const lastCompilationResult = this._deps.compilersArtefacts.__last
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0) {
       let lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, lastCompilationResult.getSourceCode().sources, lastCompilationResult.getAsts())
       const css = csjs`
@@ -158,8 +159,8 @@ class ContextualListener extends Plugin {
 
   _highlightExpressions (node, compilationResult) {
     const highlights = (id) => {
-      if (this._index['Declarations'] && this._index['Declarations'][id]) {
-        const refs = this._index['Declarations'][id]
+      if (this._index.Declarations && this._index.Declarations[id]) {
+        const refs = this._index.Declarations[id]
         for (const ref in refs) {
           const node = refs[ref]
           this._highlight(node, compilationResult)
@@ -168,7 +169,7 @@ class ContextualListener extends Plugin {
     }
     if (node && node.referencedDeclaration) {
       highlights(node.referencedDeclaration)
-      const current = this._index['FlatReferences'][node.referencedDeclaration]
+      const current = this._index.FlatReferences[node.referencedDeclaration]
       this._highlight(current, compilationResult)
     } else {
       highlights(node.id)
@@ -206,7 +207,7 @@ class ContextualListener extends Plugin {
     } else {
       executionCost = '-'
     }
-    return {executionCost, codeDepositCost}
+    return { executionCost, codeDepositCost }
   }
 
   _loadContractInfos (node) {
@@ -223,7 +224,7 @@ class ContextualListener extends Plugin {
 
   _getInputParams (node) {
     const params = []
-    let target = node.parameters
+    const target = node.parameters
     // for (const i in node.children) {
     //   if (node.children[i].name === 'ParameterList') {
     //     target = node.children[i]

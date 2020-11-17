@@ -3,7 +3,6 @@ const stateDecoder = require('../solidity-decoder/stateDecoder')
 const StorageViewer = require('../storage/storageViewer')
 
 class DebuggerSolidityState {
-
   constructor (tx, _stepManager, _traceManager, _codeManager, _solidityProxy) {
     this.event = new EventManager()
     this.storageResolver = null
@@ -66,7 +65,7 @@ class DebuggerSolidityState {
   }
 
   extractStateVariables (stateVars, address) {
-    let storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
+    const storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
     stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
       this.event.trigger('solidityStateMessage', [''])
       if (result.error) {
@@ -75,7 +74,6 @@ class DebuggerSolidityState {
       this.event.trigger('solidityState', [result])
     })
   }
-
 }
 
 module.exports = DebuggerSolidityState

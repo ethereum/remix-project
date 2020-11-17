@@ -33,6 +33,7 @@ export class MainView {
     this.appManager = appManager
     this.init()
   }
+
   showApp (name) {
     this.fileManager.unselectCurrentFile()
     this.mainPanel.showContent(name)
@@ -40,9 +41,11 @@ export class MainView {
     this._components.contextView.hide()
     this._view.mainPanel.style.display = 'block'
   }
+
   getAppPanel () {
     return this.mainPanel
   }
+
   init () {
     var self = this
     self._deps = {
@@ -86,7 +89,7 @@ export class MainView {
       }
     }
 
-    const contextView = new ContextView({contextualListener: self._components.contextualListener, editor: self.editor})
+    const contextView = new ContextView({ contextualListener: self._components.contextualListener, editor: self.editor })
 
     self._components.contextView = contextView
 
@@ -97,9 +100,11 @@ export class MainView {
       })
     }
   }
+
   _terminalTopOffset () {
     return this._deps.config.get('terminal-top-offset') || 150
   }
+
   _adjustLayout (direction, delta) {
     var limitUp = 0
     var limitDown = 32
@@ -129,36 +134,45 @@ export class MainView {
       self._components.terminal.scroll2bottom()
     }
   }
+
   minimizeTerminal () {
     this._adjustLayout('top')
   }
+
   showTerminal (offset) {
     this._adjustLayout('top', offset || this._terminalTopOffset())
   }
+
   getTerminal () {
     return this._components.terminal
   }
+
   getEditor () {
     var self = this
     return self.editor
   }
+
   refresh () {
     var self = this
     self._view.tabs.onmouseenter()
   }
+
   log (data = {}) {
     var self = this
     var command = self._components.terminal.commands[data.type]
     if (typeof command === 'function') command(data.value)
   }
+
   logMessage (msg) {
     var self = this
-    self.log({type: 'log', value: msg})
+    self.log({ type: 'log', value: msg })
   }
+
   logHtmlMessage (msg) {
     var self = this
-    self.log({type: 'html', value: msg})
+    self.log({ type: 'html', value: msg })
   }
+
   render () {
     var self = this
     if (self._view.mainview) return self._view.mainview
@@ -184,12 +198,13 @@ export class MainView {
 
     return self._view.mainview
   }
+
   registerCommand (name, command, opts) {
     var self = this
     return self._components.terminal.registerCommand(name, command, opts)
   }
+
   updateTerminalFilter (filter) {
     this._components.terminal.updateJournal(filter)
   }
 }
-
