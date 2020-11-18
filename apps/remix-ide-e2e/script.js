@@ -16,6 +16,7 @@ bash.stdout.on('data', (data) => {
 
 bash.stderr.on('data', (data) => {
   console.log(data.toString());
+  throw new Error(data)
 });
 
 bash.on('exit', (code) => {
