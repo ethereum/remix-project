@@ -15,3 +15,9 @@ then
 fi
 
 eval $TEST_SCRIPT;
+
+echo "$TEST_EXITCODE"
+if [ "$TEST_EXITCODE" -eq 1 ]
+then
+  exit 1
+fi
