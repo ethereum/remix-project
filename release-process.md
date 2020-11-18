@@ -34,7 +34,7 @@ This document includes:
  - git fetch origin remix_beta
  - git checkout origin/remix_beta
  - git checkout -b bumpVersion
- - update package.json version (remove the tag `beta`)
+ - update package.json version
  - remove package-lock.json version and generate a new one with `npm install`
  - merge PR to origin/remix_beta
  - git fetch origin remix_beta
