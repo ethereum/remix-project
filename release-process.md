@@ -41,7 +41,7 @@ This document includes:
  - git checkout origin/remix_beta
  - git tag v(version-number)
  - git push --tags
- - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
+ - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --branch remix_beta --only-merges --between-tags previous_version...next_version
  - publish a release in github using the changelog
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
  - move to next section `Remix IDE bump dev branch (master)` for bumping the master branch.
