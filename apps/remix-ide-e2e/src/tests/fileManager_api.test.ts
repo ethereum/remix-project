@@ -12,7 +12,7 @@ module.exports = {
     browser
     .addFile('file.js', { content: executeFile })
     .executeScript(`remix.exeCurrent()`)
-    .pause(2000)
+    .pause(5000)
     .journalLastChildIncludes('browser/file.js')
   },
 
