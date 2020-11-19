@@ -14,10 +14,10 @@ then
     TEST_SCRIPT=${TEST_SCRIPT}' '$2;
 fi
 
-eval $TEST_SCRIPT;
+eval $TEST_SCRIPT || TEST_EXITCODE=1;
 
 echo $TEST_EXITCODE
-if [ $TEST_EXITCODE -eq 1 ]
+if [ "$TEST_EXITCODE" -eq "1" ]
 then
   exit 1
 fi
