@@ -181,6 +181,13 @@ module.exports = {
     .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
     .assert.containsText('*[data-id="stepdetail"]', 'loaded address:\n0x3c943Fb816694d7D1f4C738e3e7823818a88DD6C')
     .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x6C3CCC7FBA111707D5A1AAF2758E9D4F4AC5E7B1')
+  },
+
+  'Call web3.eth.getAccounts() using Injected web3 (Metamask)': function (browser: NightwatchBrowser) {
+    browser
+    .executeScript(`web3.eth.getAccounts()`)
+    .pause(2000)
+    .journalLastChildIncludes(`[ "0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f" ]`)
     .end()
   },
   tearDown: sauce
