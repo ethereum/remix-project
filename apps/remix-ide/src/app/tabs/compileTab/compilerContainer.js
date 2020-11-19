@@ -346,7 +346,9 @@ class CompilerContainer {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
     if (this.compileTabLogic.optimize) {
       this._view.runs.removeAttribute('disabled')
+      this.compileTabLogic.setRuns(parseInt(this._view.runs.value))
     } else {
+      this.compileTabLogic.setRuns(200)
       this._view.runs.setAttribute('disabled', '')
     }
     this.compileIfAutoCompileOn()
