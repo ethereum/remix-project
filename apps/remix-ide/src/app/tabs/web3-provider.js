@@ -22,7 +22,9 @@ export class Web3ProviderModule extends Plugin {
   */
   sendAsync (payload) {
     return new Promise((resolve, reject) => {
-      this.blockchain.web3().currentProvider.sendAsync(payload, (error, message) => {
+      const provider = this.blockchain.web3().currentProvider
+      // see https://github.com/ethereum/web3.js/pull/1018/files#diff-d25786686c1053b786cc2626dc6e048675050593c0ebaafbf0814e1996f22022R129
+      provider[provider.sendAsync ? 'sendAsync' : 'send'](payload, (error, message) => {
         if (error) return reject(error)
         resolve(message)
       })
