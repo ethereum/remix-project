@@ -89,11 +89,10 @@ module.exports = {
     .debugTransaction(2)
     .pause(2000)
     .goToVMTraceStep(10)
-    .pause(10000)
     .getEditorValue((content) => {
-      browser.assert.ok(content.indexOf(`constructor (string memory name, string memory symbol) public {
-        _name = name;
-        _symbol = symbol;
+      browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) public {
+        _name = name_;
+        _symbol = symbol_;
         _decimals = 18;
     }`) != -1, 
     'current displayed content is not from the ERC20 source code')
