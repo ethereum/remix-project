@@ -158,7 +158,9 @@ class FileManager extends Plugin {
       await this._handleIsFile(path, `Cannot write file ${path}`)
       return await this.setFileContent(path, data)
     } else {
-      return await this.setFileContent(path, data)
+      const ret = this.setFileContent(path, data)
+      this.emit('fileAdded', path)
+      return ret
     }
   }
 
@@ -396,6 +398,7 @@ class FileManager extends Plugin {
       provider.set(path, content, (error) => {
         if (error) reject(error)
         this.syncEditor(path)
+        this.emit('fileSaved', path)
         resolve(true)
       })
     })
@@ -528,6 +531,7 @@ class FileManager extends Plugin {
         var provider = this.fileProviderOf(currentFile)
         if (provider) {
           provider.set(currentFile, input)
+          this.emit('fileSaved', currentFile)
         } else {
           console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
         }
