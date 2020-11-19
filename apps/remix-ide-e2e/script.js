@@ -20,7 +20,7 @@ bash.stderr.on('data', (data) => {
 
 bash.on('exit', (code) => {
   console.log(`Process exited with code ${code}`)
-  // if (parseInt(code) === 1) {
-  //   throw new Error('Failed with error code 1')
-  // }
+  if (parseInt(code) === 1) {
+    throw new Error('Failed with error code 1')
+  }
 })
