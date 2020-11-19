@@ -16,7 +16,7 @@ fi
 
 eval $TEST_SCRIPT || TEST_EXITCODE=1;
 
-echo $TEST_EXITCODE
+echo $TEST_EXITCODE;
 if [ "$TEST_EXITCODE" -eq "1" ]
 then
   exit 1
