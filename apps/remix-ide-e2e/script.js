@@ -12,12 +12,15 @@ const bash = spawn('apps/remix-ide-e2e/script.sh', [env, filePath]);
 
 bash.stdout.on('data', (data) => {
   console.log(data.toString())
-});
+})
 
 bash.stderr.on('data', (data) => {
   console.log(data.toString())
-});
+})
 
 bash.on('exit', (code) => {
   console.log(`Process exited with code ${code}`)
-});
+  if (parseInt(code) === 1) {
+    throw new Error('Failed with error code 1')
+  }
+})
