@@ -1,82 +1,78 @@
 'use strict'
 
-const gray = require('ansi-gray')
-const timestamp = require('time-stamp')
-const supportsColor = require('color-support')
+import gray from 'ansi-gray'
+import timestamp from 'time-stamp'
+import supportsColor from 'color-support'
 
-function hasFlag (flag) {
-  return ((typeof (process) !== 'undefined') && (process.argv.indexOf('--' + flag) !== -1))
-}
+export class Logger {
 
-function addColor (str) {
-  if (hasFlag('no-color')) {
+  private hasFlag(flag) {
+    return ((typeof (process) !== 'undefined') && (process.argv.indexOf('--' + flag) !== -1))
+  }
+
+  private addColor(str) {
+    if (this.hasFlag('no-color')) {
+      return str
+    }
+
+    if (this.hasFlag('color')) {
+      return gray(str)
+    }
+
+    if (supportsColor()) {
+      return gray(str)
+    }
+
     return str
   }
 
-  if (hasFlag('color')) {
-    return gray(str)
-  }
-
-  if (supportsColor()) {
-    return gray(str)
-  }
-
-  return str
-}
-
-const logger = {
-  stdout: function (arg) {
+  private stdout(arg) {
     if (typeof (process) === 'undefined' || !process.stdout) return
     process.stdout.write(arg)
-  },
-  stderr: function (arg) {
+  }
+
+  private stderr(arg) {
     if (typeof (process) === 'undefined' || process.stderr) return
     process.stderr.write(arg)
   }
-}
 
-function getTimestamp () {
-  const coloredTimestamp = addColor(timestamp('HH:mm:ss'))
-  return '[' + coloredTimestamp + ']'
-}
+  private getTimestamp() {
+    const coloredTimestamp = this.addColor(timestamp('HH:mm:ss'))
+    return '[' + coloredTimestamp + ']'
+  }
 
-function log () {
-  const time = getTimestamp()
-  logger.stdout(time + ' ')
-  console.log.apply(console, arguments)
-  return this
-}
+  log(...args: any[]) {
+    const time = this.getTimestamp()
+    this.stdout(time + ' ')
+    console.log(args)
+    return this
+  }
 
-function info () {
-  const time = getTimestamp()
-  logger.stdout(time + ' ')
-  console.info.apply(console, arguments)
-  return this
-}
+  info(...args: any[]) {
+    const time = this.getTimestamp()
+    this.stdout(time + ' ')
+    console.info(args)
+    return this
+  }
 
-function dir () {
-  const time = getTimestamp()
-  logger.stdout(time + ' ')
-  console.dir.apply(console, arguments)
-  return this
-}
+  dir(...args: any[]) {
+    const time = this.getTimestamp()
+    this.stdout(time + ' ')
+    console.dir(args)
+    return this
+  }
 
-function warn () {
-  const time = getTimestamp()
-  logger.stderr(time + ' ')
-  console.warn.apply(console, arguments)
-  return this
-}
+  warn(...args: any[]) {
+    const time = this.getTimestamp()
+    this.stderr(time + ' ')
+    console.warn(args)
+    return this
+  }
 
-function error () {
-  const time = getTimestamp()
-  logger.stderr(time + ' ')
-  console.error.apply(console, arguments)
-  return this
+  error(...args: any[]) {
+    const time = this.getTimestamp()
+    this.stderr(time + ' ')
+    console.error(args)
+    return this
+  }
 }
-
-module.exports = log
-module.exports.info = info
-module.exports.dir = dir
-module.exports.warn = warn
-module.exports.error = error

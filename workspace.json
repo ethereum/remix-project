@@ -292,7 +292,7 @@
     },
     "remix-simulator": {
       "root": "libs/remix-simulator",
-      "sourceRoot": "libs/remix-simulator/",
+      "sourceRoot": "libs/remix-simulator/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -322,7 +322,7 @@
             "outputPath": "dist/libs/remix-simulator",
             "tsConfig": "libs/remix-simulator/tsconfig.lib.json",
             "packageJson": "libs/remix-simulator/package.json",
-            "main": "libs/remix-simulator/index.js",
+            "main": "libs/remix-simulator/src/index.ts",
             "assets": [
               {
                 "glob": "ethsim",
