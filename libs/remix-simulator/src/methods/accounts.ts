@@ -1,23 +1,22 @@
-import { BN, privateToAddress, toChecksumAddress, isValidPrivate} from 'ethereumjs-util'
+import { BN, privateToAddress, toChecksumAddress, isValidPrivate } from 'ethereumjs-util'
 import { stripHexPrefix } from 'ethjs-util'
 import Web3 from 'web3'
 import * as crypto from 'crypto'
 
 export class Accounts {
-
   web3
   accounts
   accountsKeys
   executionContext
 
-  constructor(executionContext) {
+  constructor (executionContext) {
     this.web3 = new Web3()
     this.executionContext = executionContext
     // TODO: make it random and/or use remix-libs
-    
+
     this.accounts = {}
     this.accountsKeys = {}
-    this.executionContext.init({get: () => { return true }})
+    this.executionContext.init({ get: () => { return true } })
   }
 
   async resetAccounts () {
@@ -49,7 +48,7 @@ export class Accounts {
       this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
       this.accountsKeys[toChecksumAddress('0x' + address.toString('hex'))] = '0x' + privateKey.toString('hex')
 
-      let stateManager = this.executionContext.vm().stateManager
+      const stateManager = this.executionContext.vm().stateManager
       stateManager.getAccount(address, (error, account) => {
         if (error) {
           console.log(error)
@@ -60,7 +59,6 @@ export class Accounts {
         resolve()
       })
     })
-    
   }
 
   newAccount (cb) {

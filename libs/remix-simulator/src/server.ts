@@ -21,7 +21,7 @@ class Server {
     expressWs(app)
 
     app.use(cors())
-    app.use(bodyParser.urlencoded({extended: true}))
+    app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())
 
     app.get('/', (req, res) => {

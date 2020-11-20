@@ -301,7 +301,7 @@
           "options": {
             "linter": "eslint",
             "config": "libs/remix-simulator/.eslintrc",
-            "files": ["libs/remix-simulator/**/*.js"],
+            "tsConfig": ["libs/remix-simulator/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "libs/remix-simulator/test/**/*"]
           }
         },
