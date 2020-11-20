@@ -290,7 +290,7 @@ class Blockchain {
     // self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
 
     // return this.getCurrentProvider().callMethod(address, abi, methodName, (returnValue) => {
-    const inputs = (params === "" ? [] : params.split(","))
+    const inputs = (params === "" ? [] : params.split(",").map(x => x.trim()))
 
     let returnValue
     try {
