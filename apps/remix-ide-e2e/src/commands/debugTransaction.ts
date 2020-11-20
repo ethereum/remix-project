@@ -17,7 +17,7 @@ function checkStyle (browser: NightwatchBrowser, index: number, callback: VoidFu
   browser.pause(2000).execute(function (index: number) {
     const debugBtn = document.querySelectorAll('*[data-shared="txLoggerDebugButton"]')[index] as HTMLInputElement
 
-    debugBtn.click()
+    debugBtn && debugBtn.click()
   }, [index], function () {
     callback()
   })
