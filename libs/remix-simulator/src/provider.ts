@@ -1,3 +1,4 @@
+import { Blocks } from './methods/blocks'
 const RemixLib = require('@remix-project/remix-lib')
 const executionContext = RemixLib.execution.executionContext
 
@@ -5,7 +6,6 @@ const log = require('./utils/logs.js')
 const merge = require('merge')
 
 const Accounts = require('./methods/accounts.js')
-import { Blocks } from './methods/blocks'
 const Filters = require('./methods/filters.js')
 const Misc = require('./methods/misc.js')
 const Net = require('./methods/net.js')
@@ -15,14 +15,13 @@ const Debug = require('./methods/debug.js')
 const generateBlock = require('./genesis.js')
 
 export class Provider {
-
   options
   executionContext
   Accounts
   Transactions
   methods
 
-  constructor(options = {}) {
+  constructor (options = {}) {
     this.options = options
     // TODO: init executionContext here
     this.executionContext = executionContext
@@ -63,7 +62,7 @@ export class Provider {
         if (err) {
           return callback(err)
         }
-        const response = {'id': payload.id, 'jsonrpc': '2.0', 'result': result}
+        const response = { id: payload.id, jsonrpc: '2.0', result: result }
         callback(null, response)
       })
     }
