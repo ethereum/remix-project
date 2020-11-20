@@ -22,7 +22,6 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
       requestDebug(undefined, state.txNumber)
     }
   }
-  
   const unload = () => {
     unloadRequested()
   }
@@ -33,7 +32,6 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
     // oninvalid="setCustomValidity('Please provide a valid transaction number, must start with 0x and have length of 22')"
     // pattern="^0[x,X]+[0-9a-fA-F]{22}"
     // this.state.txNumberInput.setCustomValidity('')
-  
     setState(prevState => {
       return {
         ...prevState,
@@ -58,16 +56,16 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
           />
         </div>
         <div className="d-flex justify-content-center w-100 btn-group py-1">
-        <button
-          className="btn btn-primary btn-sm txbutton"
-          id="load"
-          title={debugging ? 'Stop debugging' : 'Start debugging'}
-          onClick={handleSubmit}
-          data-id="debuggerTransactionStartButton"
-          disabled={!state.txNumber ? true : false }
-        >
-          { debugging ? 'Stop' : 'Start' } debugging
-        </button>
+          <button
+            className="btn btn-primary btn-sm txbutton"
+            id="load"
+            title={debugging ? 'Stop debugging' : 'Start debugging'}
+            onClick={handleSubmit}
+            data-id="debuggerTransactionStartButton"
+            disabled={!state.txNumber ? true : false }
+          >
+            { debugging ? 'Stop' : 'Start' } debugging
+          </button>
         </div>
       </div>
       <span id='error'></span>
