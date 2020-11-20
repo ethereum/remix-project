@@ -66,8 +66,9 @@ module.exports = {
           .addFile('Untitled8.sol', sources[7]['browser/Untitled8.sol'])
           .clickLaunchIcon('fileExplorers')
           .clickLaunchIcon('solidity')
-          .waitForElementPresent('[data-id="compiledErrors"] div:nth-child(3)')
-          .click('[data-id="compiledErrors"] div:nth-child(3)') // select the second warning which point to ERC20 code
+          .waitForElementPresent('[data-id="compiledErrors"] div:nth-child(4)')
+          .click('[data-id="compiledErrors"] div:nth-child(4)') // select the second warning which point to ERC20 code
+          .pause(5000)
           .getEditorValue((content) => {
             browser.assert.ok(content.indexOf(`contract ERC20 is Context, IERC20`) != -1, 
           'current displayed content should be from the ERC20 source code')
