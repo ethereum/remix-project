@@ -43,7 +43,7 @@
     "mocha": "^5.2.0"
   },
   "scripts": {
-    "test": "./../../node_modules/.bin/mocha --require tsconfig-paths/register test/"
+    "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/mocha test/*.ts"
   },
   "publishConfig": {
     "access": "public"
