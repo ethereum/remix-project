@@ -49,7 +49,7 @@ module.exports = {
     .executeScript(`remix.execute('browser/asyncAwait.js')`)
     .pause(5500)
     .journalLastChild('Waiting Promise')
-    .pause(5500)
+    .pause(10500)
     .journalLastChild('result - Promise Resolved')
   },
 
