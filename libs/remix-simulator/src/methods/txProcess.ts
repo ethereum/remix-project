@@ -39,7 +39,7 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
 
 let txRunnerInstance
 
-function processTx (executionContext, accounts, payload, isCall, callback) {
+export function processTx (executionContext, accounts, payload, isCall, callback) {
   const api = {
     logMessage: (msg) => {
     },
@@ -94,5 +94,3 @@ function processTx (executionContext, accounts, payload, isCall, callback) {
     createContract(payload, from, data, value, gas, txRunnerInstance, callbacks, callback)
   }
 }
-
-module.exports = processTx
