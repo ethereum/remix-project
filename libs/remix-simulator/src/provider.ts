@@ -1,16 +1,17 @@
 import { Blocks } from './methods/blocks'
-const RemixLib = require('@remix-project/remix-lib')
-const executionContext = RemixLib.execution.executionContext
+import { execution } from '@remix-project/remix-lib'
+const { executionContext } = execution
 
-const log = require('./utils/logs.js')
-const merge = require('merge')
+import { Logger } from './utils/logs'
+const logger = new Logger()
+import merge from 'merge'
 
-const Accounts = require('./methods/accounts.js')
-const Filters = require('./methods/filters.js')
-const Misc = require('./methods/misc.js')
-const Net = require('./methods/net.js')
-const Transactions = require('./methods/transactions.js')
-const Debug = require('./methods/debug.js')
+import { Accounts } from './methods/accounts'
+import { Filters } from './methods/filters'
+import { Misc } from './methods/misc'
+import { Net } from './methods/net.js'
+import { Transactions } from './methods/transactions.js'
+import { Debug } from './methods/debug.js'
 
 const generateBlock = require('./genesis.js')
 
@@ -51,13 +52,13 @@ export class Provider {
 
     const method = this.methods[payload.method]
     if (this.options.logDetails) {
-      log.info(payload)
+      logger.info(payload)
     }
     if (method) {
       return method.call(method, payload, (err, result) => {
         if (this.options.logDetails) {
-          log.info(err)
-          log.info(result)
+          logger.info(err)
+          logger.info(result)
         }
         if (err) {
           return callback(err)
