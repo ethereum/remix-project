@@ -1,18 +1,18 @@
 /* global describe, before, it */
-const Web3 = require('web3')
-const RemixSim = require('../index.js')
+import Web3 from 'web3'
+import RemixSim from '../src/index'
 const web3 = new Web3()
-const assert = require('assert')
+import * as assert from 'assert'
 
 describe('Misc', () => {
   before(() => {
-    const provider = new RemixSim.Provider()
+    const provider: any = new RemixSim.Provider()
     web3.setProvider(provider)
   })
 
   describe('web3_clientVersion', () => {
     it('should get correct remix simulator version', async (done) => {
-      web3._requestManager.send({ method: 'web3_clientVersion', params: [] }, (err, version) => {
+      web3['_requestManager'].send({ method: 'web3_clientVersion', params: [] }, (err, version) => {
         if (err) {
           throw new Error(err)
         }
@@ -25,7 +25,7 @@ describe('Misc', () => {
 
   describe('eth_protocolVersion', () => {
     it('should get protocol version', async () => {
-      web3._requestManager.send({ method: 'eth_protocolVersion', params: [] }, (err, result) => {
+      web3['_requestManager'].send({ method: 'eth_protocolVersion', params: [] }, (err, result) => {
         if (err) {
           throw new Error(err)
         }
@@ -57,7 +57,7 @@ describe('Misc', () => {
 
   describe('web3_sha3', () => {
     it('should get result of a sha3', async () => {
-      web3._requestManager.send({ method: 'web3_sha3', params: ['0x68656c6c6f20776f726c64'] }, (err, result) => {
+      web3['_requestManager'].send({ method: 'web3_sha3', params: ['0x68656c6c6f20776f726c64'] }, (err, result) => {
         if (err) {
           throw new Error(err)
         }
@@ -68,7 +68,7 @@ describe('Misc', () => {
 
   describe('eth_getCompilers', () => {
     it('should get list of compilers', async () => {
-      web3._requestManager.send({ method: 'eth_getCompilers', params: [] }, (err, result) => {
+      web3['_requestManager'].send({ method: 'eth_getCompilers', params: [] }, (err, result) => {
         if (err) {
           throw new Error(err)
         }
@@ -79,7 +79,7 @@ describe('Misc', () => {
 
   describe('eth_compileSolidity', () => {
     it('get unsupported result when requesting solidity compiler', async () => {
-      web3._requestManager.send({ method: 'eth_compileSolidity', params: [] }, (err, result) => {
+      web3['_requestManager'].send({ method: 'eth_compileSolidity', params: [] }, (err, result) => {
         if (err) {
           throw new Error(err)
         }
@@ -90,7 +90,7 @@ describe('Misc', () => {
 
   describe('eth_compileLLL', () => {
     it('get unsupported result when requesting LLL compiler', async () => {
-      web3._requestManager.send({ method: 'eth_compileLLL', params: [] }, (err, result) => {
+      web3['_requestManager'].send({ method: 'eth_compileLLL', params: [] }, (err, result) => {
         if (err) {
           throw new Error(err)
         }
@@ -101,7 +101,7 @@ describe('Misc', () => {
 
   describe('eth_compileSerpent', () => {
     it('get unsupported result when requesting serpent compiler', async () => {
-      web3._requestManager.send({ method: 'eth_compileSerpent', params: [] }, (err, result) => {
+      web3['_requestManager'].send({ method: 'eth_compileSerpent', params: [] }, (err, result) => {
         if (err) {
           throw new Error(err)
         }
