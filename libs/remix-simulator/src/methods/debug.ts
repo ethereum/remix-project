@@ -1,5 +1,4 @@
 export class Debug {
-
   executionContext
 
   constructor (executionContext) {
@@ -10,7 +9,7 @@ export class Debug {
     return {
       debug_traceTransaction: this.debug_traceTransaction.bind(this),
       debug_preimage: this.debug_preimage.bind(this),
-      debug_storageRangeAt: this.debug_storageRangeAt.bind(this),
+      debug_storageRangeAt: this.debug_storageRangeAt.bind(this)
     }
   }
 
