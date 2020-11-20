@@ -1,5 +1,4 @@
 export class Blocks {
-
   executionContext
   coinbase
   blockNumber
@@ -38,58 +37,58 @@ export class Blocks {
       return cb(new Error('block not found'))
     }
 
-    let b = {
-      'number': this.toHex(block.header.number),
-      'hash': this.toHex(block.hash()),
-      'parentHash': this.toHex(block.header.parentHash),
-      'nonce': this.toHex(block.header.nonce),
-      'sha3Uncles': '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
-      'logsBloom': '0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331',
-      'transactionsRoot': '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-      'stateRoot': this.toHex(block.header.stateRoot),
-      'miner': this.coinbase,
-      'difficulty': this.toHex(block.header.difficulty),
-      'totalDifficulty': this.toHex(block.header.totalDifficulty),
-      'extraData': this.toHex(block.header.extraData),
-      'size': '0x027f07', // 163591
-      'gasLimit': this.toHex(block.header.gasLimit),
-      'gasUsed': this.toHex(block.header.gasUsed),
-      'timestamp': this.toHex(block.header.timestamp),
-      'transactions': block.transactions.map((t) => '0x' + t.hash().toString('hex')),
-      'uncles': []
+    const b = {
+      number: this.toHex(block.header.number),
+      hash: this.toHex(block.hash()),
+      parentHash: this.toHex(block.header.parentHash),
+      nonce: this.toHex(block.header.nonce),
+      sha3Uncles: '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
+      logsBloom: '0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331',
+      transactionsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
+      stateRoot: this.toHex(block.header.stateRoot),
+      miner: this.coinbase,
+      difficulty: this.toHex(block.header.difficulty),
+      totalDifficulty: this.toHex(block.header.totalDifficulty),
+      extraData: this.toHex(block.header.extraData),
+      size: '0x027f07', // 163591
+      gasLimit: this.toHex(block.header.gasLimit),
+      gasUsed: this.toHex(block.header.gasUsed),
+      timestamp: this.toHex(block.header.timestamp),
+      transactions: block.transactions.map((t) => '0x' + t.hash().toString('hex')),
+      uncles: []
     }
 
     cb(null, b)
-}
+  }
 
- toHex (value) {
-  if (!value) return '0x0'
-  let v = value.toString('hex')
-  return ((v === '0x' || v === '') ? '0x0' : ('0x' + v))
+  toHex (value) {
+    if (!value) return '0x0'
+    const v = value.toString('hex')
+    return ((v === '0x' || v === '') ? '0x0' : ('0x' + v))
   }
 
   eth_getBlockByHash (payload, cb) {
     var block = this.executionContext.blocks[payload.params[0]]
 
-    let b = {
-      'number': this.toHex(block.header.number),
-      'hash': this.toHex(block.hash()),
-      'parentHash': this.toHex(block.header.parentHash),
-      'nonce': this.toHex(block.header.nonce),
-      'sha3Uncles': '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
-      'logsBloom': '0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331',
-      'transactionsRoot': '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-      'stateRoot': this.toHex(block.header.stateRoot),
-      'miner': this.coinbase,
-      'difficulty': this.toHex(block.header.difficulty),
-      'totalDifficulty': this.toHex(block.header.totalDifficulty),
-      'extraData': this.toHex(block.header.extraData),
-      'size': '0x027f07', // 163591
-      'gasLimit': this.toHex(block.header.gasLimit),
-      'gasUsed': this.toHex(block.header.gasUsed),
-      'timestamp': this.toHex(block.header.timestamp),
-      'transactions': block.transactions.map((t) => '0x' + t.hash().toString('hex')),
-      'uncles': []
+    const b = {
+      number: this.toHex(block.header.number),
+      hash: this.toHex(block.hash()),
+      parentHash: this.toHex(block.header.parentHash),
+      nonce: this.toHex(block.header.nonce),
+      sha3Uncles: '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
+      logsBloom: '0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331',
+      transactionsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
+      stateRoot: this.toHex(block.header.stateRoot),
+      miner: this.coinbase,
+      difficulty: this.toHex(block.header.difficulty),
+      totalDifficulty: this.toHex(block.header.totalDifficulty),
+      extraData: this.toHex(block.header.extraData),
+      size: '0x027f07', // 163591
+      gasLimit: this.toHex(block.header.gasLimit),
+      gasUsed: this.toHex(block.header.gasUsed),
+      timestamp: this.toHex(block.header.timestamp),
+      transactions: block.transactions.map((t) => '0x' + t.hash().toString('hex')),
+      uncles: []
     }
 
     cb(null, b)
@@ -135,7 +134,7 @@ export class Blocks {
         return cb(err, '')
       }
 
-      let value = Object.values(result.storage)[0]['value']
+      const value = Object.values(result.storage)[0]['value']
       cb(err, value)
     })
   }
