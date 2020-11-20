@@ -1,18 +1,23 @@
-const express = require('express')
-const cors = require('cors')
-const bodyParser = require('body-parser')
+import express from 'express'
+import cors from 'cors'
+import bodyParser from 'body-parser'
 const app = express()
-const expressWs = require('express-ws')
-const Provider = require('./provider')
-const log = require('./utils/logs.js')
+import expressWs from 'express-ws'
+import { Provider } from './provider'
+import { Logger } from './utils/logs'
+const logger = new Logger()
 
 class Server {
+
+  provider
+  rpcOnly
+
   constructor (options) {
     this.provider = new Provider(options)
     this.provider.init().then(() => {
-      log('Provider initiated')
+      logger.log('Provider initiated')
     }).catch((error) => {
-      log(error)
+      logger.log(error)
     })
     this.rpcOnly = options.rpc
   }
@@ -55,9 +60,9 @@ class Server {
     }
 
     app.listen(port, host, () => {
-      log('Remix Simulator listening on ws://' + host + ':' + port)
+      logger.log('Remix Simulator listening on ws://' + host + ':' + port)
       if (!this.rpcOnly) {
-        log('http json-rpc is deprecated and disabled by default. To enable it use --rpc')
+        logger.log('http json-rpc is deprecated and disabled by default. To enable it use --rpc')
       }
     })
   }

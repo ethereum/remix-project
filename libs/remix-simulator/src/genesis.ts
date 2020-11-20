@@ -1,6 +1,5 @@
-const EthJSBlock = require('ethereumjs-block')
-const ethJSUtil = require('ethereumjs-util')
-const BN = ethJSUtil.BN
+import EthJSBlock from 'ethereumjs-block'
+import { BN } from 'ethereumjs-util'
 
 function generateBlock (executionContext) {
   const block = new EthJSBlock({
