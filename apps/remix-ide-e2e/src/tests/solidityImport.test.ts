@@ -68,8 +68,8 @@ module.exports = {
           .clickLaunchIcon('solidity')
           .waitForElementPresent('[data-id="compiledErrors"] div:nth-child(3)')
           .click('[data-id="compiledErrors"] div:nth-child(3)') // select the second warning which point to ERC20 code
+          .pause(10000)
           .getEditorValue((content) => {
-            console.log('content: ', content)
             browser.assert.ok(content.indexOf(`contract ERC20 is Context, IERC20`) != -1, 
           'current displayed content should be from the ERC20 source code')
           })     
