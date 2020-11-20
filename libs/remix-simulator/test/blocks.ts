@@ -1,12 +1,12 @@
 /* global describe, before, it */
-const Web3 = require('web3')
-const RemixSim = require('../index.js')
+import Web3 from 'web3'
+import RemixSim from '../src/index'
 const web3 = new Web3()
-const assert = require('assert')
+import * as assert from 'assert'
 
 describe('blocks', () => {
   before(() => {
-    const provider = new RemixSim.Provider({
+    const provider: any = new RemixSim.Provider({
       coinbase: '0x0000000000000000000000000000000000000001'
     })
     web3.setProvider(provider)
@@ -21,7 +21,7 @@ describe('blocks', () => {
         extraData: '0x0',
         gasLimit: 8000000,
         gasUsed: 0,
-        hash: block.hash.toString('hex'),
+        hash: block.hash.toString(),
         logsBloom: '0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331',
         miner: '0x0000000000000000000000000000000000000001',
         nonce: '0x0000000000000000',
@@ -92,7 +92,7 @@ describe('blocks', () => {
     it('should get block given its hash', async () => {
       const correctBlock = await web3.eth.getBlock(0)
       const numberTransactions = await (new Promise((resolve, reject) => {
-        web3._requestManager.send({method: 'eth_getUncleCountByBlockHash', params: [correctBlock.hash]}, (err, numberTransactions) => {
+        web3['_requestManager'].send({method: 'eth_getUncleCountByBlockHash', params: [correctBlock.hash]}, (err, numberTransactions) => {
           if (err) return reject(err)
           resolve(numberTransactions)
         })
@@ -105,7 +105,7 @@ describe('blocks', () => {
     it('should get block given its number', async () => {
       const correctBlock = await web3.eth.getBlock(0)
       const numberTransactions = await (new Promise((resolve, reject) => {
-        web3._requestManager.send({method: 'eth_getUncleCountByBlockHash', params: [0]}, (err, numberTransactions) => {
+        web3['_requestManager'].send({method: 'eth_getUncleCountByBlockHash', params: [0]}, (err, numberTransactions) => {
           if (err) return reject(err)
           resolve(numberTransactions)
         })
@@ -116,7 +116,7 @@ describe('blocks', () => {
 
   describe('eth_getStorageAt', () => {
     it('should get storage at position at given address', async () => {
-      const abi = [
+      const abi: any = [
         {
           'constant': false,
           'inputs': [
@@ -203,7 +203,7 @@ describe('blocks', () => {
       const contract = new web3.eth.Contract(abi)
       const accounts = await web3.eth.getAccounts()
 
-      const contractInstance = await contract.deploy({ data: code, arguments: [100] }).send({ from: accounts[0], gas: 400000 })
+      const contractInstance: any = await contract.deploy({ data: code, arguments: [100] }).send({ from: accounts[0], gas: 400000 })
       contractInstance.currentProvider = web3.eth.currentProvider
       contractInstance.givenProvider = web3.eth.currentProvider
 
@@ -223,7 +223,7 @@ describe('blocks', () => {
 
   describe('eth_call', () => {
     it('should get a value', async () => {
-      const abi = [
+      const abi: any = [
         {
           'constant': false,
           'inputs': [
@@ -310,7 +310,7 @@ describe('blocks', () => {
       const contract = new web3.eth.Contract(abi)
       const accounts = await web3.eth.getAccounts()
 
-      const contractInstance = await contract.deploy({ data: code, arguments: [100] }).send({ from: accounts[0], gas: 400000 })
+      const contractInstance: any = await contract.deploy({ data: code, arguments: [100] }).send({ from: accounts[0], gas: 400000 })
       contractInstance.currentProvider = web3.eth.currentProvider
       contractInstance.givenProvider = web3.eth.currentProvider
 
