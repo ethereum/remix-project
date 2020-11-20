@@ -47,13 +47,11 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       editor.event.register('breakpointCleared', (fileName, row) => {
         if (state.debugger) state.debugger.breakPointManager.remove({fileName: fileName, row: row})
       })
-  
       editor.event.register('breakpointAdded', (fileName, row) => {
         if (state.debugger) {
           state.debugger.breakPointManager.add({fileName: fileName, row: row})
         }
       })
-  
       editor.event.register('contentChanged', () => {
         unLoad()
       })
@@ -146,7 +144,12 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     if (state.debugger) unLoad()
     if (!txNumber) return
     const web3 = await debuggerModule.getDebugWeb3()
-    const currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
+    let currentReceipt
+    try {
+      currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
+    } catch (e) {
+    // throw modal
+    }
     const debuggerInstance = new Debugger({
       web3,
       offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
@@ -207,26 +210,31 @@ const vmDebugger = {
 }
 
   return (
-      <div>
-        <div className="px-2">
-          <div className="mt-3">
-            <p className="mt-2 debuggerLabel">Debugger Configuration</p>
-            <div className="mt-2 debuggerConfig custom-control custom-checkbox">
-              <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
-                setState(prevState => {
-                  return { ...prevState, opt: { debugWithGeneratedSources: checked }}
-                })
-              }} type="checkbox" title="Debug with generated sources" />
-              <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (from Solidity v0.7.2)</label>
-            </div>
+    <div>
+      <div className='px-2'>
+        <div className='mt-3'>
+          <p className='mt-2 debuggerLabel'>Debugger Configuration</p>
+          <div className='mt-2 debuggerConfig custom-control custom-checkbox'>
+            <input className='custom-control-input' id='debugGeneratedSourcesInput' onChange={({ target: { checked } }) => {
+              setState(prevState => {
+                return { ...prevState, opt: { debugWithGeneratedSources: checked }}
+              })
+            }} type='checkbox' title='Debug with generated sources' />
+            <label data-id='debugGeneratedSourcesLabel' className='form-check-label custom-control-label' htmlFor='debugGeneratedSourcesInput'>Use generated sources (from Solidity v0.7.2)</label>
           </div>
-          <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } transactionNumber={ state.txNumber } debugging={ state.debugging } />
-  { state.debugging && <StepManager stepManager={ stepManager } /> }
-  { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
         </div>
-  { state.debugging && <div className="statusMessage">{ state.statusMessage }</div> }
-  { state.debugging && <VmDebugger vmDebugger={ vmDebugger } /> }
+        <TxBrowser
+          requestDebug={ requestDebug }
+          unloadRequested={ unloadRequested }
+          transactionNumber={ state.txNumber }
+          debugging={ state.debugging }
+        />
+        { state.debugging && <StepManager stepManager={ stepManager } /> }
+        { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
       </div>
+      { state.debugging && <div className='statusMessage'>{ state.statusMessage }</div> }
+      { state.debugging && <VmDebugger vmDebugger={ vmDebugger } /> }
+    </div>
   )
 }
 
