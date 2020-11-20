@@ -1,12 +1,12 @@
 /* global describe, before, it */
-const Web3 = require('web3')
-const RemixSim = require('../index.js')
+import Web3 from 'web3'
+import RemixSim from '../src/index'
 const web3 = new Web3()
-const assert = require('assert')
+import * as assert from 'assert'
 
 describe('Accounts', () => {
   before(function () {
-    const provider = new RemixSim.Provider()
+    const provider: any = new RemixSim.Provider()
     web3.setProvider(provider)
   })
 
