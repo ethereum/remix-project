@@ -9,11 +9,10 @@ import merge from 'merge'
 import { Accounts } from './methods/accounts'
 import { Filters } from './methods/filters'
 import { Misc } from './methods/misc'
-import { Net } from './methods/net.js'
-import { Transactions } from './methods/transactions.js'
-import { Debug } from './methods/debug.js'
-
-const generateBlock = require('./genesis.js')
+import { Net } from './methods/net'
+import { Transactions } from './methods/transactions'
+import { Debug } from './methods/debug'
+import { generateBlock } from './genesis'
 
 export class Provider {
   options
