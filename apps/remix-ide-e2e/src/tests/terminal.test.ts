@@ -47,6 +47,7 @@ module.exports = {
     .addFile('asyncAwait.js', { content: asyncAwait })
     .openFile('browser/asyncAwait.js')
     .executeScript(`remix.execute('browser/asyncAwait.js')`)
+    .pause(5500)
     .journalLastChild('Waiting Promise')
     .pause(5500)
     .journalLastChild('result - Promise Resolved')
