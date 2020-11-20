@@ -1,4 +1,9 @@
-class Blocks {
+export class Blocks {
+
+  executionContext
+  coinbase
+  blockNumber
+
   constructor (executionContext, _options) {
     this.executionContext = executionContext
     const options = _options || {}
@@ -130,10 +135,8 @@ class Blocks {
         return cb(err, '')
       }
 
-      let value = Object.values(result.storage)[0].value
+      let value = Object.values(result.storage)[0]['value']
       cb(err, value)
     })
   }
 }
-
-module.exports = Blocks
