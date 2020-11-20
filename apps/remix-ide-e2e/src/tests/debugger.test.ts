@@ -27,6 +27,7 @@ module.exports = {
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
     .click('*[data-id="universalDappUiTitleExpander"]')
+    .pause(2000)
     .scrollAndClick('*[title="string name, uint256 goal"]')
     .setValue('*[title="string name, uint256 goal"]', '"toast", 999')
     .click('*[data-id="createProject - transact (not payable)"]')
