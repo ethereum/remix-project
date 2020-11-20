@@ -2,12 +2,11 @@ import Web3 from 'web3'
 import { toChecksumAddress, BN } from 'ethereumjs-util'
 import { processTx } from './txProcess'
 
-class Transactions{
-
+export class Transactions {
   executionContext
   accounts
-  
-  constructor(executionContext) {
+
+  constructor (executionContext) {
     this.executionContext = executionContext
   }
 
@@ -46,16 +45,16 @@ class Transactions{
       const txBlock = this.executionContext.txs[receipt.hash]
 
       const r = {
-        'transactionHash': receipt.hash,
-        'transactionIndex': '0x00',
-        'blockHash': '0x' + txBlock.hash().toString('hex'),
-        'blockNumber': '0x' + txBlock.header.number.toString('hex'),
-        'gasUsed': Web3.utils.toHex(receipt.gas),
-        'cumulativeGasUsed': Web3.utils.toHex(receipt.gas),
-        'contractAddress': receipt.contractAddress,
-        'logs': receipt.logs,
-        'status': receipt.status,
-        'to': receipt.to
+        transactionHash: receipt.hash,
+        transactionIndex: '0x00',
+        blockHash: '0x' + txBlock.hash().toString('hex'),
+        blockNumber: '0x' + txBlock.header.number.toString('hex'),
+        gasUsed: Web3.utils.toHex(receipt.gas),
+        cumulativeGasUsed: Web3.utils.toHex(receipt.gas),
+        contractAddress: receipt.contractAddress,
+        logs: receipt.logs,
+        status: receipt.status,
+        to: receipt.to
       }
 
       if (r.blockNumber === '0x') {
@@ -71,7 +70,7 @@ class Transactions{
   }
 
   eth_getCode (payload, cb) {
-    let address = payload.params[0]
+    const address = payload.params[0]
 
     this.executionContext.web3().eth.getCode(address, (error, result) => {
       if (error) {
@@ -97,13 +96,13 @@ class Transactions{
   }
 
   eth_getTransactionCount (payload, cb) {
-    let address = payload.params[0]
+    const address = payload.params[0]
 
     this.executionContext.vm().stateManager.getAccount(address, (err, account) => {
       if (err) {
         return cb(err)
       }
-      let nonce = new BN(account.nonce).toString(10)
+      const nonce = new BN(account.nonce).toString(10)
       cb(null, nonce)
     })
   }
@@ -120,17 +119,17 @@ class Transactions{
 
       // TODO: params to add later
       const r = {
-        'blockHash': '0x' + txBlock.hash().toString('hex'),
-        'blockNumber': '0x' + txBlock.header.number.toString('hex'),
-        'from': receipt.from,
-        'gas': Web3.utils.toHex(receipt.gas),
+        blockHash: '0x' + txBlock.hash().toString('hex'),
+        blockNumber: '0x' + txBlock.header.number.toString('hex'),
+        from: receipt.from,
+        gas: Web3.utils.toHex(receipt.gas),
         // 'gasPrice': '2000000000000', // 0x123
-        'gasPrice': '0x4a817c800', // 20000000000
-        'hash': receipt.transactionHash,
-        'input': receipt.input,
+        gasPrice: '0x4a817c800', // 20000000000
+        hash: receipt.transactionHash,
+        input: receipt.input,
         // "nonce": 2, // 0x15
         // "transactionIndex": 0,
-        'value': receipt.value
+        value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
         // "v": "0x25", // 37
         // "r": "0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea",
@@ -165,18 +164,18 @@ class Transactions{
       }
 
       // TODO: params to add later
-      let r = {
-        'blockHash': '0x' + txBlock.hash().toString('hex'),
-        'blockNumber': '0x' + txBlock.header.number.toString('hex'),
-        'from': receipt.from,
-        'gas': Web3.utils.toHex(receipt.gas),
+      const r = {
+        blockHash: '0x' + txBlock.hash().toString('hex'),
+        blockNumber: '0x' + txBlock.header.number.toString('hex'),
+        from: receipt.from,
+        gas: Web3.utils.toHex(receipt.gas),
         // 'gasPrice': '2000000000000', // 0x123
-        'gasPrice': '0x4a817c800', // 20000000000
-        'hash': receipt.transactionHash,
-        'input': receipt.input,
+        gasPrice: '0x4a817c800', // 20000000000
+        hash: receipt.transactionHash,
+        input: receipt.input,
         // "nonce": 2, // 0x15
         // "transactionIndex": 0,
-        'value': receipt.value
+        value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
         // "v": "0x25", // 37
         // "r": "0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea",
@@ -208,17 +207,17 @@ class Transactions{
 
       // TODO: params to add later
       const r = {
-        'blockHash': '0x' + txBlock.hash().toString('hex'),
-        'blockNumber': '0x' + txBlock.header.number.toString('hex'),
-        'from': receipt.from,
-        'gas': Web3.utils.toHex(receipt.gas),
+        blockHash: '0x' + txBlock.hash().toString('hex'),
+        blockNumber: '0x' + txBlock.header.number.toString('hex'),
+        from: receipt.from,
+        gas: Web3.utils.toHex(receipt.gas),
         // 'gasPrice': '2000000000000', // 0x123
-        'gasPrice': '0x4a817c800', // 20000000000
-        'hash': receipt.transactionHash,
-        'input': receipt.input,
+        gasPrice: '0x4a817c800', // 20000000000
+        hash: receipt.transactionHash,
+        input: receipt.input,
         // "nonce": 2, // 0x15
         // "transactionIndex": 0,
-        'value': receipt.value
+        value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
         // "v": "0x25", // 37
         // "r": "0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea",

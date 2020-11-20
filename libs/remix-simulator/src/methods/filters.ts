@@ -1,8 +1,7 @@
-export class Filters { 
-
+export class Filters {
   executionContext
 
-  constructor(executionContext) {
+  constructor (executionContext) {
     this.executionContext = executionContext
   }
 
@@ -15,12 +14,12 @@ export class Filters {
   }
 
   eth_getLogs (payload, cb) {
-    let results = this.executionContext.logsManager.getLogsFor(payload.params[0])
+    const results = this.executionContext.logsManager.getLogsFor(payload.params[0])
     cb(null, results)
   }
 
   eth_subscribe (payload, cb) {
-    let subscriptionId = this.executionContext.logsManager.subscribe(payload.params)
+    const subscriptionId = this.executionContext.logsManager.subscribe(payload.params)
     cb(null, subscriptionId)
   }
 
@@ -51,13 +50,13 @@ export class Filters {
 
   eth_getFilterChanges (payload, cb) {
     const filterId = payload.params[0]
-    let results = this.executionContext.logsManager.getLogsForFilter(filterId)
+    const results = this.executionContext.logsManager.getLogsForFilter(filterId)
     cb(null, results)
   }
 
   eth_getFilterLogs (payload, cb) {
     const filterId = payload.params[0]
-    let results = this.executionContext.logsManager.getLogsForFilter(filterId, true)
+    const results = this.executionContext.logsManager.getLogsForFilter(filterId, true)
     cb(null, results)
   }
 }
