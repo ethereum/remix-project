@@ -20,7 +20,7 @@
       "@remix-project/remix-astwalker": ["dist/libs/remix-astwalker/index.js"],
       "@remix-project/remix-debug": ["dist/libs/remix-debug/index.js"],
       "@remix-project/remix-lib": ["dist/libs/remix-lib/index.js"],
-      "@remix-project/remix-simulator": ["dist/libs/remix-simulator/index.js"],
+      "@remix-project/remix-simulator": ["dist/libs/remix-simulator/src/index.js"],
       "@remix-project/remix-solidity": ["dist/libs/remix-solidity/index.js"],
       "@remix-project/remix-tests": ["dist/libs/remix-tests/src/index.js"],
       "@remix-project/remix-url-resolver": ["dist/libs/remix-url-resolver/index.js"],
