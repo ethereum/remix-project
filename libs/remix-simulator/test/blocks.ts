@@ -1,12 +1,12 @@
 /* global describe, before, it */
 import Web3 from 'web3'
-import RemixSim from '../src/index'
+import { Provider } from '../src/index'
 const web3 = new Web3()
 import * as assert from 'assert'
 
 describe('blocks', () => {
   before(() => {
-    const provider: any = new RemixSim.Provider({
+    const provider: any = new Provider({
       coinbase: '0x0000000000000000000000000000000000000001'
     })
     web3.setProvider(provider)

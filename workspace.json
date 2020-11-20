@@ -292,7 +292,7 @@
     },
     "remix-simulator": {
       "root": "libs/remix-simulator",
-      "sourceRoot": "libs/remix-simulator/src",
+      "sourceRoot": "libs/remix-simulator",
       "projectType": "library",
       "schematics": {},
       "architect": {
