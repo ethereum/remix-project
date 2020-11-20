@@ -1,4 +1,7 @@
-class Debug {
+export class Debug {
+
+  executionContext
+
   constructor (executionContext) {
     this.executionContext = executionContext
   }
@@ -29,5 +32,3 @@ class Debug {
       cb)
   }
 }
-
-module.exports = Debug

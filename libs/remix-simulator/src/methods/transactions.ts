@@ -1,9 +1,11 @@
-const Web3 = require('web3')
-const ethJSUtil = require('ethereumjs-util')
-const processTx = require('./txProcess.js')
-const BN = ethJSUtil.BN
+import Web3 from 'web3'
+import { toChecksumAddress, BN } from 'ethereumjs-util'
+import { processTx } from './txProcess'
 
 class Transactions{
+
+  executionContext
+  accounts
   
   constructor(executionContext) {
     this.executionContext = executionContext
@@ -30,7 +32,7 @@ class Transactions{
   eth_sendTransaction (payload, cb) {
     // from might be lowercased address (web3)
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
-      payload.params[0].from = ethJSUtil.toChecksumAddress(payload.params[0].from)
+      payload.params[0].from = toChecksumAddress(payload.params[0].from)
     }
     processTx(this.executionContext, this.accounts, payload, false, cb)
   }
@@ -83,10 +85,10 @@ class Transactions{
   eth_call (payload, cb) {
     // from might be lowercased address (web3)
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
-      payload.params[0].from = ethJSUtil.toChecksumAddress(payload.params[0].from)
+      payload.params[0].from = toChecksumAddress(payload.params[0].from)
     }
     if (payload.params && payload.params.length > 0 && payload.params[0].to) {
-      payload.params[0].to = ethJSUtil.toChecksumAddress(payload.params[0].to)
+      payload.params[0].to = toChecksumAddress(payload.params[0].to)
     }
 
     payload.params[0].value = undefined
@@ -136,7 +138,7 @@ class Transactions{
       }
 
       if (receipt.to) {
-        r.to = receipt.to
+        r['to'] = receipt.to
       }
 
       if (r.value === '0x') {
@@ -182,7 +184,7 @@ class Transactions{
       }
 
       if (receipt.to) {
-        r.to = receipt.to
+        r['to'] = receipt.to
       }
 
       if (r.value === '0x') {
@@ -224,7 +226,7 @@ class Transactions{
       }
 
       if (receipt.to) {
-        r.to = receipt.to
+        r['to'] = receipt.to
       }
 
       if (r.value === '0x') {
@@ -235,5 +237,3 @@ class Transactions{
     })
   }
 }
-
-module.exports = Transactions

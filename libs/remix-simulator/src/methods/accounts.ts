@@ -1,9 +1,14 @@
-const ethJSUtil = require('ethereumjs-util')
-const { BN, privateToAddress, isValidPrivate } = require('ethereumjs-util')
-const Web3 = require('web3')
-const crypto = require('crypto')
+import { BN, privateToAddress, toChecksumAddress, isValidPrivate} from 'ethereumjs-util'
+import { stripHexPrefix } from 'ethjs-util'
+import Web3 from 'web3'
+import * as crypto from 'crypto'
 
-class Accounts{
+export class Accounts {
+
+  web3
+  accounts
+  accountsKeys
+  executionContext
 
   constructor(executionContext) {
     this.web3 = new Web3()
@@ -39,10 +44,10 @@ class Accounts{
   _addAccount (privateKey, balance) {
     return new Promise((resolve, reject) => {
       privateKey = Buffer.from(privateKey, 'hex')
-      const address = ethJSUtil.privateToAddress(privateKey)
+      const address = privateToAddress(privateKey)
 
-      this.accounts[ethJSUtil.toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
-      this.accountsKeys[ethJSUtil.toChecksumAddress('0x' + address.toString('hex'))] = '0x' + privateKey.toString('hex')
+      this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
+      this.accountsKeys[toChecksumAddress('0x' + address.toString('hex'))] = '0x' + privateKey.toString('hex')
 
       let stateManager = this.executionContext.vm().stateManager
       stateManager.getAccount(address, (error, account) => {
@@ -81,7 +86,7 @@ class Accounts{
 
   eth_getBalance (payload, cb) {
     let address = payload.params[0]
-    address = ethJSUtil.stripHexPrefix(address)
+    address = stripHexPrefix(address)
 
     this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, account) => {
       if (err) {
@@ -95,7 +100,7 @@ class Accounts{
     const address = payload.params[0]
     const message = payload.params[1]
 
-    const privateKey = this.accountsKeys[ethJSUtil.toChecksumAddress(address)]
+    const privateKey = this.accountsKeys[toChecksumAddress(address)]
     if (!privateKey) {
       return cb(new Error('unknown account'))
     }
@@ -106,5 +111,3 @@ class Accounts{
     cb(null, data.signature)
   }
 }
-
-module.exports = Accounts

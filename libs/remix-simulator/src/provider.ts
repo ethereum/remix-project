@@ -5,7 +5,7 @@ const log = require('./utils/logs.js')
 const merge = require('merge')
 
 const Accounts = require('./methods/accounts.js')
-const Blocks = require('./methods/blocks.js')
+import { Blocks } from './methods/blocks'
 const Filters = require('./methods/filters.js')
 const Misc = require('./methods/misc.js')
 const Net = require('./methods/net.js')
@@ -14,7 +14,14 @@ const Debug = require('./methods/debug.js')
 
 const generateBlock = require('./genesis.js')
 
-class Provider { 
+export class Provider {
+
+  options
+  executionContext
+  Accounts
+  Transactions
+  methods
+
   constructor(options = {}) {
     this.options = options
     // TODO: init executionContext here
@@ -75,5 +82,3 @@ class Provider {
     this.executionContext.logsManager.addListener(type, cb)
   }
 }
-
-module.exports = Provider

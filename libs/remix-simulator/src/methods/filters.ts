@@ -1,4 +1,7 @@
-class Filters { 
+export class Filters { 
+
+  executionContext
+
   constructor(executionContext) {
     this.executionContext = executionContext
   }
@@ -58,5 +61,3 @@ class Filters {
     cb(null, results)
   }
 }
-
-module.exports = Filters
