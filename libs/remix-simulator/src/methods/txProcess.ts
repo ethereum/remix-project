@@ -1,6 +1,6 @@
-const RemixLib = require('@remix-project/remix-lib')
-const TxExecution = RemixLib.execution.txExecution
-const TxRunner = RemixLib.execution.txRunner
+import { execution }  from '@remix-project/remix-lib'
+const TxExecution = execution.txExecution
+const TxRunner = execution.txRunner
 
 function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
   const finalCallback = function (err, result) {
@@ -12,7 +12,7 @@ function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks,
     return callback(null, toReturn)
   }
 
-  TxExecution.callFunction(from, to, data, value, gasLimit, { constant: true }, txRunner, callbacks, finalCallback, true)
+  TxExecution.callFunction(from, to, data, value, gasLimit, { constant: true }, txRunner, callbacks, finalCallback)
 }
 
 function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
@@ -23,7 +23,7 @@ function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, c
     callback(null, result.transactionHash)
   }
 
-  TxExecution.callFunction(from, to, data, value, gasLimit, { constant: false }, txRunner, callbacks, finalCallback, false)
+  TxExecution.callFunction(from, to, data, value, gasLimit, { constant: false }, txRunner, callbacks, finalCallback)
 }
 
 function createContract (payload, from, data, value, gasLimit, txRunner, callbacks, callback) {
