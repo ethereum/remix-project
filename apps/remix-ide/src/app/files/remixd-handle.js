@@ -1,5 +1,5 @@
 import isElectron from 'is-electron'
-import { WebsocketPlugin } from '@remixproject/engine'
+import { WebsocketPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
