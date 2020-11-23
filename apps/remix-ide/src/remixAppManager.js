@@ -1,5 +1,6 @@
 /* global localStorage, fetch */
-import { PluginManager, IframePlugin } from '@remixproject/engine'
+import { PluginManager } from '@remixproject/engine'
+import { IframePlugin } from '@remixproject/engine-web'
 import { EventEmitter } from 'events'
 import QueryParams from './lib/query-params'
 import { PermissionHandler } from './app/ui/persmission-handler'
@@ -15,7 +16,7 @@ export function isNative (name) {
 }
 
 export function canActivate (name) {
-  return ['manager', 'debugger', 'ethdoc'].includes(name)
+  return ['ethdoc'].includes(name) || isNative(name)
 }
 
 export class RemixAppManager extends PluginManager {
@@ -27,11 +28,12 @@ export class RemixAppManager extends PluginManager {
     this.permissionHandler = new PermissionHandler()
   }
 
-  async canActivate (from, to) {
+  async canActivatePlugin (from, to) {
     return canActivate(from.name)
   }
 
-  async canDeactivate (from, to) {
+  async canDeactivatePlugin (from, to) {
+    if (requiredModules.includes(to.name)) return false
     return from.name === 'manager'
   }
 
@@ -68,9 +70,7 @@ export class RemixAppManager extends PluginManager {
     this.event.emit('deactivate', plugin)
   }
 
-  onRegistration (plugin) {
-    this.event.emit('added', plugin.name)
-  }
+  onRegistration () {}
 
   async ensureActivated (apiName) {
     await this.activatePlugin(apiName)
@@ -80,11 +80,6 @@ export class RemixAppManager extends PluginManager {
   async ensureDeactivated (apiName) {
     await this.deactivatePlugin(apiName)
     this.event.emit('ensureDeactivated', apiName)
-  }
-
-  deactivatePlugin (name) {
-    if (requiredModules.includes(name)) return
-    super.deactivatePlugin(name)
   }
 
   isRequired (name) {

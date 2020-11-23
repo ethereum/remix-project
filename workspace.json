@@ -104,7 +104,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "node_modules/.bin/tsc -p apps/remix-ide-e2e/tsconfig.e2e.json"
+              "tsc -p apps/remix-ide-e2e/tsconfig.e2e.json"
             ]
           }
         },
