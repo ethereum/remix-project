@@ -56,7 +56,36 @@ module.exports = {
           browser.assert.equal(JSON.stringify(parsed.transactions[1].record.name), JSON.stringify(scenario.transactions[1].record.name))
           browser.assert.equal(JSON.stringify(parsed.transactions[1].record.type), JSON.stringify(scenario.transactions[1].record.type))
           browser.assert.equal(JSON.stringify(parsed.transactions[1].record.from), JSON.stringify(scenario.transactions[1].record.from))
-        })
+        })        
+  },
+
+  'Record more than one contract': function (browser: NightwatchBrowser) {
+    // deploy 2 contracts (2 different ABIs), save the record, reexecute and test one of the function.
+    let addressRef
+    browser
+        .click('*[data-id="deployAndRunClearInstances"]')
+        .testContracts('multipleContracts.sol', sources[1]['browser/multipleContracts.sol'], ['t1est', 't2est'])
+        .selectContract('t1est')
+        .pause(1000)
+        .createContract('')
+        .pause(1000)
+        .selectContract('t2est')
+        .pause(1000)
+        .createContract('')
+        .click('i.savetransaction')
+        .modalFooterOKClick()
+        .click('*[data-id="deployAndRunClearInstances"]') // clear udapp
+        .click('*[data-id="terminalClearConsole"]') // clear terminal
+        .click('#runTabView .runtransaction')
+        .clickInstance(1)
+        .pause(1000)
+        .clickFunction('set2 - transact (not payable)', {types: 'uint256 _po', values: '10'})
+        .testFunction('0xa88bf726e706480f61f04a066452929030c0a0216cc6923106f863963339bdb7',
+      {
+        status: 'true Transaction mined and execution succeed',
+        'transaction hash': '0xa88bf726e706480f61f04a066452929030c0a0216cc6923106f863963339bdb7',
+        'decoded input': {"uint256 _po":{"type":"BigNumber","hex":"0x0a"}}
+      })
         .end()
   },
   tearDown: sauce
@@ -69,7 +98,28 @@ const sources = [{'browser/testRecorder.sol': {content: `contract testRecorder {
   function set (uint _p) public {
           
   }
-}`}}]
+}`}},
+{'browser/multipleContracts.sol': {content: `contract t1est {
+  uint p;
+  t2est t;
+  constructor () public {
+      t = new t2est();
+      t.set2(34);
+  }
+  
+  function set(uint _p) public {
+      p = _p;
+      t.set2(12);
+  }
+}
+
+contract t2est {
+  uint p;
+  function set2(uint _po) public {
+      p = _po;
+  }
+}`}}
+]
 
 const records = `{
   "accounts": {
