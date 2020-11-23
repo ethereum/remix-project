@@ -33,7 +33,8 @@
       "@remix-ui/clipboard": ["libs/remix-ui/clipboard/src/index.ts"],
       "@remix-project/remix-solidity-ts": ["libs/remix-solidity/src/index.ts"],
       "@remix-ui/modal-dialog": ["libs/remix-ui/modal-dialog/src/index.ts"],
-      "@remix-ui/toaster": ["libs/remix-ui/toaster/src/index.ts"]
+      "@remix-ui/toaster": ["libs/remix-ui/toaster/src/index.ts"],
+      "@remix-ui/file-explorer": ["libs/remix-ui/file-explorer/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
