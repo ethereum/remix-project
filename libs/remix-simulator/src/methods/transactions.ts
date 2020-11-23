@@ -44,7 +44,7 @@ export class Transactions {
 
       const txBlock = this.executionContext.txs[receipt.hash]
 
-      const r = {
+      const r: Record <string, unknown> = {
         transactionHash: receipt.hash,
         transactionIndex: '0x00',
         blockHash: '0x' + txBlock.hash().toString('hex'),
@@ -118,7 +118,7 @@ export class Transactions {
       const txBlock = this.executionContext.txs[receipt.transactionHash]
 
       // TODO: params to add later
-      const r = {
+      const r: Record<string, unknown> = {
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         from: receipt.from,
@@ -164,7 +164,7 @@ export class Transactions {
       }
 
       // TODO: params to add later
-      const r = {
+      const r: Record<string, unknown> = {
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         from: receipt.from,
@@ -206,7 +206,7 @@ export class Transactions {
       }
 
       // TODO: params to add later
-      const r = {
+      const r: Record<string, unknown> = {
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         from: receipt.from,

@@ -5,8 +5,8 @@ import * as crypto from 'crypto'
 
 export class Accounts {
   web3
-  accounts
-  accountsKeys
+  accounts: Record<string, unknown>
+  accountsKeys: Record<string, unknown>
   executionContext
 
   constructor (executionContext) {
@@ -19,7 +19,7 @@ export class Accounts {
     this.executionContext.init({ get: () => { return true } })
   }
 
-  async resetAccounts () {
+  async resetAccounts (): Promise<void> {
     // TODO: setting this to {} breaks the app currently, unclear why still
     // this.accounts = {}
     // this.accountsKeys = {}
@@ -43,7 +43,7 @@ export class Accounts {
   _addAccount (privateKey, balance) {
     return new Promise((resolve, reject) => {
       privateKey = Buffer.from(privateKey, 'hex')
-      const address = privateToAddress(privateKey)
+      const address: Buffer = privateToAddress(privateKey)
 
       this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
       this.accountsKeys[toChecksumAddress('0x' + address.toString('hex'))] = '0x' + privateKey.toString('hex')
@@ -62,7 +62,7 @@ export class Accounts {
   }
 
   newAccount (cb) {
-    let privateKey
+    let privateKey:Buffer
     do {
       privateKey = crypto.randomBytes(32)
     } while (!isValidPrivate(privateKey))
@@ -70,7 +70,7 @@ export class Accounts {
     return cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
   }
 
-  methods () {
+  methods (): Record<string, unknown> {
     return {
       eth_accounts: this.eth_accounts.bind(this),
       eth_getBalance: this.eth_getBalance.bind(this),

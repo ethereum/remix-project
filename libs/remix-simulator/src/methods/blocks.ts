@@ -1,7 +1,7 @@
 export class Blocks {
   executionContext
-  coinbase
-  blockNumber
+  coinbase: string
+  blockNumber: number
 
   constructor (executionContext, _options) {
     this.executionContext = executionContext
@@ -10,7 +10,7 @@ export class Blocks {
     this.blockNumber = 0
   }
 
-  methods () {
+  methods (): Record<string, unknown> {
     return {
       eth_getBlockByNumber: this.eth_getBlockByNumber.bind(this),
       eth_gasPrice: this.eth_gasPrice.bind(this),
@@ -68,7 +68,7 @@ export class Blocks {
   }
 
   eth_getBlockByHash (payload, cb) {
-    var block = this.executionContext.blocks[payload.params[0]]
+    const block = this.executionContext.blocks[payload.params[0]]
 
     const b = {
       number: this.toHex(block.header.number),
@@ -107,13 +107,13 @@ export class Blocks {
   }
 
   eth_getBlockTransactionCountByHash (payload, cb) {
-    var block = this.executionContext.blocks[payload.params[0]]
+    const block = this.executionContext.blocks[payload.params[0]]
 
     cb(null, block.transactions.length)
   }
 
   eth_getBlockTransactionCountByNumber (payload, cb) {
-    var block = this.executionContext.blocks[payload.params[0]]
+    const block = this.executionContext.blocks[payload.params[0]]
 
     cb(null, block.transactions.length)
   }
