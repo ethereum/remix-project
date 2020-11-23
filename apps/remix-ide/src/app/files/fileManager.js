@@ -158,7 +158,7 @@ class FileManager extends Plugin {
       await this._handleIsFile(path, `Cannot write file ${path}`)
       return await this.setFileContent(path, data)
     } else {
-      const ret = this.setFileContent(path, data)
+      const ret = await this.setFileContent(path, data)
       this.emit('fileAdded', path)
       return ret
     }
