@@ -29,6 +29,31 @@ This document includes:
  - publish a release in github using the changelog
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
 
+## Remix IDE release from beta
+
+ - git fetch origin remix_beta
+ - git checkout origin/remix_beta
+ - git checkout -b bumpVersion
+ - update package.json version
+ - remove package-lock.json version and generate a new one with `npm install`
+ - merge PR to origin/remix_beta
+ - git fetch origin remix_beta
+ - git checkout origin/remix_beta
+ - git tag v(version-number)
+ - git push --tags
+ - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --branch remix_beta --only-merges --between-tags previous_version...next_version
+ - publish a release in github using the changelog
+ - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
+ - move to next section `Remix IDE bump dev branch (master)` for bumping the master branch.
+ 
+## Remix IDE bump dev branch (master)
+
+ - git checkout master (checkout master branch)
+ - git checkout -b bumpDevVersion
+ - update package.json version: bump the version and add the tag `dev` if not already present.
+ - remove package-lock.json version and generate a new one with `npm install`
+ - merge PR to origin/master
+
 ## Remix-ide beta release
  - git fetch origin master
  - git checkout origin/master
@@ -49,7 +74,7 @@ This document includes:
 This is not strictly speaking a release. Updating the remix site is done through the Travis build:
 
  - git co -b remix_live origin/remix_live
- - git reset --hard -master-commit-hash-
+ - git reset --hard -master-commit-hash- (or remix_beta-commit-hash-)
  - git push -f origin remix_live
 
  CircleCI will build automaticaly and remix.ethereum.org will be updated
