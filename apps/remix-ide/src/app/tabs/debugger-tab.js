@@ -1,6 +1,6 @@
 import toaster from '../ui/tooltip'
 import { DebuggerUI } from '@remix-ui/debugger-ui' // eslint-disable-line
-import { ViewPlugin } from '@remixproject/engine'
+import { ViewPlugin } from '@remixproject/engine-web'
 import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
@@ -63,7 +63,6 @@ class DebuggerTab extends ViewPlugin {
 
     this.renderComponent()
 
-    this.call('manager', 'activatePlugin', 'source-verification').catch(e => console.log(e.message))
     // this.call('manager', 'activatePlugin', 'udapp')
 
     return this.el

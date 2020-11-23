@@ -1,4 +1,4 @@
-import { ViewPlugin, IframePlugin, WebsocketPlugin } from '@remixproject/engine'
+import { IframePlugin, ViewPlugin, WebsocketPlugin } from '@remixproject/engine-web'
 import { PluginManagerSettings } from './plugin-manager-settings'
 import * as packageJson from '../../../../../package.json'
 const yo = require('yo-yo')
@@ -83,8 +83,8 @@ class PluginManagerComponent extends ViewPlugin {
     this.filter = ''
     this.appManager.event.on('activate', () => { this.reRender() })
     this.appManager.event.on('deactivate', () => { this.reRender() })
-    this.appManager.event.on('added', () => { this.reRender() })
     this.engine = engine
+    this.engine.event.on('onRegistration', () => { this.reRender() })
   }
 
   isActive (name) {
@@ -151,7 +151,7 @@ class PluginManagerComponent extends ViewPlugin {
       }
       const plugin = profile.type === 'iframe' ? new IframePlugin(profile) : new WebsocketPlugin(profile)
       this.engine.register(plugin)
-      this.appManager.activatePlugin(plugin.name)
+      await this.appManager.activatePlugin(plugin.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
       console.log(`Cannot create Plugin : ${err.message}`)
