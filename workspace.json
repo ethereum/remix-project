@@ -109,10 +109,7 @@
         "e2e": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              "node apps/remix-ide-e2e/script.js"
-            ],
-            "parallel": false
+            "commands": ["node apps/remix-ide-e2e/script.js"]
           }
         },
         "lint": {
