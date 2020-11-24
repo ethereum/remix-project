@@ -14,14 +14,18 @@ import { Debug } from './methods/debug'
 import { generateBlock } from './genesis'
 
 export class Provider {
-  options
+  options: Record<string, unknown>
   executionContext
   Accounts
   Transactions
   methods
+  host: string
+  connected: boolean;
 
-  constructor (options = {}) {
+  constructor (host: string = 'vm', options: Record<string, unknown> = {}) {
     this.options = options
+    this.host = host
+    this.connected = true
     // TODO: init executionContext here
     this.executionContext = executionContext
     this.Accounts = new Accounts(this.executionContext)
@@ -75,6 +79,14 @@ export class Provider {
   isConnected () {
     return true
   }
+   
+  disconnect () {
+    return false
+  };
+
+  supportsSubscriptions () {
+      return true;
+  };
 
   on (type, cb) {
     this.executionContext.logsManager.addListener(type, cb)

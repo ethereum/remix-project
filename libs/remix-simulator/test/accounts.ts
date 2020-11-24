@@ -6,7 +6,7 @@ import * as assert from 'assert'
 
 describe('Accounts', () => {
   before(function () {
-    const provider: any = new Provider()
+    const provider = new Provider()
     web3.setProvider(provider)
   })
 
