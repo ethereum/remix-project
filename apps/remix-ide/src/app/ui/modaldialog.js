@@ -2,8 +2,8 @@ var yo = require('yo-yo')
 var css = require('./styles/modaldialog-styles')
 
 let incomingModal = false // in case modals are queued, ensure we are not hiding the last one.
-module.exports = (title, content, ok, cancel, focusSelector, opts) => { //props
-  let agreed = true //state vars
+module.exports = (title, content, ok, cancel, focusSelector, opts) => {
+  let agreed = true
   let footerIsActive = false
   opts = opts || {}
   var container = document.querySelector('.modal')
