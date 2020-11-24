@@ -199,7 +199,7 @@ class CompilerContainer {
       id="runs"
       placeholder="200"
       type="number"
-      title="Number of optimisation runs."
+      title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
       onchange=${() => this.onchangeRuns()}
     >`
     if (this.compileTabLogic.optimize) this._view.runs.removeAttribute('disabled')
