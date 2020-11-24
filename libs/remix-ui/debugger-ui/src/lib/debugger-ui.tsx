@@ -3,11 +3,13 @@ import TxBrowser from './tx-browser/tx-browser'
 import StepManager from './step-manager/step-manager'
 import VmDebugger from './vm-debugger/vm-debugger'
 import VmDebuggerHead from './vm-debugger/vm-debugger-head'
-import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
+import { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
+import { DebuggerAPI, DebuggerUIProps } from './DebuggerAPI'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 
-export const DebuggerUI = ({ debuggerModule }) => {
+export const DebuggerUI = (props: DebuggerUIProps) => {
+  const debuggerModule = props.debuggerAPI
   const [state, setState] = useState({
     isActive: false,
     statusMessage: '',
@@ -64,7 +66,7 @@ export const DebuggerUI = ({ debuggerModule }) => {
     if (!debuggerInstance) return
 
     debuggerInstance.event.register('debuggerStatus', async (isActive) => {
-      await debuggerModule.call('editor', 'discardHighlight')
+      await debuggerModule.discardHighlight()
       setState( prevState => {
         return { ...prevState, isActive }
       })
@@ -85,20 +87,20 @@ export const DebuggerUI = ({ debuggerModule }) => {
               path = `browser/.debugger/generated-sources/${source.name}`
               let content
               try {
-                content = await debuggerModule.call('fileManager', 'getFile', path, source.contents)
+                content = await debuggerModule.getFile(path)
               } catch (e) {
                 console.log('unable to fetch generated sources, the file probably doesn\'t exist yet', e)
               }
               if (content !== source.contents) {
-                await debuggerModule.call('fileManager', 'setFile', path, source.contents)
+                await debuggerModule.setFile(path, source.contents)
               }
               break
             }
           }
         }
         if (path) {
-          await debuggerModule.call('editor', 'discardHighlight')
-          await debuggerModule.call('editor', 'highlight', lineColumnPos, path)
+          await debuggerModule.discardHighlight()
+          await debuggerModule.highlight(lineColumnPos, path)
         }
       }
     })
@@ -183,7 +185,7 @@ const debug = (txHash) => {
 
 
 const deleteHighlights = async () => {
-  await debuggerModule.call('editor', 'discardHighlight')
+  await debuggerModule.discardHighlight()
 }
 
 const stepManager = {
