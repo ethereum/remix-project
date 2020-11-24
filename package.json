@@ -279,6 +279,7 @@
     "webworkify-webpack": "^2.1.5",
     "worker-loader": "^2.0.0",
     "yo-yo": "github:ioedeveloper/yo-yo",
-    "yo-yoify": "^3.7.3"
+    "yo-yoify": "^3.7.3",
+    "@types/jest": "25.1.4"
   }
 }
