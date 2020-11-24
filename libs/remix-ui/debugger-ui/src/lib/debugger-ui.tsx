@@ -5,6 +5,7 @@ import VmDebugger from './vm-debugger/vm-debugger'
 import VmDebuggerHead from './vm-debugger/vm-debugger-head'
 import { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import { DebuggerAPI, DebuggerUIProps } from './DebuggerAPI'
+import { ModalDialog } from '@remix-ui/modal-dialog'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 
@@ -23,7 +24,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     debugging: false,
     opt: {
       debugWithGeneratedSources: false
-    }
+    },
+    showModal: false
   })
 
   useEffect(() => {
@@ -114,10 +116,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     unLoad()
   }
 
-  const isDebuggerActive = () => {
-    return state.isActive
-  }
-
   const unLoad = () => {
     if (state.debugger) state.debugger.unload()
     setState(prevState => {
@@ -148,7 +146,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     try {
       currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     } catch (e) {
-    // throw modal
+      console.log('cant get tx', e)
+      setState((prevState) => { return { ...prevState, showModal: true } })
     }
     const debuggerInstance = new Debugger({
       web3,
@@ -157,6 +156,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         try {
           return await debuggerModule.fetchContractAndCompile(address, currentReceipt)
         } catch (e) {
+          console.log('cant fetch tx')
           console.error(e)
         }
         return null
@@ -176,48 +176,55 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }
       })
     }).catch((error) => {
+      console.log('unloading while ', error)
+      setState((prevState) => { return { ...prevState, showModal: true } })
       // toaster(error, null, null)
       unLoad()
     })
-}
+  }
 
-const debug = (txHash) => {
-  startDebugging(null, txHash, null)
-}
+  const debug = (txHash) => {
+    startDebugging(null, txHash, null)
+  }
 
-
-
+<<<<<<< HEAD
 const deleteHighlights = async () => {
   await debuggerModule.discardHighlight()
 }
+=======
+  const deleteHighlights = async () => {
+    await debuggerModule.call('editor', 'discardHighlight')
+  }
+>>>>>>> 1b1d8f0c7... modal dialog in react
 
-const stepManager = {
-  jumpTo: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpTo.bind(state.debugger.step_manager) : null,
-  stepOverBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverBack.bind(state.debugger.step_manager) : null,
-  stepIntoBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoBack.bind(state.debugger.step_manager) : null,
-  stepIntoForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoForward.bind(state.debugger.step_manager) : null,
-  stepOverForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverForward.bind(state.debugger.step_manager) : null,
-  jumpOut: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpOut.bind(state.debugger.step_manager) : null,
-  jumpPreviousBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpPreviousBreakpoint.bind(state.debugger.step_manager) : null,
-  jumpNextBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpNextBreakpoint.bind(state.debugger.step_manager) : null,
-  jumpToException: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpToException.bind(state.debugger.step_manager) : null,
-  traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
-  registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null,
-}
-const vmDebugger = {
-  registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
-  triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
-}
+  const stepManager = {
+    jumpTo: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpTo.bind(state.debugger.step_manager) : null,
+    stepOverBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverBack.bind(state.debugger.step_manager) : null,
+    stepIntoBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoBack.bind(state.debugger.step_manager) : null,
+    stepIntoForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoForward.bind(state.debugger.step_manager) : null,
+    stepOverForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverForward.bind(state.debugger.step_manager) : null,
+    jumpOut: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpOut.bind(state.debugger.step_manager) : null,
+    jumpPreviousBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpPreviousBreakpoint.bind(state.debugger.step_manager) : null,
+    jumpNextBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpNextBreakpoint.bind(state.debugger.step_manager) : null,
+    jumpToException: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpToException.bind(state.debugger.step_manager) : null,
+    traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
+    registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null,
+  }
+  const vmDebugger = {
+    registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
+    triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
+  }
 
   return (
     <div>
+      <ModalDialog title={'New Modal'} hide={!state.showModal} content={<span>Text</span>} opts={{ class: 'p-2', hideClose: true }} />
       <div className='px-2'>
         <div className='mt-3'>
           <p className='mt-2 debuggerLabel'>Debugger Configuration</p>
           <div className='mt-2 debuggerConfig custom-control custom-checkbox'>
             <input className='custom-control-input' id='debugGeneratedSourcesInput' onChange={({ target: { checked } }) => {
               setState(prevState => {
-                return { ...prevState, opt: { debugWithGeneratedSources: checked }}
+                return { ...prevState, opt: { debugWithGeneratedSources: checked } }
               })
             }} type='checkbox' title='Debug with generated sources' />
             <label data-id='debugGeneratedSourcesLabel' className='form-check-label custom-control-label' htmlFor='debugGeneratedSourcesInput'>Use generated sources (from Solidity v0.7.2)</label>
