@@ -4,8 +4,7 @@ import bodyParser from 'body-parser'
 const app = express()
 import expressWs from 'express-ws'
 import { Provider } from './provider'
-import { Logger } from './utils/logs'
-const logger = new Logger()
+import { log } from './utils/logs'
 
 class Server {
 
@@ -15,9 +14,9 @@ class Server {
   constructor (options) {
     this.provider = new Provider(options)
     this.provider.init().then(() => {
-      logger.log('Provider initiated')
+      log('Provider initiated')
     }).catch((error) => {
-      logger.log(error)
+      log(error)
     })
     this.rpcOnly = options.rpc
   }
@@ -60,9 +59,9 @@ class Server {
     }
 
     app.listen(port, host, () => {
-      logger.log('Remix Simulator listening on ws://' + host + ':' + port)
+      log('Remix Simulator listening on ws://' + host + ':' + port)
       if (!this.rpcOnly) {
-        logger.log('http json-rpc is deprecated and disabled by default. To enable it use --rpc')
+        log('http json-rpc is deprecated and disabled by default. To enable it use --rpc')
       }
     })
   }
