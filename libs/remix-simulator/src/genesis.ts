@@ -2,7 +2,7 @@ import EthJSBlock from 'ethereumjs-block'
 import { BN } from 'ethereumjs-util'
 
 export function generateBlock (executionContext) {
-  const block = new EthJSBlock({
+  const block: EthJSBlock = new EthJSBlock({
     header: {
       timestamp: (new Date().getTime() / 1000 | 0),
       number: 0,
