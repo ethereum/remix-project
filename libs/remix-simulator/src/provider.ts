@@ -2,14 +2,13 @@ import { Blocks } from './methods/blocks'
 import { execution } from '@remix-project/remix-lib'
 const { executionContext } = execution
 
-import { Logger } from './utils/logs'
-const logger = new Logger()
+import { info } from './utils/logs'
 import merge from 'merge'
 
 import { Accounts } from './methods/accounts'
 import { Filters } from './methods/filters'
-import { Misc } from './methods/misc'
-import { Net } from './methods/net'
+import { methods as miscMethods } from './methods/misc'
+import { methods as netMethods } from './methods/net'
 import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
 import { generateBlock } from './genesis'
@@ -31,9 +30,9 @@ export class Provider {
     this.methods = {}
     this.methods = merge(this.methods, this.Accounts.methods())
     this.methods = merge(this.methods, (new Blocks(this.executionContext, options)).methods())
-    this.methods = merge(this.methods, (new Misc()).methods())
+    this.methods = merge(this.methods, miscMethods())
     this.methods = merge(this.methods, (new Filters(this.executionContext)).methods())
-    this.methods = merge(this.methods, (new Net()).methods())
+    this.methods = merge(this.methods, netMethods())
     this.methods = merge(this.methods, this.Transactions.methods())
     this.methods = merge(this.methods, (new Debug(this.executionContext)).methods())
 
@@ -51,13 +50,13 @@ export class Provider {
 
     const method = this.methods[payload.method]
     if (this.options.logDetails) {
-      logger.info(payload)
+      info(payload)
     }
     if (method) {
       return method.call(method, payload, (err, result) => {
         if (this.options.logDetails) {
-          logger.info(err)
-          logger.info(result)
+          info(err)
+          info(result)
         }
         if (err) {
           return callback(err)
