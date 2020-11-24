@@ -4,75 +4,72 @@ import gray from 'ansi-gray'
 import timestamp from 'time-stamp'
 import supportsColor from 'color-support'
 
-export class Logger {
+function hasFlag(flag) {
+  return ((typeof (process) !== 'undefined') && (process.argv.indexOf('--' + flag) !== -1))
+}
 
-  private hasFlag(flag) {
-    return ((typeof (process) !== 'undefined') && (process.argv.indexOf('--' + flag) !== -1))
-  }
-
-  private addColor(str) {
-    if (this.hasFlag('no-color')) {
-      return str
-    }
-
-    if (this.hasFlag('color')) {
-      return gray(str)
-    }
-
-    if (supportsColor()) {
-      return gray(str)
-    }
-
+function addColor(str) {
+  if (this.hasFlag('no-color')) {
     return str
   }
 
-  private stdout(arg) {
-    if (typeof (process) === 'undefined' || !process.stdout) return
-    process.stdout.write(arg)
+  if (this.hasFlag('color')) {
+    return gray(str)
   }
 
-  private stderr(arg) {
-    if (typeof (process) === 'undefined' || process.stderr) return
-    process.stderr.write(arg)
+  if (supportsColor()) {
+    return gray(str)
   }
 
-  private getTimestamp() {
-    const coloredTimestamp = this.addColor(timestamp('HH:mm:ss'))
-    return '[' + coloredTimestamp + ']'
-  }
+  return str
+}
 
-  log(...args: any[]) {
-    const time = this.getTimestamp()
-    this.stdout(time + ' ')
-    console.log(args)
-    return this
-  }
+function stdout(arg) {
+  if (typeof (process) === 'undefined' || !process.stdout) return
+  process.stdout.write(arg)
+}
 
-  info(...args: any[]) {
-    const time = this.getTimestamp()
-    this.stdout(time + ' ')
-    console.info(args)
-    return this
-  }
+function stderr(arg) {
+  if (typeof (process) === 'undefined' || process.stderr) return
+  process.stderr.write(arg)
+}
 
-  dir(...args: any[]) {
-    const time = this.getTimestamp()
-    this.stdout(time + ' ')
-    console.dir(args)
-    return this
-  }
+function getTimestamp() {
+  const coloredTimestamp = this.addColor(timestamp('HH:mm:ss'))
+  return '[' + coloredTimestamp + ']'
+}
 
-  warn(...args: any[]) {
-    const time = this.getTimestamp()
-    this.stderr(time + ' ')
-    console.warn(args)
-    return this
-  }
+export function log(...args: any[]) {
+  const time = this.getTimestamp()
+  this.stdout(time + ' ')
+  console.log(args)
+  return this
+}
 
-  error(...args: any[]) {
-    const time = this.getTimestamp()
-    this.stderr(time + ' ')
-    console.error(args)
-    return this
-  }
+export function info(...args: any[]) {
+  const time = this.getTimestamp()
+  this.stdout(time + ' ')
+  console.info(args)
+  return this
+}
+
+export function dir(...args: any[]) {
+  const time = this.getTimestamp()
+  this.stdout(time + ' ')
+  console.dir(args)
+  return this
+}
+
+export function warn(...args: any[]) {
+  const time = this.getTimestamp()
+  this.stderr(time + ' ')
+  console.warn(args)
+  return this
+}
+
+export function error(...args: any[]) {
+  const time = this.getTimestamp()
+  this.stderr(time + ' ')
+  console.error(args)
+  return this
 }
