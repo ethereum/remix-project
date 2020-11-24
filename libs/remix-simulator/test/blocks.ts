@@ -6,7 +6,7 @@ import * as assert from 'assert'
 
 describe('blocks', () => {
   before(() => {
-    const provider: any = new Provider({
+    const provider = new Provider('vm', {
       coinbase: '0x0000000000000000000000000000000000000001'
     })
     web3.setProvider(provider)
