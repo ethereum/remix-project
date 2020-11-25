@@ -1,1 +1,1 @@
-contract test2 { function get () returns (uint) { return 9; }}
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
