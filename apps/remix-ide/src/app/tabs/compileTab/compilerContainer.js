@@ -197,12 +197,14 @@ class CompilerContainer {
       class="custom-select ml-2 ${css.runs}"
       id="runs"
       placeholder="200"
+      value="200"
       type="number"
       title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
       onchange=${() => this.onchangeRuns()}
     >`
-    if (this.compileTabLogic.optimize) this._view.runs.removeAttribute('disabled')
-    else {
+    if (this.compileTabLogic.optimize) {
+      this._view.runs.value = this.compileTabLogic.runs
+    } else {
       this._view.runs.setAttribute('disabled', '')
     }
 
