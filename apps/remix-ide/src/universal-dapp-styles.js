@@ -34,6 +34,7 @@ var css = csjs`
     word-break: break-word;
     width: 100%;
     border: none;
+    overflow: hidden;
   }
   .spanTitleText {
     line-height: 12px;
@@ -43,6 +44,7 @@ var css = csjs`
     border: none;
     background: none;
     text-transform: uppercase;
+    overflow: hidden;
   }
   .inputGroupText {
     width: 100%;

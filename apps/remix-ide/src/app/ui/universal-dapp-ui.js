@@ -78,7 +78,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   var close = yo`
     <button
-      class="${css.udappClose} mr-2 p-1 btn btn-secondary"
+      class="${css.udappClose} mr-1 p-1 btn btn-secondary align-items-center"
       data-id="universalDappUiUdappClose"
       onclick=${remove}
       title="Remove from the list"
