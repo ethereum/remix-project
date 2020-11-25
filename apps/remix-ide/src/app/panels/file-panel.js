@@ -94,20 +94,20 @@ module.exports = class Filepanel extends ViewPlugin {
               <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
                 <FileExplorer
                   name='browser'
-                  localRegistry={this._components.registry}
+                  registry={this._components.registry}
                   files={this._deps.fileProviders.browser}
                   menuItems={['createNewFile', 'publishToGist', canUpload ? 'uploadFile' : '']}
                   plugin={this}
                 />
               </div>
               <div className='pl-2 filesystemexplorer remixui_treeview'>
-                <FileExplorer
+                {/* <FileExplorer
                   name='localhost'
-                  localRegistry={this._components.registry}
+                  registry={this._components.registry}
                   files={this._deps.fileProviders.localhost}
                   menuItems={[]}
                   plugin={this}
-                />
+                /> */}
               </div>
             </div>
           </div>
