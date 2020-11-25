@@ -1,9 +1,9 @@
-import React, { useReducer, useState } from 'react' // eslint-disable-line
-import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
+import React, { useEffect, useState } from 'react' // eslint-disable-line
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import { FileExplorerProps } from './types'
 
-import './file-explorer.css'
+import './css/file-explorer.css'
 
 function extractData (value, tree, key) {
   const newValue = {}
@@ -54,34 +54,100 @@ export const FileExplorer = (props: FileExplorerProps) => {
     ].filter(item => props.menuItems && props.menuItems.find((name) => { return name === item.action }))
   })
 
+  useEffect(() => {
+    if (props.files) {
+      console.log('props.files.type: ', props.files.type)
+      props.files.event.register('fileAdded', fileAdded)
+    }
+  }, [props.files])
+
   const formatSelf = (key, data, li) => {
-    const isRoot = data.path === state.files.type
     const isFolder = !!data.children
 
     return (
       <div className='remixui_items'>
         <span
           title={data.path}
-          className={'remixui_label ' + !isRoot ? !isFolder ? 'remixui_leaf' : 'folder' : ''}
+          className={'remixui_label ' + (!isFolder ? 'remixui_leaf' : 'folder')}
           data-path={data.path}
-          style={{ fontWeight: isRoot ? 'bold' : null }}
           // onkeydown=${editModeOff}
           // onblur=${editModeOff}
         >
           {key.split('/').pop()}
         </span>
-        {isRoot ? renderMenuItems() : ''}
       </div>
     )
   }
 
-  const remixdDialog = () => {
-    return <div>This file has been changed outside of Remix IDE.</div>
-  }
+  // self._components = {}
+  // self._components.registry = localRegistry || globalRegistry
+  // self._deps = {
+  //   config: self._components.registry.get('config').api,
+  //   editor: self._components.registry.get('editor').api,
+  //   fileManager: self._components.registry.get('filemanager').api
+  // }
 
-  const fileRenamedError = (error) => {
-    console.log(error)
-    // modalDialogCustom.alert(error)
+  // self.events.register('focus', function (path) {
+  //   self._deps.fileManager.open(path)
+  // })
+
+  // self._components.registry.put({ api: self, name: `fileexplorer/${self.files.type}` })
+
+  // warn if file changed outside of Remix
+  // function remixdDialog () {
+  //   return yo`<div>This file has been changed outside of Remix IDE.</div>`
+  // }
+
+  // props.files.event.register('fileExternallyChanged', (path, file) => {
+  //   if (self._deps.config.get('currentFile') === path && self._deps.editor.currentContent() && self._deps.editor.currentContent() !== file.content) {
+  //     if (this.files.isReadOnly(path)) return self._deps.editor.setText(file.content)
+
+  //     modalDialog(path + ' changed', remixdDialog(),
+  //       {
+  //         label: 'Replace by the new content',
+  //         fn: () => {
+  //           self._deps.editor.setText(file.content)
+  //         }
+  //       },
+  //       {
+  //         label: 'Keep the content displayed in Remix',
+  //         fn: () => {}
+  //       }
+  //     )
+  //   }
+  // })
+
+  // register to event of the file provider
+  // files.event.register('fileRemoved', fileRemoved)
+  // files.event.register('fileRenamed', fileRenamed)
+  // files.event.register('fileRenamedError', fileRenamedError)
+  // files.event.register('fileAdded', fileAdded)
+  // files.event.register('folderAdded', folderAdded)
+
+  // function fileRenamedError (error) {
+  //   modalDialogCustom.alert(error)
+  // }
+
+  const fileAdded = (filepath) => {
+    const folderpath = filepath.split('/').slice(0, -1).join('/')
+    console.log('filePath: ', folderpath)
+    console.log('folderPath: ', folderpath)
+    // const currentTree = self.treeView.nodeAt(folderpath)
+    // if (!self.treeView.isExpanded(folderpath)) self.treeView.expand(folderpath)
+    // if (currentTree) {
+    //   props.files.resolveDirectory(folderpath, (error, fileTree) => {
+    //     if (error) console.error(error)
+    //     if (!fileTree) return
+    //     fileTree = normalize(folderpath, fileTree)
+    //     self.treeView.updateNodeFromJSON(folderpath, fileTree, true)
+    //     self.focusElement = self.treeView.labelAt(self.focusPath)
+    //     // TODO: here we update the selected file (it applicable)
+    //     // cause we are refreshing the interface of the whole directory when there's a new file.
+    //     if (self.focusElement && !self.focusElement.classList.contains('bg-secondary')) {
+    //       self.focusElement.classList.add('bg-secondary')
+    //     }
+    //   })
+    // }
   }
 
   const extractNameFromKey = (key) => {
@@ -93,7 +159,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const renderMenuItems = () => {
     let items
     if (state.menuItems) {
-      items = state.menuItems.map(({ action, title, icon }) => {
+      items = state.menuItems.map(({ action, title, icon }, index) => {
         if (action === 'uploadFile') {
           return (
             <label
@@ -101,6 +167,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               data-id={'fileExplorerUploadFile' + action }
               className={icon + ' mb-0 remixui_newFile'}
               title={title}
+              key={index}
             >
               <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={({ stopPropagation, target }) => {
                 stopPropagation()
@@ -117,13 +184,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
               // onclick={({ stopPropagation }) => { stopPropagation(); this[action]() }}
               className={'newFile ' + icon + ' remixui_newFile'}
               title={title}
+              key={index}
             >
             </span>
           )
         }
       })
     }
-    return <span className="remixui_menu">{items}</span>
+    return (
+      <>
+        <span className='remixui_label' title={props.name} data-path={props.name} style={{ fontWeight: 'bold' }}>{ props.name }</span>
+        <span className="remixui_menu">{items}</span>
+      </>
+    )
   }
 
   const uploadFile = (target) => {
@@ -168,7 +241,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   return (
     <div>
+      <TreeView id='treeView'>
+        <TreeViewItem id="treeViewItem" label={renderMenuItems()}>
 
+        </TreeViewItem>
+      </TreeView>
     </div>
   )
 }
