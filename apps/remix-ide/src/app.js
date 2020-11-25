@@ -235,8 +235,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   engine.register(appManager)
 
   // SERVICES
-  // ----------------- import content servive ------------------------
-  const contentImport = new CompilerImport()
   // ----------------- theme servive ---------------------------------
   const themeModule = new ThemeModule(registry)
   registry.put({ api: themeModule, name: 'themeModule' })
@@ -254,6 +252,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- fileManager servive ----------------------------
   const fileManager = new FileManager(editor, appManager)
   registry.put({ api: fileManager, name: 'filemanager' })
+
+  // ----------------- import content servive ------------------------
+  const contentImport = new CompilerImport(fileManager)
 
   const blockchain = new Blockchain(registry.get('config').api)
   const pluginUdapp = new PluginUDapp(blockchain)
@@ -350,7 +351,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     registry.get('config').api,
     new Renderer(),
     registry.get('fileproviders/browser').api,
-    registry.get('filemanager').api
+    registry.get('filemanager').api,
+    contentImport
   )
   const run = new RunTab(
     blockchain,
@@ -375,7 +377,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel,
     compileTab,
     appManager,
-    new Renderer()
+    new Renderer(),
+    contentImport
   )
 
   engine.register([

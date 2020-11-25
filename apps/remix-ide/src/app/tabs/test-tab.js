@@ -20,9 +20,10 @@ const profile = {
 }
 
 module.exports = class TestTab extends ViewPlugin {
-  constructor (fileManager, offsetToLineColumnConverter, filePanel, compileTab, appManager, renderer) {
+  constructor (fileManager, offsetToLineColumnConverter, filePanel, compileTab, appManager, renderer, contentImport) {
     super(profile)
     this.compileTab = compileTab
+    this.contentImport = contentImport
     this._view = { el: null }
     this.fileManager = fileManager
     this.filePanel = filePanel
@@ -373,7 +374,7 @@ module.exports = class TestTab extends ViewPlugin {
         if (error) return reject(error)
         resolve(result)
       }, (url, cb) => {
-        return this.compileTab.compileTabLogic.importFileCb(url, cb)
+        return this.contentImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
       })
     })
   }
@@ -405,7 +406,7 @@ module.exports = class TestTab extends ViewPlugin {
           this.updateFinalResult(error, result, testFilePath)
           callback(error)
         }, (url, cb) => {
-          return this.compileTab.compileTabLogic.importFileCb(url, cb)
+          return this.contentImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
         }
       )
     }).catch((error) => {

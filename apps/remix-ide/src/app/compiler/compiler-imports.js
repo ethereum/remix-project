@@ -1,7 +1,10 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+const remixTests = require('@remix-project/remix-tests')
 const globalRegistry = require('../../global/registry')
+const addTooltip = require('../ui/tooltip')
+const async = require('async')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')()
 var resolver = require('@resolver-engine/imports').ImportsEngine()
@@ -11,12 +14,13 @@ const profile = {
   name: 'contentImport',
   displayName: 'content import',
   version: packageJson.version,
-  methods: ['resolve']
+  methods: ['resolve', 'resolveAndSave']
 }
 
 module.exports = class CompilerImports extends Plugin {
-  constructor () {
+  constructor (fileManager) {
     super(profile)
+    this.fileManager = fileManager
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
@@ -101,6 +105,12 @@ module.exports = class CompilerImports extends Plugin {
     return /^([^/]+)/.exec(url)
   }
 
+  /**
+    * resolve the content of @arg url. This only resolves external URLs.
+    *
+    * @param {String} url  - external URL of the content. can be basically anything like raw HTTP, ipfs URL, github address etc...
+    * @returns {Promise} - { content, cleanUrl, type, url }
+    */
   resolve (url) {
     return new Promise((resolve, reject) => {
       this.import(url, null, (error, content, cleanUrl, type, url) => {
@@ -170,5 +180,91 @@ module.exports = class CompilerImports extends Plugin {
         console.error(err)
         cb('Unable to import "' + url + '": File not found')
       })
+  }
+
+  importExternal (url, cb) {
+    this.import(url,
+      // TODO: move to an event that is generated, the UI shouldn't be here
+      (loadingMsg) => { addTooltip(loadingMsg) },
+      (error, content, cleanUrl, type, url) => {
+        if (error) return cb(error)
+        if (this.fileManager) {
+          const browser = this.fileManager.fileProviderOf('browser/')
+          if (browser) browser.addExternal(type + '/' + cleanUrl, content, url)
+        }
+        cb(null, content)
+      })
+  }
+
+  /**
+    * import the content of @arg url.
+    * first look in the browser localstorage (browser explorer) or locahost explorer. if the url start with `browser/*` or  `localhost/*`
+    * then check if the @arg url is located in the localhost, in the node_modules or installed_contracts folder
+    * then check if the @arg url match any external url
+    *
+    * @param {String} url  - URL of the content. can be basically anything like file located in the browser explorer, in the localhost explorer, raw HTTP, github address etc...
+    * @returns {Promise} - string content
+    */
+  resolveAndSave (url) {
+    return new Promise((resolve, reject) => {
+      if (url.indexOf('remix_tests.sol') !== -1) resolve(remixTests.assertLibCode)
+      if (!this.fileManager) {
+        // fallback to just resolving the file, it won't be saved in file manager
+        return this.importExternal(url, (error, content) => {
+          if (error) return reject(error)
+          resolve(content)
+        })
+      }
+      var provider = this.fileManager.fileProviderOf(url)
+      if (provider) {
+        if (provider.type === 'localhost' && !provider.isConnected()) {
+          return reject(new Error(`file provider ${provider.type} not available while trying to resolve ${url}`))
+        }
+        provider.exists(url, (error, exist) => {
+          if (error) return reject(error)
+          if (!exist && provider.type === 'localhost') return reject(new Error(`not found ${url}`))
+
+          /*
+            if the path is absolute and the file does not exist, we can stop here
+            Doesn't make sense to try to resolve "localhost/node_modules/localhost/node_modules/<path>" and we'll end in an infinite loop.
+          */
+          if (!exist && url.startsWith('browser/')) return reject(new Error(`not found ${url}`))
+          if (!exist && url.startsWith('localhost/')) return reject(new Error(`not found ${url}`))
+
+          if (exist) {
+            return provider.get(url, (error, content) => {
+              if (error) return reject(error)
+              resolve(content)
+            })
+          }
+
+          // try to resolve localhost modules (aka truffle imports) - e.g from the node_modules folder
+          const localhostProvider = this.fileManager.getProvider('localhost')
+          if (localhostProvider.isConnected()) {
+            var splitted = /([^/]+)\/(.*)$/g.exec(url)
+            return async.tryEach([
+              (cb) => { this.resolveAndSave('localhost/installed_contracts/' + url).then((result) => cb(null, result)).catch((error) => cb(error.message)) },
+              (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2]).then((result) => cb(null, result)).catch((error) => cb(error.message)) } },
+              (cb) => { this.resolveAndSave('localhost/node_modules/' + url).then((result) => cb(null, result)).catch((error) => cb(error.message)) },
+              (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2]).then((result) => cb(null, result)).catch((error) => cb(error.message)) } }],
+            (error, result) => {
+              if (error) {
+                return this.importExternal(url, (error, content) => {
+                  if (error) return reject(error)
+                  resolve(content)
+                })
+              }
+              resolve(result)
+            })
+          } else {
+            // try to resolve external content
+            this.importExternal(url, (error, content) => {
+              if (error) return reject(error)
+              resolve(content)
+            })
+          }
+        })
+      }
+    })
   }
 }
