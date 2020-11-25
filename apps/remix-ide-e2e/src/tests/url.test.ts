@@ -23,6 +23,7 @@ module.exports = {
     .assert.containsText('#versionSelector option[selected="selected"]', '0.7.4+commit.3f05b770')
     .assert.containsText('#evmVersionSelector option[selected="selected"]', 'istanbul')
     .verify.elementPresent('#optimize:checked')
+    .verify.attributeEquals('#runs', 'value', '300')
   },
 
   'Should load using compiler from link passed in remix URL': function (browser: NightwatchBrowser) {
@@ -34,9 +35,10 @@ module.exports = {
     .pause(5000)
     .assert.containsText('#versionSelector option[selected="selected"]', 'custom')
     // default values
+    .assert.containsText('#evmVersionSelector option[selected="selected"]', 'default')
     .verify.elementPresent('#optimize')
     .assert.elementNotPresent('#optimize:checked')
-    .assert.containsText('#evmVersionSelector option[selected="selected"]', 'default')
+    .verify.elementPresent('#runs:disabled')
     .end()
   },
 
