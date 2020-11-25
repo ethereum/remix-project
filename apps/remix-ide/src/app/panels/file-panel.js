@@ -3,14 +3,14 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
-import { FileExplorer } from '@remix-ui/file-explorer'
+import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
+import './styles/file-panel-styles.css'
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 // var FileExplorer = require('../files/file-explorer')
 var { RemixdHandle } = require('../files/remixd-handle.js')
 var { GitHandle } = require('../files/git-handle.js')
 var globalRegistry = require('../../global/registry')
-var css = require('./styles/file-panel-styles')
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
@@ -47,68 +47,72 @@ const profile = {
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
-    var self = this
-    self._components = {}
-    self._components.registry = globalRegistry
-    self._deps = {
-      fileProviders: self._components.registry.get('fileproviders').api,
-      fileManager: self._components.registry.get('filemanager').api,
-      config: self._components.registry.get('config').api
+    this._components = {}
+    this._components.registry = globalRegistry
+    this._deps = {
+      fileProviders: this._components.registry.get('fileproviders').api,
+      fileManager: this._components.registry.get('filemanager').api,
+      config: this._components.registry.get('config').api
     }
-
-    function createProvider (key, menuItems) {
-      return <FileExplorer
-        localRegistry={self._components.registry}
-        files={self._deps.fileProviders[key]}
-        menuItems={menuItems}
-        plugin={self}
-      />
-    }
-
-    var fileExplorer = createProvider('browser', ['createNewFile', 'publishToGist', canUpload ? 'uploadFile' : ''])
-    var fileSystemExplorer = createProvider('localhost')
-
-    // self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders.localhost, appManager)
-    self.gitHandle = new GitHandle()
-
-    const explorers = yo`
-      <div>
-        <div class="pl-2 ${css.treeview}" data-id="filePanelFileExplorerTree">${fileExplorer.init()}</div>
-        <div class="pl-2 filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
+    this.el = yo` 
+      <div id="fileExplorerView">
       </div>
     `
 
-    function template () {
-      return yo`
-        <div class=${css.container}>
-          <div class="${css.fileexplorer}">           
-            <div class="${css.fileExplorerTree}">
-              ${explorers}
-            </div>
-          </div>
-        </div>
-      `
-    }
+    this.remixdHandle = new RemixdHandle({}, this._deps.fileProviders.localhost, appManager)
 
-    var event = new EventManager()
-    self.event = event
-    var element = template()
-    fileExplorer.ensureRoot()
-    self._deps.fileProviders.localhost.event.register('connecting', (event) => {
+    this.event = new EventManager()
+    // fileExplorer.ensureRoot()
+    this._deps.fileProviders.localhost.event.register('connecting', (event) => {
     })
 
-    self._deps.fileProviders.localhost.event.register('connected', (event) => {
+    this._deps.fileProviders.localhost.event.register('connected', (event) => {
       fileSystemExplorer.show()
     })
 
-    self._deps.fileProviders.localhost.event.register('errored', (event) => {
+    this._deps.fileProviders.localhost.event.register('errored', (event) => {
       fileSystemExplorer.hide()
     })
 
-    self._deps.fileProviders.localhost.event.register('closed', (event) => {
+    this._deps.fileProviders.localhost.event.register('closed', (event) => {
       fileSystemExplorer.hide()
     })
 
-    self.render = function render () { return element }
+    this.renderComponent()
+  }
+
+  render () {
+    return this.el
+  }
+
+  renderComponent () {
+    ReactDOM.render(
+      <div className='remixui_container'>
+        <div className='remixui_fileexplorer'>
+          <div className='remixui_fileExplorerTree'>
+            <div>
+              <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
+                <FileExplorer
+                  name='browser'
+                  localRegistry={this._components.registry}
+                  files={this._deps.fileProviders.browser}
+                  menuItems={['createNewFile', 'publishToGist', canUpload ? 'uploadFile' : '']}
+                  plugin={this}
+                />
+              </div>
+              <div className='pl-2 filesystemexplorer remixui_treeview'>
+                <FileExplorer
+                  name='localhost'
+                  localRegistry={this._components.registry}
+                  files={this._deps.fileProviders.localhost}
+                  menuItems={[]}
+                  plugin={this}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      , this.el)
   }
 }
