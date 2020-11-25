@@ -53,6 +53,7 @@ var css = csjs`
   .select {
     font-weight: normal;
     width: 100%;
+    overflow: hidden;
   }
   .instanceContainer {
     display: flex;
