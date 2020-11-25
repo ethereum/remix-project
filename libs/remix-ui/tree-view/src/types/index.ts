@@ -1,11 +1,11 @@
 export interface TreeViewProps {
     children?: React.ReactNode,
-    id: string
+    id?: string
 }
 
 export interface TreeViewItemProps {
     children?: React.ReactNode,
-    id: string,
+    id?: string,
     label: string | number | React.ReactNode,
     expand?: boolean,
     onClick?: VoidFunction,

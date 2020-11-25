@@ -1,7 +1,7 @@
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
     name: string,
-    localRegistry: any,
+    registry: any,
     files: any,
     menuItems?: string[],
     plugin: any
