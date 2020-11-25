@@ -34,14 +34,6 @@ module.exports = {
     .journalChildIncludes(`\\"optimizer\\":{\\"enabled\\":true,\\"runs\\":300}`)
   },
 
-  'Should compile using "compileWithParamaters" API with optimization off check default runs': function (browser: NightwatchBrowser) {
-    browser
-    .addFile('test_jsCompileWithOptimizationDefault.js', { content: jsCompileWithOptimizationDefault })
-    .executeScript('remix.exeCurrent()')
-    .pause(10000)
-    .journalChildIncludes(`\\"optimizer\\":{\\"enabled\\":false,\\"runs\\":200}`)
-  },
-
   'Should update the compiler configuration with "setCompilerConfig" API': function (browser: NightwatchBrowser) {
     browser
     .addFile('test_updateConfiguration.js', { content: updateConfiguration })
@@ -120,26 +112,9 @@ const jsCompileWithOptimization = `(async () => {
       const result = await remix.call('solidity', 'compileWithParameters', contract, params)
       console.log('result ', result)
   } catch (e) {
-      console.log(e.message)
-  }
-})()`
-
-const jsCompileWithOptimizationDefault = `(async () => {
-  try {
-      const contract = {
-          "storage.sol": {content : \`${simpleContract}\` }
-      }
-      console.log('compile')
-      const params = {
-          optimize: false,
-      }
-      const result = await remix.call('solidity', 'compileWithParameters', contract, params)
-      console.log('result ', result)
-  } catch (e) {
       console.log(e.message)   
   }
 })()`
-
 
 const updateConfiguration = `(async () => {
   try {    
