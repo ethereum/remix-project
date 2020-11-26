@@ -3,9 +3,9 @@ import * as Websocket from 'ws'
 
 type ServiceListKeys = keyof typeof ServiceList;
 
-export type SharedFolder = typeof ServiceList[ServiceListKeys]
+export type Service = typeof ServiceList[ServiceListKeys]
 
-export type SharedFolderClient = InstanceType<typeof ServiceList[ServiceListKeys]>
+export type ServiceClient = InstanceType<typeof ServiceList[ServiceListKeys]>
 
 export type WebsocketOpt = {
     remixIdeUrl: string

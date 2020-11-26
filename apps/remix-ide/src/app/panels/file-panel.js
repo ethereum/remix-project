@@ -5,6 +5,7 @@ var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 var FileExplorer = require('../files/file-explorer')
 var { RemixdHandle } = require('../files/remixd-handle.js')
+var { GitHandle } = require('../files/git-handle.js')
 var globalRegistry = require('../../global/registry')
 var css = require('./styles/file-panel-styles')
 
@@ -60,6 +61,7 @@ module.exports = class Filepanel extends ViewPlugin {
     var fileSystemExplorer = createProvider('localhost')
 
     self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders.localhost, appManager)
+    self.gitHandle = new GitHandle()
 
     const explorers = yo`
       <div>
