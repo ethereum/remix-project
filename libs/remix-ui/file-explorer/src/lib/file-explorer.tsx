@@ -401,7 +401,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const renderFiles = (file, index) => {
     if (file.isDirectory) {
       return (
-        <TreeViewItem id={`treeViewItem${file.path}`} iconX='px-3 far fa-folder' iconY='px-3 far fa-folder-open' key={index} label={label(file)} onClick={() => { resolveDirectory(file.path) }}>
+        <TreeViewItem id={`treeViewItem${file.path}`} iconX='pr-3 far fa-folder' iconY='pr-3 far fa-folder-open' key={index} label={label(file)} onClick={() => { resolveDirectory(file.path) }}>
           {
             file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
               file.child.map((file, index) => {
@@ -419,6 +419,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           key={index}
           label={label(file)}
           onClick={() => { state.fileManager.open(file.path) }}
+          icon='fa fa-file'
         />
       )
     }
