@@ -27,7 +27,7 @@ module.exports = {
     })
       .addFile('signMassage.sol', sources[0]['browser/signMassage.sol'])
       .openFile('browser/signMassage.sol')
-      .pause(5000)
+      .pause(10000)
       .selectContract('ECVerify')
       .createContract('')
       .clickInstance(0)
