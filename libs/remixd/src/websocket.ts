@@ -1,15 +1,15 @@
 import * as WS from 'ws'
 import * as http from 'http'
-import { WebsocketOpt, SharedFolderClient } from './types' // eslint-disable-line
+import { WebsocketOpt, ServiceClient } from './types' // eslint-disable-line
 import { getDomain } from './utils'
 import { createClient } from '@remixproject/plugin-ws'
 export default class WebSocket {
   server: http.Server
   wsServer: WS.Server
 
-  constructor (public port: number, public opt: WebsocketOpt, public sharedFolder: SharedFolderClient) {} //eslint-disable-line
+  constructor (public port: number, public opt: WebsocketOpt, public getclient: () => ServiceClient) {} //eslint-disable-line
 
-  start (callback?: (ws: WS) => void): void {
+  start (callback?: (ws: WS, client: ServiceClient) => void): void {
     this.server = http.createServer((request, response) => {
       console.log((new Date()) + ' Received request for ' + request.url)
       response.writeHead(404)
@@ -17,8 +17,8 @@ export default class WebSocket {
     })
     const loopback = '127.0.0.1'
 
-    this.server.listen(this.port, loopback, function () {
-      console.log((new Date()) + ' remixd is listening on ' + loopback + ':65520')
+    this.server.listen(this.port, loopback, () => {
+      console.log((new Date()) + ' remixd is listening on ' + loopback + ':' + this.port + '')
     })
     this.wsServer = new WS.Server({
       server: this.server,
@@ -32,10 +32,10 @@ export default class WebSocket {
       }
     })
     this.wsServer.on('connection', (ws) => {
-      const { sharedFolder } = this
+      const client = this.getclient()
 
-      createClient(ws, sharedFolder as any)
-      if (callback) callback(ws)
+      createClient(ws, client as any)
+      if (callback) callback(ws, client)
     })
   }
 
