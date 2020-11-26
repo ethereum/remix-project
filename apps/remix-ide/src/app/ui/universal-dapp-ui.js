@@ -22,6 +22,7 @@ function UniversalDAppUI (blockchain, logCallback) {
 }
 
 function decodeResponseToTreeView (response, fnabi) {
+  // debugger
   var treeView = new TreeView({
     extractData: (item, parent, key) => {
       var ret = {}
@@ -250,6 +251,7 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
       // }
       const decoded = decodeResponseToTreeView(returnValue, args.funABI)
       outputOverride.innerHTML = ''
+      // debugger
       outputOverride.appendChild(decoded)
     }
   }

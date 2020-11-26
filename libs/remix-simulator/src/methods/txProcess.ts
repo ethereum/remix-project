@@ -19,11 +19,26 @@ function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks,
   TxExecution.callFunction(from, to, data, value, gasLimit, { constant: true }, txRunner, callbacks, finalCallback)
 }
 
-function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
+function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback, events) {
   const finalCallback = function (err, result) {
     if (err) {
       return callback(err)
     }
+
+    console.dir("-------> result <--------")
+    console.dir("-------> result <--------")
+    console.dir("-------> result <--------")
+    console.dir("-------> result <--------")
+    console.dir("-------> result <--------")
+    console.dir(result)
+    console.dir("-------> result <--------")
+    console.dir("-------> result <--------")
+    console.dir("-------> result <--------")
+    console.dir("-------> result <--------")
+    console.dir("-------> result <--------")
+
+    events.emit("VMTransaction", result)
+
     callback(null, result.transactionHash)
   }
 
@@ -93,7 +108,7 @@ export function processTx (executionContext, accounts, payload, isCall, callback
   if (isCall) {
     runCall(payload, from, to, data, value, gas, txRunnerInstance, callbacks, callback, events)
   } else if (to) {
-    runTx(payload, from, to, data, value, gas, txRunnerInstance, callbacks, callback)
+    runTx(payload, from, to, data, value, gas, txRunnerInstance, callbacks, callback, events)
   } else {
     createContract(payload, from, data, value, gas, txRunnerInstance, callbacks, callback)
   }

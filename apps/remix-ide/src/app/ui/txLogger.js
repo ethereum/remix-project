@@ -373,6 +373,7 @@ function txDetails (e, tx, data, obj) {
   const log = blockElement.querySelector(`#${tx.id} [class^='log']`)
   const arrow = blockElement.querySelector(`#${tx.id} [class^='arrow']`)
 
+  // debugger
   if (table && table.parentNode) {
     tx.removeChild(table)
     log.removeChild(arrow)
@@ -548,6 +549,7 @@ function createTable (opts) {
   }
 
   if (opts['decoded output']) {
+    // debugger
     var outputDecoded = yo`
     <tr class="${css.tr}">
       <td class="${css.td}" data-shared="key_${opts.hash}"> decoded output </td>

@@ -402,6 +402,7 @@ module.exports = {
 
     // Only decode if there supposed to be fields
     if (fnabi.outputs && fnabi.outputs.length > 0) {
+      // debugger
       try {
         let i
 
@@ -411,20 +412,31 @@ module.exports = {
           outputTypes.push(type.indexOf('tuple') === 0 ? helper.makeFullTypeDefinition(fnabi.outputs[i]) : type)
         }
 
-        if (!response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
+        if (!response || !response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
         // decode data
         const abiCoder = new ethers.utils.AbiCoder()
+        // debugger
         const decodedObj = abiCoder.decode(outputTypes, response)
+        console.dir("---------------")
+        console.dir("---------------")
+        console.dir(decodedObj)
+        console.dir("---------------")
+        console.dir("---------------")
+        // debugger
 
         const json = {}
         for (i = 0; i < outputTypes.length; i++) {
           const name = fnabi.outputs[i].name
           json[i] = outputTypes[i] + ': ' + (name ? name + ' ' + decodedObj[i] : decodedObj[i])
         }
+        console.dir("return json")
+        console.dir(json)
 
         return json
-      } catch (e) {
-        return { error: 'Failed to decode output: ' + e }
+      } catch (error) {
+        console.dir("====> error")
+        console.dir(error)
+        return { error: 'Failed to decode output: ' + error }
       }
     }
     return {}

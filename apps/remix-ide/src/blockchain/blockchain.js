@@ -292,18 +292,54 @@ class Blockchain {
     // return this.getCurrentProvider().callMethod(address, abi, methodName, (returnValue) => {
     const inputs = (params === "" ? [] : params.split(",").map(x => x.trim()))
 
-    let returnValue
+    let returnValue, receipt
     try {
-      returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, inputs)
-      const receipt = await this.getCurrentProvider().getTransaction(returnValue.transactionHash)
+
       // debugger
-      console.dir('triggering transactionExecuted')
-      self.event.trigger('transactionExecuted', [null, receipt.from, receipt.to, receipt.input, tx.useCall, returnValue, timestamp, payLoad, address])
+      if (this.getCurrentProvider().RemixSimulatorProvider) {
+
+        this.getCurrentProvider().RemixSimulatorProvider.events.once("VMTransaction", async (txResult) => {
+          console.dir("====================")
+          console.dir("====================")
+          console.dir(txResult)
+          console.dir("====================")
+          console.dir("====================")
+          // debugger
+          console.dir('triggering transactionExecuted')
+          receipt = await this.getCurrentProvider().getTransaction(txResult.transactionHash)
+          // self.event.trigger('transactionExecuted', [null, receipt.from, receipt.to, receipt.input, tx.useCall, returnValue, timestamp, payLoad, address])
+          self.event.trigger('transactionExecuted', [null, receipt.from, receipt.to, receipt.input, tx.useCall, txResult, timestamp, payLoad, address])
+          // outputCb(returnValue)
+          // debugger
+          // outputCb("0x8")
+          // outputCb(txResult.result)
+          outputCb(txResult.result.execResult.returnValue)
+        })
+
+        console.dir("----> calling sending")
+
+        returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, inputs)
+        // debugger
+        receipt = await this.getCurrentProvider().getTransaction(returnValue.transactionHash)
+        // debugger
+        return
+
+      } else {
+        returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, inputs)
+        receipt = await this.getCurrentProvider().getTransaction(returnValue.transactionHash)
+        // debugger
+        console.dir('triggering transactionExecuted')
+
+        self.event.trigger('transactionExecuted', [null, receipt.from, receipt.to, receipt.input, tx.useCall, returnValue, timestamp, payLoad, address])
+      }
+
+      // debugger
       outputCb(returnValue)
     } catch (err) {
       const txHash = Object.values(JSON.parse("{" + err.message.replace("Transaction has been reverted by the EVM:", '"Transaction has been reverted by the EVM":') + "}"))[0].transactionHash
       const receipt = await this.getCurrentProvider().getTransaction(txHash)
       self.event.trigger('transactionExecuted', [null, receipt.from, receipt.to, receipt.input, tx.useCall, err, timestamp, payLoad, address])
+      // debugger
       outputCb({
         "transactionHash": receipt.hash,
         "transactionIndex": receipt.transactionIndex,
