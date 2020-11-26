@@ -433,15 +433,6 @@ class CompilerContainer {
       this.data.selectedVersion = this.data.defaultVersion
     }
     this._view.versionSelector.innerHTML = ''
-    this.data.allversions.forEach(build => {
-      const option = build.path === this.data.selectedVersion
-        ? yo`<option value="${build.path}" selected>${build.longVersion}</option>`
-        : yo`<option value="${build.path}">${build.longVersion}</option>`
-
-      if (this._shouldBeAdded(option.innerText)) {
-        this._view.versionSelector.appendChild(option)
-      }
-    })
     this._view.versionSelector.removeAttribute('disabled')
     this.queryParams.update({ version: this.data.selectedVersion })
     let url
@@ -462,6 +453,16 @@ class CompilerContainer {
       }
       url = `${urlFromVersion(this.data.selectedVersion)}`
     }
+
+    this.data.allversions.forEach(build => {
+      const option = build.path === this.data.selectedVersion
+        ? yo`<option value="${build.path}" selected>${build.longVersion}</option>`
+        : yo`<option value="${build.path}">${build.longVersion}</option>`
+
+      if (this._shouldBeAdded(option.innerText)) {
+        this._view.versionSelector.appendChild(option)
+      }
+    })
 
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
