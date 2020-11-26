@@ -160,18 +160,29 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const normalize = (path, filesList) => {
+    const folders = []
+    const files = []
     const prefix = path.split('/')[0]
-    const files = Object.keys(filesList).map(key => {
+
+    Object.keys(filesList).forEach(key => {
       const path = prefix + '/' + key
 
-      return {
-        path,
-        name: extractNameFromKey(path),
-        isDirectory: filesList[key].isDirectory
+      if (filesList[key].isDirectory) {
+        folders.push({
+          path,
+          name: extractNameFromKey(path),
+          isDirectory: filesList[key].isDirectory
+        })
+      } else {
+        files.push({
+          path,
+          name: extractNameFromKey(path),
+          isDirectory: filesList[key].isDirectory
+        })
       }
     })
 
-    return files
+    return [...folders, ...files]
   }
 
   const extractNameFromKey = (key) => {
@@ -390,7 +401,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const renderFiles = (file, index) => {
     if (file.isDirectory) {
       return (
-        <TreeViewItem id={`treeViewItem${file.path}`} onClick={() => { resolveDirectory(file.path) }} key={index} label={label(file)}>
+        <TreeViewItem id={`treeViewItem${file.path}`} iconX='px-3 far fa-folder' iconY='px-3 far fa-folder-open' key={index} label={label(file)} onClick={() => { resolveDirectory(file.path) }}>
           {
             file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
               file.child.map((file, index) => {
