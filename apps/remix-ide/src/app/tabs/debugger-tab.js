@@ -68,9 +68,25 @@ class DebuggerTab extends ViewPlugin {
     return this.el
   }
 
+  async discardHighlight () {
+    await this.call('editor', 'discardHighlight')
+  }
+
+  async highlight (lineColumnPos, path) {
+    await this.call('editor', 'highlight', lineColumnPos, path)
+  }
+
+  async getFile (path) {
+    await this.call('fileManager', 'getFile', path)
+  }
+
+  async setFile (path, content) {
+    await this.call('fileManager', 'setFile', path, content)
+  }
+
   renderComponent () {
     ReactDOM.render(
-      <DebuggerUI debuggerModule={this} />
+      <DebuggerUI debuggerAPI={this} />
       , this.el)
   }
 
