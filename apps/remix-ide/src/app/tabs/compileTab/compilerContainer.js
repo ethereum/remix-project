@@ -378,7 +378,7 @@ class CompilerContainer {
         s.options[i].removeAttribute('selected')
       }
     }
-    
+
     this.compileIfAutoCompileOn()
   }
 
