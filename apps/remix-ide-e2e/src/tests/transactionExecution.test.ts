@@ -21,10 +21,11 @@ module.exports = {
         .click('#runTabView .instance div[class^="title"]')
         .click('#runTabView .instance div[class^="title"]')
         .clickFunction('f - transact (not payable)')
-        .testFunction('0x38bb944fa4709ed9e163d6c670259f97284b4defd916d512a2fcc3f35bb53e03',
+        .pause(30000)
+        .testFunction('0x377b7d44c1013bdbdf458b495f3ab687837992d44eff9e69906d2ad0b875c01b',
       {
         status: '0x1 Transaction mined and execution succeed',
-        'transaction hash': '0x38bb944fa4709ed9e163d6c670259f97284b4defd916d512a2fcc3f35bb53e03',
+        'transaction hash': '0x377b7d44c1013bdbdf458b495f3ab687837992d44eff9e69906d2ad0b875c01b',
         'decoded output': { '0': 'uint256: 8' }
       })
         .pause(500)

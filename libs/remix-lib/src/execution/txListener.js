@@ -85,7 +85,7 @@ class TxListener {
           return console.log(error)
         }
 
-        // addExecutionCosts(txResult, tx)
+        addExecutionCosts(txResult, tx)
         tx.transactionCost = txResult.cumulativeGasUsed
         tx.envMode = this.executionContext.getProvider()
         // tx.status = txResult.result.status // 0x0 or 0x1
@@ -282,6 +282,7 @@ class TxListener {
   }
 
   _resolveFunction (contract, tx, isCtor) {
+    // debugger
     if (!contract) {
       console.log('txListener: cannot resolve contract - contract is null')
       return
@@ -300,6 +301,7 @@ class TxListener {
             params: this._decodeInputParams(inputData.substring(8), fnabi)
           }
           if (tx.returnValue) {
+            // debugger
             this._resolvedTransactions[tx.hash].decodedReturnValue = txFormat.decodeResponse(tx.returnValue, fnabi)
           }
           return this._resolvedTransactions[tx.hash]
