@@ -40,6 +40,7 @@ export class RemixdHandle extends WebsocketPlugin {
   deactivate () {
     this.fileSystemExplorer.hide()
     if (super.socket) super.deactivate()
+    this.appManager.ensureDeactivated('git')
     this.locahostProvider.close((error) => {
       if (error) console.log(error)
     })
@@ -52,6 +53,7 @@ export class RemixdHandle extends WebsocketPlugin {
 
   async canceled () {
     this.appManager.ensureDeactivated('remixd')
+    this.appManager.ensureDeactivated('git')
   }
 
   /**
@@ -82,6 +84,7 @@ export class RemixdHandle extends WebsocketPlugin {
           }
         }, 3000)
         this.locahostProvider.init(_ => this.fileSystemExplorer.ensureRoot())
+        this.appManager.ensureActivated('git')
       }
     }
     if (this.locahostProvider.isConnected()) {

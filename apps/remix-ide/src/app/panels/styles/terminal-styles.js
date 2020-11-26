@@ -54,6 +54,9 @@ var css = csjs`
     padding           : 1ch;
     margin-top        : 2ch;
   }
+  .block > pre        {
+    max-height        : 200px;
+  }
   .cli                {
     line-height       : 1.7em;
     font-family       : monospace;

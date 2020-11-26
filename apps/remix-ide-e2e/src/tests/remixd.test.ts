@@ -71,6 +71,11 @@ module.exports = {
     .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
     .clickLaunchIcon('pluginManager')
     .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+  },
+
+  'Run git status': function (browser) {
+    browser.executeScript('git status')
+    .journalLastChildIncludes('On branch master')
     .end()
   },
   tearDown: sauce
