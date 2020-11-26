@@ -233,8 +233,11 @@ class CompilerContainer {
       </select>`
     if (this.compileTabLogic.evmVersion) {
       const s = this._view.evmVersionSelector
+      console.log('s=====>', s)
       let i
       for (i = 0; i < s.options.length; i++) {
+        console.log('options value', s.options[i].value)
+        console.log('this.compileTabLogic.evmVersion', this.compileTabLogic.evmVersion)
         if (s.options[i].value === this.compileTabLogic.evmVersion) {
           break
         }
@@ -244,6 +247,7 @@ class CompilerContainer {
         this.onchangeEvmVersion()
       } else {
         s.selectedIndex = i
+        this.onchangeEvmVersion()
       }
     }
 
@@ -373,6 +377,14 @@ class CompilerContainer {
       v = null
     }
     this.compileTabLogic.setEvmVersion(v)
+    for (let i = 0; i < s.options.length; i++) {
+      if (i === s.selectedIndex) {
+        s.options[s.selectedIndex].setAttribute('selected', 'selected')
+      } else {
+        s.options[i].removeAttribute('selected')
+      }
+    }
+    
     this.compileIfAutoCompileOn()
   }
 
