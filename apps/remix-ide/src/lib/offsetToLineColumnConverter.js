@@ -17,6 +17,16 @@ export class OffsetToLineColumnConverter extends Plugin {
     this.sourceMappingDecoder = new SourceMappingDecoder()
   }
 
+  /**
+   * Convert offset representation with line/column representation.
+   * This is also used to resolve the content:
+   * @arg file is the index of the file in the content sources array and content sources array does have filename as key and not index.
+   * So we use the asts (which references both index and filename) to look up the actual content targeted by the @arg file index.
+   * @param {{start, length}} rawLocation - offset location
+   * @param {number} file - The index where to find the source in the sources parameters
+   * @param {Object.<string, {content}>} sources - Map of content sources
+   * @param {Object.<string, {ast, id}>} asts - Map of content sources
+   */
   offsetToLineColumn (rawLocation, file, sources, asts) {
     if (!this.lineBreakPositionsByContent[file]) {
       const sourcesArray = Object.keys(sources)
@@ -36,15 +46,27 @@ export class OffsetToLineColumnConverter extends Plugin {
     return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
   }
 
+  /**
+   * Convert offset representation with line/column representation.
+   * @param {{start, length}} rawLocation - offset location
+   * @param {number} file - The index where to find the source in the sources parameters
+   * @param {string} content - source
+   */
   offsetToLineColumnWithContent (rawLocation, file, content) {
     this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(content)
     return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
   }
 
+  /**
+   * Clear the cache
+   */
   clear () {
     this.lineBreakPositionsByContent = {}
   }
 
+  /**
+   * called by plugin API
+   */
   activate () {
     this.on('solidity', 'compilationFinished', () => {
       this.clear()
