@@ -21,7 +21,7 @@ module.exports = {
   'Should load using URL compiler params': function (browser: NightwatchBrowser) {
     browser
     .assert.containsText('#versionSelector option[selected="selected"]', '0.7.4+commit.3f05b770')
-    // .assert.containsText('#evmVersionSelector option[selected="selected"]', 'istanbul')
+    .assert.containsText('#evmVersionSelector option[selected="selected"]', 'istanbul')
     .verify.elementPresent('[id="optimize"]:checked')
   },
 
@@ -34,8 +34,8 @@ module.exports = {
     .pause(5000)
     .assert.containsText('#versionSelector option[selected="selected"]', 'custom')
     // default values
-    .verify.elementPresent('[id="optimize"]:checked')
-    // .assert.containsText('#evmVersionSelector option[selected="selected"]', 'compiler default')
+    // .verify.elementPresent('[id="optimize"]:checked')
+    .assert.containsText('#evmVersionSelector option[selected="selected"]', 'default')
 
   },
 

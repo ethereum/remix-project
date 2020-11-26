@@ -222,7 +222,7 @@ class CompilerContainer {
 
     this._view.evmVersionSelector = yo`
       <select onchange="${this.onchangeEvmVersion.bind(this)}" class="custom-select" id="evmVersionSelector">
-        <option value="default">compiler default</option>
+        <option value="default" selected="selected">compiler default</option>
         <option>istanbul</option>
         <option>petersburg</option>
         <option>constantinople</option>
@@ -233,11 +233,8 @@ class CompilerContainer {
       </select>`
     if (this.compileTabLogic.evmVersion) {
       const s = this._view.evmVersionSelector
-      console.log('s=====>', s)
       let i
       for (i = 0; i < s.options.length; i++) {
-        console.log('options value', s.options[i].value)
-        console.log('this.compileTabLogic.evmVersion', this.compileTabLogic.evmVersion)
         if (s.options[i].value === this.compileTabLogic.evmVersion) {
           break
         }
