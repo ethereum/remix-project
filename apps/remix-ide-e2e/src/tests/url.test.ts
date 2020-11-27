@@ -37,7 +37,7 @@ module.exports = {
     .verify.elementPresent('#optimize')
     .assert.elementNotPresent('#optimize:checked')
     .assert.containsText('#evmVersionSelector option[selected="selected"]', 'default')
-
+    .end()
   },
 
   tearDown: sauce
