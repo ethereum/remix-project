@@ -6,3 +6,10 @@ export interface FileExplorerProps {
     menuItems?: string[],
     plugin: any
 }
+
+export interface File {
+    path: string,
+    name: string,
+    isDirectory: boolean,
+    child?: File[]
+}
