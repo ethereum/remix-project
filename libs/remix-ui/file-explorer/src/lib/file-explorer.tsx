@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
+import Draggable from 'react-draggable' // eslint-disable-line
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import { FileExplorerProps } from './types'
 
@@ -75,7 +76,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const [state, setState] = useState({
-    focusElement: null,
+    focusElement: [],
     focusPath: null,
     menuItems: [
       {
@@ -106,41 +107,42 @@ export const FileExplorer = (props: FileExplorerProps) => {
       publishToGist,
       createNewFile
     },
-    fileManager: null
+    fileManager: null,
+    ctrlKey: false
   })
 
   useEffect(() => {
-    const fileManager = registry.get('filemanager').api
+    (async () => {
+      const fileManager = registry.get('filemanager').api
+      const files = await resolveDirectory(name)
 
-    setState(prevState => {
-      return { ...prevState, fileManager }
-    })
-    resolveDirectory(name)
+      setState(prevState => {
+        return { ...prevState, fileManager, files }
+      })
+    })()
   }, [])
 
-  const resolveDirectory = (folderPath) => {
-    const folderIndex = state.files.findIndex(({ path }) => path === folderPath)
+  const resolveDirectory = async (folderPath): Promise<{ path: string, name: string, isDirectory: boolean }[]> => {
+    return new Promise((resolve) => {
+      const folderIndex = state.files.findIndex(({ path }) => path === folderPath)
 
-    if (folderIndex === -1) {
-      files.resolveDirectory(folderPath, (error, fileTree) => {
-        if (error) console.error(error)
-        const files = normalize(folderPath, fileTree)
+      if (folderIndex === -1) {
+        files.resolveDirectory(folderPath, (error, fileTree) => {
+          if (error) console.error(error)
+          const files = normalize(folderPath, fileTree)
 
-        setState(prevState => {
-          return { ...prevState, files }
+          resolve(files)
         })
-      })
-    } else {
-      files.resolveDirectory(folderPath, (error, fileTree) => {
-        if (error) console.error(error)
-        const files = state.files
+      } else {
+        files.resolveDirectory(folderPath, (error, fileTree) => {
+          if (error) console.error(error)
+          const files = state.files
 
-        files[folderIndex].child = normalize(folderPath, fileTree)
-        setState(prevState => {
-          return { ...prevState, files }
+          files[folderIndex].child = normalize(folderPath, fileTree)
+          resolve(files)
         })
-      })
-    }
+      }
+    })
   }
 
   const label = (data) => {
@@ -159,7 +161,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     )
   }
 
-  const normalize = (path, filesList) => {
+  const normalize = (path, filesList): { path: string, name: string, isDirectory: boolean }[] => {
     const folders = []
     const files = []
     const prefix = path.split('/')[0]
@@ -352,6 +354,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
   // }
   // }
 
+  const handleClickFile = async (event, path) => {
+    event.stopPropagation()
+    await state.fileManager.open(path)
+    setState(prevState => {
+      return { ...prevState, focusElement: [path] }
+    })
+  }
+
+  const handleClickFolder = async (path) => {
+    console.log('path: ', path)
+    const files = await resolveDirectory(path)
+
+    setState(prevState => {
+      return { ...prevState, focusElement: [path], files }
+    })
+  }
+
   const renderMenuItems = () => {
     let items
     if (state.menuItems) {
@@ -401,7 +420,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const renderFiles = (file, index) => {
     if (file.isDirectory) {
       return (
-        <TreeViewItem id={`treeViewItem${file.path}`} iconX='pr-3 far fa-folder' iconY='pr-3 far fa-folder-open' key={index} label={label(file)} onClick={() => { resolveDirectory(file.path) }}>
+        // <Draggable key={index} axis="y" bounds="parent">
+        <TreeViewItem
+          id={`treeViewItem${file.path}`}
+          iconX='pr-3 far fa-folder'
+          iconY='pr-3 far fa-folder-open'
+          key={`${file.path + index}`}
+          label={label(file)}
+          onClick={(e) => { e.stopPropagation(); handleClickFolder(file.path) }}
+          labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
+        >
           {
             file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
               file.child.map((file, index) => {
@@ -411,31 +439,56 @@ export const FileExplorer = (props: FileExplorerProps) => {
             </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
           }
         </TreeViewItem>
+        // </Draggable>
       )
     } else {
       return (
+        // <Draggable key={index} axis="y" bounds="parent">
         <TreeViewItem
-          id={`treeView${file.path}`}
+          id={`treeViewItem${file.path}`}
           key={index}
           label={label(file)}
-          onClick={() => { state.fileManager.open(file.path) }}
+          onClick={(event) => {
+            handleClickFile(event, file.path)
+          }}
           icon='fa fa-file'
+          labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
         />
+        // </Draggable>
       )
     }
   }
 
   return (
-    <div>
+    <div tabIndex={-1}
+      onKeyDown={(e) => {
+        if (e.ctrlKey) {
+          console.log('TRUE')
+          setState(prevState => {
+            return { ...prevState, ctrlKey: true }
+          })
+        }
+      }}
+      onKeyUp={() => {
+        console.log('FALSE')
+        setState(prevState => {
+          return { ...prevState, ctrlKey: false }
+        })
+      }}
+    >
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem" label={renderMenuItems()} expand={true}>
-          <TreeView id='treeViewMenu'>
-            {
-              state.files.map((file, index) => {
-                return renderFiles(file, index)
-              })
-            }
-          </TreeView>
+          {/* <Draggable onStart={() => false}> */}
+          <div>
+            <TreeView id='treeViewMenu'>
+              {
+                state.files.map((file, index) => {
+                  return renderFiles(file, index)
+                })
+              }
+            </TreeView>
+          </div>
+          {/* </Draggable> */}
         </TreeViewItem>
       </TreeView>
     </div>
