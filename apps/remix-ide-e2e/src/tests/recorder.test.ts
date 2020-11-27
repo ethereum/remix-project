@@ -56,10 +56,11 @@ module.exports = {
           browser.assert.equal(JSON.stringify(parsed.transactions[1].record.name), JSON.stringify(scenario.transactions[1].record.name))
           browser.assert.equal(JSON.stringify(parsed.transactions[1].record.type), JSON.stringify(scenario.transactions[1].record.type))
           browser.assert.equal(JSON.stringify(parsed.transactions[1].record.from), JSON.stringify(scenario.transactions[1].record.from))
-        })        
+        })
+        .end()
   },
 
-  'Record more than one contract': function (browser: NightwatchBrowser) {
+  'Record more than one contract': '' + function (browser: NightwatchBrowser) {
     // deploy 2 contracts (2 different ABIs), save the record, reexecute and test one of the function.
     let addressRef
     browser
