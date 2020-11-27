@@ -39,6 +39,8 @@ module.exports = {
     .verify.elementPresent('#optimize')
     .assert.elementNotPresent('#optimize:checked')
     .verify.elementPresent('#runs:disabled')
+    .click('[for="optimize"')
+    .verify.attributeEquals('#runs', 'value', '200')
     .end()
   },
 
