@@ -203,6 +203,7 @@ class CompilerContainer {
       onchange=${() => this.onchangeRuns()}
     >`
     if (this.compileTabLogic.optimize) {
+      this._view.runs.removeAttribute('disabled')
       this._view.runs.value = this.compileTabLogic.runs
     } else {
       this._view.runs.setAttribute('disabled', '')
