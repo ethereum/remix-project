@@ -1,5 +1,6 @@
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
+import { basicProject } from '../../projectTemplates/basicProject'
 
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
@@ -281,6 +282,29 @@ export class LandingPage extends ViewPlugin {
       this.verticalIcons.select('pluginManager')
     }
 
+    const createNewBasicProject = () => {
+      modalDialogCustom.confirm(
+        'Create a new project', 
+        'This will remove all the existing file from the browser local storage. Are you sure to continue?',
+        async () => {
+          const fileManager = globalRegistry.get('filemanager').api
+          await fileManager.remove('browser')
+          for  (const file in basicProject) {
+            await fileManager.writeFile(file, basicProject[file])          
+          }          
+        })
+    }
+
+    const createEmptyProject = () => {
+      modalDialogCustom.confirm(
+        'Create a new project', 
+        'This will remove all the existing file from the browser local storage. Are you sure to continue?',
+        async () => {
+          const fileManager = globalRegistry.get('filemanager').api
+          await fileManager.remove('browser')                 
+        })
+    }
+
     const createNewFile = () => {
       const fileExplorer = globalRegistry.get('fileexplorer/browser').api
       fileExplorer.createNewFile()
@@ -369,6 +393,14 @@ export class LandingPage extends ViewPlugin {
                   <div class="d-flex">
                     <div class="file">
                       <h4>File</h4>
+                      <p class="mb-1">
+                        <i class="mr-1 far fa-file"></i>
+                        <span class="ml-1 mb-1 ${css.text}" onclick=${() => createNewBasicProject()}>Start with a new basic project</span>
+                      </p>
+                      <p class="mb-1">
+                        <i class="mr-1 far fa-file"></i>
+                        <span class="ml-1 mb-1 ${css.text}" onclick=${() => createEmptyProject()}>Start with a new empty project</span>
+                      </p>
                       <p class="mb-1">
                         <i class="mr-1 far fa-file"></i>
                         <span class="ml-1 mb-1 ${css.text}" onclick=${() => createNewFile()}>New File</span>
