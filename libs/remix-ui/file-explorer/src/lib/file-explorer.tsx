@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef } from 'react' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import Draggable from 'react-draggable' // eslint-disable-line
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
@@ -75,6 +75,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     // }, null, true)
   }
 
+  const containerRef = useRef(null)
   const [state, setState] = useState({
     focusElement: [],
     focusPath: null,
@@ -122,7 +123,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })()
   }, [])
 
-  const resolveDirectory = async (folderPath, dir: File[]): File[] => {
+  const resolveDirectory = async (folderPath, dir: File[]): Promise<File[]> => {
     dir = await Promise.all(dir.map(async (file) => {
       if (file.path === folderPath) {
         file.child = await fetchDirectoryContent(folderPath)
@@ -363,6 +364,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     setState(prevState => {
       return { ...prevState, focusElement: [path] }
     })
+    containerRef.current.focus()
   }
 
   const handleClickFolder = async (path) => {
@@ -466,7 +468,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   return (
-    <div tabIndex={-1}
+    <div
+      ref={containerRef}
+      tabIndex={-1}
       onKeyDown={(e) => {
         if (e.ctrlKey) {
           console.log('TRUE')
