@@ -11,7 +11,7 @@ npm run serve &
 
 sleep 5
 
-npx nx build remix-ide-e2e
+npm run build:e2e
 npm run nightwatch_local_runAndDeploy || TEST_EXITCODE=1
 
 echo "$TEST_EXITCODE"
