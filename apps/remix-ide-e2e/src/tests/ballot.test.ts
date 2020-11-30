@@ -32,8 +32,10 @@ module.exports = {
     .pause(15000)
     .testFunction('0x3aab7292cc494979c2e6f34f5d15fe94273251b84348348fe9556c89e5d181f4',
       {
-        status: 'true Transaction mined and execution succeed',
-        'transaction hash': '0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
+        // status: 'true Transaction mined and execution succeed',
+        // status: '0x1 Transaction mined and execution succeed',
+        status: 'Status not available at the moment',
+        'transaction hash': '0x3aab7292cc494979c2e6f34f5d15fe94273251b84348348fe9556c89e5d181f4',
         'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
       })
   },
