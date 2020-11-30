@@ -1,6 +1,6 @@
 'use strict'
-const async = require('async')
-const ethers = require('ethers')
+import async from 'async'
+import { ethers } from 'ethers'
 const ethJSUtil = require('ethereumjs-util')
 const EventManager = require('../eventManager')
 const codeUtil = require('../util')
@@ -27,6 +27,17 @@ function addExecutionCosts(txResult, tx) {
   *
   */
 class TxListener {
+
+  event
+  executionContext
+  _resolvedTransactions
+  _api
+  _resolvedContracts
+  _isListening: boolean
+  _listenOnNetwork:boolean
+  _loopId
+  blocks
+  lastBlock
 
   constructor (opt, executionContext) {
     this.event = new EventManager()
