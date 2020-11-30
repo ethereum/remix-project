@@ -105,47 +105,57 @@ const mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69a
 /*
   trigger contextChanged, web3EndpointChanged
 */
-function ExecutionContext () {
-  this.event = new EventManager()
+export class ExecutionContext {
+  event
+  logsManager
+  blockGasLimitDefault
+  blockGasLimit
+  customNetWorks
+  blocks
+  latestBlockNumber
+  txs
+  executionContext
+  listenOnLastBlockId
 
-  this.logsManager = new LogsManager()
+  constructor() {
+    this.event = new EventManager()
+    this.logsManager = new LogsManager()
+    this.executionContext = null
+    this.blockGasLimitDefault = 4300000
+    this.blockGasLimit = this.blockGasLimitDefault
+    this.customNetWorks = {}
+    this.blocks = {}
+    this.latestBlockNumber = 0
+    this.txs = {}
+  }
 
-  let executionContext = null
-
-  this.blockGasLimitDefault = 4300000
-  this.blockGasLimit = this.blockGasLimitDefault
-  this.customNetWorks = {}
-  this.blocks = {}
-  this.latestBlockNumber = 0
-  this.txs = {}
-
-  this.init = function (config) {
+  init (config) {
     if (config.get('settings/always-use-vm')) {
-      executionContext = 'vm'
+      this.executionContext = 'vm'
     } else {
-      executionContext = injectedProvider ? 'injected' : 'vm'
-      if (executionContext === 'injected') this.askPermission()
+      this.executionContext = injectedProvider ? 'injected' : 'vm'
+      if (this.executionContext === 'injected') this.askPermission()
     }
   }
 
-  this.askPermission = function () {
+  askPermission () {
     // metamask
     if (ethereum && typeof ethereum.enable === 'function') ethereum.enable()
   }
 
-  this.getProvider = function () {
-    return executionContext
+  getProvider () {
+    return this.executionContext
   }
 
-  this.isVM = function () {
-    return executionContext === 'vm'
+  isVM () {
+    return this.executionContext === 'vm'
   }
 
-  this.web3 = function () {
+  web3 () {
     return this.isVM() ? vms[currentFork].web3vm : web3
   }
 
-  this.detectNetwork = function (callback) {
+  detectNetwork = function (callback) {
     if (this.isVM()) {
       callback(null, { id: '-', name: 'VM' })
     } else {
@@ -174,44 +184,44 @@ function ExecutionContext () {
     }
   }
 
-  this.removeProvider = (name) => {
+  removeProvider (name) {
     if (name && this.customNetWorks[name]) {
-      if (executionContext === name) this.setContext('vm', null)
+      if (this.executionContext === name) this.setContext('vm', null, null, null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
   }
 
-  this.addProvider = (network) => {
+  addProvider (network) {
     if (network && network.name && !this.customNetWorks[network.name]) {
       this.customNetWorks[network.name] = network
       this.event.trigger('addProvider', [network])
     }
   }
 
-  this.internalWeb3 = () => {
+  internalWeb3 () {
     return web3
   }
 
-  this.blankWeb3 = () => {
+  blankWeb3 () {
     return blankWeb3
   }
 
-  this.vm = () => {
+  vm () {
     return vms[currentFork].vm
   }
 
-  this.setContext = (context, endPointUrl, confirmCb, infoCb) => {
-    executionContext = context
-    this.executionContextChange(context, endPointUrl, confirmCb, infoCb)
+  setContext (context, endPointUrl, confirmCb, infoCb) {
+    this.executionContext = context
+    this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
   }
 
-  this.executionContextChange = (context, endPointUrl, confirmCb, infoCb, cb) => {
+  executionContextChange (context, endPointUrl, confirmCb, infoCb, cb) {
     if (!cb) cb = () => {}
     if (!confirmCb) confirmCb = () => {}
     if (!infoCb) infoCb = () => {}
     if (context === 'vm') {
-      executionContext = context
+      this.executionContext = context
       vms[currentFork].stateManager.revert(() => {
         vms[currentFork].stateManager.checkpoint(() => {})
       })
@@ -225,7 +235,7 @@ function ExecutionContext () {
         return cb()
       } else {
         this.askPermission()
-        executionContext = context
+        this.executionContext = context
         web3.setProvider(injectedProvider)
         this._updateBlockGasLimit()
         this.event.trigger('contextChanged', ['injected'])
@@ -246,16 +256,16 @@ function ExecutionContext () {
     }
   }
 
-  this.currentblockGasLimit = () => {
+  currentblockGasLimit () {
     return this.blockGasLimit
   }
 
-  this.stopListenOnLastBlock = () => {
+  stopListenOnLastBlock () {
     if (this.listenOnLastBlockId) clearInterval(this.listenOnLastBlockId)
     this.listenOnLastBlockId = null
   }
 
-  this._updateBlockGasLimit = () => {
+  _updateBlockGasLimit () {
     if (this.getProvider() !== 'vm') {
       web3.eth.getBlock('latest', (err, block) => {
         if (!err) {
@@ -268,26 +278,26 @@ function ExecutionContext () {
     }
   }
 
-  this.listenOnLastBlock = () => {
+  listenOnLastBlock () {
     this.listenOnLastBlockId = setInterval(() => {
       this._updateBlockGasLimit()
     }, 15000)
   }
 
   // TODO: remove this when this function is moved
-  const self = this
+  // const self = this
 
-  this.setProviderFromEndpoint = (endpoint, context, cb) => {
+  setProviderFromEndpoint (endpoint, context, cb) {
     const oldProvider = web3.currentProvider
 
     web3.setProvider(endpoint)
 
     web3.eth.net.isListening((err, isConnected) => {
       if (!err && isConnected) {
-        executionContext = context
-        self._updateBlockGasLimit()
-        self.event.trigger('contextChanged', [context])
-        self.event.trigger('web3EndpointChanged')
+        this.executionContext = context
+        this._updateBlockGasLimit()
+        this.event.trigger('contextChanged', [context])
+        this.event.trigger('web3EndpointChanged')
         cb()
       } else {
         web3.setProvider(oldProvider)
@@ -296,13 +306,13 @@ function ExecutionContext () {
     })
   }
 
-  this.txDetailsLink = (network, hash) => {
+  txDetailsLink (network, hash) {
     if (transactionDetailsLinks[network]) {
       return transactionDetailsLinks[network] + hash
     }
   }
 
-  this.addBlock = (block) => {
+  addBlock (block) {
     let blockNumber = '0x' + block.header.number.toString('hex')
     if (blockNumber === '0x') {
       blockNumber = '0x0'
@@ -316,7 +326,7 @@ function ExecutionContext () {
     this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
-  this.trackTx = (tx, block) => {
+  trackTx (tx, block) {
     this.txs[tx] = block
   }
 }
@@ -328,5 +338,3 @@ const transactionDetailsLinks = {
   'Kovan': 'https://kovan.etherscan.io/tx/',
   'Goerli': 'https://goerli.etherscan.io/tx/'
 }
-
-module.exports = ExecutionContext

@@ -6,9 +6,9 @@ const txHelper = require('./txHelper')
   * Register to txListener and extract events
   *
   */
-class EventsDecoder {
+export class EventsDecoder {
   resolveReceipt
-  
+
   constructor ({resolveReceipt}) {
     this.resolveReceipt = resolveReceipt
   }
@@ -109,5 +109,3 @@ class EventsDecoder {
     cb(null, { decoded: events, raw: logs })
   }
 }
-
-module.exports = EventsDecoder
