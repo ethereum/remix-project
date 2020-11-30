@@ -1,5 +1,5 @@
 'use strict'
-const ethers = require('ethers')
+import { ethers } from 'ethers'
 
 module.exports = {
   /**

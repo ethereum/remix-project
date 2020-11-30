@@ -1,12 +1,22 @@
 'use strict'
 const EthJSTX = require('ethereumjs-tx').Transaction
 const EthJSBlock = require('ethereumjs-block')
-const ethJSUtil = require('ethereumjs-util')
-const BN = ethJSUtil.BN
+import { BN } from 'ethereumjs-util'
 const defaultExecutionContext = require('./execution-context')
 const EventManager = require('../eventManager')
 
 class TxRunner {
+
+  event
+  executionContext
+  _api
+  blockNumber
+  runAsync
+  pendingTxs
+  vmaccounts
+  queusTxs
+  blocks
+
   constructor (vmaccounts, api, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
@@ -63,7 +73,7 @@ class TxRunner {
           resolve({
             result,
             tx,
-            transactionHash: result ? result.transactionHash : null
+            transactionHash: result ? result['transactionHash'] : null
           })
         })
       }
@@ -167,7 +177,7 @@ class TxRunner {
     const tx = { from: from, to: to, data: data, value: value }
 
     if (useCall) {
-      tx.gas = gasLimit
+      tx['gas'] = gasLimit
       return this.executionContext.web3().eth.call(tx, function (error, result) {
         callback(error, {
           result: result,
@@ -182,7 +192,7 @@ class TxRunner {
       }
       gasEstimationForceSend(err, () => {
         // callback is called whenever no error
-        tx.gas = !gasEstimation ? gasLimit : gasEstimation
+        tx['gas'] = !gasEstimation ? gasLimit : gasEstimation
 
         if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
           return this._executeTx(tx, null, this._api, promptCb, callback)
@@ -194,7 +204,7 @@ class TxRunner {
             return
           }
 
-          confirmCb(network, tx, tx.gas, (gasPrice) => {
+          confirmCb(network, tx, tx['gas'], (gasPrice) => {
             return this._executeTx(tx, gasPrice, this._api, promptCb, callback)
           }, (error) => {
             callback(error)
@@ -248,7 +258,7 @@ async function tryTillTxAvailable (txhash, executionContext) {
 
 async function pause () { return new Promise((resolve, reject) => { setTimeout(resolve, 500) }) }
 
-function run(self, tx, stamp, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+function run(self, tx, stamp, confirmationCb, gasEstimationForceSend = null, promptCb = null, callback = null) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
     return self.queusTxs.push({ tx, stamp, callback })
   }

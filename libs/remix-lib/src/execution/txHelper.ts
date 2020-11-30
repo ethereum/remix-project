@@ -1,5 +1,5 @@
 'use strict'
-const ethers = require('ethers')
+import { ethers } from 'ethers'
 
 module.exports = {
   makeFullTypeDefinition: function (typeDef) {
@@ -76,7 +76,7 @@ module.exports = {
       if (abi[i].type === 'constructor') {
         funABI.inputs = abi[i].inputs || []
         funABI.payable = abi[i].payable
-        funABI.stateMutability = abi[i].stateMutability
+        funABI['stateMutability'] = abi[i].stateMutability
         break
       }
     }

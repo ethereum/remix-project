@@ -1,5 +1,5 @@
 'use strict'
-const ethutil = require('ethereumjs-util')
+import { BN, bufferToHex, keccak, setLengthLeft } from 'ethereumjs-util'
 
 /*
  contains misc util: @TODO should be splitted
@@ -48,10 +48,10 @@ module.exports = {
     const ret = []
     for (let k in bnList) {
       const v = bnList[k]
-      if (ethutil.BN.isBN(v)) {
+      if (BN.isBN(v)) {
         ret.push('0x' + v.toString('hex', 64))
       } else {
-        ret.push('0x' + (new ethutil.BN(v)).toString('hex', 64)) // TEMP FIX TO REMOVE ONCE https://github.com/ethereumjs/ethereumjs-vm/pull/293 is released
+        ret.push('0x' + (new BN(v)).toString('hex', 64)) // TEMP FIX TO REMOVE ONCE https://github.com/ethereumjs/ethereumjs-vm/pull/293 is released
       }
     }
     return ret
@@ -161,9 +161,9 @@ module.exports = {
     if (typeof value === 'string' && value.indexOf('0x') !== 0) {
       value = '0x' + value
     }
-    let ret = ethutil.bufferToHex(ethutil.setLengthLeft(value, 32))
-    ret = ethutil.keccak(ret)
-    return ethutil.bufferToHex(ret)
+    let ret: any = bufferToHex(setLengthLeft(value, 32))
+    ret = keccak(ret)
+    return bufferToHex(ret)
   },
 
   /**
