@@ -8,7 +8,10 @@
       "rootDir": "./",
       "types": ["node"]
     },
-    "exclude": ["**/*.spec.js"],
+    "exclude": [
+      "**/*.spec.js",
+      "test/"
+    ],
     "include": [
       "src/**/*.js",
       "./index.js"
