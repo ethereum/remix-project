@@ -240,53 +240,43 @@ export class LandingPage extends ViewPlugin {
       })
     }
 
-    const startSolidity = () => {
-      this.appManager.ensureActivated('solidity')
-      this.appManager.ensureActivated('udapp')
-      this.appManager.ensureActivated('solidityStaticAnalysis')
-      this.appManager.ensureActivated('solidityUnitTesting')
+
+    const startSolidity = async () => {
+      await this.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
       this.verticalIcons.select('solidity')
     }
+    const startPipeline = () => {
+      this.appManager.activatePlugin(['solidity', 'pipeline', 'udapp'])
+    }
+    const startDebugger = async () => {
+      await this.appManager.activatePlugin('debugger')
+      this.verticalIcons.select('debugger')
+    }
+    const startMythX = async () => {
+      await this.appManager.activatePlugin(['solidity', 'mythx'])
+      this.verticalIcons.select('mythx')
+    }
+    const startSourceVerify = async () => {
+      await this.appManager.activatePlugin(['solidity', 'source-verification'])
+      this.verticalIcons.select('source-verification')
+    }
+    const startPluginManager = async () => {
+      await this.appManager.activatePlugin('pluginManager')
+      this.verticalIcons.select('pluginManager')
+    }
     /*
-    const startWorkshop = () => {
-      this.appManager.ensureActivated('box')
-      this.appManager.ensureActivated('solidity')
-      this.appManager.ensureActivated('solidityUnitTesting')
-      this.appManager.ensureActivated('workshops')
+    const startWorkshop = async () => {
+      await this.appManager.activatePlugin(['box', 'solidity', 'solidityUnitTesting', 'workshops'])
       this.verticalIcons.select('workshops')
     }
     */
-
-    const startPipeline = () => {
-      this.appManager.ensureActivated('solidity')
-      this.appManager.ensureActivated('pipeline')
-      this.appManager.ensureActivated('udapp')
-    }
-    const startDebugger = () => {
-      this.appManager.ensureActivated('debugger')
-      this.verticalIcons.select('debugger')
-    }
-    const startMythX = () => {
-      this.appManager.ensureActivated('solidity')
-      this.appManager.ensureActivated('mythx')
-      this.verticalIcons.select('mythx')
-    }
-    const startSourceVerify = () => {
-      this.appManager.ensureActivated('solidity')
-      this.appManager.ensureActivated('source-verification')
-      this.verticalIcons.select('source-verification')
-    }
-    const startPluginManager = () => {
-      this.appManager.ensureActivated('pluginManager')
-      this.verticalIcons.select('pluginManager')
-    }
 
     const createNewFile = () => {
       const fileExplorer = globalRegistry.get('fileexplorer/browser').api
       fileExplorer.createNewFile()
     }
     const connectToLocalhost = () => {
-      this.appManager.ensureActivated('remixd')
+      this.appManager.activatePlugin('remixd')
     }
     const importFromGist = () => {
       this.gistHandler.loadFromGist({ gist: '' }, globalRegistry.get('filemanager').api)
