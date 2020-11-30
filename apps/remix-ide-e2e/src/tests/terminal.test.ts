@@ -91,6 +91,7 @@ module.exports = {
     .executeScript(`remix.execute('browser/resolveExternalUrlAndSave.js')`)
     .pause(6000)
     .journalLastChildIncludes('Implementation of the {IERC20} interface.')
+    .openFile('browser/github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol')
   },
 
   'Call Remix File Resolver (internal URL) from a script': function (browser: NightwatchBrowser) {
@@ -101,7 +102,19 @@ module.exports = {
     .pause(1000)
     .executeScript(`remix.execute('browser/resolveUrl.js')`)
     .pause(6000)
-    .journalLastChildIncludes('contract Ballot {')
+    .journalLastChildIncludes('contract Ballot {')    
+  },
+
+  'Call Remix File Resolver (internal URL) from a script and specify a path': function (browser: NightwatchBrowser) {
+    browser
+    .click('*[data-id="terminalClearConsole"]') // clear the terminal
+    .addFile('resolveExternalUrlAndSaveToaPath.js', { content: resolveExternalUrlAndSaveToaPath })
+    .openFile('browser/resolveExternalUrlAndSaveToaPath.js')
+    .pause(1000)
+    .executeScript(`remix.execute('browser/resolveExternalUrlAndSaveToaPath.js')`)
+    .pause(6000)
+    .journalLastChildIncludes('abstract contract ERC20Burnable')   
+    .openFile('browser/github/newFile.sol')
     .end()
   },
 
@@ -151,6 +164,17 @@ const resolveExternalUrlAndSave = `
   try {
       console.log('start')
       console.log(await remix.call('contentImport', 'resolveAndSave', 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol'))
+  } catch (e) {
+      console.log(e.message)
+  }
+})()  
+`
+
+const resolveExternalUrlAndSaveToaPath = `
+(async () => {
+  try {
+      console.log('start')
+      console.log(await remix.call('contentImport', 'resolveAndSave', 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20Burnable.sol', 'github/newFile.sol'))
   } catch (e) {
       console.log(e.message)
   }
