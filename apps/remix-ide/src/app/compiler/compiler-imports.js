@@ -182,7 +182,7 @@ module.exports = class CompilerImports extends Plugin {
       })
   }
 
-  importExternal (url, cb) {
+  importExternal (url, targetPath, cb) {
     this.import(url,
       // TODO: move to an event that is generated, the UI shouldn't be here
       (loadingMsg) => { addTooltip(loadingMsg) },
@@ -190,7 +190,8 @@ module.exports = class CompilerImports extends Plugin {
         if (error) return cb(error)
         if (this.fileManager) {
           const browser = this.fileManager.fileProviderOf('browser/')
-          if (browser) browser.addExternal(type + '/' + cleanUrl, content, url)
+          const path = targetPath || type + '/' + cleanUrl
+          if (browser) browser.addExternal(path, content, url)
         }
         cb(null, content)
       })
@@ -202,15 +203,16 @@ module.exports = class CompilerImports extends Plugin {
     * then check if the @arg url is located in the localhost, in the node_modules or installed_contracts folder
     * then check if the @arg url match any external url
     *
-    * @param {String} url  - URL of the content. can be basically anything like file located in the browser explorer, in the localhost explorer, raw HTTP, github address etc...
+    * @param {String} url - URL of the content. can be basically anything like file located in the browser explorer, in the localhost explorer, raw HTTP, github address etc...
+    * @param {String} targetPath - (optional) internal path where the content should be saved to
     * @returns {Promise} - string content
     */
-  resolveAndSave (url) {
+  resolveAndSave (url, targetPath) {
     return new Promise((resolve, reject) => {
       if (url.indexOf('remix_tests.sol') !== -1) resolve(remixTests.assertLibCode)
       if (!this.fileManager) {
         // fallback to just resolving the file, it won't be saved in file manager
-        return this.importExternal(url, (error, content) => {
+        return this.importExternal(url, targetPath, (error, content) => {
           if (error) return reject(error)
           resolve(content)
         })
@@ -249,7 +251,7 @@ module.exports = class CompilerImports extends Plugin {
               (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2]).then((result) => cb(null, result)).catch((error) => cb(error.message)) } }],
             (error, result) => {
               if (error) {
-                return this.importExternal(url, (error, content) => {
+                return this.importExternal(url, targetPath, (error, content) => {
                   if (error) return reject(error)
                   resolve(content)
                 })
@@ -258,7 +260,7 @@ module.exports = class CompilerImports extends Plugin {
             })
           } else {
             // try to resolve external content
-            this.importExternal(url, (error, content) => {
+            this.importExternal(url, targetPath, (error, content) => {
               if (error) return reject(error)
               resolve(content)
             })
