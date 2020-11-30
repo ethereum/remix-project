@@ -429,8 +429,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }).catch(console.error)
   } else {
     // activate solidity plugin
-    appManager.ensureActivated('solidity')
-    appManager.ensureActivated('udapp')
+    appManager.activatePlugin(['solidity', 'udapp'])
   }
 
   // Load and start the service who manager layout and frame
