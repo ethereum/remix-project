@@ -368,11 +368,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleClickFolder = async (path) => {
-    const files = await resolveDirectory(path, state.files)
+    if (state.ctrlKey) {
+      if (state.focusElement.findIndex(item => item === path) !== -1) {
+        setState(prevState => {
+          return { ...prevState, focusElement: [...prevState.focusElement.filter(item => item !== path)] }
+        })
+      } else {
+        setState(prevState => {
+          return { ...prevState, focusElement: [...prevState.focusElement, path] }
+        })
+      }
+    } else {
+      const files = await resolveDirectory(path, state.files)
 
-    setState(prevState => {
-      return { ...prevState, focusElement: [path], files }
-    })
+      setState(prevState => {
+        return { ...prevState, focusElement: [path], files }
+      })
+    }
   }
 
   const renderMenuItems = () => {
@@ -436,6 +448,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               handleClickFolder(file.path)
             }}
             labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
+            controlBehaviour={ state.ctrlKey }
           >
             {
               file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
@@ -472,7 +485,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       ref={containerRef}
       tabIndex={-1}
       onKeyDown={(e) => {
-        if (e.ctrlKey) {
+        if (e.shiftKey) {
           console.log('TRUE')
           setState(prevState => {
             return { ...prevState, ctrlKey: true }

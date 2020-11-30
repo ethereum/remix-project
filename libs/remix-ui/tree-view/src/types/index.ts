@@ -13,5 +13,6 @@ export interface TreeViewItemProps {
     iconX?: string,
     iconY?: string,
     icon?: string,
-    labelClass?: string
+    labelClass?: string,
+    controlBehaviour?: boolean
 }
