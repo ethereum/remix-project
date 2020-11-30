@@ -91,7 +91,6 @@ export class TabProxy extends Plugin {
     appManager.event.on('deactivate', (profile) => {
       this.removeTab(profile.name)
     })
-
   }
 
   focus (name) {
