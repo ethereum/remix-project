@@ -225,9 +225,7 @@ export class VerticalIcons extends Plugin {
     const home = yo`
       <div
         class="${css.homeIcon}"
-        onclick="${(e) => {
-          this.appManager.ensureActivated('home')
-        }}"
+        onclick="${(e) => this.appManager.activatePlugin('home')}"
         plugin="home" title="Home"
         data-id="verticalIconsHomeIcon"
       >
