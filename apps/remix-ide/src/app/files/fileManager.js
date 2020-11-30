@@ -6,7 +6,6 @@ import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 const EventEmitter = require('events')
 const globalRegistry = require('../../global/registry')
-const CompilerImport = require('../compiler/compiler-imports')
 const toaster = require('../ui/tooltip')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const helper = require('../../lib/helper.js')
@@ -44,7 +43,6 @@ class FileManager extends Plugin {
     this.events = new EventEmitter()
     this.editor = editor
     this._components = {}
-    this._components.compilerImport = new CompilerImport()
     this._components.registry = globalRegistry
     this.appManager = appManager
     this.init()
