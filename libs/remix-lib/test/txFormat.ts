@@ -1,5 +1,5 @@
 'use strict'
-const tape = require('tape')
+import * as tape from 'tape'
 const txFormat = require('../src/execution/txFormat')
 const txHelper = require('../src/execution/txHelper')
 const util = require('../src/util')
