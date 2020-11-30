@@ -263,12 +263,6 @@ export class LandingPage extends ViewPlugin {
       await this.appManager.activatePlugin('pluginManager')
       this.verticalIcons.select('pluginManager')
     }
-    /*
-    const startWorkshop = async () => {
-      await this.appManager.activatePlugin(['box', 'solidity', 'solidityUnitTesting', 'workshops'])
-      this.verticalIcons.select('workshops')
-    }
-    */
 
     const createNewFile = () => {
       const fileExplorer = globalRegistry.get('fileexplorer/browser').api
