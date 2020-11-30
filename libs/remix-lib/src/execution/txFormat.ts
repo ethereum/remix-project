@@ -1,9 +1,9 @@
 'use strict'
-const ethers = require('ethers')
+import { ethers } from 'ethers'
 const helper = require('./txHelper')
-const asyncJS = require('async')
-const solcLinker = require('solc/linker')
-const ethJSUtil = require('ethereumjs-util')
+import { eachOfSeries } from 'async'
+import { linkBytecode } from 'solc/linker'
+import { isValidAddress, addHexPrefix }  from 'ethereumjs-util'
 
 module.exports = {
 
@@ -38,7 +38,7 @@ module.exports = {
   * @param {Function} callback    - callback
   */
   encodeParams: function (params, funAbi, callback) {
-    let data = ''
+    let data: any = ''
     let dataHex = ''
     let funArgs
     if (params.indexOf('raw:0x') === 0) {
@@ -104,7 +104,7 @@ module.exports = {
           for (let libFile in linkLibraries) {
             for (let lib in linkLibraries[libFile]) {
               const address = linkLibraries[libFile][lib]
-              if (!ethJSUtil.isValidAddress(address)) return callback(address + ' is not a valid address. Please check the provided address is valid.')
+              if (!isValidAddress(address)) return callback(address + ' is not a valid address. Please check the provided address is valid.')
               bytecodeToDeploy = this.linkLibraryStandardFromlinkReferences(lib, address.replace('0x', ''), bytecodeToDeploy, linkReferences)
             }
           }
@@ -168,7 +168,7 @@ module.exports = {
   */
   buildData: function (contractName, contract, contracts, isConstructor, funAbi, params, callback, callbackStep, callbackDeployLibrary) {
     let funArgs = []
-    let data = ''
+    let data: any = ''
     let dataHex = ''
 
     if (params.indexOf('raw:0x') === 0) {
@@ -223,8 +223,8 @@ module.exports = {
 
   linkBytecodeStandard: function (contract, contracts, callback, callbackStep, callbackDeployLibrary) {
     let contractBytecode = contract.evm.bytecode.object
-    asyncJS.eachOfSeries(contract.evm.bytecode.linkReferences, (libs, file, cbFile) => {
-      asyncJS.eachOfSeries(contract.evm.bytecode.linkReferences[file], (libRef, libName, cbLibDeployed) => {
+    eachOfSeries(contract.evm.bytecode.linkReferences, (libs, file, cbFile) => {
+      eachOfSeries(contract.evm.bytecode.linkReferences[file], (libRef, libName, cbLibDeployed) => {
         const library = contracts[file][libName]
         if (library) {
           this.deployLibrary(file + ':' + libName, libName, library, contracts, (error, address) => {
@@ -351,7 +351,7 @@ module.exports = {
   },
 
   linkLibrary: function (libraryName, address, bytecodeToLink) {
-    return solcLinker.linkBytecode(bytecodeToLink, { [libraryName]: ethJSUtil.addHexPrefix(address) })
+    return linkBytecode(bytecodeToLink, { [libraryName]: addHexPrefix(address) })
   },
 
   decodeResponse: function (response, fnabi) {
