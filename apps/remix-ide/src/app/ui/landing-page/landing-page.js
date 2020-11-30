@@ -240,7 +240,6 @@ export class LandingPage extends ViewPlugin {
       })
     }
 
-
     const startSolidity = async () => {
       await this.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
       this.verticalIcons.select('solidity')
