@@ -1,5 +1,5 @@
 'use strict'
-const ethers = require('ethers')
+import { ethers } from 'ethers'
 const txHelper = require('./txHelper')
 
 /**
@@ -7,6 +7,8 @@ const txHelper = require('./txHelper')
   *
   */
 class EventsDecoder {
+  resolveReceipt
+  
   constructor ({resolveReceipt}) {
     this.resolveReceipt = resolveReceipt
   }
