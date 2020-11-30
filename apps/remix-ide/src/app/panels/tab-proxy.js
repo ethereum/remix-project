@@ -1,9 +1,9 @@
-var yo = require('yo-yo')
-var $ = require('jquery')
+import { Plugin } from '@remixproject/engine'
+const yo = require('yo-yo')
+const $ = require('jquery')
 const EventEmitter = require('events')
 const globalRegistry = require('../../global/registry')
 const csjs = require('csjs-inject')
-import { Plugin } from '@remixproject/engine'
 require('remix-tabs')
 
 const css = csjs`
@@ -14,7 +14,7 @@ const css = csjs`
 
 const profile = {
   name: 'tabs',
-  methods: ['focus'],
+  methods: ['focus']
 }
 
 // @todo(#650) Merge this with MainPanel into one plugin
@@ -92,13 +92,6 @@ export class TabProxy extends Plugin {
       this.removeTab(profile.name)
     })
 
-    // appManager.event.on('pluginActivated', ({name}) => {
-    //   if (name === 'home') {
-    //     // if someone force activation of home, we switch to it
-    //     this.event.emit('switchApp', name)
-    //     this._view.filetabs.activateTab(name)
-    //   }
-    // })
   }
 
   focus (name) {
