@@ -1,7 +1,13 @@
-const async = require('async')
-const crypto = require('crypto')
+import { eachOf } from 'async'
+import { randomBytes } from 'crypto'
 
-class LogsManager {
+export class LogsManager {
+
+  notificationCallbacks
+  subscriptions
+  filters
+  filterTracking
+  oldLogs
 
   constructor () {
     this.notificationCallbacks = []
@@ -12,7 +18,7 @@ class LogsManager {
   }
 
   checkBlock (blockNumber, block, web3) {
-    async.eachOf(block.transactions, (tx, i, next) => {
+    eachOf(block.transactions, (tx, i, next) => {
       let txHash = '0x' + tx.hash().toString('hex')
 
       web3.eth.getTransactionReceipt(txHash, (_error, receipt) => {
@@ -97,7 +103,7 @@ class LogsManager {
   }
 
   subscribe (params) {
-    let subscriptionId = '0x' + crypto.randomBytes(16).toString('hex')
+    let subscriptionId = '0x' + randomBytes(16).toString('hex')
     this.subscriptions[subscriptionId] = params
     return subscriptionId
   }
@@ -107,7 +113,7 @@ class LogsManager {
   }
 
   newFilter (filterType, params) {
-    const filterId = '0x' + crypto.randomBytes(16).toString('hex')
+    const filterId = '0x' + randomBytes(16).toString('hex')
     if (filterType === 'block' || filterType === 'pendingTransactions') {
       this.filters[filterId] = { filterType }
     }
@@ -123,7 +129,7 @@ class LogsManager {
   }
 
   getLogsForFilter (filterId, logsOnly) {
-    const {filterType, params} = this.filter[filterId]
+    const {filterType, params} = this.filters[filterId]
     const tracking = this.filterTracking[filterId]
 
     if (logsOnly || filterType === 'filter') {
@@ -161,5 +167,3 @@ class LogsManager {
   }
 
 }
-
-module.exports = LogsManager
