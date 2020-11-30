@@ -3,7 +3,7 @@ var $ = require('jquery')
 const EventEmitter = require('events')
 const globalRegistry = require('../../global/registry')
 const csjs = require('csjs-inject')
-
+import { Plugin } from '@remixproject/engine'
 require('remix-tabs')
 
 const css = csjs`
@@ -12,8 +12,15 @@ const css = csjs`
   }
 `
 
-export class TabProxy {
+const profile = {
+  name: 'tabs',
+  methods: ['focus'],
+}
+
+// @todo(#650) Merge this with MainPanel into one plugin
+export class TabProxy extends Plugin {
   constructor (fileManager, editor, appManager) {
+    super(profile)
     this.event = new EventEmitter()
     this.fileManager = fileManager
     this.appManager = appManager
@@ -85,22 +92,25 @@ export class TabProxy {
       this.removeTab(profile.name)
     })
 
-    appManager.event.on('ensureActivated', (name) => {
-      if (name === 'home') {
-        // if someone force activation of home, we switch to it
-        this.event.emit('switchApp', name)
-        this._view.filetabs.activateTab(name)
-      }
-    })
+    // appManager.event.on('pluginActivated', ({name}) => {
+    //   if (name === 'home') {
+    //     // if someone force activation of home, we switch to it
+    //     this.event.emit('switchApp', name)
+    //     this._view.filetabs.activateTab(name)
+    //   }
+    // })
+  }
+
+  focus (name) {
+    this.event.emit('switchApp', name)
+    this._view.filetabs.activateTab(name)
   }
 
   updateImgStyles () {
     const images = this._view.filetabs.getElementsByClassName('iconImage')
-    if (images.length !== 0) {
-      for (const element of images) {
-        globalRegistry.get('themeModule').api.fixInvert(element)
-      };
-    }
+    for (const element of images) {
+      globalRegistry.get('themeModule').api.fixInvert(element)
+    };
   }
 
   switchTab (tabName) {
@@ -205,6 +215,7 @@ export class TabProxy {
     delete this._handlers[name]
     this.switchToActiveTab()
     this.loadedTabs = this.loadedTabs.filter(tab => tab.name !== name)
+    this.updateImgStyles()
   }
 
   addHandler (type, fn) {

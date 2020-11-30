@@ -17,6 +17,7 @@ var css = csjs`
   }
 `
 
+// @todo(#650) Extract this into two classes: MainPanel (TabsProxy + Iframe/Editor) & BottomPanel (Terminal)
 export class MainView {
   constructor (contextualListener, editor, mainPanel, fileManager, appManager, terminal) {
     var self = this
