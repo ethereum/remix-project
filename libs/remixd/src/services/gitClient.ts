@@ -18,32 +18,26 @@ export class GitClient extends PluginClient {
   }
 
   execute (cmd: string) {
-      assertCommand(cmd)
-      const options = { cwd: this.currentSharedFolder, shell: true }
-      const child = spawn(cmd, options)
-      let result = ''
-      let error = ''        
-      return new Promise((resolve, reject) => {
-        child.stdout.on('data', (data) => {
-          result += data.toString()
-        })
-        child.stderr.on('data', (err) => {
-          error += err.toString()
-        })
-        child.on('close', (exitCode) => {
-          if (exitCode !== 0) {
-            reject(error)
-          } else {
-            resolve(result + error)
-          }
-        })    
+    assertCommand(cmd)
+    const options = { cwd: this.currentSharedFolder, shell: true }
+    const child = spawn(cmd, options)
+    child.stdout.on('data', (data) => {
+      this.emit('log', data.toString())
+    })
+    child.stderr.on('data', (err) => {
+      this.emit('error', err.toString())
+    })
+    child.on('close', (exitCode) => {
+      if (exitCode !== 0) {
+        this.emit('error', 'exit with ' + exitCode)
+      }
     })
   }
 }
 
 /**
  * Validate that command can be run by service
- * @param cmd 
+ * @param cmd
  */
 function assertCommand (cmd) {
   const regex = '^git\\s[^&|;]*$'
