@@ -1,10 +1,12 @@
 import Web3 from 'web3'
 import { toChecksumAddress, BN } from 'ethereumjs-util'
 import { processTx } from './txProcess'
+import EventEmitter from "events"
 
 export class Transactions {
   executionContext
   accounts
+  events
 
   constructor (executionContext) {
     this.executionContext = executionContext

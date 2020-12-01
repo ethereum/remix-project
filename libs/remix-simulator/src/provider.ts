@@ -19,6 +19,7 @@ export class Provider {
   Accounts
   Transactions
   methods
+  events
   host: string
   connected: boolean;
 
