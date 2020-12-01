@@ -95,7 +95,7 @@ export class TabProxy {
   }
 
   updateImgStyles () {
-    const images = this._view.filetabs.getElementsByClassName('image')
+    const images = this._view.filetabs.getElementsByClassName('iconImage')
     if (images.length !== 0) {
       for (const element of images) {
         globalRegistry.get('themeModule').api.fixInvert(element)
