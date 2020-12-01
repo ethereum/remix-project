@@ -107,7 +107,7 @@ class Terminal extends Plugin {
     this.on('git', 'log', (result) => {
       this.commands.html(yo`<pre>${result}</pre>`)
     })
-    this.on('git', 'error', (result) => {      
+    this.on('git', 'error', (result) => {
       this.commands.html(yo`<pre>${result}</pre>`)
     })
   }
@@ -756,7 +756,7 @@ class Terminal extends Plugin {
     }
     try {
       if (script.trim().startsWith('git')) {
-        await this.call('git', 'execute', script)        
+        await this.call('git', 'execute', script)   
       } else {
         await this.call('scriptRunner', 'execute', script)
       }
