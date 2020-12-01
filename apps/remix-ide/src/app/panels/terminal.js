@@ -104,11 +104,11 @@ class Terminal extends Plugin {
     this.on('scriptRunner', 'error', (msg) => {
       this.commands.error.apply(this.commands, msg.data)
     })
-    this.on('git', 'log', (result) => {      
-      this.commands.html.apply(this.commands, yo`<pre>${result}</pre>`)
+    this.on('git', 'log', (result) => {
+      this.commands.html(yo`<pre>${result}</pre>`)
     })
     this.on('git', 'error', (result) => {      
-      this.commands.html.apply(this.commands, yo`<pre>${result}</pre>`)
+      this.commands.html(yo`<pre>${result}</pre>`)
     })
   }
 
@@ -493,7 +493,7 @@ class Terminal extends Plugin {
     return self._view.el
 
     function wrapScript (script) {
-      const isKnownScript = ['remix.', 'git'].some(prefix => script.trim().startWith(prefix))
+      const isKnownScript = ['remix.', 'git'].some(prefix => script.trim().startsWith(prefix))
       if (isKnownScript) return script
       return `
         try {
@@ -755,7 +755,7 @@ class Terminal extends Plugin {
       }
     }
     try {
-      if (script.trim().startWith('git')) {
+      if (script.trim().startsWith('git')) {
         await this.call('git', 'execute', script)        
       } else {
         await this.call('scriptRunner', 'execute', script)
