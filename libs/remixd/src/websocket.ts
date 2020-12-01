@@ -1,6 +1,6 @@
 import * as WS from 'ws'
 import * as http from 'http'
-import { WebsocketOpt, ServiceClient } from './types' // eslint-disable-line
+import { WebsocketOpt, ServiceClient } from './types'
 import { getDomain } from './utils'
 import { createClient } from '@remixproject/plugin-ws'
 export default class WebSocket {
@@ -18,14 +18,14 @@ export default class WebSocket {
     const loopback = '127.0.0.1'
 
     this.server.listen(this.port, loopback, () => {
-      console.log((new Date()) + ' remixd is listening on ' + loopback + ':' + this.port + '')
+      console.log(`${new Date()} remixd is listening on ${loopback}:${this.port}`)
     })
     this.wsServer = new WS.Server({
       server: this.server,
       verifyClient: (info, done) => {
         if (!originIsAllowed(info.origin, this)) {
           done(false)
-          console.log((new Date()) + ' Connection from origin ' + info.origin + ' rejected.')
+          console.log(`${new Date()} connection from origin  ${info.origin}`)          
           return
         }
         done(true)
