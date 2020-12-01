@@ -107,7 +107,9 @@ class Terminal extends Plugin {
     this.on('git', 'log', (result) => {      
       this.commands.html.apply(this.commands, yo`<pre>${result}</pre>`)
     })
-    
+    this.on('git', 'error', (result) => {      
+      this.commands.html.apply(this.commands, yo`<pre>${result}</pre>`)
+    })
   }
 
   onDeactivation () {
@@ -116,6 +118,7 @@ class Terminal extends Plugin {
     this.off('scriptRunner', 'warn')
     this.off('scriptRunner', 'error')
     this.off('git', 'log')
+    this.off('git', 'error')
   }
 
   logHtml (html) {

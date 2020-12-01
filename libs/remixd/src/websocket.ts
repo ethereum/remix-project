@@ -1,6 +1,6 @@
 import * as WS from 'ws'
 import * as http from 'http'
-import { WebsocketOpt, ServiceClient } from './types'
+import { WebsocketOpt, ServiceClient } from './types' // eslint-disable-line
 import { getDomain } from './utils'
 import { createClient } from '@remixproject/plugin-ws'
 export default class WebSocket {
@@ -25,7 +25,7 @@ export default class WebSocket {
       verifyClient: (info, done) => {
         if (!originIsAllowed(info.origin, this)) {
           done(false)
-          console.log(`${new Date()} connection from origin  ${info.origin}`)          
+          console.log(`${new Date()} connection from origin  ${info.origin}`)
           return
         }
         done(true)
