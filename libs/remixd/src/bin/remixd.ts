@@ -38,24 +38,34 @@ import * as program from 'commander'
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolic links are not forwarded to Remix IDE\n')
     try {
-      // shared folder
-      const websocketHandler = new WebSocket(65520, { remixIdeUrl: program.remixIde }, () => new servicesList.Sharedfolder())
 
-      websocketHandler.start((ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
+      const services = {
+        git: () => new servicesList.GitClient(),
+        folder: () => new servicesList.Sharedfolder()
+      }
+  
+      const ports = {
+        git: 65521,
+        folder: 65520
+      }
+
+      function startService<S extends 'git' | 'folder'>(service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => void) {
+        const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () =>services[service]());
+        socket.start(callback)
+        killCallBack.push(socket.close.bind(socket))
+      }
+
+      startService('folder', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
         sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.setupNotifications(program.sharedFolder)
         sharedFolderClient.sharedFolder(program.sharedFolder, program.readOnly || false)
       })
-      killCallBack.push(websocketHandler.close.bind(websocketHandler))
 
-      // git
-      const websocketHandlerForGit = new WebSocket(65521, { remixIdeUrl: program.remixIde }, () => new servicesList.GitClient())
-
-      websocketHandlerForGit.start((ws: WS, gitClient: servicesList.GitClient) => {
-        gitClient.setWebSocket(ws)
-        gitClient.sharedFolder(program.sharedFolder, program.readOnly || false)
+      startService('git', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
+        sharedFolderClient.setWebSocket(ws)
+        sharedFolderClient.sharedFolder(program.sharedFolder, program.readOnly || false)
       })
-      killCallBack.push(websocketHandlerForGit.close.bind(websocketHandlerForGit))
+     
     } catch (error) {
       throw new Error(error)
     }
