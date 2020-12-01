@@ -21,16 +21,17 @@ export class GitClient extends PluginClient {
     assertCommand(cmd)
     const options = { cwd: this.currentSharedFolder, shell: true }
     const child = spawn(cmd, options)
+    let result = ''
+    let error = ''
     child.stdout.on('data', (data) => {
-      this.emit('log', data.toString())
+      result += data.toString()
     })
     child.stderr.on('data', (err) => {
-      this.emit('error', err.toString())
+      error += err.toString()
     })
-    child.on('close', (exitCode) => {
-      if (exitCode !== 0) {
-        this.emit('error', 'exit with ' + exitCode)
-      }
+    child.on('close', () => {
+      if (error !== '') this.emit('error', error)
+      else this.emit('log', result)
     })
   }
 }
