@@ -1,10 +1,9 @@
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
 const { spawn } = require('child_process')
-const gitRegex = '^git\\s[^&|;]*$'
 
 export class GitClient extends PluginClient {
-  methods: ['command']
+  methods: ['execute']
   websocket: WS
   currentSharedFolder: string
   readOnly: boolean
