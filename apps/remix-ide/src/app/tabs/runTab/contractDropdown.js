@@ -26,13 +26,12 @@ class ContractDropdownUI {
 
   listenToEvents () {
     this.dropdownLogic.event.register('newlyCompiled', (success, data, source, compiler, compilerFullName, file) => {
-      if (!document.querySelector(`.${css.contractNames.classNames[0]}`)) return
-      var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-      contractNames.innerHTML = ''
+      if (!this.selectContractNames) return
+      this.selectContractNames.innerHTML = ''
       if (success) {
         this.enableContractNames(true)
         this.dropdownLogic.getCompiledContracts(compiler, compilerFullName).forEach((contract) => {
-          contractNames.appendChild(yo`<option value="${contract.name}" compiler="${compilerFullName}">${contract.name} - ${contract.file}</option>`)
+          this.selectContractNames.appendChild(yo`<option value="${contract.name}" compiler="${compilerFullName}">${contract.name} - ${contract.file}</option>`)
         })
       } else {
         this.enableContractNames(false, 'sol')
@@ -187,14 +186,14 @@ class ContractDropdownUI {
   }
 
   changeCurrentFile (currentFile) {
-    if (!document.querySelector(`.${css.contractNames}`)) return
+    if (!this.selectContractNames) return
     if (/.(.abi)$/.exec(currentFile)) {
       this.createPanel.style.display = 'none'
       this.orLabel.style.display = 'none'
       this.compFails.style.display = 'none'
       this.loadType = 'abi'
       this.contractNamesContainer.style.display = 'block'
-      while (this.selectContractNames.options.length > 0) this.selectContractNames.remove(0)
+      this.selectContractNames.innerHTML = ''
       this.selectContractNames.appendChild(yo`<option>${currentFile}</option>`)
       this.enableContractNames(true)
       this.enableAtAddress(true)
@@ -203,7 +202,7 @@ class ContractDropdownUI {
       this.orLabel.style.display = 'block'
       this.contractNamesContainer.style.display = 'block'
       this.loadType = 'sol'
-      while (this.selectContractNames.options.length > 0) this.selectContractNames.remove(0)
+      this.selectContractNames.innerHTML = ''
       this.enableContractNames(false)
       this.enableAtAddress(false)
     } else {
