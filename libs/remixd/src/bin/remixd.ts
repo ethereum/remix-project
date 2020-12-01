@@ -8,6 +8,23 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as program from 'commander'
 
+const services = {
+  git: () => new servicesList.GitClient(),
+  folder: () => new servicesList.Sharedfolder()
+}
+
+const ports = {
+  git: 65521,
+  folder: 65520
+}
+
+const killCallBack: Array<Function> = []
+function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => void) {
+  const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () => services[service]())
+  socket.start(callback)
+  killCallBack.push(socket.close.bind(socket))
+}
+
 (async () => {
   program
     .usage('-s <shared folder>')
@@ -19,7 +36,6 @@ import * as program from 'commander'
       console.log('\nExample:\n\n    remixd -s ./ --remix-ide http://localhost:8080')
     }).parse(process.argv)
   // eslint-disable-next-line
-  const killCallBack: Array<Function> = []
 
   if (!program.remixIde) {
     console.log('\x1b[33m%s\x1b[0m', '[WARN] You can only connect to remixd from one of the supported origins.')
@@ -38,23 +54,6 @@ import * as program from 'commander'
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolic links are not forwarded to Remix IDE\n')
     try {
-
-      const services = {
-        git: () => new servicesList.GitClient(),
-        folder: () => new servicesList.Sharedfolder()
-      }
-  
-      const ports = {
-        git: 65521,
-        folder: 65520
-      }
-
-      function startService<S extends 'git' | 'folder'>(service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => void) {
-        const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () =>services[service]());
-        socket.start(callback)
-        killCallBack.push(socket.close.bind(socket))
-      }
-
       startService('folder', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
         sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.setupNotifications(program.sharedFolder)
@@ -65,7 +64,6 @@ import * as program from 'commander'
         sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.sharedFolder(program.sharedFolder, program.readOnly || false)
       })
-     
     } catch (error) {
       throw new Error(error)
     }
