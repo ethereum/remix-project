@@ -16,12 +16,4 @@ export class GitHandle extends WebsocketPlugin {
   constructor () {
     super(profile)
   }
-
-  deactivate () {
-    super.deactivate()
-  }
-
-  activate () {
-    super.activate()
-  }
 }
