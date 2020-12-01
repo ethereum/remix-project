@@ -756,7 +756,7 @@ class Terminal extends Plugin {
     }
     try {
       if (script.trim().startsWith('git')) {
-        await this.call('git', 'execute', script)   
+        await this.call('git', 'execute', script)
       } else {
         await this.call('scriptRunner', 'execute', script)
       }
