@@ -76,7 +76,6 @@ module.exports = {
 }
 
 const validateInput = (e) => {
-  console.log('validation from ', e)
   if (!document.getElementById('modal-footer-ok')) return
 
   if (e.target.value === '') {
