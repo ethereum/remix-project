@@ -22,8 +22,9 @@ class InjectedProvider {
   sendMethod (address, abi, methodName, params, outputCb) {
     return new Promise((resolve, reject) => {
       // TODO: should use selected account
-      this.getAccounts((error, accounts) => {
-        const contract = new this.executionContext.web3().eth.Contract(abi, address, { from: accounts[0] })
+      this.getAccounts((_error, accounts) => {
+        // eslint-disable-next-line
+        const contract = new this.executionContext.web3().eth.Contract(abi, address, { from: accounts[0] }) // @ts-ignore
         contract.methods[methodName].apply(contract.methods[methodName], params).send().then(resolve).catch(reject)
       })
     })
@@ -32,14 +33,15 @@ class InjectedProvider {
   callMethod (address, abi, methodName, params, outputCb) {
     return new Promise((resolve, reject) => {
       // TODO: should use selected account
-      this.getAccounts((error, accounts) => {
+      this.getAccounts((_error, accounts) => {
+        // eslint-disable-next-line
         const contract = new this.executionContext.web3().eth.Contract(abi, address, { from: accounts[0] })
         contract.methods[methodName].apply(contract.methods[methodName], params).call().then(resolve).catch(reject)
       })
     })
   }
 
-  async getTransaction(transactionHash) {
+  async getTransaction (transactionHash) {
     return this.executionContext.web3().eth.getTransaction(transactionHash)
   }
 

@@ -16,7 +16,7 @@ class Server {
     this.provider.init().then(() => {
       log('Provider initiated')
     }).catch((error) => {
-      log(error)
+    log(error)
     })
     this.rpcOnly = options.rpc
   }

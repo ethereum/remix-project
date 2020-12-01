@@ -1,8 +1,7 @@
 const remixLib = require('@remix-project/remix-lib')
-const {txFormat, txExecution, typeConversion, txHelper, txListener: Txlistener, txRunner: TxRunner, executionContext} = remixLib.execution
+const { txFormat, txExecution, typeConversion, txHelper, txListener: Txlistener, txRunner: TxRunner, executionContext } = remixLib.execution
 const EventManager = remixLib.EventManager
 const Web3 = require('web3')
-const async = require('async')
 const { EventEmitter } = require('events')
 
 const { resultToRemixTx } = require('./txResultHelper')
@@ -247,7 +246,7 @@ class Blockchain {
     if (self.transactionContextAPI.getGasLimit) {
       gasLimit = self.transactionContextAPI.getGasLimit()
     }
-    let value = 0
+    const value = 0
 
     // if (args.value) {
     //   value = args.value
@@ -260,15 +259,15 @@ class Blockchain {
     let from
 
     // if (args.from) {
-      // from = args.from
+    // from = args.from
     // } else if (self.transactionContextAPI.getAddress) {
     if (self.transactionContextAPI.getAddress) {
       from = self.transactionContextAPI.getAddress()
     } else {
       try {
-        let accounts = await self.getAccounts()
+        const accounts = await self.getAccounts()
 
-        let address = accounts[0]
+        const address = accounts[0]
 
         if (!address) throw new Error('No accounts available')
         if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
@@ -282,28 +281,26 @@ class Blockchain {
 
     // const tx = { to: address, data: args.data.dataHex, useCall: true, from, value, gasLimit, timestamp: args.data.timestamp }
     // const tx = { to: address, data: args.data.dataHex, useCall: true, from, value, gasLimit, timestamp: Date.now() }
-    const tx = { to: address, data: "0x123", useCall: false, from, value, gasLimit, timestamp: Date.now() }
+    const tx = { to: address, data: '0x123', useCall: false, from, value, gasLimit, timestamp: Date.now() }
     // const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
     const payLoad = {}
-    let timestamp = tx.timestamp || Date.now()
+    const timestamp = tx.timestamp || Date.now()
 
     // self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
 
     // return this.getCurrentProvider().callMethod(address, abi, methodName, (returnValue) => {
-    const inputs = (params === "" ? [] : params.split(",").map(x => x.trim()))
+    const inputs = (params === '' ? [] : params.split(',').map(x => x.trim()))
 
     let returnValue, receipt
     try {
-
       // debugger
       if (this.getCurrentProvider().RemixSimulatorProvider) {
-
-        this.getCurrentProvider().RemixSimulatorProvider.events.once("VMTransaction", async (txResult) => {
-          console.dir("====================")
-          console.dir("====================")
+        this.getCurrentProvider().RemixSimulatorProvider.events.once('VMTransaction', async (txResult) => {
+          console.dir('====================')
+          console.dir('====================')
           console.dir(txResult)
-          console.dir("====================")
-          console.dir("====================")
+          console.dir('====================')
+          console.dir('====================')
           // debugger
           console.dir('triggering transactionExecuted')
           receipt = await this.getCurrentProvider().getTransaction(txResult.transactionHash)
@@ -316,14 +313,13 @@ class Blockchain {
           outputCb(txResult.result.execResult.returnValue)
         })
 
-        console.dir("----> calling sending")
+        console.dir('----> calling sending')
 
         returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, inputs)
         // debugger
         receipt = await this.getCurrentProvider().getTransaction(returnValue.transactionHash)
         // debugger
         return
-
       } else {
         returnValue = await this.getCurrentProvider().sendMethod(address, abi, methodName, inputs)
         receipt = await this.getCurrentProvider().getTransaction(returnValue.transactionHash)
@@ -336,20 +332,20 @@ class Blockchain {
       // debugger
       outputCb(returnValue)
     } catch (err) {
-      const txHash = Object.values(JSON.parse("{" + err.message.replace("Transaction has been reverted by the EVM:", '"Transaction has been reverted by the EVM":') + "}"))[0].transactionHash
+      const txHash = Object.values(JSON.parse('{' + err.message.replace('Transaction has been reverted by the EVM:', '"Transaction has been reverted by the EVM":') + '}'))[0].transactionHash
       const receipt = await this.getCurrentProvider().getTransaction(txHash)
       self.event.trigger('transactionExecuted', [null, receipt.from, receipt.to, receipt.input, tx.useCall, err, timestamp, payLoad, address])
       // debugger
       outputCb({
-        "transactionHash": receipt.hash,
-        "transactionIndex": receipt.transactionIndex,
-        "blockHash": receipt.blockHash,
-        "blockNumber": receipt.blockNumber,
-        "gasUsed": receipt.gas,
-        "cumulativeGasUsed": receipt.gas,
-        "contractAddress": address,
-        "status": "0x0",
-        "events": {}
+        transactionHash: receipt.hash,
+        transactionIndex: receipt.transactionIndex,
+        blockHash: receipt.blockHash,
+        blockNumber: receipt.blockNumber,
+        gasUsed: receipt.gas,
+        cumulativeGasUsed: receipt.gas,
+        contractAddress: address,
+        status: '0x0',
+        events: {}
       })
 
       // ["blockHash", "blockNumber", "from", "gas", "gasPrice", "hash", "input", "value", "to", "transactionIndex", "nonce"]
@@ -363,7 +359,7 @@ class Blockchain {
     if (self.transactionContextAPI.getGasLimit) {
       gasLimit = self.transactionContextAPI.getGasLimit()
     }
-    let value = 0
+    const value = 0
 
     // if (args.value) {
     //   value = args.value
@@ -376,15 +372,15 @@ class Blockchain {
     let from
 
     // if (args.from) {
-      // from = args.from
+    // from = args.from
     // } else if (self.transactionContextAPI.getAddress) {
     if (self.transactionContextAPI.getAddress) {
       from = self.transactionContextAPI.getAddress()
     } else {
       try {
-        let accounts = await self.getAccounts()
+        const accounts = await self.getAccounts()
 
-        let address = accounts[0]
+        const address = accounts[0]
 
         if (!address) throw new Error('No accounts available')
         if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
@@ -398,16 +394,16 @@ class Blockchain {
 
     // const tx = { to: address, data: args.data.dataHex, useCall: true, from, value, gasLimit, timestamp: args.data.timestamp }
     // const tx = { to: address, data: args.data.dataHex, useCall: true, from, value, gasLimit, timestamp: Date.now() }
-    const tx = { to: address, data: "0x123", useCall: true, from, value, gasLimit, timestamp: Date.now() }
+    const tx = { to: address, data: '0x123', useCall: true, from, value, gasLimit, timestamp: Date.now() }
     // const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
     const payLoad = {}
-    let timestamp = tx.timestamp || Date.now()
-    const inputs = (params === "" ? [] : params.split(","))
+    const timestamp = tx.timestamp || Date.now()
+    const inputs = (params === '' ? [] : params.split(','))
 
     // self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
 
     if (this.getCurrentProvider().RemixSimulatorProvider) {
-      this.getCurrentProvider().RemixSimulatorProvider.events.once("VMCall", (txResult) => {
+      this.getCurrentProvider().RemixSimulatorProvider.events.once('VMCall', (txResult) => {
         self.event.trigger('callExecuted', [null, tx.from, tx.to, tx.data, tx.useCall, txResult, timestamp, payLoad, address])
       })
     }
@@ -423,8 +419,8 @@ class Blockchain {
   }
 
   runOrCallContractMethod (contractName, contractAbi, funABI, value, address, callType, lookupOnly, logMsg, logCallback, outputCb, confirmationCb, continueCb, promptCb) {
-    console.dir("======")
-    console.dir("runOrCallContractMethod")
+    console.dir('======')
+    console.dir('runOrCallContractMethod')
     // contractsDetails is used to resolve libraries
     txFormat.buildData(contractName, contractAbi, {}, false, funABI, callType, (error, data) => {
       if (error) {
@@ -569,8 +565,8 @@ class Blockchain {
   // contract deployment with libraries
   // transaction
   // call
-  async runTx(args, confirmationCb, continueCb, promptCb, cb) {
-    console.dir("====== runTx")
+  async runTx (args, confirmationCb, continueCb, promptCb, cb) {
+    console.dir('====== runTx')
     console.dir(args)
     const self = this
 
@@ -596,9 +592,9 @@ class Blockchain {
       from = self.transactionContextAPI.getAddress()
     } else {
       try {
-        let accounts = await self.getAccounts()
+        const accounts = await self.getAccounts()
 
-        let address = accounts[0]
+        const address = accounts[0]
 
         if (!address) throw new Error('No accounts available')
         if (self.executionContext.isVM() && !self.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
@@ -612,7 +608,7 @@ class Blockchain {
 
     const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from, value, gasLimit, timestamp: args.data.timestamp }
     const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
-    let timestamp = tx.timestamp || Date.now()
+    const timestamp = tx.timestamp || Date.now()
 
     self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
 
@@ -622,13 +618,13 @@ class Blockchain {
         if (error) return cb(error)
 
         const rawAddress = self.executionContext.isVM() ? result.result.createdAddress : result.result.contractAddress
-        let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
+        const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
         self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad, rawAddress])
-        console.dir("====================")
+        console.dir('====================')
         console.dir([null, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad, rawAddress])
-        console.dir("====================")
+        console.dir('====================')
 
-        let txResult = result
+        const txResult = result
 
         const isVM = self.executionContext.isVM()
         if (isVM) {

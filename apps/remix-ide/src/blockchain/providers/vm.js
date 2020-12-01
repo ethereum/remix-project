@@ -28,7 +28,7 @@ class VMProvider {
   sendMethod (address, abi, methodName, params, outputCb) {
     return new Promise((resolve, reject) => {
       // TODO: should use selected account
-      this.getAccounts((error, accounts) => {
+      this.getAccounts((_error, accounts) => {
         const contract = new this.web3.eth.Contract(abi, address, { from: accounts[0] })
         contract.methods[methodName].apply(contract.methods[methodName], params).send().then(resolve).catch(reject)
       })
@@ -38,14 +38,14 @@ class VMProvider {
   callMethod (address, abi, methodName, params, outputCb) {
     return new Promise((resolve, reject) => {
       // TODO: should use selected account
-      this.getAccounts((error, accounts) => {
+      this.getAccounts((_error, accounts) => {
         const contract = new this.web3.eth.Contract(abi, address, { from: accounts[0] })
         contract.methods[methodName].apply(contract.methods[methodName], params).call().then(resolve).catch(reject)
       })
     })
   }
 
-  async getTransaction(transactionHash) {
+  async getTransaction (transactionHash) {
     return this.web3.eth.getTransaction(transactionHash)
   }
 

@@ -210,7 +210,7 @@ function log (self, tx, receipt) {
 }
 
 function renderKnownTransaction (self, data, blockchain) {
-  console.trace("renderKnownTransaction")
+  console.trace('renderKnownTransaction')
   var from = data.tx.from
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = { from, to }
@@ -231,7 +231,7 @@ function renderKnownTransaction (self, data, blockchain) {
 }
 
 function renderCall (self, data) {
-  console.trace("renderCall")
+  console.trace('renderCall')
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
@@ -258,7 +258,7 @@ function renderCall (self, data) {
 }
 
 function renderUnknownTransaction (self, data, blockchain) {
-  console.trace("renderUnknownTransaction")
+  console.trace('renderUnknownTransaction')
   var from = data.tx.from
   var to = data.tx.to
   var obj = { from, to }
@@ -402,20 +402,20 @@ function txDetails (e, tx, data, obj) {
   }
 }
 
-function convertStatus(status) {
+function convertStatus (status) {
   if (status === true) {
-    return "0x1"
+    return '0x1'
   }
   if (status === false) {
-    return "0x0"
+    return '0x0'
   }
   // return status
-  return ""
+  return ''
 }
 
 function createTable (opts) {
   // debugger
-  console.trace("---------------------")
+  console.trace('---------------------')
   console.dir(opts)
   var table = yo`<table class="${css.txTable}" id="txTable" data-id="txLoggerTable${opts.hash}"></table>`
   if (!opts.isCall) {

@@ -13,7 +13,7 @@ var remixLib = require('@remix-project/remix-lib')
 var txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
 var TreeView = require('./TreeView')
-var txCallBacks = require('./sendTxCallbacks')
+// var txCallBacks = require('./sendTxCallbacks')
 
 function UniversalDAppUI (blockchain, logCallback) {
   this.blockchain = blockchain
@@ -232,22 +232,22 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
 }
 
 UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, inputsValues, outputOverride) {
-  console.dir("======")
-  console.dir("runTransaction")
+  console.dir('======')
+  console.dir('runTransaction')
   console.dir(arguments)
-  const functionName = args.funABI.type === 'function' ? args.funABI.name : `(${args.funABI.type})`
-  const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${args.contractName}.${functionName}`
+  // const functionName = args.funABI.type === 'function' ? args.funABI.name : `(${args.funABI.type})`
+  // const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${args.contractName}.${functionName}`
 
-  const callbacksInContext = txCallBacks.getCallBacksWithContext(this, this.blockchain)
+  // const callbacksInContext = txCallBacks.getCallBacksWithContext(this, this.blockchain)
 
   const outputCb = (returnValue) => {
     // debugger
-    console.dir("== outputCb")
+    console.dir('== outputCb')
     console.dir(returnValue)
     if (outputOverride) {
       // if (lookupOnly) {
-        // outputOverride.innerHTML = ''
-        // return outputOverride.appendChild(returnValue)
+      // outputOverride.innerHTML = ''
+      // return outputOverride.appendChild(returnValue)
       // }
       const decoded = decodeResponseToTreeView(returnValue, args.funABI)
       outputOverride.innerHTML = ''
@@ -258,16 +258,16 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
 
   // TODO: if lookupOnly then call contract
   if (lookupOnly) {
-    const {address, contractABI} = args
+    const { address, contractABI } = args
     const methodName = args.funABI.name
     const params = args.funABI.type !== 'fallback' ? inputsValues.trim().replace(/"/g, '') : ''
-    this.logCallback("call to " + args.contractName + "." + methodName)
+    this.logCallback('call to ' + args.contractName + '.' + methodName)
     return this.blockchain.callMethod(address, contractABI, methodName, params, outputCb)
   } else {
-    const {address, contractABI} = args
+    const { address, contractABI } = args
     const methodName = args.funABI.name
     const params = args.funABI.type !== 'fallback' ? inputsValues.trim().replace(/"/g, '') : ''
-    this.logCallback("transact to " + args.contractName + "." + methodName)
+    this.logCallback('transact to ' + args.contractName + '.' + methodName)
     return this.blockchain.sendMethod(address, contractABI, methodName, params, outputCb)
   }
 
