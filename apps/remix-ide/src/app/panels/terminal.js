@@ -748,8 +748,7 @@ class Terminal extends Plugin {
     }
     try {
       if (script.trim().startWith('git')) {
-        const result = await this.call('git', 'command', script)
-        self.commands.html(yo`<pre>${result}</pre>`)
+        await this.call('git', 'execute', script)        
       } else {
         await this.call('scriptRunner', 'execute', script)
       }
