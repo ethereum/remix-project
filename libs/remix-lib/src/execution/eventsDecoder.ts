@@ -9,11 +9,11 @@ import { visitContracts } from './txHelper'
 export class EventsDecoder {
   resolveReceipt
 
-  constructor ({resolveReceipt}) {
+  constructor ({ resolveReceipt }) {
     this.resolveReceipt = resolveReceipt
   }
 
-/**
+  /**
   * use Transaction Receipt to decode logs. assume that the transaction as already been resolved by txListener.
   * logs are decoded only if the contract if known by remix.
   *
@@ -41,7 +41,7 @@ export class EventsDecoder {
   _eventABI (contract) {
     const eventABI = {}
     const abi = new ethers.utils.Interface(contract.abi)
-    for (let e in abi.events) {
+    for (const e in abi.events) {
       const event = abi.getEvent(e)
       eventABI[abi.getEventTopic(e).replace('0x', '')] = { event: event.name, inputs: event.inputs, object: event, abi: abi }
     }
@@ -57,10 +57,10 @@ export class EventsDecoder {
   }
 
   _event (hash, eventsABI) {
-    for (let k in eventsABI) {
+    for (const k in eventsABI) {
       if (eventsABI[k][hash]) {
-        let event = eventsABI[k][hash]
-        for (let input of event.inputs) {
+        const event = eventsABI[k][hash]
+        for (const input of event.inputs) {
           if (input.type === 'function') {
             input.type = 'bytes24'
             input.baseType = 'bytes24'
@@ -90,7 +90,7 @@ export class EventsDecoder {
   _decodeEvents (tx, logs, contractName, compiledContracts, cb) {
     const eventsABI = this._eventsABI(compiledContracts)
     const events = []
-    for (let i in logs) {
+    for (const i in logs) {
       // [address, topics, mem]
       const log = logs[i]
       const topicId = log.topics[0]
