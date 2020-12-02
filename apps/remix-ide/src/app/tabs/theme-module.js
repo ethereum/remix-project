@@ -33,8 +33,8 @@ export class ThemeModule extends Plugin {
       config: registry.get('config').api
     }
     this.themes = themes.reduce((acc, theme) => {
-      theme.url = window.location.origin + '/' + theme.url 
-      return { ...acc, [theme.name]: theme } 
+      theme.url = window.location.origin + '/' + theme.url
+      return { ...acc, [theme.name]: theme }
     }, {})
     let queryTheme = (new QueryParams()).get().theme
     queryTheme = this.themes[queryTheme] ? queryTheme : null
