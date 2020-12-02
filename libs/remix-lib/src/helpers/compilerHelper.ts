@@ -1,8 +1,4 @@
-module.exports = {
-  compilerInput: compilerInput
-}
-
-function compilerInput (contracts) {
+export function compilerInput (contracts) {
   return JSON.stringify({
     language: 'Solidity',
     sources: {
