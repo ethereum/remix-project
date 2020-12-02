@@ -1,31 +1,36 @@
 'use strict'
-const Web3 = require('web3')
+import Web3 from 'web3'
 
-module.exports = {
-  loadWeb3: function (url) {
-    if (!url) url = 'http://localhost:8545'
-    const web3 = new Web3()
-    web3.setProvider(new web3.providers.HttpProvider(url))
-    this.extend(web3)
-    return web3
-  },
+export function loadWeb3 (url = 'http://localhost:8545') {
+  const web3 = new Web3()
+  web3.setProvider(new Web3.providers.HttpProvider(url))
+  this.extend(web3)
+  return web3
+}
 
-  extendWeb3: function (web3) {
-    this.extend(web3)
-  },
+export function extendWeb3 (web3) {
+  this.extend(web3)
+}
 
-  setProvider: function (web3, url) {
-    web3.setProvider(new web3.providers.HttpProvider(url))
-  },
+export function setProvider (web3, url) {
+  web3.setProvider(new web3.providers.HttpProvider(url))
+}
 
-  web3DebugNode: function (network) {
-    if (web3DebugNodes[network]) {
-      return this.loadWeb3(web3DebugNodes[network])
-    }
-    return null
-  },
+export function web3DebugNode (network) {
+  const web3DebugNodes = {
+    'Main': 'https://gethmainnet.komputing.org',
+    'Rinkeby': 'https://remix-rinkeby.ethdevops.io',
+    'Ropsten': 'https://remix-ropsten.ethdevops.io',
+    'Goerli': 'https://remix-goerli.ethdevops.io',
+    'Kovan': 'https://remix-kovan.ethdevops.io'
+  }
+  if (web3DebugNodes[network]) {
+    return this.loadWeb3(web3DebugNodes[network])
+  }
+  return null
+}
 
-  extend: function (web3) {
+export function extend (web3) {
     if (!web3.extend) {
       return
     }
@@ -65,12 +70,3 @@ module.exports = {
       })
     }
   }
-}
-
-const web3DebugNodes = {
-  'Main': 'https://gethmainnet.komputing.org',
-  'Rinkeby': 'https://remix-rinkeby.ethdevops.io',
-  'Ropsten': 'https://remix-ropsten.ethdevops.io',
-  'Goerli': 'https://remix-goerli.ethdevops.io',
-  'Kovan': 'https://remix-kovan.ethdevops.io'
-}
