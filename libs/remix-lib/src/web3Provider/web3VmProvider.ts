@@ -1,7 +1,7 @@
 import { hexConvert, hexListFromBNs, formatMemory } from '../util'
 import { normalizeHexAddress } from '../helpers/uiHelper'
 import { toChecksumAddress, BN, toBuffer, }  from 'ethereumjs-util'
-const Web3 = require('web3')
+import Web3 from 'web3'
 
 export class Web3VmProvider {
 
