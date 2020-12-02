@@ -1,22 +1,44 @@
 'use strict'
 
-function Storage (prefix) {
-  this.exists = function (name) {
+export class Storage {
+  prefix
+
+  constructor (prefix) {
+    this.prefix = prefix
+
+    // on startup, upgrade the old storage layout
+    if (typeof window !== 'undefined') {
+      this.safeKeys().forEach(function (name) {
+        if (name.indexOf('sol-cache-file-', 0) === 0) {
+          var content = window.localStorage.getItem(name)
+          window.localStorage.setItem(name.replace(/^sol-cache-file-/, 'sol:'), content)
+          window.localStorage.removeItem(name)
+        }
+      })
+    }
+
+    // remove obsolete key
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem('editor-size-cache')
+    }
+  }
+
+  exists (name) {
     if (typeof window !== 'undefined') {
       return this.get(name) !== null
     }
   }
 
-  this.get = function (name) {
+  get (name) {
     if (typeof window !== 'undefined') {
-      return window.localStorage.getItem(prefix + name)
+      return window.localStorage.getItem(this.prefix + name)
     }
   }
 
-  this.set = function (name, content) {
+  set (name, content) {
     try {
       if (typeof window !== 'undefined') {
-        window.localStorage.setItem(prefix + name, content)
+        window.localStorage.setItem(this.prefix + name, content)
       }
     } catch (exception) {
       return false
@@ -24,14 +46,14 @@ function Storage (prefix) {
     return true
   }
 
-  this.remove = function (name) {
+  remove (name) {
     if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(prefix + name)
+      window.localStorage.removeItem(this.prefix + name)
     }
     return true
   }
 
-  this.rename = function (originalName, newName) {
+  rename (originalName, newName) {
     const content = this.get(originalName)
     if (!this.set(newName, content)) {
       return false
@@ -40,7 +62,7 @@ function Storage (prefix) {
     return true
   }
 
-  function safeKeys () {
+  safeKeys () {
     // NOTE: this is a workaround for some browsers
     if (typeof window !== 'undefined') {
       return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined })
@@ -48,29 +70,11 @@ function Storage (prefix) {
     return []
   }
 
-  this.keys = function () {
-    return safeKeys()
+  keys () {
+    return this.safeKeys()
       // filter any names not including the prefix
-      .filter(function (item) { return item.indexOf(prefix, 0) === 0 })
+      .filter(function (item) { return item.indexOf(this.prefix, 0) === 0 })
       // remove prefix from filename and add the 'browser' path
-      .map(function (item) { return item.substr(prefix.length) })
-  }
-
-  // on startup, upgrade the old storage layout
-  if (typeof window !== 'undefined') {
-    safeKeys().forEach(function (name) {
-      if (name.indexOf('sol-cache-file-', 0) === 0) {
-        var content = window.localStorage.getItem(name)
-        window.localStorage.setItem(name.replace(/^sol-cache-file-/, 'sol:'), content)
-        window.localStorage.removeItem(name)
-      }
-    })
-  }
-
-  // remove obsolete key
-  if (typeof window !== 'undefined') {
-    window.localStorage.removeItem('editor-size-cache')
+      .map(function (item) { return item.substr(this.prefix.length) })
   }
 }
-
-module.exports = Storage
