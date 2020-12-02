@@ -11,8 +11,8 @@ const LogsManager = require('./logsManager.js')
 
 declare let ethereum: any
 let web3
-if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
-  var injectedProvider = window.ethereum
+if (typeof window !== 'undefined' && typeof window['ethereum'] !== 'undefined') {
+  var injectedProvider = window['ethereum']
   web3 = new Web3(injectedProvider)
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
