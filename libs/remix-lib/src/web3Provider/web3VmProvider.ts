@@ -46,14 +46,14 @@ export class Web3VmProvider {
     this.incr = 0
     this.eth = {}
     this.debug = {}
-    this.eth.getCode = (...args) => this.getCode(...args)
-    this.eth.getTransaction = (...args) => this.getTransaction(...args)
-    this.eth.getTransactionReceipt = (...args) => this.getTransactionReceipt(...args)
-    this.eth.getTransactionFromBlock = (...args) => this.getTransactionFromBlock(...args)
-    this.eth.getBlockNumber = (...args) => this.getBlockNumber(...args)
-    this.debug.traceTransaction = (...args) => this.traceTransaction(...args)
-    this.debug.storageRangeAt = (...args) => this.storageRangeAt(...args)
-    this.debug.preimage = (...args) => this.preimage(...args)
+    this.eth.getCode = this.getCode
+    this.eth.getTransaction = this.getTransaction
+    this.eth.getTransactionReceipt = this.getTransactionReceipt
+    this.eth.getTransactionFromBlock = this.getTransactionFromBlock
+    this.eth.getBlockNumber = this.getBlockNumber
+    this.debug.traceTransaction = this.traceTransaction
+    this.debug.storageRangeAt = this.storageRangeAt
+    this.debug.preimage = this.preimage
     this.providers = { 'HttpProvider': function (url) {} }
     this.currentProvider = { 'host': 'vm provider' }
     this.storageCache = {}
