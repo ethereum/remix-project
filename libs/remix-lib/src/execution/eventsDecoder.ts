@@ -1,6 +1,6 @@
 'use strict'
 import { ethers } from 'ethers'
-const txHelper = require('./txHelper')
+import { visitContracts } from './txHelper'
 
 /**
   * Register to txListener and extract events
@@ -50,7 +50,7 @@ export class EventsDecoder {
 
   _eventsABI (compiledContracts) {
     const eventsABI = {}
-    txHelper.visitContracts(compiledContracts, (contract) => {
+    visitContracts(compiledContracts, (contract) => {
       eventsABI[contract.name] = this._eventABI(contract.object)
     })
     return eventsABI
