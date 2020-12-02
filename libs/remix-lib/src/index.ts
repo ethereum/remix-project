@@ -1,22 +1,20 @@
-const EventManager = require('./eventManager')
-const uiHelper = require('./helpers/uiHelper')
-const compilerHelper = require('./helpers/compilerHelper')
-const util = require('./util')
-const Web3Providers = require('./web3Provider/web3Providers')
-const DummyProvider = require('./web3Provider/dummyProvider')
-const Web3VMProvider = require('./web3Provider/web3VmProvider')
-const Storage = require('./storage')
-
-const EventsDecoder = require('./execution/eventsDecoder')
-const txExecution = require('./execution/txExecution')
-const txHelper = require('./execution/txHelper')
-const txFormat = require('./execution/txFormat')
-const txListener = require('./execution/txListener')
-const txRunner = require('./execution/txRunner')
-const ExecutionContext = require('./execution/execution-context')
-const typeConversion = require('./execution/typeConversion')
-
-const UniversalDApp = require('./universalDapp')
+import { EventManager } from './eventManager'
+import * as uiHelper from './helpers/uiHelper'
+import * as compilerHelper from './helpers/compilerHelper'
+import * as util from './util'
+import { Web3Providers } from './web3Provider/web3Providers'
+import { DummyProvider } from './web3Provider/dummyProvider'
+import { Web3VmProvider } from './web3Provider/web3VmProvider'
+import { Storage } from './storage'
+import { EventsDecoder } from './execution/eventsDecoder'
+import * as txExecution from './execution/txExecution'
+import * as txHelper from './execution/txHelper'
+import * as txFormat from './execution/txFormat'
+import { TxListener } from './execution/txListener'
+import { TxRunner } from './execution/txRunner'
+import { ExecutionContext } from './execution/execution-context'
+import * as typeConversion from './execution/typeConversion'
+import { UniversalDApp } from './universalDapp'
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
@@ -32,7 +30,7 @@ function modules () {
     vm: {
       Web3Providers: Web3Providers,
       DummyProvider: DummyProvider,
-      Web3VMProvider: Web3VMProvider
+      Web3VMProvider: Web3VmProvider
     },
     Storage: Storage,
     util: util,
@@ -42,8 +40,8 @@ function modules () {
       txHelper: txHelper,
       executionContext: new ExecutionContext(),
       txFormat: txFormat,
-      txListener: txListener,
-      txRunner: txRunner,
+      txListener: TxListener,
+      txRunner: TxRunner,
       typeConversion: typeConversion
     },
     UniversalDApp: UniversalDApp
