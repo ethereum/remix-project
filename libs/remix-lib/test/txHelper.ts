@@ -1,6 +1,6 @@
 'use strict'
-const tape = require('tape')
-const txHelper = require('../src/execution/txHelper')
+import tape from 'tape'
+import * as txHelper from '../src/execution/txHelper'
 
 tape('getFunction', function (st) {
   st.plan(6)

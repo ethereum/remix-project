@@ -7,7 +7,7 @@ import { Web3VmProvider } from '../web3Provider/web3VmProvider'
 const EthJSVM = require('ethereumjs-vm').default
 const StateManager = require('ethereumjs-vm/dist/state/stateManager').default
 
-const LogsManager = require('./logsManager.js')
+import { LogsManager } from './logsManager'
 
 declare let ethereum: any
 let web3
