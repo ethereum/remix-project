@@ -1,11 +1,12 @@
 'use strict'
-import * as tape from 'tape'
-const txFormat = require('../src/execution/txFormat')
-const txHelper = require('../src/execution/txHelper')
-const util = require('../src/util')
+import tape from 'tape'
+import * as txFormat from '../src/execution/txFormat'
+import * as txHelper from '../src/execution/txHelper'
+import { hexToIntArray } from '../src/util'
 let compiler = require('solc')
-const compilerInput = require('../src/helpers/compilerHelper').compilerInput
-const executionContext = require('../').execution.executionContext
+import { compilerInput } from '../src/helpers/compilerHelper'
+import { ExecutionContext } from '../src/execution/execution-context'
+const executionContext = new ExecutionContext()
 const solidityVersion = 'v0.6.0+commit.26b70077'
 
 /* tape *********************************************************** */
@@ -150,7 +151,7 @@ function testInvalidTupleInput (st, params) {
 /* tape *********************************************************** */
 
 tape('ContractParameters - (TxFormat.buildData) - link Libraries', function (t) {
-  executionContext.setContext('vm')
+  executionContext.setContext('vm', null, null, null)
   const compileData = compiler.compile(compilerInput(deploySimpleLib))
 
   const fakeDeployedContracts = {
@@ -293,7 +294,7 @@ tape('test abiEncoderV2', function (t) {
       console.log(error)
       st.equal(encoded.dataHex, functionId + encodedData.replace('0x', ''))
     })
-    let decoded = txFormat.decodeResponse(util.hexToIntArray(encodedData), contract.abi[0])
+    let decoded = txFormat.decodeResponse(hexToIntArray(encodedData), contract.abi[0])
     console.log(decoded)
     st.equal(decoded[0], `tuple(uint256,uint256,string): ${value1},${value2},${value3}`)
   })
@@ -314,14 +315,14 @@ tape('test abiEncoderV2 array of tuple', function (t) {
     const contract = output.contracts['test.sol']['test']
     txFormat.encodeParams('[34, "test"]', contract.abi[1], (error, encoded) => {
       console.log(error)
-      const decoded = txFormat.decodeResponse(util.hexToIntArray(encoded.dataHex), contract.abi[1])
+      const decoded = txFormat.decodeResponse(hexToIntArray(encoded.dataHex), contract.abi[1])
       console.log(decoded)
       st.equal(decoded[0], 'tuple(uint256,string): _strucmts 34,test')
     })
 
     txFormat.encodeParams('[[34, "test"], [123, "test2"]]', contract.abi[2], (error, encoded) => {
       console.log(error)
-      const decoded = txFormat.decodeResponse(util.hexToIntArray(encoded.dataHex), contract.abi[2])
+      const decoded = txFormat.decodeResponse(hexToIntArray(encoded.dataHex), contract.abi[2])
       console.log(decoded)
       st.equal(decoded[0], 'tuple(uint256,string)[]: strucmts 34,test,123,test2')
     })
