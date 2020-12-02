@@ -1,6 +1,6 @@
 'use strict'
 import { ethers } from 'ethers'
-const helper = require('./txHelper')
+import { encodeParams as encodeParamsHelper, encodeFunctionId, makeFullTypeDefinition} from './txHelper'
 import { eachOfSeries } from 'async'
 import { linkBytecode } from 'solc/linker'
 import { isValidAddress, addHexPrefix }  from 'ethereumjs-util'
@@ -16,7 +16,7 @@ export function encodeData (funABI, values, contractbyteCode) {
   let encoded
   let encodedHex
   try {
-    encoded = helper.encodeParams(funABI, values)
+    encoded = encodeParamsHelper(funABI, values)
     encodedHex = encoded.toString('hex')
   } catch (e) {
     return { error: 'cannot encode arguments' }
@@ -24,7 +24,7 @@ export function encodeData (funABI, values, contractbyteCode) {
   if (contractbyteCode) {
     return { data: '0x' + contractbyteCode + encodedHex.replace('0x', '') }
   } else {
-    return { data: helper.encodeFunctionId(funABI) + encodedHex.replace('0x', '') }
+    return { data: encodeFunctionId(funABI) + encodedHex.replace('0x', '') }
   }
 }
 
@@ -53,7 +53,7 @@ export function encodeParams (params, funAbi, callback) {
     }
     if (funArgs.length > 0) {
       try {
-        data = helper.encodeParams(funAbi, funArgs)
+        data = encodeParamsHelper(funAbi, funArgs)
         dataHex = data.toString('hex')
       } catch (e) {
         return callback('Error encoding arguments: ' + e)
@@ -79,7 +79,7 @@ export function encodeParams (params, funAbi, callback) {
 export function encodeFunctionCall (params, funAbi, callback) {
   this.encodeParams(params, funAbi, (error, encodedParam) => {
     if (error) return callback(error)
-    callback(null, { dataHex: helper.encodeFunctionId(funAbi) + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs })
+    callback(null, { dataHex: encodeFunctionId(funAbi) + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs })
   })
 }
 
@@ -182,7 +182,7 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
       return callback('Error encoding arguments: ' + e)
     }
     try {
-      data = helper.encodeParams(funAbi, funArgs)
+      data = encodeParamsHelper(funAbi, funArgs)
       dataHex = data.toString('hex')
     } catch (e) {
       return callback('Error encoding arguments: ' + e)
@@ -212,7 +212,7 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
       dataHex = bytecodeToDeploy + dataHex
     }
   } else {
-    dataHex = helper.encodeFunctionId(funAbi) + dataHex
+    dataHex = encodeFunctionId(funAbi) + dataHex
   }
   callback(null, { dataHex, funAbi, funArgs, contractBytecode, contractName: contractName })
 }
@@ -361,7 +361,7 @@ export function decodeResponse (response, fnabi) {
       const outputTypes = []
       for (i = 0; i < fnabi.outputs.length; i++) {
         const type = fnabi.outputs[i].type
-        outputTypes.push(type.indexOf('tuple') === 0 ? helper.makeFullTypeDefinition(fnabi.outputs[i]) : type)
+        outputTypes.push(type.indexOf('tuple') === 0 ? makeFullTypeDefinition(fnabi.outputs[i]) : type)
       }
 
       if (!response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data

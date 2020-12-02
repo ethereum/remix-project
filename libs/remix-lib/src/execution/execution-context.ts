@@ -1,11 +1,11 @@
 /* global ethereum */
 'use strict'
 import Web3 from 'web3'
-const EventManager = require('../eventManager')
+import { EventManager } from '../eventManager'
 const EthJSVM = require('ethereumjs-vm').default
 import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
 const StateManager = require('ethereumjs-vm/dist/state/stateManager').default
-const Web3VMProvider = require('../web3Provider/web3VmProvider')
+import { Web3VmProvider } from '../web3Provider/web3VmProvider'
 
 const LogsManager = require('./logsManager.js')
 
@@ -84,7 +84,7 @@ function createVm (hardfork) {
     hardfork: hardfork
   })
   vm.blockchain.validate = false
-  const web3vm = new Web3VMProvider()
+  const web3vm = new Web3VmProvider()
   web3vm.setVM(vm)
   return { vm, web3vm, stateManager }
 }
@@ -306,6 +306,15 @@ export class ExecutionContext {
   }
 
   txDetailsLink (network, hash) {
+    
+    const transactionDetailsLinks = {
+      'Main': 'https://www.etherscan.io/tx/',
+      'Rinkeby': 'https://rinkeby.etherscan.io/tx/',
+      'Ropsten': 'https://ropsten.etherscan.io/tx/',
+      'Kovan': 'https://kovan.etherscan.io/tx/',
+      'Goerli': 'https://goerli.etherscan.io/tx/'
+    }
+
     if (transactionDetailsLinks[network]) {
       return transactionDetailsLinks[network] + hash
     }
@@ -330,10 +339,3 @@ export class ExecutionContext {
   }
 }
 
-const transactionDetailsLinks = {
-  'Main': 'https://www.etherscan.io/tx/',
-  'Rinkeby': 'https://rinkeby.etherscan.io/tx/',
-  'Ropsten': 'https://ropsten.etherscan.io/tx/',
-  'Kovan': 'https://kovan.etherscan.io/tx/',
-  'Goerli': 'https://goerli.etherscan.io/tx/'
-}

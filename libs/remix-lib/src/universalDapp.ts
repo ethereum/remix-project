@@ -3,7 +3,6 @@ import { BN, privateToAddress, isValidPrivate, toChecksumAddress } from 'ethereu
 import { stripHexPrefix } from 'ethjs-util'
 import { randomBytes } from 'crypto'
 import { EventEmitter } from 'events'
-
 import { TxRunner } from './execution/txRunner'
 import { sortAbiFunction, getFallbackInterface, getReceiveInterface, inputParametersDeclarationToString } from './execution/txHelper'
 import { EventManager } from './eventManager'
