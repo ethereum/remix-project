@@ -100,26 +100,26 @@ export class Web3VmProvider {
       structLogs: []
     }
     const tx = {}
-    tx.hash = self.processingHash
-    tx.from = toChecksumAddress(hexConvert(data.getSenderAddress()))
+    tx['hash'] = self.processingHash
+    tx['from'] = toChecksumAddress(hexConvert(data.getSenderAddress()))
     if (data.to && data.to.length) {
-      tx.to = toChecksumAddress(hexConvert(data.to))
+      tx['to'] = toChecksumAddress(hexConvert(data.to))
     }
-    this.processingAddress = tx.to
-    tx.data = hexConvert(data.data)
-    tx.input = hexConvert(data.input)
-    tx.gas = (new BN(hexConvert(data.gas).replace('0x', ''), 16)).toString(10)
+    this.processingAddress = tx['to']
+    tx['data'] = hexConvert(data.data)
+    tx['input'] = hexConvert(data.input)
+    tx['gas'] = (new BN(hexConvert(data.gas).replace('0x', ''), 16)).toString(10)
     if (data.value) {
-      tx.value = hexConvert(data.value)
+      tx['value'] = hexConvert(data.value)
     }
     self.txs[self.processingHash] = tx
     self.txsReceipt[self.processingHash] = tx
     self.storageCache[self.processingHash] = {}
-    if (tx.to) {
-      const account = toBuffer(tx.to)
+    if (tx['to']) {
+      const account = toBuffer(tx['to'])
       self.vm.stateManager.dumpStorage(account, (storage) => {
-        self.storageCache[self.processingHash][tx.to] = storage
-        self.lastProcessedStorageTxHash[tx.to] = self.processingHash
+        self.storageCache[self.processingHash][tx['to']] = storage
+        self.lastProcessedStorageTxHash[tx['to']] = self.processingHash
       })
     }
     this.processingIndex = 0
