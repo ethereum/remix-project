@@ -5,7 +5,7 @@ import { BN, bufferToHex } from 'ethereumjs-util'
 import  { ExecutionContext } from './execution-context'
 const EventManager = require('../eventManager')
 
-class TxRunner {
+export class TxRunner {
 
   event
   executionContext
@@ -272,5 +272,3 @@ function run(self, tx, stamp, confirmationCb, gasEstimationForceSend = null, pro
     }
   })
 }
-
-module.exports = TxRunner
