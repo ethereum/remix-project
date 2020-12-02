@@ -1,6 +1,6 @@
 'use strict'
-const tape = require('tape')
-const util = require('../src/util')
+import tape from 'tape'
+import * as util from '../src/util'
 
 tape('Util', function (t) {
   t.test('lowerbound', function (st) {
