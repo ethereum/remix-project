@@ -4,11 +4,11 @@ import { ethers } from 'ethers'
 import { toBuffer } from 'ethereumjs-util'
 import { EventManager } from '../eventManager'
 import { compareByteCode } from '../util'
-import  { ExecutionContext } from './execution-context'
-import  { decodeResponse } from './txFormat'
-import  { getFunction, getReceiveInterface, getConstructorInterface, visitContracts, makeFullTypeDefinition } from './txHelper'
+import { ExecutionContext } from './execution-context'
+import { decodeResponse } from './txFormat'
+import { getFunction, getReceiveInterface, getConstructorInterface, visitContracts, makeFullTypeDefinition } from './txHelper'
 
-function addExecutionCosts(txResult, tx) {
+function addExecutionCosts (txResult, tx) {
   if (txResult && txResult.result) {
     if (txResult.result.execResult) {
       tx.returnValue = txResult.result.execResult.returnValue
@@ -26,7 +26,6 @@ function addExecutionCosts(txResult, tx) {
   *
   */
 export class TxListener {
-
   event
   executionContext
   _resolvedTransactions
@@ -139,7 +138,7 @@ export class TxListener {
     }
   }
 
-   /**
+  /**
     * stop listening for incoming transactions. do not reset the recorded pool.
     *
     * @param {String} type - type/name of the provider to add
@@ -179,7 +178,7 @@ export class TxListener {
   _manageBlock (blockNumber) {
     this.executionContext.web3().eth.getBlock(blockNumber, true, (error, result) => {
       if (!error) {
-        this._newBlock(Object.assign({type: 'web3'}, result))
+        this._newBlock(Object.assign({ type: 'web3' }, result))
       }
     })
   }
@@ -242,13 +241,13 @@ export class TxListener {
       const code = tx.input
       contract = this._tryResolveContract(code, contracts, true)
       if (contract) {
-        let address = receipt.contractAddress
+        const address = receipt.contractAddress
         this._resolvedContracts[address] = contract
         fun = this._resolveFunction(contract, tx, true)
         if (this._resolvedTransactions[tx.hash]) {
           this._resolvedTransactions[tx.hash].contractAddress = address
         }
-        return cb(null, {to: null, contractName: contract.name, function: fun, creationAddress: address})
+        return cb(null, { to: null, contractName: contract.name, function: fun, creationAddress: address })
       }
       return cb()
     } else {
@@ -262,7 +261,7 @@ export class TxListener {
             if (contract) {
               this._resolvedContracts[tx.to] = contract
               const fun = this._resolveFunction(contract, tx, false)
-              return cb(null, {to: tx.to, contractName: contract.name, function: fun})
+              return cb(null, { to: tx.to, contractName: contract.name, function: fun })
             }
           }
           return cb()
@@ -271,7 +270,7 @@ export class TxListener {
       }
       if (contract) {
         fun = this._resolveFunction(contract, tx, false)
-        return cb(null, {to: tx.to, contractName: contract.name, function: fun})
+        return cb(null, { to: tx.to, contractName: contract.name, function: fun })
       }
       return cb()
     }
@@ -286,7 +285,7 @@ export class TxListener {
     const inputData = tx.input.replace('0x', '')
     if (!isCtor) {
       const methodIdentifiers = contract.object.evm.methodIdentifiers
-      for (let fn in methodIdentifiers) {
+      for (const fn in methodIdentifiers) {
         if (methodIdentifiers[fn] === inputData.substring(0, 8)) {
           const fnabi = getFunction(abi, fn)
           this._resolvedTransactions[tx.hash] = {
