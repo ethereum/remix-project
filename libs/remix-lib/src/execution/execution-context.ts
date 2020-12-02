@@ -9,6 +9,7 @@ const Web3VMProvider = require('../web3Provider/web3VmProvider')
 
 const LogsManager = require('./logsManager.js')
 
+declare let ethereum: any;
 let web3
 if (typeof window !== 'undefined' && typeof window['ethereum'] !== 'undefined') {
   var injectedProvider = window['ethereum']
