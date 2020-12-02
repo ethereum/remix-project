@@ -6,7 +6,6 @@ import { ExecutionContext } from './execution-context'
 import { EventManager } from '../eventManager'
 
 export class TxRunner {
-
   event
   executionContext
   _api
@@ -73,7 +72,7 @@ export class TxRunner {
           resolve({
             result,
             tx,
-            transactionHash: result ? result['transactionHash'] : null
+            transactionHash: result ? result.transactionHash : null
           })
         })
       }
@@ -87,7 +86,7 @@ export class TxRunner {
     }
   }
 
-  execute(args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+  execute (args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
     let data = args.data
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data
@@ -157,7 +156,7 @@ export class TxRunner {
 
   runBlockInVm (tx, block, callback) {
     this.executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then((results) => {
-      let result = results.results[0]
+      const result = results.results[0]
       if (result) {
         const status = result.execResult.exceptionError ? 0 : 1
         result.status = `0x${status}`
@@ -177,7 +176,7 @@ export class TxRunner {
     const tx = { from: from, to: to, data: data, value: value }
 
     if (useCall) {
-      tx['gas'] = gasLimit
+      tx.gas = gasLimit
       return this.executionContext.web3().eth.call(tx, function (error, result) {
         callback(error, {
           result: result,
@@ -192,7 +191,7 @@ export class TxRunner {
       }
       gasEstimationForceSend(err, () => {
         // callback is called whenever no error
-        tx['gas'] = !gasEstimation ? gasLimit : gasEstimation
+        tx.gas = !gasEstimation ? gasLimit : gasEstimation
 
         if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
           return this._executeTx(tx, null, this._api, promptCb, callback)
@@ -204,7 +203,7 @@ export class TxRunner {
             return
           }
 
-          confirmCb(network, tx, tx['gas'], (gasPrice) => {
+          confirmCb(network, tx, tx.gas, (gasPrice) => {
             return this._executeTx(tx, gasPrice, this._api, promptCb, callback)
           }, (error) => {
             callback(error)
@@ -258,7 +257,7 @@ async function tryTillTxAvailable (txhash, executionContext) {
 
 async function pause () { return new Promise((resolve, reject) => { setTimeout(resolve, 500) }) }
 
-function run(self, tx, stamp, confirmationCb, gasEstimationForceSend = null, promptCb = null, callback = null) {
+function run (self, tx, stamp, confirmationCb, gasEstimationForceSend = null, promptCb = null, callback = null) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
     return self.queusTxs.push({ tx, stamp, callback })
   }

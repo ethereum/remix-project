@@ -15,7 +15,7 @@ import { ethers } from 'ethers'
   *     [personal mode enabled, need password to continue] promptCb (okCb, cancelCb)
   * @param {Function} finalCallback    - last callback.
   */
-export function createContract  (from, data, value, gasLimit, txRunner, callbacks, finalCallback) {
+export function createContract (from, data, value, gasLimit, txRunner, callbacks, finalCallback) {
   if (!callbacks.confirmationCb || !callbacks.gasEstimationForceSend || !callbacks.promptCb) {
     return finalCallback('all the callbacks must have been defined')
   }
@@ -56,7 +56,7 @@ export function callFunction (from, to, data, value, gasLimit, funAbi, txRunner,
   * @param {Object} txResult    - the value returned by the vm
   * @return {Object} -  { error: true/false, message: DOMNode }
   */
- export function checkVMError (txResult) {
+export function checkVMError (txResult) {
   const errorCode = {
     OUT_OF_GAS: 'out of gas',
     STACK_UNDERFLOW: 'stack underflow',
@@ -81,10 +81,10 @@ export function callFunction (from, to, data, value, gasLimit, funAbi, txRunner,
   const error = `VM error: ${exceptionError}.\n`
   let msg
   if (exceptionError === errorCode.INVALID_OPCODE) {
-    msg = `\t\n\tThe execution might have thrown.\n`
+    msg = '\t\n\tThe execution might have thrown.\n'
     ret.error = true
   } else if (exceptionError === errorCode.OUT_OF_GAS) {
-    msg = `\tThe transaction ran out of gas. Please increase the Gas Limit.\n`
+    msg = '\tThe transaction ran out of gas. Please increase the Gas Limit.\n'
     ret.error = true
   } else if (exceptionError === errorCode.REVERT) {
     const returnData = txResult.result.execResult.returnValue
@@ -94,15 +94,13 @@ export function callFunction (from, to, data, value, gasLimit, funAbi, txRunner,
       const reason = abiCoder.decode(['string'], returnData.slice(4))[0]
       msg = `\tThe transaction has been reverted to the initial state.\nReason provided by the contract: "${reason}".`
     } else {
-      msg = `\tThe transaction has been reverted to the initial state.\nNote: The called function should be payable if you send value and the value you send should be less than your current balance.`
+      msg = '\tThe transaction has been reverted to the initial state.\nNote: The called function should be payable if you send value and the value you send should be less than your current balance.'
     }
     ret.error = true
   } else if (exceptionError === errorCode.STATIC_STATE_CHANGE) {
-    msg = `\tState changes is not allowed in Static Call context\n`
+    msg = '\tState changes is not allowed in Static Call context\n'
     ret.error = true
   }
   ret.message = `${error}${exceptionError}${msg}\tDebug the transaction to get more information.`
   return ret
 }
-
-

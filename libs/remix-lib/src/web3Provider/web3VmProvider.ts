@@ -1,10 +1,9 @@
 import { hexConvert, hexListFromBNs, formatMemory } from '../util'
 import { normalizeHexAddress } from '../helpers/uiHelper'
-import { toChecksumAddress, BN, toBuffer, }  from 'ethereumjs-util'
+import { toChecksumAddress, BN, toBuffer } from 'ethereumjs-util'
 import Web3 from 'web3'
 
 export class Web3VmProvider {
-
   web3
   vm
   vmTraces
@@ -54,8 +53,8 @@ export class Web3VmProvider {
     this.debug.traceTransaction = this.traceTransaction
     this.debug.storageRangeAt = this.storageRangeAt
     this.debug.preimage = this.preimage
-    this.providers = { 'HttpProvider': function (url) {} }
-    this.currentProvider = { 'host': 'vm provider' }
+    this.providers = { HttpProvider: function (url) {} }
+    this.currentProvider = { host: 'vm provider' }
     this.storageCache = {}
     this.lastProcessedStorageTxHash = {}
     this.sha3Preimages = {}
@@ -100,27 +99,27 @@ export class Web3VmProvider {
       return: '0x0',
       structLogs: []
     }
-    let tx = {}
-    tx['hash'] = self.processingHash
-    tx['from'] = toChecksumAddress(hexConvert(data.getSenderAddress()))
+    const tx = {}
+    tx.hash = self.processingHash
+    tx.from = toChecksumAddress(hexConvert(data.getSenderAddress()))
     if (data.to && data.to.length) {
-      tx['to'] = toChecksumAddress(hexConvert(data.to))
+      tx.to = toChecksumAddress(hexConvert(data.to))
     }
-    this.processingAddress = tx['to']
-    tx['data'] = hexConvert(data.data)
-    tx['input'] = hexConvert(data.input)
-    tx['gas'] = (new BN(hexConvert(data.gas).replace('0x', ''), 16)).toString(10)
+    this.processingAddress = tx.to
+    tx.data = hexConvert(data.data)
+    tx.input = hexConvert(data.input)
+    tx.gas = (new BN(hexConvert(data.gas).replace('0x', ''), 16)).toString(10)
     if (data.value) {
-      tx['value'] = hexConvert(data.value)
+      tx.value = hexConvert(data.value)
     }
     self.txs[self.processingHash] = tx
     self.txsReceipt[self.processingHash] = tx
     self.storageCache[self.processingHash] = {}
-    if (tx['to']) {
-      const account = toBuffer(tx['to'])
+    if (tx.to) {
+      const account = toBuffer(tx.to)
       self.vm.stateManager.dumpStorage(account, (storage) => {
-        self.storageCache[self.processingHash][tx['to']] = storage
-        self.lastProcessedStorageTxHash[tx['to']] = self.processingHash
+        self.storageCache[self.processingHash][tx.to] = storage
+        self.lastProcessedStorageTxHash[tx.to] = self.processingHash
       })
     }
     this.processingIndex = 0
@@ -134,7 +133,7 @@ export class Web3VmProvider {
     self.vmTraces[self.processingHash].gas = '0x' + data.gasUsed.toString(16)
 
     const logs = []
-    for (let l in data.execResult.logs) {
+    for (const l in data.execResult.logs) {
       const log = data.execResult.logs[l]
       const topics = []
       if (log[1].length > 0) {
@@ -218,7 +217,7 @@ export class Web3VmProvider {
       const preimage = this.getSha3Input(previousopcode.stack, previousopcode.memory)
       const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
       self.sha3Preimages[imageHash] = {
-        'preimage': preimage
+        preimage: preimage
       }
     }
 

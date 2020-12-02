@@ -1,9 +1,9 @@
 'use strict'
 import { ethers } from 'ethers'
-import { encodeParams as encodeParamsHelper, encodeFunctionId, makeFullTypeDefinition} from './txHelper'
+import { encodeParams as encodeParamsHelper, encodeFunctionId, makeFullTypeDefinition } from './txHelper'
 import { eachOfSeries } from 'async'
-import { linkBytecode } from 'solc/linker'
-import { isValidAddress, addHexPrefix }  from 'ethereumjs-util'
+import { linkBytecode as linkBytecodeSolc } from 'solc/linker'
+import { isValidAddress, addHexPrefix } from 'ethereumjs-util'
 
 /**
   * build the transaction data
@@ -99,8 +99,8 @@ export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi,
     let bytecodeToDeploy = contract.evm.bytecode.object
     if (bytecodeToDeploy.indexOf('_') >= 0) {
       if (linkLibraries && linkReferences) {
-        for (let libFile in linkLibraries) {
-          for (let lib in linkLibraries[libFile]) {
+        for (const libFile in linkLibraries) {
+          for (const lib in linkLibraries[libFile]) {
             const address = linkLibraries[libFile][lib]
             if (!isValidAddress(address)) return callback(address + ' is not a valid address. Please check the provided address is valid.')
             bytecodeToDeploy = this.linkLibraryStandardFromlinkReferences(lib, address.replace('0x', ''), bytecodeToDeploy, linkReferences)
@@ -140,14 +140,14 @@ export function encodeConstructorCallAndDeployLibraries (contractName, contract,
           callback('Error deploying required libraries: ' + err)
         } else {
           bytecodeToDeploy = bytecode + dataHex
-          return callback(null, {dataHex: bytecodeToDeploy, funAbi, funArgs: encodedParam.funArgs, contractBytecode, contractName: contractName})
+          return callback(null, { dataHex: bytecodeToDeploy, funAbi, funArgs: encodedParam.funArgs, contractBytecode, contractName: contractName })
         }
       }, callbackStep, callbackDeployLibrary)
       return
     } else {
       dataHex = bytecodeToDeploy + encodedParam.dataHex
     }
-    callback(null, {dataHex: bytecodeToDeploy, funAbi, funArgs: encodedParam.funArgs, contractBytecode, contractName: contractName})
+    callback(null, { dataHex: bytecodeToDeploy, funAbi, funArgs: encodedParam.funArgs, contractBytecode, contractName: contractName })
   })
 }
 
@@ -204,7 +204,7 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
           callback('Error deploying required libraries: ' + err)
         } else {
           bytecodeToDeploy = bytecode + dataHex
-          return callback(null, {dataHex: bytecodeToDeploy, funAbi, funArgs, contractBytecode, contractName: contractName})
+          return callback(null, { dataHex: bytecodeToDeploy, funAbi, funArgs, contractBytecode, contractName: contractName })
         }
       }, callbackStep, callbackDeployLibrary)
       return
@@ -309,7 +309,7 @@ export function deployLibrary (libraryName, libraryShortName, library, contracts
     }, callbackStep, callbackDeployLibrary)
   } else {
     callbackStep(`creation of library ${libraryName} pending...`)
-    const data = {dataHex: bytecode, funAbi: {type: 'constructor'}, funArgs: [], contractBytecode: bytecode, contractName: libraryShortName}
+    const data = { dataHex: bytecode, funAbi: { type: 'constructor' }, funArgs: [], contractBytecode: bytecode, contractName: libraryShortName }
     callbackDeployLibrary({ data: data, useCall: false }, (err, txResult) => {
       if (err) {
         return callback(err)
@@ -322,8 +322,8 @@ export function deployLibrary (libraryName, libraryShortName, library, contracts
 }
 
 export function linkLibraryStandardFromlinkReferences (libraryName, address, bytecode, linkReferences) {
-  for (let file in linkReferences) {
-    for (let libName in linkReferences[file]) {
+  for (const file in linkReferences) {
+    for (const libName in linkReferences[file]) {
       if (libraryName === libName) {
         bytecode = this.setLibraryAddress(address, bytecode, linkReferences[file][libName])
       }
@@ -338,7 +338,7 @@ export function linkLibraryStandard (libraryName, address, bytecode, contract) {
 
 export function setLibraryAddress (address, bytecodeToLink, positions) {
   if (positions) {
-    for (let pos of positions) {
+    for (const pos of positions) {
       const regpos = bytecodeToLink.match(new RegExp(`(.{${2 * pos.start}})(.{${2 * pos.length}})(.*)`))
       if (regpos) {
         bytecodeToLink = regpos[1] + address + regpos[3]
@@ -349,7 +349,7 @@ export function setLibraryAddress (address, bytecodeToLink, positions) {
 }
 
 export function linkLibrary (libraryName, address, bytecodeToLink) {
-  return linkBytecode(bytecodeToLink, { [libraryName]: addHexPrefix(address) })
+  return linkBytecodeSolc(bytecodeToLink, { [libraryName]: addHexPrefix(address) })
 }
 
 export function decodeResponse (response, fnabi) {
@@ -404,7 +404,7 @@ export function parseFunctionParams (params) {
           throw new Error('invalid params')
         }
       }
-    } else if (params.charAt(i) === '[') {  // If an array/struct opening bracket is received
+    } else if (params.charAt(i) === '[') { // If an array/struct opening bracket is received
       startIndex = -1
       let bracketCount = 1
       let j
@@ -412,7 +412,7 @@ export function parseFunctionParams (params) {
         // Increase count if another array opening bracket is received (To handle nested array)
         if (params.charAt(j) === '[') {
           bracketCount++
-        } else if (params.charAt(j) === ']') {  // // Decrease count if an array closing bracket is received (To handle nested array)
+        } else if (params.charAt(j) === ']') { // // Decrease count if an array closing bracket is received (To handle nested array)
           bracketCount--
         }
         // Throw error if end of params string is arrived but couldn't get end of tuple
@@ -448,5 +448,3 @@ export function parseFunctionParams (params) {
 export function isArrayOrStringStart (str, index) {
   return str.charAt(index) === '"' || str.charAt(index) === '['
 }
-
-

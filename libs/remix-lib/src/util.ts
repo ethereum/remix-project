@@ -10,7 +10,7 @@ import { BN, bufferToHex, keccak, setLengthLeft } from 'ethereumjs-util'
   - swarm hash extraction
   - bytecode comparison
 */
-  /*
+/*
     ints: IntArray
   */
 export function hexConvert (ints) {
@@ -26,7 +26,7 @@ export function hexConvert (ints) {
   return ret
 }
 
-  /**
+/**
    * Converts a hex string to an array of integers.
    */
 export function hexToIntArray (hexString) {
@@ -40,12 +40,12 @@ export function hexToIntArray (hexString) {
   return integers
 }
 
-  /*
+/*
     ints: list of BNs
   */
 export function hexListFromBNs (bnList) {
   const ret = []
-  for (let k in bnList) {
+  for (const k in bnList) {
     const v = bnList[k]
     if (BN.isBN(v)) {
       ret.push('0x' + v.toString('hex', 64))
@@ -61,7 +61,7 @@ export function hexListFromBNs (bnList) {
 */
 export function hexListConvert (intsList) {
   const ret = []
-  for (let k in intsList) {
+  for (const k in intsList) {
     ret.push(this.hexConvert(intsList[k]))
   }
   return ret
@@ -139,12 +139,12 @@ export function findClosestIndex (target, array): number {
   * @param {Object} rootCall  - call tree, built by the trace analyser
   * @return {Object} - return the call which include the @args index
   */
-export function  findCall (index, rootCall) {
+export function findCall (index, rootCall) {
   const ret = buildCallPath(index, rootCall)
   return ret[ret.length - 1]
 }
 
-  /**
+/**
   * Find calls path from @args rootCall which leads to @args index (recursive)
   *
   * @param {Int} index - index of the vmtrace
@@ -157,13 +157,13 @@ export function buildCallPath (index, rootCall) {
   return ret
 }
 
-  /**
+/**
   * sha3 the given @arg value (left pad to 32 bytes)
   *
   * @param {String} value - value to sha3
   * @return {Object} - return sha3ied value
   */
- export function sha3_256 (value) {
+export function sha3_256 (value) {
   if (typeof value === 'string' && value.indexOf('0x') !== 0) {
     value = '0x' + value
   }
@@ -186,7 +186,7 @@ export function swarmHashExtraction () {
   *
   * @return {RegEx}
   */
- export function swarmHashExtractionPOC31 () {
+export function swarmHashExtractionPOC31 () {
   return /a265627a7a72315820([0-9a-f]{64})64736f6c6343([0-9a-f]{6})0032$/
 }
 
@@ -227,7 +227,7 @@ export function extractSwarmHash (value) {
   *
   * @return {bool}
   */
- export function compareByteCode (code1, code2) {
+export function compareByteCode (code1, code2) {
   if (code1 === code2) return true
   if (code2 === '0x') return false // abstract contract. see comment
 
@@ -271,7 +271,6 @@ export function escapeRegExp (str) {
   return str.replace(/[-[\]/{}()+?.\\^$|]/g, '\\$&')
 }
 
-
 function replaceLibReference (code, pos) {
   return code.substring(0, pos) + '0000000000000000000000000000000000000000' + code.substring(pos + 40)
 }
@@ -280,8 +279,8 @@ function findCallInternal (index, rootCall, callsPath) {
   const calls = Object.keys(rootCall.calls)
   const ret = rootCall
   callsPath.push(rootCall)
-  for (let k in calls) {
-    let subCall = rootCall.calls[calls[k]]
+  for (const k in calls) {
+    const subCall = rootCall.calls[calls[k]]
     if (index >= subCall.start && index <= subCall.return) {
       findCallInternal(index, subCall, callsPath)
       break
