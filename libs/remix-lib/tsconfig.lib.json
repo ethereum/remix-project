@@ -5,7 +5,7 @@
       "outDir": "../../dist/out-tsc",
       "declaration": true,
       "rootDir": "./",
-      "types": ["node"]
+      "types": ["node", "tape"]
     },
     "exclude": [
       "**/*.spec.js",
