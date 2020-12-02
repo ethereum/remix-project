@@ -1,10 +1,9 @@
 'use strict'
-import async from 'async'
+import { each } from 'async'
 import { ethers } from 'ethers'
 import { toBuffer } from 'ethereumjs-util'
-const EventManager = require('../eventManager')
-const codeUtil = require('../util')
-
+import { EventManager } from '../eventManager'
+import { compareByteCode } from '../util'
 import  { ExecutionContext } from './execution-context'
 import  { decodeResponse } from './txFormat'
 import  { getFunction, getReceiveInterface, getConstructorInterface, visitContracts, makeFullTypeDefinition } from './txHelper'
@@ -214,7 +213,7 @@ export class TxListener {
   }
 
   _resolve (transactions, callback) {
-    async.each(transactions, (tx, cb) => {
+    each(transactions, (tx, cb) => {
       this._api.resolveReceipt(tx, (error, receipt) => {
         if (error) return cb(error)
         this._resolveTx(tx, receipt, (error, resolvedData) => {
@@ -339,7 +338,7 @@ export class TxListener {
     let found = null
     visitContracts(compiledContracts, (contract) => {
       const bytes = isCreation ? contract.object.evm.bytecode.object : contract.object.evm.deployedBytecode.object
-      if (codeUtil.compareByteCode(codeToResolve, '0x' + bytes)) {
+      if (compareByteCode(codeToResolve, '0x' + bytes)) {
         found = contract
         return true
       }

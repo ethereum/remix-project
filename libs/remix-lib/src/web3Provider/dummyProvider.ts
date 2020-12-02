@@ -1,4 +1,4 @@
-export class dummyProvider {
+export class DummyProvider {
   eth
   debug
   providers
