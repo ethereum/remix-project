@@ -86,7 +86,7 @@ export class RemixAppManager extends PluginManager {
       const savedPlugins = localStorage.getItem('plugins-directory')
       if (savedPlugins) {
         try {
-          plugin = JSON.parse(savedPlugins)
+          plugins = JSON.parse(savedPlugins)
         } catch (e) {
           console.error(e)
         }
