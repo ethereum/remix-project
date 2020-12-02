@@ -1,21 +1,30 @@
-const async = require('async')
-const { BN, privateToAddress, isValidPrivate, stripHexPrefix, toChecksumAddress } = require('ethereumjs-util')
-const crypto = require('crypto')
-const { EventEmitter } = require('events')
+import  { waterfall } from 'async'
+import { BN, privateToAddress, isValidPrivate, toChecksumAddress } from 'ethereumjs-util'
+import { stripHexPrefix } from 'ethjs-util'
+import { randomBytes } from 'crypto'
+import { EventEmitter } from 'events'
 
-const TxRunner = require('./execution/txRunner')
-const txHelper = require('./execution/txHelper')
-const EventManager = require('./eventManager')
-const defaultExecutionContext = require('./execution/execution-context')
-const { resultToRemixTx } = require('./helpers/txResultHelper')
+import { TxRunner } from './execution/txRunner'
+import { sortAbiFunction, getFallbackInterface, getReceiveInterface, inputParametersDeclarationToString } from './execution/txHelper'
+import { EventManager } from './eventManager'
+import { ExecutionContext } from './execution/execution-context'
+import { resultToRemixTx } from './helpers/txResultHelper'
 
-module.exports = class UniversalDApp {
+export class UniversalDApp {
+
+  events
+  event
+  executionContext
+  config
+  txRunner
+  accounts
+  transactionContextAPI
 
   constructor (config, executionContext) {
     this.events = new EventEmitter()
     this.event = new EventManager()
     // has a default for now for backwards compatability
-    this.executionContext = executionContext || defaultExecutionContext
+    this.executionContext = executionContext || new ExecutionContext()
     this.config = config
 
     this.txRunner = new TxRunner({}, {
@@ -97,7 +106,7 @@ module.exports = class UniversalDApp {
     }
     let privateKey
     do {
-      privateKey = crypto.randomBytes(32)
+      privateKey = randomBytes(32)
     } while (!isValidPrivate(privateKey))
     this._addAccount(privateKey, '0x56BC75E2D63100000')
     cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
@@ -247,22 +256,22 @@ module.exports = class UniversalDApp {
   }
 
   getABI (contract) {
-    return txHelper.sortAbiFunction(contract.abi)
+    return sortAbiFunction(contract.abi)
   }
 
   getFallbackInterface (contractABI) {
-    return txHelper.getFallbackInterface(contractABI)
+    return getFallbackInterface(contractABI)
   }
 
   getReceiveInterface (contractABI) {
-    return txHelper.getReceiveInterface(contractABI)
+    return getReceiveInterface(contractABI)
   }
 
   getInputs (funABI) {
     if (!funABI.inputs) {
       return ''
     }
-    return txHelper.inputParametersDeclarationToString(funABI.inputs)
+    return inputParametersDeclarationToString(funABI.inputs)
   }
 
   /**
@@ -309,7 +318,7 @@ module.exports = class UniversalDApp {
 
   runTx (args, confirmationCb, continueCb, promptCb, cb) {
     const self = this
-    async.waterfall([
+    waterfall([
       function getGasLimit (next) {
         if (self.transactionContextAPI.getGasLimit) {
           return self.transactionContextAPI.getGasLimit(next)
