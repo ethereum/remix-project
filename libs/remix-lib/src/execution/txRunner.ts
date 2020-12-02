@@ -1,7 +1,7 @@
 'use strict'
 import { Transaction } from 'ethereumjs-tx'
 import { Block } from 'ethereumjs-block'
-import { BN } from 'ethereumjs-util'
+import { BN, bufferToHex } from 'ethereumjs-util'
 import  { ExecutionContext } from './execution-context'
 const EventManager = require('../eventManager')
 
