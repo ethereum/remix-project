@@ -2,17 +2,17 @@
 'use strict'
 import Web3 from 'web3'
 import { EventManager } from '../eventManager'
-const EthJSVM = require('ethereumjs-vm').default
 import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
-const StateManager = require('ethereumjs-vm/dist/state/stateManager').default
 import { Web3VmProvider } from '../web3Provider/web3VmProvider'
+const EthJSVM = require('ethereumjs-vm').default
+const StateManager = require('ethereumjs-vm/dist/state/stateManager').default
 
 const LogsManager = require('./logsManager.js')
 
-declare let ethereum: any;
+declare let ethereum: any
 let web3
-if (typeof window !== 'undefined' && typeof window['ethereum'] !== 'undefined') {
-  var injectedProvider = window['ethereum']
+if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
+  var injectedProvider = window.ethereum
   web3 = new Web3(injectedProvider)
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
@@ -65,7 +65,7 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   setStateRoot (stateRoot, cb) {
-    let checkpoint = this._checkpointCount
+    const checkpoint = this._checkpointCount
     this._checkpointCount = 0
     super.setStateRoot(stateRoot, (err) => {
       this._checkpointCount = checkpoint
@@ -116,7 +116,7 @@ export class ExecutionContext {
   executionContext
   listenOnLastBlockId
 
-  constructor() {
+  constructor () {
     this.event = new EventManager()
     this.logsManager = new LogsManager()
     this.executionContext = null
@@ -306,13 +306,12 @@ export class ExecutionContext {
   }
 
   txDetailsLink (network, hash) {
-    
     const transactionDetailsLinks = {
-      'Main': 'https://www.etherscan.io/tx/',
-      'Rinkeby': 'https://rinkeby.etherscan.io/tx/',
-      'Ropsten': 'https://ropsten.etherscan.io/tx/',
-      'Kovan': 'https://kovan.etherscan.io/tx/',
-      'Goerli': 'https://goerli.etherscan.io/tx/'
+      Main: 'https://www.etherscan.io/tx/',
+      Rinkeby: 'https://rinkeby.etherscan.io/tx/',
+      Ropsten: 'https://ropsten.etherscan.io/tx/',
+      Kovan: 'https://kovan.etherscan.io/tx/',
+      Goerli: 'https://goerli.etherscan.io/tx/'
     }
 
     if (transactionDetailsLinks[network]) {
@@ -338,4 +337,3 @@ export class ExecutionContext {
     this.txs[tx] = block
   }
 }
-

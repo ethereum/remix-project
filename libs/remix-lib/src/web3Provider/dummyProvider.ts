@@ -4,7 +4,7 @@ export class DummyProvider {
   providers
   currentProvider
 
-  constructor() {
+  constructor () {
     this.eth = {}
     this.debug = {}
     this.eth.getCode = (address, cb) => { return this.getCode(address, cb) }
@@ -13,8 +13,8 @@ export class DummyProvider {
     this.eth.getBlockNumber = (cb) => { return this.getBlockNumber(cb) }
     this.debug.traceTransaction = (hash, options, cb) => { return this.traceTransaction(hash, options, cb) }
     this.debug.storageRangeAt = (blockNumber, txIndex, address, start, end, maxLength, cb) => { return this.storageRangeAt(blockNumber, txIndex, address, start, end, maxLength, cb) }
-    this.providers = { 'HttpProvider': function (url) {} }
-    this.currentProvider = {'host': ''}
+    this.providers = { HttpProvider: function (url) {} }
+    this.currentProvider = { host: '' }
   }
 
   getCode (address, cb) {
