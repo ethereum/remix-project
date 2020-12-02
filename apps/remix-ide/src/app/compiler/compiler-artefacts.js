@@ -46,6 +46,11 @@ module.exports = class CompilerArtefacts extends Plugin {
       this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
+
+    this.on('optimism-compiler', 'compilationFinished', (file, source, languageVersion, data) => {
+      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
+      saveCompilationPerFileResult(file, source, languageVersion, data)
+    })
   }
 
   getAllContractDatas () {

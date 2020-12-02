@@ -37,6 +37,9 @@ class DropdownLogic {
     this.runView.on('yulp', 'compilationFinished', (file, source, languageVersion, data) =>
       broadcastCompilationResult(file, source, languageVersion, data)
     )
+    this.runView.on('optimism-compiler', 'compilationFinished', (file, source, languageVersion, data) =>
+      broadcastCompilationResult(file, source, languageVersion, data)
+    )
   }
 
   loadContractFromAddress (address, confirmCb, cb) {
