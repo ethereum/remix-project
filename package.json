@@ -49,7 +49,6 @@
     "bumpVersion:libs": "gulp & gulp syncLibVersions;",
     "browsertest": "sleep 5 && npm run nightwatch_local",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='apps/remix-ide/assets/css/font-awesome.min.css' apps/remix-ide/assets/css/",
-    "downloadsolc_root": "wget --no-check-certificate https://solc-bin.ethereum.org/bin/soljson-v0.7.4+commit.3f05b770.js -O ./apps/remix-ide/soljson.js",
     "make-mock-compiler": "node apps/remix-ide/ci/makeMockCompiler.js",
     "minify": "uglifyjs --in-source-map inline --source-map-inline -c warnings=false",
     "nightwatch_parallel": "npm run build:e2e & nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js --env=chrome,firefox",
@@ -87,7 +86,7 @@
     "selenium": "selenium-standalone start",
     "selenium-install": "selenium-standalone install",
     "sourcemap": "exorcist --root ../ apps/remix-ide/build/app.js.map > apps/remix-ide/build/app.js",
-    "test-browser": "npm-run-all -lpr selenium downloadsolc_root make-mock-compiler serve browsertest",
+    "test-browser": "npm-run-all -lpr selenium make-mock-compiler serve browsertest",
     "watch": "watchify apps/remix-ide/src/index.js -dv -p browserify-reload -o apps/remix-ide/build/app.js --exclude solc",
     "reinstall": "rm ./node-modules/ -rf & rm package-lock.json & rm ./build/ -rf & npm install & npm run build",
     "ganache-cli": "npx ganache-cli"
