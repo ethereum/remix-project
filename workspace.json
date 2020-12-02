@@ -128,7 +128,7 @@
         "test": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["npm-run-all test"],
+            "commands": ["./../../node_modules/.bin/npm-run-all test"],
             "cwd": "libs/remix-analyzer"
           }
         },
@@ -162,7 +162,7 @@
         "test": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["npm-run-all test"],
+            "commands": ["./../../node_modules/.bin/npm-run-all test"],
             "cwd": "libs/remix-astwalker"
           }
         },
@@ -196,7 +196,7 @@
         "test": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["npm-run-all test"],
+            "commands": ["./../../node_modules/.bin/npm-run-all test"],
             "cwd": "libs/remix-debug"
           }
         },
@@ -241,7 +241,7 @@
         "test": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["npm-run-all test"],
+            "commands": ["./../../node_modules/.bin/npm-run-all test"],
             "cwd": "libs/remix-lib"
           }
         },
@@ -275,7 +275,7 @@
         "test": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["npm-run-all test"],
+            "commands": ["./../../node_modules/.bin/npm-run-all test"],
             "cwd": "libs/remix-simulator"
           }
         },
@@ -320,7 +320,7 @@
         "test": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["npm-run-all test"],
+            "commands": ["./../../node_modules/.bin/npm-run-all test"],
             "cwd": "libs/remix-solidity"
           }
         },
@@ -402,7 +402,7 @@
         "test": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["npm-run-all test"],
+            "commands": ["./../../node_modules/.bin/npm-run-all test"],
             "cwd": "libs/remix-url-resolver"
           }
         },

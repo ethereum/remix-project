@@ -1,16 +1,16 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-      "module": "commonjs",
-      "outDir": "../../dist/out-tsc",
-      "declaration": true,
-      "rootDir": "./",
-      "types": ["node", "tape"]
-    },
-    "exclude": [
-      "**/*.spec.js",
-      "test/"
-    ],
-    "include": ["**/*.ts"]
-  }
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "../../dist/out-tsc",
+    "declaration": true,
+    "rootDir": "./",
+    "types": ["node", "tape"]
+  },
+  "exclude": [
+    "**/*.spec.js",
+    "test/"
+  ],
+  "include": ["**/*.ts"]
+}
   
