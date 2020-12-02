@@ -1,50 +1,55 @@
-function dummyProvider () {
-  this.eth = {}
-  this.debug = {}
-  this.eth.getCode = (address, cb) => { return this.getCode(address, cb) }
-  this.eth.getTransaction = (hash, cb) => { return this.getTransaction(hash, cb) }
-  this.eth.getTransactionFromBlock = (blockNumber, txIndex, cb) => { return this.getTransactionFromBlock(blockNumber, txIndex, cb) }
-  this.eth.getBlockNumber = (cb) => { return this.getBlockNumber(cb) }
-  this.debug.traceTransaction = (hash, options, cb) => { return this.traceTransaction(hash, options, cb) }
-  this.debug.storageRangeAt = (blockNumber, txIndex, address, start, end, maxLength, cb) => { return this.storageRangeAt(blockNumber, txIndex, address, start, end, maxLength, cb) }
-  this.providers = { 'HttpProvider': function (url) {} }
-  this.currentProvider = {'host': ''}
-}
+export class dummyProvider {
+  eth
+  debug
+  providers
+  currentProvider
 
-dummyProvider.prototype.getCode = function (address, cb) {
-  cb(null, '')
-}
-
-dummyProvider.prototype.setProvider = function (provider) {}
-
-dummyProvider.prototype.traceTransaction = function (txHash, options, cb) {
-  if (cb) {
-    cb(null, {})
+  constructor() {
+    this.eth = {}
+    this.debug = {}
+    this.eth.getCode = (address, cb) => { return this.getCode(address, cb) }
+    this.eth.getTransaction = (hash, cb) => { return this.getTransaction(hash, cb) }
+    this.eth.getTransactionFromBlock = (blockNumber, txIndex, cb) => { return this.getTransactionFromBlock(blockNumber, txIndex, cb) }
+    this.eth.getBlockNumber = (cb) => { return this.getBlockNumber(cb) }
+    this.debug.traceTransaction = (hash, options, cb) => { return this.traceTransaction(hash, options, cb) }
+    this.debug.storageRangeAt = (blockNumber, txIndex, address, start, end, maxLength, cb) => { return this.storageRangeAt(blockNumber, txIndex, address, start, end, maxLength, cb) }
+    this.providers = { 'HttpProvider': function (url) {} }
+    this.currentProvider = {'host': ''}
   }
-  return {}
-}
 
-dummyProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxLength, cb) {
-  if (cb) {
-    cb(null, {})
+  getCode (address, cb) {
+    cb(null, '')
   }
-  return {}
-}
 
-dummyProvider.prototype.getBlockNumber = function (cb) { cb(null, '') }
+  setProvider (provider) {}
 
-dummyProvider.prototype.getTransaction = function (txHash, cb) {
-  if (cb) {
-    cb(null, {})
+  traceTransaction (txHash, options, cb) {
+    if (cb) {
+      cb(null, {})
+    }
+    return {}
   }
-  return {}
-}
 
-dummyProvider.prototype.getTransactionFromBlock = function (blockNumber, txIndex, cb) {
-  if (cb) {
-    cb(null, {})
+  storageRangeAt (blockNumber, txIndex, address, start, end, maxLength, cb) {
+    if (cb) {
+      cb(null, {})
+    }
+    return {}
   }
-  return {}
-}
 
-module.exports = dummyProvider
+  getBlockNumber (cb) { cb(null, '') }
+
+  getTransaction (txHash, cb) {
+    if (cb) {
+      cb(null, {})
+    }
+    return {}
+  }
+
+  getTransactionFromBlock (blockNumber, txIndex, cb) {
+    if (cb) {
+      cb(null, {})
+    }
+    return {}
+  }
+}

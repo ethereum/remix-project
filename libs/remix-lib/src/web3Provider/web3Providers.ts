@@ -1,37 +1,39 @@
-const Web3VMProvider = require('./web3VmProvider')
-const init = require('../init')
+import { Web3VmProvider } from './web3VmProvider'
+import { loadWeb3, extendWeb3 } from '../init'
 
-function Web3Providers () {
-  this.modes = {}
-}
+export class Web3Providers {
 
-Web3Providers.prototype.addProvider = function (type, obj) {
-  if (type === 'INTERNAL') {
-    const web3 = init.loadWeb3()
-    this.addWeb3(type, web3)
-  } else if (type === 'vm') {
-    this.addVM(type, obj)
-  } else {
-    init.extendWeb3(obj)
-    this.addWeb3(type, obj)
+  modes
+  constructor() {
+    this.modes = {}
+  }
+
+  addProvider (type, obj) {
+    if (type === 'INTERNAL') {
+      const web3 = loadWeb3()
+      this.addWeb3(type, web3)
+    } else if (type === 'vm') {
+      this.addVM(type, obj)
+    } else {
+      extendWeb3(obj)
+      this.addWeb3(type, obj)
+    }
+  }
+
+  get (type, cb) {
+    if (this.modes[type]) {
+      return cb(null, this.modes[type])
+    }
+    cb('error: this provider has not been setup (' + type + ')', null)
+  }
+
+  addWeb3 (type, web3) {
+    this.modes[type] = web3
+  }
+
+  addVM (type, vm) {
+    const vmProvider = new Web3VmProvider()
+    vmProvider.setVM(vm)
+    this.modes[type] = vmProvider
   }
 }
-
-Web3Providers.prototype.get = function (type, cb) {
-  if (this.modes[type]) {
-    return cb(null, this.modes[type])
-  }
-  cb('error: this provider has not been setup (' + type + ')', null)
-}
-
-Web3Providers.prototype.addWeb3 = function (type, web3) {
-  this.modes[type] = web3
-}
-
-Web3Providers.prototype.addVM = function (type, vm) {
-  const vmProvider = new Web3VMProvider()
-  vmProvider.setVM(vm)
-  this.modes[type] = vmProvider
-}
-
-module.exports = Web3Providers
