@@ -75,7 +75,7 @@ export function getConstructorInterface (abi) {
     if (abi[i].type === 'constructor') {
       funABI.inputs = abi[i].inputs || []
       funABI.payable = abi[i].payable
-      funABI.stateMutability = abi[i].stateMutability
+      funABI['stateMutability'] = abi[i].stateMutability
       break
     }
   }
