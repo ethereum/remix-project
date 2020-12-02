@@ -1,13 +1,13 @@
 'use strict'
 import async from 'async'
 import { ethers } from 'ethers'
-const ethJSUtil = require('ethereumjs-util')
+import { toBuffer } from 'ethereumjs-util'
 const EventManager = require('../eventManager')
 const codeUtil = require('../util')
 
-const defaultExecutionContext = require('./execution-context')
-const txFormat = require('./txFormat')
-const txHelper = require('./txHelper')
+import  { ExecutionContext } from './execution-context'
+import  { decodeResponse } from './txFormat'
+import  { getFunction, getReceiveInterface, getConstructorInterface, visitContracts, makeFullTypeDefinition } from './txHelper'
 
 function addExecutionCosts(txResult, tx) {
   if (txResult && txResult.result) {
@@ -26,7 +26,7 @@ function addExecutionCosts(txResult, tx) {
   * trigger 'newBlock'
   *
   */
-class TxListener {
+export class TxListener {
 
   event
   executionContext
@@ -42,7 +42,7 @@ class TxListener {
   constructor (opt, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
-    this.executionContext = executionContext || defaultExecutionContext
+    this.executionContext = executionContext || new ExecutionContext()
     this._api = opt.api
     this._resolvedTransactions = {}
     this._resolvedContracts = {}
@@ -71,7 +71,7 @@ class TxListener {
         input: data,
         hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
         isCall: true,
-        returnValue: this.executionContext.isVM() ? txResult.result.execResult.returnValue : ethJSUtil.toBuffer(txResult.result),
+        returnValue: this.executionContext.isVM() ? txResult.result.execResult.returnValue : toBuffer(txResult.result),
         envMode: this.executionContext.getProvider()
       }
 
@@ -289,7 +289,7 @@ class TxListener {
       const methodIdentifiers = contract.object.evm.methodIdentifiers
       for (let fn in methodIdentifiers) {
         if (methodIdentifiers[fn] === inputData.substring(0, 8)) {
-          const fnabi = txHelper.getFunction(abi, fn)
+          const fnabi = getFunction(abi, fn)
           this._resolvedTransactions[tx.hash] = {
             contractName: contract.name,
             to: tx.to,
@@ -297,13 +297,13 @@ class TxListener {
             params: this._decodeInputParams(inputData.substring(8), fnabi)
           }
           if (tx.returnValue) {
-            this._resolvedTransactions[tx.hash].decodedReturnValue = txFormat.decodeResponse(tx.returnValue, fnabi)
+            this._resolvedTransactions[tx.hash].decodedReturnValue = decodeResponse(tx.returnValue, fnabi)
           }
           return this._resolvedTransactions[tx.hash]
         }
       }
       // receive function
-      if (!inputData && txHelper.getReceiveInterface(abi)) {
+      if (!inputData && getReceiveInterface(abi)) {
         this._resolvedTransactions[tx.hash] = {
           contractName: contract.name,
           to: tx.to,
@@ -323,7 +323,7 @@ class TxListener {
       const bytecode = contract.object.evm.bytecode.object
       let params = null
       if (bytecode && bytecode.length) {
-        params = this._decodeInputParams(inputData.substring(bytecode.length), txHelper.getConstructorInterface(abi))
+        params = this._decodeInputParams(inputData.substring(bytecode.length), getConstructorInterface(abi))
       }
       this._resolvedTransactions[tx.hash] = {
         contractName: contract.name,
@@ -337,7 +337,7 @@ class TxListener {
 
   _tryResolveContract (codeToResolve, compiledContracts, isCreation) {
     let found = null
-    txHelper.visitContracts(compiledContracts, (contract) => {
+    visitContracts(compiledContracts, (contract) => {
       const bytes = isCreation ? contract.object.evm.bytecode.object : contract.object.evm.deployedBytecode.object
       if (codeUtil.compareByteCode(codeToResolve, '0x' + bytes)) {
         found = contract
@@ -348,13 +348,13 @@ class TxListener {
   }
 
   _decodeInputParams (data, abi) {
-    data = ethJSUtil.toBuffer('0x' + data)
+    data = toBuffer('0x' + data)
     if (!data.length) data = new Uint8Array(32 * abi.inputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
 
     const inputTypes = []
     for (let i = 0; i < abi.inputs.length; i++) {
       const type = abi.inputs[i].type
-      inputTypes.push(type.indexOf('tuple') === 0 ? txHelper.makeFullTypeDefinition(abi.inputs[i]) : type)
+      inputTypes.push(type.indexOf('tuple') === 0 ? makeFullTypeDefinition(abi.inputs[i]) : type)
     }
     const abiCoder = new ethers.utils.AbiCoder()
     const decoded = abiCoder.decode(inputTypes, data)
@@ -365,5 +365,3 @@ class TxListener {
     return ret
   }
 }
-
-module.exports = TxListener
