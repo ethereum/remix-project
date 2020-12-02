@@ -1,8 +1,8 @@
 'use strict'
-const EthJSTX = require('ethereumjs-tx').Transaction
-const EthJSBlock = require('ethereumjs-block')
+import { Transaction } from 'ethereumjs-tx'
+import { Block } from 'ethereumjs-block'
 import { BN } from 'ethereumjs-util'
-const defaultExecutionContext = require('./execution-context')
+import  { ExecutionContext } from './execution-context'
 const EventManager = require('../eventManager')
 
 class TxRunner {
@@ -20,7 +20,7 @@ class TxRunner {
   constructor (vmaccounts, api, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
-    this.executionContext = executionContext || defaultExecutionContext
+    this.executionContext = executionContext || new ExecutionContext()
     this._api = api
     this.blockNumber = 0
     this.runAsync = true
@@ -117,7 +117,7 @@ class TxRunner {
         // See https://github.com/ethereumjs/ethereumjs-tx/blob/master/docs/classes/transaction.md#constructor
         // for initialization fields and their types
         value = value ? parseInt(value) : 0
-        const tx = new EthJSTX({
+        const tx = new Transaction({
           nonce: new BN(res.nonce),
           gasPrice: '0x1',
           gasLimit: gasLimit,
@@ -128,7 +128,7 @@ class TxRunner {
         tx.sign(account.privateKey)
         const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
         const difficulties = [new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10)]
-        const block = new EthJSBlock({
+        const block = new Block({
           header: {
             timestamp: timestamp || (new Date().getTime() / 1000 | 0),
             number: self.blockNumber,
@@ -166,7 +166,7 @@ class TxRunner {
       this.executionContext.trackTx('0x' + tx.hash().toString('hex'), block)
       callback(null, {
         result: result,
-        transactionHash: ethJSUtil.bufferToHex(Buffer.from(tx.hash()))
+        transactionHash: bufferToHex(Buffer.from(tx.hash()))
       })
     }).catch(function (err) {
       callback(err)

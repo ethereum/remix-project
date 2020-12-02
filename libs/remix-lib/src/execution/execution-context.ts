@@ -3,13 +3,11 @@
 import Web3 from 'web3'
 const EventManager = require('../eventManager')
 const EthJSVM = require('ethereumjs-vm').default
-const ethUtil = require('ethereumjs-util')
+import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
 const StateManager = require('ethereumjs-vm/dist/state/stateManager').default
 const Web3VMProvider = require('../web3Provider/web3VmProvider')
 
 const LogsManager = require('./logsManager.js')
-
-const rlp = ethUtil.rlp
 
 let web3
 if (typeof window !== 'undefined' && typeof window['ethereum'] !== 'undefined') {
@@ -32,7 +30,7 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   putContractStorage (address, key, value, cb) {
-    this.keyHashes[ethUtil.keccak(key).toString('hex')] = ethUtil.bufferToHex(key)
+    this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
     super.putContractStorage(address, key, value, cb)
   }
 
