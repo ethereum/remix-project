@@ -1,4 +1,4 @@
-import  { waterfall } from 'async'
+import { waterfall } from 'async'
 import { BN, privateToAddress, isValidPrivate, toChecksumAddress } from 'ethereumjs-util'
 import { stripHexPrefix } from 'ethjs-util'
 import { randomBytes } from 'crypto'
@@ -10,7 +10,6 @@ import { ExecutionContext } from './execution/execution-context'
 import { resultToRemixTx } from './helpers/txResultHelper'
 
 export class UniversalDApp {
-
   events
   event
   executionContext
@@ -124,11 +123,11 @@ export class UniversalDApp {
     const address = privateToAddress(privateKey)
 
     // FIXME: we don't care about the callback, but we should still make this proper
-    let stateManager = this.executionContext.vm().stateManager
+    const stateManager = this.executionContext.vm().stateManager
     stateManager.getAccount(address, (error, account) => {
       if (error) return console.log(error)
       account.balance = balance || '0xf00000000000000001'
-      stateManager.putAccount(address, account, function cb(error) {
+      stateManager.putAccount(address, account, function cb (error) {
         if (error) console.log(error)
       })
     })
@@ -141,17 +140,16 @@ export class UniversalDApp {
     return new Promise((resolve, reject) => {
       const provider = this.executionContext.getProvider()
       switch (provider) {
-        case 'vm': {
+        case 'vm':
           if (!this.accounts) {
             if (cb) cb('No accounts?')
-            reject('No accounts?')
+            reject(new Error('No accounts?'))
             return
           }
           if (cb) cb(null, Object.keys(this.accounts))
           resolve(Object.keys(this.accounts))
-        }
           break
-        case 'web3': {
+        case 'web3':
           if (this.config.get('settings/personal-mode')) {
             return this.executionContext.web3().personal.getListAccounts((error, accounts) => {
               if (cb) cb(error, accounts)
@@ -165,7 +163,6 @@ export class UniversalDApp {
               resolve(accounts)
             })
           }
-        }
           break
         case 'injected': {
           this.executionContext.web3().eth.getAccounts((error, accounts) => {
@@ -179,7 +176,7 @@ export class UniversalDApp {
   }
 
   /** Get the balance of an address */
-  getBalance(address, cb) {
+  getBalance (address, cb) {
     address = stripHexPrefix(address)
 
     if (!this.executionContext.isVM()) {
@@ -223,7 +220,7 @@ export class UniversalDApp {
     * @param {Function} callback    - callback.
     */
   createContract (data, confirmationCb, continueCb, promptCb, callback) {
-    this.runTx({data: data, useCall: false}, confirmationCb, continueCb, promptCb, callback)
+    this.runTx({ data: data, useCall: false }, confirmationCb, continueCb, promptCb, callback)
   }
 
   /**
@@ -236,10 +233,10 @@ export class UniversalDApp {
     */
   callFunction (to, data, funAbi, confirmationCb, continueCb, promptCb, callback) {
     const useCall = funAbi.stateMutability === 'view' || funAbi.stateMutability === 'pure'
-    this.runTx({to, data, useCall}, confirmationCb, continueCb, promptCb, callback)
+    this.runTx({ to, data, useCall }, confirmationCb, continueCb, promptCb, callback)
   }
 
-   /**
+  /**
     * call the current given contract
     *
     * @param {String} to    - address of the contract to call.
@@ -247,7 +244,7 @@ export class UniversalDApp {
     * @param {Function} callback    - callback.
     */
   sendRawTransaction (to, data, confirmationCb, continueCb, promptCb, callback) {
-    this.runTx({to, data, useCall: false}, confirmationCb, continueCb, promptCb, callback)
+    this.runTx({ to, data, useCall: false }, confirmationCb, continueCb, promptCb, callback)
   }
 
   context () {
@@ -345,7 +342,7 @@ export class UniversalDApp {
           })
         }
         self.getAccounts(function (err, accounts) {
-          let address = accounts[0]
+          const address = accounts[0]
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
@@ -366,7 +363,7 @@ export class UniversalDApp {
         self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
         self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
           function (error, result) {
-            let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
+            const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
             self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
 
             if (error && (typeof (error) !== 'string')) {

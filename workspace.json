@@ -234,7 +234,7 @@
           "options": {
             "linter": "eslint",
             "config": "libs/remix-lib/.eslintrc",
-            "files": ["libs/remix-lib/**/*.js"],
+            "tsConfig": ["libs/remix-lib/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "libs/remix-lib/test/**/*"]
           }
         },

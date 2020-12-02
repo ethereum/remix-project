@@ -2,9 +2,8 @@ import { Web3VmProvider } from './web3VmProvider'
 import { loadWeb3, extendWeb3 } from '../init'
 
 export class Web3Providers {
-
   modes
-  constructor() {
+  constructor () {
     this.modes = {}
   }
 

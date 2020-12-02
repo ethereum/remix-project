@@ -34,13 +34,13 @@ export function encodeParams (funABI, args) {
 
 export function encodeFunctionId (funABI) {
   if (funABI.type === 'fallback' || funABI.type === 'receive') return '0x'
-  let abi = new ethers.utils.Interface([funABI])
+  const abi = new ethers.utils.Interface([funABI])
   return abi.getSighash(funABI.name)
 }
 
 export function sortAbiFunction (contractabi) {
   // Check if function is constant (introduced with Solidity 0.6.0)
-  const isConstant = ({stateMutability}) => stateMutability === 'view' || stateMutability === 'pure'
+  const isConstant = ({ stateMutability }) => stateMutability === 'view' || stateMutability === 'pure'
   // Sorts the list of ABI entries. Constant functions will appear first,
   // followed by non-constant functions. Within those t wo groupings, functions
   // will be sorted by their names.
@@ -61,7 +61,7 @@ export function sortAbiFunction (contractabi) {
 }
 
 export function getConstructorInterface (abi) {
-  const funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'payable': false, 'outputs': [] }
+  const funABI = { name: '', inputs: [], type: 'constructor', payable: false, outputs: [] }
   if (typeof abi === 'string') {
     try {
       abi = JSON.parse(abi)
@@ -75,7 +75,7 @@ export function getConstructorInterface (abi) {
     if (abi[i].type === 'constructor') {
       funABI.inputs = abi[i].inputs || []
       funABI.payable = abi[i].payable
-      funABI['stateMutability'] = abi[i].stateMutability
+      funABI.stateMutability = abi[i].stateMutability
       break
     }
   }
@@ -102,7 +102,7 @@ export function getFunction (abi, fnName) {
     const fn = abi[i]
     if (fn.type === 'function' && fnName === fn.name + '(' + fn.inputs.map((value) => {
       if (value.components) {
-        let fullType = this.makeFullTypeDefinition(value)
+        const fullType = this.makeFullTypeDefinition(value)
         return fullType.replace(/tuple/g, '') // return of makeFullTypeDefinition might contain `tuple`, need to remove it cause `methodIdentifier` (fnName) does not include `tuple` keyword
       } else {
         return value.type
@@ -136,8 +136,8 @@ export function getReceiveInterface (abi) {
   * @param {String} name    - contract name
   * @returns contract obj and associated file: { contract, file } or null
   */
- export function getContract(contractName, contracts) {
-  for (let file in contracts) {
+export function getContract (contractName, contracts) {
+  for (const file in contracts) {
     if (contracts[file][contractName]) {
       return { object: contracts[file][contractName], file: file }
     }
@@ -150,9 +150,9 @@ export function getReceiveInterface (abi) {
   * stop visiting when cb return true
   * @param {Function} cb    - callback
   */
- export function visitContracts (contracts, cb) {
-  for (let file in contracts) {
-    for (let name in contracts[file]) {
+export function visitContracts (contracts, cb) {
+  for (const file in contracts) {
+    for (const name in contracts[file]) {
       if (cb({ name: name, object: contracts[file][name], file: file })) return
     }
   }

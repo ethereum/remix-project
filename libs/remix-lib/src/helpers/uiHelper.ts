@@ -45,8 +45,8 @@ export function tryConvertAsciiFormat (memorySlot) {
  */
 export function formatCss (css1, css2) {
   let ret = ''
-  for (let arg in arguments) {
-    for (let k in arguments[arg]) {
+  for (const arg in arguments) {
+    for (const k in arguments[arg]) {
       if (arguments[arg][k] && ret.indexOf(k) === -1) {
         if (k.indexOf('*') === 0) {
           ret += arguments[arg][k]
