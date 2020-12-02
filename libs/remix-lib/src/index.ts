@@ -16,9 +16,7 @@ import { ExecutionContext } from './execution/execution-context'
 import * as typeConversion from './execution/typeConversion'
 import { UniversalDApp } from './universalDapp'
 
-if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
-  module.exports = modules()
-}
+export = modules()
 
 function modules () {
   return {
