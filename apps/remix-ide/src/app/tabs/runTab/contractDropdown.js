@@ -81,6 +81,7 @@ class ContractDropdownUI {
 
   enableContractNames (enable) {
     if (enable) {
+      if (this.selectContractNames.value === '') return
       this.selectContractNames.removeAttribute('disabled')
       this.selectContractNames.setAttribute('title', 'Select contract for Deploy or At Address.')
     } else {
@@ -113,8 +114,10 @@ class ContractDropdownUI {
     this.atAddress = yo`<button class="${css.atAddress} btn btn-sm btn-info" id="runAndDeployAtAdressButton" onclick=${this.loadFromAddress.bind(this)}>At Address</button>`
     this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="address of contract" oninput=${this.atAddressChanged.bind(this)} />`
     this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled title="Please compile *.sol file to deploy or access a contract"></select>`
+    this.abiLabel = yo`<span class="py-1">ABI file selected</span>`
     if (this.exEnvironment === 'vm') this.networkName = 'VM'
     this.enableAtAddress(false)
+    this.abiLabel.style.display = 'none'
 
     const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
     this.ipfsCheckedState = savedConfig === 'true' ? true : false // eslint-disable-line
@@ -151,6 +154,7 @@ class ContractDropdownUI {
         <label class="${css.settingsLabel}">Contract</label>
         <div class="${css.subcontainer}">
           ${this.selectContractNames} ${this.compFails}
+          ${this.abiLabel}
         </div>
         <div>
           ${this.createPanel}
@@ -191,8 +195,9 @@ class ContractDropdownUI {
       this.compFails.style.display = 'none'
       this.loadType = 'abi'
       this.contractNamesContainer.style.display = 'block'
-      this.selectContractNames.innerHTML = ''
-      this.selectContractNames.appendChild(yo`<option>${currentFile}</option>`)
+      this.abiLabel.style.display = 'block'
+      this.abiLabel.innerHTML = currentFile
+      this.selectContractNames.style.display = 'none'
       this.enableContractNames(true)
       this.enableAtAddress(true)
     } else if (/.(.sol)$/.exec(currentFile)) {
@@ -200,17 +205,16 @@ class ContractDropdownUI {
       this.orLabel.style.display = 'block'
       this.contractNamesContainer.style.display = 'block'
       this.loadType = 'sol'
-      this.selectContractNames.innerHTML = ''
-      this.enableContractNames(false)
-      this.enableAtAddress(false)
+      this.selectContractNames.style.display = 'block'
+      this.abiLabel.style.display = 'none'
+      if (this.selectContractNames.value === '') this.enableAtAddress(false)
     } else {
       this.loadType = 'other'
       this.createPanel.style.display = 'none'
       this.orLabel.style.display = 'none'
       this.compFails.style.display = 'none'
       this.contractNamesContainer.style.display = 'none'
-      this.enableContractNames(false)
-      this.enableAtAddress(false)
+      this.abiLabel.style.display = 'none'
     }
   }
 
