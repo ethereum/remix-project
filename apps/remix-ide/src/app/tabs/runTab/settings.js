@@ -54,7 +54,15 @@ class SettingsUI {
   }
 
   validateValue () {
-    if (this.el.querySelector('#value').value === '') this.el.querySelector('#value').value = 0
+    const valueEl = this.el.querySelector('#value')
+    valueEl.value = parseInt(valueEl.value)
+    // assign 0 if given value is
+    // - empty
+    // - not valid (for ex 4345-54)
+    // - contains only '0's (for ex 00..0)
+    if (!valueEl.value) valueEl.value = 0
+    // if giveen value is negative, ignore '-'
+    if (valueEl.value < 0) valueEl.value = Math.abs(valueEl.value)
   }
 
   render () {
@@ -126,6 +134,7 @@ class SettingsUI {
             min="0"
             class="form-control ${css.gasNval} ${css.col2}"
             id="value"
+            data-id="dandrValue"
             value="0"
             title="Enter the value and choose the unit"
             onchange=${() => this.validateValue()}
