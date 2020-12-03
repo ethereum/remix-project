@@ -45,14 +45,14 @@ export class Web3VmProvider {
     this.incr = 0
     this.eth = {}
     this.debug = {}
-    this.eth.getCode = this.getCode
-    this.eth.getTransaction = this.getTransaction
-    this.eth.getTransactionReceipt = this.getTransactionReceipt
-    this.eth.getTransactionFromBlock = this.getTransactionFromBlock
-    this.eth.getBlockNumber = this.getBlockNumber
-    this.debug.traceTransaction = this.traceTransaction
-    this.debug.storageRangeAt = this.storageRangeAt
-    this.debug.preimage = this.preimage
+    this.eth.getCode = (address, cb) => this.getCode(address, cb)
+    this.eth.getTransaction = (txHash, cb) => this.getTransaction(txHash, cb)
+    this.eth.getTransactionReceipt = (txHash, cb) => this.getTransactionReceipt(txHash, cb)
+    this.eth.getTransactionFromBlock = (blockNumber, txIndex, cb) => this.getTransactionFromBlock(blockNumber, txIndex, cb)
+    this.eth.getBlockNumber = (cb) => this.getBlockNumber(cb)
+    this.debug.traceTransaction = (txHash, options, cb) => this.traceTransaction(txHash, options, cb)
+    this.debug.storageRangeAt = (blockNumber, txIndex, address, start, maxLength, cb) => this.storageRangeAt(blockNumber, txIndex, address, start, maxLength, cb)
+    this.debug.preimage = (hashedKey, cb) => this.preimage(hashedKey, cb)
     this.providers = { HttpProvider: function (url) {} }
     this.currentProvider = { host: 'vm provider' }
     this.storageCache = {}
