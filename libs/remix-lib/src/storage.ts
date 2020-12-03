@@ -73,8 +73,8 @@ export class Storage {
   keys () {
     return this.safeKeys()
       // filter any names not including the prefix
-      .filter(function (item) { return item.indexOf(this.prefix, 0) === 0 })
+      .filter(item => item.indexOf(this.prefix, 0) === 0)
       // remove prefix from filename and add the 'browser' path
-      .map(function (item) { return item.substr(this.prefix.length) })
+      .map(item => item.substr(this.prefix.length))
   }
 }
