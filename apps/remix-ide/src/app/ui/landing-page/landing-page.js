@@ -407,7 +407,7 @@ export class LandingPage extends ViewPlugin {
               </div><!-- end of hpSections -->
             </div>
             <div class="d-flex flex-column ${css.rightPanel}">
-              <div class="d-flex pr-2 py-2 align-self-end"  id="remixIDEMediaPanelsTitle">
+              <div class="d-flex pr-3 py-2 align-self-end"  id="remixIDEMediaPanelsTitle">
                 ${this.badgeTwitter}
                 ${this.badgeMedium}
               </div>
