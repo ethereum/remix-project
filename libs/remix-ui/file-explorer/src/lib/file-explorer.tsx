@@ -1,13 +1,43 @@
 import React, { useEffect, useState, useRef } from 'react' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
-import Draggable from 'react-draggable' // eslint-disable-line
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
+import * as async from 'async'
+import * as Gists from 'gists'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
+import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 import { FileExplorerProps, File } from './types'
 
 import './css/file-explorer.css'
 
+const queryParams = new QueryParams()
+
+function packageFiles (filesProvider, directory, callback) {
+  const ret = {}
+  filesProvider.resolveDirectory(directory, (error, files) => {
+    if (error) callback(error)
+    else {
+      async.eachSeries(Object.keys(files), (path, cb) => {
+        if (filesProvider.isDirectory(path)) {
+          cb()
+        } else {
+          filesProvider.get(path, (error, content) => {
+            if (error) return cb(error)
+            if (/^\s+$/.test(content) || !content.length) {
+              content = '// this line is added to create a gist. Empty file is not allowed.'
+            }
+            ret[path] = { content }
+            cb()
+          })
+        }
+      }, (error) => {
+        callback(error, ret)
+      })
+    }
+  })
+}
+
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { files, name, registry } = props
+  const { files, name, registry, plugin } = props
   const uploadFile = (target) => {
     // TODO The file explorer is merely a view on the current state of
     // the files module. Please ask the user here if they want to overwrite
@@ -47,34 +77,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       })
     })
   }
-  const publishToGist = () => {
-    // modalDialogCustom.confirm(
-    //   'Create a public gist',
-    //   'Are you sure you want to publish all your files in browser directory anonymously as a public gist on github.com? Note: this will not include directories.',
-    //   () => { this.toGist() }
-    // )
-  }
-  const createNewFile = (parentFolder = 'browser') => {
-    // const self = this
-    // modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
-    //   if (!input) input = 'New file'
-    //   helper.createNonClashingName(parentFolder + '/' + input, self.files, async (error, newName) => {
-    //     if (error) return tooltip('Failed to create file ' + newName + ' ' + error)
-    //     const fileManager = self._deps.fileManager
-    //     const createFile = await fileManager.writeFile(newName, '')
-
-    //     if (!createFile) {
-    //       tooltip('Failed to create file ' + newName)
-    //     } else {
-    //       await fileManager.open(newName)
-    //       if (newName.includes('_test.sol')) {
-    //         self.events.trigger('newTestFileCreated', [newName])
-    //       }
-    //     }
-    //   })
-    // }, null, true)
-  }
-
   const containerRef = useRef(null)
   const [state, setState] = useState({
     focusElement: [],
@@ -102,23 +104,28 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
     ].filter(item => props.menuItems && props.menuItems.find((name) => { return name === item.action })),
     files: [],
-    actions: {
-      updateGist: () => {},
-      uploadFile,
-      publishToGist,
-      createNewFile
-    },
+    actions: {},
     fileManager: null,
-    ctrlKey: false
+    tokenAccess: null,
+    ctrlKey: false,
+    newFileName: ''
   })
 
   useEffect(() => {
     (async () => {
+      console.log('registry: ', registry)
       const fileManager = registry.get('filemanager').api
+      const config = registry.get('config').api
+      const tokenAccess = config.get('settings/gist-access-token').api
       const files = await fetchDirectoryContent(name)
+      const actions = {
+        updateGist: () => {},
+        uploadFile,
+        publishToGist
+      }
 
       setState(prevState => {
-        return { ...prevState, fileManager, files }
+        return { ...prevState, fileManager, tokenAccess, files, actions }
       })
     })()
   }, [])
@@ -148,22 +155,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
         resolve(files)
       })
     })
-  }
-
-  const label = (data) => {
-    return (
-      <div className='remixui_items'>
-        <span
-          title={data.path}
-          className={'remixui_label ' + (data.isDirectory ? 'folder' : 'remixui_leaf')}
-          data-path={data.path}
-          // onkeydown=${editModeOff}
-          // onblur=${editModeOff}
-        >
-          { data.path.split('/').pop() }
-        </span>
-      </div>
-    )
   }
 
   const normalize = (path, filesList): File[] => {
@@ -198,100 +189,147 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return keyPath[keyPath.length - 1]
   }
 
-  const toGist = (id) => {
-  //   const proccedResult = function (error, data) {
-  //     if (error) {
-  //       modalDialogCustom.alert('Failed to manage gist: ' + error)
-  //       console.log('Failed to manage gist: ' + error)
-  //     } else {
-  //       if (data.html_url) {
-  //         modalDialogCustom.confirm('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, () => {
-  //           window.open(data.html_url, '_blank')
-  //         })
-  //       } else {
-  //         modalDialogCustom.alert(data.message + ' ' + data.documentation_url + ' ' + JSON.stringify(data.errors, null, '\t'))
-  //       }
-  //     }
-  //   }
+  const createNewFile = (parentFolder = 'browser') => {
+    // const self = this
+    // modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
+    // if (!input) input = 'New file'
+    // get filename from state (state.newFileName)
+    const fileManager = state.fileManager
+    const newFileName = parentFolder + '/' + 'unnamed' + Math.floor(Math.random() * 101)
 
-    //   /**
-    //    * This function is to get the original content of given gist
-    //    * @params id is the gist id to fetch
-    //    */
-    //   async function getOriginalFiles (id) {
-    //     if (!id) {
-    //       return []
-    //     }
+    helper.createNonClashingName(newFileName, files, async (error, newName) => {
+      // if (error) return tooltip('Failed to create file ' + newName + ' ' + error)
+      if (error) return
+      const createFile = await fileManager.writeFile(newName, '')
 
-    //     const url = `https://api.github.com/gists/${id}`
-    //     const res = await fetch(url)
-    //     const data = await res.json()
-    //     return data.files || []
-    //   }
+      if (!createFile) {
+        // tooltip('Failed to create file ' + newName)
+      } else {
+        if (parentFolder === name) {
+          // const updatedFiles = await resolveDirectory(parentFolder, state.files)
 
-    //   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
-    //   const folder = id ? 'browser/gists/' + id : 'browser/'
-    //   this.packageFiles(this.files, folder, (error, packaged) => {
-    //     if (error) {
-    //       console.log(error)
-    //       modalDialogCustom.alert('Failed to create gist: ' + error.message)
-    //     } else {
-    //       // check for token
-    //       var tokenAccess = this._deps.config.get('settings/gist-access-token')
-    //       if (!tokenAccess) {
-    //         modalDialogCustom.alert(
-    //           'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.'
-    //         )
-    //       } else {
-    //         const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
-    //           queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs=' + queryParams.get().runs + '&gist='
-    //         const gists = new Gists({ token: tokenAccess })
+          setState(prevState => {
+            return {
+              ...prevState,
+              files: [...prevState.files, {
+                path: newFileName,
+                name: extractNameFromKey(newFileName),
+                isDirectory: false
+              }]
+            }
+          })
+        }
+        await fileManager.open(newName)
+        if (newName.includes('_test.sol')) {
+          plugin.events.trigger('newTestFileCreated', [newName])
+        }
+      }
+    })
+    // }, null, true)
+  }
 
-    //         if (id) {
-    //           const originalFileList = getOriginalFiles(id)
-    //           // Telling the GIST API to remove files
-    //           const updatedFileList = Object.keys(packaged)
-    //           const allItems = Object.keys(originalFileList)
-    //             .filter(fileName => updatedFileList.indexOf(fileName) === -1)
-    //             .reduce((acc, deleteFileName) => ({
-    //               ...acc,
-    //               [deleteFileName]: null
-    //             }), originalFileList)
-    //           // adding new files
-    //           updatedFileList.forEach((file) => {
-    //             const _items = file.split('/')
-    //             const _fileName = _items[_items.length - 1]
-    //             allItems[_fileName] = packaged[file]
-    //           })
+  const publishToGist = () => {
+    // modalDialogCustom.confirm(
+    //   'Create a public gist',
+    //   'Are you sure you want to publish all your files in browser directory anonymously as a public gist on github.com? Note: this will not include directories.',
+    //   () => { this.toGist() }
+    toGist()
+    // )
+  }
 
-  //           tooltip('Saving gist (' + id + ') ...')
-  //           gists.edit({
-  //             description: description,
-  //             public: true,
-  //             files: allItems,
-  //             id: id
-  //           }, (error, result) => {
-  //             proccedResult(error, result)
-  //             if (!error) {
-  //               for (const key in allItems) {
-  //                 if (allItems[key] === null) delete allItems[key]
-  //               }
-  //             }
-  //           })
-  //         } else {
-  //           // id is not existing, need to create a new gist
-  //           tooltip('Creating a new gist ...')
-  //           gists.create({
-  //             description: description,
-  //             public: true,
-  //             files: packaged
-  //           }, (error, result) => {
-  //             proccedResult(error, result)
-  //           })
-  //         }
-  //       }
-  //     }
-  //   })
+  const toGist = (id?: string) => {
+    const proccedResult = function (error, data) {
+      if (error) {
+        // modalDialogCustom.alert('Failed to manage gist: ' + error)
+        console.log('Failed to manage gist: ' + error)
+      } else {
+        if (data.html_url) {
+          // modalDialogCustom.confirm('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, () => {
+          // window.open(data.html_url, '_blank')
+          // })
+        } else {
+          // modalDialogCustom.alert(data.message + ' ' + data.documentation_url + ' ' + JSON.stringify(data.errors, null, '\t'))
+        }
+      }
+    }
+
+    /**
+       * This function is to get the original content of given gist
+       * @params id is the gist id to fetch
+       */
+    async function getOriginalFiles (id) {
+      if (!id) {
+        return []
+      }
+
+      const url = `https://api.github.com/gists/${id}`
+      const res = await fetch(url)
+      const data = await res.json()
+      return data.files || []
+    }
+
+    // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
+    const folder = id ? 'browser/gists/' + id : 'browser/'
+    packageFiles(files, folder, (error, packaged) => {
+      if (error) {
+        console.log(error)
+        // modalDialogCustom.alert('Failed to create gist: ' + error.message)
+      } else {
+        // check for token
+        if (!state.tokenAccess) {
+          // modalDialogCustom.alert(
+          //   'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.'
+          // )
+        } else {
+          const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
+            queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs=' + queryParams.get().runs + '&gist='
+          const gists = new Gists({ token: state.tokenAccess })
+
+          if (id) {
+            const originalFileList = getOriginalFiles(id)
+            // Telling the GIST API to remove files
+            const updatedFileList = Object.keys(packaged)
+            const allItems = Object.keys(originalFileList)
+              .filter(fileName => updatedFileList.indexOf(fileName) === -1)
+              .reduce((acc, deleteFileName) => ({
+                ...acc,
+                [deleteFileName]: null
+              }), originalFileList)
+            // adding new files
+            updatedFileList.forEach((file) => {
+              const _items = file.split('/')
+              const _fileName = _items[_items.length - 1]
+              allItems[_fileName] = packaged[file]
+            })
+
+            // tooltip('Saving gist (' + id + ') ...')
+            gists.edit({
+              description: description,
+              public: true,
+              files: allItems,
+              id: id
+            }, (error, result) => {
+              proccedResult(error, result)
+              if (!error) {
+                for (const key in allItems) {
+                  if (allItems[key] === null) delete allItems[key]
+                }
+              }
+            })
+          } else {
+            // id is not existing, need to create a new gist
+            // tooltip('Creating a new gist ...')
+            gists.create({
+              description: description,
+              public: true,
+              files: packaged
+            }, (error, result) => {
+              proccedResult(error, result)
+            })
+          }
+        }
+      }
+    })
   }
 
   // self._components = {}
@@ -359,6 +397,26 @@ export const FileExplorer = (props: FileExplorerProps) => {
   // }
   // }
 
+  const label = (data) => {
+    return (
+      <div className='remixui_items'>
+        <span
+          title={data.path}
+          className={'remixui_label ' + (data.isDirectory ? 'folder' : 'remixui_leaf')}
+          data-path={data.path}
+          // onkeydown=${editModeOff}
+          // onblur=${editModeOff}
+        >
+          { data.path.split('/').pop() }
+        </span>
+      </div>
+    )
+  }
+
+  const onDragEnd = result => {
+
+  }
+
   const handleClickFile = (path) => {
     state.fileManager.open(path)
     setState(prevState => {
@@ -414,7 +472,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               data-id={'fileExplorerNewFile' + action}
               onClick={(e) => {
                 e.stopPropagation()
-                state.actions[action]()
+                action === 'createNewFile' ? createNewFile() : state.actions[action]()
               }}
               className={'newFile ' + icon + ' remixui_newFile'}
               title={title}
@@ -436,45 +494,55 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const renderFiles = (file, index) => {
     if (file.isDirectory) {
       return (
-        <Draggable key={index} axis="y" bounds="parent">
-          <TreeViewItem
-            id={`treeViewItem${file.path}`}
-            iconX='pr-3 far fa-folder'
-            iconY='pr-3 far fa-folder-open'
-            key={`${file.path + index}`}
-            label={label(file)}
-            onClick={(e) => {
-              e.stopPropagation()
-              handleClickFolder(file.path)
-            }}
-            labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
-            controlBehaviour={ state.ctrlKey }
-          >
-            {
-              file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
-                file.child.map((file, index) => {
-                  return renderFiles(file, index)
-                })
+        <Droppable droppableId={file.path} key={index}>
+          {(provided) => (
+            <TreeViewItem
+              { ...provided.droppableProps }
+              innerRef={ provided.innerRef }
+              id={`treeViewItem${file.path}`}
+              iconX='pr-3 far fa-folder'
+              iconY='pr-3 far fa-folder-open'
+              key={`${file.path + index}`}
+              label={label(file)}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleClickFolder(file.path)
+              }}
+              labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
+              controlBehaviour={ state.ctrlKey }
+            >
+              {
+                file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
+                  file.child.map((file, index) => {
+                    return renderFiles(file, index)
+                  })
+                }
+                </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
               }
-              </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
-            }
-          </TreeViewItem>
-        </Draggable>
+              { provided.placeholder }
+            </TreeViewItem>
+          )}
+        </Droppable>
       )
     } else {
       return (
-        <Draggable key={index} axis="y" bounds="parent">
-          <TreeViewItem
-            id={`treeViewItem${file.path}`}
-            key={index}
-            label={label(file)}
-            onClick={(e) => {
-              e.stopPropagation()
-              handleClickFile(file.path)
-            }}
-            icon='fa fa-file'
-            labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
-          />
+        <Draggable draggableId={file.path} index={index} key={index}>
+          {(provided) => (
+            <TreeViewItem
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+              innerRef={provided.innerRef}
+              id={`treeViewItem${file.path}`}
+              key={index}
+              label={label(file)}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleClickFile(file.path)
+              }}
+              icon='fa fa-file'
+              labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
+            />
+          )}
         </Draggable>
       )
     }
@@ -486,14 +554,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
       tabIndex={-1}
       onKeyDown={(e) => {
         if (e.shiftKey) {
-          console.log('TRUE')
           setState(prevState => {
             return { ...prevState, ctrlKey: true }
           })
         }
       }}
       onKeyUp={() => {
-        console.log('FALSE')
         setState(prevState => {
           return { ...prevState, ctrlKey: false }
         })
@@ -501,17 +567,24 @@ export const FileExplorer = (props: FileExplorerProps) => {
     >
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem" label={renderMenuItems()} expand={true}>
-          <Draggable onStart={() => false}>
-            <div>
-              <TreeView id='treeViewMenu'>
-                {
-                  state.files.map((file, index) => {
-                    return renderFiles(file, index)
-                  })
-                }
-              </TreeView>
-            </div>
-          </Draggable>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId='droppableTreeView'>
+              {(provided) => (
+                <div
+                  { ...provided.droppableProps }
+                  ref={ provided.innerRef }>
+                  <TreeView id='treeViewMenu'>
+                    {
+                      state.files.map((file, index) => {
+                        return renderFiles(file, index)
+                      })
+                    }
+                  </TreeView>
+                  { provided.placeholder }
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </TreeViewItem>
       </TreeView>
     </div>
