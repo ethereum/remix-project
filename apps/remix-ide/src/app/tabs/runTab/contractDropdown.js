@@ -29,14 +29,12 @@ class ContractDropdownUI {
       if (!this.selectContractNames) return
       this.selectContractNames.innerHTML = ''
       if (success) {
-        this.enableContractNames(true)
         this.dropdownLogic.getCompiledContracts(compiler, compilerFullName).forEach((contract) => {
           this.selectContractNames.appendChild(yo`<option value="${contract.name}" compiler="${compilerFullName}">${contract.name} - ${contract.file}</option>`)
         })
-      } else {
-        this.enableContractNames(false, 'sol')
       }
       this.enableAtAddress(success)
+      this.enableContractNames(success)
       this.setInputParamsPlaceHolder()
 
       if (success) {
