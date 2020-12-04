@@ -53,16 +53,26 @@ class SettingsUI {
     })
   }
 
+  validateInput (e) {
+    console.log('start value = ', this.el.querySelector('#value').value)
+    console.log("e = ", e)
+    if (!helper.isNumeric(e.key)) {
+      console.log("e.data = ", e.key)
+      e.preventDefault()
+      e.stopImmediatePropagation()
+    }
+  }
+
   validateValue () {
     const valueEl = this.el.querySelector('#value')
     valueEl.value = parseInt(valueEl.value)
     // assign 0 if given value is
     // - empty
     // - not valid (for ex 4345-54)
-    // - contains only '0's (for ex 00..0)
+    // - contains only '0's (for ex 0000)
     if (!valueEl.value) valueEl.value = 0
-    // if giveen value is negative, ignore '-'
-    if (valueEl.value < 0) valueEl.value = Math.abs(valueEl.value)
+    // if giveen value is negative(possible with copy-pasting) set to 0
+    if (valueEl.value < 0) valueEl.value = 0
   }
 
   render () {
@@ -132,11 +142,14 @@ class SettingsUI {
           <input
             type="number"
             min="0"
+            pattern="^[0-9]"
+            step="1"
             class="form-control ${css.gasNval} ${css.col2}"
             id="value"
             data-id="dandrValue"
             value="0"
             title="Enter the value and choose the unit"
+            onkeypress=${(e) => this.validateInputKey(e)}
             onchange=${() => this.validateValue()}
           >
           <select name="unit" class="form-control p-1 ${css.gasNvalUnit} ${css.col2_2} custom-select" id="unit">
