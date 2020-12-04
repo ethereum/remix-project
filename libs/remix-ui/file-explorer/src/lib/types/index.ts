@@ -13,3 +13,12 @@ export interface File {
     isDirectory: boolean,
     child?: File[]
 }
+
+export interface FileExplorerMenuProps {
+    title: string,
+    menuItems: string[],
+    fileManager: any,
+    addFile: (parent: string, fileName: string) => void,
+    files: any,
+    accessToken: string
+}
