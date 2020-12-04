@@ -4,13 +4,13 @@ import Web3 from 'web3'
 import { EventManager } from '../eventManager'
 import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
 import { Web3VmProvider } from '../web3Provider/web3VmProvider'
+import { LogsManager } from './logsManager'
 const EthJSVM = require('ethereumjs-vm').default
 const StateManager = require('ethereumjs-vm/dist/state/stateManager').default
 
-import { LogsManager } from './logsManager'
-
 declare let ethereum: any
 let web3
+
 if (typeof window !== 'undefined' && typeof window['ethereum'] !== 'undefined') {
   var injectedProvider = window['ethereum']
   web3 = new Web3(injectedProvider)
@@ -18,8 +18,6 @@ if (typeof window !== 'undefined' && typeof window['ethereum'] !== 'undefined') 
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 }
 
-const blankWeb3 = new Web3()
-const currentFork = 'muirGlacier'
 /*
   extend vm state manager and instanciate VM
 */
@@ -74,33 +72,6 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 }
 
-function createVm (hardfork) {
-  const stateManager = new StateManagerCommonStorageDump({})
-  stateManager.checkpoint(() => {})
-  const vm = new EthJSVM({
-    activatePrecompiles: true,
-    blockchain: stateManager.blockchain,
-    stateManager: stateManager,
-    hardfork: hardfork
-  })
-  vm.blockchain.validate = false
-  const web3vm = new Web3VmProvider()
-  web3vm.setVM(vm)
-  return { vm, web3vm, stateManager }
-}
-
-const vms = {
-  /*
-  byzantium: createVm('byzantium'),
-  constantinople: createVm('constantinople'),
-  petersburg: createVm('petersburg'),
-  istanbul: createVm('istanbul'),
-  */
-  muirGlacier: createVm('muirGlacier')
-}
-
-const mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
-
 /*
   trigger contextChanged, web3EndpointChanged
 */
@@ -115,6 +86,9 @@ export class ExecutionContext {
   txs
   executionContext
   listenOnLastBlockId
+  currentFork: string
+  vms
+  mainNetGenesisHash: string
 
   constructor () {
     this.event = new EventManager()
@@ -122,6 +96,17 @@ export class ExecutionContext {
     this.executionContext = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
+    this.currentFork = 'muirGlacier'
+    this.vms = {
+      /*
+      byzantium: createVm('byzantium'),
+      constantinople: createVm('constantinople'),
+      petersburg: createVm('petersburg'),
+      istanbul: createVm('istanbul'),
+      */
+      muirGlacier: this.createVm('muirGlacier')
+    }
+    this.mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
     this.customNetWorks = {}
     this.blocks = {}
     this.latestBlockNumber = 0
@@ -135,6 +120,21 @@ export class ExecutionContext {
       this.executionContext = injectedProvider ? 'injected' : 'vm'
       if (this.executionContext === 'injected') this.askPermission()
     }
+  }
+
+  createVm (hardfork) {
+    const stateManager = new StateManagerCommonStorageDump({})
+    stateManager.checkpoint(() => {})
+    const vm = new EthJSVM({
+      activatePrecompiles: true,
+      blockchain: stateManager.blockchain,
+      stateManager: stateManager,
+      hardfork: hardfork
+    })
+    vm.blockchain.validate = false
+    const web3vm = new Web3VmProvider()
+    web3vm.setVM(vm)
+    return { vm, web3vm, stateManager }
   }
 
   askPermission () {
@@ -151,10 +151,10 @@ export class ExecutionContext {
   }
 
   web3 () {
-    return this.isVM() ? vms[currentFork].web3vm : web3
+    return this.isVM() ? this.vms[this.currentFork].web3vm : web3
   }
 
-  detectNetwork = function (callback) {
+  detectNetwork (callback) {
     if (this.isVM()) {
       callback(null, { id: '-', name: 'VM' })
     } else {
@@ -173,7 +173,7 @@ export class ExecutionContext {
         if (id === '1') {
           web3.eth.getBlock(0, (error, block) => {
             if (error) console.log('cant query first block')
-            if (block && block.hash !== mainNetGenesisHash) name = 'Custom'
+            if (block && block.hash !== this.mainNetGenesisHash) name = 'Custom'
             callback(err, { id, name })
           })
         } else {
@@ -203,11 +203,11 @@ export class ExecutionContext {
   }
 
   blankWeb3 () {
-    return blankWeb3
+    return new Web3()
   }
 
   vm () {
-    return vms[currentFork].vm
+    return this.vms[this.currentFork].vm
   }
 
   setContext (context, endPointUrl, confirmCb, infoCb) {
@@ -221,8 +221,8 @@ export class ExecutionContext {
     if (!infoCb) infoCb = () => {}
     if (context === 'vm') {
       this.executionContext = context
-      vms[currentFork].stateManager.revert(() => {
-        vms[currentFork].stateManager.checkpoint(() => {})
+      this.vms[this.currentFork].stateManager.revert(() => {
+        this.vms[this.currentFork].stateManager.checkpoint(() => {})
       })
       this.event.trigger('contextChanged', ['vm'])
       return cb()
