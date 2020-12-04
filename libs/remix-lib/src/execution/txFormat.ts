@@ -36,8 +36,8 @@ export function encodeData (funABI, values, contractbyteCode) {
 * @param {Function} callback    - callback
 */
 export function encodeParams (params, funAbi, callback) {
-  let data: any = ''
-  let dataHex = ''
+  let data: Buffer | string = ''
+  let dataHex: string = ''
   let funArgs
   if (params.indexOf('raw:0x') === 0) {
     // in that case we consider that the input is already encoded and *does not* contain the method signature
@@ -54,7 +54,7 @@ export function encodeParams (params, funAbi, callback) {
     if (funArgs.length > 0) {
       try {
         data = encodeParamsHelper(funAbi, funArgs)
-        dataHex = data.toString('hex')
+        dataHex = data.toString()
       } catch (e) {
         return callback('Error encoding arguments: ' + e)
       }
@@ -166,8 +166,8 @@ export function encodeConstructorCallAndDeployLibraries (contractName, contract,
 */
 export function buildData (contractName, contract, contracts, isConstructor, funAbi, params, callback, callbackStep, callbackDeployLibrary) {
   let funArgs = []
-  let data: any = ''
-  let dataHex = ''
+  let data: Buffer | string = ''
+  let dataHex: string = ''
 
   if (params.indexOf('raw:0x') === 0) {
     // in that case we consider that the input is already encoded and *does not* contain the method signature
@@ -183,7 +183,7 @@ export function buildData (contractName, contract, contracts, isConstructor, fun
     }
     try {
       data = encodeParamsHelper(funAbi, funArgs)
-      dataHex = data.toString('hex')
+      dataHex = data.toString()
     } catch (e) {
       return callback('Error encoding arguments: ' + e)
     }
