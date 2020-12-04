@@ -38,8 +38,8 @@ export class EventsDecoder {
     this._decodeEvents(tx, receipt.logs, contract, contracts, cb)
   }
 
-  _eventABI (contract) {
-    const eventABI = {}
+  _eventABI (contract): Record<string, unknown> {
+    const eventABI: Record<string, unknown> = {}
     const abi = new ethers.utils.Interface(contract.abi)
     for (const e in abi.events) {
       const event = abi.getEvent(e)
@@ -48,8 +48,8 @@ export class EventsDecoder {
     return eventABI
   }
 
-  _eventsABI (compiledContracts) {
-    const eventsABI = {}
+  _eventsABI (compiledContracts): Record<string, unknown> {
+    const eventsABI: Record<string, unknown> = {}
     visitContracts(compiledContracts, (contract) => {
       eventsABI[contract.name] = this._eventABI(contract.object)
     })
@@ -72,7 +72,7 @@ export class EventsDecoder {
     return null
   }
 
-  _stringifyBigNumber (value) {
+  _stringifyBigNumber (value): string {
     return value._isBigNumber ? value.toString() : value
   }
 
