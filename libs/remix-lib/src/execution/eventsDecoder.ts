@@ -38,8 +38,8 @@ export class EventsDecoder {
     this._decodeEvents(tx, receipt.logs, contract, contracts, cb)
   }
 
-  _eventABI (contract): Record<string, unknown> {
-    const eventABI: Record<string, unknown> = {}
+  _eventABI (contract): Record<string, { event, inputs, object, abi }> {
+    const eventABI: Record<string, { event, inputs, object, abi }> = {}
     const abi = new ethers.utils.Interface(contract.abi)
     for (const e in abi.events) {
       const event = abi.getEvent(e)
