@@ -130,7 +130,7 @@ export class LandingPage extends ViewPlugin {
           href="https://twitter.com/EthereumRemix"
         >
         </a>
-        <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
       </div>
     `
     this.badgeTwitter = yo`<button
@@ -149,7 +149,7 @@ export class LandingPage extends ViewPlugin {
       </div>
     `
     this.mediumPanel = yo`
-      <div id="remixIDE_MediumBlock" class="p-2 mx-04 mb-0 d-none ${css.remixHomeMedia}">
+      <div id="remixIDE_MediumBlock" class="p-2 mx-0 mb-0 d-none ${css.remixHomeMedia}">
         <div id="medium-widget" class="p-3 ${css.media}">
           <div
             id="retainable-rss-embed"
@@ -198,7 +198,7 @@ export class LandingPage extends ViewPlugin {
           href="https://twitter.com/EthereumRemix"
         >
         </a>
-        <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
       </div>
     `
     yo.update(this.twitterFrame, twitterFrame)
