@@ -284,7 +284,6 @@ export class ExecutionContext {
   }
 
   // TODO: remove this when this function is moved
-  // const self = this
 
   setProviderFromEndpoint (endpoint, context, cb) {
     const oldProvider = web3.currentProvider

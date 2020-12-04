@@ -75,13 +75,13 @@ export class Web3VmProvider {
     if (this.vm === vm) return
     this.vm = vm
     this.vm.on('step', (data) => {
-      this.pushTrace(this, data)
+      this.pushTrace(data)
     })
     this.vm.on('afterTx', (data) => {
-      this.txProcessed(this, data)
+      this.txProcessed(data)
     })
     this.vm.on('beforeTx', (data) => {
-      this.txWillProcess(this, data)
+      this.txWillProcess(data)
     })
   }
 
@@ -91,16 +91,16 @@ export class Web3VmProvider {
     return ret
   }
 
-  txWillProcess (self, data) {
-    self.incr++
-    self.processingHash = hexConvert(data.hash())
-    self.vmTraces[self.processingHash] = {
+  txWillProcess (data) {
+    this.incr++
+    this.processingHash = hexConvert(data.hash())
+    this.vmTraces[this.processingHash] = {
       gas: '0x0',
       return: '0x0',
       structLogs: []
     }
     const tx = {}
-    tx['hash'] = self.processingHash
+    tx['hash'] = this.processingHash
     tx['from'] = toChecksumAddress(hexConvert(data.getSenderAddress()))
     if (data.to && data.to.length) {
       tx['to'] = toChecksumAddress(hexConvert(data.to))
@@ -112,25 +112,25 @@ export class Web3VmProvider {
     if (data.value) {
       tx['value'] = hexConvert(data.value)
     }
-    self.txs[self.processingHash] = tx
-    self.txsReceipt[self.processingHash] = tx
-    self.storageCache[self.processingHash] = {}
+    this.txs[this.processingHash] = tx
+    this.txsReceipt[this.processingHash] = tx
+    this.storageCache[this.processingHash] = {}
     if (tx['to']) {
       const account = toBuffer(tx['to'])
-      self.vm.stateManager.dumpStorage(account, (storage) => {
-        self.storageCache[self.processingHash][tx['to']] = storage
-        self.lastProcessedStorageTxHash[tx['to']] = self.processingHash
+      this.vm.stateManager.dumpStorage(account, (storage) => {
+        this.storageCache[this.processingHash][tx['to']] = storage
+        this.lastProcessedStorageTxHash[tx['to']] = this.processingHash
       })
     }
     this.processingIndex = 0
   }
 
-  txProcessed (self, data) {
-    const lastOp = self.vmTraces[self.processingHash].structLogs[self.processingIndex - 1]
+  txProcessed (data) {
+    const lastOp = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
     if (lastOp) {
-      lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'SELFDESTRUCT'
+      lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'thisDESTRUCT'
     }
-    self.vmTraces[self.processingHash].gas = '0x' + data.gasUsed.toString(16)
+    this.vmTraces[this.processingHash].gas = '0x' + data.gasUsed.toString(16)
 
     const logs = []
     for (const l in data.execResult.logs) {
@@ -150,34 +150,34 @@ export class Web3VmProvider {
         rawVMResponse: log
       })
     }
-    self.txsReceipt[self.processingHash].logs = logs
-    self.txsReceipt[self.processingHash].transactionHash = self.processingHash
+    this.txsReceipt[this.processingHash].logs = logs
+    this.txsReceipt[this.processingHash].transactionHash = this.processingHash
     const status = data.execResult.exceptionError ? 0 : 1
-    self.txsReceipt[self.processingHash].status = `0x${status}`
+    this.txsReceipt[this.processingHash].status = `0x${status}`
 
     if (data.createdAddress) {
       const address = hexConvert(data.createdAddress)
-      self.vmTraces[self.processingHash].return = toChecksumAddress(address)
-      self.txsReceipt[self.processingHash].contractAddress = toChecksumAddress(address)
+      this.vmTraces[this.processingHash].return = toChecksumAddress(address)
+      this.txsReceipt[this.processingHash].contractAddress = toChecksumAddress(address)
     } else if (data.execResult.returnValue) {
-      self.vmTraces[self.processingHash].return = hexConvert(data.execResult.returnValue)
+      this.vmTraces[this.processingHash].return = hexConvert(data.execResult.returnValue)
     } else {
-      self.vmTraces[self.processingHash].return = '0x'
+      this.vmTraces[this.processingHash].return = '0x'
     }
     this.processingIndex = null
     this.processingAddress = null
     this.previousDepth = 0
   }
 
-  pushTrace (self, data) {
+  pushTrace (data) {
     const depth = data.depth + 1 // geth starts the depth from 1
-    if (!self.processingHash) {
+    if (!this.processingHash) {
       console.log('no tx processing')
       return
     }
     let previousopcode
-    if (self.vmTraces[self.processingHash] && self.vmTraces[self.processingHash].structLogs[this.processingIndex - 1]) {
-      previousopcode = self.vmTraces[self.processingHash].structLogs[this.processingIndex - 1]
+    if (this.vmTraces[this.processingHash] && this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]) {
+      previousopcode = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
     }
 
     if (this.previousDepth > depth && previousopcode) {
@@ -195,7 +195,7 @@ export class Web3VmProvider {
       depth: depth,
       error: data.error === false ? undefined : data.error
     }
-    self.vmTraces[self.processingHash].structLogs.push(step)
+    this.vmTraces[this.processingHash].structLogs.push(step)
     if (step.op === 'CREATE' || step.op === 'CALL') {
       if (step.op === 'CREATE') {
         this.processingAddress = '(Contract Creation - Step ' + this.processingIndex + ')'
@@ -204,11 +204,11 @@ export class Web3VmProvider {
       } else {
         this.processingAddress = normalizeHexAddress(step.stack[step.stack.length - 2])
         this.processingAddress = toChecksumAddress(this.processingAddress)
-        if (!self.storageCache[self.processingHash][this.processingAddress]) {
+        if (!this.storageCache[this.processingHash][this.processingAddress]) {
           const account = toBuffer(this.processingAddress)
-          self.vm.stateManager.dumpStorage(account, function (storage) {
-            self.storageCache[self.processingHash][self.processingAddress] = storage
-            self.lastProcessedStorageTxHash[self.processingAddress] = self.processingHash
+          this.vm.stateManager.dumpStorage(account, function (storage) {
+            this.storageCache[this.processingHash][this.processingAddress] = storage
+            this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
           })
         }
       }
@@ -216,7 +216,7 @@ export class Web3VmProvider {
     if (previousopcode && previousopcode.op === 'SHA3') {
       const preimage = this.getSha3Input(previousopcode.stack, previousopcode.memory)
       const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
-      self.sha3Preimages[imageHash] = {
+      this.sha3Preimages[imageHash] = {
         preimage: preimage
       }
     }
