@@ -70,29 +70,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     })
   }, [])
 
-  const createNewFile = (parentFolder = 'browser/Folder 2') => {
-    // const self = this
-    // modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
-    // if (!input) input = 'New file'
-    // get filename from state (state.newFileName)
-    const fileManager = props.fileManager
-    const newFileName = parentFolder + '/' + 'unnamed' + Math.floor(Math.random() * 101)
-
-    helper.createNonClashingName(newFileName, props.files, async (error, newName) => {
-      // if (error) return tooltip('Failed to create file ' + newName + ' ' + error)
-      if (error) return
-      const createFile = await fileManager.writeFile(newName, '')
-
-      if (!createFile) {
-        // tooltip('Failed to create file ' + newName)
-      } else {
-        props.addFile(parentFolder, newFileName)
-        await fileManager.open(newName)
-      }
-    })
-    // }, null, true)
-  }
-
   const uploadFile = (target) => {
     // TODO The file explorer is merely a view on the current state of
     // the files module. Please ask the user here if they want to overwrite
@@ -267,7 +244,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 onClick={(e) => {
                   e.stopPropagation()
                   if (action === 'createNewFile') {
-                    createNewFile()
+                    props.createNewFile()
                   } else if (action === 'publishToGist') {
                     publishToGist()
                   } else {
