@@ -3,12 +3,14 @@ import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-l
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
+import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 
 import './css/file-explorer.css'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { files, name, registry, plugin } = props
   const containerRef = useRef(null)
+  const contextMenuRef = useRef({})
   const [state, setState] = useState({
     focusElement: [],
     focusPath: null,
@@ -16,7 +18,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
     fileManager: null,
     accessToken: null,
     ctrlKey: false,
-    newFileName: ''
+    newFileName: '',
+    actions: [],
+    focusContext: {
+      element: null,
+      x: null,
+      y: null
+    }
   })
 
   useEffect(() => {
@@ -25,9 +33,25 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const config = registry.get('config').api
       const accessToken = config.get('settings/gist-access-token')
       const files = await fetchDirectoryContent(name)
+      const actions = [{
+        name: 'New File',
+        type: ['folder']
+      }, {
+        name: 'New Folder',
+        type: ['folder']
+      }, {
+        name: 'Rename',
+        type: ['file', 'folder']
+      }, {
+        name: 'Delete',
+        type: ['file', 'folder']
+      }, {
+        name: 'Push changes to gist',
+        type: []
+      }]
 
       setState(prevState => {
-        return { ...prevState, fileManager, accessToken, files }
+        return { ...prevState, fileManager, accessToken, files, actions }
       })
     })()
   }, [])
@@ -89,6 +113,35 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const keyPath = key.split('/')
 
     return keyPath[keyPath.length - 1]
+  }
+
+  const extractParentFromKey = (key: string):string => {
+    const keyPath = key.split('/')
+
+    return keyPath.pop()
+  }
+
+  const createNewFile = (parentFolder?: string) => {
+    if (!parentFolder) parentFolder = extractParentFromKey(state.focusElement[0])
+    // const self = this
+    // modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
+    // if (!input) input = 'New file'
+    const fileManager = state.fileManager
+    const newFileName = parentFolder + '/' + 'unnamed' + Math.floor(Math.random() * 101) // get filename from state (state.newFileName)
+
+    helper.createNonClashingName(newFileName, props.files, async (error, newName) => {
+      // if (error) return tooltip('Failed to create file ' + newName + ' ' + error)
+      if (error) return
+      const createFile = await fileManager.writeFile(newName, '')
+
+      if (!createFile) {
+        // tooltip('Failed to create file ' + newName)
+      } else {
+        addFile(parentFolder, newFileName)
+        await fileManager.open(newName)
+      }
+    })
+    // }, null, true)
   }
 
   const addFile = async (parentFolder: string, newFileName: string) => {
@@ -181,7 +234,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   // }
   // }
 
-  const label = (data) => {
+  const label = (data: File) => {
     return (
       <div className='remixui_items'>
         <span
@@ -197,6 +250,33 @@ export const FileExplorer = (props: FileExplorerProps) => {
     )
   }
 
+  const contextMenu = (actions: { name: string, type: string[] }[], index: number) => {
+    const menu = actions.map((item) => {
+      return <li
+        id={`menuitem${item.name.toLowerCase()}`}
+        className='remixui_liitem'
+        onClick={() => {
+          if (item.name === 'Create File') {
+            createNewFile()
+          }
+          setState(prevState => {
+            return { ...prevState, focusContext: { element: null, x: null, y: null } }
+          })
+        }}>{item.name}</li>
+    })
+
+    return (
+      <div
+        id="menuItemsContainer"
+        className="p-1 remixui_container bg-light shadow border"
+        style={{ left: state.focusContext.x, top: state.focusContext.y }}
+        ref={ref => { contextMenuRef.current[index] = ref }}
+      >
+        <ul id='menuitems'>{menu}</ul>
+      </div>
+    )
+  }
+
   const onDragEnd = result => {
 
   }
@@ -206,7 +286,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     setState(prevState => {
       return { ...prevState, focusElement: [path] }
     })
-    containerRef.current.focus()
   }
 
   const handleClickFolder = async (path) => {
@@ -229,7 +308,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const renderFiles = (file, index) => {
+  const handleContextMenuFile = (pageX, pageY, label) => {
+    const menuItemsContainer = contextMenuRef.current
+    const boundary = menuItemsContainer.getBoundingClientRect()
+
+    if (boundary.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
+      menuItemsContainer.style.position = 'absolute'
+      menuItemsContainer.style.bottom = '10px'
+      menuItemsContainer.style.top = null
+    }
+  }
+
+  const renderFiles = (file: File, index: number) => {
     if (file.isDirectory) {
       return (
         <Droppable droppableId={file.path} key={index}>
@@ -248,6 +338,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
               }}
               labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
               controlBehaviour={ state.ctrlKey }
+              onContextMenu={(e) => {
+                e.preventDefault()
+              }}
             >
               {
                 file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
@@ -266,20 +359,27 @@ export const FileExplorer = (props: FileExplorerProps) => {
       return (
         <Draggable draggableId={file.path} index={index} key={index}>
           {(provided) => (
-            <TreeViewItem
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-              innerRef={provided.innerRef}
-              id={`treeViewItem${file.path}`}
-              key={index}
-              label={label(file)}
-              onClick={(e) => {
-                e.stopPropagation()
-                handleClickFile(file.path)
-              }}
-              icon='fa fa-file'
-              labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
-            />
+            <>
+              <TreeViewItem
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                innerRef={provided.innerRef}
+                id={`treeViewItem${file.path}`}
+                key={index}
+                label={label(file)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleClickFile(file.path)
+                }}
+                onContextMenu={(e) => {
+                  e.preventDefault()
+                  handleContextMenuFile()
+                }}
+                icon='fa fa-file'
+                labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
+              />
+              { contextMenu(state.actions.filter(item => item.type.findIndex(name => name === 'file') !== -1), index) }
+            </>
           )}
         </Draggable>
       )
@@ -310,6 +410,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               title={name}
               menuItems={props.menuItems}
               addFile={addFile}
+              createNewFile={createNewFile}
               files={props.files}
               fileManager={state.fileManager}
               accessToken={state.accessToken}

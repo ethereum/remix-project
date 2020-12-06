@@ -19,6 +19,7 @@ export interface FileExplorerMenuProps {
     menuItems: string[],
     fileManager: any,
     addFile: (parent: string, fileName: string) => void,
+    createNewFile: () => void,
     files: any,
     accessToken: string
 }
