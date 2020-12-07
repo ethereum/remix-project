@@ -248,9 +248,9 @@ contract BallotTest {
     }
 }
 `
-var deploy = `(async () => {
+var deployWithWeb3 = `(async () => {
     try {
-      console.log('Running...')
+      console.log('Running deployWithWeb3 script...')
       
       const contractName = 'Storage' // Change this for other contract
       const constructorArgs = []    // Put constructor args (if any) here for your contract
@@ -279,13 +279,44 @@ var deploy = `(async () => {
       console.log(e.message)
     }
   })()`
+
+var deployWithEthers = `(async function() {
+    try {
+          console.log('Running deployWithEthers script...')
+      
+          const contractName = 'Storage' // Change this for other contract
+          const constructorArgs = []    // Put constructor args (if any) here for your contract
+  
+          // Note that the script needs the ABI which is generated from the compilation artifact.
+          // Make sure contract is compiled and artifacts are generated
+          const artifactsPath = \`browser/contracts/artifacts/\${contractName}.json\` // Change this for different path
+        
+          const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
+          // 'web3Provider' is a remix global variable object
+          const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
+        
+          let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+        
+          let contract = await factory.deploy();
+        
+          console.log('Contract Address: ', contract.address);
+        
+          // The contract is NOT deployed yet; we must wait until it is mined
+          await contract.deployed()
+          console.log('Deployment successful.')
+    } catch (e) {
+          console.log(e.message)
+    }
+})()`
+
 var readme = `readme`
 
 module.exports = {
   storage: { name: 'contracts/1_Storage.sol', content: storage },
   owner: { name: 'contracts/2_Owner.sol', content: owner },
   ballot: { name: 'contracts/3_Ballot.sol', content: ballot },
-  deploy: { name: 'scripts/deploy.js', content: deploy },
+  deployWithWeb3: { name: 'scripts/deployWithWeb3.js', content: deployWithWeb3 },
+  deployWithEthers: { name: 'scripts/deployWithEthers.js', content: deployWithEthers },
   ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
   readme: { name: 'README', content: readme }
 }
