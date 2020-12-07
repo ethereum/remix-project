@@ -34,7 +34,7 @@ export class RemixAppManager extends PluginManager {
 
   async canDeactivatePlugin (from, to) {
     if (requiredModules.includes(to.name)) return false
-    return from.name === 'manager'
+    return isNative(from.name)
   }
 
   async canCall (from, to, method, message) {
@@ -68,11 +68,6 @@ export class RemixAppManager extends PluginManager {
   onPluginDeactivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('deactivate', plugin)
-  }
-
-  async ensureDeactivated (apiName) {
-    await this.deactivatePlugin(apiName)
-    this.event.emit('ensureDeactivated', apiName)
   }
 
   isRequired (name) {
