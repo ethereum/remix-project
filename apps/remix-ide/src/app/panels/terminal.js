@@ -103,13 +103,7 @@ class Terminal extends Plugin {
     })
     this.on('scriptRunner', 'error', (msg) => {
       this.commands.error.apply(this.commands, msg.data)
-    })
-    this.on('git', 'log', (result) => {
-      this.commands.html(yo`<pre>${result}</pre>`)
-    })
-    this.on('git', 'error', (result) => {
-      this.commands.html(yo`<pre>${result}</pre>`)
-    })
+    })    
   }
 
   onDeactivation () {
@@ -117,8 +111,6 @@ class Terminal extends Plugin {
     this.off('scriptRunner', 'info')
     this.off('scriptRunner', 'warn')
     this.off('scriptRunner', 'error')
-    this.off('git', 'log')
-    this.off('git', 'error')
   }
 
   logHtml (html) {
@@ -755,11 +747,13 @@ class Terminal extends Plugin {
       }
     }
     try {
+      let result
       if (script.trim().startsWith('git')) {
-        await this.call('git', 'execute', script)
+        result = await this.call('git', 'execute', script)        
       } else {
-        await this.call('scriptRunner', 'execute', script)
+        result = await this.call('scriptRunner', 'execute', script)        
       }
+      if (result) self.commands.html(yo`<pre>${result}</pre>`)
       done()
     } catch (error) {
       done(error.message || error)
