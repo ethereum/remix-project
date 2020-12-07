@@ -152,7 +152,7 @@ const asyncAwaitWithFileManagerAccess = `
   var run = async () => {
     console.log('Waiting Promise')
     var result = await p()
-    let text = await remix.call('fileManager', 'readFile', 'browser/3_Ballot.sol')
+    let text = await remix.call('fileManager', 'readFile', 'browser/contracts/3_Ballot.sol')
     console.log('result - ', text)
   }
 
@@ -185,7 +185,7 @@ const resolveUrl = `
 (async () => {
   try {
       console.log('start')
-      console.log(await remix.call('contentImport', 'resolveAndSave', 'browser/3_Ballot.sol'))
+      console.log(await remix.call('contentImport', 'resolveAndSave', 'browser/contracts/3_Ballot.sol'))
   } catch (e) {
       console.log(e.message)
   }

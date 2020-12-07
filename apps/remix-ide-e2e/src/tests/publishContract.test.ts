@@ -16,7 +16,7 @@ module.exports = {
     browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('fileExplorers')
-    .openFile('browser/3_Ballot.sol')
+    .openFile('browser/contracts/3_Ballot.sol')
     .verifyContracts(['Ballot'])
     .click('#publishOnIpfs')
     .getModalBody((value, done) => {
@@ -42,7 +42,7 @@ module.exports = {
     browser
     .waitForElementVisible('#icon-panel')
     .clickLaunchIcon('fileExplorers')
-    .openFile('browser/1_Storage.sol')
+    .openFile('browser/contracts/1_Storage.sol')
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="contractDropdownIpfsCheckbox"]')
     .click('*[data-id="contractDropdownIpfsCheckbox"]')
@@ -55,7 +55,7 @@ module.exports = {
   'Should remember choice after page refresh': function (browser: NightwatchBrowser) {
     browser
     .refresh()
-    .openFile('browser/1_Storage.sol')
+    .openFile('browser/contracts/1_Storage.sol')
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="contractDropdownIpfsCheckbox"]')
     .verify.elementPresent('*[data-id="contractDropdownIpfsCheckbox"]:checked')
