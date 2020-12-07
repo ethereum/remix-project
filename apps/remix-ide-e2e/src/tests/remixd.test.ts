@@ -69,6 +69,17 @@ module.exports = {
     .clickLaunchIcon('solidity')
     .setSolidityCompilerVersion('soljson-v0.6.2+commit.bacdbe57.js') // open-zeppelin moved to pragma ^0.6.0
     .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
+    },
+
+  'Run git status': function (browser) {
+    browser
+    .executeScript('git status')
+    .pause(3000)
+    .journalLastChildIncludes('On branch ')
+  },
+
+  'Close Remixd': function (browser) {
+    browser
     .clickLaunchIcon('pluginManager')
     .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
     .end()
