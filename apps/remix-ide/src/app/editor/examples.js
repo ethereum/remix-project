@@ -250,8 +250,8 @@ contract BallotTest {
 `
 
 module.exports = {
-  storage: { name: '1_Storage.sol', content: storage },
-  owner: { name: '2_Owner.sol', content: owner },
-  ballot: { name: '3_Ballot.sol', content: ballot },
-  ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest }
+  storage: { name: 'contracts/1_Storage.sol', content: storage },
+  owner: { name: 'contracts/2_Owner.sol', content: owner },
+  ballot: { name: 'contracts/3_Ballot.sol', content: ballot },
+  ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
 }
