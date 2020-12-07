@@ -297,7 +297,7 @@ var deployWithEthers = `(async function() {
         
           let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
         
-          let contract = await factory.deploy();
+          let contract = await factory.deploy(...constructorArgs);
         
           console.log('Contract Address: ', contract.address);
         
@@ -309,7 +309,24 @@ var deployWithEthers = `(async function() {
     }
 })()`
 
-var readme = 'readme'
+var readme = `REMIX EXAMPLE PROJECT
+
+Remix example project is the project which is there at the time of very first loading of Remix. It contains mainly 3 directories:
+'contracts', 'scripts' & 'tests'.
+
+'contracts' directory holds 3 contracts with different complexity level.
+'scripts' directory holds the scripts to deploy a contract using web3.js or ethers.js libraries.
+'tests' directory contains a test file with unit tests for 'Ballot' contract.
+
+DEPLOY CONTRACT
+
+A contract can be deployed using the scripts in 'scripts' folder. Currently, they are configured to deploy the 'Storage' contract.
+For deployment of any other contract, 'contractName' and 'constructorArgs' should be update (along with other code if required).
+
+To run a script, just right click on file name and click 'Run'.
+
+Consoles from script will appear in remix terminal.
+`
 
 module.exports = {
   storage: { name: 'contracts/1_Storage.sol', content: storage },
