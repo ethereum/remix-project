@@ -30,7 +30,7 @@ module.exports = {
     .addFile('open.js', { content: executeOpen })
     .executeScript(`remix.exeCurrent()`)
     .pause(2000)
-    .journalLastChildIncludes('browser/3_Ballot.sol')
+    .journalLastChildIncludes('browser/contracts/3_Ballot.sol')
   },
 
   'Should execute `writeFile` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -118,7 +118,7 @@ const executeExists = `
 
 const executeOpen = `
   const run = async () => {
-    await remix.call('fileManager', 'open', 'browser/3_Ballot.sol')
+    await remix.call('fileManager', 'open', 'browser/contracts/3_Ballot.sol')
     const result = await remix.call('fileManager', 'file')
 
     console.log(result)
@@ -147,7 +147,7 @@ const executeReadFile = `
 
 const executeCopyFile = `
   const run = async () => {
-    await remix.call('fileManager', 'copyFile', 'browser/3_Ballot.sol', 'browser/new_contract.sol')
+    await remix.call('fileManager', 'copyFile', 'browser/contracts/3_Ballot.sol', 'browser/new_contract.sol')
     const result = await remix.call('fileManager', 'readFile', 'browser/new_contract.sol')
 
     console.log(result)
