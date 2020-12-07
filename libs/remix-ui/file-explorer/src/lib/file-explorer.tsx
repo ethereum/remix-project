@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react' // eslint-disable-lin
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
-import { FileExplorerContextMenu } from './file-explorer-context-menu'
+import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 
@@ -292,6 +292,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
+  const handleContextMenuFolder = (pageX: number, pageY: number, path: string) => {
+    setState(prevState => {
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY } }
+    })
+  }
+
   const hideContextMenu = () => {
     setState(prevState => {
       return { ...prevState, focusContext: { element: null, x: 0, y: 0 } }
@@ -303,34 +309,47 @@ export const FileExplorer = (props: FileExplorerProps) => {
       return (
         <Droppable droppableId={file.path} key={index}>
           {(provided) => (
-            <TreeViewItem
-              { ...provided.droppableProps }
-              innerRef={ provided.innerRef }
-              id={`treeViewItem${file.path}`}
-              iconX='pr-3 far fa-folder'
-              iconY='pr-3 far fa-folder-open'
-              key={`${file.path + index}`}
-              label={label(file)}
-              onClick={(e) => {
-                e.stopPropagation()
-                handleClickFolder(file.path)
-              }}
-              labelClass={ state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
-              controlBehaviour={ state.ctrlKey }
-              onContextMenu={(e) => {
-                e.preventDefault()
-              }}
-            >
-              {
-                file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
-                  file.child.map((file, index) => {
-                    return renderFiles(file, index)
-                  })
+            <>
+              <TreeViewItem
+                { ...provided.droppableProps }
+                innerRef={ provided.innerRef }
+                id={`treeViewItem${file.path}`}
+                iconX='pr-3 far fa-folder'
+                iconY='pr-3 far fa-folder-open'
+                key={`${file.path + index}`}
+                label={label(file)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleClickFolder(file.path)
+                }}
+                onContextMenu={(e) => {
+                  e.preventDefault()
+                  handleContextMenuFolder(e.pageX, e.pageY, file.path)
+                }}
+                labelClass={ state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
+                controlBehaviour={ state.ctrlKey }
+              >
+                {
+                  file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
+                    file.child.map((file, index) => {
+                      return renderFiles(file, index)
+                    })
+                  }
+                  </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
                 }
-                </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
+                { provided.placeholder }
+              </TreeViewItem>
+              { (state.focusContext.element === file.path) &&
+                <FileExplorerContextMenu
+                  actions={ state.actions.filter(item => item.type.findIndex(name => name === 'folder') !== -1) }
+                  hideContextMenu={hideContextMenu}
+                  createNewFile={createNewFile}
+                  pageX={state.focusContext.x}
+                  pageY={state.focusContext.y}
+                  folder={file.path}
+                />
               }
-              { provided.placeholder }
-            </TreeViewItem>
+            </>
           )}
         </Droppable>
       )
