@@ -127,7 +127,7 @@ export class Transactions {
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        // "nonce": 2, // 0x15
+        nonce: 2, // 0x15 // the nonce should be updated
         // "transactionIndex": 0,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
@@ -173,7 +173,7 @@ export class Transactions {
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        // "nonce": 2, // 0x15
+        nonce: 2, // 0x15 // the nonce should be updated
         // "transactionIndex": 0,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
@@ -215,7 +215,7 @@ export class Transactions {
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        // "nonce": 2, // 0x15
+        nonce: 2, // 0x15 // the nonce should be updated
         // "transactionIndex": 0,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
