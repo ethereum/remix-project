@@ -17,22 +17,24 @@ export class GitClient extends PluginClient {
     this.readOnly = readOnly
   }
 
-  execute (cmd: string) {
-    assertCommand(cmd)
-    const options = { cwd: this.currentSharedFolder, shell: true }
-    const child = spawn(cmd, options)
-    let result = ''
-    let error = ''
-    child.stdout.on('data', (data) => {
-      result += data.toString()
-    })
-    child.stderr.on('data', (err) => {
-      error += err.toString()
-    })
-    child.on('close', () => {
-      if (error !== '') this.emit('error', error)
-      else this.emit('log', result)
-    })
+  execute (cmd: string) {    
+      assertCommand(cmd)
+      const options = { cwd: this.currentSharedFolder, shell: true }
+      const child = spawn(cmd, options)
+      let result = ''
+      let error = ''
+      return new Promise((resolve, reject) => {
+        child.stdout.on('data', (data) => {
+          result += data.toString()
+        })
+        child.stderr.on('data', (err) => {
+          error += err.toString()
+        })
+        child.on('close', () => {
+          if (error) reject(error)
+          else resolve(result)
+        })
+    })    
   }
 }
 
