@@ -103,7 +103,7 @@ class Terminal extends Plugin {
     })
     this.on('scriptRunner', 'error', (msg) => {
       this.commands.error.apply(this.commands, msg.data)
-    })    
+    })
   }
 
   onDeactivation () {
@@ -749,9 +749,9 @@ class Terminal extends Plugin {
     try {
       let result
       if (script.trim().startsWith('git')) {
-        result = await this.call('git', 'execute', script)        
+        result = await this.call('git', 'execute', script)
       } else {
-        result = await this.call('scriptRunner', 'execute', script)        
+        result = await this.call('scriptRunner', 'execute', script)
       }
       if (result) self.commands.html(yo`<pre>${result}</pre>`)
       done()
