@@ -38,7 +38,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       {
         action: 'createNewFile',
         title: 'Create New File',
-        icon: 'fas fa-plus-circle'
+        icon: 'far fa-file'
       },
       {
         action: 'publishToGist',
