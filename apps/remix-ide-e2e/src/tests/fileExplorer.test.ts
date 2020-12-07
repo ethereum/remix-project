@@ -46,8 +46,8 @@ module.exports = {
 
   'Should create a new folder': function (browser: NightwatchBrowser) {
     browser
-    .waitForElementVisible('*[data-id="treeViewLibrowser/contracts/1_Storage.sol"]')
-    .rightClick('[data-path="browser/contracts/1_Storage.sol"]')
+    .waitForElementVisible('*[data-id="treeViewLibrowser/readme"]')
+    .rightClick('[data-path="browser/readme"]')
     .click('*[id="menuitemcreate folder"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .setValue('*[data-id="modalDialogCustomPromptText"]', 'Browser_Tests')
