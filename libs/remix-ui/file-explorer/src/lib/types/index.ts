@@ -19,7 +19,15 @@ export interface FileExplorerMenuProps {
     menuItems: string[],
     fileManager: any,
     addFile: (parent: string, fileName: string) => void,
-    createNewFile: () => void,
+    createNewFile: (parentFolder?: string) => void,
     files: any,
     accessToken: string
+}
+
+export interface FileExplorerContextMenuProps {
+    actions: { name: string, type: string[] }[],
+    createNewFile: (parentFolder?: string) => void
+    hideContextMenu: () => void,
+    pageX: number,
+    pageY: number
 }

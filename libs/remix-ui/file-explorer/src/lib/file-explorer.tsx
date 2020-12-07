@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react' // eslint-disable-lin
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
+import { FileExplorerContextMenu } from './file-explorer-context-menu'
 import { FileExplorerProps, File } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 
@@ -10,9 +11,11 @@ import './css/file-explorer.css'
 export const FileExplorer = (props: FileExplorerProps) => {
   const { files, name, registry, plugin } = props
   const containerRef = useRef(null)
-  const contextMenuRef = useRef({})
   const [state, setState] = useState({
-    focusElement: [],
+    focusElement: [{
+      key: name,
+      type: 'folder'
+    }],
     focusPath: null,
     files: [],
     fileManager: null,
@@ -116,13 +119,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const extractParentFromKey = (key: string):string => {
+    if (!key) return
     const keyPath = key.split('/')
+    keyPath.pop()
 
-    return keyPath.pop()
+    return keyPath.join('/')
   }
 
   const createNewFile = (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = extractParentFromKey(state.focusElement[0])
+    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
     // const self = this
     // modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
     // if (!input) input = 'New file'
@@ -154,14 +159,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
             name: extractNameFromKey(newFileName),
             isDirectory: false
           }],
-          focusElement: [newFileName]
+          focusElement: [{ key: newFileName, type: 'file' }]
         }
       })
     } else {
       const updatedFiles = await resolveDirectory(parentFolder, state.files)
 
       setState(prevState => {
-        return { ...prevState, files: updatedFiles, focusElement: [newFileName] }
+        return { ...prevState, files: [...updatedFiles], focusElement: [{ key: newFileName, type: 'file' }] }
       })
     }
     if (newFileName.includes('_test.sol')) {
@@ -250,33 +255,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     )
   }
 
-  const contextMenu = (actions: { name: string, type: string[] }[], index: number) => {
-    const menu = actions.map((item) => {
-      return <li
-        id={`menuitem${item.name.toLowerCase()}`}
-        className='remixui_liitem'
-        onClick={() => {
-          if (item.name === 'Create File') {
-            createNewFile()
-          }
-          setState(prevState => {
-            return { ...prevState, focusContext: { element: null, x: null, y: null } }
-          })
-        }}>{item.name}</li>
-    })
-
-    return (
-      <div
-        id="menuItemsContainer"
-        className="p-1 remixui_container bg-light shadow border"
-        style={{ left: state.focusContext.x, top: state.focusContext.y }}
-        ref={ref => { contextMenuRef.current[index] = ref }}
-      >
-        <ul id='menuitems'>{menu}</ul>
-      </div>
-    )
-  }
-
   const onDragEnd = result => {
 
   }
@@ -284,39 +262,40 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const handleClickFile = (path) => {
     state.fileManager.open(path)
     setState(prevState => {
-      return { ...prevState, focusElement: [path] }
+      return { ...prevState, focusElement: [{ key: path, type: 'file' }] }
     })
   }
 
   const handleClickFolder = async (path) => {
     if (state.ctrlKey) {
-      if (state.focusElement.findIndex(item => item === path) !== -1) {
+      if (state.focusElement.findIndex(item => item.key === path) !== -1) {
         setState(prevState => {
-          return { ...prevState, focusElement: [...prevState.focusElement.filter(item => item !== path)] }
+          return { ...prevState, focusElement: [...prevState.focusElement.filter(item => item.key !== path)] }
         })
       } else {
         setState(prevState => {
-          return { ...prevState, focusElement: [...prevState.focusElement, path] }
+          return { ...prevState, focusElement: [...prevState.focusElement, { key: path, type: 'folder' }] }
         })
       }
     } else {
       const files = await resolveDirectory(path, state.files)
 
       setState(prevState => {
-        return { ...prevState, focusElement: [path], files }
+        return { ...prevState, focusElement: [{ key: path, type: 'folder' }], files }
       })
     }
   }
 
-  const handleContextMenuFile = (pageX, pageY, label) => {
-    const menuItemsContainer = contextMenuRef.current
-    const boundary = menuItemsContainer.getBoundingClientRect()
+  const handleContextMenuFile = (pageX: number, pageY: number, path: string) => {
+    setState(prevState => {
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY } }
+    })
+  }
 
-    if (boundary.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
-      menuItemsContainer.style.position = 'absolute'
-      menuItemsContainer.style.bottom = '10px'
-      menuItemsContainer.style.top = null
-    }
+  const hideContextMenu = () => {
+    setState(prevState => {
+      return { ...prevState, focusContext: { element: null, x: 0, y: 0 } }
+    })
   }
 
   const renderFiles = (file: File, index: number) => {
@@ -336,7 +315,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 e.stopPropagation()
                 handleClickFolder(file.path)
               }}
-              labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
+              labelClass={ state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
               controlBehaviour={ state.ctrlKey }
               onContextMenu={(e) => {
                 e.preventDefault()
@@ -373,12 +352,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 }}
                 onContextMenu={(e) => {
                   e.preventDefault()
-                  handleContextMenuFile()
+                  handleContextMenuFile(e.pageX, e.pageY, file.path)
                 }}
                 icon='fa fa-file'
-                labelClass={ state.focusElement.findIndex(item => item === file.path) !== -1 ? 'bg-secondary' : '' }
+                labelClass={ state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
               />
-              { contextMenu(state.actions.filter(item => item.type.findIndex(name => name === 'file') !== -1), index) }
+              { (state.focusContext.element === file.path) &&
+                <FileExplorerContextMenu
+                  actions={ state.actions.filter(item => item.type.findIndex(name => name === 'file') !== -1) }
+                  hideContextMenu={hideContextMenu}
+                  createNewFile={createNewFile}
+                  pageX={state.focusContext.x}
+                  pageY={state.focusContext.y}
+                />
+              }
             </>
           )}
         </Draggable>
