@@ -309,7 +309,7 @@ var deployWithEthers = `(async function() {
     }
 })()`
 
-var readme = `readme`
+var readme = 'readme'
 
 module.exports = {
   storage: { name: 'contracts/1_Storage.sol', content: storage },
