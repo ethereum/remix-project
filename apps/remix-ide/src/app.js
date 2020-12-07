@@ -314,7 +314,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const mainview = new MainView(contextualListener, editor, appPanel, fileManager, appManager, terminal)
   registry.put({ api: mainview, name: 'mainview' })
 
-  engine.register(appPanel)
+  engine.register([
+    appPanel,
+    mainview.tabProxy
+  ])
 
   // those views depend on app_manager
   const menuicons = new VerticalIcons(appManager)
@@ -429,8 +432,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }).catch(console.error)
   } else {
     // activate solidity plugin
-    appManager.ensureActivated('solidity')
-    appManager.ensureActivated('udapp')
+    appManager.activatePlugin(['solidity', 'udapp'])
   }
 
   // Load and start the service who manager layout and frame
