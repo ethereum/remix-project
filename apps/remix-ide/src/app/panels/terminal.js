@@ -485,7 +485,8 @@ class Terminal extends Plugin {
     return self._view.el
 
     function wrapScript (script) {
-      if (script.startsWith('remix.')) return script
+      const isKnownScript = ['remix.', 'git'].some(prefix => script.trim().startsWith(prefix))
+      if (isKnownScript) return script
       return `
         try {
           const ret = ${script};
@@ -746,10 +747,16 @@ class Terminal extends Plugin {
       }
     }
     try {
-      await this.call('scriptRunner', 'execute', script)
+      let result
+      if (script.trim().startsWith('git')) {
+        result = await this.call('git', 'execute', script)
+      } else {
+        result = await this.call('scriptRunner', 'execute', script)
+      }
+      if (result) self.commands.html(yo`<pre>${result}</pre>`)
       done()
     } catch (error) {
-      done(error.message)
+      done(error.message || error)
     }
   }
 }
