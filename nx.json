@@ -81,6 +81,9 @@
     },
     "remix-ui-modal-dialog": {
       "tags": []
+    },
+    "remix-ui-toaster": {
+      "tags": []
     }
   }
 }
