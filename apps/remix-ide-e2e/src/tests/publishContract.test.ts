@@ -16,6 +16,7 @@ module.exports = {
     browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('fileExplorers')
+    .click('*[data-id="treeViewTogglebrowser/contracts"]')
     .openFile('browser/contracts/3_Ballot.sol')
     .verifyContracts(['Ballot'])
     .click('#publishOnIpfs')
