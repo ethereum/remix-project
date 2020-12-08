@@ -53,11 +53,8 @@ class SettingsUI {
     })
   }
 
-  validateInput (e) {
-    console.log('start value = ', this.el.querySelector('#value').value)
-    console.log("e = ", e)
-    if (!helper.isNumeric(e.key)) {
-      console.log("e.data = ", e.key)
+  validateInputKey (e) {
+    if (!helper.isNumeric(e.key) || (e.key === 0 && !this.el.querySelector('#value').value)) {
       e.preventDefault()
       e.stopImmediatePropagation()
     }
