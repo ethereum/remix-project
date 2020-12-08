@@ -4,7 +4,8 @@ import StepManager from './step-manager/step-manager'
 import VmDebugger from './vm-debugger/vm-debugger'
 import VmDebuggerHead from './vm-debugger/vm-debugger-head'
 import { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
-import { DebuggerAPI, DebuggerUIProps } from './DebuggerAPI'
+import { DebuggerUIProps } from './DebuggerAPI'
+import { RemixUiToaster } from '@remix-ui/toaster'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 
@@ -23,7 +24,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     debugging: false,
     opt: {
       debugWithGeneratedSources: false
-    }
+    },
+    toastMessage: ''
   })
 
   useEffect(() => {
@@ -137,11 +139,10 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           vmDebugger: false,
           vmDebuggerHead: false
         },
-        debugging: false
+        debugging: false,
       }
     })
   }
-
   const startDebugging = async (blockNumber, txNumber, tx) => {
     if (state.debugger) unLoad()
     if (!txNumber) return
@@ -169,7 +170,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           txNumber,
           debugging: true,
           currentReceipt,
-          debugger: debuggerInstance
+          debugger: debuggerInstance,
+          toastMessage: `debugging ${txNumber} ...`
         }
       })
     }).catch((error) => {
@@ -205,9 +207,9 @@ const vmDebugger = {
   registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
   triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
 }
-
-  return (
+ return (
       <div>
+        <RemixUiToaster message={state.toastMessage} />
         <div className="px-2">
           <div className="mt-3">
             <p className="mt-2 debuggerLabel">Debugger Configuration</p>

@@ -1,0 +1,43 @@
+.remixui_tooltip {
+    z-index: 1001;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    min-height: 50px;
+    padding: 16px 24px 12px;
+    border-radius: 3px;
+    left: 40%;
+    font-size: 14px;
+    text-align: center;
+    bottom: -0px;
+    flex-direction: row;
+}
+@-webkit-keyframes remixui_animatebottom  {
+  0% {bottom: -300px}
+  100% {bottom: 0px}
+}
+@keyframes remixui_animatebottom  {
+  0% {bottom: -300px}
+  100% {bottom: 0px}
+}
+@-webkit-keyframes remixui_animatetop  {
+  0% {bottom: 0px}
+  100% {bottom: -300px}
+}
+@keyframes remixui_animatetop  {
+  0% {bottom: 0px}
+  100% {bottom: -300px}
+}
+.remixui_animateTop {
+  -webkit-animation-name: remixui_animatetop;
+  -webkit-animation-duration: 2s;
+  animation-name: remixui_animatetop;
+  animation-duration: 2s;
+}
+.remixui_animateBottom {
+  -webkit-animation-name: remixui_animatebottom;
+  -webkit-animation-duration: 2s;
+  animation-name: remixui_animatebottom;
+  animation-duration: 2s;    
+}
