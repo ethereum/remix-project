@@ -4,7 +4,8 @@ import { FileExplorerContextMenuProps } from './types'
 import './css/file-explorer-context-menu.css'
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, hideContextMenu, pageX, pageY, folder, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, hideContextMenu, pageX, pageY, folder, ...otherProps } = props
+  console.log('folder: ', folder)
   const contextMenuRef = useRef(null)
 
   useEffect(() => {
@@ -31,6 +32,8 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
         onClick={() => {
           if (item.name === 'New File') {
             createNewFile(folder)
+          } else if (item.name === 'New Folder') {
+            createNewFolder(folder)
           }
           hideContextMenu()
         }}>{item.name}</li>
