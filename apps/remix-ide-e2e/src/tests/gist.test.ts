@@ -48,7 +48,7 @@ module.exports = {
           .modalFooterCancelClick()
           .executeScript(`remix.loadgist('${gistid}')`)
           .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('browser/gists') } done() })
-          .openFile(`browser/gists/${gistid}/1_Storage.sol`)
+          .openFile(`browser/gists/${gistid}/README`)
           .perform(done)
       }
     })
