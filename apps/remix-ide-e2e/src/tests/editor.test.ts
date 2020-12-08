@@ -12,6 +12,8 @@ module.exports = {
 
   'Should zoom in editor': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
+    .clickLaunchIcon('fileExplorers')
+    .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
     .click('*[data-id="treeViewTogglebrowser/contracts"]')
     .openFile('browser/contracts/1_Storage.sol')
     .waitForElementVisible('*[data-id="editorInput"]')
