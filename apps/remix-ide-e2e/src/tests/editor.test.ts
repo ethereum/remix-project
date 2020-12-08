@@ -12,6 +12,7 @@ module.exports = {
 
   'Should zoom in editor': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
+    .click('*[data-id="treeViewTogglebrowser/contracts"]')
     .openFile('browser/contracts/1_Storage.sol')
     .waitForElementVisible('*[data-id="editorInput"]')
     .checkElementStyle('*[data-id="editorInput"]', 'font-size', '12px')

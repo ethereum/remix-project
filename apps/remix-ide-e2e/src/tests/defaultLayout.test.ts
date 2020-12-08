@@ -20,7 +20,10 @@ module.exports = {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
     .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
     .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-    .waitForElementVisible('li[key="browser/contracts/3_Ballot.sol"]')
+    .waitForElementVisible('li[key="browser/contracts"]')
+    .waitForElementVisible('li[key="browser/scripts"]')
+    .waitForElementVisible('li[key="browser/tests"]')
+    .waitForElementVisible('li[key="browser/README"]')
   },
 
   'Loads Main View': function (browser: NightwatchBrowser) {
@@ -68,6 +71,7 @@ module.exports = {
   'Switch Tabs using tabs icon': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
+    .click('*[data-id="treeViewTogglebrowser/contracts"]')
     .openFile('browser/contracts/3_Ballot.sol')
     .assert.containsText('div[title="browser/contracts/3_Ballot.sol"]', '3_Ballot.sol')
     .click('span[class^=dropdownCaret]')
