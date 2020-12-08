@@ -127,7 +127,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const createNewFile = (parentFolder?: string) => {
+    console.log('parentFolderBefore: ', parentFolder)
     if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    console.log('parentFolderAfter: ', parentFolder)
     // const self = this
     // modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
     // if (!input) input = 'New file'
@@ -149,6 +151,33 @@ export const FileExplorer = (props: FileExplorerProps) => {
     // }, null, true)
   }
 
+  const createNewFolder = async (parentFolder?: string) => {
+    console.log('parentFolderBefore: ', parentFolder)
+    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    else if (parentFolder.indexOf('.sol') !== -1) parentFolder = extractParentFromKey(parentFolder)
+    console.log('parentFolderAfter: ', parentFolder)
+    // const self = this
+    // modalDialogCustom.prompt('Create new folder', '', 'New folder', (input) => {
+    //   if (!input) {
+    //     return tooltip('Failed to create folder. The name can not be empty')
+    //   }
+
+    const fileManager = state.fileManager
+    const newFolderName = parentFolder + '/' + 'unnamed' + Math.floor(Math.random() * 101) // get filename from state (state.newFileName)
+    const dirName = newFolderName + '/'
+    // if (error) return tooltip('Unexpected error while creating folder: ' + error)
+    const exists = fileManager.exists(dirName)
+
+    if (exists) return
+    try {
+      await fileManager.mkdir(dirName)
+      addFolder(parentFolder, newFolderName)
+    } catch (e) {
+      // tooltip('Failed to create file ' + newName)
+    }
+    // }, null, true)
+  }
+
   const addFile = async (parentFolder: string, newFileName: string) => {
     if (parentFolder === name) {
       setState(prevState => {
@@ -166,11 +195,33 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const updatedFiles = await resolveDirectory(parentFolder, state.files)
 
       setState(prevState => {
-        return { ...prevState, files: [...updatedFiles], focusElement: [{ key: newFileName, type: 'file' }] }
+        return { ...prevState, files: updatedFiles, focusElement: [{ key: newFileName, type: 'file' }] }
       })
     }
     if (newFileName.includes('_test.sol')) {
       plugin.events.trigger('newTestFileCreated', [newFileName])
+    }
+  }
+
+  const addFolder = async (parentFolder: string, newFolderName: string) => {
+    if (parentFolder === name) {
+      setState(prevState => {
+        return {
+          ...prevState,
+          files: [{
+            path: newFolderName,
+            name: extractNameFromKey(newFolderName),
+            isDirectory: true
+          }, ...prevState.files],
+          focusElement: [{ key: newFolderName, type: 'folder' }]
+        }
+      })
+    } else {
+      const updatedFiles = await resolveDirectory(parentFolder, state.files)
+
+      setState(prevState => {
+        return { ...prevState, files: updatedFiles, focusElement: [{ key: newFolderName, type: 'folder' }] }
+      })
     }
   }
 
@@ -293,6 +344,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleContextMenuFolder = (pageX: number, pageY: number, path: string) => {
+    console.log('path: ', path)
     setState(prevState => {
       return { ...prevState, focusContext: { element: path, x: pageX, y: pageY } }
     })
@@ -324,6 +376,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 }}
                 onContextMenu={(e) => {
                   e.preventDefault()
+                  e.stopPropagation()
                   handleContextMenuFolder(e.pageX, e.pageY, file.path)
                 }}
                 labelClass={ state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
@@ -344,6 +397,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   actions={ state.actions.filter(item => item.type.findIndex(name => name === 'folder') !== -1) }
                   hideContextMenu={hideContextMenu}
                   createNewFile={createNewFile}
+                  createNewFolder={createNewFolder}
                   pageX={state.focusContext.x}
                   pageY={state.focusContext.y}
                   folder={file.path}
@@ -371,6 +425,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 }}
                 onContextMenu={(e) => {
                   e.preventDefault()
+                  e.stopPropagation()
                   handleContextMenuFile(e.pageX, e.pageY, file.path)
                 }}
                 icon='fa fa-file'
@@ -381,6 +436,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   actions={ state.actions.filter(item => item.type.findIndex(name => name === 'file') !== -1) }
                   hideContextMenu={hideContextMenu}
                   createNewFile={createNewFile}
+                  createNewFolder={createNewFolder}
                   pageX={state.focusContext.x}
                   pageY={state.focusContext.y}
                 />
@@ -417,6 +473,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               menuItems={props.menuItems}
               addFile={addFile}
               createNewFile={createNewFile}
+              createNewFolder={createNewFolder}
               files={props.files}
               fileManager={state.fileManager}
               accessToken={state.accessToken}
