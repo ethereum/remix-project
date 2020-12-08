@@ -96,7 +96,7 @@ module.exports = class Filepanel extends ViewPlugin {
                   name='browser'
                   registry={this._components.registry}
                   files={this._deps.fileProviders.browser}
-                  menuItems={['createNewFile', 'publishToGist', canUpload ? 'uploadFile' : '']}
+                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
                   plugin={this}
                 />
               </div>

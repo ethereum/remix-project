@@ -41,14 +41,19 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         icon: 'far fa-file'
       },
       {
+        action: 'createNewFolder',
+        title: 'Create New Folder',
+        icon: 'far fa-folder'
+      },
+      {
         action: 'publishToGist',
         title: 'Publish all [browser] explorer files to a github gist',
         icon: 'fab fa-github'
       },
       {
         action: 'uploadFile',
-        title: 'Add Local file to the Browser Storage Explorer',
-        icon: 'far fa-folder-open'
+        title: 'Upload Local files to the Browser Storage Explorer',
+        icon: 'fa fa-upload'
       },
       {
         action: 'updateGist',
@@ -245,6 +250,8 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                   e.stopPropagation()
                   if (action === 'createNewFile') {
                     props.createNewFile()
+                  } else if (action === 'createNewFolder') {
+                    props.createNewFolder()
                   } else if (action === 'publishToGist') {
                     publishToGist()
                   } else {
