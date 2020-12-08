@@ -40,6 +40,11 @@ const css = csjs`
   .mediaBadge:focus {
     outline: none;
   }
+  .image {
+    height: 1em;
+    width: 1em;
+    text-align: center;
+  }
   .logoImg {
     height: 10em;
   }
@@ -394,12 +399,12 @@ export class LandingPage extends ViewPlugin {
                         <a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
                         </p>
                       <p class="mb-1">
-                        <i class="mr-1 fab fa-medium"></i>
-                        <a class="${css.text}" target="__blank" href="https://medium.com/remix-ide">Medium Posts</a>
+                        <img class="mr-1 ${css.image}" src="${profile.icon}">
+                        <a class="${css.text}" target="__blank" href="https://remix-project.org">Featuring website</a>
                       </p>
                       <p>
-                        <i class="fab fa-ethereum"></i>
-                        <span class="ml-2 ${css.text}" onclick=${() => switchToPreviousVersion()}>Old experience</span>
+                        <i class="fab fa-ethereum ${css.image}"></i>
+                        <span class="${css.text}" onclick=${() => switchToPreviousVersion()}>Old experience</span>
                       </p>
                     </div>
                   </div>
