@@ -31,14 +31,14 @@ module.exports = {
     .checkElementStyle('*[data-id="editorInput"]', 'font-size', '12px')
   },
 
-  // 'Should display compile error in editor': function (browser: NightwatchBrowser) {
-  //   browser.waitForElementVisible('*[data-id="editorInput"]')
-  //   .waitForElementVisible('*[class="ace_content"]')
-  //   .click('*[class="ace_content"]')
-  //   .sendKeys('*[class="ace_text-input"]', 'error')
-  //   .pause(2000)
-  //   .waitForElementVisible('.ace_error')
-  // },
+  'Should display compile error in editor': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('*[data-id="editorInput"]')
+    .waitForElementVisible('*[class="ace_content"]')
+    .click('*[class="ace_content"]')
+    .sendKeys('*[class="ace_text-input"]', 'error')
+    .pause(2000)
+    .waitForElementVisible('.ace_error')
+  },
 
   'Should minimize and maximize codeblock in editor': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="editorInput"]')
