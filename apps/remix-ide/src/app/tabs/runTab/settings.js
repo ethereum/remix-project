@@ -54,7 +54,10 @@ class SettingsUI {
   }
 
   validateInputKey (e) {
-    if (!helper.isNumeric(e.key) || (e.key === 0 && !this.el.querySelector('#value').value)) {
+    // preventing not numeric keys
+    // preventing 000 case
+    if (!helper.isNumeric(e.key) ||
+      (e.key === '0' && !parseInt(this.el.querySelector('#value').value) && this.el.querySelector('#value').value.length > 0)) {
       e.preventDefault()
       e.stopImmediatePropagation()
     }
@@ -66,7 +69,7 @@ class SettingsUI {
     // assign 0 if given value is
     // - empty
     // - not valid (for ex 4345-54)
-    // - contains only '0's (for ex 0000)
+    // - contains only '0's (for ex 0000) copy past or edit
     if (!valueEl.value) valueEl.value = 0
     // if giveen value is negative(possible with copy-pasting) set to 0
     if (valueEl.value < 0) valueEl.value = 0
@@ -134,7 +137,7 @@ class SettingsUI {
 
     const valueEl = yo`
       <div class="${css.crow}">
-        <label class="${css.settingsLabel}">Value</label>
+        <label class="${css.settingsLabel}" data-id="remixDRValueLabel">Value</label>
         <div class="${css.gasValueContainer}">
           <input
             type="number"

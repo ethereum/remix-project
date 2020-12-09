@@ -28,6 +28,7 @@ module.exports = {
     .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
     .clearValue('#value')
     .setValue('#value', '0000')
+    .click('*[data-id="remixDRValueLabel"]')
     .assert.containsText('*[data-id="dandrValue"]', '0')
     .clearValue('#value')
     .setValue('#value', '-44')
