@@ -14,7 +14,7 @@ module.exports = {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
     .clickLaunchIcon('fileExplorers')
     .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-    .click('*[data-id="treeViewTogglebrowser/contracts"]')
+    .click('*[data-id="treeViewLibrowser/contracts"]')
     .openFile('browser/contracts/1_Storage.sol')
     .waitForElementVisible('*[data-id="editorInput"]')
     .checkElementStyle('*[data-id="editorInput"]', 'font-size', '12px')
@@ -31,14 +31,14 @@ module.exports = {
     .checkElementStyle('*[data-id="editorInput"]', 'font-size', '12px')
   },
 
-  'Should display compile error in editor': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="editorInput"]')
-    .waitForElementVisible('*[class="ace_content"]')
-    .click('*[class="ace_content"]')
-    .sendKeys('*[class="ace_text-input"]', 'error')
-    .pause(2000)
-    .waitForElementVisible('.ace_error')
-  },
+  // 'Should display compile error in editor': function (browser: NightwatchBrowser) {
+  //   browser.waitForElementVisible('*[data-id="editorInput"]')
+  //   .waitForElementVisible('*[class="ace_content"]')
+  //   .click('*[class="ace_content"]')
+  //   .sendKeys('*[class="ace_text-input"]', 'error')
+  //   .pause(2000)
+  //   .waitForElementVisible('.ace_error')
+  // },
 
   'Should minimize and maximize codeblock in editor': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="editorInput"]')
@@ -100,9 +100,11 @@ module.exports = {
     .click('li[key="browser/removeSourcehighlightScript.js"]')
     .pause(2000)
     .executeScript('remix.exeCurrent()')
+    .waitForElementVisible('li[key="browser/contracts"]')
+    .click('li[key="browser/contracts"]') // files don't appear, so we click twice to get the files
+    .click('li[key="browser/contracts"]')
     .waitForElementVisible('li[key="browser/contracts/3_Ballot.sol"]')
     .click('li[key="browser/contracts/3_Ballot.sol"]')
-    .pause(2000)
     .waitForElementNotPresent('.highlightLine32')
     .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
     .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
