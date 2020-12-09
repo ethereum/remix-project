@@ -29,8 +29,10 @@ export interface FileExplorerContextMenuProps {
     actions: { name: string, type: string[] }[],
     createNewFile: (folder?: string) => void,
     createNewFolder: (parentFolder?: string) => void,
+    deletePath: (path: string) => void,
+    renamePath: (path: string) => void
     hideContextMenu: () => void,
     pageX: number,
     pageY: number,
-    folder?: string
+    path: string
 }
