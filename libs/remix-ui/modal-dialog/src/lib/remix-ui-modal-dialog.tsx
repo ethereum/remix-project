@@ -8,33 +8,39 @@ import {ModalDialogProps} from './types';
 
 export const ModalDialog = (props: ModalDialogProps) => {
   const [state, setState] = useState({
-    toggleBtn: true,
-    hideState: true
+    toggleBtn: true
   })
-  const okBtn = useRef(null)
-  const cancelBtn = useRef(null)
-  useEffect(() => {
-    setState(prevState => {
-      console.log("useeffect to ", props.hide)  
-      return {...prevState, hideState: props.hide}
-    })
-}, [props.hide])
+  const modal = useRef(null)
+  const handleHide = () => {
+    props.hide()
+  }
+  useEffect (
+    () => {
+      modal.current.focus()
+    }, []
+  )
   const modalKeyEvent = (keyCode) => {
     console.log("key is ", keyCode)
     if (keyCode === 27) { // Esc
       if (props.cancel && props.cancel.fn) props.cancel.fn()
-      setState((prevState)=>{return {...prevState, hideState: true}})
-    //} else if (keyCode === 13) { // Enter
-    //  okListener()
+      handleHide()
+    } else if (keyCode === 13) { // Enter
+      enterHandler()
     } else if (keyCode === 37) {
       // todo && footerIsActive) { // Arrow Left
       setState((prevState)=>{return {...prevState, toggleBtn: true}})
-      okBtn.current.focus()
     } else if (keyCode === 39) {
       // todo && footerIsActive) { // Arrow Right
       setState((prevState)=>{return {...prevState, toggleBtn: false}})
-      cancelBtn.current.focus()
     }
+  }
+  const enterHandler = () => {
+    if (state.toggleBtn) {
+      if (props.ok && props.ok.fn) props.ok.fn()
+    } else {
+      if (props.cancel && props.cancel.fn) props.cancel.fn()
+    }
+    handleHide()
   }
   return (<>
     <div
@@ -43,18 +49,26 @@ export const ModalDialog = (props: ModalDialogProps) => {
       data-backdrop="static"  
       data-keyboard="false"
       tabIndex={-1}
-      className={"modal " + (state.hideState ? "d-none" : "d-block")}
+      className={"modal d-block"}
       role="dialog"
-      onKeyDown={({keyCode})=>{modalKeyEvent(keyCode)}}
     >
       <div id="modal-background" className="modal-dialog" role="document">
-        <div className={"modal-content remixModalContent " + (props.opts ? props.opts.class ? props.opts.class : '': '')}>
+        <div
+          tabIndex={1}
+          onBlur={(e) => {
+            e.stopPropagation()
+            handleHide()
+          }}
+          ref={modal}
+          className={"modal-content remixModalContent " + (props.opts ? props.opts.class ? props.opts.class : '': '')}
+          onKeyDown={({keyCode})=>{modalKeyEvent(keyCode)}}
+        >
           <div className="modal-header">
             <h6 className="modal-title" data-id="modalDialogModalTitle">
             {props.title && props.title}
             </h6>
             {!props.opts.hideClose &&
-            <span className="modal-close">
+            <span className="modal-close" onClick={() => handleHide()}>
               <i id="modal-close" title="Close" className="fas fa-times" aria-hidden="true"></i>
             </span>
             }
@@ -66,14 +80,31 @@ export const ModalDialog = (props: ModalDialogProps) => {
           </div>
           <div className="modal-footer" data-id="modalDialogModalFooter">
             {/* todo add autofocus ^^ */}
+            {props.ok &&
             <span
               id="modal-footer-ok"
               className={"modal-ok btn btn-sm " + (state.toggleBtn ? "btn-dark" : "btn-light")}
-              onClick={() => {if (props.ok && props.ok.fn) props.ok.fn()}}
+              onClick={() => {
+                if (props.ok && props.ok.fn) props.ok.fn()
+                handleHide()
+              }}
+              tabIndex={1}
             >
-              {props.ok&&props.ok.label ? props.ok.label: 'OK'}
+              {props.ok && props.ok.label ? props.ok.label: 'OK'}
             </span>
-            <span id="modal-footer-cancel" className={"modal-cancel btn btn-sm " + (state.toggleBtn ? "btn-light" : "btn-dark")} data-dismiss="modal">{props.cancel&&props.cancel.label ? props.cancel.label: 'Cancel'}</span>
+            }
+            <span
+              id="modal-footer-cancel"
+              className={"modal-cancel btn btn-sm " + (state.toggleBtn ? "btn-light" : "btn-dark")}
+              data-dismiss="modal"
+              onClick={() => {
+                if (props.cancel && props.cancel.fn) props.cancel.fn()
+                handleHide()
+              }}
+              tabIndex={2}
+            >
+              {props.cancel && props.cancel.label ? props.cancel.label: 'Cancel'}
+              </span>
           </div>
         </div>
       </div>

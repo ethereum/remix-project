@@ -25,7 +25,11 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     opt: {
       debugWithGeneratedSources: false
     },
-    showModal: false
+    showModal: false,
+    modalOpt: {
+      title: '',
+      message: ''
+    }
   })
 
   useEffect(() => {
@@ -89,6 +93,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
               try {
                 content = await debuggerModule.getFile(path)
               } catch (e) {
+                showMsg('Error', e.message)
                 console.log('unable to fetch generated sources, the file probably doesn\'t exist yet', e)
               }
               if (content !== source.contents) {
@@ -146,8 +151,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     try {
       currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     } catch (e) {
-      console.log('cant get tx', e)
-      setState((prevState) => { return { ...prevState, showModal: true } })
+      showMsg('Error', e.message)
+      console.log('cant get tx', e.message)
     }
     const debuggerInstance = new Debugger({
       web3,
@@ -156,6 +161,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         try {
           return await debuggerModule.fetchContractAndCompile(address, currentReceipt)
         } catch (e) {
+          showMsg('Error', e.message)
           console.log('cant fetch tx')
           console.error(e)
         }
@@ -175,10 +181,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           debugger: debuggerInstance
         }
       })
-    }).catch((error) => {
-      console.log('unloading while ', error)
-      setState((prevState) => { return { ...prevState, showModal: true } })
-      // toaster(error, null, null)
+    }).catch(() => {
       unLoad()
     })
   }
@@ -215,9 +218,25 @@ const deleteHighlights = async () => {
     triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
   }
 
+  const hideModal = () => {
+    setState((prevState) => { return { ...prevState, showModal: false } })
+  }
+  const showMsg = (title, message) => {
+    setState((prevState) => { return { ...prevState, showModal: true, modalOpt: { title, message } } })
+  }
+
   return (
     <div>
-      <ModalDialog title={'New Modal'} hide={!state.showModal} content={<span>Text</span>} opts={{ class: 'p-2', hideClose: true }} />
+      {state.showModal &&
+      <ModalDialog
+        title={state.modalOpt.title}
+        ok={{ label: 'Yes', fn: () => { console.log('OK') } }}
+        cancel={{ label: 'No', fn: () => { console.log('cancel') } }}
+        hide={hideModal}
+        content={<span>{state.modalOpt.message} <textarea onKeyDown={(e) => { e.stopPropagation() }} name="" id="" cols="30" rows="10" /></span>}
+        opts={{ class: 'p-2', hideClose: false }}
+      />
+      }
       <div className='px-2'>
         <div className='mt-3'>
           <p className='mt-2 debuggerLabel'>Debugger Configuration</p>
