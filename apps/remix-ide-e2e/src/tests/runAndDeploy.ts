@@ -1,4 +1,5 @@
 'use strict'
+import { doesNotThrow } from 'assert'
 import { NightwatchBrowser } from "nightwatch"
 import init from '../helpers/init'
 import sauce from './sauce'
@@ -29,15 +30,39 @@ module.exports = {
     .clearValue('#value')
     .setValue('#value', '0000')
     .click('*[data-id="remixDRValueLabel"]')
-    .assert.containsText('*[data-id="dandrValue"]', '0')
+    .execute(function () {
+      const elem = document.getElementById('value') as HTMLInputElement
+      return elem.value
+    }, [], function (result) {
+      console.log('logging ', result)
+      browser.assert.equal(result.value, "0")
+    })
     .clearValue('#value')
     .setValue('#value', '-44')
-    .assert.containsText('*[data-id="dandrValue"]', '0')
+    .execute(function () {
+      const elem = document.getElementById('value') as HTMLInputElement
+      return elem
+    }, [], function (result) {
+      console.log('loging ', result.value)
+      browser.assert.equal(result.value, "0")
+    })
     .clearValue('#value')
     .setValue('#value', '')
-    .assert.containsText('*[data-id="dandrValue"]', '0')
+    .execute(function () {
+      const elem = document.getElementById('value') as HTMLInputElement
+      return elem
+    }, [], function (result) {
+      console.log('loging ', result.value)
+      browser.assert.equal(result.value, "0")
+    })
     .setValue('#value', 'dragon')
-    .assert.containsText('*[data-id="dandrValue"]', '0')
+    .execute(function () {
+      const elem = document.getElementById('value') as HTMLInputElement
+      return elem
+    }, [], function (result) {
+      console.log('loging ', result.value)
+      browser.assert.equal(result.value, "0")
+    })
   },
 
   'Should sign message using account key': function (browser: NightwatchBrowser) {
