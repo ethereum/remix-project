@@ -27,6 +27,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
       element: null,
       x: null,
       y: null
+    },
+    focusEdit: {
+      element: null
     }
   })
 
@@ -127,9 +130,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const createNewFile = (parentFolder?: string) => {
-    console.log('parentFolderBefore: ', parentFolder)
     if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
-    console.log('parentFolderAfter: ', parentFolder)
     // const self = this
     // modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
     // if (!input) input = 'New file'
@@ -152,10 +153,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const createNewFolder = async (parentFolder?: string) => {
-    console.log('parentFolderBefore: ', parentFolder)
     if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
     else if (parentFolder.indexOf('.sol') !== -1) parentFolder = extractParentFromKey(parentFolder)
-    console.log('parentFolderAfter: ', parentFolder)
     // const self = this
     // modalDialogCustom.prompt('Create new folder', '', 'New folder', (input) => {
     //   if (!input) {
@@ -176,6 +175,39 @@ export const FileExplorer = (props: FileExplorerProps) => {
       // tooltip('Failed to create file ' + newName)
     }
     // }, null, true)
+  }
+
+  const deletePath = async (path: string) => {
+    // if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
+    if (files.isReadOnly(path)) return
+    // const currentFilename = extractNameFromKey(path)
+
+    // modalDialogCustom.confirm(
+    //   'Delete file', `Are you sure you want to delete ${currentFilename} file?`,
+    //   async () => {
+    try {
+      const fileManager = state.fileManager
+
+      await fileManager.remove(path)
+      const files = removePath(path, state.files)
+      const updatedFiles = files.filter(file => file)
+
+      setState(prevState => {
+        return { ...prevState, files: updatedFiles }
+      })
+    } catch (e) {
+      console.log('e: ', e)
+      // tooltip(`Failed to remove file ${key}.`)
+    }
+    // },
+    // () => {}
+    // )
+  }
+
+  const renamePath = async (path: string) => {
+    // if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
+    if (files.isReadOnly(path)) return
+    editModeOn(path)
   }
 
   const addFile = async (parentFolder: string, newFileName: string) => {
@@ -223,6 +255,21 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return { ...prevState, files: updatedFiles, focusElement: [{ key: newFolderName, type: 'folder' }] }
       })
     }
+  }
+
+  const removePath = (path: string, files: File[]): File[] => {
+    return files.map(file => {
+      if (file.path === path) {
+        return null
+      } else if (file.child) {
+        const childFiles = removePath(path, file.child)
+
+        file.child = childFiles.filter(file => file)
+        return file
+      } else {
+        return file
+      }
+    })
   }
 
   // self._components = {}
@@ -344,7 +391,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleContextMenuFolder = (pageX: number, pageY: number, path: string) => {
-    console.log('path: ', path)
     setState(prevState => {
       return { ...prevState, focusContext: { element: path, x: pageX, y: pageY } }
     })
@@ -356,94 +402,101 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
+  const editModeOn = (path) => {
+    setState(prevState => {
+      return { ...prevState, focusEdit: { element: path } }
+    })
+  }
+
+  const editModeOff = (path) => {
+    setState(prevState => {
+      return { ...prevState, focusEdit: { element: null } }
+    })
+  }
+
   const renderFiles = (file: File, index: number) => {
     if (file.isDirectory) {
       return (
-        <Droppable droppableId={file.path} key={index}>
-          {(provided) => (
-            <>
-              <TreeViewItem
-                { ...provided.droppableProps }
-                innerRef={ provided.innerRef }
-                id={`treeViewItem${file.path}`}
-                iconX='pr-3 far fa-folder'
-                iconY='pr-3 far fa-folder-open'
-                key={`${file.path + index}`}
-                label={label(file)}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleClickFolder(file.path)
-                }}
-                onContextMenu={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  handleContextMenuFolder(e.pageX, e.pageY, file.path)
-                }}
-                labelClass={ state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
-                controlBehaviour={ state.ctrlKey }
-              >
-                {
-                  file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
-                    file.child.map((file, index) => {
-                      return renderFiles(file, index)
-                    })
-                  }
-                  </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
-                }
-                { provided.placeholder }
-              </TreeViewItem>
-              { (state.focusContext.element === file.path) &&
-                <FileExplorerContextMenu
-                  actions={ state.actions.filter(item => item.type.findIndex(name => name === 'folder') !== -1) }
-                  hideContextMenu={hideContextMenu}
-                  createNewFile={createNewFile}
-                  createNewFolder={createNewFolder}
-                  pageX={state.focusContext.x}
-                  pageY={state.focusContext.y}
-                  folder={file.path}
-                />
+        <>
+          <TreeViewItem
+            id={`treeViewItem${file.path}`}
+            iconX='pr-3 far fa-folder'
+            iconY='pr-3 far fa-folder-open'
+            key={`${file.path + index}`}
+            label={label(file)}
+            onClick={(e) => {
+              e.stopPropagation()
+              handleClickFolder(file.path)
+            }}
+            onContextMenu={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleContextMenuFolder(e.pageX, e.pageY, file.path)
+            }}
+            labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
+            editable={state.focusEdit.element === file.path}
+            onBlur={() => editModeOff(file.path)}
+            controlBehaviour={ state.ctrlKey }
+          >
+            {
+              file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
+                file.child.map((file, index) => {
+                  return renderFiles(file, index)
+                })
               }
-            </>
-          )}
-        </Droppable>
+              </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
+            }
+          </TreeViewItem>
+          { (state.focusContext.element === file.path) &&
+            <FileExplorerContextMenu
+              actions={ state.actions.filter(item => item.type.findIndex(name => name === 'folder') !== -1) }
+              hideContextMenu={hideContextMenu}
+              createNewFile={createNewFile}
+              createNewFolder={createNewFolder}
+              deletePath={deletePath}
+              renamePath={renamePath}
+              pageX={state.focusContext.x}
+              pageY={state.focusContext.y}
+              path={file.path}
+            />
+          }
+        </>
       )
     } else {
       return (
-        <Draggable draggableId={file.path} index={index} key={index}>
-          {(provided) => (
-            <>
-              <TreeViewItem
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-                innerRef={provided.innerRef}
-                id={`treeViewItem${file.path}`}
-                key={index}
-                label={label(file)}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleClickFile(file.path)
-                }}
-                onContextMenu={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  handleContextMenuFile(e.pageX, e.pageY, file.path)
-                }}
-                icon='fa fa-file'
-                labelClass={ state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
-              />
-              { (state.focusContext.element === file.path) &&
-                <FileExplorerContextMenu
-                  actions={ state.actions.filter(item => item.type.findIndex(name => name === 'file') !== -1) }
-                  hideContextMenu={hideContextMenu}
-                  createNewFile={createNewFile}
-                  createNewFolder={createNewFolder}
-                  pageX={state.focusContext.x}
-                  pageY={state.focusContext.y}
-                />
-              }
-            </>
-          )}
-        </Draggable>
+        <>
+          <TreeViewItem
+            id={`treeViewItem${file.path}`}
+            key={index}
+            label={label(file)}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (state.focusEdit.element !== file.path) handleClickFile(file.path)
+            }}
+            onContextMenu={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleContextMenuFile(e.pageX, e.pageY, file.path)
+            }}
+            icon='fa fa-file'
+            labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
+            editable={state.focusEdit.element === file.path}
+            onBlur={() => editModeOff(file.path)}
+          />
+          { (state.focusContext.element === file.path) &&
+            <FileExplorerContextMenu
+              actions={ state.actions.filter(item => item.type.findIndex(name => name === 'file') !== -1) }
+              hideContextMenu={hideContextMenu}
+              createNewFile={createNewFile}
+              createNewFolder={createNewFolder}
+              deletePath={deletePath}
+              renamePath={renamePath}
+              pageX={state.focusContext.x}
+              pageY={state.focusContext.y}
+              path={file.path}
+            />
+          }
+        </>
       )
     }
   }
@@ -480,24 +533,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
             />
           }
           expand={true}>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId='droppableTreeView'>
-              {(provided) => (
-                <div
-                  { ...provided.droppableProps }
-                  ref={ provided.innerRef }>
-                  <TreeView id='treeViewMenu'>
-                    {
-                      state.files.map((file, index) => {
-                        return renderFiles(file, index)
-                      })
-                    }
-                  </TreeView>
-                  { provided.placeholder }
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <div>
+            <TreeView id='treeViewMenu'>
+              {
+                state.files.map((file, index) => {
+                  return renderFiles(file, index)
+                })
+              }
+            </TreeView>
+          </div>
         </TreeViewItem>
       </TreeView>
     </div>
