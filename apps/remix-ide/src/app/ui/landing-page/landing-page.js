@@ -61,7 +61,7 @@ const css = csjs`
     max-height: 720px;
   }
   .panels {
-    box-shadow: 0px 0px 17px -7px;
+    box-shadow: 0px 0px 13px -7px;
   }
   .labelIt {
     margin-bottom: 0;
