@@ -16,5 +16,7 @@ export interface TreeViewItemProps {
     labelClass?: string,
     controlBehaviour?: boolean
     innerRef?: any,
-    onContextMenu?: (...args: any) => void
+    onContextMenu?: (...args: any) => void,
+    editable?: boolean,
+    onBlur?: (...args: any) => void
 }
