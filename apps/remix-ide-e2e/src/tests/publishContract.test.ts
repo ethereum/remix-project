@@ -43,6 +43,8 @@ module.exports = {
     browser
     .waitForElementVisible('#icon-panel')
     .clickLaunchIcon('fileExplorers')
+    .click('*[data-id="treeViewLibrowser/contracts"]')
+    .click('*[data-id="treeViewLibrowser/contracts"]')
     .openFile('browser/contracts/1_Storage.sol')
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="contractDropdownIpfsCheckbox"]')
@@ -56,7 +58,9 @@ module.exports = {
   'Should remember choice after page refresh': function (browser: NightwatchBrowser) {
     browser
     .refresh()
-    .click('*[data-id="treeViewTogglebrowser/contracts"]')
+    .waitForElementVisible('*[data-id="treeViewLibrowser/contracts"]')
+    .click('*[data-id="treeViewLibrowser/contracts"]')
+    .click('*[data-id="treeViewLibrowser/contracts"]')
     .openFile('browser/contracts/1_Storage.sol')
     .clickLaunchIcon('udapp')
     .waitForElementPresent('*[data-id="contractDropdownIpfsCheckbox"]')
