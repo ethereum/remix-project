@@ -335,5 +335,5 @@ module.exports = {
   deployWithWeb3: { name: 'scripts/deployWithWeb3.js', content: deployWithWeb3 },
   deployWithEthers: { name: 'scripts/deployWithEthers.js', content: deployWithEthers },
   ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
-  readme: { name: 'README', content: readme }
+  readme: { name: 'README.txt', content: readme }
 }
