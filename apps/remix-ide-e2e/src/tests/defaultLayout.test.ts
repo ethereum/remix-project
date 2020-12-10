@@ -23,7 +23,7 @@ module.exports = {
     .waitForElementVisible('li[key="browser/contracts"]')
     .waitForElementVisible('li[key="browser/scripts"]')
     .waitForElementVisible('li[key="browser/tests"]')
-    .waitForElementVisible('li[key="browser/README"]')
+    .waitForElementVisible('li[key="browser/README.txt"]')
   },
 
   'Loads Main View': function (browser: NightwatchBrowser) {
