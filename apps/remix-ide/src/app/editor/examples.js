@@ -221,7 +221,7 @@ contract Ballot {
 }
 `
 
-var ballotTest = `// SPDX-License-Identifier: GPL-3.0
+ ballotTest = `// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity >=0.7.0 <0.8.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
@@ -332,8 +332,8 @@ module.exports = {
   storage: { name: 'contracts/1_Storage.sol', content: storage },
   owner: { name: 'contracts/2_Owner.sol', content: owner },
   ballot: { name: 'contracts/3_Ballot.sol', content: ballot },
-  deployWithWeb3: { name: 'scripts/deployWithWeb3.js', content: deployWithWeb3 },
-  deployWithEthers: { name: 'scripts/deployWithEthers.js', content: deployWithEthers },
+  deployWithWeb3: { name: 'scripts/deploy_web3.js', content: deployWithWeb3 },
+  deployWithEthers: { name: 'scripts/deploy_ethers.js', content: deployWithEthers },
   ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
   readme: { name: 'README.txt', content: readme }
 }
