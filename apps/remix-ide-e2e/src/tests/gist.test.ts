@@ -26,7 +26,7 @@ module.exports = {
     browser
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('fileExplorers')
-    .rightClick('[data-path="browser/README"]')
+    .rightClick('[data-path="browser/README.txt"]')
     .click('*[id="menuitemcreate folder"]')
     .waitForElementVisible('*[data-id="modalDialogContainer"]')
     .setValue('*[data-id="modalDialogCustomPromptText"]', 'Browser_Tests')
@@ -50,7 +50,7 @@ module.exports = {
           .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('browser/gists') } done() })
           .waitForElementVisible(`li[key="browser/gists/${gistid}"]`)
           .click(`li[key="browser/gists/${gistid}"]`)
-          .openFile(`browser/gists/${gistid}/README`)
+          .openFile(`browser/gists/${gistid}/README.txt`)
           .perform(done)
       }
     })
