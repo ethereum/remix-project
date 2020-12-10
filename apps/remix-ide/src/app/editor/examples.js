@@ -221,7 +221,7 @@ contract Ballot {
 }
 `
 
- ballotTest = `// SPDX-License-Identifier: GPL-3.0
+const ballotTest = `// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity >=0.7.0 <0.8.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
@@ -248,7 +248,7 @@ contract BallotTest {
     }
 }
 `
-var deployWithWeb3 = `(async () => {
+const deployWithWeb3 = `(async () => {
     try {
       console.log('Running deployWithWeb3 script...')
       
@@ -280,7 +280,7 @@ var deployWithWeb3 = `(async () => {
     }
   })()`
 
-var deployWithEthers = `(async function() {
+const deployWithEthers = `(async function() {
     try {
           console.log('Running deployWithEthers script...')
       
@@ -309,7 +309,7 @@ var deployWithEthers = `(async function() {
     }
 })()`
 
-var readme = `REMIX EXAMPLE PROJECT
+const readme = `REMIX EXAMPLE PROJECT
 
 Remix example project is the project which is there at the time of very first loading of Remix. It contains mainly 3 directories:
 'contracts', 'scripts' & 'tests'.
