@@ -2,7 +2,17 @@ const EventManager = require('../eventManager')
 const stateDecoder = require('../solidity-decoder/stateDecoder')
 const StorageViewer = require('../storage/storageViewer')
 
-class DebuggerSolidityState {
+export class DebuggerSolidityState {
+
+  event
+  storageResolver
+  stepManager
+  traceManager
+  codeManager
+  solidityProxy
+  stateVariablesByAddresses
+  tx
+
   constructor (tx, _stepManager, _traceManager, _codeManager, _solidityProxy) {
     this.event = new EventManager()
     this.storageResolver = null
@@ -75,5 +85,3 @@ class DebuggerSolidityState {
     })
   }
 }
-
-module.exports = DebuggerSolidityState
