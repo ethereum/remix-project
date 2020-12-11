@@ -1,11 +1,22 @@
-const Web3 = require('web3')
+import Web3 from 'web3'
 const Debugger = require('../debugger/debugger.js')
-import EventManager from 'events'
+import { EventEmitter } from 'events'
 
-class CmdLine {
+export class CmdLine {
+
+  events
+  lineColumnPos
+  rawLocation
+  web3
+  compilation
+  debugger
+  filename
+  txHash
+  solidityState
+  solidityLocals
 
   constructor () {
-    this.events = new EventManager()
+    this.events = new EventEmitter()
     this.lineColumnPos = null
     this.rawLocation = null
   }
@@ -17,8 +28,8 @@ class CmdLine {
 
   loadCompilationData (inputJson, outputJson) {
     const data = {}
-    data.data = outputJson
-    data.source = { sources: inputJson.sources }
+    data['data'] = outputJson
+    data['source'] = { sources: inputJson.sources }
     this.loadCompilationResult(data)
   }
 
@@ -195,5 +206,3 @@ class CmdLine {
     console.dir(this.solidityState)
   }
 }
-
-module.exports = CmdLine
