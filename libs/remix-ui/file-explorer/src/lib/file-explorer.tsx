@@ -9,7 +9,7 @@ import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import './css/file-explorer.css'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { files, name, registry, plugin } = props
+  const { filesProvider, name, registry, plugin } = props
   const containerRef = useRef(null)
   const [state, setState] = useState({
     focusElement: [{
@@ -80,7 +80,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const fetchDirectoryContent = async (folderPath: string): Promise<File[]> => {
     return new Promise((resolve) => {
-      files.resolveDirectory(folderPath, (error, fileTree) => {
+      filesProvider.resolveDirectory(folderPath, (error, fileTree) => {
         if (error) console.error(error)
         const files = normalize(folderPath, fileTree)
 
@@ -137,7 +137,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const fileManager = state.fileManager
     const newFileName = parentFolder + '/' + 'unnamed' + Math.floor(Math.random() * 101) // get filename from state (state.newFileName)
 
-    helper.createNonClashingName(newFileName, props.files, async (error, newName) => {
+    helper.createNonClashingName(newFileName, filesProvider, async (error, newName) => {
       // if (error) return tooltip('Failed to create file ' + newName + ' ' + error)
       if (error) return
       const createFile = await fileManager.writeFile(newName, '')
@@ -179,7 +179,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const deletePath = async (path: string) => {
     // if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
-    if (files.isReadOnly(path)) return
+    if (filesProvider.isReadOnly(path)) return
     // const currentFilename = extractNameFromKey(path)
 
     // modalDialogCustom.confirm(
@@ -204,10 +204,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
     // )
   }
 
-  const renamePath = async (path: string) => {
-    // if (self.files.isReadOnly(key)) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
-    if (files.isReadOnly(path)) return
-    editModeOn(path)
+  const renamePath = async (oldPath: string, newPath: string) => {
+    try {
+      const fileManager = state.fileManager
+      const exists = fileManager.exists(newPath)
+
+      if (exists) return
+      // modalDialogCustom.alert(File already exists.)
+      await fileManager.rename(oldPath, newPath)
+      const files = await replacePath(oldPath, newPath, state.files)
+
+      setState(prevState => {
+        return { ...prevState, files }
+      })
+    } catch (error) {
+      // modalDialogCustom.alert('Unexpected error while renaming: ' + error)
+    }
   }
 
   const addFile = async (parentFolder: string, newFileName: string) => {
@@ -265,6 +277,24 @@ export const FileExplorer = (props: FileExplorerProps) => {
         const childFiles = removePath(path, file.child)
 
         file.child = childFiles.filter(file => file)
+        return file
+      } else {
+        return file
+      }
+    })
+  }
+
+  const replacePath = (oldPath: string, newPath: string, files: File[]): File[] => {
+    return files.map(file => {
+      if (file.path === oldPath) {
+        return {
+          ...file,
+          path: newPath,
+          name: extractNameFromKey(newPath)
+        }
+      } else if (file.child) {
+        file.child = replacePath(oldPath, newPath, file.child)
+
         return file
       } else {
         return file
@@ -344,8 +374,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
           title={data.path}
           className={'remixui_label ' + (data.isDirectory ? 'folder' : 'remixui_leaf')}
           data-path={data.path}
-          // onkeydown=${editModeOff}
-          // onblur=${editModeOff}
         >
           { data.path.split('/').pop() }
         </span>
@@ -353,18 +381,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     )
   }
 
-  const onDragEnd = result => {
-
-  }
-
-  const handleClickFile = (path) => {
+  const handleClickFile = (path: string) => {
     state.fileManager.open(path)
     setState(prevState => {
       return { ...prevState, focusElement: [{ key: path, type: 'file' }] }
     })
   }
 
-  const handleClickFolder = async (path) => {
+  const handleClickFolder = async (path: string) => {
     if (state.ctrlKey) {
       if (state.focusElement.findIndex(item => item.key === path) !== -1) {
         setState(prevState => {
@@ -402,13 +426,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const editModeOn = (path) => {
+  const editModeOn = (path: string) => {
+    if (filesProvider.isReadOnly(path)) return
     setState(prevState => {
       return { ...prevState, focusEdit: { element: path } }
     })
   }
 
-  const editModeOff = (path) => {
+  const editModeOff = (content: string) => {
+    if (!content) return
+    if (helper.checkSpecialChars(content)) {
+      // modalDialogCustom.alert('Special characters are not allowed')
+    }
+    const oldPath = state.focusEdit.element
+    const oldName = extractNameFromKey(oldPath)
+    const newPath = oldPath.replace(oldName, content)
+
+    renamePath(oldPath, newPath)
     setState(prevState => {
       return { ...prevState, focusEdit: { element: null } }
     })
@@ -435,7 +469,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             }}
             labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
             editable={state.focusEdit.element === file.path}
-            onBlur={() => editModeOff(file.path)}
+            onBlur={(value) => editModeOff(value)}
             controlBehaviour={ state.ctrlKey }
           >
             {
@@ -449,15 +483,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
           </TreeViewItem>
           { (state.focusContext.element === file.path) &&
             <FileExplorerContextMenu
-              actions={ state.actions.filter(item => item.type.findIndex(name => name === 'folder') !== -1) }
+              actions={state.actions}
               hideContextMenu={hideContextMenu}
               createNewFile={createNewFile}
               createNewFolder={createNewFolder}
               deletePath={deletePath}
-              renamePath={renamePath}
+              renamePath={editModeOn}
               pageX={state.focusContext.x}
               pageY={state.focusContext.y}
               path={file.path}
+              type='folder'
             />
           }
         </>
@@ -481,19 +516,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
             icon='fa fa-file'
             labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
             editable={state.focusEdit.element === file.path}
-            onBlur={() => editModeOff(file.path)}
+            onBlur={(value) => editModeOff(value)}
           />
           { (state.focusContext.element === file.path) &&
             <FileExplorerContextMenu
-              actions={ state.actions.filter(item => item.type.findIndex(name => name === 'file') !== -1) }
+              actions={state.actions}
               hideContextMenu={hideContextMenu}
               createNewFile={createNewFile}
               createNewFolder={createNewFolder}
               deletePath={deletePath}
-              renamePath={renamePath}
+              renamePath={editModeOn}
               pageX={state.focusContext.x}
               pageY={state.focusContext.y}
               path={file.path}
+              type='file'
             />
           }
         </>
@@ -527,7 +563,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               addFile={addFile}
               createNewFile={createNewFile}
               createNewFolder={createNewFolder}
-              files={props.files}
+              files={filesProvider}
               fileManager={state.fileManager}
               accessToken={state.accessToken}
             />
