@@ -2,7 +2,7 @@
 export interface FileExplorerProps {
     name: string,
     registry: any,
-    files: any,
+    filesProvider: any,
     menuItems?: string[],
     plugin: any
 }
@@ -30,9 +30,10 @@ export interface FileExplorerContextMenuProps {
     createNewFile: (folder?: string) => void,
     createNewFolder: (parentFolder?: string) => void,
     deletePath: (path: string) => void,
-    renamePath: (path: string) => void
+    renamePath: (path: string) => void,
     hideContextMenu: () => void,
     pageX: number,
     pageY: number,
-    path: string
+    path: string,
+    type: string
 }

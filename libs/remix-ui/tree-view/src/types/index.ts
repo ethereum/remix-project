@@ -9,6 +9,7 @@ export interface TreeViewItemProps {
     label: string | number | React.ReactNode,
     expand?: boolean,
     onClick?: (...args: any) => void,
+    onInput?: (...args: any) => void,
     className?: string,
     iconX?: string,
     iconY?: string,
