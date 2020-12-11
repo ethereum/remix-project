@@ -25,7 +25,7 @@ program
   .option('--node [url]', 'node to connect to')
   .parse(process.argv)
 
-const CmdLine = require('../src/cmdline/index.js')
+const CmdLine = require('../src/cmdline/index')
 
 const solc = require('solc')
 const fs = require('fs')
