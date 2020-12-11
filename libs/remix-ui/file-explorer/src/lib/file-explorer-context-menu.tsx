@@ -4,7 +4,7 @@ import { FileExplorerContextMenuProps } from './types'
 import './css/file-explorer-context-menu.css'
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pageX, pageY, path, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pageX, pageY, path, type, ...otherProps } = props
   const contextMenuRef = useRef(null)
 
   useEffect(() => {
@@ -23,12 +23,13 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   }, [pageX, pageY])
 
   const menu = () => {
-    return actions.map((item, index) => {
+    return actions.filter(item => item.type.findIndex(name => name === type) !== -1).map((item, index) => {
       return <li
         id={`menuitem${item.name.toLowerCase()}`}
         key={index}
         className='remixui_liitem'
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation()
           switch (item.name) {
             case 'New File':
               createNewFile(path)
