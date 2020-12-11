@@ -189,7 +189,7 @@
           "options": {
             "linter": "eslint",
             "config": "libs/remix-debug/.eslintrc",
-            "files": ["libs/remix-debug/**/*.js"],
+            "tsConfig": ["libs/remix-debug/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "libs/remix-debug/test/**/*"]
           }
         },
@@ -206,7 +206,7 @@
             "outputPath": "dist/libs/remix-debug",
             "tsConfig": "libs/remix-debug/tsconfig.lib.json",
             "packageJson": "libs/remix-debug/package.json",
-            "main": "libs/remix-debug/index.js",
+            "main": "libs/remix-debug/src/index.ts",
             "assets": [
               {
                 "glob": "rdb",
