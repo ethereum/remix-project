@@ -1,9 +1,17 @@
 const EventManager = require('../eventManager')
-
 const localDecoder = require('../solidity-decoder/localDecoder')
 const StorageViewer = require('../storage/storageViewer')
 
-class DebuggerSolidityLocals {
+export class DebuggerSolidityLocals {
+
+  event
+  stepManager
+  internalTreeCall
+  storageResolver
+  traceManager
+  tx
+  _sourceLocation
+
   constructor (tx, _stepManager, _traceManager, _internalTreeCall) {
     this.event = new EventManager()
     this.stepManager = _stepManager
@@ -28,7 +36,7 @@ class DebuggerSolidityLocals {
     }, 500)
   }
 
-  decode (sourceLocation, cursor) {
+  decode (sourceLocation, cursor?) {
     const self = this
     this.event.trigger('solidityLocalsMessage', [''])
     this.traceManager.waterfall([
@@ -94,5 +102,3 @@ class DebuggerSolidityLocals {
     }, 500)
   }
 }
-
-module.exports = DebuggerSolidityLocals
