@@ -3,7 +3,7 @@
 const EventManager = require('../eventManager')
 const traceHelper = require('../trace/traceHelper')
 const SourceMappingDecoder = require('../source/sourceMappingDecoder')
-const CodeResolver = require('./codeResolver')
+import { CodeResolver } from './codeResolver'
 
 /*
   resolve contract code referenced by vmtrace in order to be used by asm listview.
