@@ -1,5 +1,5 @@
 'use strict'
-const codeUtils = require('./codeUtils')
+import  { nameOpCodes } from './codeUtils'
 
 export class CodeResolver {
 
@@ -40,7 +40,7 @@ export class CodeResolver {
   }
 
   formatCode (hexCode) {
-    const [code, instructionsIndexByBytesOffset] = codeUtils.nameOpCodes(Buffer.from(hexCode.substring(2), 'hex'))
+    const [code, instructionsIndexByBytesOffset] = nameOpCodes(Buffer.from(hexCode.substring(2), 'hex'))
     return {code, instructionsIndexByBytesOffset}
   }
 
