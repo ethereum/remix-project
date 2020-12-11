@@ -1,8 +1,16 @@
-const remixLib = require('@remix-project/remix-lib')
+import { util } from '@remix-project/remix-lib'
 const EventManager = require('../eventManager')
-const util = remixLib.util
 
-class DebuggerStepManager {
+export class DebuggerStepManager {
+
+  event
+  debugger
+  traceManager
+  currentStepIndex: number
+  traceLength: number
+  codeTraceLength: number
+  revertionPoint
+  currentCall
 
   constructor (_debugger, traceManager) {
     this.event = new EventManager()
@@ -205,5 +213,3 @@ class DebuggerStepManager {
   }
 
 }
-
-module.exports = DebuggerStepManager
