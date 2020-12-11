@@ -8,7 +8,16 @@ const helper = require('../trace/traceHelper')
   *
   * Trigger events: breakpointHit, breakpointAdded, breakpointRemoved
   */
-class BreakpointManager {
+export class BreakpointManager {
+
+  event
+  traceManager
+  callTree
+  solidityProxy
+  breakpoints
+  locationToRowConverter
+  previousLine
+
   /**
     * constructor
     *
@@ -189,5 +198,3 @@ class BreakpointManager {
     }
   }
 }
-
-module.exports = BreakpointManager
