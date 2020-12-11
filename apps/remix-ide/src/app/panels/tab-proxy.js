@@ -14,7 +14,8 @@ const css = csjs`
 
 const profile = {
   name: 'tabs',
-  methods: ['focus']
+  methods: ['focus'],
+  kind: 'other'
 }
 
 // @todo(#650) Merge this with MainPanel into one plugin
