@@ -2,10 +2,9 @@
 const Ethdebugger = require('../Ethdebugger')
 const EventManager = require('../eventManager')
 const traceHelper = require('../trace/traceHelper')
-const BreakpointManager = require('../code/breakpointManager')
-
-const StepManager = require('./stepManager')
-const VmDebuggerLogic = require('./VmDebugger')
+import { BreakpointManager } from '../code/breakpointManager'
+import { DebuggerStepManager } from './stepManager'
+import { VmDebuggerLogic } from './VmDebugger'
 
 export class Debugger {
 
@@ -135,7 +134,7 @@ export class Debugger {
   }
 
   debugTx (tx, loadingCb) {
-    this.step_manager = new StepManager(this.debugger, this.debugger.traceManager)
+    this.step_manager = new DebuggerStepManager(this.debugger, this.debugger.traceManager)
 
     this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
       this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts).then((sourceLocation) => {
