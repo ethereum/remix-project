@@ -1,10 +1,9 @@
 'use strict'
 
-const parseCode = require('./codeUtils').parseCode
-const remixLib = require('@remix-project/remix-lib')
-const util = remixLib.util
+import { parseCode } from './codeUtils'
+import { util } from '@remix-project/remix-lib'
 
-const createExpressions = function (instructions) {
+function createExpressions (instructions) {
   const expressions = []
   let labels = 0
   for (let i = 0; i < instructions.length; i++) {
@@ -35,7 +34,7 @@ const createExpressions = function (instructions) {
   return expressions
 }
 
-const toString = function (expr) {
+function toString (expr) {
   if (expr.name.slice(0, 4) === 'PUSH') {
     return util.hexConvert(expr.pushData)
   } else if (expr.name === 'JUMPDEST') {
@@ -46,14 +45,10 @@ const toString = function (expr) {
   return expr.name.toLowerCase()
 }
 
-const disassemble = function (input) {
-  const code = parseCode(util.hexToIntArray(input))
-  return createExpressions(code).map(toString).join('\n')
-}
-
-module.exports = {
- /**
+/**
   * Disassembler that turns bytecode (as a hex string) into Solidity inline assembly.
   */
-  disassemble: disassemble
+export function disassemble (input) {
+  const code = parseCode(util.hexToIntArray(input))
+  return createExpressions(code).map(toString).join('\n')
 }
