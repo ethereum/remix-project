@@ -1,13 +1,27 @@
-const remixLib = require('@remix-project/remix-lib')
 const EventManager = require('../eventManager')
-const ui = remixLib.helpers.ui
 const StorageResolver = require('../storage/storageResolver')
 const StorageViewer = require('../storage/storageViewer')
+import { helpers } from '@remix-project/remix-lib'
+import { DebuggerSolidityState } from './solidityState'
+import { DebuggerSolidityLocals } from './solidityLocals'
+const ui = helpers.ui
 
-const DebuggerSolidityState = require('./solidityState')
-const DebuggerSolidityLocals = require('./solidityLocals')
+export class VmDebuggerLogic {
 
-class VmDebuggerLogic {
+  event
+  debugger
+  stepManager
+  _traceManager
+  _codeManager
+  _solidityProxy
+  _callTree
+  storageResolver
+  tx
+  debuggerSolidityState
+  debuggerSolidityLocals
+  address
+  traceLength
+  addresses
 
   constructor (_debugger, tx, _stepManager, _traceManager, _codeManager, _solidityProxy, _callTree) {
     this.event = new EventManager()
@@ -247,5 +261,3 @@ class VmDebuggerLogic {
   }
 
 }
-
-module.exports = VmDebuggerLogic
