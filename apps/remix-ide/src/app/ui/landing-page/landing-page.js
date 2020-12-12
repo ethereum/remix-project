@@ -304,7 +304,7 @@ export class LandingPage extends ViewPlugin {
     const pipelineEnv = createLargeButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
     const debuggerEnv = createLargeButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
     const mythXEnv = createLargeButton('assets/img/mythxLogo.webp', 'mythxLogo', 'MythX', startMythX)
-    const sourceVerifyEnv = createLargeButton('assets/img/sourceVerifyLogo.webp', 'sourceVerifyLogo', 'Sourcify', startSourceVerify)
+    const sourcifyEnv = createLargeButton('assets/img/sourcifyLogo.webp', 'sourcifyLogo', 'Sourcify', startSourceVerify)
     const moreEnv = createLargeButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
 
     const themeQuality = globalRegistry.get('themeModule').api.currentTheme().quality
@@ -313,7 +313,7 @@ export class LandingPage extends ViewPlugin {
     pipelineEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     mythXEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    sourceVerifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    sourcifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
 
     const switchToPreviousVersion = () => {
@@ -344,7 +344,7 @@ export class LandingPage extends ViewPlugin {
                     ${solEnv}
                     ${pipelineEnv}
                     ${mythXEnv}
-                    ${sourceVerifyEnv}
+                    ${sourcifyEnv}
                     ${debuggerEnv}
                     ${moreEnv}
                   </div>
