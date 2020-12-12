@@ -8,7 +8,7 @@ import { PermissionHandler } from './app/ui/persmission-handler'
 const requiredModules = [ // services + layout views + system views
   'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport', 'web3Provider', 'scriptRunner', 'fetchAndCompile',
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
-  'terminal', 'settings', 'pluginManager']
+  'terminal', 'settings', 'pluginManager', 'tabs']
 
 export function isNative (name) {
   const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd']
@@ -71,6 +71,7 @@ export class RemixAppManager extends PluginManager {
   }
 
   isRequired (name) {
+    // excluding internal use plugins
     return requiredModules.includes(name)
   }
 
