@@ -5,7 +5,7 @@ const sha3256 = remixLib.util.sha3_256
 const BN = require('ethereumjs-util').BN
 const RefType = require('./RefType')
 
-class ArrayType extends RefType {
+export class ArrayType extends RefType {
 
   constructor (underlyingType, arraySize, location) {
     let storageSlots = null
@@ -104,5 +104,3 @@ class ArrayType extends RefType {
     }
   }
 }
-
-module.exports = ArrayType

@@ -2,7 +2,7 @@
 const util = require('./util')
 const ValueType = require('./ValueType')
 
-class Int extends ValueType {
+export class Int extends ValueType {
   constructor (storageBytes) {
     super(1, storageBytes, 'int' + storageBytes * 8)
   }
@@ -12,5 +12,3 @@ class Int extends ValueType {
     return util.decodeIntFromHex(value, this.storageBytes, true)
   }
 }
-
-module.exports = Int
