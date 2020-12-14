@@ -83,7 +83,7 @@ export class RemixdHandle extends WebsocketPlugin {
             this.canceled()
           }
         }, 3000)
-        this.locahostProvider.init(_ => this.fileSystemExplorer.ensureRoot())
+        this.locahostProvider.init()
         this.call('manager', 'activatePlugin', 'git')
       }
     }
