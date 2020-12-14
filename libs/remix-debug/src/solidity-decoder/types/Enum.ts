@@ -1,7 +1,7 @@
 'use strict'
 const ValueType = require('./ValueType')
 
-class Enum extends ValueType {
+export class Enum extends ValueType {
   constructor (enumDef) {
     let storageBytes = 0
     let length = enumDef.members.length
@@ -24,5 +24,3 @@ class Enum extends ValueType {
     return 'INVALID_ENUM<' + value + '>'
   }
 }
-
-module.exports = Enum

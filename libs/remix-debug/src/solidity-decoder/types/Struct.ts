@@ -2,7 +2,7 @@
 const util = require('./util')
 const RefType = require('./RefType')
 
-class Struct extends RefType {
+export class Struct extends RefType {
   constructor (memberDetails, location, fullType) {
     super(memberDetails.storageSlots, 32, 'struct ' + fullType, location)
     this.members = memberDetails.members
@@ -36,5 +36,3 @@ class Struct extends RefType {
     return {value: ret, type: this.typeName}
   }
 }
-
-module.exports = Struct

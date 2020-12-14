@@ -5,7 +5,7 @@ const sha3256 = remixLib.util.sha3_256
 const BN = require('ethereumjs-util').BN
 const RefType = require('./RefType')
 
-class DynamicByteArray extends RefType {
+export class DynamicByteArray extends RefType {
   constructor (location) {
     super(1, 32, 'bytes', location)
   }
@@ -56,4 +56,3 @@ class DynamicByteArray extends RefType {
   }
 }
 
-module.exports = DynamicByteArray

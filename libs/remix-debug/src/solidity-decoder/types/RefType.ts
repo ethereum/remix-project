@@ -1,7 +1,14 @@
 'use strict'
 const util = require('./util')
 
-class RefType {
+export class RefType {
+
+  location
+  storageSlots
+  storageBytes
+  typeName
+  basicType
+
   constructor (storageSlots, storageBytes, typeName, location) {
     this.location = location
     this.storageSlots = storageSlots
@@ -71,5 +78,3 @@ class RefType {
     return this.location.indexOf('memory') === 0
   }
 }
-
-module.exports = RefType
