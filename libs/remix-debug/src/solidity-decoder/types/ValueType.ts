@@ -1,7 +1,13 @@
 'use strict'
 var util = require('./util')
 
-class ValueType {
+export class ValueType {
+
+  storageSlots
+  storageBytes
+  typeName
+  basicType
+
   constructor (storageSlots, storageBytes, typeName) {
     this.storageSlots = storageSlots
     this.storageBytes = storageBytes

@@ -1,8 +1,7 @@
 'use strict'
-const ethutil = require('ethereumjs-util')
-const BN = require('ethereumjs-util').BN
+import { BN, bufferToHex, unpad } from 'ethereumjs-util'
 
-function decodeIntFromHex (value, byteLength, signed) {
+export function decodeIntFromHex (value, byteLength, signed) {
   let bigNumber = new BN(value, 16)
   if (signed) {
     bigNumber = bigNumber.fromTwos(8 * byteLength)
@@ -10,8 +9,8 @@ function decodeIntFromHex (value, byteLength, signed) {
   return bigNumber.toString(10)
 }
 
-function readFromStorage(slot, storageResolver) {
-  const hexSlot = '0x' + normalizeHex(ethutil.bufferToHex(slot))
+export function readFromStorage(slot, storageResolver) {
+  const hexSlot = '0x' + normalizeHex(bufferToHex(slot))
   return new Promise((resolve, reject) => {
     storageResolver.storageSlot(hexSlot, (error, slot) => {
       if (error) {
@@ -32,7 +31,7 @@ function readFromStorage(slot, storageResolver) {
  * @param {Int} byteLength  - Length of the byte slice to extract
  * @param {Int} offsetFromLSB  - byte distance from the right end slot value to the right end of the byte slice
  */
-function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
+export function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
   const offset = slotValue.length - 2 * offsetFromLSB - 2 * byteLength
   return slotValue.substr(offset, 2 * byteLength)
 }
@@ -44,7 +43,7 @@ function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
  * @param {Object} storageResolver  - storage resolver
  * @param {Int} byteLength  - Length of the byte slice to extract
  */
-async function extractHexValue (location, storageResolver, byteLength) {
+export async function extractHexValue (location, storageResolver, byteLength) {
   let slotvalue
   try {
     slotvalue = await readFromStorage(location.slot, storageResolver)
@@ -54,11 +53,11 @@ async function extractHexValue (location, storageResolver, byteLength) {
   return extractHexByteSlice(slotvalue, byteLength, location.offset)
 }
 
-function toBN (value) {
+export function toBN (value) {
   if (value instanceof BN) {
     return value
   } else if (value.match && value.match(/^(0x)?([a-f0-9]*)$/)) {
-    value = ethutil.unpad(value.replace(/^(0x)/, ''))
+    value = unpad(value.replace(/^(0x)/, ''))
     value = new BN(value === '' ? '0' : value, 16)
   } else if (!isNaN(value)) {
     value = new BN(value)
@@ -66,19 +65,19 @@ function toBN (value) {
   return value
 }
 
-function add (value1, value2) {
+export function add (value1, value2) {
   return toBN(value1).add(toBN(value2))
 }
 
-function sub (value1, value2) {
+export function sub (value1, value2) {
   return toBN(value1).sub(toBN(value2))
 }
 
-function removeLocation (type) {
+export function removeLocation (type) {
   return type.replace(/( storage ref| storage pointer| memory| calldata)/g, '')
 }
 
-function extractLocation (type) {
+export function extractLocation (type) {
   let match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
   if (match[1] !== '') {
     return match[1].trim()
@@ -86,7 +85,7 @@ function extractLocation (type) {
   return null
 }
 
-function extractLocationFromAstVariable (node) {
+export function extractLocationFromAstVariable (node) {
   if (node.storageLocation !== 'default') {
     return node.storageLocation
   } else if (node.stateVariable) {
@@ -95,12 +94,10 @@ function extractLocationFromAstVariable (node) {
   return 'default' // local variables => storage, function parameters & return values => memory, state => storage
 }
 
-function normalizeHex (hex) {
+export function normalizeHex (hex) {
   hex = hex.replace('0x', '')
   if (hex.length < 64) {
     return (new Array(64 - hex.length + 1).join('0')) + hex
   }
   return hex
 }
-
-module.exports = {readFromStorage, decodeIntFromHex, extractHexValue, extractHexByteSlice, toBN, add, sub, extractLocation, removeLocation, normalizeHex, extractLocationFromAstVariable}

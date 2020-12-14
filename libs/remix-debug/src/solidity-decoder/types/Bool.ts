@@ -2,7 +2,7 @@
 const ValueType = require('./ValueType')
 const util = require('./util')
 
-class Bool extends ValueType {
+export class Bool extends ValueType {
   constructor () {
     super(1, 1, 'bool')
   }
@@ -15,5 +15,3 @@ class Bool extends ValueType {
     return value !== '00'
   }
 }
-
-module.exports = Bool
