@@ -5,7 +5,14 @@ const stateDecoder = require('./stateDecoder')
 const astHelper = require('./astHelper')
 const util = remixLib.util
 
-class SolidityProxy {
+export class SolidityProxy {
+
+  cache
+  getCurrentCalledAddressAt
+  getCode
+  sources
+  contracts
+
   constructor ({getCurrentCalledAddressAt, getCode}) {
     this.cache = new Cache()
     this.reset({})
@@ -133,6 +140,12 @@ function contractObjectFromCode (contracts, code, address) {
 }
 
 class Cache {
+
+  contractObjectByAddress
+  stateVariablesByContractName
+  contractDeclarations
+  statesDefinitions
+
   constructor () {
     this.reset()
   }
@@ -143,5 +156,3 @@ class Cache {
     this.statesDefinitions = null
   }
 }
-
-module.exports = SolidityProxy
