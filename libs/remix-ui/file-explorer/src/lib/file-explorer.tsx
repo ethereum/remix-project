@@ -144,16 +144,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
       if (!createFile) {
         // tooltip('Failed to create file ' + newName)
       } else {
-        addFile(parentFolder, newFilePath)
+        addFile(parentFolder, newName)
         await fileManager.open(newName)
       }
     })
     // }, null, true)
   }
 
-  const createNewFolder = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
-    else if (parentFolder.indexOf('.sol') !== -1) parentFolder = extractParentFromKey(parentFolder)
+  const createNewFolder = async (parentFolder: string, newFolderPath: string) => {
+    // if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    // else if (parentFolder.indexOf('.sol') !== -1) parentFolder = extractParentFromKey(parentFolder)
     // const self = this
     // modalDialogCustom.prompt('Create new folder', '', 'New folder', (input) => {
     //   if (!input) {
@@ -161,15 +161,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     //   }
 
     const fileManager = state.fileManager
-    const newFolderName = parentFolder + '/' + 'unnamed' + Math.floor(Math.random() * 101) // get filename from state (state.newFileName)
-    const dirName = newFolderName + '/'
+    const dirName = newFolderPath + '/'
     // if (error) return tooltip('Unexpected error while creating folder: ' + error)
     const exists = fileManager.exists(dirName)
 
     if (exists) return
     try {
       await fileManager.mkdir(dirName)
-      addFolder(parentFolder, newFolderName)
+      addFolder(parentFolder, newFolderPath)
     } catch (e) {
       // tooltip('Failed to create file ' + newName)
     }
@@ -294,6 +293,35 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return { ...prevState, files: updatedFiles, focusElement: [{ key: newFolderName, type: 'folder' }] }
       })
     }
+  }
+
+  const addEmptyFolder = (parentFolder: string, files: File[]): File[] => {
+    if (parentFolder === name) {
+      files.unshift({
+        path: 'browser/blank',
+        name: '',
+        isDirectory: true
+      })
+      return files
+    }
+    return files.map(file => {
+      if (file.child) {
+        if (file.path === parentFolder) {
+          file.child = [{
+            path: file.path + '/blank',
+            name: '',
+            isDirectory: true
+          }, ...file.child]
+          return file
+        } else {
+          file.child = addEmptyFolder(parentFolder, file.child)
+
+          return file
+        }
+      } else {
+        return file
+      }
+    })
   }
 
   const removePath = (path: string, files: File[]): File[] => {
@@ -432,7 +460,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const editModeOff = async (content: string) => {
-    const parentFolder = state.focusEdit.type === 'folder' ? state.focusEdit.element : extractParentFromKey(state.focusEdit.element)
+    const parentFolder = extractParentFromKey(state.focusEdit.element)
 
     if (!content || (content.trim() === '')) {
       if (state.focusEdit.isNew) {
@@ -457,7 +485,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       return
     }
     if (state.focusEdit.isNew) {
-      createNewFile(parentFolder, parentFolder + '/' + content)
+      state.focusEdit.type === 'file' ? createNewFile(parentFolder, parentFolder + '/' + content) : createNewFolder(parentFolder, parentFolder + '/' + content)
       const files = removePath(state.focusEdit.element, state.files)
       const updatedFiles = files.filter(file => file)
 
@@ -480,12 +508,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleNewFileInput = (parentFolder?: string) => {
     if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
-
     const files = addEmptyFile(parentFolder, state.files)
+
     setState(prevState => {
       return { ...prevState, files }
     })
     editModeOn(parentFolder + '/blank', 'file', true)
+  }
+
+  const handleNewFolderInput = (parentFolder?: string) => {
+    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    else if (parentFolder.indexOf('.sol') !== -1) parentFolder = extractParentFromKey(parentFolder)
+    const files = addEmptyFolder(parentFolder, state.files)
+
+    setState(prevState => {
+      return { ...prevState, files }
+    })
+    editModeOn(parentFolder + '/blank', 'folder', true)
   }
 
   // warn if file changed outside of Remix
@@ -539,12 +578,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
               }
               </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
             }
-            { ((state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)) &&
+          </TreeViewItem>
+          { ((state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)) &&
             <FileExplorerContextMenu
               actions={state.actions}
               hideContextMenu={hideContextMenu}
               createNewFile={handleNewFileInput}
-              createNewFolder={createNewFolder}
+              createNewFolder={handleNewFolderInput}
               deletePath={deletePath}
               renamePath={editModeOn}
               pageX={state.focusContext.x}
@@ -552,8 +592,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               path={file.path}
               type='folder'
             />
-            }
-          </TreeViewItem>
+          }
         </div>
       )
     } else {
@@ -582,7 +621,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               actions={state.actions}
               hideContextMenu={hideContextMenu}
               createNewFile={handleNewFileInput}
-              createNewFolder={createNewFolder}
+              createNewFolder={handleNewFolderInput}
               deletePath={deletePath}
               renamePath={editModeOn}
               pageX={state.focusContext.x}
@@ -601,7 +640,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       ref={containerRef}
       tabIndex={-1}
       onKeyDown={(e) => {
-        if (e.shiftKey) {
+        if (e.ctrlKey) {
           setState(prevState => {
             return { ...prevState, ctrlKey: true }
           })
@@ -621,14 +660,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
               menuItems={props.menuItems}
               addFile={addFile}
               createNewFile={handleNewFileInput}
-              createNewFolder={createNewFolder}
+              createNewFolder={handleNewFolderInput}
               files={filesProvider}
               fileManager={state.fileManager}
               accessToken={state.accessToken}
             />
           }
           expand={true}>
-          <div>
+          <div className='pb-2'>
             <TreeView id='treeViewMenu'>
               {
                 state.files.map((file, index) => {
