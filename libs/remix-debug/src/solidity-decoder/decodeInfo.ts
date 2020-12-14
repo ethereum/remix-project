@@ -368,17 +368,17 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
   }
 }
 
-module.exports = {
+export {
   parseType,
   computeOffsets,
-  Uint: uint,
-  Address: address,
-  Bool: bool,
-  DynamicByteArray: dynamicByteArray,
-  FixedByteArray: fixedByteArray,
-  Int: int,
-  String: stringType,
-  Array: array,
-  Enum: enumType,
-  Struct: struct
+  uint as Uint,
+  address as Address,
+  bool as Bool,
+  dynamicByteArray as DynamicByteArray,
+  fixedByteArray as FixedByteArray,
+  int as Int,
+  stringType as String,
+  array as Array,
+  enumType as Enum,
+  struct as Struct
 }
