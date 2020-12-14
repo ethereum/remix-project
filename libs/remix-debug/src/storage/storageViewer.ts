@@ -8,7 +8,16 @@ const mappingPreimages = require('./mappingPreimages')
    * Basically one instance is created foreach execution step and foreach component that need it.
    * (TODO: one instance need to be shared over all the components)
    */
-class StorageViewer {
+export class StorageViewer {
+
+  context
+  storageResolver
+  web3
+  initialMappingsLocationPromise
+  currentMappingsLocationPromise
+  storageChanges
+  mappingsLocationChanges
+
   constructor (_context, _storageResolver, _traceManager) {
     this.context = _context
     this.storageResolver = _storageResolver
@@ -98,5 +107,3 @@ class StorageViewer {
     return this.mappingsLocationChanges
   }
 }
-
-module.exports = StorageViewer
