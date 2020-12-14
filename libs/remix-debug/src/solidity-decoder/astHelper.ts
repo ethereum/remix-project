@@ -1,5 +1,5 @@
 'use strict'
-const { AstWalker } = require('@remix-project/remix-astwalker')
+import { AstWalker } from '@remix-project/remix-astwalker'
 
 /**
   * return all contract definitions of the given @astList
@@ -7,7 +7,7 @@ const { AstWalker } = require('@remix-project/remix-astwalker')
   * @param {Object} sourcesList - sources list (containing root AST node)
   * @return {Object} - returns a mapping from AST node ids to AST nodes for the contracts
   */
-function extractContractDefinitions (sourcesList) {
+export function extractContractDefinitions (sourcesList) {
   const ret = {
     contractsById: {},
     contractsByName: {},
@@ -33,7 +33,7 @@ function extractContractDefinitions (sourcesList) {
   * @param {Map} contracts  - all contracts defined in the current context
   * @return {Array} - array of base contracts in derived to base order as AST nodes.
   */
-function getLinearizedBaseContracts (id, contractsById) {
+export function getLinearizedBaseContracts (id, contractsById) {
   return contractsById[id].linearizedBaseContracts.map(function (id) { return contractsById[id] })
 }
 
@@ -46,7 +46,7 @@ function getLinearizedBaseContracts (id, contractsById) {
   * @return {Object} - return an object containing: stateItems - list of all the children node of the @arg contractName
   *                                                 stateVariables - list of all the variable declaration of the @arg contractName
   */
-function extractStateDefinitions (contractName, sourcesList, contracts) {
+export function extractStateDefinitions (contractName, sourcesList, contracts) {
   if (!contracts) {
     contracts = extractContractDefinitions(sourcesList)
   }
@@ -78,7 +78,7 @@ function extractStateDefinitions (contractName, sourcesList, contracts) {
   * @param {Object} [contracts] - map of contract definitions (contains contractsById, contractsByName)
   * @return {Object} - returns a mapping between contract name and contract state
   */
-function extractStatesDefinitions (sourcesList, contracts) {
+export function extractStatesDefinitions (sourcesList, contracts) {
   if (!contracts) {
     contracts = extractContractDefinitions(sourcesList)
   }
@@ -94,9 +94,3 @@ function extractStatesDefinitions (sourcesList, contracts) {
   return ret
 }
 
-module.exports = {
-  extractStatesDefinitions: extractStatesDefinitions,
-  extractStateDefinitions: extractStateDefinitions,
-  extractContractDefinitions: extractContractDefinitions,
-  getLinearizedBaseContracts: getLinearizedBaseContracts
-}
