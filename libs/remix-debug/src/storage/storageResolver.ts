@@ -6,7 +6,14 @@ const mappingPreimages = require('./mappingPreimages')
   * Basically one instance is created for one debugging session.
   * (TODO: one instance need to be shared over all the components)
   */
-class StorageResolver {
+export class StorageResolver {
+
+  storageByAddress
+  preimagesMappingByAddress
+  maxSize
+  web3
+  zeroSlot
+
   constructor (options) {
     this.storageByAddress = {}
     this.preimagesMappingByAddress = {}
@@ -121,7 +128,7 @@ class StorageResolver {
     self.storageByAddress[address].storage = Object.assign(self.storageByAddress[address].storage || {}, storage)
   }
 
-  storageRangeWeb3Call (tx, address, start, maxSize) {
+  storageRangeWeb3Call (tx, address, start, maxSize): Promise<Array<unknown>> {
     return new Promise((resolve, reject) => {
       if (traceHelper.isContractCreation(address)) {
         resolve([{}, null])
@@ -144,5 +151,3 @@ class StorageResolver {
     })
   }
 }
-
-module.exports = StorageResolver
