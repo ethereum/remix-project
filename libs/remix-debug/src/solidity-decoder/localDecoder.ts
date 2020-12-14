@@ -1,6 +1,6 @@
 'use strict'
 
-async function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory, storageResolver, currentSourceLocation, cursor) {
+export async function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory, storageResolver, currentSourceLocation, cursor) {
   const scope = internalTreeCall.findScope(vmtraceIndex)
   if (!scope) {
     const error = { 'message': 'Can\'t display locals. reason: compilation result might not have been provided' }
@@ -34,5 +34,3 @@ function formatMemory (memory) {
   }
   return memory
 }
-
-module.exports = {solidityLocals}

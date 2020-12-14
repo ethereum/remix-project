@@ -14,7 +14,23 @@ const typesUtil = require('./types/util.js')
  * Triggers `callTreeReady` event when tree is ready
  * Triggers `callTreeBuildFailed` event when tree fails to build
  */
-class InternalCallTree {
+export class InternalCallTree {
+
+  includeLocalVariables
+  debugWithGeneratedSources
+  event
+  solidityProxy
+  traceManager
+  sourceLocationTracker
+  scopes
+  scopeStarts
+  functionCallStack
+  functionDefinitionsByScope
+  variableDeclarationByFile
+  functionDefinitionByFile
+  astWalker
+  reducedTrace
+
   /**
     * constructor
     *
@@ -375,5 +391,3 @@ function addParams (parameterList, tree, scopeId, states, contractName, sourceLo
   }
   return params
 }
-
-module.exports = InternalCallTree
