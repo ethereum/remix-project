@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
-const program = require('commander')
-const version = require('../package.json').version
+import program from 'commander'
+import { compileStandardWrapper } from 'solc'
+import { readFileSync } from 'fs'
+import { start } from 'repl'
+import { version } from '../package.json'
+import { CmdLine } from '../src/cmdline/index'
 
 program
   .command('version')
@@ -25,14 +29,8 @@ program
   .option('--node [url]', 'node to connect to')
   .parse(process.argv)
 
-const CmdLine = require('../src/cmdline/index')
-
-const solc = require('solc')
-const fs = require('fs')
-
 const filename = 'test/sol/simple_storage.sol'
 const shortFilename = 'simple_storage.sol'
-
 const inputJson = {
   language: 'Solidity',
   sources: {
@@ -51,11 +49,11 @@ const inputJson = {
   }
 }
 
-inputJson.sources[shortFilename] = {content: fs.readFileSync(filename).toString()}
+inputJson.sources[shortFilename] = {content: readFileSync(filename).toString()}
 
 console.log('compiling...')
 
-const compilationData = JSON.parse(solc.compileStandardWrapper(JSON.stringify(inputJson)))
+const compilationData = JSON.parse(compileStandardWrapper(JSON.stringify(inputJson)))
 const compilation = {}
 compilation.data = compilationData
 compilation.source = { sources: inputJson.sources }
@@ -73,9 +71,7 @@ cmdLine.events.on('source', () => {
   cmdLine.getSource().forEach(console.dir)
 })
 
-const repl = require('repl')
-
-repl.start({
+start({
   prompt: '> ',
   eval: (cmd, context, filename, cb) => {
     let command = cmd.trim()
