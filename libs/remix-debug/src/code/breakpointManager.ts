@@ -1,7 +1,7 @@
 'use strict'
 
-const EventManager = require('../eventManager')
-const helper = require('../trace/traceHelper')
+import { EventManager } from '../eventManager'
+import { isJumpDestInstruction } from '../trace/traceHelper'
 
 /**
   * allow to manage breakpoint
@@ -72,7 +72,7 @@ export class BreakpointManager {
     // isJumpDestInstruction -> returning from a internal function call
     // depthChange -> returning from an external call
     // sourceLocation.start <= previousSourceLocation.start && ... -> previous src is contained in the current one
-    if ((helper.isJumpDestInstruction(trace[currentStep]) && previousSourceLocation.jump === 'o') ||
+    if ((isJumpDestInstruction(trace[currentStep]) && previousSourceLocation.jump === 'o') ||
       this.depthChange(currentStep, trace) ||
       (sourceLocation.start <= previousSourceLocation.start &&
         sourceLocation.start + sourceLocation.length >= previousSourceLocation.start + previousSourceLocation.length)) {
