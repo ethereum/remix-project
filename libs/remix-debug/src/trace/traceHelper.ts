@@ -2,7 +2,7 @@
 const remixLib = require('@remix-project/remix-lib')
 const ui = remixLib.helpers.ui
 
-module.exports = {
+export = {
   // vmTraceIndex has to point to a CALL, CODECALL, ...
   resolveCalledAddress: function (vmTraceIndex, trace) {
     const step = trace[vmTraceIndex]
