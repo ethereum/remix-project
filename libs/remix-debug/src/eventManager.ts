@@ -1,6 +1,6 @@
 'use strict'
 
-export class eventManager {
+export class EventManager {
 
   registered
   anonymous

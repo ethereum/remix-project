@@ -1,70 +1,69 @@
 'use strict'
-const remixLib = require('@remix-project/remix-lib')
-const ui = remixLib.helpers.ui
+import { helpers } from '@remix-project/remix-lib'
+const ui = helpers.ui
 
-export = {
   // vmTraceIndex has to point to a CALL, CODECALL, ...
-  resolveCalledAddress: function (vmTraceIndex, trace) {
-    const step = trace[vmTraceIndex]
-    if (this.isCreateInstruction(step)) {
-      return this.contractCreationToken(vmTraceIndex)
-    } else if (this.isCallInstruction(step)) {
-      const stack = step.stack // callcode, delegatecall, ...
-      return ui.normalizeHexAddress(stack[stack.length - 2])
-    }
-    return undefined
-  },
-
-  isCallInstruction: function (step) {
-    return step.op === 'CALL' || step.op === 'CALLCODE' || step.op === 'CREATE' || step.op === 'DELEGATECALL'
-  },
-
-  isCreateInstruction: function (step) {
-    return step.op === 'CREATE'
-  },
-
-  isReturnInstruction: function (step) {
-    return step.op === 'RETURN'
-  },
-
-  isJumpDestInstruction: function (step) {
-    return step.op === 'JUMPDEST'
-  },
-
-  isStopInstruction: function (step) {
-    return step.op === 'STOP'
-  },
-
-  isRevertInstruction: function (step) {
-    return step.op === 'REVERT'
-  },
-
-  isSSTOREInstruction: function (step) {
-    return step.op === 'SSTORE'
-  },
-
-  isSHA3Instruction: function (step) {
-    return step.op === 'SHA3'
-  },
-
-  newContextStorage: function (step) {
-    return step.op === 'CREATE' || step.op === 'CALL'
-  },
-
-  isCallToPrecompiledContract: function (index, trace) {
-    // if stack empty => this is not a precompiled contract
-    const step = trace[index]
-    if (this.isCallInstruction(step)) {
-      return index + 1 < trace.length && trace[index + 1].stack.length !== 0
-    }
-    return false
-  },
-
-  contractCreationToken: function (index) {
-    return '(Contract Creation - Step ' + index + ')'
-  },
-
-  isContractCreation: function (address) {
-    return address.indexOf('(Contract Creation - Step') !== -1
+export function resolveCalledAddress (vmTraceIndex, trace) {
+  const step = trace[vmTraceIndex]
+  if (isCreateInstruction(step)) {
+    return contractCreationToken(vmTraceIndex)
+  } else if (isCallInstruction(step)) {
+    const stack = step.stack // callcode, delegatecall, ...
+    return ui.normalizeHexAddress(stack[stack.length - 2])
   }
+  return undefined
 }
+
+export function isCallInstruction (step) {
+  return step.op === 'CALL' || step.op === 'CALLCODE' || step.op === 'CREATE' || step.op === 'DELEGATECALL'
+}
+
+export function isCreateInstruction (step) {
+  return step.op === 'CREATE'
+}
+
+export function isReturnInstruction (step) {
+  return step.op === 'RETURN'
+}
+
+export function isJumpDestInstruction (step) {
+  return step.op === 'JUMPDEST'
+}
+
+export function isStopInstruction (step) {
+  return step.op === 'STOP'
+}
+
+export function isRevertInstruction (step) {
+  return step.op === 'REVERT'
+}
+
+export function isSSTOREInstruction (step) {
+  return step.op === 'SSTORE'
+}
+
+export function isSHA3Instruction (step) {
+  return step.op === 'SHA3'
+}
+
+export function newContextStorage (step) {
+  return step.op === 'CREATE' || step.op === 'CALL'
+}
+
+export function isCallToPrecompiledContract (index, trace) {
+  // if stack empty => this is not a precompiled contract
+  const step = trace[index]
+  if (this.isCallInstruction(step)) {
+    return index + 1 < trace.length && trace[index + 1].stack.length !== 0
+  }
+  return false
+}
+
+export function contractCreationToken (index) {
+  return '(Contract Creation - Step ' + index + ')'
+}
+
+export function isContractCreation (address) {
+  return address.indexOf('(Contract Creation - Step') !== -1
+}
+
