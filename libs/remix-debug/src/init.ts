@@ -1,7 +1,7 @@
 'use strict'
 const Web3 = require('web3')
 
-module.exports = {
+export = {
   loadWeb3: function (url) {
     if (!url) url = 'http://localhost:8545'
     const web3 = new Web3()
@@ -19,6 +19,13 @@ module.exports = {
   },
 
   web3DebugNode: function (network) {
+    const web3DebugNodes = {
+      'Main': 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym',
+      'Rinkeby': 'https://remix-rinkeby.ethdevops.io',
+      'Ropsten': 'https://remix-ropsten.ethdevops.io',
+      'Goerli': 'https://remix-goerli.ethdevops.io',
+      'Kovan': 'https://remix-kovan.ethdevops.io'
+    }
     if (web3DebugNodes[network]) {
       return this.loadWeb3(web3DebugNodes[network])
     }
@@ -65,12 +72,4 @@ module.exports = {
       })
     }
   }
-}
-
-const web3DebugNodes = {
-  'Main': 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym',
-  'Rinkeby': 'https://remix-rinkeby.ethdevops.io',
-  'Ropsten': 'https://remix-ropsten.ethdevops.io',
-  'Goerli': 'https://remix-goerli.ethdevops.io',
-  'Kovan': 'https://remix-kovan.ethdevops.io'
 }
