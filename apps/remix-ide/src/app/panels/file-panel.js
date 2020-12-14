@@ -54,29 +54,40 @@ module.exports = class Filepanel extends ViewPlugin {
       fileManager: this._components.registry.get('filemanager').api,
       config: this._components.registry.get('config').api
     }
-    this.el = yo` 
+    this.hideRemixdExplorer = true
+    this.remixdExplorer = {
+      hide: () => {
+        this.hideRemixdExplorer = true
+        this.renderComponent()
+      },
+      show: () => {
+        this.hideRemixdExplorer = false
+        this.renderComponent()
+      }
+    }
+    this.el = yo`
       <div id="fileExplorerView">
       </div>
     `
 
-    this.remixdHandle = new RemixdHandle({}, this._deps.fileProviders.localhost, appManager)
+    this.remixdHandle = new RemixdHandle(this.remixdExplorer, this._deps.fileProviders.localhost, appManager)
 
     this.event = new EventManager()
     // fileExplorer.ensureRoot()
     this._deps.fileProviders.localhost.event.register('connecting', (event) => {
     })
 
-    this._deps.fileProviders.localhost.event.register('connected', (event) => {
-      fileSystemExplorer.show()
-    })
+    // this._deps.fileProviders.localhost.event.register('connected', (event) => {
+    //   fileSystemExplorer.show()
+    // })
 
-    this._deps.fileProviders.localhost.event.register('errored', (event) => {
-      fileSystemExplorer.hide()
-    })
+    // this._deps.fileProviders.localhost.event.register('errored', (event) => {
+    //   fileSystemExplorer.hide()
+    // })
 
-    this._deps.fileProviders.localhost.event.register('closed', (event) => {
-      fileSystemExplorer.hide()
-    })
+    // this._deps.fileProviders.localhost.event.register('closed', (event) => {
+    //   fileSystemExplorer.hide()
+    // })
 
     this.renderComponent()
   }
@@ -101,13 +112,15 @@ module.exports = class Filepanel extends ViewPlugin {
                 />
               </div>
               <div className='pl-2 filesystemexplorer remixui_treeview'>
-                {/* <FileExplorer
-                  name='localhost'
-                  registry={this._components.registry}
-                  files={this._deps.fileProviders.localhost}
-                  menuItems={[]}
-                  plugin={this}
-                /> */}
+                { !this.hideRemixdExplorer &&
+                  <FileExplorer
+                    name='localhost'
+                    registry={this._components.registry}
+                    filesProvider={this._deps.fileProviders.localhost}
+                    menuItems={['createNewFile', 'createNewFolder']}
+                    plugin={this}
+                  />
+                }
               </div>
             </div>
           </div>

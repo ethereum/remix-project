@@ -38,7 +38,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               createNewFolder(path)
               break
             case 'Rename':
-              renamePath(path)
+              renamePath(path, type)
               break
             case 'Delete':
               deletePath(path)
