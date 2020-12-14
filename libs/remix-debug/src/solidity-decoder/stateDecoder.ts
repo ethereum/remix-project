@@ -1,5 +1,5 @@
-const astHelper = require('./astHelper')
-const {computeOffsets} = require('./decodeInfo')
+import { extractStatesDefinitions } from './astHelper'
+import { computeOffsets } from './decodeInfo'
 
 /**
   * decode the contract state storage
@@ -8,7 +8,7 @@ const {computeOffsets} = require('./decodeInfo')
   * @param {Object} storageResolver  - resolve storage queries
   * @return {Map} - decoded state variable
   */
-async function decodeState (stateVars, storageResolver) {
+export async function decodeState (stateVars, storageResolver) {
   const ret = {}
   for (var k in stateVars) {
     var stateVar = stateVars[k]
@@ -34,8 +34,8 @@ async function decodeState (stateVars, storageResolver) {
   * @param {Object} sourcesList  - sources list
   * @return {Object} - return the location of all contract variables in the storage
   */
-function extractStateVariables (contractName, sourcesList) {
-  const states = astHelper.extractStatesDefinitions(sourcesList)
+export function extractStateVariables (contractName, sourcesList) {
+  const states = extractStatesDefinitions(sourcesList, null)
   if (!states[contractName]) {
     return []
   }
@@ -55,7 +55,7 @@ function extractStateVariables (contractName, sourcesList) {
   * @param {String} contractName  - contract for which state var should be resolved
   * @return {Map} - return the state of the contract
   */
-async function solidityState (storageResolver, astList, contractName) {
+export async function solidityState (storageResolver, astList, contractName) {
   const stateVars = extractStateVariables(contractName, astList)
   try {
     return await decodeState(stateVars, storageResolver)
@@ -63,5 +63,3 @@ async function solidityState (storageResolver, astList, contractName) {
     return '<decoding failed - ' + e.message + '>'
   }
 }
-
-module.exports = {solidityState, extractStateVariables, decodeState}
