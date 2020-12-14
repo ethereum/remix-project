@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-const Debugger = require('../debugger/debugger.js')
+import { Debugger } from '../debugger/debugger.js'
 import { EventEmitter } from 'events'
 
 export class CmdLine {
@@ -47,13 +47,9 @@ export class CmdLine {
 
   getSource () {
     const lineColumnPos = this.lineColumnPos
-
     if (!lineColumnPos || !lineColumnPos.start) return []
-
     const content = this.compilation.compilationResult.source.sources[this.filename].content.split('\n')
-
     const source = []
-
     let line
     line = content[lineColumnPos.start.line - 2]
     if (line !== undefined) {
