@@ -1,9 +1,5 @@
 const util = require('../solidity-decoder/types/util')
 
-module.exports = {
-  decodeMappingsKeys: decodeMappingsKeys
-}
-
 /**
   * extract the mappings location from the storage
   * like { "<mapping_slot>" : { "<mapping-key1>": preimageOf1 }, { "<mapping-key2>": preimageOf2 }, ... }
@@ -13,7 +9,7 @@ module.exports = {
   * @param {Function} callback  - calback
   * @return {Map} - solidity mapping location (e.g { "<mapping_slot>" : { "<mapping-key1>": preimageOf1 }, { "<mapping-key2>": preimageOf2 }, ... })
   */
-async function decodeMappingsKeys (web3, storage, corrections) {
+export async function decodeMappingsKeys (web3, storage, corrections) {
   const ret = {}
   if (!corrections.length) corrections.push({offset: 0, slot: 0})
   for (let hashedLoc in storage) {
