@@ -23,23 +23,23 @@ const traceHelper = require('./src/trace/traceHelper')
   })
   this.debugger.setBreakpointManager(breakPointManager)
 */
-module.exports = {
+export = {
   init,
   traceHelper,
   SourceMappingDecoder,
-  EthDebugger: EthDebugger,
-  TransactionDebugger: TransactionDebugger,
+  EthDebugger,
+  TransactionDebugger,
   /**
    * constructor
    *
    * @param {Object} _debugger - type of EthDebugger
    * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
    */
-  BreakpointManager: BreakpointManager,
-  SolidityDecoder: SolidityDecoder,
+  BreakpointManager,
+  SolidityDecoder,
   storage: {
     StorageViewer: StorageViewer,
     StorageResolver: StorageResolver
   },
-  CmdLine: CmdLine
+  CmdLine
 }
