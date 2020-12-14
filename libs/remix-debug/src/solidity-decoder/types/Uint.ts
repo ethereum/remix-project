@@ -2,7 +2,7 @@
 const util = require('./util')
 const ValueType = require('./ValueType')
 
-class Uint extends ValueType {
+export class Uint extends ValueType {
   constructor (storageBytes) {
     super(1, storageBytes, 'uint' + storageBytes * 8)
   }
@@ -12,5 +12,3 @@ class Uint extends ValueType {
     return util.decodeIntFromHex(value, this.storageBytes, false)
   }
 }
-
-module.exports = Uint

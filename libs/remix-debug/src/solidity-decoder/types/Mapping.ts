@@ -3,7 +3,7 @@ const RefType = require('./RefType')
 const util = require('./util')
 const ethutil = require('ethereumjs-util')
 
-class Mapping extends RefType {
+export class Mapping extends RefType {
   constructor (underlyingTypes, location, fullType) {
     super(1, 32, fullType, 'storage')
     this.keyType = underlyingTypes.keyType
@@ -76,5 +76,3 @@ function concatTypedArrays (a, b) { // a, b TypedArray of same type
   c.set(b, a.length)
   return c
 }
-
-module.exports = Mapping
