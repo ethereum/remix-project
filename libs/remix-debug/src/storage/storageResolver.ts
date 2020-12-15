@@ -1,6 +1,6 @@
 'use strict'
-const traceHelper = require('../trace/traceHelper')
-const mappingPreimages = require('./mappingPreimages')
+import { isContractCreation } from '../trace/traceHelper'
+import { decodeMappingsKeys } from './mappingPreimages'
 
 /**
   * Basically one instance is created for one debugging session.
@@ -50,7 +50,7 @@ export class StorageResolver {
       return this.preimagesMappingByAddress[address]
     }
     const storage = await this.storageRange(tx, stepIndex, address)
-    const mappings = mappingPreimages.decodeMappingsKeys(this.web3, storage, corrections)
+    const mappings = decodeMappingsKeys(this.web3, storage, corrections)
     this.preimagesMappingByAddress[address] = mappings
     return mappings
   }
@@ -130,7 +130,7 @@ export class StorageResolver {
 
   storageRangeWeb3Call (tx, address, start, maxSize): Promise<Array<unknown>> {
     return new Promise((resolve, reject) => {
-      if (traceHelper.isContractCreation(address)) {
+      if (isContractCreation(address)) {
         resolve([{}, null])
       } else {
         this.web3.debug.storageRangeAt(

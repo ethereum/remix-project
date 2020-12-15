@@ -1,7 +1,6 @@
 'use strict'
-const remixLib = require('@remix-project/remix-lib')
-const util = remixLib.util
-const mappingPreimages = require('./mappingPreimages')
+import { util } from '@remix-project/remix-lib'
+import { decodeMappingsKeys } from './mappingPreimages'
 
  /**
    * easier access to the storage resolver
@@ -102,7 +101,7 @@ export class StorageViewer {
     if (this.mappingsLocationChanges) {
       return this.mappingsLocationChanges
     }
-    const mappings = mappingPreimages.decodeMappingsKeys(this.web3, storageChanges, corrections)
+    const mappings = decodeMappingsKeys(this.web3, storageChanges, corrections)
     this.mappingsLocationChanges = mappings
     return this.mappingsLocationChanges
   }
