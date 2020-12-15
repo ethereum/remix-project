@@ -1,5 +1,5 @@
 'use strict'
-import init from './init'
+import * as init from './init'
 import { Ethdebugger as EthDebugger } from './Ethdebugger'
 import { Debugger as TransactionDebugger } from './debugger/debugger'
 import { CmdLine } from './cmdline'
