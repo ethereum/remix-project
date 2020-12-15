@@ -1,11 +1,9 @@
 'use strict'
-const TraceAnalyser = require('./traceAnalyser')
-const TraceCache = require('./traceCache')
-const TraceStepManager = require('./traceStepManager')
-
-const traceHelper = require('./traceHelper')
-const remixLib = require('@remix-project/remix-lib')
-const util = remixLib.util
+import { TraceAnalyser } from './traceAnalyser'
+import { TraceCache } from './traceCache'
+import { TraceStepManager } from './traceStepManager'
+import { isCreateInstruction } from './traceHelper'
+import { util } from '@remix-project/remix-lib'
 
 export class TraceManager {
 
@@ -241,7 +239,7 @@ export class TraceManager {
   }
 
   isCreationStep (stepIndex) {
-    return traceHelper.isCreateInstruction(this.trace[stepIndex])
+    return isCreateInstruction(this.trace[stepIndex])
   }
 
   // step section
