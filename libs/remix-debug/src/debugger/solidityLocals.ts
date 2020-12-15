@@ -1,6 +1,6 @@
-const EventManager = require('../eventManager')
-const localDecoder = require('../solidity-decoder/localDecoder')
-const StorageViewer = require('../storage/storageViewer')
+import { EventManager } from '../eventManager'
+import { solidityLocals } from '../solidity-decoder/localDecoder'
+import { StorageViewer } from '../storage/storageViewer'
 
 export class DebuggerSolidityLocals {
 
@@ -73,16 +73,16 @@ export class DebuggerSolidityLocals {
       var memory = result[1].value
       try {
         var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
-        localDecoder.solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation, cursor).then((locals) => {
+        solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation, cursor).then((locals) => {
           if (!cursor) {
-            if (!locals.error) {
+            if (!locals['error']) {
               this.event.trigger('solidityLocals', [locals])
             }
             if (!Object.keys(locals).length) {
               this.event.trigger('solidityLocalsMessage', ['no locals'])
             }
           } else {
-            if (!locals.error) {
+            if (!locals['error']) {
               this.event.trigger('solidityLocalsLoadMoreCompleted', [locals])
             }
           }

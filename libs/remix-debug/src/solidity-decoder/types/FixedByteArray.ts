@@ -1,5 +1,5 @@
 'use strict'
-const ValueType = require('./ValueType')
+import { ValueType } from './ValueType'
 
 export class FixedByteArray extends ValueType {
   constructor (storageBytes) {

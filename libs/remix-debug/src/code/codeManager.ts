@@ -1,8 +1,8 @@
 'use strict'
 
-const EventManager = require('../eventManager')
-const traceHelper = require('../trace/traceHelper')
-const SourceMappingDecoder = require('../source/sourceMappingDecoder')
+import { EventManager } from '../eventManager'
+import { isContractCreation } from '../trace/traceHelper'
+import { findNodeAtInstructionIndex } from '../source/sourceMappingDecoder'
 import { CodeResolver } from './codeResolver'
 
 /*
@@ -70,7 +70,7 @@ export class CodeManager {
    * @param {Function} cb - callback function, return the bytecode
    */
   async getCode (address) {
-    if (!traceHelper.isContractCreation(address)) {
+    if (!isContractCreation(address)) {
       const code = await this.codeResolver.resolveCode(address)
       return code
     }
@@ -131,7 +131,7 @@ export class CodeManager {
    */
   getFunctionFromPC (address, pc, sourceMap, ast) {
     const instIndex = this.codeResolver.getInstructionIndex(address, pc)
-    return SourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', instIndex, sourceMap, ast)
+    return findNodeAtInstructionIndex('FunctionDefinition', instIndex, sourceMap, ast)
   }
 
   private retrieveCodeAndTrigger (codeMananger, address, stepIndex, tx) {

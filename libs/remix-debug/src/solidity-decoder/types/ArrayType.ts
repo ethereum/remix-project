@@ -1,11 +1,14 @@
 'use strict'
-const util = require('./util')
-const remixLib = require('@remix-project/remix-lib')
-const sha3256 = remixLib.util.sha3_256
-const BN = require('ethereumjs-util').BN
-const RefType = require('./RefType')
+import { add, toBN, extractHexValue } from './util'
+import { util } from '@remix-project/remix-lib'
+import { BN } from 'ethereumjs-util'
+import { RefType } from './RefType'
+const sha3256 = util.sha3_256
 
 export class ArrayType extends RefType {
+
+  underlyingType
+  arraySize
 
   constructor (underlyingType, arraySize, location) {
     let storageSlots = null
@@ -30,7 +33,7 @@ export class ArrayType extends RefType {
     let size = null
     let slotValue
     try {
-      slotValue = await util.extractHexValue(location, storageResolver, this.storageBytes)
+      slotValue = await extractHexValue(location, storageResolver, this.storageBytes)
     } catch (e) {
       console.log(e)
       return {
@@ -43,12 +46,12 @@ export class ArrayType extends RefType {
       slot: location.slot
     }
     if (this.arraySize === 'dynamic') {
-      size = util.toBN('0x' + slotValue)
+      size = toBN('0x' + slotValue)
       currentLocation.slot = sha3256(location.slot)
     } else {
       size = new BN(this.arraySize)
     }
-    var k = util.toBN(0)
+    var k = toBN(0)
     for (; k.lt(size) && k.ltn(300); k.iaddn(1)) {
       try {
         ret.push(await this.underlyingType.decodeFromStorage(currentLocation, storageResolver))
@@ -62,10 +65,10 @@ export class ArrayType extends RefType {
         currentLocation.offset += this.underlyingType.storageBytes
         if (currentLocation.offset + this.underlyingType.storageBytes > 32) {
           currentLocation.offset = 0
-          currentLocation.slot = '0x' + util.add(currentLocation.slot, 1).toString(16)
+          currentLocation.slot = '0x' + add(currentLocation.slot, 1).toString(16)
         }
       } else {
-        currentLocation.slot = '0x' + util.add(currentLocation.slot, this.underlyingType.storageSlots).toString(16)
+        currentLocation.slot = '0x' + add(currentLocation.slot, this.underlyingType.storageSlots).toString(16)
         currentLocation.offset = 0
       }
     }

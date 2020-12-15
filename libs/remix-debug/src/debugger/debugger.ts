@@ -1,7 +1,7 @@
 'use strict'
-const Ethdebugger = require('../Ethdebugger')
-const EventManager = require('../eventManager')
-const traceHelper = require('../trace/traceHelper')
+import { Ethdebugger } from '../Ethdebugger'
+import { EventManager } from '../eventManager'
+import { contractCreationToken } from '../trace/traceHelper'
 import { BreakpointManager } from '../code/breakpointManager'
 import { DebuggerStepManager } from './stepManager'
 import { VmDebuggerLogic } from './VmDebugger'
@@ -18,7 +18,6 @@ export class Debugger {
   
   constructor (options) {
     this.event = new EventManager()
-
     this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
     /*
       Returns a compilation result for a given address or the last one available if none are found
@@ -96,7 +95,7 @@ export class Debugger {
     this.debugger.web3 = web3
   }
 
-  debug (blockNumber, txNumber, tx, loadingCb) {
+  debug (blockNumber, txNumber, tx, loadingCb): Promise<void> {
     const web3 = this.debugger.web3
 
     return new Promise((resolve, reject) => {
@@ -106,7 +105,7 @@ export class Debugger {
 
       if (tx) {
         if (!tx.to) {
-          tx.to = traceHelper.contractCreationToken('0')
+          tx.to = contractCreationToken('0')
         }
         this.debugTx(tx, loadingCb)
         return resolve()

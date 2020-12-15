@@ -9,7 +9,7 @@ export function decodeIntFromHex (value, byteLength, signed) {
   return bigNumber.toString(10)
 }
 
-export function readFromStorage(slot, storageResolver) {
+export function readFromStorage(slot, storageResolver): Promise<string> {
   const hexSlot = '0x' + normalizeHex(bufferToHex(slot))
   return new Promise((resolve, reject) => {
     storageResolver.storageSlot(hexSlot, (error, slot) => {
@@ -94,7 +94,7 @@ export function extractLocationFromAstVariable (node) {
   return 'default' // local variables => storage, function parameters & return values => memory, state => storage
 }
 
-export function normalizeHex (hex) {
+export function normalizeHex (hex): string {
   hex = hex.replace('0x', '')
   if (hex.length < 64) {
     return (new Array(64 - hex.length + 1).join('0')) + hex

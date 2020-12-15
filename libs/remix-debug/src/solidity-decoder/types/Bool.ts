@@ -1,6 +1,6 @@
 'use strict'
-const ValueType = require('./ValueType')
-const util = require('./util')
+import { ValueType } from './ValueType'
+import { extractHexByteSlice } from './util'
 
 export class Bool extends ValueType {
   constructor () {
@@ -11,7 +11,7 @@ export class Bool extends ValueType {
     if (!value) {
       return false
     }
-    value = util.extractHexByteSlice(value, this.storageBytes, 0)
+    value = extractHexByteSlice(value, this.storageBytes, 0)
     return value !== '00'
   }
 }

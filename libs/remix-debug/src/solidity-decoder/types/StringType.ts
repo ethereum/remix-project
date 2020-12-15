@@ -1,14 +1,17 @@
 'use strict'
-const DynamicBytes = require('./DynamicByteArray')
+import { DynamicByteArray } from './DynamicByteArray'
 
-export class StringType extends DynamicBytes {
+export class StringType extends DynamicByteArray {
+
+  typeName
+
   constructor (location) {
     super(location)
     this.typeName = 'string'
   }
 
   async decodeFromStorage (location, storageResolver) {
-    let decoded = '0x'
+    let decoded: any = '0x'
     try {
       decoded = await super.decodeFromStorage(location, storageResolver)
     } catch (e) {
@@ -20,7 +23,7 @@ export class StringType extends DynamicBytes {
 
   async decodeFromStack (stackDepth, stack, memory) {
     try {
-      return await super.decodeFromStack(stackDepth, stack, memory)
+      return await super.decodeFromStack(stackDepth, stack, memory, null, null)
     } catch (e) {
       console.log(e)
       return '<decoding failed - ' + e.message + '>'

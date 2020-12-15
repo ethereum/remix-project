@@ -1,7 +1,10 @@
 'use strict'
-const ValueType = require('./ValueType')
+import { ValueType } from './ValueType'
 
 export class Enum extends ValueType {
+
+  enumDef
+
   constructor (enumDef) {
     let storageBytes = 0
     let length = enumDef.members.length

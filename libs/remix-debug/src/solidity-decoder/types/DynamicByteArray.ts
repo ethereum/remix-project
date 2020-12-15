@@ -1,9 +1,9 @@
 'use strict'
-const util = require('./util')
-const remixLib = require('@remix-project/remix-lib')
-const sha3256 = remixLib.util.sha3_256
-const BN = require('ethereumjs-util').BN
-const RefType = require('./RefType')
+import { extractHexValue, readFromStorage } from './util'
+import { util } from '@remix-project/remix-lib'
+import { BN } from 'ethereumjs-util'
+import { RefType } from './RefType'
+const sha3256 = util.sha3_256
 
 export class DynamicByteArray extends RefType {
   constructor (location) {
@@ -13,29 +13,29 @@ export class DynamicByteArray extends RefType {
   async decodeFromStorage (location, storageResolver) {
     let value = '0x0'
     try {
-      value = await util.extractHexValue(location, storageResolver, this.storageBytes)
+      value = await extractHexValue(location, storageResolver, this.storageBytes)
     } catch (e) {
       console.log(e)
       return {value: '<decoding failed - ' + e.message + '>', type: this.typeName}
     }
     const bn = new BN(value, 16)
     if (bn.testn(0)) {
-      const length = bn.div(new BN(2))
+      const length: BN = bn.div(new BN(2))
       let dataPos = new BN(sha3256(location.slot).replace('0x', ''), 16)
       let ret = ''
       let currentSlot = '0x'
       try {
-        currentSlot = await util.readFromStorage(dataPos, storageResolver)
+        currentSlot = await readFromStorage(dataPos, storageResolver)
       } catch (e) {
         console.log(e)
         return {value: '<decoding failed - ' + e.message + '>', type: this.typeName}
       }
-      while (length.gt(ret.length) && ret.length < 32000) {
+      while (length.gt(new BN(ret.length)) && ret.length < 32000) {
         currentSlot = currentSlot.replace('0x', '')
         ret += currentSlot
         dataPos = dataPos.add(new BN(1))
         try {
-          currentSlot = await util.readFromStorage(dataPos, storageResolver)
+          currentSlot = await readFromStorage(dataPos, storageResolver)
         } catch (e) {
           console.log(e)
           return {value: '<decoding failed - ' + e.message + '>', type: this.typeName}
