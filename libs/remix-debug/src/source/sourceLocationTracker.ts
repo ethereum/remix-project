@@ -31,7 +31,7 @@ export class SourceLocationTracker {
    */
   async getSourceLocationFromInstructionIndex (address, index, contracts) {
     const sourceMap = await this.extractSourceMap(this, this.codeManager, address, contracts)
-    return atIndex(index, sourceMap.map)
+    return atIndex(index, sourceMap['map'])
   }
 
   /**
@@ -44,7 +44,7 @@ export class SourceLocationTracker {
   async getSourceLocationFromVMTraceIndex (address, vmtraceStepIndex, contracts) {
     const sourceMap = await this.extractSourceMap(this, this.codeManager, address, contracts)
     const index = this.codeManager.getInstructionIndex(address, vmtraceStepIndex)
-    return atIndex(index, sourceMap.map)
+    return atIndex(index, sourceMap['map'])
   }
 
   /**
