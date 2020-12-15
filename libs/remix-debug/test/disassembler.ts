@@ -1,6 +1,6 @@
 'use strict'
 
-const tape = require('tape')
+import tape from 'tape'
 const disassemble = require('../src/code/disassembler').disassemble
 
 tape('Disassembler', function (t) {

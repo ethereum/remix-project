@@ -1,21 +1,21 @@
 'use strict'
-var tape = require('tape')
-var compiler = require('solc')
-var astHelper = require('../../src/solidity-decoder/astHelper')
-var decodeInfo = require('../../src/solidity-decoder/decodeInfo')
-var stateDecoder = require('../../src/solidity-decoder/stateDecoder')
+import tape from 'tape'
+import { compile } from 'solc'
+import * as astHelper from '../../src/solidity-decoder/astHelper'
+import * as decodeInfo from '../../src/solidity-decoder/decodeInfo'
+import * as stateDecoder from '../../src/solidity-decoder/stateDecoder'
 var contracts = require('./contracts/miscContracts')
 var simplecontracts = require('./contracts/simpleContract')
-var compilerInput = require('../helpers/compilerHelper').compilerInput
-var util = require('../../src/solidity-decoder/types/util')
+import { compilerInput } from '../helpers/compilerHelper'
+import * as util from '../../src/solidity-decoder/types/util'
 
 tape('solidity', function (t) {
   t.test('astHelper, decodeInfo', function (st) {
-    var output = compiler.compile(compilerInput(contracts))
+    var output = compile(compilerInput(contracts))
     output = JSON.parse(output)
 
-    var state = astHelper.extractStateDefinitions('test.sol:contractUint', output.sources)
-    var states = astHelper.extractStatesDefinitions(output.sources)
+    var state: any = astHelper.extractStateDefinitions('test.sol:contractUint', output.sources, null)
+    var states = astHelper.extractStatesDefinitions(output.sources, null)
     var stateDef = state.stateDefinitions
     var parsedType = decodeInfo.parseType(stateDef[0].typeDescriptions.typeString, states, 'contractUint', util.extractLocationFromAstVariable(stateDef[0]))
     checkDecodeInfo(st, parsedType, 1, 1, 'uint8')
@@ -26,7 +26,7 @@ tape('solidity', function (t) {
     parsedType = decodeInfo.parseType(stateDef[3].typeDescriptions.typeString, states, 'contractUint', util.extractLocationFromAstVariable(stateDef[3]))
     checkDecodeInfo(st, parsedType, 1, 16, 'bytes16')
 
-    state = astHelper.extractStateDefinitions('test.sol:contractStructAndArray', output.sources)
+    state = astHelper.extractStateDefinitions('test.sol:contractStructAndArray', output.sources, null)
     stateDef = state.stateDefinitions
     parsedType = decodeInfo.parseType(stateDef[1].typeDescriptions.typeString, states, 'contractStructAndArray', util.extractLocationFromAstVariable(stateDef[1]))
     checkDecodeInfo(st, parsedType, 2, 32, 'struct contractStructAndArray.structDef')
@@ -35,7 +35,7 @@ tape('solidity', function (t) {
     parsedType = decodeInfo.parseType(stateDef[3].typeDescriptions.typeString, states, 'contractStructAndArray', util.extractLocationFromAstVariable(stateDef[3]))
     checkDecodeInfo(st, parsedType, 2, 32, 'bytes12[4]')
 
-    state = astHelper.extractStateDefinitions('test.sol:contractArray', output.sources)
+    state = astHelper.extractStateDefinitions('test.sol:contractArray', output.sources, null)
     stateDef = state.stateDefinitions
     parsedType = decodeInfo.parseType(stateDef[0].typeDescriptions.typeString, states, 'contractArray', util.extractLocationFromAstVariable(stateDef[0]))
     checkDecodeInfo(st, parsedType, 1, 32, 'uint32[5]')
@@ -44,12 +44,12 @@ tape('solidity', function (t) {
     parsedType = decodeInfo.parseType(stateDef[2].typeDescriptions.typeString, states, 'contractArray', util.extractLocationFromAstVariable(stateDef[2]))
     checkDecodeInfo(st, parsedType, 4, 32, 'int16[][3][][4]')
 
-    state = astHelper.extractStateDefinitions('test.sol:contractEnum', output.sources)
+    state = astHelper.extractStateDefinitions('test.sol:contractEnum', output.sources, null)
     stateDef = state.stateDefinitions
-    parsedType = decodeInfo.parseType(stateDef[1].typeDescriptions.typeString, states, 'contractEnum')
+    parsedType = decodeInfo.parseType(stateDef[1].typeDescriptions.typeString, states, 'contractEnum', null)
     checkDecodeInfo(st, parsedType, 1, 2, 'enum')
 
-    state = astHelper.extractStateDefinitions('test.sol:contractSmallVariable', output.sources)
+    state = astHelper.extractStateDefinitions('test.sol:contractSmallVariable', output.sources, null)
     stateDef = state.stateDefinitions
     parsedType = decodeInfo.parseType(stateDef[0].typeDescriptions.typeString, states, 'contractSmallVariable', util.extractLocationFromAstVariable(stateDef[0]))
     checkDecodeInfo(st, parsedType, 1, 1, 'int8')
@@ -64,10 +64,10 @@ tape('solidity', function (t) {
     parsedType = decodeInfo.parseType(stateDef[5].typeDescriptions.typeString, states, 'contractSmallVariable', util.extractLocationFromAstVariable(stateDef[5]))
     checkDecodeInfo(st, parsedType, 1, 2, 'int16')
 
-    output = compiler.compile(compilerInput(simplecontracts))
+    output = compile(compilerInput(simplecontracts))
     output = JSON.parse(output)
-    state = astHelper.extractStateDefinitions('test.sol:simpleContract', output.sources)
-    states = astHelper.extractStatesDefinitions(output.sources)
+    state = astHelper.extractStateDefinitions('test.sol:simpleContract', output.sources, null)
+    states = astHelper.extractStatesDefinitions(output.sources, null)
     stateDef = state.stateDefinitions
     parsedType = decodeInfo.parseType(stateDef[2].typeDescriptions.typeString, states, 'simpleContract', util.extractLocationFromAstVariable(stateDef[2]))
     checkDecodeInfo(st, parsedType, 2, 32, 'struct simpleContract.structDef')
@@ -76,7 +76,7 @@ tape('solidity', function (t) {
     parsedType = decodeInfo.parseType(stateDef[4].typeDescriptions.typeString, states, 'simpleContract', util.extractLocationFromAstVariable(stateDef[4]))
     checkDecodeInfo(st, parsedType, 1, 1, 'enum')
 
-    state = astHelper.extractStateDefinitions('test.sol:test2', output.sources)
+    state = astHelper.extractStateDefinitions('test.sol:test2', output.sources, null)
     stateDef = state.stateDefinitions
     parsedType = decodeInfo.parseType(stateDef[0].typeDescriptions.typeString, states, 'test1', util.extractLocationFromAstVariable(stateDef[0]))
     checkDecodeInfo(st, parsedType, 1, 32, 'struct test1.str')
