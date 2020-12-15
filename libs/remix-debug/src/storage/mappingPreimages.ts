@@ -1,4 +1,4 @@
-const util = require('../solidity-decoder/types/util')
+import { sub } from '../solidity-decoder/types/util'
 
 /**
   * extract the mappings location from the storage
@@ -17,7 +17,7 @@ export async function decodeMappingsKeys (web3, storage, corrections) {
     try {
       const key = storage[hashedLoc].key
       for (let k in corrections) {
-        const corrected = util.sub(key, corrections[k].slot).toString(16)
+        const corrected = sub(key, corrections[k].slot).toString(16)
         preimage = await getPreimage(web3, '0x' + corrected)
         if (preimage) break
       }
