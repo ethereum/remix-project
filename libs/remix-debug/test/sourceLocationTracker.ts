@@ -1,5 +1,5 @@
 'use strict'
-const tape = require('tape')
+import tape from 'tape'
 const TraceManager = require('../src/trace/traceManager')
 const CodeManager = require('../src/code/codeManager')
 const web3Test = require('./resources/testWeb3')
