@@ -19,11 +19,11 @@ export function setProvider (web3, url) {
 
 export function web3DebugNode (network) {
   const web3DebugNodes = {
-    'Main': 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym',
-    'Rinkeby': 'https://remix-rinkeby.ethdevops.io',
-    'Ropsten': 'https://remix-ropsten.ethdevops.io',
-    'Goerli': 'https://remix-goerli.ethdevops.io',
-    'Kovan': 'https://remix-kovan.ethdevops.io'
+    Main: 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym',
+    Rinkeby: 'https://remix-rinkeby.ethdevops.io',
+    Ropsten: 'https://remix-ropsten.ethdevops.io',
+    Goerli: 'https://remix-goerli.ethdevops.io',
+    Kovan: 'https://remix-kovan.ethdevops.io'
   }
   if (web3DebugNodes[network]) {
     return loadWeb3(web3DebugNodes[network])
@@ -71,4 +71,3 @@ export function extend (web3) {
     })
   }
 }
-

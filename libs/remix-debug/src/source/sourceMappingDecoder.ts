@@ -33,7 +33,7 @@ export function decode (value) {
 export function decompressAll (mapping) {
   const map = mapping.split(';')
   const ret = []
-  for (let k in map) {
+  for (const k in map) {
     const compressed = map[k].split(':')
     const sourceMap = {
       start: compressed[0] ? parseInt(compressed[0]) : ret[ret.length - 1].start,
@@ -74,9 +74,8 @@ export function convertOffsetToLineColumn (sourceLocation, lineBreakPositions) {
       end: convertFromCharPosition(sourceLocation.start + sourceLocation.length, lineBreakPositions)
     }
   }
-  return {start: null, end: null}
+  return { start: null, end: null }
 }
-
 
 function convertFromCharPosition (pos, lineBreakPositions) {
   let line = util.findLowerBound(pos, lineBreakPositions)
@@ -85,7 +84,7 @@ function convertFromCharPosition (pos, lineBreakPositions) {
   }
   const beginColumn = line === 0 ? 0 : (lineBreakPositions[line - 1] + 1)
   const column = pos - beginColumn
-  return {line, column}
+  return { line, column }
 }
 
 function sourceLocationFromAstNode (astNode) {
@@ -173,7 +172,7 @@ export function nodesAtPosition (astNodeType, position, ast) {
  *  @return Object { start, length, file, jump }
  */
 export function atIndex (index, mapping) {
-  let ret = {}
+  const ret = {}
   const map = mapping.split(';')
   if (index >= map.length) {
     index = map.length - 1
@@ -184,19 +183,19 @@ export function atIndex (index, mapping) {
       continue
     }
     current = current.split(':')
-    if (ret['start'] === undefined && current[0] && current[0] !== '-1' && current[0].length) {
-      ret['start'] = parseInt(current[0])
+    if (ret.start === undefined && current[0] && current[0] !== '-1' && current[0].length) {
+      ret.start = parseInt(current[0])
     }
-    if (ret['length'] === undefined && current[1] && current[1] !== '-1' && current[1].length) {
-      ret['length'] = parseInt(current[1])
+    if (ret.length === undefined && current[1] && current[1] !== '-1' && current[1].length) {
+      ret.length = parseInt(current[1])
     }
-    if (ret['file'] === undefined && current[2] && current[2].length) {
-      ret['file'] = parseInt(current[2])
+    if (ret.file === undefined && current[2] && current[2].length) {
+      ret.file = parseInt(current[2])
     }
-    if (ret['jump'] === undefined && current[3] && current[3].length) {
-      ret['jump'] = current[3]
+    if (ret.jump === undefined && current[3] && current[3].length) {
+      ret.jump = current[3]
     }
-    if (ret['start'] !== undefined && ret['length'] !== undefined && ret['file'] !== undefined && ret['jump'] !== undefined) {
+    if (ret.start !== undefined && ret.length !== undefined && ret.file !== undefined && ret.jump !== undefined) {
       break
     }
   }

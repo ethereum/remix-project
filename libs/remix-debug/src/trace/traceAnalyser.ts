@@ -2,10 +2,9 @@
 import * as traceHelper from './traceHelper'
 
 export class TraceAnalyser {
-
   traceCache
   trace
-  
+
   constructor (_cache) {
     this.traceCache = _cache
     this.trace = null
@@ -42,7 +41,7 @@ export class TraceAnalyser {
       const memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
       const noOfReturnParams = size / 64
       const memoryInString = memory.join('')
-      let returnParamsObj = []
+      const returnParamsObj = []
       for (let i = 0; i < noOfReturnParams; i++) {
         returnParamsObj.push('0x' + memoryInString.substring(offset, offset + 64))
         offset += 64
@@ -141,4 +140,3 @@ export class TraceAnalyser {
     return context
   }
 }
-

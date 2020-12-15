@@ -13,26 +13,27 @@ import { CodeResolver } from './codeResolver'
 */
 
 export class CodeManager {
-
   event
   isLoading: boolean
   traceManager
   codeResolver
-  
-  constructor(_traceManager) {
+
+  constructor (_traceManager) {
     this.event = new EventManager()
     this.isLoading = false
     this.traceManager = _traceManager
-    this.codeResolver = new CodeResolver({getCode: async (address) => {
-      return new Promise((resolve, reject) => {
-        this.traceManager.web3.eth.getCode(address, (error, code) => {
-          if (error) {
-            return reject(error)
-          }
-          return resolve(code)
+    this.codeResolver = new CodeResolver({
+      getCode: async (address) => {
+        return new Promise((resolve, reject) => {
+          this.traceManager.web3.eth.getCode(address, (error, code) => {
+            if (error) {
+              return reject(error)
+            }
+            return resolve(code)
+          })
         })
-      })
-    }})
+      }
+    })
   }
 
   /**
@@ -153,6 +154,6 @@ export class CodeManager {
       codeMananger.event.trigger('changed', [code, address, result])
     } catch (e) {
       console.log('dispatching event failed', e)
-    }  
+    }
   }
 }

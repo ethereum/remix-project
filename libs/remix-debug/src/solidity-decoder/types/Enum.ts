@@ -2,7 +2,6 @@
 import { ValueType } from './ValueType'
 
 export class Enum extends ValueType {
-
   enumDef
 
   constructor (enumDef) {

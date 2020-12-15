@@ -3,7 +3,6 @@ import { Debugger } from '../debugger/debugger.js'
 import { EventEmitter } from 'events'
 
 export class CmdLine {
-
   events
   lineColumnPos
   rawLocation
@@ -28,8 +27,8 @@ export class CmdLine {
 
   loadCompilationData (inputJson, outputJson) {
     const data = {}
-    data['data'] = outputJson
-    data['source'] = { sources: inputJson.sources }
+    data.data = outputJson
+    data.source = { sources: inputJson.sources }
     this.loadCompilationResult(data)
   }
 

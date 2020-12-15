@@ -3,7 +3,6 @@ import { util } from '@remix-project/remix-lib'
 const { sha3_256 } = util
 
 export class TraceCache {
-
   returnValues
   currentCall
   callsTree
@@ -16,10 +15,9 @@ export class TraceCache {
   storageChanges
   sstore
 
-  constructor() {
+  constructor () {
     this.init()
   }
-
 
   init () {
     // ...Changes contains index in the vmtrace of the corresponding changes
@@ -53,7 +51,7 @@ export class TraceCache {
   // outOfGas has been removed because gas left logging is apparently made differently
   // in the vm/geth/eth. TODO add the error property (with about the error in all clients)
   pushCall (step, index, address, callStack, reverted) {
-    let validReturnStep = step.op === 'RETURN' || step.op === 'STOP'
+    const validReturnStep = step.op === 'RETURN' || step.op === 'STOP'
     if ((validReturnStep || reverted) && (this.currentCall)) {
       this.currentCall.call.return = index - 1
       if (!validReturnStep) {
@@ -63,7 +61,7 @@ export class TraceCache {
       this.currentCall = parent ? { call: parent.call, parent: parent.parent } : null
       return
     }
-    let call = {
+    const call = {
       op: step.op,
       address: address,
       callStack: callStack,
@@ -102,10 +100,10 @@ export class TraceCache {
 
   pushStoreChanges (index, address, key, value) {
     this.sstore[index] = {
-      'address': address,
-      'key': key,
-      'value': value,
-      'hashedKey': sha3_256(key)
+      address: address,
+      key: key,
+      value: value,
+      hashedKey: sha3_256(key)
     }
     this.storageChanges.push(index)
   }

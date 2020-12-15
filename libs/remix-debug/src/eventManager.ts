@@ -1,11 +1,10 @@
 'use strict'
 
 export class EventManager {
-
   registered
   anonymous
 
-  constructor() {
+  constructor () {
     this.registered = {}
     this.anonymous = {}
   }
@@ -26,7 +25,7 @@ export class EventManager {
       func = obj
       obj = this.anonymous
     }
-    for (let reg in this.registered[eventName]) {
+    for (const reg in this.registered[eventName]) {
       if (this.registered[eventName][reg].obj === obj && this.registered[eventName][reg].func === func) {
         this.registered[eventName].splice(reg, 1)
       }
@@ -66,7 +65,7 @@ export class EventManager {
     if (!this.registered[eventName]) {
       return
     }
-    for (let listener in this.registered[eventName]) {
+    for (const listener in this.registered[eventName]) {
       const l = this.registered[eventName][listener]
       l.func.apply(l.obj === this.anonymous ? {} : l.obj, args)
     }

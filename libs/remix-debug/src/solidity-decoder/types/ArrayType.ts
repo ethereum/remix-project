@@ -6,7 +6,6 @@ import { RefType } from './RefType'
 const sha3256 = util.sha3_256
 
 export class ArrayType extends RefType {
-
   underlyingType
   arraySize
 
@@ -72,7 +71,7 @@ export class ArrayType extends RefType {
         currentLocation.offset = 0
       }
     }
-    return {value: ret, length: '0x' + size.toString(16), type: this.typeName}
+    return { value: ret, length: '0x' + size.toString(16), type: this.typeName }
   }
 
   decodeFromMemoryInternal (offset, memory, skip) {
