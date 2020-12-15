@@ -10,7 +10,8 @@
     },
     "exclude": [
       "**/*.spec.js",
-      "test/"
+      "test/",
+      "test.ts"
     ],
     "include": ["**/*.ts"]
   }
