@@ -32,7 +32,7 @@ export class RefType {
     }
     let offset = stack[stack.length - 1 - stackDepth]
     if (this.isInStorage()) {
-      offset = util.toBN(offset)
+      offset = toBN(offset)
       try {
         return await this.decodeFromStorage({ offset: 0, slot: offset }, storageResolver)
       } catch (e) {
