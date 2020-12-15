@@ -1,4 +1,4 @@
-var init = {
+export const init = {
   overrideWeb3: function (web3, web3Override) {
     web3.eth.getCode = web3Override.getCode
     web3.debug.traceTransaction = web3Override.traceTransaction
@@ -27,5 +27,3 @@ var init = {
     }
   }
 }
-
-module.exports = init

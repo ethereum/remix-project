@@ -2,7 +2,10 @@
 var remixLib = require('@remix-project/remix-lib')
 var util = remixLib.util
 
-class MockStorageResolver {
+export class MockStorageResolver {
+
+  storage
+
   constructor (_storage) {
     this.storage = {}
     for (var k in _storage) {
@@ -35,5 +38,3 @@ class MockStorageResolver {
   toCache (address, storage, complete) {
   }
 }
-
-module.exports = MockStorageResolver

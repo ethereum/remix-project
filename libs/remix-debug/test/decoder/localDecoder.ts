@@ -1,5 +1,5 @@
 'use strict'
-var tape = require('tape')
+import tape from 'tape'
 var compiler = require('solc')
 var intLocal = require('./contracts/intLocal')
 var miscLocal = require('./contracts/miscLocal')
