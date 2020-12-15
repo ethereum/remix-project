@@ -1,5 +1,5 @@
 'use strict'
-var tape = require('tape')
+import tape from 'tape'
 var compiler = require('solc')
 var stateDecoder = require('../../src/solidity-decoder/stateDecoder')
 var contracts = require('./contracts/miscContracts')
