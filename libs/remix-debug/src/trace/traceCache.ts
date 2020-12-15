@@ -1,6 +1,6 @@
 'use strict'
-const remixLib = require('@remix-project/remix-lib')
-const helper = remixLib.util
+import { util } from '@remix-project/remix-lib'
+const { sha3_256 } = util
 
 export class TraceCache {
 
@@ -105,7 +105,7 @@ export class TraceCache {
       'address': address,
       'key': key,
       'value': value,
-      'hashedKey': helper.sha3_256(key)
+      'hashedKey': sha3_256(key)
     }
     this.storageChanges.push(index)
   }
