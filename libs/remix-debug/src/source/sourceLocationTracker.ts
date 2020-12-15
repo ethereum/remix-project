@@ -1,10 +1,8 @@
 'use strict'
-const EventManager = require('../eventManager')
-const helper = require('../trace/traceHelper')
-const SourceMappingDecoder = require('./sourceMappingDecoder')
-const remixLib = require('@remix-project/remix-lib')
-const { map } = require('jquery')
-const util = remixLib.util
+import { EventManager } from '../eventManager'
+import { isContractCreation } from '../trace/traceHelper'
+import { atIndex } from './sourceMappingDecoder'
+import { util } from '@remix-project/remix-lib'
 
 /**
  * Process the source code location for the current executing bytecode
@@ -14,7 +12,6 @@ export class SourceLocationTracker {
   opts
   codeManager
   event
-  sourceMappingDecoder
   sourceMapByAddress
   
   constructor (_codeManager, { debugWithGeneratedSources }) {
@@ -23,7 +20,6 @@ export class SourceLocationTracker {
     }
     this.codeManager = _codeManager
     this.event = new EventManager()
-    this.sourceMappingDecoder = new SourceMappingDecoder()
     this.sourceMapByAddress = {}
   }
 
@@ -36,7 +32,7 @@ export class SourceLocationTracker {
    */
   async getSourceLocationFromInstructionIndex (address, index, contracts) {
     const sourceMap = await this.extractSourceMap(this, this.codeManager, address, contracts)
-    return this.sourceMappingDecoder.atIndex(index, sourceMap['map'])
+    return atIndex(index, sourceMap['map'])
   }
 
   /**
@@ -49,7 +45,7 @@ export class SourceLocationTracker {
   async getSourceLocationFromVMTraceIndex (address, vmtraceStepIndex, contracts) {  
     const sourceMap = await this.extractSourceMap(this, this.codeManager, address, contracts)
     const index = this.codeManager.getInstructionIndex(address, vmtraceStepIndex)
-    return this.sourceMappingDecoder.atIndex(index, sourceMap['map'])
+    return atIndex(index, sourceMap['map'])
   }
 
   /**
@@ -72,7 +68,7 @@ export class SourceLocationTracker {
    * @param {Object} contractDetails - AST of compiled contracts
    */
   async getValidSourceLocationFromVMTraceIndex (address, vmtraceStepIndex, contracts) {
-    let map = { file: -1}
+    let map: Record<string, number> = { file: -1}
     while (vmtraceStepIndex >= 0 && map.file === -1) {
       map = await this.getSourceLocationFromVMTraceIndex(address, vmtraceStepIndex, contracts)
       vmtraceStepIndex = vmtraceStepIndex - 1    
@@ -85,7 +81,7 @@ export class SourceLocationTracker {
   }
 
   private getSourceMap (address, code, contracts) {
-    const isCreation = helper.isContractCreation(address)
+    const isCreation = isContractCreation(address)
     let bytes
     for (let file in contracts) {
       for (let contract in contracts[file]) {
@@ -111,7 +107,7 @@ export class SourceLocationTracker {
       codeManager.getCode(address).then((result) => {
         const sourceMap = this.getSourceMap(address, result.bytecode, contracts)
         if (sourceMap) {
-          if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
+          if (!isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
           return resolve(sourceMap)
         }
         reject('no sourcemap associated with the code ' + address)

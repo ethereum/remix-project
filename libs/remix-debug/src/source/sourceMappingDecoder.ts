@@ -1,7 +1,6 @@
 'use strict'
-const { AstWalker } = require('@remix-project/remix-astwalker')
-const remixLib = require('@remix-project/remix-lib')
-const util = remixLib.util
+import { AstWalker } from '@remix-project/remix-astwalker'
+import { util } from '@remix-project/remix-lib'
 
 /**
  * Decompress the source mapping given by solc-bin.js
