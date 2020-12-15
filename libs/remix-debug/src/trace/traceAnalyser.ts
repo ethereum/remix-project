@@ -1,5 +1,5 @@
 'use strict'
-const traceHelper = require('./traceHelper')
+import * as traceHelper from './traceHelper'
 
 export class TraceAnalyser {
 
