@@ -7,7 +7,6 @@ import { DebuggerStepManager } from './stepManager'
 import { VmDebuggerLogic } from './VmDebugger'
 
 export class Debugger {
-
   event
   offsetToLineColumnConverter
   compilationResult
@@ -15,7 +14,7 @@ export class Debugger {
   breakPointManager
   step_manager
   vmDebuggerLogic
-  
+
   constructor (options) {
     this.event = new EventManager()
     this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
@@ -27,19 +26,24 @@ export class Debugger {
     this.debugger = new Ethdebugger({
       web3: options.web3,
       debugWithGeneratedSources: options.debugWithGeneratedSources,
-      compilationResult: this.compilationResult,
+      compilationResult: this.compilationResult
     })
 
-    const {traceManager, callTree, solidityProxy} = this.debugger
-    this.breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy, locationToRowConverter: async (sourceLocation) => {
-      const compilationResult = await this.compilationResult()
-      if (!compilationResult) return { start: null, end: null }
-      return this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationResult.source.sources, compilationResult.data.sources)
-    }})
+    const { traceManager, callTree, solidityProxy } = this.debugger
+    this.breakPointManager = new BreakpointManager({
+      traceManager,
+      callTree,
+      solidityProxy,
+      locationToRowConverter: async (sourceLocation) => {
+        const compilationResult = await this.compilationResult()
+        if (!compilationResult) return { start: null, end: null }
+        return this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationResult.source.sources, compilationResult.data.sources)
+      }
+    })
 
     this.breakPointManager.event.register('managersChanged', () => {
-      const {traceManager, callTree, solidityProxy} = this.debugger
-      this.breakPointManager.setManagers({traceManager, callTree, solidityProxy})
+      const { traceManager, callTree, solidityProxy } = this.debugger
+      this.breakPointManager.setManagers({ traceManager, callTree, solidityProxy })
     })
 
     this.breakPointManager.event.register('breakpointStep', (step) => {
@@ -115,14 +119,14 @@ export class Debugger {
         if (txNumber.indexOf('0x') !== -1) {
           return web3.eth.getTransaction(txNumber, (_error, tx) => {
             if (_error) return reject(_error)
-            if (!tx) return reject('cannot find transaction ' + txNumber)
+            if (!tx) return reject(new Error('cannot find transaction ' + txNumber))
             this.debugTx(tx, loadingCb)
             return resolve()
           })
         }
         web3.eth.getTransactionFromBlock(blockNumber, txNumber, (_error, tx) => {
           if (_error) return reject(_error)
-          if (!tx) return reject('cannot find transaction ' + blockNumber + ' ' + txNumber)
+          if (!tx) return reject(new Error('cannot find transaction ' + blockNumber + ' ' + txNumber))
           this.debugTx(tx, loadingCb)
           return resolve()
         })

@@ -22,7 +22,6 @@ import { SolidityProxy, stateDecoder, localDecoder, InternalCallTree } from './s
   * @param {Map} opts  -  { function compilationResult } //
   */
 export class Ethdebugger {
-
   compilationResult
   web3
   opts
@@ -42,31 +41,31 @@ export class Ethdebugger {
     this.opts = opts
 
     this.event = new EventManager()
-    this.traceManager = new TraceManager({web3: this.web3})
+    this.traceManager = new TraceManager({ web3: this.web3 })
     this.codeManager = new CodeManager(this.traceManager)
-    this.solidityProxy = new SolidityProxy({getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), getCode: this.codeManager.getCode.bind(this.codeManager)})
+    this.solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), getCode: this.codeManager.getCode.bind(this.codeManager) })
     this.storageResolver = null
 
     const includeLocalVariables = true
-    this.callTree = new InternalCallTree(this.event, 
-        this.traceManager,
-        this.solidityProxy,
-        this.codeManager, 
-        { ...opts, includeLocalVariables})
+    this.callTree = new InternalCallTree(this.event,
+      this.traceManager,
+      this.solidityProxy,
+      this.codeManager,
+      { ...opts, includeLocalVariables })
   }
 
   setManagers () {
-    this.traceManager = new TraceManager({web3: this.web3})
+    this.traceManager = new TraceManager({ web3: this.web3 })
     this.codeManager = new CodeManager(this.traceManager)
-    this.solidityProxy = new SolidityProxy({getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), getCode: this.codeManager.getCode.bind(this.codeManager)})
+    this.solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), getCode: this.codeManager.getCode.bind(this.codeManager) })
     this.storageResolver = null
     const includeLocalVariables = true
 
-    this.callTree = new InternalCallTree(this.event, 
-        this.traceManager, 
-        this.solidityProxy, 
-        this.codeManager, 
-        { ...this.opts, includeLocalVariables})
+    this.callTree = new InternalCallTree(this.event,
+      this.traceManager,
+      this.solidityProxy,
+      this.codeManager,
+      { ...this.opts, includeLocalVariables })
     this.event.trigger('managersChanged')
   }
 
@@ -108,8 +107,8 @@ export class Ethdebugger {
       try {
         const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
         const locals = await localDecoder.solidityLocals(step, this.callTree, stack, memory, storageViewer, sourceLocation, null)
-        if (locals['error']) {
-          return callback(locals['error'])
+        if (locals.error) {
+          return callback(locals.error)
         }
         return callback(null, locals)
       } catch (e) {
@@ -128,7 +127,7 @@ export class Ethdebugger {
   async decodeStateAt (step, stateVars, callback) {
     try {
       const address = this.traceManager.getCurrentCalledAddressAt(step)
-      const storageViewer = new StorageViewer({stepIndex: step, tx: this.tx, address: address}, this.storageResolver, this.traceManager)
+      const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
       const result = await stateDecoder.decodeState(stateVars, storageViewer)
       return result
     } catch (error) {
@@ -137,7 +136,7 @@ export class Ethdebugger {
   }
 
   storageViewAt (step, address) {
-    return new StorageViewer({stepIndex: step, tx: this.tx, address: address}, this.storageResolver, this.traceManager)
+    return new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
   }
 
   updateWeb3 (web3) {
@@ -164,7 +163,7 @@ export class Ethdebugger {
       if (this.breakpointManager && this.breakpointManager.hasBreakpoint()) {
         this.breakpointManager.jumpNextBreakpoint(false)
       }
-      this.storageResolver = new StorageResolver({web3: this.traceManager.web3})
+      this.storageResolver = new StorageResolver({ web3: this.traceManager.web3 })
     }).catch((error) => {
       this.statusMessage = error ? error.message : 'Trace not loaded'
     })

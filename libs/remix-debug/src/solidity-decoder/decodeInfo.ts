@@ -28,8 +28,8 @@ function mapping (type, stateDefinitions, contractName) {
   const valueType = parseType(valueTypeName, stateDefinitions, contractName, 'storage')
 
   var underlyingTypes = {
-    'keyType': keyType,
-    'valueType': valueType
+    keyType: keyType,
+    valueType: valueType
   }
   return new MappingType(underlyingTypes, 'location', removeLocation(type))
 }
@@ -41,7 +41,7 @@ function mapping (type, stateDefinitions, contractName) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function uint (type) {
-  type === 'uint' ? 'uint256' : type
+  type = type === 'uint' ? 'uint256' : type
   const storageBytes = parseInt(type.replace('uint', '')) / 8
   return new UintType(storageBytes)
 }
@@ -53,7 +53,7 @@ function uint (type) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function int (type) {
-  type === 'int' ? 'int256' : type
+  type = type === 'int' ? 'int256' : type
   const storageBytes = parseInt(type.replace('int', '')) / 8
   return new IntType(storageBytes)
 }
@@ -139,7 +139,6 @@ function stringType (type, stateDefinitions, contractName, location) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, arraySize, subArray}
   */
 function array (type, stateDefinitions, contractName, location) {
-  let arraySize
   const match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
   if (!match) {
     console.log('unable to parse type ' + type)
@@ -148,7 +147,7 @@ function array (type, stateDefinitions, contractName, location) {
   if (!location) {
     location = match[3].trim()
   }
-  arraySize = match[2] === '' ? 'dynamic' : parseInt(match[2])
+  const arraySize = match[2] === '' ? 'dynamic' : parseInt(match[2])
   const underlyingType = parseType(match[1], stateDefinitions, contractName, location)
   if (underlyingType === null) {
     console.log('unable to parse type ' + type)
@@ -215,7 +214,7 @@ function getEnum (type, stateDefinitions, contractName) {
   }
   const state = stateDefinitions[contractName]
   if (state) {
-    for (let dec of state.stateDefinitions) {
+    for (const dec of state.stateDefinitions) {
       if (dec && dec.name && type === contractName + '.' + dec.name) {
         return dec
       }
@@ -242,7 +241,7 @@ function getStructMembers (type, stateDefinitions, contractName, location) {
   }
   const state = stateDefinitions[contractName]
   if (state) {
-    for (let dec of state.stateDefinitions) {
+    for (const dec of state.stateDefinitions) {
       if (dec.nodeType === 'StructDefinition' && type === contractName + '.' + dec.name) {
         const offsets = computeOffsets(dec.members, stateDefinitions, contractName, location)
         if (!offsets) {
@@ -290,18 +289,18 @@ function typeClass (fullType) {
   */
 function parseType (type, stateDefinitions, contractName, location) {
   const decodeInfos = {
-    'contract': address,
-    'address': address,
-    'array': array,
-    'bool': bool,
-    'bytes': dynamicByteArray,
-    'bytesX': fixedByteArray,
-    'enum': enumType,
-    'string': stringType,
-    'struct': struct,
-    'int': int,
-    'uint': uint,
-    'mapping': mapping
+    contract: address,
+    address: address,
+    array: array,
+    bool: bool,
+    bytes: dynamicByteArray,
+    bytesX: fixedByteArray,
+    enum: enumType,
+    string: stringType,
+    struct: struct,
+    int: int,
+    uint: uint,
+    mapping: mapping
   }
   const currentType = typeClass(type)
   if (currentType === null) {

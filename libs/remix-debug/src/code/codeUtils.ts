@@ -22,7 +22,7 @@ export function nameOpCodes (raw) {
     code.push(this.pad(pc, this.roundLog(raw.length, 10)) + ' ' + curOpCode + data)
     pushData = ''
   }
-  return [ code, codeMap ]
+  return [code, codeMap]
 }
 
 /**
@@ -35,11 +35,11 @@ export function parseCode (raw) {
     const opcode = opcodes(raw[i], true)
     if (opcode.name.slice(0, 4) === 'PUSH') {
       const length = raw[i] - 0x5f
-      opcode['pushData'] = raw.slice(i + 1, i + length + 1)
+      opcode.pushData = raw.slice(i + 1, i + length + 1)
       // in case pushdata extends beyond code
       if (i + 1 + length > raw.length) {
-        for (let j = opcode['pushData'].length; j < length; j++) {
-          opcode['pushData'].push(0)
+        for (let j = opcode.pushData.length; j < length; j++) {
+          opcode.pushData.push(0)
         }
       }
       i += length
@@ -62,4 +62,3 @@ export function log (num, base) {
 export function roundLog (num, base) {
   return Math.ceil(this.log(num, base))
 }
-

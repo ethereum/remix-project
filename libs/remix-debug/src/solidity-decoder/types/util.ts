@@ -9,7 +9,7 @@ export function decodeIntFromHex (value, byteLength, signed) {
   return bigNumber.toString(10)
 }
 
-export function readFromStorage(slot, storageResolver): Promise<string> {
+export function readFromStorage (slot, storageResolver): Promise<string> {
   const hexSlot = '0x' + normalizeHex(bufferToHex(slot))
   return new Promise((resolve, reject) => {
     storageResolver.storageSlot(hexSlot, (error, slot) => {
@@ -78,7 +78,7 @@ export function removeLocation (type) {
 }
 
 export function extractLocation (type) {
-  let match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
+  const match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
   if (match[1] !== '') {
     return match[1].trim()
   }

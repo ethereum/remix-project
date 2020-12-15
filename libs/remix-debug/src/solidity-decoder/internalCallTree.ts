@@ -13,7 +13,6 @@ import { extractLocationFromAstVariable } from './types/util.js'
  * Triggers `callTreeBuildFailed` event when tree fails to build
  */
 export class InternalCallTree {
-
   includeLocalVariables
   debugWithGeneratedSources
   event
@@ -121,21 +120,21 @@ export class InternalCallTree {
   }
 
   retrieveFunctionsStack (vmtraceIndex) {
-    let scope = this.findScope(vmtraceIndex)
+    const scope = this.findScope(vmtraceIndex)
     if (!scope) return []
     let scopeId = this.scopeStarts[scope.firstStep]
-    let functions = []
+    const functions = []
     if (!scopeId) return functions
     let i = 0
     // eslint-disable-next-line no-constant-condition
     while (true) {
       i += 1
       if (i > 1000) throw new Error('retrieFunctionStack: recursion too deep')
-      let functionDefinition = this.functionDefinitionsByScope[scopeId]
+      const functionDefinition = this.functionDefinitionsByScope[scopeId]
       if (functionDefinition !== undefined) {
         functions.push(functionDefinition)
       }
-      let parent = this.parentScope(scopeId)
+      const parent = this.parentScope(scopeId)
       if (!parent) break
       else scopeId = parent
     }
@@ -294,8 +293,8 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
       const stack = tree.traceManager.getStackAt(step)
       states = tree.solidityProxy.extractStatesDefinitions()
       if (functionDefinition.parameters) {
-        let inputs = functionDefinition.parameters
-        let outputs = functionDefinition.returnParameters
+        const inputs = functionDefinition.parameters
+        const outputs = functionDefinition.returnParameters
         // for (const element of functionDefinition.parameters) {
         //   if (element.nodeType === 'ParameterList') {
         //     if (!inputs) inputs = element
@@ -369,8 +368,8 @@ function extractFunctionDefinitions (ast, astWalker) {
 }
 
 function addParams (parameterList, tree, scopeId, states, contractName, sourceLocation, stackLength, stackPosition, dir) {
-  let params = []
-  for (let inputParam in parameterList.parameters) {
+  const params = []
+  for (const inputParam in parameterList.parameters) {
     const param = parameterList.parameters[inputParam]
     const stackDepth = stackLength + (dir * stackPosition)
     if (stackDepth >= 0) {
