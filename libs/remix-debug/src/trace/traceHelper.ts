@@ -1,6 +1,6 @@
 'use strict'
 import { helpers } from '@remix-project/remix-lib'
-const ui = helpers.ui
+const { ui } = helpers
 
   // vmTraceIndex has to point to a CALL, CODECALL, ...
 export function resolveCalledAddress (vmTraceIndex, trace) {
