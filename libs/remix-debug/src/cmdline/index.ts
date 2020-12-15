@@ -27,8 +27,8 @@ export class CmdLine {
 
   loadCompilationData (inputJson, outputJson) {
     const data = {}
-    data.data = outputJson
-    data.source = { sources: inputJson.sources }
+    data['data'] = outputJson
+    data['source'] = { sources: inputJson.sources }
     this.loadCompilationResult(data)
   }
 
