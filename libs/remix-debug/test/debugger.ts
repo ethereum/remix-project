@@ -1,4 +1,4 @@
-var tape = require('tape')
+import tape from 'tape'
 var deepequal = require('deep-equal')
 var remixLib = require('@remix-project/remix-lib')
 var compilerInput = require('./helpers/compilerHelper').compilerInput

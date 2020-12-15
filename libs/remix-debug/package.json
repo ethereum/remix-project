@@ -40,7 +40,7 @@
     "tape": "^4.6.0"
   },
   "scripts": {
-    "test": "./../../node_modules/.bin/tape --require tsconfig-paths/register ./test/tests.ts"
+    "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "publishConfig": {
     "access": "public"

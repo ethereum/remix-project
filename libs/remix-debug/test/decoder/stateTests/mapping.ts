@@ -1,20 +1,18 @@
-var compilerInput = require('../../helpers/compilerHelper').compilerInput
-var TraceManager = require('../../../src/trace/traceManager')
-
-var compiler = require('solc')
-var stateDecoder = require('../../../src/solidity-decoder/stateDecoder')
-var vmCall = require('../vmCall')
-
-var StorageResolver = require('../../../src/storage/storageResolver')
-var StorageViewer = require('../../../src/storage/storageViewer')
+import { compilerInput } from '../../helpers/compilerHelper'
+import { TraceManager } from '../../../src/trace/traceManager'
+import { compile } from 'solc'
+import * as stateDecoder from '../../../src/solidity-decoder/stateDecoder'
+import { sendTx, initVM } from '../vmCall'
+import { StorageResolver } from '../../../src/storage/storageResolver'
+import { StorageViewer } from '../../../src/storage/storageViewer'
 
 module.exports = function testMappingStorage (st, cb) {
   var mappingStorage = require('../contracts/mappingStorage')
   var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
-  var vm = vmCall.initVM(st, privateKey)
-  var output = compiler.compile(compilerInput(mappingStorage.contract))
+  var vm = initVM(st, privateKey)
+  var output = compile(compilerInput(mappingStorage.contract))
   output = JSON.parse(output)
-  vmCall.sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, txHash) {
+  sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, txHash) {
     if (error) {
       console.log(error)
       st.end(error)
@@ -32,7 +30,7 @@ module.exports = function testMappingStorage (st, cb) {
 }
 
 function testMapping (st, vm, privateKey, contractAddress, output, cb) {
-  vmCall.sendTx(vm, {nonce: 1, privateKey: privateKey}, contractAddress, 0, '2fd0a83a00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000001074686973206973206120737472696e6700000000000000000000000000000000',
+  sendTx(vm, {nonce: 1, privateKey: privateKey}, contractAddress, 0, '2fd0a83a00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000001074686973206973206120737472696e6700000000000000000000000000000000',
         function (error, txHash) {
           if (error) {
             console.log(error)
@@ -45,7 +43,6 @@ function testMapping (st, vm, privateKey, contractAddress, output, cb) {
                 st.end(error)
               } else {
                 var traceManager = new TraceManager({web3: vm.web3})
-
                 traceManager.resolveTrace(tx).then(() => {
                   var storageViewer = new StorageViewer({
                     stepIndex: 268,
