@@ -1,5 +1,5 @@
 'use strict'
-var util = require('./util')
+import { extractHexValue } from './util'
 
 export class ValueType {
 
@@ -24,7 +24,7 @@ export class ValueType {
     */
   async decodeFromStorage (location, storageResolver) {
     try {
-      var value = await util.extractHexValue(location, storageResolver, this.storageBytes)
+      var value = await extractHexValue(location, storageResolver, this.storageBytes)
       return {value: this.decodeValue(value), type: this.typeName}
     } catch (e) {
       console.log(e)
@@ -62,5 +62,3 @@ export class ValueType {
     return {value: this.decodeValue(value), type: this.typeName}
   }
 }
-
-module.exports = ValueType

@@ -1,8 +1,11 @@
 'use strict'
-const util = require('./util')
-const RefType = require('./RefType')
+import { add } from './util'
+import { RefType } from './RefType'
 
 export class Struct extends RefType {
+
+  members
+
   constructor (memberDetails, location, fullType) {
     super(memberDetails.storageSlots, 32, 'struct ' + fullType, location)
     this.members = memberDetails.members
@@ -13,7 +16,7 @@ export class Struct extends RefType {
     for (var item of this.members) {
       const globalLocation = {
         offset: location.offset + item.storagelocation.offset,
-        slot: util.add(location.slot, item.storagelocation.slot)
+        slot: add(location.slot, item.storagelocation.slot)
       }
       try {
         ret[item.name] = await item.type.decodeFromStorage(globalLocation, storageResolver)

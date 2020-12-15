@@ -1,6 +1,6 @@
 'use strict'
-const util = require('./util')
-const ValueType = require('./ValueType')
+import { extractHexByteSlice, decodeIntFromHex } from './util'
+import { ValueType } from './ValueType'
 
 export class Int extends ValueType {
   constructor (storageBytes) {
@@ -8,7 +8,7 @@ export class Int extends ValueType {
   }
 
   decodeValue (value) {
-    value = util.extractHexByteSlice(value, this.storageBytes, 0)
-    return util.decodeIntFromHex(value, this.storageBytes, true)
+    value = extractHexByteSlice(value, this.storageBytes, 0)
+    return decodeIntFromHex(value, this.storageBytes, true)
   }
 }

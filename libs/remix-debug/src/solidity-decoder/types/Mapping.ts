@@ -1,9 +1,15 @@
 'use strict'
-const RefType = require('./RefType')
-const util = require('./util')
-const ethutil = require('ethereumjs-util')
+import { RefType } from './RefType'
+import { normalizeHex } from './util'
+import { toBuffer, setLengthLeft, keccak, BN, bufferToHex} from 'ethereumjs-util'
+import { intToBuffer } from 'ethjs-util'
 
 export class Mapping extends RefType {
+
+  keyType
+  valueType
+  initialDecodedState
+
   constructor (underlyingTypes, location, fullType) {
     super(1, 32, fullType, 'storage')
     this.keyType = underlyingTypes.keyType
@@ -38,7 +44,7 @@ export class Mapping extends RefType {
   }
 
   async decodeMappingsLocation (preimages, location, storageResolver) {
-    const mapSlot = util.normalizeHex(ethutil.bufferToHex(location.slot))
+    const mapSlot = normalizeHex(bufferToHex(location.slot))
     if (!preimages[mapSlot]) {
       return {}
     }
@@ -60,14 +66,14 @@ function getMappingLocation (key, position) {
   // > the value corresponding to a mapping key k is located at keccak256(k . p) where . is concatenation.
 
   // key should be a hex string, and position an int
-  const mappingK = ethutil.toBuffer('0x' + key)
-  let mappingP = ethutil.intToBuffer(position)
-  mappingP = ethutil.setLengthLeft(mappingP, 32)
+  const mappingK = toBuffer('0x' + key)
+  let mappingP = intToBuffer(position)
+  mappingP = setLengthLeft(mappingP, 32)
   const mappingKeyBuf = concatTypedArrays(mappingK, mappingP)
-  const mappingKeyPreimage = '0x' + mappingKeyBuf.toString('hex')
-  let mappingStorageLocation = ethutil.keccak(mappingKeyPreimage)
-  mappingStorageLocation = new ethutil.BN(mappingStorageLocation, 16)
-  return mappingStorageLocation
+  const mappingKeyPreimage: string = '0x' + mappingKeyBuf.toString('hex')
+  let mappingStorageLocation: Buffer = keccak(mappingKeyPreimage)
+  const mappingStorageLocationinBn: BN = new BN(mappingStorageLocation, 16)
+  return mappingStorageLocationinBn
 }
 
 function concatTypedArrays (a, b) { // a, b TypedArray of same type
