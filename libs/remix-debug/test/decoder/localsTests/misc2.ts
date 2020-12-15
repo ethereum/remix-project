@@ -1,17 +1,15 @@
 'use strict'
-var vmCall = require('../vmCall')
-var traceHelper = require('../../../src/trace/traceHelper')
-var SolidityProxy = require('../../../src/solidity-decoder/solidityProxy')
-var InternalCallTree = require('../../../src/solidity-decoder/internalCallTree')
-var EventManager = require('../../../src/eventManager')
-
-var helper = require('./helper')
-
-var TraceManager = require('../../../src/trace/traceManager')
-var CodeManager = require('../../../src/code/codeManager')
+import { sendTx } from '../vmCall'
+import { contractCreationToken } from '../../../src/trace/traceHelper'
+import { SolidityProxy } from '../../../src/solidity-decoder/solidityProxy'
+import { InternalCallTree } from '../../../src/solidity-decoder/internalCallTree'
+import { EventManager } from '../../../src/eventManager'
+import * as helper from './helper'
+import { TraceManager } from '../../../src/trace/traceManager'
+import { CodeManager } from '../../../src/code/codeManager'
 
 module.exports = function (st, vm, privateKey, contractBytecode, compilationResult, cb) {
-  vmCall.sendTx(vm, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, txHash) {
+  sendTx(vm, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, txHash) {
     if (error) {
       return st.fail(error)
     }
@@ -19,7 +17,7 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
       if (error) {
         return st.fail(error)
       }
-      tx.to = traceHelper.contractCreationToken('0')
+      tx.to = contractCreationToken('0')
       var traceManager = new TraceManager({ web3: vm.web3 })
       var codeManager = new CodeManager(traceManager)
       codeManager.clear()
