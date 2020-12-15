@@ -1,6 +1,6 @@
-const SolidityProxy = require('./solidityProxy')
-const stateDecoder = require('./stateDecoder')
-const localDecoder = require('./localDecoder')
-const InternalCallTree = require('./internalCallTree')
+import { SolidityProxy } from './solidityProxy'
+import * as stateDecoder from './stateDecoder'
+import * as localDecoder from './localDecoder'
+import { InternalCallTree } from './internalCallTree'
 
 export { SolidityProxy, stateDecoder, localDecoder, InternalCallTree }
