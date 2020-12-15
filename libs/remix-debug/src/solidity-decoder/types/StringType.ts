@@ -43,9 +43,9 @@ function format (decoded) {
   value = value.replace('0x', '').replace(/(..)/g, '%$1')
   const ret = { length: decoded.length, raw: decoded.value, type: 'string' }
   try {
-    ret.value = decodeURIComponent(value)
+    ret['value'] = decodeURIComponent(value)
   } catch (e) {
-    ret.error = 'Invalid UTF8 encoding'
+    ret['error'] = 'Invalid UTF8 encoding'
     ret.raw = decoded.value
   }
   return ret

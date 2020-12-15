@@ -32,10 +32,10 @@ export class TraceManager {
     try {
       const result = await this.getTrace(tx.hash)
 
-      if (result.structLogs.length > 0) {
-        this.trace = result.structLogs
+      if (result['structLogs'].length > 0) {
+        this.trace = result['structLogs']
 
-        this.traceAnalyser.analyse(result.structLogs, tx)
+        this.traceAnalyser.analyse(result['structLogs'], tx)
         this.isLoading = false
         return true
       }
