@@ -6,7 +6,6 @@ import { isCreateInstruction } from './traceHelper'
 import { util } from '@remix-project/remix-lib'
 
 export class TraceManager {
-
   web3
   isLoading: boolean
   trace
@@ -33,10 +32,10 @@ export class TraceManager {
     try {
       const result = await this.getTrace(tx.hash)
 
-      if (result['structLogs'].length > 0) {
-        this.trace = result['structLogs']
+      if (result.structLogs.length > 0) {
+        this.trace = result.structLogs
 
-        this.traceAnalyser.analyse(result['structLogs'], tx)
+        this.traceAnalyser.analyse(result.structLogs, tx)
         this.isLoading = false
         return true
       }
@@ -82,7 +81,7 @@ export class TraceManager {
 
   getLength (callback) {
     if (!this.trace) {
-      callback('no trace available', null)
+      callback(new Error('no trace available'), null)
     } else {
       callback(null, this.trace.length)
     }
@@ -136,7 +135,7 @@ export class TraceManager {
   getStackAt (stepIndex) {
     this.checkRequestedStep(stepIndex)
     if (this.trace[stepIndex] && this.trace[stepIndex].stack) { // there's always a stack
-      let stack = this.trace[stepIndex].stack.slice(0)
+      const stack = this.trace[stepIndex].stack.slice(0)
       stack.reverse()
       return stack
     } else {
@@ -268,7 +267,7 @@ export class TraceManager {
   }
 
   waterfall (calls, stepindex, cb) {
-    let ret = []
+    const ret = []
     let retError = null
     for (var call in calls) {
       calls[call].apply(this, [stepindex, function (error, result) {

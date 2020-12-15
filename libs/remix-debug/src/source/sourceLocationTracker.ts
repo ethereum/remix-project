@@ -8,12 +8,11 @@ import { util } from '@remix-project/remix-lib'
  * Process the source code location for the current executing bytecode
  */
 export class SourceLocationTracker {
-
   opts
   codeManager
   event
   sourceMapByAddress
-  
+
   constructor (_codeManager, { debugWithGeneratedSources }) {
     this.opts = {
       debugWithGeneratedSources: debugWithGeneratedSources || false
@@ -32,7 +31,7 @@ export class SourceLocationTracker {
    */
   async getSourceLocationFromInstructionIndex (address, index, contracts) {
     const sourceMap = await this.extractSourceMap(this, this.codeManager, address, contracts)
-    return atIndex(index, sourceMap['map'])
+    return atIndex(index, sourceMap.map)
   }
 
   /**
@@ -42,10 +41,10 @@ export class SourceLocationTracker {
    * @param {Int} vmtraceStepIndex - index of the current code in the vmtrace
    * @param {Object} contractDetails - AST of compiled contracts
    */
-  async getSourceLocationFromVMTraceIndex (address, vmtraceStepIndex, contracts) {  
+  async getSourceLocationFromVMTraceIndex (address, vmtraceStepIndex, contracts) {
     const sourceMap = await this.extractSourceMap(this, this.codeManager, address, contracts)
     const index = this.codeManager.getInstructionIndex(address, vmtraceStepIndex)
-    return atIndex(index, sourceMap['map'])
+    return atIndex(index, sourceMap.map)
   }
 
   /**
@@ -68,10 +67,10 @@ export class SourceLocationTracker {
    * @param {Object} contractDetails - AST of compiled contracts
    */
   async getValidSourceLocationFromVMTraceIndex (address, vmtraceStepIndex, contracts) {
-    let map: Record<string, number> = { file: -1}
+    let map: Record<string, number> = { file: -1 }
     while (vmtraceStepIndex >= 0 && map.file === -1) {
       map = await this.getSourceLocationFromVMTraceIndex(address, vmtraceStepIndex, contracts)
-      vmtraceStepIndex = vmtraceStepIndex - 1    
+      vmtraceStepIndex = vmtraceStepIndex - 1
     }
     return map
   }
@@ -83,10 +82,10 @@ export class SourceLocationTracker {
   private getSourceMap (address, code, contracts) {
     const isCreation = isContractCreation(address)
     let bytes
-    for (let file in contracts) {
-      for (let contract in contracts[file]) {
+    for (const file in contracts) {
+      for (const contract in contracts[file]) {
         const bytecode = contracts[file][contract].evm.bytecode
-        const deployedBytecode = contracts[file][contract].evm.deployedBytecode     
+        const deployedBytecode = contracts[file][contract].evm.deployedBytecode
         if (!deployedBytecode) continue
 
         bytes = isCreation ? bytecode.object : deployedBytecode.object
@@ -110,7 +109,7 @@ export class SourceLocationTracker {
           if (!isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
           return resolve(sourceMap)
         }
-        reject('no sourcemap associated with the code ' + address)
+        reject(new Error('no sourcemap associated with the code ' + address))
       }).catch(reject)
     })
   }

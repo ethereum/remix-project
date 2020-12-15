@@ -11,12 +11,12 @@ import { sub } from '../solidity-decoder/types/util'
   */
 export async function decodeMappingsKeys (web3, storage, corrections) {
   const ret = {}
-  if (!corrections.length) corrections.push({offset: 0, slot: 0})
-  for (let hashedLoc in storage) {
+  if (!corrections.length) corrections.push({ offset: 0, slot: 0 })
+  for (const hashedLoc in storage) {
     var preimage
     try {
       const key = storage[hashedLoc].key
-      for (let k in corrections) {
+      for (const k in corrections) {
         const corrected = sub(key, corrections[k].slot).toString(16)
         preimage = await getPreimage(web3, '0x' + corrected)
         if (preimage) break

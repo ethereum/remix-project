@@ -7,7 +7,6 @@ import { decodeMappingsKeys } from './mappingPreimages'
   * (TODO: one instance need to be shared over all the components)
   */
 export class StorageResolver {
-
   storageByAddress
   preimagesMappingByAddress
   maxSize
@@ -93,7 +92,7 @@ export class StorageResolver {
     const result = await this.storageRangeWeb3Call(tx, address, slotKey, self.maxSize)
     const [storage, nextKey] = result
     if (!storage[slotKey] && slotKey !== self.zeroSlot) { // we don't cache the zero slot (could lead to inconsistency)
-      storage[slotKey] = {key: slotKey, value: self.zeroSlot}
+      storage[slotKey] = { key: slotKey, value: self.zeroSlot }
     }
     self.toCache(self, address, storage)
     if (slotKey === self.zeroSlot && !nextKey) { // only working if keys are sorted !!
@@ -144,7 +143,7 @@ export class StorageResolver {
             } else if (result.storage) {
               resolve([result.storage, result.nextKey])
             } else {
-              reject('the storage has not been provided')
+              reject(new Error('the storage has not been provided'))
             }
           })
       }

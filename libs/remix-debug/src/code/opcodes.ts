@@ -189,5 +189,5 @@ export default function (op, full) {
     }
   }
 
-  return {name: opcode, fee: code[1], in: code[2], out: code[3], dynamic: code[4], async: code[5]}
+  return { name: opcode, fee: code[1], in: code[2], out: code[3], dynamic: code[4], async: code[5] }
 }

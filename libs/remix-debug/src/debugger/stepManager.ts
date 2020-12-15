@@ -2,7 +2,6 @@ import { util } from '@remix-project/remix-lib'
 import { EventManager } from '../eventManager'
 
 export class DebuggerStepManager {
-
   event
   debugger
   traceManager
@@ -52,7 +51,7 @@ export class DebuggerStepManager {
       this.traceManager.buildCallPath(index).then((callsPath) => {
         this.currentCall = callsPath[callsPath.length - 1]
         if (this.currentCall.reverted) {
-          let revertedReason = this.currentCall.outofgas ? 'outofgas' : ''
+          const revertedReason = this.currentCall.outofgas ? 'outofgas' : ''
           this.revertionPoint = this.currentCall.return
           return this.event.trigger('revertWarning', [revertedReason])
         }
@@ -82,7 +81,7 @@ export class DebuggerStepManager {
         stepState = 'end'
       }
 
-      let jumpOutDisabled = (step === this.traceManager.findStepOut(step))
+      const jumpOutDisabled = (step === this.traceManager.findStepOut(step))
 
       this.event.trigger('stepChanged', [step, stepState, jumpOutDisabled])
     })
@@ -128,7 +127,7 @@ export class DebuggerStepManager {
     if (!this.traceManager.isLoaded()) return
     if (this.currentStepIndex >= this.traceLength - 1) return
     let step = this.currentStepIndex + 1
-    let scope = this.debugger.callTree.findScope(step)
+    const scope = this.debugger.callTree.findScope(step)
     if (scope && scope.firstStep === step) {
       step = scope.lastStep + 1
     }
@@ -168,7 +167,7 @@ export class DebuggerStepManager {
   }
 
   calculateFirstStep () {
-    let step = this.resolveToReducedTrace(0, 1)
+    const step = this.resolveToReducedTrace(0, 1)
     return this.resolveToReducedTrace(step, 1)
   }
 
@@ -176,7 +175,7 @@ export class DebuggerStepManager {
     let step = 0
     let steps = []
     while (step < this.traceLength) {
-      let _step = this.resolveToReducedTrace(step, 1)
+      const _step = this.resolveToReducedTrace(step, 1)
       if (!_step) break
       steps.push(_step)
       step += 1
@@ -211,5 +210,4 @@ export class DebuggerStepManager {
     }
     return this.debugger.callTree.reducedTrace[nextSource]
   }
-
 }

@@ -1,14 +1,13 @@
 'use strict'
-import  { nameOpCodes } from './codeUtils'
+import { nameOpCodes } from './codeUtils'
 
 export class CodeResolver {
-
   getCode
   bytecodeByAddress
   instructionsByAddress
   instructionsIndexByBytesOffset
-  
-  constructor({getCode}) {
+
+  constructor ({ getCode }) {
     this.getCode = getCode
     this.bytecodeByAddress = {} // bytes code by contract addesses
     this.instructionsByAddress = {} // assembly items instructions list by contract addesses
@@ -41,7 +40,7 @@ export class CodeResolver {
 
   formatCode (hexCode) {
     const [code, instructionsIndexByBytesOffset] = nameOpCodes(Buffer.from(hexCode.substring(2), 'hex'))
-    return {code, instructionsIndexByBytesOffset}
+    return { code, instructionsIndexByBytesOffset }
   }
 
   getExecutingCodeFromCache (address) {

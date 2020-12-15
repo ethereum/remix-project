@@ -2,11 +2,10 @@
 import { getLinebreakPositions, convertOffsetToLineColumn } from './sourceMappingDecoder'
 
 export class OffsetToColumnConverter {
-
   lineBreakPositionsByContent
   sourceMappingDecoder
 
-  constructor(compilerEvent) {
+  constructor (compilerEvent) {
     this.lineBreakPositionsByContent = {}
     if (compilerEvent) {
       compilerEvent.register('compilationFinished', (success, data, source) => {
@@ -17,7 +16,7 @@ export class OffsetToColumnConverter {
 
   offsetToLineColumn (rawLocation, file, sources, asts) {
     if (!this.lineBreakPositionsByContent[file]) {
-      for (let filename in asts) {
+      for (const filename in asts) {
         const source = asts[filename]
         // source id was string before. in newer versions it has been changed to an integer so we need to check the type here
         if (typeof source.id === 'string') source.id = parseInt(source.id, 10)
