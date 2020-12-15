@@ -1,8 +1,7 @@
 'use strict'
 
-const traceHelper = require('./traceHelper')
-const remixLib = require('@remix-project/remix-lib')
-const util = remixLib.util
+import { isCallInstruction, isCallToPrecompiledContract, isReturnInstruction } from './traceHelper'
+import { util } from '@remix-project/remix-lib'
 
 export class TraceStepManager {
 
@@ -14,12 +13,12 @@ export class TraceStepManager {
 
   isCallInstruction (index) {
     const state = this.traceAnalyser.trace[index]
-    return traceHelper.isCallInstruction(state) && !traceHelper.isCallToPrecompiledContract(index, this.traceAnalyser.trace)
+    return isCallInstruction(state) && !isCallToPrecompiledContract(index, this.traceAnalyser.trace)
   }
 
   isReturnInstruction (index) {
     const state = this.traceAnalyser.trace[index]
-    return traceHelper.isReturnInstruction(state)
+    return isReturnInstruction(state)
   }
 
   findStepOverBack (currentStep) {
