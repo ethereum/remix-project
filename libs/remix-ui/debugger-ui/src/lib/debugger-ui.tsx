@@ -189,6 +189,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   const debug = (txHash) => {
     startDebugging(null, txHash, null)
   }
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 const deleteHighlights = async () => {
@@ -200,6 +201,9 @@ const deleteHighlights = async () => {
   }
 >>>>>>> 1b1d8f0c7... modal dialog in react
 
+=======
+  
+>>>>>>> c941558da... fixing conflict
   const stepManager = {
     jumpTo: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpTo.bind(state.debugger.step_manager) : null,
     stepOverBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverBack.bind(state.debugger.step_manager) : null,
