@@ -77,8 +77,8 @@ export class DebuggerSolidityState {
     const storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
     decodeState(stateVars, storageViewer).then((result) => {
       this.event.trigger('solidityStateMessage', [''])
-      if (result.error) {
-        return this.event.trigger('solidityStateMessage', [result.error])
+      if (result['error']) {
+        return this.event.trigger('solidityStateMessage', [result['error']])
       }
       this.event.trigger('solidityState', [result])
     })

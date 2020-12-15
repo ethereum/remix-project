@@ -107,8 +107,8 @@ export class Ethdebugger {
       try {
         const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
         const locals = await localDecoder.solidityLocals(step, this.callTree, stack, memory, storageViewer, sourceLocation, null)
-        if (locals.error) {
-          return callback(locals.error)
+        if (locals['error']) {
+          return callback(locals['error'])
         }
         return callback(null, locals)
       } catch (e) {
