@@ -1,6 +1,6 @@
-const EventManager = require('../eventManager')
-const stateDecoder = require('../solidity-decoder/stateDecoder')
-const StorageViewer = require('../storage/storageViewer')
+import { EventManager } from '../eventManager'
+import { decodeState } from '../solidity-decoder/stateDecoder'
+import { StorageViewer } from '../storage/storageViewer'
 
 export class DebuggerSolidityState {
 
@@ -76,10 +76,10 @@ export class DebuggerSolidityState {
 
   extractStateVariables (stateVars, address) {
     const storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
-    stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
+    decodeState(stateVars, storageViewer).then((result) => {
       this.event.trigger('solidityStateMessage', [''])
-      if (result.error) {
-        return this.event.trigger('solidityStateMessage', [result.error])
+      if (result['error']) {
+        return this.event.trigger('solidityStateMessage', [result['error']])
       }
       this.event.trigger('solidityState', [result])
     })

@@ -1,10 +1,10 @@
-const EventManager = require('../eventManager')
-const StorageResolver = require('../storage/storageResolver')
-const StorageViewer = require('../storage/storageViewer')
+import { EventManager } from '../eventManager'
+import { StorageResolver } from '../storage/storageResolver'
+import { StorageViewer } from '../storage/storageViewer'
 import { helpers } from '@remix-project/remix-lib'
 import { DebuggerSolidityState } from './solidityState'
 import { DebuggerSolidityLocals } from './solidityLocals'
-const ui = helpers.ui
+const { ui } = helpers
 
 export class VmDebuggerLogic {
 

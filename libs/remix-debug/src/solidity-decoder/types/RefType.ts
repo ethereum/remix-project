@@ -1,5 +1,5 @@
 'use strict'
-const util = require('./util')
+import { toBN } from './util'
 
 export class RefType {
 

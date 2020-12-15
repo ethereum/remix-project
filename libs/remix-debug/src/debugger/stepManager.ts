@@ -1,5 +1,5 @@
 import { util } from '@remix-project/remix-lib'
-const EventManager = require('../eventManager')
+import { EventManager } from '../eventManager'
 
 export class DebuggerStepManager {
 
