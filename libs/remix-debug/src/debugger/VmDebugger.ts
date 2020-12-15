@@ -7,7 +7,6 @@ import { DebuggerSolidityLocals } from './solidityLocals'
 const { ui } = helpers
 
 export class VmDebuggerLogic {
-
   event
   debugger
   stepManager
@@ -212,7 +211,7 @@ export class VmDebuggerLogic {
 
   listenToNewChanges () {
     this.debugger.event.register('newTraceLoaded', this, () => {
-      this.storageResolver = new StorageResolver({web3: this.debugger.web3})
+      this.storageResolver = new StorageResolver({ web3: this.debugger.web3 })
       this.debuggerSolidityState.storageResolver = this.storageResolver
       this.debuggerSolidityLocals.storageResolver = this.storageResolver
       this.event.trigger('newTrace', [])
@@ -259,5 +258,4 @@ export class VmDebuggerLogic {
       this.event.trigger('traceReturnValueUpdate', [data, header])
     })
   }
-
 }

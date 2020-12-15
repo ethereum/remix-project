@@ -3,7 +3,6 @@ import { solidityLocals } from '../solidity-decoder/localDecoder'
 import { StorageViewer } from '../storage/storageViewer'
 
 export class DebuggerSolidityLocals {
-
   event
   stepManager
   internalTreeCall
@@ -75,14 +74,14 @@ export class DebuggerSolidityLocals {
         var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
         solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation, cursor).then((locals) => {
           if (!cursor) {
-            if (!locals['error']) {
+            if (!locals.error) {
               this.event.trigger('solidityLocals', [locals])
             }
             if (!Object.keys(locals).length) {
               this.event.trigger('solidityLocalsMessage', ['no locals'])
             }
           } else {
-            if (!locals['error']) {
+            if (!locals.error) {
               this.event.trigger('solidityLocalsLoadMoreCompleted', [locals])
             }
           }
