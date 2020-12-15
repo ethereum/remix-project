@@ -1,17 +1,17 @@
 'use strict'
 
-const AddressType = require('./types/Address')
-const ArrayType = require('./types/ArrayType')
-const BoolType = require('./types/Bool')
-const BytesType = require('./types/DynamicByteArray')
-const BytesXType = require('./types/FixedByteArray')
-const EnumType = require('./types/Enum')
-const StringType = require('./types/StringType')
-const StructType = require('./types/Struct')
-const IntType = require('./types/Int')
-const UintType = require('./types/Uint')
-const MappingType = require('./types/Mapping')
-const util = require('./types/util')
+import { Address as AddressType } from './types/Address'
+import { ArrayType } from './types/ArrayType'
+import { Bool as BoolType } from './types/Bool'
+import { DynamicByteArray as BytesType } from './types/DynamicByteArray'
+import { FixedByteArray as BytesXType } from './types/FixedByteArray'
+import { Enum as EnumType } from './types/Enum'
+import { StringType } from './types/StringType'
+import { Struct as StructType } from './types/Struct'
+import { Int as IntType } from './types/Int'
+import { Uint as UintType } from './types/Uint'
+import { Mapping as MappingType } from './types/Mapping'
+import { extractLocation, removeLocation } from './types/util'
 
 /**
   * mapping decode the given @arg type
@@ -31,7 +31,7 @@ function mapping (type, stateDefinitions, contractName) {
     'keyType': keyType,
     'valueType': valueType
   }
-  return new MappingType(underlyingTypes, 'location', util.removeLocation(type))
+  return new MappingType(underlyingTypes, 'location', removeLocation(type))
 }
 
 /**
@@ -89,7 +89,7 @@ function bool (type) {
   */
 function dynamicByteArray (type, stateDefinitions, contractName, location) {
   if (!location) {
-    location = util.extractLocation(type)
+    location = extractLocation(type)
   }
   if (location) {
     return new BytesType(location)
@@ -120,7 +120,7 @@ function fixedByteArray (type) {
   */
 function stringType (type, stateDefinitions, contractName, location) {
   if (!location) {
-    location = util.extractLocation(type)
+    location = extractLocation(type)
   }
   if (location) {
     return new StringType(location)
@@ -265,7 +265,7 @@ function getStructMembers (type, stateDefinitions, contractName, location) {
   * @return {String} returns the token type (used to instanciate the right decoder) (uint[2] storage ref[2] will return 'array', uint256 will return uintX)
   */
 function typeClass (fullType) {
-  fullType = util.removeLocation(fullType)
+  fullType = removeLocation(fullType)
   if (fullType.lastIndexOf(']') === fullType.length - 1) {
     return 'array'
   }

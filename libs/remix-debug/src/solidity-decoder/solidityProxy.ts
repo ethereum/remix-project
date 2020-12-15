@@ -1,9 +1,8 @@
 'use strict'
-const remixLib = require('@remix-project/remix-lib')
-const traceHelper = require('../trace/traceHelper')
-const stateDecoder = require('./stateDecoder')
-const astHelper = require('./astHelper')
-const util = remixLib.util
+import { util } from '@remix-project/remix-lib'
+import { isContractCreation } from '../trace/traceHelper'
+import { extractStateVariables } from './stateDecoder'
+import { extractContractDefinitions, extractStatesDefinitions } from './astHelper'
 
 export class SolidityProxy {
 
@@ -65,10 +64,10 @@ export class SolidityProxy {
     */
   extractStatesDefinitions () {
     if (!this.cache.contractDeclarations) {
-      this.cache.contractDeclarations = astHelper.extractContractDefinitions(this.sources)
+      this.cache.contractDeclarations = extractContractDefinitions(this.sources)
     }
     if (!this.cache.statesDefinitions) {
-      this.cache.statesDefinitions = astHelper.extractStatesDefinitions(this.sources, this.cache.contractDeclarations)
+      this.cache.statesDefinitions = extractStatesDefinitions(this.sources, this.cache.contractDeclarations)
     }
     return this.cache.statesDefinitions
   }
@@ -81,7 +80,7 @@ export class SolidityProxy {
     */
   extractStateVariables (contractName) {
     if (!this.cache.stateVariablesByContractName[contractName]) {
-      this.cache.stateVariablesByContractName[contractName] = stateDecoder.extractStateVariables(contractName, this.sources)
+      this.cache.stateVariablesByContractName[contractName] = extractStateVariables(contractName, this.sources)
     }
     return this.cache.stateVariablesByContractName[contractName]
   }
@@ -127,7 +126,7 @@ export class SolidityProxy {
 }
 
 function contractObjectFromCode (contracts, code, address) {
-  const isCreation = traceHelper.isContractCreation(address)
+  const isCreation = isContractCreation(address)
   for (let file in contracts) {
     for (let contract in contracts[file]) {
       const bytecode = isCreation ? contracts[file][contract].evm.bytecode.object : contracts[file][contract].evm.deployedBytecode.object
