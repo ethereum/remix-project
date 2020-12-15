@@ -1,14 +1,12 @@
 'use strict'
 
-const StorageViewer = require('./storage/storageViewer')
-const StorageResolver = require('./storage/storageResolver')
-
-const TraceManager = require('./trace/traceManager')
-const CodeManager = require('./code/codeManager')
-const traceHelper = require('./trace/traceHelper')
-const EventManager = require('./eventManager')
-
-const {SolidityProxy, stateDecoder, localDecoder, InternalCallTree} = require('./solidity-decoder')
+import { StorageViewer } from './storage/storageViewer'
+import { StorageResolver } from './storage/storageResolver'
+import { TraceManager } from './trace/traceManager'
+import { CodeManager } from './code/codeManager'
+import { contractCreationToken } from './trace/traceHelper'
+import { EventManager } from './eventManager'
+import { SolidityProxy, stateDecoder, localDecoder, InternalCallTree } from './solidity-decoder'
 
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
@@ -109,9 +107,9 @@ export class Ethdebugger {
       const address = this.traceManager.getCurrentCalledAddressAt(step)
       try {
         const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
-        const locals = await localDecoder.solidityLocals(step, this.callTree, stack, memory, storageViewer, sourceLocation)
-        if (locals.error) {
-          return callback(locals.error)
+        const locals = await localDecoder.solidityLocals(step, this.callTree, stack, memory, storageViewer, sourceLocation, null)
+        if (locals['error']) {
+          return callback(locals['error'])
         }
         return callback(null, locals)
       } catch (e) {
@@ -157,7 +155,7 @@ export class Ethdebugger {
     if (this.traceManager.isLoading) {
       return
     }
-    tx.to = tx.to || traceHelper.contractCreationToken('0')
+    tx.to = tx.to || contractCreationToken('0')
     this.tx = tx
 
     this.traceManager.resolveTrace(tx).then(async (result) => {

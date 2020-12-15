@@ -1,19 +1,14 @@
 'use strict'
-const init = require('./src/init')
-const EthDebugger = require('./src/Ethdebugger')
-const TransactionDebugger = require('./src/debugger/debugger')
-const CmdLine = require('./src/cmdline')
-
-const StorageViewer = require('./src/storage/storageViewer')
-const StorageResolver = require('./src/storage/storageResolver')
-
-const SolidityDecoder = require('./src/solidity-decoder')
-
-const BreakpointManager = require('./src/code/breakpointManager')
-
-const SourceMappingDecoder = require('./src/source/sourceMappingDecoder')
-
-const traceHelper = require('./src/trace/traceHelper')
+import init from './init'
+import { Ethdebugger as EthDebugger } from './Ethdebugger'
+import { Debugger as TransactionDebugger } from './debugger/debugger'
+import { CmdLine } from './cmdline'
+import { StorageViewer } from './storage/storageViewer'
+import { StorageResolver } from './storage/storageResolver'
+import * as SolidityDecoder from './solidity-decoder'
+import { BreakpointManager } from './code/breakpointManager'
+import * as SourceMappingDecoder from './source/sourceMappingDecoder'
+import * as traceHelper from './trace/traceHelper'
 
 /*
   Use of breakPointManager :

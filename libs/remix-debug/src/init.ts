@@ -1,11 +1,11 @@
 'use strict'
-const Web3 = require('web3')
+import Web3 from 'web3'
 
 export = {
   loadWeb3: function (url) {
     if (!url) url = 'http://localhost:8545'
     const web3 = new Web3()
-    web3.setProvider(new web3.providers.HttpProvider(url))
+    web3.setProvider(new Web3.providers.HttpProvider(url))
     this.extend(web3)
     return web3
   },
