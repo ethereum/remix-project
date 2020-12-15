@@ -1,10 +1,10 @@
 'use strict'
-var localDecoder = require('../../../src/solidity-decoder/localDecoder')
+import { solidityLocals } from '../../../src/solidity-decoder/localDecoder'
 
 /*
   Decode local variable
 */
-function decodeLocal (st, index, traceManager, callTree, verifier) {
+export function decodeLocals (st, index, traceManager, callTree, verifier) {
   try {
     traceManager.waterfall([
       function getStackAt (stepIndex, callback) {
@@ -28,15 +28,11 @@ function decodeLocal (st, index, traceManager, callTree, verifier) {
         if (error) {
           return st.fail(error)
         }
-        localDecoder.solidityLocals(index, callTree, result[0].value, result[1].value, {}, { start: 5000 }).then((locals) => {
+        solidityLocals(index, callTree, result[0].value, result[1].value, {}, { start: 5000 }, null).then((locals) => {
           verifier(locals)
         })
       })
   } catch (e) {
     st.fail(e.message)
   }
-}
-
-module.exports = {
-  decodeLocals: decodeLocal
 }
