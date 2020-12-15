@@ -6,7 +6,7 @@ var BN = require('ethereumjs-util').BN
 var remixLib = require('@remix-project/remix-lib')
 var EthJSVM = require('ethereumjs-vm').default
 
-function sendTx (vm, from, to, value, data, cb) {
+export function sendTx (vm, from, to, value, data, cb) {
   var tx = new Tx({
     nonce: new BN(from.nonce++),
     gasPrice: new BN(1),
@@ -52,7 +52,7 @@ function createVm (hardfork) {
 /*
   Init VM / Send Transaction
 */
-function initVM (st, privateKey) {
+export function initVM (st, privateKey) {
   var VM = createVm('muirGlacier')
   const vm = VM.vm
 
@@ -72,7 +72,3 @@ function initVM (st, privateKey) {
   return vm
 }
 
-module.exports = {
-  sendTx: sendTx,
-  initVM: initVM
-}
