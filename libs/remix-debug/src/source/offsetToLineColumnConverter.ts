@@ -1,5 +1,5 @@
 'use strict'
-const SourceMappingDecoder = require('./sourceMappingDecoder')
+import { getLinebreakPositions, convertOffsetToLineColumn } from './sourceMappingDecoder'
 
 export class OffsetToColumnConverter {
 
@@ -8,7 +8,6 @@ export class OffsetToColumnConverter {
 
   constructor(compilerEvent) {
     this.lineBreakPositionsByContent = {}
-    this.sourceMappingDecoder = new SourceMappingDecoder()
     if (compilerEvent) {
       compilerEvent.register('compilationFinished', (success, data, source) => {
         this.clear()
@@ -23,12 +22,12 @@ export class OffsetToColumnConverter {
         // source id was string before. in newer versions it has been changed to an integer so we need to check the type here
         if (typeof source.id === 'string') source.id = parseInt(source.id, 10)
         if (source.id === file) {
-          this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[filename].content)
+          this.lineBreakPositionsByContent[file] = getLinebreakPositions(sources[filename].content)
           break
         }
       }
     }
-    return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
+    return convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
   }
 
   clear () {
