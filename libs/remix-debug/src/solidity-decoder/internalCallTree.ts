@@ -1,13 +1,11 @@
 'use strict'
-const { AstWalker } = require('@remix-project/remix-astwalker')
-const remixLib = require('@remix-project/remix-lib')
-const SourceLocationTracker = require('../source/sourceLocationTracker')
-const EventManager = require('../eventManager')
-
-const decodeInfo = require('./decodeInfo')
-const util = remixLib.util
-const traceHelper = require('../trace/traceHelper')
-const typesUtil = require('./types/util.js')
+import { AstWalker } from '@remix-project/remix-astwalker'
+import { util } from '@remix-project/remix-lib'
+import { SourceLocationTracker } from '../source/sourceLocationTracker'
+import { EventManager } from '../eventManager'
+import { parseType } from './decodeInfo'
+import { isContractCreation, isCallInstruction, isCreateInstruction, isJumpDestInstruction } from '../trace/traceHelper'
+import { extractLocationFromAstVariable } from './types/util.js'
 
 /**
  * Tree representing internal jump into function.
@@ -54,7 +52,7 @@ export class InternalCallTree {
       } else {
         // each recursive call to buildTree represent a new context (either call, delegatecall, internal function)
         const calledAddress = traceManager.getCurrentCalledAddressAt(0)
-        const isCreation = traceHelper.isContractCreation(calledAddress)
+        const isCreation = isContractCreation(calledAddress)
         buildTree(this, 0, '', true, isCreation).then((result) => {
           if (result.error) {
             this.event.trigger('callTreeBuildFailed', [result.error])
@@ -204,12 +202,12 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
     if (!sourceLocation) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
-    const isCallInstruction = traceHelper.isCallInstruction(tree.traceManager.trace[step])
-    const isCreateInstruction = traceHelper.isCreateInstruction(tree.traceManager.trace[step])
+    const isCallInstrn = isCallInstruction(tree.traceManager.trace[step])
+    const isCreateInstrn = isCreateInstruction(tree.traceManager.trace[step])
     // we are checking if we are jumping in a new CALL or in an internal function
-    if (isCallInstruction || sourceLocation.jump === 'i') {
+    if (isCallInstrn || sourceLocation.jump === 'i') {
       try {
-        const externalCallResult = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, isCallInstruction, isCreateInstruction)
+        const externalCallResult = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, isCallInstrn, isCreateInstrn)
         if (externalCallResult.error) {
           return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
         } else {
@@ -264,12 +262,12 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
       // so, either this is the direct value, or the offset in memory. That depends on the type.
       if (variableDeclaration.name !== '') {
         states = tree.solidityProxy.extractStatesDefinitions()
-        var location = typesUtil.extractLocationFromAstVariable(variableDeclaration)
+        var location = extractLocationFromAstVariable(variableDeclaration)
         location = location === 'default' ? 'storage' : location
         // we push the new local variable in our tree
         tree.scopes[scopeId].locals[variableDeclaration.name] = {
           name: variableDeclaration.name,
-          type: decodeInfo.parseType(variableDeclaration.typeDescriptions.typeString, states, contractObj.name, location),
+          type: parseType(variableDeclaration.typeDescriptions.typeString, states, contractObj.name, location),
           stackDepth: stack.length,
           sourceLocation: sourceLocation
         }
@@ -283,8 +281,8 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
   const functionDefinition = resolveFunctionDefinition(tree, previousSourceLocation, generatedSources)
   if (!functionDefinition) return
 
-  const previousIsJumpDest2 = traceHelper.isJumpDestInstruction(tree.traceManager.trace[step - 2])
-  const previousIsJumpDest1 = traceHelper.isJumpDestInstruction(tree.traceManager.trace[step - 1])
+  const previousIsJumpDest2 = isJumpDestInstruction(tree.traceManager.trace[step - 2])
+  const previousIsJumpDest1 = isJumpDestInstruction(tree.traceManager.trace[step - 1])
   const isConstructor = functionDefinition.kind === 'constructor'
   if (newLocation && (previousIsJumpDest1 || previousIsJumpDest2 || isConstructor)) {
     tree.functionCallStack.push(step)
@@ -376,12 +374,12 @@ function addParams (parameterList, tree, scopeId, states, contractName, sourceLo
     const param = parameterList.parameters[inputParam]
     const stackDepth = stackLength + (dir * stackPosition)
     if (stackDepth >= 0) {
-      let location = typesUtil.extractLocationFromAstVariable(param)
+      let location = extractLocationFromAstVariable(param)
       location = location === 'default' ? 'memory' : location
       const attributesName = param.name === '' ? `$${inputParam}` : param.name
       tree.scopes[scopeId].locals[attributesName] = {
         name: attributesName,
-        type: decodeInfo.parseType(param.typeDescriptions.typeString, states, contractName, location),
+        type: parseType(param.typeDescriptions.typeString, states, contractName, location),
         stackDepth: stackDepth,
         sourceLocation: sourceLocation
       }
