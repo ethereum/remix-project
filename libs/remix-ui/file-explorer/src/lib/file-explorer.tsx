@@ -33,7 +33,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       type: '',
       isNew: false
     },
-    fileExternallyChanged: false
+    fileExternallyChanged: false,
+    expandPath: []
   })
 
   useEffect(() => {
@@ -427,9 +428,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
     } else {
       const files = await resolveDirectory(path, state.files)
+      let expandPath = []
+
+      if (!state.expandPath.includes(path)) {
+        expandPath = [...state.expandPath, path]
+      } else {
+        expandPath = state.expandPath.filter(key => key !== path)
+      }
 
       setState(prevState => {
-        return { ...prevState, focusElement: [{ key: path, type: 'folder' }], files }
+        return { ...prevState, focusElement: [{ key: path, type: 'folder' }], files, expandPath }
       })
     }
   }
@@ -506,23 +514,27 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const handleNewFileInput = (parentFolder?: string) => {
+  const handleNewFileInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
-    const files = addEmptyFile(parentFolder, state.files)
+    let files = await resolveDirectory(parentFolder, state.files)
+    const expandPath = [...state.expandPath, parentFolder]
 
+    files = addEmptyFile(parentFolder, files)
     setState(prevState => {
-      return { ...prevState, files }
+      return { ...prevState, files, expandPath }
     })
     editModeOn(parentFolder + '/blank', 'file', true)
   }
 
-  const handleNewFolderInput = (parentFolder?: string) => {
+  const handleNewFolderInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
     else if (parentFolder.indexOf('.sol') !== -1) parentFolder = extractParentFromKey(parentFolder)
-    const files = addEmptyFolder(parentFolder, state.files)
+    let files = await resolveDirectory(parentFolder, state.files)
+    const expandPath = [...state.expandPath, parentFolder]
 
+    files = addEmptyFolder(parentFolder, state.files)
     setState(prevState => {
-      return { ...prevState, files }
+      return { ...prevState, files, expandPath }
     })
     editModeOn(parentFolder + '/blank', 'folder', true)
   }
@@ -569,6 +581,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             editable={state.focusEdit.element === file.path}
             onBlur={(value) => editModeOff(value)}
             controlBehaviour={ state.ctrlKey }
+            expand={state.expandPath.includes(file.path)}
           >
             {
               file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
