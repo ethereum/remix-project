@@ -3,13 +3,13 @@
 export async function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory, storageResolver, currentSourceLocation, cursor) {
   const scope = internalTreeCall.findScope(vmtraceIndex)
   if (!scope) {
-    const error = { 'message': 'Can\'t display locals. reason: compilation result might not have been provided' }
+    const error = { message: 'Can\'t display locals. reason: compilation result might not have been provided' }
     throw error
   }
   const locals = {}
   memory = formatMemory(memory)
   let anonymousIncr = 1
-  for (let local in scope.locals) {
+  for (const local in scope.locals) {
     var variable = scope.locals[local]
     if (variable.stackDepth < stack.length && variable.sourceLocation.start <= currentSourceLocation.start) {
       let name = variable.name

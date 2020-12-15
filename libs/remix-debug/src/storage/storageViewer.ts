@@ -2,13 +2,12 @@
 import { util } from '@remix-project/remix-lib'
 import { decodeMappingsKeys } from './mappingPreimages'
 
- /**
+/**
    * easier access to the storage resolver
    * Basically one instance is created foreach execution step and foreach component that need it.
    * (TODO: one instance need to be shared over all the components)
    */
 export class StorageViewer {
-
   context
   storageResolver
   web3

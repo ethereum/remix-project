@@ -5,14 +5,13 @@ import { extractStateVariables } from './stateDecoder'
 import { extractContractDefinitions, extractStatesDefinitions } from './astHelper'
 
 export class SolidityProxy {
-
   cache
   getCurrentCalledAddressAt
   getCode
   sources
   contracts
 
-  constructor ({getCurrentCalledAddressAt, getCode}) {
+  constructor ({ getCurrentCalledAddressAt, getCode }) {
     this.cache = new Cache()
     this.reset({})
     this.getCurrentCalledAddressAt = getCurrentCalledAddressAt
@@ -127,8 +126,8 @@ export class SolidityProxy {
 
 function contractObjectFromCode (contracts, code, address) {
   const isCreation = isContractCreation(address)
-  for (let file in contracts) {
-    for (let contract in contracts[file]) {
+  for (const file in contracts) {
+    for (const contract in contracts[file]) {
       const bytecode = isCreation ? contracts[file][contract].evm.bytecode.object : contracts[file][contract].evm.deployedBytecode.object
       if (util.compareByteCode(code, '0x' + bytecode)) {
         return { name: contract, contract: contracts[file][contract] }
@@ -139,7 +138,6 @@ function contractObjectFromCode (contracts, code, address) {
 }
 
 class Cache {
-
   contractObjectByAddress
   stateVariablesByContractName
   contractDeclarations
@@ -148,6 +146,7 @@ class Cache {
   constructor () {
     this.reset()
   }
+
   reset () {
     this.contractObjectByAddress = {}
     this.stateVariablesByContractName = {}

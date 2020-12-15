@@ -4,7 +4,6 @@ import { isCallInstruction, isCallToPrecompiledContract, isReturnInstruction } f
 import { util } from '@remix-project/remix-lib'
 
 export class TraceStepManager {
-
   traceAnalyser
 
   constructor (_traceAnalyser) {

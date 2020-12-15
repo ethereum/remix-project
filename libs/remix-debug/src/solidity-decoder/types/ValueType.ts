@@ -2,7 +2,6 @@
 import { extractHexValue } from './util'
 
 export class ValueType {
-
   storageSlots
   storageBytes
   typeName
@@ -25,10 +24,10 @@ export class ValueType {
   async decodeFromStorage (location, storageResolver) {
     try {
       var value = await extractHexValue(location, storageResolver, this.storageBytes)
-      return {value: this.decodeValue(value), type: this.typeName}
+      return { value: this.decodeValue(value), type: this.typeName }
     } catch (e) {
       console.log(e)
-      return {value: '<decoding failed - ' + e.message + '>', type: this.typeName}
+      return { value: '<decoding failed - ' + e.message + '>', type: this.typeName }
     }
   }
 
@@ -47,7 +46,7 @@ export class ValueType {
     } else {
       value = this.decodeValue(stack[stack.length - 1 - stackDepth].replace('0x', ''))
     }
-    return {value, type: this.typeName}
+    return { value, type: this.typeName }
   }
 
   /**
@@ -58,7 +57,7 @@ export class ValueType {
     * @return {Object} - decoded value
     */
   decodeFromMemory (offset, memory) {
-    let value = memory.substr(2 * offset, 64)
-    return {value: this.decodeValue(value), type: this.typeName}
+    const value = memory.substr(2 * offset, 64)
+    return { value: this.decodeValue(value), type: this.typeName }
   }
 }

@@ -1,11 +1,10 @@
 'use strict'
 import { RefType } from './RefType'
 import { normalizeHex } from './util'
-import { toBuffer, setLengthLeft, keccak, BN, bufferToHex} from 'ethereumjs-util'
+import { toBuffer, setLengthLeft, keccak, BN, bufferToHex } from 'ethereumjs-util'
 import { intToBuffer } from 'ethjs-util'
 
 export class Mapping extends RefType {
-
   keyType
   valueType
   initialDecodedState
@@ -34,13 +33,13 @@ export class Mapping extends RefType {
     const mappingPreimages = await storageResolver.mappingsLocation(corrections)
     let ret = await this.decodeMappingsLocation(mappingPreimages, location, storageResolver) // fetch mapping storage changes
     ret = Object.assign({}, this.initialDecodedState, ret) // merge changes
-    return {value: ret, type: this.typeName}
+    return { value: ret, type: this.typeName }
   }
 
   decodeFromMemoryInternal (offset, memory) {
     // mappings can only exist in storage and not in memory
     // so this should never be called
-    return {value: '<not implemented>', length: '0x', type: this.typeName}
+    return { value: '<not implemented>', length: '0x', type: this.typeName }
   }
 
   async decodeMappingsLocation (preimages, location, storageResolver) {
@@ -49,7 +48,7 @@ export class Mapping extends RefType {
       return {}
     }
     const ret = {}
-    for (let i in preimages[mapSlot]) {
+    for (const i in preimages[mapSlot]) {
       const mapLocation = getMappingLocation(i, location.slot)
       const globalLocation = {
         offset: location.offset,
@@ -71,13 +70,13 @@ function getMappingLocation (key, position) {
   mappingP = setLengthLeft(mappingP, 32)
   const mappingKeyBuf = concatTypedArrays(mappingK, mappingP)
   const mappingKeyPreimage: string = '0x' + mappingKeyBuf.toString('hex')
-  let mappingStorageLocation: Buffer = keccak(mappingKeyPreimage)
+  const mappingStorageLocation: Buffer = keccak(mappingKeyPreimage)
   const mappingStorageLocationinBn: BN = new BN(mappingStorageLocation, 16)
   return mappingStorageLocationinBn
 }
 
 function concatTypedArrays (a, b) { // a, b TypedArray of same type
-  let c = new (a.constructor)(a.length + b.length)
+  const c = new (a.constructor)(a.length + b.length)
   c.set(a, 0)
   c.set(b, a.length)
   return c

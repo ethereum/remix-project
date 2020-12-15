@@ -2,7 +2,7 @@
 import { helpers } from '@remix-project/remix-lib'
 const { ui } = helpers
 
-  // vmTraceIndex has to point to a CALL, CODECALL, ...
+// vmTraceIndex has to point to a CALL, CODECALL, ...
 export function resolveCalledAddress (vmTraceIndex, trace) {
   const step = trace[vmTraceIndex]
   if (isCreateInstruction(step)) {
@@ -66,4 +66,3 @@ export function contractCreationToken (index) {
 export function isContractCreation (address) {
   return address.indexOf('(Contract Creation - Step') !== -1
 }
-
