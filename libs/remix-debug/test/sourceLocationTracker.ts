@@ -1,12 +1,12 @@
 'use strict'
 import tape from 'tape'
-const TraceManager = require('../src/trace/traceManager')
-const CodeManager = require('../src/code/codeManager')
-const web3Test = require('./resources/testWeb3')
+import { TraceManager } from '../src/trace/traceManager'
+import { CodeManager } from '../src/code/codeManager'
+const web3Test = require('./resources/testWeb3.ts')
 const sourceMapping = require('./resources/sourceMapping')
-const SourceLocationTracker = require('../src/source/sourceLocationTracker')
+import { SourceLocationTracker } from '../src/source/sourceLocationTracker'
 const compiler = require('solc')
-const compilerInput = require('./helpers/compilerHelper').compilerInput
+import { compilerInput } from './helpers/compilerHelper'
 
 tape('SourceLocationTracker', function (t) {
   t.test('SourceLocationTracker.getSourceLocationFromVMTraceIndex - simple contract', async function (st) {
@@ -27,8 +27,8 @@ tape('SourceLocationTracker', function (t) {
       
       try {
         const map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
-        st.equal(map.file, 0)
-        st.equal(map.start, 0)
+        st.equal(map['file'], 0)
+        st.equal(map['start'], 0)
       } catch (e) {
         console.log(e)
       }
@@ -59,21 +59,21 @@ tape('SourceLocationTracker', function (t) {
       try {
         let map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
         console.log(map)
-        st.equal(map.file, 0)
-        st.equal(map.start, 35)
+        st.equal(map['file'], 0)
+        st.equal(map['start'], 35)
 
         map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
-        st.equal(map.file, 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
+        st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
 
         map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
-        st.equal(map.file, 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
-        st.equal(map.start, 1293)
-        st.equal(map.length, 32)
+        st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
+        st.equal(map['start'], 1293)
+        st.equal(map['length'], 32)
 
         map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 36, output.contracts)
-        st.equal(map.file, 0) // 0 refers to the initial solidity code. see source below (ABIEncoderV2)
-        st.equal(map.start, 303)
-        st.equal(map.length, 448)
+        st.equal(map['file'], 0) // 0 refers to the initial solidity code. see source below (ABIEncoderV2)
+        st.equal(map['start'], 303)
+        st.equal(map['length'], 448)
       } catch (e) {
         console.log(e)
       }

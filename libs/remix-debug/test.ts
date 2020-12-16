@@ -1,5 +1,5 @@
 // TODO: this file shoudl be removed at some point
-var CmdLine = require('./src/cmdline/index.js')
+var CmdLine = require('./src/cmdline/index')
 // var compilation = require('./compilation.json')
 
 var solc = require('solc')
@@ -35,10 +35,10 @@ console.log('compiling...')
 let compilationData = JSON.parse(solc.compileStandardWrapper(JSON.stringify(inputJson)))
 console.dir(Object.keys(compilationData))
 var compilation = {}
-compilation.data = compilationData
-compilation.source = { sources: inputJson.sources }
+compilation['data'] = compilationData
+compilation['source'] = { sources: inputJson.sources }
 console.dir(compilation)
-console.dir(compilation.data.errors)
+console.dir(compilation['data'].errors)
 
 var cmdLine = new CmdLine()
 cmdLine.connect('http', 'http://localhost:8545')

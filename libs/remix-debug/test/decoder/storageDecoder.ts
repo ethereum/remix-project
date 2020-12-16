@@ -2,8 +2,8 @@
 import tape from 'tape'
 var compiler = require('solc')
 var stateDecoder = require('../../src/solidity-decoder/stateDecoder')
-var MockStorageResolver = require('./mockStorageResolver')
-var compilerInput = require('../helpers/compilerHelper').compilerInput
+import { MockStorageResolver } from './mockStorageResolver'
+import { compilerInput } from '../helpers/compilerHelper'
 var testMappingStorage = require('./stateTests/mapping')
 
 tape('solidity', function (t) {
