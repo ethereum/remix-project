@@ -33,7 +33,7 @@ export class RefType {
     * @param {Object} - storageResolver
     * @return {Object} decoded value
     */
-  async decodeFromStack (stackDepth, stack, memory, storageResolver, cursor) {
+  async decodeFromStack (stackDepth, stack, memory, storageResolver, cursor): Promise<any> {
     if (stack.length - 1 < stackDepth) {
       return { error: '<decoding failed - stack underflow ' + stackDepth + '>', type: this.typeName }
     }
