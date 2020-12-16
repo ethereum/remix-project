@@ -1,6 +1,5 @@
 'use strict'
-var remixLib = require('@remix-project/remix-lib')
-var util = remixLib.util
+import { util } from '@remix-project/remix-lib'
 
 export class MockStorageResolver {
 
