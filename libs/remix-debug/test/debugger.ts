@@ -1,12 +1,13 @@
 import tape from 'tape'
-var deepequal = require('deep-equal')
-var remixLib = require('@remix-project/remix-lib')
-var compilerInput = require('./helpers/compilerHelper').compilerInput
-var SourceMappingDecoder = require('../src/source/sourceMappingDecoder')
+import deepequal from 'deep-equal'
+import { compilerInput } from './helpers/compilerHelper'
+import * as sourceMappingDecoder from '../src/source/sourceMappingDecoder'
+import { Ethdebugger as Debugger } from '../src/Ethdebugger'
+import { BreakpointManager } from '../src/code/breakpointManager'
 
-var vmCall = require('./vmCall')
-var Debugger = require('../src/Ethdebugger')
 var compiler = require('solc')
+var vmCall = require('./vmCall')
+var remixLib = require('@remix-project/remix-lib')
 
 var ballot = `pragma solidity >=0.4.22 <0.8.0;
 
@@ -149,8 +150,6 @@ contract Ballot {
 }
 `
 
-var BreakpointManager = require('../src/code/breakpointManager')
-
 var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
 var vm = vmCall.initVM(privateKey)
 var output = compiler.compile(compilerInput(ballot))
@@ -273,7 +272,6 @@ function testDebugging (debugManager) {
 
   tape('breakPointManager', (t) => {
     t.plan(2)
-    var sourceMappingDecoder = new SourceMappingDecoder()
     const {traceManager, callTree, solidityProxy} = debugManager
     var breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy, locationToRowConverter: async (rawLocation) => {
       return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
