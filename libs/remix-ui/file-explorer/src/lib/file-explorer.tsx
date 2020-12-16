@@ -494,7 +494,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       if (!state.expandPath.includes(path)) {
         expandPath = [...state.expandPath, path]
       } else {
-        expandPath = state.expandPath.filter(key => !key.startsWith(path))
+        expandPath = state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(path))
       }
 
       setState(prevState => {
