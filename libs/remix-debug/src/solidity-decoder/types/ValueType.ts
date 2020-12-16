@@ -14,6 +14,10 @@ export class ValueType {
     this.basicType = 'ValueType'
   }
 
+  decodeValue(input? : any) {
+    throw new Error('This method is abstract');
+  }
+
   /**
     * decode the type with the @arg location from the storage
     *
