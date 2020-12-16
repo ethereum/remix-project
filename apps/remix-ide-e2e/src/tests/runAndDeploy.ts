@@ -27,42 +27,10 @@ module.exports = {
   'Should load run and deploy tab and check value validation': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
-    .clearValue('#value')
-    .setValue('#value', '0000')
-    .click('*[data-id="remixDRValueLabel"]')
-    .execute(function () {
-      const elem = document.getElementById('value') as HTMLInputElement
-      return elem.value
-    }, [], function (result) {
-      console.log('logging ', result)
-      browser.assert.equal(result.value, "0")
-    })
-    .clearValue('#value')
-    .setValue('#value', '-44')
-    .execute(function () {
-      const elem = document.getElementById('value') as HTMLInputElement
-      return elem
-    }, [], function (result) {
-      console.log('loging ', result.value)
-      browser.assert.equal(result.value, "0")
-    })
-    .clearValue('#value')
-    .setValue('#value', '')
-    .execute(function () {
-      const elem = document.getElementById('value') as HTMLInputElement
-      return elem
-    }, [], function (result) {
-      console.log('loging ', result.value)
-      browser.assert.equal(result.value, "0")
-    })
-    .setValue('#value', 'dragon')
-    .execute(function () {
-      const elem = document.getElementById('value') as HTMLInputElement
-      return elem
-    }, [], function (result) {
-      console.log('loging ', result.value)
-      browser.assert.equal(result.value, "0")
-    })
+    .validateValueInput('#value', '0000', '0')
+    .validateValueInput('#value', '-44', '0')
+    .validateValueInput('#value', '', '0')
+    .validateValueInput('#value', 'dragon', '0')
   },
 
   'Should sign message using account key': function (browser: NightwatchBrowser) {
