@@ -1,7 +1,7 @@
 'use strict'
 import tape from 'tape'
-var compiler = require('solc')
-var stateDecoder = require('../../src/solidity-decoder/stateDecoder')
+import { compile } from 'solc'
+import * as stateDecoder from '../../src/solidity-decoder/stateDecoder'
 import { MockStorageResolver } from './mockStorageResolver'
 import { compilerInput } from '../helpers/compilerHelper'
 var testMappingStorage = require('./stateTests/mapping')
@@ -22,7 +22,7 @@ tape('solidity', function (t) {
 
 function testIntStorage (st, cb) {
   var intStorage = require('./contracts/intStorage')
-  var output = compiler.compile(compilerInput(intStorage.contract))
+  var output = compile(compilerInput(intStorage.contract))
   output = JSON.parse(output)
   var mockStorageResolver
   for (var storage of [intStorage.fullStorage, shrinkStorage(intStorage.fullStorage)]) {
@@ -69,7 +69,7 @@ function testIntStorage (st, cb) {
 
 function testByteStorage (st, cb) {
   var byteStorage = require('./contracts/byteStorage')
-  var output = compiler.compile(compilerInput(byteStorage.contract))
+  var output = compile(compilerInput(byteStorage.contract))
   output = JSON.parse(output)
   var mockStorageResolver
   for (var storage of [byteStorage.storage, shrinkStorage(byteStorage.storage)]) {
@@ -182,7 +182,7 @@ function shrinkStorage (storage) {
 
 function testStructArrayStorage (st, cb) {
   var structArrayStorage = require('./contracts/structArrayStorage')
-  var output = compiler.compile(compilerInput(structArrayStorage.contract))
+  var output = compile(compilerInput(structArrayStorage.contract))
   output = JSON.parse(output)
   var mockStorageResolver = new MockStorageResolver(structArrayStorage.storage)
   stateDecoder.solidityState(mockStorageResolver, output.sources, 'structArrayStorage').then((decoded) => {
