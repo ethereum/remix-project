@@ -16,6 +16,14 @@ export class RefType {
     this.basicType = 'RefType'
   }
 
+  decodeFromStorage(input1? : any, input2? : any) {
+    throw new Error('This method is abstract');
+  }
+
+  decodeFromMemoryInternal(input1? : any, input2? : any, input3?: any) {
+    throw new Error('This method is abstract');
+  }
+
   /**
     * decode the type from the stack
     *
