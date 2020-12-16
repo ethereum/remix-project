@@ -394,7 +394,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
   // register to event of the file provider
   // files.event.register('fileRemoved', fileRemoved)
   // files.event.register('fileRenamed', fileRenamed)
-  // files.event.register('fileRenamedError', fileRenamedError)
+  props.filesProvider.event.register('fileRenamedError', (error) => {
+  //   modalDialogCustom.alert(error)
+  })
   props.filesProvider.event.register('fileAdded', async (filePath: string) => {
     const pathArr = filePath.split('/')
     const hasChild = pathArr.length > 2
@@ -444,30 +446,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   })
   // files.event.register('folderAdded', folderAdded)
-
-  // function fileRenamedError (error) {
-  //   modalDialogCustom.alert(error)
-  // }
-
-  // const fileAdded = (filepath) => {
-  //   const folderpath = filepath.split('/').slice(0, -1).join('/')
-  // const currentTree = self.treeView.nodeAt(folderpath)
-  // if (!self.treeView.isExpanded(folderpath)) self.treeView.expand(folderpath)
-  // if (currentTree) {
-  //   props.files.resolveDirectory(folderpath, (error, fileTree) => {
-  //     if (error) console.error(error)
-  //     if (!fileTree) return
-  //     fileTree = normalize(folderpath, fileTree)
-  //     self.treeView.updateNodeFromJSON(folderpath, fileTree, true)
-  //     self.focusElement = self.treeView.labelAt(self.focusPath)
-  //     // TODO: here we update the selected file (it applicable)
-  //     // cause we are refreshing the interface of the whole directory when there's a new file.
-  //     if (self.focusElement && !self.focusElement.classList.contains('bg-secondary')) {
-  //       self.focusElement.classList.add('bg-secondary')
-  //     }
-  //   })
-  // }
-  // }
 
   const handleClickFile = (path: string) => {
     state.fileManager.open(path)
