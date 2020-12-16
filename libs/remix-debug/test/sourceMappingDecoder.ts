@@ -62,8 +62,8 @@ tape('SourceMappingDecoder', function (t) {
     // console.log(result)
     st.equal(result3['start'], 103)
     st.equal(result3['length'], 2)
-    st.equal(result['file'], 4)
-    st.equal(result['jump'], '-')
+    st.equal(result3['file'], 4)
+    st.equal(result3['jump'], '-')
     testSourceMapping[82] = result3
 
     const result4 = sourceMappingDecoder.atIndex(85, sourceMapping.mapping)
