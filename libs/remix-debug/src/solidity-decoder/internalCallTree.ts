@@ -5,7 +5,7 @@ import { SourceLocationTracker } from '../source/sourceLocationTracker'
 import { EventManager } from '../eventManager'
 import { parseType } from './decodeInfo'
 import { isContractCreation, isCallInstruction, isCreateInstruction, isJumpDestInstruction } from '../trace/traceHelper'
-import { extractLocationFromAstVariable } from './types/util.js'
+import { extractLocationFromAstVariable } from './types/util'
 
 /**
  * Tree representing internal jump into function.

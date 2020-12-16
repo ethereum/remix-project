@@ -1,7 +1,7 @@
 'use strict'
 import { TraceManager } from '../src/trace/traceManager'
 import tape from 'tape'
-const web3Test = require('./resources/testWeb3')
+const web3Test = require('./resources/testWeb3.ts')
 
 tape('TraceManager', function (t) {
   let traceManager
