@@ -51,7 +51,8 @@ declare module "nightwatch" {
         sendLowLevelTx(address: string, value: string, callData: string): NightwatchBrowser,
         journalLastChild(val: string): NightwatchBrowser,
         checkTerminalFilter(filter: string, test: string): NightwatchBrowser,
-        noWorkerErrorFor(version: string): NightwatchBrowser
+        noWorkerErrorFor(version: string): NightwatchBrowser,
+        validateValueInput(selector: string, valueTosSet: string, expectedValue: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
