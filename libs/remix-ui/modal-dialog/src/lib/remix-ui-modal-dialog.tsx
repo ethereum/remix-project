@@ -1,10 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react'
+import { ModalDialogProps } from './types'
 
-import './remix-ui-modal-dialog.css';
-import {ModalDialogProps} from './types';
-
-/* eslint-disable-next-line */
-
+import './remix-ui-modal-dialog.css'
 
 export const ModalDialog = (props: ModalDialogProps) => {
   const [state, setState] = useState({
@@ -14,13 +11,14 @@ export const ModalDialog = (props: ModalDialogProps) => {
   const handleHide = () => {
     props.hide()
   }
+
   useEffect (
     () => {
       modal.current.focus()
     }, []
   )
+
   const modalKeyEvent = (keyCode) => {
-    console.log("key is ", keyCode)
     if (keyCode === 27) { // Esc
       if (props.cancel && props.cancel.fn) props.cancel.fn()
       handleHide()
@@ -34,6 +32,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
       setState((prevState)=>{return {...prevState, toggleBtn: false}})
     }
   }
+  
   const enterHandler = () => {
     if (state.toggleBtn) {
       if (props.ok && props.ok.fn) props.ok.fn()
