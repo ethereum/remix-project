@@ -5,7 +5,6 @@ import VmDebugger from './vm-debugger/vm-debugger'
 import VmDebuggerHead from './vm-debugger/vm-debugger-head'
 import { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import { DebuggerAPI, DebuggerUIProps } from './DebuggerAPI'
-import { ModalDialog } from '@remix-ui/modal-dialog'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 
@@ -24,11 +23,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     debugging: false,
     opt: {
       debugWithGeneratedSources: false
-    },
-    showModal: false,
-    modalOpt: {
-      title: '',
-      message: ''
     }
   })
 
@@ -53,11 +47,13 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       editor.event.register('breakpointCleared', (fileName, row) => {
         if (state.debugger) state.debugger.breakPointManager.remove({fileName: fileName, row: row})
       })
+  
       editor.event.register('breakpointAdded', (fileName, row) => {
         if (state.debugger) {
           state.debugger.breakPointManager.add({fileName: fileName, row: row})
         }
       })
+  
       editor.event.register('contentChanged', () => {
         unLoad()
       })
@@ -93,7 +89,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
               try {
                 content = await debuggerModule.getFile(path)
               } catch (e) {
-                showMsg('Error', e.message)
                 console.log('unable to fetch generated sources, the file probably doesn\'t exist yet', e)
               }
               if (content !== source.contents) {
@@ -119,6 +114,10 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
 
   const unloadRequested = (blockNumber, txIndex, tx) => {
     unLoad()
+  }
+
+  const isDebuggerActive = () => {
+    return state.isActive
   }
 
   const unLoad = () => {
@@ -147,13 +146,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     if (state.debugger) unLoad()
     if (!txNumber) return
     const web3 = await debuggerModule.getDebugWeb3()
-    let currentReceipt
-    try {
-      currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
-    } catch (e) {
-      showMsg('Error', e.message)
-      console.log('cant get tx', e.message)
-    }
+    const currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     const debuggerInstance = new Debugger({
       web3,
       offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
@@ -161,8 +154,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         try {
           return await debuggerModule.fetchContractAndCompile(address, currentReceipt)
         } catch (e) {
-          showMsg('Error', e.message)
-          console.log('cant fetch tx')
           console.error(e)
         }
         return null
@@ -181,90 +172,61 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           debugger: debuggerInstance
         }
       })
-    }).catch(() => {
+    }).catch((error) => {
+      // toaster(error, null, null)
       unLoad()
     })
-  }
+}
 
-  const debug = (txHash) => {
-    startDebugging(null, txHash, null)
-  }
-<<<<<<< HEAD
+const debug = (txHash) => {
+  startDebugging(null, txHash, null)
+}
 
-<<<<<<< HEAD
+
+
 const deleteHighlights = async () => {
   await debuggerModule.discardHighlight()
 }
-=======
-  const deleteHighlights = async () => {
-    await debuggerModule.call('editor', 'discardHighlight')
-  }
->>>>>>> 1b1d8f0c7... modal dialog in react
 
-=======
-  
->>>>>>> c941558da... fixing conflict
-  const stepManager = {
-    jumpTo: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpTo.bind(state.debugger.step_manager) : null,
-    stepOverBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverBack.bind(state.debugger.step_manager) : null,
-    stepIntoBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoBack.bind(state.debugger.step_manager) : null,
-    stepIntoForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoForward.bind(state.debugger.step_manager) : null,
-    stepOverForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverForward.bind(state.debugger.step_manager) : null,
-    jumpOut: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpOut.bind(state.debugger.step_manager) : null,
-    jumpPreviousBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpPreviousBreakpoint.bind(state.debugger.step_manager) : null,
-    jumpNextBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpNextBreakpoint.bind(state.debugger.step_manager) : null,
-    jumpToException: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpToException.bind(state.debugger.step_manager) : null,
-    traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
-    registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null,
-  }
-  const vmDebugger = {
-    registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
-    triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
-  }
-
-  const hideModal = () => {
-    setState((prevState) => { return { ...prevState, showModal: false } })
-  }
-  const showMsg = (title, message) => {
-    setState((prevState) => { return { ...prevState, showModal: true, modalOpt: { title, message } } })
-  }
+const stepManager = {
+  jumpTo: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpTo.bind(state.debugger.step_manager) : null,
+  stepOverBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverBack.bind(state.debugger.step_manager) : null,
+  stepIntoBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoBack.bind(state.debugger.step_manager) : null,
+  stepIntoForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoForward.bind(state.debugger.step_manager) : null,
+  stepOverForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverForward.bind(state.debugger.step_manager) : null,
+  jumpOut: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpOut.bind(state.debugger.step_manager) : null,
+  jumpPreviousBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpPreviousBreakpoint.bind(state.debugger.step_manager) : null,
+  jumpNextBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpNextBreakpoint.bind(state.debugger.step_manager) : null,
+  jumpToException: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpToException.bind(state.debugger.step_manager) : null,
+  traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
+  registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null,
+}
+const vmDebugger = {
+  registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
+  triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
+}
 
   return (
-    <div>
-      {state.showModal &&
-      <ModalDialog
-        title={state.modalOpt.title}
-        ok={{ label: 'Yes', fn: () => { console.log('OK') } }}
-        cancel={{ label: 'No', fn: () => { console.log('cancel') } }}
-        hide={hideModal}
-        content={<span>{state.modalOpt.message} <textarea onKeyDown={(e) => { e.stopPropagation() }} name="" id="" cols="30" rows="10" /></span>}
-        opts={{ class: 'p-2', hideClose: false }}
-      />
-      }
-      <div className='px-2'>
-        <div className='mt-3'>
-          <p className='mt-2 debuggerLabel'>Debugger Configuration</p>
-          <div className='mt-2 debuggerConfig custom-control custom-checkbox'>
-            <input className='custom-control-input' id='debugGeneratedSourcesInput' onChange={({ target: { checked } }) => {
-              setState(prevState => {
-                return { ...prevState, opt: { debugWithGeneratedSources: checked } }
-              })
-            }} type='checkbox' title='Debug with generated sources' />
-            <label data-id='debugGeneratedSourcesLabel' className='form-check-label custom-control-label' htmlFor='debugGeneratedSourcesInput'>Use generated sources (from Solidity v0.7.2)</label>
+      <div>
+        <div className="px-2">
+          <div className="mt-3">
+            <p className="mt-2 debuggerLabel">Debugger Configuration</p>
+            <div className="mt-2 debuggerConfig custom-control custom-checkbox">
+              <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
+                setState(prevState => {
+                  return { ...prevState, opt: { debugWithGeneratedSources: checked }}
+                })
+              }} type="checkbox" title="Debug with generated sources" />
+              <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (from Solidity v0.7.2)</label>
+            </div>
           </div>
+          <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } transactionNumber={ state.txNumber } debugging={ state.debugging } />
+  { state.debugging && <StepManager stepManager={ stepManager } /> }
+  { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
         </div>
-        <TxBrowser
-          requestDebug={ requestDebug }
-          unloadRequested={ unloadRequested }
-          transactionNumber={ state.txNumber }
-          debugging={ state.debugging }
-        />
-        { state.debugging && <StepManager stepManager={ stepManager } /> }
-        { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
+  { state.debugging && <div className="statusMessage">{ state.statusMessage }</div> }
+  { state.debugging && <VmDebugger vmDebugger={ vmDebugger } /> }
       </div>
-      { state.debugging && <div className='statusMessage'>{ state.statusMessage }</div> }
-      { state.debugging && <VmDebugger vmDebugger={ vmDebugger } /> }
-    </div>
   )
 }
 
