@@ -41,7 +41,7 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "lint:libs": "nx run-many --target=lint --projects=remixd,remix-ui-modal-dialog,remix-ui-toaster,remix-ui-file-explorer",
+    "lint:libs": "nx run-many --target=lint --projects=remixd,remix-ui-tree-view,remix-ui-modal-dialog,remix-ui-toaster,remix-ui-file-explorer",
     "build:libs": "nx run-many --target=build --parallel=false --with-deps=true --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd",
     "test:libs": "nx run-many --target=test --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd",
     "publish:libs": "npm run build:libs & lerna publish --skip-git & npm run bumpVersion:libs",
