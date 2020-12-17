@@ -160,7 +160,7 @@
     "time-stamp": "^2.2.0",
     "winston": "^3.3.3",
     "ws": "^7.3.0"
-  }, 
+  },
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/plugin-transform-modules-amd": "^7.10.4",

@@ -71,6 +71,7 @@ module.exports = class Filepanel extends ViewPlugin {
     `
 
     this.remixdHandle = new RemixdHandle(this.remixdExplorer, this._deps.fileProviders.localhost, appManager)
+    this.gitHandle = new GitHandle()
 
     this.event = new EventManager()
     // fileExplorer.ensureRoot()
