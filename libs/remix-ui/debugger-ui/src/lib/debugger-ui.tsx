@@ -5,7 +5,7 @@ import VmDebugger from './vm-debugger/vm-debugger'
 import VmDebuggerHead from './vm-debugger/vm-debugger-head'
 import { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import { DebuggerUIProps } from './DebuggerAPI'
-import { RemixUiToaster } from '@remix-ui/toaster'
+import { Toaster } from '@remix-ui/toaster'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 
@@ -209,7 +209,7 @@ const vmDebugger = {
 }
  return (
       <div>
-        <RemixUiToaster message={state.toastMessage} />
+        <Toaster message={state.toastMessage} />
         <div className="px-2">
           <div className="mt-3">
             <p className="mt-2 debuggerLabel">Debugger Configuration</p>
