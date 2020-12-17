@@ -1,1 +1,1 @@
-export * from './lib/remix-ui-toaster';
+export * from './lib/toaster';

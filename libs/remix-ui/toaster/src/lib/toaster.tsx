@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
 
-import './remix-ui-toaster.css';
+import './toaster.css';
 
 /* eslint-disable-next-line */
-export interface RemixUiToasterProps {
+export interface ToasterProps {
   message: any
-  opts?: RemixUiToasterOptions
+  opts?: ToasterOptions
 }
 
-export interface RemixUiToasterOptions {
+export interface ToasterOptions {
   time: number
 }
 
-export const RemixUiToaster = (props: RemixUiToasterProps) => {
+export const Toaster = (props: ToasterProps) => {
   const [state, setState] = useState({
     timeOutId: null,
     message: '',
@@ -51,7 +51,7 @@ export const RemixUiToaster = (props: RemixUiToasterProps) => {
   }
 
   function showFullMessage () {
-    alert(state.message)
+    // alert(state.message)
   }
 
   function closeTheToaster () {
@@ -60,7 +60,7 @@ export const RemixUiToaster = (props: RemixUiToasterProps) => {
 
   // out()
   const animate = state.timeOutId ? (state.hiding ? 'remixui_animateBottom' : 'remixui_animateTop') : ''
-  const hide = state.timeOutId
+  // const hide = state.timeOutId
   const className = `remixui_tooltip alert alert-info p-2 ${animate}`
   return (
     <div data-shared="tooltipPopup" className={className}  onMouseEnter={() => { }} onMouseLeave={() => { }}>
@@ -77,9 +77,9 @@ export const RemixUiToaster = (props: RemixUiToasterProps) => {
   // animation(this.tooltip, css.animateBottom.className)  
 };
 
-export default RemixUiToaster;
+export default Toaster;
 
-const defaultOptions = (opts) : RemixUiToasterOptions => {
+const defaultOptions = (opts) : ToasterOptions => {
   opts = opts || {}
   return {
     time: opts.time || 7000
