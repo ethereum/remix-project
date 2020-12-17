@@ -22,6 +22,7 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
       requestDebug(undefined, state.txNumber)
     }
   }
+
   const unload = () => {
     unloadRequested()
   }
