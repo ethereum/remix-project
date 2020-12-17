@@ -78,6 +78,9 @@
     },
     "remix-ui-clipboard": {
       "tags": []
+    },
+    "remix-ui-modal-dialog": {
+      "tags": []
     }
   }
 }
