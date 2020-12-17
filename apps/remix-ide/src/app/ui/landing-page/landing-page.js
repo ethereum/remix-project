@@ -203,6 +203,15 @@ export class LandingPage extends ViewPlugin {
       </div>
     `
     yo.update(this.twitterFrame, twitterFrame)
+
+    const invertNum = (themeQuality === 'dark') ? 1 : 0
+    if (this.solEnv.getElementsByTagName('img')[0]) this.solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    if (this.pipelineEnv.getElementsByTagName('img')[0]) this.pipelineEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    if (this.debuggerEnv.getElementsByTagName('img')[0]) this.debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    if (this.mythXEnv.getElementsByTagName('img')[0]) this.mythXEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    if (this.sourcifyEnv.getElementsByTagName('img')[0]) this.sourcifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    if (this.moreEnv.getElementsByTagName('img')[0]) this.moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    if (this.websiteIcon) this.websiteIcon.style.filter = `invert(${invertNum})`
   }
 
   showMediaPanel (e) {
@@ -305,22 +314,25 @@ export class LandingPage extends ViewPlugin {
     }
 
     // main
-    const solEnv = createLargeButton('assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
+    this.solEnv = createLargeButton('assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
     // Featured
-    const pipelineEnv = createLargeButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
-    const debuggerEnv = createLargeButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
-    const mythXEnv = createLargeButton('assets/img/mythxLogo.webp', 'mythxLogo', 'MythX', startMythX)
-    const sourcifyEnv = createLargeButton('assets/img/sourcifyLogo.webp', 'sourcifyLogo', 'Sourcify', startSourceVerify)
-    const moreEnv = createLargeButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
+    this.pipelineEnv = createLargeButton('assets/img/pipelineLogo.webp', 'pipelineLogo', 'Pipeline', startPipeline)
+    this.debuggerEnv = createLargeButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
+    this.mythXEnv = createLargeButton('assets/img/mythxLogo.webp', 'mythxLogo', 'MythX', startMythX)
+    this.sourcifyEnv = createLargeButton('assets/img/sourcifyLogo.webp', 'sourcifyLogo', 'Sourcify', startSourceVerify)
+    this.moreEnv = createLargeButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
+    this.websiteIcon = yo`<img id='remixHhomeWebsite' class="mr-1 ${css.image}" src="${profile.icon}"></img>`
 
     const themeQuality = globalRegistry.get('themeModule').api.currentTheme().quality
     const invertNum = (themeQuality === 'dark') ? 1 : 0
-    solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    pipelineEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    mythXEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    sourcifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    this.solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    this.pipelineEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    this.debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    this.mythXEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    this.sourcifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    this.moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    this.websiteIcon.style.filter = `invert(${invertNum})`
+
 
     const switchToPreviousVersion = () => {
       const query = new QueryParams()
@@ -347,12 +359,12 @@ export class LandingPage extends ViewPlugin {
                   <div class="plugins mb-5">
                   <h4>Featured Plugins</h4>
                   <div class="d-flex flex-row pt-2">
-                    ${solEnv}
-                    ${pipelineEnv}
-                    ${mythXEnv}
-                    ${sourcifyEnv}
-                    ${debuggerEnv}
-                    ${moreEnv}
+                    ${this.solEnv}
+                    ${this.pipelineEnv}
+                    ${this.mythXEnv}
+                    ${this.sourcifyEnv}
+                    ${this.debuggerEnv}
+                    ${this.moreEnv}
                   </div>
                 </div>
                   <div class="d-flex">
@@ -400,7 +412,7 @@ export class LandingPage extends ViewPlugin {
                         <a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
                         </p>
                       <p class="mb-1">
-                        <img class="mr-1 ${css.image}" src="${profile.icon}">
+                        ${this.websiteIcon}
                         <a class="${css.text}" target="__blank" href="https://remix-project.org">Featuring website</a>
                       </p>
                       <p>
@@ -426,6 +438,7 @@ export class LandingPage extends ViewPlugin {
         </div>
       </div>
     `
+
     return container
   }
 }
