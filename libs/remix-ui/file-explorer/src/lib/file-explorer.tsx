@@ -7,7 +7,7 @@ import { FileExplorerProps, File } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 
 import './css/file-explorer.css'
-import { constants } from 'os'
+import { connected } from 'process'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { filesProvider, name, registry, plugin } = props
@@ -234,7 +234,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const addFile = async (parentFolder: string, newFilePath: string) => {
+  const addFile = async (parentFolder: string, newFilePath: string, files?: File[]) => {
     if (parentFolder === name) {
       setState(prevState => {
         return {
@@ -248,7 +248,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
       })
     } else {
-      const updatedFiles = await resolveDirectory(parentFolder, state.files)
+      const updatedFiles = await resolveDirectory(parentFolder, files || state.files)
 
       setState(prevState => {
         return { ...prevState, files: updatedFiles, focusElement: [{ key: newFilePath, type: 'file' }] }
@@ -288,24 +288,24 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const addFolder = async (parentFolder: string, newFolderName: string) => {
+  const addFolder = async (parentFolder: string, newFolderPath: string, files?: File[]) => {
     if (parentFolder === name) {
       setState(prevState => {
         return {
           ...prevState,
           files: [{
-            path: newFolderName,
-            name: extractNameFromKey(newFolderName),
+            path: newFolderPath,
+            name: extractNameFromKey(newFolderPath),
             isDirectory: true
           }, ...prevState.files],
-          focusElement: [{ key: newFolderName, type: 'folder' }]
+          focusElement: [{ key: newFolderPath, type: 'folder' }]
         }
       })
     } else {
-      const updatedFiles = await resolveDirectory(parentFolder, state.files)
+      const updatedFiles = await resolveDirectory(parentFolder, files || state.files)
 
       setState(prevState => {
-        return { ...prevState, files: updatedFiles, focusElement: [{ key: newFolderName, type: 'folder' }] }
+        return { ...prevState, files: updatedFiles, focusElement: [{ key: newFolderPath, type: 'folder' }] }
       })
     }
   }
@@ -397,8 +397,53 @@ export const FileExplorer = (props: FileExplorerProps) => {
   props.filesProvider.event.register('fileRenamedError', (error) => {
   //   modalDialogCustom.alert(error)
   })
+
   props.filesProvider.event.register('fileAdded', async (filePath: string) => {
     const pathArr = filePath.split('/')
+    const hasChild = pathArr.length > 2
+
+    if (hasChild) {
+      const expandPath = pathArr.map((path, index) => {
+        return [...pathArr.slice(0, index)].join('/')
+      }).filter(path => path && (path !== name))
+
+      if (state.files.findIndex(item => item.path === expandPath[0]) === -1) {
+        const dir = buildTree(expandPath)
+        let files = [dir, ...state.files]
+
+        await Promise.all(expandPath.map(async path => {
+          files = await resolveDirectory(path, files)
+        }))
+        setState(prevState => {
+          return { ...prevState, files, expandPath: [...state.expandPath, ...expandPath] }
+        })
+      } else {
+        console.log('called here again')
+        console.log('expandPath[expandPath.length - 1]: ', expandPath[expandPath.length - 1])
+        if (state.expandPath.findIndex(path => path === expandPath[expandPath.length - 1]) !== -1) return
+        const dir = state.files.find(item => item.path === expandPath[0])
+        let files = [{
+          ...dir,
+          child: [...(await fetchDirectoryContent(dir.path))]
+        }, ...state.files.filter(item => item.path !== expandPath[0])]
+        console.log('files: ', files)
+
+        await Promise.all(expandPath.map(async path => {
+          files = await resolveDirectory(path, files)
+        }))
+        const updatedPath = [state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(expandPath[0]))]
+
+        setState(prevState => {
+          return { ...prevState, files, expandPath: [...updatedPath, ...expandPath] }
+        })
+      }
+    } else {
+      addFile(pathArr[0], filePath)
+    }
+  })
+
+  props.filesProvider.event.register('folderAdded', async (folderpath: string) => {
+    const pathArr = folderpath.split('/')
     const hasChild = pathArr.length > 2
 
     if (hasChild) {
@@ -434,18 +479,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       }
     } else {
-      const files = [...state.files, {
-        path: filePath,
-        name: extractNameFromKey(filePath),
-        isDirectory: false
-      }]
-
-      setState(prevState => {
-        return { ...prevState, files }
-      })
+      addFolder(pathArr[0], folderpath)
     }
+
+    // folderpath = folderpath.split('/').slice(0, -1).join('/')
+    // self.files.resolveDirectory(folderpath, (error, fileTree) => {
+    //   if (error) console.error(error)
+    //   if (!fileTree) return
+    //   fileTree = normalize(folderpath, fileTree)
+    //   self.treeView.updateNodeFromJSON(folderpath, fileTree, true)
+    //   if (!self.treeView.isExpanded(folderpath)) self.treeView.expand(folderpath)
+    // })
   })
-  // files.event.register('folderAdded', folderAdded)
 
   const handleClickFile = (path: string) => {
     state.fileManager.open(path)
