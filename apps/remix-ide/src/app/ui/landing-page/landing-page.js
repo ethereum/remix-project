@@ -333,7 +333,6 @@ export class LandingPage extends ViewPlugin {
     this.moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     this.websiteIcon.style.filter = `invert(${invertNum})`
 
-
     const switchToPreviousVersion = () => {
       const query = new QueryParams()
       query.update({ appVersion: '0.7.7' })
