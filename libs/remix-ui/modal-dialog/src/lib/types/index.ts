@@ -1,4 +1,3 @@
-/* eslint-disable */
 export interface ModalDialogProps {
   title?: string,
   content?: JSX.Element,
