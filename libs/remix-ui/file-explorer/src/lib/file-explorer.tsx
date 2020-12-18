@@ -11,7 +11,6 @@ import './css/file-explorer.css'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { filesProvider, name, registry, plugin } = props
-  const containerRef = useRef(null)
   const [state, setState] = useState({
     focusElement: [{
       key: name,
@@ -32,7 +31,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     focusEdit: {
       element: null,
       type: '',
-      isNew: false
+      isNew: false,
+      lastEdit: ''
     },
     fileExternallyChanged: false,
     expandPath: [],
@@ -180,12 +180,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const createNewFolder = async (parentFolder: string, newFolderPath: string) => {
-    // const self = this
-    // modalDialogCustom.prompt('Create new folder', '', 'New folder', (input) => {
-    //   if (!input) {
-    //     return tooltip('Failed to create folder. The name can not be empty')
-    //   }
-
     const fileManager = state.fileManager
     const dirName = newFolderPath + '/'
     // if (error) return tooltip('Unexpected error while creating folder: ' + error)
@@ -198,18 +192,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     } catch (e) {
       // tooltip('Failed to create file ' + newName)
     }
-    // }, null, true)
   }
 
   const deletePath = async (path: string) => {
     // if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
     if (filesProvider.isReadOnly(path)) return
-    // modalDialogCustom.confirm(
-    //   'Delete file', `Are you sure you want to delete ${currentFilename} file?`,
-    //   async () => {
     const isDir = state.fileManager.isDirectory(path)
 
-    showModal('Delete file', `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, {
+    modal('Delete file', `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, {
       label: 'Ok',
       fn: async () => {
         try {
@@ -236,14 +226,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const fileManager = state.fileManager
       const exists = fileManager.exists(newPath)
 
-      if (exists) return
-      // modalDialogCustom.alert(File already exists.)
-      await fileManager.rename(oldPath, newPath)
-      const files = replacePath(oldPath, newPath, state.files)
+      if (exists) {
+        return modal('Create File Failed', 'File already exists', {
+          label: 'Ok',
+          fn: async () => {}
+        }, null)
+      } else {
+        await fileManager.rename(oldPath, newPath)
+        const files = replacePath(oldPath, newPath, state.files)
 
-      setState(prevState => {
-        return { ...prevState, files }
-      })
+        setState(prevState => {
+          return { ...prevState, files }
+        })
+      }
     } catch (error) {
       // modalDialogCustom.alert('Unexpected error while renaming: ' + error)
     }
@@ -504,7 +499,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const showModal = (title: string, message: string, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
+  const modal = (title: string, message: string, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
     setState(prevState => {
       return {
         ...prevState,
@@ -555,15 +550,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleContextMenuFile = (pageX: number, pageY: number, path: string) => {
+  const handleContextMenuFile = (pageX: number, pageY: number, path: string, content: string) => {
+    if (!content) return
     setState(prevState => {
-      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY } }
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY }, focusEdit: { ...prevState.focusEdit, lastEdit: content } }
     })
   }
 
-  const handleContextMenuFolder = (pageX: number, pageY: number, path: string) => {
+  const handleContextMenuFolder = (pageX: number, pageY: number, path: string, content: string) => {
+    if (!content) return
     setState(prevState => {
-      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY } }
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY }, focusEdit: { ...prevState.focusEdit, lastEdit: content } }
     })
   }
 
@@ -576,7 +573,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const editModeOn = (path: string, type: string, isNew: boolean = false) => {
     if (filesProvider.isReadOnly(path)) return
     setState(prevState => {
-      return { ...prevState, focusEdit: { element: path, isNew, type } }
+      return { ...prevState, focusEdit: { ...prevState.focusEdit, element: path, isNew, type } }
     })
   }
 
@@ -589,23 +586,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
         const updatedFiles = files.filter(file => file)
 
         setState(prevState => {
-          return { ...prevState, files: updatedFiles, focusEdit: { element: null, isNew: false, type: '' } }
+          return { ...prevState, files: updatedFiles, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
       } else {
-        // modalDialogCustom.alert('Are you sure you want to delete this file?')
-        if (true) { // eslint-disable-line
-          await deletePath(state.focusEdit.element)
-
-          setState(prevState => {
-            return { ...prevState, focusEdit: { element: null, isNew: false, type: '' } }
-          })
-        } else {
-
-        }
+        setState(prevState => {
+          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+        })
       }
     } else {
       if (helper.checkSpecialChars(content)) {
-        showModal('Validation Error', 'Special characters are not allowed', {
+        modal('Validation Error', 'Special characters are not allowed', {
           label: 'Ok',
           fn: () => {}
         }, null)
@@ -626,7 +616,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           renamePath(oldPath, newPath)
         }
         setState(prevState => {
-          return { ...prevState, focusEdit: { element: null, isNew: false, type: '' } }
+          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
       }
     }
@@ -693,7 +683,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             onContextMenu={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              handleContextMenuFolder(e.pageX, e.pageY, file.path)
+              handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent)
             }}
             labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
             editable={state.focusEdit.element === file.path}
@@ -740,7 +730,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             onContextMenu={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              handleContextMenuFile(e.pageX, e.pageY, file.path)
+              handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent)
             }}
             icon='fa fa-file'
             labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
@@ -767,22 +757,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   return (
-    <div
-      ref={containerRef}
-      tabIndex={-1}
-      onKeyDown={(e) => {
-        if (e.ctrlKey) {
-          setState(prevState => {
-            return { ...prevState, ctrlKey: true }
-          })
-        }
-      }}
-      onKeyUp={() => {
-        setState(prevState => {
-          return { ...prevState, ctrlKey: false }
-        })
-      }}
-    >
+    <div>
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
           label={
