@@ -3,6 +3,7 @@ import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-l
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 
@@ -34,7 +35,21 @@ export const FileExplorer = (props: FileExplorerProps) => {
       isNew: false
     },
     fileExternallyChanged: false,
-    expandPath: []
+    expandPath: [],
+    modalOptions: {
+      hide: true,
+      title: '',
+      message: '',
+      ok: {
+        label: 'Ok',
+        fn: null
+      },
+      cancel: {
+        label: 'Cancel',
+        fn: null
+      },
+      handleHide: null
+    }
   })
 
   useEffect(() => {
@@ -147,7 +162,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const createNewFile = (parentFolder: string, newFilePath: string) => {
-    // if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
     const fileManager = state.fileManager
 
     helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
@@ -166,8 +180,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const createNewFolder = async (parentFolder: string, newFolderPath: string) => {
-    // if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
-    // else if (parentFolder.indexOf('.sol') !== -1) parentFolder = extractParentFromKey(parentFolder)
     // const self = this
     // modalDialogCustom.prompt('Create new folder', '', 'New folder', (input) => {
     //   if (!input) {
@@ -192,27 +204,31 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const deletePath = async (path: string) => {
     // if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
     if (filesProvider.isReadOnly(path)) return
-    // const currentFilename = extractNameFromKey(path)
-
     // modalDialogCustom.confirm(
     //   'Delete file', `Are you sure you want to delete ${currentFilename} file?`,
     //   async () => {
-    try {
-      const fileManager = state.fileManager
+    const isDir = state.fileManager.isDirectory(path)
 
-      await fileManager.remove(path)
-      const files = removePath(path, state.files)
-      const updatedFiles = files.filter(file => file)
+    showModal('Delete file', `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, {
+      label: 'Ok',
+      fn: async () => {
+        try {
+          const fileManager = state.fileManager
+          await fileManager.remove(path)
+          const files = removePath(path, state.files)
+          const updatedFiles = files.filter(file => file)
 
-      setState(prevState => {
-        return { ...prevState, files: updatedFiles }
-      })
-    } catch (e) {
-      // tooltip(`Failed to remove file ${key}.`)
-    }
-    // },
-    // () => {}
-    // )
+          setState(prevState => {
+            return { ...prevState, files: updatedFiles }
+          })
+        } catch (e) {
+          // tooltip(`Failed to remove file ${key}.`)
+        }
+      }
+    }, {
+      label: 'Cancel',
+      fn: () => {}
+    })
   }
 
   const renamePath = async (oldPath: string, newPath: string) => {
@@ -482,6 +498,29 @@ export const FileExplorer = (props: FileExplorerProps) => {
   //   }
   // })
 
+  const handleHideModal = () => {
+    setState(prevState => {
+      return { ...prevState, modalOptions: { ...state.modalOptions, hide: true } }
+    })
+  }
+
+  const showModal = (title: string, message: string, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
+    setState(prevState => {
+      return {
+        ...prevState,
+        modalOptions: {
+          ...prevState.modalOptions,
+          hide: false,
+          message,
+          title,
+          ok,
+          cancel,
+          handleHide: handleHideModal
+        }
+      }
+    })
+  }
+
   const handleClickFile = (path: string) => {
     state.fileManager.open(path)
     setState(prevState => {
@@ -564,28 +603,33 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
         }
       }
-      return
-    }
-    if (state.focusEdit.isNew) {
-      state.focusEdit.type === 'file' ? createNewFile(parentFolder, parentFolder + '/' + content) : createNewFolder(parentFolder, parentFolder + '/' + content)
-      const files = removePath(state.focusEdit.element, state.files)
-      const updatedFiles = files.filter(file => file)
-
-      setState(prevState => {
-        return { ...prevState, files: updatedFiles }
-      })
     } else {
-      if (helper.checkSpecialChars(content)) return
-      // modalDialogCustom.alert('Special characters are not allowed')
-      const oldPath: string = state.focusEdit.element
-      const oldName = extractNameFromKey(oldPath)
-      const newPath = oldPath.replace(oldName, content)
+      if (helper.checkSpecialChars(content)) {
+        showModal('Validation Error', 'Special characters are not allowed', {
+          label: 'Ok',
+          fn: () => {}
+        }, null)
+      } else {
+        if (state.focusEdit.isNew) {
+          state.focusEdit.type === 'file' ? createNewFile(parentFolder, parentFolder + '/' + content) : createNewFolder(parentFolder, parentFolder + '/' + content)
+          const files = removePath(state.focusEdit.element, state.files)
+          const updatedFiles = files.filter(file => file)
 
-      renamePath(oldPath, newPath)
+          setState(prevState => {
+            return { ...prevState, files: updatedFiles }
+          })
+        } else {
+          const oldPath: string = state.focusEdit.element
+          const oldName = extractNameFromKey(oldPath)
+          const newPath = oldPath.replace(oldName, content)
+
+          renamePath(oldPath, newPath)
+        }
+        setState(prevState => {
+          return { ...prevState, focusEdit: { element: null, isNew: false, type: '' } }
+        })
+      }
     }
-    setState(prevState => {
-      return { ...prevState, focusEdit: { element: null, isNew: false, type: '' } }
-    })
   }
 
   const handleNewFileInput = async (parentFolder?: string) => {
@@ -602,7 +646,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleNewFolderInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
-    else if (parentFolder.indexOf('.sol') !== -1) parentFolder = extractParentFromKey(parentFolder)
+    else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
     let files = await resolveDirectory(parentFolder, state.files)
     const expandPath = [...state.expandPath, parentFolder]
 
@@ -765,6 +809,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
           </div>
         </TreeViewItem>
       </TreeView>
+      <ModalDialog
+        title={ state.modalOptions.title }
+        message={ state.modalOptions.message }
+        hide={ state.modalOptions.hide }
+        ok={ state.modalOptions.ok }
+        cancel={ state.modalOptions.cancel }
+        handleHide={ handleHideModal }
+      />
     </div>
   )
 }
