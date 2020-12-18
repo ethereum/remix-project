@@ -18,9 +18,8 @@ export class DynamicByteArray extends RefType {
       console.log(e)
       return { value: '<decoding failed - ' + e.message + '>', type: this.typeName }
     }
-    const bn = new BN(value, 16)
-    if (bn.testn(0)) {
-      const length: BN = bn.div(new BN(2))
+    const length = new BN(value, 16)
+    if (length.testn(0)) {
       let dataPos = new BN(sha3256(location.slot).replace('0x', ''), 16)
       let ret = ''
       let currentSlot = '0x'
