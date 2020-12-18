@@ -28,7 +28,7 @@ class ContextView {
     this._view = null
     this._nodes = null
     this._current = null
-    this.sourceMappingDecoder = new SourceMappingDecoder()
+    this.sourceMappingDecoder = SourceMappingDecoder
     this.previousElement = null
     this.contextualListener.event.register('contextChanged', nodes => {
       this.show()

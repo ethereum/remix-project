@@ -14,7 +14,7 @@ export class OffsetToLineColumnConverter extends Plugin {
   constructor () {
     super(profile)
     this.lineBreakPositionsByContent = {}
-    this.sourceMappingDecoder = new SourceMappingDecoder()
+    this.sourceMappingDecoder = SourceMappingDecoder
   }
 
   /**
