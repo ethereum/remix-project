@@ -39,7 +39,7 @@ class ContextualListener extends Plugin {
     this._activeHighlights = []
     this.editor.event.register('contentChanged', () => { this._stopHighlighting() })
 
-    this.sourceMappingDecoder = new SourceMappingDecoder()
+    this.sourceMappingDecoder = SourceMappingDecoder
     this.astWalker = new AstWalker()
   }
 
