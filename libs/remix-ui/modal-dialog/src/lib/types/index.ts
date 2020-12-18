@@ -1,9 +1,11 @@
 export interface ModalDialogProps {
   title?: string,
-  content?: JSX.Element,
-  ok?: {label:string, fn: () => void},
-  cancel?: {label:string, fn: () => void},
-  focusSelector?: string,
-  opts?: {class: string, hideClose?: boolean},
-  hide: () => void
+  message?: string,
+  ok?: { label: string, fn: () => void },
+  cancel: { label: string, fn: () => void },
+  modalClass?: string,
+  showCancelIcon?: boolean,
+  hide: boolean,
+  handleHide: (hideState?: boolean) => void,
+  children?: React.ReactNode
 }
