@@ -1,1 +1,1 @@
-export * from './lib/toaster';
+export * from './lib/toaster'
