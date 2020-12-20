@@ -51,6 +51,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
       handleHide: null
     }
   })
+  const editRef = useRef(null)
+
+  useEffect(() => {
+    editRef && editRef.current && editRef.current.focus()
+  }, [state.focusEdit.element])
 
   useEffect(() => {
     (async () => {
@@ -165,15 +170,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const fileManager = state.fileManager
 
     helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
-      // if (error) return tooltip('Failed to create file ' + newName + ' ' + error)
-      if (error) return
-      const createFile = await fileManager.writeFile(newName, '')
-
-      if (!createFile) {
-        // tooltip('Failed to create file ' + newName)
+      if (error) {
+        return modal('Create File Failed', error, {
+          label: 'Close',
+          fn: async () => {}
+        }, null)
       } else {
-        addFile(parentFolder, newName)
-        await fileManager.open(newName)
+        const createFile = await fileManager.writeFile(newName, '')
+
+        if (!createFile) {
+          // tooltip('Failed to create file ' + newName)
+        } else {
+          addFile(parentFolder, newName)
+          await fileManager.open(newName)
+        }
       }
     })
     // }, null, true)
@@ -227,8 +237,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const exists = fileManager.exists(newPath)
 
       if (exists) {
-        return modal('Create File Failed', 'File already exists', {
-          label: 'Ok',
+        return modal('Rename File Failed', 'File name already exists', {
+          label: 'Close',
           fn: async () => {}
         }, null)
       } else {
@@ -240,7 +250,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       }
     } catch (error) {
-      // modalDialogCustom.alert('Unexpected error while renaming: ' + error)
+      modal('Rename File Failed', 'Unexpected error while renaming: ' + error, {
+        label: 'Close',
+        fn: async () => {}
+      }, null)
     }
   }
 
@@ -589,11 +602,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
           return { ...prevState, files: updatedFiles, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
       } else {
+        editRef.current.textContent = state.focusEdit.lastEdit
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
       }
     } else {
+      if (state.focusEdit.lastEdit === content) {
+        return setState(prevState => {
+          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+        })
+      }
       if (helper.checkSpecialChars(content)) {
         modal('Validation Error', 'Special characters are not allowed', {
           label: 'Ok',
@@ -647,20 +666,37 @@ export const FileExplorer = (props: FileExplorerProps) => {
     editModeOn(parentFolder + '/blank', 'folder', true)
   }
 
+  const handleEditInput = (event) => {
+    if (event.which === 13) {
+      event.preventDefault()
+      editModeOff(editRef.current.innerText)
+    }
+  }
+
   // warn if file changed outside of Remix
   const remixdDialog = () => {
     return <div>This file has been changed outside of Remix IDE.</div>
   }
 
-  const label = (data: File) => {
+  const label = (file: File) => {
     return (
-      <div className='remixui_items'>
+      <div
+        className='remixui_items d-inline-block w-100'
+        ref={state.focusEdit.element === file.path ? editRef : null}
+        suppressContentEditableWarning={true}
+        contentEditable={state.focusEdit.element === file.path}
+        onKeyDown={handleEditInput}
+        onBlur={(e) => {
+          e.stopPropagation()
+          editModeOff(editRef.current.innerText)
+        }}
+      >
         <span
-          title={data.path}
-          className={'remixui_label ' + (data.isDirectory ? 'folder' : 'remixui_leaf')}
-          data-path={data.path}
+          title={file.path}
+          className={'remixui_label ' + (file.isDirectory ? 'folder' : 'remixui_leaf')}
+          data-path={file.path}
         >
-          { data.name }
+          { file.name }
         </span>
       </div>
     )
@@ -686,8 +722,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
               handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent)
             }}
             labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
-            editable={state.focusEdit.element === file.path}
-            onBlur={(value) => editModeOff(value)}
             controlBehaviour={ state.ctrlKey }
             expand={state.expandPath.includes(file.path)}
           >
@@ -734,8 +768,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
             }}
             icon='fa fa-file'
             labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
-            editable={state.focusEdit.element === file.path}
-            onBlur={(value) => editModeOff(value)}
           />
           { ((state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)) &&
             <FileExplorerContextMenu
