@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react' // eslint-disable-line
 
-import './toaster.css';
+import './toaster.css'
 
 /* eslint-disable-next-line */
 export interface ToasterProps {
@@ -32,7 +32,7 @@ export const Toaster = (props: ToasterProps) => {
           }
         })
       }, opts.time)
-    }    
+    }
 
     setState(prevState => {
       return {
@@ -45,7 +45,7 @@ export const Toaster = (props: ToasterProps) => {
   }, [props.message])
 
   const shortTooltipText = state.message.length > 201 ? state.message.substring(0, 200) + '...' : state.message
-      
+
   function hide () {
     if (state.timeOutId) clearTimeout(state.timeOutId)
   }
@@ -55,7 +55,7 @@ export const Toaster = (props: ToasterProps) => {
   }
 
   function closeTheToaster () {
-    hide()           
+    hide()
   }
 
   // out()
@@ -63,21 +63,20 @@ export const Toaster = (props: ToasterProps) => {
   // const hide = state.timeOutId
   const className = `remixui_tooltip alert alert-info p-2 ${animate}`
   return (
-    <div data-shared="tooltipPopup" className={className}  onMouseEnter={() => { }} onMouseLeave={() => { }}>
+    <div data-shared="tooltipPopup" className={className} onMouseEnter={() => { }} onMouseLeave={() => { }}>
       <span className="px-2">
         {shortTooltipText}
-        { state.message.length > 201 ? <button className="btn btn-secondary btn-sm mx-3" style={{whiteSpace: 'nowrap'}} onClick={() => showFullMessage()}>Show full message</button> : ''}            
+        { state.message.length > 201 ? <button className="btn btn-secondary btn-sm mx-3" style={{ whiteSpace: 'nowrap' }} onClick={() => showFullMessage()}>Show full message</button> : ''}
       </span>
-      <span style={{alignSelf: 'baseline'}}>
+      <span style={{ alignSelf: 'baseline' }}>
         <button data-id="tooltipCloseButton" className="fas fa-times btn-info mx-1 p-0" onClick={() => closeTheToaster()}></button>
       </span>
     </div>
   )
-  
-  // animation(this.tooltip, css.animateBottom.className)  
-};
+  // animation(this.tooltip, css.animateBottom.className)
+}
 
-export default Toaster;
+export default Toaster
 
 const defaultOptions = (opts) : ToasterOptions => {
   opts = opts || {}
