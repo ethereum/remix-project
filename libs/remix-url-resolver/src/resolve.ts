@@ -42,6 +42,7 @@ export class RemixURLResolver {
   * @params cleanURL
   */
   async handleHttp(url: string, _: string) {
+    console.log('Inside libs handleHttpCall')
   //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
