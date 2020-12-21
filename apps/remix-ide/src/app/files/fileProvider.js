@@ -170,7 +170,7 @@ class FileProvider {
             const items = window.remixFileSystem.readdirSync(path)
             if (items.length !== 0) {
               items.forEach((item, index) => {
-                const curPath = `${path}/${item}`
+                const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
                 if (window.remixFileSystem.statSync(curPath).isDirectory()) { // delete folder
                   this.remove(curPath)
                 } else { // delete file
@@ -238,6 +238,7 @@ class FileProvider {
 
   removePrefix (path) {
     path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
+    if (path === '') return '/'
     return path
   }
 
