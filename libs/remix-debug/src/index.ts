@@ -7,7 +7,7 @@ import { StorageViewer } from './storage/storageViewer'
 import { StorageResolver } from './storage/storageResolver'
 import * as SolidityDecoder from './solidity-decoder'
 import { BreakpointManager } from './code/breakpointManager'
-import * as SourceMappingDecoder from './source/sourceMappingDecoder'
+import * as sourceMappingDecoder from './source/sourceMappingDecoder'
 import * as traceHelper from './trace/traceHelper'
 
 /*
@@ -21,7 +21,7 @@ import * as traceHelper from './trace/traceHelper'
 export = {
   init,
   traceHelper,
-  SourceMappingDecoder,
+  sourceMappingDecoder,
   EthDebugger,
   TransactionDebugger,
   /**
