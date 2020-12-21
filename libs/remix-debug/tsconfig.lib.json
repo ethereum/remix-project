@@ -3,7 +3,8 @@
     "compilerOptions": {
       "module": "commonjs",
       "outDir": "../../dist/out-tsc",
-      "allowJs": true,
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
       "declaration": true,
       "rootDir": "./",
       "types": ["node"]
