@@ -1,7 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../package.json'
-var SourceMappingDecoder = require('@remix-project/remix-debug').SourceMappingDecoder
+import { sourceMappingDecoder } from '@remix-project/remix-debug'
 
 const profile = {
   name: 'offsetToLineColumnConverter',
@@ -14,7 +14,7 @@ export class OffsetToLineColumnConverter extends Plugin {
   constructor () {
     super(profile)
     this.lineBreakPositionsByContent = {}
-    this.sourceMappingDecoder = SourceMappingDecoder
+    this.sourceMappingDecoder = sourceMappingDecoder
   }
 
   /**

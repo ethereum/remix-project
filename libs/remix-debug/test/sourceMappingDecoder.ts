@@ -5,11 +5,10 @@ import * as sourceMappingDecoder from '../src/source/sourceMappingDecoder'
 const compiler = require('solc')
 const compilerInput = require('./helpers/compilerHelper').compilerInput
 
-tape('SourceMappingDecoder', function (t) {
-  t.test('SourceMappingDecoder.findNodeAtInstructionIndex', function (st) {
+tape('sourceMappingDecoder', function (t) {
+  t.test('sourceMappingDecoder.findNodeAtInstructionIndex', function (st) {
     let output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
-    // const sourceMappingDecoder = new SourceMappingDecoder()
     let node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
     st.equal(node, null)
     node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 80, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
@@ -23,7 +22,6 @@ tape('SourceMappingDecoder', function (t) {
   const testSourceMapping = {}
   t.test('sourceMappingDecoder', function (st) {
     st.plan(36)
-    // const sourceMappingDecoder = new SourceMappingDecoder()
     console.log('test decompressAll')
     let result = sourceMappingDecoder.decompressAll(sourceMapping.mapping)
     st.equal(result[0].start, 0)
