@@ -1,6 +1,6 @@
 'use strict'
-const yo = require('yo-yo')
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
+const yo = require('yo-yo')
 const globalRegistry = require('../../global/registry')
 
 const css = require('./styles/contextView-styles')
