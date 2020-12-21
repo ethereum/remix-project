@@ -235,7 +235,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   engine.register(appManager)
 
   // SERVICES
-  // ----------------- theme servive ---------------------------------
+  // ----------------- theme service ---------------------------------
   const themeModule = new ThemeModule(registry)
   registry.put({ api: themeModule, name: 'themeModule' })
   themeModule.initTheme(() => {
@@ -244,22 +244,22 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       self._view.el.style.visibility = 'visible'
     }, 1500)
   })
-  // ----------------- editor servive ----------------------------
+  // ----------------- editor service ----------------------------
   const editor = new Editor({}, themeModule) // wrapper around ace editor
   registry.put({ api: editor, name: 'editor' })
   editor.event.register('requiringToSaveCurrentfile', () => fileManager.saveCurrentFile())
 
-  // ----------------- fileManager servive ----------------------------
+  // ----------------- fileManager service ----------------------------
   const fileManager = new FileManager(editor, appManager)
   registry.put({ api: fileManager, name: 'filemanager' })
 
-  // ----------------- import content servive ------------------------
+  // ----------------- import content service ------------------------
   const contentImport = new CompilerImport(fileManager)
 
   const blockchain = new Blockchain(registry.get('config').api)
   const pluginUdapp = new PluginUDapp(blockchain)
 
-  // ----------------- compilation metadata generation servive ---------
+  // ----------------- compilation metadata generation service ---------
   const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
   // ----------------- compilation result service (can keep track of compilation results) ----------------------------
   const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
