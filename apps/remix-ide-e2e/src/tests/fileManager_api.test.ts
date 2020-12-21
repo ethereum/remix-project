@@ -87,7 +87,15 @@ module.exports = {
     .addFile('removeFile.js', { content: executeRemove })
     .executeScript(`remix.exeCurrent()`)
     .pause(2000)
-    .waitForElementNotPresent('[data-id="treeViewLibrowser/old_contract.sol"]')
+    .waitForElementNotPresent('[data-id="treeViewLibrowser/old_contract.sol"]')    
+  },
+
+  'Should execute `remove` api from file manager external api on a folder': function (browser: NightwatchBrowser) {
+    browser
+    .addFile('test_jsRemoveFolder.js', { content: executeRemoveOnFolder })
+    .executeScript('remix.exeCurrent()')
+    .pause(2000)
+    .waitForElementNotPresent('*[key="browser/tests"]')
     .end()
   },
 
@@ -189,3 +197,11 @@ const executeRemove = `
 
   run()
 `
+
+const executeRemoveOnFolder = `(async () => {
+  try {      
+      await remix.call('fileManager', 'remove', 'browser')
+  } catch (e) {
+      console.log(e.message)
+  }
+})()`
