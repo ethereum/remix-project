@@ -2,10 +2,9 @@
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 
-const remixdebug = require('@remix-project/remix-debug')
+import { sourceMappingDecoder } from '@remix-project/remix-debug'
 const { AstWalker } = require('@remix-project/remix-astwalker')
 const csjs = require('csjs-inject')
-const SourceMappingDecoder = remixdebug.SourceMappingDecoder
 const EventManager = require('../../lib/events')
 const globalRegistry = require('../../global/registry')
 
@@ -39,7 +38,7 @@ class ContextualListener extends Plugin {
     this._activeHighlights = []
     this.editor.event.register('contentChanged', () => { this._stopHighlighting() })
 
-    this.sourceMappingDecoder = SourceMappingDecoder
+    this.sourceMappingDecoder = sourceMappingDecoder
     this.astWalker = new AstWalker()
   }
 
