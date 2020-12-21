@@ -105,7 +105,8 @@ module.exports = {
     .waitForElementVisible('*[key="browser/fileExplorer.test.js"]')
     .waitForElementVisible('*[key="browser/generalSettings.test.js"]')
     .end()
-  },
+  },  
 
   tearDown: sauce
 }
+
