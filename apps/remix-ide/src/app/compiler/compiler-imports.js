@@ -1,6 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import {RemixURLResolver} from '@remix-project/remix-url-resolver'
 const remixTests = require('@remix-project/remix-tests')
 const globalRegistry = require('../../global/registry')
 const addTooltip = require('../ui/tooltip')
@@ -79,6 +80,7 @@ module.exports = class CompilerImports extends Plugin {
   }
 
   handleHttpCall (url, cleanUrl, cb) {
+    console.log('Inside ide handleHttpCall')
     return request.get(
       {
         url
@@ -136,7 +138,7 @@ module.exports = class CompilerImports extends Plugin {
     if (imported) {
       return cb(null, imported.content, imported.cleanUrl, imported.type, url)
     }
-    var handlers = this.handlers()
+    var handlers = new RemixURLResolver().getHandlers()
 
     var found = false
     handlers.forEach(function (handler) {
@@ -149,18 +151,24 @@ module.exports = class CompilerImports extends Plugin {
         found = true
 
         loadingCb('Loading ' + url + ' ...')
-        handler.handler(match, function (err, content, cleanUrl) {
-          if (err) {
-            cb('Unable to import "' + cleanUrl + '": ' + err)
-            return
-          }
+        handler.handle(match).then(function(content) {
           self.previouslyHandled[url] = {
             content: content,
             cleanUrl: cleanUrl,
             type: handler.type
           }
           cb(null, content, cleanUrl, handler.type, url)
-        })
+        }).catch(function (error) {
+            cb('Unable to import "' + cleanUrl + '": ' + error)
+            return
+        }) 
+        // function (err, content, cleanUrl) {
+        //   if (err) {
+            
+        //   }
+          
+          
+        // })
       }
     })
     if (found) return
