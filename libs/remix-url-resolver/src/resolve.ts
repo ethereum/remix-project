@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 
 export interface Imported {
   content: string;
-  cleanURL: string;
+  cleanUrl: string;
   type: string;
 }
 
@@ -149,10 +149,10 @@ export class RemixURLResolver {
     const matchedHandler = handlers.filter(handler => handler.match(filePath))
     const handler: Handler = matchedHandler[0]
     const match = handler.match(filePath)
-    const content: string = await handler.handle(match)
+    const { content, cleanUrl } = await handler.handle(match)
     imported = {
       content,
-      cleanURL: filePath,
+      cleanUrl : cleanUrl ? cleanUrl : filePath,
       type: handler.type
     }
     this.previouslyHandled[filePath] = imported
