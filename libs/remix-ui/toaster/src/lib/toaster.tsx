@@ -5,7 +5,7 @@ import './toaster.css'
 /* eslint-disable-next-line */
 export interface ToasterProps {
   message: any
-  opts?: ToasterOptions
+  timeOut?: number
 }
 
 export interface ToasterOptions {
@@ -14,40 +14,33 @@ export interface ToasterOptions {
 
 export const Toaster = (props: ToasterProps) => {
   const [state, setState] = useState({
-    timeOutId: null,
     message: '',
-    hiding: false
+    hide: false,
+    timeOutId: null,
+    timeOut: props.timeOut || 700
   })
 
-  const opts = defaultOptions(props.opts)
-
   useEffect(() => {
-    let timeOutId = null
     if (props.message) {
-      timeOutId = setTimeout(() => {
+      const timeOutId = setTimeout(() => {
         setState(prevState => {
-          return {
-            ...prevState,
-            hiding: true
-          }
+          return { ...prevState, hide: true }
         })
-      }, opts.time)
-    }
+      }, state.timeOut)
 
-    setState(prevState => {
-      return {
-        ...prevState,
-        message: props.message,
-        hiding: false,
-        timeOutId
-      }
-    })
+      console.log('timeOutId: ', timeOutId)
+      setState(prevState => {
+        return { ...prevState, hide: false, timeOutId, message: props.message }
+      })
+    }
   }, [props.message])
 
   const shortTooltipText = state.message.length > 201 ? state.message.substring(0, 200) + '...' : state.message
 
   function hide () {
-    if (state.timeOutId) clearTimeout(state.timeOutId)
+    if (!state.hide) {
+      clearTimeout(state.timeOutId)
+    }
   }
 
   function showFullMessage () {
@@ -59,7 +52,7 @@ export const Toaster = (props: ToasterProps) => {
   }
 
   // out()
-  const animate = state.timeOutId ? (state.hiding ? 'remixui_animateBottom' : 'remixui_animateTop') : ''
+  const animate = state.timeOutId ? (state.hide ? 'remixui_animateBottom' : 'remixui_animateTop') : ''
   // const hide = state.timeOutId
   const className = `remixui_tooltip alert alert-info p-2 ${animate}`
   return (
@@ -77,13 +70,6 @@ export const Toaster = (props: ToasterProps) => {
 }
 
 export default Toaster
-
-const defaultOptions = (opts) : ToasterOptions => {
-  opts = opts || {}
-  return {
-    time: opts.time || 7000
-  }
-}
 
 /*
 const animation = (tooltip, anim) => {
