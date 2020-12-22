@@ -1,12 +1,11 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import {RemixURLResolver} from '@remix-project/remix-url-resolver'
+import { RemixURLResolver } from '@remix-project/remix-url-resolver'
 const remixTests = require('@remix-project/remix-tests')
 const globalRegistry = require('../../global/registry')
 const addTooltip = require('../ui/tooltip')
 const async = require('async')
-var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')()
 var resolver = require('@resolver-engine/imports').ImportsEngine()
 var request = require('request')
@@ -19,7 +18,6 @@ const profile = {
 }
 
 module.exports = class CompilerImports extends Plugin {
-
   constructor (fileManager) {
     super(profile)
     this.fileManager = fileManager
@@ -123,7 +121,7 @@ module.exports = class CompilerImports extends Plugin {
         found = true
 
         loadingCb('Loading ' + url + ' ...')
-        handler.handle(match).then(function(result) { 
+        handler.handle(match).then(function (result) {
           const { content, cleanUrl } = result
           self.previouslyHandled[url] = {
             content,
@@ -132,8 +130,7 @@ module.exports = class CompilerImports extends Plugin {
           }
           cb(null, content, cleanUrl, handler.type, url)
         }).catch(function (error) {
-            cb('Unable to import url : ' + error)
-            return
+          cb('Unable to import url : ' + error)
         })
       }
     })
