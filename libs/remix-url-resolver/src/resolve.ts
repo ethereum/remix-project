@@ -16,6 +16,11 @@ interface Handler {
   handle(match: any): any;
 }
 
+interface HandlerResponse {
+  content: any;
+  cleanUrl: string
+}
+
 export class RemixURLResolver {
   private previouslyHandled: PreviouslyHandledImports
   gistAccessToken: string
@@ -30,7 +35,7 @@ export class RemixURLResolver {
   * @param root The root of the github import statement
   * @param filePath path of the file in github
   */
-  async handleGithubCall(root: string, filePath: string) {
+  async handleGithubCall(root: string, filePath: string): Promise<HandlerResponse> {
     let param = '?'
     param += this.gistAccessToken ? 'access_token=' + this.gistAccessToken : ''
     const regex = filePath.match(/blob\/([^/]+)\/(.*)/)
@@ -56,7 +61,7 @@ export class RemixURLResolver {
   * @param url The url of the import statement
   * @param cleanUrl
   */
-  async handleHttp(url: string, cleanUrl: string) {
+  async handleHttp(url: string, cleanUrl: string): Promise<HandlerResponse> {
     //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
@@ -71,17 +76,17 @@ export class RemixURLResolver {
   * @param url The url of the import statement
   * @param cleanUrl
   */
-  async handleHttps(url: string, cleanUrl: string) {
+  async handleHttps(url: string, cleanUrl: string): Promise<HandlerResponse> {
     //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
-      return { content: response.data, cleanUrl}
+      return { content: response.data, cleanUrl }
     } catch(e) {
       throw e
     }
   }
 
-  handleSwarm(url: string, cleanURL: string) {
+  handleSwarm(url: string, cleanUrl: string) {
     return
   }
 
@@ -89,7 +94,7 @@ export class RemixURLResolver {
   * Handle an import statement based on IPFS
   * @param url The url of the IPFS import statement
   */
-  async handleIPFS(url: string) {
+  async handleIPFS(url: string): Promise<HandlerResponse> {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
     //eslint-disable-next-line no-useless-catch
@@ -98,7 +103,7 @@ export class RemixURLResolver {
       // If you don't find greeter.sol on ipfs gateway use local
       // const req = 'http://localhost:8080/' + url
       const response: AxiosResponse = await axios.get(req)
-      return response.data
+      return { content: response.data, cleanUrl: url }
     } catch (e) {
       throw e
     }
