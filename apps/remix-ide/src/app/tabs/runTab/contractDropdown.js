@@ -26,11 +26,16 @@ class ContractDropdownUI {
 
   listenToEvents () {
     this.dropdownLogic.event.register('newlyCompiled', (success, data, source, compiler, compilerFullName, file) => {
+
       if (!this.selectContractNames) return
       this.selectContractNames.innerHTML = ''
       if (success) {
         this.dropdownLogic.getCompiledContracts(compiler, compilerFullName).forEach((contract) => {
+          console.log('file = ', file)
+          console.log('contrtact.file = ', contract.file)
           this.selectContractNames.appendChild(yo`<option value="${contract.name}" compiler="${compilerFullName}">${contract.name} - ${contract.file}</option>`)
+          this.runView.compilersArtefacts.addressToCompilationResults[contract.name + '-' + contract.file] = data
+          console.log("runView.compilersArtefacts.addressToCompilationResults ", this.runView.compilersArtefacts.addressToCompilationResults)
         })
       }
       this.enableAtAddress(success)
@@ -295,6 +300,9 @@ class ContractDropdownUI {
       }
 
       this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
+
+      this.runView.compilersArtefacts.addResolvedContract(address, this.runView.compilersArtefacts.addressToCompilationResults[contractObject.name + '-' + contractObject.file])
+      console.log("this.runView.compilersArtefacts.addressToCompilationResults[contractObject.name + '-' + contractObject.file]", this.runView.compilersArtefacts.addressToCompilationResults[contractObject.name + '-' + contractObject.file])
       if (this.ipfsCheckedState) {
         publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, selectedContract)
       }
