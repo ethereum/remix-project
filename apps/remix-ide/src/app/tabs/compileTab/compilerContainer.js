@@ -22,7 +22,7 @@ class CompilerContainer {
       timeout: 300,
       allversions: null,
       selectedVersion: null,
-      defaultVersion: 'soljson-v0.7.4+commit.3f05b770.js' // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
+      defaultVersion: 'soljson-v0.7.4+commit.3f05b770.js' // this default version is defined: in makeMockCompiler (for browser test)
     }
   }
 
@@ -212,6 +212,7 @@ class CompilerContainer {
     this._view.versionSelector = yo`
       <select onchange="${this.onchangeLoadVersion.bind(this)}" class="custom-select" id="versionSelector" disabled>
         <option disabled selected>${this.data.defaultVersion}</option>
+        <option disabled>builtin</option>
       </select>`
     this._view.languageSelector = yo`
       <select onchange="${this.onchangeLanguage.bind(this)}" class="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
@@ -452,7 +453,9 @@ class CompilerContainer {
       this.queryParams.update({ version: this.data.selectedVersion })
     } else if (this.data.selectedVersion === 'builtin') {
       let location = window.document.location
-      location = `${location.protocol}//${location.host}/${location.pathname}`
+      let path = location.pathname
+      if (!path.startsWith('/')) path = '/' + path
+      location = `${location.protocol}//${location.host}${path}assets/js`
       if (location.endsWith('index.html')) location = location.substring(0, location.length - 10)
       if (!location.endsWith('/')) location += '/'
       url = location + 'soljson.js'
@@ -502,18 +505,19 @@ class CompilerContainer {
 
   // fetching both normal and wasm builds and creating a [version, baseUrl] map
   async fetchAllVersion (callback) {
-    let allVersions, selectedVersion, allVersionsWasm, isURL
+    let selectedVersion, allVersionsWasm, isURL
+    let allVersions = [{ path: 'builtin', longVersion: 'latest local version - 0.7.4' }]
     // fetch normal builds
     const binRes = await promisedMiniXhr(`${baseURLBin}/list.json`)
     // fetch wasm builds
     const wasmRes = await promisedMiniXhr(`${baseURLWasm}/list.json`)
     if (binRes.event.type === 'error' && wasmRes.event.type === 'error') {
-      allVersions = [{ path: 'builtin', longVersion: 'latest local version' }]
       selectedVersion = 'builtin'
-      callback(allVersions, selectedVersion)
+      return callback(allVersions, selectedVersion)
     }
     try {
-      allVersions = JSON.parse(binRes.json).builds.slice().reverse()
+      const versions = JSON.parse(binRes.json).builds.slice().reverse()
+      allVersions = [...allVersions, ...versions]
       selectedVersion = this.data.defaultVersion
       if (this.queryParams.get().version) selectedVersion = this.queryParams.get().version
       // Check if version is a URL and corresponding filename starts with 'soljson'
