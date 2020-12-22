@@ -19,42 +19,14 @@ const profile = {
 }
 
 module.exports = class CompilerImports extends Plugin {
+
   constructor (fileManager) {
     super(profile)
     this.fileManager = fileManager
-    this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
-  }
-
-  handleGithubCall (root, path, cb) {
-    let param = '?'
     // const token = await this.call('settings', 'getGithubAccessToken')
     const token = globalRegistry.get('config').api.get('settings/gist-access-token') // TODO replace with the plugin call above https://github.com/ethereum/remix-ide/issues/2288
-    param += token ? 'access_token=' + token : ''
-    const regex = path.match(/blob\/([^/]+)\/(.*)/)
-    if (regex) {
-      // if we have /blob/master/+path we extract the branch name "master" and add it as a parameter to the github api
-      // the ref can be branch name, tag, commit id
-      const reference = regex[1]
-      param += '&ref=' + reference
-      path = path.replace(`blob/${reference}/`, '')
-    }
-    return request.get(
-      {
-        url: 'https://api.github.com/repos/' + root + '/contents/' + path + param,
-        json: true
-      },
-      (err, r, data) => {
-        if (err) {
-          return cb(err || 'Unknown transport error')
-        }
-        if ('content' in data) {
-          cb(null, base64.decode(data.content), root + '/' + path)
-        } else if ('message' in data) {
-          cb(data.message)
-        } else {
-          cb('Content not received')
-        }
-      })
+    this.urlResolver = new RemixURLResolver(token)
+    this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
   handleSwarmImport (url, cleanUrl, cb) {
@@ -138,7 +110,7 @@ module.exports = class CompilerImports extends Plugin {
     if (imported) {
       return cb(null, imported.content, imported.cleanUrl, imported.type, url)
     }
-    var handlers = new RemixURLResolver().getHandlers()
+    var handlers = this.urlResolver.getHandlers()
 
     var found = false
     handlers.forEach(function (handler) {
@@ -146,20 +118,21 @@ module.exports = class CompilerImports extends Plugin {
         return
       }
 
-      var match = handler.match.exec(url)
+      var match = handler.match(url)
       if (match) {
         found = true
 
         loadingCb('Loading ' + url + ' ...')
-        handler.handle(match).then(function(content) {
+        handler.handle(match).then(function(result) { 
+          const { content, cleanUrl } = result
           self.previouslyHandled[url] = {
-            content: content,
-            cleanUrl: cleanUrl,
+            content,
+            cleanUrl,
             type: handler.type
           }
           cb(null, content, cleanUrl, handler.type, url)
         }).catch(function (error) {
-            cb('Unable to import "' + cleanUrl + '": ' + error)
+            cb('Unable to import url : ' + error)
             return
         }) 
         // function (err, content, cleanUrl) {
