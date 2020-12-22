@@ -18,8 +18,11 @@ interface Handler {
 
 export class RemixURLResolver {
   private previouslyHandled: PreviouslyHandledImports
-  constructor() {
+  gistAccessToken: string
+
+  constructor(gistToken?: string) {
     this.previouslyHandled = {}
+    this.gistAccessToken = gistToken ? gistToken : ''
   }
   /**
   * Handle an import statement based on github
@@ -27,40 +30,51 @@ export class RemixURLResolver {
   * @params filePath path of the file in github
   */
   async handleGithubCall(root: string, filePath: string) {
+    let param = '?'
+    param += this.gistAccessToken ? 'access_token=' + this.gistAccessToken : ''
+    const regex = filePath.match(/blob\/([^/]+)\/(.*)/)
+    if (regex) {
+      // if we have /blob/master/+path we extract the branch name "master" and add it as a parameter to the github api
+      // the ref can be branch name, tag, commit id
+      const reference = regex[1]
+      param += '&ref=' + reference
+      filePath = filePath.replace(`blob/${reference}/`, '')
+    }
     //eslint-disable-next-line no-useless-catch
     try {
-      const req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath
+      const req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath + param
       const response: AxiosResponse = await axios.get(req)
-      return Buffer.from(response.data.content, 'base64').toString()
+      return { content: Buffer.from(response.data.content, 'base64').toString(), cleanUrl: root + '/' + filePath }
     } catch(e) {
       throw e
     }
   }
   /**
   * Handle an import statement based on http
-  * @params url The url of the import statement
-  * @params cleanURL
+  * @param url The url of the import statement
+  * @param cleanUrl
   */
-  async handleHttp(url: string, _: string) {
+  async handleHttp(url: string, cleanUrl: string) {
     console.log('Inside libs handleHttpCall')
   //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
-      return response.data
+      return { content: response.data, cleanUrl}
     } catch(e) {
       throw e
     }
   }
   /**
   * Handle an import statement based on https
-  * @params url The url of the import statement
-  * @params cleanURL
+  * @param url The url of the import statement
+  * @param cleanUrl
   */
-  async handleHttps(url: string, _: string) {
+  async handleHttps(url: string, cleanUrl: string) {
+    console.log('Inside libs handleHttpsCall')
   //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
-      return response.data
+      return { content: response.data, cleanUrl}
     } catch(e) {
       throw e
     }
