@@ -76,8 +76,22 @@ export class RemixAppManager extends PluginManager {
   }
 
   async registeredPlugins () {
-    const res = await fetch(this.pluginsDirectory)
-    const plugins = await res.json()
+    let plugins
+    try {
+      const res = await fetch(this.pluginsDirectory)
+      plugins = await res.json()
+      localStorage.setItem('plugins-directory', JSON.stringify(plugins))
+    } catch (e) {
+      console.log('getting plugins list from localstorage...')
+      const savedPlugins = localStorage.getItem('plugins-directory')
+      if (savedPlugins) {
+        try {
+          plugins = JSON.parse(savedPlugins)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+    }
     plugins.push({
       name: 'walletconnect',
       kind: 'provider',

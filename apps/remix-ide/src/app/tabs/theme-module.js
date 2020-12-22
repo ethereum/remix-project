@@ -5,16 +5,16 @@ import * as packageJson from '../../../../../package.json'
 import yo from 'yo-yo'
 
 const themes = [
-  { name: 'Dark', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-dark_tvx1s2.css' },
-  { name: 'Light', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-light_powaqg.css' },
-  { name: 'Midcentury', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014334/remix-themes/PR365/remix-midcentury_hrzph3.css' },
-  { name: 'Black', quality: 'dark', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014334/remix-themes/PR365/remix-black_undtds.css' },
-  { name: 'Candy', quality: 'light', url: 'https://res.cloudinary.com/lianahus/raw/upload/v1598014799/remix-themes/PR365/remix-candy_ikhg4m.css' },
+  { name: 'Dark', quality: 'dark', url: 'assets/css/themes/remix-dark_tvx1s2.css' },
+  { name: 'Light', quality: 'light', url: 'assets/css/themes/remix-light_powaqg.css' },
+  { name: 'Midcentury', quality: 'light', url: 'assets/css/themes/remix-midcentury_hrzph3.css' },
+  { name: 'Black', quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css' },
+  { name: 'Candy', quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css' },
 
-  { name: 'Cerulean', quality: 'light', url: 'https://bootswatch.com/4/cerulean/bootstrap.min.css' },
-  { name: 'Flatly', quality: 'light', url: 'https://bootswatch.com/4/flatly/bootstrap.min.css' },
-  { name: 'Spacelab', quality: 'light', url: 'https://bootswatch.com/4/spacelab/bootstrap.min.css' },
-  { name: 'Cyborg', quality: 'dark', url: 'https://bootswatch.com/4/cyborg/bootstrap.min.css' }
+  { name: 'Cerulean', quality: 'light', url: 'assets/css/themes/bootstrap-cerulean.min.css' },
+  { name: 'Flatly', quality: 'light', url: 'assets/css/themes/bootstrap-flatly.min.css' },
+  { name: 'Spacelab', quality: 'light', url: 'assets/css/themes/bootstrap-spacelab.min.css' },
+  { name: 'Cyborg', quality: 'dark', url: 'assets/css/themes/bootstrap-cyborg.min.css' }
 ]
 
 const profile = {
@@ -32,7 +32,10 @@ export class ThemeModule extends Plugin {
     this._deps = {
       config: registry.get('config').api
     }
-    this.themes = themes.reduce((acc, theme) => ({ ...acc, [theme.name]: theme }), {})
+    this.themes = themes.reduce((acc, theme) => {
+      theme.url = window.location.origin + window.location.pathname + theme.url
+      return { ...acc, [theme.name]: theme }
+    }, {})
     let queryTheme = (new QueryParams()).get().theme
     queryTheme = this.themes[queryTheme] ? queryTheme : null
     let currentTheme = this._deps.config.get('settings/theme')
