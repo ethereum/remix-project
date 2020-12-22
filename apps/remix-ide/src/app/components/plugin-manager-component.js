@@ -31,6 +31,11 @@ const css = csjs`
     align-items: center;
     justify-content: space-between;
   }
+  .pluginIcon {
+    height: 0.7rem;
+    width: 0.7rem;
+    filter: invert(0.5);
+  }
   .description {
     font-size: 13px;
     line-height: 18px;
@@ -123,15 +128,18 @@ class PluginManagerComponent extends ViewPlugin {
       </button>`
 
     return yo`
-      <article id="remixPluginManagerListItem_${profile.name}" class="list-group-item py-1 plugins-list-group-item" title="${displayName}" >
+      <article id="remixPluginManagerListItem_${profile.name}" class="list-group-item py-1 mb-1 plugins-list-group-item" title="${displayName}" >
         <div class="${css.row} justify-content-between align-items-center mb-2">
           <h6 class="${css.displayName} plugin-name">
             ${displayName}
             ${versionWarning}
+            ${activationButton}
           </h6>
-          ${activationButton}
         </div>
-        <p class="${css.description} text-body plugin-text">${profile.description}</p>
+        <div class="${css.description} text-body plugin-text mb-2">
+          <img src="${profile.icon}" class="mr-1 mb-1 ${css.pluginIcon}" />
+          <span>${profile.description}</span>
+        </div>
       </article>
     `
   }
