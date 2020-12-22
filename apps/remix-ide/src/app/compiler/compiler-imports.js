@@ -134,14 +134,7 @@ module.exports = class CompilerImports extends Plugin {
         }).catch(function (error) {
             cb('Unable to import url : ' + error)
             return
-        }) 
-        // function (err, content, cleanUrl) {
-        //   if (err) {
-            
-        //   }
-          
-          
-        // })
+        })
       }
     })
     if (found) return
