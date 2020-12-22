@@ -15,6 +15,7 @@ module.exports = class CompilerArtefacts extends Plugin {
     super(profile)
     this.compilersArtefacts = {}
     this.compilersArtefactsPerFile = {}
+    this.addressToCompilationResults = {}
   }
 
   clear () {

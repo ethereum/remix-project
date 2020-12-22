@@ -478,8 +478,8 @@ class Terminal extends Plugin {
     self._components.txLogger.event.register('debuggingRequested', async (hash) => {
       // TODO should probably be in the run module
       if (!await self._opts.appManager.isActive('debugger')) await self._opts.appManager.activatePlugin('debugger')
-      this.call('debugger', 'debug', hash)
       this.call('menuicons', 'select', 'debugger')
+      this.call('debugger', 'debug', hash)
     })
 
     return self._view.el
