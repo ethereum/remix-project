@@ -141,6 +141,37 @@ describe('testRunner', () => {
           assert.deepEqual(results, expt)
         })
       })
+
+      // Test IPFS imports
+      describe('test getting IPFS imports', () => {
+        const urlResolver = new RemixURLResolver()
+        const fileName = 'ipfs://QmcuCKyokk9Z6f65ADAADNiS2R2xCjfRkv7mYBSWDwtA7M'
+        let results: object = {}
+
+        before(done => {
+          urlResolver.resolve(fileName)
+            .then((sources: object) => {
+              results = sources
+              done()
+            })
+            .catch((e: Error) => {
+              throw e
+            })
+        })
+
+        it('should have 3 items', () => {
+          assert.equal(Object.keys(results).length, 3)
+        })
+        it('should return contract content from raw github url', () => {
+          const content = fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'})
+          const expt: object = {
+            content: content,
+            cleanUrl: 'ipfs/QmcuCKyokk9Z6f65ADAADNiS2R2xCjfRkv7mYBSWDwtA7M',
+            type: 'ipfs'
+          }
+          assert.deepEqual(results, expt)
+        })
+      })
     })
   })
 })
