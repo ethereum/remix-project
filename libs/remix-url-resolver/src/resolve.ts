@@ -99,7 +99,7 @@ export class RemixURLResolver {
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
     //eslint-disable-next-line no-useless-catch
     try {
-      const req = 'https://gateway.ipfs.io/' + url
+      const req = 'https://ipfsgw.komputing.org/' + url
       // If you don't find greeter.sol on ipfs gateway use local
       // const req = 'http://localhost:8080/' + url
       const response: AxiosResponse = await axios.get(req)
