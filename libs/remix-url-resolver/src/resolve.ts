@@ -24,10 +24,11 @@ export class RemixURLResolver {
     this.previouslyHandled = {}
     this.gistAccessToken = gistToken ? gistToken : ''
   }
+
   /**
   * Handle an import statement based on github
-  * @params root The root of the github import statement
-  * @params filePath path of the file in github
+  * @param root The root of the github import statement
+  * @param filePath path of the file in github
   */
   async handleGithubCall(root: string, filePath: string) {
     let param = '?'
@@ -49,14 +50,14 @@ export class RemixURLResolver {
       throw e
     }
   }
+
   /**
   * Handle an import statement based on http
   * @param url The url of the import statement
   * @param cleanUrl
   */
   async handleHttp(url: string, cleanUrl: string) {
-    console.log('Inside libs handleHttpCall')
-  //eslint-disable-next-line no-useless-catch
+    //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
       return { content: response.data, cleanUrl}
@@ -64,14 +65,14 @@ export class RemixURLResolver {
       throw e
     }
   }
+
   /**
   * Handle an import statement based on https
   * @param url The url of the import statement
   * @param cleanUrl
   */
   async handleHttps(url: string, cleanUrl: string) {
-    console.log('Inside libs handleHttpsCall')
-  //eslint-disable-next-line no-useless-catch
+    //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
       return { content: response.data, cleanUrl}
@@ -79,12 +80,14 @@ export class RemixURLResolver {
       throw e
     }
   }
+
   handleSwarm(url: string, cleanURL: string) {
     return
   }
+
   /**
   * Handle an import statement based on IPFS
-  * @params url The url of the IPFS import statement
+  * @param url The url of the IPFS import statement
   */
   async handleIPFS(url: string) {
     // replace ipfs:// with /ipfs/
@@ -100,6 +103,7 @@ export class RemixURLResolver {
       throw e
     }
   }
+
   getHandlers(): Handler[] {
     return [
       {
