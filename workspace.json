@@ -601,6 +601,22 @@
           }
         }
       }
+    },
+    "remix-ui-toaster": {
+      "root": "libs/remix-ui/toaster",
+      "sourceRoot": "libs/remix-ui/toaster/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/toaster/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/toaster/**/*"]
+          }
+        }
+      }
     }
   },
   "cli": {
