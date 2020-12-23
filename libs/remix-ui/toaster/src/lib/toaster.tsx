@@ -49,7 +49,7 @@ export const Toaster = (props: ToasterProps) => {
     })
   }
 
-  const hideFullMessage = () => {
+  const hideFullMessage = () => { //eslint-disable-line
     setState(prevState => {
       return { ...prevState, showModal: false }
     })
