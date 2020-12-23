@@ -64,11 +64,34 @@ export const Toaster = (props: ToasterProps) => {
     })
   }
 
+  const handleMouseEnter = () => {
+    if (state.timeOutId) {
+      clearTimeout(state.timeOutId)
+    }
+    setState(prevState => {
+      return { ...prevState, timeOutId: null }
+    })
+  }
+
+  const handleMouseLeave = () => {
+    if (!state.timeOutId) {
+      const timeOutId = setTimeout(() => {
+        setState(prevState => {
+          return { ...prevState, hiding: true }
+        })
+      }, state.timeOut)
+
+      setState(prevState => {
+        return { ...prevState, timeOutId }
+      })
+    }
+  }
+
   return (
     <>
       {/* <ModalDialog /> */}
       { !state.hide &&
-        <div data-shared="tooltipPopup" className={`remixui_tooltip alert alert-info p-2 ${state.hiding ? 'remixui_animateTop' : 'remixui_animateBottom'}`} onMouseEnter={() => { }} onMouseLeave={() => { }}>
+        <div data-shared="tooltipPopup" className={`remixui_tooltip alert alert-info p-2 ${state.hiding ? 'remixui_animateTop' : 'remixui_animateBottom'}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
           <span className="px-2">
             { state.message }
             { (props.message.length > 201) && <button className="btn btn-secondary btn-sm mx-3" style={{ whiteSpace: 'nowrap' }} onClick={showFullMessage}>Show full message</button> }
