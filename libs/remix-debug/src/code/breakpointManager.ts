@@ -15,8 +15,7 @@ export class BreakpointManager {
   solidityProxy
   breakpoints
   locationToRowConverter
-  previousLine
-
+  
   /**
     * constructor
     *
@@ -92,22 +91,25 @@ export class BreakpointManager {
     let previousSourceLocation
     let currentStep = fromStep + direction
     let lineHadBreakpoint = false
+    let initialLine
     while (currentStep > 0 && currentStep < trace.length) {
       try {
         previousSourceLocation = sourceLocation
         sourceLocation = await this.callTree.extractValidSourceLocation(currentStep)
       } catch (e) {
-        return console.log('cannot jump to breakpoint ' + e)
+        console.log('cannot jump to breakpoint ' + e)
+        currentStep += direction
       }
       const lineColumn = await this.locationToRowConverter(sourceLocation)
-      if (this.previousLine !== lineColumn.start.line) {
+      if (!initialLine) initialLine = lineColumn
+
+      if (initialLine.start.line !== lineColumn.start.line) {
         if (direction === -1 && lineHadBreakpoint) { // TODO : improve this when we will build the correct structure before hand
           lineHadBreakpoint = false
           if (this.hitLine(currentStep + 1, previousSourceLocation, sourceLocation, trace)) {
             return
           }
         }
-        this.previousLine = lineColumn.start.line
         if (this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line)) {
           lineHadBreakpoint = true
           if (direction === 1 && this.hitLine(currentStep, sourceLocation, previousSourceLocation, trace)) {
