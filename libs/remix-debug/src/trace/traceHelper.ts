@@ -15,7 +15,7 @@ export function resolveCalledAddress (vmTraceIndex, trace) {
 }
 
 export function isCallInstruction (step) {
-  return step.op === 'CALL' || step.op === 'CALLCODE' || step.op === 'CREATE' || step.op === 'DELEGATECALL'
+  return step.op === 'CALL' || step.op === 'STATICCALL' || step.op === 'CALLCODE' || step.op === 'CREATE' || step.op === 'DELEGATECALL'
 }
 
 export function isCreateInstruction (step) {
@@ -54,7 +54,7 @@ export function isCallToPrecompiledContract (index, trace) {
   // if stack empty => this is not a precompiled contract
   const step = trace[index]
   if (this.isCallInstruction(step)) {
-    return index + 1 < trace.length && trace[index + 1].stack.length !== 0
+    return index + 1 < trace.length && (trace[index].depth === trace[index + 1].depth)
   }
   return false
 }
