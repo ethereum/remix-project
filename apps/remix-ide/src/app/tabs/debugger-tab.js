@@ -141,7 +141,7 @@ class DebuggerTab extends ViewPlugin {
   fetchContractAndCompile (address, receipt) {
     const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
 
-    return this.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, '.debug', this.blockchain.web3())
+    return this.call('fetchAndCompile', 'resolve', target || receipt.contractAddress || receipt.to, 'browser/.debug', this.blockchain.web3())
   }
 
   // debugger () {
