@@ -59,8 +59,8 @@ export const Toaster = (props: ToasterProps) => {
     if (state.timeOutId) {
       clearTimeout(state.timeOutId)
     }
-    setState(() => {
-      return { message: '', hide: true, hiding: false, timeOut: 0, timeOutId: null, showModal: false }
+    setState(prevState => {
+      return { ...prevState, message: '', hide: true, hiding: false, timeOutId: null, showModal: false }
     })
   }
 
