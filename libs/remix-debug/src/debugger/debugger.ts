@@ -82,7 +82,7 @@ export class Debugger {
             }
           }
           var lineColumnPos = this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
-          this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources])
+          this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address])
         } else {
           this.event.trigger('newSourceLocation', [null])
         }

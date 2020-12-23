@@ -72,12 +72,11 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       })
     })
 
-    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources) => {
+    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address) => {
       if (!lineColumnPos) return
       const contracts = await debuggerModule.fetchContractAndCompile(
-        currentReceipt.contractAddress || currentReceipt.to,
+        address || currentReceipt.contractAddress || currentReceipt.to,
         currentReceipt)
-
       if (contracts) {
         let path = contracts.getSourceName(rawLocation.file)
         if (!path) {
@@ -152,7 +151,9 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
       compilationResult: async (address) => {
         try {
-          return await debuggerModule.fetchContractAndCompile(address, currentReceipt)
+          const ret = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
+          console.log('ok', ret)
+          return ret
         } catch (e) {
           console.error(e)
         }
