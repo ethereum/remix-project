@@ -1,82 +1,86 @@
 import React, { useEffect, useState } from 'react' // eslint-disable-line
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 
 import './toaster.css'
 
 /* eslint-disable-next-line */
 export interface ToasterProps {
-  message: any
+  message: string
   timeOut?: number
-}
-
-export interface ToasterOptions {
-  time: number
 }
 
 export const Toaster = (props: ToasterProps) => {
   const [state, setState] = useState({
     message: '',
-    hide: false,
+    hide: true,
+    hiding: false,
     timeOutId: null,
-    timeOut: props.timeOut || 700
+    timeOut: props.timeOut || 7000,
+    showModal: false
   })
 
   useEffect(() => {
     if (props.message) {
       const timeOutId = setTimeout(() => {
         setState(prevState => {
-          return { ...prevState, hide: true }
+          return { ...prevState, hiding: true }
         })
       }, state.timeOut)
 
-      console.log('timeOutId: ', timeOutId)
       setState(prevState => {
-        return { ...prevState, hide: false, timeOutId, message: props.message }
+        const shortTooltipText = props.message.length > 201 ? props.message.substring(0, 200) + '...' : props.message
+
+        return { ...prevState, hide: false, hiding: false, timeOutId, message: shortTooltipText }
       })
     }
   }, [props.message])
 
-  const shortTooltipText = state.message.length > 201 ? state.message.substring(0, 200) + '...' : state.message
+  useEffect(() => {
+    if (state.hiding) {
+      setTimeout(() => {
+        closeTheToaster()
+      }, 1800)
+    }
+  }, [state.hiding])
 
-  function hide () {
-    if (!state.hide) {
+  const showFullMessage = () => {
+    setState(prevState => {
+      return { ...prevState, showModal: true }
+    })
+  }
+
+  const hideFullMessage = () => {
+    setState(prevState => {
+      return { ...prevState, showModal: false }
+    })
+  }
+
+  const closeTheToaster = () => {
+    if (state.timeOutId) {
       clearTimeout(state.timeOutId)
     }
+    setState(() => {
+      return { message: '', hide: true, hiding: false, timeOut: 0, timeOutId: null, showModal: false }
+    })
   }
 
-  function showFullMessage () {
-    // alert(state.message)
-  }
-
-  function closeTheToaster () {
-    hide()
-  }
-
-  // out()
-  const animate = state.timeOutId ? (state.hide ? 'remixui_animateBottom' : 'remixui_animateTop') : ''
-  // const hide = state.timeOutId
-  const className = `remixui_tooltip alert alert-info p-2 ${animate}`
+  console.log('props.message.length: ', props.message.length)
   return (
-    <div data-shared="tooltipPopup" className={className} onMouseEnter={() => { }} onMouseLeave={() => { }}>
-      <span className="px-2">
-        {shortTooltipText}
-        { state.message.length > 201 ? <button className="btn btn-secondary btn-sm mx-3" style={{ whiteSpace: 'nowrap' }} onClick={() => showFullMessage()}>Show full message</button> : ''}
-      </span>
-      <span style={{ alignSelf: 'baseline' }}>
-        <button data-id="tooltipCloseButton" className="fas fa-times btn-info mx-1 p-0" onClick={() => closeTheToaster()}></button>
-      </span>
-    </div>
+    <>
+      {/* <ModalDialog /> */}
+      { !state.hide &&
+        <div data-shared="tooltipPopup" className={`remixui_tooltip alert alert-info p-2 ${state.hiding ? 'remixui_animateTop' : 'remixui_animateBottom'}`} onMouseEnter={() => { }} onMouseLeave={() => { }}>
+          <span className="px-2">
+            { state.message }
+            { (props.message.length > 201) && <button className="btn btn-secondary btn-sm mx-3" style={{ whiteSpace: 'nowrap' }} onClick={showFullMessage}>Show full message</button> }
+          </span>
+          <span style={{ alignSelf: 'baseline' }}>
+            <button data-id="tooltipCloseButton" className="fas fa-times btn-info mx-1 p-0" onClick={closeTheToaster}></button>
+          </span>
+        </div>
+      }
+    </>
   )
-  // animation(this.tooltip, css.animateBottom.className)
 }
 
 export default Toaster
-
-/*
-const animation = (tooltip, anim) => {
-  tooltip.classList.remove(css.animateTop.className)
-  tooltip.classList.remove(css.animateBottom.className)
-  // eslint-disable-next-line
-  void tooltip.offsetWidth // trick for restarting the animation
-  tooltip.classList.add(anim)
-}
-*/
