@@ -31,6 +31,12 @@ describe('testRunner', () => {
       //         handle: (match: Array<string>) => { return handleLocal(match[2], match[3]) }
       //       }
       //     ]
+//       browser/greeter.sol : 
+// bzz-raw://a728627437140f2b0b46c1bcfb0de2126d18b40e9b61c3e31bd96abebf714619
+// browser/mortal.sol : 
+// bzz-raw://bbd213997d71870470ad72e9b4a74d7898d11bfd3bfc483220f9fd0721607bff
+// metadata.json : 
+// bzz-raw://ce595759fa991e3b165b280c9376f073c1d9d5591edaadf05fe76ddef8909249
       //     urlResolver.resolve(fileName, localFSHandler)
       //       .then((sources: object) => {
       //         results = sources
@@ -168,6 +174,37 @@ describe('testRunner', () => {
             content: content,
             cleanUrl: 'ipfs/QmcuCKyokk9Z6f65ADAADNiS2R2xCjfRkv7mYBSWDwtA7M',
             type: 'ipfs'
+          }
+          assert.deepEqual(results, expt)
+        })
+      })
+
+      // Test SWARM imports
+      describe('test getting SWARM imports', () => {
+        const urlResolver = new RemixURLResolver()
+        const fileName = 'bzz-raw://a728627437140f2b0b46c1bcfb0de2126d18b40e9b61c3e31bd96abebf714619'
+        let results: object = {}
+
+        before(done => {
+          urlResolver.resolve(fileName)
+            .then((sources: object) => {
+              results = sources
+              done()
+            })
+            .catch((e: Error) => {
+              throw e
+            })
+        })
+
+        it('should have 3 items', () => {
+          assert.equal(Object.keys(results).length, 3)
+        })
+        it('should return contract content from raw github url', () => {
+          const content = fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'})
+          const expt: object = {
+            content: content,
+            cleanUrl: 'a728627437140f2b0b46c1bcfb0de2126d18b40e9b61c3e31bd96abebf714619',
+            type: 'swarm'
           }
           assert.deepEqual(results, expt)
         })
