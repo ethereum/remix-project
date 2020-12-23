@@ -139,7 +139,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           vmDebugger: false,
           vmDebuggerHead: false
         },
-        debugging: false,
+        debugging: false
       }
     })
   }
@@ -171,14 +171,19 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           debugging: true,
           currentReceipt,
           debugger: debuggerInstance,
-          toastMessage: `debugging ${txNumber} ...`
+          toastMessage: `debugging ${txNumber}`
         }
       })
     }).catch((error) => {
-      // toaster(error, null, null)
+      setState(prevState => {
+        return {
+          ...prevState,
+          toastMessage: JSON.stringify(error)
+        }
+      })
       unLoad()
     })
-}
+  }
 
 const debug = (txHash) => {
   startDebugging(null, txHash, null)
