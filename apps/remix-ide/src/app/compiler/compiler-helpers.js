@@ -3,10 +3,10 @@ import { canUseWorker, urlFromVersion } from './compiler-utils'
 import { Compiler } from '@remix-project/remix-solidity'
 import CompilerAbstract from './compiler-abstract'
 
-export const compile = async (compilationTargets, settings) => {
+export const compile = async (compilationTargets, settings, contentResolverCallback) => {
   const res = await (() => {
     return new Promise((resolve, reject) => {
-      const compiler = new Compiler(() => {})
+      const compiler = new Compiler(contentResolverCallback || (() => {}))
       compiler.set('evmVersion', settings.evmVersion)
       compiler.set('optimize', settings.optimize)
       compiler.set('language', settings.language)
