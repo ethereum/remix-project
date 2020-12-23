@@ -99,6 +99,7 @@ export class BreakpointManager {
       } catch (e) {
         console.log('cannot jump to breakpoint ' + e)
         currentStep += direction
+        continue
       }
       const lineColumn = await this.locationToRowConverter(sourceLocation)
       if (!initialLine) initialLine = lineColumn
