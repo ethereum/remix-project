@@ -64,7 +64,6 @@ export const Toaster = (props: ToasterProps) => {
     })
   }
 
-  console.log('props.message.length: ', props.message.length)
   return (
     <>
       {/* <ModalDialog /> */}
