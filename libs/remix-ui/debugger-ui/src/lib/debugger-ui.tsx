@@ -152,8 +152,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
       compilationResult: async (address) => {
         try {
-          const ret = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
-          console.log('ok', ret)
+          const ret = await debuggerModule.fetchContractAndCompile(address, currentReceipt)          
           return ret
         } catch (e) {
           console.error(e)
