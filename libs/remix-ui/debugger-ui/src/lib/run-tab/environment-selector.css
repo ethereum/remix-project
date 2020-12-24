@@ -1,0 +1,25 @@
+.crow {
+  display: block;
+  margin-top: 8px;
+}
+.settingsLabel {
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.environment {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+.select {
+  font-weight: normal;
+  width: 100%;
+  overflow: hidden;
+} 
+.infoDeployAction {
+  margin-left: 1px;
+  font-size: 13px;
+  color: var(--info);
+}

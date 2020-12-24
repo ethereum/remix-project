@@ -1,3 +1,7 @@
+import { EnvironmentSelector } from '@remix-ui/debugger-ui' // eslint-disable-line
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
+
 const $ = require('jquery')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
@@ -57,30 +61,9 @@ class SettingsUI {
     this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
 
     var environmentEl = yo`
-      <div class="${css.crow}">
-        <label id="selectExEnv" class="${css.settingsLabel}">
-          Environment
-        </label>
-        <div class="${css.environment}">
-          <select id="selectExEnvOptions" data-id="settingsSelectEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select} custom-select">
-            <option id="vm-mode"
-              title="Execution environment does not connect to any node, everything is local and in memory only."
-              value="vm" name="executionContext"> JavaScript VM
-            </option>
-            <option id="injected-mode"
-              title="Execution environment has been provided by Metamask or similar provider."
-              value="injected" name="executionContext"> Injected Web3
-            </option>
-            <option id="web3-mode" data-id="settingsWeb3Mode"
-              title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
-              If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-              value="web3" name="executionContext"> Web3 Provider
-            </option>
-          </select>
-          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank"><i class="${css.infoDeployAction} ml-2 fas fa-info" title="check out docs to setup Environment"></i></a>
-        </div>
-      </div>
+      <span></span>
     `
+
     const networkEl = yo`
     <div class="${css.crow}">
         <div class="${css.settingsLabel}">
@@ -137,6 +120,10 @@ class SettingsUI {
         ${valueEl}
       </div>
     `
+
+    ReactDOM.render(
+      <EnvironmentSelector updateNetwork={this.updateNetwork} />
+      , environmentEl)
 
     var selectExEnv = environmentEl.querySelector('#selectExEnvOptions')
     this.setDropdown(selectExEnv)
