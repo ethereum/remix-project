@@ -1,4 +1,5 @@
-import { EnvironmentSelector } from '@remix-ui/debugger-ui' // eslint-disable-line
+// import { EnvironmentSelector, AccountSelector, GasPrice, ValueSelector } from '@remix-ui/debugger-ui' // eslint-disable-line
+import { Settings } from '@remix-ui/debugger-ui' // eslint-disable-line
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 
@@ -60,86 +61,88 @@ class SettingsUI {
   render () {
     this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
 
-    var environmentEl = yo`
+    var el = yo`
       <span></span>
     `
 
-    const networkEl = yo`
-    <div class="${css.crow}">
-        <div class="${css.settingsLabel}">
-        </div>
-        <div class="${css.environment}" data-id="settingsNetworkEnv">
-          ${this.netUI}
-        </div>
-      </div>
-    `
-    const accountEl = yo`
-      <div class="${css.crow}">
-        <label class="${css.settingsLabel}">
-          Account
-          <span id="remixRunPlusWraper" title="Create a new account" onload=${this.updatePlusButton.bind(this)}>
-            <i id="remixRunPlus" class="fas fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)}"></i>
-          </span>
-        </label>
-        <div class="${css.account}">
-          <select data-id="runTabSelectAccount" name="txorigin" class="form-control ${css.select} custom-select pr-4" id="txorigin"></select>
-          <div style="margin-left: -5px;">${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}</div>
-          <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" class="mx-1 fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
-        </div>
-      </div>
-    `
-
-    const gasPriceEl = yo`
-      <div class="${css.crow}">
-        <label class="${css.settingsLabel}">Gas limit</label>
-        <input type="number" class="form-control ${css.gasNval} ${css.col2}" id="gasLimit" value="3000000">
-      </div>
-    `
-
-    const valueEl = yo`
-      <div class="${css.crow}">
-        <label class="${css.settingsLabel}">Value</label>
-        <div class="${css.gasValueContainer}">
-          <input type="text" class="form-control ${css.gasNval} ${css.col2}" id="value" value="0" title="Enter the value and choose the unit">
-          <select name="unit" class="form-control p-1 ${css.gasNvalUnit} ${css.col2_2} custom-select" id="unit">
-            <option data-unit="wei">wei</option>
-            <option data-unit="gwei">gwei</option>
-            <option data-unit="finney">finney</option>
-            <option data-unit="ether">ether</option>
-          </select>
-        </div>
-      </div>
-    `
-
-    const el = yo`
-      <div class="${css.settings}">
-        ${environmentEl}
-        ${networkEl}
-        ${accountEl}
-        ${gasPriceEl}
-        ${valueEl}
-      </div>
-    `
-
     ReactDOM.render(
-      <EnvironmentSelector updateNetwork={this.updateNetwork} />
-      , environmentEl)
-
-    var selectExEnv = environmentEl.querySelector('#selectExEnvOptions')
-    this.setDropdown(selectExEnv)
-
-    this.blockchain.event.register('contextChanged', (context, silent) => {
-      this.setFinalContext()
-    })
-
-    setInterval(() => {
-      this.updateNetwork()
-    }, 1000)
+      <Settings updateNetwork={this.updateNetwork.bind(this)} updatePlusButton={this.updatePlusButton.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
+      , el)
 
     this.el = el
 
     this.fillAccountsList()
     return el
+
+    // this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
+
+    // var environmentEl = yo`
+    //   <span></span>
+    // `
+
+    // const networkEl = yo`
+    // <div class="${css.crow}">
+    //     <div class="${css.settingsLabel}">
+    //     </div>
+    //     <div class="${css.environment}" data-id="settingsNetworkEnv">
+    //       ${this.netUI}
+    //     </div>
+    //   </div>
+    // `
+
+    // var accountEl = yo`
+    //   <span></span>
+    // `
+
+    // var gasPriceEl = yo`
+    //   <span></span>
+    // `
+
+    // var valueEl = yo`
+    //   <span></span>
+    // `
+
+    // const el = yo`
+    //   <div class="${css.settings}">
+    //     ${environmentEl}
+    //     ${networkEl}
+    //     ${accountEl}
+    //     ${gasPriceEl}
+    //     ${valueEl}
+    //   </div>
+    // `
+
+    // ReactDOM.render(
+    //   <EnvironmentSelector updateNetwork={this.updateNetwork.bind(this)} />
+    //   , environmentEl)
+
+    // var selectExEnv = environmentEl.querySelector('#selectExEnvOptions')
+    // this.setDropdown(selectExEnv)
+
+    // ReactDOM.render(
+    //   <AccountSelector updatePlusButton={this.updatePlusButton.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
+    //   , accountEl)
+
+    // ReactDOM.render(
+    //   <ValueSelector />
+    //   , valueEl)
+
+    // this.blockchain.event.register('contextChanged', (context, silent) => {
+    //   this.setFinalContext()
+    // })
+
+    // setInterval(() => {
+    //   this.updateNetwork()
+    // }, 1000)
+
+    // ReactDOM.render(
+    //   <GasPrice />
+    //   , gasPriceEl)
+
+    // this.el = el
+
+    // this.fillAccountsList()
+    // return el
   }
 
   setDropdown (selectExEnv) {

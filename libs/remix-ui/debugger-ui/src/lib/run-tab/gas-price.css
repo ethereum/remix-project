@@ -1,0 +1,16 @@
+.crow {
+  display: block;
+  margin-top: 8px;
+}
+.settingsLabel {
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.gasNval {
+  width: 55%;
+  font-size: 0.8rem;
+}
+ .col2 {
+  border-radius: 3px;
+}

@@ -1,0 +1,31 @@
+.crow {
+  display: block;
+  margin-top: 8px;
+}
+.settingsLabel {
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.select {
+  font-weight: normal;
+  width: 100%;
+  overflow: hidden;
+} 
+.icon {
+  cursor: pointer;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+.icon:hover {
+  font-size: 12px;
+  color: var(--warning);
+}
+.account {
+  display: flex;
+  align-items: center;
+}
+.account i {
+  margin-left: 12px;
+}

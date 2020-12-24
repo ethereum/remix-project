@@ -1,0 +1,31 @@
+.crow {
+  display: block;
+  margin-top: 8px;
+}
+.settingsLabel {
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.gasNval {
+  width: 55%;
+  font-size: 0.8rem;
+}
+.col2 {
+  border-radius: 3px;
+}
+.col2_1 {
+  width: 164px;
+  min-width: 164px;
+}
+.col2_2 {
+}
+.gasNvalUnit {
+  width: 41%;
+  margin-left: 10px;
+  font-size: 0.8rem;
+}
+.gasValueContainer {
+  flex-direction: row;
+  display: flex;
+}
