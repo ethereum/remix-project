@@ -59,11 +59,7 @@ class SettingsUI {
   }
 
   render () {
-    this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
-
-    var el = yo`
-      <span></span>
-    `
+    var el = yo`<span></span>`
 
     ReactDOM.render(
       <Settings updateNetwork={this.updateNetwork.bind(this)} updatePlusButton={this.updatePlusButton.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
@@ -71,78 +67,19 @@ class SettingsUI {
 
     this.el = el
 
+    var selectExEnv = el.querySelector('#selectExEnvOptions')
+    this.setDropdown(selectExEnv)
+
+    this.blockchain.event.register('contextChanged', (context, silent) => {
+      this.setFinalContext()
+    })
+
+    setInterval(() => {
+      this.updateNetwork()
+    }, 1000)
+
     this.fillAccountsList()
     return el
-
-    // this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
-
-    // var environmentEl = yo`
-    //   <span></span>
-    // `
-
-    // const networkEl = yo`
-    // <div class="${css.crow}">
-    //     <div class="${css.settingsLabel}">
-    //     </div>
-    //     <div class="${css.environment}" data-id="settingsNetworkEnv">
-    //       ${this.netUI}
-    //     </div>
-    //   </div>
-    // `
-
-    // var accountEl = yo`
-    //   <span></span>
-    // `
-
-    // var gasPriceEl = yo`
-    //   <span></span>
-    // `
-
-    // var valueEl = yo`
-    //   <span></span>
-    // `
-
-    // const el = yo`
-    //   <div class="${css.settings}">
-    //     ${environmentEl}
-    //     ${networkEl}
-    //     ${accountEl}
-    //     ${gasPriceEl}
-    //     ${valueEl}
-    //   </div>
-    // `
-
-    // ReactDOM.render(
-    //   <EnvironmentSelector updateNetwork={this.updateNetwork.bind(this)} />
-    //   , environmentEl)
-
-    // var selectExEnv = environmentEl.querySelector('#selectExEnvOptions')
-    // this.setDropdown(selectExEnv)
-
-    // ReactDOM.render(
-    //   <AccountSelector updatePlusButton={this.updatePlusButton.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
-    //   , accountEl)
-
-    // ReactDOM.render(
-    //   <ValueSelector />
-    //   , valueEl)
-
-    // this.blockchain.event.register('contextChanged', (context, silent) => {
-    //   this.setFinalContext()
-    // })
-
-    // setInterval(() => {
-    //   this.updateNetwork()
-    // }, 1000)
-
-    // ReactDOM.render(
-    //   <GasPrice />
-    //   , gasPriceEl)
-
-    // this.el = el
-
-    // this.fillAccountsList()
-    // return el
   }
 
   setDropdown (selectExEnv) {
@@ -321,14 +258,14 @@ class SettingsUI {
     })
   }
 
-  updateNetwork () {
+  updateNetwork (cb) {
     this.blockchain.updateNetwork((err, { id, name } = {}) => {
+      if (!cb) return
       if (err) {
-        this.netUI.innerHTML = 'can\'t detect network '
-        return
+          return cb('can\'t detect network ')
       }
       const network = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
-      this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
+      cb((network() !== 'vm') ? `${name} (${id || '-'}) network` : '')
     })
     this.fillAccountsList()
   }

@@ -23,3 +23,7 @@
   font-size: 13px;
   color: var(--info);
 }
+.network {
+  margin-left: 8px;
+  pointer-events: none;
+}
