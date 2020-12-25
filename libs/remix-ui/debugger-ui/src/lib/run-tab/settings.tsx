@@ -7,10 +7,10 @@ import ValueSelector from './value-selector'
 import './settings.css'
 
 export const Settings = (props: any) => {
-    const {updateNetwork, updatePlusButton, newAccount, signMessage, copyToClipboard} = props
+    const {updateNetwork, updatePlusButton, newAccount, signMessage, copyToClipboard, options} = props
     return (
         <div className="settings">
-          <EnvironmentSelector updateNetwork={updateNetwork} />
+          <EnvironmentSelector options={options} updateNetwork={updateNetwork} />
           {/* ${networkEl} */}
           <AccountSelector updatePlusButton={updatePlusButton} newAccount={newAccount} signMessage={signMessage} copyToClipboard={copyToClipboard} />
           <GasPrice />

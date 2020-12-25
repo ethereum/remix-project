@@ -7,7 +7,7 @@ const clipboardstyles = {
 } as React.CSSProperties;
 
 export const AccountSelector = (props: any) => {
-    const {updatePlusButton, newAccount, signMessage, copyToClipboard} = props
+    const {updatePlusButton, newAccount, signMessage, copyToClipboard, selectedProvider} = props
     return (
       <div className="crow">
         <label className="settingsLabel">

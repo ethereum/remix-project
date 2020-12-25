@@ -14,11 +14,18 @@ const addTooltip = require('../../ui/tooltip')
 const helper = require('../../../lib/helper.js')
 const globalRegistry = require('../../../global/registry')
 
+const defaultOptions = [
+    {value: "vm", name: "JavaScript VM new one", title: "Execution environment does not connect to any node, everything is local and in memory only."},
+    {value: "injected", name: "Injected Web3", title: "Execution environment has been provided by Metamask or similar provider."},
+    {value: "web3", name: "Web3 Provider", title: "Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse! If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."}
+]
+
 class SettingsUI {
   constructor (blockchain, networkModule) {
     this.blockchain = blockchain
     this.event = new EventManager()
     this._components = {}
+    this.options = defaultOptions
 
     this.blockchain.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
@@ -58,14 +65,17 @@ class SettingsUI {
     })
   }
 
+  renderSettings() {
+    ReactDOM.render(
+      <Settings options={this.options} updateNetwork={this.updateNetwork.bind(this)} updatePlusButton={this.updatePlusButton.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
+      , this.el)
+  }
+
   render () {
     var el = yo`<span></span>`
-
-    ReactDOM.render(
-      <Settings updateNetwork={this.updateNetwork.bind(this)} updatePlusButton={this.updatePlusButton.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
-      , el)
-
     this.el = el
+
+    this.renderSettings()
 
     var selectExEnv = el.querySelector('#selectExEnvOptions')
     this.setDropdown(selectExEnv)
@@ -85,39 +95,18 @@ class SettingsUI {
   setDropdown (selectExEnv) {
     this.selectExEnv = selectExEnv
 
-    const addProvider = (network) => {
-      selectExEnv.appendChild(yo`<option
-        title="provider name: ${network.name}"
-        value="${network.name}"
-        name="executionContext"
-      >
-        ${network.name}
-      </option>`)
+    this.blockchain.event.register('addProvider', (network) => {
+      this.options.push({title: "provider name: ${network.name}", value: "${network.name}", name: "executionContext"})
+      this.renderSettings()
+
       addTooltip(yo`<span><b>${network.name}</b> provider added</span>`)
-    }
+    })
 
-    const removeProvider = (name) => {
-      var env = selectExEnv.querySelector(`option[value="${name}"]`)
-      if (env) {
-        selectExEnv.removeChild(env)
-        addTooltip(yo`<span><b>${name}</b> provider removed</span>`)
-      }
-    }
-    this.blockchain.event.register('addProvider', provider => addProvider(provider))
-    this.blockchain.event.register('removeProvider', name => removeProvider(name))
+    this.blockchain.event.register('removeProvider', (name) => {
+      this.options = this.options.filter((option) => option.name !== name)
+      this.renderSettings()
 
-    selectExEnv.addEventListener('change', (event) => {
-      const context = selectExEnv.options[selectExEnv.selectedIndex].value
-      this.blockchain.changeExecutionContext(context, () => {
-        modalDialogCustom.prompt('External node request', this.web3ProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
-          this.blockchain.setProviderFromEndpoint(target, context, (alertMsg) => {
-            if (alertMsg) addTooltip(alertMsg)
-            this.setFinalContext()
-          })
-        }, this.setFinalContext.bind(this))
-      }, (alertMsg) => {
-        addTooltip(alertMsg)
-      }, this.setFinalContext.bind(this))
+      addTooltip(yo`<span><b>${name}</b> provider removed</span>`)
     })
 
     selectExEnv.value = this.blockchain.getProvider()
@@ -258,7 +247,20 @@ class SettingsUI {
     })
   }
 
-  updateNetwork (cb) {
+  updateNetwork (context, cb) {
+    if (context) {
+      this.blockchain.changeExecutionContext(context, () => {
+        modalDialogCustom.prompt('External node request', this.web3ProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
+          this.blockchain.setProviderFromEndpoint(target, context, (alertMsg) => {
+            if (alertMsg) addTooltip(alertMsg)
+            this.setFinalContext()
+          })
+        }, this.setFinalContext.bind(this))
+      }, (alertMsg) => {
+        addTooltip(alertMsg)
+      }, this.setFinalContext.bind(this))
+    }
+
     this.blockchain.updateNetwork((err, { id, name } = {}) => {
       if (!cb) return
       if (err) {
