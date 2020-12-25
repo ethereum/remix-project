@@ -29,3 +29,6 @@
 .account i {
   margin-left: 12px;
 }
+.disableMouseEvents {
+  pointer-events: none;
+}

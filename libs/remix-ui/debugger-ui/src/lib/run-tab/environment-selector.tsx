@@ -10,7 +10,7 @@ const defaultOptions = [
 
 export const EnvironmentSelector = (props: any) => {
     const [networkMessage, setNetworkMessage] = useState("");
-    const {updateNetwork} = props
+    const {updateNetwork, selectedProvider} = props
 
     const onSettingsChange = (e) => {
         const provider = e.target.value
@@ -25,7 +25,7 @@ export const EnvironmentSelector = (props: any) => {
                 Environment
             </label>
             <div className="environment">
-                <select id="selectExEnvOptions" data-id="settingsSelectEnvOptions" onChange={(e) => { onSettingsChange(e) }}  className="form-control select custom-select">
+                <select id="selectExEnvOptions" value={selectedProvider} data-id="settingsSelectEnvOptions" onChange={(e) => { onSettingsChange(e) }}  className="form-control select custom-select">
                 {props.options.map((option, index) => (
                     <option id={`${option.value}-mode`} title={option.title} value={option.value}>{option.name}</option>
                 ))}

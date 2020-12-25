@@ -41,7 +41,7 @@ class SettingsUI {
       config: this._components.registry.get('config').api
     }
 
-    this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
+    this._deps.config.events.on('settings/personal-mode_changed', this.renderSettings.bind(this))
 
     setInterval(() => {
       this.updateAccountBalances()
@@ -66,8 +66,11 @@ class SettingsUI {
   }
 
   renderSettings() {
+    const personalModeChecked = this._deps.config.get('settings/personal-mode')
+    const selectedProvider = this.blockchain.getProvider()
+
     ReactDOM.render(
-      <Settings options={this.options} updateNetwork={this.updateNetwork.bind(this)} updatePlusButton={this.updatePlusButton.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
+      <Settings options={this.options} selectedProvider={selectedProvider} personalModeChecked={personalModeChecked} updateNetwork={this.updateNetwork.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
       , this.el)
   }
 
@@ -108,8 +111,6 @@ class SettingsUI {
 
       addTooltip(yo`<span><b>${name}</b> provider removed</span>`)
     })
-
-    selectExEnv.value = this.blockchain.getProvider()
   }
 
   web3ProviderDialogBody () {
@@ -134,51 +135,10 @@ class SettingsUI {
     `
   }
 
+  // set the final context. Cause it is possible that this is not the one we've originaly selected
   setFinalContext () {
-    // set the final context. Cause it is possible that this is not the one we've originaly selected
-    this.selectExEnv.value = this.blockchain.getProvider()
     this.event.trigger('clearInstance', [])
     this.updateNetwork()
-    this.updatePlusButton()
-  }
-
-  updatePlusButton () {
-    // enable/disable + button
-    const plusBtn = document.getElementById('remixRunPlus')
-    const plusTitle = document.getElementById('remixRunPlusWraper')
-    switch (this.selectExEnv.value) {
-      case 'injected':
-        plusBtn.classList.add(css.disableMouseEvents)
-        plusTitle.title = "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
-
-        break
-      case 'vm':
-        plusBtn.classList.remove(css.disableMouseEvents)
-        plusTitle.title = 'Create a new account'
-
-        break
-
-      case 'web3':
-        this.onPersonalChange()
-
-        break
-      default: {
-        plusBtn.classList.add(css.disableMouseEvents)
-        plusTitle.title = `Unfortunately it's not possible to create an account using an external wallet (${this.selectExEnv.value}).`
-      }
-    }
-  }
-
-  onPersonalChange () {
-    const plusBtn = document.getElementById('remixRunPlus')
-    const plusTitle = document.getElementById('remixRunPlusWraper')
-    if (!this._deps.config.get('settings/personal-mode')) {
-      plusBtn.classList.add(css.disableMouseEvents)
-      plusTitle.title = 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
-    } else {
-      plusBtn.classList.remove(css.disableMouseEvents)
-      plusTitle.title = 'Create a new account'
-    }
   }
 
   newAccount () {
@@ -267,6 +227,7 @@ class SettingsUI {
           return cb('can\'t detect network ')
       }
       const network = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
+      this.renderSettings()
       cb((network() !== 'vm') ? `${name} (${id || '-'}) network` : '')
     })
     this.fillAccountsList()
