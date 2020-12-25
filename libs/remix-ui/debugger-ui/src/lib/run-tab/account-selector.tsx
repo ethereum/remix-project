@@ -41,7 +41,7 @@ const plusButtonStyle = (providerName, personalModeChecked) => {
 }
 
 export const AccountSelector = (props: any) => {
-    const {newAccount, signMessage, copyToClipboard, selectedProvider, personalModeChecked} = props
+    const {newAccount, signMessage, copyToClipboard, selectedProvider, personalModeChecked, accounts} = props
     const plusButtonCss = plusButtonStyle(selectedProvider, personalModeChecked)
 
     const createAccount = () => {
@@ -58,7 +58,11 @@ export const AccountSelector = (props: any) => {
           </span>
         </label>
         <div className="account">
-          <select data-id="runTabSelectAccount" name="txorigin" className="form-control select custom-select pr-4" id="txorigin"></select>
+          <select data-id="runTabSelectAccount" name="txorigin" className="form-control select custom-select pr-4" id="txorigin">
+            {accounts.map((account, index) => (
+                <option key={account.address} value={account.address}>{account.name}</option>
+            ))}
+          </select>
           <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="mx-1 fas fa-edit icon" aria-hidden="true" onClick={() => {signMessage() }} title="Sign a message using this account key"></i>
         </div>
       </div>

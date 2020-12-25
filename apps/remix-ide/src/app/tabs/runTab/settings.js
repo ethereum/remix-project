@@ -26,6 +26,7 @@ class SettingsUI {
     this.event = new EventManager()
     this._components = {}
     this.options = defaultOptions
+    this.accounts = []
 
     this.blockchain.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
@@ -52,6 +53,19 @@ class SettingsUI {
   }
 
   updateAccountBalances () {
+    this.accounts.forEach((account, index) => {
+      this.blockchain.getBalanceInEther(account.address, (err, balance) => {
+        if (err) return
+        const updated = helper.shortenAddress(account.address, balance)
+        if (updated !== account.name) { // check if the balance has been updated and update UI accordingly.
+          this.accounts[index].name = updated
+        }
+      })
+    })
+    this.renderSettings()
+  }
+
+  _updateAccountBalances () {
     if (!this.el) return
     var accounts = $(this.el.querySelector('#txorigin')).children('option')
     accounts.each((index, account) => {
@@ -70,7 +84,7 @@ class SettingsUI {
     const selectedProvider = this.blockchain.getProvider()
 
     ReactDOM.render(
-      <Settings options={this.options} selectedProvider={selectedProvider} personalModeChecked={personalModeChecked} updateNetwork={this.updateNetwork.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
+      <Settings accounts={this.accounts} options={this.options} selectedProvider={selectedProvider} personalModeChecked={personalModeChecked} updateNetwork={this.updateNetwork.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
       , this.el)
   }
 
@@ -80,8 +94,7 @@ class SettingsUI {
 
     this.renderSettings()
 
-    var selectExEnv = el.querySelector('#selectExEnvOptions')
-    this.setDropdown(selectExEnv)
+    this.setDropdown()
 
     this.blockchain.event.register('contextChanged', (context, silent) => {
       this.setFinalContext()
@@ -95,9 +108,7 @@ class SettingsUI {
     return el
   }
 
-  setDropdown (selectExEnv) {
-    this.selectExEnv = selectExEnv
-
+  setDropdown () {
     this.blockchain.event.register('addProvider', (network) => {
       this.options.push({title: "provider name: ${network.name}", value: "${network.name}", name: "executionContext"})
       this.renderSettings()
@@ -230,34 +241,22 @@ class SettingsUI {
       this.renderSettings()
       cb((network() !== 'vm') ? `${name} (${id || '-'}) network` : '')
     })
-    this.fillAccountsList()
+    // this.fillAccountsList()
   }
 
-  // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
   fillAccountsList () {
-    this.accountListCallId++
-    var callid = this.accountListCallId
-    var txOrigin = this.el.querySelector('#txorigin')
     this.blockchain.getAccounts((err, accounts) => {
-      if (this.accountListCallId > callid) return
-      this.accountListCallId++
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
-      for (var loadedaddress in this.loadedAccounts) {
-        if (accounts.indexOf(loadedaddress) === -1) {
-          txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
-          delete this.loadedAccounts[loadedaddress]
+
+      this.accounts = []
+      if (!err) {
+        for (let account of accounts) {
+          this.accounts.push({ address: account, name: account })
         }
       }
-      for (var i in accounts) {
-        var address = accounts[i]
-        if (!this.loadedAccounts[address]) {
-          txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
-          this.loadedAccounts[address] = 1
-        }
-      }
-      txOrigin.setAttribute('value', accounts[0])
     })
   }
+
 }
 
 module.exports = SettingsUI
