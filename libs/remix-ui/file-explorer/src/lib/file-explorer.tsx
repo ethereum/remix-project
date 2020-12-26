@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react' // eslint-disable-line
-import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 
@@ -49,7 +50,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
         fn: null
       },
       handleHide: null
-    }
+    },
+    toasterMsg: ''
   })
   const editRef = useRef(null)
 
@@ -83,6 +85,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
       setState(prevState => {
         return { ...prevState, fileManager, accessToken, files, actions }
       })
+
+      if (props.filesProvider) {
+        props.filesProvider.event.register('fileAdded', fileAdded)
+      }
     })()
   }, [])
 
@@ -166,7 +172,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const createNewFile = (parentFolder: string, newFilePath: string) => {
+  const createNewFile = (newFilePath: string) => {
     const fileManager = state.fileManager
 
     helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
@@ -179,20 +185,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
         const createFile = await fileManager.writeFile(newName, '')
 
         if (!createFile) {
-          // tooltip('Failed to create file ' + newName)
-        } else {
-          addFile(parentFolder, newName)
-          await fileManager.open(newName)
+          setState(prevState => {
+            return { ...prevState, toasterMsg: 'Failed to create file ' + newName }
+          })
         }
       }
     })
-    // }, null, true)
   }
 
   const createNewFolder = async (parentFolder: string, newFolderPath: string) => {
     const fileManager = state.fileManager
     const dirName = newFolderPath + '/'
-    // if (error) return tooltip('Unexpected error while creating folder: ' + error)
     const exists = fileManager.exists(dirName)
 
     if (exists) return
@@ -200,13 +203,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
       await fileManager.mkdir(dirName)
       addFolder(parentFolder, newFolderPath)
     } catch (e) {
-      // tooltip('Failed to create file ' + newName)
+      setState(prevState => {
+        return { ...prevState, toasterMsg: 'Failed to create folder: ' + newFolderPath }
+      })
     }
   }
 
   const deletePath = async (path: string) => {
-    // if (self.files.isReadOnly(key)) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
-    if (filesProvider.isReadOnly(path)) return
+    if (filesProvider.isReadOnly(path)) {
+      return setState(prevState => {
+        return { ...prevState, toasterMsg: 'cannot delete file. ' + name + ' is a read only explorer' }
+      })
+    }
     const isDir = state.fileManager.isDirectory(path)
 
     modal('Delete file', `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, {
@@ -222,7 +230,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
             return { ...prevState, files: updatedFiles }
           })
         } catch (e) {
-          // tooltip(`Failed to remove file ${key}.`)
+          setState(prevState => {
+            return { ...prevState, toasterMsg: `Failed to remove file ${path}.` }
+          })
         }
       }
     }, {
@@ -421,49 +431,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
   // //   modalDialogCustom.alert(error)
   // })
 
-  // props.filesProvider.event.register('fileAdded', async (filePath: string) => {
-  //   const pathArr = filePath.split('/')
-  //   const hasChild = pathArr.length > 2
+  const fileAdded = async (filePath: string) => {
+    const parentFolder = extractParentFromKey(filePath)
 
-  //   if (hasChild) {
-  //     const expandPath = pathArr.map((path, index) => {
-  //       return [...pathArr.slice(0, index)].join('/')
-  //     }).filter(path => path && (path !== name))
-
-  //     if (state.files.findIndex(item => item.path === expandPath[0]) === -1) {
-  //       const dir = buildTree(expandPath)
-  //       let files = [dir, ...state.files]
-
-  //       await Promise.all(expandPath.map(async path => {
-  //         files = await resolveDirectory(path, files)
-  //       }))
-  //       setState(prevState => {
-  //         return { ...prevState, files, expandPath: [...state.expandPath, ...expandPath] }
-  //       })
-  //     } else {
-  //       console.log('called here again')
-  //       console.log('expandPath[expandPath.length - 1]: ', expandPath[expandPath.length - 1])
-  //       if (state.expandPath.findIndex(path => path === expandPath[expandPath.length - 1]) !== -1) return
-  //       const dir = state.files.find(item => item.path === expandPath[0])
-  //       let files = [{
-  //         ...dir,
-  //         child: [...(await fetchDirectoryContent(dir.path))]
-  //       }, ...state.files.filter(item => item.path !== expandPath[0])]
-  //       console.log('files: ', files)
-
-  //       await Promise.all(expandPath.map(async path => {
-  //         files = await resolveDirectory(path, files)
-  //       }))
-  //       const updatedPath = [state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(expandPath[0]))]
-
-  //       setState(prevState => {
-  //         return { ...prevState, files, expandPath: [...updatedPath, ...expandPath] }
-  //       })
-  //     }
-  //   } else {
-  //     addFile(pathArr[0], filePath)
-  //   }
-  // })
+    addFile(parentFolder, filePath)
+    await state.fileManager.open(filePath)
+  }
 
   // props.filesProvider.event.register('folderAdded', async (folderpath: string) => {
   //   const pathArr = folderpath.split('/')
@@ -620,7 +593,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }, null)
       } else {
         if (state.focusEdit.isNew) {
-          state.focusEdit.type === 'file' ? createNewFile(parentFolder, parentFolder + '/' + content) : createNewFolder(parentFolder, parentFolder + '/' + content)
+          state.focusEdit.type === 'file' ? createNewFile(parentFolder + '/' + content) : createNewFolder(parentFolder, parentFolder + '/' + content)
           const files = removePath(state.focusEdit.element, state.files)
           const updatedFiles = files.filter(file => file)
 
@@ -824,6 +797,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         cancel={ state.modalOptions.cancel }
         handleHide={ handleHideModal }
       />
+      <Toaster message={state.toasterMsg} />
     </div>
   )
 }
