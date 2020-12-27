@@ -4,36 +4,39 @@
 
 # Remix
 
-Remix is a browser-based compiler and IDE that enables users to build **Ethereum contracts with Solidity language** and to debug transactions.
+**Remix** is a browser-based compiler and IDE that enables users to build **Ethereum contracts with [Solidity language](https://soliditylang.org/)** and to debug transactions.
 
 To try it out, visit [https://remix.ethereum.org](https://remix.ethereum.org).
 
-https://github.com/ethereum/remix-project/releases also gives others ways to use Remix locally. Please check it out.
+The [release page](https://github.com/ethereum/remix-project/releases) also gives others ways to use Remix locally. Please check it out.
 
-Remix consists of many modules and in this repository you will find Remix related apps, libs and plugins. (remix-ide, remix-analyzer, etc.).
+Remix consists of many modules and in this repository you will find Remix related apps, libs and plugins (remix-ide, remix-analyzer, etc.).
 
 ![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix_screenshot.png)
 
 ## Offline Usage
 
-The `gh-pages` branch has always the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.
+The `master` branch has always the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.
 
 Note: It contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.
 
 
 ## INSTALLATION:
 
-Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/installing-node), then
+Install **npm** and **node.js** (see https://docs.npmjs.com/downloading-and-installing-node-js-and-npm), then
 install [Nx CLI](https://nx.dev/react/cli/overview) globally to enable running **nx executable commands**.
 ```bash
 npm install -g @nrwl/cli
 ```
 
-clone the github repository (`wget` need to be installed first) :
+Clone the github repository (`wget` need to be installed first):
 
 ```bash
 git clone https://github.com/ethereum/remix-project.git
+```
 
+And build it:
+```bash
 cd remix-project
 npm install
 nx build remix-ide --with-deps
@@ -44,7 +47,7 @@ nx serve
 
 Prerequisites: 
 * Docker (https://docs.docker.com/desktop/)
-* Docker-compose (https://docs.docker.com/compose/install/)
+* Docker Compose (https://docs.docker.com/compose/install/)
 
 ### Run with docker
 
