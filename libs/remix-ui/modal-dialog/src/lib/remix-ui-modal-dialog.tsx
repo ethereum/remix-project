@@ -42,7 +42,6 @@ export const ModalDialog = (props: ModalDialogProps) => {
 
   return (
     <div
-      id="modal-dialog"
       data-id="modalDialogContainer"
       data-backdrop="static"
       data-keyboard="false"
@@ -50,7 +49,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
       style={{ display: props.hide ? 'none' : 'block' }}
       role="dialog"
     >
-      <div id="modal-background" className="modal-dialog" role="document">
+      <div className="modal-dialog" role="document">
         <div
           onBlur={(e) => {
             e.stopPropagation()
@@ -67,7 +66,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
             </h6>
             {!props.showCancelIcon &&
             <span className="modal-close" onClick={() => handleHide()}>
-              <i id="modal-close" title="Close" className="fas fa-times" aria-hidden="true"></i>
+              <i title="Close" className="fas fa-times" aria-hidden="true"></i>
             </span>
             }
           </div>
@@ -78,7 +77,6 @@ export const ModalDialog = (props: ModalDialogProps) => {
             {/* todo add autofocus ^^ */}
             { props.ok &&
               <span
-                id="modal-footer-ok"
                 className={'modal-ok btn btn-sm ' + (state.toggleBtn ? 'btn-dark' : 'btn-light')}
                 onClick={() => {
                   if (props.ok.fn) props.ok.fn()
@@ -90,7 +88,6 @@ export const ModalDialog = (props: ModalDialogProps) => {
             }
             { props.cancel &&
               <span
-                id="modal-footer-cancel"
                 className={'modal-cancel btn btn-sm ' + (state.toggleBtn ? 'btn-light' : 'btn-dark')}
                 data-dismiss="modal"
                 onClick={() => {
