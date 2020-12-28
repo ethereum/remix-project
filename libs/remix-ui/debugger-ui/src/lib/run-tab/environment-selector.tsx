@@ -14,9 +14,7 @@ export const EnvironmentSelector = (props: any) => {
 
     const onSettingsChange = (e) => {
         const provider = e.target.value
-        updateNetwork(provider, (msg) => {
-            setNetworkMessage(msg)
-        })
+        updateNetwork(provider, (msg) => { setNetworkMessage(msg) })
     }
 
     return (

@@ -1,13 +1,10 @@
-// import { EnvironmentSelector, AccountSelector, GasPrice, ValueSelector } from '@remix-ui/debugger-ui' // eslint-disable-line
 import { Settings } from '@remix-ui/debugger-ui' // eslint-disable-line
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 
-const $ = require('jquery')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
 const EventManager = remixLib.EventManager
-const css = require('../styles/run-tab-styles')
 const copyToClipboard = require('../../ui/copy-to-clipboard')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const addTooltip = require('../../ui/tooltip')
@@ -43,13 +40,7 @@ class SettingsUI {
     }
 
     this._deps.config.events.on('settings/personal-mode_changed', this.renderSettings.bind(this))
-
-    setInterval(() => {
-      this.updateAccountBalances()
-    }, 1000)
-
-    this.accountListCallId = 0
-    this.loadedAccounts = {}
+    setInterval(this.updateAccountBalances.bind(this), 1000)
   }
 
   updateAccountBalances () {
@@ -65,50 +56,18 @@ class SettingsUI {
     this.renderSettings()
   }
 
-  _updateAccountBalances () {
-    if (!this.el) return
-    var accounts = $(this.el.querySelector('#txorigin')).children('option')
-    accounts.each((index, account) => {
-      this.blockchain.getBalanceInEther(account.value, (err, balance) => {
-        if (err) return
-        const updated = helper.shortenAddress(account.value, balance)
-        if (updated !== account.innerText) { // check if the balance has been updated and update UI accordingly.
-          account.innerText = updated
-        }
-      })
-    })
-  }
-
   renderSettings() {
     const personalModeChecked = this._deps.config.get('settings/personal-mode')
     const selectedProvider = this.blockchain.getProvider()
 
-    ReactDOM.render(
-      <Settings accounts={this.accounts} options={this.options} selectedProvider={selectedProvider} personalModeChecked={personalModeChecked} updateNetwork={this.updateNetwork.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />
-      , this.el)
+    ReactDOM.render(<Settings accounts={this.accounts} options={this.options} selectedProvider={selectedProvider} personalModeChecked={personalModeChecked} updateNetwork={this.updateNetwork.bind(this)} newAccount={this.newAccount.bind(this)} signMessage={this.signMessage.bind(this)} copyToClipboard={copyToClipboard} />, this.el)
   }
 
   render () {
-    var el = yo`<span></span>`
-    this.el = el
+    this.el = yo`<span></span>`
 
     this.renderSettings()
 
-    this.setDropdown()
-
-    this.blockchain.event.register('contextChanged', (context, silent) => {
-      this.setFinalContext()
-    })
-
-    setInterval(() => {
-      this.updateNetwork()
-    }, 1000)
-
-    this.fillAccountsList()
-    return el
-  }
-
-  setDropdown () {
     this.blockchain.event.register('addProvider', (network) => {
       this.options.push({title: "provider name: ${network.name}", value: "${network.name}", name: "executionContext"})
       this.renderSettings()
@@ -122,6 +81,12 @@ class SettingsUI {
 
       addTooltip(yo`<span><b>${name}</b> provider removed</span>`)
     })
+
+    this.blockchain.event.register('contextChanged', this.setFinalContext.bind(this))
+    setInterval(this.updateNetwork.bind(this), 1000)
+
+    this.fillAccountsList()
+    return this.el
   }
 
   web3ProviderDialogBody () {
