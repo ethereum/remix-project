@@ -2,6 +2,7 @@ import { Settings } from '@remix-ui/debugger-ui' // eslint-disable-line
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 
+const asyncJS = require('async')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
 const EventManager = remixLib.EventManager
@@ -28,7 +29,6 @@ class SettingsUI {
     this.blockchain.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
       if (!lookupOnly) this.el.querySelector('#value').value = '0'
-      this.updateAccountBalances()
     })
     this._components = {
       registry: globalRegistry,
@@ -40,20 +40,7 @@ class SettingsUI {
     }
 
     this._deps.config.events.on('settings/personal-mode_changed', this.renderSettings.bind(this))
-    setInterval(this.updateAccountBalances.bind(this), 1000)
-  }
-
-  updateAccountBalances () {
-    this.accounts.forEach((account, index) => {
-      this.blockchain.getBalanceInEther(account.address, (err, balance) => {
-        if (err) return
-        const updated = helper.shortenAddress(account.address, balance)
-        if (updated !== account.name) { // check if the balance has been updated and update UI accordingly.
-          this.accounts[index].name = updated
-        }
-      })
-    })
-    this.renderSettings()
+    setInterval(this.updateAccountsAndBalances.bind(this), 2000)
   }
 
   renderSettings() {
@@ -85,7 +72,6 @@ class SettingsUI {
     this.blockchain.event.register('contextChanged', this.setFinalContext.bind(this))
     setInterval(this.updateNetwork.bind(this), 1000)
 
-    this.fillAccountsList()
     return this.el
   }
 
@@ -206,20 +192,22 @@ class SettingsUI {
       this.renderSettings()
       cb((network() !== 'vm') ? `${name} (${id || '-'}) network` : '')
     })
-    // this.fillAccountsList()
+    this.updateAccountsAndBalances()
   }
 
-  fillAccountsList () {
-    this.blockchain.getAccounts((err, accounts) => {
-      if (err) { addTooltip(`Cannot get account list: ${err}`) }
-
-      this.accounts = []
-      if (!err) {
-        for (let account of accounts) {
-          this.accounts.push({ address: account, name: account })
-        }
-      }
-    })
+  async updateAccountsAndBalances () {
+    const accounts = await this.blockchain.getAccounts()
+    asyncJS.map(accounts, async (address, next) => {
+      this.blockchain.getBalanceInEther(address, (err, balance) => {
+        if (err) { return next(error) }
+        const updated = helper.shortenAddress(address, balance)
+        const new_account = { address, name: updated }
+        next(null, new_account)
+      })
+    }, (err, results) => {
+        this.accounts = results
+        this.renderSettings()
+      })
   }
 
 }

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react'
 /* eslint-disable-next-line */
 import './gas-price.css'
 
-export const GasPrice = (props: any) => {
-    // const {updateNetwork} = props
+export const GasPrice = () => {
     return (
       <div className="crow">
         <label className="settingsLabel">Gas limit</label>
@@ -13,4 +12,3 @@ export const GasPrice = (props: any) => {
 }
 
 export default GasPrice
-

@@ -1,5 +1,1 @@
-// export * from './run-tab/environment-selector'
-// export * from './run-tab/account-selector'
-// export * from './run-tab/gas-price'
-// export * from './run-tab/value-selector'
 export * from './run-tab/settings'

@@ -7,8 +7,6 @@ const clipboardstyles = {
 } as React.CSSProperties;
 
 const plusButtonStyle = (providerName, personalModeChecked) => {
-    console.dir("======== plusButtonStyle")
-    console.dir(providerName)
     let css = {classList: "", title: ""}
 
     switch (providerName) {

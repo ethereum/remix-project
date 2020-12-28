@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 /* eslint-disable-next-line */
 import './value-selector.css'
 
-export const ValueSelector = (props: any) => {
+export const ValueSelector = () => {
     return (
       <div className="crow">
         <label className="settingsLabel">Value</label>
