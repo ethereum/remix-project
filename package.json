@@ -127,6 +127,7 @@
     ]
   },
   "dependencies": {
+    "@erebos/bzz-node": "^0.13.0",
     "@remixproject/engine": "^0.3.3",
     "@remixproject/engine-web": "^0.3.3",
     "@remixproject/plugin": "^0.3.3",
