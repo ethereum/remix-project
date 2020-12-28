@@ -85,12 +85,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
       setState(prevState => {
         return { ...prevState, fileManager, accessToken, files, actions }
       })
-
-      if (props.filesProvider) {
-        props.filesProvider.event.register('fileAdded', fileAdded)
-      }
     })()
   }, [])
+
+  useEffect(() => {
+    if (state.fileManager) {
+      props.filesProvider.event.register('fileAdded', fileAdded)
+    }
+  }, [state.fileManager])
 
   const resolveDirectory = async (folderPath, dir: File[]): Promise<File[]> => {
     dir = await Promise.all(dir.map(async (file) => {
@@ -267,7 +269,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const addFile = async (parentFolder: string, newFilePath: string, files?: File[]) => {
+  const addFile = async (parentFolder: string, newFilePath: string) => {
     if (parentFolder === name) {
       setState(prevState => {
         return {
@@ -281,7 +283,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
       })
     } else {
-      const updatedFiles = await resolveDirectory(parentFolder, files || state.files)
+      const updatedFiles = await resolveDirectory(parentFolder, state.files)
 
       setState(prevState => {
         return { ...prevState, files: updatedFiles, focusElement: [{ key: newFilePath, type: 'file' }] }
@@ -290,6 +292,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (newFilePath.includes('_test.sol')) {
       plugin.events.trigger('newTestFileCreated', [newFilePath])
     }
+    state.fileManager.open(newFilePath)
   }
 
   const addEmptyFile = (parentFolder: string, files: File[]): File[] => {
@@ -432,10 +435,46 @@ export const FileExplorer = (props: FileExplorerProps) => {
   // })
 
   const fileAdded = async (filePath: string) => {
-    const parentFolder = extractParentFromKey(filePath)
+    const pathArr = filePath.split('/')
+    const hasChild = pathArr.length > 2
 
-    addFile(parentFolder, filePath)
-    await state.fileManager.open(filePath)
+    if (hasChild) {
+      const expandPath = pathArr.map((path, index) => {
+        return [...pathArr.slice(0, index)].join('/')
+      }).filter(path => path && (path !== name))
+
+      if (state.files.findIndex(item => item.path === expandPath[0]) === -1) {
+        const dir = buildTree(expandPath)
+        let files = [dir, ...state.files]
+
+        await Promise.all(expandPath.map(async path => {
+          files = await resolveDirectory(path, files)
+        }))
+        setState(prevState => {
+          return { ...prevState, files, expandPath: [...state.expandPath, ...expandPath] }
+        })
+      } else {
+        if (state.expandPath.findIndex(path => path === expandPath[expandPath.length - 1]) !== -1) return
+        const dir = state.files.find(item => item.path === expandPath[0])
+        let files = [{
+          ...dir,
+          child: [...(await fetchDirectoryContent(dir.path))]
+        }, ...state.files.filter(item => item.path !== expandPath[0])]
+
+        await Promise.all(expandPath.map(async path => {
+          files = await resolveDirectory(path, files)
+        }))
+        const updatedPath = [state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(expandPath[0]))]
+
+        setState(prevState => {
+          return { ...prevState, files, expandPath: [...updatedPath, ...expandPath] }
+        })
+      }
+    } else {
+      const parentFolder = extractParentFromKey(filePath)
+
+      addFile(parentFolder, filePath)
+    }
   }
 
   // props.filesProvider.event.register('folderAdded', async (folderpath: string) => {
@@ -681,8 +720,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
         <div key={index}>
           <TreeViewItem
             id={`treeViewItem${file.path}`}
-            iconX='pr-3 fa fa-folder text-info'
-            iconY='pr-3 fa fa-folder-open text-info'
+            iconX='pr-3 far fa-folder'
+            iconY='pr-3 far fa-folder-open'
             key={`${file.path + index}`}
             label={label(file)}
             onClick={(e) => {
