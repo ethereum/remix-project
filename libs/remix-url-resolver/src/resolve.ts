@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-var Bzz = require('web3-bzz');
+import { BzzNode as Bzz } from '@erebos/bzz-node'
 
 export interface Imported {
   content: string;
@@ -90,9 +90,10 @@ export class RemixURLResolver {
   async handleSwarm(url: string, cleanUrl: string): Promise<HandlerResponse> {
     //eslint-disable-next-line no-useless-catch
     try {
-      const bzz = new Bzz(Bzz.givenProvider || 'http://swarm-gateways.net');
-      const contentInBuffer = await bzz.download(url)
-      return { content: contentInBuffer.toString(), cleanUrl }
+      const bzz = new Bzz({url: 'http://swarm-gateways.net'});
+      const url = bzz.getDownloadURL(cleanUrl, {mode: 'raw'})
+      const response: AxiosResponse = await axios.get(url)
+      return { content: response.data, cleanUrl }
     } catch(e) {
       throw e
     }
