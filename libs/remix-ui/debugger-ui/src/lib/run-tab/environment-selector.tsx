@@ -2,12 +2,6 @@ import React, { useState, useEffect } from 'react'
 /* eslint-disable-next-line */
 import './environment-selector.css'
 
-const defaultOptions = [
-    {value: "vm", name: "JavaScript VM", title: "Execution environment does not connect to any node, everything is local and in memory only."},
-    {value: "injected", name: "Injected Web3", title: "Execution environment has been provided by Metamask or similar provider."},
-    {value: "web3", name: "Web3 Provider", title: "Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse! If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."}
-]
-
 export const EnvironmentSelector = (props: any) => {
     const [networkMessage, setNetworkMessage] = useState("");
     const {updateNetwork, selectedProvider} = props
