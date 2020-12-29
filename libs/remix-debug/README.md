@@ -1,20 +1,23 @@
-# `remix-debug`
+## Remix Debug`
+[![npm version](https://badge.fury.io/js/%40remix-project%2Fremix-debug.svg)](https://www.npmjs.com/package/@remix-project/remix-debug)
+[![npm](https://img.shields.io/npm/dt/@remix-project/remix-debug.svg?label=Total%20Downloads)](https://www.npmjs.com/package/@remix-project/remix-debug)
+[![npm](https://img.shields.io/npm/dw/@remix-project/remix-debug.svg)](https://www.npmjs.com/package/@remix-project/remix-debug)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethereum/remix-project/tree/master/libs/remix-debug)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ethereum/remix-project/issues)
 
-remix-debug wrap other remix-* libraries and can be used to debug Ethereum transactions.
+`@remix-project/remix-debug` is a tool to to debug Ethereum transactions on different Remix environments (VM, testnet etc.). It works underneath Remix IDE "DEBUGGER" plugin which is used to analyse step-to-step executioon of a transaction to debug it.
 
-+ [Installation](#installation)
-+ [Development](#development)
+### Installation
+`@remix-project/remix-debug` is an NPM package and can be installed using NPM as:
 
-## Installation
+`npm install @remix-project/remix-debug`
 
+### How to use
 
-```bash
-npm install remix-debug
-```
+`@remix-project/remix-debug` can be used as:
 
-## Development
+```ts
 
-```javascript
 var Debugger = require('remix-debug').EthDebugger
 var BreakpointManager = require('remix-debug').BreakpointManager
 
@@ -64,169 +67,85 @@ debugger.callTree.register('callTreeReady', () => {
 })
 ```
 
-## Library
-
-Provides:
+It exports:
 
 ```javascript
 {
-    code: {
-        CodeManager: CodeManager,
-        BreakpointManager: BreakpointManager
-    },
-    storage: {
-        StorageViewer: StorageViewer,
-        StorageResolver: StorageResolver
-    },
-    trace: {
-        TraceManager: TraceManager
-    }
+  init,
+  traceHelper,
+  sourceMappingDecoder,
+  EthDebugger,
+  TransactionDebugger,
+  BreakpointManager,
+  SolidityDecoder,
+  storage: {
+    StorageViewer: StorageViewer,
+    StorageResolver: StorageResolver
+  },
+  CmdLine
 }
 ```
-      
 
-TraceManager is a convenient way to access a VM Trace and resolve some value from it.
-
-`TraceManager()` :
-
-`function resolveTrace(stepIndex, tx)`
-
-`function init(stepIndex, tx)`
-
-`function inRange(stepIndex, tx)`
-
-`function isLoaded(stepIndex, tx)`
-
-`function getLength(stepIndex, tx)`
-
-`function accumulateStorageChanges(stepIndex, tx)`
-
-`function getAddresses(stepIndex, tx)`
-
-`function getCallDataAt(stepIndex, tx)`
-
-`function getCallStackAt(stepIndex, tx)`
-
-`function getStackAt(stepIndex, tx)`
-
-`function getLastCallChangeSince(stepIndex, tx)`
-
-`function getCurrentCalledAddressAt(stepIndex, tx)`
-
-`function getContractCreationCode(stepIndex, tx)`
-
-`function getMemoryAt(stepIndex, tx)`
-
-`function getCurrentPC(stepIndex, tx)`
-
-`function getReturnValue(stepIndex, tx)`
-
-`function getCurrentStep(stepIndex, tx)`
-
-`function getMemExpand(stepIndex, tx)`
-
-`function getStepCost(stepIndex, tx)`
-
-`function getRemainingGas(stepIndex, tx)`
-
-`function getStepCost(stepIndex, tx)`
-
-`function isCreationStep(stepIndex, tx)`
-
-`function findStepOverBack(stepIndex, tx)`
-
-`function findStepOverForward(stepIndex, tx)`
-
-`function findStepOverBack(stepIndex, tx)`
-
-`function findNextCall(stepIndex, tx)`
-
-`function findStepOut(stepIndex, tx)`
-
-`function checkRequestedStep(stepIndex, tx)`
-
-`function waterfall(stepIndex, tx)`
-
+Some of the class details are as:
 
 - - - -
 
-`CodeManager(_traceManager)` :
+**BreakpointManager**
 
-`function getCode(stepIndex, tx)` :
-Resolve the code of the given @arg stepIndex and trigger appropriate event
+`constructor({ traceManager, callTree, solidityProxy, locationToRowConverter })` : create new instance
 
-`function resolveStep(address, cb)` :
-Retrieve the code located at the given @arg address
+`jumpNextBreakpoint(defaultToLimit)` : start looking for the next breakpoint
 
-`function getFunctionFromStep(stepIndex, sourceMap, ast)` :
-Retrieve the called function for the current vm step
+`jumpPreviousBreakpoint(defaultToLimit)` : start looking for the previous breakpoint
 
-`function getInstructionIndex(address, step, callback)` :
-Retrieve the instruction index of the given @arg step
+`jump(direction, defaultToLimit)` : start looking for the previous or next breakpoint
 
-`function getFunctionFromPC(address, pc, sourceMap, ast)` :
-Retrieve the called function for the given @arg pc and @arg address
+`hasBreakpointAtLine((fileIndex, line)` : check the given pair fileIndex/line against registered breakpoints
 
-- - - -
+`hasBreakpoint()` : return true if current manager has breakpoint
 
-`BreakpointManager(_ethdebugger, _locationToRowConverter)` :
+`add(sourceLocation)` : add a new breakpoint to the manager
 
-`function jumpNextBreakpoint(defaultToLimit)` :
-start looking for the next breakpoint
-
-`function jumpPreviousBreakpoint(defaultToLimit)` :
-start looking for the previous breakpoint
-
-`function jump(direction, defaultToLimit)` :
-start looking for the previous or next breakpoint
-
-`function hasBreakpointAtLine((fileIndex, line)` :
-check the given pair fileIndex/line against registered breakpoints
-
-`function hasBreakpoint()` :
-return true if current manager has breakpoint
-
-`function add(sourceLocation)` :
-add a new breakpoint to the manager
-
-`function remove(sourceLocation)` :
-remove a breakpoint from the manager
+`remove(sourceLocation)` : remove a breakpoint from the manager
 
 - - - -
 
-`StorageViewer(_context, _storageResolver, _traceManager)` :
+**StorageViewer**
 
-`function storageRange(defaultToLimit)` :
-return the storage for the current context (address and vm trace index)
+`constructor (_context, _storageResolver, _traceManager)` : create new instance
 
-`function storageSlot(defaultToLimit)` :
-return a slot value for the current context (address and vm trace index)
+`storageRange(defaultToLimit)` : return the storage for the current context (address and vm trace index)
 
-`function isComplete(direction, defaultToLimit)` :
-return True if the storage at @arg address is complete
+`storageSlot(defaultToLimit)` : return a slot value for the current context (address and vm trace index)
 
-`function initialMappingsLocation((fileIndex, line)` :
-return all the possible mappings locations for the current context (cached) do not return state changes during the current transaction
+`isComplete(direction, defaultToLimit)` : return True if the storage at @arg address is complete
 
-`function mappingsLocation()` :
-return all the possible mappings locations for the current context (cached) and current mapping slot. returns state changes during the current transaction
+`initialMappingsLocation((fileIndex, line)` : return all the possible mappings locations for the current context (cached) do not return state changes during the current transaction
 
-`function extractMappingsLocationChanges(sourceLocation)` :
-retrieve mapping location changes from the storage changes.
+`mappingsLocation()` : return all the possible mappings locations for the current context (cached) and current mapping slot. returns state changes during the current transaction
+
+`extractMappingsLocationChanges(sourceLocation)` : retrieve mapping location changes from the storage changes.
 
 - - - -
 
-`StorageResolver()` :
+**StorageResolver**
 
-`function storageRange(tx, stepIndex, address, callback)` :
-return the storage for the current context (address and vm trace index)
+`constructor (options)` : create new instance
 
-`function initialPreimagesMappings(tx, stepIndex, address, callback)` :
-return a slot value for the current context (address and vm trace index)
+`storageRange(tx, stepIndex, address, callback)` : return the storage for the current context (address and vm trace index)
 
-`function storageSlot(slot, tx, stepIndex, address, callback)` :
-return True if the storage at @arg address is complete
+`initialPreimagesMappings(tx, stepIndex, address, callback)` : return a slot value for the current context (address and vm trace index)
 
-`function isComplete(address)` :
-return all the possible mappings locations for the current context (cached) do not return state changes during the current transaction
+`storageSlot(slot, tx, stepIndex, address, callback)` : return True if the storage at @arg address is complete
+
+`isComplete(address)` : return all the possible mappings locations for the current context (cached) do not return state changes during the current transaction
+
+### Contribute
+
+Please feel free to open an issue or a pull request. 
+
+In case you want to add some code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md). Reach us on [Gitter](https://gitter.im/ethereum/remix) in case of any queries.
+
+### License
+MIT © 2018-21 Remix Team
 
