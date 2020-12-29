@@ -25,10 +25,12 @@ interface HandlerResponse {
 export class RemixURLResolver {
   private previouslyHandled: PreviouslyHandledImports
   gistAccessToken: string
+  protocol: string
 
-  constructor(gistToken?: string) {
+  constructor(gistToken?: string, protocol = 'http:') {
     this.previouslyHandled = {}
     this.gistAccessToken = gistToken ? gistToken : ''
+    this.protocol = protocol
   }
 
   /**
@@ -90,7 +92,7 @@ export class RemixURLResolver {
   async handleSwarm(url: string, cleanUrl: string): Promise<HandlerResponse> {
     //eslint-disable-next-line no-useless-catch
     try {
-      const bzz = new Bzz({url: 'http://swarm-gateways.net'});
+      const bzz = new Bzz({url: this.protocol + '//swarm-gateways.net'});
       const url = bzz.getDownloadURL(cleanUrl, {mode: 'raw'})
       const response: AxiosResponse = await axios.get(url)
       return { content: response.data, cleanUrl }
