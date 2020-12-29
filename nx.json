@@ -32,7 +32,7 @@
     },
     "remix-debug": {
       "tags": [],
-      "implicitDependencies": ["remix-lib"]
+      "implicitDependencies": ["remix-astwalker", "remix-lib"]
     },
     "remix-simulator": {
       "tags": [],
@@ -57,7 +57,9 @@
         "remix-lib",
         "remix-simulator",
         "remix-solidity",
-        "remix-tests"
+        "remix-tests",
+        "remix-astwalker",
+        "remix-url-resolver"
       ]
     },
     "remix-ide-e2e": {
