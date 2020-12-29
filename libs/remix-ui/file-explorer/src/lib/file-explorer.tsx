@@ -3,12 +3,17 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // e
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import * as async from 'async'
+import Gists from 'gists'
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
+import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 
 import './css/file-explorer.css'
+
+const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { filesProvider, name, registry, plugin } = props
@@ -79,7 +84,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         type: ['file', 'folder']
       }, {
         name: 'Push changes to gist',
-        type: []
+        type: ['browser/gists']
       }]
 
       setState(prevState => {
@@ -179,7 +184,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
     helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
       if (error) {
-        return modal('Create File Failed', error, {
+        modal('Create File Failed', error, {
           label: 'Close',
           fn: async () => {}
         }, null)
@@ -249,7 +254,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const exists = fileManager.exists(newPath)
 
       if (exists) {
-        return modal('Rename File Failed', 'File name already exists', {
+        modal('Rename File Failed', 'File name already exists', {
           label: 'Close',
           fn: async () => {}
         }, null)
@@ -518,6 +523,179 @@ export const FileExplorer = (props: FileExplorerProps) => {
   //   }
   // })
 
+  const uploadFile = (target) => {
+    // TODO The file explorer is merely a view on the current state of
+    // the files module. Please ask the user here if they want to overwrite
+    // a file and then just use `files.add`. The file explorer will
+    // pick that up via the 'fileAdded' event from the files module.
+
+    [...target.files].forEach((file) => {
+      const files = props.filesProvider
+
+      const loadFile = (name: string): void => {
+        const fileReader = new FileReader()
+
+        fileReader.onload = async function (event) {
+          if (helper.checkSpecialChars(file.name)) {
+            modal('File Upload Failed', 'Special characters are not allowed', {
+              label: 'Close',
+              fn: async () => {}
+            }, null)
+            return
+          }
+          const success = await files.set(name, event.target.result)
+
+          if (!success) {
+            modal('File Upload Failed', 'Failed to create file ' + name, {
+              label: 'Close',
+              fn: async () => {}
+            }, null)
+          }
+        }
+        fileReader.readAsText(file)
+      }
+      const name = files.type + '/' + file.name
+
+      files.exists(name, (error, exist) => {
+        if (error) console.log(error)
+        if (!exist) {
+          loadFile(name)
+        } else {
+          modal('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, {
+            label: 'Ok',
+            fn: () => {
+              loadFile(name)
+            }
+          }, {
+            label: 'Cancel',
+            fn: () => {}
+          })
+        }
+      })
+    })
+  }
+
+  const publishToGist = () => {
+    modal('Create a public gist', 'Are you sure you want to publish all your files in browser directory anonymously as a public gist on github.com? Note: this will not include directories.', {
+      label: 'Ok',
+      fn: toGist
+    }, {
+      label: 'Cancel',
+      fn: () => {}
+    })
+  }
+
+  const toGist = (id?: string) => {
+    const proccedResult = function (error, data) {
+      if (error) {
+        modal('Publish to gist Failed', 'Failed to manage gist: ' + error, {
+          label: 'Close',
+          fn: async () => {}
+        }, null)
+      } else {
+        if (data.html_url) {
+          modal('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, {
+            label: 'Ok',
+            fn: () => {
+              window.open(data.html_url, '_blank')
+            }
+          }, {
+            label: 'Cancel',
+            fn: () => {}
+          })
+        } else {
+          modal('Publish to gist Failed', data.message + ' ' + data.documentation_url + ' ' + JSON.stringify(data.errors, null, '\t'), {
+            label: 'Close',
+            fn: async () => {}
+          }, null)
+        }
+      }
+    }
+
+    /**
+       * This function is to get the original content of given gist
+       * @params id is the gist id to fetch
+       */
+    const getOriginalFiles = async (id) => {
+      if (!id) {
+        return []
+      }
+
+      const url = `https://api.github.com/gists/${id}`
+      const res = await fetch(url)
+      const data = await res.json()
+      return data.files || []
+    }
+
+    // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
+    const folder = id ? 'browser/gists/' + id : 'browser/'
+
+    packageFiles(props.filesProvider, folder, async (error, packaged) => {
+      if (error) {
+        console.log(error)
+        modal('Publish to gist Failed', 'Failed to create gist: ' + error.message, {
+          label: 'Close',
+          fn: async () => {}
+        }, null)
+      } else {
+        // check for token
+        if (!state.accessToken) {
+          modal('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', {
+            label: 'Close',
+            fn: async () => {}
+          }, null)
+        } else {
+          const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
+            queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs=' + queryParams.get().runs + '&gist='
+          const gists = new Gists({ token: state.accessToken })
+
+          if (id) {
+            const originalFileList = await getOriginalFiles(id)
+            // Telling the GIST API to remove files
+            const updatedFileList = Object.keys(packaged)
+            const allItems = Object.keys(originalFileList)
+              .filter(fileName => updatedFileList.indexOf(fileName) === -1)
+              .reduce((acc, deleteFileName) => ({
+                ...acc,
+                [deleteFileName]: null
+              }), originalFileList)
+            // adding new files
+            updatedFileList.forEach((file) => {
+              const _items = file.split('/')
+              const _fileName = _items[_items.length - 1]
+              allItems[_fileName] = packaged[file]
+            })
+
+            // tooltip('Saving gist (' + id + ') ...')
+            gists.edit({
+              description: description,
+              public: true,
+              files: allItems,
+              id: id
+            }, (error, result) => {
+              proccedResult(error, result)
+              if (!error) {
+                for (const key in allItems) {
+                  if (allItems[key] === null) delete allItems[key]
+                }
+              }
+            })
+          } else {
+            // id is not existing, need to create a new gist
+            // tooltip('Creating a new gist ...')
+            gists.create({
+              description: description,
+              public: true,
+              files: packaged
+            }, (error, result) => {
+              proccedResult(error, result)
+            })
+          }
+        }
+      }
+    })
+  }
+
   const handleHideModal = () => {
     setState(prevState => {
       return { ...prevState, modalOptions: { ...state.modalOptions, hide: true } }
@@ -754,6 +932,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
               createNewFolder={handleNewFolderInput}
               deletePath={deletePath}
               renamePath={editModeOn}
+              extractParentFromKey={extractParentFromKey}
+              publishToGist={publishToGist}
               pageX={state.focusContext.x}
               pageY={state.focusContext.y}
               path={file.path}
@@ -811,9 +991,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
               addFile={addFile}
               createNewFile={handleNewFileInput}
               createNewFolder={handleNewFolderInput}
-              files={filesProvider}
+              publishToGist={publishToGist}
+              uploadFile={uploadFile}
               fileManager={state.fileManager}
-              accessToken={state.accessToken}
             />
           }
           expand={true}>
@@ -842,3 +1022,28 @@ export const FileExplorer = (props: FileExplorerProps) => {
 }
 
 export default FileExplorer
+
+function packageFiles (filesProvider, directory, callback) {
+  const ret = {}
+  filesProvider.resolveDirectory(directory, (error, files) => {
+    if (error) callback(error)
+    else {
+      async.eachSeries(Object.keys(files), (path, cb) => {
+        if (filesProvider.isDirectory(path)) {
+          cb()
+        } else {
+          filesProvider.get(path, (error, content) => {
+            if (error) return cb(error)
+            if (/^\s+$/.test(content) || !content.length) {
+              content = '// this line is added to create a gist. Empty file is not allowed.'
+            }
+            ret[path] = { content }
+            cb()
+          })
+        }
+      }, (error) => {
+        callback(error, ret)
+      })
+    }
+  })
+}

@@ -4,7 +4,7 @@ import { FileExplorerContextMenuProps } from './types'
 import './css/file-explorer-context-menu.css'
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pageX, pageY, path, type, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, extractParentFromKey, publishToGist, pageX, pageY, path, type, ...otherProps } = props
   const contextMenuRef = useRef(null)
 
   useEffect(() => {
@@ -23,7 +23,10 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   }, [pageX, pageY])
 
   const menu = () => {
-    return actions.filter(item => item.type.findIndex(name => name === type) !== -1).map((item, index) => {
+    return actions.filter(item => item.type.findIndex(name => {
+      if ((name === 'browser/gists') && (type === 'folder') && (extractParentFromKey(path) === name)) return true // add publish to gist for gist folders
+      return name === type
+    }) !== -1).map((item, index) => {
       return <li
         id={`menuitem${item.name.toLowerCase()}`}
         key={index}
@@ -42,6 +45,9 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               break
             case 'Delete':
               deletePath(path)
+              break
+            case 'Push changes to gist':
+              publishToGist()
               break
             default:
               break
