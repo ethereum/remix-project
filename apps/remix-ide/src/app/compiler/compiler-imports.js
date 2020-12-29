@@ -6,9 +6,7 @@ const remixTests = require('@remix-project/remix-tests')
 const globalRegistry = require('../../global/registry')
 const addTooltip = require('../ui/tooltip')
 const async = require('async')
-var swarmgw = require('swarmgw')()
 var resolver = require('@resolver-engine/imports').ImportsEngine()
-var request = require('request')
 
 const profile = {
   name: 'contentImport',
@@ -25,52 +23,6 @@ module.exports = class CompilerImports extends Plugin {
     const token = globalRegistry.get('config').api.get('settings/gist-access-token') // TODO replace with the plugin call above https://github.com/ethereum/remix-ide/issues/2288
     this.urlResolver = new RemixURLResolver(token)
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
-  }
-
-  handleSwarmImport (url, cleanUrl, cb) {
-    swarmgw.get(url, function (err, content) {
-      cb(err, content, cleanUrl)
-    })
-  }
-
-  handleIPFS (url, cb) {
-    // replace ipfs:// with /ipfs/
-    url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
-
-    return request.get(
-      {
-        url: 'https://ipfsgw.komputing.org/' + url
-      },
-      (err, r, data) => {
-        if (err) {
-          return cb(err || 'Unknown transport error')
-        }
-        cb(null, data, url)
-      })
-  }
-
-  handleHttpCall (url, cleanUrl, cb) {
-    console.log('Inside ide handleHttpCall')
-    return request.get(
-      {
-        url
-      },
-      (err, r, data) => {
-        if (err) {
-          return cb(err || 'Unknown transport error')
-        }
-        cb(null, data, cleanUrl)
-      })
-  }
-
-  handlers () {
-    return [
-      { type: 'github', match: /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: (match, cb) => { this.handleGithubCall(match[3], match[4], cb) } },
-      { type: 'http', match: /^(http?:\/\/?(.*))$/, handler: (match, cb) => { this.handleHttpCall(match[1], match[2], cb) } },
-      { type: 'https', match: /^(https?:\/\/?(.*))$/, handler: (match, cb) => { this.handleHttpCall(match[1], match[2], cb) } },
-      { type: 'swarm', match: /^(bzz-raw?:\/\/?(.*))$/, handler: (match, cb) => { this.handleSwarmImport(match[1], match[2], cb) } },
-      { type: 'ipfs', match: /^(ipfs:\/\/?.+)/, handler: (match, cb) => { this.handleIPFS(match[1], cb) } }
-    ]
   }
 
   isRelativeImport (url) {
@@ -109,17 +61,12 @@ module.exports = class CompilerImports extends Plugin {
       return cb(null, imported.content, imported.cleanUrl, imported.type, url)
     }
     var handlers = this.urlResolver.getHandlers()
-
     var found = false
     handlers.forEach(function (handler) {
-      if (found) {
-        return
-      }
-
+      if (found) return
       var match = handler.match(url)
       if (match) {
         found = true
-
         loadingCb('Loading ' + url + ' ...')
         handler.handle(match).then(function (result) {
           const { content, cleanUrl } = result
