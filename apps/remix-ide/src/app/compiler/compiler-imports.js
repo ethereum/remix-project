@@ -21,7 +21,8 @@ module.exports = class CompilerImports extends Plugin {
     this.fileManager = fileManager
     // const token = await this.call('settings', 'getGithubAccessToken')
     const token = globalRegistry.get('config').api.get('settings/gist-access-token') // TODO replace with the plugin call above https://github.com/ethereum/remix-ide/issues/2288
-    this.urlResolver = new RemixURLResolver(token)
+    const protocol = window.location.protocol
+    this.urlResolver = new RemixURLResolver(token, protocol)
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
