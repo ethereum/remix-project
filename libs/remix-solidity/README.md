@@ -10,6 +10,8 @@
 
 ### Installation
 
+`@remix-project/remix-solidity` is an NPM package and can be installed using NPM as:
+
 `npm install @remix-project/remix-solidity`
 
 ### How to use

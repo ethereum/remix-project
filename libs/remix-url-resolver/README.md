@@ -1,21 +1,62 @@
-## Remix URL resolver engine
+## Remix Url Resolver
+[![npm version](https://badge.fury.io/js/%40remix-project%2Fremix-url-resolver.svg)](https://www.npmjs.com/package/@remix-project/remix-url-resolver)
+[![npm](https://img.shields.io/npm/dt/@remix-project/remix-url-resolver.svg?label=Total%20Downloads)](https://www.npmjs.com/package/@remix-project/remix-url-resolver)
+[![npm](https://img.shields.io/npm/dw/@remix-project/remix-url-resolver.svg)](https://www.npmjs.com/package/@remix-project/remix-url-resolver)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethereum/remix-project/tree/master/libs/remix-url-resolver)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ethereum/remix-project/issues)
 
-`resolve(url, urlHandler)`
 
-Returns `json` object with exact same path as `import` statement.
+`@remix-project/remix-url-resolver` is a tool to handle import from different sources and resolve the content. It is used in Remix IDE to handle imports from `Github`, `Swarm`, `IPFS` and other URLs. 
 
-**Output**
-```json
-{
-	content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
-	cleanURL: '../greeter.sol',
-	type: 'local'
-}
+### Installation
+
+`@remix-project/remix-url-resolver` is an NPM package and can be installed using NPM as:
+
+`npm install @remix-project/remix-url-resolver`
+
+### How to use
+
+`@remix-project/remix-url-resolver` exports:
+
 ```
 
-#### Usage
+export declare class RemixURLResolver {
+    private previouslyHandled;
+    gistAccessToken: string;
+    constructor(gistToken?: string);
+    /**
+    * Handle an import statement based on github
+    * @param root The root of the github import statement
+    * @param filePath path of the file in github
+    */
+    handleGithubCall(root: string, filePath: string): Promise<HandlerResponse>;
+    /**
+    * Handle an import statement based on http
+    * @param url The url of the import statement
+    * @param cleanUrl
+    */
+    handleHttp(url: string, cleanUrl: string): Promise<HandlerResponse>;
+    /**
+    * Handle an import statement based on https
+    * @param url The url of the import statement
+    * @param cleanUrl
+    */
+    handleHttps(url: string, cleanUrl: string): Promise<HandlerResponse>;
+    handleSwarm(url: string, cleanUrl: string): Promise<HandlerResponse>;
+    /**
+    * Handle an import statement based on IPFS
+    * @param url The url of the IPFS import statement
+    */
+    handleIPFS(url: string): Promise<HandlerResponse>;
+    getHandlers(): Handler[];
+    resolve(filePath: string, customHandlers?: Handler[]): Promise<Imported>;
+}
 
-`resolve(url, urlHandler)` function should be called from within `handleImportCb` function of `solc.compile(input, handleImportCb)`.
+```
+
+**Usage**
+
+`resolve(url, customHandlers)` function should be called from within `handleImportCb` function of `solc.compile(input, handleImportCb)`.
 
 ```ts
 import { RemixURLResolver } from 'remix-url-resolver'
@@ -35,3 +76,12 @@ urlResolver.resolve(fileName, urlHandler)
 
 * [TypeScript Publishing](http://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html)
 * [DefinitelyTyped 'Create a new package' guide](https://github.com/DefinitelyTyped/DefinitelyTyped#create-a-new-package)
+
+### Contribute
+
+Please feel free to open an issue or a pull request. 
+
+In case you want to add some code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md). Reach us on [Gitter](https://gitter.im/ethereum/remix) in case of any queries.   
+
+### License
+MIT © 2018-21 Remix Team
