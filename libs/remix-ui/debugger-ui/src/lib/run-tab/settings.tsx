@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 /* eslint-disable-next-line */
-import EnvironmentSelector from './environment-selector'
-import AccountSelector from './account-selector'
-import GasPrice from './gas-price'
-import ValueSelector from './value-selector'
+import EnvironmentSelector from './settings/environment-selector'
+import AccountSelector from './settings/account-selector'
+import GasPrice from './settings/gas-price'
+import ValueSelector from './settings/value-selector'
 import './settings.css'
 
 export const Settings = (props: any) => {
