@@ -1,4 +1,7 @@
 import publishToStorage from '../../../publishToStorage'
+import { IPFSCheck } from '@remix-ui/debugger-ui'
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
 
 var yo = require('yo-yo')
 var css = require('../styles/run-tab-styles')
@@ -70,13 +73,15 @@ class ContractDropdownUI {
   setCheckedState (value) {
     value = value === 'true' ? true : value === 'false' ? false : value
     this.ipfsCheckedState = value
-    if (this.ipfsCheckbox) this.ipfsCheckbox.checked = value
+    ReactDOM.render(
+      <IPFSCheck toggleCheckedState={this.toggleCheckedState.bind(this)} initialCheck={this.ipfsCheckedState} />
+      , this.ipfsCheckbox)
   }
 
-  toggleCheckedState () {
+  toggleCheckedState (ipfsCheckedState) {
     if (this.exEnvironment === 'vm') this.networkName = 'VM'
-    this.ipfsCheckedState = !this.ipfsCheckedState
-    window.localStorage.setItem(`ipfs/${this.exEnvironment}/${this.networkName}`, this.ipfsCheckedState)
+    this.ipfsCheckedState = ipfsCheckedState
+    window.localStorage.setItem(`ipfs/${this.exEnvironment}/${this.networkName}`, ipfsCheckedState)
   }
 
   enableContractNames (enable) {
@@ -123,27 +128,15 @@ class ContractDropdownUI {
     this.ipfsCheckedState = savedConfig === 'true' ? true : false // eslint-disable-line
 
     this.ipfsCheckbox = yo`
-      <input
-        id="deployAndRunPublishToIPFS"
-        data-id="contractDropdownIpfsCheckbox"
-        class="form-check-input custom-control-input"
-        type="checkbox"
-        onchange=${() => this.toggleCheckedState()}
-      >
+      <span></span>
     `
-    if (this.ipfsCheckedState) this.ipfsCheckbox.checked = true
+    ReactDOM.render(
+      <IPFSCheck toggleCheckedState={this.toggleCheckedState.bind(this)} initialCheck={this.ipfsCheckedState} />
+      , this.ipfsCheckbox)
 
     this.deployCheckBox = yo`
       <div class="d-flex py-1 align-items-center custom-control custom-checkbox">
         ${this.ipfsCheckbox}
-        <label
-          for="deployAndRunPublishToIPFS"
-          data-id="contractDropdownIpfsCheckboxLabel"
-          class="m-0 form-check-label custom-control-label ${css.checkboxAlign}"
-          title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
-        >
-          Publish to IPFS
-        </label>
       </div>
       `
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
