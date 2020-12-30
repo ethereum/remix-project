@@ -1,11 +1,11 @@
-## Remix-Tests
+## Remix Tests
 [![npm version](https://badge.fury.io/js/%40remix-project%2Fremix-tests.svg)](https://www.npmjs.com/package/@remix-project/remix-tests)
 [![npm](https://img.shields.io/npm/dt/@remix-project/remix-tests.svg?label=Total%20Downloads)](https://www.npmjs.com/package/@remix-project/remix-tests)
 [![npm](https://img.shields.io/npm/dw/@remix-project/remix-tests.svg)](https://www.npmjs.com/package/@remix-project/remix-tests)
 [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethereum/remix-project/tree/master/libs/remix-tests)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ethereum/remix-project/issues)
 
-`remix-tests` is a tool to test Solidity smart contracts. It works underneath Remix IDE plugin "Solidity Unit Testing" which is used to write and run test cases for a contract. Tests are written in Solidity itself. `remix-tests` can be used as CLI and a library too.
+`@remix-project/remix-tests` is a tool to test Solidity smart contracts. It works underneath Remix IDE "Solidity Unit Testing" plugin which is used to write and run test cases for a contract. Tests are written in Solidity itself. `@remix-project/remix-tests` can be used as CLI and a library too.
 
 To know more about Remix IDE `Solidity Unit Testing Plugin`, visit [Remix IDE official documentation](https://remix-ide.readthedocs.io/en/latest/unittesting.html).
 
@@ -26,7 +26,7 @@ $ remix-tests --version
 Version should be same as on NPM.
 
 ### Test structure
-remix-tests provides and injects a built-in assert library for testing purpose.
+`@remix-project/remix-tests` provides and injects a built-in assert library for testing purpose.
 
 #### Assert library
 
@@ -230,12 +230,12 @@ remixTests.runTestSources(contractSources: SrcIfc, versionUrl: string, usingWork
 
 For more details, see parameters' type definitions [here](src/types.ts).
 
-## Contribute
+### Contribute
 
 Please feel free to open an issue or a pull request. 
 
 In case you want to add a code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md). Reach us in [Gitter](https://gitter.im/ethereum/remix) in case of any queries.
 
-## License
+### License
+MIT © 2018-21 Remix Team
 
-[MIT](LICENSE.md) © 2018-20 Remix Team
