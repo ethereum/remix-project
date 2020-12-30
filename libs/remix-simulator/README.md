@@ -1,6 +1,20 @@
-# `remix-simulator`
+# Remix Simulator
+[![npm version](https://badge.fury.io/js/%40remix-project%2Fremix-simulator.svg)](https://www.npmjs.com/package/@remix-project/remix-simulator)
+[![npm](https://img.shields.io/npm/dt/@remix-project/remix-simulator.svg?label=Total%20Downloads)](https://www.npmjs.com/package/@remix-project/remix-simulator)
+[![npm](https://img.shields.io/npm/dw/@remix-project/remix-simulator.svg)](https://www.npmjs.com/package/@remix-project/remix-simulator)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethereum/remix-project/tree/master/libs/remix-simulator)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ethereum/remix-project/issues)
 
-Implemented:
+`@remix-project/remix-simulator` is a web3 wrapper for different kind of providers. It is used in `remix-tests` library and in Remix IDE codebase.
+
+### Installation
+`@remix-project/remix-simulator` is an NPM package and can be installed using NPM as:
+
+`npm install @remix-project/remix-simulator`
+
+### How to use
+
+`@remix-project/remix-simulator` implements:
 
 * [X] web3_clientVersion
 * [X] web3_sha3
@@ -67,3 +81,12 @@ Implemented:
 * [_] personal_unlockAccount
 * [_] personal_sendTransaction
 * [_] rpc_modules
+
+### Contribute
+
+Please feel free to open an issue or a pull request. 
+
+In case you want to add some code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md). Reach us on [Gitter](https://gitter.im/ethereum/remix) in case of any queries.
+
+### License
+MIT © 2018-21 Remix Team
