@@ -12,7 +12,7 @@ export const IPFSCheck = (props: any) => {
     }
 
     return (
-        <div>
+        <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
            <input
                 id="deployAndRunPublishToIPFS" 
                 type="checkbox"
