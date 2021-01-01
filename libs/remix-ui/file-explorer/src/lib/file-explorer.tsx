@@ -103,8 +103,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const { expandPath } = state
 
     if (expandPath && expandPath.length > 0) {
-      expandPath.map(async (path, index) => {
-        console.log('path ' + index + ' :', path)
+      expandPath.map(async (path) => {
         const files = await resolveDirectory(path, state.files)
 
         setState(prevState => {
@@ -123,7 +122,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     dir = await Promise.all(dir.map(async (file) => {
       if (file.path === folderPath) {
         if (file.child) {
-          const newInput = file.child.filter(({ path }) => path === 'browser/blank')
+          const newInput = file.child.filter(({ path }) => path.endsWith('/blank'))
 
           if (newInput.length === 1) {
             const dirContent = await fetchDirectoryContent(folderPath)
@@ -880,7 +879,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             label={label(file)}
             onClick={(e) => {
               e.stopPropagation()
-              handleClickFolder(file.path)
+              if (state.focusEdit.element !== file.path) handleClickFolder(file.path)
             }}
             onContextMenu={(e) => {
               e.preventDefault()
