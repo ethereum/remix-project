@@ -60,7 +60,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const editRef = useRef(null)
 
   useEffect(() => {
-    editRef && editRef.current && editRef.current.focus()
+    if (editRef && editRef.current) {
+      setTimeout(() => {
+        editRef.current.focus()
+      }, 150)
+    }
   }, [state.focusEdit.element])
 
   useEffect(() => {
@@ -96,10 +100,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (state.fileManager) {
       props.filesProvider.event.register('fileExternallyChanged', fileExternallyChanged)
       props.filesProvider.event.register('fileRenamedError', fileRenamedError)
+      props.filesProvider.event.register('fileAdded', fileAdded)
     }
   }, [state.fileManager])
 
   useEffect(() => {
+    if (props.filesProvider.event.registered.fileAdded) {
+      // unregister event to update state in callback
+      props.filesProvider.event.unregister('fileAdded', fileAdded)
+    }
+    props.filesProvider.event.register('fileAdded', fileAdded)
     const { expandPath } = state
 
     if (expandPath && expandPath.length > 0) {
@@ -110,19 +120,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
           return { ...prevState, files }
         })
       })
-      if (props.filesProvider.event.registered.fileAdded) {
-        // unregister event to update state in callback
-        props.filesProvider.event.unregister('fileAdded', fileAdded)
-      }
-      props.filesProvider.event.register('fileAdded', fileAdded)
     }
   }, [state.expandPath])
+
+  useEffect(() => {
+    if (props.filesProvider.event.registered.fileAdded) {
+      // unregister event to update state in callback
+      props.filesProvider.event.unregister('fileAdded', fileAdded)
+    }
+    props.filesProvider.event.register('fileAdded', fileAdded)
+  }, [state.files])
 
   const resolveDirectory = async (folderPath, dir: File[]): Promise<File[]> => {
     dir = await Promise.all(dir.map(async (file) => {
       if (file.path === folderPath) {
         if (file.child) {
-          const newInput = file.child.filter(({ path }) => path.endsWith('/blank'))
+          const newInput = file.child.filter(({ path }) => path && path.endsWith('/blank'))
 
           if (newInput.length === 1) {
             const dirContent = await fetchDirectoryContent(folderPath)
@@ -223,9 +236,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         const createFile = await fileManager.writeFile(newName, '')
 
         if (!createFile) {
-          setState(prevState => {
-            return { ...prevState, toasterMsg: 'Failed to create file ' + newName }
-          })
+          toast('Failed to create file ' + newName)
         }
       }
     })
@@ -241,17 +252,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
       await fileManager.mkdir(dirName)
       addFolder(parentFolder, newFolderPath)
     } catch (e) {
-      setState(prevState => {
-        return { ...prevState, toasterMsg: 'Failed to create folder: ' + newFolderPath }
-      })
+      toast('Failed to create folder: ' + newFolderPath)
     }
   }
 
   const deletePath = async (path: string) => {
     if (filesProvider.isReadOnly(path)) {
-      return setState(prevState => {
-        return { ...prevState, toasterMsg: 'cannot delete file. ' + name + ' is a read only explorer' }
-      })
+      return toast('cannot delete file. ' + name + ' is a read only explorer')
     }
     const isDir = state.fileManager.isDirectory(path)
 
@@ -268,9 +275,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             return { ...prevState, files: updatedFiles }
           })
         } catch (e) {
-          setState(prevState => {
-            return { ...prevState, toasterMsg: `Failed to remove file ${path}.` }
-          })
+          toast(`Failed to remove file ${path}.`)
         }
       }
     }, {
@@ -303,32 +308,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
         fn: async () => {}
       }, null)
     }
-  }
-
-  const addFile = async (parentFolder: string, newFilePath: string) => {
-    if (parentFolder === name) {
-      setState(prevState => {
-        return {
-          ...prevState,
-          files: [...prevState.files, {
-            path: newFilePath,
-            name: extractNameFromKey(newFilePath),
-            isDirectory: false
-          }],
-          focusElement: [{ key: newFilePath, type: 'file' }]
-        }
-      })
-    } else {
-      const updatedFiles = await resolveDirectory(parentFolder, state.files)
-
-      setState(prevState => {
-        return { ...prevState, files: updatedFiles, focusElement: [{ key: newFilePath, type: 'file' }] }
-      })
-    }
-    if (newFilePath.includes('_test.sol')) {
-      plugin.events.trigger('newTestFileCreated', [newFilePath])
-    }
-    state.fileManager.open(newFilePath)
   }
 
   const addEmptyFile = (parentFolder: string, files: File[]): File[] => {
@@ -461,6 +440,55 @@ export const FileExplorer = (props: FileExplorerProps) => {
         setState(prevState => {
           const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
 
+          return { ...prevState, files, expandPath: uniquePaths, focusElement: [{ key: filePath, type: 'file' }] }
+        })
+      } else {
+        setState(prevState => {
+          const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
+
+          return { ...prevState, expandPath: uniquePaths, focusElement: [{ key: filePath, type: 'file' }] }
+        })
+      }
+    } else {
+      const parentFolder = extractParentFromKey(filePath)
+
+      if (parentFolder === name) {
+        setState(prevState => {
+          return {
+            ...prevState,
+            files: [...prevState.files, {
+              path: filePath,
+              name: extractNameFromKey(filePath),
+              isDirectory: false
+            }],
+            focusElement: [{ key: filePath, type: 'file' }]
+          }
+        })
+      } // else does not exist in explorer
+    }
+    if (filePath.includes('_test.sol')) {
+      plugin.event.trigger('newTestFileCreated', [filePath])
+    }
+    // state.fileManager.open(filePath)
+  }
+
+  const folderAdded = async (filePath: string) => {
+    const pathArr = filePath.split('/')
+    const hasChild = pathArr.length > 2
+
+    if (hasChild) {
+      const expandPath = pathArr.map((path, index) => {
+        return [...pathArr.slice(0, index)].join('/')
+      }).filter(path => path && (path !== props.name))
+      const pathExist = state.files.findIndex(item => item.path === expandPath[0]) !== -1
+
+      if (!pathExist) {
+        const dir = buildTree(expandPath)
+        const files = [dir, ...state.files]
+
+        setState(prevState => {
+          const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
+
           return { ...prevState, files, expandPath: uniquePaths }
         })
       } else {
@@ -473,8 +501,24 @@ export const FileExplorer = (props: FileExplorerProps) => {
     } else {
       const parentFolder = extractParentFromKey(filePath)
 
-      addFile(parentFolder, filePath)
+      if (parentFolder === name) {
+        setState(prevState => {
+          return {
+            ...prevState,
+            files: [...prevState.files, {
+              path: filePath,
+              name: extractNameFromKey(filePath),
+              isDirectory: false
+            }],
+            focusElement: [{ key: filePath, type: 'file' }]
+          }
+        })
+      }
     }
+    if (filePath.includes('_test.sol')) {
+      plugin.event.trigger('newTestFileCreated', [filePath])
+    }
+    // state.fileManager.open(filePath)
   }
 
   const fileExternallyChanged = (path: string, file: { content: string }) => {
@@ -647,7 +691,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               allItems[_fileName] = packaged[file]
             })
 
-            // tooltip('Saving gist (' + id + ') ...')
+            toast('Saving gist (' + id + ') ...')
             gists.edit({
               description: description,
               public: true,
@@ -663,7 +707,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             })
           } else {
             // id is not existing, need to create a new gist
-            // tooltip('Creating a new gist ...')
+            toast('Creating a new gist ...')
             gists.create({
               description: description,
               public: true,
@@ -697,6 +741,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
           handleHide: handleHideModal
         }
       }
+    })
+  }
+
+  const toast = (message: string) => {
+    setState(prevState => {
+      return { ...prevState, toasterMsg: message }
     })
   }
 
@@ -963,7 +1013,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
             <FileExplorerMenu
               title={name}
               menuItems={props.menuItems}
-              addFile={addFile}
               createNewFile={handleNewFileInput}
               createNewFolder={handleNewFolderInput}
               publishToGist={publishToGist}
