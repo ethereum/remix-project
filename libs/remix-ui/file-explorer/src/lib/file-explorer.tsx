@@ -102,6 +102,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       props.filesProvider.event.register('fileRenamedError', fileRenamedError)
       props.filesProvider.event.register('fileAdded', fileAdded)
       props.filesProvider.event.register('folderAdded', folderAdded)
+      props.filesProvider.event.register('fileRemoved', fileRemoved)
+      props.filesProvider.event.register('fileRenamed', fileRenamed)
     }
   }, [state.fileManager])
 
@@ -123,8 +125,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     // unregister event to update state in callback
     if (props.filesProvider.event.registered.fileAdded) props.filesProvider.event.unregister('fileAdded', fileAdded)
     if (props.filesProvider.event.registered.folderAdded) props.filesProvider.event.unregister('folderAdded', folderAdded)
+    if (props.filesProvider.event.registered.fileRemoved) props.filesProvider.event.unregister('fileRemoved', fileRemoved)
+    if (props.filesProvider.event.registered.fileRenamed) props.filesProvider.event.unregister('fileRenamed', fileRenamed)
     props.filesProvider.event.register('fileAdded', fileAdded)
     props.filesProvider.event.register('folderAdded', folderAdded)
+    props.filesProvider.event.register('fileRemoved', fileRemoved)
+    props.filesProvider.event.unregister('fileRenamed', fileRenamed)
   }, [state.files, state.expandPath])
 
   const resolveDirectory = async (folderPath, dir: File[]): Promise<File[]> => {
@@ -264,12 +270,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
         try {
           const fileManager = state.fileManager
           await fileManager.remove(path)
-          const files = removePath(path, state.files)
-          const updatedFiles = files.filter(file => file)
-
-          setState(prevState => {
-            return { ...prevState, files: updatedFiles }
-          })
         } catch (e) {
           toast(`Failed to remove file ${path}.`)
         }
@@ -288,15 +288,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
       if (exists) {
         modal('Rename File Failed', 'File name already exists', {
           label: 'Close',
-          fn: async () => {}
+          fn: () => {
+            console.log('called!')
+            editRef.current.textContent = extractNameFromKey(oldPath)
+          }
         }, null)
       } else {
         await fileManager.rename(oldPath, newPath)
-        const files = replacePath(oldPath, newPath, state.files)
-
-        setState(prevState => {
-          return { ...prevState, files }
-        })
       }
     } catch (error) {
       modal('Rename File Failed', 'Unexpected error while renaming: ' + error, {
@@ -333,28 +331,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return file
       }
     })
-  }
-
-  const addFolder = async (parentFolder: string, newFolderPath: string, files?: File[]) => {
-    if (parentFolder === name) {
-      setState(prevState => {
-        return {
-          ...prevState,
-          files: [{
-            path: newFolderPath,
-            name: extractNameFromKey(newFolderPath),
-            isDirectory: true
-          }, ...prevState.files],
-          focusElement: [{ key: newFolderPath, type: 'folder' }]
-        }
-      })
-    } else {
-      const updatedFiles = await resolveDirectory(parentFolder, files || state.files)
-
-      setState(prevState => {
-        return { ...prevState, files: updatedFiles, focusElement: [{ key: newFolderPath, type: 'folder' }] }
-      })
-    }
   }
 
   const addEmptyFolder = (parentFolder: string, files: File[]): File[] => {
@@ -452,7 +428,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         const files = await fetchDirectoryContent(name)
 
         setState(prevState => {
-          return { ...prevState, files, focusElement: [{ key: filePath, type: 'file' }] }
+          return { ...prevState, files, focusElement: [{ key: filePath, type: 'file' }], expandPath: [] }
         })
       } // else does not exist in explorer
     }
@@ -517,8 +493,24 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
+  const fileRemoved = (filePath) => {
+    const files = removePath(filePath, state.files)
+    const updatedFiles = files.filter(file => file)
+
+    setState(prevState => {
+      return { ...prevState, files: updatedFiles }
+    })
+  }
+
+  const fileRenamed = (oldName, newName) => {
+    const files = replacePath(oldName, newName, state.files)
+
+    setState(prevState => {
+      return { ...prevState, files }
+    })
+  }
+
   // register to event of the file provider
-  // files.event.register('fileRemoved', fileRemoved)
   // files.event.register('fileRenamed', fileRenamed)
   const fileRenamedError = (error: string) => {
     modal('File Renamed Failed', error, {
