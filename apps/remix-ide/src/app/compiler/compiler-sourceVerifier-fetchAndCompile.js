@@ -99,7 +99,7 @@ export default class FetchAndCompile extends Plugin {
             const path = `${targetPath}/${name}/${contractAddress}/${file}`
             await this.call('fileManager', 'setFile', path, source.content)
             compilationTargets[path] = { content: source.content }
-          }         
+          }
           break
         }
       }
@@ -116,9 +116,9 @@ export default class FetchAndCompile extends Plugin {
     try {
       setTimeout(_ => this.emit('compiling', settings), 0)
       const compData = await compile(
-          compilationTargets, 
-          settings, 
-          (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+        compilationTargets,
+        settings,
+        (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
       compilersartefacts.addResolvedContract(contractAddress, compData)
       return compData
     } catch (e) {
