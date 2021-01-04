@@ -224,7 +224,7 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
       // if not, we are in the current scope.
       // We check in `includeVariableDeclaration` if there is a new local variable in scope for this specific `step`
       if (tree.includeLocalVariables) {
-        includeVariableDeclaration(tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation)
+        await includeVariableDeclaration(tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation)
       }
       previousSourceLocation = sourceLocation
       step++
@@ -357,7 +357,7 @@ function extractVariableDeclarations (ast, astWalker) {
     if (node.nodeType === 'VariableDeclaration' || node.nodeType === 'YulVariableDeclaration') {
       ret[node.src] = [node]
     }
-    if (node.nodeType === 'VariableDeclarationStatement' || node.nodeType === 'YulVariableDeclarationStatement') {
+    if (node.initialValue && (node.nodeType === 'VariableDeclarationStatement' || node.nodeType === 'YulVariableDeclarationStatement')) {
       ret[node.initialValue.src] = node.declarations       
     }
   })
