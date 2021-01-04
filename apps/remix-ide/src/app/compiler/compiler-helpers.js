@@ -6,7 +6,7 @@ import CompilerAbstract from './compiler-abstract'
 export const compile = async (compilationTargets, settings, contentResolverCallback) => {
   const res = await (() => {
     return new Promise((resolve, reject) => {
-      const compiler = new Compiler(contentResolverCallback || (() => {}))
+      const compiler = new Compiler(contentResolverCallback)
       compiler.set('evmVersion', settings.evmVersion)
       compiler.set('optimize', settings.optimize)
       compiler.set('language', settings.language)
