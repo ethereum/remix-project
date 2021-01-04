@@ -6,6 +6,8 @@ import * as assert from 'assert'
 describe('testRunner', () => {
   describe('# RemixResolve.resolve()', () => {
     describe('* test without AppManager', () => {
+      // Local Imports Handler should be rather added in source code and tested here
+
       // describe('test example_1 [local imports]', () => {
       //   const urlResolver = new RemixURLResolver()
       //   const fileName: string = '../remix-url-resolver/tests/example_1/greeter.sol'
@@ -53,6 +55,7 @@ describe('testRunner', () => {
       //     assert.deepEqual(results, expt)
       //   })
       // })
+
       // Test github import
       describe('test getting github imports', () => {
         const urlResolver = new RemixURLResolver()
