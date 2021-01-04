@@ -166,6 +166,7 @@ module.exports = class RemixDProvider {
   removePrefix (path) {
     path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
     if (path[0] === '/') return path.substring(1)
+    if (path === '') return '/'
     return path
   }
 
