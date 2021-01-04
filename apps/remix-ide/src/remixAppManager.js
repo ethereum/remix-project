@@ -111,7 +111,8 @@ export class RemixAppManager extends PluginManager {
       url: 'https://dgitremix.web.app/',
       description: 'A decentralized git plugin for Remix. Store your files in IPFS and 3Box as a git repository.',
       icon: 'https://dgitremix.web.app/dgitlogo.png',
-      location: 'mainPanel' 
+      location: 'mainPanel',
+      documentation: 'https://github.com/bunsenstraat/remix-storage-plugin'
     })
     return plugins.map(plugin => {
       if (plugin.name === 'scriptRunner') {
