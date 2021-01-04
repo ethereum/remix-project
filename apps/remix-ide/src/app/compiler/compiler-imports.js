@@ -31,12 +31,8 @@ module.exports = class CompilerImports extends Plugin {
   }
 
   isExternalUrl (url) {
-    for (const handler of this.handlers()) {
-      if (handler.match.exec(url)) {
-        return true
-      }
-    }
-    return false
+    const handlers = this.handlers()
+    return handlers.some(handler => handler.match.exec(url))
   }
 
   /**
