@@ -12,7 +12,7 @@ const profile = {
   name: 'contentImport',
   displayName: 'content import',
   version: packageJson.version,
-  methods: ['resolve', 'resolveAndSave']
+  methods: ['resolve', 'resolveAndSave', 'isExternalUrl']
 }
 
 module.exports = class CompilerImports extends Plugin {
@@ -28,6 +28,11 @@ module.exports = class CompilerImports extends Plugin {
 
   isRelativeImport (url) {
     return /^([^/]+)/.exec(url)
+  }
+
+  isExternalUrl (url) {
+    const handlers = this.handlers()
+    return handlers.some(handler => handler.match.exec(url))
   }
 
   /**
