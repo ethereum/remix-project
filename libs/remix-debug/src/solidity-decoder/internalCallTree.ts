@@ -357,9 +357,8 @@ function extractVariableDeclarations (ast, astWalker) {
     if (node.nodeType === 'VariableDeclaration' || node.nodeType === 'YulVariableDeclaration') {
       ret[node.src] = [node]
     }
-    if (node.initialValue && (node.nodeType === 'VariableDeclarationStatement' || node.nodeType === 'YulVariableDeclarationStatement')) {
-      ret[node.initialValue.src] = node.declarations       
-    }
+    const hasChild = node.initialValue && (node.nodeType === 'VariableDeclarationStatement' || node.nodeType === 'YulVariableDeclarationStatement')
+    if (hasChild) ret[node.initialValue.src] = node.declarations
   })
   return ret
 }
