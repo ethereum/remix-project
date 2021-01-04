@@ -11,9 +11,7 @@ import * as pathModule from 'path'
  */
 function absolutePath (path: string, sharedFolder:string): string {
   path = normalizePath(path)
-  if (path.indexOf(sharedFolder) !== 0) {
-    path = pathModule.resolve(sharedFolder, path)
-  }
+  path = pathModule.resolve(sharedFolder, path)
   return path
 }
 
@@ -34,6 +32,7 @@ function normalizePath (path: string): string {
   if (process.platform === 'win32') {
     return path.replace(/\\/g, '/')
   }
+  if (path === '/') path = './'
   return path
 }
 
