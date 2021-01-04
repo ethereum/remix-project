@@ -92,10 +92,14 @@ export default class FetchAndCompile extends Plugin {
         if (url.includes('ipfs')) {
           const stdUrl = `ipfs://${url.split('/')[2]}`
           const source = await this.call('contentImport', 'resolve', stdUrl)
-          file = file.replace('browser/', '') // should be fixed in the remix IDE end.
-          const path = `${targetPath}/${name}/${contractAddress}/${file}`
-          await this.call('fileManager', 'setFile', path, source.content)
-          compilationTargets[path] = { content: source.content }
+          if (await this.call('contentImport', 'isExternalUrl', file)) {
+            // nothing to do, the compiler callback will handle those
+          } else {
+            file = file.replace('browser/', '') // should be fixed in the remix IDE end.
+            const path = `${targetPath}/${name}/${contractAddress}/${file}`
+            await this.call('fileManager', 'setFile', path, source.content)
+            compilationTargets[path] = { content: source.content }
+          }
           break
         }
       }
@@ -111,7 +115,10 @@ export default class FetchAndCompile extends Plugin {
     }
     try {
       setTimeout(_ => this.emit('compiling', settings), 0)
-      const compData = await compile(compilationTargets, settings)
+      const compData = await compile(
+        compilationTargets,
+        settings,
+        (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
       compilersartefacts.addResolvedContract(contractAddress, compData)
       return compData
     } catch (e) {

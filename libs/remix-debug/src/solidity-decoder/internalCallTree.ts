@@ -224,7 +224,7 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
       // if not, we are in the current scope.
       // We check in `includeVariableDeclaration` if there is a new local variable in scope for this specific `step`
       if (tree.includeLocalVariables) {
-        includeVariableDeclaration(tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation)
+        await includeVariableDeclaration(tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation)
       }
       previousSourceLocation = sourceLocation
       step++
@@ -249,32 +249,36 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
   const contractObj = await tree.solidityProxy.contractObjectAt(step)
   let states = null
   const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
-
-  const variableDeclaration = resolveVariableDeclaration(tree, sourceLocation, generatedSources)
+  const variableDeclarations = resolveVariableDeclaration(tree, sourceLocation, generatedSources)
   // using the vm trace step, the current source location and the ast,
   // we check if the current vm trace step target a new ast node of type VariableDeclaration
   // that way we know that there is a new local variable from here.
-  if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.name]) {
-    try {
-      const stack = tree.traceManager.getStackAt(step)
-      // the stack length at this point is where the value of the new local variable will be stored.
-      // so, either this is the direct value, or the offset in memory. That depends on the type.
-      if (variableDeclaration.name !== '') {
-        states = tree.solidityProxy.extractStatesDefinitions()
-        var location = extractLocationFromAstVariable(variableDeclaration)
-        location = location === 'default' ? 'storage' : location
-        // we push the new local variable in our tree
-        tree.scopes[scopeId].locals[variableDeclaration.name] = {
-          name: variableDeclaration.name,
-          type: parseType(variableDeclaration.typeDescriptions.typeString, states, contractObj.name, location),
-          stackDepth: stack.length,
-          sourceLocation: sourceLocation
+  if (variableDeclarations && variableDeclarations.length) {
+    for (const variableDeclaration of variableDeclarations) {
+      if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.name]) {
+        try {
+          const stack = tree.traceManager.getStackAt(step)
+          // the stack length at this point is where the value of the new local variable will be stored.
+          // so, either this is the direct value, or the offset in memory. That depends on the type.
+          if (variableDeclaration.name !== '') {
+            states = tree.solidityProxy.extractStatesDefinitions()
+            var location = extractLocationFromAstVariable(variableDeclaration)
+            location = location === 'default' ? 'storage' : location
+            // we push the new local variable in our tree
+            tree.scopes[scopeId].locals[variableDeclaration.name] = {
+              name: variableDeclaration.name,
+              type: parseType(variableDeclaration.typeDescriptions.typeString, states, contractObj.name, location),
+              stackDepth: stack.length,
+              sourceLocation: sourceLocation
+            }
+          }
+        } catch (error) {
+          console.log(error)
         }
       }
-    } catch (error) {
-      console.log(error)
     }
   }
+  
   // we check here if we are at the beginning inside a new function.
   // if that is the case, we have to add to locals tree the inputs and output params
   const functionDefinition = resolveFunctionDefinition(tree, previousSourceLocation, generatedSources)
@@ -351,8 +355,10 @@ function extractVariableDeclarations (ast, astWalker) {
   const ret = {}
   astWalker.walkFull(ast, (node) => {
     if (node.nodeType === 'VariableDeclaration' || node.nodeType === 'YulVariableDeclaration') {
-      ret[node.src] = node
+      ret[node.src] = [node]
     }
+    const hasChild = node.initialValue && (node.nodeType === 'VariableDeclarationStatement' || node.nodeType === 'YulVariableDeclarationStatement')
+    if (hasChild) ret[node.initialValue.src] = node.declarations
   })
   return ret
 }
