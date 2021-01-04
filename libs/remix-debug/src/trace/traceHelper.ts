@@ -15,7 +15,7 @@ export function resolveCalledAddress (vmTraceIndex, trace) {
 }
 
 export function isCallInstruction (step) {
-  return step.op === 'CALL' || step.op === 'STATICCALL' || step.op === 'CALLCODE' || step.op === 'CREATE' || step.op === 'DELEGATECALL'
+  return ['CALL', 'STATICCALL', 'CALLCODE', 'CREATE', 'DELEGATECALL'].includes(step.op)
 }
 
 export function isCreateInstruction (step) {
