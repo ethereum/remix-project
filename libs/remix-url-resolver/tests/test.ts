@@ -85,6 +85,37 @@ describe('testRunner', () => {
           assert.deepEqual(results, expt)
         })
       })
+
+      // Test github import for specific blob
+      describe('test getting github imports for specific blob', () => {
+        const urlResolver = new RemixURLResolver()
+        const fileName: string = 'https://github.com/ethereum/remix-project/blob/v0.10.7/libs/remix-url-resolver/tests/example_1/greeter.sol'
+        let results: object = {}
+
+        before(done => {
+          urlResolver.resolve(fileName)
+            .then((sources: object) => {
+              results = sources
+              done()
+            })
+            .catch((e: Error) => {
+              throw e
+            })
+        })
+
+        it('should have 3 items', () => {
+          assert.equal(Object.keys(results).length, 3)
+        })
+        it('should return contract content of given github path', () => {
+          const expt: object = {
+            cleanUrl: 'ethereum/remix-project/libs/remix-url-resolver/tests/example_1/greeter.sol',
+            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'}) + '\n',
+            type: 'github'
+          }
+          assert.deepEqual(results, expt)
+        })
+      })
+
       // Test https imports
       describe('test getting https imports', () => {
         const urlResolver = new RemixURLResolver()
