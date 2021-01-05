@@ -23,7 +23,7 @@ contract SafeMathTest {
   function safeMultiplicationShouldRevert() public returns (bool) {
     uint256 a = 4;
     uint256 b = 2 ** 256 - 1;
-    (bool success, bytes memory data) = address(safemathproxy).call.gas(40000).value(0)(abi.encode("mulProxy, [a, b]"));
+    (bool success, bytes memory data) = address(safemathproxy).call{gas:40000, value:0}(abi.encode("mulProxy, [a, b]"));
     return Assert.equal(
       success,
       false,
@@ -34,7 +34,7 @@ contract SafeMathTest {
   function safeDivisionByZeroShouldRevert() public returns (bool) {
     uint256 a = 4;
     uint256 b = 0;
-    (bool success, bytes memory data) = address(safemathproxy).call.gas(40000).value(0)(abi.encode("divProxy, [a, b]"));
+    (bool success, bytes memory data) = address(safemathproxy).call{gas:40000, value:0}(abi.encode("divProxy, [a, b]"));
     return Assert.equal(
       success,
       false,
@@ -53,13 +53,29 @@ contract SafeMathTest {
   }
 
   function safeSubtractShouldRevert() public returns (bool) {
-    (bool success, bytes memory data) = address(safemathproxy).call.gas(40000).value(0)(abi.encode("subProxy, [0, 1]"));
+    (bool success, bytes memory data) = address(safemathproxy).call{gas:40000, value:0}(abi.encode("subProxy, [0, 1]"));
     return Assert.equal(
       success,
       false,
       "safe subtract should revert"
     );
   }
+
+  function safeSubtractShouldRevertUsingTryCatch() public returns (bool) {
+    try safemathproxy.subProxy(0, 1) returns ( uint256 res) {
+        Assert.ok(false, "Should revert");
+    } catch (bytes memory /*lowLevelData*/) { 
+        Assert.ok(true, "safe subtract should revert");         
+    }  
+  }
+
+  function safeSubtractShouldNotRevert() public returns (bool) {
+    try safemathproxy.subProxy(3, 2) returns ( uint256 res) {
+        Assert.equal(res, 1, "should be equal to 1");
+    } catch (bytes memory /*lowLevelData*/) { 
+        Assert.ok(false, "safe subtract should not revert");
+    }  
+  } 
 
   function unsafeAdditionShouldOverflow() public returns (bool) {
     uint256 a = 1;
@@ -70,7 +86,7 @@ contract SafeMathTest {
   function safeAdditionShouldRevert() public returns (bool) {
     uint256 a = 1;
     uint256 b = 2 ** 256 - 1;
-    (bool success, bytes memory data) = address(safemathproxy).call.gas(40000).value(0)(abi.encode("addProxy, [a, b]"));
+    (bool success, bytes memory data) = address(safemathproxy).call{gas:40000, value:0}(abi.encode("addProxy, [a, b]"));
     return Assert.equal(
       success,
       false,
@@ -81,7 +97,7 @@ contract SafeMathTest {
   function safeModulusShouldRevert() public returns (bool) {
     uint256 a = 1;
     uint256 b = 0;
-    (bool success, bytes memory data) = address(safemathproxy).call.gas(40000).value(0)(abi.encode("modProxy, [a, b]"));
+    (bool success, bytes memory data) = address(safemathproxy).call{gas:40000, value:0}(abi.encode("modProxy, [a, b]"));
     return Assert.equal(
       success,
       false,
