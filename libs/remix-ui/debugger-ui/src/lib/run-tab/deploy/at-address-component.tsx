@@ -6,13 +6,15 @@ import A from './abi-label'
 import './common.css'
 
 export const AtAddressComponent = (props: any) => {
-    const {atAddressChanged, loadFromAddress, enabledAtAddress} = props
+    const {atAddressChanged, loadFromAddress, enabledAtAddress, setEnabledAtAddress} = props
     const [address, setAddress] = useState("");
+    // const [enabledAtAddress, setEnabledAtAddress] = useState(false);
 
     const changeAddress = (e) => {
         const newAddress = e.target.value
         setAddress(newAddress)
-        atAddressChanged(newAddress)
+        // atAddressChanged(newAddress)
+        setEnabledAtAddress(false) // TODO: should atAddressChanged
     }
 
     let title = "address of contract"

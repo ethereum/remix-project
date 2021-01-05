@@ -32,4 +32,35 @@
   align-items: center;
   margin-top: 13px;
 }
- 
+.contractNames {
+  width: 100%;
+  border: 1px solid
+}
+.container {
+  padding: 0 24px 16px;
+}
+.subcontainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.subcontainer i {
+  width: 16px;
+  display: flex;
+  justify-content: center;
+  margin-left: 1px;
+}
+.settingsLabel {
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.deployDropdown {
+  text-align: center;
+  text-transform: uppercase;
+}
+.orLabel {
+  text-align: center;
+  text-transform: uppercase;
+}

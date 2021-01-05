@@ -1,5 +1,6 @@
 import publishToStorage from '../../../publishToStorage'
-import { IPFSCheck, CompilationFail, AtAddress, AtAddressButtonInput, AbiLabel, AtAddressComponent } from '@remix-ui/debugger-ui'
+// import { IPFSCheck, CompilationFail, AtAddress, AtAddressButtonInput, AbiLabel, AtAddressComponent, ContractSelector } from '@remix-ui/debugger-ui'
+import { ContractsComponent } from '@remix-ui/debugger-ui'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 
@@ -18,30 +19,144 @@ class ContractDropdownUI {
     this.dropdownLogic = dropdownLogic
     this.logCallback = logCallback
     this.runView = runView
+    this.compilerFullName = ""
     this.event = new EventManager()
+    this.contracts = []
+    this.el = yo`
+      <span></span>
+      `
 
     this.listenToEvents()
     this.ipfsCheckedState = false
-    // this.enableAtAddress = false
+    this.enabledAtAddress = false
+    this.noCompilationError = true
     this.exEnvironment = blockchain.getProvider()
     this.listenToContextChange()
     this.loadType = 'other'
   }
 
+  render() {
+    console.dir("----- contracts")
+    console.dir(this.contracts)
+    console.dir(this.enabledAtAddress)
+    let deployButton = this.createDeployButton()
+    ReactDOM.render(
+      <ContractsComponent noCompilationError={this.noCompilationError} enabledAtAddress={this.enabledAtAddress} contracts={this.contracts} deployButton={deployButton} loadFromAddress={this.loadFromAddress.bind(this)} />
+      , this.el)
+    return this.el
+  }
+
   listenToEvents () {
+    this.dropdownLogic.event.register('newlyCompiled', (success, data, source, compiler, compilerFullName, file) => {
+      if (success) {
+        console.dir("new contracts")
+        this.contracts = this.dropdownLogic.getCompiledContracts(compiler, compilerFullName)
+        this.compilerFullName = compilerFullName
+      }
+      console.dir("--- newlyCompiled")
+      console.dir(success)
+      // this.renderAddressComponent(success)
+      this.enabledAtAddress = success
+      this.noCompilationError = success
+      // this.enableContractNames(success)
+      // this.setInputParamsPlaceHolder()
+      this.render()
+
+      // if (success) {
+      //   this.compFails.style.display = 'none'
+      // } else {
+      //   this.compFails.style.display = 'block'
+      // }
+    })
+  }
+
+  createDeployButton () {
+    // this.createPanel.innerHTML = ''
+    // if (this.selectContractNames.selectedIndex < 0 || this.selectContractNames.children.length <= 0) {
+      // this.createPanel.innerHTML = 'No compiled contracts'
+      // return
+    // }
+    let createPanel = yo`<div class=""></div>`
+    if (this.contracts.length === 0) {
+      createPanel.innerHTML = 'No compiled contracts'
+      return createPanel
+    }
+
+    // TODO: should be the selected contract instead of the first contract
+    let contract = this.contracts[0]
+
+    const selectedContract = this.dropdownLogic.getSelectedContract(contract.name, this.compilerFullName)
+    // const selectedContract = this.getSelectedContract()
+    const clickCallback = async (valArray, inputsValues) => {
+      console.dir("----- clickCallback")
+      // var selectedContract = this.getSelectedContract()
+      var selectedContract = this.dropdownLogic.getSelectedContract(contract.name, this.compilerFullName)
+      this.createInstance(selectedContract, inputsValues)
+    }
+    const createConstructorInstance = new MultiParamManager(
+      0,
+      selectedContract.getConstructorInterface(),
+      clickCallback,
+      selectedContract.getConstructorInputs(),
+      'Deploy',
+      selectedContract.bytecodeObject,
+      true
+    )
+    // this.createPanel.appendChild(createConstructorInstance.render())
+    // this.createPanel.appendChild(this.deployCheckBox)
+
+    return createConstructorInstance.render()
+  }
+
+  loadFromAddress (address) {
+    this.event.trigger('clearInstance')
+
+    // var address = this.atAddressButtonInput.value
+    this.dropdownLogic.loadContractFromAddress(address,
+      (cb) => {
+        modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition?', cb)
+      },
+      (error, loadType, abi) => {
+        if (error) {
+          return modalDialogCustom.alert(error)
+        }
+        if (loadType === 'abi') {
+          return this.event.trigger('newContractABIAdded', [abi, address])
+        }
+
+        let contract = this.contracts[0]
+        const selectedContract = this.dropdownLogic.getSelectedContract(contract.name, this.compilerFullName)
+        // var selectedContract = this.getSelectedContract()
+        // this.event.trigger('newContractInstanceAdded', [selectedContract.object, address, this.selectContractNames.value])
+        this.event.trigger('newContractInstanceAdded', [selectedContract.object, address, contract.name])
+      }
+    )
+  }
+
+
+
+
+
+
+
+
+
+  _listenToEvents () {
     this.dropdownLogic.event.register('newlyCompiled', (success, data, source, compiler, compilerFullName, file) => {
       if (!this.selectContractNames) return
       this.selectContractNames.innerHTML = ''
       if (success) {
-        this.dropdownLogic.getCompiledContracts(compiler, compilerFullName).forEach((contract) => {
-          this.selectContractNames.appendChild(yo`<option value="${contract.name}" compiler="${compilerFullName}">${contract.name} - ${contract.file}</option>`)
-        })
+        // this.dropdownLogic.getCompiledContracts(compiler, compilerFullName).forEach((contract) => {
+          // this.selectContractNames.appendChild(yo`<option value="${contract.name}" compiler="${compilerFullName}">${contract.name} - ${contract.file}</option>`)
+        // })
+        this.contracts = this.dropdownLogic.getCompiledContracts(compiler, compilerFullName)
+        this.renderContracts()
       }
       // this.enableAtAddress(success)
       // this.enableAtAddress = success
-      this.renderAddressComponent(success)
-      this.enableContractNames(success)
-      this.setInputParamsPlaceHolder()
+      // this.renderAddressComponent(success)
+      // this.enableContractNames(success)
+      // this.setInputParamsPlaceHolder()
 
       if (success) {
         this.compFails.style.display = 'none'
@@ -117,7 +232,7 @@ class ContractDropdownUI {
   //   }
   // }
 
-  render () {
+  _render () {
     // this.compFails = yo`<i title="No contract compiled yet or compilation failed. Please check the compile tab for more information." class="m-2 ml-3 fas fa-times-circle ${css.errorIcon}" ></i>`
     this.compFails = yo`
       <span></span>
@@ -151,7 +266,15 @@ class ContractDropdownUI {
 
 
 
-    this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled title="Please compile *.sol file to deploy or access a contract"></select>`
+    // this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled title="Please compile *.sol file to deploy or access a contract"></select>`
+    console.dir("---- rendering contracts")
+    console.dir(this.contracts)
+    this.selectContractNames = yo`<span></span>`
+    ReactDOM.render(
+      <ContractSelector contracts={this.contracts} />
+      , this.selectContractNames)
+
+
     // this.abiLabel = yo`<span class="py-1">ABI file selected</span>`
     this.abiLabel = yo`<span></span>`
     ReactDOM.render(
@@ -191,8 +314,8 @@ class ContractDropdownUI {
         </div>
       </div>
     `
-    this.selectContractNames.addEventListener('change', this.setInputParamsPlaceHolder.bind(this))
-    this.setInputParamsPlaceHolder()
+    // this.selectContractNames.addEventListener('change', this.setInputParamsPlaceHolder.bind(this))
+    // this.setInputParamsPlaceHolder()
     if (!this.contractNamesContainer) {
       this.contractNamesContainer = contractNamesContainer
     }
@@ -203,6 +326,15 @@ class ContractDropdownUI {
     ReactDOM.render(
       <AtAddressComponent enabledAtAddress={enable} loadFromAddress={this.loadFromAddress.bind(this)} atAddressChanged={this.atAddressChanged.bind(this)} />
       , this.atAddressComponent)
+  }
+
+  renderContracts() {
+    console.dir("---- rendering contracts")
+    console.dir(this.contracts)
+    ReactDOM.render(
+      <ContractSelector contracts={this.contracts} />
+      , this.selectContractNames)
+    // this.render()
   }
 
   atAddressChanged (address) {
@@ -226,37 +358,37 @@ class ContractDropdownUI {
 
   changeCurrentFile (currentFile) {
     if (!this.selectContractNames) return
-    if (/.(.abi)$/.exec(currentFile)) {
-      this.createPanel.style.display = 'none'
-      this.orLabel.style.display = 'none'
-      this.compFails.style.display = 'none'
-      this.loadType = 'abi'
-      this.contractNamesContainer.style.display = 'block'
-      this.abiLabel.style.display = 'block'
-      this.abiLabel.innerHTML = currentFile
-      this.selectContractNames.style.display = 'none'
-      this.enableContractNames(true)
-      // this.enableAtAddress(true)
-      // this.enableAtAddress = true
-      this.renderAddressComponent(success)
-    } else if (/.(.sol)$/.exec(currentFile)) {
-      this.createPanel.style.display = 'block'
-      this.orLabel.style.display = 'block'
-      this.contractNamesContainer.style.display = 'block'
-      this.loadType = 'sol'
-      this.selectContractNames.style.display = 'block'
-      this.abiLabel.style.display = 'none'
-      // if (this.selectContractNames.value === '') this.enableAtAddress(false)
-      // if (this.selectContractNames.value === '') this.enableAtAddress = false
-      if (this.selectContractNames.value === '') this.renderAddressComponent(false)
-    } else {
-      this.loadType = 'other'
-      this.createPanel.style.display = 'none'
-      this.orLabel.style.display = 'none'
-      this.compFails.style.display = 'none'
-      this.contractNamesContainer.style.display = 'none'
-      this.abiLabel.style.display = 'none'
-    }
+    // if (/.(.abi)$/.exec(currentFile)) {
+    //   this.createPanel.style.display = 'none'
+    //   this.orLabel.style.display = 'none'
+    //   this.compFails.style.display = 'none'
+    //   this.loadType = 'abi'
+    //   this.contractNamesContainer.style.display = 'block'
+    //   this.abiLabel.style.display = 'block'
+    //   this.abiLabel.innerHTML = currentFile
+    //   this.selectContractNames.style.display = 'none'
+    //   this.enableContractNames(true)
+    //   // this.enableAtAddress(true)
+    //   // this.enableAtAddress = true
+    //   this.renderAddressComponent(success)
+    // } else if (/.(.sol)$/.exec(currentFile)) {
+    //   this.createPanel.style.display = 'block'
+    //   this.orLabel.style.display = 'block'
+    //   this.contractNamesContainer.style.display = 'block'
+    //   this.loadType = 'sol'
+    //   this.selectContractNames.style.display = 'block'
+    //   this.abiLabel.style.display = 'none'
+    //   // if (this.selectContractNames.value === '') this.enableAtAddress(false)
+    //   // if (this.selectContractNames.value === '') this.enableAtAddress = false
+    //   if (this.selectContractNames.value === '') this.renderAddressComponent(false)
+    // } else {
+    //   this.loadType = 'other'
+    //   this.createPanel.style.display = 'none'
+    //   this.orLabel.style.display = 'none'
+    //   this.compFails.style.display = 'none'
+    //   this.contractNamesContainer.style.display = 'none'
+    //   this.abiLabel.style.display = 'none'
+    // }
   }
 
   setInputParamsPlaceHolder () {
@@ -411,28 +543,6 @@ class ContractDropdownUI {
     }
 
     return confirmationCb
-  }
-
-  // TODO: turn address here
-  loadFromAddress (address) {
-    this.event.trigger('clearInstance')
-
-    // var address = this.atAddressButtonInput.value
-    this.dropdownLogic.loadContractFromAddress(address,
-      (cb) => {
-        modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition?', cb)
-      },
-      (error, loadType, abi) => {
-        if (error) {
-          return modalDialogCustom.alert(error)
-        }
-        if (loadType === 'abi') {
-          return this.event.trigger('newContractABIAdded', [abi, address])
-        }
-        var selectedContract = this.getSelectedContract()
-        this.event.trigger('newContractInstanceAdded', [selectedContract.object, address, this.selectContractNames.value])
-      }
-    )
   }
 }
 
