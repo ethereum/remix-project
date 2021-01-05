@@ -33,8 +33,9 @@ export default class FetchAndCompile extends Plugin {
     contractAddress = ethutil.toChecksumAddress(contractAddress)
     const compilersartefacts = globalRegistry.get('compilersartefacts').api
 
-    const localCompilation = () => compilersartefacts.get('__last') ? compilersartefacts.get('__last') : null
+    const localCompilation = () => compilersartefacts.get(contractAddress) ? compilersartefacts.get(contractAddress) : compilersartefacts.get('__last') ? compilersartefacts.get('__last') : null
 
+    console.log("localCompilation - ", localCompilation)
     const resolved = compilersartefacts.get(contractAddress)
     if (resolved) return resolved
     if (this.unresolvedAddresses.includes(contractAddress)) return localCompilation()
@@ -54,6 +55,7 @@ export default class FetchAndCompile extends Plugin {
     // check if the contract if part of the local compilation result
     const codeAtAddress = await web3.eth.getCode(contractAddress)
     const compilation = localCompilation()
+    console.log("compilationResult= ", compilation)
     if (compilation) {
       let found = false
       compilation.visitContracts((contract) => {

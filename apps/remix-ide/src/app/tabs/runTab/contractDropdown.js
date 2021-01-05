@@ -284,6 +284,8 @@ class ContractDropdownUI {
       }
     }
 
+    let self = this
+
     var promptCb = (okCb, cancelCb) => {
       modalDialogCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
@@ -293,18 +295,19 @@ class ContractDropdownUI {
     }
 
     var finalCb = (error, contractObject, address) => {
-      this.event.trigger('clearInstance')
+      self.event.trigger('clearInstance')
 
       if (error) {
         return this.logCallback(error)
       }
 
-      this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
+      self.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
 
-      this.runView.compilersArtefacts.addResolvedContract(address, this.runView.compilersArtefacts.addressToCompilationResults[contractObject.name + '-' + contractObject.file])
-      console.log("this.runView.compilersArtefacts.addressToCompilationResults[contractObject.name + '-' + contractObject.file]", this.runView.compilersArtefacts.addressToCompilationResults[contractObject.name + '-' + contractObject.file])
-      if (this.ipfsCheckedState) {
-        publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, selectedContract)
+      const data = self.runView.compilersArtefacts.addressToCompilationResults[contractObject.name + '-' + contractObject.file]
+      self.runView.compilersArtefacts.addResolvedContract(address, data)
+      console.log("this.runView.compilersArtefacts.addressToCompilationResults[contractObject.name + '-' + contractObject.file]", data)
+      if (self.ipfsCheckedState) {
+        publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
       }
     }
 
