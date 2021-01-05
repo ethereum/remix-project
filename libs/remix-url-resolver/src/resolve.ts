@@ -1,8 +1,9 @@
 import axios, { AxiosResponse } from 'axios'
+import { BzzNode as Bzz } from '@erebos/bzz-node'
 
 export interface Imported {
   content: string;
-  cleanURL: string;
+  cleanUrl: string;
   type: string;
 }
 
@@ -16,75 +17,109 @@ interface Handler {
   handle(match: any): any;
 }
 
+interface HandlerResponse {
+  content: any;
+  cleanUrl: string
+}
+
 export class RemixURLResolver {
   private previouslyHandled: PreviouslyHandledImports
-  constructor() {
+  gistAccessToken: string
+  protocol: string
+
+  constructor(gistToken?: string, protocol = 'http:') {
     this.previouslyHandled = {}
+    this.gistAccessToken = gistToken ? gistToken : ''
+    this.protocol = protocol
   }
+
   /**
   * Handle an import statement based on github
-  * @params root The root of the github import statement
-  * @params filePath path of the file in github
+  * @param root The root of the github import statement
+  * @param filePath path of the file in github
   */
-  async handleGithubCall(root: string, filePath: string) {
+  async handleGithubCall(root: string, filePath: string): Promise<HandlerResponse> {
+    let param = '?'
+    param += this.gistAccessToken ? 'access_token=' + this.gistAccessToken : ''
+    const regex = filePath.match(/blob\/([^/]+)\/(.*)/)
+    if (regex) {
+      // if we have /blob/master/+path we extract the branch name "master" and add it as a parameter to the github api
+      // the ref can be branch name, tag, commit id
+      const reference = regex[1]
+      param += '&ref=' + reference
+      filePath = filePath.replace(`blob/${reference}/`, '')
+    }
     //eslint-disable-next-line no-useless-catch
     try {
-      const req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath
+      const req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath + param
       const response: AxiosResponse = await axios.get(req)
-      return Buffer.from(response.data.content, 'base64').toString()
+      return { content: Buffer.from(response.data.content, 'base64').toString(), cleanUrl: root + '/' + filePath }
     } catch(e) {
       throw e
     }
   }
+
   /**
   * Handle an import statement based on http
-  * @params url The url of the import statement
-  * @params cleanURL
+  * @param url The url of the import statement
+  * @param cleanUrl
   */
-  async handleHttp(url: string, _: string) {
-  //eslint-disable-next-line no-useless-catch
+  async handleHttp(url: string, cleanUrl: string): Promise<HandlerResponse> {
+    //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
-      return response.data
+      return { content: response.data, cleanUrl}
     } catch(e) {
       throw e
     }
   }
+
   /**
   * Handle an import statement based on https
-  * @params url The url of the import statement
-  * @params cleanURL
+  * @param url The url of the import statement
+  * @param cleanUrl
   */
-  async handleHttps(url: string, _: string) {
-  //eslint-disable-next-line no-useless-catch
+  async handleHttps(url: string, cleanUrl: string): Promise<HandlerResponse> {
+    //eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
-      return response.data
+      return { content: response.data, cleanUrl }
     } catch(e) {
       throw e
     }
   }
-  handleSwarm(url: string, cleanURL: string) {
-    return
+
+  async handleSwarm(url: string, cleanUrl: string): Promise<HandlerResponse> {
+    //eslint-disable-next-line no-useless-catch
+    try {
+      const bzz = new Bzz({url: this.protocol + '//swarm-gateways.net'});
+      const url = bzz.getDownloadURL(cleanUrl, {mode: 'raw'})
+      const response: AxiosResponse = await axios.get(url)
+      return { content: response.data, cleanUrl }
+    } catch(e) {
+      throw e
+    }
   }
+
   /**
   * Handle an import statement based on IPFS
-  * @params url The url of the IPFS import statement
+  * @param url The url of the IPFS import statement
   */
-  async handleIPFS(url: string) {
+  async handleIPFS(url: string): Promise<HandlerResponse> {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
     //eslint-disable-next-line no-useless-catch
     try {
-      const req = 'https://gateway.ipfs.io/' + url
+      const req = 'https://ipfsgw.komputing.org/' + url
       // If you don't find greeter.sol on ipfs gateway use local
       // const req = 'http://localhost:8080/' + url
       const response: AxiosResponse = await axios.get(req)
-      return response.data
+      return { content: response.data, cleanUrl: url }
     } catch (e) {
       throw e
     }
   }
+
   getHandlers(): Handler[] {
     return [
       {
@@ -125,10 +160,10 @@ export class RemixURLResolver {
     const matchedHandler = handlers.filter(handler => handler.match(filePath))
     const handler: Handler = matchedHandler[0]
     const match = handler.match(filePath)
-    const content: string = await handler.handle(match)
+    const { content, cleanUrl } = await handler.handle(match)
     imported = {
       content,
-      cleanURL: filePath,
+      cleanUrl : cleanUrl ? cleanUrl : filePath,
       type: handler.type
     }
     this.previouslyHandled[filePath] = imported

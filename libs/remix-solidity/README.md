@@ -1,27 +1,29 @@
 ## Remix-Solidity
-[![npm version](https://badge.fury.io/js/remix-solidity.svg)](https://www.npmjs.com/package/remix-solidity)
-[![npm](https://img.shields.io/npm/dt/remix-solidity.svg?label=Total%20Downloads)](https://www.npmjs.com/package/remix-solidity)
-[![npm](https://img.shields.io/npm/dw/remix-solidity.svg)](https://www.npmjs.com/package/remix-solidity)
-[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethereum/remix/tree/master/LICENSE)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ethereum/remix/issues)
+[![npm version](https://badge.fury.io/js/%40remix-project%2Fremix-solidity.svg)](https://www.npmjs.com/package/@remix-project/remix-solidity)
+[![npm](https://img.shields.io/npm/dt/@remix-project/remix-solidity.svg?label=Total%20Downloads)](https://www.npmjs.com/package/@remix-project/remix-solidity)
+[![npm](https://img.shields.io/npm/dw/@remix-project/remix-solidity.svg)](https://www.npmjs.com/package/@remix-project/remix-solidity)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethereum/remix-project/tree/master/libs/remix-solidity)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ethereum/remix-project/issues)
 
 
-`remix-solidity` is a tool to load and run solidity compiler. It works underneath Remix IDE plugin "Solidity Compiler" which is used to load different versions of compiler and compile the smart contracts. 
+`@remix-project/remix-solidity` is a tool to load and run solidity compiler. It works underneath Remix IDE  "Solidity Compiler" plugin which is used to load different versions of compiler and compile the smart contracts. 
 
 ### Installation
 
-`npm install remix-solidity`
+`@remix-project/remix-solidity` is an NPM package and can be installed using NPM as:
+
+`npm install @remix-project/remix-solidity`
 
 ### How to use
 
-`remix-solidity` exports:
+`@remix-project/remix-solidity` exports:
 ```
     {
         Compiler: Compiler,
         CompilerInput: CompilerInput
     }
 ```
-`CompilerInput` can be used to form the [compiler input](https://github.com/ethereum/remix/blob/remix-solidity-readme/remix-solidity/src/compiler/types.ts#L1) by passing the [options](https://github.com/ethereum/remix/blob/remix-solidity-readme/remix-solidity/src/compiler/types.ts#L144)
+`CompilerInput` can be used to form the [compiler input](https://github.com/ethereum/remix-project/blob/master/libs/remix-solidity/src/compiler/types.ts#L1) by passing the [options](https://github.com/ethereum/remix-project/blob/master/libs/remix-solidity/src/compiler/types.ts#L144)
 
 `Compiler` is a class containing various methods to perform compiler related actions. Have a look to `Compiler` interface:
 
@@ -129,12 +131,11 @@ class Compiler {
 }
 ```
 
-## Contribute
+### Contribute
 
 Please feel free to open an issue or a pull request. 
 
-In case you want to add a code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix/blob/master/CONTRIBUTING.md). Reach us in [Gitter](https://gitter.im/ethereum/remix) in case of any queries.
+In case you want to add some code, do have a look to our contribution guidelnes [here](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md). Reach us on [Gitter](https://gitter.im/ethereum/remix) in case of any queries.   
 
-## License
-
-[MIT](../LICENSE) © 2020 Remix Team
+### License
+MIT © 2018-21 Remix Team
