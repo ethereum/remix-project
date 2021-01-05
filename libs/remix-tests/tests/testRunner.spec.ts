@@ -393,6 +393,26 @@ describe('testRunner', () => {
     })
 
     //Test signed/unsigned integer weight
+    describe('test SafeMath library', () => {
+      const filename: string = __dirname + '/examples_4/SafeMath_test.sol'
+
+      beforeAll(done => {
+        compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, asts: any, accounts: string[]) {
+          runTest('SafeMathTest', contracts.SafeMathTest, compilationData[filename]['SafeMathTest'], asts[filename], { accounts }, testCallback, resultsCallback(done))
+        })
+      })
+
+      afterAll(() => { tests = [] })
+
+      it('should have 10 passing tests', () => {
+        assert.equal(results.passingNum, 10)
+      })
+      it('should have 0 failing tests', () => {
+        assert.equal(results.failureNum, 0)
+      })
+    })
+
+    //Test signed/unsigned integer weight
     describe('test number weight', () => {
       const filename: string = __dirname + '/number/number_test.sol'
 
