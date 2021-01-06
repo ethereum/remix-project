@@ -15,7 +15,6 @@ module.exports = class CompilerArtefacts extends Plugin {
     super(profile)
     this.compilersArtefacts = {}
     this.compilersArtefactsPerFile = {}
-    this.addressToCompilationResults = {}
   }
 
   clear () {
@@ -68,6 +67,11 @@ module.exports = class CompilerArtefacts extends Plugin {
     return contractsData
   }
 
+  getCompilerAbstract(file) {
+    return this.compilersArtefactsPerFile[file]
+  }
+
+  // compilerData is a CompilerAbstract object
   addResolvedContract (address, compilerData) {
     this.compilersArtefacts[address] = compilerData
   }
