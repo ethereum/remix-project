@@ -42,18 +42,19 @@ export class RemixURLResolver {
     let param = '?'
     param += this.gistAccessToken ? 'access_token=' + this.gistAccessToken : ''
     const regex = filePath.match(/blob\/([^/]+)\/(.*)/)
+    let reference = 'master'
     if (regex) {
       // if we have /blob/master/+path we extract the branch name "master" and add it as a parameter to the github api
       // the ref can be branch name, tag, commit id
-      const reference = regex[1]
+      reference = regex[1]
       param += '&ref=' + reference
       filePath = filePath.replace(`blob/${reference}/`, '')
     }
     //eslint-disable-next-line no-useless-catch
     try {
-      const req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath + param
+      const req: string = `https://raw.githubusercontent.com/${root}/${reference}/${filePath}`
       const response: AxiosResponse = await axios.get(req)
-      return { content: Buffer.from(response.data.content, 'base64').toString(), cleanUrl: root + '/' + filePath }
+      return { content: response.data, cleanUrl: root + '/' + filePath }
     } catch(e) {
       throw e
     }
