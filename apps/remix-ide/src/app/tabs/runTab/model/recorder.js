@@ -4,11 +4,10 @@ var remixLib = require('@remix-project/remix-lib')
 var EventManager = remixLib.EventManager
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
+const helper = require('../../../../lib/helper')
 
 /**
   * Record transaction as long as the user create them.
-  *
-  *
   */
 class Recorder {
   constructor (blockchain) {
@@ -69,8 +68,7 @@ class Recorder {
       if (call) return
 
       if (!rawAddress) return // not a contract creation
-      const stringAddress = this.addressToString(rawAddress)
-      const address = ethutil.toChecksumAddress(stringAddress)
+      const address = helper.addressToString(rawAddress)
       // save back created addresses for the convertion from tokens to real adresses
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address
@@ -252,8 +250,7 @@ class Recorder {
             return logCallBack(err + '. Execution failed at ' + index)
           }
           if (rawAddress) {
-            const stringAddress = self.addressToString(rawAddress)
-            const address = ethutil.toChecksumAddress(stringAddress)
+            const address = helper.addressToString(rawAddress)
             // save back created addresses for the convertion from tokens to real adresses
             self.data._createdContracts[address] = tx.timestamp
             self.data._createdContractsReverse[tx.timestamp] = address
@@ -263,17 +260,6 @@ class Recorder {
         }
       )
     }, () => { self.setListen(true); self.clearAll() })
-  }
-
-  addressToString (address) {
-    if (!address) return null
-    if (typeof address !== 'string') {
-      address = address.toString('hex')
-    }
-    if (address.indexOf('0x') === -1) {
-      address = '0x' + address
-    }
-    return address
   }
 
   runScenario (json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
