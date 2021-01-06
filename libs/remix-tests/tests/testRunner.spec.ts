@@ -76,7 +76,7 @@ async function compileAndDeploy(filename: string, callback: Function) {
   })
 }
 
-// Use `export NODE_OPTIONS="--max-old-space-size=2048"` if there is a JavaScript heap out of memory issue
+// Use `export NODE_OPTIONS="--max-old-space-size=4096"` if there is a JavaScript heap out of memory issue
 
 describe('testRunner', () => {
     let tests: any[] = [], results: ResultsInterface;
@@ -392,7 +392,7 @@ describe('testRunner', () => {
       })
     })
 
-    //Test signed/unsigned integer weight
+    //Test SafeMath library methods
     describe('test SafeMath library', () => {
       const filename: string = __dirname + '/examples_4/SafeMath_test.sol'
 
