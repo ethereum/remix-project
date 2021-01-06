@@ -1,13 +1,14 @@
 import publishToStorage from '../../../publishToStorage'
 
-var yo = require('yo-yo')
-var css = require('../styles/run-tab-styles')
-var modalDialogCustom = require('../../ui/modal-dialog-custom')
-var remixLib = require('@remix-project/remix-lib')
-var EventManager = remixLib.EventManager
-var confirmDialog = require('../../ui/confirmDialog')
-var modalDialog = require('../../ui/modaldialog')
-var MultiParamManager = require('../../ui/multiParamManager')
+const yo = require('yo-yo')
+const css = require('../styles/run-tab-styles')
+const modalDialogCustom = require('../../ui/modal-dialog-custom')
+const remixLib = require('@remix-project/remix-lib')
+const EventManager = remixLib.EventManager
+const confirmDialog = require('../../ui/confirmDialog')
+const modalDialog = require('../../ui/modaldialog')
+const MultiParamManager = require('../../ui/multiParamManager')
+const helper = require('../../../lib/helper')
 
 class ContractDropdownUI {
   constructor (blockchain, dropdownLogic, logCallback, runView) {
@@ -31,11 +32,7 @@ class ContractDropdownUI {
       this.selectContractNames.innerHTML = ''
       if (success) {
         this.dropdownLogic.getCompiledContracts(compiler, compilerFullName).forEach((contract) => {
-          console.log('file = ', file)
-          console.log('contrtact.file = ', contract.file)
           this.selectContractNames.appendChild(yo`<option value="${contract.name}" compiler="${compilerFullName}">${contract.name} - ${contract.file}</option>`)
-          this.runView.compilersArtefacts.addressToCompilationResults[contract.name + '-' + contract.file] = data
-          console.log("runView.compilersArtefacts.addressToCompilationResults ", this.runView.compilersArtefacts.addressToCompilationResults)
         })
       }
       this.enableAtAddress(success)
@@ -303,9 +300,8 @@ class ContractDropdownUI {
 
       self.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
 
-      const data = self.runView.compilersArtefacts.addressToCompilationResults[contractObject.name + '-' + contractObject.file]
-      self.runView.compilersArtefacts.addResolvedContract(address, data)
-      console.log("this.runView.compilersArtefacts.addressToCompilationResults[contractObject.name + '-' + contractObject.file]", data)
+      const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
+      self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
       if (self.ipfsCheckedState) {
         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
       }
