@@ -4,9 +4,10 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var helper = require('../../lib/helper')
 const globalRegistry = require('../../global/registry')
+const contextMenu = require('../ui/contextMenu')
 const { Plugin } = require('@remixproject/engine')
-
 const EventEmitter = require('events')
+let VERTICALMENU_HANDLE
 
 const profile = {
   name: 'menuicons',
@@ -72,6 +73,7 @@ export class VerticalIcons extends Plugin {
         onclick="${() => { this.toggle(name) }}"
         plugin="${name}"
         title="${title}"
+        oncontextmenu="${(e) => this.itemContextMenu(e, name)}"
         data-id="verticalIconsKind${name}">
         <img class="image" src="${icon}" alt="${name}" />
       </div>`
@@ -219,6 +221,15 @@ export class VerticalIcons extends Plugin {
       const image = active.querySelector('.image')
       image.style.setProperty('filter', `invert(${invert})`)
     }
+  }
+
+  itemContextMenu (e, name) {
+    console.log(name)
+    VERTICALMENU_HANDLE && VERTICALMENU_HANDLE.hide(null, true)
+    const actions = {}
+    actions['Deactivate'] = () => { this.call('manager', 'deactivatePlugin', name) }
+    VERTICALMENU_HANDLE = contextMenu(e, actions)
+    e.preventDefault()
   }
 
   render () {
