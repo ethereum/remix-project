@@ -136,15 +136,26 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [state.files])
 
   const resolveDirectory = async (folderPath, dir: File[]): Promise<File[]> => {
+    if (extractParentFromKey(state.focusEdit.element) === name) {
+      dir = state.focusEdit.type === 'file' ? [...dir, {
+        path: state.focusEdit.element,
+        name: '',
+        isDirectory: false
+      }] : [{
+        path: state.focusEdit.element,
+        name: '',
+        isDirectory: true
+      }, ...dir]
+    }
     dir = await Promise.all(dir.map(async (file) => {
       if (file.path === folderPath) {
         if ((extractParentFromKey(state.focusEdit.element) === folderPath) && state.focusEdit.isNew) {
           file.child = state.focusEdit.type === 'file' ? [...await fetchDirectoryContent(folderPath), {
-            path: file.path + '/blank',
+            path: state.focusEdit.element,
             name: '',
             isDirectory: false
           }] : [{
-            path: file.path + '/blank',
+            path: state.focusEdit.element,
             name: '',
             isDirectory: true
           }, ...await fetchDirectoryContent(folderPath)]
