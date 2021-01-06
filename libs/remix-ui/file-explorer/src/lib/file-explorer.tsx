@@ -60,9 +60,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const editRef = useRef(null)
 
   useEffect(() => {
-    if (editRef && editRef.current) {
+    if (state.focusEdit.element) {
       setTimeout(() => {
-        editRef.current.focus()
+        if (editRef && editRef.current) {
+          editRef.current.focus()
+        }
       }, 150)
     }
   }, [state.focusEdit.element])
@@ -100,24 +102,24 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (state.fileManager) {
       props.filesProvider.event.register('fileExternallyChanged', fileExternallyChanged)
       props.filesProvider.event.register('fileRenamedError', fileRenamedError)
-      props.filesProvider.event.register('fileAdded', fileAdded)
-      props.filesProvider.event.register('folderAdded', folderAdded)
-      props.filesProvider.event.register('fileRemoved', fileRemoved)
-      props.filesProvider.event.register('fileRenamed', fileRenamed)
     }
   }, [state.fileManager])
 
   useEffect(() => {
     const { expandPath } = state
+    const expandFn = async () => {
+      let files = state.files
 
-    if (expandPath && expandPath.length > 0) {
-      expandPath.map(async (path) => {
-        const files = await resolveDirectory(path, state.files)
-
-        setState(prevState => {
+      for (let i = 0; i < expandPath.length; i++) {
+        files = await resolveDirectory(expandPath[i], files)
+        await setState(prevState => {
           return { ...prevState, files }
         })
-      })
+      }
+    }
+
+    if (expandPath && expandPath.length > 0) {
+      expandFn()
     }
   }, [state.expandPath])
 
@@ -130,22 +132,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.filesProvider.event.register('fileAdded', fileAdded)
     props.filesProvider.event.register('folderAdded', folderAdded)
     props.filesProvider.event.register('fileRemoved', fileRemoved)
-    props.filesProvider.event.unregister('fileRenamed', fileRenamed)
-  }, [state.files, state.expandPath])
+    props.filesProvider.event.register('fileRenamed', fileRenamed)
+  }, [state.files])
 
   const resolveDirectory = async (folderPath, dir: File[]): Promise<File[]> => {
     dir = await Promise.all(dir.map(async (file) => {
       if (file.path === folderPath) {
-        if (file.child) {
-          const newInput = file.child.filter(({ path }) => path && path.endsWith('/blank'))
-
-          if (newInput.length === 1) {
-            const dirContent = await fetchDirectoryContent(folderPath)
-
-            file.child = newInput[0].isDirectory ? [...newInput, ...dirContent] : [...dirContent, ...newInput]
-          } else {
-            file.child = await fetchDirectoryContent(folderPath)
-          }
+        if ((extractParentFromKey(state.focusEdit.element) === folderPath) && state.focusEdit.isNew) {
+          file.child = state.focusEdit.type === 'file' ? [...await fetchDirectoryContent(folderPath), {
+            path: file.path + '/blank',
+            name: '',
+            isDirectory: false
+          }] : [{
+            path: file.path + '/blank',
+            name: '',
+            isDirectory: true
+          }, ...await fetchDirectoryContent(folderPath)]
         } else {
           file.child = await fetchDirectoryContent(folderPath)
         }
@@ -212,19 +214,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return keyPath.join('/')
   }
 
-  const buildTree = (paths: string[]) => {
-    if (paths.length > 0) {
-      return {
-        path: paths[0],
-        name: extractNameFromKey(paths[0]),
-        isDirectory: true,
-        child: [buildTree(paths.filter(item => item !== paths[0]))]
-      }
-    } else {
-      return []
-    }
-  }
-
   const createNewFile = (newFilePath: string) => {
     const fileManager = state.fileManager
 
@@ -269,6 +258,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       fn: async () => {
         try {
           const fileManager = state.fileManager
+
           await fileManager.remove(path)
         } catch (e) {
           toast(`Failed to remove file ${path}.`)
@@ -288,10 +278,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       if (exists) {
         modal('Rename File Failed', 'File name already exists', {
           label: 'Close',
-          fn: () => {
-            console.log('called!')
-            editRef.current.textContent = extractNameFromKey(oldPath)
-          }
+          fn: () => {}
         }, null)
       } else {
         await fileManager.rename(oldPath, newPath)
@@ -397,41 +384,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const fileAdded = async (filePath: string) => {
     const pathArr = filePath.split('/')
-    const hasChild = pathArr.length > 2
+    const expandPath = pathArr.map((path, index) => {
+      return [...pathArr.slice(0, index)].join('/')
+    }).filter(path => path && (path !== props.name))
+    const files = await fetchDirectoryContent(props.name)
 
-    if (hasChild) {
-      const expandPath = pathArr.map((path, index) => {
-        return [...pathArr.slice(0, index)].join('/')
-      }).filter(path => path && (path !== props.name))
-      const pathExist = state.files.findIndex(item => item.path === expandPath[0]) !== -1
+    setState(prevState => {
+      const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
 
-      if (!pathExist) {
-        const dir = buildTree(expandPath)
-        const files = [dir, ...state.files]
-
-        setState(prevState => {
-          const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
-
-          return { ...prevState, files, expandPath: uniquePaths, focusElement: [{ key: filePath, type: 'file' }] }
-        })
-      } else {
-        setState(prevState => {
-          const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
-
-          return { ...prevState, expandPath: uniquePaths, focusElement: [{ key: filePath, type: 'file' }] }
-        })
-      }
-    } else {
-      const parentFolder = extractParentFromKey(filePath)
-
-      if (parentFolder === name) {
-        const files = await fetchDirectoryContent(name)
-
-        setState(prevState => {
-          return { ...prevState, files, focusElement: [{ key: filePath, type: 'file' }], expandPath: [] }
-        })
-      } // else does not exist in explorer
-    }
+      return { ...prevState, files, expandPath: uniquePaths, focusElement: [{ key: filePath, type: 'file' }] }
+    })
     if (filePath.includes('_test.sol')) {
       plugin.event.trigger('newTestFileCreated', [filePath])
     }
@@ -439,41 +401,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const folderAdded = async (folderPath: string) => {
     const pathArr = folderPath.split('/')
-    const hasChild = pathArr.length > 2
+    const expandPath = pathArr.map((path, index) => {
+      return [...pathArr.slice(0, index)].join('/')
+    }).filter(path => path && (path !== props.name))
+    const files = await fetchDirectoryContent(props.name)
 
-    if (hasChild) {
-      const expandPath = pathArr.map((path, index) => {
-        return [...pathArr.slice(0, index)].join('/')
-      }).filter(path => path && (path !== props.name))
-      const pathExist = state.files.findIndex(item => item.path === expandPath[0]) !== -1
+    setState(prevState => {
+      const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
 
-      if (!pathExist) {
-        const dir = buildTree(expandPath)
-        const files = [dir, ...state.files]
-
-        setState(prevState => {
-          const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
-
-          return { ...prevState, files, expandPath: uniquePaths, focusElement: [{ key: folderPath, type: 'folder' }] }
-        })
-      } else {
-        setState(prevState => {
-          const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
-
-          return { ...prevState, expandPath: uniquePaths, focusElement: [{ key: folderPath, type: 'folder' }] }
-        })
-      }
-    } else {
-      const parentFolder = extractParentFromKey(folderPath)
-
-      if (parentFolder === name) {
-        const files = await fetchDirectoryContent(name)
-
-        setState(prevState => {
-          return { ...prevState, files, focusElement: [{ key: folderPath, type: 'folder' }] }
-        })
-      } // else does not exist in explorer
-    }
+      return { ...prevState, files, expandPath: uniquePaths, focusElement: [{ key: folderPath, type: 'folder' }] }
+    })
   }
 
   const fileExternallyChanged = (path: string, file: { content: string }) => {
@@ -823,6 +760,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           const oldName = extractNameFromKey(oldPath)
           const newPath = oldPath.replace(oldName, content)
 
+          editRef.current.textContent = extractNameFromKey(oldPath)
           renamePath(oldPath, newPath)
         }
         setState(prevState => {
@@ -834,12 +772,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleNewFileInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
-    let files = await resolveDirectory(parentFolder, state.files)
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
-    files = addEmptyFile(parentFolder, files)
     setState(prevState => {
-      return { ...prevState, files, expandPath }
+      return { ...prevState, expandPath }
     })
     editModeOn(parentFolder + '/blank', 'file', true)
   }
@@ -847,12 +783,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const handleNewFolderInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
     else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
-    let files = await resolveDirectory(parentFolder, state.files)
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
-    files = addEmptyFolder(parentFolder, state.files)
     setState(prevState => {
-      return { ...prevState, files, expandPath }
+      return { ...prevState, expandPath }
     })
     editModeOn(parentFolder + '/blank', 'folder', true)
   }
