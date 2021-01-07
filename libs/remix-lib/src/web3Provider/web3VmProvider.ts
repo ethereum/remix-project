@@ -206,7 +206,7 @@ export class Web3VmProvider {
         this.processingAddress = toChecksumAddress(this.processingAddress)
         if (!this.storageCache[this.processingHash][this.processingAddress]) {
           const account = toBuffer(this.processingAddress)
-          this.vm.stateManager.dumpStorage(account, function (storage) {
+          this.vm.stateManager.dumpStorage(account, (storage) => {
             this.storageCache[this.processingHash][this.processingAddress] = storage
             this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
           })
