@@ -27,7 +27,6 @@ class ContractDropdownUI {
 
   listenToEvents () {
     this.dropdownLogic.event.register('newlyCompiled', (success, data, source, compiler, compilerFullName, file) => {
-
       if (!this.selectContractNames) return
       this.selectContractNames.innerHTML = ''
       if (success) {
@@ -281,7 +280,7 @@ class ContractDropdownUI {
       }
     }
 
-    let self = this
+    const self = this
 
     var promptCb = (okCb, cancelCb) => {
       modalDialogCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
