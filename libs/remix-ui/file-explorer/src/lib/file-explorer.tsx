@@ -77,19 +77,40 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const files = await fetchDirectoryContent(name)
       const actions = [{
         name: 'New File',
-        type: ['folder']
+        type: ['folder'],
+        path: [],
+        extension: [],
+        pattern: []
       }, {
         name: 'New Folder',
-        type: ['folder']
+        type: ['folder'],
+        path: [],
+        extension: [],
+        pattern: []
       }, {
         name: 'Rename',
-        type: ['file', 'folder']
+        type: ['file', 'folder'],
+        path: [],
+        extension: [],
+        pattern: []
       }, {
         name: 'Delete',
-        type: ['file', 'folder']
+        type: ['file', 'folder'],
+        path: [],
+        extension: [],
+        pattern: []
       }, {
         name: 'Push changes to gist',
-        type: ['browser/gists']
+        type: [],
+        path: [],
+        extension: [],
+        pattern: ['^browser/gists/([0-9]|[a-z])*$']
+      }, {
+        name: 'Run',
+        type: [],
+        path: [],
+        extension: ['.js'],
+        pattern: []
       }]
 
       setState(prevState => {
@@ -100,8 +121,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     if (state.fileManager) {
-      props.filesProvider.event.register('fileExternallyChanged', fileExternallyChanged)
-      props.filesProvider.event.register('fileRenamedError', fileRenamedError)
+      filesProvider.event.register('fileExternallyChanged', fileExternallyChanged)
+      filesProvider.event.register('fileRenamedError', fileRenamedError)
     }
   }, [state.fileManager])
 
@@ -125,14 +146,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     // unregister event to update state in callback
-    if (props.filesProvider.event.registered.fileAdded) props.filesProvider.event.unregister('fileAdded', fileAdded)
-    if (props.filesProvider.event.registered.folderAdded) props.filesProvider.event.unregister('folderAdded', folderAdded)
-    if (props.filesProvider.event.registered.fileRemoved) props.filesProvider.event.unregister('fileRemoved', fileRemoved)
-    if (props.filesProvider.event.registered.fileRenamed) props.filesProvider.event.unregister('fileRenamed', fileRenamed)
-    props.filesProvider.event.register('fileAdded', fileAdded)
-    props.filesProvider.event.register('folderAdded', folderAdded)
-    props.filesProvider.event.register('fileRemoved', fileRemoved)
-    props.filesProvider.event.register('fileRenamed', fileRenamed)
+    if (filesProvider.event.registered.fileAdded) filesProvider.event.unregister('fileAdded', fileAdded)
+    if (filesProvider.event.registered.folderAdded) filesProvider.event.unregister('folderAdded', folderAdded)
+    if (filesProvider.event.registered.fileRemoved) filesProvider.event.unregister('fileRemoved', fileRemoved)
+    if (filesProvider.event.registered.fileRenamed) filesProvider.event.unregister('fileRenamed', fileRenamed)
+    filesProvider.event.register('fileAdded', fileAdded)
+    filesProvider.event.register('folderAdded', folderAdded)
+    filesProvider.event.register('fileRemoved', fileRemoved)
+    filesProvider.event.register('fileRenamed', fileRenamed)
   }, [state.files])
 
   const resolveDirectory = async (folderPath, dir: File[]): Promise<File[]> => {
@@ -302,64 +323,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const addEmptyFile = (parentFolder: string, files: File[]): File[] => {
-    if (parentFolder === name) {
-      files.push({
-        path: 'browser/blank',
-        name: '',
-        isDirectory: false
-      })
-      return files
-    }
-    return files.map(file => {
-      if (file.child) {
-        if (file.path === parentFolder) {
-          file.child = [...file.child, {
-            path: file.path + '/blank',
-            name: '',
-            isDirectory: false
-          }]
-          return file
-        } else {
-          file.child = addEmptyFile(parentFolder, file.child)
-
-          return file
-        }
-      } else {
-        return file
-      }
-    })
-  }
-
-  const addEmptyFolder = (parentFolder: string, files: File[]): File[] => {
-    if (parentFolder === name) {
-      files.unshift({
-        path: 'browser/blank',
-        name: '',
-        isDirectory: true
-      })
-      return files
-    }
-    return files.map(file => {
-      if (file.child) {
-        if (file.path === parentFolder) {
-          file.child = [{
-            path: file.path + '/blank',
-            name: '',
-            isDirectory: true
-          }, ...file.child]
-          return file
-        } else {
-          file.child = addEmptyFolder(parentFolder, file.child)
-
-          return file
-        }
-      } else {
-        return file
-      }
-    })
-  }
-
   const removePath = (path: string, files: File[]): File[] => {
     return files.map(file => {
       if (file.path === path) {
@@ -474,7 +437,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     // pick that up via the 'fileAdded' event from the files module.
 
     [...target.files].forEach((file) => {
-      const files = props.filesProvider
+      const files = filesProvider
 
       const loadFile = (name: string): void => {
         const fileReader = new FileReader()
@@ -574,7 +537,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
     const folder = id ? 'browser/gists/' + id : 'browser/'
 
-    packageFiles(props.filesProvider, folder, async (error, packaged) => {
+    packageFiles(filesProvider, folder, async (error, packaged) => {
       if (error) {
         console.log(error)
         modal('Publish to gist Failed', 'Failed to create gist: ' + error.message, {
@@ -637,6 +600,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
           }
         }
       }
+    })
+  }
+
+  const runScript = async (path: string) => {
+    filesProvider.get(path, (error, content: string) => {
+      if (error) return console.log(error)
+      plugin.call('scriptRunner', 'execute', content)
     })
   }
 
@@ -910,6 +880,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               createNewFolder={handleNewFolderInput}
               deletePath={deletePath}
               renamePath={editModeOn}
+              runScript={runScript}
               pageX={state.focusContext.x}
               pageY={state.focusContext.y}
               path={file.path}
