@@ -47,7 +47,6 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   activate () {
-    this.fileSystemExplorer.show()
     this.connectToLocalhost()
   }
 
@@ -83,7 +82,9 @@ export class RemixdHandle extends WebsocketPlugin {
             this.canceled()
           }
         }, 3000)
-        this.locahostProvider.init()
+        this.locahostProvider.init(() => {
+          this.fileSystemExplorer.show()
+        })
         this.call('manager', 'activatePlugin', 'git')
       }
     }
