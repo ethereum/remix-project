@@ -157,7 +157,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [state.files])
 
   const resolveDirectory = async (folderPath, dir: File[]): Promise<File[]> => {
-    if (extractParentFromKey(state.focusEdit.element) === name) {
+    if ((extractParentFromKey(state.focusEdit.element) === name) && (dir.findIndex(({ path }) => path === state.focusEdit.element) === -1)) {
       dir = state.focusEdit.type === 'file' ? [...dir, {
         path: state.focusEdit.element,
         name: '',
@@ -171,15 +171,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
     dir = await Promise.all(dir.map(async (file) => {
       if (file.path === folderPath) {
         if ((extractParentFromKey(state.focusEdit.element) === folderPath) && state.focusEdit.isNew) {
-          file.child = state.focusEdit.type === 'file' ? [...await fetchDirectoryContent(folderPath), {
-            path: state.focusEdit.element,
-            name: '',
-            isDirectory: false
-          }] : [{
-            path: state.focusEdit.element,
-            name: '',
-            isDirectory: true
-          }, ...await fetchDirectoryContent(folderPath)]
+          if (file.child && (file.child.findIndex(({ path }) => path === state.focusEdit.element) === -1)) {
+            file.child = state.focusEdit.type === 'file' ? [...await fetchDirectoryContent(folderPath), {
+              path: state.focusEdit.element,
+              name: '',
+              isDirectory: false
+            }] : [{
+              path: state.focusEdit.element,
+              name: '',
+              isDirectory: true
+            }, ...await fetchDirectoryContent(folderPath)]
+          } else {
+            file.child = await fetchDirectoryContent(folderPath)
+          }
         } else {
           file.child = await fetchDirectoryContent(folderPath)
         }
@@ -268,13 +272,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const createNewFolder = async (newFolderPath: string) => {
     const fileManager = state.fileManager
     const dirName = newFolderPath + '/'
-    const exists = fileManager.exists(dirName)
 
-    if (exists) return
     try {
+      const exists = await fileManager.exists(dirName)
+
+      if (exists) return
       await fileManager.mkdir(dirName)
       // addFolder(parentFolder, newFolderPath)
     } catch (e) {
+      console.log('error: ', e)
       toast('Failed to create folder: ' + newFolderPath)
     }
   }
@@ -305,7 +311,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const renamePath = async (oldPath: string, newPath: string) => {
     try {
       const fileManager = state.fileManager
-      const exists = fileManager.exists(newPath)
+      const exists = await fileManager.exists(newPath)
 
       if (exists) {
         modal('Rename File Failed', 'File name already exists', {
@@ -331,24 +337,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
         const childFiles = removePath(path, file.child)
 
         file.child = childFiles.filter(file => file)
-        return file
-      } else {
-        return file
-      }
-    })
-  }
-
-  const replacePath = (oldPath: string, newPath: string, files: File[]): File[] => {
-    return files.map(file => {
-      if (file.path === oldPath) {
-        return {
-          ...file,
-          path: newPath,
-          name: extractNameFromKey(newPath)
-        }
-      } else if (file.child) {
-        file.child = replacePath(oldPath, newPath, file.child)
-
         return file
       } else {
         return file
@@ -413,11 +401,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const fileRenamed = (oldName, newName) => {
-    const files = replacePath(oldName, newName, state.files)
+  const fileRenamed = async () => {
+    const files = await fetchDirectoryContent(props.name)
 
     setState(prevState => {
-      return { ...prevState, files }
+      return { ...prevState, files, expandPath: [...prevState.expandPath] }
     })
   }
 
