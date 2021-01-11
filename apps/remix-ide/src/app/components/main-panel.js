@@ -24,6 +24,11 @@ export class MainPanel extends AbstractPanel {
     super(profile)
   }
 
+  focus (name) {
+    this.emit('focusChanged', name)
+    super.focus(name)
+  }
+
   render () {
     return yo`
       <div class=${css.pluginsContainer} data-id="mainPanelPluginsContainer">
