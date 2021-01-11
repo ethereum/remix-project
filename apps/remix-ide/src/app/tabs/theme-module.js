@@ -4,18 +4,63 @@ import QueryParams from '../../lib/query-params'
 import * as packageJson from '../../../../../package.json'
 import yo from 'yo-yo'
 
-const themes = [
-  { name: 'Dark', quality: 'dark', url: 'assets/css/themes/remix-dark_tvx1s2.css' },
-  { name: 'Light', quality: 'light', url: 'assets/css/themes/remix-light_powaqg.css' },
-  { name: 'Midcentury', quality: 'light', url: 'assets/css/themes/remix-midcentury_hrzph3.css' },
-  { name: 'Black', quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css' },
-  { name: 'Candy', quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css' },
-
-  { name: 'Cerulean', quality: 'light', url: 'assets/css/themes/bootstrap-cerulean.min.css' },
-  { name: 'Flatly', quality: 'light', url: 'assets/css/themes/bootstrap-flatly.min.css' },
-  { name: 'Spacelab', quality: 'light', url: 'assets/css/themes/bootstrap-spacelab.min.css' },
-  { name: 'Cyborg', quality: 'dark', url: 'assets/css/themes/bootstrap-cyborg.min.css' }
-]
+const themes = [{
+  url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-light_powaqg.css',
+  brightness: 'light',
+  colors: {
+    surface: '#fff',
+    background: '#eef1f6',
+    foreground: '#2e3145',
+    primary: '#007aa6',
+    primaryContrast: '#fff',
+    secondary: '#a8b3bc',
+    secondaryContrast: '#fff',
+    success: '#32ba89',
+    successContrast: '#fff',
+    warn: '#c97539',
+    warnContrast: '#212529',
+    error: '#b84040',
+    errorContrast: '#fff',
+    disabled: ''
+  },
+  breakpoints: {
+    xs: 0,
+    sm: 576,
+    md: 768,
+    lg: 992,
+    xl: 1200
+  },
+  fontFamily: '"Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  space: 8
+}, {
+  url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-dark_tvx1s2.css',
+  brightness: 'dark',
+  colors: {
+    surface: '#2a2c3f',
+    background: '#222336',
+    foreground: '#a2a3bd',
+    primary: '#007aa6',
+    primaryContrast: '#fff',
+    secondary: '#a8b3bc',
+    secondaryContrast: '#fff',
+    success: '#32ba89',
+    successContrast: '#fff',
+    warn: '#c97539',
+    warnContrast: '#212529',
+    error: '#b84040',
+    errorContrast: '#fff',
+    disabled: ''
+  },
+  breakpoints: {
+    xs: 0,
+    sm: 576,
+    md: 768,
+    lg: 992,
+    xl: 1200
+  },
+  fontFamily: '"Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  space: 8
+}]
 
 const profile = {
   name: 'theme',
@@ -33,14 +78,14 @@ export class ThemeModule extends Plugin {
       config: registry.get('config').api
     }
     this.themes = themes.reduce((acc, theme) => {
-      theme.url = window.location.origin + window.location.pathname + theme.url
-      return { ...acc, [theme.name]: theme }
+      theme.name = theme.brightness
+      return { ...acc, [theme.brightness]: theme }
     }, {})
     let queryTheme = (new QueryParams()).get().theme
     queryTheme = this.themes[queryTheme] ? queryTheme : null
     let currentTheme = this._deps.config.get('settings/theme')
     currentTheme = this.themes[currentTheme] ? currentTheme : null
-    this.active = queryTheme || currentTheme || 'Dark'
+    this.active = queryTheme || currentTheme || 'dark'
     this.forced = !!queryTheme
   }
 
@@ -60,7 +105,7 @@ export class ThemeModule extends Plugin {
   initTheme (callback) {
     if (this.active) {
       const nextTheme = this.themes[this.active] // Theme
-      document.documentElement.style.setProperty('--theme', nextTheme.quality)
+      document.documentElement.style.setProperty('--theme', nextTheme.brightness)
       const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
       theme.addEventListener('load', () => {
         if (callback) callback()
@@ -81,7 +126,7 @@ export class ThemeModule extends Plugin {
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
-    document.documentElement.style.setProperty('--theme', nextTheme.quality)
+    document.documentElement.style.setProperty('--theme', nextTheme.brightness)
     if (themeName) this.active = themeName
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('themeChanged', nextTheme)
@@ -93,7 +138,7 @@ export class ThemeModule extends Plugin {
    * @param {element} [image] - the dom element which invert should be fixed to increase visibility
    */
   fixInvert (image) {
-    const invert = this.currentTheme().quality === 'dark' ? 1 : 0
+    const invert = this.currentTheme().brightness === 'dark' ? 1 : 0
     if (image) {
       image.style.filter = `invert(${invert})`
     }

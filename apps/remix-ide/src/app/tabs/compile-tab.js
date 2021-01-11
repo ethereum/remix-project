@@ -180,7 +180,7 @@ class CompileTab extends ViewPlugin {
     this.compiler.event.register('compilationFinished', this.data.eventHandlers.onCompilationFinished)
 
     this.data.eventHandlers.onThemeChanged = (theme) => {
-      const invert = theme.quality === 'dark' ? 1 : 0
+      const invert = theme.brightness === 'dark' ? 1 : 0
       const img = document.getElementById('swarmLogo')
       if (img) {
         img.style.filter = `invert(${invert})`

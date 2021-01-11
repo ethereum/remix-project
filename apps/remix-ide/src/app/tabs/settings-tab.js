@@ -59,7 +59,7 @@ module.exports = class SettingsTab extends ViewPlugin {
         ${themes.map((aTheme) => {
           const el = yo`<div class="radio custom-control custom-radio mb-1 form-check ${css.crow}">
           <input type="radio" onchange=${event => { onswitchTheme(event, aTheme.name) }} class="align-middle custom-control-input" name="theme" id="${aTheme.name}" data-id="settingsTabTheme${aTheme.name}">
-          <label class="form-check-label custom-control-label" data-id="settingsTabThemeLabel${aTheme.name}" for="${aTheme.name}">${aTheme.name} (${aTheme.quality})</label>
+          <label class="form-check-label custom-control-label" data-id="settingsTabThemeLabel${aTheme.name}" for="${aTheme.name}">${aTheme.brightness[0].toUpperCase() + aTheme.brightness.slice(1)} (${aTheme.brightness})</label>
         </div>`
           if (this._deps.themeModule.active === aTheme.name) el.querySelector('input').setAttribute('checked', 'checked')
           return el

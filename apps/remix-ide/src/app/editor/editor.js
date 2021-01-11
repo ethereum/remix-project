@@ -68,7 +68,7 @@ class Editor extends Plugin {
       remixDark: 'remixDark'
     }
     themeModule.events.on('themeChanged', (theme) => {
-      this.setTheme(theme.name === 'Dark' ? 'remixDark' : theme.quality)
+      this.setTheme(theme.name === 'Dark' ? 'remixDark' : theme.brightness)
     })
 
     // Init
