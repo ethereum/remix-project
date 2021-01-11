@@ -23,6 +23,10 @@ export class MainPanel extends AbstractPanel {
   constructor () {
     super(profile)
   }
+  
+  focus (name) {
+    super.focus(name)
+  }
 
   render () {
     return yo`
