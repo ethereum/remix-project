@@ -18,8 +18,7 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
     .pause(2000)
     .keys(name)
     .keys(browser.Keys.ENTER)
-    .pause(1000)
-    .click('[data-id="treeViewLitreeViewItembrowser/Greet.sol"]')
+    .openFile('browser/Greet.sol')
     .setEditorValue(content.content)
     .pause(1000)
     .perform(function () {
