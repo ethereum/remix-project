@@ -69,10 +69,10 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
  * }
  */
 
-function getPositionDetails(msg) {
-  let result = {};
+function getPositionDetails (msg) {
+  const result = {}
 
-  if(!msg.includes(':')) return {errLine: -1, errCol: -1, errFile: msg}
+  if (!msg.includes(':')) return { errLine: -1, errCol: -1, errFile: msg }
 
   // extract line / column
   let position = msg.match(/^(.*?):([0-9]*?):([0-9]*?)?/)
@@ -103,7 +103,7 @@ Renderer.prototype.error = function (message, container, opt) {
   // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0/contracts/introspection/IERC1820Registry.sol:3:1: ParserError: Source file requires different compiler version (current compiler is 0.7.4+commit.3f05b770.Emscripten.clang) - note that nightly builds are considered to be strictly less than the released version
 
   let position = getPositionDetails(text)
-  if(!position.errFile || (opt.errorType && opt.errorType === position.errFile)) {
+  if (!position.errFile || (opt.errorType && opt.errorType === position.errFile)) {
     const errorDetails = text.split('-->')
     position = getPositionDetails(errorDetails[1])
   }
