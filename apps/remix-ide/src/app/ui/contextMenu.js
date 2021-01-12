@@ -30,7 +30,7 @@ var css = csjs`
     }
 `
 
-module.exports = (event, items) => {
+module.exports = (event, items, linkItems) => {
   event.preventDefault()
 
   function hide (event, force) {
@@ -45,7 +45,17 @@ module.exports = (event, items) => {
     current.onclick = () => { hide(null, true); items[item]() }
     return current
   })
-  const container = yo`<div id="menuItemsContainer" class="p-1 ${css.container} bg-light shadow border"><ul id='menuitems'>${menu}</ul></div>`
+
+  const menuForLinks = Object.keys(linkItems).map((item, index) => {
+    const current = yo`<li id="menuitem${item.toLowerCase()}" class=${css.liitem}><a href=${linkItems[item]} target="_blank">${item}</a></li>`
+    current.onclick = () => { hide(null, true) }
+    return current
+  })
+  const container = yo`
+    <div id="menuItemsContainer" class="p-1 ${css.container} bg-light shadow border">
+     <ul id='menuitems'>${menu} ${menuForLinks}</ul>
+    </div>
+  `
 
   container.style.left = event.pageX + 'px'
   container.style.top = event.pageY + 'px'
