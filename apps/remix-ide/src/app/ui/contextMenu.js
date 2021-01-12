@@ -46,11 +46,15 @@ module.exports = (event, items, linkItems) => {
     return current
   })
 
-  const menuForLinks = Object.keys(linkItems).map((item, index) => {
-    const current = yo`<li id="menuitem${item.toLowerCase()}" class=${css.liitem}><a href=${linkItems[item]} target="_blank">${item}</a></li>`
-    current.onclick = () => { hide(null, true) }
-    return current
-  })
+  let menuForLinks = yo``
+  if (linkItems) {
+    menuForLinks = Object.keys(linkItems).map((item, index) => {
+      const current = yo`<li id="menuitem${item.toLowerCase()}" class=${css.liitem}><a href=${linkItems[item]} target="_blank">${item}</a></li>`
+      current.onclick = () => { hide(null, true) }
+      return current
+    })
+  }
+  
   const container = yo`
     <div id="menuItemsContainer" class="p-1 ${css.container} bg-light shadow border">
      <ul id='menuitems'>${menu} ${menuForLinks}</ul>
