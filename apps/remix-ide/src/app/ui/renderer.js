@@ -50,6 +50,23 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
   }
 }
 
+function getPositionDetails (msg) {
+  const result = {}
+  
+  // To handle some compiler warning without location like SPDX license warning etc
+  if (!msg.includes(':')) return { errLine: -1, errCol: -1, errFile: msg }
+
+  // extract line / column
+  let position = msg.match(/^(.*?):([0-9]*?):([0-9]*?)?/)
+  result.errLine = position ? parseInt(position[2]) - 1 : -1
+  result.errCol = position ? parseInt(position[3]) : -1
+
+  // extract file
+  position = msg.match(/^(https:.*?|http:.*?|.*?):/)
+  result.errFile = position ? position[1] : ''
+  return result
+}
+
 /**
  * format msg like error or warning,
  *
@@ -69,22 +86,6 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
  * }
  */
 
-function getPositionDetails (msg) {
-  const result = {}
-
-  if (!msg.includes(':')) return { errLine: -1, errCol: -1, errFile: msg }
-
-  // extract line / column
-  let position = msg.match(/^(.*?):([0-9]*?):([0-9]*?)?/)
-  result.errLine = position ? parseInt(position[2]) - 1 : -1
-  result.errCol = position ? parseInt(position[3]) : -1
-
-  // extract file
-  position = msg.match(/^(https:.*?|http:.*?|.*?):/)
-  result.errFile = position ? position[1] : ''
-  return result
-}
-
 Renderer.prototype.error = function (message, container, opt) {
   if (!message) return
   if (container === undefined) return
@@ -103,8 +104,14 @@ Renderer.prototype.error = function (message, container, opt) {
   // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0/contracts/introspection/IERC1820Registry.sol:3:1: ParserError: Source file requires different compiler version (current compiler is 0.7.4+commit.3f05b770.Emscripten.clang) - note that nightly builds are considered to be strictly less than the released version
 
   let position = getPositionDetails(text)
+
+  // For compiler version 0.8.0 and upcoming versions, errors and warning will be reported in a different way
+  // Above method regex will return type of error as 'errFile'
+  // Comparison of 'errFile' with passed error type will ensure the reporter type 
   if (!position.errFile || (opt.errorType && opt.errorType === position.errFile)) {
+    // Updated error reported includes '-->' before file details
     const errorDetails = text.split('-->')
+    // errorDetails[1] will have file details
     position = getPositionDetails(errorDetails[1])
   }
 
