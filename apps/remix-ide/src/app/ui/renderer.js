@@ -52,7 +52,7 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
 
 function getPositionDetails (msg) {
   const result = {}
-  
+
   // To handle some compiler warning without location like SPDX license warning etc
   if (!msg.includes(':')) return { errLine: -1, errCol: -1, errFile: msg }
 
@@ -107,7 +107,7 @@ Renderer.prototype.error = function (message, container, opt) {
 
   // For compiler version 0.8.0 and upcoming versions, errors and warning will be reported in a different way
   // Above method regex will return type of error as 'errFile'
-  // Comparison of 'errFile' with passed error type will ensure the reporter type 
+  // Comparison of 'errFile' with passed error type will ensure the reporter type
   if (!position.errFile || (opt.errorType && opt.errorType === position.errFile)) {
     // Updated error reported includes '-->' before file details
     const errorDetails = text.split('-->')
