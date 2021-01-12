@@ -156,8 +156,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     filesProvider.event.register('fileRenamed', fileRenamed)
   }, [state.files])
 
-  const resolveDirectory = async (folderPath, dir: File[]): Promise<File[]> => {
-    if ((extractParentFromKey(state.focusEdit.element) === name) && (dir.findIndex(({ path }) => path === state.focusEdit.element) === -1)) {
+  const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
+    if (!isChild && (state.focusEdit.element === 'browser/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === 'browser/blank') === -1)) {
       dir = state.focusEdit.type === 'file' ? [...dir, {
         path: state.focusEdit.element,
         name: '',
@@ -171,25 +171,21 @@ export const FileExplorer = (props: FileExplorerProps) => {
     dir = await Promise.all(dir.map(async (file) => {
       if (file.path === folderPath) {
         if ((extractParentFromKey(state.focusEdit.element) === folderPath) && state.focusEdit.isNew) {
-          if (file.child && (file.child.findIndex(({ path }) => path === state.focusEdit.element) === -1)) {
-            file.child = state.focusEdit.type === 'file' ? [...await fetchDirectoryContent(folderPath), {
-              path: state.focusEdit.element,
-              name: '',
-              isDirectory: false
-            }] : [{
-              path: state.focusEdit.element,
-              name: '',
-              isDirectory: true
-            }, ...await fetchDirectoryContent(folderPath)]
-          } else {
-            file.child = await fetchDirectoryContent(folderPath)
-          }
+          file.child = state.focusEdit.type === 'file' ? [...await fetchDirectoryContent(folderPath), {
+            path: state.focusEdit.element,
+            name: '',
+            isDirectory: false
+          }] : [{
+            path: state.focusEdit.element,
+            name: '',
+            isDirectory: true
+          }, ...await fetchDirectoryContent(folderPath)]
         } else {
           file.child = await fetchDirectoryContent(folderPath)
         }
         return file
       } else if (file.child) {
-        file.child = await resolveDirectory(folderPath, file.child)
+        file.child = await resolveDirectory(folderPath, file.child, true)
         return file
       } else {
         return file
