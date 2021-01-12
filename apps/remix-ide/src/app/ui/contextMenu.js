@@ -54,7 +54,7 @@ module.exports = (event, items, linkItems) => {
       return current
     })
   }
-  
+
   const container = yo`
     <div id="menuItemsContainer" class="p-1 ${css.container} bg-light shadow border">
      <ul id='menuitems'>${menu} ${menuForLinks}</ul>
