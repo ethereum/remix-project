@@ -154,7 +154,7 @@ class CompileTab extends ViewPlugin {
         this.renderer.error(
           data.error.formattedMessage || data.error,
           this._view.errorContainer,
-          { type: data.error.severity || 'error' }
+          { type: data.error.severity || 'error', errorType: data.error.type }
         )
         if (data.error.mode === 'panic') {
           return modalDialogCustom.alert(yo`
@@ -169,10 +169,10 @@ class CompileTab extends ViewPlugin {
         data.errors.forEach((err) => {
           if (this.config.get('hideWarnings')) {
             if (err.severity !== 'warning') {
-              this.renderer.error(err.formattedMessage, this._view.errorContainer, { type: err.severity })
+              this.renderer.error(err.formattedMessage, this._view.errorContainer, { type: err.severity, errorType: err.type })
             }
           } else {
-            this.renderer.error(err.formattedMessage, this._view.errorContainer, { type: err.severity })
+            this.renderer.error(err.formattedMessage, this._view.errorContainer, { type: err.severity, errorType: err.type })
           }
         })
       }
