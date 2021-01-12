@@ -68,6 +68,23 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
  *  errCol
  * }
  */
+
+function getPositionDetails(msg) {
+  let result = {};
+
+  if(!msg.includes(':')) return {errLine: -1, errCol: -1, errFile: msg}
+
+  // extract line / column
+  let position = msg.match(/^(.*?):([0-9]*?):([0-9]*?)?/)
+  result.errLine = position ? parseInt(position[2]) - 1 : -1
+  result.errCol = position ? parseInt(position[3]) : -1
+
+  // extract file
+  position = msg.match(/^(https:.*?|http:.*?|.*?):/)
+  result.errFile = position ? position[1] : ''
+  return result
+}
+
 Renderer.prototype.error = function (message, container, opt) {
   if (!message) return
   if (container === undefined) return
@@ -85,14 +102,15 @@ Renderer.prototype.error = function (message, container, opt) {
   // browser/gm.sol: Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.6.12
   // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0/contracts/introspection/IERC1820Registry.sol:3:1: ParserError: Source file requires different compiler version (current compiler is 0.7.4+commit.3f05b770.Emscripten.clang) - note that nightly builds are considered to be strictly less than the released version
 
-  // extract line / column
-  let position = text.match(/^(.*?):([0-9]*?):([0-9]*?)?/)
-  opt.errLine = position ? parseInt(position[2]) - 1 : -1
-  opt.errCol = position ? parseInt(position[3]) : -1
+  let position = getPositionDetails(text)
+  if(!position.errFile || (opt.errorType && opt.errorType === position.errFile)) {
+    const errorDetails = text.split('-->')
+    position = getPositionDetails(errorDetails[1])
+  }
 
-  // extract file
-  position = text.match(/^(https:.*?|http:.*?|.*?):/)
-  opt.errFile = position ? position[1] : ''
+  opt.errLine = position.errLine
+  opt.errCol = position.errCol
+  opt.errFile = position.errFile.trim()
 
   if (!opt.noAnnotations && opt.errFile) {
     this._error(opt.errFile, {
