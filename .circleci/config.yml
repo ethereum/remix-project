@@ -21,10 +21,10 @@ jobs:
 
     steps:
       - checkout
-      - run: npm install
-      - run: npm run lint:libs
-      - run: npm run build:libs
-      - run: npm run test:libs
+      # - run: npm install
+      # - run: npm run lint:libs
+      # - run: npm run build:libs
+      # - run: npm run test:libs
 
   remix-ide-chrome:
     docker:
@@ -45,23 +45,23 @@ jobs:
     parallelism: 20
     steps:
       - checkout
-      - run: npm install
-      - run: npm run lint
-      # - run: npm run lint remix-ide-e2e
-      - run: npm run build:libs      
-      - run: npm run build
-      - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
-      - run:
-          name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
-          background: true
-      - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
+      # - run: npm install
+      # - run: npm run lint
+      # # - run: npm run lint remix-ide-e2e
+      # - run: npm run build:libs      
+      # - run: npm run build
+      # - run:
+      #     name: Download Selenium
+      #     command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+      # - run:
+      #     name: Start Selenium
+      #     command: ./node_modules/.bin/selenium-standalone start --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+      #     background: true
+      # - run: ./apps/remix-ide/ci/browser_tests_chrome.sh
+      # - store_test_results:
+      #     path: ./reports/tests
+      # - store_artifacts:
+      #     path: ./reports/screenshots
 
   remix-ide-firefox:
     docker:
@@ -82,29 +82,29 @@ jobs:
     parallelism: 20
     steps:
       - checkout
-      - run: npm install
-      - run: npm run lint
-      # - run: npm run lint remix-ide-e2e
-      - run: npm run build:libs
-      - run: npm run build
-      - run:
-          name: Download Selenium
-          command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
-      - run:
-          name: Start Selenium
-          command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
-          background: true
-      - run:
-          name: Download Latest Firefox
-          command: sudo apt-get purge -y firefox && wget https://sourceforge.net/projects/ubuntuzilla/files/mozilla/apt/pool/main/f/firefox-mozilla-build/firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      - run:
-          name: Install Firefox
-          command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      - run: ./apps/remix-ide/ci/browser_tests_firefox.sh
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
+      # - run: npm install
+      # - run: npm run lint
+      # # - run: npm run lint remix-ide-e2e
+      # - run: npm run build:libs
+      # - run: npm run build
+      # - run:
+      #     name: Download Selenium
+      #     command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+      # - run:
+      #     name: Start Selenium
+      #     command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
+      #     background: true
+      # - run:
+      #     name: Download Latest Firefox
+      #     command: sudo apt-get purge -y firefox && wget https://sourceforge.net/projects/ubuntuzilla/files/mozilla/apt/pool/main/f/firefox-mozilla-build/firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
+      # - run:
+      #     name: Install Firefox
+      #     command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
+      # - run: ./apps/remix-ide/ci/browser_tests_firefox.sh
+      # - store_test_results:
+      #     path: ./reports/tests
+      # - store_artifacts:
+      #     path: ./reports/screenshots
 
   remix-ide-run-deploy:
     docker:
