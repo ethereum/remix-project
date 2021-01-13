@@ -20,7 +20,7 @@ module.exports = {
     .openFile('browser/contracts/3_Ballot.sol')
     .verifyContracts(['Ballot'])
     .click('#publishOnIpfs')
-    .pause(10000)
+    .pause(8000)
     .getModalBody((value, done) => {
       if (value.indexOf('Metadata of "ballot" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed', '', '')
       if (value.indexOf('dweb:/ipfs') === -1) browser.assert.fail('ipfs deploy failed', '', '')
@@ -32,7 +32,7 @@ module.exports = {
   'Publish on Swarm': '' + function (browser: NightwatchBrowser) {
     browser
     .click('#publishOnSwarm')
-    .pause(10000)
+    .pause(8000)
     .getModalBody((value, done) => {
       if (value.indexOf('Metadata of "ballot" was successfully.') === -1) browser.assert.fail('swarm deploy failed', '', '')
       if (value.indexOf('bzz') === -1) browser.assert.fail('swarm deploy failed', '', '')
@@ -52,8 +52,11 @@ module.exports = {
     .waitForElementPresent('*[data-id="contractDropdownIpfsCheckbox"]')
     .click('*[data-id="contractDropdownIpfsCheckbox"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
-    .pause(10000)
-    .assert.containsText('*[data-id="modalDialogModalBody"]', 'Metadata of "storage" was published successfully.')
+    .pause(8000)
+    .getModalBody((value, done) => {
+      if (value.indexOf('Metadata of "storage" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed', '', '')
+      done()
+    })
     .modalFooterOKClick()
   },
 
