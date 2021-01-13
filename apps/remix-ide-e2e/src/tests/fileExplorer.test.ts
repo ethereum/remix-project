@@ -103,9 +103,9 @@ module.exports = {
     .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile1)
     .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile2)
     .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile3)
-    .waitForElementVisible('*[key="browser/editor.test.js"]')
-    .waitForElementVisible('*[key="browser/fileExplorer.test.js"]')
-    .waitForElementVisible('*[key="browser/generalSettings.test.js"]')
+    .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/editor.test.js"]')
+    .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/fileExplorer.test.js"]')
+    .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/generalSettings.test.js"]')
     .end()
   },  
 
