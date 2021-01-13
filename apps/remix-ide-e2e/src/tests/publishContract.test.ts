@@ -52,7 +52,7 @@ module.exports = {
     .waitForElementPresent('*[data-id="contractDropdownIpfsCheckbox"]')
     .click('*[data-id="contractDropdownIpfsCheckbox"]')
     .click('*[data-id="Deploy - transact (not payable)"]')
-    .pause(5000)
+    .pause(10000)
     .assert.containsText('*[data-id="modalDialogModalBody"]', 'Metadata of "storage" was published successfully.')
     .modalFooterOKClick()
   },
