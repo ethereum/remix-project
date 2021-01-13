@@ -33,7 +33,7 @@ export default class FetchAndCompile extends Plugin {
     contractAddress = ethutil.toChecksumAddress(contractAddress)
     const compilersartefacts = globalRegistry.get('compilersartefacts').api
 
-    const localCompilation = () => compilersartefacts.get('__last') ? compilersartefacts.get('__last') : null
+    const localCompilation = () => compilersartefacts.get(contractAddress) ? compilersartefacts.get(contractAddress) : compilersartefacts.get('__last') ? compilersartefacts.get('__last') : null
 
     const resolved = compilersartefacts.get(contractAddress)
     if (resolved) return resolved
