@@ -16,5 +16,21 @@ describe('testRunner: remix-tests CLI', () => {
         const res = spawnSync(executablePath, ['-V'])
         expect(res.stdout.toString().trim()).toBe(require('../package.json').version)
       })
+
+      test('remix-tests help', () => {
+        const res = spawnSync(executablePath, ['-h'])
+        console.log('res---->', res.stdout.toString().trim())
+        const expectedHelp = `Usage: remix-tests [options] [command]
+
+Options:
+  -V, --version          output the version number
+  -v, --verbose <level>  run with verbosity
+  -h, --help             output usage information
+
+Commands:
+  version                output the version number
+  help                   output usage information`
+        expect(res.stdout.toString().trim()).toBe(expectedHelp)
+      })
     })
 })
