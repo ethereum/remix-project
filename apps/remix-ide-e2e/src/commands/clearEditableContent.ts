@@ -22,7 +22,7 @@ function clearContent (browser: NightwatchBrowser, cssSelector: string, callback
     selection.removeAllRanges()
     selection.addRange(range)
   }, [cssSelector], function () {
-    browser.sendKeys(cssSelector, browser.Keys.BACK_SPACE)
+    browser.keys(browser.Keys.BACK_SPACE)
     .pause(5000)
     callback()
   })
