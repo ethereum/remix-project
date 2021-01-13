@@ -75,6 +75,7 @@ module.exports = {
     })
   },
 
+  /*
   'Should connect to Goerli Test Network using MetaMask': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
     .setupMetamask(passphrase, password)
@@ -128,6 +129,7 @@ module.exports = {
     .pause(25000)
     .switchBrowserTab(0)
   },
+  */
 
   'Should connect to Ethereum Main Network using MetaMask': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
