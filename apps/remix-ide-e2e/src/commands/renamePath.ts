@@ -1,10 +1,10 @@
 import EventEmitter from 'events'
 import { NightwatchBrowser } from 'nightwatch'
 
-class RenameFile extends EventEmitter {
+class RenamePath extends EventEmitter {
   command (this: NightwatchBrowser, path: string, newFileName: string, renamedPath: string) {
     this.api.perform((done) => {
-      renameFile(this.api, path, newFileName, renamedPath, () => {
+      renamePath(this.api, path, newFileName, renamedPath, () => {
         done()
         this.emit('complete')
       })
@@ -13,7 +13,7 @@ class RenameFile extends EventEmitter {
   }
 }
 
-function renameFile (browser: NightwatchBrowser, path: string, newFileName: string, renamedPath: string, done: VoidFunction) {
+function renamePath (browser: NightwatchBrowser, path: string, newFileName: string, renamedPath: string, done: VoidFunction) {
   browser.execute(function (path: string) {
     function contextMenuClick (element) {
       const evt = element.ownerDocument.createEvent('MouseEvents')
@@ -41,10 +41,9 @@ function renameFile (browser: NightwatchBrowser, path: string, newFileName: stri
           doneSetValue()
         })
       })
-      .click('body') // blur
-      .waitForElementVisible('#modal-footer-ok', 100000)
+      .pause(1000)
+      .keys(browser.Keys.ENTER)
       .pause(2000)
-      .click('#modal-footer-ok')
       .waitForElementNotPresent('[data-path="' + path + '"]')
       .waitForElementPresent('[data-path="' + renamedPath + '"]')
       .perform(() => {
@@ -53,4 +52,4 @@ function renameFile (browser: NightwatchBrowser, path: string, newFileName: stri
   })
 }
 
-module.exports = RenameFile
+module.exports = RenamePath
