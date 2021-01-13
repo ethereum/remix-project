@@ -27,10 +27,10 @@ function setupMetaMask (browser: NightwatchBrowser, passphrase: string, password
     .setValue('.first-time-flow__textarea', passphrase)
     .setValue('*[autocomplete="new-password"]', password)
     .setValue('*[autocomplete="confirm-password"]', password)
-    .click('.first-time-flow__checkbox')
-    .click('.first-time-flow__button')
+    .scrollAndClick('.first-time-flow__checkbox')
+    .scrollAndClick('.first-time-flow__button')
     .pause(5000)
-    .click('.first-time-flow__button')
+    .scrollAndClick('.first-time-flow__button')
     .perform(() => {
       done()
     })
