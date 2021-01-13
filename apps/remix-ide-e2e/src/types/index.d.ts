@@ -63,6 +63,10 @@ declare module "nightwatch" {
         sendKeys: (selector: string, inputValue: string | string[], callback?: (this: NightwatchAPI, result: NightwatchCallbackResult<void>) => void) => NightwatchBrowser
     }
 
+    export interface NightwatchAPI {
+        keys(keysToSend: string, callback?: (this: NightwatchAPI, result: NightwatchCallbackResult<void>) => void): NightwatchAPI
+    }
+
     export interface NightwatchContractContent {
         content: string;
     }
