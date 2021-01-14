@@ -4,7 +4,6 @@ import Web3 from 'web3'
 import { EventManager } from '../eventManager'
 import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
 import { Web3VmProvider } from '../web3Provider/web3VmProvider'
-import { LogsManager } from './logsManager'
 import VM from '@ethereumjs/vm'
 import Common from '@ethereumjs/common'
 import StateManager from '@ethereumjs/vm/dist/state/stateManager'
@@ -100,22 +99,21 @@ class StateManagerCommonStorageDump extends StateManager {
 */
 export class ExecutionContext {
   event
-  logsManager
-  blockGasLimitDefault
-  blockGasLimit
+  blockGasLimitDefault: number
+  blockGasLimit: number
   customNetWorks
   blocks
   latestBlockNumber
   txs
-  executionContext
+  executionContext: string
   listenOnLastBlockId
   currentFork: string
   vms
   mainNetGenesisHash: string
+  customWeb3: { [key: string]: Web3 }
 
   constructor () {
     this.event = new EventManager()
-    this.logsManager = new LogsManager()
     this.executionContext = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
@@ -134,6 +132,7 @@ export class ExecutionContext {
     this.blocks = {}
     this.latestBlockNumber = 0
     this.txs = {}
+    this.customWeb3 = {} // mapping between a context name and a web3.js instance
   }
 
   init (config) {
@@ -172,7 +171,12 @@ export class ExecutionContext {
     return this.executionContext === 'vm'
   }
 
+  setWeb3 (context: string, web3: Web3) {
+    this.customWeb3[context] = web3
+  }
+
   web3 () {
+    if (this.customWeb3[this.executionContext]) return this.customWeb3[this.executionContext]
     return this.isVM() ? this.vms[this.currentFork].web3vm : web3
   }
 
@@ -339,23 +343,5 @@ export class ExecutionContext {
     if (transactionDetailsLinks[network]) {
       return transactionDetailsLinks[network] + hash
     }
-  }
-
-  addBlock (block) {
-    let blockNumber = '0x' + block.header.number.toString('hex')
-    if (blockNumber === '0x') {
-      blockNumber = '0x0'
-    }
-    blockNumber = web3.utils.toHex(web3.utils.toBN(blockNumber))
-
-    this.blocks['0x' + block.hash().toString('hex')] = block
-    this.blocks[blockNumber] = block
-    this.latestBlockNumber = blockNumber
-
-    this.logsManager.checkBlock(blockNumber, block, this.web3())
-  }
-
-  trackTx (tx, block) {
-    this.txs[tx] = block
-  }
+  }  
 }

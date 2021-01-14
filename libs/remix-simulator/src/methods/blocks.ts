@@ -1,10 +1,10 @@
 export class Blocks {
-  executionContext
+  vmContext
   coinbase: string
   blockNumber: number
 
-  constructor (executionContext, _options) {
-    this.executionContext = executionContext
+  constructor (vmContext, _options) {
+    this.vmContext = vmContext
     const options = _options || {}
     this.coinbase = options.coinbase || '0x0000000000000000000000000000000000000000'
     this.blockNumber = 0
@@ -28,13 +28,13 @@ export class Blocks {
   eth_getBlockByNumber (payload, cb) {
     let blockIndex = payload.params[0]
     if (blockIndex === 'latest') {
-      blockIndex = this.executionContext.latestBlockNumber
+      blockIndex = this.vmContext.latestBlockNumber
     }
 
     if (Number.isInteger(blockIndex)) {
       blockIndex = '0x' + blockIndex.toString(16)
     }
-    const block = this.executionContext.blocks[blockIndex]
+    const block = this.vmContext.blocks[blockIndex]
 
     if (!block) {
       return cb(new Error('block not found'))
@@ -70,7 +70,7 @@ export class Blocks {
   }
 
   eth_getBlockByHash (payload, cb) {
-    const block = this.executionContext.blocks[payload.params[0]]
+    const block = this.vmContext.blocks[payload.params[0]]
 
     const b = {
       number: this.toHex(block.header.number),
@@ -109,13 +109,13 @@ export class Blocks {
   }
 
   eth_getBlockTransactionCountByHash (payload, cb) {
-    const block = this.executionContext.blocks[payload.params[0]]
+    const block = this.vmContext.blocks[payload.params[0]]
 
     cb(null, block.transactions.length)
   }
 
   eth_getBlockTransactionCountByNumber (payload, cb) {
-    const block = this.executionContext.blocks[payload.params[0]]
+    const block = this.vmContext.blocks[payload.params[0]]
 
     cb(null, block.transactions.length)
   }
@@ -131,7 +131,7 @@ export class Blocks {
   eth_getStorageAt (payload, cb) {
     const [address, position, blockNumber] = payload.params
 
-    this.executionContext.web3().debug.storageRangeAt(blockNumber, 'latest', address.toLowerCase(), position, 1, (err, result) => {
+    this.vmContext.web3().debug.storageRangeAt(blockNumber, 'latest', address.toLowerCase(), position, 1, (err, result) => {
       if (err || (result.storage && Object.values(result.storage).length === 0)) {
         return cb(err, '')
       }

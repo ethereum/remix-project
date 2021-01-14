@@ -161,8 +161,8 @@ tape('ContractParameters - (TxFormat.buildData) - link Libraries', function (t) 
   }
   const callbackDeployLibraries = (param, callback) => {
     callback(null, {
-      result: {
-        createdAddress: fakeDeployedContracts[param.data.contractName]
+      receipt: {
+        contractAddress: fakeDeployedContracts[param.data.contractName]
       }
     })
   } // fake

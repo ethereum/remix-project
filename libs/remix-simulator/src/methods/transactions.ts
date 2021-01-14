@@ -3,11 +3,14 @@ import { toChecksumAddress, BN, Address } from 'ethereumjs-util'
 import { processTx } from './txProcess'
 
 export class Transactions {
-  executionContext
+  vmContext
   accounts
+  tags
 
-  constructor (executionContext) {
-    this.executionContext = executionContext
+
+  constructor (vmContext) {
+    this.vmContext = vmContext
+    this.tags = {}
   }
 
   init (accounts) {
@@ -24,7 +27,9 @@ export class Transactions {
       eth_getTransactionCount: this.eth_getTransactionCount.bind(this),
       eth_getTransactionByHash: this.eth_getTransactionByHash.bind(this),
       eth_getTransactionByBlockHashAndIndex: this.eth_getTransactionByBlockHashAndIndex.bind(this),
-      eth_getTransactionByBlockNumberAndIndex: this.eth_getTransactionByBlockNumberAndIndex.bind(this)
+      eth_getTransactionByBlockNumberAndIndex: this.eth_getTransactionByBlockNumberAndIndex.bind(this),
+      eth_getExecutionResultFromSimulator: this.eth_getExecutionResultFromSimulator.bind(this),
+      eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this)
     }
   }
 
@@ -33,16 +38,30 @@ export class Transactions {
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = toChecksumAddress(payload.params[0].from)
     }
-    processTx(this.executionContext, this.accounts, payload, false, cb)
+    processTx(this.vmContext, this.accounts, payload, false, (error, result) => {
+      if (!error && result) {
+        this.vmContext.addBlock(result.block)
+        const hash = '0x' + result.tx.hash().toString('hex')
+        this.vmContext.trackTx(hash, result.block)
+        this.vmContext.trackExecResult(hash, result.result.execResult)
+        return cb (null, result.transactionHash)
+      }
+      cb(error)
+    })
+  }
+
+  eth_getExecutionResultFromSimulator (payload, cb) {
+    const txHash = payload.params[0]
+    cb(null, this.vmContext.exeResults[txHash])
   }
 
   eth_getTransactionReceipt (payload, cb) {
-    this.executionContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
+    this.vmContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
       if (error) {
         return cb(error)
       }
 
-      const txBlock = this.executionContext.txs[receipt.hash]
+      const txBlock = this.vmContext.txs[receipt.hash]
 
       const r: Record <string, unknown> = {
         transactionHash: receipt.hash,
@@ -72,7 +91,7 @@ export class Transactions {
   eth_getCode (payload, cb) {
     const address = payload.params[0]
 
-    this.executionContext.web3().eth.getCode(address, (error, result) => {
+    this.vmContext.web3().eth.getCode(address, (error, result) => {
       if (error) {
         console.dir('error getting code')
         console.dir(error)
@@ -91,14 +110,32 @@ export class Transactions {
     }
 
     payload.params[0].value = undefined
+    
+    const tag = payload.params[0].timestamp // e2e reference
 
-    processTx(this.executionContext, this.accounts, payload, true, cb)
+    processTx(this.vmContext, this.accounts, payload, true, (error, result) => {
+      if (!error && result) {
+        this.vmContext.addBlock(result.block)
+        const hash = '0x' + result.tx.hash().toString('hex')
+        this.vmContext.trackTx(hash, result.block)
+        this.vmContext.trackExecResult(hash, result.result.execResult)
+        this.tags[tag] = result.transactionHash
+        // calls are not supposed to return a transaction hash. we do this for keeping track of it and allowing debugging calls.
+        const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
+        return cb (null, returnValue)
+      }
+      cb(error)
+    })
+  }
+
+  eth_getHashFromTagBySimulator (payload, cb) {
+    return cb(null, this.tags[payload.params[0]])
   }
 
   eth_getTransactionCount (payload, cb) {
     const address = payload.params[0]
 
-    this.executionContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
+    this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
       const nonce = new BN(account.nonce).toString(10)
       cb(null, nonce)
     }).catch((error) => {
@@ -109,12 +146,12 @@ export class Transactions {
   eth_getTransactionByHash (payload, cb) {
     const address = payload.params[0]
 
-    this.executionContext.web3().eth.getTransactionReceipt(address, (error, receipt) => {
+    this.vmContext.web3().eth.getTransactionReceipt(address, (error, receipt) => {
       if (error) {
         return cb(error)
       }
 
-      const txBlock = this.executionContext.txs[receipt.transactionHash]
+      const txBlock = this.vmContext.txs[receipt.transactionHash]
 
       // TODO: params to add later
       const r: Record<string, unknown> = {
@@ -154,10 +191,10 @@ export class Transactions {
   eth_getTransactionByBlockHashAndIndex (payload, cb) {
     const txIndex = payload.params[1]
 
-    const txBlock = this.executionContext.blocks[payload.params[0]]
+    const txBlock = this.vmContext.blocks[payload.params[0]]
     const txHash = '0x' + txBlock.transactions[Web3.utils.toDecimal(txIndex)].hash().toString('hex')
 
-    this.executionContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
+    this.vmContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {
         return cb(error)
       }
@@ -196,10 +233,10 @@ export class Transactions {
   eth_getTransactionByBlockNumberAndIndex (payload, cb) {
     const txIndex = payload.params[1]
 
-    const txBlock = this.executionContext.blocks[payload.params[0]]
+    const txBlock = this.vmContext.blocks[payload.params[0]]
     const txHash = '0x' + txBlock.transactions[Web3.utils.toDecimal(txIndex)].hash().toString('hex')
 
-    this.executionContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
+    this.vmContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {
         return cb(error)
       }
