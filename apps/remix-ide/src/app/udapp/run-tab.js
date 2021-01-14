@@ -1,4 +1,4 @@
-import { LibraryPlugin } from '@remixproject/engine'
+import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 
 const $ = require('jquery')
@@ -14,6 +14,7 @@ const Recorder = require('../tabs/runTab/model/recorder.js')
 const RecorderUI = require('../tabs/runTab/recorder.js')
 const DropdownLogic = require('../tabs/runTab/model/dropdownlogic.js')
 const ContractDropdownUI = require('../tabs/runTab/contractDropdown.js')
+const toaster = require('../ui/tooltip')
 
 const UniversalDAppUI = require('../ui/universal-dapp-ui')
 
@@ -28,12 +29,12 @@ const profile = {
   version: packageJson.version,
   permission: true,
   events: ['newTransaction'],
-  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount']
+  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode']
 }
 
-export class RunTab extends LibraryPlugin {
-  constructor (blockchain, pluginUDapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView, fileProvider) {
-    super(pluginUDapp, profile)
+export class RunTab extends ViewPlugin {
+  constructor (blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView, fileProvider) {
+    super(profile)
     this.event = new EventManager()
     this.config = config
     this.blockchain = blockchain
@@ -44,6 +45,61 @@ export class RunTab extends LibraryPlugin {
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule
     this.fileProvider = fileProvider
+    this.setupEvents()
+  }
+
+  setupEvents () {
+    this.blockchain.events.on('newTransaction', (tx, receipt) => {
+      this.emit('newTransaction', tx, receipt)
+    })
+  }
+
+  getSettings () {
+    return new Promise((resolve, reject) => {
+      if (!this.container) reject(new Error('UI not ready'))
+      else {
+        resolve({
+          selectedAccount: this.settingsUI.getSelectedAccount(),
+          selectedEnvMode: this.blockchain.getProvider(),
+          networkEnvironment: this.container.querySelector('*[data-id="settingsNetworkEnv"]').textContent
+        }
+        )
+      }
+    })
+  }
+
+  async setEnvironmentMode (env) {
+    const canCall = await this.askUserPermission('setEnvironmentMode', 'change the enivornment used')
+    if (canCall) {
+      toaster(yo`
+        <div>
+          <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
+          <span>
+            ${this.currentRequest.from}
+            <span class="font-weight-bold text-warning">
+              is changing your environment to
+            </span> ${env}
+          </span>
+        </div>
+      `, '', { time: 3000 })
+      this.settingsUI.setExecutionContext(env)
+    }
+  }
+
+  createVMAccount (newAccount) {
+    return this.blockchain.createVMAccount(newAccount)
+  }
+
+  sendTransaction (tx) {
+    return this.blockchain.sendTransaction(tx)
+  }
+
+  getAccounts (cb) {
+    return this.blockchain.getAccounts(cb)
+  }
+
+  pendingTransactionsCount () {
+    return this.blockchain.pendingTransactionsCount()
   }
 
   renderContainer () {
