@@ -14,3 +14,6 @@
 .debuggerConfig label {
   margin: 0;
 }
+.validationError {
+  overflow-wrap: break-word;
+}
