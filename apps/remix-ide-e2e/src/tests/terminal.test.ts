@@ -10,6 +10,7 @@ module.exports = {
 
   'Should execution a simple console command': function (browser: NightwatchBrowser) {
     browser
+    .pause(10000)
     .waitForElementVisible('*[data-id="terminalCli"]', 10000)
     .executeScript('console.log(1 + 1)')
     .journalLastChild('2')
@@ -97,6 +98,7 @@ module.exports = {
   'Call Remix File Resolver (internal URL) from a script': function (browser: NightwatchBrowser) {
     browser
     .click('*[data-id="terminalClearConsole"]') // clear the terminal
+    .click('li[data-id="treeViewLitreeViewItembrowser/resolveExternalUrlAndSave.js"')
     .addFile('resolveUrl.js', { content: resolveUrl })
     .openFile('browser/resolveUrl.js')
     .pause(1000)
@@ -108,6 +110,7 @@ module.exports = {
   'Call Remix File Resolver (internal URL) from a script and specify a path': function (browser: NightwatchBrowser) {
     browser
     .click('*[data-id="terminalClearConsole"]') // clear the terminal
+    .click('li[data-id="treeViewLitreeViewItembrowser/resolveUrl.js"')
     .addFile('resolveExternalUrlAndSaveToaPath.js', { content: resolveExternalUrlAndSaveToaPath })
     .openFile('browser/resolveExternalUrlAndSaveToaPath.js')
     .pause(1000)
