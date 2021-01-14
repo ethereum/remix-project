@@ -186,6 +186,8 @@ module.exports = {
 
   'Should call the debugger api: getTrace': function (browser: NightwatchBrowser) {
     browser
+    .clickLaunchIcon('fileExplorers')
+    .click('li[data-id="treeViewLitreeViewItembrowser/externalImport.sol"')
     .addFile('test_jsGetTrace.js', { content: jsGetTrace })
     .executeScript('remix.exeCurrent()')
     .pause(3000)
