@@ -13,7 +13,7 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
-  'UploadToGists': function (browser: NightwatchBrowser) {
+  UploadToGists: function (browser: NightwatchBrowser) {
       /*
        - set the access token
        - publish to gist
@@ -24,18 +24,23 @@ module.exports = {
     const runtimeBrowser = browser.options.desiredCapabilities.browserName
 
     browser
+    .refresh()
+    .pause(10000)
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('fileExplorers')
-    .rightClick('[data-path="browser/README.txt"]')
-    .click('*[id="menuitemcreate folder"]')
-    .waitForElementVisible('*[data-id="modalDialogContainer"]')
-    .setValue('*[data-id="modalDialogCustomPromptText"]', 'Browser_Tests')
-    .modalFooterOKClick()
+    .click('[data-id="fileExplorerNewFilecreateNewFolder"]')
+    .pause(1000)
+    .keys('Browser_Tests')
+    .keys(browser.Keys.ENTER)
     .waitForElementVisible('*[data-id="treeViewLibrowser/Browser_Tests"]')
     .addFile('File.sol', { content: '' })
     .click('*[data-id="fileExplorerNewFilepublishToGist"]')
-    .modalFooterOKClick()
-    .getModalBody((value, done) => {
+    .waitForElementVisible('*[data-id="modalDialogContainer-react"]')
+    .pause(2000)
+    .click('.modal-ok')
+    .getText('[data-id="modalDialogModalBody-react"]', (result) => {
+      console.log(result)
+      const value = typeof result.value === 'string' ? result.value : null
       const reg = /gist.github.com\/([^.]+)/
       const id = value.match(reg)
 
@@ -45,13 +50,12 @@ module.exports = {
       } else {
         const gistid = id[1]
         browser
-          .modalFooterCancelClick()
+          .click('[data-id="modal-footer-cancel-react"]')
           .executeScript(`remix.loadgist('${gistid}')`)
           .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('browser/gists') } done() })
           .waitForElementVisible(`li[key="browser/gists/${gistid}"]`)
           .click(`li[key="browser/gists/${gistid}"]`)
           .openFile(`browser/gists/${gistid}/README.txt`)
-          .perform(done)
       }
     })
   },

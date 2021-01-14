@@ -88,6 +88,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
             }
             { props.cancel &&
               <span
+                data-id='modal-footer-cancel-react'
                 className={'modal-cancel btn btn-sm ' + (state.toggleBtn ? 'btn-light' : 'btn-dark')}
                 data-dismiss="modal"
                 onClick={() => {
