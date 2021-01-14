@@ -5,6 +5,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
+import modalDialogCustom from '../ui/modal-dialog-custom'
 const yo = require('yo-yo')
 const css = require('./styles/debugger-tab-styles')
 
