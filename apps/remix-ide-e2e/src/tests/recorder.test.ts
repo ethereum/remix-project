@@ -38,6 +38,7 @@ module.exports = {
         })
         .click('*[data-id="deployAndRunClearInstances"]')
         .testContracts('testRecorder.sol', sources[0]['browser/testRecorder.sol'], ['testRecorder'])
+        .clickLaunchIcon('udapp')
         .createContract('12')
         .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2) > div > button')
@@ -57,19 +58,19 @@ module.exports = {
           browser.assert.equal(JSON.stringify(parsed.transactions[1].record.type), JSON.stringify(scenario.transactions[1].record.type))
           browser.assert.equal(JSON.stringify(parsed.transactions[1].record.from), JSON.stringify(scenario.transactions[1].record.from))
         })
-        .end()
   },
 
-  'Record more than one contract': '' + function (browser: NightwatchBrowser) {
+  'Record more than one contract': function (browser: NightwatchBrowser) {
     // deploy 2 contracts (2 different ABIs), save the record, reexecute and test one of the function.
     let addressRef
     browser
         .click('*[data-id="deployAndRunClearInstances"]')
         .testContracts('multipleContracts.sol', sources[1]['browser/multipleContracts.sol'], ['t1est', 't2est'])
+        .clickLaunchIcon('udapp')
         .selectContract('t1est')
         .pause(1000)
         .createContract('')
-        .pause(1000)
+        .clickInstance(0)
         .selectContract('t2est')
         .pause(1000)
         .createContract('')
