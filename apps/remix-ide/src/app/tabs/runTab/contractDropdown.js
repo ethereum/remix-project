@@ -1,13 +1,14 @@
 import publishToStorage from '../../../publishToStorage'
 
-var yo = require('yo-yo')
-var css = require('../styles/run-tab-styles')
-var modalDialogCustom = require('../../ui/modal-dialog-custom')
-var remixLib = require('@remix-project/remix-lib')
-var EventManager = remixLib.EventManager
-var confirmDialog = require('../../ui/confirmDialog')
-var modalDialog = require('../../ui/modaldialog')
-var MultiParamManager = require('../../ui/multiParamManager')
+const yo = require('yo-yo')
+const css = require('../styles/run-tab-styles')
+const modalDialogCustom = require('../../ui/modal-dialog-custom')
+const remixLib = require('@remix-project/remix-lib')
+const EventManager = remixLib.EventManager
+const confirmDialog = require('../../ui/confirmDialog')
+const modalDialog = require('../../ui/modaldialog')
+const MultiParamManager = require('../../ui/multiParamManager')
+const helper = require('../../../lib/helper')
 
 class ContractDropdownUI {
   constructor (blockchain, dropdownLogic, logCallback, runView) {
@@ -279,6 +280,8 @@ class ContractDropdownUI {
       }
     }
 
+    const self = this
+
     var promptCb = (okCb, cancelCb) => {
       modalDialogCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
@@ -288,15 +291,18 @@ class ContractDropdownUI {
     }
 
     var finalCb = (error, contractObject, address) => {
-      this.event.trigger('clearInstance')
+      self.event.trigger('clearInstance')
 
       if (error) {
         return this.logCallback(error)
       }
 
-      this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
-      if (this.ipfsCheckedState) {
-        publishToStorage('ipfs', this.runView.fileProvider, this.runView.fileManager, selectedContract)
+      self.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
+
+      const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
+      self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
+      if (self.ipfsCheckedState) {
+        publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
       }
     }
 
