@@ -31,6 +31,9 @@ export class Web3VmProvider {
   toBigNumber
   isAddress
   utils
+  txsMapBlock
+  blocks
+  latestBlockNumber
 
   constructor () {
     this.web3 = new Web3()
@@ -69,6 +72,9 @@ export class Web3VmProvider {
     this.toBigNumber = (...args) => this.web3.utils.toBN(...args)
     this.isAddress = (...args) => this.web3.utils.isAddress(...args)
     this.utils = Web3.utils || []
+    this.txsMapBlock = {}
+    this.blocks = {}
+    this.latestBlockNumber
   }
 
   setVM (vm) {

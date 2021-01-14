@@ -12,9 +12,12 @@ import * as txHelper from './execution/txHelper'
 import * as txFormat from './execution/txFormat'
 import { TxListener } from './execution/txListener'
 import { TxRunner } from './execution/txRunner'
+import { LogsManager } from './execution/logsManager'
 import { ExecutionContext } from './execution/execution-context'
 import * as typeConversion from './execution/typeConversion'
-import { UniversalDApp } from './universalDapp'
+import { TxRunnerVM } from './execution/txRunnerVM'
+import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
+import * as txResultHelper from './helpers/txResultHelper'
 
 export = modules()
 
@@ -23,7 +26,8 @@ function modules () {
     EventManager: EventManager,
     helpers: {
       ui: uiHelper,
-      compiler: compilerHelper
+      compiler: compilerHelper,
+      txResultHelper
     },
     vm: {
       Web3Providers: Web3Providers,
@@ -39,9 +43,11 @@ function modules () {
       executionContext: new ExecutionContext(),
       txFormat: txFormat,
       txListener: TxListener,
-      txRunner: TxRunner,
-      typeConversion: typeConversion
-    },
-    UniversalDApp: UniversalDApp
+      TxRunner: TxRunner,
+      TxRunnerWeb3: TxRunnerWeb3,
+      TxRunnerVM: TxRunnerVM,
+      typeConversion: typeConversion,
+      LogsManager
+    }
   }
 }
