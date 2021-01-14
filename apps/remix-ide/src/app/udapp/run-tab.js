@@ -28,7 +28,7 @@ const profile = {
   version: packageJson.version,
   permission: true,
   events: ['newTransaction'],
-  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount']
+  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSelectedAccount']
 }
 
 export class RunTab extends LibraryPlugin {

@@ -25,6 +25,13 @@ class PluginUdapp {
     return this.blockchain.getAccounts(cb)
   }
 
+  getSelectedAccount () {
+    return new Promise((resolve, reject) => {
+      const runTab = document.querySelector('#runTabView')
+      resolve(runTab && runTab.querySelector('#txorigin').selectedOptions[0].value)
+    })
+  }
+
   pendingTransactionsCount () {
     return this.blockchain.pendingTransactionsCount()
   }
