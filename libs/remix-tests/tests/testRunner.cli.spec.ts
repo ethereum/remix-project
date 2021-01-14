@@ -31,5 +31,20 @@ Commands:
   help                   output usage information`
         expect(res.stdout.toString().trim()).toBe(expectedHelp)
       })
+
+    test('remix-tests running a test file', () => {
+      const res = spawnSync(executablePath, [resolve(__dirname + '/examples_0/assert_ok_test.sol')])
+      // match initial lines
+      expect(res.stdout.toString().trim()).toMatch(/:: Running remix-tests - Unit testing for solidity ::/)
+      expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
+      // match test result
+      expect(res.stdout.toString().trim()).toMatch(/AssertOkTest/)
+      expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
+      expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
+      // macth fail test details
+      expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
+      expect(res.stdout.toString().trim()).toMatch(/expected value to be ok to: true/)
+      expect(res.stdout.toString().trim()).toMatch(/returned: false/)
     })
+  })
 })
