@@ -28,7 +28,7 @@ export class VerticalIcons extends Plugin {
 
     const themeModule = globalRegistry.get('themeModule').api
     themeModule.events.on('themeChanged', (theme) => {
-      this.onThemeChanged(theme.brightness)
+      this.onThemeChanged(theme.quality)
     })
   }
 
@@ -174,7 +174,7 @@ export class VerticalIcons extends Plugin {
    */
   addActive (name) {
     if (name === 'home') return
-    const themeType = globalRegistry.get('themeModule').api.currentTheme().brightness
+    const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
     const invert = themeType === 'dark' ? 1 : 0
     const brightness = themeType === 'dark' ? '150' : '0' // should be >100 for icons with color
     const nextActive = this.view.querySelector(`[plugin="${name}"]`)

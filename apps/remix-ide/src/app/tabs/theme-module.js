@@ -4,9 +4,22 @@ import QueryParams from '../../lib/query-params'
 import * as packageJson from '../../../../../package.json'
 import yo from 'yo-yo'
 
+const common = {
+  breakpoints: {
+    xs: 0,
+    sm: 576,
+    md: 768,
+    lg: 992,
+    xl: 1200
+  },
+  fontFamily: '"Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  space: 8
+}
+
 const themes = [{
   url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-light_powaqg.css',
-  brightness: 'light',
+  quality: 'light',
+  name: 'Light',
   colors: {
     surface: '#fff',
     background: '#eef1f6',
@@ -21,20 +34,14 @@ const themes = [{
     warnContrast: '#212529',
     error: '#b84040',
     errorContrast: '#fff',
-    disabled: ''
+    disabled: '#e9ecef',
+    disabledContrast: '#6c757d'
   },
-  breakpoints: {
-    xs: 0,
-    sm: 576,
-    md: 768,
-    lg: 992,
-    xl: 1200
-  },
-  fontFamily: '"Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  space: 8
+  ...common
 }, {
   url: 'https://res.cloudinary.com/lianahus/raw/upload/v1597918237/remix-themes/PR365/remix-dark_tvx1s2.css',
-  brightness: 'dark',
+  quality: 'dark',
+  name: 'Dark',
   colors: {
     surface: '#2a2c3f',
     background: '#222336',
@@ -49,17 +56,10 @@ const themes = [{
     warnContrast: '#212529',
     error: '#b84040',
     errorContrast: '#fff',
-    disabled: ''
+    disabled: '#282a3d',
+    disabledContrast: '#55566c'
   },
-  breakpoints: {
-    xs: 0,
-    sm: 576,
-    md: 768,
-    lg: 992,
-    xl: 1200
-  },
-  fontFamily: '"Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  space: 8
+  ...common
 }]
 
 const profile = {
@@ -78,14 +78,13 @@ export class ThemeModule extends Plugin {
       config: registry.get('config').api
     }
     this.themes = themes.reduce((acc, theme) => {
-      theme.name = theme.brightness
-      return { ...acc, [theme.brightness]: theme }
+      return { ...acc, [theme.name]: theme }
     }, {})
     let queryTheme = (new QueryParams()).get().theme
     queryTheme = this.themes[queryTheme] ? queryTheme : null
     let currentTheme = this._deps.config.get('settings/theme')
     currentTheme = this.themes[currentTheme] ? currentTheme : null
-    this.active = queryTheme || currentTheme || 'dark'
+    this.active = queryTheme || currentTheme || 'Dark'
     this.forced = !!queryTheme
   }
 
@@ -105,7 +104,7 @@ export class ThemeModule extends Plugin {
   initTheme (callback) {
     if (this.active) {
       const nextTheme = this.themes[this.active] // Theme
-      document.documentElement.style.setProperty('--theme', nextTheme.brightness)
+      document.documentElement.style.setProperty('--theme', nextTheme.quality)
       const theme = yo`<link rel="stylesheet" href="${nextTheme.url}" id="theme-link"/>`
       theme.addEventListener('load', () => {
         if (callback) callback()
@@ -126,7 +125,7 @@ export class ThemeModule extends Plugin {
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
-    document.documentElement.style.setProperty('--theme', nextTheme.brightness)
+    document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('themeChanged', nextTheme)
@@ -138,7 +137,7 @@ export class ThemeModule extends Plugin {
    * @param {element} [image] - the dom element which invert should be fixed to increase visibility
    */
   fixInvert (image) {
-    const invert = this.currentTheme().brightness === 'dark' ? 1 : 0
+    const invert = this.currentTheme().quality === 'dark' ? 1 : 0
     if (image) {
       image.style.filter = `invert(${invert})`
     }

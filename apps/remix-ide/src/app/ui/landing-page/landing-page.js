@@ -117,7 +117,7 @@ export class LandingPage extends ViewPlugin {
     this.appManager = appManager
     this.verticalIcons = verticalIcons
     this.gistHandler = new GistHandler()
-    const themeQuality = globalRegistry.get('themeModule').api.currentTheme().brightness
+    const themeQuality = globalRegistry.get('themeModule').api.currentTheme().quality
     window.addEventListener('resize', () => this.adjustMediaPanel())
     window.addEventListener('click', (e) => this.hideMediaPanel(e))
     this.twitterFrame = yo`
@@ -167,7 +167,7 @@ export class LandingPage extends ViewPlugin {
     `
     this.adjustMediaPanel()
     globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
-      this.onThemeChanged(theme.brightness)
+      this.onThemeChanged(theme.quality)
     })
   }
 
@@ -313,7 +313,7 @@ export class LandingPage extends ViewPlugin {
     const sourcifyEnv = createLargeButton('assets/img/sourcifyLogo.webp', 'sourcifyLogo', 'Sourcify', startSourceVerify)
     const moreEnv = createLargeButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
 
-    const themeQuality = globalRegistry.get('themeModule').api.currentTheme().brightness
+    const themeQuality = globalRegistry.get('themeModule').api.currentTheme().quality
     const invertNum = (themeQuality === 'dark') ? 1 : 0
     solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     pipelineEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
