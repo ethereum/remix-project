@@ -18,7 +18,7 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
     .pause(2000)
     .keys(name)
     .keys(browser.Keys.ENTER)
-    .openFile('browser/Greet.sol')
+    .openFile('browser/' + name)
     .setEditorValue(content.content)
     .pause(1000)
     .perform(function () {
