@@ -10,7 +10,7 @@ declare module "nightwatch" {
         scrollInto(target: string): NightwatchBrowser,
         testContracts(fileName: string, contractCode: NightwatchContractContent, compiledContractNames: string[]): NightwatchBrowser,
         setEditorValue(value: string, callback?: () => void): NightwatchBrowser,
-        addFile(name: string, content: NightwatchContractContent): NightwatchBrowser,
+        addFile(name: string, content: NightwatchContractContent, open?: boolean): NightwatchBrowser,
         verifyContracts(compiledContractNames: string[], opts?: { wait: number, version?: string }): NightwatchBrowser,
         selectAccount(account?: string): NightwatchBrowser,
         clickFunction(fnFullName: string, expectedInput?: NightwatchClickFunctionExpectedInput): NightwatchBrowser,
