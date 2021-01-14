@@ -42,7 +42,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
 
   return (
     <div
-      data-id="modalDialogContainer"
+      data-id="modalDialogContainer-react"
       data-backdrop="static"
       data-keyboard="false"
       className='modal'
@@ -61,7 +61,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
           onKeyDown={({ keyCode }) => { modalKeyEvent(keyCode) }}
         >
           <div className="modal-header">
-            <h6 className="modal-title" data-id="modalDialogModalTitle">
+            <h6 className="modal-title" data-id="modalDialogModalTitle-react">
               {props.title && props.title}
             </h6>
             {!props.showCancelIcon &&
@@ -70,10 +70,10 @@ export const ModalDialog = (props: ModalDialogProps) => {
             </span>
             }
           </div>
-          <div className="modal-body text-break remixModalBody" data-id="modalDialogModalBody">
+          <div className="modal-body text-break remixModalBody" data-id="modalDialogModalBody-react">
             { props.children ? props.children : props.message }
           </div>
-          <div className="modal-footer" data-id="modalDialogModalFooter">
+          <div className="modal-footer" data-id="modalDialogModalFooter-react">
             {/* todo add autofocus ^^ */}
             { props.ok &&
               <span
