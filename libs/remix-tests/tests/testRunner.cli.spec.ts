@@ -19,7 +19,6 @@ describe('testRunner: remix-tests CLI', () => {
 
       test('remix-tests help', () => {
         const res = spawnSync(executablePath, ['-h'])
-        console.log('res---->', res.stdout.toString().trim())
         const expectedHelp = `Usage: remix-tests [options] [command]
 
 Options:
