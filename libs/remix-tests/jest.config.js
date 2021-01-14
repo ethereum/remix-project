@@ -1,7 +1,7 @@
 module.exports = {
     name: 'remix-tests',
     preset: '../../jest.config.js',
-    verbose: true,
+    verbose: false,
     silent: false, // Silent console messages, specially the 'remix-simulator' ones
     transform: {
       '^.+\\.[tj]sx?$': 'ts-jest',
@@ -18,6 +18,6 @@ module.exports = {
       "!src/types.ts",
       "!src/logger.ts"
     ],
-    coverageDirectory: '../../coverage/libs/remix-tests',
+    coverageDirectory: '../../coverage/libs/remix-tests'
   };
   
