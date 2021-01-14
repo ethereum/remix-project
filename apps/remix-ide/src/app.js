@@ -42,7 +42,6 @@ var CompilerMetadata = require('./app/files/compiler-metadata')
 var CompilerImport = require('./app/compiler/compiler-imports')
 
 const Blockchain = require('./blockchain/blockchain.js')
-const PluginUDapp = require('./blockchain/pluginUDapp.js')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
@@ -257,7 +256,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const contentImport = new CompilerImport(fileManager)
 
   const blockchain = new Blockchain(registry.get('config').api)
-  const pluginUdapp = new PluginUDapp(blockchain)
 
   // ----------------- compilation metadata generation service ---------
   const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
@@ -359,7 +357,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   )
   const run = new RunTab(
     blockchain,
-    pluginUdapp,
     registry.get('config').api,
     registry.get('filemanager').api,
     registry.get('editor').api,

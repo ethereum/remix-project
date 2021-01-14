@@ -319,6 +319,10 @@ class SettingsUI {
     )
   }
 
+  getSelectedAccount () {
+    return this.el.querySelector('#txorigin').selectedOptions[0].value
+  }
+
   signMessage () {
     this.blockchain.getAccounts((err, accounts) => {
       if (err) {
