@@ -1,9 +1,11 @@
 import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from "events"
 
+const selector = '#runTabView select[class^="contractNames"]'
+
 class SelectContract extends EventEmitter {
   command (this: NightwatchBrowser, contractName: string): NightwatchBrowser {
-    this.api.perform((done) => {
+    this.api.waitForElementVisible(selector).perform((done) => {
       selectContract(this.api, contractName, () => {
         done()
         this.emit('complete')
@@ -14,11 +16,7 @@ class SelectContract extends EventEmitter {
 }
 
 function selectContract (browser: NightwatchBrowser, contractName: string, callback: VoidFunction) {
-  browser.clickLaunchIcon('settings').clickLaunchIcon('udapp')
-  .pause(10000)
-  .setValue('#runTabView select[class^="contractNames"]', contractName).perform(() => {
-    callback()
-  })
+  browser.click(`${selector} option[value="${contractName}"]`).perform(() => callback())
 }
 
 module.exports = SelectContract
