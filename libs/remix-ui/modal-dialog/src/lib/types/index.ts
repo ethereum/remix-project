@@ -1,4 +1,5 @@
 export interface ModalDialogProps {
+  id?: string
   title?: string,
   message?: string,
   ok?: { label: string, fn: () => void },
