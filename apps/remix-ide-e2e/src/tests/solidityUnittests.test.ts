@@ -42,7 +42,7 @@ module.exports = {
 
   'Should run simple unit test `simple_storage_test.sol` ': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .addFile('simple_storage_test.sol', sources[0]['browser/tests/simple_storage_test.sol'])
+    .addFile('simple_storage_test.sol', sources[0]['browser/tests/simple_storage_test.sol'], false)
     .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
     .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
     .click('*[data-id="testTabCheckAllTests"]')
@@ -62,7 +62,7 @@ module.exports = {
   'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .clickLaunchIcon('fileExplorers')
-    .addFile('ks2b_test.sol', sources[0]['browser/tests/ks2b_test.sol'])
+    .addFile('ks2b_test.sol', sources[0]['browser/tests/ks2b_test.sol'], false)
     .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
     .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
     .click('*[data-id="testTabCheckAllTests"]')
