@@ -81,8 +81,6 @@ module.exports = {
   'Should highlight source code': function (browser: NightwatchBrowser) {
     // include all files here because switching between plugins in side-panel removes highlight
     browser
-    .clickLaunchIcon('fileExplorers')
-    .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
     .addFile('sourcehighlight.js', sourcehighlightScript)
     .addFile('removeSourcehighlightScript.js', removeSourcehighlightScript)
     .addFile('removeAllSourcehighlightScript.js', removeAllSourcehighlightScript)
