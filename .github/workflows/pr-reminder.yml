@@ -1,0 +1,19 @@
+name: PRs reviews reminder
+
+on:
+  schedule:
+    # Every weekday every 2 hours during working hours, send notification
+    - cron: "0 8-17/2 * * 1-5"
+
+jobs:
+  pr-reviews-reminder:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: yann300/pr-reviews-reminder-action
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        webhook-url: 'https://api.gitter.im/v1/rooms/5e451c02d73408ce4fd98526/chatMessages' # Required
+        provider: '' # Required (slack or msteams)
+        channel: '' # Optional, eg: #general
+        github-provider-map: '' # Optional, eg: "DavideViolante:UEABCDEFG,foobar:UAABCDEFG"
