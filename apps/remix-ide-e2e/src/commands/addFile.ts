@@ -18,8 +18,8 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
     .clickLaunchIcon('fileExplorers')
     .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"]') // focus on root directory
     .click('.newFile')
-    .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/blank"]')
-    .click('[data-id="treeViewLitreeViewItembrowser/blank"]')
+    .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items')
+    .click('[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items')
     .sendKeys('[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', name)
     .sendKeys('[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', browser.Keys.ENTER)
     .pause(2000)
