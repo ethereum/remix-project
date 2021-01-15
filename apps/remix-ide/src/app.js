@@ -50,7 +50,7 @@ const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
 const AnalysisTab = require('./app/tabs/analysis-tab')
-const { DebuggerTab } = require('./app/tabs/debugger-tab')
+const DebuggerTab = require('./app/tabs/debugger-tab')
 const TestTab = require('./app/tabs/test-tab')
 const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
@@ -370,7 +370,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     registry.get('fileproviders/browser').api
   )
   const analysis = new AnalysisTab(registry)
-  const debug = new DebuggerTab()
+  const debug = new DebuggerTab(
+    blockchain,
+    registry.get('editor').api,
+    registry.get('offsettolinecolumnconverter').api)
   const test = new TestTab(
     registry.get('filemanager').api,
     registry.get('offsettolinecolumnconverter').api,

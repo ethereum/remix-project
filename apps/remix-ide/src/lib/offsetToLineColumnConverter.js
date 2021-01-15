@@ -5,7 +5,7 @@ import { sourceMappingDecoder } from '@remix-project/remix-debug'
 
 const profile = {
   name: 'offsetToLineColumnConverter',
-  methods: ['offsetToLineColumn'],
+  methods: [],
   events: [],
   version: packageJson.version
 }
