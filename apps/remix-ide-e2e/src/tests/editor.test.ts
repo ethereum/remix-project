@@ -14,7 +14,6 @@ module.exports = {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
     .clickLaunchIcon('fileExplorers')
     .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-    .click('*[data-id="treeViewLibrowser/contracts"]')
     .openFile('browser/contracts/1_Storage.sol')
     .waitForElementVisible('*[data-id="editorInput"]')
     .checkElementStyle('*[data-id="editorInput"]', 'font-size', '12px')
@@ -81,7 +80,10 @@ module.exports = {
 
   'Should highlight source code': function (browser: NightwatchBrowser) {
     // include all files here because switching between plugins in side-panel removes highlight
-    browser.addFile('sourcehighlight.js', sourcehighlightScript)
+    browser
+    .clickLaunchIcon('fileExplorers')
+    .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
+    .addFile('sourcehighlight.js', sourcehighlightScript)
     .addFile('removeSourcehighlightScript.js', removeSourcehighlightScript)
     .addFile('removeAllSourcehighlightScript.js', removeAllSourcehighlightScript)
     .openFile('browser/sourcehighlight.js')
@@ -96,27 +98,26 @@ module.exports = {
   },
 
   'Should remove 1 highlight from source code': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('li[key="browser/removeSourcehighlightScript.js"]')
-    .click('li[key="browser/removeSourcehighlightScript.js"]')
+    browser.waitForElementVisible('li[data-id="treeViewLitreeViewItembrowser/removeSourcehighlightScript.js"]')
+    .click('li[data-id="treeViewLitreeViewItembrowser/removeSourcehighlightScript.js"]')
     .pause(2000)
     .executeScript('remix.exeCurrent()')
-    .waitForElementVisible('li[key="browser/contracts"]')
-    .click('li[key="browser/contracts"]') // files don't appear, so we click twice to get the files
-    .click('li[key="browser/contracts"]')
-    .waitForElementVisible('li[key="browser/contracts/3_Ballot.sol"]')
-    .click('li[key="browser/contracts/3_Ballot.sol"]')
+    .waitForElementVisible('li[data-id="treeViewLitreeViewItembrowser/contracts"]')
+    .click('li[data-id="treeViewLitreeViewItembrowser/contracts"]')
+    .waitForElementVisible('li[data-id="treeViewLitreeViewItembrowser/contracts/3_Ballot.sol"]')
+    .click('li[data-id="treeViewLitreeViewItembrowser/contracts/3_Ballot.sol"]')
     .waitForElementNotPresent('.highlightLine32')
     .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
     .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
   },
 
   'Should remove all highlights from source code': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('li[key="browser/removeAllSourcehighlightScript.js"]')
-    .click('li[key="browser/removeAllSourcehighlightScript.js"]')
+    browser.waitForElementVisible('li[data-id="treeViewLitreeViewItembrowser/removeAllSourcehighlightScript.js"]')
+    .click('li[data-id="treeViewLitreeViewItembrowser/removeAllSourcehighlightScript.js"]')
     .pause(2000)
     .executeScript('remix.exeCurrent()')
-    .waitForElementVisible('li[key="browser/contracts/3_Ballot.sol"]')
-    .click('li[key="browser/contracts/3_Ballot.sol"]')
+    .waitForElementVisible('li[data-id="treeViewLitreeViewItembrowser/contracts/3_Ballot.sol"]')
+    .click('li[data-id="treeViewLitreeViewItembrowser/contracts/3_Ballot.sol"]')
     .pause(2000)
     .waitForElementNotPresent('.highlightLine32')
     .waitForElementNotPresent('.highlightLine40')
