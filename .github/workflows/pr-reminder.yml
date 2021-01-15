@@ -2,7 +2,6 @@ name: PRs reviews reminder
 
 on:
   schedule:
-    # Every weekday every 2 hours during working hours, send notification
     - cron: "0 8-17/7 * * 1-5"
   workflow_dispatch:
 
@@ -10,7 +9,7 @@ jobs:
   pr-reviews-reminder:
     runs-on: ubuntu-latest
     steps:
-    - uses: yann300/pr-reviews-reminder-action@v1.4.4
+    - uses: yann300/pr-reviews-reminder-action@v1.4.5
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITTER_TOKEN: ${{ secrets.GITTER_TOKEN }}
