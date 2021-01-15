@@ -209,20 +209,19 @@ function renderKnownTransaction (self, data, blockchain) {
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = { from, to }
   var txType = 'knownTx'
+  var debugButton =
+    (data.tx.debuggable === undefined ? true : data.tx.debuggable) ? (
+      yo`<div class=${css.buttons}>
+          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
+        </div>`
+    ) : yo``
+
   var tx = yo`
     <span id="tx${data.tx.hash}" data-id="txLogger${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt, txType)}
         ${context(self, { from, to, data }, blockchain)}
-        <div class=${css.buttons}>
-          <button
-            class="${css.debug} btn btn-primary btn-sm"
-            data-shared="txLoggerDebugButton"
-            data-id="txLoggerDebugButton${data.tx.hash}"
-            onclick=${(e) => debug(e, data, self)}
-          >
-            Debug
-          </div>
+        ${debugButton}
         </div>
         <i class="${css.arrow} fas fa-angle-down"></i>
       </div>
@@ -237,6 +236,12 @@ function renderCall (self, data) {
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var obj = { from, to }
   var txType = 'call'
+  var debugButton = (data.tx.debuggable === undefined ? true : data.tx.debuggable) ? (
+    yo`<div class=${css.buttons}>
+          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
+        </div>`
+  ) : yo``
+
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
@@ -247,9 +252,7 @@ function renderCall (self, data) {
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
         </span>
-        <div class=${css.buttons}>
-          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
-        </div>
+        ${debugButton}
         <i class="${css.arrow} fas fa-angle-down"></i>
       </div>
     </span>
@@ -262,14 +265,18 @@ function renderUnknownTransaction (self, data, blockchain) {
   var to = data.tx.to
   var obj = { from, to }
   var txType = 'unknown' + (data.tx.isCall ? 'Call' : 'Tx')
+  var debugButton = (data.tx.debuggable === undefined ? true : data.tx.debuggable) ? (
+    yo`<div class=${css.buttons}>
+          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
+        </div>`
+  ) : yo``
+
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt || data.tx, txType)}
         ${context(self, { from, to, data }, blockchain)}
-        <div class=${css.buttons}>
-          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
-        </div>
+        ${debugButton}
         <i class="${css.arrow} fas fa-angle-down"></i>
       </div>
     </span>
@@ -309,27 +316,30 @@ function context (self, opts, blockchain) {
   var block = data.receipt ? data.receipt.blockNumber : data.tx.blockNumber || ''
   var i = data.receipt ? data.receipt.transactionIndex : data.tx.transactionIndex
   var value = val ? typeConversion.toInt(val) : 0
-  if (blockchain.getProvider() === 'vm') {
+  var provider = data.tx.provider || blockchain.getProvider()
+  var unit = data.tx.unit || 'wei'
+
+  if (provider === 'vm') {
     return yo`
       <div>
         <span class=${css.txLog}>
           <span class=${css.tx}>[vm]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} ${unit}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</div>
         </span>
       </div>`
-  } else if (blockchain.getProvider() !== 'vm' && data.resolvedData) {
+  } else if (provider !== 'vm' && data.resolvedData) {
     return yo`
       <div>
         <span class=${css.txLog}>
         <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} ${unit}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</div>
@@ -344,7 +354,7 @@ function context (self, opts, blockchain) {
           <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} ${unit}</div>
         </span>
       </div>`
   }
@@ -560,11 +570,13 @@ function createTable (opts) {
   if (opts.logs) table.appendChild(logs)
 
   var val = opts.val != null ? typeConversion.toInt(opts.val) : 0
+  var unit = opts.unit || 'wei'
+
   val = yo`
     <tr class="${css.tr}">
       <td class="${css.td}" data-shared="key_${opts.hash}"> value </td>
-      <td class="${css.td}" data-id="txLoggerTableValue${opts.hash}" data-shared="pair_${opts.hash}">${val} wei
-        ${copyToClipboard(() => `${val} wei`)}
+      <td class="${css.td}" data-id="txLoggerTableValue${opts.hash}" data-shared="pair_${opts.hash}">${val} ${unit}
+        ${copyToClipboard(() => `${val} ${unit}`)}
       </td>
     </tr>
   `

@@ -24,12 +24,15 @@ function register (api) { KONSOLES.push(api) }
 var ghostbar = yo`<div class=${css.ghostbar} bg-secondary></div>`
 
 const profile = {
-  displayName: 'Terminal',
   name: 'terminal',
-  methods: [],
+  displayName: 'Terminal',
+  description: 'log and debug transactions',
+  kind: 'terminal',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
+  version: packageJson.version,
+  permission: true,
   events: [],
-  description: ' - ',
-  version: packageJson.version
+  methods: ['logHtml', 'logTx']
 }
 
 class Terminal extends Plugin {
@@ -111,6 +114,18 @@ class Terminal extends Plugin {
     this.off('scriptRunner', 'info')
     this.off('scriptRunner', 'warn')
     this.off('scriptRunner', 'error')
+  }
+
+  logTx (tx) {
+    let transaction = tx
+
+    if (typeof tx === 'string') {
+      transaction = JSON.parse(tx)
+    }
+
+    const txType = transaction.resolvedData ? 'knownTransaction' : 'unknownTransaction'
+
+    this.commands[txType](transaction)
   }
 
   logHtml (html) {
@@ -494,7 +509,7 @@ class Terminal extends Plugin {
             ret.then((result) => { console.log(result) }).catch((error) => { console.log(error) })
           } else {
             console.log(ret)
-          }   
+          }
         } catch (e) {
           console.log(e.message)
         }
