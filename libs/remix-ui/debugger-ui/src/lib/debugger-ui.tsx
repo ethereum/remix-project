@@ -4,7 +4,7 @@ import StepManager from './step-manager/step-manager'
 import VmDebugger from './vm-debugger/vm-debugger'
 import VmDebuggerHead from './vm-debugger/vm-debugger-head'
 import { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
-import { DebuggerUIProps } from './DebuggerAPI'
+import { DebuggerUIProps } from './idebugger-api'
 import { Toaster } from '@remix-ui/toaster'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
@@ -25,39 +25,35 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     opt: {
       debugWithGeneratedSources: false
     },
-    toastMessage: ''
+    toastMessage: '',
+    currentDebugTransaction: ''
   })
 
   useEffect(() => {
     return unLoad()
   }, [])
 
-  useEffect(() => {
-    if (debuggerModule.debugHash) {
-      debug(debuggerModule.debugHash)
-    }
-  }, [debuggerModule.debugHashRequest])
+  debuggerModule.onDebugRequested((hash) => {
+    if (hash) debug(hash)    
+  })
 
-  useEffect(() => {
-    if (debuggerModule.removeHighlights) deleteHighlights()
-  }, [debuggerModule.removeHighlights])
+  debuggerModule.onRemoveHighlights(async () => {
+    await debuggerModule.discardHighlight()
+  })
 
   useEffect(() => {
     const setEditor = () => {
-      const editor = debuggerModule.editor
-
-      editor.event.register('breakpointCleared', (fileName, row) => {
+      
+      debuggerModule.onBreakpointCleared((fileName, row) => {
         if (state.debugger) state.debugger.breakPointManager.remove({fileName: fileName, row: row})
       })
   
-      editor.event.register('breakpointAdded', (fileName, row) => {
-        if (state.debugger) {
-          state.debugger.breakPointManager.add({fileName: fileName, row: row})
-        }
+      debuggerModule.onBreakpointAdded((fileName, row) => {
+        if (state.debugger) state.debugger.breakPointManager.add({fileName: fileName, row: row})
       })
   
-      editor.event.register('contentChanged', () => {
-        unLoad()
+      debuggerModule.onEditorContentChanged(() => {
+        if (state.debugger) unLoad()
       })
     }
 
@@ -117,10 +113,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     unLoad()
   }
 
-  const isDebuggerActive = () => {
-    return state.isActive
-  }
-
   const unLoad = () => {
     if (state.debugger) state.debugger.unload()
     setState(prevState => {
@@ -138,13 +130,20 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           vmDebugger: false,
           vmDebuggerHead: false
         },
-        debugging: false
+        debugging: false,
+        currentDebugTransaction: ''
       }
     })
   }
   const startDebugging = async (blockNumber, txNumber, tx) => {
     if (state.debugger) unLoad()
     if (!txNumber) return
+    setState(prevState => {
+      return {
+        ...prevState,
+        currentDebugTransaction: txNumber
+      }
+    })
     const web3 = await debuggerModule.getDebugWeb3()
     const currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
     const debuggerInstance = new Debugger({
@@ -187,12 +186,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
 
 const debug = (txHash) => {
   startDebugging(null, txHash, null)
-}
-
-
-
-const deleteHighlights = async () => {
-  await debuggerModule.discardHighlight()
 }
 
 const stepManager = {

@@ -1,7 +1,6 @@
 import toaster from '../ui/tooltip'
-import { DebuggerUI } from '@remix-ui/debugger-ui' // eslint-disable-line
+import { DebuggerUI, DebuggerApiMixin } from '@remix-ui/debugger-ui' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
-import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
@@ -21,16 +20,11 @@ const profile = {
   version: packageJson.version
 }
 
-class DebuggerTab extends ViewPlugin {
-  constructor (blockchain, editor, offsetToLineColumnConverter) {
+export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
+  constructor () {
     super(profile)
     this.el = null
-    this.editor = editor
-    this.offsetToLineColumnConverter = offsetToLineColumnConverter
-    this.blockchain = blockchain
-    this.debugHash = null
-    this.removeHighlights = false
-    this.debugHashRequest = 0
+    this.initDebuggerApi()
   }
 
   render () {
@@ -63,25 +57,7 @@ class DebuggerTab extends ViewPlugin {
 
     this.renderComponent()
 
-    // this.call('manager', 'activatePlugin', 'udapp')
-
     return this.el
-  }
-
-  async discardHighlight () {
-    await this.call('editor', 'discardHighlight')
-  }
-
-  async highlight (lineColumnPos, path) {
-    await this.call('editor', 'highlight', lineColumnPos, path)
-  }
-
-  async getFile (path) {
-    await this.call('fileManager', 'getFile', path)
-  }
-
-  async setFile (path, content) {
-    await this.call('fileManager', 'setFile', path, content)
   }
 
   renderComponent () {
@@ -89,64 +65,4 @@ class DebuggerTab extends ViewPlugin {
       <DebuggerUI debuggerAPI={this} />
       , this.el)
   }
-
-  deactivate () {
-    this.removeHighlights = true
-    this.renderComponent()
-    super.deactivate()
-  }
-
-  debug (hash) {
-    this.debugHash = hash
-    this.debugHashRequest++ // so we can trigger a debug using the same hash 2 times in a row. that's needs to be improved
-    this.renderComponent()
-  }
-
-  getDebugWeb3 () {
-    return new Promise((resolve, reject) => {
-      this.blockchain.detectNetwork((error, network) => {
-        let web3
-        if (error || !network) {
-          web3 = remixDebug.init.web3DebugNode(this.blockchain.web3())
-        } else {
-          const webDebugNode = remixDebug.init.web3DebugNode(network.name)
-          web3 = !webDebugNode ? this.blockchain.web3() : webDebugNode
-        }
-        remixDebug.init.extendWeb3(web3)
-        resolve(web3)
-      })
-    })
-  }
-
-  async getTrace (hash) {
-    if (!hash) return
-    const web3 = await this.getDebugWeb3()
-    const currentReceipt = await web3.eth.getTransactionReceipt(hash)
-    const debug = new Debugger({
-      web3,
-      offsetToLineColumnConverter: this.offsetToLineColumnConverter,
-      compilationResult: async (address) => {
-        try {
-          return await this.fetchContractAndCompile(address, currentReceipt)
-        } catch (e) {
-          console.error(e)
-        }
-        return null
-      },
-      debugWithGeneratedSources: false
-    })
-    return await debug.debugger.traceManager.getTrace(hash)
-  }
-
-  fetchContractAndCompile (address, receipt) {
-    const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
-    const targetAddress = target || receipt.contractAddress || receipt.to
-    return this.call('fetchAndCompile', 'resolve', targetAddress, 'browser/.debug', this.blockchain.web3())
-  }
-
-  // debugger () {
-  //   return this.debuggerUI
-  // }
 }
-
-module.exports = DebuggerTab
