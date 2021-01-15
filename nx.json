@@ -86,6 +86,9 @@
     },
     "remix-ui-toaster": {
       "tags": []
+    },
+    "debugger": {
+      "tags": []
     }
   }
 }
