@@ -76,6 +76,7 @@ module.exports = {
 
   'Should execute `readdir` api from file manager external api': function (browser: NightwatchBrowser) {
     browser
+    .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
     .addFile('readdirFile.js', { content: executeReaddir })
     .executeScript(`remix.exeCurrent()`)
     .pause(2000)
