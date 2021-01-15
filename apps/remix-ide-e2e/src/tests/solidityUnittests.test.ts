@@ -102,7 +102,7 @@ module.exports = {
 
   'Should fail on compilation': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .addFile('compilationError_test.sol', sources[0]['browser/compilationError_test.sol'])
+    .addFile('tests/compilationError_test.sol', sources[0]['browser/compilationError_test.sol'])
     .clickLaunchIcon('fileExplorers')
     .openFile('browser/tests/compilationError_test.sol')
     .clickLaunchIcon('solidityUnitTesting')
