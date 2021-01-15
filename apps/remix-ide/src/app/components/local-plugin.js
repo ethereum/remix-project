@@ -67,20 +67,11 @@ module.exports = class LocalPlugin {
     this.profile[key] = e.target.value
   }
 
-  updateMethods ({ target }) {
-    if (target.value) {
-      try {
-        this.profile.methods = target.value.split(',')
-      } catch (e) {}
-    }
-  }
-
   /** The form to create a local plugin */
   form () {
     const name = this.profile.name || ''
     const url = this.profile.url || ''
     const displayName = this.profile.displayName || ''
-    const methods = (this.profile.methods && this.profile.methods.join(',')) || ''
     const radioSelection = (key, label, message) => {
       return this.profile[key] === label
         ? yo`<div class="radio">
@@ -103,12 +94,6 @@ module.exports = class LocalPlugin {
         <label for="plugin-displayname">Display Name</label>
         <input class="form-control" onchange="${e => this.updateDisplayName(e)}" value="${displayName}" id="plugin-displayname" data-id="localPluginDisplayName" placeholder="Name in the header">
       </div>
-
-      <div class="form-group">
-        <label for="plugin-methods">Api (comma separated list of methods name)</label>
-        <input class="form-control" onchange="${e => this.updateMethods(e)}" value="${methods}" id="plugin-methods" data-id="localPluginMethods" placeholder="Name in the header">
-      </div>
-
       <div class="form-group">
         <label for="plugin-url">Url <small>(required)</small></label>
         <input class="form-control" onchange="${e => this.updateUrl(e)}" value="${url}" id="plugin-url" data-id="localPluginUrl" placeholder="ex: https://localhost:8000">
