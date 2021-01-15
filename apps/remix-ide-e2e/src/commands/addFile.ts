@@ -19,8 +19,8 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
     .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"]') // focus on root directory
     .click('.newFile')
     .pause(2000)
-    .keys(name)
-    .keys(browser.Keys.ENTER)
+    .sendKeys('[data-id="treeViewLitreeViewItembrowser/blank"]', name)
+    .sendKeys('[data-id="treeViewLitreeViewItembrowser/blank"]', browser.Keys.ENTER)
     .pause(2000)
     .waitForElementVisible(`li[data-id="treeViewLitreeViewItembrowser/${name}"]`)
     .click(`li[data-id="treeViewLitreeViewItembrowser/${name}"]`)
