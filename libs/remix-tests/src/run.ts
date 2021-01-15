@@ -45,8 +45,11 @@ commander.command('help').description('output usage information').action(functio
 
 // get current version
 commander
-    .option('-v, --verbose <level>', 'run with verbosity', mapVerbosity)
-    .option('-o, --optimize <bool>', 'run compiler optimization', mapOptimize)
+    .option('-c, --compiler <string>', 'set compiler version')
+    .option('-e, --evm <string>', 'set EVM version')
+    .option('-o, --optimize <bool>', 'enable/disable optimization', mapOptimize)
+    .option('-r, --runs <number>', 'set runs')
+    .option('-v, --verbose <level>', 'set verbosity level', mapVerbosity)
     .action(async (testsPath) => {
 
         // Check if path exists
