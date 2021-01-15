@@ -22,13 +22,17 @@ describe('testRunner: remix-tests CLI', () => {
         const expectedHelp = `Usage: remix-tests [options] [command]
 
 Options:
-  -V, --version          output the version number
-  -v, --verbose <level>  run with verbosity
-  -h, --help             output usage information
+  -V, --version            output the version number
+  -c, --compiler <string>  set compiler version
+  -e, --evm <string>       set EVM version
+  -o, --optimize <bool>    enable/disable optimization
+  -r, --runs <number>      set runs
+  -v, --verbose <level>    set verbosity level
+  -h, --help               output usage information
 
 Commands:
-  version                output the version number
-  help                   output usage information`
+  version                  output the version number
+  help                     output usage information`
         expect(res.stdout.toString().trim()).toBe(expectedHelp)
       })
 

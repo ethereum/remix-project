@@ -125,11 +125,12 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
     } finally {
         async.waterfall([
             function loadCompiler(next) {
-                const {currentCompilerUrl, evmVersion, optimize, usingWorker} = compilerConfig
                 compiler = new RemixCompiler()
-                compiler.set('evmVersion', evmVersion)
-                compiler.set('optimize', optimize)
-                // compiler.loadVersion(usingWorker, currentCompilerUrl)
+                if(compilerConfig) {
+                    const {currentCompilerUrl, evmVersion, optimize, usingWorker} = compilerConfig
+                    compiler.set('evmVersion', evmVersion)
+                    compiler.set('optimize', optimize)
+                }
                 compiler.onInternalCompilerLoaded()
                 // compiler.event.register('compilerLoaded', this, function (version) {
                 next()
