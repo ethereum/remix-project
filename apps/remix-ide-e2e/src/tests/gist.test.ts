@@ -32,7 +32,7 @@ module.exports = {
     .keys('Browser_Tests')
     .keys(browser.Keys.ENTER)
     .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/Browser_Tests"]')
-    .addFile('File.sol', { content: '' }, false)
+    .addFile('File.sol', { content: '' })
     .click('*[data-id="fileExplorerNewFilepublishToGist"]')
     .waitForElementVisible('*[data-id="browserModalDialogContainer-react"]')
     .pause(2000)
