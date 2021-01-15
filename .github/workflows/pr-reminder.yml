@@ -16,6 +16,3 @@ jobs:
         GITTER_TOKEN: ${{ secrets.GITTER_TOKEN }}
       with:
         webhook-url: 'https://api.gitter.im/v1/rooms/5e451c02d73408ce4fd98526/chatMessages' # Required
-        provider: '' # Required (slack or msteams)
-        channel: '' # Optional, eg: #general
-        github-provider-map: '' # Optional, eg: "DavideViolante:UEABCDEFG,foobar:UAABCDEFG"
