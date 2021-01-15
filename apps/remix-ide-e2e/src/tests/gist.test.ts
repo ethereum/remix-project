@@ -34,11 +34,11 @@ module.exports = {
     .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/Browser_Tests"]')
     .addFile('File.sol', { content: '' }, false)
     .click('*[data-id="fileExplorerNewFilepublishToGist"]')
-    .waitForElementVisible('*[data-id="modalDialogContainer-react"]')
+    .waitForElementVisible('*[data-id="browserModalDialogContainer-react"]')
     .pause(2000)
     .click('.modal-ok')
     .pause(10000)
-    .getText('[data-id="modalDialogModalBody-react"]', (result) => {
+    .getText('[data-id="browserModalDialogModalBody-react"]', (result) => {
       console.log(result)
       const value = typeof result.value === 'string' ? result.value : null
       const reg = /gist.github.com\/([^.]+)/
@@ -50,7 +50,7 @@ module.exports = {
       } else {
         const gistid = id[1]
         browser
-          .click('[data-id="modal-footer-cancel-react"]')
+          .click('[data-id="browser-modal-footer-ok-react"]')
           .executeScript(`remix.loadgist('${gistid}')`)
           .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('browser/gists') } done() })
           .waitForElementVisible(`[data-id="treeViewLitreeViewItembrowser/gists/${gistid}"]`)

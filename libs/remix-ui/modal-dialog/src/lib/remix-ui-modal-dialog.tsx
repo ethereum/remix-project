@@ -42,7 +42,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
 
   return (
     <div
-      data-id="modalDialogContainer-react"
+      data-id={`${props.id}ModalDialogContainer-react`}
       data-backdrop="static"
       data-keyboard="false"
       className='modal'
@@ -61,7 +61,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
           onKeyDown={({ keyCode }) => { modalKeyEvent(keyCode) }}
         >
           <div className="modal-header">
-            <h6 className="modal-title" data-id="modalDialogModalTitle-react">
+            <h6 className="modal-title" data-id={`${props.id}ModalDialogModalTitle-react`}>
               {props.title && props.title}
             </h6>
             {!props.showCancelIcon &&
@@ -70,13 +70,14 @@ export const ModalDialog = (props: ModalDialogProps) => {
             </span>
             }
           </div>
-          <div className="modal-body text-break remixModalBody" data-id="modalDialogModalBody-react">
+          <div className="modal-body text-break remixModalBody" data-id={`${props.id}ModalDialogModalBody-react`}>
             { props.children ? props.children : props.message }
           </div>
-          <div className="modal-footer" data-id="modalDialogModalFooter-react">
+          <div className="modal-footer" data-id={`${props.id}ModalDialogModalFooter-react`}>
             {/* todo add autofocus ^^ */}
             { props.ok &&
               <span
+                data-id={`${props.id}-modal-footer-ok-react`}
                 className={'modal-ok btn btn-sm ' + (state.toggleBtn ? 'btn-dark' : 'btn-light')}
                 onClick={() => {
                   if (props.ok.fn) props.ok.fn()
@@ -88,7 +89,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
             }
             { props.cancel &&
               <span
-                data-id='modal-footer-cancel-react'
+                data-id={`${props.id}-modal-footer-cancel-react`}
                 className={'modal-cancel btn btn-sm ' + (state.toggleBtn ? 'btn-light' : 'btn-dark')}
                 data-dismiss="modal"
                 onClick={() => {
