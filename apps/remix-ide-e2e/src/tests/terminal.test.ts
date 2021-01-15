@@ -98,7 +98,6 @@ module.exports = {
   'Call Remix File Resolver (internal URL) from a script': function (browser: NightwatchBrowser) {
     browser
     .click('*[data-id="terminalClearConsole"]') // clear the terminal
-    .click('li[data-id="treeViewLitreeViewItembrowser/resolveExternalUrlAndSave.js"')
     .addFile('resolveUrl.js', { content: resolveUrl })
     .openFile('browser/resolveUrl.js')
     .pause(1000)
@@ -110,7 +109,6 @@ module.exports = {
   'Call Remix File Resolver (internal URL) from a script and specify a path': function (browser: NightwatchBrowser) {
     browser
     .click('*[data-id="terminalClearConsole"]') // clear the terminal
-    .click('li[data-id="treeViewLitreeViewItembrowser/resolveUrl.js"')
     .addFile('resolveExternalUrlAndSaveToaPath.js', { content: resolveExternalUrlAndSaveToaPath })
     .openFile('browser/resolveExternalUrlAndSaveToaPath.js')
     .pause(1000)

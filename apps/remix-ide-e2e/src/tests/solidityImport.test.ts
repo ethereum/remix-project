@@ -40,8 +40,6 @@ module.exports = {
   'Test Github Import - from other branch': function (browser: NightwatchBrowser) {
     browser
           .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js') // switch back to 0.5.0 : release-v2.3.0 branch is not solidity 0.6 compliant
-          .clickLaunchIcon('fileExplorers')
-          .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
           .addFile('Untitled5.sol', sources[4]['browser/Untitled5.sol'])
           .clickLaunchIcon('fileExplorers')
           .verifyContracts(['test8', 'ERC20', 'SafeMath'], {wait: 10000})
