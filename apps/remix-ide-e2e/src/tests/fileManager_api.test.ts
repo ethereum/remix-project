@@ -91,7 +91,8 @@ module.exports = {
     .waitForElementNotPresent('[data-id="treeViewLitreeViewItembrowser/old_contract.sol"]')    
   },
 
-  'Should execute `remove` api from file manager external api on a folder': function (browser: NightwatchBrowser) {
+  // TODO: Fix remove root directory prefix for browser and localhost
+  'Should execute `remove` api from file manager external api on a folder': '' + function (browser: NightwatchBrowser) {
     browser
     .addFile('test_jsRemoveFolder.js', { content: executeRemoveOnFolder })
     .executeScript('remix.exeCurrent()')
