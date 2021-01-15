@@ -39,7 +39,6 @@ const css = csjs`
   .description {
     font-size: 13px;
     line-height: 18px;
-    text-transform: capitalize;
   }
   .row {
     display: flex;
