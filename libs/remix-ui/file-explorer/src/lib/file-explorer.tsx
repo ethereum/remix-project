@@ -903,14 +903,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
           </div>
         </TreeViewItem>
       </TreeView>
-      <ModalDialog
-        title={ state.modalOptions.title }
-        message={ state.modalOptions.message }
-        hide={ state.modalOptions.hide }
-        ok={ state.modalOptions.ok }
-        cancel={ state.modalOptions.cancel }
-        handleHide={ handleHideModal }
-      />
+      {
+        props.name && <ModalDialog
+          id={ props.name }
+          title={ state.modalOptions.title }
+          message={ state.modalOptions.message }
+          hide={ state.modalOptions.hide }
+          ok={ state.modalOptions.ok }
+          cancel={ state.modalOptions.cancel }
+          handleHide={ handleHideModal }
+        />
+      }
       <Toaster message={state.toasterMsg} />
     </div>
   )
