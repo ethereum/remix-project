@@ -21,10 +21,10 @@ jobs:
 
     steps:
       - checkout
-      # - run: npm install
-      # - run: npm run lint:libs
-      # - run: npm run build:libs
-      # - run: npm run test:libs
+      - run: npm install
+      - run: npm run lint:libs
+      - run: npm run build:libs
+      - run: npm run test:libs
 
   remix-ide-chrome:
     docker:
