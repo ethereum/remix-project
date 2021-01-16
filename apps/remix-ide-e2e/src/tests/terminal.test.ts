@@ -10,7 +10,6 @@ module.exports = {
 
   'Should execution a simple console command': function (browser: NightwatchBrowser) {
     browser
-    .pause(10000)
     .waitForElementVisible('*[data-id="terminalCli"]', 10000)
     .executeScript('console.log(1 + 1)')
     .journalLastChild('2')
@@ -35,7 +34,6 @@ module.exports = {
   'Should execute remix.help() command': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('*[data-id="terminalCli"]')
-    .clearEditableContent('*[data-id="terminalCliInput"]')
     .executeScript('remix.help()')
     .journalChildIncludes('remix.loadgist(id)')
     .journalChildIncludes('remix.loadurl(url)')
