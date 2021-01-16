@@ -35,6 +35,7 @@ module.exports = {
   'Should execute remix.help() command': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('*[data-id="terminalCli"]')
+    .clearEditableContent('*[data-id="terminalCliInput"]')
     .executeScript('remix.help()')
     .journalChildIncludes('remix.loadgist(id)')
     .journalChildIncludes('remix.loadurl(url)')
