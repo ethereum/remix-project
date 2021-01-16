@@ -22,8 +22,9 @@ module.exports = {
     .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
     .click('*[data-id="fileExplorerNewFilecreateNewFile"]')
     .pause(1000)
-    .keys('5_New_contract.sol')
-    .keys(browser.Keys.ENTER)
+    .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/blank"]')
+    .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', '5_New_contract.sol')
+    .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', browser.Keys.ENTER)
     .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/5_New_contract.sol"]', 7000)
   },
 
@@ -50,8 +51,9 @@ module.exports = {
     .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/README.txt"]')
     .click('[data-id="fileExplorerNewFilecreateNewFolder"]')
     .pause(1000)
-    .keys('Browser_Tests')
-    .keys(browser.Keys.ENTER)
+    .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/blank"]')
+    .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', 'Browser_Tests')
+    .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', browser.Keys.ENTER)
     .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/Browser_Tests"]')
   },
 
