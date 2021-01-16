@@ -51,7 +51,7 @@ module.exports = {
       } else {
         const gistid = id[1]
         browser
-          .click('[data-id="browser-modal-footer-ok-react"]')
+          .click('[data-id="browser-modal-footer-cancel-react"]')
           .executeScript(`remix.loadgist('${gistid}')`)
           .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('browser/gists') } done() })
           .waitForElementVisible(`[data-id="treeViewLitreeViewItembrowser/gists/${gistid}"]`)
