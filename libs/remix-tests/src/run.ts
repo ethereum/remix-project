@@ -89,7 +89,7 @@ commander
                 process.exit()
             } else {
                 log.info(`Compiler version set to ${compVersion}. Latest version is ${latestRelease}`)
-                compilerConfig.currentCompilerUrl = baseURL + '/' + compString
+                compilerConfig.currentCompilerUrl = compString.replace('soljson-', '').replace('.js', '')
             }
         }
 
