@@ -1,0 +1,17 @@
+name: PRs reviews reminder
+
+on:
+  schedule:
+    - cron: "0 8-17/7 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  pr-reviews-reminder:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: yann300/pr-reviews-reminder-action@v1.4.7
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITTER_TOKEN: ${{ secrets.GITTER_TOKEN }}
+      with:
+        webhook-url: 'https://api.gitter.im/v1/rooms/5e451c02d73408ce4fd98526/chatMessages' # Required
