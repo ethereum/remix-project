@@ -89,6 +89,9 @@
     },
     "remix-ui-file-explorer": {
       "tags": []
+    },
+    "debugger": {
+      "tags": []
     }
   }
 }
