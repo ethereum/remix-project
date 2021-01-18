@@ -26,10 +26,11 @@ export default class FetchAndCompile extends Plugin {
    * Returns compilation data
    *
    * @param {string} contractAddress - Address of the contrac to resolve
-   * @param {string} compilersartefacts - Object containing a mapping of compilation results (byContractAddress and __last)
+   * @param {string} deployedBytecode - deployedBytecode of the contract
+   * @param {string} targetPath - Folder where to save the compilation arfefacts
    * @return {CompilerAbstract} - compilation data targeting the given @arg contractAddress
    */
-  async resolve (contractAddress, targetPath, web3) {
+  async resolve (contractAddress, codeAtAddress, targetPath) {
     contractAddress = ethutil.toChecksumAddress(contractAddress)
     const compilersartefacts = globalRegistry.get('compilersartefacts').api
 
@@ -52,7 +53,6 @@ export default class FetchAndCompile extends Plugin {
     if (!this.sourceVerifierNetWork.includes(network.name)) return localCompilation()
 
     // check if the contract if part of the local compilation result
-    const codeAtAddress = await web3.eth.getCode(contractAddress)
     const compilation = localCompilation()
     if (compilation) {
       let found = false

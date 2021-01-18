@@ -174,27 +174,32 @@ class Editor extends Plugin {
       const breakpoints = e.editor.session.getBreakpoints()
       for (const k in breakpoints) {
         if (k === row.toString()) {
-          this.event.trigger('breakpointCleared', [this.currentSession, row])
+          this.triggerEvent('breakpointCleared', [this.currentSession, row])
           e.editor.session.clearBreakpoint(row)
           e.stop()
           return
         }
       }
       this.setBreakpoint(row)
-      this.event.trigger('breakpointAdded', [this.currentSession, row])
+      this.triggerEvent('breakpointAdded', [this.currentSession, row])
       e.stop()
     })
 
     // Do setup on initialisation here
     this.editor.on('changeSession', () => {
       this._onChange()
-      this.event.trigger('sessionSwitched', [])
+      this.triggerEvent('sessionSwitched', [])
       this.editor.getSession().on('change', () => {
         this._onChange()
         this.sourceHighlighters.discardAllHighlights()
-        this.event.trigger('contentChanged', [])
+        this.triggerEvent('contentChanged', [])
       })
     })
+  }
+
+  triggerEvent (name, params) {
+    this.event.trigger(name, params) // internal stack
+    this.emit(name, ...params) // plugin stack
   }
 
   onActivation () {
@@ -247,7 +252,7 @@ class Editor extends Plugin {
       window.clearTimeout(this.saveTimeout)
     }
     this.saveTimeout = window.setTimeout(() => {
-      this.event.trigger('requiringToSaveCurrentfile', [])
+      this.triggerEvent('requiringToSaveCurrentfile', [])
     }, 5000)
   }
 
