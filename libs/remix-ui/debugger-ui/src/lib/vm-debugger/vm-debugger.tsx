@@ -51,14 +51,14 @@ export const VmDebugger = ({ vmDebugger: { registerEvent } }) => {
   }, [registerEvent])
 
   return (
-    <div id="vmdebugger" className="px-2">
+    <div id='vmdebugger' className="px-2">
       <div>
         <StackPanel calldata={stackPanel} />
         <MemoryPanel calldata={memoryPanel} />
         <StoragePanel calldata={storagePanel.calldata} header={storagePanel.header} />
         <CallstackPanel calldata={callStackPanel} />
         <CalldataPanel calldata={calldataPanel} />
-        <ReturnValuesPanel dropdownName="Return Value" calldata={returnValuesPanel || {}} />
+        <ReturnValuesPanel dropdownName='Return Value' calldata={returnValuesPanel || {}} />
         <FullStoragesChangesPanel calldata={fullStoragesChangesPanel} />
       </div>
     </div>
