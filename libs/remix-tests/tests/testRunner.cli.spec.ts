@@ -53,9 +53,8 @@ Commands:
 
     test('remix-tests running a test file with custom compiler version', () => {
       const res = spawnSync(executablePath, ['--compiler', '0.7.4', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
-      console.log('res.stdout.toString().trim()---------->', res.stdout.toString().trim())
       // match initial lines
-      expect(res.stdout.toString().trim()).toMatch(/Loading remote solc version v0.7.4+commit.3f05b770/)
+      expect(res.stdout.toString().trim().includes('Loading remote solc version v0.7.4+commit.3f05b770')).toBeTruthy()
       expect(res.stdout.toString().trim()).toMatch(/:: Running remix-tests - Unit testing for solidity ::/)
       expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
