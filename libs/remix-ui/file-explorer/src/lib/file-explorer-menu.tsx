@@ -21,7 +21,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       },
       {
         action: 'uploadFile',
-        title: 'Upload Local files to the Browser Storage Explorer',
+        title: 'Load a local file into Remix\'s browser folder',
         icon: 'fa fa-upload'
       },
       {

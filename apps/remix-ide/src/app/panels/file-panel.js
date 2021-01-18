@@ -74,21 +74,20 @@ module.exports = class Filepanel extends ViewPlugin {
     this.gitHandle = new GitHandle()
 
     this.event = new EventManager()
-    // fileExplorer.ensureRoot()
     this._deps.fileProviders.localhost.event.register('connecting', (event) => {
     })
 
-    // this._deps.fileProviders.localhost.event.register('connected', (event) => {
-    //   fileSystemExplorer.show()
-    // })
+    this._deps.fileProviders.localhost.event.register('connected', (event) => {
+      this.remixdExplorer.show()
+    })
 
-    // this._deps.fileProviders.localhost.event.register('errored', (event) => {
-    //   fileSystemExplorer.hide()
-    // })
+    this._deps.fileProviders.localhost.event.register('errored', (event) => {
+      this.remixdExplorer.hide()
+    })
 
-    // this._deps.fileProviders.localhost.event.register('closed', (event) => {
-    //   fileSystemExplorer.hide()
-    // })
+    this._deps.fileProviders.localhost.event.register('closed', (event) => {
+      this.remixdExplorer.hide()
+    })
 
     this.renderComponent()
   }
