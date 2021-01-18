@@ -9,6 +9,7 @@
 }
 .remixui_fileexplorer       {
     box-sizing        : border-box;
+    user-select       : none;
 }
 input[type="file"] {
     display: none;
