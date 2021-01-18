@@ -1,6 +1,7 @@
 import commander from 'commander'
-import Web3 from 'web3';
+import Web3 from 'web3'
 import path from 'path'
+import axios, { AxiosResponse } from 'axios'
 import { runTestFiles } from './runTestFiles'
 import fs from './fileSystem'
 import { Provider } from '@remix-project/remix-simulator'
@@ -45,7 +46,7 @@ commander.command('help').description('output usage information').action(functio
 
 // get current version
 commander
-    .option('-c, --compiler <string>', 'set compiler version')
+    .option('-c, --compiler <string>', 'set compiler version (e.g: 0.6.1, 0.7.1 etc)')
     .option('-e, --evm <string>', 'set EVM version')
     .option('-o, --optimize <bool>', 'enable/disable optimization', mapOptimize)
     .option('-r, --runs <number>', 'set runs')
@@ -76,16 +77,31 @@ commander
             log.info('verbosity level set to ' + commander.verbose.blue)
         }
 
-        const web3 = new Web3()
-        const provider: any = new Provider()
-        await provider.init()
-        web3.setProvider(provider)
+        let compilerConfig = {} as CompilerConfiguration
+        if (commander.compiler) {
+            const compVersion = commander.compiler
+            const baseURL = 'https://binaries.soliditylang.org/wasm/'
+            const response: AxiosResponse = await axios.get(baseURL + 'list.json')
+            const { releases, latestRelease } = response.data
+            const compString = releases[compVersion]
+            if(!compString) {
+                log.error(`No compiler found in releases with version ${compVersion}`)
+                process.exit()
+            } else {
+                log.info(`Compiler version set to ${compVersion}. Latest version is ${latestRelease}`)
+                compilerConfig.currentCompilerUrl = baseURL + '/' + compString
+            }
+        }
 
-        const compilerConfig = {} as CompilerConfiguration
         if (commander.optimize) {
                 compilerConfig.optimize = commander.optimize
                 log.info('compiler optimization set to ' + compilerConfig.optimize)
         }
+
+        const web3 = new Web3()
+        const provider: any = new Provider()
+        await provider.init()
+        web3.setProvider(provider)
 
         runTestFiles(path.resolve(testsPath), isDirectory, web3, compilerConfig)
     })
