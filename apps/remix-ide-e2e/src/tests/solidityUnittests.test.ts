@@ -144,7 +144,8 @@ module.exports = {
   },
 
   'Changing current path': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    browser
+    .waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .addFile('myTests/simple_storage_test.sol', sources[0]['browser/tests/simple_storage_test.sol'])
     .clickLaunchIcon('solidityUnitTesting')
     .setValue('*[data-id="uiPathInput"]', 'browser/myTests')
@@ -167,7 +168,7 @@ function runTests (browser: NightwatchBrowser) {
   browser
     .waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .clickLaunchIcon('fileExplorers')
-    .click('*[data-id="treeViewTogglebrowser/contracts"]')
+    .click('*[data-id="treeViewLitreeViewItembrowser/contracts"]')
     .openFile('browser/contracts/3_Ballot.sol')
     .clickLaunchIcon('solidityUnitTesting')
     .pause(500)
