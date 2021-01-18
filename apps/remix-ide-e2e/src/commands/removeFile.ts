@@ -34,13 +34,19 @@ function removeFile (browser: NightwatchBrowser, path: string, done: VoidFunctio
     contextMenuClick(document.querySelector('[data-path="' + path + '"]'))
   }, [path], function () {
     browser
-      .waitForElementVisible('#menuitemdelete', 2000)
+      .waitForElementVisible('#menuitemdelete')
       .click('#menuitemdelete')
-      .pause(500)
-      .waitForElementVisible('#modal-footer-ok', 2000)
-      .click('#modal-footer-ok')
-      .waitForElementNotPresent('[data-path="' + path + '"]')
+      .pause(2000)
       .perform(() => {
+        if (path.indexOf('browser') !== -1) {
+          browser.waitForElementVisible('[data-id="browser-modal-footer-ok-react"]')
+            .click('[data-id="browser-modal-footer-ok-react"]')
+            .waitForElementNotPresent('[data-path="' + path + '"]')
+        } else if (path.indexOf('localhost') !== -1) {
+          browser.waitForElementVisible('[data-id="localhost-modal-footer-ok-react"]')
+            .click('[data-id="localhost-modal-footer-ok-react"]')
+            .waitForElementNotPresent('[data-path="' + path + '"]')
+        }
         done()
       })
   })

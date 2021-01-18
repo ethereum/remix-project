@@ -89,7 +89,15 @@ export const Toaster = (props: ToasterProps) => {
 
   return (
     <>
-      {/* <ModalDialog /> */}
+      <ModalDialog
+        message={props.message}
+        cancel={{
+          label: 'Close',
+          fn: () => {}
+        }}
+        hide={!state.showModal}
+        handleHide={hideFullMessage}
+      />
       { !state.hide &&
         <div data-shared="tooltipPopup" className={`remixui_tooltip alert alert-info p-2 ${state.hiding ? 'remixui_animateTop' : 'remixui_animateBottom'}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
           <span className="px-2">
