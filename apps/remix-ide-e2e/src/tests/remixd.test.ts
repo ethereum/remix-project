@@ -121,7 +121,7 @@ function runTests (browser: NightwatchBrowser) {
     .setEditorValue('contract test1 { function get () returns (uint) { return 10; }}')
     .click('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // rename a file and check
     .pause(1000)
-    .renameFile('localhost/folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol', 'localhost/folder1/renamed_contract_' + browserName + '.sol')
+    .renamePath('localhost/folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol', 'localhost/folder1/renamed_contract_' + browserName + '.sol')
     .pause(1000)
     .removeFile('localhost/folder1/contract_' + browserName + '_toremove.sol')
     .perform(function (done) {

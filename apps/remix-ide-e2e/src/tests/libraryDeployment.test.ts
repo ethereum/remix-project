@@ -21,6 +21,7 @@ module.exports = {
   'Test Auto Deploy Lib': function (browser: NightwatchBrowser) {
     let addressRef: string
     browser.verifyContracts(['test'])
+      .clickLaunchIcon('udapp')
       .selectContract('test')
       .createContract('')
       .getAddressAtPosition(0, (address) => {
@@ -45,6 +46,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('#compileTabView button[title="Compile"]') // that should generate the JSON artefact
       .verifyContracts(['test'])
+      .clickLaunchIcon('udapp')
       .selectContract('lib') // deploy lib
       .createContract('')
       .perform((done) => {
@@ -74,6 +76,7 @@ function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFuncti
       browser.setEditorValue(JSON.stringify(config))
     })
     .openFile('browser/Untitled5.sol')
+    .clickLaunchIcon('udapp')
     .selectContract('test') // deploy lib
     .createContract('')
     .getText('div[class^="terminal"]', (value) => {
@@ -96,6 +99,7 @@ function checkDeployShouldSucceed (browser: NightwatchBrowser, address: string, 
       browser.setEditorValue(JSON.stringify(config))
     })
     .openFile('browser/Untitled5.sol')
+    .clickLaunchIcon('udapp')
     .selectContract('test') // deploy lib
     .createContract('')
     .getAddressAtPosition(1, (address) => {

@@ -41,7 +41,7 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "lint:libs": "nx run-many --target=lint --projects=remixd,remix-ui-modal-dialog,remix-ui-toaster",
+    "lint:libs": "nx run-many --target=lint --projects=remixd,remix-ui-tree-view,remix-ui-modal-dialog,remix-ui-toaster,remix-ui-file-explorer",
     "build:libs": "nx run-many --target=build --parallel=false --with-deps=true --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd",
     "test:libs": "nx run-many --target=test --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd",
     "publish:libs": "npm run build:libs & lerna publish --skip-git & npm run bumpVersion:libs",
@@ -153,12 +153,14 @@
     "merge": "^1.2.0",
     "npm-install-version": "^6.0.2",
     "react": "16.13.1",
+    "react-beautiful-dnd": "^13.0.0",
     "react-bootstrap": "^1.3.0",
     "react-dom": "16.13.1",
     "signale": "^1.4.0",
     "time-stamp": "^2.2.0",
     "winston": "^3.3.3",
-    "ws": "^7.3.0"
+    "ws": "^7.3.0",
+    "document-register-element": "1.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -190,6 +192,7 @@
     "@types/nightwatch": "^1.1.6",
     "@types/node": "~8.9.4",
     "@types/react": "16.9.17",
+    "@types/react-beautiful-dnd": "^13.0.0",
     "@types/react-dom": "16.9.4",
     "@types/react-router-dom": "5.1.3",
     "@types/ws": "^7.2.4",
@@ -281,6 +284,7 @@
     "worker-loader": "^2.0.0",
     "yo-yo": "github:ioedeveloper/yo-yo",
     "yo-yoify": "^3.7.3",
-    "@types/jest": "25.1.4"
+    "@types/jest": "25.1.4",
+    "@testing-library/react": "10.4.1"
   }
 }
