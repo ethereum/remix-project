@@ -89,6 +89,7 @@ module.exports = {
     .createContract('"tokenName", "symbol"')
     .debugTransaction(2)
     .pause(2000)
+    .waitForElementVisible('#stepdetail')
     .goToVMTraceStep(10)
     .getEditorValue((content) => {
       browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) public {
@@ -118,7 +119,8 @@ module.exports = {
     .clickInstance(2)
     .clickFunction('test1 - transact (not payable)', {types: 'bytes userData', values: '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4'})
     .debugTransaction(4)
-    .pause(2000)    
+    .pause(2000)
+    .waitForElementVisible('#stepdetail')
     .goToVMTraceStep(261)
     .pause(1000)
     /*
