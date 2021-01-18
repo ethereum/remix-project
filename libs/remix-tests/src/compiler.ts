@@ -129,11 +129,16 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
                 const {currentCompilerUrl, evmVersion, optimize, runs} = compilerConfig
                 evmVersion ? compiler.set('evmVersion', evmVersion) :
                 optimize ? compiler.set('optimize', optimize) :
-                runs ? compiler.set('runs', runs) :
-                currentCompilerUrl ? compiler.loadRemoteVersion(currentCompilerUrl) : compiler.onInternalCompilerLoaded()
-                compiler.event.register('compilerLoaded', this, function (version) {
+                runs ? compiler.set('runs', runs) : ''
+                if(currentCompilerUrl) {
+                    compiler.loadRemoteVersion(currentCompilerUrl)
+                    compiler.event.register('compilerLoaded', this, function (version) {
+                        next()
+                    });
+                } else {
+                    compiler.onInternalCompilerLoaded()
                     next()
-                });
+                }
             },
             function doCompilation(next) {
                 // @ts-ignore
