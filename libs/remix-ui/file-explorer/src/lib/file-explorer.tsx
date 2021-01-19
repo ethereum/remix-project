@@ -16,7 +16,7 @@ import './css/file-explorer.css'
 const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { filesProvider, name, registry, plugin, focusRoot } = props
+  const { filesProvider, name, registry, plugin, focusRoot, contextMenuItems } = props
   const [state, setState] = useState({
     focusElement: [{
       key: name,
@@ -164,6 +164,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
       plugin.resetFocus(false)
     }
   }, [focusRoot])
+
+  useEffect(() => {
+    if (contextMenuItems) {
+      setState(prevState => {
+        // filter duplicate items
+        const items = contextMenuItems.filter(({ name }) => prevState.actions.findIndex(action => action.name === name) === -1)
+
+        return { ...prevState, actions: [...prevState.actions, ...items] }
+      })
+    }
+  }, [contextMenuItems])
 
   const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
     if (!isChild && (state.focusEdit.element === 'browser/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === 'browser/blank') === -1)) {
