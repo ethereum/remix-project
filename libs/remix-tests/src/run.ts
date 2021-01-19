@@ -103,6 +103,15 @@ commander
             log.info(`Optimization is ${compilerConfig.optimize ? 'enabled' : 'disabled'}`)
         }
 
+        if (commander.runs) {
+            if(!commander.optimize) {
+                log.error(`Optimization should be enabled for runs`)
+                process.exit()
+            }
+            compilerConfig.runs = commander.runs
+            log.info(`Runs set to ${compilerConfig.runs}`)
+        }
+
         const web3 = new Web3()
         const provider: any = new Provider()
         await provider.init()
