@@ -105,7 +105,8 @@ module.exports = class Filepanel extends ViewPlugin {
 
   /**
    *
-   * @param { name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
+   * @param item { name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
+   * @param callback (...args) => void
    */
   registerContextMenuItem (item, callback) {
     if (!item.name || !callback) return console.error('menu name and callback is mandatory')
