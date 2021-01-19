@@ -128,6 +128,7 @@ module.exports = {
     .waitForElementPresent('.transaction-status--submitted')
     .pause(25000)
     .switchBrowserTab(0)
+    .end()
   },
 
   'Should connect to Ethereum Main Network using MetaMask': '' + function (browser: NightwatchBrowser) {
