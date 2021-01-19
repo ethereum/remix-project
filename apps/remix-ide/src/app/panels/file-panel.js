@@ -105,7 +105,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
   /**
    *
-   * @param item { name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
+   * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
    * @param callback (...args) => void
    */
   registerContextMenuItem (item) {
