@@ -44,7 +44,7 @@ export const SolidityLocals = ({ data, message, registerEvent, triggerEvent }) =
 
   return (
     <div id='soliditylocals' data-id="solidityLocals">
-      <DropdownPanel 
+      <DropdownPanel
         dropdownName='Solidity Locals'
         dropdownMessage={message}
         calldata={calldata || {}}

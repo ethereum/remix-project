@@ -10,7 +10,7 @@ export const CodeListView = ({ registerEvent }) => {
   })
 
   const indexChanged = (index) => {
-    if(index < 0) return
+    if (index < 0) return
     setState(prevState => {
       return {
         ...prevState,
@@ -31,7 +31,7 @@ export const CodeListView = ({ registerEvent }) => {
       }
     })
     indexChanged(index)
-  } 
+  }
 
   return (
     <div id='asmcodes'>
