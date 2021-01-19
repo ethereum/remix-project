@@ -130,6 +130,8 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     this.off('editor', 'breakpointAdded')
     this.off('editor', 'contentChanged')
   }
+
+  showMessage (title: string, body: string) {}  
 }
 
 export class CompilerAbstract implements CompilationOutput { // this is a subset of /remix-ide/src/app/compiler/compiler-abstract.js
