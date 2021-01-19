@@ -5,7 +5,8 @@ export interface FileExplorerProps {
     filesProvider: any,
     menuItems?: string[],
     plugin: any,
-    focusRoot: boolean
+    focusRoot: boolean,
+    contextMenuItems: { name: string, type: string[], path: string[], extension: string[], pattern: string[] }[]
 }
 
 export interface File {
@@ -26,7 +27,7 @@ export interface FileExplorerMenuProps {
 }
 
 export interface FileExplorerContextMenuProps {
-    actions: { name: string, type: string[], path: string[], extension: string[], pattern: string[] }[],
+    actions: { name: string, type: string[], path: string[], extension: string[], pattern: string[], action?: (...args) => void }[],
     createNewFile: (folder?: string) => void,
     createNewFolder: (parentFolder?: string) => void,
     deletePath: (path: string) => void,
