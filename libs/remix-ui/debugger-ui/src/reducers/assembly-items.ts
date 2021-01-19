@@ -1,4 +1,4 @@
-import { default as deepEqual } from 'deep-equal'
+import { default as deepEqual } from 'deep-equal' // eslint-disable-line
 
 interface Action {
     type: string;

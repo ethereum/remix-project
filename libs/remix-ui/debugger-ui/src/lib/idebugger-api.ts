@@ -1,5 +1,5 @@
 
-import type { CompilationResult, CompilationSource } from '@remix-project/remix-solidity-ts'
+import type { CompilationResult, CompilationSource } from '@remix-project/remix-solidity-ts' // eslint-disable-line
 
 export interface DebuggerUIProps {
     debuggerAPI: IDebuggerApi

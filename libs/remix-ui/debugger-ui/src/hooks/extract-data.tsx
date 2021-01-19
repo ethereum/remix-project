@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { ExtractData, ExtractFunc } from '../types'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { ExtractData, ExtractFunc } from '../types' // eslint-disable-line
 
 export const useExtractData = (json, extractFunc?: ExtractFunc): Array<{ key: string, data: ExtractData }> => {
   const [data, setData] = useState([])

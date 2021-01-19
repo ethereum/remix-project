@@ -1,5 +1,5 @@
 import { BN } from 'ethereumjs-util'
-import { ExtractData } from '../types'
+import { ExtractData } from '../types' // eslint-disable-line
 
 export function extractData (item, parent): ExtractData {
   const ret: ExtractData = {}

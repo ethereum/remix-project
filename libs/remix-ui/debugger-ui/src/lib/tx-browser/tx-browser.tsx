@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 import './tx-browser.css'
 
 export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, debugging }) => {
