@@ -56,7 +56,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               runScript(path)
               break
             default:
-              item.action && item.action()
+              item.action && item.action(path)
               break
           }
           hideContextMenu()
