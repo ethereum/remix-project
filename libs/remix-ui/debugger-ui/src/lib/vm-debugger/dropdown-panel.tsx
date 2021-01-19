@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useReducer } from 'react'
-import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
-import { DropdownPanelProps, ExtractData, ExtractFunc } from '../../types'
-import { CopyToClipboard } from '@remix-ui/clipboard'
+import React, { useState, useEffect, useReducer } from 'react' // eslint-disable-line
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
+import { DropdownPanelProps, ExtractData, ExtractFunc } from '../../types' // eslint-disable-line
+import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 import { initialState, reducer } from '../../reducers/calldata'
 import './styles/dropdown-panel.css'
 

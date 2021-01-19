@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import CalldataPanel from './calldata-panel'
-import MemoryPanel from './memory-panel'
-import CallstackPanel from './callstack-panel'
-import StackPanel from './stack-panel'
-import StoragePanel from './storage-panel'
-import ReturnValuesPanel from './dropdown-panel'
-import FullStoragesChangesPanel from './full-storages-changes'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
+import CalldataPanel from './calldata-panel' // eslint-disable-line
+import MemoryPanel from './memory-panel' // eslint-disable-line
+import CallstackPanel from './callstack-panel' // eslint-disable-line
+import StackPanel from './stack-panel' // eslint-disable-line
+import StoragePanel from './storage-panel' // eslint-disable-line
+import ReturnValuesPanel from './dropdown-panel' // eslint-disable-line
+import FullStoragesChangesPanel from './full-storages-changes' // eslint-disable-line
 
 export const VmDebugger = ({ vmDebugger: { registerEvent } }) => {
   const [calldataPanel, setCalldataPanel] = useState(null)

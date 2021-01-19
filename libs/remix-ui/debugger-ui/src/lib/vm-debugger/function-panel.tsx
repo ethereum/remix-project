@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import DropdownPanel from './dropdown-panel'
-import { default as deepequal } from 'deep-equal'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
+import DropdownPanel from './dropdown-panel' // eslint-disable-line
+import { default as deepequal } from 'deep-equal' // eslint-disable-line
 
 export const FunctionPanel = ({ data }) => {
   const [calldata, setCalldata] = useState(null)

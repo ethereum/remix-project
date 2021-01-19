@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import TxBrowser from './tx-browser/tx-browser'
-import StepManager from './step-manager/step-manager'
-import VmDebugger from './vm-debugger/vm-debugger'
-import VmDebuggerHead from './vm-debugger/vm-debugger-head'
-import { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
-import { DebuggerUIProps } from './idebugger-api'
-import { Toaster } from '@remix-ui/toaster'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
+import TxBrowser from './tx-browser/tx-browser' // eslint-disable-line
+import StepManager from './step-manager/step-manager' // eslint-disable-line
+import VmDebugger from './vm-debugger/vm-debugger' // eslint-disable-line
+import VmDebuggerHead from './vm-debugger/vm-debugger-head' // eslint-disable-line
+import { TransactionDebugger as Debugger } from '@remix-project/remix-debug' // eslint-disable-line
+import { DebuggerUIProps } from './idebugger-api' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 
