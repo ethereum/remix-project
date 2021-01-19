@@ -27,7 +27,7 @@ export interface FileExplorerMenuProps {
 }
 
 export interface FileExplorerContextMenuProps {
-    actions: { name: string, type: string[], path: string[], extension: string[], pattern: string[], action?: (...args) => void }[],
+    actions: { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string }[],
     createNewFile: (folder?: string) => void,
     createNewFolder: (parentFolder?: string) => void,
     deletePath: (path: string) => void,
@@ -35,6 +35,7 @@ export interface FileExplorerContextMenuProps {
     hideContextMenu: () => void,
     publishToGist?: () => void,
     runScript?: (path: string) => void,
+    emit?: (id: string, path: string) => void,
     pageX: number,
     pageY: number,
     path: string,
