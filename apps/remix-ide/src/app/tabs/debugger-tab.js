@@ -62,6 +62,10 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
     return this.el
   }
 
+  showMessage (title, body) {
+    modalDialogCustom.alert(title, body)
+  }
+
   renderComponent () {
     ReactDOM.render(
       <DebuggerUI debuggerAPI={this} />
