@@ -164,6 +164,41 @@ export class Compiler {
   }
 
   /**
+   * @dev Load compiler using given version (used by remix-tests CLI)
+   * @param version compiler version
+   */
+  
+  loadRemoteVersion (version: string): void {
+    console.log(`Loading remote solc version ${version} ...`)
+    const compiler: any = require('solc')
+    compiler.loadRemoteVersion(version, (err, remoteCompiler) => {
+      if (err) {
+        console.error('Error in loading remote solc compiler: ', err)
+      } else {
+        this.state.compileJSON = (source: SourceWithTarget) => {
+          const missingInputs: string[] = []
+          const missingInputsCallback = (path: string) => {
+            missingInputs.push(path)
+            return { error: 'Deferred import' }
+          }
+          let result: CompilationResult = {}
+          try {
+            if(source && source.sources) {
+              const {optimize, runs, evmVersion, language} = this.state
+              const input = compilerInput(source.sources, {optimize, runs, evmVersion, language})
+              result = JSON.parse(remoteCompiler.compile(input, { import: missingInputsCallback }))
+            }
+          } catch (exception) {
+            result = { error: { formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' } }
+          }
+          this.onCompilationFinished(result, missingInputs, source)
+        }
+        this.onCompilerLoaded(version)
+      }
+    })
+  }
+
+  /**
    * @dev Load compiler using given URL (used by IDE)
    * @param usingWorker if true, load compiler using worker
    * @param url URL to load compiler from

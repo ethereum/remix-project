@@ -45,15 +45,15 @@ function isRemixTestFile(path: string) {
  */
 
 function processFile(filePath: string, sources: SrcIfc, isRoot = false) {
-    const importRegEx = /import ['"](.+?)['"];/g;
-    let group: RegExpExecArray| null = null;
+    const importRegEx = /import ['"](.+?)['"];/g
+    let group: RegExpExecArray| null = null
     const isFileAlreadyInSources: boolean = Object.keys(sources).includes(filePath)
 
     // Return if file is a remix test file or already processed
     if(isRemixTestFile(filePath) || isFileAlreadyInSources)
         return
 
-    let content: string = fs.readFileSync(filePath, { encoding: 'utf-8' });
+    let content: string = fs.readFileSync(filePath, { encoding: 'utf-8' })
     const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
     // import 'remix_tests.sol', if file is a root test contract file and doesn't already have it 
@@ -61,13 +61,13 @@ function processFile(filePath: string, sources: SrcIfc, isRoot = false) {
         const includeTestLibs = '\nimport \'remix_tests.sol\';\n'
         content = includeTestLibs.concat(content)
     }
-    sources[filePath] = {content};
-    importRegEx.exec(''); // Resetting state of RegEx
+    sources[filePath] = {content}
+    importRegEx.exec('') // Resetting state of RegEx
 
     // Process each 'import' in file content
     while ((group = importRegEx.exec(content))) {
-        const importedFile: string = group[1];
-        const importedFilePath: string = path.join(path.dirname(filePath), importedFile);
+        const importedFile: string = group[1]
+        const importedFilePath: string = path.join(path.dirname(filePath), importedFile)
         processFile(importedFilePath, sources)
     }
 }
@@ -85,7 +85,7 @@ const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' elect
  * TODO: replace this with remix's own compiler code
  */
 
-export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb): void {
+export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, compilerConfig: CompilerConfiguration, cb): void {
     let compiler: any
     const accounts: string[] = opts.accounts || []
     const sources: SrcIfc = {
@@ -103,11 +103,11 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
             }
         } else {
             // walkSync only if it is a directory
-            let testFileCount = 0;
+            let testFileCount = 0
             fs.walkSync(filepath, (foundpath: string) => {
                 // only process .sol files
                 if (foundpath.split('.').pop() === 'sol' && foundpath.endsWith('_test.sol')) {
-                    testFileCount++;
+                    testFileCount++
                     processFile(foundpath, sources, true)
                 }
             })
@@ -126,10 +126,24 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
         async.waterfall([
             function loadCompiler(next) {
                 compiler = new RemixCompiler()
-                compiler.onInternalCompilerLoaded()
-                // compiler.event.register('compilerLoaded', this, function (version) {
-                next()
-                // });
+                if(compilerConfig) {
+                    const {currentCompilerUrl, evmVersion, optimize, runs} = compilerConfig
+                    evmVersion ? compiler.set('evmVersion', evmVersion) : null
+                    optimize ? compiler.set('optimize', optimize) : null
+                    runs ? compiler.set('runs', runs) : null
+                    if(currentCompilerUrl) {
+                        compiler.loadRemoteVersion(currentCompilerUrl)
+                        compiler.event.register('compilerLoaded', this, function (version) {
+                            next()
+                        })
+                    } else {
+                        compiler.onInternalCompilerLoaded()
+                        next()
+                    }
+                } else {
+                    compiler.onInternalCompilerLoaded()
+                    next()
+                }
             },
             function doCompilation(next) {
                 // @ts-ignore
