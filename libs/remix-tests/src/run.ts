@@ -47,10 +47,10 @@ commander.command('help').description('output usage information').action(functio
 // get current version
 commander
     .option('-c, --compiler <string>', 'set compiler version (e.g: 0.6.1, 0.7.1 etc)')
-    .option('-e, --evm <string>', 'set EVM version')
+    .option('-e, --evm <string>', 'set EVM version (e.g: petersburg, istanbul etc)')
     .option('-o, --optimize <bool>', 'enable/disable optimization', mapOptimize)
-    .option('-r, --runs <number>', 'set runs')
-    .option('-v, --verbose <level>', 'set verbosity level', mapVerbosity)
+    .option('-r, --runs <number>', 'set runs (e.g: 150, 250 etc)')
+    .option('-v, --verbose <level>', 'set verbosity level (0 to 5)', mapVerbosity)
     .action(async (testsPath) => {
 
         // Check if path exists
