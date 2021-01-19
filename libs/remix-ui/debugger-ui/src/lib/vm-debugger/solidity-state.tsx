@@ -1,7 +1,7 @@
-import React from 'react'
-import DropdownPanel from './dropdown-panel'
+import React from 'react' // eslint-disable-line
+import DropdownPanel from './dropdown-panel' // eslint-disable-line
 import { extractData } from '../../utils/solidityTypeFormatter'
-import { ExtractData } from '../../types'
+import { ExtractData } from '../../types' // eslint-disable-line
 
 export const SolidityState = ({ calldata, message }) => {
   const formatSelf = (key: string, data: ExtractData) => {

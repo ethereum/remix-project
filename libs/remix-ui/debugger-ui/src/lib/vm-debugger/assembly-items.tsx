@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useReducer } from 'react'
+import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import { initialState, reducer } from '../../reducers/assembly-items'
 import './styles/assembly-items.css'
 
@@ -48,7 +48,7 @@ export const AssemblyItems = ({ registerEvent }) => {
           <div className="pl-2 my-1 small instructions" id='asmitems' ref={asmItemsRef}>
             {
               assemblyItems.display.map((item, i) => {
-                return <div className="px-1" key={i} ref={ref => refs.current[i] = ref}><span>{item}</span></div>
+                return <div className="px-1" key={i} ref={ref => { refs.current[i] = ref }}><span>{item}</span></div>
               })
             }
           </div>
