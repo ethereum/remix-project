@@ -6,12 +6,12 @@ import QueryParams from './lib/query-params'
 import { PermissionHandler } from './app/ui/persmission-handler'
 
 const requiredModules = [ // services + layout views + system views
-  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport', 'web3Provider', 'scriptRunner', 'fetchAndCompile',
-  'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
-  'terminal', 'settings', 'pluginManager', 'tabs']
+  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
+  'fileManager', 'contentImport', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
+  'fileExplorers', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp']
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd']
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
