@@ -33,7 +33,6 @@ export interface FileExplorerContextMenuProps {
     deletePath: (path: string) => void,
     renamePath: (path: string, type: string) => void,
     hideContextMenu: () => void,
-    extractParentFromKey?: (key: string) => string,
     publishToGist?: () => void,
     runScript?: (path: string) => void,
     pageX: number,
