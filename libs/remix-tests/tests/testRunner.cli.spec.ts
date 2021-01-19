@@ -77,5 +77,18 @@ Commands:
       // macth fail test details
       expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
     })
+
+    test('remix-tests running a test file by enabling optimization', () => {
+      const res = spawnSync(executablePath, ['--optimize', 'true', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
+      // match initial lines
+      expect(res.stdout.toString().trim().includes('Optimization is enabled')).toBeTruthy()
+      expect(res.stdout.toString().trim()).toMatch(/:: Running remix-tests - Unit testing for solidity ::/)
+      expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
+      // match test result
+      expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
+      expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
+      // macth fail test details
+      expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
+    })
   })
 })
