@@ -169,7 +169,7 @@ export class Compiler {
    */
   
   loadRemoteVersion (version: string): void {
-    console.log('Loading remote solc version ' + version)
+    console.log(`Loading remote solc version ${version} ...`)
     const compiler: any = require('solc')
     compiler.loadRemoteVersion(version, (err, remoteCompiler) => {
       if (err) {
