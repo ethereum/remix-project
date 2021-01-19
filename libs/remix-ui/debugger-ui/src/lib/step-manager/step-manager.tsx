@@ -31,7 +31,7 @@ export const StepManager = ({ stepManager: { jumpTo, traceLength, stepIntoBack, 
   return (
     <div className="py-1">
       <Slider jumpTo={jumpTo} sliderValue={sliderValue} traceLength={traceLength} />
-      <ButtonNavigator 
+      <ButtonNavigator
         stepIntoBack={stepIntoBack}
         stepIntoForward={stepIntoForward}
         stepOverBack={stepOverBack}

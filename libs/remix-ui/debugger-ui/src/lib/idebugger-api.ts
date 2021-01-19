@@ -2,13 +2,13 @@
 import type { CompilationResult, CompilationSource } from '@remix-project/remix-solidity-ts'
 
 export interface DebuggerUIProps {
-    debuggerAPI: IDebuggerApi 
+    debuggerAPI: IDebuggerApi
 }
 
 export interface LineColumnLocation {
     start: {
         line: number, column: number
-    }, 
+    },
     end: {
         line: number, column: number
     }
@@ -39,7 +39,7 @@ export interface TransactionReceipt {
     transactionIndex: number
     from: string
     to: string
-    contractAddress: string | null    
+    contractAddress: string | null
   }
 
 export type onBreakpointClearedListener = (params: string, row: number) => void
@@ -63,4 +63,4 @@ export interface IDebuggerApi {
     getFile: (path: string) => Promise<string>
     setFile: (path: string, content: string) => Promise<void>
     getDebugWeb3: () => any // returns an instance of web3.js
-} 
+}

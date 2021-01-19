@@ -134,7 +134,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   }
 
   const update = function (calldata) {
-    let isEmpty = !calldata ? true : false
+    let isEmpty = !calldata
 
     if (calldata && Array.isArray(calldata) && calldata.length === 0) isEmpty = true
     else if (calldata && Object.keys(calldata).length === 0 && calldata.constructor === Object) isEmpty = true
@@ -171,7 +171,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)} onClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)}>
           <TreeView id={`treeView${key}`} key={keyPath}>
             {children}
-            {data.hasNext && <TreeViewItem id={`treeViewLoadMore`} data-id={`treeViewLoadMore`} className="cursor_pointer" label="Load more" onClick={() => { triggerEvent(loadMoreEvent, [data.cursor]) }} />}
+            {data.hasNext && <TreeViewItem id={'treeViewLoadMore'} data-id={'treeViewLoadMore'} className="cursor_pointer" label="Load more" onClick={() => { triggerEvent(loadMoreEvent, [data.cursor]) }} />}
           </TreeView>
         </TreeViewItem>
       )

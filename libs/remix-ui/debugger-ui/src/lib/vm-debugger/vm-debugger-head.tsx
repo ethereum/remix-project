@@ -11,7 +11,7 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
     'vm trace step': '-',
     'execution step': '-',
     'add memory': '',
-    'gas': '',
+    gas: '',
     'remaining gas': '-',
     'loaded address': '-'
   })
@@ -36,12 +36,12 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
     })
     registerEvent && registerEvent('traceUnloaded', () => {
       setStepDetail(() => {
-        return { 'vm trace step': '-', 'execution step': '-', 'add memory': '', 'gas': '', 'remaining gas': '-', 'loaded address': '-' }
+        return { 'vm trace step': '-', 'execution step': '-', 'add memory': '', gas: '', 'remaining gas': '-', 'loaded address': '-' }
       })
     })
     registerEvent && registerEvent('newTraceLoaded', () => {
       setStepDetail(() => {
-        return { 'vm trace step': '-', 'execution step': '-', 'add memory': '', 'gas': '', 'remaining gas': '-', 'loaded address': '-' }
+        return { 'vm trace step': '-', 'execution step': '-', 'add memory': '', gas: '', 'remaining gas': '-', 'loaded address': '-' }
       })
     })
     registerEvent && registerEvent('traceCurrentStepUpdate', (error, step) => {
@@ -56,7 +56,7 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
     })
     registerEvent && registerEvent('traceStepCostUpdate', (error, gas) => {
       setStepDetail(prevState => {
-        return { ...prevState, 'gas': (error ? '-' : gas) }
+        return { ...prevState, gas: (error ? '-' : gas) }
       })
     })
     registerEvent && registerEvent('traceCurrentCalledAddressAtUpdate', (error, address) => {
