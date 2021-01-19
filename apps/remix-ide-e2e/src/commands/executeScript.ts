@@ -5,7 +5,7 @@ class ExecuteScript extends EventEmitter {
   command (this: NightwatchBrowser, script: string): NightwatchBrowser {
     this.api
       .clearEditableContent('*[data-id="terminalCliInput"]')
-      .click('*[data-id="terminalCliInput"]')
+      .click('*[data-id="terminalCli"]')
       .sendKeys('*[data-id="terminalCliInput"]', script)
       .sendKeys('*[data-id="terminalCliInput"]', this.api.Keys.ENTER)
       .sendKeys('*[data-id="terminalCliInput"]', this.api.Keys.ENTER)
