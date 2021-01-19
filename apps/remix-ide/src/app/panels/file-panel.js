@@ -66,6 +66,7 @@ module.exports = class Filepanel extends ViewPlugin {
       }
     }
     this.reset = false
+    this.registeredMenuItems = []
     this.el = yo`
       <div id="fileExplorerView">
       </div>
@@ -106,9 +107,13 @@ module.exports = class Filepanel extends ViewPlugin {
    *
    * @param { name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
    */
-  registerContextMenuItem (action, callback) {
-    if (!action.name || !callback) return
+  registerContextMenuItem (item, callback) {
+    if (!item.name || !callback) return console.error('menu name and item is mandatory')
+    if (!item.type && !item.path && !item.extension && !item.pattern) return console.error('invalid menu match criteria provided')
 
+    item.action = callback
+    this.registeredMenuItems = [...this.registeredMenuItems, item]
+    this.renderComponent()
   }
 
   renderComponent () {
@@ -125,6 +130,7 @@ module.exports = class Filepanel extends ViewPlugin {
                   menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
                   plugin={this}
                   focusRoot={this.reset}
+                  contextMenuItems={this.registeredMenuItems}
                 />
               </div>
               <div className='pl-2 filesystemexplorer remixui_treeview'>
@@ -136,6 +142,7 @@ module.exports = class Filepanel extends ViewPlugin {
                     menuItems={['createNewFile', 'createNewFolder']}
                     plugin={this}
                     focusRoot={this.reset}
+                    contextMenuItems={this.registeredMenuItems}
                   />
                 }
               </div>
