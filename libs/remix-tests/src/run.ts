@@ -93,6 +93,11 @@ commander
             }
         }
 
+        if (commander.evm) {
+            compilerConfig.evmVersion = commander.evm
+            log.info('EVM set to ' + compilerConfig.evmVersion)
+        }
+
         if (commander.optimize) {
                 compilerConfig.optimize = commander.optimize
                 log.info('compiler optimization set to ' + compilerConfig.optimize)
