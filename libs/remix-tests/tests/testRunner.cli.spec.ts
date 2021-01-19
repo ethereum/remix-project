@@ -45,7 +45,7 @@ Commands:
       expect(res.stdout.toString().trim()).toMatch(/AssertOkTest/)
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
-      // macth fail test details
+      // match fail test details
       expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
       expect(res.stdout.toString().trim()).toMatch(/expected value to be ok to: true/)
       expect(res.stdout.toString().trim()).toMatch(/returned: false/)
@@ -61,8 +61,14 @@ Commands:
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
-      // macth fail test details
+      // match fail test details
       expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
+    })
+
+    test('remix-tests running a test file with unavailable custom compiler version (should fail)', () => {
+      const res = spawnSync(executablePath, ['--compiler', '1.10.4', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
+      // match initial lines
+      expect(res.stdout.toString().trim().includes('No compiler found in releases with version 1.10.4')).toBeTruthy()
     })
 
     test('remix-tests running a test file with custom EVM', () => {
@@ -74,7 +80,7 @@ Commands:
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
-      // macth fail test details
+      // match fail test details
       expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
     })
 
@@ -87,7 +93,7 @@ Commands:
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
-      // macth fail test details
+      // match fail test details
       expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
     })
 
@@ -101,7 +107,30 @@ Commands:
       // match test result
       expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
       expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
-      // macth fail test details
+      // match fail test details
+      expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
+    })
+
+    test('remix-tests running a test file without enabling optimization and setting runs (should fail)', () => {
+      const res = spawnSync(executablePath, ['--runs', '300', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
+      // match initial lines
+      expect(res.stdout.toString().trim().includes('Optimization should be enabled for runs')).toBeTruthy()
+    })
+
+    test('remix-tests running a test file with all options', () => {
+      const res = spawnSync(executablePath, ['--compiler', '0.7.5', '--evm', 'istanbul', '--optimize', 'true', '--runs', '250', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
+      // match initial lines
+      expect(res.stdout.toString().trim().includes('Compiler version set to 0.7.5. Latest version is')).toBeTruthy()
+      expect(res.stdout.toString().trim().includes('Loading remote solc version v0.7.5+commit.eb77ed08 ...')).toBeTruthy()
+      expect(res.stdout.toString().trim().includes('EVM set to istanbul')).toBeTruthy()
+      expect(res.stdout.toString().trim().includes('Optimization is enabled')).toBeTruthy()
+      expect(res.stdout.toString().trim().includes('Runs set to 250')).toBeTruthy()
+      expect(res.stdout.toString().trim()).toMatch(/:: Running remix-tests - Unit testing for solidity ::/)
+      expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
+      // match test result
+      expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
+      expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
+      // match fail test details
       expect(res.stdout.toString().trim()).toMatch(/error: okFailTest fails/)
     })
   })
