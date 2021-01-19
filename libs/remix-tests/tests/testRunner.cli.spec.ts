@@ -24,10 +24,10 @@ describe('testRunner: remix-tests CLI', () => {
 Options:
   -V, --version            output the version number
   -c, --compiler <string>  set compiler version (e.g: 0.6.1, 0.7.1 etc)
-  -e, --evm <string>       set EVM version
+  -e, --evm <string>       set EVM version (e.g: petersburg, istanbul etc)
   -o, --optimize <bool>    enable/disable optimization
-  -r, --runs <number>      set runs
-  -v, --verbose <level>    set verbosity level
+  -r, --runs <number>      set runs (e.g: 150, 250 etc)
+  -v, --verbose <level>    set verbosity level (0 to 5)
   -h, --help               output usage information
 
 Commands:
