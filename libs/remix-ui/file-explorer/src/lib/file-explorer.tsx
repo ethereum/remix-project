@@ -76,36 +76,42 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const accessToken = config.get('settings/gist-access-token')
       const files = await fetchDirectoryContent(name)
       const actions = [{
+        id: 'newFile',
         name: 'New File',
         type: ['folder'],
         path: [],
         extension: [],
         pattern: []
       }, {
+        id: 'newFolder',
         name: 'New Folder',
         type: ['folder'],
         path: [],
         extension: [],
         pattern: []
       }, {
+        id: 'rename',
         name: 'Rename',
         type: ['file', 'folder'],
         path: [],
         extension: [],
         pattern: []
       }, {
+        id: 'delete',
         name: 'Delete',
         type: ['file', 'folder'],
         path: [],
         extension: [],
         pattern: []
       }, {
+        id: 'pushChangesToGist',
         name: 'Push changes to gist',
         type: [],
         path: [],
         extension: [],
         pattern: ['^browser/gists/([0-9]|[a-z])*$']
       }, {
+        id: 'run',
         name: 'Run',
         type: [],
         path: [],
@@ -614,6 +620,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
+  const emitContextMenuEvent = (id: string, path: string) => {
+    plugin.emit(id, path)
+  }
+
   const handleHideModal = () => {
     setState(prevState => {
       return { ...prevState, modalOptions: { ...state.modalOptions, hide: true } }
@@ -850,6 +860,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               deletePath={deletePath}
               renamePath={editModeOn}
               publishToGist={publishToGist}
+              emit={emitContextMenuEvent}
               pageX={state.focusContext.x}
               pageY={state.focusContext.y}
               path={file.path}
@@ -886,6 +897,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               deletePath={deletePath}
               renamePath={editModeOn}
               runScript={runScript}
+              emit={emitContextMenuEvent}
               pageX={state.focusContext.x}
               pageY={state.focusContext.y}
               path={file.path}

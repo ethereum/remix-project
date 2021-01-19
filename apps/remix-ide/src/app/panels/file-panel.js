@@ -108,11 +108,11 @@ module.exports = class Filepanel extends ViewPlugin {
    * @param item { name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
    * @param callback (...args) => void
    */
-  registerContextMenuItem (item, callback) {
-    if (!item.name || !callback) return console.error('menu name and callback is mandatory')
-    if (!item.type && !item.path && !item.extension && !item.pattern) return console.error('invalid file matching criteria provided')
+  registerContextMenuItem (item) {
+    if (!item) throw new Error('Invalid register context menu argument')
+    if (!item.name || !item.id) throw new Error('Item name and id is mandatory')
+    if (!item.type && !item.path && !item.extension && !item.pattern) throw new Error('Invalid file matching criteria provided')
 
-    item.action = callback
     this.registeredMenuItems = [...this.registeredMenuItems, item]
     this.renderComponent()
   }
