@@ -88,19 +88,19 @@ commander
                 log.error(`No compiler found in releases with version ${compVersion}`)
                 process.exit()
             } else {
-                log.info(`Compiler version set to ${compVersion}. Latest version is ${latestRelease}`)
                 compilerConfig.currentCompilerUrl = compString.replace('soljson-', '').replace('.js', '')
+                log.info(`Compiler version set to ${compVersion}. Latest version is ${latestRelease}`)
             }
         }
 
         if (commander.evm) {
             compilerConfig.evmVersion = commander.evm
-            log.info('EVM set to ' + compilerConfig.evmVersion)
+            log.info(`EVM set to ${compilerConfig.evmVersion}`)
         }
 
         if (commander.optimize) {
                 compilerConfig.optimize = commander.optimize
-                log.info('compiler optimization set to ' + compilerConfig.optimize)
+                log.info(`Optimization is ${compilerConfig.optimize ? 'enabled' : 'disabled'}`)
         }
 
         const web3 = new Web3()
