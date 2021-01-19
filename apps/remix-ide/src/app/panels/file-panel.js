@@ -34,7 +34,7 @@ var canUpload = window.File || window.FileReader || window.FileList || window.Bl
 const profile = {
   name: 'fileExplorers',
   displayName: 'File explorers',
-  methods: [],
+  methods: ['registerContextMenuItem'],
   events: [],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
@@ -100,6 +100,15 @@ module.exports = class Filepanel extends ViewPlugin {
 
   render () {
     return this.el
+  }
+
+  /**
+   *
+   * @param { name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
+   */
+  registerContextMenuItem (action, callback) {
+    if (!action.name || !callback) return
+
   }
 
   renderComponent () {
