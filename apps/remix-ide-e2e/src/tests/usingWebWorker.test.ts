@@ -28,7 +28,7 @@ module.exports = {
     browser
     .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
     .clickLaunchIcon('fileExplorers')
-    .addFile('browser/basic.sol', sources[0]['browser/basic.sol'])
+    .addFile('basic.sol', sources[0]['browser/basic.sol'])
     .clickLaunchIcon('solidity')
     .execute(function() {
       const elem = document.getElementById('nightlies') as HTMLInputElement

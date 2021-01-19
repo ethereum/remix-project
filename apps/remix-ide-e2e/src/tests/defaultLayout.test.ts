@@ -20,10 +20,10 @@ module.exports = {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
     .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
     .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-    .waitForElementVisible('li[key="browser/contracts"]')
-    .waitForElementVisible('li[key="browser/scripts"]')
-    .waitForElementVisible('li[key="browser/tests"]')
-    .waitForElementVisible('li[key="browser/README.txt"]')
+    .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/contracts"]')
+    .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/scripts"]')
+    .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/tests"]')
+    .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/README.txt"]')
   },
 
   'Loads Main View': function (browser: NightwatchBrowser) {
@@ -61,17 +61,17 @@ module.exports = {
   'Toggles File Explorer Browser': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-    .assert.visible('ul[key="browser"]')
-    .click('div[data-id="treeViewTogglebrowser"]')
-    .assert.hidden('ul[key="browser"]')
-    .click('div[data-id="treeViewTogglebrowser"]')
-    .assert.visible('ul[key="browser"]')
+    .waitForElementPresent('[data-id="treeViewLitreeViewItembrowser/contracts"]')
+    .click('[data-path="browser"]')
+    .waitForElementNotPresent('[data-id="treeViewLitreeViewItembrowser/contracts"]')
+    .click('[data-path="browser"]')
+    .waitForElementPresent('[data-id="treeViewLitreeViewItembrowser/contracts"]')
   },
 
   'Switch Tabs using tabs icon': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-    .click('*[data-id="treeViewTogglebrowser/contracts"]')
+    .click('[data-id="treeViewLitreeViewItembrowser/contracts"]')
     .openFile('browser/contracts/3_Ballot.sol')
     .assert.containsText('div[title="browser/contracts/3_Ballot.sol"]', '3_Ballot.sol')
     .click('span[class^=dropdownCaret]')
