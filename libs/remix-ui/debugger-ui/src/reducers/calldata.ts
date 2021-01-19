@@ -4,58 +4,58 @@ interface Action {
 }
 
 export const initialState = {
-    calldata: {},
-    isRequesting: false,
-    isSuccessful: false,
-    hasError: null
+  calldata: {},
+  isRequesting: false,
+  isSuccessful: false,
+  hasError: null
 }
 
 export const reducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case 'FETCH_CALLDATA_REQUEST':
       return {
-          ...state,
-          isRequesting: true,
-          isSuccessful: false,
-          hasError: null
-      };
+        ...state,
+        isRequesting: true,
+        isSuccessful: false,
+        hasError: null
+      }
     case 'FETCH_CALLDATA_SUCCESS':
       return {
-          calldata: action.payload,
-          isRequesting: false,
-          isSuccessful: true,
-          hasError: null
-      };
+        calldata: action.payload,
+        isRequesting: false,
+        isSuccessful: true,
+        hasError: null
+      }
     case 'FETCH_CALLDATA_ERROR':
-        return {
-            ...state,
-            isRequesting: false,
-            isSuccessful: false,
-            hasError: action.payload
-        };
+      return {
+        ...state,
+        isRequesting: false,
+        isSuccessful: false,
+        hasError: action.payload
+      }
     case 'UPDATE_CALLDATA_REQUEST':
       return {
-          ...state,
-          isRequesting: true,
-          isSuccessful: false,
-          hasError: null
-      };
+        ...state,
+        isRequesting: true,
+        isSuccessful: false,
+        hasError: null
+      }
     case 'UPDATE_CALLDATA_SUCCESS':
       return {
-          calldata: mergeLocals(action.payload, state.calldata),
-          isRequesting: false,
-          isSuccessful: true,
-          hasError: null
-      };
+        calldata: mergeLocals(action.payload, state.calldata),
+        isRequesting: false,
+        isSuccessful: true,
+        hasError: null
+      }
     case 'UPDATE_CALLDATA_ERROR':
-        return {
-            ...state,
-            isRequesting: false,
-            isSuccessful: false,
-            hasError: action.payload
-        };
+      return {
+        ...state,
+        isRequesting: false,
+        isSuccessful: false,
+        hasError: action.payload
+      }
     default:
-      throw new Error();
+      throw new Error()
   }
 }
 

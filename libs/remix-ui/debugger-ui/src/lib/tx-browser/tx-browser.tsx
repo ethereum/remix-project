@@ -63,7 +63,7 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
             title={debugging ? 'Stop debugging' : 'Start debugging'}
             onClick={handleSubmit}
             data-id="debuggerTransactionStartButton"
-            disabled={!state.txNumber ? true : false }
+            disabled={!state.txNumber }
           >
             { debugging ? 'Stop' : 'Start' } debugging
           </button>
