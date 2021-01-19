@@ -115,6 +115,13 @@ module.exports = class RemixDProvider {
     })
   }
 
+  async createDir (path, cb) {
+    if (!this._isReady) return cb && cb('provider not ready')
+    const unprefixedpath = this.removePrefix(path)
+
+    return this._appManager.call('remixd', 'createDir', { path: unprefixedpath })
+  }
+
   isReadOnly (path) {
     return this._readOnlyMode || this._readOnlyFiles[path] === 1
   }

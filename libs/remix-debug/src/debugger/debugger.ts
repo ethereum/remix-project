@@ -37,7 +37,7 @@ export class Debugger {
       locationToRowConverter: async (sourceLocation) => {
         const compilationResult = await this.compilationResult()
         if (!compilationResult) return { start: null, end: null }
-        return this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationResult.source.sources, compilationResult.data.sources)
+        return await this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationResult.source.sources, compilationResult.data.sources)
       }
     })
 
@@ -70,7 +70,7 @@ export class Debugger {
       const compilationResultForAddress = await this.compilationResult(address)
       if (!compilationResultForAddress) return
 
-      this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts).then((rawLocation) => {
+      this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts).then(async (rawLocation) => {
         if (compilationResultForAddress && compilationResultForAddress.data) {
           const generatedSources = this.debugger.callTree.sourceLocationTracker.getGeneratedSourcesFromAddress(address)
           const astSources = Object.assign({}, compilationResultForAddress.data.sources)
@@ -81,7 +81,7 @@ export class Debugger {
               sources[genSource.name] = { content: genSource.contents }
             }
           }
-          var lineColumnPos = this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
+          var lineColumnPos = await this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
           this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address])
         } else {
           this.event.trigger('newSourceLocation', [null])

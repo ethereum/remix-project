@@ -194,7 +194,7 @@ export class TabProxy extends Plugin {
     }
 
     this._view.filetabs.addTab({
-      id: name,
+      id: name.split(' ').join(''),
       title,
       icon,
       tooltip: name

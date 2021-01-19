@@ -1,13 +1,22 @@
 export interface TreeViewProps {
     children?: React.ReactNode,
-    id: string
+    id?: string
 }
 
 export interface TreeViewItemProps {
     children?: React.ReactNode,
-    id: string,
+    id?: string,
     label: string | number | React.ReactNode,
     expand?: boolean,
-    onClick?: VoidFunction,
-    className?: string
+    onClick?: (...args: any) => void,
+    onInput?: (...args: any) => void,
+    className?: string,
+    iconX?: string,
+    iconY?: string,
+    icon?: string,
+    labelClass?: string,
+    controlBehaviour?: boolean
+    innerRef?: any,
+    onContextMenu?: (...args: any) => void,
+    onBlur?: (...args: any) => void
 }
