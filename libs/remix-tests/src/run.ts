@@ -99,8 +99,8 @@ commander
         }
 
         if (commander.optimize) {
-                compilerConfig.optimize = commander.optimize
-                log.info(`Optimization is ${compilerConfig.optimize ? 'enabled' : 'disabled'}`)
+            compilerConfig.optimize = commander.optimize
+            log.info(`Optimization is ${compilerConfig.optimize ? 'enabled' : 'disabled'}`)
         }
 
         const web3 = new Web3()
