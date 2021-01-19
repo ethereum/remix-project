@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import CodeListView from './code-list-view'
-import FunctionPanel from './function-panel'
-import StepDetail from './step-detail'
-import SolidityState from './solidity-state'
-import SolidityLocals from './solidity-locals'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
+import CodeListView from './code-list-view' // eslint-disable-line
+import FunctionPanel from './function-panel' // eslint-disable-line
+import StepDetail from './step-detail' // eslint-disable-line
+import SolidityState from './solidity-state' // eslint-disable-line
+import SolidityLocals from './solidity-locals' // eslint-disable-line
 
 export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) => {
   const [functionPanel, setFunctionPanel] = useState(null)
