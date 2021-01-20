@@ -16,7 +16,7 @@ import './css/file-explorer.css'
 const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { filesProvider, name, registry, plugin } = props
+  const { filesProvider, name, registry, plugin, focusRoot } = props
   const [state, setState] = useState({
     focusElement: [{
       key: name,
@@ -156,6 +156,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
     filesProvider.event.register('fileRenamed', fileRenamed)
   }, [state.files])
 
+  useEffect(() => {
+    if (focusRoot) {
+      setState(prevState => {
+        return { ...prevState, focusElement: [{ key: name, type: 'folder' }] }
+      })
+      plugin.resetFocus(false)
+    }
+  }, [focusRoot])
+
   const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
     if (!isChild && (state.focusEdit.element === 'browser/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === 'browser/blank') === -1)) {
       dir = state.focusEdit.type === 'file' ? [...dir, {
@@ -287,7 +296,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
     const isDir = state.fileManager.isDirectory(path)
 
-    modal('Delete file', `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, {
+    modal(`Delete ${isDir ? 'folder' : 'file'}`, `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, {
       label: 'Ok',
       fn: async () => {
         try {
@@ -295,7 +304,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
           await fileManager.remove(path)
         } catch (e) {
-          toast(`Failed to remove file ${path}.`)
+          toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${path}.`)
         }
       }
     }, {
@@ -684,6 +693,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const editModeOff = async (content: string) => {
+    if (typeof content === 'string') content = content.trim()
     const parentFolder = extractParentFromKey(state.focusEdit.element)
 
     if (!content || (content.trim() === '')) {
@@ -827,7 +837,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
               createNewFolder={handleNewFolderInput}
               deletePath={deletePath}
               renamePath={editModeOn}
-              extractParentFromKey={extractParentFromKey}
               publishToGist={publishToGist}
               pageX={state.focusContext.x}
               pageY={state.focusContext.y}
