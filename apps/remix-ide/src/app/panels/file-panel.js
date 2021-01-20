@@ -34,7 +34,7 @@ var canUpload = window.File || window.FileReader || window.FileList || window.Bl
 const profile = {
   name: 'fileExplorers',
   displayName: 'File explorers',
-  methods: ['registerContextMenuItem'],
+  methods: [],
   events: [],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
