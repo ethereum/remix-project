@@ -66,6 +66,7 @@ module.exports = class Filepanel extends ViewPlugin {
       }
     }
     this.reset = false
+    this.registeredMenuItems = []
     this.el = yo`
       <div id="fileExplorerView">
       </div>
@@ -102,6 +103,20 @@ module.exports = class Filepanel extends ViewPlugin {
     return this.el
   }
 
+  /**
+   *
+   * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
+   * @param callback (...args) => void
+   */
+  registerContextMenuItem (item) {
+    if (!item) throw new Error('Invalid register context menu argument')
+    if (!item.name || !item.id) throw new Error('Item name and id is mandatory')
+    if (!item.type && !item.path && !item.extension && !item.pattern) throw new Error('Invalid file matching criteria provided')
+
+    this.registeredMenuItems = [...this.registeredMenuItems, item]
+    this.renderComponent()
+  }
+
   renderComponent () {
     ReactDOM.render(
       <div className='remixui_container'>
@@ -116,6 +131,7 @@ module.exports = class Filepanel extends ViewPlugin {
                   menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
                   plugin={this}
                   focusRoot={this.reset}
+                  contextMenuItems={this.registeredMenuItems}
                 />
               </div>
               <div className='pl-2 filesystemexplorer remixui_treeview'>
@@ -127,6 +143,7 @@ module.exports = class Filepanel extends ViewPlugin {
                     menuItems={['createNewFile', 'createNewFolder']}
                     plugin={this}
                     focusRoot={this.reset}
+                    contextMenuItems={this.registeredMenuItems}
                   />
                 }
               </div>
