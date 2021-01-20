@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 
 export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
   const [state, setState] = useState({
@@ -25,16 +25,16 @@ export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
 
   return (
     <div>
-        <input id='slider'
-            data-id="slider"
-            className='w-100 my-0'
-            type='range'
-            min={0}
-            max={traceLength ? traceLength - 1 : 0}
-            value={state.currentValue}
-            onChange={handleChange}
-            disabled={traceLength ? traceLength === 0 : true}
-        />
+      <input id='slider'
+        data-id="slider"
+        className='w-100 my-0'
+        type='range'
+        min={0}
+        max={traceLength ? traceLength - 1 : 0}
+        value={state.currentValue}
+        onChange={handleChange}
+        disabled={traceLength ? traceLength === 0 : true}
+      />
     </div>
   )
 }
