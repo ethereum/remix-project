@@ -20,7 +20,7 @@ The `gh-pages` branch has always the latest stable build of Remix. It also conta
 
 Note: It contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.
 
-
+do not merge
 ## INSTALLATION:
 
 Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/installing-node), then
