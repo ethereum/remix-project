@@ -2,8 +2,10 @@ name: Rebase Pull Requests
 on:
   push:
     branches: [master]
+  workflow_dispatch:
+  
 jobs:
   rebase:
     runs-on: ubuntu-latest
     steps:
-      - uses: linhbn123/rebase-pull-requests@v1.0.1
+      - uses: yann300/rebase-pull-requests@v1.0.16

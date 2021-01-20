@@ -1,7 +1,7 @@
 import async from 'async'
 import fs from './fileSystem'
 import { runTest } from './testRunner'
-import { TestResultInterface, ResultsInterface, compilationInterface, ASTInterface, Options, AstNode } from './types'
+import { TestResultInterface, ResultsInterface, CompilerConfiguration, compilationInterface, ASTInterface, Options, AstNode } from './types'
 import colors from 'colors'
 import Web3 from 'web3';
 
@@ -18,8 +18,9 @@ import { deployAll } from './deployer'
  */
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, finalCallback: any = () => {}, opts?: Options) {
+export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, compilerConfig: CompilerConfiguration, finalCallback: any = () => {}, opts?: Options) {
     opts = opts || {}
+    compilerConfig = compilerConfig || {} as CompilerConfiguration
     const sourceASTs: any = {}
     const { Signale } = require('signale')
     // signale configuration
@@ -53,7 +54,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
             })
         },
         function compile(next) {
-            compileFileOrFiles(filepath, isDirectory, { accounts }, next)
+            compileFileOrFiles(filepath, isDirectory, { accounts }, compilerConfig, next)
         },
         function deployAllContracts (compilationResult: compilationInterface, asts: ASTInterface, next) {
             // Extract AST of test contract file source
