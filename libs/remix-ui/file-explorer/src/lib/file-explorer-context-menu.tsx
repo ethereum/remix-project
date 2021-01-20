@@ -4,7 +4,7 @@ import { FileExplorerContextMenuProps } from './types'
 import './css/file-explorer-context-menu.css'
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, publishToGist, runScript, pageX, pageY, path, type, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, publishToGist, runScript, emit, pageX, pageY, path, type, ...otherProps } = props
   const contextMenuRef = useRef(null)
 
   useEffect(() => {
@@ -24,10 +24,10 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
 
   const menu = () => {
     return actions.filter(item => {
-      if (item.type.findIndex(name => name === type) !== -1) return true
-      else if (item.path.findIndex(key => key === path) !== -1) return true
-      else if (item.extension.findIndex(ext => path.endsWith(ext)) !== -1) return true
-      else if (item.pattern.filter(value => path.match(new RegExp(value))).length > 0) return true
+      if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === type) !== -1)) return true
+      else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === path) !== -1)) return true
+      else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => path.endsWith(ext)) !== -1)) return true
+      else if (item.pattern && Array.isArray(item.pattern) && (item.pattern.filter(value => path.match(new RegExp(value))).length > 0)) return true
       else return false
     }).map((item, index) => {
       return <li
@@ -56,6 +56,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               runScript(path)
               break
             default:
+              emit && emit(item.id, path)
               break
           }
           hideContextMenu()
