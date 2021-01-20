@@ -41,7 +41,7 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "lint:libs": "nx run-many --target=lint --projects=remixd,remix-ui-tree-view,remix-ui-modal-dialog,remix-ui-toaster,remix-ui-file-explorer",
+    "lint:libs": "nx run-many --target=lint --projects=remixd,remix-ui-tree-view,remix-ui-modal-dialog,remix-ui-toaster,remix-ui-file-explorer,remix-ui-debugger-ui",
     "build:libs": "nx run-many --target=build --parallel=false --with-deps=true --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd",
     "test:libs": "nx run-many --target=test --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd",
     "publish:libs": "npm run build:libs & lerna publish --skip-git & npm run bumpVersion:libs",
@@ -82,6 +82,8 @@
     "nightwatch_local_fileManager": "npm run build:e2e & nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/fileManager_api.test.js --env=chrome",
     "nightwatch_local_runAndDeploy": "npm run build:e2e & nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/runAndDeploy.js --env=chrome-runAndDeploy",
     "nightwatch_local_url": "npm run build:e2e & nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/url.test.js --env=chrome",
+    "nightwatch_local_verticalIconscontextmenu": "npm run build:e2e & nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/verticalIconsPanel.test.js --env=chrome",
+
     "onchange": "onchange apps/remix-ide/build/app.js -- npm-run-all lint",
     "remixd": "nx build remixd & nx serve remixd --folder=./apps/remix-ide/contracts --remixide=http://127.0.0.1:8080",
     "selenium": "selenium-standalone start",

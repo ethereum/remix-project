@@ -57,7 +57,7 @@ async function compileAndDeploy(filename: string, callback: Function) {
       })
     },
     function compile(next: Function): void {
-      compileFileOrFiles(filename, false, { accounts }, next)
+      compileFileOrFiles(filename, false, { accounts }, null, next)
     },
     function deployAllContracts(compilationResult: compilationInterface, asts, next: Function): void {
       for(const filename in asts) {

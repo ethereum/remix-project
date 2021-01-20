@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import Slider from '../slider/slider'
-import ButtonNavigator from '../button-navigator/button-navigator'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
+import Slider from '../slider/slider' // eslint-disable-line
+import ButtonNavigator from '../button-navigator/button-navigator' // eslint-disable-line
 
 export const StepManager = ({ stepManager: { jumpTo, traceLength, stepIntoBack, stepIntoForward, stepOverBack, stepOverForward, jumpOut, jumpNextBreakpoint, jumpPreviousBreakpoint, jumpToException, registerEvent } }) => {
   const [state, setState] = useState({
@@ -31,7 +31,7 @@ export const StepManager = ({ stepManager: { jumpTo, traceLength, stepIntoBack, 
   return (
     <div className="py-1">
       <Slider jumpTo={jumpTo} sliderValue={sliderValue} traceLength={traceLength} />
-      <ButtonNavigator 
+      <ButtonNavigator
         stepIntoBack={stepIntoBack}
         stepIntoForward={stepIntoForward}
         stepOverBack={stepOverBack}
