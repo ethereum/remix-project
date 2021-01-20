@@ -65,6 +65,7 @@ module.exports = class Filepanel extends ViewPlugin {
         this.renderComponent()
       }
     }
+    this.reset = false
     this.el = yo`
       <div id="fileExplorerView">
       </div>
@@ -92,6 +93,11 @@ module.exports = class Filepanel extends ViewPlugin {
     this.renderComponent()
   }
 
+  resetFocus (value) {
+    this.reset = value
+    this.renderComponent()
+  }
+
   render () {
     return this.el
   }
@@ -99,7 +105,7 @@ module.exports = class Filepanel extends ViewPlugin {
   renderComponent () {
     ReactDOM.render(
       <div className='remixui_container'>
-        <div className='remixui_fileexplorer'>
+        <div className='remixui_fileexplorer' onClick={() => this.resetFocus(true)}>
           <div className='remixui_fileExplorerTree'>
             <div>
               <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
@@ -109,6 +115,7 @@ module.exports = class Filepanel extends ViewPlugin {
                   filesProvider={this._deps.fileProviders.browser}
                   menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
                   plugin={this}
+                  focusRoot={this.reset}
                 />
               </div>
               <div className='pl-2 filesystemexplorer remixui_treeview'>
@@ -119,6 +126,7 @@ module.exports = class Filepanel extends ViewPlugin {
                     filesProvider={this._deps.fileProviders.localhost}
                     menuItems={['createNewFile', 'createNewFolder']}
                     plugin={this}
+                    focusRoot={this.reset}
                   />
                 }
               </div>
