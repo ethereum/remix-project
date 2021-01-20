@@ -8,4 +8,4 @@ jobs:
   rebase:
     runs-on: ubuntu-latest
     steps:
-      - uses: yann300/rebase-pull-requests@v1.0.13
+      - uses: yann300/rebase-pull-requests@v1.0.14
