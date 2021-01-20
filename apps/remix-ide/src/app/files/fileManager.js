@@ -424,15 +424,14 @@ class FileManager extends Plugin {
   }
 
   fileRemovedEvent (path) {
-    // TODO: Only keep `this.emit` (issue#2210)
-    this.emit('fileRemoved', path)
-    this.events.emit('fileRemoved', path)
-    if (!this.openedFiles[path]) return
     if (path === this._deps.config.get('currentFile')) {
       this._deps.config.set('currentFile', '')
     }
     this.editor.discard(path)
     delete this.openedFiles[path]
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('fileRemoved', path)
+    this.events.emit('fileRemoved', path)
     this.openFile()
   }
 
