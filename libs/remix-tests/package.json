@@ -37,7 +37,7 @@
   "dependencies": {
     "@remix-project/remix-lib": "^0.4.31",
     "@remix-project/remix-simulator": "^0.1.9-beta.8",
-    "@remix-project/remix-solidity": "^0.3.32",
+    "@remix-project/remix-solidity": "file:../remix-solidity",
     "ansi-gray": "^0.1.1",
     "async": "^2.6.0",
     "change-case": "^3.0.1",
