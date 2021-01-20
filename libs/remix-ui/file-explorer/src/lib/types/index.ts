@@ -4,7 +4,8 @@ export interface FileExplorerProps {
     registry: any,
     filesProvider: any,
     menuItems?: string[],
-    plugin: any
+    plugin: any,
+    focusRoot: boolean
 }
 
 export interface File {
