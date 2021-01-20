@@ -712,6 +712,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
     } else {
       if (state.focusEdit.lastEdit === content) {
+        editRef.current.textContent = content
         return setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
