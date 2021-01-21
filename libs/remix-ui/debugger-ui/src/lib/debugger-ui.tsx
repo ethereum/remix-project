@@ -203,7 +203,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     }).catch((error) => {
       if (JSON.stringify(error) !== '{}') {
         let message = 'Error: ' + JSON.stringify(error)
-        message = message.split(`\\"`).join(`'`)
+        message = message.split('\\"').join('\'')
         setState(prevState => {
           return {
             ...prevState,

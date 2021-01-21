@@ -63,5 +63,5 @@ export interface IDebuggerApi {
     getFile: (path: string) => Promise<string>
     setFile: (path: string, content: string) => Promise<void>
     getDebugWeb3: () => any // returns an instance of web3.js
-    showMessage (title: string, body: string): void
-} 
+    showMessage (title: string, message: string): void
+}
