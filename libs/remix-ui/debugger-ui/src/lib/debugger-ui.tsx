@@ -8,6 +8,7 @@ import { DebuggerUIProps } from './idebugger-api' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 /* eslint-disable-next-line */
 import './debugger-ui.css'
+const helper = require('../../../../../apps/remix-ide/src/lib/helper')
 
 export const DebuggerUI = (props: DebuggerUIProps) => {
   const debuggerModule = props.debuggerAPI
@@ -26,7 +27,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       debugWithGeneratedSources: false
     },
     toastMessage: '',
-    currentDebugTransaction: '',
     validationError: '',
     txNumberIsEmpty: true
   })
@@ -144,7 +144,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           vmDebuggerHead: false
         },
         debugging: false,
-        currentDebugTransaction: ''
+        txNumber: ''
       }
     })
   }
@@ -154,9 +154,19 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     setState(prevState => {
       return {
         ...prevState,
-        currentDebugTransaction: txNumber
+        txNumber: txNumber
       }
     })
+    if (!helper.isValidHash(txNumber)) {
+      setState(prevState => {
+        return {
+          ...prevState,
+          validationError: 'Invalid transaction hash.'
+        }
+      })
+      return
+    }
+
     const web3 = await debuggerModule.getDebugWeb3()
     let currentReceipt
     try {
@@ -186,6 +196,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       },
       debugWithGeneratedSources: state.opt.debugWithGeneratedSources
     })
+
     debuggerInstance.debug(blockNumber, txNumber, tx, () => {
       listenToEvents(debuggerInstance, currentReceipt)
       setState(prevState => {
@@ -210,7 +221,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             validationError: message
           }
         })
-        console.log(message)
       }
       unLoad()
     })

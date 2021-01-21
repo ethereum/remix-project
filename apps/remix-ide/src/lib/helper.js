@@ -64,6 +64,10 @@ module.exports = {
   isNumeric (value) {
     return /^\+?(0|[1-9]\d*)$/.test(value)
   },
+  isValidHash (hash) { // 0x prefixed, hexadecimal, 64digit
+    const hexValue = hash.slice(2, hash.length)
+    return this.is0XPrefixed(hash) && /^[0-9a-fA-F]{64}$/.test(hexValue)
+  },
   find: find
 }
 
