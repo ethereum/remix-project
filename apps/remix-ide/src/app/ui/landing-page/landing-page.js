@@ -207,8 +207,8 @@ export class LandingPage extends ViewPlugin {
     const invertNum = (themeQuality === 'dark') ? 1 : 0
     if (this.solEnv.getElementsByTagName('img')[0]) this.solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     if (this.debuggerEnv.getElementsByTagName('img')[0]) this.debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    if (this.mythXEnv.getElementsByTagName('img')[0]) this.mythXEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     if (this.learnEthEnv.getElementsByTagName('img')[0]) this.learnEthEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    if (this.solhintEnv.getElementsByTagName('img')[0]) this.solhintEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     if (this.sourcifyEnv.getElementsByTagName('img')[0]) this.sourcifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     if (this.moreEnv.getElementsByTagName('img')[0]) this.moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     if (this.websiteIcon) this.websiteIcon.style.filter = `invert(${invertNum})`
@@ -263,13 +263,13 @@ export class LandingPage extends ViewPlugin {
       await this.appManager.activatePlugin('debugger')
       this.verticalIcons.select('debugger')
     }
-    const startMythX = async () => {
-      await this.appManager.activatePlugin(['solidity', 'mythx'])
-      this.verticalIcons.select('mythx')
-    }
     const startLearnEth = async () => {
-      await this.appManager.activatePlugin(['solidity', 'LearnEth'])
+      await this.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
       this.verticalIcons.select('LearnEth')
+    }
+    const startSolhint = async () => {
+      await this.appManager.activatePlugin(['solidity', 'solhint'])
+      this.verticalIcons.select('solhint')
     }
     const startSourceVerify = async () => {
       await this.appManager.activatePlugin(['solidity', 'source-verification'])
@@ -297,6 +297,7 @@ export class LandingPage extends ViewPlugin {
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('solidityLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('debuggerLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('learnEthLogo'))
+      globalRegistry.get('themeModule').api.fixInvert(document.getElementById('solhintLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('workshopLogo'))
       globalRegistry.get('themeModule').api.fixInvert(document.getElementById('moreLogo'))
     })
@@ -318,8 +319,8 @@ export class LandingPage extends ViewPlugin {
     this.solEnv = createLargeButton('assets/img/solidityLogo.webp', 'solidityLogo', 'Solidity', startSolidity)
     // Featured
     this.debuggerEnv = createLargeButton('assets/img/debuggerLogo.webp', 'debuggerLogo', 'Debugger', startDebugger)
-    this.mythXEnv = createLargeButton('assets/img/mythxLogo.webp', 'mythxLogo', 'MythX', startMythX)
     this.learnEthEnv = createLargeButton('assets/img/learnEthLogo.webp', 'learnEthLogo', 'LearnEth', startLearnEth)
+    this.solhintEnv = createLargeButton('assets/img/solhintLogo.png', 'solhintLogo', 'solhint', startSolhint)
     this.sourcifyEnv = createLargeButton('assets/img/sourcifyLogo.webp', 'sourcifyLogo', 'Sourcify', startSourceVerify)
     this.moreEnv = createLargeButton('assets/img/moreLogo.webp', 'moreLogo', 'More', startPluginManager)
     this.websiteIcon = yo`<img id='remixHhomeWebsite' class="mr-1 ${css.image}" src="${profile.icon}"></img>`
@@ -328,8 +329,8 @@ export class LandingPage extends ViewPlugin {
     const invertNum = (themeQuality === 'dark') ? 1 : 0
     this.solEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     this.debuggerEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
-    this.mythXEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     this.learnEthEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
+    this.solhintEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     this.sourcifyEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     this.moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     this.websiteIcon.style.filter = `invert(${invertNum})`
@@ -361,7 +362,7 @@ export class LandingPage extends ViewPlugin {
                   <div class="d-flex flex-row pt-2">
                     ${this.solEnv}
                     ${this.learnEthEnv}
-                    ${this.mythXEnv}
+                    ${this.solhintEnv}
                     ${this.sourcifyEnv}
                     ${this.debuggerEnv}
                     ${this.moreEnv}
