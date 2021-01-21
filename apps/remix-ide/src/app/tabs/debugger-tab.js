@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom'
 import modalDialogCustom from '../ui/modal-dialog-custom'
 const yo = require('yo-yo')
 const css = require('./styles/debugger-tab-styles')
-const bleach = require('bleach');
+import bleach from '../../lib/bleach'
 
 const profile = {
   name: 'debugger',
