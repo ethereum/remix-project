@@ -21,7 +21,7 @@ To know more about Remix IDE `Solidity Unit Testing Plugin`, visit [Remix IDE of
 To confirm installation, run:
 ```
 $ remix-tests --version
-0.1.34
+0.1.36
 ```
 Version should be same as on NPM.
 
@@ -61,6 +61,28 @@ Note that `TestsAccounts` is filled with all the accounts available in `web3.eth
 
 #### As command line interface
 
+One can see all available option for remix-tests using `--help` command.
+
+```
+$ remix-tests --help           
+Usage: remix-tests [options] [command]
+
+Options:
+  -V, --version            output the version number
+  -c, --compiler <string>  set compiler version (e.g: 0.6.1, 0.7.1 etc)
+  -e, --evm <string>       set EVM version (e.g: petersburg, istanbul etc)
+  -o, --optimize <bool>    enable/disable optimization
+  -r, --runs <number>      set runs (e.g: 150, 250 etc)
+  -v, --verbose <level>    set verbosity level (0 to 5)
+  -h, --help               output usage information
+
+Commands:
+  version                  output the version number
+  help                     output usage information
+```
+
+Along with the shown options, you need to provide a file or directory path.
+
 * To run all test files inside `examples` directory
 ```
 $ remix-tests examples/
@@ -76,7 +98,7 @@ $ remix-tests examples/simple_storage_test.sol
 Consider for a simple storage contract named `simple_storage.sol`:
 
 ```Javascript
-pragma solidity >=0.4.22 <0.7.0;
+pragma solidity >=0.4.22 <=0.8.0;
 
 contract SimpleStorage {
   uint public storedData;
@@ -99,14 +121,14 @@ test file `simple_storage_test.sol` can be as:
 
 
 ```Javascript
-pragma solidity >=0.4.22 <0.7.0;
+pragma solidity >=0.4.22 <=0.8.0;
 import "remix_tests.sol"; // injected by remix-tests
 import "./simple_storage.sol";
 
 contract MyTest {
   SimpleStorage foo;
 
-  function beforeEach() public {
+  function beforeAll() public {
     foo = new SimpleStorage();
   }
 
@@ -114,13 +136,17 @@ contract MyTest {
     return Assert.equal(foo.get(), 100, "initial value is not correct");
   }
 
-  function valueIsSet200() public returns (bool) {
-    foo.set(200);
-    return Assert.equal(foo.get(), 200, "value is not 200");
+  function initialValueShouldNotBe200() public returns (bool) {
+    return Assert.notEqual(foo.get(), 200, "initial value is not correct");
   }
 
-  function valueIsNotSet200() public returns (bool) {
-    return Assert.notEqual(foo.get(), 200, "value is 200");
+  function shouldTriggerOneFail() public {
+    Assert.equal(uint(1), uint(2), "uint test 1 fails");
+    Assert.notEqual(uint(1), uint(2), "uint test 2 passes");
+  }
+
+  function shouldTriggerOnePass() public {
+    Assert.equal(uint(1), uint(1), "uint test 3 passes");
   }
 }
 ```
@@ -128,53 +154,58 @@ contract MyTest {
 Running `simple_storage_test.sol` file will output as:
 
 ```
+$ remix-tests simple_storage_test.sol
 
 	👁	:: Running remix-tests - Unit testing for solidity ::	👁
 
-[14:58:43] payload method is  eth_accounts
-[14:58:49] payload method is  eth_accounts
-[14:58:49] payload method is  eth_estimateGas
-[14:58:49] payload method is  eth_gasPrice
-[14:58:49] payload method is  eth_sendTransaction
-[14:58:49] payload method is  eth_getTransactionReceipt
-[14:58:49] payload method is  eth_getCode
 'creation of library remix_tests.sol:Assert pending...'
-[14:58:49] payload method is  eth_estimateGas
-[14:58:49] payload method is  eth_gasPrice
-[14:58:49] payload method is  eth_sendTransaction
-[14:58:49] payload method is  eth_getTransactionReceipt
-[14:58:49] payload method is  eth_getCode
-[14:58:49] payload method is  eth_estimateGas
-[14:58:49] payload method is  eth_gasPrice
-[14:58:49] payload method is  eth_sendTransaction
-[14:58:49] payload method is  eth_getTransactionReceipt
-[14:58:49] payload method is  eth_getCode
 
 	◼  MyTest
-[14:58:49] payload method is  eth_gasPrice
-[14:58:49] payload method is  eth_sendTransaction
-[14:58:50] payload method is  eth_getTransactionReceipt
-[14:58:50] payload method is  eth_gasPrice
-[14:58:50] payload method is  eth_sendTransaction
-[14:58:50] payload method is  eth_getTransactionReceipt
 	✓  Initial value should be100
-[14:58:50] payload method is  eth_gasPrice
-[14:58:50] payload method is  eth_sendTransaction
-[14:58:50] payload method is  eth_getTransactionReceipt
-[14:58:50] payload method is  eth_gasPrice
-[14:58:50] payload method is  eth_sendTransaction
-[14:58:50] payload method is  eth_getTransactionReceipt
-	✓  Value is set200
-[14:58:50] payload method is  eth_gasPrice
-[14:58:50] payload method is  eth_sendTransaction
-[14:58:50] payload method is  eth_getTransactionReceipt
-[14:58:50] payload method is  eth_gasPrice
-[14:58:50] payload method is  eth_sendTransaction
-[14:58:50] payload method is  eth_getTransactionReceipt
-	✓  Value is not set200
+	✓  Initial value should not be200
+	✘  Should trigger one fail
+	✓  Should trigger one pass
 
 
-3 passing (0s)
+3 passing (0.282s)
+1 failing
+
+  1) MyTest: Should trigger one fail
+
+	 error: uint test 1 fails
+	 expected value to be equal to: 2
+	 returned: 1
+```
+
+Most of the `remix-tests` options are there to define a custom compiler context. With an extended custom compiler context, execution of above test file will go as:
+
+```
+$ remix-tests --compiler 0.7.4 --evm istanbul --optimize true --runs 300 simple_storage_test.sol
+
+	👁	:: Running remix-tests - Unit testing for solidity ::	👁
+
+[14:03:18] info: Compiler version set to 0.7.4. Latest version is 0.8.0
+[14:03:18] info: EVM set to istanbul
+[14:03:18] info: Optimization is enabled
+[14:03:18] info: Runs set to 300
+Loading remote solc version v0.7.4+commit.3f05b770 ...
+'creation of library remix_tests.sol:Assert pending...'
+
+	◼  MyTest
+	✓  Initial value should be100
+	✓  Initial value should not be200
+	✘  Should trigger one fail
+	✓  Should trigger one pass
+
+
+3 passing (0.316s)
+1 failing
+
+  1) MyTest: Should trigger one fail
+
+	 error: uint test 1 fails
+	 expected value to be equal to: 2
+	 returned: 1
 ```
 
 :point_right: remix-test can also be used for continuous integration testing. See example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [Travis build](https://travis-ci.org/su-squares/ethereum-contract/builds/446186067) 
@@ -212,21 +243,25 @@ remixTests.runTestSources(contractSources: SrcIfc, versionUrl: string, usingWork
 ```
 <em>Params:-</em>
 1. `contractSources` - Contract sources
-2. `versionUrl` - URL of solc compiler to load
-3. `usingWorker` - Set `true` if compiler should be loaded using web-worker
-4. `testCallback(object)` - Called each time there is a test event. 3 possible type of objects:
+2. `compilerConfig` - Custom compiler configuration
+* `currentCompilerUrl: URL to load compiler from`
+* `evmVersion: EVM name`
+* `optimize: set true to enable optimizartion`
+* `usingWorker?: set true to load compiler using worker`
+* `runs: number of contract runs`
+3. `testCallback(object)` - Called each time there is a test event. 3 possible type of objects:
 * `{ type: 'contract', value: '<TestName>', filename: '<test_filename.sol>' }`
 * `{ type: 'testPass', value: '<name of testing function>', time: <time taken>, context: '<TestName>'}`
 * `{ type: 'testFailure', value: '<name of testing function>', time: <time taken>, context: '<TestName>', errMsg: '<message in the Assert>' }`
 
-5. `resultCallback(err, object)` -  Callback with test results
+4. `resultCallback(err, object)` -  Callback with test results
 * `passingNum` - number of passing tests
 * `failureNum` - number of failing tests
 * `timePassed` - time it took for all the tests to run (in seconds)
 
-6. `finalCallback(err)` - called when all tests finish running.
-7. `importCb(url, cb)` - Callback to resolve imported files
-8. `opts` - Custom options
+5. `finalCallback(err)` - called when all tests finish running.
+6. `importCb(url, cb)` - Callback to resolve imported files
+7. `opts` - Custom options
 
 For more details, see parameters' type definitions [here](src/types.ts).
 
