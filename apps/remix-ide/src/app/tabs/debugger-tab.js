@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom'
 import modalDialogCustom from '../ui/modal-dialog-custom'
 const yo = require('yo-yo')
 const css = require('./styles/debugger-tab-styles')
+const bleach = require('bleach');
 
 const profile = {
   name: 'debugger',
@@ -62,8 +63,12 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
     return this.el
   }
 
-  showMessage (title, body) {
-    modalDialogCustom.alert(title, body)
+  showMessage (title, message) {
+    try {
+      modalDialogCustom.alert(title, bleach.sanitize(message))
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   renderComponent () {
