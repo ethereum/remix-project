@@ -6,10 +6,10 @@ import type { CompilationResult } from '@remix-project/remix-solidity-ts'
 export const DebuggerApiMixin = (Base) => class extends Base {
   initDebuggerApi () {
     this.debugHash = null
-        
+
     const self = this
     this.web3Provider = {
-      sendAsync(payload, callback) {
+      sendAsync (payload, callback) {
         self.call('web3Provider', 'sendAsync', payload)
           .then(result => callback(null, result))
           .catch(e => callback(e))
