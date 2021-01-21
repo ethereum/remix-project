@@ -1,8 +1,8 @@
 # Automation
 
 ## Activated automations:
-
- - **Out of the box github automerge** will merge PR once everything is green. It is activable from a pull request page.
+ 
+ - **Out of the box, github automerge** will merge a PR once everything is green. It is activated from a pull request page.
  
    It won't automatically sync (merge or rebase) the branch with master.    
  
@@ -12,7 +12,7 @@
  
    It will automatically squash and merge to master once everything is green.
    
-   It is activable by adding the `autosquash` label. 
+   It is activated by adding the `autosquash` label. 
  
    For more [information](https://github.com/marketplace/actions/autosquash)
  
@@ -20,6 +20,6 @@
  
    It won't automatically merge to master (this can be done with the first automation).
    
-   It is activable by adding the `autorebase` label.
+   It is activated by adding the `autorebase` label.
  
    For more [information](https://github.com/marketplace/actions/rebase-pull-requests)
