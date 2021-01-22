@@ -63,8 +63,8 @@ class SourceHighlighters {
       for (const index in this.highlighters[highlighter]) {
         this.highlighters[highlighter][index].currentSourceLocation(null)
       }
-      this.highlightAllFrom(toStay)
     }
+    this.highlightAllFrom(toStay)
   }
 
   discardHighlightAt (line, filePath, from) {
