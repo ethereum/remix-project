@@ -143,8 +143,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           vmDebugger: false,
           vmDebuggerHead: false
         },
-        debugging: false,
-        txNumber: ''
+        debugging: false
       }
     })
   }
@@ -230,7 +229,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     setState(prevState => {
       return {
         ...prevState,
-        validationError: ''
+        validationError: '',
+        txNumber: txHash
       }
     })
     startDebugging(null, txHash, null)
