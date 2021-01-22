@@ -285,7 +285,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
         const createFile = await fileManager.writeFile(newName, '')
 
         if (!createFile) {
-          toast('Failed to create file ' + newName)
+          return toast('Failed to create file ' + newName)
+        } else {
+          await fileManager.open(newName)
+          setState(prevState => {
+            return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
+          })
         }
       }
     })
@@ -300,7 +305,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
       if (exists) return
       await fileManager.mkdir(dirName)
-      // addFolder(parentFolder, newFolderPath)
+      setState(prevState => {
+        return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
+      })
     } catch (e) {
       console.log('error: ', e)
       toast('Failed to create folder: ' + newFolderPath)
@@ -376,7 +383,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     setState(prevState => {
       const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
 
-      return { ...prevState, files, expandPath: uniquePaths, focusElement: [{ key: filePath, type: 'file' }] }
+      return { ...prevState, files, expandPath: uniquePaths }
     })
     if (filePath.includes('_test.sol')) {
       plugin.event.trigger('newTestFileCreated', [filePath])
@@ -393,7 +400,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     setState(prevState => {
       const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
 
-      return { ...prevState, files, expandPath: uniquePaths, focusElement: [{ key: folderPath, type: 'folder' }] }
+      return { ...prevState, files, expandPath: uniquePaths }
     })
   }
 
