@@ -67,7 +67,7 @@ module.exports = {
     .click('.ace_gutter-cell:nth-of-type(20)')
     .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
     .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-    .pause(2000)
+    .pause(5000)
     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n0')
     .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n0')
     .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
