@@ -6,8 +6,8 @@ import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import modalDialogCustom from '../ui/modal-dialog-custom'
+import * as bleach from '../../lib/bleach'
 const css = require('./styles/debugger-tab-styles')
-const bleach = require('../../lib/bleach')
 const yo = require('yo-yo')
 
 const profile = {
