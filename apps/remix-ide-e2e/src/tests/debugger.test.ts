@@ -67,7 +67,7 @@ module.exports = {
     .click('.ace_gutter-cell:nth-of-type(20)')
     .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
     .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-    .pause(5000)
+    .pause(2000)
     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n0')
     .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n0')
     .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
@@ -183,6 +183,7 @@ module.exports = {
     .getEditorValue((content) => {
       browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32) { revert(0, 0) }') != -1, 'current displayed content is not a generated source')
     })
+    .modalFooterOKClick()
     .click('*[data-id="debuggerTransactionStartButton"]')
   },
 
