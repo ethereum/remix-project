@@ -6,7 +6,7 @@ import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import modalDialogCustom from '../ui/modal-dialog-custom'
-import * as bleach from '../../lib/bleach'
+import * as remixBleach from '../../lib/remixBleach'
 const css = require('./styles/debugger-tab-styles')
 const yo = require('yo-yo')
 
@@ -65,7 +65,7 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
 
   showMessage (title, message) {
     try {
-      modalDialogCustom.alert(title, bleach.sanitize(message))
+      modalDialogCustom.alert(title, remixBleach.sanitize(message))
     } catch (e) {
       console.log(e)
     }
