@@ -22,7 +22,7 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
     // .scrollAndClick('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items')
     .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', name)
     .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', browser.Keys.ENTER)
-    .pause(2000)
+    .pause(5000)
     .waitForElementVisible(`li[data-id="treeViewLitreeViewItembrowser/${name}"]`)
     .click(`li[data-id="treeViewLitreeViewItembrowser/${name}"]`)
     .setEditorValue(content.content)

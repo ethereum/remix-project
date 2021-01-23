@@ -18,6 +18,7 @@ function testContracts (browser: NightwatchBrowser, fileName: string, contractCo
     .clickLaunchIcon('solidity')
     .addFile(fileName, contractCode)
     .pause(1000)
+    .pause(50000)
     .verifyContracts(compiledContractNames)
     .perform(() => {
       callback()
