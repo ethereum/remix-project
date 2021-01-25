@@ -229,6 +229,7 @@ export class VerticalIcons extends Plugin {
       actions.Deactivate = () => {
         // this.call('manager', 'deactivatePlugin', name)
         this.appManager.deactivatePlugin(name)
+        this.select('fileExplorers')
       }
     }
     const links = {}
