@@ -183,7 +183,6 @@ module.exports = {
     .getEditorValue((content) => {
       browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32) { revert(0, 0) }') != -1, 'current displayed content is not a generated source')
     })
-    .modalFooterOKClick()
     .click('*[data-id="debuggerTransactionStartButton"]')
   },
 
