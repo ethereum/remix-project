@@ -79,7 +79,7 @@ describe('testRunner', () => {
         it('should return contract content of given github path', () => {
           const expt: object = {
             cleanUrl: 'MathCody/solidity-examples/greeter/greeter.sol',
-            content: 'pragma solidity >=0.5.0 <0.6.0;\nimport \"../mortal/mortal.sol\";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}',
+            content: 'pragma solidity >=0.5.0 <0.6.0;\nimport \"../mortal/mortal.sol\";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
             type: 'github'
           }
           assert.deepEqual(results, expt)
