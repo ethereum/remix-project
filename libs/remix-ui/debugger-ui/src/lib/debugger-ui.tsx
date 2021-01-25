@@ -88,7 +88,6 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                 content = await debuggerModule.getFile(path)
               } catch (e) {
                 const message = 'Unable to fetch generated sources, the file probably doesn\'t exist yet.'
-                debuggerModule.showMessage('Debugging error', message)
                 console.log(message, ' ', e)
               }
               if (content !== source.contents) {
