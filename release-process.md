@@ -29,10 +29,13 @@ This document includes:
  - publish a release in github using the changelog
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
 
-## Remix IDE release Part 1. First push master to beta
+## Remix IDE release Part 1. First push master to beta. Feature Freeze
  - git co -b remix_beta origin/remix_beta
  - git reset --hard -master-commit-hash-
  - git push -f origin remix_beta
+ 
+## Testing phase
+## In case of fixing bugs push PR's also to beta to include in Release
  
 ## Remix IDE release Part 2. Bump the version in beta and release
 
