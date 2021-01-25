@@ -29,7 +29,7 @@ This document includes:
  - publish a release in github using the changelog
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
 
-## Remix IDE release from beta
+## Remix IDE release with beta
 
  - git fetch origin remix_beta
  - git checkout origin/remix_beta
@@ -37,6 +37,11 @@ This document includes:
  - update package.json version
  - remove package-lock.json version and generate a new one with `npm install`
  - merge PR to origin/remix_beta
+ 
+ - testing period. Please check all resently added features and bugfixes
+ - create PR's also to remix_beta in case of fixes in master that should go to release
+ - for release FROM beta
+ 
  - git fetch origin remix_beta
  - git checkout origin/remix_beta
  - git tag v(version-number)
