@@ -281,9 +281,13 @@ export class LandingPage extends ViewPlugin {
     }
 
     const createNewFile = () => {
-      const fileExplorer = globalRegistry.get('fileexplorer/browser').api
-      fileExplorer.createNewFile()
+      this.call('fileExplorers', 'createNewFile')
     }
+
+    const uploadFile = (target) => {
+      this.call('fileExplorers', 'uploadFile', target)
+    }
+
     const connectToLocalhost = () => {
       this.appManager.activatePlugin('remixd')
     }
@@ -382,8 +386,7 @@ export class LandingPage extends ViewPlugin {
                           <input title="open file" type="file" onchange="${
                             (event) => {
                               event.stopPropagation()
-                              const fileExplorer = globalRegistry.get('fileexplorer/browser').api
-                              fileExplorer.uploadFile(event)
+                              uploadFile(event.target)
                             }
                           }" multiple />
                         </label>
