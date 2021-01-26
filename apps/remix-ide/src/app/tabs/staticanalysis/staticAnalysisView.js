@@ -211,6 +211,9 @@ staticAnalysisView.prototype.checkModule = function (event) {
   }
 }
 staticAnalysisView.prototype.correctRunBtnDisabled = function () {
+  if (!this.view) {
+    return
+  }
   const selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
   if (this.lastCompilationResult && selected.length !== 0) {
     this.runBtn.removeAttribute('disabled')
