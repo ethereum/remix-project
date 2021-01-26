@@ -16,7 +16,7 @@ import './css/file-explorer.css'
 const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { filesProvider, name, registry, plugin, focusRoot, contextMenuItems } = props
+  const { filesProvider, name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads } = props
   const [state, setState] = useState({
     focusElement: [{
       key: name,
@@ -181,6 +181,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
       })
     }
   }, [contextMenuItems])
+
+  useEffect(() => {
+    if (displayInput) {
+      handleNewFileInput()
+      plugin.resetNewFile()
+    }
+  }, [displayInput])
+
+  useEffect(() => {
+    if (externalUploads) {
+      uploadFile(externalUploads)
+      plugin.resetUploadFile()
+    }
+  }, [externalUploads])
 
   const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
     if (!isChild && (state.focusEdit.element === 'browser/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === 'browser/blank') === -1)) {
@@ -454,8 +468,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     // pick that up via the 'fileAdded' event from the files module.
 
     [...target.files].forEach((file) => {
-      const files = filesProvider
-
       const loadFile = (name: string): void => {
         const fileReader = new FileReader()
 
@@ -467,7 +479,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             }, null)
             return
           }
-          const success = await files.set(name, event.target.result)
+          const success = await filesProvider.set(name, event.target.result)
 
           if (!success) {
             modal('File Upload Failed', 'Failed to create file ' + name, {
@@ -478,9 +490,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
         fileReader.readAsText(file)
       }
-      const name = files.type + '/' + file.name
+      const name = filesProvider.type + '/' + file.name
 
-      files.exists(name, (error, exist) => {
+      filesProvider.exists(name, (error, exist) => {
         if (error) console.log(error)
         if (!exist) {
           loadFile(name)
