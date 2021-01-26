@@ -112,7 +112,6 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   uploadFile (target) {
-    console.log('called: ', target)
     this.uploadFileEvent = target
     this.renderComponent()
   }
