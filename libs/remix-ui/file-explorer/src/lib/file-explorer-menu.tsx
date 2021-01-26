@@ -60,6 +60,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={(e) => {
                   e.stopPropagation()
                   props.uploadFile(e.target)
+                  e.target.value = null
                 }}
                 multiple />
               </label>
