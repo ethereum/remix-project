@@ -6,7 +6,6 @@ const remixTests = require('@remix-project/remix-tests')
 const globalRegistry = require('../../global/registry')
 const addTooltip = require('../ui/tooltip')
 const async = require('async')
-var resolver = require('@resolver-engine/imports').ImportsEngine()
 
 const profile = {
   name: 'contentImport',
@@ -50,7 +49,7 @@ module.exports = class CompilerImports extends Plugin {
     })
   }
 
-  import (url, force, loadingCb, cb) {
+  async import (url, force, loadingCb, cb) {
     if (typeof force !== 'boolean') {
       const temp = loadingCb
       loadingCb = force
@@ -66,44 +65,20 @@ module.exports = class CompilerImports extends Plugin {
     if (imported) {
       return cb(null, imported.content, imported.cleanUrl, imported.type, url)
     }
-    var handlers = this.urlResolver.getHandlers()
-    var found = false
-    handlers.forEach(function (handler) {
-      if (found) return
-      var match = handler.match(url)
-      if (match) {
-        found = true
-        loadingCb('Loading ' + url + ' ...')
-        handler.handle(match).then(function (result) {
-          const { content, cleanUrl } = result
-          self.previouslyHandled[url] = {
-            content,
-            cleanUrl,
-            type: handler.type
-          }
-          cb(null, content, cleanUrl, handler.type, url)
-        }).catch(function (error) {
-          cb('Unable to import url : ' + error)
-        })
-      }
-    })
-    if (found) return
 
-    resolver
-      .resolve(url)
-      .then(result => {
-        return resolver.require(url)
-      })
-      .then(result => {
-        if (url.indexOf(result.provider + ':') === 0) {
-          url = url.substring(result.provider.length + 1) // remove the github prefix
-        }
-        cb(null, result.source, url, result.provider, result.url)
-      })
-      .catch(err => {
-        console.error(err)
-        cb('Unable to import "' + url + '": File not found')
-      })
+    let resolved
+    try {
+      resolved = await this.urlResolver.resolve(url)
+      const { content, cleanUrl, type } = resolved
+      self.previouslyHandled[url] = {
+        content,
+        cleanUrl,
+        type
+      }
+      cb(null, content, cleanUrl, type, url)
+    } catch (e) {
+      return cb('Unable to import url : ' + e.message)
+    }
   }
 
   importExternal (url, targetPath, cb) {
@@ -182,13 +157,12 @@ module.exports = class CompilerImports extends Plugin {
               }
               resolve(result)
             })
-          } else {
-            // try to resolve external content
-            this.importExternal(url, targetPath, (error, content) => {
-              if (error) return reject(error)
-              resolve(content)
-            })
           }
+
+          this.importExternal(url, targetPath, (error, content) => {
+            if (error) return reject(error)
+            resolve(content)
+          })
         })
       }
     })
