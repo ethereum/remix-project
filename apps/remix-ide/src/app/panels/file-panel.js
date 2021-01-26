@@ -34,7 +34,7 @@ var canUpload = window.File || window.FileReader || window.FileList || window.Bl
 const profile = {
   name: 'fileExplorers',
   displayName: 'File explorers',
-  methods: [],
+  methods: ['createNewFile', 'uploadFile'],
   events: [],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
@@ -67,6 +67,8 @@ module.exports = class Filepanel extends ViewPlugin {
     }
     this.reset = false
     this.registeredMenuItems = []
+    this.displayNewFile = false
+    this.uploadFileEvent = null
     this.el = yo`
       <div id="fileExplorerView">
       </div>
@@ -96,6 +98,26 @@ module.exports = class Filepanel extends ViewPlugin {
 
   resetFocus (value) {
     this.reset = value
+    this.renderComponent()
+  }
+
+  createNewFile () {
+    this.displayNewFile = true
+    this.renderComponent()
+  }
+
+  resetNewFile () {
+    this.displayNewFile = false
+    this.renderComponent()
+  }
+
+  uploadFile (target) {
+    this.uploadFileEvent = target
+    this.renderComponent()
+  }
+
+  resetUploadFile () {
+    this.uploadFileEvent = null
     this.renderComponent()
   }
 
@@ -132,6 +154,8 @@ module.exports = class Filepanel extends ViewPlugin {
                   plugin={this}
                   focusRoot={this.reset}
                   contextMenuItems={this.registeredMenuItems}
+                  displayInput={this.displayNewFile}
+                  externalUploads={this.uploadFileEvent}
                 />
               </div>
               <div className='pl-2 filesystemexplorer remixui_treeview'>
