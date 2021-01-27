@@ -77,10 +77,24 @@ module.exports = class SettingsTab extends ViewPlugin {
     const gistAccessToken = yo`<input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" class="form-control">`
     if (token) gistAccessToken.value = token
     const removeToken = () => { self.config.set('settings/gist-access-token', ''); gistAccessToken.value = ''; tooltip('Access token removed') }
-    const saveToken = () => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }
+    const saveToken = () => {
+      this.config.set('settings/gist-access-token', gistAccessToken.value)
+      tooltip('Access token has been saved. RELOAD the page to apply it.')
+    }
     const gistAddToken = yo`<input class="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onclick=${() => saveToken()} value="Save" type="button">`
     const gistRemoveToken = yo`<button class="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onclick=${() => removeToken()}>Remove</button>`
-    this._view.gistToken = yo`<div class="text-secondary mb-0 h6">${gistAccessToken}<div class="d-flex justify-content-end pt-2">${copyToClipboard(() => gistAccessToken.value)}${gistAddToken}${gistRemoveToken}</div></div>`
+    this._view.gistToken = yo`
+      <div class="text-secondary mb-0 h6">
+        ${gistAccessToken}
+        <div class="d-flex justify-content-end pt-2">
+          ${copyToClipboard(() => gistAccessToken.value)}${gistAddToken}${gistRemoveToken}
+        </div>
+        <p class="pt-1">
+          <i class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+          <span class="text-warning">PAGE RELOAD REQUIRED AFTER SAVING A NEW TOKEN: (this step is temprorary, will be fixed soon)</span>
+        </p>
+      </div>
+    `
     this._view.optionVM = yo`<input onchange=${onchangeOption} class="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox">`
     this._view.optionVMLabel = yo`<label class="form-check-label custom-control-label align-middle" for="alwaysUseVM">Always use Ethereum VM at Load</label>`
     if (this.config.get('settings/always-use-vm') === undefined) this.config.set('settings/always-use-vm', true)
