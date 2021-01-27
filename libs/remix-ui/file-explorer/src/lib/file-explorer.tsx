@@ -40,21 +40,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
       isNew: false,
       lastEdit: ''
     },
-    expandPath: [],
-    modalOptions: {
+    expandPath: [name],
+    focusModal: {
       hide: true,
       title: '',
       message: '',
       ok: {
-        label: 'Ok',
-        fn: null
+        label: '',
+        fn: () => {}
       },
       cancel: {
-        label: 'Cancel',
-        fn: null
+        label: '',
+        fn: () => {}
       },
       handleHide: null
     },
+    modals: [],
     toasterMsg: ''
   })
   const editRef = useRef(null)
@@ -195,6 +196,28 @@ export const FileExplorer = (props: FileExplorerProps) => {
       plugin.resetUploadFile()
     }
   }, [externalUploads])
+
+  useEffect(() => {
+    if (state.modals.length > 0) {
+      setState(prevState => {
+        const focusModal = {
+          hide: false,
+          title: prevState.modals[0].title,
+          message: prevState.modals[0].message,
+          ok: prevState.modals[0].ok,
+          cancel: prevState.modals[0].cancel,
+          handleHide: prevState.modals[0].handleHide
+        }
+
+        prevState.modals.shift()
+        return {
+          ...prevState,
+          focusModal,
+          modals: prevState.modals
+        }
+      })
+    }
+  }, [state.modals])
 
   const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
     if (!isChild && (state.focusEdit.element === 'browser/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === 'browser/blank') === -1)) {
@@ -645,7 +668,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleHideModal = () => {
     setState(prevState => {
-      return { ...prevState, modalOptions: { ...state.modalOptions, hide: true } }
+      return { ...prevState, focusModal: { ...state.focusModal, hide: true } }
     })
   }
 
@@ -653,15 +676,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     setState(prevState => {
       return {
         ...prevState,
-        modalOptions: {
-          ...prevState.modalOptions,
-          hide: false,
-          message,
-          title,
-          ok,
-          cancel,
-          handleHide: handleHideModal
-        }
+        modals: [...prevState.modals,
+          {
+            message,
+            title,
+            ok,
+            cancel,
+            handleHide: handleHideModal
+          }]
       }
     })
   }
@@ -933,17 +955,32 @@ export const FileExplorer = (props: FileExplorerProps) => {
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
           label={
-            <FileExplorerMenu
-              title={name}
-              menuItems={props.menuItems}
-              createNewFile={handleNewFileInput}
-              createNewFolder={handleNewFolderInput}
-              publishToGist={publishToGist}
-              uploadFile={uploadFile}
-              fileManager={state.fileManager}
-            />
+            <div onClick={(e) => {
+              e.stopPropagation()
+              let expandPath = []
+
+              if (!state.expandPath.includes(props.name)) {
+                expandPath = [props.name, ...new Set([...state.expandPath])]
+              } else {
+                expandPath = [...new Set(state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(props.name)))]
+              }
+              setState(prevState => {
+                return { ...prevState, expandPath }
+              })
+              plugin.resetFocus(true)
+            }}>
+              <FileExplorerMenu
+                title={name}
+                menuItems={props.menuItems}
+                createNewFile={handleNewFileInput}
+                createNewFolder={handleNewFolderInput}
+                publishToGist={publishToGist}
+                uploadFile={uploadFile}
+                fileManager={state.fileManager}
+              />
+            </div>
           }
-          expand={true}>
+          expand={state.expandPath.includes(props.name)}>
           <div className='pb-2'>
             <TreeView id='treeViewMenu'>
               {
@@ -958,11 +995,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
       {
         props.name && <ModalDialog
           id={ props.name }
-          title={ state.modalOptions.title }
-          message={ state.modalOptions.message }
-          hide={ state.modalOptions.hide }
-          ok={ state.modalOptions.ok }
-          cancel={ state.modalOptions.cancel }
+          title={ state.focusModal.title }
+          message={ state.focusModal.message }
+          hide={ state.focusModal.hide }
+          ok={ state.focusModal.ok }
+          cancel={ state.focusModal.cancel }
           handleHide={ handleHideModal }
         />
       }
