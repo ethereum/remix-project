@@ -4,6 +4,7 @@ import { default as algorithm } from './algorithmCategories'
 import  AbstractAst from './abstractAstView'
 import { get } from 'fast-levenshtein'
 import { util } from '@remix-project/remix-lib'
+import { AstWalker } from '@remix-project/remix-astwalker'
 import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, VisitFunction, ReportFunction, SupportedVersion} from './../../types'
 
 interface SimilarRecord {
@@ -43,13 +44,20 @@ export default class similarVariableNames implements AnalyzerModule {
         if (multipleContractsWithSameName) {
           multipleContractsWithSameNameComments = 'Note: Import aliases are currently not supported by this static analysis.'
         }
-
         const vars: string[] = this.getFunctionVariables(contract, func).map(getDeclaredVariableName)
         this.findSimilarVarNames(vars).map((sim) => {
-          warnings.push({
-            warning: `${funcName} : Variables have very similar names "${sim.var1}" and "${sim.var2}". ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
-            location: func.node['src']
-          })
+          if(func.node.implemented) {
+            const astWalker = new AstWalker()
+            const functionBody: any = func.node.body
+            astWalker.walk(functionBody, (node) => {
+              if (node.nodeType === "Identifier" && (node.name === sim.var1 || node.name === sim.var2)) {
+                warnings.push({
+                  warning: `${funcName} : Variables have very similar names "${sim.var1}" and "${sim.var2}". ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
+                  location: func.node['src']
+                })
+              }
+            })
+          }
         })
       })
     })
