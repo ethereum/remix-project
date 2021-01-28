@@ -91,7 +91,7 @@ module.exports = class SettingsTab extends ViewPlugin {
         </div>
         <p class="pt-1">
           <i class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
-          <span class="text-warning">PAGE RELOAD REQUIRED AFTER SAVING A NEW TOKEN: (this step is temprorary, will be fixed soon)</span>
+          <span class="text-warning">Please reload Remix after having saved the token.</span>
         </p>
       </div>
     `
