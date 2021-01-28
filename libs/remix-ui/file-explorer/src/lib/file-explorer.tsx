@@ -443,13 +443,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const fileExternallyChanged = (path: string, file: { content: string }) => {
     const config = registry.get('config').api
+    const editor = registry.get('editor').api
 
-    if (config.get('currentFile') === path && registry.editor.currentContent() && registry.editor.currentContent() !== file.content) {
-      if (filesProvider.isReadOnly(path)) return registry.editor.setText(file.content)
+    if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
+      if (filesProvider.isReadOnly(path)) return editor.setText(file.content)
       modal(path + ' changed', 'This file has been changed outside of Remix IDE.', {
         label: 'Replace by the new content',
         fn: () => {
-          registry.editor.setText(file.content)
+          editor.setText(file.content)
         }
       }, {
         label: 'Keep the content displayed in Remix',
@@ -505,10 +506,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
           const success = await filesProvider.set(name, event.target.result)
 
           if (!success) {
-            modal('File Upload Failed', 'Failed to create file ' + name, {
+            return modal('File Upload Failed', 'Failed to create file ' + name, {
               label: 'Close',
               fn: async () => {}
             }, null)
+          }
+          const config = registry.get('config').api
+          const editor = registry.get('editor').api
+
+          if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
+            editor.setText(event.target.result)
           }
         }
         fileReader.readAsText(file)
