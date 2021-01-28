@@ -25,7 +25,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     focusPath: null,
     files: [],
     fileManager: null,
-    accessToken: null,
     ctrlKey: false,
     newFileName: '',
     actions: [],
@@ -40,21 +39,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
       isNew: false,
       lastEdit: ''
     },
-    expandPath: [],
-    modalOptions: {
+    expandPath: [name],
+    focusModal: {
       hide: true,
       title: '',
       message: '',
       ok: {
-        label: 'Ok',
-        fn: null
+        label: '',
+        fn: () => {}
       },
       cancel: {
-        label: 'Cancel',
-        fn: null
+        label: '',
+        fn: () => {}
       },
       handleHide: null
     },
+    modals: [],
     toasterMsg: ''
   })
   const editRef = useRef(null)
@@ -72,8 +72,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   useEffect(() => {
     (async () => {
       const fileManager = registry.get('filemanager').api
-      const config = registry.get('config').api
-      const accessToken = config.get('settings/gist-access-token')
       const files = await fetchDirectoryContent(name)
       const actions = [{
         id: 'newFile',
@@ -120,7 +118,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }]
 
       setState(prevState => {
-        return { ...prevState, fileManager, accessToken, files, actions }
+        return { ...prevState, fileManager, files, actions }
       })
     })()
   }, [])
@@ -195,6 +193,28 @@ export const FileExplorer = (props: FileExplorerProps) => {
       plugin.resetUploadFile()
     }
   }, [externalUploads])
+
+  useEffect(() => {
+    if (state.modals.length > 0) {
+      setState(prevState => {
+        const focusModal = {
+          hide: false,
+          title: prevState.modals[0].title,
+          message: prevState.modals[0].message,
+          ok: prevState.modals[0].ok,
+          cancel: prevState.modals[0].cancel,
+          handleHide: prevState.modals[0].handleHide
+        }
+
+        prevState.modals.shift()
+        return {
+          ...prevState,
+          focusModal,
+          modals: prevState.modals
+        }
+      })
+    }
+  }, [state.modals])
 
   const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
     if (!isChild && (state.focusEdit.element === 'browser/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === 'browser/blank') === -1)) {
@@ -420,13 +440,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const fileExternallyChanged = (path: string, file: { content: string }) => {
     const config = registry.get('config').api
+    const editor = registry.get('editor').api
 
-    if (config.get('currentFile') === path && registry.editor.currentContent() && registry.editor.currentContent() !== file.content) {
-      if (filesProvider.isReadOnly(path)) return registry.editor.setText(file.content)
+    if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
+      if (filesProvider.isReadOnly(path)) return editor.setText(file.content)
       modal(path + ' changed', 'This file has been changed outside of Remix IDE.', {
         label: 'Replace by the new content',
         fn: () => {
-          registry.editor.setText(file.content)
+          editor.setText(file.content)
         }
       }, {
         label: 'Keep the content displayed in Remix',
@@ -482,10 +503,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
           const success = await filesProvider.set(name, event.target.result)
 
           if (!success) {
-            modal('File Upload Failed', 'Failed to create file ' + name, {
+            return modal('File Upload Failed', 'Failed to create file ' + name, {
               label: 'Close',
               fn: async () => {}
             }, null)
+          }
+          const config = registry.get('config').api
+          const editor = registry.get('editor').api
+
+          if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
+            editor.setText(event.target.result)
           }
         }
         fileReader.readAsText(file)
@@ -575,7 +602,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }, null)
       } else {
         // check for token
-        if (!state.accessToken) {
+        const config = registry.get('config').api
+        const accessToken = config.get('settings/gist-access-token')
+
+        if (!accessToken) {
           modal('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', {
             label: 'Close',
             fn: async () => {}
@@ -583,7 +613,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         } else {
           const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
             queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs=' + queryParams.get().runs + '&gist='
-          const gists = new Gists({ token: state.accessToken })
+          const gists = new Gists({ token: accessToken })
 
           if (id) {
             const originalFileList = await getOriginalFiles(id)
@@ -645,7 +675,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleHideModal = () => {
     setState(prevState => {
-      return { ...prevState, modalOptions: { ...state.modalOptions, hide: true } }
+      return { ...prevState, focusModal: { ...state.focusModal, hide: true } }
     })
   }
 
@@ -653,15 +683,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     setState(prevState => {
       return {
         ...prevState,
-        modalOptions: {
-          ...prevState.modalOptions,
-          hide: false,
-          message,
-          title,
-          ok,
-          cancel,
-          handleHide: handleHideModal
-        }
+        modals: [...prevState.modals,
+          {
+            message,
+            title,
+            ok,
+            cancel,
+            handleHide: handleHideModal
+          }]
       }
     })
   }
@@ -933,17 +962,32 @@ export const FileExplorer = (props: FileExplorerProps) => {
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
           label={
-            <FileExplorerMenu
-              title={name}
-              menuItems={props.menuItems}
-              createNewFile={handleNewFileInput}
-              createNewFolder={handleNewFolderInput}
-              publishToGist={publishToGist}
-              uploadFile={uploadFile}
-              fileManager={state.fileManager}
-            />
+            <div onClick={(e) => {
+              e.stopPropagation()
+              let expandPath = []
+
+              if (!state.expandPath.includes(props.name)) {
+                expandPath = [props.name, ...new Set([...state.expandPath])]
+              } else {
+                expandPath = [...new Set(state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(props.name)))]
+              }
+              setState(prevState => {
+                return { ...prevState, expandPath }
+              })
+              plugin.resetFocus(true)
+            }}>
+              <FileExplorerMenu
+                title={name}
+                menuItems={props.menuItems}
+                createNewFile={handleNewFileInput}
+                createNewFolder={handleNewFolderInput}
+                publishToGist={publishToGist}
+                uploadFile={uploadFile}
+                fileManager={state.fileManager}
+              />
+            </div>
           }
-          expand={true}>
+          expand={state.expandPath.includes(props.name)}>
           <div className='pb-2'>
             <TreeView id='treeViewMenu'>
               {
@@ -958,11 +1002,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
       {
         props.name && <ModalDialog
           id={ props.name }
-          title={ state.modalOptions.title }
-          message={ state.modalOptions.message }
-          hide={ state.modalOptions.hide }
-          ok={ state.modalOptions.ok }
-          cancel={ state.modalOptions.cancel }
+          title={ state.focusModal.title }
+          message={ state.focusModal.message }
+          hide={ state.focusModal.hide }
+          ok={ state.focusModal.ok }
+          cancel={ state.focusModal.cancel }
           handleHide={ handleHideModal }
         />
       }
