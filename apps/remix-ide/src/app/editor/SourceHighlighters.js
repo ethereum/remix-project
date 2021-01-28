@@ -30,8 +30,9 @@ class SourceHighlighters {
     // eslint-disable-next-line
     try {
       if (!this.highlighters[from]) return
-      const sourceHighlight = new SourceHighlighter()
+      let sourceHighlight
       for (const index in this.highlighters[from]) {
+        sourceHighlight = new SourceHighlighter()
         sourceHighlight.currentSourceLocationFromfileName(
           this.highlighters[from][index].position,
           this.highlighters[from][index].source,
@@ -62,8 +63,8 @@ class SourceHighlighters {
       for (const index in this.highlighters[highlighter]) {
         this.highlighters[highlighter][index].currentSourceLocation(null)
       }
-      this.highlightAllFrom(toStay)
     }
+    this.highlightAllFrom(toStay)
   }
 
   discardHighlightAt (line, filePath, from) {

@@ -7,7 +7,7 @@ import * as fs from 'fs-extra'
 import * as isbinaryfile from 'isbinaryfile'
 
 export class RemixdClient extends PluginClient {
-  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'list', 'isDirectory']
+  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'list', 'isDirectory', 'createDir']
   trackDownStreamUpdate: TrackDownStreamUpdate = {}
   websocket: WS
   currentSharedFolder: string
@@ -121,6 +121,30 @@ export class RemixdClient extends PluginClient {
             this.emit('fileChanged', args.path)
           }
         }
+      })
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
+
+  createDir (args: SharedFolderArgs): Promise<void> {
+    try {
+      return new Promise((resolve, reject) => {
+        if (this.readOnly) reject(new Error('Cannot create folder: read-only mode selected'))
+        const path = utils.absolutePath(args.path, this.currentSharedFolder)
+        const exists = fs.existsSync(path)
+
+        if (exists && !isRealPath(path)) reject(new Error(''))
+        this.trackDownStreamUpdate[path] = path
+        fs.mkdirp(path).then(() => {
+          let splitPath = args.path.split('/')
+
+          splitPath = splitPath.filter(dir => dir)
+          const dir = '/' + splitPath.join('/')
+
+          this.emit('folderAdded', dir)
+          resolve()
+        }).catch((e: Error) => reject(e))
       })
     } catch (error) {
       throw new Error(error)

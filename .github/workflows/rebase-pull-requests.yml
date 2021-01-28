@@ -1,0 +1,11 @@
+name: Rebase Pull Requests
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: yann300/rebase-pull-requests@master

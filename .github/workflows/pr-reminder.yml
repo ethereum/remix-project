@@ -9,7 +9,7 @@ jobs:
   pr-reviews-reminder:
     runs-on: ubuntu-latest
     steps:
-    - uses: yann300/pr-reviews-reminder-action@v1.4.7
+    - uses: yann300/pr-reviews-reminder-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITTER_TOKEN: ${{ secrets.GITTER_TOKEN }}

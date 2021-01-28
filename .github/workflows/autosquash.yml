@@ -1,8 +1,5 @@
 name: Autosquash
 on:
-  push:    
-    branches-ignore: 
-      - master
   check_run:
     types:
       # Check runs completing successfully can unblock the corresponding pull requests and make them mergeable.

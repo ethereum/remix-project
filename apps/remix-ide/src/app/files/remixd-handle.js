@@ -22,7 +22,7 @@ const profile = {
   name: 'remixd',
   displayName: 'RemixD',
   url: 'ws://127.0.0.1:65520',
-  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list'],
+  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir'],
   events: [],
   description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',
@@ -47,7 +47,6 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   activate () {
-    this.fileSystemExplorer.show()
     this.connectToLocalhost()
   }
 
@@ -83,7 +82,9 @@ export class RemixdHandle extends WebsocketPlugin {
             this.canceled()
           }
         }, 3000)
-        this.locahostProvider.init(_ => this.fileSystemExplorer.ensureRoot())
+        this.locahostProvider.init(() => {
+          this.fileSystemExplorer.show()
+        })
         this.call('manager', 'activatePlugin', 'git')
       }
     }

@@ -176,7 +176,7 @@ class TreeView {
 
   formatSelfDefault (key, data) {
     return yo`
-      <div class="d-flex mb-1 flex-row ${css.label_item}">
+      <div class="d-flex mt-2 flex-row ${css.label_item}">
         <label class="small font-weight-bold pr-1 ${css.label_key}">${key}:</label> 
         <label class="m-0 ${css.label_value}">${data.self}</label>
       </div>

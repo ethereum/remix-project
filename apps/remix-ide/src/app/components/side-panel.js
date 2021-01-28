@@ -92,6 +92,7 @@ export class SidePanel extends AbstractPanel {
 
   focus (name) {
     this.emit('focusChanged', name)
+    super.focus(name)
   }
 
   removeView (profile) {
@@ -112,7 +113,7 @@ export class SidePanel extends AbstractPanel {
   async showContent (name) {
     super.showContent(name)
     this.renderHeader()
-    this.focus(name)
+    this.emit('focusChanged', name)
   }
 
   /** The header of the side panel */

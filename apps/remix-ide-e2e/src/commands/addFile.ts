@@ -14,21 +14,17 @@ class AddFile extends EventEmitter {
 }
 
 function addFile (browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
-  browser.clickLaunchIcon('udapp').clickLaunchIcon('fileExplorers').click('.newFile')
-    .waitForElementVisible('#modal-dialog')
-    .perform((client, done) => {
-      browser.execute(function (fileName) {
-        if (fileName !== 'Untitled.sol') {
-          document.querySelector('#modal-dialog #prompt_text').setAttribute('value', fileName)
-        }
-        const elem = document.querySelector('#modal-footer-ok') as HTMLElement
-
-        elem.click()
-      }, [name], function (result) {
-        console.log(result)
-        done()
-      })
-    })
+  browser.clickLaunchIcon('udapp')
+    .clickLaunchIcon('fileExplorers')
+    .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"]') // focus on root directory
+    .click('.newFile')
+    .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/blank"]')
+    // .scrollAndClick('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items')
+    .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', name)
+    .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', browser.Keys.ENTER)
+    .pause(2000)
+    .waitForElementVisible(`li[data-id="treeViewLitreeViewItembrowser/${name}"]`)
+    // .click(`li[data-id="treeViewLitreeViewItembrowser/${name}"]`)
     .setEditorValue(content.content)
     .pause(1000)
     .perform(function () {

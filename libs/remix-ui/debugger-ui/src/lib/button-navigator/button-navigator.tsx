@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 import './button-navigator.css'
 
 export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, stepOverForward, jumpOut, jumpPreviousBreakpoint, jumpNextBreakpoint, jumpToException, revertedReason, stepState, jumpOutDisabled }) => {
@@ -45,7 +45,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
         intoForwardDisabled: stepState === 'end',
         overForwardDisabled: stepState === 'end',
         jumpNextBreakpointDisabled: stepState === 'end',
-        jumpOutDisabled: jumpOutDisabled ? jumpOutDisabled : true
+        jumpOutDisabled: jumpOutDisabled || true
       }
     })
   }
@@ -60,7 +60,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
       </div>
 
       <div className="jumpButtons btn-group py-1">
-        <button className='btn btn-primary btn-sm navigator jumpButton fas fa-step-backward'  id='jumppreviousbreakpoint' data-id="buttonNavigatorJumpPreviousBreakpoint" title='Jump to the previous breakpoint' onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} disabled={state.jumpPreviousBreakpointDisabled}></button>
+        <button className='btn btn-primary btn-sm navigator jumpButton fas fa-step-backward' id='jumppreviousbreakpoint' data-id="buttonNavigatorJumpPreviousBreakpoint" title='Jump to the previous breakpoint' onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} disabled={state.jumpPreviousBreakpointDisabled}></button>
         <button className='btn btn-primary btn-sm navigator jumpButton fas fa-eject' id='jumpout' title='Jump out' onClick={() => { jumpOut && jumpOut() }} disabled={state.jumpOutDisabled}></button>
         <button className='btn btn-primary btn-sm navigator jumpButton fas fa-step-forward' id='jumpnextbreakpoint' data-id="buttonNavigatorJumpNextBreakpoint" title='Jump to the next breakpoint' onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }} disabled={state.jumpNextBreakpointDisabled}></button>
       </div>

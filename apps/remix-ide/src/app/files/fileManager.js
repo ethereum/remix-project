@@ -271,6 +271,7 @@ class FileManager extends Plugin {
     this._deps.browserExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.localhostExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.browserExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.browserExplorer.event.register('fileAdded', (path) => { this.fileAddedEvent(path) })
     this._deps.localhostExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
     this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
@@ -281,9 +282,12 @@ class FileManager extends Plugin {
     this.switchFile = this.open
   }
 
+  fileAddedEvent (path) {
+    this.emit('fileAdded', path)
+  }
+
   fileChangedEvent (path) {
-    // @todo(#2386) use only for discard changes function.
-    // this.syncEditor(path)
+    this.emit('currentFileChanged', path)
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {
@@ -424,7 +428,6 @@ class FileManager extends Plugin {
   }
 
   fileRemovedEvent (path) {
-    if (!this.openedFiles[path]) return
     if (path === this._deps.config.get('currentFile')) {
       this._deps.config.set('currentFile', '')
     }

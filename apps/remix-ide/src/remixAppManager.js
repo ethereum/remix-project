@@ -6,17 +6,29 @@ import QueryParams from './lib/query-params'
 import { PermissionHandler } from './app/ui/persmission-handler'
 
 const requiredModules = [ // services + layout views + system views
-  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport', 'web3Provider', 'scriptRunner', 'fetchAndCompile',
-  'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
-  'terminal', 'settings', 'pluginManager', 'tabs']
+  'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
+  'fileManager', 'contentImport', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
+  'fileExplorers', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp']
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd']
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
-export function canActivate (name) {
-  return ['ethdoc'].includes(name) || isNative(name)
+/**
+ * Checks if plugin caller 'from' is allowed to activate plugin 'to'
+ * The caller can have 'canActivate' as a optional property in the plugin profile.
+ * This is an array containing the 'name' property of the plugin it wants to call.
+ * canActivate = ['plugin1-to-call','plugin2-to-call',....]
+ * or the plugin is allowed by default because it is native
+ *
+ * @param {any, any}
+ * @returns {boolean}
+ */
+export function canActivate (from, to) {
+  return ['ethdoc'].includes(from.name) ||
+  isNative(from.name) ||
+  (to && from && from.canActivate && from.canActivate.includes[to.name])
 }
 
 export class RemixAppManager extends PluginManager {
@@ -29,7 +41,7 @@ export class RemixAppManager extends PluginManager {
   }
 
   async canActivatePlugin (from, to) {
-    return canActivate(from.name)
+    return canActivate(from, to)
   }
 
   async canDeactivatePlugin (from, to) {

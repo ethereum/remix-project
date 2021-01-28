@@ -20,7 +20,7 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
     .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadataLabel"]', 5000)
     .click('*[data-id="verticalIconsFileExplorerIcons"]')
-    .click('*[data-id="treeViewTogglebrowser/contracts"]')
+    .click('[data-id="treeViewLitreeViewItembrowser/contracts"]')
     .openFile('browser/contracts/3_Ballot.sol')
     .click('*[data-id="verticalIconsKindsolidity"]')
     .pause(2000)
@@ -41,7 +41,7 @@ module.exports = {
     .setValue('*[data-id="settingsTabGistAccessToken"]', '**********')
     .click('*[data-id="settingsTabSaveGistToken"]')
     .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
-    .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token saved')
+    .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token has been saved')
   },
 
   'Should copy github access token to clipboard': function (browser: NightwatchBrowser) {

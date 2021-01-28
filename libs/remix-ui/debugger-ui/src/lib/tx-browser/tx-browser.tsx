@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'  //eslint-disable-line
 import './tx-browser.css'
 
-export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, debugging }) => {
+export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging }) => {
   const [state, setState] = useState({
     txNumber: ''
   })
 
+  const inputValue = useRef(null)
   useEffect(() => {
     setState(prevState => {
       return {
@@ -41,35 +42,41 @@ export const TxBrowser = ({ requestDebug, unloadRequested, transactionNumber, de
     })
   }
 
+  const txInputOnInput = () => {
+    updateTxNumberFlag(!inputValue.current.value)
+  }
+
   return (
-    <div className="container px-0">
-      <div className="txContainer">
-        <div className="py-1 d-flex justify-content-center w-100 input-group">
+    <div className='container px-0'>
+      <div className='txContainer'>
+        <div className='py-1 d-flex justify-content-center w-100 input-group'>
           <input
+            ref={inputValue}
             value={state.txNumber}
-            className="form-control m-0 txinput"
+            className='form-control m-0 txinput'
             id='txinput'
             type='text'
             onChange={({ target: { value } }) => txInputChanged(value)}
+            onInput={txInputOnInput}
             placeholder={'Transaction hash, should start with 0x'}
-            data-id="debuggerTransactionInput"
+            data-id='debuggerTransactionInput'
             disabled={debugging}
           />
         </div>
-        <div className="d-flex justify-content-center w-100 btn-group py-1">
+        <div className='d-flex justify-content-center w-100 btn-group py-1'>
           <button
-            className="btn btn-primary btn-sm txbutton"
-            id="load"
+            className='btn btn-primary btn-sm txbutton'
+            id='load'
             title={debugging ? 'Stop debugging' : 'Start debugging'}
             onClick={handleSubmit}
-            data-id="debuggerTransactionStartButton"
-            disabled={!state.txNumber ? true : false }
+            data-id='debuggerTransactionStartButton'
+            disabled={!state.txNumber }
           >
             { debugging ? 'Stop' : 'Start' } debugging
           </button>
         </div>
       </div>
-      <span id='error'></span>
+      <span id='error' />
     </div>
   )
 }
