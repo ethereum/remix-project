@@ -25,7 +25,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     focusPath: null,
     files: [],
     fileManager: null,
-    accessToken: null,
     ctrlKey: false,
     newFileName: '',
     actions: [],
@@ -73,8 +72,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   useEffect(() => {
     (async () => {
       const fileManager = registry.get('filemanager').api
-      const config = registry.get('config').api
-      const accessToken = config.get('settings/gist-access-token')
       const files = await fetchDirectoryContent(name)
       const actions = [{
         id: 'newFile',
@@ -121,7 +118,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }]
 
       setState(prevState => {
-        return { ...prevState, fileManager, accessToken, files, actions }
+        return { ...prevState, fileManager, files, actions }
       })
     })()
   }, [])
@@ -605,7 +602,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }, null)
       } else {
         // check for token
-        if (!state.accessToken) {
+        const config = registry.get('config').api
+        const accessToken = config.get('settings/gist-access-token')
+
+        if (!accessToken) {
           modal('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', {
             label: 'Close',
             fn: async () => {}
@@ -613,7 +613,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         } else {
           const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
             queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs=' + queryParams.get().runs + '&gist='
-          const gists = new Gists({ token: state.accessToken })
+          const gists = new Gists({ token: accessToken })
 
           if (id) {
             const originalFileList = await getOriginalFiles(id)
