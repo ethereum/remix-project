@@ -46,10 +46,13 @@ export default class similarVariableNames implements AnalyzerModule {
         }
         const vars: string[] = this.getFunctionVariables(contract, func).map(getDeclaredVariableName)
         this.findSimilarVarNames(vars).map((sim) => {
+          // check if function is implemented
           if(func.node.implemented) {
             const astWalker = new AstWalker()
             const functionBody: any = func.node.body
+            // Walk through all statements of function
             astWalker.walk(functionBody, (node) => {
+              // check if these is an identifier node which is one of the tracked similar variables
               if (node.nodeType === "Identifier" && (node.name === sim.var1 || node.name === sim.var2)) {
                 warnings.push({
                   warning: `${funcName} : Variables have very similar names "${sim.var1}" and "${sim.var2}". ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
