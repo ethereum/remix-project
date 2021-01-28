@@ -35,8 +35,8 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   }
   const formatSelfDefault = (key: string | number, data: ExtractData) => {
     return (
-      <div className="d-flex mb-1 flex-row label_item">
-        <label className="small font-weight-bold pr-1 label_key">{key}:</label>
+      <div className="d-flex mr-1 flex-row label_item">
+        <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
         <label className="m-0 label_value">{data.self}</label>
       </div>
     )
