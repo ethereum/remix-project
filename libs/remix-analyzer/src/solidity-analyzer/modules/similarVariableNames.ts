@@ -53,9 +53,10 @@ export default class similarVariableNames implements AnalyzerModule {
               if (node.nodeType === "Identifier" && (node.name === sim.var1 || node.name === sim.var2)) {
                 warnings.push({
                   warning: `${funcName} : Variables have very similar names "${sim.var1}" and "${sim.var2}". ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
-                  location: func.node['src']
+                  location: node['src']
                 })
               }
+              return true
             })
           }
         })
