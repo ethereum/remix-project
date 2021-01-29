@@ -283,7 +283,7 @@ test('Integration test similarVariableNames module', function (t: test.Test) {
     'inheritance.sol': 0,
     'modifier1.sol': 0,
     'modifier2.sol': 0,
-    'notReentrant.sol': 3,
+    'notReentrant.sol': 4,
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
     'globals.sol': 0,
