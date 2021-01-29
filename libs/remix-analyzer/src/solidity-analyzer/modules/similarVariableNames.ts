@@ -53,7 +53,8 @@ export default class similarVariableNames implements AnalyzerModule {
             // Walk through all statements of function
             astWalker.walk(functionBody, (node) => {
               // check if these is an identifier node which is one of the tracked similar variables
-              if (node.nodeType === "Identifier" && (node.name === sim.var1 || node.name === sim.var2)) {
+              if ((node.nodeType === 'Identifier' || node.nodeType === 'VariableDeclaration') 
+                    && (node.name === sim.var1 || node.name === sim.var2)) {
                 warnings.push({
                   warning: `${funcName} : Variables have very similar names "${sim.var1}" and "${sim.var2}". ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
                   location: node['src']
