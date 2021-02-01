@@ -17,7 +17,7 @@ export function nameOpCodes (raw) {
       i += jumpNum
     }
 
-    const data = pushData.toString() !== '' ? ' ' + pushData.toString() : ''
+    const data = (pushData as any).toString('hex') !== '' ? ' ' + (pushData as any).toString('hex') : ''
 
     code.push(this.pad(pc, this.roundLog(raw.length, 10)) + ' ' + curOpCode + data)
     pushData = ''
