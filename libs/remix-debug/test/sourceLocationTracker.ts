@@ -54,9 +54,37 @@ tape('SourceLocationTracker', function (t) {
 
     traceManager.resolveTrace(tx).then(async () => {     
 
-      const sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: false })
+      
       
       try {
+        // with debugWithGeneratedSources: false
+        const sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: false })
+
+        let map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
+        console.log(map)
+        st.equal(map['file'], 0)
+        st.equal(map['start'], 35)
+
+        map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
+        st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
+        
+        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
+        st.equal(map['file'], 0) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
+        st.equal(map['start'], 303)
+        st.equal(map['length'], 448)
+
+        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 36, output.contracts)
+        st.equal(map['file'], 0) // 0 refers to the initial solidity code. see source below (ABIEncoderV2)
+        st.equal(map['start'], 303)
+        st.equal(map['length'], 448)
+      } catch (e) {
+        console.log(e)
+      }
+
+      try {
+        // with debugWithGeneratedSources: true
+        const sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: true })
+        
         let map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
         console.log(map)
         st.equal(map['file'], 0)
