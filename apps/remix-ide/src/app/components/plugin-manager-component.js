@@ -40,6 +40,12 @@ const css = csjs`
     font-size: 13px;
     line-height: 18px;
   }
+  .descriptiontext {
+    display: block;
+  }
+  .descriptiontext:first-letter {
+    text-transform: uppercase;
+  }
   .row {
     display: flex;
     flex-direction: row;
@@ -135,9 +141,9 @@ class PluginManagerComponent extends ViewPlugin {
             ${activationButton}
           </h6>
         </div>
-        <div class="${css.description} text-body plugin-text mb-2">
-          <img src="${profile.icon}" class="mr-1 mb-1 ${css.pluginIcon}" />
-          <span>${profile.description}</span>
+        <div class="${css.description} d-flex text-body plugin-text mb-2">
+          <img src="${profile.icon}" class="mr-1 mt-1 ${css.pluginIcon}" />
+          <span class="${css.descriptiontext}">${profile.description}</span>
         </div>
       </article>
     `
