@@ -60,6 +60,19 @@ export class SourceLocationTracker {
   }
 
   /**
+   * Returns the total amount of sources from a specific @arg address and @arg contracts
+   *
+   * @param {String} address - contract address from which has generated sources
+   * @param {Object} contracts - AST of compiled contracts
+   */
+  getTotalAmountOfSources (address, contracts) {
+    let sourcesLength = Object.keys(contracts).length
+    const generatedSources = this.getGeneratedSourcesFromAddress(address)
+    if (generatedSources) sourcesLength = sourcesLength + Object.keys(generatedSources).length
+    return sourcesLength
+  }
+
+  /**
    * Return a valid source location associated with the given @arg vmTraceIndex
    *
    * @param {String} address - contract address from which the source location is retrieved
@@ -67,8 +80,14 @@ export class SourceLocationTracker {
    * @param {Object} contractDetails - AST of compiled contracts
    */
   async getValidSourceLocationFromVMTraceIndex (address, vmtraceStepIndex, contracts) {
+    const amountOfSources = this.getTotalAmountOfSources(address, contracts)
     let map: Record<string, number> = { file: -1 }
-    while (vmtraceStepIndex >= 0 && map.file === -1) {
+    /*
+      (map.file === -1) this indicates that it isn't associated with a known source code
+      (map.file > amountOfSources - 1) this indicates the current file index exceed the total number of files.
+                                              this happens when generated sources should not be considered.
+    */
+    while (vmtraceStepIndex >= 0 && (map.file === -1 || map.file > amountOfSources - 1)) {
       map = await this.getSourceLocationFromVMTraceIndex(address, vmtraceStepIndex, contracts)
       vmtraceStepIndex = vmtraceStepIndex - 1
     }
