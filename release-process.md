@@ -29,7 +29,15 @@ This document includes:
  - publish a release in github using the changelog
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
 
-## Remix IDE release from beta
+## Remix IDE release Part 1. First push master to beta. Feature Freeze
+ - git co -b remix_beta origin/remix_beta
+ - git reset --hard -master-commit-hash-
+ - git push -f origin remix_beta
+ 
+## Testing phase
+## In case of fixing bugs push PR's also to beta to include in Release
+ 
+## Remix IDE release Part 2. Bump the version in beta and release
 
  - git fetch origin remix_beta
  - git checkout origin/remix_beta
@@ -46,13 +54,23 @@ This document includes:
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
  - move to next section `Remix IDE bump dev branch (master)` for bumping the master branch.
  
-## Remix IDE bump dev branch (master)
+## Remix IDE release Part 3. Bump dev branch (master)
 
  - git checkout master (checkout master branch)
  - git checkout -b bumpDevVersion
  - update package.json version: bump the version and add the tag `dev` if not already present.
  - remove package-lock.json version and generate a new one with `npm install`
  - merge PR to origin/master
+ 
+## Remix IDE release Part 3. remix.ethereum.org update
+
+This is not strictly speaking a release. Updating the remix site is done through the Travis build:
+
+ - git co -b remix_live origin/remix_live
+ - git reset --hard -master-commit-hash- (or remix_beta-commit-hash-)
+ - git push -f origin remix_live
+
+ CircleCI will build automaticaly and remix.ethereum.org will be updated
 
 ## Remix-ide beta release
  - git fetch origin master
@@ -69,16 +87,6 @@ This document includes:
  - publish a beta release in github using the changelog
  - drop zip file to the beta release (from https://github.com/ethereum/remix-live-alpha)
  
-## remix.ethereum.org update
-
-This is not strictly speaking a release. Updating the remix site is done through the Travis build:
-
- - git co -b remix_live origin/remix_live
- - git reset --hard -master-commit-hash- (or remix_beta-commit-hash-)
- - git push -f origin remix_live
-
- CircleCI will build automaticaly and remix.ethereum.org will be updated
-
 ## remix-alpha.ethereum.org update
 
 remix-alpha.ethereum.org is automaticaly updated every time commits are pushed to master
