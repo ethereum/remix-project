@@ -51,8 +51,6 @@ This document includes:
  - git push --tags
  - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --branch remix_beta --only-merges --between-tags previous_version...next_version
  - publish a release in github using the changelog
- - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
- - move to next section `Remix IDE bump dev branch (master)` for bumping the master branch.
  
 ## Remix IDE release Part 3. Bump dev branch (master)
 
@@ -72,6 +70,9 @@ This is not strictly speaking a release. Updating the remix site is done through
 
  CircleCI will build automaticaly and remix.ethereum.org will be updated
 
+##  Remix IDE release Part 4. Update Zip in release
+ - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
+ 
 ## Remix-ide beta release
  - git fetch origin master
  - git checkout origin/master
