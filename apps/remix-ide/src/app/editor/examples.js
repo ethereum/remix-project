@@ -313,21 +313,22 @@ const deployWithEthers = `// Right click on the script name and hit "Run" to exe
 
 const readme = `REMIX EXAMPLE PROJECT
 
-Remix example project is the project which is there at the time of very first loading of Remix. It contains mainly 3 directories:
-'contracts', 'scripts' & 'tests'.
+Remix example project is present when Remix loads very first time or there are no files existing in the File Explorer. 
+It contains 3 directories:
 
-'contracts' directory holds 3 contracts with different complexity level.
-'scripts' directory holds the scripts to deploy a contract using web3.js or ethers.js libraries.
-'tests' directory contains a test file with unit tests for 'Ballot' contract.
+1. 'contracts': Holds three contracts with different complexity level, denoted with number prefix in file name.
+2. 'scripts': Holds two scripts to deploy a contract. It is explained below.
+3. 'tests': Contains one test file for 'Ballot' contract with unit tests in Solidity.
 
-DEPLOY CONTRACT
+SCRIPTS
 
-A contract can be deployed using the scripts in 'scripts' folder. Currently, they are configured to deploy the 'Storage' contract.
-For deployment of any other contract, 'contractName' and 'constructorArgs' should be update (along with other code if required).
+The 'scripts' folder contains example async/await scripts for deploying the 'Storage' contract.
+For the deployment of any other contract, 'contractName' and 'constructorArgs' should be updated (along with other code if required). 
+Scripts have full access to the web3.js and ethers.js libraries.
 
-To run a script, just right click on file name and click 'Run'.
+To run a script, right click on file name in the file explorer and click 'Run'. Remember, Solidity file must already be compiled.
 
-Consoles from script will appear in remix terminal.
+Output from script will appear in remix terminal.
 `
 
 module.exports = {
