@@ -217,7 +217,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [state.modals])
 
   const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
-    if (!isChild && (state.focusEdit.element === 'browser/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === 'browser/blank') === -1)) {
+    if (!isChild && (state.focusEdit.element === `${name}/blank`) && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === `${name}/blank`) === -1)) {
       dir = state.focusEdit.type === 'file' ? [...dir, {
         path: state.focusEdit.element,
         name: '',
