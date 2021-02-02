@@ -1,5 +1,14 @@
 {
-  "packages": ["dist/libs/**/*"],
+  "packages": [
+    "dist/libs/remix-analyzer",
+    "dist/libs/remix-astwalker",
+    "dist/libs/remix-debug",
+    "dist/libs/remix-lib",
+    "dist/libs/remix-simulator",
+    "dist/libs/remix-solidity",
+    "dist/libs/remix-tests",
+    "dist/libs/remix-url-resolver"
+  ],
   "version": "independent",
   "command": {
     "publish": {
