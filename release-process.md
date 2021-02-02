@@ -54,11 +54,12 @@ This document includes:
  
 ## Remix IDE release Part 3. Bump dev branch (master)
 
- - git checkout master (checkout master branch)
+ - git fetch origin master
+ - git checkout origin/master
  - git checkout -b bumpDevVersion
  - update package.json version: bump the version and add the tag `dev` if not already present.
  - remove package-lock.json version and generate a new one with `npm install`
- - merge PR to origin/master
+ - create a PR and merge it to origin/master
  
 ## Remix IDE release Part 3. remix.ethereum.org update
 
