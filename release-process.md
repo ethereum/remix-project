@@ -54,7 +54,7 @@ This document includes:
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
  - move to next section `Remix IDE bump dev branch (master)` for bumping the master branch.
  
-## Remix IDE release Part 3. Bbump dev branch (master)
+## Remix IDE release Part 3. Bump dev branch (master)
 
  - git checkout master (checkout master branch)
  - git checkout -b bumpDevVersion
