@@ -108,8 +108,7 @@ export class InternalCallTree {
   }
 
   parentScope (scopeId) {
-    const matched = scopeId.match(/(.\d|\d)$/)
-    return scopeId.replace(matched[1], '')
+    return scopeId.replace(/(.\d|\d)$/, '')
   }
 
   findScopeId (vmtraceIndex) {
