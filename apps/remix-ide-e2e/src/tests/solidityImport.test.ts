@@ -31,7 +31,7 @@ module.exports = {
 
   'Test Github Import - from master branch': function (browser: NightwatchBrowser) {
     browser
-      .setSolidityCompilerVersion('soljson-v0.6.2+commit.bacdbe57.js') // open-zeppelin moved to pragma ^0.6.0 (master branch)
+      .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
       .addFile('Untitled4.sol', sources[3]['browser/Untitled4.sol'])
       .clickLaunchIcon('fileExplorers')
       .verifyContracts(['test7', 'ERC20'], {wait: 10000})
