@@ -186,7 +186,7 @@ To run the Selenium tests via Nightwatch:
 
 ## Important Links
 
-Official documentation: https://remix-ide.readthedocs.io/en/latest/
-Curated list of Remix resources, tutorials etc.: https://github.com/ethereum/awesome-remix
-Medium: https://medium.com/remix-ide
-Twitter: https://twitter.com/ethereumremix
+- Official documentation: https://remix-ide.readthedocs.io/en/latest/
+- Curated list of Remix resources, tutorials etc.: https://github.com/ethereum/awesome-remix
+- Medium: https://medium.com/remix-ide
+- Twitter: https://twitter.com/ethereumremix
