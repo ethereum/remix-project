@@ -34,7 +34,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.6.2+commit.bacdbe57.js') // open-zeppelin moved to pragma ^0.6.0 (master branch)
       .addFile('Untitled4.sol', sources[3]['browser/Untitled4.sol'])
       .clickLaunchIcon('fileExplorers')
-      .verifyContracts(['test7', 'ERC20', 'SafeMath'], {wait: 10000})
+      .verifyContracts(['test7', 'ERC20'], {wait: 10000})
   },
 
   'Test Github Import - from other branch': function (browser: NightwatchBrowser) {
