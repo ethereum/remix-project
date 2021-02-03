@@ -92,7 +92,7 @@ module.exports = {
     .waitForElementVisible('#stepdetail')
     .goToVMTraceStep(10)
     .getEditorValue((content) => {
-      browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) public {
+      browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
         _decimals = 18;
