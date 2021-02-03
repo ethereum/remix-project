@@ -79,7 +79,7 @@ module.exports = {
   'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
     browser
     .clickLaunchIcon('solidity')
-    .setSolidityCompilerVersion('soljson-v0.6.12+commit.27d51765.js')
+    .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js')
     .pause(2000)
     .clickLaunchIcon('udapp')
     .testContracts('externalImport.sol', sources[1]['browser/externalImport.sol'], ['ERC20'])
