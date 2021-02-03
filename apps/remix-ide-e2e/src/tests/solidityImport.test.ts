@@ -47,7 +47,7 @@ module.exports = {
 
   'Test Github Import - no branch specified': function (browser: NightwatchBrowser) {
     browser
-          .setSolidityCompilerVersion('soljson-v0.6.2+commit.bacdbe57.js') // open-zeppelin moved to pragma ^0.6.0 (master branch)
+          .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
           .clickLaunchIcon('fileExplorers')
           .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
           .addFile('Untitled6.sol', sources[5]['browser/Untitled6.sol'])
