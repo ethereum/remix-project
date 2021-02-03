@@ -2,17 +2,19 @@
 [![CircleCI](https://circleci.com/gh/ethereum/remix-project.svg?style=svg)](https://circleci.com/gh/ethereum/remix-project)
 [![Documentation Status](https://readthedocs.org/projects/docs/badge/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
 
-# Remix
+# Remix Project
 
-**Remix** is a browser-based compiler and IDE that enables users to build **Ethereum contracts with [Solidity language](https://soliditylang.org/)** and to debug transactions.
+The Remix Project is a platform for development tools that use a plugin architecture. It encompasses sub-projects including Remix Plugin Engine, Remix Libraries, and of course Remix IDE.
 
-To try it out, visit [https://remix.ethereum.org](https://remix.ethereum.org).
+**Remix IDE** is an open source web and desktop application. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs. Remix is used for the **entire journey of contract development with [Solidity language](https://soliditylang.org/)** in as well as being a playground for learning and teaching Ethereum.
 
-The [release page](https://github.com/ethereum/remix-project/releases) also gives others ways to use Remix locally. Please check it out.
+To try web app, visit: [https://remix.ethereum.org](https://remix.ethereum.org).
 
-Remix consists of many modules and in this repository you will find Remix related apps, libs and plugins (remix-ide, remix-analyzer, etc.).
+For desktop version, See releases: [https://github.com/ethereum/remix-desktop/releases](https://github.com/ethereum/remix-desktop/releases)
 
 ![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix_screenshot.png)
+
+**Remix libraries** work as a core of native plugins of Remix IDE. Read more about libraries [here](libs/README.md)
 
 ## Offline Usage
 
