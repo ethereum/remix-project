@@ -127,6 +127,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (state.fileManager) {
       filesProvider.event.register('fileExternallyChanged', fileExternallyChanged)
       filesProvider.event.register('fileRenamedError', fileRenamedError)
+      filesProvider.event.register('rootFolderChanged', rootFolderChanged)
     }
   }, [state.fileManager])
 
@@ -480,6 +481,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
       label: 'Close',
       fn: () => {}
     }, null)
+  }
+
+  // register to event of the file provider
+  // files.event.register('rootFolderChanged', rootFolderChanged)
+  const rootFolderChanged = async () => {
+    const files = await fetchDirectoryContent(name)
+    setState(prevState => {
+      return { ...prevState, files }
+    })
   }
 
   const uploadFile = (target) => {

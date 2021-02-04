@@ -391,6 +391,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel.gitHandle
   ])
 
+  if (isElectron()) {
+    appManager.activatePlugin('remixd')
+  }
+
   try {
     engine.register(await appManager.registeredPlugins())
   } catch (e) {
@@ -453,10 +457,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         }
       }
     })
-  }
-
-  if (isElectron()) {
-    appManager.activatePlugin('remixd')
   }
 
   if (params.embed) framingService.embed()
