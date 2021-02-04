@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.10.9-dev",
+  "version": "0.10.10",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "keywords": [
