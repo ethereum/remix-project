@@ -52,7 +52,7 @@ module.exports = {
           .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
           .addFile('Untitled6.sol', sources[5]['browser/Untitled6.sol'])
           .clickLaunchIcon('fileExplorers')
-          .verifyContracts(['test10', 'ERC20', 'SafeMath'], {wait: 10000})
+          .verifyContracts(['test10', 'ERC20'], {wait: 10000})
   },
 
   'Test Github Import - raw URL': function (browser: NightwatchBrowser) {
@@ -61,7 +61,7 @@ module.exports = {
           .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
           .addFile('Untitled7.sol', sources[6]['browser/Untitled7.sol'])
           .clickLaunchIcon('fileExplorers')
-          .verifyContracts(['test11', 'ERC20', 'SafeMath'], {wait: 10000})            
+          .verifyContracts(['test11', 'ERC20'], {wait: 10000})            
   },
   
   'Test switch to a github import from a solidity warning': function (browser: NightwatchBrowser) {
