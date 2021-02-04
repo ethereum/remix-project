@@ -42,8 +42,15 @@ function walkSync (dir: string, filelist: Filelist, sharedFolder: string): Filel
   filelist = filelist || {}
   files.forEach(function (file) {
     const subElement = pathModule.join(dir, file)
+    let isSymbolicLink
 
-    if (!fs.lstatSync(subElement).isSymbolicLink()) {
+    try {
+      isSymbolicLink = !fs.lstatSync(subElement).isSymbolicLink()
+    } catch (error) {
+      isSymbolicLink = false
+    }
+
+    if (isSymbolicLink) {
       if (fs.statSync(subElement).isDirectory()) {
         filelist = walkSync(subElement, filelist, sharedFolder)
       } else {
@@ -62,8 +69,14 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
 
   files.forEach(function (file) {
     const subElement = pathModule.join(dir, file)
+    let isSymbolicLink
 
-    if (!fs.lstatSync(subElement).isSymbolicLink()) {
+    try {
+      isSymbolicLink = !fs.lstatSync(subElement).isSymbolicLink()
+    } catch (error) {
+      isSymbolicLink = false
+    }
+    if (isSymbolicLink) {
       const relative: string = relativePath(subElement, sharedFolder)
 
       ret[relative] = { isDirectory: fs.statSync(subElement).isDirectory() }
