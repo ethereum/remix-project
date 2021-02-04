@@ -29,10 +29,10 @@ function relativePath (path: string, sharedFolder: string): string {
 }
 
 function normalizePath (path: string): string {
+  if (path === '/') path = './'
   if (process.platform === 'win32') {
     return path.replace(/\\/g, '/')
   }
-  if (path === '/') path = './'
   return path
 }
 

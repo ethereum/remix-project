@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remixd",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "remix server: allow accessing file system from remix.ethereum.org and start a dev environment (see help section)",
   "main": "index.js",
   "types": "./index.d.ts",
@@ -40,7 +40,7 @@
     "@remixproject/plugin-utils": "^0.3.3",
     "@remixproject/plugin-ws": "^0.3.3",
     "axios": "^0.20.0",
-    "chokidar": "^3.5.1",
+    "chokidar": "^2.1.8",
     "commander": "^2.20.3",
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
