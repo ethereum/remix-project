@@ -5,7 +5,7 @@ import { RemixClient } from './RemixClient'
 function App() {
   const p = new RemixClient()
   const openModal = () => {
-    p.openModal()
+    p.onConnect()
   }
   const clearLocalStorage = () => {
     localStorage.clear()
