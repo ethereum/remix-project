@@ -4,7 +4,6 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import Torus from "@toruslabs/torus-embed";
 import Authereum from "authereum";
 import Web3Modal from "web3modal";
-import UniLogin from "@unilogin/provider";
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import MewConnect from "@myetherwallet/mewconnect-web-client";
 import EventManager from "events"
@@ -18,46 +17,54 @@ export class RemixClient extends PluginClient {
         this.internalEvents = new EventManager()
         createClient(this);
         this.onload()
-    }
 
-    async initModal () {
-      try {
-        const currentTheme = await this.call('theme', 'currentTheme')
-        console.log('theme', currentTheme)
-        this.web3Modal.updateTheme(currentTheme.quality)
-        
-        this.on('theme', 'themeChanged', (theme) => { 
-          this.web3Modal.updateTheme(theme.quality)
-          console.log('theme', theme)
-        })
-
-        this.web3Modal.on('connect', (provider) => {
-          this.provider = provider
-          this.internalEvents.emit('accountsChanged', provider.accounts || [])
-          this.internalEvents.emit('chainChanged', provider.chainId)
-          this.provider.on("accountsChanged", (accounts) => {
-            this.internalEvents.emit('accountsChanged', accounts || [])
-          });
-          
-          this.provider.on("chainChanged", (chain) => {
-            this.internalEvents.emit('chainChanged', chain)
-          });
-        })
-      } catch (e) {
-        console.log(e)
-      }
-    }
-
-    async openModal () {
-      if (!this.web3Modal) {
         this.web3Modal = new Web3Modal({
           providerOptions: this.getProviderOptions() // required
         });
-        await this.initModal()
+    }
+
+    async init() {
+      const currentTheme = await this.call('theme', 'currentTheme')
+      console.log('theme', currentTheme)
+      this.web3Modal.updateTheme(currentTheme.quality)
+
+      this.on('theme', 'themeChanged', (theme) => { 
+        this.web3Modal.updateTheme(theme.quality)
+        console.log('theme', theme)
+      })
+
+    }
+
+    /**
+     * Connect wallet button pressed.
+     */
+    async onConnect() {
+
+      console.log("Opening a dialog", this.web3Modal);
+      try {
+        this.provider = await this.web3Modal.connect();
+      } catch(e) {
+        console.log("Could not get a wallet connection", e);
+        return;
       }
-      if (!this.web3Modal.show) {
-        this.web3Modal.toggleModal()
-      }
+
+      this.internalEvents.emit('accountsChanged', this.provider.accounts || [])
+      this.internalEvents.emit('chainChanged', this.provider.chainId)
+
+      // Subscribe to accounts change
+      this.provider.on("accountsChanged", (accounts) => {
+        this.internalEvents.emit('accountsChanged', accounts || [])
+      });
+
+      // Subscribe to chainId change
+      this.provider.on("chainChanged", (chainId) => {
+        this.internalEvents.emit('chainChanged', chainId)
+      });
+
+      // Subscribe to networkId change
+      this.provider.on("networkChanged", (networkId) => {
+        this.internalEvents.emit('networkChanged', networkId)
+      });
     }
 
     getProviderOptions () {
@@ -74,9 +81,6 @@ export class RemixClient extends PluginClient {
           },
           authereum: {
             package: Authereum
-          },
-          unilogin: {
-            package: UniLogin // required
           },
           burnerconnect: {
             package: BurnerConnectProvider, // required
