@@ -71,7 +71,7 @@ module.exports = {
 
   'Deploy and use Ballot using external web3': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="settingsWeb3Mode"]')
+      .click('*[id="web3-mode"]')
       .modalFooterOKClick()
       .clickLaunchIcon('solidity')
       .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])

@@ -27,7 +27,7 @@ module.exports = {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
       .validateValueInput('#value', '0000', '0')
-      .validateValueInput('#value', '', '0')
+      // .validateValueInput('#value', '', '0')
       .validateValueInput('#value', 'dragon', '0')
   },
 

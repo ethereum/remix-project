@@ -48,7 +48,8 @@ module.exports = {
 
   'Should create a new folder': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/README.txt"]')
+      .waitForElementPresent('[data-id="filePanelFileExplorer"]')
+      .click('[data-id="filePanelFileExplorer"]') // focus on root directory
       .click('[data-id="fileExplorerNewFilecreateNewFolder"]')
       .pause(1000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/blank"]')
