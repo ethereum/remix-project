@@ -1,4 +1,8 @@
+import { Contracts, AbiLabel, AtAddressComponent } from '@remix-ui/run-tab' // eslint-disable-line
 import publishToStorage from '../../../publishToStorage'
+
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
 
 const yo = require('yo-yo')
 const css = require('../styles/run-tab-styles')
@@ -17,12 +21,14 @@ class ContractDropdownUI {
     this.logCallback = logCallback
     this.runView = runView
     this.event = new EventManager()
+    this.isEnabledAtAddress = false
 
     this.listenToEvents()
     this.ipfsCheckedState = false
     this.exEnvironment = blockchain.getProvider()
     this.listenToContextChange()
     this.loadType = 'other'
+    this.el = yo`<span></span>`
   }
 
   listenToEvents () {
@@ -96,26 +102,18 @@ class ContractDropdownUI {
   }
 
   enableAtAddress (enable) {
-    if (enable) {
-      if (this.atAddressButtonInput.value === '') return
-      this.atAddress.removeAttribute('disabled')
-      this.atAddress.setAttribute('title', 'Interact with the given contract.')
-    } else {
-      this.atAddress.setAttribute('disabled', true)
-      if (this.atAddressButtonInput.value === '') {
-        this.atAddress.setAttribute('title', '⚠ Compile *.sol file or select *.abi file & then enter the address of deployed contract.')
-      } else {
-        this.atAddress.setAttribute('title', '⚠ Compile *.sol file or select *.abi file.')
-      }
-    }
+    this.isEnabledAtAddress = enable
+    ReactDOM.render(<AtAddressComponent enabledAtAddress={this.isEnabledAtAddress} loadFromAddress={this.loadFromAddress.bind(this)} />, this.atAddressComponent)
   }
 
   render () {
+    this.atAddressComponent = yo`<span></span>`
+
     this.compFails = yo`<i title="No contract compiled yet or compilation failed. Please check the compile tab for more information." class="m-2 ml-3 fas fa-times-circle ${css.errorIcon}" ></i>`
-    this.atAddress = yo`<button class="${css.atAddress} btn btn-sm btn-info" id="runAndDeployAtAdressButton" onclick=${this.loadFromAddress.bind(this)}>At Address</button>`
-    this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="address of contract" oninput=${this.atAddressChanged.bind(this)} />`
     this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled title="Please compile *.sol file to deploy or access a contract"></select>`
-    this.abiLabel = yo`<span class="py-1">ABI file selected</span>`
+    this.abiLabel = yo`<span></span>`
+    ReactDOM.render(<AbiLabel />, this.abiLabel)
+
     if (this.exEnvironment === 'vm') this.networkName = 'VM'
     this.enableAtAddress(false)
     this.abiLabel.style.display = 'none'
@@ -150,6 +148,8 @@ class ContractDropdownUI {
     this.createPanel = yo`<div class="${css.deployDropdown}"></div>`
     this.orLabel = yo`<div class="${css.orLabel} mt-2">or</div>`
 
+    ReactDOM.render(<AtAddressComponent enabledAtAddress={this.isEnabledAtAddress} loadFromAddress={this.loadFromAddress.bind(this)} />, this.atAddressComponent)
+
     const contractNamesContainer = yo`
       <div class="${css.container}" data-id="contractDropdownContainer">
         <label class="${css.settingsLabel}">Contract</label>
@@ -160,32 +160,17 @@ class ContractDropdownUI {
         <div>
           ${this.createPanel}
           ${this.orLabel}
-          <div class="${css.button} ${css.atAddressSect}">
-            ${this.atAddress}
-            ${this.atAddressButtonInput}
-          </div>
+          ${this.atAddressComponent}
         </div>
       </div>
     `
+
     this.selectContractNames.addEventListener('change', this.setInputParamsPlaceHolder.bind(this))
     this.setInputParamsPlaceHolder()
     if (!this.contractNamesContainer) {
       this.contractNamesContainer = contractNamesContainer
     }
     return contractNamesContainer
-  }
-
-  atAddressChanged (event) {
-    if (!this.atAddressButtonInput.value) {
-      this.enableAtAddress(false)
-    } else {
-      if ((this.selectContractNames && !this.selectContractNames.getAttribute('disabled') && this.loadType === 'sol') ||
-        this.loadType === 'abi') {
-        this.enableAtAddress(true)
-      } else {
-        this.enableAtAddress(false)
-      }
-    }
   }
 
   changeCurrentFile (currentFile) {
@@ -381,10 +366,9 @@ class ContractDropdownUI {
     return confirmationCb
   }
 
-  loadFromAddress () {
+  loadFromAddress (address) {
     this.event.trigger('clearInstance')
 
-    var address = this.atAddressButtonInput.value
     this.dropdownLogic.loadContractFromAddress(address,
       (cb) => {
         modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition?', cb)
