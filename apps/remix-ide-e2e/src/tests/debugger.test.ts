@@ -94,8 +94,7 @@ module.exports = {
     .getEditorValue((content) => {
       browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) {
         _name = name_;
-        _symbol = symbol_;
-        _decimals = 18;
+        _symbol = symbol_;        
     }`) != -1, 
     'current displayed content is not from the ERC20 source code')
     })        
