@@ -201,7 +201,10 @@ class ContractDropdownUI {
       this.selectContractNames.style.display = 'none'
       this.enableContractNames(true)
       this.enableAtAddress(true)
-    } else if (/.(.sol)$/.exec(currentFile)) {
+    } else if (/.(.sol)$/.exec(currentFile) ||
+        /.(.vy)$/.exec(currentFile) || // vyper
+        /.(.lex)$/.exec(currentFile) || // lexon
+        /.(.contract)$/.exec(currentFile)) {
       this.createPanel.style.display = 'block'
       this.orLabel.style.display = 'block'
       this.contractNamesContainer.style.display = 'block'
