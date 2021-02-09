@@ -459,5 +459,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     })
   }
 
+  if (params.code) {
+    try {
+      const path = 'browser/.code-sample/contract.sol'
+      await fileManager.writeFile(path, atob(params.code))
+      await fileManager.openFile(path)
+    } catch (e) {
+      console.error(e)
+    }
+  }
   if (params.embed) framingService.embed()
 }
