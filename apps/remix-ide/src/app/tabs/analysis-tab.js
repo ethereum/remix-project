@@ -28,6 +28,9 @@ class AnalysisTab extends ViewPlugin {
   }
 
   render () {
+    const listOfPlugins = localStorage.getItem('workspace')
+    // Reset state if plugin is deactivated
+    if (!listOfPlugins.includes('solidityStaticAnalysis')) this.staticanalysis = null
     if (!this.staticanalysis) this.staticanalysis = new StaticAnalysis(this.registry, this)
     this.staticanalysis.event.register('staticAnaysisWarning', (count) => {
       if (count > 0) {
