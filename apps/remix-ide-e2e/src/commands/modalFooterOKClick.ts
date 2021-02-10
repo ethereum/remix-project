@@ -1,5 +1,5 @@
-import { NightwatchBrowser } from "nightwatch"
-import EventEmitter from "events"
+import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from 'events'
 
 class ModalFooterOKClick extends EventEmitter {
   command (this: NightwatchBrowser): NightwatchBrowser {

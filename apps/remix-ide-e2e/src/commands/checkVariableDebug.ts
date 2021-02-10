@@ -1,5 +1,5 @@
 import { NightwatchBrowser, NightwatchCheckVariableDebugValue } from 'nightwatch'
-import EventEmitter from "events"
+import EventEmitter from 'events'
 
 const deepequal = require('deep-equal')
 
@@ -16,7 +16,7 @@ class CheckVariableDebug extends EventEmitter {
 }
 
 function checkDebug (browser: NightwatchBrowser, id: string, debugValue: NightwatchCheckVariableDebugValue, done: VoidFunction) {
-    // id is soliditylocals or soliditystate
+  // id is soliditylocals or soliditystate
   browser.execute(function (id: string) {
     const elem = document.querySelector('#' + id + ' .dropdownrawcontent') as HTMLElement
 
