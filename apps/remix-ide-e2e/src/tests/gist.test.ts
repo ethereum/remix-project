@@ -103,7 +103,7 @@ module.exports = {
       .getText('[data-id="browserModalDialogModalBody-react"]', (result) => {
         browser.assert.ok(result.value === 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Assert failed. Gist token error message not displayed.')
       })
-      .click('[data-id="browser-modal-footer-cancel-react"]')
+      .click('[data-id="browser-modal-footer-ok-react"]')
   },
 
   'Import From Gist For Valid Gist ID': function (browser: NightwatchBrowser) {
