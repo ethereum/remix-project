@@ -74,6 +74,10 @@ module.exports = {
       .modalFooterCancelClick()
   },
 
+  'Display Error Message For Missing Gist Token': function (browser: NightwatchBrowser) {
+    
+  },
+
   'Display Error Message For Invalid Gist ID': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
