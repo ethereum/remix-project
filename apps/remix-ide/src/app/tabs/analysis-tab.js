@@ -28,7 +28,7 @@ class AnalysisTab extends ViewPlugin {
   }
 
   render () {
-    if (!this.staticanalysis) this.staticanalysis = new StaticAnalysis(this.registry, this)
+    this.staticanalysis = new StaticAnalysis(this.registry, this)
     this.staticanalysis.event.register('staticAnaysisWarning', (count) => {
       if (count > 0) {
         this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning' })
