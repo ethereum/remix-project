@@ -6,50 +6,50 @@ import sauce from './sauce'
 import examples from '../examples/example-contracts'
 
 const sources = [
-  {'browser/Untitled.sol': { content: examples.ballot.content }}
+  { 'browser/Untitled.sol': { content: examples.ballot.content } }
 ]
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
-  
+
   '@sources': function () {
     return sources
   },
 
   'Should compile using "compileWithParamaters" API': function (browser: NightwatchBrowser) {
     browser
-    .addFile('test_jsCompile.js', { content: jsCompile })
-    .executeScript('remix.exeCurrent()')
-    .pause(5000)
-    .journalChildIncludes(`"languageversion": "0.6.8+commit.0bbfe453"`)
+      .addFile('test_jsCompile.js', { content: jsCompile })
+      .executeScript('remix.exeCurrent()')
+      .pause(5000)
+      .journalChildIncludes('"languageversion": "0.6.8+commit.0bbfe453"')
   },
 
   'Should compile using "compileWithParamaters" API with optimization On': function (browser: NightwatchBrowser) {
     browser
-    .addFile('test_jsCompileWithOptimization.js', { content: jsCompileWithOptimization })
-    .executeScript('remix.exeCurrent()')
-    .pause(10000)
-    .journalChildIncludes(`\\"optimizer\\":{\\"enabled\\":true,\\"runs\\":300}`)
+      .addFile('test_jsCompileWithOptimization.js', { content: jsCompileWithOptimization })
+      .executeScript('remix.exeCurrent()')
+      .pause(10000)
+      .journalChildIncludes('\\"optimizer\\":{\\"enabled\\":true,\\"runs\\":300}')
   },
 
   'Should compile using "compileWithParamaters" API with optimization off check default runs': function (browser: NightwatchBrowser) {
     browser
-    .addFile('test_jsCompileWithOptimizationDefault.js', { content: jsCompileWithOptimizationDefault })
-    .executeScript('remix.exeCurrent()')
-    .pause(10000)
-    .journalChildIncludes(`\\"optimizer\\":{\\"enabled\\":false,\\"runs\\":200}`)
+      .addFile('test_jsCompileWithOptimizationDefault.js', { content: jsCompileWithOptimizationDefault })
+      .executeScript('remix.exeCurrent()')
+      .pause(10000)
+      .journalChildIncludes('\\"optimizer\\":{\\"enabled\\":false,\\"runs\\":200}')
   },
 
   'Should update the compiler configuration with "setCompilerConfig" API': function (browser: NightwatchBrowser) {
     browser
-    .addFile('test_updateConfiguration.js', { content: updateConfiguration })
-    .executeScript('remix.exeCurrent()')
-    .pause(5000)
-    .addFile('test_updateConfiguration.sol', { content: simpleContract })
-    .verifyContracts(['StorageTestUpdateConfiguration'], { wait: 5000, version: '0.6.8+commit.0bbfe453' })
-    .end()
+      .addFile('test_updateConfiguration.js', { content: updateConfiguration })
+      .executeScript('remix.exeCurrent()')
+      .pause(5000)
+      .addFile('test_updateConfiguration.sol', { content: simpleContract })
+      .verifyContracts(['StorageTestUpdateConfiguration'], { wait: 5000, version: '0.6.8+commit.0bbfe453' })
+      .end()
   },
 
   tearDown: sauce
@@ -139,7 +139,6 @@ const jsCompileWithOptimizationDefault = `(async () => {
       console.log(e.message)   
   }
 })()`
-
 
 const updateConfiguration = `(async () => {
   try {    

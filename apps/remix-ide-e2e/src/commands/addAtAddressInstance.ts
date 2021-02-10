@@ -1,5 +1,5 @@
 import { NightwatchBrowser } from 'nightwatch'
-import EventEmitter from "events"
+import EventEmitter from 'events'
 
 class addAtAddressInstance extends EventEmitter {
   command (this: NightwatchBrowser, address: string, isValidFormat: boolean, isValidChecksum: boolean): NightwatchBrowser {
@@ -19,7 +19,7 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
       .execute(function () {
         const ret = document.querySelector('div[class^="modal-body"] div').innerHTML
         const modal = document.querySelector('#modal-footer-ok') as HTMLElement
-        
+
         modal.click()
         return ret
       }, [], function (result) {

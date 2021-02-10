@@ -1,5 +1,5 @@
 'use strict'
-import { NightwatchBrowser } from "nightwatch"
+import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import sauce from './sauce'
 
@@ -14,94 +14,99 @@ module.exports = {
 
   'Test Recorder': function (browser: NightwatchBrowser) {
     let addressRef
-    browser.addFile('scenario.json', {content: records})
-        .pause(5000)
-        .clickLaunchIcon('udapp')
-        .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-        .click('div[class^="cardContainer"] i[class^="arrow"]')
-        .click('#runTabView .runtransaction')
-        .waitForElementPresent('.instance:nth-of-type(2)')
-        .click('.instance:nth-of-type(2) > div > button')
-        .waitForElementPresent('.instance:nth-of-type(3)')
-        .click('.instance:nth-of-type(3) > div > button')
-        .clickFunction('getInt - call')
-        .clickFunction('getAddress - call')
-        .clickFunction('getFromLib - call')
-        .waitForElementPresent('div[class^="contractActionsContainer"] div[class^="value"] ul')
-        .getAddressAtPosition(1, (address) => {
-          console.log('Test Recorder ' + address)
-          addressRef = address
-        })
-        .perform((done) => {
-          browser.verifyCallReturnValue(addressRef, ['0:uint256: 1', '0:uint256: 3456', '0:address: 0xbBF289D846208c16EDc8474705C748aff07732dB'])
+    browser.addFile('scenario.json', { content: records })
+      .pause(5000)
+      .clickLaunchIcon('udapp')
+      .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
+      .click('div[class^="cardContainer"] i[class^="arrow"]')
+      .click('#runTabView .runtransaction')
+      .waitForElementPresent('.instance:nth-of-type(2)')
+      .click('.instance:nth-of-type(2) > div > button')
+      .waitForElementPresent('.instance:nth-of-type(3)')
+      .click('.instance:nth-of-type(3) > div > button')
+      .clickFunction('getInt - call')
+      .clickFunction('getAddress - call')
+      .clickFunction('getFromLib - call')
+      .waitForElementPresent('div[class^="contractActionsContainer"] div[class^="value"] ul')
+      .getAddressAtPosition(1, (address) => {
+        console.log('Test Recorder ' + address)
+        addressRef = address
+      })
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 1', '0:uint256: 3456', '0:address: 0xbBF289D846208c16EDc8474705C748aff07732dB'])
           .perform(() => done())
-        })
-        .click('*[data-id="deployAndRunClearInstances"]')
-        .testContracts('testRecorder.sol', sources[0]['browser/testRecorder.sol'], ['testRecorder'])
-        .clickLaunchIcon('udapp')
-        .createContract('12')
-        .waitForElementPresent('.instance:nth-of-type(2)')
-        .click('.instance:nth-of-type(2) > div > button')
-        .clickFunction('set - transact (not payable)', {types: 'uint256 _p', values: '34'})
-        .click('i.savetransaction')
-        .modalFooterOKClick()
-        .getEditorValue(function (result) {
-          const parsed = JSON.parse(result)
-          browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
-          browser.assert.equal(JSON.stringify(parsed.transactions[0].record.name), JSON.stringify(scenario.transactions[0].record.name))
-          browser.assert.equal(JSON.stringify(parsed.transactions[0].record.type), JSON.stringify(scenario.transactions[0].record.type))
-          browser.assert.equal(JSON.stringify(parsed.transactions[0].record.from), JSON.stringify(scenario.transactions[0].record.from))
-          browser.assert.equal(JSON.stringify(parsed.transactions[0].record.contractName), JSON.stringify(scenario.transactions[0].record.contractName))
+      })
+      .click('*[data-id="deployAndRunClearInstances"]')
+      .testContracts('testRecorder.sol', sources[0]['browser/testRecorder.sol'], ['testRecorder'])
+      .clickLaunchIcon('udapp')
+      .createContract('12')
+      .waitForElementPresent('.instance:nth-of-type(2)')
+      .click('.instance:nth-of-type(2) > div > button')
+      .clickFunction('set - transact (not payable)', { types: 'uint256 _p', values: '34' })
+      .click('i.savetransaction')
+      .modalFooterOKClick()
+      .getEditorValue(function (result) {
+        const parsed = JSON.parse(result)
+        browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
+        browser.assert.equal(JSON.stringify(parsed.transactions[0].record.name), JSON.stringify(scenario.transactions[0].record.name))
+        browser.assert.equal(JSON.stringify(parsed.transactions[0].record.type), JSON.stringify(scenario.transactions[0].record.type))
+        browser.assert.equal(JSON.stringify(parsed.transactions[0].record.from), JSON.stringify(scenario.transactions[0].record.from))
+        browser.assert.equal(JSON.stringify(parsed.transactions[0].record.contractName), JSON.stringify(scenario.transactions[0].record.contractName))
 
-          browser.assert.equal(JSON.stringify(parsed.transactions[1].record.parameters), JSON.stringify(scenario.transactions[1].record.parameters))
-          browser.assert.equal(JSON.stringify(parsed.transactions[1].record.name), JSON.stringify(scenario.transactions[1].record.name))
-          browser.assert.equal(JSON.stringify(parsed.transactions[1].record.type), JSON.stringify(scenario.transactions[1].record.type))
-          browser.assert.equal(JSON.stringify(parsed.transactions[1].record.from), JSON.stringify(scenario.transactions[1].record.from))
-        })
+        browser.assert.equal(JSON.stringify(parsed.transactions[1].record.parameters), JSON.stringify(scenario.transactions[1].record.parameters))
+        browser.assert.equal(JSON.stringify(parsed.transactions[1].record.name), JSON.stringify(scenario.transactions[1].record.name))
+        browser.assert.equal(JSON.stringify(parsed.transactions[1].record.type), JSON.stringify(scenario.transactions[1].record.type))
+        browser.assert.equal(JSON.stringify(parsed.transactions[1].record.from), JSON.stringify(scenario.transactions[1].record.from))
+      })
   },
 
   'Record more than one contract': function (browser: NightwatchBrowser) {
     // deploy 2 contracts (2 different ABIs), save the record, reexecute and test one of the function.
-    let addressRef
     browser
-        .click('*[data-id="deployAndRunClearInstances"]')
-        .testContracts('multipleContracts.sol', sources[1]['browser/multipleContracts.sol'], ['t1est', 't2est'])
-        .clickLaunchIcon('udapp')
-        .selectContract('t1est')
-        .pause(1000)
-        .createContract('')
-        .clickInstance(0)
-        .selectContract('t2est')
-        .pause(1000)
-        .createContract('')
-        .click('i.savetransaction')
-        .modalFooterOKClick()
-        .click('*[data-id="deployAndRunClearInstances"]') // clear udapp
-        .click('*[data-id="terminalClearConsole"]') // clear terminal
-        .click('#runTabView .runtransaction')
-        .clickInstance(1)
-        .pause(1000)
-        .clickFunction('set2 - transact (not payable)', {types: 'uint256 _po', values: '10'})
-        .testFunction('0xa88bf726e706480f61f04a066452929030c0a0216cc6923106f863963339bdb7',
-      {
-        status: 'true Transaction mined and execution succeed',
-        'transaction hash': '0xa88bf726e706480f61f04a066452929030c0a0216cc6923106f863963339bdb7',
-        'decoded input': {"uint256 _po":{"type":"BigNumber","hex":"0x0a"}}
-      })
-        .end()
+      .click('*[data-id="deployAndRunClearInstances"]')
+      .testContracts('multipleContracts.sol', sources[1]['browser/multipleContracts.sol'], ['t1est', 't2est'])
+      .clickLaunchIcon('udapp')
+      .selectContract('t1est')
+      .pause(1000)
+      .createContract('')
+      .clickInstance(0)
+      .selectContract('t2est')
+      .pause(1000)
+      .createContract('')
+      .click('i.savetransaction')
+      .modalFooterOKClick()
+      .click('*[data-id="deployAndRunClearInstances"]') // clear udapp
+      .click('*[data-id="terminalClearConsole"]') // clear terminal
+      .click('#runTabView .runtransaction')
+      .clickInstance(1)
+      .pause(1000)
+      .clickFunction('set2 - transact (not payable)', { types: 'uint256 _po', values: '10' })
+      .testFunction('0xa88bf726e706480f61f04a066452929030c0a0216cc6923106f863963339bdb7',
+        {
+          status: 'true Transaction mined and execution succeed',
+          'transaction hash': '0xa88bf726e706480f61f04a066452929030c0a0216cc6923106f863963339bdb7',
+          'decoded input': { 'uint256 _po': { type: 'BigNumber', hex: '0x0a' } }
+        })
+      .end()
   },
   tearDown: sauce
 }
 
-const sources = [{'browser/testRecorder.sol': {content: `contract testRecorder {
+const sources = [{
+  'browser/testRecorder.sol': {
+    content: `contract testRecorder {
   constructor(uint p) public {
       
   }
   function set (uint _p) public {
           
   }
-}`}},
-{'browser/multipleContracts.sol': {content: `contract t1est {
+}`
+  }
+},
+{
+  'browser/multipleContracts.sol': {
+    content: `contract t1est {
   uint p;
   t2est t;
   constructor () public {
@@ -120,7 +125,9 @@ contract t2est {
   function set2(uint _po) public {
       p = _po;
   }
-}`}}
+}`
+  }
+}
 ]
 
 const records = `{
@@ -282,70 +289,70 @@ const records = `{
 }`
 
 const scenario = {
-  'accounts': {
+  accounts: {
     'account{10}': '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'
   },
-  'linkReferences': {},
-  'transactions': [
+  linkReferences: {},
+  transactions: [
     {
-      'timestamp': 1512912691086,
-      'record': {
-        'value': '0',
-        'parameters': [
+      timestamp: 1512912691086,
+      record: {
+        value: '0',
+        parameters: [
           "12" // eslint-disable-line
         ],
-        'abi': '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
-        'contractName': 'testRecorder',
-        'bytecode': '6060604052341561000f57600080fd5b6040516020806100cd833981016040528080519060200190919050505060938061003a6000396000f300606060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b1146044575b600080fd5b3415604e57600080fd5b606260048080359060200190919050506064565b005b505600a165627a7a723058204839660366b94f5f3c8c6da233a2c5fe95ad5635b5c8a2bb630a8b845d68ecdd0029',
-        'linkReferences': {},
-        'name': '',
-        'type': 'constructor',
-        'inputs': '(uint256)',
-        'from': 'account{10}'
+        abi: '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
+        contractName: 'testRecorder',
+        bytecode: '6060604052341561000f57600080fd5b6040516020806100cd833981016040528080519060200190919050505060938061003a6000396000f300606060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b1146044575b600080fd5b3415604e57600080fd5b606260048080359060200190919050506064565b005b505600a165627a7a723058204839660366b94f5f3c8c6da233a2c5fe95ad5635b5c8a2bb630a8b845d68ecdd0029',
+        linkReferences: {},
+        name: '',
+        type: 'constructor',
+        inputs: '(uint256)',
+        from: 'account{10}'
       }
     },
     {
-      'timestamp': 1512912696128,
-      'record': {
-        'value': '0',
-        'parameters': [
+      timestamp: 1512912696128,
+      record: {
+        value: '0',
+        parameters: [
           "34" // eslint-disable-line
         ],
-        'to': 'created{1512912691086}',
-        'abi': '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
-        'name': 'set',
-        'inputs': '(uint256)',
-        'type': 'function',
-        'from': 'account{10}'
+        to: 'created{1512912691086}',
+        abi: '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
+        name: 'set',
+        inputs: '(uint256)',
+        type: 'function',
+        from: 'account{10}'
       }
     }
   ],
-  'abis': {
+  abis: {
     '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798': [
       {
-        'constant': false,
-        'inputs': [
+        constant: false,
+        inputs: [
           {
-            'name': '_p',
-            'type': 'uint256'
+            name: '_p',
+            type: 'uint256'
           }
         ],
-        'name': 'set',
-        'outputs': [],
-        'payable': false,
-        'stateMutability': 'nonpayable',
-        'type': 'function'
+        name: 'set',
+        outputs: [],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function'
       },
       {
-        'inputs': [
+        inputs: [
           {
-            'name': 'p',
-            'type': 'uint256'
+            name: 'p',
+            type: 'uint256'
           }
         ],
-        'payable': false,
-        'stateMutability': 'nonpayable',
-        'type': 'constructor'
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'constructor'
       }
     ]
   }
