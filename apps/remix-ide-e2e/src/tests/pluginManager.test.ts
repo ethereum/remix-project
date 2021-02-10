@@ -1,5 +1,5 @@
 'use strict'
-import { NightwatchBrowser } from "nightwatch"
+import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import sauce from './sauce'
 
@@ -16,52 +16,52 @@ module.exports = {
 
   'Should Load Plugin Manager': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-    .pause(3000)
-    .click('*[plugin="pluginManager"]')
-    .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-    .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'PLUGIN MANAGER')
+      .pause(3000)
+      .click('*[plugin="pluginManager"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'PLUGIN MANAGER')
   },
 
   'Should Search for plugins': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-    .click('*[data-id="pluginManagerComponentSearchInput"]')
-    .keys('debugger')
-    .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
-    .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
-    .click('*[data-id="pluginManagerComponentSearchInput"]')
-    .keys('Vyper')
-    .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]')
-    .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
-    .click('*[data-id="pluginManagerComponentSearchInput"]')
-    .keys('ZoKrates')
-    .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonZoKrates"]')
-    .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
-    .click('*[data-id="pluginManagerComponentSearchInput"]')
-    .keys(browser.Keys.ENTER)
+      .click('*[data-id="pluginManagerComponentSearchInput"]')
+      .keys('debugger')
+      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
+      .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
+      .click('*[data-id="pluginManagerComponentSearchInput"]')
+      .keys('Vyper')
+      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]')
+      .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
+      .click('*[data-id="pluginManagerComponentSearchInput"]')
+      .keys('ZoKrates')
+      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonZoKrates"]')
+      .clearValue('*[data-id="pluginManagerComponentSearchInput"]')
+      .click('*[data-id="pluginManagerComponentSearchInput"]')
+      .keys(browser.Keys.ENTER)
   },
 
   'Should activate plugins': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-    .click('*[data-id="pluginManagerComponentPluginManager"]')
-    .scrollAndClick('*[data-id="pluginManagerComponentActivateButtondebugger"]')
-    .pause(2000)
-    .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
-    .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonvyper"]')
-    .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
-    .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonZoKrates"]')
-    .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonZoKrates"]')
+      .click('*[data-id="pluginManagerComponentPluginManager"]')
+      .scrollAndClick('*[data-id="pluginManagerComponentActivateButtondebugger"]')
+      .pause(2000)
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
+      .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonvyper"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
+      .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonZoKrates"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonZoKrates"]')
   },
 
   'Should deactivate plugins': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-    .click('*[data-id="pluginManagerComponentPluginManager"]')
-    .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
-    .pause(2000)
-    .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')   
-    .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
-    .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
-    .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
-    .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]')
+      .click('*[data-id="pluginManagerComponentPluginManager"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
+      .pause(2000)
+      .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
+      .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]')
   },
 
   /*
@@ -104,56 +104,56 @@ module.exports = {
 
   'Should connect a local plugin': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-    .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
-    .waitForElementVisible('*[data-id="modalDialogContainer"]')
-    .click('*[data-id="modalDialogModalBody"]')
-    .waitForElementVisible('*[data-id="localPluginName"]')
-    .setValue('*[data-id="localPluginName"]', testData.pluginName)
-    .setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
-    .setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
-    .click('*[data-id="localPluginRadioButtoniframe"]')
-    .click('*[data-id="localPluginRadioButtonsidePanel"]')
-    .click('*[data-id="modalDialogModalFooter"]')
-    .modalFooterOKClick()
-    .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]')
+      .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
+      .waitForElementVisible('*[data-id="modalDialogContainer"]')
+      .click('*[data-id="modalDialogModalBody"]')
+      .waitForElementVisible('*[data-id="localPluginName"]')
+      .setValue('*[data-id="localPluginName"]', testData.pluginName)
+      .setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
+      .setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
+      .click('*[data-id="localPluginRadioButtoniframe"]')
+      .click('*[data-id="localPluginRadioButtonsidePanel"]')
+      .click('*[data-id="modalDialogModalFooter"]')
+      .modalFooterOKClick()
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]')
   },
 
   'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-    .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
-    .waitForElementVisible('*[data-id="modalDialogContainer"]')
-    .click('*[data-id="modalDialogModalBody"]')
-    .waitForElementVisible('*[data-id="localPluginName"]')
-    .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', testData.pluginName)
-    .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
-    .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
-    .click('*[data-id="localPluginRadioButtoniframe"]')
-    .click('*[data-id="localPluginRadioButtonsidePanel"]')
-    .click('*[data-id="modalDialogModalFooter"]')
-    .modalFooterOKClick()
-    .pause(5000)
-    .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
-    .pause(2000)
-    .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Cannot create Plugin : This name has already been used')
+      .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
+      .waitForElementVisible('*[data-id="modalDialogContainer"]')
+      .click('*[data-id="modalDialogModalBody"]')
+      .waitForElementVisible('*[data-id="localPluginName"]')
+      .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', testData.pluginName)
+      .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
+      .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
+      .click('*[data-id="localPluginRadioButtoniframe"]')
+      .click('*[data-id="localPluginRadioButtonsidePanel"]')
+      .click('*[data-id="modalDialogModalFooter"]')
+      .modalFooterOKClick()
+      .pause(5000)
+      .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)')
+      .pause(2000)
+      .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Cannot create Plugin : This name has already been used')
   },
 
   'Should load back installed plugins after reload': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-    .getInstalledPlugins((plugins) => {
-      browser.refresh()
-      .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
-      .pause(3000)
-      .perform((done) => {
-        plugins.forEach(plugin => {
-          if (plugin !== testData.pluginName) {
-            browser.waitForElementVisible(`[plugin="${plugin}"`)
-          }
-        })
-        done()
+      .getInstalledPlugins((plugins) => {
+        browser.refresh()
+          .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+          .pause(3000)
+          .perform((done) => {
+            plugins.forEach(plugin => {
+              if (plugin !== testData.pluginName) {
+                browser.waitForElementVisible(`[plugin="${plugin}"`)
+              }
+            })
+            done()
+          })
       })
-    })
-    .end()
+      .end()
   },
-  
+
   tearDown: sauce
 }

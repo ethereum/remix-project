@@ -1,5 +1,5 @@
-import { NightwatchBrowser } from "nightwatch"
-import EventEmitter from "events"
+import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from 'events'
 
 class GetAddressAtPosition extends EventEmitter {
   command (this: NightwatchBrowser, index: number, cb: (pos: string) => void): NightwatchBrowser {
@@ -16,16 +16,16 @@ class GetAddressAtPosition extends EventEmitter {
 
 function getAddressAtPosition (browser: NightwatchBrowser, index: number, callback: (pos: string) => void) {
   browser.waitForElementPresent('*[data-shared="universalDappUiInstance"]')
-  .execute(function (index) {
-    const deployedContracts = document.querySelectorAll('*[data-shared="universalDappUiInstance"]')
-    const id = deployedContracts[index].getAttribute('id')
+    .execute(function (index) {
+      const deployedContracts = document.querySelectorAll('*[data-shared="universalDappUiInstance"]')
+      const id = deployedContracts[index].getAttribute('id')
 
-    return id.replace('instance', '')
-  }, [index], function (result) {
-    const pos = typeof result.value === 'string' ? result.value : null
+      return id.replace('instance', '')
+    }, [index], function (result) {
+      const pos = typeof result.value === 'string' ? result.value : null
 
-    callback(pos)
-  })
+      callback(pos)
+    })
 }
 
 module.exports = GetAddressAtPosition

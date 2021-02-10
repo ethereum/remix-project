@@ -10,25 +10,25 @@ module.exports = {
 
   'Checks vertical icons panelcontex menu': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
-    .waitForElementVisible('*[data-id="verticalIconsKindpluginManager"]')
-    .click('*[data-id="verticalIconsKindpluginManager"]')
-    .scrollAndClick('*[data-id="pluginManagerComponentActivateButtondebugger"]')
-    .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]', 7000)
-    .rightClick('[data-id="verticalIconsKinddebugger"]')
-    .waitForElementVisible('*[id="menuitemdeactivate"]')
-    .waitForElementVisible('*[id="menuitemdocumentation"]')
-    .click('*[data-id="remixIdeIconPanel"]')
+      .waitForElementVisible('*[data-id="verticalIconsKindpluginManager"]')
+      .click('*[data-id="verticalIconsKindpluginManager"]')
+      .scrollAndClick('*[data-id="pluginManagerComponentActivateButtondebugger"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]', 7000)
+      .rightClick('[data-id="verticalIconsKinddebugger"]')
+      .waitForElementVisible('*[id="menuitemdeactivate"]')
+      .waitForElementVisible('*[id="menuitemdocumentation"]')
+      .click('*[data-id="remixIdeIconPanel"]')
   },
 
   'Checks vertical icons panel contex menu deactivate': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
-    .waitForElementVisible('*[data-id="verticalIconsKinddebugger"]', 7000)
-    .rightClick('[data-id="verticalIconsKinddebugger"]')
-    .click('*[id="menuitemdeactivate"]')
-    .click('*[data-id="verticalIconsKindsettings"]')
-    .click('*[data-id="verticalIconsKindpluginManager"]')
-    .scrollInto('*[data-id="pluginManagerComponentActivateButtondebugger"]')
-    .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
+      .waitForElementVisible('*[data-id="verticalIconsKinddebugger"]', 7000)
+      .rightClick('[data-id="verticalIconsKinddebugger"]')
+      .click('*[id="menuitemdeactivate"]')
+      .click('*[data-id="verticalIconsKindsettings"]')
+      .click('*[data-id="verticalIconsKindpluginManager"]')
+      .scrollInto('*[data-id="pluginManagerComponentActivateButtondebugger"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
   },
 
   tearDown: sauce

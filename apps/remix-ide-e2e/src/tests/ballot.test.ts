@@ -6,7 +6,7 @@ import sauce from './sauce'
 import examples from '../examples/example-contracts'
 
 const sources = [
-  {'browser/Untitled.sol': { content: examples.ballot.content }}
+  { 'browser/Untitled.sol': { content: examples.ballot.content } }
 ]
 
 module.exports = {
@@ -18,136 +18,136 @@ module.exports = {
   },
   'Deploy Ballot': function (browser: NightwatchBrowser) {
     browser
-    .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-    .clickLaunchIcon('solidity')
-    .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
-    .clickLaunchIcon('udapp')
-    .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
-    .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
-    .click('*[data-id="Deploy - transact (not payable)"]')
-    .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
-    .click('*[data-id="universalDappUiTitleExpander"]')
-    .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
-    .testFunction('0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
-      {
-        status: 'true Transaction mined and execution succeed',
-        'transaction hash': '0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
-        'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-      })
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .clickLaunchIcon('solidity')
+      .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
+      .clickLaunchIcon('udapp')
+      .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
+      .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
+      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
+      .testFunction('0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
+        {
+          status: 'true Transaction mined and execution succeed',
+          'transaction hash': '0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3',
+          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+        })
   },
 
   'Debug Ballot / delegate': function (browser: NightwatchBrowser) {
     browser.pause(500)
-    .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
-    .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
+      .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
+      .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
     // .clickLaunchIcon('debugger')
-    .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-    .pause(2000)
-    .waitForElementVisible('#stepdetail')
-    .goToVMTraceStep(79)
-    .pause(1000)
-    .checkVariableDebug('soliditystate', stateCheck)
-    .checkVariableDebug('soliditylocals', localsCheck)
+      .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
+      .pause(2000)
+      .waitForElementVisible('#stepdetail')
+      .goToVMTraceStep(79)
+      .pause(1000)
+      .checkVariableDebug('soliditystate', stateCheck)
+      .checkVariableDebug('soliditylocals', localsCheck)
   },
 
   'Access Ballot via at address': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('udapp')
-    .click('*[data-id="universalDappUiUdappClose"]')
-    .addFile('ballot.abi', { content: ballotABI })
-    .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)
-    .clickLaunchIcon('fileExplorers')
-    .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
-    .pause(500)
-    .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
-    .click('*[data-id="universalDappUiTitleExpander"]')
-    .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'})
-    .testFunction('0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
-      {
-        status: 'false Transaction mined but execution failed',
-        'transaction hash': '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
-        'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-      })
+      .click('*[data-id="universalDappUiUdappClose"]')
+      .addFile('ballot.abi', { content: ballotABI })
+      .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)
+      .clickLaunchIcon('fileExplorers')
+      .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
+      .pause(500)
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
+      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
+      .testFunction('0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
+        {
+          status: 'false Transaction mined but execution failed',
+          'transaction hash': '0xca58080c8099429caeeffe43b8104df919c2c543dceb9edf9242fa55f045c803',
+          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+        })
   },
 
   'Deploy and use Ballot using external web3': function (browser: NightwatchBrowser) {
     browser
-    .click('*[data-id="settingsWeb3Mode"]')
-    .modalFooterOKClick()
-    .clickLaunchIcon('solidity')
-    .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
-    .clickLaunchIcon('udapp')
-    .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
-    .click('*[data-id="Deploy - transact (not payable)"]')
-    .clickInstance(0)
-    .click('*[data-id="terminalClearConsole"]')
-    .clickFunction('delegate - transact (not payable)', {types: 'address to', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'})
-    .journalLastChildIncludes('Ballot.delegate(address)')
-    .journalLastChildIncludes('data: 0x5c1...a733c')
-    .end()
+      .click('*[data-id="settingsWeb3Mode"]')
+      .modalFooterOKClick()
+      .clickLaunchIcon('solidity')
+      .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
+      .clickLaunchIcon('udapp')
+      .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .clickInstance(0)
+      .click('*[data-id="terminalClearConsole"]')
+      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c' })
+      .journalLastChildIncludes('Ballot.delegate(address)')
+      .journalLastChildIncludes('data: 0x5c1...a733c')
+      .end()
   },
 
   tearDown: sauce
 }
 
 const localsCheck = {
-  'to': {
-    'value': '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB',
-    'type': 'address'
+  to: {
+    value: '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB',
+    type: 'address'
   }
 }
 
 const stateCheck = {
-  'chairperson': {
-    'value': '0xCA35B7D915458EF540ADE6068DFE2F44E8FA733C',
-    'type': 'address',
-    'constant': false
+  chairperson: {
+    value: '0xCA35B7D915458EF540ADE6068DFE2F44E8FA733C',
+    type: 'address',
+    constant: false
   },
-  'voters': {
-    'value': {
+  voters: {
+    value: {
       '000000000000000000000000ca35b7d915458ef540ade6068dfe2f44e8fa733c': {
-        'value': {
-          'weight': {
-            'value': '1',
-            'type': 'uint256'
+        value: {
+          weight: {
+            value: '1',
+            type: 'uint256'
           },
-          'voted': {
-            'value': false,
-            'type': 'bool'
+          voted: {
+            value: false,
+            type: 'bool'
           },
-          'delegate': {
-            'value': '0x0000000000000000000000000000000000000000',
-            'type': 'address'
+          delegate: {
+            value: '0x0000000000000000000000000000000000000000',
+            type: 'address'
           },
-          'vote': {
-            'value': '0',
-            'type': 'uint256'
+          vote: {
+            value: '0',
+            type: 'uint256'
           }
         },
-        'type': 'struct Ballot.Voter'
+        type: 'struct Ballot.Voter'
       }
     },
-    'type': 'mapping(address => struct Ballot.Voter)',
-    'constant': false
+    type: 'mapping(address => struct Ballot.Voter)',
+    constant: false
   },
-  'proposals': {
-    'value': [
+  proposals: {
+    value: [
       {
-        'value': {
-          'name': {
-            'value': '0x48656C6C6F20576F726C64210000000000000000000000000000000000000000',
-            'type': 'bytes32'
+        value: {
+          name: {
+            value: '0x48656C6C6F20576F726C64210000000000000000000000000000000000000000',
+            type: 'bytes32'
           },
-          'voteCount': {
-            'value': '0',
-            'type': 'uint256'
+          voteCount: {
+            value: '0',
+            type: 'uint256'
           }
         },
-        'type': 'struct Ballot.Proposal'
+        type: 'struct Ballot.Proposal'
       }
     ],
-    'length': '0x1',
-    'type': 'struct Ballot.Proposal[]',
-    'constant': false
+    length: '0x1',
+    type: 'struct Ballot.Proposal[]',
+    constant: false
   }
 }
 

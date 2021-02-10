@@ -1,5 +1,5 @@
-import { NightwatchBrowser } from "nightwatch"
-import EventEmitter from "events"
+import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from 'events'
 
 class NoWorkerErrorFor extends EventEmitter {
   command (this: NightwatchBrowser, version: string): NightwatchBrowser {

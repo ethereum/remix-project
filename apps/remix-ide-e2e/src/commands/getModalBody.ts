@@ -1,17 +1,17 @@
-import { NightwatchBrowser } from "nightwatch"
-import EventEmitter from "events"
+import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from 'events'
 
 class GetModalBody extends EventEmitter {
   command (this: NightwatchBrowser, callback: (value: string, cb: VoidFunction) => void) {
     this.api.waitForElementPresent('.modal-body')
-    .getText('#modal-dialog', (result) => {
-      console.log(result)
-      const value = typeof result.value === 'string' ? result.value : null
+      .getText('#modal-dialog', (result) => {
+        console.log(result)
+        const value = typeof result.value === 'string' ? result.value : null
 
-      callback(value, () => {
-        this.emit('complete')
+        callback(value, () => {
+          this.emit('complete')
+        })
       })
-    })
     return this
   }
 }

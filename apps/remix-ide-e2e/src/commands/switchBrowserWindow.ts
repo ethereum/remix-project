@@ -1,4 +1,4 @@
-import { NightwatchBrowser, NightwatchCallbackResult } from "nightwatch"
+import { NightwatchBrowser, NightwatchCallbackResult } from 'nightwatch'
 
 const EventEmitter = require('events')
 
@@ -18,9 +18,9 @@ function switchWindow (browser: NightwatchBrowser, url: string, windowName: stri
     return window.open('', windowName, 'width=2560, height=1440')
   }, [windowName], (newWindow) => {
     browser.switchWindow(windowName)
-    .url(url)
-    .pause(5000)
-    .assert.urlContains(url)
+      .url(url)
+      .pause(5000)
+      .assert.urlContains(url)
     if (cb) cb(browser, newWindow)
   })
 }
