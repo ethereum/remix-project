@@ -121,6 +121,21 @@ export class RemixURLResolver {
     }
   }
 
+   /**
+  * Handle an import statement based on NPM
+  * @param url The url of the NPM import statement
+  */
+  async handleNpmImport(url: string): Promise<HandlerResponse> {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const req = 'https://unpkg.com/' + url
+      const response: AxiosResponse = await axios.get(req)
+      return { content: response.data, cleanUrl: url }
+    } catch (e) {
+      throw e
+    }
+  }
+
   getHandlers(): Handler[] {
     return [
       {
@@ -147,6 +162,11 @@ export class RemixURLResolver {
         type: 'ipfs',
         match: (url) => { return /^(ipfs:\/\/?.+)/.exec(url) },
         handle: (match) => this.handleIPFS(match[1])
+      },
+      {
+        type: 'npm',
+        match: (url) => { return /^[^/][^\n"?:*<>|]*$/g.exec(url) }, // match a typical relative path
+        handle: (match) => this.handleNpmImport(match[0])
       }
     ]
   }
