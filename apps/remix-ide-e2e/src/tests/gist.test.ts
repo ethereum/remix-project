@@ -74,10 +74,6 @@ module.exports = {
       .modalFooterCancelClick()
   },
 
-  'Display Error Message For Missing Gist Token': function (browser: NightwatchBrowser) {
-    
-  },
-
   'Display Error Message For Invalid Gist ID': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -91,9 +87,32 @@ module.exports = {
       .modalFooterOKClick()
   },
 
+  'Display Error Message For Missing Gist Token When Publishing': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .clickLaunchIcon('settings')
+      .waitForElementVisible('[data-id="settingsTabRemoveGistToken"]')
+      .click('[data-id="settingsTabRemoveGistToken"]')
+      .clickLaunchIcon('fileExplorers')
+      .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')
+      .click('*[data-id="fileExplorerNewFilepublishToGist"]')
+      .waitForElementVisible('*[data-id="browserModalDialogContainer-react"]')
+      .pause(2000)
+      .click('.modal-ok')
+      .pause(10000)
+      .getText('[data-id="browserModalDialogModalBody-react"]', (result) => {
+        browser.assert.ok(result.value === 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Assert failed. Gist token error message not displayed.')
+      })
+      .click('[data-id="browser-modal-footer-cancel-react"]')
+  },
+
   'Import From Gist For Valid Gist ID': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .clickLaunchIcon('settings')
+      .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
+      .setValue('[data-id="settingsTabGistAccessToken"]', process.env.gist_token)
+      .click('[data-id="settingsTabSaveGistToken"]')
       .clickLaunchIcon('fileExplorers')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
