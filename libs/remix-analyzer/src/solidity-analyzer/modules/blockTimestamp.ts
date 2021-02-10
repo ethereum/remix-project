@@ -1,23 +1,25 @@
-import { default as category } from './categories'
+import category from './categories'
 import { isNowAccess, isBlockTimestampAccess, getCompilerVersion } from './staticAnalysisCommon'
-import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, IdentifierAstNode, 
-  MemberAccessAstNode, SupportedVersion} from './../../types'
+import algorithm from './algorithmCategories'
+import {
+  AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, IdentifierAstNode,
+  MemberAccessAstNode, SupportedVersion
+} from './../../types'
 
 export default class blockTimestamp implements AnalyzerModule {
   warningNowNodes: IdentifierAstNode[] = []
   warningblockTimestampNodes: MemberAccessAstNode[] = []
-  name = `Block timestamp: `
-  description = `Can be influenced by miners`
+  name = 'Block timestamp: '
+  description = 'Can be influenced by miners'
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
     start: '0.4.12'
   }
 
-  visit (node: IdentifierAstNode | MemberAccessAstNode ): void {
-    if (node.nodeType === "Identifier" && isNowAccess(node)) this.warningNowNodes.push(node)
-    else if (node.nodeType === "MemberAccess" && isBlockTimestampAccess(node)) this.warningblockTimestampNodes.push(node)
+  visit (node: IdentifierAstNode | MemberAccessAstNode): void {
+    if (node.nodeType === 'Identifier' && isNowAccess(node)) this.warningNowNodes.push(node)
+    else if (node.nodeType === 'MemberAccess' && isBlockTimestampAccess(node)) this.warningblockTimestampNodes.push(node)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -1,12 +1,12 @@
-import { default as category } from './categories'
-import { default as algorithm } from './algorithmCategories'
+import category from './categories'
+import algorithm from './algorithmCategories'
 import { isTxOriginAccess, getCompilerVersion } from './staticAnalysisCommon'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, SupportedVersion} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, SupportedVersion } from './../../types'
 
 export default class txOrigin implements AnalyzerModule {
   txOriginNodes: MemberAccessAstNode[] = []
-  name = `Transaction origin: `
-  description = `'tx.origin' used`
+  name = 'Transaction origin: '
+  description = '\'tx.origin\' used'
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -15,7 +15,6 @@ export default class txOrigin implements AnalyzerModule {
 
   visit (node: MemberAccessAstNode): void {
     if (isTxOriginAccess(node)) this.txOriginNodes.push(node)
-    
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

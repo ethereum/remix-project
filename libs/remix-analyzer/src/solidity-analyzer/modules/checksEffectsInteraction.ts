@@ -1,16 +1,20 @@
-import { default as category } from './categories'
-import { isInteraction, isEffect, isLocalCallGraphRelevantNode, getFullQuallyfiedFuncDefinitionIdent,
-  isWriteOnStateVariable, isStorageVariableDeclaration, getFullQualifiedFunctionCallIdent, getCompilerVersion } from './staticAnalysisCommon'
-import { default as algorithm } from './algorithmCategories'
+import category from './categories'
+import {
+  isInteraction, isEffect, isLocalCallGraphRelevantNode, getFullQuallyfiedFuncDefinitionIdent,
+  isWriteOnStateVariable, isStorageVariableDeclaration, getFullQualifiedFunctionCallIdent, getCompilerVersion
+} from './staticAnalysisCommon'
+import algorithm from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
-import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VariableDeclarationAstNode, 
-  FunctionHLAst, ContractCallGraph, Context, FunctionCallAstNode, AssignmentAstNode, UnaryOperationAstNode, 
-  InlineAssemblyAstNode, ReportFunction, VisitFunction, FunctionCallGraph, SupportedVersion } from './../../types'
+import AbstractAst from './abstractAstView'
+import {
+  AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VariableDeclarationAstNode,
+  FunctionHLAst, ContractCallGraph, Context, FunctionCallAstNode, AssignmentAstNode, UnaryOperationAstNode,
+  InlineAssemblyAstNode, ReportFunction, VisitFunction, FunctionCallGraph, SupportedVersion
+} from './../../types'
 
 export default class checksEffectsInteraction implements AnalyzerModule {
-  name = `Check-effects-interaction: `
-  description = `Potential reentrancy bugs`
+  name = 'Check-effects-interaction: '
+  description = 'Potential reentrancy bugs'
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
   version: SupportedVersion = {
@@ -20,11 +24,11 @@ export default class checksEffectsInteraction implements AnalyzerModule {
   abstractAst: AbstractAst = new AbstractAst()
 
   visit: VisitFunction = this.abstractAst.build_visit((node: FunctionCallAstNode | AssignmentAstNode | UnaryOperationAstNode | InlineAssemblyAstNode) => (
-          node.nodeType === 'FunctionCall' && (isInteraction(node) || isLocalCallGraphRelevantNode(node))) || 
+    node.nodeType === 'FunctionCall' && (isInteraction(node) || isLocalCallGraphRelevantNode(node))) ||
           ((node.nodeType === 'Assignment' || node.nodeType === 'UnaryOperation' || node.nodeType === 'InlineAssembly') && isEffect(node)))
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
-    
+
   private _report (contracts: ContractHLAst[], multipleContractsWithSameName: boolean, version: string): ReportObj[] {
     const warnings: ReportObj[] = []
     const hasModifiers: boolean = contracts.some((item) => item.modifiers.length > 0)
@@ -32,16 +36,16 @@ export default class checksEffectsInteraction implements AnalyzerModule {
     contracts.forEach((contract) => {
       contract.functions.forEach((func) => {
         func['changesState'] = this.checkIfChangesState(
-                              getFullQuallyfiedFuncDefinitionIdent(
-                                contract.node, 
-                                func.node, 
-                                func.parameters
-                              ),
-                              this.getContext(
-                                callGraph, 
-                                contract, 
-                                func)
-                              )
+          getFullQuallyfiedFuncDefinitionIdent(
+            contract.node,
+            func.node,
+            func.parameters
+          ),
+          this.getContext(
+            callGraph,
+            contract,
+            func)
+        )
       })
       contract.functions.forEach((func: FunctionHLAst) => {
         if (this.isPotentialVulnerableFunction(func, this.getContext(callGraph, contract, func))) {
@@ -50,7 +54,7 @@ export default class checksEffectsInteraction implements AnalyzerModule {
           comments += (multipleContractsWithSameName) ? 'Note: Import aliases are currently not supported by this static analysis.' : ''
           warnings.push({
             warning: `Potential violation of Checks-Effects-Interaction pattern in ${funcName}: Could potentially lead to re-entrancy vulnerability. ${comments}`,
-            location: func.node['src'],
+            location: func.node.src,
             more: `https://solidity.readthedocs.io/en/${version}/security-considerations.html#re-entrancy`
           })
         }
@@ -92,4 +96,3 @@ export default class checksEffectsInteraction implements AnalyzerModule {
     return analyseCallGraph(context.callGraph, startFuncName, context, (node: any, context: Context) => isWriteOnStateVariable(node, context.stateVariables))
   }
 }
-
