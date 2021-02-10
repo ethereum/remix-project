@@ -16,12 +16,12 @@ class OpenFile extends EventEmitter {
 // click on fileExplorer can toggle it. We go through settings to be sure FE is open
 function openFile (browser: NightwatchBrowser, name: string, done: VoidFunction) {
   browser.clickLaunchIcon('settings').clickLaunchIcon('fileExplorers')
-      .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"')
-      .click('li[data-id="treeViewLitreeViewItem' + name + '"')
-      .pause(2000)
-      .perform(() => {
-        done()
-      })
+    .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"')
+    .click('li[data-id="treeViewLitreeViewItem' + name + '"')
+    .pause(2000)
+    .perform(() => {
+      done()
+    })
 }
 
 module.exports = OpenFile

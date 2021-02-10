@@ -47,7 +47,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
-      # - run: npm run lint remix-ide-e2e
+      - run: npm run lint remix-ide-e2e
       - run: npm run build:libs      
       - run: npm run build
       - run:
@@ -84,7 +84,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
-      # - run: npm run lint remix-ide-e2e
+      - run: npm run lint remix-ide-e2e
       - run: npm run build:libs
       - run: npm run build
       - run:
@@ -126,7 +126,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run lint
-      # - run: npm run lint remix-ide-e2e
+      - run: npm run lint remix-ide-e2e
       - run: npm run build:libs
       - run: npm run build
       - run:

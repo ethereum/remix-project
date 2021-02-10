@@ -1,5 +1,5 @@
 'use strict'
-import { NightwatchBrowser } from "nightwatch"
+import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import sauce from './sauce'
 
@@ -10,125 +10,125 @@ module.exports = {
 
   'Should display settings menu': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-    .click('*[data-id="landingPageStartSolidity"]')
-    .waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="verticalIconsKindsettings"]')
-    .waitForElementContainsText('h6[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
+      .click('*[data-id="landingPageStartSolidity"]')
+      .waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
+      .click('*[data-id="verticalIconsKindsettings"]')
+      .waitForElementContainsText('h6[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
   },
 
   'Should activate `generate contract metadata`': function (browser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
-    .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadataLabel"]', 5000)
-    .click('*[data-id="verticalIconsFileExplorerIcons"]')
-    .click('[data-id="treeViewLitreeViewItembrowser/contracts"]')
-    .openFile('browser/contracts/3_Ballot.sol')
-    .click('*[data-id="verticalIconsKindsolidity"]')
-    .pause(2000)
-    .click('*[data-id="compilerContainerCompileBtn"]')
-    .pause(3000)
-    .click('*[data-id="verticalIconsKindfileExplorers"]')
-    .openFile('browser/contracts/artifacts/Ballot.json')
-    .openFile('browser/contracts/artifacts/Ballot_metadata.json')
-    .getEditorValue((content) => {
-      const metadata = JSON.parse(content)
-      browser.assert.equal(metadata.language, 'Solidity')
-    })
+      .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadataLabel"]', 5000)
+      .click('*[data-id="verticalIconsFileExplorerIcons"]')
+      .click('[data-id="treeViewLitreeViewItembrowser/contracts"]')
+      .openFile('browser/contracts/3_Ballot.sol')
+      .click('*[data-id="verticalIconsKindsolidity"]')
+      .pause(2000)
+      .click('*[data-id="compilerContainerCompileBtn"]')
+      .pause(3000)
+      .click('*[data-id="verticalIconsKindfileExplorers"]')
+      .openFile('browser/contracts/artifacts/Ballot.json')
+      .openFile('browser/contracts/artifacts/Ballot_metadata.json')
+      .getEditorValue((content) => {
+        const metadata = JSON.parse(content)
+        browser.assert.equal(metadata.language, 'Solidity')
+      })
   },
 
   'Should add new github access token': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="verticalIconsKindsettings"]')
-    .setValue('*[data-id="settingsTabGistAccessToken"]', '**********')
-    .click('*[data-id="settingsTabSaveGistToken"]')
-    .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
-    .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token has been saved')
+      .click('*[data-id="verticalIconsKindsettings"]')
+      .setValue('*[data-id="settingsTabGistAccessToken"]', '**********')
+      .click('*[data-id="settingsTabSaveGistToken"]')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
+      .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token has been saved')
   },
 
   'Should copy github access token to clipboard': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="copyToClipboardCopyIcon"]')
-    .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
-    .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Copied value to clipboard.')
+      .click('*[data-id="copyToClipboardCopyIcon"]')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
+      .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Copied value to clipboard.')
   },
 
   'Should remove github access token': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="settingsTabRemoveGistToken"]')
-    .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
-    .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token removed')
-    .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
+      .click('*[data-id="settingsTabRemoveGistToken"]')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
+      .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token removed')
+      .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
   },
 
   'Should load dark theme': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="settingsTabThemeLabelDark"]')
-    .pause(2000)
-    .checkElementStyle(':root', '--primary', remixIdeThemes.dark.primary)
-    .checkElementStyle(':root', '--secondary', remixIdeThemes.dark.secondary)
-    .checkElementStyle(':root', '--success', remixIdeThemes.dark.success)
-    .checkElementStyle(':root', '--info', remixIdeThemes.dark.info)
-    .checkElementStyle(':root', '--warning', remixIdeThemes.dark.warning)
-    .checkElementStyle(':root', '--danger', remixIdeThemes.dark.danger)
+      .click('*[data-id="settingsTabThemeLabelDark"]')
+      .pause(2000)
+      .checkElementStyle(':root', '--primary', remixIdeThemes.dark.primary)
+      .checkElementStyle(':root', '--secondary', remixIdeThemes.dark.secondary)
+      .checkElementStyle(':root', '--success', remixIdeThemes.dark.success)
+      .checkElementStyle(':root', '--info', remixIdeThemes.dark.info)
+      .checkElementStyle(':root', '--warning', remixIdeThemes.dark.warning)
+      .checkElementStyle(':root', '--danger', remixIdeThemes.dark.danger)
   },
 
   'Should load light theme': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="settingsTabThemeLabelLight"]')
-    .pause(2000)
-    .checkElementStyle(':root', '--primary', remixIdeThemes.light.primary)
-    .checkElementStyle(':root', '--secondary', remixIdeThemes.light.secondary)
-    .checkElementStyle(':root', '--success', remixIdeThemes.light.success)
-    .checkElementStyle(':root', '--info', remixIdeThemes.light.info)
-    .checkElementStyle(':root', '--warning', remixIdeThemes.light.warning)
-    .checkElementStyle(':root', '--danger', remixIdeThemes.light.danger)
+      .click('*[data-id="settingsTabThemeLabelLight"]')
+      .pause(2000)
+      .checkElementStyle(':root', '--primary', remixIdeThemes.light.primary)
+      .checkElementStyle(':root', '--secondary', remixIdeThemes.light.secondary)
+      .checkElementStyle(':root', '--success', remixIdeThemes.light.success)
+      .checkElementStyle(':root', '--info', remixIdeThemes.light.info)
+      .checkElementStyle(':root', '--warning', remixIdeThemes.light.warning)
+      .checkElementStyle(':root', '--danger', remixIdeThemes.light.danger)
   },
 
   'Should load Cerulean theme': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="settingsTabThemeLabelCerulean"]')
-    .pause(5000)
-    .checkElementStyle(':root', '--primary', remixIdeThemes.curelean.primary)
-    .checkElementStyle(':root', '--secondary', remixIdeThemes.curelean.secondary)
-    .checkElementStyle(':root', '--success', remixIdeThemes.curelean.success)
-    .checkElementStyle(':root', '--info', remixIdeThemes.curelean.info)
-    .checkElementStyle(':root', '--warning', remixIdeThemes.curelean.warning)
-    .checkElementStyle(':root', '--danger', remixIdeThemes.curelean.danger)
+      .click('*[data-id="settingsTabThemeLabelCerulean"]')
+      .pause(5000)
+      .checkElementStyle(':root', '--primary', remixIdeThemes.curelean.primary)
+      .checkElementStyle(':root', '--secondary', remixIdeThemes.curelean.secondary)
+      .checkElementStyle(':root', '--success', remixIdeThemes.curelean.success)
+      .checkElementStyle(':root', '--info', remixIdeThemes.curelean.info)
+      .checkElementStyle(':root', '--warning', remixIdeThemes.curelean.warning)
+      .checkElementStyle(':root', '--danger', remixIdeThemes.curelean.danger)
   },
 
   'Should load Flatly theme': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="settingsTabThemeLabelFlatly"]')
-    .pause(2000)
-    .checkElementStyle(':root', '--primary', remixIdeThemes.flatly.primary)
-    .checkElementStyle(':root', '--secondary', remixIdeThemes.flatly.secondary)
-    .checkElementStyle(':root', '--success', remixIdeThemes.flatly.success)
-    .checkElementStyle(':root', '--info', remixIdeThemes.flatly.info)
-    .checkElementStyle(':root', '--warning', remixIdeThemes.flatly.warning)
-    .checkElementStyle(':root', '--danger', remixIdeThemes.flatly.danger)
+      .click('*[data-id="settingsTabThemeLabelFlatly"]')
+      .pause(2000)
+      .checkElementStyle(':root', '--primary', remixIdeThemes.flatly.primary)
+      .checkElementStyle(':root', '--secondary', remixIdeThemes.flatly.secondary)
+      .checkElementStyle(':root', '--success', remixIdeThemes.flatly.success)
+      .checkElementStyle(':root', '--info', remixIdeThemes.flatly.info)
+      .checkElementStyle(':root', '--warning', remixIdeThemes.flatly.warning)
+      .checkElementStyle(':root', '--danger', remixIdeThemes.flatly.danger)
   },
 
   'Should load Spacelab theme': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="settingsTabThemeLabelSpacelab"]')
-    .pause(2000)
-    .checkElementStyle(':root', '--primary', remixIdeThemes.spacelab.primary)
-    .checkElementStyle(':root', '--secondary', remixIdeThemes.spacelab.secondary)
-    .checkElementStyle(':root', '--success', remixIdeThemes.spacelab.success)
-    .checkElementStyle(':root', '--info', remixIdeThemes.spacelab.info)
-    .checkElementStyle(':root', '--warning', remixIdeThemes.spacelab.warning)
-    .checkElementStyle(':root', '--danger', remixIdeThemes.spacelab.danger)
+      .click('*[data-id="settingsTabThemeLabelSpacelab"]')
+      .pause(2000)
+      .checkElementStyle(':root', '--primary', remixIdeThemes.spacelab.primary)
+      .checkElementStyle(':root', '--secondary', remixIdeThemes.spacelab.secondary)
+      .checkElementStyle(':root', '--success', remixIdeThemes.spacelab.success)
+      .checkElementStyle(':root', '--info', remixIdeThemes.spacelab.info)
+      .checkElementStyle(':root', '--warning', remixIdeThemes.spacelab.warning)
+      .checkElementStyle(':root', '--danger', remixIdeThemes.spacelab.danger)
   },
 
   'Should load Cyborg theme': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-    .click('*[data-id="settingsTabThemeLabelCyborg"]')
-    .pause(2000)
-    .checkElementStyle(':root', '--primary', remixIdeThemes.cyborg.primary)
-    .checkElementStyle(':root', '--secondary', remixIdeThemes.cyborg.secondary)
-    .checkElementStyle(':root', '--success', remixIdeThemes.cyborg.success)
-    .checkElementStyle(':root', '--info', remixIdeThemes.cyborg.info)
-    .checkElementStyle(':root', '--warning', remixIdeThemes.cyborg.warning)
-    .checkElementStyle(':root', '--danger', remixIdeThemes.cyborg.danger)
+      .click('*[data-id="settingsTabThemeLabelCyborg"]')
+      .pause(2000)
+      .checkElementStyle(':root', '--primary', remixIdeThemes.cyborg.primary)
+      .checkElementStyle(':root', '--secondary', remixIdeThemes.cyborg.secondary)
+      .checkElementStyle(':root', '--success', remixIdeThemes.cyborg.success)
+      .checkElementStyle(':root', '--info', remixIdeThemes.cyborg.info)
+      .checkElementStyle(':root', '--warning', remixIdeThemes.cyborg.warning)
+      .checkElementStyle(':root', '--danger', remixIdeThemes.cyborg.danger)
   },
 
   tearDown: sauce
