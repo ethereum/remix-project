@@ -3,7 +3,7 @@
 export interface Location {
   start: number;
   length: number;
-  file: number;  // Would it be clearer to call this a file index?
+  file: number; // Would it be clearer to call this a file index?
 }
 
 // This is intended to be compatibile with VScode's Position.
@@ -31,7 +31,7 @@ export interface Node {
 export interface AstNode {
   /* The following fields are essential, and indicates an that object
      is an AST node. */
-  id: number;  // This is unique across all nodes in an AST tree
+  id: number; // This is unique across all nodes in an AST tree
   nodeType: string;
   src: string;
 
