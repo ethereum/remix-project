@@ -1,5 +1,5 @@
-import { NightwatchBrowser, NightwatchTestConstantFunctionExpectedInput } from "nightwatch"
-import EventEmitter from "events"
+import { NightwatchBrowser, NightwatchTestConstantFunctionExpectedInput } from 'nightwatch'
+import EventEmitter from 'events'
 
 class TestConstantFunction extends EventEmitter {
   command (this: NightwatchBrowser, address: string, fnFullName: string, expectedInput: NightwatchTestConstantFunctionExpectedInput | null, expectedOutput: string): NightwatchBrowser {

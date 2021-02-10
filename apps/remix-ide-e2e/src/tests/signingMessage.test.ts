@@ -1,5 +1,5 @@
 'use strict'
-import { NightwatchBrowser } from "nightwatch"
+import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import sauce from './sauce'
 
@@ -15,16 +15,16 @@ module.exports = {
   'Test Signature': function (browser: NightwatchBrowser) {
     let hash, signature
     browser
-    .clickLaunchIcon('udapp')
-    .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-    .signMessage('test message', (h, s) => {
-      hash = h
-      signature = s
-      console.log('hash', hash)
-      console.log('signature', signature)
-      browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
-      browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
-    })
+      .clickLaunchIcon('udapp')
+      .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
+      .signMessage('test message', (h, s) => {
+        hash = h
+        signature = s
+        console.log('hash', hash)
+        console.log('signature', signature)
+        browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
+        browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
+      })
       .addFile('signMassage.sol', sources[0]['browser/signMassage.sol'])
       .openFile('browser/signMassage.sol')
       .clickLaunchIcon('solidity')
@@ -41,13 +41,13 @@ module.exports = {
           const inputs = `"${hash.value}","${signature.value}"`
           console.log('Test Signature Input', inputs)
           browser.clickFunction('ecrecovery - call', { types: 'bytes32 hash, bytes sig', values: inputs })
-              .pause(5000)
-              .verifyCallReturnValue(
-                address,
-                ['0:address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'])
-              .perform(() => {
-                done()
-              })
+            .pause(5000)
+            .verifyCallReturnValue(
+              address,
+              ['0:address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'])
+            .perform(() => {
+              done()
+            })
         })
       })
       .end()
@@ -57,7 +57,8 @@ module.exports = {
 
 const sources = [
   {
-    'browser/signMassage.sol': {content: `
+    'browser/signMassage.sol': {
+      content: `
     pragma solidity >=0.4.22 <0.8.0;
     contract SignMassageTest {
       function testRecovery(bytes32 h, uint8 v, bytes32 r, bytes32 s) public pure returns (address) {
@@ -95,6 +96,7 @@ const sources = [
       function ecverify(bytes32 hash, bytes memory sig, address signer) public pure returns (bool) {
         return signer == ecrecovery(hash, sig);
       }
-    }`}
+    }`
+    }
   }
 ]

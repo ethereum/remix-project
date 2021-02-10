@@ -1,5 +1,5 @@
-import { NightwatchBrowser } from "nightwatch"
-import EventEmitter from "events"
+import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from 'events'
 
 // fix for editor scroll
 class ScrollEditor extends EventEmitter {

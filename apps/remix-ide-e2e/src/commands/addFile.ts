@@ -1,5 +1,5 @@
 import { NightwatchBrowser, NightwatchContractContent } from 'nightwatch'
-import EventEmitter from "events"
+import EventEmitter from 'events'
 
 class AddFile extends EventEmitter {
   command (this: NightwatchBrowser, name: string, content: NightwatchContractContent): NightwatchBrowser {

@@ -1,8 +1,8 @@
 import { NightwatchBrowser } from 'nightwatch'
-import EventEmitter from "events"
+import EventEmitter from 'events'
 class GoToVmTraceStep extends EventEmitter {
   command (this: NightwatchBrowser, step: number, incr?: number): NightwatchBrowser {
-    goToVMtraceStep(this.api, step, incr, () => {      
+    goToVMtraceStep(this.api, step, incr, () => {
       this.emit('complete')
     })
     return this
@@ -15,7 +15,7 @@ function goToVMtraceStep (browser: NightwatchBrowser, step: number, incr: number
     return document.querySelector('#stepdetail').innerHTML
   }, [], function (result) {
     console.log('goToVMtraceStep', result)
-    if (typeof result.value === 'string' && ( result.value.indexOf('vm trace step:') !== -1 && result.value.indexOf(step.toString()) !== -1)) {
+    if (typeof result.value === 'string' && (result.value.indexOf('vm trace step:') !== -1 && result.value.indexOf(step.toString()) !== -1)) {
       done()
     } else if (incr > 1000) {
       browser.assert.fail('goToVMtraceStep fails', 'info about error', '')
@@ -23,11 +23,11 @@ function goToVMtraceStep (browser: NightwatchBrowser, step: number, incr: number
     } else {
       incr++
       browser.click('#intoforward')
-          .perform(() => {
-            setTimeout(() => {
-              goToVMtraceStep(browser, step, incr, done)
-            }, 200)
-          })
+        .perform(() => {
+          setTimeout(() => {
+            goToVMtraceStep(browser, step, incr, done)
+          }, 200)
+        })
     }
   })
 }

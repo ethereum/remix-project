@@ -1,5 +1,5 @@
 'use strict'
-import { NightwatchBrowser } from "nightwatch"
+import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import sauce from './sauce'
 
@@ -93,7 +93,7 @@ function checkDeployShouldSucceed (browser: NightwatchBrowser, address: string, 
     .getEditorValue((content) => {
       config = JSON.parse(content)
       config.deploy['VM:-'].autoDeployLib = false
-      config.deploy['VM:-']['linkReferences']['browser/Untitled5.sol'].lib = address
+      config.deploy['VM:-'].linkReferences['browser/Untitled5.sol'].lib = address
     })
     .perform(() => {
       browser.setEditorValue(JSON.stringify(config))
@@ -116,7 +116,8 @@ function checkDeployShouldSucceed (browser: NightwatchBrowser, address: string, 
 
 const sources = [
   {
-    'browser/Untitled5.sol': {content: `library lib {
+    'browser/Untitled5.sol': {
+      content: `library lib {
       function getInt () public view returns (uint) {
           return 45;
       }
@@ -126,6 +127,7 @@ const sources = [
       function get () public view returns (uint) {
           return lib.getInt();
       }
-    }`}
+    }`
+    }
   }
 ]
