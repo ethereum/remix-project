@@ -1,13 +1,15 @@
-import { default as category } from './categories'
+import category from './categories'
 import { isSubScopeWithTopLevelUnAssignedBinOp, getUnAssignedTopLevelBinOps } from './staticAnalysisCommon'
-import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, BlockAstNode, IfStatementAstNode, 
-  WhileStatementAstNode, ForStatementAstNode, CompilationResult, ExpressionStatementAstNode, SupportedVersion} from './../../types'
+import algorithm from './algorithmCategories'
+import {
+  AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, BlockAstNode, IfStatementAstNode,
+  WhileStatementAstNode, ForStatementAstNode, CompilationResult, ExpressionStatementAstNode, SupportedVersion
+} from './../../types'
 
 export default class assignAndCompare implements AnalyzerModule {
   warningNodes: ExpressionStatementAstNode[] = []
-  name = `Result not used: `
-  description = `The result of an operation not used`
+  name = 'Result not used: '
+  description = 'The result of an operation not used'
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {

@@ -1,9 +1,11 @@
 'use strict'
 
-import { FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode, 
-  WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode, 
-  MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode, 
-  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter, CompiledContract } from "../../types"
+import {
+  FunctionDefinitionAstNode, ModifierDefinitionAstNode, ParameterListAstNode, ForStatementAstNode,
+  WhileStatementAstNode, VariableDeclarationAstNode, ContractDefinitionAstNode, InheritanceSpecifierAstNode,
+  MemberAccessAstNode, BinaryOperationAstNode, FunctionCallAstNode, ExpressionStatementAstNode, UnaryOperationAstNode,
+  IdentifierAstNode, IndexAccessAstNode, BlockAstNode, AssignmentAstNode, InlineAssemblyAstNode, IfStatementAstNode, CompiledContractObj, ABIParameter, CompiledContract
+} from '../../types'
 import { util } from '@remix-project/remix-lib'
 
 type SpecialObjDetail = {
@@ -34,35 +36,35 @@ const nodeTypes: Record<string, string> = {
   FUNCTIONTYPENAME: 'FunctionTypeName',
   MAPPING: 'Mapping',
   ARRAYTYPENAME: 'ArrayTypeName',
-  INLINEASSEMBLY: 'InlineAssembly', 
+  INLINEASSEMBLY: 'InlineAssembly',
   BLOCK: 'Block',
-  PLACEHOLDERSTATEMENT: 'PlaceholderStatement', 
+  PLACEHOLDERSTATEMENT: 'PlaceholderStatement',
   IFSTATEMENT: 'IfStatement',
-  TRYCATCHCLAUSE: 'TryCatchClause', 
-  TRYSTATEMENT: 'TryStatement', 
+  TRYCATCHCLAUSE: 'TryCatchClause',
+  TRYSTATEMENT: 'TryStatement',
   WHILESTATEMENT: 'WhileStatement',
   DOWHILESTATEMENT: 'DoWhileStatement',
   FORSTATEMENT: 'ForStatement',
-  CONTINUE: 'Continue', 
-  BREAK: 'Break', 
-  RETURN: 'Return', 
-  THROW: 'Throw', 
-  EMITSTATEMENT: 'EmitStatement', 
-  VARIABLEDECLARATIONSTATEMENT: 'VariableDeclarationStatement', 
+  CONTINUE: 'Continue',
+  BREAK: 'Break',
+  RETURN: 'Return',
+  THROW: 'Throw',
+  EMITSTATEMENT: 'EmitStatement',
+  VARIABLEDECLARATIONSTATEMENT: 'VariableDeclarationStatement',
   EXPRESSIONSTATEMENT: 'ExpressionStatement',
-  CONDITIONAL: 'Conditional', 
+  CONDITIONAL: 'Conditional',
   ASSIGNMENT: 'Assignment',
-  TUPLEEXPRESSION: 'TupleExpression', 
+  TUPLEEXPRESSION: 'TupleExpression',
   UNARYOPERATION: 'UnaryOperation',
   BINARYOPERATION: 'BinaryOperation',
   FUNCTIONCALL: 'FunctionCall',
   FUNCTIONCALLOPTIONS: 'FunctionCallOptions',
-  NEWEXPRESSION: 'NewExpression', 
-  MEMBERACCESS: 'MemberAccess', 
-  INDEXACCESS: 'IndexAccess', 
-  INDEXRANGEACCESS: 'IndexRangeAccess', 
-  ELEMENTARYTYPENAMEEXPRESSION: 'ElementaryTypeNameExpression', 
-  LITERAL: 'Literal', 
+  NEWEXPRESSION: 'NewExpression',
+  MEMBERACCESS: 'MemberAccess',
+  INDEXACCESS: 'IndexAccess',
+  INDEXRANGEACCESS: 'IndexRangeAccess',
+  ELEMENTARYTYPENAMEEXPRESSION: 'ElementaryTypeNameExpression',
+  LITERAL: 'Literal',
   IDENTIFIER: 'Identifier',
   STRUCTUREDDOCUMENTATION: 'StructuredDocumentation'
 }
@@ -184,7 +186,7 @@ function getFunctionCallType (func: FunctionCallAstNode): string {
  */
 function getEffectedVariableName (effectNode: AssignmentAstNode | UnaryOperationAstNode): string {
   if (!isEffect(effectNode)) throw new Error('staticAnalysisCommon.js: not an effect Node')
-  if(effectNode.nodeType === 'Assignment' || effectNode.nodeType === 'UnaryOperation') {
+  if (effectNode.nodeType === 'Assignment' || effectNode.nodeType === 'UnaryOperation') {
     const IdentNode: IdentifierAstNode = findFirstSubNodeLTR(effectNode, exactMatch(nodeTypes.IDENTIFIER))
     return IdentNode.name
   } else throw new Error('staticAnalysisCommon.js: wrong node type')
@@ -334,7 +336,7 @@ function getDeclaredVariableType (varDeclNode: VariableDeclarationAstNode): stri
  * @return {list variable declaration} state variable node list
  */
 function getStateVariableDeclarationsFromContractNode (contractNode: ContractDefinitionAstNode): VariableDeclarationAstNode[] {
-  return contractNode.nodes.filter(el => el.nodeType === "VariableDeclaration")
+  return contractNode.nodes.filter(el => el.nodeType === 'VariableDeclaration')
 }
 
 /**
@@ -398,8 +400,7 @@ function getFunctionCallTypeParameterType (func: FunctionCallAstNode): string | 
 function getLibraryCallContractName (node: FunctionCallAstNode): string | undefined {
   if (!isLibraryCall(node.expression)) throw new Error('staticAnalysisCommon.js: not a library call Node')
   const types: RegExpExecArray | null = new RegExp(basicRegex.LIBRARYTYPE).exec(node.expression.expression.typeDescriptions.typeString)
-  if(types)
-    return types[1]
+  if (types) { return types[1] }
 }
 
 /**
@@ -444,29 +445,24 @@ function getFullQuallyfiedFuncDefinitionIdent (contract: ContractDefinitionAstNo
 
 function getUnAssignedTopLevelBinOps (subScope: BlockAstNode | IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): ExpressionStatementAstNode[] {
   let result: ExpressionStatementAstNode[] = []
-  if(subScope && subScope.nodeType === 'Block')
-    result = subScope.statements.filter(isBinaryOpInExpression)
+  if (subScope && subScope.nodeType === 'Block') result = subScope.statements.filter(isBinaryOpInExpression)
   // for 'without braces' loops
   else if (subScope && subScope.nodeType && subScope.nodeType !== 'Block' && isSubScopeStatement(subScope)) {
-    if (subScope.nodeType === 'IfStatement'){
-      if((subScope.trueBody && subScope.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.trueBody)))
-        result.push(subScope.trueBody) 
-      if (subScope.falseBody && subScope.falseBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.falseBody))
-        result.push(subScope.falseBody) 
-    }
-    else {
-      if(subScope.body && subScope.body.nodeType === "ExpressionStatement" && isBinaryOpInExpression(subScope.body))
-        result.push(subScope.body)
+    if (subScope.nodeType === 'IfStatement') {
+      if ((subScope.trueBody && subScope.trueBody.nodeType === 'ExpressionStatement' && isBinaryOpInExpression(subScope.trueBody))) { result.push(subScope.trueBody) }
+      if (subScope.falseBody && subScope.falseBody.nodeType === 'ExpressionStatement' && isBinaryOpInExpression(subScope.falseBody)) { result.push(subScope.falseBody) }
+    } else {
+      if (subScope.body && subScope.body.nodeType === 'ExpressionStatement' && isBinaryOpInExpression(subScope.body)) { result.push(subScope.body) }
     }
   }
-  return result 
+  return result
 }
 
 // #################### Trivial Node Identification
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function isStatement (node: any): boolean {
-  return nodeType(node, 'Statement$') || node.nodeType === "Block" || node.nodeType === "Return"
+  return nodeType(node, 'Statement$') || node.nodeType === 'Block' || node.nodeType === 'Return'
 }
 
 // #################### Complex Node Identification
@@ -505,7 +501,7 @@ function isDynamicArrayAccess (node: IdentifierAstNode): boolean {
  */
 function isDynamicArrayLengthAccess (node: MemberAccessAstNode): boolean {
   return (node.memberName === 'length') && // accessing 'length' member
-  node.expression['typeDescriptions']['typeString'].indexOf('[]') !== -1 // member is accessed from dynamic array, notice [] without any number
+  node.expression.typeDescriptions.typeString.indexOf('[]') !== -1 // member is accessed from dynamic array, notice [] without any number
 }
 
 /**
@@ -550,7 +546,7 @@ function isBuiltinFunctionCall (node: FunctionCallAstNode): boolean {
  * @return {bool}
  */
 function isAbiNamespaceCall (node: FunctionCallAstNode): boolean {
-  return Object.keys(abiNamespace).some((key) => Object.prototype.hasOwnProperty.call(abiNamespace,key) && node.expression && isSpecialVariableAccess(node.expression, abiNamespace[key]))
+  return Object.keys(abiNamespace).some((key) => Object.prototype.hasOwnProperty.call(abiNamespace, key) && node.expression && isSpecialVariableAccess(node.expression, abiNamespace[key]))
 }
 
 /**
@@ -576,7 +572,7 @@ function isAssertCall (node: FunctionCallAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isRequireCall (node: FunctionCallAstNode): boolean  {
+function isRequireCall (node: FunctionCallAstNode): boolean {
   return isBuiltinFunctionCall(node) && getLocalCallName(node) === 'require'
 }
 
@@ -597,7 +593,7 @@ function isStorageVariableDeclaration (node: VariableDeclarationAstNode): boolea
 function isInteraction (node: FunctionCallAstNode): boolean {
   return isLLCall(node.expression) || isLLSend(node.expression) || isExternalDirectCall(node) || isTransfer(node.expression) ||
       isLLCall04(node.expression) || isLLSend04(node.expression) ||
-      // to cover case of address.call.value.gas , See: inheritance.sol  
+      // to cover case of address.call.value.gas , See: inheritance.sol
       (node.expression && node.expression.expression && isLLCall(node.expression.expression)) ||
       (node.expression && node.expression.expression && isLLCall04(node.expression.expression))
 }
@@ -608,9 +604,9 @@ function isInteraction (node: FunctionCallAstNode): boolean {
  * @return {bool}
  */
 function isEffect (node: AssignmentAstNode | UnaryOperationAstNode | InlineAssemblyAstNode): boolean {
-  return node.nodeType === "Assignment" || 
-        (node.nodeType === "UnaryOperation" && (isPlusPlusUnaryOperation(node) || isMinusMinusUnaryOperation(node))) || 
-        node.nodeType === "InlineAssembly"
+  return node.nodeType === 'Assignment' ||
+        (node.nodeType === 'UnaryOperation' && (isPlusPlusUnaryOperation(node) || isMinusMinusUnaryOperation(node))) ||
+        node.nodeType === 'InlineAssembly'
 }
 
 /**
@@ -620,7 +616,7 @@ function isEffect (node: AssignmentAstNode | UnaryOperationAstNode | InlineAssem
  * @return {bool}
  */
 function isWriteOnStateVariable (effectNode: AssignmentAstNode | InlineAssemblyAstNode | UnaryOperationAstNode, stateVariables: VariableDeclarationAstNode[]): boolean {
-  return effectNode.nodeType === "InlineAssembly" || (isEffect(effectNode) && isStateVariable(getEffectedVariableName(effectNode), stateVariables))
+  return effectNode.nodeType === 'InlineAssembly' || (isEffect(effectNode) && isStateVariable(getEffectedVariableName(effectNode), stateVariables))
 }
 
 /**
@@ -648,7 +644,7 @@ function isConstantFunction (node: FunctionDefinitionAstNode): boolean {
  * @return {bool}
  */
 function isVariableTurnedIntoGetter (varDeclNode: VariableDeclarationAstNode): boolean {
-  return varDeclNode.stateVariable && varDeclNode.visibility === 'public';
+  return varDeclNode.stateVariable && varDeclNode.visibility === 'public'
 }
 
 /**
@@ -666,7 +662,7 @@ function isPayableFunction (node: FunctionDefinitionAstNode): boolean {
  * @return {bool}
  */
 function isConstructor (node: FunctionDefinitionAstNode): boolean {
-  return node.kind === "constructor"
+  return node.kind === 'constructor'
 }
 
 /**
@@ -684,24 +680,21 @@ function isIntDivision (node: BinaryOperationAstNode): boolean {
  * @return {bool}
  */
 function isSubScopeWithTopLevelUnAssignedBinOp (node: BlockAstNode | IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): boolean | undefined {
-  if(node.nodeType === 'Block')
-    return node.statements.some(isBinaryOpInExpression)
+  if (node.nodeType === 'Block') return node.statements.some(isBinaryOpInExpression)
   // for 'without braces' loops
   else if (node && node.nodeType && isSubScopeStatement(node)) {
-    if (node.nodeType === 'IfStatement')
-      return (node.trueBody && node.trueBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.trueBody)) || 
-          (node.falseBody && node.falseBody.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.falseBody))
-    else 
-      return node.body && node.body.nodeType === "ExpressionStatement" && isBinaryOpInExpression(node.body)
-  } 
+    if (node.nodeType === 'IfStatement') {
+      return (node.trueBody && node.trueBody.nodeType === 'ExpressionStatement' && isBinaryOpInExpression(node.trueBody)) ||
+          (node.falseBody && node.falseBody.nodeType === 'ExpressionStatement' && isBinaryOpInExpression(node.falseBody))
+    } else { return node.body && node.body.nodeType === 'ExpressionStatement' && isBinaryOpInExpression(node.body) }
+  }
 }
 
 function isSubScopeStatement (node: IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): boolean {
-  if(node.nodeType === 'IfStatement')
+  if (node.nodeType === 'IfStatement') {
     return (node.trueBody && node.trueBody.nodeType && !nodeType(node.trueBody, exactMatch(nodeTypes.BLOCK))) ||
         (node.falseBody && node.falseBody.nodeType && !nodeType(node.falseBody, exactMatch(nodeTypes.BLOCK)))
-  else      
-    return node.body && node.body.nodeType && !nodeType(node.body, exactMatch(nodeTypes.BLOCK))
+  } else { return node.body && node.body.nodeType && !nodeType(node.body, exactMatch(nodeTypes.BLOCK)) }
 }
 
 /**
@@ -710,7 +703,7 @@ function isSubScopeStatement (node: IfStatementAstNode | WhileStatementAstNode |
  * @return {bool}
  */
 function isBinaryOpInExpression (node: ExpressionStatementAstNode): boolean {
-  return node.nodeType === "ExpressionStatement" && node.expression.nodeType === "BinaryOperation"
+  return node.nodeType === 'ExpressionStatement' && node.expression.nodeType === 'BinaryOperation'
 }
 
 /**
@@ -791,7 +784,7 @@ function isExternalDirectCall (node: FunctionCallAstNode): boolean {
  * @return {bool}
  */
 function isNowAccess (node: IdentifierAstNode): boolean {
-  return node.name === "now" && typeDescription(node, exactMatch(basicTypes.UINT))
+  return node.name === 'now' && typeDescription(node, exactMatch(basicTypes.UINT))
 }
 
 /**
@@ -818,7 +811,7 @@ function isBlockTimestampAccess (node: MemberAccessAstNode): boolean {
  * @return {bool}
  */
 function isBlockBlockHashAccess (node: FunctionCallAstNode): boolean {
-  return ( isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash' ) || 
+  return (isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash') ||
       isSpecialVariableAccess(node.expression, specialVariables.BLOCKHASH)
 }
 
@@ -846,7 +839,7 @@ function isSuperLocalCall (node: MemberAccessAstNode): boolean {
  * @return {bool}
  */
 function isLocalCall (node: FunctionCallAstNode): boolean {
-  return node.nodeType === 'FunctionCall' && node.kind === 'functionCall' && 
+  return node.nodeType === 'FunctionCall' && node.kind === 'functionCall' &&
         node.expression.nodeType === 'Identifier' && expressionTypeDescription(node, basicRegex.FUNCTIONTYPE) &&
         !expressionTypeDescription(node, basicRegex.EXTERNALFUNCTIONTYPE)
 }
@@ -873,8 +866,8 @@ function isLowLevelCall (node: MemberAccessAstNode): boolean {
  */
 function isLLSend04 (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
+    exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
+    undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
 }
 
 /**
@@ -884,8 +877,8 @@ function isLLSend04 (node: MemberAccessAstNode): boolean {
  */
 function isLLSend (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
-          undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
+    exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
+    undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
 }
 
 /**
@@ -895,8 +888,8 @@ function isLLSend (node: MemberAccessAstNode): boolean {
  */
 function isLLCall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident)) ||
+    exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
+    undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident)) ||
           isMemberAccess(node,
             exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
             undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident))
@@ -909,8 +902,8 @@ function isLLCall (node: MemberAccessAstNode): boolean {
  */
 function isLLCall04 (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes['CALL-0.4'].type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['CALL-0.4'].ident))
+    exactMatch(util.escapeRegExp(lowLevelCallTypes['CALL-0.4'].type)),
+    undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['CALL-0.4'].ident))
 }
 
 /**
@@ -920,8 +913,8 @@ function isLLCall04 (node: MemberAccessAstNode): boolean {
  */
 function isLLCallcode (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.CALLCODE.type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALLCODE.ident))
+    exactMatch(util.escapeRegExp(lowLevelCallTypes.CALLCODE.type)),
+    undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALLCODE.ident))
 }
 
 /**
@@ -931,8 +924,8 @@ function isLLCallcode (node: MemberAccessAstNode): boolean {
  */
 function isLLDelegatecall (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.DELEGATECALL.type)),
-          undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.DELEGATECALL.ident))
+    exactMatch(util.escapeRegExp(lowLevelCallTypes.DELEGATECALL.type)),
+    undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.DELEGATECALL.ident))
 }
 
 /**
@@ -942,8 +935,8 @@ function isLLDelegatecall (node: MemberAccessAstNode): boolean {
  */
 function isLLDelegatecall04 (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes['DELEGATECALL-0.4'].type)),
-          undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['DELEGATECALL-0.4'].ident))
+    exactMatch(util.escapeRegExp(lowLevelCallTypes['DELEGATECALL-0.4'].type)),
+    undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['DELEGATECALL-0.4'].ident))
 }
 
 /**
@@ -953,8 +946,8 @@ function isLLDelegatecall04 (node: MemberAccessAstNode): boolean {
  */
 function isTransfer (node: MemberAccessAstNode): boolean {
   return isMemberAccess(node,
-          exactMatch(util.escapeRegExp(lowLevelCallTypes.TRANSFER.type)),
-          undefined, matches(basicTypes.ADDRESS, basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.TRANSFER.ident))
+    exactMatch(util.escapeRegExp(lowLevelCallTypes.TRANSFER.type)),
+    undefined, matches(basicTypes.ADDRESS, basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.TRANSFER.ident))
 }
 
 function isStringToBytesConversion (node: FunctionCallAstNode): boolean {
@@ -962,7 +955,7 @@ function isStringToBytesConversion (node: FunctionCallAstNode): boolean {
 }
 
 function isExplicitCast (node: FunctionCallAstNode, castFromType: string, castToType: string): boolean {
-  return node.kind === "typeConversion" && 
+  return node.kind === 'typeConversion' &&
         nodeType(node.expression, exactMatch(nodeTypes.ELEMENTARYTYPENAMEEXPRESSION)) && node.expression.typeName === castToType &&
         nodeType(node.arguments[0], exactMatch(nodeTypes.IDENTIFIER)) && typeDescription(node.arguments[0], castFromType)
 }
@@ -976,7 +969,7 @@ function isBytesLengthCheck (node: MemberAccessAstNode): boolean {
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
- // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function isLoop (node: any): boolean {
   return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
           nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
@@ -986,7 +979,7 @@ function isLoop (node: any): boolean {
 // #################### Complex Node Identification - Private
 
 function isMemberAccess (node: MemberAccessAstNode, retType: string, accessor: string| undefined, accessorType: string, memberName: string | undefined): boolean {
-  if(node && nodeType(node, exactMatch('MemberAccess'))) {
+  if (node && nodeType(node, exactMatch('MemberAccess'))) {
     const nodeTypeDef: boolean = typeDescription(node, retType)
     const nodeMemName: boolean = memName(node, memberName)
     const nodeExpMemName: boolean = memName(node.expression, accessor)
@@ -1003,12 +996,12 @@ function isSpecialVariableAccess (node: MemberAccessAstNode, varType: SpecialObj
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function expressionTypeDescription (node: any, typeRegex: string): boolean {
-  return  new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
+  return new RegExp(typeRegex).test(node.expression.typeDescriptions.typeString)
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function typeDescription (node: any, typeRegex: string): boolean {
-  return  new RegExp(typeRegex).test(node.typeDescriptions.typeString)
+  return new RegExp(typeRegex).test(node.typeDescriptions.typeString)
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -1018,7 +1011,7 @@ function nodeType (node: any, typeRegex: string): boolean {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function nodeTypeIn (node: any, typeRegex: string[]): boolean {
-  return typeRegex.some((typeRegex) => nodeType (node, typeRegex))
+  return typeRegex.some((typeRegex) => nodeType(node, typeRegex))
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -1053,20 +1046,7 @@ function matches (...fnArgs: any[]): string {
  * Note: developed keeping identifier node search in mind to get first identifier node from left in subscope
  */
 function findFirstSubNodeLTR (node: any, type: string): any {
-  if(node.nodeType && nodeType(node, type))
-    return node
-
-  else if(node.nodeType && nodeType(node, exactMatch('Assignment')))
-    return findFirstSubNodeLTR(node.leftHandSide, type)
-
-  else if(node.nodeType && nodeType(node, exactMatch('MemberAccess')))
-    return findFirstSubNodeLTR(node.expression, type)
-  
-  else if(node.nodeType && nodeType(node, exactMatch('IndexAccess')))
-    return findFirstSubNodeLTR(node.baseExpression, type)
-  
-  else if(node.nodeType && nodeType(node, exactMatch('UnaryOperation')))
-    return findFirstSubNodeLTR(node.subExpression, type)
+  if (node.nodeType && nodeType(node, type)) { return node } else if (node.nodeType && nodeType(node, exactMatch('Assignment'))) { return findFirstSubNodeLTR(node.leftHandSide, type) } else if (node.nodeType && nodeType(node, exactMatch('MemberAccess'))) { return findFirstSubNodeLTR(node.expression, type) } else if (node.nodeType && nodeType(node, exactMatch('IndexAccess'))) { return findFirstSubNodeLTR(node.baseExpression, type) } else if (node.nodeType && nodeType(node, exactMatch('UnaryOperation'))) { return findFirstSubNodeLTR(node.subExpression, type) }
 }
 
 /**
@@ -1087,45 +1067,41 @@ function buildAbiSignature (funName: string, paramTypes: any[]): string {
 }
 
 // To create the method signature similar to contract.evm.gasEstimates.external object
-// For address payable, return address 
-function getMethodParamsSplittedTypeDesc(node: FunctionDefinitionAstNode, contracts: CompiledContractObj): string[] {
+// For address payable, return address
+function getMethodParamsSplittedTypeDesc (node: FunctionDefinitionAstNode, contracts: CompiledContractObj): string[] {
   return node.parameters.parameters.map((varNode, varIndex) => {
-    let finalTypeString;
+    let finalTypeString
     const typeString = varNode.typeDescriptions.typeString
-    if(typeString.includes('struct')) {
+    if (typeString.includes('struct')) {
       const fnName = node.name
       for (const filename in contracts) {
         for (const contractName in contracts[filename]) {
           const methodABI = contracts[filename][contractName].abi
-            .find(e => e.name === fnName && e.inputs?.length && 
-                e.inputs[varIndex]['type'].includes('tuple') && 
+            .find(e => e.name === fnName && e.inputs?.length &&
+                e.inputs[varIndex]['type'].includes('tuple') &&
                 e.inputs[varIndex]['internalType'] === typeString)
-          if(methodABI && methodABI.inputs) {
+          if (methodABI && methodABI.inputs) {
             const inputs = methodABI.inputs[varIndex]
             const typeStr = getTypeStringFromComponents(inputs['components'])
             finalTypeString = typeStr + inputs['type'].replace('tuple', '')
           }
         }
       }
-    } else 
-      finalTypeString = typeString.split(' ')[0]
+    } else { finalTypeString = typeString.split(' ')[0] }
     return finalTypeString
   })
 }
 
-function getTypeStringFromComponents(components: ABIParameter[]) {
+function getTypeStringFromComponents (components: ABIParameter[]) {
   let typeString = '('
-  for(let i=0; i < components.length; i++) {
+  for (let i = 0; i < components.length; i++) {
     const param = components[i]
-    if(param.type.includes('tuple') && param.components && param.components.length > 0){
+    if (param.type.includes('tuple') && param.components && param.components.length > 0) {
       typeString = typeString + getTypeStringFromComponents(param.components)
       typeString = typeString + param.type.replace('tuple', '')
-    }
-    else
-      typeString = typeString + param.type
+    } else { typeString = typeString + param.type }
 
-    if(i !== components.length - 1)
-      typeString = typeString + ','
+    if (i !== components.length - 1) { typeString = typeString + ',' }
   }
   typeString = typeString + ')'
   return typeString
@@ -1136,18 +1112,17 @@ function getTypeStringFromComponents(components: ABIParameter[]) {
  * This is used to redirect the user to specific version of Solidity documentation
  * @param contractFiles compiled contract object
  */
-function getCompilerVersion(contractFiles: CompiledContractObj): string {
+function getCompilerVersion (contractFiles: CompiledContractObj): string {
   let version = 'latest'
   const fileNames: string[] = Object.keys(contractFiles)
   const contracts = contractFiles[fileNames[0]]
   const contractNames: string[] = Object.keys(contracts)
   const contract: CompiledContract = contracts[contractNames[0]]
   // For some compiler/contract,  metadata is ""
-  if(contract && contract.metadata) {
+  if (contract && contract.metadata) {
     const metadata = JSON.parse(contract.metadata)
     const compilerVersion: string = metadata.compiler.version
-    if(!compilerVersion.includes('nightly'))
-      version = 'v' + compilerVersion.split('+commit')[0]
+    if (!compilerVersion.includes('nightly')) { version = 'v' + compilerVersion.split('+commit')[0] }
   }
   return version
 }

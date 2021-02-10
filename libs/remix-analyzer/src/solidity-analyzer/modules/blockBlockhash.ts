@@ -1,12 +1,12 @@
-import { default as category } from './categories'
+import category from './categories'
 import { isBlockBlockHashAccess } from './staticAnalysisCommon'
-import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, FunctionCallAstNode, SupportedVersion} from './../../types'
+import algorithm from './algorithmCategories'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, FunctionCallAstNode, SupportedVersion } from './../../types'
 
 export default class blockBlockhash implements AnalyzerModule {
   warningNodes: FunctionCallAstNode[] = []
-  name = `Block hash: `
-  description = `Can be influenced by miners`
+  name = 'Block hash: '
+  description = 'Can be influenced by miners'
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -30,4 +30,3 @@ export default class blockBlockhash implements AnalyzerModule {
     })
   }
 }
-

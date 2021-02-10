@@ -1,14 +1,16 @@
 'use strict'
 
-import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph, Context, FunctionCallAstNode } from "../../types"
-import { isLocalCallGraphRelevantNode,  isExternalDirectCall, getFullQualifiedFunctionCallIdent, 
-  getFullQuallyfiedFuncDefinitionIdent, getContractName } from './staticAnalysisCommon'
+import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph, Context, FunctionCallAstNode } from '../../types'
+import {
+  isLocalCallGraphRelevantNode, isExternalDirectCall, getFullQualifiedFunctionCallIdent,
+  getFullQuallyfiedFuncDefinitionIdent, getContractName
+} from './staticAnalysisCommon'
 
 type filterNodesFunction = (node: FunctionCallAstNode) => boolean
 type NodeIdentFunction = (node: FunctionCallAstNode) => string
 type FunDefIdentFunction = (node: FunctionHLAst) => string
 
-function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter: filterNodesFunction , extractNodeIdent: NodeIdentFunction, extractFuncDefIdent: FunDefIdentFunction): Record<string, FunctionCallGraph> {
+function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter: filterNodesFunction, extractNodeIdent: NodeIdentFunction, extractFuncDefIdent: FunDefIdentFunction): Record<string, FunctionCallGraph> {
   const callGraph: Record<string, FunctionCallGraph> = {}
   functions.forEach((func: FunctionHLAst) => {
     const calls: string[] = func.relevantNodes
@@ -76,7 +78,7 @@ function analyseCallGraphInternal (callGraph: Record<string, ContractCallGraph>,
   visited[funcName] = true
 
   return combinator(current.node.relevantNodes.reduce((acc, val) => combinator(acc, nodeCheck(val, context)), false),
-                        current.calls.reduce((acc, val) => combinator(acc, analyseCallGraphInternal(callGraph, val, context, combinator, nodeCheck, visited)), false))
+    current.calls.reduce((acc, val) => combinator(acc, analyseCallGraphInternal(callGraph, val, context, combinator, nodeCheck, visited)), false))
 }
 
 export function resolveCallGraphSymbol (callGraph: Record<string, ContractCallGraph>, funcName: string): FunctionCallGraph | undefined {
@@ -92,7 +94,7 @@ function resolveCallGraphSymbolInternal (callGraph: Record<string, ContractCallG
     const currentContract: ContractCallGraph = callGraph[contractPart]
     if (!(currentContract === undefined)) {
       current = currentContract.functions[funcName]
-       // resolve inheritance hierarchy
+      // resolve inheritance hierarchy
       if (current === undefined) {
         // resolve inheritance lookup in linearized fashion
         const inheritsFromNames: string[] = currentContract.contract.inheritsFrom.reverse()
@@ -108,6 +110,5 @@ function resolveCallGraphSymbolInternal (callGraph: Record<string, ContractCallG
     throw new Error('functionCallGraph.js: function does not have full qualified name.')
   }
   if (current === undefined && !silent) console.log(`static analysis functionCallGraph.js: ${funcName} not found in function call graph.`)
-  if(current !== null)
-    return current
+  if (current !== null) { return current }
 }
