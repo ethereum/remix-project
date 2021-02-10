@@ -1,5 +1,5 @@
-import { NightwatchBrowser, NightwatchAPI } from "nightwatch"
-import EventEmitter from "events"
+import { NightwatchBrowser, NightwatchAPI } from 'nightwatch'
+import EventEmitter from 'events'
 
 /*
   Switches between browser tabs

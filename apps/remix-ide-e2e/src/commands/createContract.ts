@@ -1,5 +1,5 @@
-import { NightwatchBrowser } from "nightwatch"
-import EventEmitter from "events"
+import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from 'events'
 
 class CreateContract extends EventEmitter {
   command (this: NightwatchBrowser, inputParams: string): NightwatchBrowser {
@@ -20,9 +20,9 @@ function createContract (browser: NightwatchBrowser, inputParams: string, callba
     })
   } else {
     browser
-    .click('#runTabView button[class^="instanceButton"]')
-    .pause(500)
-    .perform(function () { callback() })
+      .click('#runTabView button[class^="instanceButton"]')
+      .pause(500)
+      .perform(function () { callback() })
   }
 }
 

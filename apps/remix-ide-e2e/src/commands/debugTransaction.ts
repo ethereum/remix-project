@@ -1,5 +1,5 @@
-import { NightwatchBrowser } from "nightwatch"
-import EventEmitter from "events"
+import { NightwatchBrowser } from 'nightwatch'
+import EventEmitter from 'events'
 
 class debugTransaction extends EventEmitter {
   command (this: NightwatchBrowser, index = 0): NightwatchBrowser {
@@ -19,7 +19,7 @@ function checkStyle (browser: NightwatchBrowser, index: number, callback: VoidFu
 
     debugBtn && debugBtn.click()
   }, [index], function () {
-    browser.waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]').perform(() => callback())    
+    browser.waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]').perform(() => callback())
   })
 }
 
