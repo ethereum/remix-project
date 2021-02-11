@@ -37,6 +37,7 @@ module.exports = {
       () => { return exist },
       (callback) => {
         fileProvider.exists(name + counter + prefix + '.' + ext, (error, currentExist) => {
+          console.log('currentExists: ', currentExist)
           if (error) {
             callback(error)
           } else {
