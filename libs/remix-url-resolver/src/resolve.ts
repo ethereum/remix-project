@@ -119,11 +119,11 @@ export class RemixURLResolver {
     }
   }
 
-   /**
+  /**
   * Handle an import statement based on NPM
   * @param url The url of the NPM import statement
   */
-  async handleNpmImport(url: string): Promise<HandlerResponse> {
+  async handleNpmImport (url: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
       const req = 'https://unpkg.com/' + url
@@ -134,7 +134,7 @@ export class RemixURLResolver {
     }
   }
 
-  getHandlers(): Handler[] {
+  getHandlers (): Handler[] {
     return [
       {
         type: 'github',
