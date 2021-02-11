@@ -14,8 +14,8 @@ export class ValueType {
     this.basicType = 'ValueType'
   }
 
-  decodeValue(input? : any) {
-    throw new Error('This method is abstract');
+  decodeValue (input? : any) {
+    throw new Error('This method is abstract')
   }
 
   /**
