@@ -1,7 +1,7 @@
-import { default as category } from './categories'
+import category from './categories'
 import { isLLCall, isLLDelegatecall, isLLCallcode, isLLCall04, isLLDelegatecall04, isLLSend04, isLLSend, lowLevelCallTypes, getCompilerVersion } from './staticAnalysisCommon'
-import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, SupportedVersion} from './../../types'
+import algorithm from './algorithmCategories'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, SupportedVersion } from './../../types'
 
 interface llcNode {
   node: MemberAccessAstNode
@@ -10,8 +10,8 @@ interface llcNode {
 
 export default class lowLevelCalls implements AnalyzerModule {
   llcNodes: llcNode[] = []
-  name = `Low level calls: `
-  description = `Should only be used by experienced devs`
+  name = 'Low level calls: '
+  description = 'Should only be used by experienced devs'
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -20,19 +20,19 @@ export default class lowLevelCalls implements AnalyzerModule {
 
   visit (node : MemberAccessAstNode): void {
     if (isLLCall(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.CALL})
+      this.llcNodes.push({ node: node, type: lowLevelCallTypes.CALL })
     } else if (isLLDelegatecall(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.DELEGATECALL})
+      this.llcNodes.push({ node: node, type: lowLevelCallTypes.DELEGATECALL })
     } else if (isLLSend(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.SEND})
+      this.llcNodes.push({ node: node, type: lowLevelCallTypes.SEND })
     } else if (isLLDelegatecall04(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.DELEGATECALL})
+      this.llcNodes.push({ node: node, type: lowLevelCallTypes.DELEGATECALL })
     } else if (isLLSend04(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.SEND})
+      this.llcNodes.push({ node: node, type: lowLevelCallTypes.SEND })
     } else if (isLLCall04(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.CALL})
+      this.llcNodes.push({ node: node, type: lowLevelCallTypes.CALL })
     } else if (isLLCallcode(node)) {
-      this.llcNodes.push({node: node, type: lowLevelCallTypes.CALLCODE})
+      this.llcNodes.push({ node: node, type: lowLevelCallTypes.CALLCODE })
     }
   }
 
@@ -73,4 +73,3 @@ export default class lowLevelCalls implements AnalyzerModule {
     })
   }
 }
-

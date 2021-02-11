@@ -1,11 +1,11 @@
-import { default as category } from './categories'
+import category from './categories'
 import { getDeclaredVariableName, getFullQuallyfiedFuncDefinitionIdent } from './staticAnalysisCommon'
-import { default as algorithm } from './algorithmCategories'
-import  AbstractAst from './abstractAstView'
+import algorithm from './algorithmCategories'
+import AbstractAst from './abstractAstView'
 import { get } from 'fast-levenshtein'
 import { util } from '@remix-project/remix-lib'
 import { AstWalker } from '@remix-project/remix-astwalker'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, VisitFunction, ReportFunction, SupportedVersion} from './../../types'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, FunctionHLAst, VariableDeclarationAstNode, VisitFunction, ReportFunction, SupportedVersion } from './../../types'
 
 interface SimilarRecord {
   var1: string
@@ -14,8 +14,8 @@ interface SimilarRecord {
 }
 
 export default class similarVariableNames implements AnalyzerModule {
-  name = `Similar variable names: `
-  description = `Variable names are too similar`
+  name = 'Similar variable names: '
+  description = 'Variable names are too similar'
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -47,17 +47,17 @@ export default class similarVariableNames implements AnalyzerModule {
         const vars: string[] = this.getFunctionVariables(contract, func).map(getDeclaredVariableName)
         this.findSimilarVarNames(vars).map((sim) => {
           // check if function is implemented
-          if(func.node.implemented) {
+          if (func.node.implemented) {
             const astWalker = new AstWalker()
             const functionBody: any = func.node.body
             // Walk through all statements of function
             astWalker.walk(functionBody, (node) => {
               // check if these is an identifier node which is one of the tracked similar variables
-              if ((node.nodeType === 'Identifier' || node.nodeType === 'VariableDeclaration') 
-                    && (node.name === sim.var1 || node.name === sim.var2)) {
+              if ((node.nodeType === 'Identifier' || node.nodeType === 'VariableDeclaration') &&
+                    (node.name === sim.var1 || node.name === sim.var2)) {
                 warnings.push({
                   warning: `${funcName} : Variables have very similar names "${sim.var1}" and "${sim.var2}". ${hasModifiersComments} ${multipleContractsWithSameNameComments}`,
-                  location: node['src']
+                  location: node.src
                 })
               }
               return true
@@ -73,9 +73,9 @@ export default class similarVariableNames implements AnalyzerModule {
     const similar: SimilarRecord[] = []
     const comb: Record<string, boolean> = {}
     vars.map((varName1: string) => vars.map((varName2: string) => {
-      if (varName1.length > 1 && varName2.length > 1 && 
-        varName2 !== varName1 && !this.isCommonPrefixedVersion(varName1, varName2) && 
-        !this.isCommonNrSuffixVersion(varName1, varName2) && 
+      if (varName1.length > 1 && varName2.length > 1 &&
+        varName2 !== varName1 && !this.isCommonPrefixedVersion(varName1, varName2) &&
+        !this.isCommonNrSuffixVersion(varName1, varName2) &&
         !(comb[varName1 + ';' + varName2] || comb[varName2 + ';' + varName1])) {
         comb[varName1 + ';' + varName2] = true
         const distance: number = get(varName1, varName2)

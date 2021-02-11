@@ -51,8 +51,8 @@ export interface Options {
 
 export interface CompilerConfiguration {
   currentCompilerUrl: string,
-  evmVersion: string, 
-  optimize: boolean, 
+  evmVersion: string,
+  optimize: boolean,
   usingWorker?: boolean,
   runs: number
 }
@@ -64,7 +64,7 @@ export interface CompilationErrors {
 }
 
 export class CompilationErrors extends Error {
-  constructor(errors: Array<any>) {
+  constructor (errors: Array<any>) {
     const mapError = errors.map((e) => { return e.formattedMessage || e.message })
     super(mapError.join('\n'))
     this.errors = errors
@@ -74,9 +74,9 @@ export class CompilationErrors extends Error {
 
 /** sources object with name of the file and content **/
 
-////////////
+/// /////////
 // SOURCE //
-////////////
+/// /////////
 export interface CompilationSource {
   /** Identifier of the source (used in source maps) */
   id: number
@@ -162,9 +162,9 @@ export interface CompiledContract {
   }
 }
 
-/////////
+/// //////
 // ABI //
-/////////
+/// //////
 export type ABIDescription = FunctionDescription | EventDescription
 
 export interface FunctionDescription {
@@ -227,9 +227,9 @@ export type ABITypeParameter =
   | 'tuple[]'
   | string // Fallback
 
-///////////////////////////
+/// ////////////////////////
 // NATURAL SPECIFICATION //
-///////////////////////////
+/// ////////////////////////
 
 // Userdoc
 export interface UserDocumentation {
@@ -267,9 +267,9 @@ export interface DevMethodDoc {
   }
 }
 
-//////////////
+/// ///////////
 // BYTECODE //
-//////////////
+/// ///////////
 export interface BytecodeObject {
   /** The bytecode as a hex string. */
   object: string

@@ -1,5 +1,5 @@
-const version = require('../../package.json').version
 import Web3 from 'web3'
+const version = require('../../package.json').version
 
 export function methods () {
   return {
@@ -57,4 +57,3 @@ export function eth_compileLLL (payload, cb) {
 export function eth_compileSerpent (payload, cb) {
   cb(null, 'unsupported')
 }
-

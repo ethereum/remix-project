@@ -9,7 +9,7 @@ export default {
    * @param contracts 'contracts' object from last compilation result
    */
 
-  getContract: (contractName: string, contracts: CompilationResult["contracts"]) : Record<string, any> | null => {
+  getContract: (contractName: string, contracts: CompilationResult['contracts']) : Record<string, any> | null => {
     for (const file in contracts) {
       if (contracts[file][contractName]) {
         return { object: contracts[file][contractName], file: file }
@@ -23,14 +23,14 @@ export default {
    * @param contracts - 'contracts' object from last compilation result
    * @param cb    - callback
    */
-  
-  visitContracts: (contracts: CompilationResult["contracts"], cb: visitContractsCallbackInterface) : void => {
+
+  visitContracts: (contracts: CompilationResult['contracts'], cb: visitContractsCallbackInterface) : void => {
     for (const file in contracts) {
       for (const name in contracts[file]) {
-        const param: visitContractsCallbackParam = { 
-          name: name, 
-          object: contracts[file][name], 
-          file: file 
+        const param: visitContractsCallbackParam = {
+          name: name,
+          object: contracts[file][name],
+          file: file
         }
         if (cb(param)) return
       }

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import axios, { AxiosResponse } from 'axios'
 import { BzzNode as Bzz } from '@erebos/bzz-node'
 
@@ -27,9 +28,9 @@ export class RemixURLResolver {
   gistAccessToken: string
   protocol: string
 
-  constructor(gistToken?: string, protocol = 'http:') {
+  constructor (gistToken?: string, protocol = 'http:') {
     this.previouslyHandled = {}
-    this.gistAccessToken = gistToken ? gistToken : ''
+    this.gistAccessToken = gistToken || ''
     this.protocol = protocol
   }
 
@@ -38,24 +39,21 @@ export class RemixURLResolver {
   * @param root The root of the github import statement
   * @param filePath path of the file in github
   */
-  async handleGithubCall(root: string, filePath: string): Promise<HandlerResponse> {
-    let param = '?'
-    param += this.gistAccessToken ? 'access_token=' + this.gistAccessToken : ''
+  async handleGithubCall (root: string, filePath: string): Promise<HandlerResponse> {
     const regex = filePath.match(/blob\/([^/]+)\/(.*)/)
     let reference = 'master'
     if (regex) {
       // if we have /blob/master/+path we extract the branch name "master" and add it as a parameter to the github api
       // the ref can be branch name, tag, commit id
       reference = regex[1]
-      param += '&ref=' + reference
       filePath = filePath.replace(`blob/${reference}/`, '')
     }
-    //eslint-disable-next-line no-useless-catch
+    // eslint-disable-next-line no-useless-catch
     try {
       const req: string = `https://raw.githubusercontent.com/${root}/${reference}/${filePath}`
       const response: AxiosResponse = await axios.get(req)
       return { content: response.data, cleanUrl: root + '/' + filePath }
-    } catch(e) {
+    } catch (e) {
       throw e
     }
   }
@@ -65,12 +63,12 @@ export class RemixURLResolver {
   * @param url The url of the import statement
   * @param cleanUrl
   */
-  async handleHttp(url: string, cleanUrl: string): Promise<HandlerResponse> {
-    //eslint-disable-next-line no-useless-catch
+  async handleHttp (url: string, cleanUrl: string): Promise<HandlerResponse> {
+    // eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
-      return { content: response.data, cleanUrl}
-    } catch(e) {
+      return { content: response.data, cleanUrl }
+    } catch (e) {
       throw e
     }
   }
@@ -80,24 +78,24 @@ export class RemixURLResolver {
   * @param url The url of the import statement
   * @param cleanUrl
   */
-  async handleHttps(url: string, cleanUrl: string): Promise<HandlerResponse> {
-    //eslint-disable-next-line no-useless-catch
+  async handleHttps (url: string, cleanUrl: string): Promise<HandlerResponse> {
+    // eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url)
       return { content: response.data, cleanUrl }
-    } catch(e) {
+    } catch (e) {
       throw e
     }
   }
 
-  async handleSwarm(url: string, cleanUrl: string): Promise<HandlerResponse> {
-    //eslint-disable-next-line no-useless-catch
+  async handleSwarm (url: string, cleanUrl: string): Promise<HandlerResponse> {
+    // eslint-disable-next-line no-useless-catch
     try {
-      const bzz = new Bzz({url: this.protocol + '//swarm-gateways.net'});
-      const url = bzz.getDownloadURL(cleanUrl, {mode: 'raw'})
+      const bzz = new Bzz({ url: this.protocol + '//swarm-gateways.net' })
+      const url = bzz.getDownloadURL(cleanUrl, { mode: 'raw' })
       const response: AxiosResponse = await axios.get(url)
       return { content: response.data, cleanUrl }
-    } catch(e) {
+    } catch (e) {
       throw e
     }
   }
@@ -106,10 +104,10 @@ export class RemixURLResolver {
   * Handle an import statement based on IPFS
   * @param url The url of the IPFS import statement
   */
-  async handleIPFS(url: string): Promise<HandlerResponse> {
+  async handleIPFS (url: string): Promise<HandlerResponse> {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
-    //eslint-disable-next-line no-useless-catch
+    // eslint-disable-next-line no-useless-catch
     try {
       const req = 'https://ipfsgw.komputing.org/' + url
       // If you don't find greeter.sol on ipfs gateway use local
@@ -121,11 +119,11 @@ export class RemixURLResolver {
     }
   }
 
-   /**
+  /**
   * Handle an import statement based on NPM
   * @param url The url of the NPM import statement
   */
-  async handleNpmImport(url: string): Promise<HandlerResponse> {
+  async handleNpmImport (url: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
       const req = 'https://unpkg.com/' + url
@@ -136,7 +134,7 @@ export class RemixURLResolver {
     }
   }
 
-  getHandlers(): Handler[] {
+  getHandlers (): Handler[] {
     return [
       {
         type: 'github',
@@ -171,9 +169,9 @@ export class RemixURLResolver {
     ]
   }
 
-  public async resolve(filePath: string, customHandlers?: Handler[]): Promise<Imported> {
+  public async resolve (filePath: string, customHandlers?: Handler[]): Promise<Imported> {
     let imported: Imported = this.previouslyHandled[filePath]
-    if(imported) {
+    if (imported) {
       return imported
     }
     const builtinHandlers: Handler[] = this.getHandlers()
@@ -184,7 +182,7 @@ export class RemixURLResolver {
     const { content, cleanUrl } = await handler.handle(match)
     imported = {
       content,
-      cleanUrl : cleanUrl ? cleanUrl : filePath,
+      cleanUrl: cleanUrl || filePath,
       type: handler.type
     }
     this.previouslyHandled[filePath] = imported

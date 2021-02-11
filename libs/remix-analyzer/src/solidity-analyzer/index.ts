@@ -9,7 +9,6 @@ type ModuleObj = {
 }
 
 export default class staticAnalysisRunner {
-
   /**
    * Run analysis (Used by IDE)
    * @param compilationResult contract compilation result
@@ -18,9 +17,9 @@ export default class staticAnalysisRunner {
    */
   run (compilationResult: CompilationResult, toRun: number[], callback: ((reports: AnalysisReport[]) => void)): void {
     const modules: ModuleObj[] = toRun.map((i) => {
-      const module = this.modules()[i]
-      const m = new module()
-      return { 'name': m.name, 'mod': m }
+      const Module = this.modules()[i]
+      const m = new Module()
+      return { name: m.name, mod: m }
     })
     this.runWithModuleList(compilationResult, modules, callback)
   }
@@ -36,21 +35,21 @@ export default class staticAnalysisRunner {
     // Also provide convenience analysis via the AST walker.
     const walker = new AstWalker()
     for (const k in compilationResult.sources) {
-      walker.walkFull(compilationResult.sources[k].ast, 
+      walker.walkFull(compilationResult.sources[k].ast,
         (node: any) => {
-        modules.map((item: ModuleObj) => {
-          if (item.mod.visit !== undefined) {
-            try {
-              item.mod.visit(node)
-            } catch (e) {
-              reports.push({
-                name: item.name, report: [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message, error: e.stack }]
-              })
+          modules.map((item: ModuleObj) => {
+            if (item.mod.visit !== undefined) {
+              try {
+                item.mod.visit(node)
+              } catch (e) {
+                reports.push({
+                  name: item.name, report: [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message, error: e.stack }]
+                })
+              }
             }
-          }
-        })
-        return true
-      }
+          })
+          return true
+        }
       )
     }
 
