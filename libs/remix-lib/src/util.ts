@@ -163,6 +163,7 @@ export function buildCallPath (index, rootCall) {
   * @param {String} value - value to sha3
   * @return {Object} - return sha3ied value
   */
+// eslint-disable-next-line camelcase
 export function sha3_256 (value) {
   if (typeof value === 'string' && value.indexOf('0x') !== 0) {
     value = '0x' + value
