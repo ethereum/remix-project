@@ -18,4 +18,3 @@ export function generateBlock (executionContext) {
     executionContext.addBlock(block)
   })
 }
-
