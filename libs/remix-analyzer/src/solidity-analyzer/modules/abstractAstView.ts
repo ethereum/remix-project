@@ -1,9 +1,13 @@
-import { getStateVariableDeclarationsFromContractNode, getInheritsFromName, getContractName,
-  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName, 
-  getFunctionDefinitionReturnParameterPart, getCompilerVersion } from './staticAnalysisCommon'
+import {
+  getStateVariableDeclarationsFromContractNode, getInheritsFromName, getContractName,
+  getFunctionOrModifierDefinitionParameterPart, getType, getDeclaredVariableName,
+  getFunctionDefinitionReturnParameterPart, getCompilerVersion
+} from './staticAnalysisCommon'
 import { AstWalker } from '@remix-project/remix-astwalker'
-import { FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode, ContractHLAst, VariableDeclarationAstNode, 
-  FunctionHLAst, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult } from '../../types'
+import {
+  FunctionDefinitionAstNode, ParameterListAstNode, ModifierDefinitionAstNode, ContractHLAst, VariableDeclarationAstNode,
+  FunctionHLAst, ReportObj, ReportFunction, VisitFunction, ModifierHLAst, CompilationResult
+} from '../../types'
 
 type WrapFunction = ((contracts: ContractHLAst[], isSameName: boolean, version: string) => ReportObj[])
 
@@ -23,7 +27,7 @@ export default class abstractAstView {
   */
   multipleContractsWithSameName = false
 
-/**
+  /**
  * Builds a higher level AST view. I creates a list with each contract as an object in it.
  * Example contractsOut:
  *
@@ -48,9 +52,10 @@ export default class abstractAstView {
  * @contractsOut {list} return list for high level AST view
  * @return {ASTNode -> void} returns a function that can be used as visit function for static analysis modules, to build up a higher level AST view for further analysis.
  */
+  // eslint-disable-next-line camelcase
   build_visit (relevantNodeFilter: ((node:any) => boolean)): VisitFunction {
     return (node: any) => {
-      if (node.nodeType === "ContractDefinition") {
+      if (node.nodeType === 'ContractDefinition') {
         this.setCurrentContract({
           node: node,
           functions: [],
@@ -59,11 +64,11 @@ export default class abstractAstView {
           inheritsFrom: [],
           stateVariables: getStateVariableDeclarationsFromContractNode(node)
         })
-      } else if (node.nodeType === "InheritanceSpecifier") {
+      } else if (node.nodeType === 'InheritanceSpecifier') {
         const currentContract: ContractHLAst = this.getCurrentContract()
         const inheritsFromName: string = getInheritsFromName(node)
         currentContract.inheritsFrom.push(inheritsFromName)
-      } else if (node.nodeType === "FunctionDefinition") {
+      } else if (node.nodeType === 'FunctionDefinition') {
         this.setCurrentFunction({
           node: node,
           relevantNodes: [],
@@ -78,14 +83,14 @@ export default class abstractAstView {
             this.getCurrentFunction().relevantNodes.push(item.node)
           }
         })
-      } else if (node.nodeType === "ModifierDefinition") {
+      } else if (node.nodeType === 'ModifierDefinition') {
         this.setCurrentModifier({
           node: node,
           relevantNodes: [],
           localVariables: this.getLocalVariables(node),
           parameters: this.getLocalParameters(node)
         })
-      } else if (node.nodeType === "ModifierInvocation") {
+      } else if (node.nodeType === 'ModifierInvocation') {
         if (!this.isFunctionNotModifier) throw new Error('abstractAstView.js: Found modifier invocation outside of function scope.')
         this.getCurrentFunction().modifierInvocations.push(node)
       } else if (relevantNodeFilter(node)) {
@@ -102,6 +107,7 @@ export default class abstractAstView {
     }
   }
 
+  // eslint-disable-next-line camelcase
   build_report (wrap: WrapFunction): ReportFunction {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return (compilationResult: CompilationResult) => {
@@ -176,7 +182,7 @@ export default class abstractAstView {
   private getLocalVariables (funcNode: ParameterListAstNode): VariableDeclarationAstNode[] {
     const locals: VariableDeclarationAstNode[] = []
     new AstWalker().walkFull(funcNode, (node: any) => {
-      if (node.nodeType === "VariableDeclaration") locals.push(node)
+      if (node.nodeType === 'VariableDeclaration') locals.push(node)
       return true
     })
     return locals

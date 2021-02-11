@@ -12,7 +12,7 @@ export class Debugger {
   compilationResult
   debugger
   breakPointManager
-  step_manager
+  step_manager // eslint-disable-line camelcase
   vmDebuggerLogic
 
   constructor (options) {

@@ -1,1 +1,1 @@
-export { default as CodeAnalysis}  from './solidity-analyzer'
+export { default as CodeAnalysis } from './solidity-analyzer'
