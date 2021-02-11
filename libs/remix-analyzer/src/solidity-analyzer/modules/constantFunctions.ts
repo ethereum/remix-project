@@ -1,17 +1,21 @@
-import { default as category } from './categories'
-import { isLowLevelCall, isTransfer, isExternalDirectCall, isEffect, isLocalCallGraphRelevantNode, isSelfdestructCall, 
-  isDeleteUnaryOperation, isPayableFunction, isConstructor, getFullQuallyfiedFuncDefinitionIdent, hasFunctionBody, 
-  isConstantFunction, isWriteOnStateVariable, isStorageVariableDeclaration, isCallToNonConstLocalFunction, 
-  getFullQualifiedFunctionCallIdent} from './staticAnalysisCommon'
-import { default as algorithm } from './algorithmCategories'
+import category from './categories'
+import {
+  isLowLevelCall, isTransfer, isExternalDirectCall, isEffect, isLocalCallGraphRelevantNode, isSelfdestructCall,
+  isDeleteUnaryOperation, isPayableFunction, isConstructor, getFullQuallyfiedFuncDefinitionIdent, hasFunctionBody,
+  isConstantFunction, isWriteOnStateVariable, isStorageVariableDeclaration, isCallToNonConstLocalFunction,
+  getFullQualifiedFunctionCallIdent
+} from './staticAnalysisCommon'
+import algorithm from './algorithmCategories'
 import { buildGlobalFuncCallGraph, resolveCallGraphSymbol, analyseCallGraph } from './functionCallGraph'
-import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractCallGraph, Context, ContractHLAst, 
-  FunctionHLAst, VariableDeclarationAstNode, FunctionCallGraph, FunctionCallAstNode, VisitFunction, ReportFunction, SupportedVersion} from './../../types'
+import AbstractAst from './abstractAstView'
+import {
+  AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractCallGraph, Context, ContractHLAst,
+  FunctionHLAst, VariableDeclarationAstNode, FunctionCallGraph, FunctionCallAstNode, VisitFunction, ReportFunction, SupportedVersion
+} from './../../types'
 
 export default class constantFunctions implements AnalyzerModule {
-  name = `Constant/View/Pure functions: `
-  description = `Potentially constant/view/pure functions`
+  name = 'Constant/View/Pure functions: '
+  description = 'Potentially constant/view/pure functions'
   category: ModuleCategory = category.MISC
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
   version: SupportedVersion = {
@@ -26,8 +30,8 @@ export default class constantFunctions implements AnalyzerModule {
               isExternalDirectCall(node) ||
               isEffect(node) ||
               isLocalCallGraphRelevantNode(node) ||
-              node.nodeType === "InlineAssembly" ||
-              node.nodeType === "NewExpression" ||
+              node.nodeType === 'InlineAssembly' ||
+              node.nodeType === 'NewExpression' ||
               isSelfdestructCall(node) ||
               isDeleteUnaryOperation(node)
   )
@@ -46,17 +50,17 @@ export default class constantFunctions implements AnalyzerModule {
           func['potentiallyshouldBeConst'] = false
         } else {
           func['potentiallyshouldBeConst'] = this.checkIfShouldBeConstant(
-                                            getFullQuallyfiedFuncDefinitionIdent(
-                                              contract.node, 
-                                              func.node, 
-                                              func.parameters
-                                            ),
-                                            this.getContext(
-                                              callGraph, 
-                                              contract, 
-                                              func
-                                            )
-                                          )
+            getFullQuallyfiedFuncDefinitionIdent(
+              contract.node,
+              func.node,
+              func.parameters
+            ),
+            this.getContext(
+              callGraph,
+              contract,
+              func
+            )
+          )
         }
       })
       contract.functions.filter((func: FunctionHLAst) => hasFunctionBody(func.node)).forEach((func: FunctionHLAst) => {
@@ -67,13 +71,13 @@ export default class constantFunctions implements AnalyzerModule {
           if (func['potentiallyshouldBeConst']) {
             warnings.push({
               warning: `${funcName} : Potentially should be constant/view/pure but is not. ${comments}`,
-              location: func.node['src'],
+              location: func.node.src,
               more: `https://solidity.readthedocs.io/en/${version}/contracts.html#view-functions`
             })
           } else {
             warnings.push({
               warning: `${funcName} : Is constant but potentially should not be. ${comments}`,
-              location: func.node['src'],
+              location: func.node.src,
               more: `https://solidity.readthedocs.io/en/${version}/contracts.html#view-functions`
             })
           }
@@ -101,8 +105,8 @@ export default class constantFunctions implements AnalyzerModule {
           isTransfer(node) ||
           this.isCallOnNonConstExternalInterfaceFunction(node, context) ||
           isCallToNonConstLocalFunction(node) ||
-          node.nodeType === "InlineAssembly" ||
-          node.nodeType === "NewExpression" ||
+          node.nodeType === 'InlineAssembly' ||
+          node.nodeType === 'NewExpression' ||
           isSelfdestructCall(node) ||
           isDeleteUnaryOperation(node)
   }

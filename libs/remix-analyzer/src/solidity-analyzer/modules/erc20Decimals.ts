@@ -1,13 +1,15 @@
-import { default as category } from './categories'
+import category from './categories'
 import { getFunctionDefinitionName, helpers, getDeclaredVariableName, getDeclaredVariableType } from './staticAnalysisCommon'
-import { default as algorithm } from './algorithmCategories'
-import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, VisitFunction, ReportFunction, ContractHLAst, 
-  FunctionHLAst, VariableDeclarationAstNode, SupportedVersion} from './../../types'
+import algorithm from './algorithmCategories'
+import AbstractAst from './abstractAstView'
+import {
+  AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, VisitFunction, ReportFunction, ContractHLAst,
+  FunctionHLAst, VariableDeclarationAstNode, SupportedVersion
+} from './../../types'
 
 export default class erc20Decimals implements AnalyzerModule {
-  name = `ERC20: `
-  description = `'decimals' should be 'uint8'`
+  name = 'ERC20: '
+  description = '\'decimals\' should be \'uint8\''
   category: ModuleCategory = category.ERC
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -34,11 +36,11 @@ export default class erc20Decimals implements AnalyzerModule {
                                                               (f.returns.length === 0 || f.returns.length > 1) ||
                                                               (f.returns.length === 1 && (f.returns[0].type !== 'uint8' || f.node.visibility !== 'public'))
                                                             )
-                                                    )
+        )
         if (decimalsVar.length > 0) {
           for (const node of decimalsVar) {
             warnings.push({
-              warning: `ERC20 contract's "decimals" variable should be "uint8" type`,
+              warning: 'ERC20 contract\'s "decimals" variable should be "uint8" type',
               location: node.src,
               more: 'https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md#decimals'
             })
@@ -46,7 +48,7 @@ export default class erc20Decimals implements AnalyzerModule {
         } else if (decimalsFun.length > 0) {
           for (const fn of decimalsFun) {
             warnings.push({
-              warning: `ERC20 contract's "decimals" function should have "uint8" as return type`,
+              warning: 'ERC20 contract\'s "decimals" function should have "uint8" as return type',
               location: fn.node.src,
               more: 'https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md#decimals'
             })
@@ -66,4 +68,3 @@ export default class erc20Decimals implements AnalyzerModule {
           funSignatures.includes('allowance(address,address)')
   }
 }
-

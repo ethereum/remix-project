@@ -129,7 +129,6 @@ export interface CompilerInput {
   }
 }
 
-
 export interface Source {
     [fileName: string]:
         {
@@ -144,7 +143,7 @@ export interface Source {
 export interface CompilerInputOptions {
     optimize: boolean | number,
     runs: number,
-    libraries?:  {
+    libraries?: {
         [fileName: string]: Record<string, string>
     },
     evmVersion?: EVMVersion,
@@ -191,7 +190,7 @@ export interface MessageFromWorker {
 }
 
 export interface visitContractsCallbackParam {
-  name: string, 
+  name: string,
   object: CompiledContract,
   file: string
 }
@@ -205,7 +204,7 @@ export interface gatherImportsCallbackInterface {
 }
 
 export interface CompilationResult {
-    error?:  CompilationError,
+    error?: CompilationError,
     /** not present if no errors/warnings were encountered */
     errors?: CompilationError[]
     /** This contains the file-level outputs. In can be limited/filtered by the outputSelection settings */
@@ -220,12 +219,12 @@ export interface CompilationResult {
       }
     }
   }
-  
-  ///////////
-  // ERROR //
-  ///////////
-  
-  export interface CompilationError {
+
+/// ////////
+// ERROR //
+/// ////////
+
+export interface CompilationError {
     /** Location within the source file */
     sourceLocation?: {
       file: string
@@ -242,7 +241,7 @@ export interface CompilationResult {
     /** the message formatted with source location */
     formattedMessage?: string
   }
-  
+
   type CompilationErrorType =
     | 'JSONError'
     | 'IOError'
@@ -257,21 +256,21 @@ export interface CompilationResult {
     | 'CompilerError'
     | 'FatalError'
     | 'Warning'
-  
-  ////////////
-  // SOURCE //
-  ////////////
-  export interface CompilationSource {
+
+/// /////////
+// SOURCE //
+/// /////////
+export interface CompilationSource {
     /** Identifier of the source (used in source maps) */
     id: number
     /** The AST object */
     ast: AstNode
   }
-  
-  /////////
-  // AST //
-  /////////
-  export interface AstNode {
+
+/// //////
+// AST //
+/// //////
+export interface AstNode {
     absolutePath?: string
     exportedSymbols?: Record<string, unknown>
     id: number
@@ -285,8 +284,8 @@ export interface CompilationResult {
     symbolAliases?: Array<string>
     [x: string]: any
   }
-  
-  export interface AstNodeAtt {
+
+export interface AstNodeAtt {
     operator?: string
     string?: null
     type?: string
@@ -299,11 +298,11 @@ export interface CompilationResult {
     absolutePath?: string
     [x: string]: any
   }
-  
-  //////////////
-  // CONTRACT //
-  //////////////
-  export interface CompiledContract {
+
+/// ///////////
+// CONTRACT //
+/// ///////////
+export interface CompiledContract {
     /** The Ethereum Contract ABI. If empty, it is represented as an empty array. */
     abi: ABIDescription[]
     // See the Metadata Output documentation (serialised JSON string)
@@ -348,19 +347,19 @@ export interface CompilationResult {
       wasm: string
     }
   }
-  
-  /////////
-  // ABI //
-  /////////
-  export type ABIDescription = FunctionDescription | EventDescription
-  
-  export const isFunctionDescription = (item: ABIDescription): item is FunctionDescription =>
-  (item as FunctionDescription).stateMutability !== undefined;
 
-  export const isEventDescription = (item: ABIDescription): item is EventDescription =>
-  (item as EventDescription).type === 'event';
-  
-  export interface FunctionDescription {
+/// //////
+// ABI //
+/// //////
+export type ABIDescription = FunctionDescription | EventDescription
+
+export const isFunctionDescription = (item: ABIDescription): item is FunctionDescription =>
+  (item as FunctionDescription).stateMutability !== undefined
+
+export const isEventDescription = (item: ABIDescription): item is EventDescription =>
+  (item as EventDescription).type === 'event'
+
+export interface FunctionDescription {
     /** Type of the method. default is 'function' */
     type?: 'function' | 'constructor' | 'fallback' | 'receive'
     /** The name of the function. Constructor and fallback function never have name */
@@ -376,8 +375,8 @@ export interface CompilationResult {
     /** true if function is either pure or view, false otherwise. Default is false  */
     constant?: boolean
   }
-  
-  export interface EventDescription {
+
+export interface EventDescription {
     type: 'event'
     name: string
     inputs: ABIParameter &
@@ -388,8 +387,8 @@ export interface CompilationResult {
     /** true if the event was declared as anonymous. */
     anonymous: boolean
   }
-  
-  export interface ABIParameter {
+
+export interface ABIParameter {
     /** The name of the parameter */
     name: string
     /** The canonical type of the parameter */
@@ -397,8 +396,8 @@ export interface CompilationResult {
     /** Used for tuple types */
     components?: ABIParameter[]
   }
-  
-  export type ABITypeParameter =
+
+export type ABITypeParameter =
     | 'uint'
     | 'uint[]' // TODO : add <M>
     | 'int'
@@ -418,39 +417,39 @@ export interface CompilationResult {
     | 'tuple'
     | 'tuple[]'
     | string // Fallback
-  
-  ///////////////////////////
-  // NATURAL SPECIFICATION //
-  ///////////////////////////
-  
-  // Userdoc
-  export interface UserDocumentation {
+
+/// ////////////////////////
+// NATURAL SPECIFICATION //
+/// ////////////////////////
+
+// Userdoc
+export interface UserDocumentation {
     methods: UserMethodList
     notice: string
   }
-  
-  export type UserMethodList = {
+
+export type UserMethodList = {
     [functionIdentifier: string]: UserMethodDoc
   } & {
     'constructor'?: string
   }
-  export interface UserMethodDoc {
+export interface UserMethodDoc {
     notice: string
   }
-  
-  // Devdoc
-  export interface DeveloperDocumentation {
+
+// Devdoc
+export interface DeveloperDocumentation {
     author: string
     title: string
     details: string
     methods: DevMethodList
   }
-  
-  export interface DevMethodList {
+
+export interface DevMethodList {
     [functionIdentifier: string]: DevMethodDoc
   }
-  
-  export interface DevMethodDoc {
+
+export interface DevMethodDoc {
     author: string
     details: string
     return: string
@@ -458,11 +457,11 @@ export interface CompilationResult {
       [param: string]: string
     }
   }
-  
-  //////////////
-  // BYTECODE //
-  //////////////
-  export interface BytecodeObject {
+
+/// ///////////
+// BYTECODE //
+/// ///////////
+export interface BytecodeObject {
     /** The bytecode as a hex string. */
     object: string
     /** Opcodes list */

@@ -1,5 +1,6 @@
 'use strict'
 import { util } from '@remix-project/remix-lib'
+// eslint-disable-next-line camelcase
 const { sha3_256 } = util
 
 export class TraceCache {

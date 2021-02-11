@@ -277,7 +277,7 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
       }
     }
   }
-  
+
   // we check here if we are at the beginning inside a new function.
   // if that is the case, we have to add to locals tree the inputs and output params
   const functionDefinition = resolveFunctionDefinition(tree, previousSourceLocation, generatedSources)

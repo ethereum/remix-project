@@ -1,4 +1,4 @@
-import { execution }  from '@remix-project/remix-lib'
+import { execution } from '@remix-project/remix-lib'
 const TxExecution = execution.txExecution
 const TxRunner = execution.txRunner
 

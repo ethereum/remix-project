@@ -1,13 +1,12 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-const app = express()
 import expressWs from 'express-ws'
 import { Provider } from './provider'
 import { log } from './utils/logs'
+const app = express()
 
 class Server {
-
   provider
   rpcOnly
 

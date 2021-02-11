@@ -14,8 +14,8 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
       libraries: opts.libraries,
       outputSelection: {
         '*': {
-          '': [ 'ast' ],
-          '*': [ 'abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly' ]
+          '': ['ast'],
+          '*': ['abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly']
         }
       }
     }
@@ -27,8 +27,7 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
     o.language = opts.language
   }
   if (opts.language === 'Yul' && o.settings.optimizer.enabled) {
-    if (!o.settings.optimizer.details) 
-      o.settings.optimizer.details = {}
+    if (!o.settings.optimizer.details) { o.settings.optimizer.details = {} }
     o.settings.optimizer.details.yul = true
   }
   return JSON.stringify(o)

@@ -5,7 +5,8 @@
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "camelcase": "off",
-        "dot-notation": "off"
+        "dot-notation": "off",
+        "no-unused-vars": "off"
     }, 
     "env": {
         "browser": true,
