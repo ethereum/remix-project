@@ -311,6 +311,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const fileManager = state.fileManager
 
     helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
+      console.log('newFilePath: ', newFilePath)
+      console.log('newName: ', newName)
       if (error) {
         modal('Create File Failed', error, {
           label: 'Close',
@@ -336,7 +338,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const dirName = newFolderPath + '/'
 
     try {
-      const exists = await fileManager.exists(dirName)
+      const exists = await fileManager.exists(dirName, 'folder')
+      console.log('exists: ', exists)
 
       if (exists) return
       await fileManager.mkdir(dirName)
@@ -372,10 +375,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const renamePath = async (oldPath: string, newPath: string) => {
+  const renamePath = async (oldPath: string, newPath: string, type?: string) => {
     try {
       const fileManager = state.fileManager
-      const exists = await fileManager.exists(newPath)
+      const exists = await fileManager.exists(newPath, type)
+      console.log('exists: ', exists)
 
       if (exists) {
         modal('Rename File Failed', 'File name already exists', {
@@ -814,9 +818,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
           const oldPath: string = state.focusEdit.element
           const oldName = extractNameFromKey(oldPath)
           const newPath = oldPath.replace(oldName, content)
+          const type: string = state.focusEdit.type
 
           editRef.current.textContent = extractNameFromKey(oldPath)
-          renamePath(oldPath, newPath)
+          renamePath(oldPath, newPath, type)
         }
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
