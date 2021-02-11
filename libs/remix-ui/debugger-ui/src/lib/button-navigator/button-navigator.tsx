@@ -45,7 +45,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
         intoForwardDisabled: stepState === 'end',
         overForwardDisabled: stepState === 'end',
         jumpNextBreakpointDisabled: stepState === 'end',
-        jumpOutDisabled: jumpOutDisabled || true
+        jumpOutDisabled: (jumpOutDisabled !== null) && (jumpOutDisabled !== undefined) ? jumpOutDisabled : true
       }
     })
   }
