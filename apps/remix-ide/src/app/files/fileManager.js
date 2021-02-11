@@ -100,13 +100,18 @@ class FileManager extends Plugin {
    * @param {string} path path of the directory or file
    * @returns {boolean} true if the path exists
    */
-  exists (path) {
+  async exists (path, type) {
     const provider = this.fileProviderOf(path)
-    const result = provider.exists(path, (err, result) => {
+    const result = await provider.exists(path, (err, result) => {
       if (err) return false
       return result
     })
 
+    if (type === 'file') {
+      return result && await this.isFile(path)
+    } else if (type === 'folder') {
+      return result && await this.isDirectory(path)
+    }
     return result
   }
 
