@@ -347,7 +347,7 @@
             "linter": "eslint",
             "config": "libs/remix-tests/.eslintrc",
             "tsConfig": ["libs/remix-tests/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "libs/remix-tests/tests/**/*"]
+            "exclude": ["**/node_modules/**", "libs/remix-tests/tests/**/*", "**/dist/**"]
           }
         },
         "test": {
