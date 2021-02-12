@@ -44,7 +44,7 @@ export const AccountSelector = (props: any) => {
   const plusButtonCss = plusButtonStyle(selectedProvider, personalModeChecked)
   const [selectedAccount, setSelectedAccount] = useState(null)
 
-  useEffect(() => { setSelectedAccount(selectedAccount || accounts[0].address) }, [accounts])
+  useEffect(() => { setSelectedAccount(selectedAccount || (accounts[0] && accounts[0].address)) }, [accounts])
 
   const createAccount = () => {
     if (selectedProvider === 'injected') return
