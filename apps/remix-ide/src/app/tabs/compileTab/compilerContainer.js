@@ -231,6 +231,7 @@ class CompilerContainer {
         <option>spuriousDragon</option>
         <option>tangerineWhistle</option>
         <option>homestead</option>
+        <option>muirGlacier</option>
       </select>`
     if (this.compileTabLogic.evmVersion) {
       const s = this._view.evmVersionSelector
