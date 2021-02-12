@@ -5,34 +5,34 @@ import './account-selector.css'
 
 const clipboardstyles = {
   'margin-left': '-5px'
-} as React.CSSProperties;
+} as React.CSSProperties
 
 const plusButtonStyle = (providerName, personalModeChecked) => {
-  let css = { classList: "", title: "" }
+  const css = { classList: '', title: '' }
 
   switch (providerName) {
     case 'injected':
-      css.classList = "remixui_disableMouseEvents"
+      css.classList = 'remixui_disableMouseEvents'
       css.title = "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
 
       break
     case 'vm':
-      css.classList = ""
+      css.classList = ''
       css.title = 'Create a new account'
 
       break
     case 'web3':
       if (!personalModeChecked) {
-        css.classList = "remixui_disableMouseEvents"
-        css.title = "Creating an account is possible only in Personal mode. Please go to Settings to enable it."
+        css.classList = 'remixui_disableMouseEvents'
+        css.title = 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
       } else {
-        css.classList = ""
+        css.classList = ''
         css.title = 'Create a new account'
       }
 
       break
     default: {
-      css.classList = "remixui_disableMouseEvents"
+      css.classList = 'remixui_disableMouseEvents'
       css.title = `Unfortunately it's not possible to create an account using an external wallet (${providerName}).`
     }
   }
@@ -47,7 +47,7 @@ export const AccountSelector = (props: any) => {
   useEffect(() => { setSelectedAccount(selectedAccount || accounts[0].address) }, [accounts])
 
   const createAccount = () => {
-    if (selectedProvider === "injected") return
+    if (selectedProvider === 'injected') return
     newAccount()
   }
 
@@ -55,8 +55,8 @@ export const AccountSelector = (props: any) => {
     <div className="remixui_crow">
       <label className="remixui_settingsLabel">
         Account
-          <span id="remixRunPlusWraper" title={plusButtonCss.title}>
-          <i id="remixRunPlus" className={`fas fa-plus-circle remixui_icon {plusButtonCss.classList}`} aria-hidden="true" onClick={() => { createAccount() }}></i>
+        <span id="remixRunPlusWraper" title={plusButtonCss.title}>
+          <i id="remixRunPlus" className={'fas fa-plus-circle remixui_icon {plusButtonCss.classList}'} aria-hidden="true" onClick={() => { createAccount() }}></i>
         </span>
       </label>
       <div className="remixui_account">

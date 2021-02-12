@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react'
 import './common.css'
 
 export const AbiLabel = (props: any) => {
-    return (
-        <span className="py-1">ABI file selected</span>
-    );
+  return (
+    <span className="py-1">ABI file selected</span>
+  )
 }
 
-export default AbiLabel 
+export default AbiLabel
