@@ -13,9 +13,9 @@ const helper = require('../../../lib/helper.js')
 const globalRegistry = require('../../../global/registry')
 
 const defaultOptions = [
-  { value: 'vm', name: 'JavaScript VM', title: 'Execution environment does not connect to any node, everything is local and in memory only.' },
-  { value: 'injected', name: 'Injected Web3', title: 'Execution environment has been provided by Metamask or similar provider.' },
-  { value: 'web3', name: 'Web3 Provider', title: 'Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse! If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http.' }
+    {value: "vm", name: "JavaScript VM", title: "Execution environment does not connect to any node, everything is local and in memory only."},
+    {value: "injected", name: "Injected Web3", title: "Execution environment has been provided by Metamask or similar provider."},
+    {value: "web3", name: "Web3 Provider", title: "Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse! If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."}
 ]
 
 class SettingsUI {
@@ -44,7 +44,7 @@ class SettingsUI {
     setInterval(this.updateAccountsAndBalances.bind(this), 2000)
   }
 
-  renderSettings () {
+  renderSettings() {
     const personalModeChecked = this._deps.config.get('settings/personal-mode')
     const selectedProvider = this.blockchain.getProvider()
 
@@ -57,7 +57,7 @@ class SettingsUI {
     this.renderSettings()
 
     this.blockchain.event.register('addProvider', (network) => {
-      this.options.push({ title: `provider name: ${network.name}`, value: `${network.name}`, name: 'executionContext' })
+      this.options.push({title: "provider name: ${network.name}", value: "${network.name}", name: "executionContext"})
       this.renderSettings()
 
       addTooltip(yo`<span><b>${network.name}</b> provider added</span>`)
@@ -187,7 +187,7 @@ class SettingsUI {
     this.blockchain.updateNetwork((err, { id, name } = {}) => {
       if (!cb) return
       if (err) {
-        return cb('can\'t detect network ')
+          return cb('can\'t detect network ')
       }
       const network = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
       this.renderSettings()
@@ -200,16 +200,17 @@ class SettingsUI {
     const accounts = await this.blockchain.getAccounts()
     asyncJS.map(accounts, async (address, next) => {
       this.blockchain.getBalanceInEther(address, (err, balance) => {
-        if (err) { return next(err) }
+        if (err) { return next(error) }
         const updated = helper.shortenAddress(address, balance)
-        const newAccount = { address, name: updated }
-        next(null, newAccount)
+        const new_account = { address, name: updated }
+        next(null, new_account)
       })
-    }, (_err, results) => {
-      this.accounts = results
-      this.renderSettings()
-    })
+    }, (err, results) => {
+        this.accounts = results
+        this.renderSettings()
+      })
   }
+
 }
 
 module.exports = SettingsUI

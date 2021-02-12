@@ -1,0 +1,66 @@
+.errorIcon {
+  color: var(--warning);
+  margin-left: 15px;
+}
+.atAddress {
+  margin: 0;
+  min-width: 100px;
+  width: 100px;
+  height: 100%;
+  word-break: inherit;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+}
+.atAddressSect {
+  margin-top: 8px;
+  height: 32px;
+}
+.atAddressSect input {
+  height: 32px;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+.ataddressinput {
+  padding: .25rem;
+}
+.input {
+  font-size: 10px !important;
+}
+.button {
+  display: flex;
+  align-items: center;
+  margin-top: 13px;
+}
+.contractNames {
+  width: 100%;
+  border: 1px solid
+}
+.container {
+  padding: 0 24px 16px;
+}
+.subcontainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.subcontainer i {
+  width: 16px;
+  display: flex;
+  justify-content: center;
+  margin-left: 1px;
+}
+.settingsLabel {
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.deployDropdown {
+  text-align: center;
+  text-transform: uppercase;
+}
+.orLabel {
+  text-align: center;
+  text-transform: uppercase;
+}

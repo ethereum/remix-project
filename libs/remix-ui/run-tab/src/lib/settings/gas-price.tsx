@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import './gas-price.css'
 
 export const GasPrice = () => {
-  const [gasPrice, setGasPrice] = useState("3000000");
+  const [gasPrice, setGasPrice] = useState('3000000')
   return (
     <div className="remixui_crow">
       <label className="remixui_settingsLabel">Gas limit</label>
