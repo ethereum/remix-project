@@ -38,8 +38,6 @@ class ContractDropdownUI {
       this.enableContractNames(success)
       this.setInputParamsPlaceHolder()
 
-
-
       if (success) {
         this.compFails.style.display = 'none'
       } else {
