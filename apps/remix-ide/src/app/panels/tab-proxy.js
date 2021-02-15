@@ -176,12 +176,6 @@ export class TabProxy extends Plugin {
               title: duplicateTabTitle
             })
             this._view.filetabs.removeTab(duplicateTabName)
-            this._view.filetabs.addTab({
-              id: duplicateTabName,
-              title: duplicateTabTitle,
-              icon,
-              tooltip: duplicateTabName
-            })
           }
           break
         }
@@ -194,7 +188,7 @@ export class TabProxy extends Plugin {
     }
 
     this._view.filetabs.addTab({
-      id: name.split(' ').join(''),
+      id: name,
       title,
       icon,
       tooltip: name
