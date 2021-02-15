@@ -4,6 +4,7 @@ import { IframePlugin } from '@remixproject/engine-web'
 import { EventEmitter } from 'events'
 import QueryParams from './lib/query-params'
 import { PermissionHandler } from './app/ui/persmission-handler'
+const _paq = window._paq = window._paq || []
 
 const requiredModules = [ // services + layout views + system views
   'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
@@ -65,6 +66,7 @@ export class RemixAppManager extends PluginManager {
   onPluginActivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('activate', plugin)
+    _paq.push(['trackEvent', 'pluginManager', 'activate', plugin])
   }
 
   getAll () {
@@ -80,6 +82,7 @@ export class RemixAppManager extends PluginManager {
   onPluginDeactivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('deactivate', plugin)
+    _paq.push(['trackEvent', 'pluginManager', 'deactivate', plugin])
   }
 
   isRequired (name) {

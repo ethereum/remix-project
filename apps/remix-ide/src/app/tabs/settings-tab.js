@@ -141,6 +141,13 @@ module.exports = class SettingsTab extends ViewPlugin {
     this._view.themes = this._deps.themeModule.getThemes()
     this._view.themesCheckBoxes = this.createThemeCheckies()
 
+    this._view.matomo = yo`
+      <div class="custom-control custom-checkbox mb-1">
+        ${this._view.useMatomoAnalytics}>
+        ${this._view.useMatomoAnalyticsLabel}
+      </div>
+    `
+
     this._view.config.general = yo`
       <div class="${css.info} border-top">
         <div class="card-body pt-3 pb-2">
@@ -158,13 +165,10 @@ module.exports = class SettingsTab extends ViewPlugin {
             ${this._view.textWrapLabel}
           </div>
           <div class="custom-control custom-checkbox mb-1">
-            ${this._view.personal}>
+            ${this._view.personal}
             ${this._view.personalLabel}
           </div>
-          <div class="custom-control custom-checkbox mb-1">
-            ${this._view.useMatomoAnalytics}>
-            ${this._view.useMatomoAnalyticsLabel}
-          </div>
+
         </div>
       </div>
       `
