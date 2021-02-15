@@ -15,9 +15,7 @@ class addAtAddressInstance extends EventEmitter {
 
 function addInstance (browser: NightwatchBrowser, address: string, isValidFormat: boolean, isValidChecksum: boolean, callback: VoidFunction) {
   browser.clickLaunchIcon('udapp').clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
-    if (!isValidFormat || !isValidChecksum)
-      browser.assert.elementPresent('button[id^="runAndDeployAtAdressButton"]:disabled')
-    else callback()
+    if (!isValidFormat || !isValidChecksum) { browser.assert.elementPresent('button[id^="runAndDeployAtAdressButton"]:disabled') } else callback()
   })
 }
 
