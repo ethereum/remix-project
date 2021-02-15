@@ -36,19 +36,19 @@ module.exports = {
         })
   },
 
-  'Debug Ballot / delegate': function (browser: NightwatchBrowser) {
-    browser.pause(500)
-      .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
-      .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-    // .clickLaunchIcon('debugger')
-      .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-      .pause(2000)
-      .waitForElementVisible('#stepdetail')
-      .goToVMTraceStep(79)
-      .pause(1000)
-      .checkVariableDebug('soliditystate', stateCheck)
-      .checkVariableDebug('soliditylocals', localsCheck)
-  },
+  // 'Debug Ballot / delegate': function (browser: NightwatchBrowser) {
+  //   browser.pause(500)
+  //     .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
+  //     .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
+  //   // .clickLaunchIcon('debugger')
+  //     .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
+  //     .pause(2000)
+  //     .waitForElementVisible('#stepdetail')
+  //     .goToVMTraceStep(79)
+  //     .pause(1000)
+  //     .checkVariableDebug('soliditystate', stateCheck)
+  //     .checkVariableDebug('soliditylocals', localsCheck)
+  // },
 
   'Access Ballot via at address': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('udapp')
