@@ -39,6 +39,8 @@ module.exports = class SettingsTab extends ViewPlugin {
       personalLabel: null,
       useMatomoAnalytics: null,
       useMatomoAnalyticsLabel: null,
+      useMatomoAnalyticsMode: null,
+      matomo: null,
       warnPersonalMode: null,
       generateContractMetadata: null,
       generateContractMetadataLabel: null,
