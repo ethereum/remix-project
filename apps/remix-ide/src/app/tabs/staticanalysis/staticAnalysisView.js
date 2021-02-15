@@ -22,7 +22,7 @@ function staticAnalysisView (localRegistry, analysisModule) {
   this.sourceHighlighter = new SourceHighlighter()
   this.analysisModule = analysisModule
   self._components = {
-    renderer: new Renderer()
+    renderer: new Renderer(analysisModule)
   }
   self._components.registry = localRegistry
   // dependencies
