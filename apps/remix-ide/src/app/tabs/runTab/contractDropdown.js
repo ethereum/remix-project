@@ -1,6 +1,6 @@
 import publishToStorage from '../../../publishToStorage'
-
 const yo = require('yo-yo')
+const ethJSUtil = require('ethereumjs-util')
 const css = require('../styles/run-tab-styles')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const remixLib = require('@remix-project/remix-lib')
@@ -97,7 +97,9 @@ class ContractDropdownUI {
 
   enableAtAddress (enable) {
     if (enable) {
-      if (this.atAddressButtonInput.value === '') return
+      const address = this.atAddressButtonInput.value
+      if (!address || !ethJSUtil.isValidAddress(address) ||
+      (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address))) return
       this.atAddress.removeAttribute('disabled')
       this.atAddress.setAttribute('title', 'Interact with the given contract.')
     } else {
