@@ -23,7 +23,7 @@ class CompilerContainer {
       timeout: 300,
       allversions: null,
       selectedVersion: null,
-      defaultVersion: 'soljson-v0.7.4+commit.3f05b770.js' // this default version is defined: in makeMockCompiler (for browser test)
+      defaultVersion: 'soljson-v0.8.1+commit.df193b15.js' // this default version is defined: in makeMockCompiler (for browser test)
     }
   }
 
