@@ -6,6 +6,7 @@ const csjs = require('csjs-inject')
 const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
 const addToolTip = require('../ui/tooltip')
+const _paq = window._paq = window._paq || []
 
 const css = csjs`
   .pluginSearch {
@@ -101,6 +102,16 @@ class PluginManagerComponent extends ViewPlugin {
     return this.appManager.actives.includes(name)
   }
 
+  activate (name) {
+    this.appManager.activatePlugin(profile.name)
+    _paq.push(['trackEvent', 'manager', 'activate', name])
+  }
+
+  deactivate (name) {
+    this.appManager.deactivatePlugin(profile.name)
+    _paq.push(['trackEvent', 'manager', 'deactivate', name])
+  }
+
   renderItem (profile) {
     const displayName = (profile.displayName) ? profile.displayName : profile.name
 
@@ -118,7 +129,7 @@ class PluginManagerComponent extends ViewPlugin {
     const activationButton = this.isActive(profile.name)
       ? yo`
       <button
-        onclick="${_ => this.appManager.deactivatePlugin(profile.name)}"
+        onclick="${_ => this.deactivate(profile.name)}"
         class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${profile.name}"
       >
         Deactivate
@@ -126,7 +137,7 @@ class PluginManagerComponent extends ViewPlugin {
       `
       : yo`
       <button
-        onclick="${_ => this.appManager.activatePlugin(profile.name)}"
+        onclick="${_ => this.activate(profile.name)}"
         class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${profile.name}"
       >
         Activate
