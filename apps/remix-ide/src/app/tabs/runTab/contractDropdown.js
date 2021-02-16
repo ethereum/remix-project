@@ -98,8 +98,7 @@ class ContractDropdownUI {
   enableAtAddress (enable) {
     if (enable) {
       const address = this.atAddressButtonInput.value
-      if (!address || !ethJSUtil.isValidAddress(address) ||
-      (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address))) return
+      if (!address || !ethJSUtil.isValidChecksumAddress(address)) return
       this.atAddress.removeAttribute('disabled')
       this.atAddress.setAttribute('title', 'Interact with the given contract.')
     } else {
