@@ -10,6 +10,8 @@ export interface TreeViewItemProps {
     expand?: boolean,
     onClick?: (...args: any) => void,
     onInput?: (...args: any) => void,
+    onMouseOver?: (...args) => void,
+    onMouseOut?: (...args) => void,
     className?: string,
     iconX?: string,
     iconY?: string,
