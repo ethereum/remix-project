@@ -339,7 +339,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       const exists = await fileManager.exists(dirName)
 
-      if (exists) return
+      if (exists) {
+        return modal('Rename File Failed', `A file or folder ${extractNameFromKey(newFolderPath)} already exists at this location. Please choose a different name.`, {
+          label: 'Close',
+          fn: () => {}
+        }, null)
+      }
       await fileManager.mkdir(dirName)
       setState(prevState => {
         return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
@@ -379,7 +384,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const exists = await fileManager.exists(newPath)
 
       if (exists) {
-        modal('Rename File Failed', 'File name already exists', {
+        modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, {
           label: 'Close',
           fn: () => {}
         }, null)
@@ -894,8 +899,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const labelClass = state.focusEdit.element === file.path
       ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1
         ? 'bg-secondary' : state.mouseOverElement === file.path
-          ? 'bg-secondary' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)
-            ? 'bg-secondary' : ''
+          ? 'bg-light border' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)
+            ? 'bg-light border' : ''
 
     if (file.isDirectory) {
       return (
