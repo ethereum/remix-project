@@ -66,7 +66,7 @@ export class RemixAppManager extends PluginManager {
   onPluginActivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('activate', plugin)
-    _paq.push(['trackEvent', 'pluginManager', 'activate', plugin])
+    _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
   }
 
   getAll () {
@@ -82,7 +82,7 @@ export class RemixAppManager extends PluginManager {
   onPluginDeactivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('deactivate', plugin)
-    _paq.push(['trackEvent', 'pluginManager', 'deactivate', plugin])
+    _paq.push(['trackEvent', 'pluginManager', 'deactivate', plugin.name])
   }
 
   isRequired (name) {
