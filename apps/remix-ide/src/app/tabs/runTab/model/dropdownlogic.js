@@ -1,4 +1,3 @@
-var ethJSUtil = require('ethereumjs-util')
 var remixLib = require('@remix-project/remix-lib')
 var txHelper = remixLib.execution.txHelper
 var CompilerAbstract = require('../../../compiler/compiler-abstract')
@@ -43,12 +42,6 @@ class DropdownLogic {
   }
 
   loadContractFromAddress (address, confirmCb, cb) {
-    if (!ethJSUtil.isValidAddress(address)) {
-      return cb('Invalid address.')
-    }
-    if (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address)) {
-      return cb('Invalid checksum address.')
-    }
     if (/.(.abi)$/.exec(this.config.get('currentFile'))) {
       confirmCb(() => {
         var abi
