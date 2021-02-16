@@ -891,6 +891,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const renderFiles = (file: File, index: number) => {
+    const labelClass = state.focusEdit.element === file.path
+      ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1
+        ? 'bg-secondary' : state.mouseOverElement === file.path
+          ? 'bg-secondary' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)
+            ? 'bg-secondary' : ''
+
     if (file.isDirectory) {
       return (
         <div key={index}>
@@ -909,7 +915,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               e.stopPropagation()
               handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent)
             }}
-            labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : state.mouseOverElement === file.path ? 'bg-secondary' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path) ? 'bg-secondary' : '' }
+            labelClass={labelClass}
             controlBehaviour={ state.ctrlKey }
             expand={state.expandPath.includes(file.path)}
             onMouseOver={(e) => {
@@ -969,7 +975,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent)
             }}
             icon='far fa-file'
-            labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : state.mouseOverElement === file.path ? 'bg-secondary' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path) ? 'bg-secondary' : '' }
+            labelClass={labelClass}
             onMouseOver={(e) => {
               e.stopPropagation()
               handleMouseOver(file.path)
