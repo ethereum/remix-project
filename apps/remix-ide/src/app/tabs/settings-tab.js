@@ -163,7 +163,7 @@ module.exports = class SettingsTab extends ViewPlugin {
             ${this._view.personalLabel}
           </div>
           <div class="custom-control custom-checkbox mb-1">
-            ${this._view.useMatomoAnalytics}>
+            ${this._view.useMatomoAnalytics}
             ${this._view.useMatomoAnalyticsLabel}
           </div>
         </div>
