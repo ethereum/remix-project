@@ -32,7 +32,6 @@ var GistHandler = require('./lib/gist-handler')
 var Storage = remixLib.Storage
 var RemixDProvider = require('./app/files/remixDProvider')
 var Config = require('./config')
-var Renderer = require('./app/ui/renderer')
 var examples = require('./app/editor/examples')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var FileManager = require('./app/files/fileManager')
@@ -352,7 +351,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const compileTab = new CompileTab(
     editor,
     registry.get('config').api,
-    new Renderer(),
     registry.get('fileproviders/browser').api,
     registry.get('filemanager').api,
     contentImport
@@ -377,7 +375,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel,
     compileTab,
     appManager,
-    new Renderer(),
     contentImport
   )
 
