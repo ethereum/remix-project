@@ -64,7 +64,7 @@ class TestTabLogic {
     const comment = hasCurrent ? `import "${relative}/${remixPath.basename(fileToImport)}";` : '// Import here the file to test.'
     return `// SPDX-License-Identifier: GPL-3.0
     
-pragma solidity >=0.4.22 <0.8.0;
+pragma solidity >=0.4.22 <0.9.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 import "remix_accounts.sol";
 ${comment}
