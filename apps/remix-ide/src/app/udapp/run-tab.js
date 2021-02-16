@@ -69,7 +69,7 @@ export class RunTab extends ViewPlugin {
   }
 
   async setEnvironmentMode (env) {
-    const canCall = await this.askUserPermission('setEnvironmentMode', 'change the enivornment used')
+    const canCall = await this.askUserPermission('setEnvironmentMode', 'change the environment used')
     if (canCall) {
       toaster(yo`
         <div>
