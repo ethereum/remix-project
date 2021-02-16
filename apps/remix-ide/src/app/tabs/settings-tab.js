@@ -40,7 +40,6 @@ module.exports = class SettingsTab extends ViewPlugin {
       useMatomoAnalytics: null,
       useMatomoAnalyticsLabel: null,
       useMatomoAnalyticsMode: null,
-      matomo: null,
       warnPersonalMode: null,
       generateContractMetadata: null,
       generateContractMetadataLabel: null,
@@ -143,13 +142,6 @@ module.exports = class SettingsTab extends ViewPlugin {
     this._view.themes = this._deps.themeModule.getThemes()
     this._view.themesCheckBoxes = this.createThemeCheckies()
 
-    this._view.matomo = yo`
-      <div class="custom-control custom-checkbox mb-1">
-        ${this._view.useMatomoAnalytics}>
-        ${this._view.useMatomoAnalyticsLabel}
-      </div>
-    `
-
     this._view.config.general = yo`
       <div class="${css.info} border-top">
         <div class="card-body pt-3 pb-2">
@@ -170,7 +162,10 @@ module.exports = class SettingsTab extends ViewPlugin {
             ${this._view.personal}
             ${this._view.personalLabel}
           </div>
-
+          <div class="custom-control custom-checkbox mb-1">
+            ${this._view.useMatomoAnalytics}>
+            ${this._view.useMatomoAnalyticsLabel}
+          </div>
         </div>
       </div>
       `
@@ -223,11 +218,14 @@ module.exports = class SettingsTab extends ViewPlugin {
       self.config.set('settings/personal-mode', !isChecked)
       elementStateChanged(self._view.personalLabel, isChecked)
     }
-    function onchangeMatomoAnalytics () {
-      const isChecked = self.config.get('settings/matomo-analytics')
-
-      self.config.set('settings/matomo-analytics', !isChecked)
-      elementStateChanged(self._view.useMatomoAnalyticsLabel, isChecked)
+    function onchangeMatomoAnalytics (event) {
+      elementStateChanged(self._view.useMatomoAnalyticsLabel, event.target.checked)
+      const _paq = window._paq = window._paq || []
+      if (this.checked) {
+        _paq.push(['forgetUserOptOut'])
+      } else {
+        _paq.push(['optUserOut'])
+      }
     }
 
     function elementStateChanged (el, isChanged) {
