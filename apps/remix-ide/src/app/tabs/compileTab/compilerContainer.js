@@ -224,6 +224,7 @@ class CompilerContainer {
     this._view.evmVersionSelector = yo`
       <select onchange="${this.onchangeEvmVersion.bind(this)}" class="custom-select" id="evmVersionSelector">
         <option value="default" selected="selected">compiler default</option>
+        <option>muirGlacier</option>
         <option>istanbul</option>
         <option>petersburg</option>
         <option>constantinople</option>
@@ -231,7 +232,6 @@ class CompilerContainer {
         <option>spuriousDragon</option>
         <option>tangerineWhistle</option>
         <option>homestead</option>
-        <option>muirGlacier</option>
       </select>`
     if (this.compileTabLogic.evmVersion) {
       const s = this._view.evmVersionSelector
