@@ -312,8 +312,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const fileManager = state.fileManager
 
     helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
-      console.log('newFilePath: ', newFilePath)
-      console.log('newName: ', newName)
       if (error) {
         modal('Create File Failed', error, {
           label: 'Close',
@@ -340,7 +338,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
     try {
       const exists = await fileManager.exists(dirName, 'folder')
-      console.log('exists: ', exists)
 
       if (exists) return
       await fileManager.mkdir(dirName)
@@ -348,7 +345,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
       })
     } catch (e) {
-      console.log('error: ', e)
       toast('Failed to create folder: ' + newFolderPath)
     }
   }
@@ -380,7 +376,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       const fileManager = state.fileManager
       const exists = await fileManager.exists(newPath, type)
-      console.log('exists: ', exists)
 
       if (exists) {
         modal('Rename File Failed', 'File name already exists', {
