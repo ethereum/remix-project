@@ -102,12 +102,12 @@ class PluginManagerComponent extends ViewPlugin {
     return this.appManager.actives.includes(name)
   }
 
-  activate (name) {
+  activateP (name) {
     this.appManager.activatePlugin(name)
     _paq.push(['trackEvent', 'manager', 'activate', name])
   }
 
-  deactivate (name) {
+  deactivateP (name) {
     this.appManager.deactivatePlugin(name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
@@ -129,7 +129,7 @@ class PluginManagerComponent extends ViewPlugin {
     const activationButton = this.isActive(profile.name)
       ? yo`
       <button
-        onclick="${_ => this.deactivate(profile.name)}"
+        onclick="${() => this.deactivateP(profile.name)}"
         class="btn btn-secondary btn-sm" data-id="pluginManagerComponentDeactivateButton${profile.name}"
       >
         Deactivate
@@ -137,7 +137,7 @@ class PluginManagerComponent extends ViewPlugin {
       `
       : yo`
       <button
-        onclick="${_ => this.activate(profile.name)}"
+        onclick="${() => this.activateP(profile.name)}"
         class="btn btn-success btn-sm" data-id="pluginManagerComponentActivateButton${profile.name}"
       >
         Activate
