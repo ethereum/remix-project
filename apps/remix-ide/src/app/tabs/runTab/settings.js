@@ -1,3 +1,7 @@
+import { Settings } from '@remix-ui/run-tab' // eslint-disable-line
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
+
 const $ = require('jquery')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
