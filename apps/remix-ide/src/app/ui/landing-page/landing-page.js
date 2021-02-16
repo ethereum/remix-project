@@ -5,10 +5,11 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const globalRegistry = require('../../../global/registry')
 const CompilerImport = require('../../compiler/compiler-imports')
-var modalDialogCustom = require('../modal-dialog-custom')
-var tooltip = require('../tooltip')
-var GistHandler = require('../../../lib/gist-handler')
-var QueryParams = require('../../../lib/query-params.js')
+const modalDialogCustom = require('../modal-dialog-custom')
+const tooltip = require('../tooltip')
+const GistHandler = require('../../../lib/gist-handler')
+const QueryParams = require('../../../lib/query-params.js')
+const _paq = window._paq = window._paq || []
 
 const css = csjs`
   .text {
@@ -219,10 +220,12 @@ export class LandingPage extends ViewPlugin {
       this.mediumPanel.classList.remove('d-block')
       this.mediumPanel.classList.add('d-none')
       this.twitterPanel.classList.toggle('d-block')
+      _paq.push(['trackEvent', 'pluginManager', 'media', 'twitter'])
     } else {
       this.twitterPanel.classList.remove('d-block')
       this.twitterPanel.classList.add('d-none')
       this.mediumPanel.classList.toggle('d-block')
+      _paq.push(['trackEvent', 'pluginManager', 'media', 'medium'])
     }
   }
 
@@ -258,22 +261,27 @@ export class LandingPage extends ViewPlugin {
     const startSolidity = async () => {
       await this.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
       this.verticalIcons.select('solidity')
+      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solidity'])
     }
     const startDebugger = async () => {
       await this.appManager.activatePlugin('debugger')
       this.verticalIcons.select('debugger')
+      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'debugger'])
     }
     const startSolhint = async () => {
       await this.appManager.activatePlugin(['solidity', 'solhint'])
       this.verticalIcons.select('solhint')
+      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solhint'])
     }
     const startLearnEth = async () => {
       await this.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
       this.verticalIcons.select('LearnEth')
+      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'learnEth'])
     }
     const startSourceVerify = async () => {
       await this.appManager.activatePlugin(['solidity', 'source-verification'])
       this.verticalIcons.select('source-verification')
+      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'source-verification'])
     }
     const startPluginManager = async () => {
       await this.appManager.activatePlugin('pluginManager')
