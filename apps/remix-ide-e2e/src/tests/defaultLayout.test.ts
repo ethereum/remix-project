@@ -23,7 +23,8 @@ module.exports = {
       .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/contracts"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/scripts"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/tests"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/README.txt"]')
+      .waitForElementPresent('[data-id="filePanelFileExplorer"]')
+      .click('[data-id="filePanelFileExplorer"]') // focus on root directory
   },
 
   'Loads Main View': function (browser: NightwatchBrowser) {

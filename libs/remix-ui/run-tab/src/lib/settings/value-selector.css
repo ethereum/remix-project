@@ -1,0 +1,31 @@
+.remixui_crow {
+  display: block;
+  margin-top: 8px;
+}
+.remixui_settingsLabel {
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.remixui_gasNval {
+  width: 55%;
+  font-size: 0.8rem;
+}
+.remixui_col2 {
+  border-radius: 3px;
+}
+.remixui_col2_1 {
+  width: 164px;
+  min-width: 164px;
+}
+.remixui_col2_2 {
+}
+.remixui_gasNvalUnit {
+  width: 41%;
+  margin-left: 10px;
+  font-size: 0.8rem;
+}
+.remixui_gasValueContainer {
+  flex-direction: row;
+  display: flex;
+}

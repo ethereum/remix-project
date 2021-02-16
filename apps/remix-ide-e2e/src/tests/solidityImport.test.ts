@@ -49,7 +49,8 @@ module.exports = {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
       .clickLaunchIcon('fileExplorers')
-      .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
+      .waitForElementPresent('[data-id="filePanelFileExplorer"]')
+      .click('[data-id="filePanelFileExplorer"]') // focus on root directory
       .addFile('Untitled6.sol', sources[5]['browser/Untitled6.sol'])
       .clickLaunchIcon('fileExplorers')
       .verifyContracts(['test10', 'ERC20'], { wait: 10000 })
@@ -58,7 +59,8 @@ module.exports = {
   'Test Github Import - raw URL': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('fileExplorers')
-      .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
+      .waitForElementPresent('[data-id="filePanelFileExplorer"]')
+      .click('[data-id="filePanelFileExplorer"]') // focus on root directory
       .addFile('Untitled7.sol', sources[6]['browser/Untitled7.sol'])
       .clickLaunchIcon('fileExplorers')
       .verifyContracts(['test11', 'ERC20'], { wait: 10000 })
@@ -68,7 +70,8 @@ module.exports = {
     browser
       .setSolidityCompilerVersion('soljson-v0.7.4+commit.3f05b770.js')
       .clickLaunchIcon('fileExplorers')
-      .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
+      .waitForElementPresent('[data-id="filePanelFileExplorer"]')
+      .click('[data-id="filePanelFileExplorer"]') // focus on root directory
       .addFile('Untitled8.sol', sources[7]['browser/Untitled8.sol'])
       .clickLaunchIcon('fileExplorers')
       .clickLaunchIcon('solidity')
@@ -85,7 +88,8 @@ module.exports = {
     browser
       // .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js')
       .clickLaunchIcon('fileExplorers')
-      .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"')
+      .waitForElementPresent('[data-id="filePanelFileExplorer"]')
+      .click('[data-id="filePanelFileExplorer"]') // focus on root directory
       .addFile('Untitled9.sol', sources[8]['browser/Untitled9.sol'])
       .clickLaunchIcon('fileExplorers')
       .verifyContracts(['test13', 'ERC20', 'SafeMath'], { wait: 30000 })

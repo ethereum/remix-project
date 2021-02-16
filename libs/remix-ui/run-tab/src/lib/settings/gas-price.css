@@ -1,0 +1,16 @@
+.remixui_crow {
+  display: block;
+  margin-top: 8px;
+}
+.remixui_settingsLabel {
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.remixui_gasNval {
+  width: 55%;
+  font-size: 0.8rem;
+}
+.remixui_col2 {
+  border-radius: 3px;
+}

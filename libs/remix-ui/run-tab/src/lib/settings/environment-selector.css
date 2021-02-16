@@ -1,0 +1,29 @@
+.remixui_crow {
+  display: block;
+  margin-top: 8px;
+}
+.remixui_settingsLabel {
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.remixui_environment {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+.remixui_select {
+  font-weight: normal;
+  width: 100%;
+  overflow: hidden;
+}
+.remixui_infoDeployAction {
+  margin-left: 1px;
+  font-size: 13px;
+  color: var(--info);
+}
+.remixui_network {
+  margin-left: 8px;
+  pointer-events: none;
+}

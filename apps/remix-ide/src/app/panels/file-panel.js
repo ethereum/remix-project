@@ -142,7 +142,7 @@ module.exports = class Filepanel extends ViewPlugin {
   renderComponent () {
     ReactDOM.render(
       <div className='remixui_container'>
-        <div className='remixui_fileexplorer' onClick={() => this.resetFocus(true)}>
+        <div className='remixui_fileexplorer' data-id='filePanelFileExplorer' onClick={() => this.resetFocus(true)}>
           <div className='remixui_fileExplorerTree'>
             <div>
               <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>

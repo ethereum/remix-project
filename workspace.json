@@ -618,6 +618,22 @@
         }
       }
     },
+    "remix-ui-run-tab": {
+      "root": "libs/remix-ui/run-tab",
+      "sourceRoot": "libs/remix-ui/run-tab/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/run-tab/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/run-tab/**/*"]
+          }
+        }
+      }
+    },
     "remix-ui-file-explorer": {
       "root": "libs/remix-ui/file-explorer",
       "sourceRoot": "libs/remix-ui/file-explorer/src",

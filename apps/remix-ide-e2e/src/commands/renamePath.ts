@@ -42,7 +42,8 @@ function renamePath (browser: NightwatchBrowser, path: string, newFileName: stri
         })
       })
       .pause(1000)
-      .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"]') // focus on root directory
+      .waitForElementPresent('[data-id="filePanelFileExplorer"]')
+      .click('[data-id="filePanelFileExplorer"]') // focus on root directory
       .pause(2000)
       .waitForElementNotPresent('[data-path="' + path + '"]')
       .waitForElementPresent('[data-path="' + renamedPath + '"]')
