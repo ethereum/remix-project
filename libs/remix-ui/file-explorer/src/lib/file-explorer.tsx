@@ -55,7 +55,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       handleHide: null
     },
     modals: [],
-    toasterMsg: ''
+    toasterMsg: '',
+    mouseOverElement: null
   })
   const editRef = useRef(null)
 
@@ -858,6 +859,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
+  const handleMouseOver = (path: string) => {
+    setState(prevState => {
+      return { ...prevState, mouseOverElement: path }
+    })
+  }
+
+  const handleMouseOut = () => {
+    setState(prevState => {
+      return { ...prevState, mouseOverElement: null }
+    })
+  }
+
   const label = (file: File) => {
     return (
       <div
@@ -901,9 +914,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
               e.stopPropagation()
               handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent)
             }}
-            labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
+            labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : state.mouseOverElement === file.path ? 'bg-secondary' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path) ? 'bg-secondary' : '' }
             controlBehaviour={ state.ctrlKey }
             expand={state.expandPath.includes(file.path)}
+            onMouseOver={(e) => {
+              e.stopPropagation()
+              handleMouseOver(file.path)
+            }}
+            onMouseOut={(e) => {
+              e.stopPropagation()
+              if (state.mouseOverElement === file.path) handleMouseOut()
+            }}
           >
             {
               file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
@@ -928,6 +949,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
               pageY={state.focusContext.y}
               path={file.path}
               type='folder'
+              onMouseOver={(e) => {
+                e.stopPropagation()
+                handleMouseOver(file.path)
+              }}
             />
           }
         </div>
@@ -949,7 +974,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
               handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent)
             }}
             icon='far fa-file'
-            labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
+            labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : state.mouseOverElement === file.path ? 'bg-secondary' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path) ? 'bg-secondary' : '' }
+            onMouseOver={(e) => {
+              e.stopPropagation()
+              handleMouseOver(file.path)
+            }}
+            onMouseOut={(e) => {
+              e.stopPropagation()
+              if (state.mouseOverElement === file.path) handleMouseOut()
+            }}
           />
           { ((state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)) &&
             <FileExplorerContextMenu
@@ -965,6 +998,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
               pageY={state.focusContext.y}
               path={file.path}
               type='file'
+              onMouseOver={(e) => {
+                e.stopPropagation()
+                handleMouseOver(file.path)
+              }}
             />
           }
         </div>
