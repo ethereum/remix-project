@@ -16,7 +16,7 @@ module.exports = {
   'Should launch debugger': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['browser/blah.sol'])
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 45000)
+      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
       .click('*[title="Deploy - transact (not payable)"]')
       .debugTransaction(0)
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER')
@@ -45,7 +45,7 @@ module.exports = {
       .pause(2000)
       .click('*[data-id="dropdownPanelSolidityLocals"]')
       .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n173')
   },
 
   'Should step back and forward transaction': function (browser: NightwatchBrowser) {
@@ -53,12 +53,12 @@ module.exports = {
       .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
       .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
       .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n91')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n91')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n172')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n172')
       .click('*[data-id="buttonNavigatorIntoForward"]')
       .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n92')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n173')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n173')
   },
 
   'Should jump through breakpoints': function (browser: NightwatchBrowser) {
