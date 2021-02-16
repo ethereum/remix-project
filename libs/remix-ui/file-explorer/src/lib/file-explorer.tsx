@@ -337,7 +337,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const dirName = newFolderPath + '/'
 
     try {
-      const exists = await fileManager.exists(dirName, 'folder')
+      const exists = await fileManager.exists(dirName)
 
       if (exists) return
       await fileManager.mkdir(dirName)
@@ -345,6 +345,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
       })
     } catch (e) {
+      console.log('error: ', e)
       toast('Failed to create folder: ' + newFolderPath)
     }
   }
@@ -372,10 +373,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const renamePath = async (oldPath: string, newPath: string, type?: string) => {
+  const renamePath = async (oldPath: string, newPath: string) => {
     try {
       const fileManager = state.fileManager
-      const exists = await fileManager.exists(newPath, type)
+      const exists = await fileManager.exists(newPath)
 
       if (exists) {
         modal('Rename File Failed', 'File name already exists', {
@@ -814,10 +815,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
           const oldPath: string = state.focusEdit.element
           const oldName = extractNameFromKey(oldPath)
           const newPath = oldPath.replace(oldName, content)
-          const type: string = state.focusEdit.type
 
           editRef.current.textContent = extractNameFromKey(oldPath)
-          renamePath(oldPath, newPath, type)
+          renamePath(oldPath, newPath)
         }
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
