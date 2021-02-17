@@ -53,6 +53,8 @@ declare module "nightwatch" {
         checkTerminalFilter(filter: string, test: string): NightwatchBrowser,
         noWorkerErrorFor(version: string): NightwatchBrowser,
         validateValueInput(selector: string, valueTosSet: string, expectedValue: string): NightwatchBrowser
+        checkAnnotations(type: string, line: number): NightwatchBrowser
+        checkAnnotationsNotPresent(type: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
