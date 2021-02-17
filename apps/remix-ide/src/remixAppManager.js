@@ -86,9 +86,9 @@ export class RemixAppManager extends PluginManager {
     this.event.emit('deactivate', plugin)
     _paq.push(['trackEvent', 'pluginManager', 'deactivate', plugin.name])
   }
-  
+
   isDependent (name) {
-     return dependentModules.includes(name)
+    return dependentModules.includes(name)
   }
 
   isRequired (name) {
