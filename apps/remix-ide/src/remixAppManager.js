@@ -11,6 +11,8 @@ const requiredModules = [ // services + layout views + system views
   'fileManager', 'contentImport', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
   'fileExplorers', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp']
 
+const dependentModules = ['git'] // module which shouldn't be manually activated (e.g git is activated by remixd)
+
 export function isNative (name) {
   const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons']
   return nativePlugins.includes(name) || requiredModules.includes(name)
@@ -83,6 +85,10 @@ export class RemixAppManager extends PluginManager {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('deactivate', plugin)
     _paq.push(['trackEvent', 'pluginManager', 'deactivate', plugin.name])
+  }
+  
+  isDependent (name) {
+     return dependentModules.includes(name)
   }
 
   isRequired (name) {
