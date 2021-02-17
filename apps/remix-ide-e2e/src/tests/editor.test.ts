@@ -37,6 +37,11 @@ module.exports = {
       .sendKeys('*[class="ace_text-input"]', 'error')
       .pause(2000)
       .waitForElementVisible('.ace_error')
+      .checkAnnotations('error', 28)
+      .clickLaunchIcon('udapp')
+      .checkAnnotationsNotPresent('error')
+      .clickLaunchIcon('solidity')
+      .checkAnnotations('error', 28)
   },
 
   'Should minimize and maximize codeblock in editor': function (browser: NightwatchBrowser) {
