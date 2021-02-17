@@ -215,19 +215,23 @@ class SettingsUI {
 
     selectExEnv.addEventListener('change', (event) => {
       const context = selectExEnv.options[selectExEnv.selectedIndex].value
-      this.blockchain.changeExecutionContext(context, () => {
-        modalDialogCustom.prompt('External node request', this.web3ProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
-          this.blockchain.setProviderFromEndpoint(target, context, (alertMsg) => {
-            if (alertMsg) addTooltip(alertMsg)
-            this.setFinalContext()
-          })
-        }, this.setFinalContext.bind(this))
-      }, (alertMsg) => {
-        addTooltip(alertMsg)
-      }, this.setFinalContext.bind(this))
+      this.setExecutionContext(context)
     })
 
     selectExEnv.value = this.blockchain.getProvider()
+  }
+
+  setExecutionContext (context) {
+    this.blockchain.changeExecutionContext(context, () => {
+      modalDialogCustom.prompt('External node request', this.web3ProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
+        this.blockchain.setProviderFromEndpoint(target, context, (alertMsg) => {
+          if (alertMsg) addTooltip(alertMsg)
+          this.setFinalContext()
+        })
+      }, this.setFinalContext.bind(this))
+    }, (alertMsg) => {
+      addTooltip(alertMsg)
+    }, this.setFinalContext.bind(this))
   }
 
   web3ProviderDialogBody () {
@@ -317,6 +321,14 @@ class SettingsUI {
         addTooltip(`account ${address} created`)
       }
     )
+  }
+
+  getSelectedAccount () {
+    return this.el.querySelector('#txorigin').selectedOptions[0].value
+  }
+
+  getEnvironment () {
+    return this.blockchain.getProvider()
   }
 
   signMessage () {
