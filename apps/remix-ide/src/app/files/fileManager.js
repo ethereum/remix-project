@@ -528,7 +528,7 @@ class FileManager extends Plugin {
     var currentFile = this._deps.config.get('currentFile')
     if (currentFile && this.editor.current()) {
       var input = this.editor.get(currentFile)
-      if (input) {
+      if ((input !== null) && (input !== undefined)) {
         var provider = this.fileProviderOf(currentFile)
         if (provider) {
           provider.set(currentFile, input)
