@@ -69,13 +69,21 @@ module.exports = class CompilerImports extends Plugin {
     let resolved
     try {
       resolved = await this.urlResolver.resolve(url)
-      const { content, cleanUrl, type } = resolved
-      self.previouslyHandled[url] = {
-        content,
-        cleanUrl,
-        type
+      if ('multiple' in resolved) {
+        resolved.multiple.forEach(e => {
+          self.previouslyHandled[url] = { ...e }
+          cb(null, e.content, e.cleanUrl, e.type, url)
+        })
+        return
+      } else {
+        const { content, cleanUrl, type } = resolved
+        self.previouslyHandled[url] = {
+          content,
+          cleanUrl,
+          type
+        }
+        cb(null, content, cleanUrl, type, url)
       }
-      cb(null, content, cleanUrl, type, url)
     } catch (e) {
       return cb('Unable to import url : ' + e.message)
     }

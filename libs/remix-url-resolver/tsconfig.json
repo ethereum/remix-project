@@ -3,7 +3,8 @@
   "compilerOptions": {
     "types": ["node", "mocha"],
     "module": "commonjs",
-    "esModuleInterop": true 
+    "esModuleInterop": true,
+    "lib": ["es2019", "DOM"]
   },
   "include": ["**/*.ts"]
 }
