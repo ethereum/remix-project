@@ -44,8 +44,8 @@ module.exports = {
       // .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .pause(2000)
       .waitForElementVisible('#stepdetail')
-      .goToVMTraceStep(79)
-      .pause(1000)
+      // .goToVMTraceStep(79)
+      // .pause(1000)
       .checkVariableDebug('soliditystate', stateCheck)
       .checkVariableDebug('soliditylocals', localsCheck)
   },
