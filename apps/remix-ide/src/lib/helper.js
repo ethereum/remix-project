@@ -68,7 +68,14 @@ module.exports = {
     const hexValue = hash.slice(2, hash.length)
     return this.is0XPrefixed(hash) && /^[0-9a-fA-F]{64}$/.test(hexValue)
   },
-  find: find
+  find: find,
+  getPathIcon (path) {
+    return path.endsWith('.txt')
+      ? 'far fa-file-alt' : file.path.endsWith('.sol')
+        ? 'fak fa-solidity-mono' : file.path.endsWith('.js')
+          ? 'fab fa-js' : file.path.endsWith('.json')
+            ? 'fas fa-brackets-curly' : 'far fa-file'
+  }
 }
 
 function findDeep (object, fn, found = { break: false, value: undefined }) {
