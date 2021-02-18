@@ -41,5 +41,6 @@ export interface FileExplorerContextMenuProps {
     pageX: number,
     pageY: number,
     path: string,
-    type: string
+    type: string,
+    onMouseOver?: (...args) => void
 }
