@@ -72,8 +72,8 @@ module.exports = {
       .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n0')
       .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
       .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n184')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n184')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n348')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n348')
   },
 
   'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
