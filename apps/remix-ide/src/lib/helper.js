@@ -71,9 +71,9 @@ module.exports = {
   find: find,
   getPathIcon (path) {
     return path.endsWith('.txt')
-      ? 'far fa-file-alt' : file.path.endsWith('.sol')
-        ? 'fak fa-solidity-mono' : file.path.endsWith('.js')
-          ? 'fab fa-js' : file.path.endsWith('.json')
+      ? 'far fa-file-alt' : path.endsWith('.sol')
+        ? 'fak fa-solidity-mono' : path.endsWith('.js')
+          ? 'fab fa-js' : path.endsWith('.json')
             ? 'fas fa-brackets-curly' : 'far fa-file'
   }
 }
