@@ -3,6 +3,7 @@ import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
 var yo = require('yo-yo')
 var async = require('async')
 var tooltip = require('../ui/tooltip')
+var Renderer = require('../ui/renderer')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('@remix-project/remix-tests')
 
@@ -20,7 +21,7 @@ const profile = {
 }
 
 module.exports = class TestTab extends ViewPlugin {
-  constructor (fileManager, offsetToLineColumnConverter, filePanel, compileTab, appManager, renderer, contentImport) {
+  constructor (fileManager, offsetToLineColumnConverter, filePanel, compileTab, appManager, contentImport) {
     super(profile)
     this.compileTab = compileTab
     this.contentImport = contentImport
@@ -29,7 +30,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.filePanel = filePanel
     this.data = {}
     this.appManager = appManager
-    this.renderer = renderer
+    this.renderer = new Renderer(this)
     this.hasBeenStopped = false
     this.runningTestsNumber = 0
     this.readyTestsNumber = 0

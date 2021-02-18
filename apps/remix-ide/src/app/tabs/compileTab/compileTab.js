@@ -2,8 +2,9 @@ const EventEmitter = require('events')
 var Compiler = require('@remix-project/remix-solidity').Compiler
 
 class CompileTab {
-  constructor (queryParams, fileManager, editor, config, fileProvider, contentImport) {
+  constructor (queryParams, fileManager, editor, config, fileProvider, contentImport, miscApi) {
     this.event = new EventEmitter()
+    this.miscApi = miscApi
     this.queryParams = queryParams
     this.compilerImport = contentImport
     this.compiler = new Compiler((url, cb) => this.compilerImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
@@ -80,7 +81,7 @@ class CompileTab {
   runCompiler () {
     try {
       this.fileManager.saveCurrentFile()
-      this.editor.clearAnnotations()
+      this.miscApi.clearAnnotations()
       var currentFile = this.config.get('currentFile')
       return this.compileFile(currentFile)
     } catch (err) {
