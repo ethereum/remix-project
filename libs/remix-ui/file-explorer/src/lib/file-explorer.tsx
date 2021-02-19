@@ -901,6 +901,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         ? 'bg-secondary' : state.mouseOverElement === file.path
           ? 'bg-light border' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)
             ? 'bg-light border' : ''
+    const icon = helper.getPathIcon(file.path)
 
     if (file.isDirectory) {
       return (
@@ -979,7 +980,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               e.stopPropagation()
               handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent)
             }}
-            icon='far fa-file'
+            icon={icon}
             labelClass={labelClass}
             onMouseOver={(e) => {
               e.stopPropagation()
