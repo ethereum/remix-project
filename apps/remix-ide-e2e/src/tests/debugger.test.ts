@@ -22,59 +22,59 @@ module.exports = {
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER')
   },
 
-  // 'Should debug failing transaction': function (browser: NightwatchBrowser) {
-  //   browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
-  //     .clickLaunchIcon('udapp')
-  //     .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
-  //     .click('*[data-id="universalDappUiTitleExpander"]')
-  //     .scrollAndClick('*[title="string name, uint256 goal"]')
-  //     .setValue('*[title="string name, uint256 goal"]', '"toast", 999')
-  //     .click('*[data-id="createProject - transact (not payable)"]')
-  //     .debugTransaction(1)
-  //     .pause(2000)
-  //     .scrollAndClick('*[data-id="solidityLocals"]')
-  //     .assert.containsText('*[data-id="solidityLocals"]', 'toast')
-  //     .assert.containsText('*[data-id="solidityLocals"]', '999')
-  // },
+  'Should debug failing transaction': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
+      .clickLaunchIcon('udapp')
+      .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
+      .click('*[data-id="universalDappUiTitleExpander"]')
+      .scrollAndClick('*[title="string name, uint256 goal"]')
+      .setValue('*[title="string name, uint256 goal"]', '"toast", 999')
+      .click('*[data-id="createProject - transact (not payable)"]')
+      .debugTransaction(1)
+      .pause(2000)
+      .scrollAndClick('*[data-id="solidityLocals"]')
+      .assert.containsText('*[data-id="solidityLocals"]', 'toast')
+      .assert.containsText('*[data-id="solidityLocals"]', '999')
+  },
 
-  // 'Should debug transaction using slider': function (browser: NightwatchBrowser) {
-  //   browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
-  //     .waitForElementVisible('*[data-id="slider"]')
-  //     .click('*[data-id="slider"]')
-  //     .setValue('*[data-id="slider"]', '50')
-  //     .pause(2000)
-  //     .click('*[data-id="dropdownPanelSolidityLocals"]')
-  //     .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
-  //     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n173')
-  // },
+  'Should debug transaction using slider': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
+      .waitForElementVisible('*[data-id="slider"]')
+      .click('*[data-id="slider"]')
+      .setValue('*[data-id="slider"]', '50')
+      .pause(2000)
+      .click('*[data-id="dropdownPanelSolidityLocals"]')
+      .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n173')
+  },
 
-  // 'Should step back and forward transaction': function (browser: NightwatchBrowser) {
-  //   browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
-  //     .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
-  //     .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
-  //     .pause(2000)
-  //     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n172')
-  //     .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n172')
-  //     .click('*[data-id="buttonNavigatorIntoForward"]')
-  //     .pause(2000)
-  //     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n173')
-  //     .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n173')
-  // },
+  'Should step back and forward transaction': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
+      .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
+      .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
+      .pause(2000)
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n172')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n172')
+      .click('*[data-id="buttonNavigatorIntoForward"]')
+      .pause(2000)
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n173')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n173')
+  },
 
-  // 'Should jump through breakpoints': function (browser: NightwatchBrowser) {
-  //   browser.waitForElementVisible('*[data-id="editorInput"]')
-  //     .click('.ace_gutter-cell:nth-of-type(10)')
-  //     .click('.ace_gutter-cell:nth-of-type(20)')
-  //     .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-  //     .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-  //     .pause(2000)
-  //     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n0')
-  //     .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n0')
-  //     .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
-  //     .pause(10000)
-  //     .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n348')
-  //     .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n348')
-  // },
+  'Should jump through breakpoints': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('*[data-id="editorInput"]')
+      .click('.ace_gutter-cell:nth-of-type(10)')
+      .click('.ace_gutter-cell:nth-of-type(20)')
+      .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
+      .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
+      .pause(2000)
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n0')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n0')
+      .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
+      .pause(10000)
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n348')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n348')
+  },
 
   'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
     browser
