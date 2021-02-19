@@ -8,7 +8,7 @@ class TestFunction extends EventEmitter {
     const browser = this.api
     const logs = {}
     const setLog = (index: number, value: string) => {
-      logs[Object.keys(logs)[index]] = typeof value === 'string' ? value.indexOf('Copy value to clipboard') ? value.split('\n').shift().trim(): value.trim() : value
+      logs[Object.keys(logs)[index]] = typeof value === 'string' ? value.indexOf('Copy value to clipboard') ? value.split('\n').shift().trim() : value.trim() : value
     }
 
     browser
