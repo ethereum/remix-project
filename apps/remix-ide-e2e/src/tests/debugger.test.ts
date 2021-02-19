@@ -71,7 +71,7 @@ module.exports = {
       .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n0')
       .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n0')
       .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
-      .pause(2000)
+      .pause(10000)
       .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n348')
       .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n348')
   },
