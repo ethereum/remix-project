@@ -7,7 +7,9 @@ class TestFunction extends EventEmitter {
   command (this: NightwatchBrowser, txHash: string, expectedValue: NightwatchTestFunctionExpectedInput): NightwatchBrowser {
     const browser = this.api
     const logs = {}
-    const setLog = (index: number, value: string) => { logs[Object.keys(logs)[index]] = typeof value === 'string' ? value.trim() : value }
+    const setLog = (index: number, value: string) => {
+      logs[Object.keys(logs)[index]] = typeof value === 'string' ? value.indexOf('Copy value to clipboard') ? value.split('\n').shift().trim(): value.trim() : value
+    }
 
     browser
       .waitForElementVisible(`[data-id="block_tx${txHash}"]`)
@@ -45,7 +47,15 @@ class TestFunction extends EventEmitter {
 
     browser.perform(() => {
       Object.keys(expectedValue).forEach(key => {
-        const equal: boolean = deepequal(logs[key], expectedValue[key])
+        let equal = false
+
+        try {
+          const receivedValue = JSON.parse(logs[key])
+
+          equal = deepequal(receivedValue, expectedValue[key])
+        } catch (err) {
+          equal = deepequal(logs[key], expectedValue[key])
+        }
 
         if (!equal) {
           browser.assert.fail(`Expected ${JSON.stringify(expectedValue[key])} but got ${JSON.stringify(logs[key])}`)
