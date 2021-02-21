@@ -300,19 +300,15 @@ class FileManager extends Plugin {
       }
       this.openFile(newName)
     } else {
-      var newFocus
       for (var k in this.openedFiles) {
         if (k.indexOf(oldName + '/') === 0) {
           var newAbsolutePath = k.replace(oldName, newName)
           this.openedFiles[newAbsolutePath] = newAbsolutePath
           delete this.openedFiles[k]
           if (this._deps.config.get('currentFile') === k) {
-            newFocus = newAbsolutePath
+            this._deps.config.set('currentFile', '')
           }
         }
-      }
-      if (newFocus) {
-        this.openFile(newFocus)
       }
     }
     // TODO: Only keep `this.emit` (issue#2210)

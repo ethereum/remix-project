@@ -55,7 +55,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
       handleHide: null
     },
     modals: [],
-    toasterMsg: ''
+    toasterMsg: '',
+    mouseOverElement: null
   })
   const editRef = useRef(null)
 
@@ -338,7 +339,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       const exists = await fileManager.exists(dirName)
 
-      if (exists) return
+      if (exists) {
+        return modal('Rename File Failed', `A file or folder ${extractNameFromKey(newFolderPath)} already exists at this location. Please choose a different name.`, {
+          label: 'Close',
+          fn: () => {}
+        }, null)
+      }
       await fileManager.mkdir(dirName)
       setState(prevState => {
         return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
@@ -378,7 +384,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const exists = await fileManager.exists(newPath)
 
       if (exists) {
-        modal('Rename File Failed', 'File name already exists', {
+        modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, {
           label: 'Close',
           fn: () => {}
         }, null)
@@ -853,6 +859,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
+  const handleMouseOver = (path: string) => {
+    setState(prevState => {
+      return { ...prevState, mouseOverElement: path }
+    })
+  }
+
+  const handleMouseOut = () => {
+    setState(prevState => {
+      return { ...prevState, mouseOverElement: null }
+    })
+  }
+
   const label = (file: File) => {
     return (
       <div
@@ -878,6 +896,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const renderFiles = (file: File, index: number) => {
+    const labelClass = state.focusEdit.element === file.path
+      ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1
+        ? 'bg-secondary' : state.mouseOverElement === file.path
+          ? 'bg-light border' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)
+            ? 'bg-light border' : ''
+    const icon = helper.getPathIcon(file.path)
+
     if (file.isDirectory) {
       return (
         <div key={index}>
@@ -896,9 +921,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
               e.stopPropagation()
               handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent)
             }}
-            labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
+            labelClass={labelClass}
             controlBehaviour={ state.ctrlKey }
             expand={state.expandPath.includes(file.path)}
+            onMouseOver={(e) => {
+              e.stopPropagation()
+              handleMouseOver(file.path)
+            }}
+            onMouseOut={(e) => {
+              e.stopPropagation()
+              if (state.mouseOverElement === file.path) handleMouseOut()
+            }}
           >
             {
               file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
@@ -923,6 +956,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
               pageY={state.focusContext.y}
               path={file.path}
               type='folder'
+              onMouseOver={(e) => {
+                e.stopPropagation()
+                handleMouseOver(file.path)
+              }}
             />
           }
         </div>
@@ -943,8 +980,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
               e.stopPropagation()
               handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent)
             }}
-            icon='far fa-file'
-            labelClass={ state.focusEdit.element === file.path ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1 ? 'bg-secondary' : '' }
+            icon={icon}
+            labelClass={labelClass}
+            onMouseOver={(e) => {
+              e.stopPropagation()
+              handleMouseOver(file.path)
+            }}
+            onMouseOut={(e) => {
+              e.stopPropagation()
+              if (state.mouseOverElement === file.path) handleMouseOut()
+            }}
           />
           { ((state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)) &&
             <FileExplorerContextMenu
@@ -960,6 +1005,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
               pageY={state.focusContext.y}
               path={file.path}
               type='file'
+              onMouseOver={(e) => {
+                e.stopPropagation()
+                handleMouseOver(file.path)
+              }}
             />
           }
         </div>

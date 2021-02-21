@@ -60,17 +60,17 @@ export class TabProxy extends Plugin {
     })
 
     fileManager.events.on('fileRenamed', (oldName, newName, isFolder) => {
-      if (isFolder) return
+      if (isFolder) {
+        for (const tab of this.loadedTabs) {
+          if (tab.name.indexOf(oldName + '/') === 0) {
+            const newTabName = newName + tab.name.slice(oldName.length, tab.name.length)
+            this.renameTab(tab.name, newTabName)
+          }
+        }
+        return
+      }
       // should change the tab title too
-      this.addTab(newName, '', () => {
-        this.fileManager.open(newName)
-        this.event.emit('openFile', newName)
-      },
-      () => {
-        this.fileManager.closeFile(newName)
-        this.event.emit('closeFile', newName)
-      })
-      this.removeTab(oldName)
+      this.renameTab(oldName, newName)
     })
 
     appManager.event.on('activate', ({ name, location, displayName, icon }) => {
@@ -142,6 +142,18 @@ export class TabProxy extends Plugin {
     if (active && this._handlers[active]) {
       this.switchTab(active)
     }
+  }
+
+  renameTab (oldName, newName) {
+    this.addTab(newName, '', () => {
+      this.fileManager.open(newName)
+      this.event.emit('openFile', newName)
+    },
+    () => {
+      this.fileManager.closeFile(newName)
+      this.event.emit('closeFile', newName)
+    })
+    this.removeTab(oldName)
   }
 
   addTab (name, title, switchTo, close, icon) {
