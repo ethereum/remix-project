@@ -73,7 +73,7 @@ module.exports = {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsWeb3Mode"]')
+      .click('*[data-id="web3-mode"]')
       .modalFooterOKClick()
       .executeScript('web3.eth.getAccounts()')
       .pause(2000)

@@ -26,6 +26,7 @@ class SettingsUI {
     this._components = {}
     this.options = defaultOptions
     this.accounts = []
+    this.environmentEl = yo`<div></div>`
 
     this.blockchain.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (!lookupOnly) this.el.querySelector('#value').value = 0
@@ -41,8 +42,8 @@ class SettingsUI {
       config: this._components.registry.get('config').api
     }
 
-    this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
-    // this._deps.config.events.on('settings/personal-mode_changed', this.renderSettings.bind(this))
+    // this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
+    this._deps.config.events.on('settings/personal-mode_changed', this.renderSettings.bind(this))
 
     setInterval(() => {
       this.updateAccountBalances()
@@ -88,13 +89,17 @@ class SettingsUI {
     if (valueEl.value < 0) valueEl.value = 0
   }
 
+  renderSettings () {
+    const selectedProvider = this.blockchain.getProvider()
+
+    ReactDOM.render(<EnvironmentSelector options={defaultOptions} updateNetwork={this.updateNetwork.bind(this)} selectedProvider={selectedProvider} />, this.environmentEl)
+  }
+
   render () {
     this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
 
-    const selectedProvider = this.blockchain.getProvider()
-
-    var environmentEl = yo`<div></div>`
-    ReactDOM.render(<EnvironmentSelector options={defaultOptions} updateNetwork={this.updateNetwork.bind(this)} selectedProvider={selectedProvider} />, environmentEl)
+    this.environmentEl = yo`<div></div>`
+    this.renderSettings()
 
     // var environmentEl = yo`
     //   <div class="${css.crow}">
@@ -183,7 +188,7 @@ class SettingsUI {
 
     const el = yo`
       <div class="${css.settings}">
-        ${environmentEl}
+        ${this.environmentEl}
         ${networkEl}
         ${accountEl}
         ${gasPriceEl}
@@ -191,7 +196,7 @@ class SettingsUI {
       </div>
     `
 
-    var selectExEnv = environmentEl.querySelector('#selectExEnvOptions')
+    var selectExEnv = this.environmentEl.querySelector('#selectExEnvOptions')
     this.setDropdown(selectExEnv)
 
     this.blockchain.event.register('contextChanged', (context, silent) => {
@@ -212,6 +217,7 @@ class SettingsUI {
     this.selectExEnv = selectExEnv
 
     const addProvider = (network) => {
+      this.renderSettings()
       selectExEnv.appendChild(yo`<option
         title="provider name: ${network.name}"
         value="${network.name}"
@@ -223,6 +229,7 @@ class SettingsUI {
     }
 
     const removeProvider = (name) => {
+      this.renderSettings()
       var env = selectExEnv.querySelector(`option[value="${name}"]`)
       if (env) {
         selectExEnv.removeChild(env)
@@ -392,6 +399,7 @@ class SettingsUI {
         return cb('can\'t detect network ')
       }
       const network = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
+      this.renderSettings()
       this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
       cb((network() !== 'vm') ? `${name} (${id || '-'}) network` : '')
     })
