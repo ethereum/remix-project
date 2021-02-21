@@ -1,6 +1,6 @@
-import { Settings } from '@remix-ui/run-tab' // eslint-disable-line
+import { Settings, EnvironmentSelector } from '@remix-ui/run-tab' // eslint-disable-line
 import React from 'react' // eslint-disable-line
-// import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom'
 
 const $ = require('jquery')
 const yo = require('yo-yo')
@@ -13,17 +13,19 @@ const addTooltip = require('../../ui/tooltip')
 const helper = require('../../../lib/helper.js')
 const globalRegistry = require('../../../global/registry')
 
-// const defaultOptions = [
-//   { value: 'vm', name: 'JavaScript VM', title: 'Execution environment does not connect to any node, everything is local and in memory only.' },
-//   { value: 'injected', name: 'Injected Web3', title: 'Execution environment has been provided by Metamask or similar provider.' },
-//   { value: 'web3', name: 'Web3 Provider', title: 'Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse! If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http.' }
-// ]
+const defaultOptions = [
+  { value: 'vm', name: 'JavaScript VM', title: 'Execution environment does not connect to any node, everything is local and in memory only.' },
+  { value: 'injected', name: 'Injected Web3', title: 'Execution environment has been provided by Metamask or similar provider.' },
+  { value: 'web3', name: 'Web3 Provider', title: 'Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse! If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http.' }
+]
 
 class SettingsUI {
   constructor (blockchain, networkModule) {
     this.blockchain = blockchain
     this.event = new EventManager()
     this._components = {}
+    this.options = defaultOptions
+    this.accounts = []
 
     this.blockchain.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (!lookupOnly) this.el.querySelector('#value').value = 0
@@ -40,6 +42,7 @@ class SettingsUI {
     }
 
     this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
+    // this._deps.config.events.on('settings/personal-mode_changed', this.renderSettings.bind(this))
 
     setInterval(() => {
       this.updateAccountBalances()
@@ -88,31 +91,37 @@ class SettingsUI {
   render () {
     this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
 
-    var environmentEl = yo`
-      <div class="${css.crow}">
-        <label id="selectExEnv" class="${css.settingsLabel}">
-          Environment
-        </label>
-        <div class="${css.environment}">
-          <select id="selectExEnvOptions" data-id="settingsSelectEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select} custom-select">
-            <option id="vm-mode"
-              title="Execution environment does not connect to any node, everything is local and in memory only."
-              value="vm" name="executionContext"> JavaScript VM
-            </option>
-            <option id="injected-mode"
-              title="Execution environment has been provided by Metamask or similar provider."
-              value="injected" name="executionContext"> Injected Web3
-            </option>
-            <option id="web3-mode" data-id="settingsWeb3Mode"
-              title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
-              If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-              value="web3" name="executionContext"> Web3 Provider
-            </option>
-          </select>
-          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank"><i class="${css.infoDeployAction} ml-2 fas fa-info" title="check out docs to setup Environment"></i></a>
-        </div>
-      </div>
-    `
+    const selectedProvider = this.blockchain.getProvider()
+
+    var environmentEl = yo`<div></div>`
+    ReactDOM.render(<EnvironmentSelector options={defaultOptions} updateNetwork={this.updateNetwork.bind(this)} selectedProvider={selectedProvider} />, environmentEl)
+
+    // var environmentEl = yo`
+    //   <div class="${css.crow}">
+    //     <label id="selectExEnv" class="${css.settingsLabel}">
+    //       Environment
+    //     </label>
+    //     <div class="${css.environment}">
+    //       <select id="selectExEnvOptions" data-id="settingsSelectEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select} custom-select">
+    //         <option id="vm-mode"
+    //           title="Execution environment does not connect to any node, everything is local and in memory only."
+    //           value="vm" name="executionContext"> JavaScript VM
+    //         </option>
+    //         <option id="injected-mode"
+    //           title="Execution environment has been provided by Metamask or similar provider."
+    //           value="injected" name="executionContext"> Injected Web3
+    //         </option>
+    //         <option id="web3-mode" data-id="settingsWeb3Mode"
+    //           title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
+    //           If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
+    //           value="web3" name="executionContext"> Web3 Provider
+    //         </option>
+    //       </select>
+    //       <a href="https://remix-ide.readthedocs.io/en/latest/run.html#run-setup" target="_blank"><i class="${css.infoDeployAction} ml-2 fas fa-info" title="check out docs to setup Environment"></i></a>
+    //     </div>
+    //   </div>
+    // `
+
     const networkEl = yo`
     <div class="${css.crow}">
         <div class="${css.settingsLabel}">
@@ -375,14 +384,16 @@ class SettingsUI {
     })
   }
 
-  updateNetwork () {
+  updateNetwork (context, cb) {
     this.blockchain.updateNetwork((err, { id, name } = {}) => {
+      if (!cb) return
       if (err) {
         this.netUI.innerHTML = 'can\'t detect network '
-        return
+        return cb('can\'t detect network ')
       }
       const network = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
       this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
+      cb((network() !== 'vm') ? `${name} (${id || '-'}) network` : '')
     })
     this.fillAccountsList()
   }
