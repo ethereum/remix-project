@@ -439,7 +439,7 @@ class CompilerContainer {
   }
 
   _updateVersionSelector (customUrl = '') {
-    // update selectedversion of previous one got filtered out
+    // update selectedversion if previous one got filtered out
     if (!this.data.selectedVersion || !this._shouldBeAdded(this.data.selectedVersion)) {
       this.data.selectedVersion = this.data.defaultVersion
     }
