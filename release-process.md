@@ -13,22 +13,6 @@ This document includes:
  - npm run publish:libs (this command uses lerna)
  - commit
 
-## Remix IDE release
-
- - git fetch origin master
- - git checkout origin/master
- - git checkout -b bumpVersion
- - update package.json version
- - remove package-lock.json version and generate a new one with `npm install`
- - merge PR
- - git fetch origin master
- - git checkout origin/master
- - git tag v(version-number)
- - git push --tags
- - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
- - publish a release in github using the changelog
- - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
-
 ## Remix IDE release Part 1. First push master to beta. Feature Freeze
  - git co -b remix_beta origin/remix_beta
  - git reset --hard -master-commit-hash-
