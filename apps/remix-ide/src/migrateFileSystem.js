@@ -21,7 +21,7 @@ export default (fileProvider) => {
   fileStorageBrowserFS.set(flag, 'done')
 }
 
-export async function migrateToWorkspace (fileManager) {  
+export async function migrateToWorkspace (fileManager) {
   const browserProvider = fileManager.getProvider('browser')
   const workspaceProvider = fileManager.getProvider('workspace')
   const flag = 'status'
@@ -33,7 +33,7 @@ export async function migrateToWorkspace (fileManager) {
   const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
   await fileManager.createWorkspace(workspaceName)
   await populateWorkspace(workspacePath, files, fileManager)
-  fileStorageBrowserWorkspace.set(flag, 'done')  
+  fileStorageBrowserWorkspace.set(flag, 'done')
 }
 
 const populateWorkspace = async (workspace, json, fileManager) => {
@@ -47,4 +47,3 @@ const populateWorkspace = async (workspace, json, fileManager) => {
     }
   }
 }
-
