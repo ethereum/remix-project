@@ -13,7 +13,7 @@ module.exports = {
       .addFile('file.js', { content: executeFile })
       .executeScript('remix.exeCurrent()')
       .pause(5000)
-      .journalLastChildIncludes('browser/file.js')
+      .journalLastChildIncludes('file.js')
   },
 
   'Should execute `exists` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -21,8 +21,8 @@ module.exports = {
       .addFile('exists.js', { content: executeExists })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .journalChildIncludes('browser/exists.js true')
-      .journalChildIncludes('browser/non-exists.js false')
+      .journalChildIncludes('exists.js true')
+      .journalChildIncludes('non-exists.js false')
   },
 
   'Should execute `open` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -30,7 +30,7 @@ module.exports = {
       .addFile('open.js', { content: executeOpen })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .journalLastChildIncludes('browser/contracts/3_Ballot.sol')
+      .journalLastChildIncludes('contracts/3_Ballot.sol')
   },
 
   'Should execute `writeFile` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -38,7 +38,7 @@ module.exports = {
       .addFile('writeFile.js', { content: executeWriteFile })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .openFile('browser/new_contract.sol')
+      .openFile('new_contract.sol')
       .assert.containsText('[data-id="editorInput"]', 'pragma solidity ^0.6.0')
   },
 
@@ -63,7 +63,7 @@ module.exports = {
       .addFile('renameFile.js', { content: executeRename })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .waitForElementPresent('[data-id="treeViewLitreeViewItembrowser/old_contract.sol"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemold_contract.sol"]')
   },
 
   'Should execute `mkdir` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -71,7 +71,7 @@ module.exports = {
       .addFile('mkdirFile.js', { content: executeMkdir })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .waitForElementPresent('[data-id="treeViewLitreeViewItembrowser/Test_Folder"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemTest_Folder"]')
   },
 
   'Should execute `readdir` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -87,16 +87,16 @@ module.exports = {
       .addFile('removeFile.js', { content: executeRemove })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .waitForElementNotPresent('[data-id="treeViewLitreeViewItembrowser/old_contract.sol"]')
+      .waitForElementNotPresent('[data-id="treeViewLitreeViewItemold_contract.sol"]')
   },
 
   // TODO: Fix remove root directory prefix for browser and localhost
-  'Should execute `remove` api from file manager external api on a folder': '' + function (browser: NightwatchBrowser) {
+  'Should execute `remove` api from file manager external api on a folder': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsRemoveFolder.js', { content: executeRemoveOnFolder })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .waitForElementNotPresent('[data-id="treeViewLitreeViewItembrowser/tests"]')
+      .waitForElementNotPresent('[data-id="treeViewLitreeViewItemTest_Folder"]')
       .end()
   },
 
@@ -115,11 +115,11 @@ const executeFile = `
 
 const executeExists = `
   const run = async () => {
-    const result1 = await remix.call('fileManager', 'exists', 'browser/exists.js')
-    const result2 = await remix.call('fileManager', 'exists', 'browser/non-exists.js')
+    const result1 = await remix.call('fileManager', 'exists', 'exists.js')
+    const result2 = await remix.call('fileManager', 'exists', 'non-exists.js')
 
-    console.log('browser/exists.js ' + result1)
-    console.log('browser/non-exists.js ' + result2)
+    console.log('exists.js ' + result1)
+    console.log('non-exists.js ' + result2)
   }
 
   run()
@@ -127,7 +127,7 @@ const executeExists = `
 
 const executeOpen = `
   const run = async () => {
-    await remix.call('fileManager', 'open', 'browser/contracts/3_Ballot.sol')
+    await remix.call('fileManager', 'open', 'contracts/3_Ballot.sol')
     const result = await remix.call('fileManager', 'file')
 
     console.log(result)
@@ -138,7 +138,7 @@ const executeOpen = `
 
 const executeWriteFile = `
   const run = async () => {
-    await remix.call('fileManager', 'writeFile', 'browser/new_contract.sol', 'pragma solidity ^0.6.0')
+    await remix.call('fileManager', 'writeFile', 'new_contract.sol', 'pragma solidity ^0.6.0')
   }
 
   run()
@@ -146,7 +146,7 @@ const executeWriteFile = `
 
 const executeReadFile = `
   const run = async () => {
-    const result = await remix.call('fileManager', 'readFile', 'browser/new_contract.sol')
+    const result = await remix.call('fileManager', 'readFile', 'new_contract.sol')
 
     console.log(result)
   }
@@ -156,8 +156,8 @@ const executeReadFile = `
 
 const executeCopyFile = `
   const run = async () => {
-    await remix.call('fileManager', 'copyFile', 'browser/contracts/3_Ballot.sol', 'browser/new_contract.sol')
-    const result = await remix.call('fileManager', 'readFile', 'browser/new_contract.sol')
+    await remix.call('fileManager', 'copyFile', 'contracts/3_Ballot.sol', 'new_contract.sol')
+    const result = await remix.call('fileManager', 'readFile', 'new_contract.sol')
 
     console.log(result)
   }
@@ -167,7 +167,7 @@ const executeCopyFile = `
 
 const executeRename = `
   const run = async () => {
-    await remix.call('fileManager', 'rename', 'browser/new_contract.sol', 'browser/old_contract.sol')
+    await remix.call('fileManager', 'rename', 'new_contract.sol', 'old_contract.sol')
   }
 
   run()
@@ -175,7 +175,7 @@ const executeRename = `
 
 const executeMkdir = `
   const run = async () => {
-    await remix.call('fileManager', 'mkdir', 'browser/Test_Folder/')
+    await remix.call('fileManager', 'mkdir', 'Test_Folder/')
   }
 
   run()
@@ -183,7 +183,7 @@ const executeMkdir = `
 
 const executeReaddir = `
   const run = async () => {
-    const result = await remix.call('fileManager', 'readdir', 'browser/')
+    const result = await remix.call('fileManager', 'readdir', '/')
 
     console.log('Test_Folder isDirectory ', result["Test_Folder"].isDirectory)
   }
@@ -193,7 +193,7 @@ const executeReaddir = `
 
 const executeRemove = `
   const run = async () => {
-    await remix.call('fileManager', 'remove', 'browser/old_contract.sol')
+    await remix.call('fileManager', 'remove', 'old_contract.sol')
   }
 
   run()
@@ -201,7 +201,7 @@ const executeRemove = `
 
 const executeRemoveOnFolder = `(async () => {
   try {      
-      await remix.call('fileManager', 'remove', 'browser')
+      await remix.call('fileManager', 'remove', 'Test_Folder')
   } catch (e) {
       console.log(e.message)
   }

@@ -5,7 +5,7 @@ import sauce from './sauce'
 
 const sources = [
   {
-    'browser/basic.sol': {
+    'basic.sol': {
       content:
     `pragma solidity >=0.2.0 <0.7.0;
 
@@ -31,7 +31,7 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('fileExplorers')
-      .addFile('basic.sol', sources[0]['browser/basic.sol'])
+      .addFile('basic.sol', sources[0]['basic.sol'])
       .clickLaunchIcon('solidity')
       .execute(function () {
         const elem = document.getElementById('nightlies') as HTMLInputElement

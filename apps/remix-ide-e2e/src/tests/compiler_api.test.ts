@@ -6,7 +6,7 @@ import sauce from './sauce'
 import examples from '../examples/example-contracts'
 
 const sources = [
-  { 'browser/Untitled.sol': { content: examples.ballot.content } }
+  { 'Untitled.sol': { content: examples.ballot.content } }
 ]
 
 module.exports = {
@@ -24,6 +24,7 @@ module.exports = {
       .executeScript('remix.exeCurrent()')
       .pause(5000)
       .journalChildIncludes('"languageversion": "0.6.8+commit.0bbfe453"')
+      .click('*[data-id="terminalClearConsole"]')
   },
 
   'Should compile using "compileWithParamaters" API with optimization On': function (browser: NightwatchBrowser) {
@@ -32,6 +33,7 @@ module.exports = {
       .executeScript('remix.exeCurrent()')
       .pause(10000)
       .journalChildIncludes('\\"optimizer\\":{\\"enabled\\":true,\\"runs\\":300}')
+      .click('*[data-id="terminalClearConsole"]')
   },
 
   'Should compile using "compileWithParamaters" API with optimization off check default runs': function (browser: NightwatchBrowser) {
@@ -40,6 +42,7 @@ module.exports = {
       .executeScript('remix.exeCurrent()')
       .pause(10000)
       .journalChildIncludes('\\"optimizer\\":{\\"enabled\\":false,\\"runs\\":200}')
+      .click('*[data-id="terminalClearConsole"]')
   },
 
   'Should update the compiler configuration with "setCompilerConfig" API': function (browser: NightwatchBrowser) {
@@ -55,7 +58,7 @@ module.exports = {
   tearDown: sauce
 }
 
-const simpleContract = `pragma solidity >=0.4.22 <0.7.0;
+const simpleContract = `pragma solidity >=0.4.22 <0.8.1;
 
 /**
 * @title Storage

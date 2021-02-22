@@ -187,7 +187,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           const ret = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
           return ret
         } catch (e) {
-          debuggerModule.showMessage('Debugging error', 'Unable to fetch a transaction.')
+          // debuggerModule.showMessage('Debugging error', 'Unable to fetch a transaction.')
           console.error(e)
         }
         return null

@@ -49,15 +49,14 @@ module.exports = {
   'Should deploy contract on JavascriptVM': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('fileExplorers')
-      .addFile('Greet.sol', sources[0]['browser/Greet.sol'])
+      .addFile('Greet.sol', sources[0]['Greet.sol'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]', 45000)
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
-      .testFunction('0xcc391e151ace69f4cfb51cda42fb6c2e1092f28c8c2757af20b1aae5ec076ead', {
-        status: 'true Transaction mined and execution succeed',
-        'transaction hash': '0xcc391e151ace69f4cfb51cda42fb6c2e1092f28c8c2757af20b1aae5ec076ead'
+      .testFunction('last', {
+        status: 'true Transaction mined and execution succeed'
       })
   },
 
@@ -68,9 +67,8 @@ module.exports = {
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .pause(5000)
-      .testFunction('0xfe718871ee0b4d03cdcac0e12e5b164efaf7e23ba952c07db76e62692867019b', {
-        status: 'true Transaction mined and execution succeed',
-        'transaction hash': '0xfe718871ee0b4d03cdcac0e12e5b164efaf7e23ba952c07db76e62692867019b'
+      .testFunction('last', {
+        status: 'true Transaction mined and execution succeed'
       })
       .end()
   },
@@ -99,7 +97,7 @@ module.exports = {
   'Should deploy contract on Goerli Test Network using MetaMask': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('fileExplorers')
-      .openFile('browser/Greet.sol')
+      .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
@@ -151,7 +149,7 @@ module.exports = {
   'Should deploy contract on Ethereum Main Network using MetaMask': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('fileExplorers')
-      .openFile('browser/Greet.sol')
+      .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
@@ -205,7 +203,7 @@ module.exports = {
 
 const sources = [
   {
-    'browser/Greet.sol': {
+    'Greet.sol': {
       content:
       `
       pragma solidity ^0.8.0;

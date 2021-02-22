@@ -14,7 +14,8 @@ module.exports = {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
       .clickLaunchIcon('fileExplorers')
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-      .openFile('browser/contracts/1_Storage.sol')
+      .openFile('contracts')
+      .openFile('contracts/1_Storage.sol')
       .waitForElementVisible('*[data-id="editorInput"]')
       .checkElementStyle('*[data-id="editorInput"]', 'font-size', '12px')
       .click('*[data-id="tabProxyZoomIn"]')
@@ -89,7 +90,7 @@ module.exports = {
       .addFile('sourcehighlight.js', sourcehighlightScript)
       .addFile('removeSourcehighlightScript.js', removeSourcehighlightScript)
       .addFile('removeAllSourcehighlightScript.js', removeAllSourcehighlightScript)
-      .openFile('browser/sourcehighlight.js')
+      .openFile('sourcehighlight.js')
       .executeScript('remix.exeCurrent()')
       .editorScroll('down', 60)
       .waitForElementPresent('.highlightLine32')
@@ -101,26 +102,26 @@ module.exports = {
   },
 
   'Should remove 1 highlight from source code': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('li[data-id="treeViewLitreeViewItembrowser/removeSourcehighlightScript.js"]')
-      .click('li[data-id="treeViewLitreeViewItembrowser/removeSourcehighlightScript.js"]')
+    browser.waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveSourcehighlightScript.js"]')
+      .click('li[data-id="treeViewLitreeViewItemremoveSourcehighlightScript.js"]')
       .pause(2000)
       .executeScript('remix.exeCurrent()')
-      .waitForElementVisible('li[data-id="treeViewLitreeViewItembrowser/contracts"]')
-      .click('li[data-id="treeViewLitreeViewItembrowser/contracts"]')
-      .waitForElementVisible('li[data-id="treeViewLitreeViewItembrowser/contracts/3_Ballot.sol"]')
-      .click('li[data-id="treeViewLitreeViewItembrowser/contracts/3_Ballot.sol"]')
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts"]')
+      .click('li[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
+      .click('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .waitForElementNotPresent('.highlightLine32')
       .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
       .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
   },
 
   'Should remove all highlights from source code': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('li[data-id="treeViewLitreeViewItembrowser/removeAllSourcehighlightScript.js"]')
-      .click('li[data-id="treeViewLitreeViewItembrowser/removeAllSourcehighlightScript.js"]')
+    browser.waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
+      .click('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
       .pause(2000)
       .executeScript('remix.exeCurrent()')
-      .waitForElementVisible('li[data-id="treeViewLitreeViewItembrowser/contracts/3_Ballot.sol"]')
-      .click('li[data-id="treeViewLitreeViewItembrowser/contracts/3_Ballot.sol"]')
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
+      .click('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .pause(2000)
       .waitForElementNotPresent('.highlightLine32')
       .waitForElementNotPresent('.highlightLine40')
@@ -160,7 +161,7 @@ const sourcehighlightScript = {
                 column: 20
             }
         }
-        await remix.call('editor', 'highlight', pos, 'browser/contracts/3_Ballot.sol')
+        await remix.call('editor', 'highlight', pos, 'contracts/3_Ballot.sol')
         
          const pos2 = {
             start: {
@@ -172,7 +173,7 @@ const sourcehighlightScript = {
                 column: 20
             }
         }
-        await remix.call('editor', 'highlight', pos2, 'browser/contracts/3_Ballot.sol')
+        await remix.call('editor', 'highlight', pos2, 'contracts/3_Ballot.sol')
         
          const pos3 = {
             start: {
@@ -184,7 +185,7 @@ const sourcehighlightScript = {
                 column: 20
             }
         }
-        await remix.call('editor', 'highlight', pos3, 'browser/contracts/3_Ballot.sol')
+        await remix.call('editor', 'highlight', pos3, 'contracts/3_Ballot.sol')
     } catch (e) {
         console.log(e.message)
     }
@@ -196,7 +197,7 @@ const removeSourcehighlightScript = {
   content: `
   (async () => {
     try {
-        await remix.call('editor', 'discardHighlightAt', 32, 'browser/contracts/3_Ballot.sol')         
+        await remix.call('editor', 'discardHighlightAt', 32, 'contracts/3_Ballot.sol')         
     } catch (e) {
         console.log(e.message)
     }
