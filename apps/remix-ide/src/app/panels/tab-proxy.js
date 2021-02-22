@@ -4,6 +4,7 @@ const $ = require('jquery')
 const EventEmitter = require('events')
 const globalRegistry = require('../../global/registry')
 const csjs = require('csjs-inject')
+const helper = require('../../lib/helper')
 require('remix-tabs')
 
 const css = csjs`
@@ -192,7 +193,8 @@ export class TabProxy extends Plugin {
               id: duplicateTabName,
               title: duplicateTabTitle,
               icon,
-              tooltip: duplicateTabName
+              tooltip: duplicateTabName,
+              iconClass: helper.getPathIcon(duplicateTabName)
             })
           }
           break
@@ -209,7 +211,8 @@ export class TabProxy extends Plugin {
       id: name,
       title,
       icon,
-      tooltip: name
+      tooltip: name,
+      iconClass: helper.getPathIcon(name)
     })
     this.updateImgStyles()
     this._handlers[name] = { switchTo, close }
