@@ -17,8 +17,8 @@ module.exports = {
   'Should launch solidity unit test plugin': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
       .clickLaunchIcon('fileExplorers')
-      .addFile('simple_storage.sol', sources[0]['browser/simple_storage.sol'])
-      .addFile('ks2a.sol', sources[0]['browser/ks2a.sol'])
+      .addFile('simple_storage.sol', sources[0]['simple_storage.sol'])
+      .addFile('ks2a.sol', sources[0]['ks2a.sol'])
       .clickLaunchIcon('pluginManager')
       .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonsolidityUnitTesting"]')
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
@@ -29,20 +29,20 @@ module.exports = {
   'Should generate test file': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
       .clickLaunchIcon('fileExplorers')
-      .openFile('browser/simple_storage.sol')
+      .openFile('simple_storage.sol')
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
       .click('*[data-id="testTabGenerateTestFile"]')
-      .waitForElementPresent('*[title="browser/tests/simple_storage_test.sol"]')
+      .waitForElementPresent('*[title="tests/simple_storage_test.sol"]')
       .clickLaunchIcon('fileExplorers')
       .pause(10000)
-      .openFile('browser/tests/simple_storage_test.sol')
-      .removeFile('browser/tests/simple_storage_test.sol')
+      .openFile('tests/simple_storage_test.sol')
+      .removeFile('tests/simple_storage_test.sol')
   },
 
   'Should run simple unit test `simple_storage_test.sol` ': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-      .addFile('tests/simple_storage_test.sol', sources[0]['browser/tests/simple_storage_test.sol'])
+      .addFile('tests/simple_storage_test.sol', sources[0]['tests/simple_storage_test.sol'])
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
       .click('*[data-id="testTabCheckAllTests"]')
@@ -50,19 +50,19 @@ module.exports = {
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 80000)
       .pause(5000)
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'MyTest (browser/tests/simple_storage_test.sol)')
+      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'MyTest (/tests/simple_storage_test.sol)')
       .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Initial value should be100')
       .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Value is set200')
       .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Should fail for wrong value200')
       .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Passing: 2')
       .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Failing: 1')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAIL MyTest (browser/tests/simple_storage_test.sol)')
+      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAIL MyTest (/tests/simple_storage_test.sol)')
   },
 
   'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
       .clickLaunchIcon('fileExplorers')
-      .addFile('tests/ks2b_test.sol', sources[0]['browser/tests/ks2b_test.sol'])
+      .addFile('tests/ks2b_test.sol', sources[0]['tests/ks2b_test.sol'])
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
       .click('*[data-id="testTabCheckAllTests"]')
@@ -70,7 +70,7 @@ module.exports = {
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
       .pause(5000)
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/ks2b_test.sol')
+      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/ks2b_test.sol')
       .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Check project exists')
       .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong project owner')
       .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong sender')
@@ -93,18 +93,18 @@ module.exports = {
     // .pause(1000)
       .assert.containsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping')
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/ks2b_test.sol')
-      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/4_Ballot_test.sol')
-      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'browser/tests/simple_storage_test.sol')
+      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/ks2b_test.sol')
+      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/4_Ballot_test.sol')
+      .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/simple_storage_test.sol')
       .pause(7000)
       .assert.containsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped')
   },
 
   'Should fail on compilation': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-      .addFile('tests/compilationError_test.sol', sources[0]['browser/compilationError_test.sol'])
+      .addFile('tests/compilationError_test.sol', sources[0]['compilationError_test.sol'])
       .clickLaunchIcon('fileExplorers')
-      .openFile('browser/tests/compilationError_test.sol')
+      .openFile('tests/compilationError_test.sol')
       .clickLaunchIcon('solidityUnitTesting')
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 3)
@@ -117,9 +117,9 @@ module.exports = {
 
   'Should fail on deploy': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-      .addFile('tests/deployError_test.sol', sources[0]['browser/tests/deployError_test.sol'])
+      .addFile('tests/deployError_test.sol', sources[0]['tests/deployError_test.sol'])
       .clickLaunchIcon('fileExplorers')
-      .openFile('browser/tests/deployError_test.sol')
+      .openFile('tests/deployError_test.sol')
       .clickLaunchIcon('solidityUnitTesting')
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 4)
@@ -131,9 +131,9 @@ module.exports = {
 
   'Should fail when parameters are to method in test contract': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-      .addFile('tests/methodFailure_test.sol', sources[0]['browser/tests/methodFailure_test.sol'])
+      .addFile('tests/methodFailure_test.sol', sources[0]['tests/methodFailure_test.sol'])
       .clickLaunchIcon('fileExplorers')
-      .openFile('browser/tests/methodFailure_test.sol')
+      .openFile('tests/methodFailure_test.sol')
       .clickLaunchIcon('solidityUnitTesting')
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 5)
@@ -146,15 +146,15 @@ module.exports = {
   'Changing current path': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-      .addFile('myTests/simple_storage_test.sol', sources[0]['browser/tests/simple_storage_test.sol'])
+      .addFile('myTests/simple_storage_test.sol', sources[0]['tests/simple_storage_test.sol'])
       .clickLaunchIcon('solidityUnitTesting')
-      .setValue('*[data-id="uiPathInput"]', 'browser/myTests')
+      .setValue('*[data-id="uiPathInput"]', 'myTests')
       .clickElementAtPosition('.singleTestLabel', 0)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
       .clearValue('*[data-id="uiPathInput"]')
-      .setValue('*[data-id="uiPathInput"]', 'browser/tests')
+      .setValue('*[data-id="uiPathInput"]', 'tests')
   },
 
   'Solidity Unittests': function (browser: NightwatchBrowser) {
@@ -168,14 +168,14 @@ function runTests (browser: NightwatchBrowser) {
   browser
     .waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
     .clickLaunchIcon('fileExplorers')
-    .click('*[data-id="treeViewLitreeViewItembrowser/contracts"]')
-    .openFile('browser/contracts/3_Ballot.sol')
+    .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+    .openFile('contracts/3_Ballot.sol')
     .clickLaunchIcon('solidityUnitTesting')
     .pause(500)
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 10000)
-    .assert.containsText('#solidityUnittestsOutput', 'browser/tests/4_Ballot_test.sol')
+    .assert.containsText('#solidityUnittestsOutput', '/tests/4_Ballot_test.sol')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winning proposal')
     .assert.containsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value')
     .end()
@@ -183,7 +183,7 @@ function runTests (browser: NightwatchBrowser) {
 
 const sources = [
   {
-    'browser/simple_storage.sol': {
+    'simple_storage.sol': {
       content: `
       pragma solidity >=0.4.22 <0.9.0;
 
@@ -204,7 +204,7 @@ const sources = [
       }
         `
     },
-    'browser/tests/simple_storage_test.sol': {
+    'tests/simple_storage_test.sol': {
       content: `
       pragma solidity >=0.4.22 <0.9.0;
       import "remix_tests.sol";
@@ -233,7 +233,7 @@ const sources = [
       }
         `
     },
-    'browser/ks2a.sol': {
+    'ks2a.sol': {
       content: `
       pragma solidity >=0.4.22 <0.9.0;
       contract Kickstarter {
@@ -287,7 +287,7 @@ const sources = [
       }
         `
     },
-    'browser/tests/ks2b_test.sol': {
+    'tests/ks2b_test.sol': {
       content: `
       pragma solidity >=0.4.22 <0.9.0;
       pragma experimental ABIEncoderV2;
@@ -346,7 +346,7 @@ const sources = [
       }
         `
     },
-    'browser/compilationError_test.sol': {
+    'compilationError_test.sol': {
       content: `
       pragma solidity ^0.7.0;
       
@@ -357,7 +357,7 @@ const sources = [
       }
         `
     },
-    'browser/tests/deployError_test.sol': {
+    'tests/deployError_test.sol': {
       content: `
       pragma solidity ^0.7.0;
 
@@ -368,7 +368,7 @@ const sources = [
       }
         `
     },
-    'browser/tests/methodFailure_test.sol': {
+    'tests/methodFailure_test.sol': {
       content: `
       pragma solidity ^0.7.0;
 

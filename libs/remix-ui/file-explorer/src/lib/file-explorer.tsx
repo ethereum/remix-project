@@ -25,6 +25,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     focusPath: null,
     files: [],
     fileManager: null,
+    filesProvider,
     ctrlKey: false,
     newFileName: '',
     actions: [],
@@ -122,7 +123,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return { ...prevState, fileManager, files, actions }
       })
     })()
-  }, [])
+  }, [name])
 
   useEffect(() => {
     if (state.fileManager) {
@@ -219,7 +220,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [state.modals])
 
   const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
-    if (!isChild && (state.focusEdit.element === `${name}/blank`) && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === `${name}/blank`) === -1)) {
+    if (!isChild && (state.focusEdit.element === '/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === '/blank') === -1)) {
       dir = state.focusEdit.type === 'file' ? [...dir, {
         path: state.focusEdit.element,
         name: '',
@@ -261,20 +262,21 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return new Promise((resolve) => {
       filesProvider.resolveDirectory(folderPath, (error, fileTree) => {
         if (error) console.error(error)
-        const files = normalize(folderPath, fileTree)
+        const files = normalize(fileTree)
 
         resolve(files)
       })
     })
   }
 
-  const normalize = (path, filesList): File[] => {
+  const normalize = (filesList): File[] => {
     const folders = []
     const files = []
-    const prefix = path.split('/')[0]
 
     Object.keys(filesList || {}).forEach(key => {
-      const path = prefix + '/' + key
+      key = key.replace(/^\/|\/$/g, '') // remove first and last slash
+      let path = key
+      path = path.replace(/^\/|\/$/g, '') // remove first and last slash
 
       if (filesList[key].isDirectory) {
         folders.push({
@@ -533,7 +535,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
         fileReader.readAsText(file)
       }
-      const name = filesProvider.type + '/' + file.name
+      const name = file.name
 
       filesProvider.exists(name, (error, exist) => {
         if (error) console.log(error)
@@ -607,7 +609,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
 
     // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
-    const folder = id ? 'browser/gists/' + id : 'browser/'
+    const folder = id ? '/gists/' + id : '/'
 
     packageFiles(filesProvider, folder, async (error, packaged) => {
       if (error) {
@@ -809,7 +811,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }, null)
       } else {
         if (state.focusEdit.isNew) {
-          state.focusEdit.type === 'file' ? createNewFile(parentFolder + '/' + content) : createNewFolder(parentFolder + '/' + content)
+          state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
           const files = removePath(state.focusEdit.element, state.files)
           const updatedFiles = files.filter(file => file)
 
@@ -1099,4 +1101,10 @@ function packageFiles (filesProvider, directory, callback) {
       })
     }
   })
+}
+
+function joinPath (...paths) {
+  paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
+  if (paths.length === 1) return paths[0]
+  return paths.join('/')
 }

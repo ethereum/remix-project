@@ -12,7 +12,7 @@ module.exports = {
   },
 
   'Execute Simple Contract and Test Terminal': function (browser: NightwatchBrowser) {
-    browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'])
+    browser.testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TestContract'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
@@ -21,19 +21,17 @@ module.exports = {
       .click('#runTabView .instance div[class^="title"]')
       .click('#runTabView .instance div[class^="title"]')
       .clickFunction('f - transact (not payable)')
-      .testFunction('0x38bb944fa4709ed9e163d6c670259f97284b4defd916d512a2fcc3f35bb53e03',
+      .testFunction('last',
         {
           status: 'true Transaction mined and execution succeed',
-          'transaction hash': '0x38bb944fa4709ed9e163d6c670259f97284b4defd916d512a2fcc3f35bb53e03',
           'decoded output': { 0: 'uint256: 8' }
         })
       .pause(500)
       .checkTerminalFilter('0x12332162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92782', '')
       .clickFunction('g - transact (not payable)')
-      .testFunction('0xab4f794ca0b531f27fc6eace623666b440facbf20e77615a057d728c67b500f0',
+      .testFunction('last',
         {
           status: 'true Transaction mined and execution succeed',
-          'transaction hash': '0xab4f794ca0b531f27fc6eace623666b440facbf20e77615a057d728c67b500f0',
           'decoded output': {
             0: 'uint256: 345',
             1: 'string: comment_comment_',
@@ -45,16 +43,15 @@ module.exports = {
   },
 
   'Test Complex Return Values': function (browser: NightwatchBrowser) {
-    browser.testContracts('returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'])
+    browser.testContracts('returnValues.sol', sources[1]['returnValues.sol'], ['testReturnValues'])
       .clickLaunchIcon('udapp')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
       .click('.instance:nth-of-type(2) > div > button')
       .clickFunction('retunValues1 - transact (not payable)')
-      .testFunction('0x09c6716a67f0f8c7a0ca2b3ddf59c25982da856a95aefd640b767f9b9feee39d',
+      .testFunction('last',
         {
           status: 'true Transaction mined and execution succeed',
-          'transaction hash': '0x09c6716a67f0f8c7a0ca2b3ddf59c25982da856a95aefd640b767f9b9feee39d',
           'decoded output': {
             0: 'bool: _b true',
             1: 'uint256: _u 345',
@@ -63,10 +60,9 @@ module.exports = {
           }
         })
       .clickFunction('retunValues2 - transact (not payable)')
-      .testFunction('0xe884953e0695399d60914af3e1ea2dad59fe41f3c0c20665c130fa40dd0fb6bf',
+      .testFunction('last',
         {
           status: 'true Transaction mined and execution succeed',
-          'transaction hash': '0xe884953e0695399d60914af3e1ea2dad59fe41f3c0c20665c130fa40dd0fb6bf',
           'decoded output': {
             0: 'bytes1: _b 0x12',
             1: 'bytes2: _b2 0x1223',
@@ -81,10 +77,9 @@ module.exports = {
           }
         }).pause(500)
       .clickFunction('retunValues3 - transact (not payable)')
-      .testFunction('0xb4108649d5e65a4a0776d6ac98c2c356540a7e99d641705a82352a845d467eb5',
+      .testFunction('last',
         {
           status: 'true Transaction mined and execution succeed',
-          'transaction hash': '0xb4108649d5e65a4a0776d6ac98c2c356540a7e99d641705a82352a845d467eb5',
           'decoded output': {
             0: 'uint8: _en 2',
             1: 'int256[5][]: _a1 1,-45,-78,56,60,-1,42,334,-45455,-446,1,10,-5435,45,-7'
@@ -93,16 +88,15 @@ module.exports = {
   },
 
   'Test Complex Input Values': function (browser: NightwatchBrowser) {
-    browser.testContracts('inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'])
+    browser.testContracts('inputValues.sol', sources[2]['inputValues.sol'], ['test'])
       .clickLaunchIcon('udapp')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
       .click('.instance:nth-of-type(2) > div > button')
       .clickFunction('inputValue1 - transact (not payable)', { types: 'uint256 _u, int256 _i, string _str', values: '"2343242", "-4324324", "string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"' })
-      .testFunction('0xe9678b5486674a0425301a1d7e925c22cfb9f7f7ec6242697d742009f7ef5b97',
+      .testFunction('last',
         {
           status: 'true Transaction mined and execution succeed',
-          'transaction hash': '0xe9678b5486674a0425301a1d7e925c22cfb9f7f7ec6242697d742009f7ef5b97',
           'decoded output': {
             0: 'uint256: _uret 2343242',
             1: 'int256: _iret -4324324',
@@ -111,9 +105,8 @@ module.exports = {
         })
       .pause(500)
       .clickFunction('inputValue2 - transact (not payable)', { types: 'uint256[3] _n, bytes8[4] _b8', values: '[1,2,3], ["0x1234000000000000", "0x1234000000000000","0x1234000000000000","0x1234000000000000"]' })
-      .testFunction('0x21724b08c3699bda8375803f8dc842194aea370f2aac284e55144b452dca321f', {
+      .testFunction('last', {
         status: 'true Transaction mined and execution succeed',
-        'transaction hash': '0x21724b08c3699bda8375803f8dc842194aea370f2aac284e55144b452dca321f',
         'decoded output': {
           0: 'uint256[3]: _nret 1,2,3',
           1: 'bytes8[4]: _b8ret 0x1234000000000000,0x1234000000000000,0x1234000000000000,0x1234000000000000'
@@ -140,7 +133,7 @@ module.exports = {
   },
 
   'Should Compile and Deploy a contract which has an event declaring a function as parameter': function (browser: NightwatchBrowser) {
-    browser.testContracts('eventFunctionInput.sol', sources[3]['browser/eventFunctionInput.sol'], ['C'])
+    browser.testContracts('eventFunctionInput.sol', sources[3]['eventFunctionInput.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
@@ -155,7 +148,7 @@ module.exports = {
 
 const sources = [
   {
-    'browser/Untitled.sol': {
+    'Untitled.sol': {
       content: `
       contract TestContract { function f() public returns (uint) { return 8; }
       function g() public returns (uint, string memory, bool, uint) {
@@ -167,7 +160,7 @@ const sources = [
     }
   },
   {
-    'browser/returnValues.sol': {
+    'returnValues.sol': {
       content: `
   contract testReturnValues {
     enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }
@@ -202,7 +195,7 @@ const sources = [
     }
   },
   {
-    'browser/inputValues.sol': {
+    'inputValues.sol': {
       content: `
   contract test {
     event event1(int _i, uint indexed _u, string indexed _str, bytes4 _b, string _notIndexed);
@@ -221,7 +214,7 @@ const sources = [
   },
   // https://github.com/ethereum/remix-project/issues/404
   {
-    'browser/eventFunctionInput.sol': {
+    'eventFunctionInput.sol': {
       content: `
 pragma solidity >= 0.7.0;
 contract C {
