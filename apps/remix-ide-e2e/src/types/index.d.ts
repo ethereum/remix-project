@@ -55,6 +55,7 @@ declare module "nightwatch" {
         validateValueInput(selector: string, valueTosSet: string, expectedValue: string): NightwatchBrowser
         checkAnnotations(type: string, line: number): NightwatchBrowser
         checkAnnotationsNotPresent(type: string): NightwatchBrowser
+        getLastTransactionHash(callback: (hash: string) => void)
     }
 
     export interface NightwatchBrowser {

@@ -45,8 +45,8 @@ module.exports = {
   'Async/Await Script': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwait.js', { content: asyncAwait })
-      .openFile('browser/asyncAwait.js')
-      .executeScript('remix.execute(\'browser/asyncAwait.js\')')
+      .openFile('asyncAwait.js')
+      .executeScript('remix.execute(\'asyncAwait.js\')')
       .journalLastChild('Waiting Promise')
       .pause(5500)
       .journalLastChild('result - Promise Resolved')
@@ -55,9 +55,9 @@ module.exports = {
   'Call Remix File Manager from a script': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwaitWithFileManagerAccess.js', { content: asyncAwaitWithFileManagerAccess })
-      .openFile('browser/asyncAwaitWithFileManagerAccess.js')
+      .openFile('asyncAwaitWithFileManagerAccess.js')
       .pause(5000)
-      .executeScript('remix.execute(\'browser/asyncAwaitWithFileManagerAccess.js\')')
+      .executeScript('remix.execute(\'asyncAwaitWithFileManagerAccess.js\')')
       .pause(6000)
       .journalLastChildIncludes('contract Ballot {')
   },
@@ -86,21 +86,21 @@ module.exports = {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .addFile('resolveExternalUrlAndSave.js', { content: resolveExternalUrlAndSave })
-      .openFile('browser/resolveExternalUrlAndSave.js')
+      .openFile('resolveExternalUrlAndSave.js')
       .pause(1000)
-      .executeScript('remix.execute(\'browser/resolveExternalUrlAndSave.js\')')
+      .executeScript('remix.execute(\'resolveExternalUrlAndSave.js\')')
       .pause(6000)
       .journalLastChildIncludes('Implementation of the {IERC20} interface.')
-      .openFile('browser/github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol')
+      .openFile('github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol')
   },
 
   'Call Remix File Resolver (internal URL) from a script': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .addFile('resolveUrl.js', { content: resolveUrl })
-      .openFile('browser/resolveUrl.js')
+      .openFile('resolveUrl.js')
       .pause(1000)
-      .executeScript('remix.execute(\'browser/resolveUrl.js\')')
+      .executeScript('remix.execute(\'resolveUrl.js\')')
       .pause(6000)
       .journalLastChildIncludes('contract Ballot {')
   },
@@ -109,12 +109,12 @@ module.exports = {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .addFile('resolveExternalUrlAndSaveToaPath.js', { content: resolveExternalUrlAndSaveToaPath })
-      .openFile('browser/resolveExternalUrlAndSaveToaPath.js')
+      .openFile('resolveExternalUrlAndSaveToaPath.js')
       .pause(1000)
-      .executeScript('remix.execute(\'browser/resolveExternalUrlAndSaveToaPath.js\')')
+      .executeScript('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
       .pause(6000)
       .journalLastChildIncludes('abstract contract ERC20Burnable')
-      .openFile('browser/github/newFile.sol')
+      .openFile('github/newFile.sol')
       .end()
   },
 
@@ -151,7 +151,7 @@ const asyncAwaitWithFileManagerAccess = `
   var run = async () => {
     console.log('Waiting Promise')
     var result = await p()
-    let text = await remix.call('fileManager', 'readFile', 'browser/contracts/3_Ballot.sol')
+    let text = await remix.call('fileManager', 'readFile', 'contracts/3_Ballot.sol')
     console.log('result - ', text)
   }
 
@@ -184,7 +184,7 @@ const resolveUrl = `
 (async () => {
   try {
       console.log('start')
-      console.log(await remix.call('contentImport', 'resolveAndSave', 'browser/contracts/3_Ballot.sol'))
+      console.log(await remix.call('contentImport', 'resolveAndSave', 'contracts/3_Ballot.sol'))
   } catch (e) {
       console.log(e.message)
   }

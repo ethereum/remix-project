@@ -20,10 +20,10 @@ module.exports = {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
       .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/contracts"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/scripts"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/tests"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItembrowser/README.txt"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemscripts"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemtests"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemREADME.txt"]')
   },
 
   'Loads Main View': function (browser: NightwatchBrowser) {
@@ -61,19 +61,19 @@ module.exports = {
   'Toggles File Explorer Browser': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItembrowser/contracts"]')
-      .click('[data-path="browser"]')
-      .waitForElementNotPresent('[data-id="treeViewLitreeViewItembrowser/contracts"]')
-      .click('[data-path="browser"]')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItembrowser/contracts"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcontracts"]')
+      .click('[data-path="default_workspace"]')
+      .waitForElementNotPresent('[data-id="treeViewLitreeViewItemcontracts"]')
+      .click('[data-path="default_workspace"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcontracts"]')
   },
 
   'Switch Tabs using tabs icon': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-      .click('[data-id="treeViewLitreeViewItembrowser/contracts"]')
-      .openFile('browser/contracts/3_Ballot.sol')
-      .assert.containsText('div[title="browser/contracts/3_Ballot.sol"]', '3_Ballot.sol')
+      .click('[data-id="treeViewLitreeViewItemcontracts"]')
+      .openFile('contracts/3_Ballot.sol')
+      .assert.containsText('div[title="contracts/3_Ballot.sol"]', '3_Ballot.sol')
       .click('span[class^=dropdownCaret]')
       .click('#homeItem')
       .assert.containsText('div[title="home"]', 'Home')

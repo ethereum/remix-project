@@ -38,15 +38,10 @@ function removeFile (browser: NightwatchBrowser, path: string, done: VoidFunctio
       .click('#menuitemdelete')
       .pause(2000)
       .perform(() => {
-        if (path.indexOf('browser') !== -1) {
-          browser.waitForElementVisible('[data-id="browser-modal-footer-ok-react"]')
-            .click('[data-id="browser-modal-footer-ok-react"]')
-            .waitForElementNotPresent('[data-path="' + path + '"]')
-        } else if (path.indexOf('localhost') !== -1) {
-          browser.waitForElementVisible('[data-id="localhost-modal-footer-ok-react"]')
-            .click('[data-id="localhost-modal-footer-ok-react"]')
-            .waitForElementNotPresent('[data-path="' + path + '"]')
-        }
+        console.log(path, 'to remove')
+        browser.waitForElementVisible('.modal-ok')
+          .click('.modal-ok')
+          .waitForElementNotPresent('[data-path="' + path + '"]')
         done()
       })
   })

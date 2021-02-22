@@ -25,8 +25,8 @@ module.exports = {
         browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
         browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
       })
-      .addFile('signMassage.sol', sources[0]['browser/signMassage.sol'])
-      .openFile('browser/signMassage.sol')
+      .addFile('signMassage.sol', sources[0]['signMassage.sol'])
+      .openFile('signMassage.sol')
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('udapp')
@@ -57,7 +57,7 @@ module.exports = {
 
 const sources = [
   {
-    'browser/signMassage.sol': {
+    'signMassage.sol': {
       content: `
     pragma solidity >=0.4.22 <0.9.0;
     contract SignMassageTest {
