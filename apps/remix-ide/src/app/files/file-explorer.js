@@ -506,7 +506,7 @@ fileExplorer.prototype.toGist = function (id) {
   }
 
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
-  const folder = id ? 'browser/gists/' + id : 'browser/'
+  const folder = id ? '/gists/' + id : '/'
   this.packageFiles(this.files, folder, (error, packaged) => {
     if (error) {
       console.log(error)
@@ -596,7 +596,7 @@ fileExplorer.prototype.packageFiles = function (filesProvider, directory, callba
   })
 }
 
-fileExplorer.prototype.createNewFile = function (parentFolder = 'browser') {
+fileExplorer.prototype.createNewFile = function (parentFolder = '/') {
   const self = this
   modalDialogCustom.prompt('Create new file', 'File Name (e.g Untitled.sol)', 'Untitled.sol', (input) => {
     if (!input) input = 'New file'

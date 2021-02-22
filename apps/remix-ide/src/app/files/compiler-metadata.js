@@ -1,6 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import { joinPath } from '../../lib/helper'
 var CompilerAbstract = require('../compiler/compiler-abstract')
 
 const profile = {
@@ -21,11 +22,11 @@ class CompilerMetadata extends Plugin {
   }
 
   _JSONFileName (path, contractName) {
-    return path + '/' + this.innerPath + '/' + contractName + '.json'
+    return joinPath(path, this.innerPath, contractName + '.json')
   }
 
   _MetadataFileName (path, contractName) {
-    return path + '/' + this.innerPath + '/' + contractName + '_metadata' + '.json'
+    return joinPath(path, this.innerPath, contractName + '_metadata.json')
   }
 
   onActivation () {
@@ -33,9 +34,9 @@ class CompilerMetadata extends Plugin {
     this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
       if (!self.config.get('settings/generate-contract-metadata')) return
       const compiler = new CompilerAbstract(languageVersion, data, source)
-      var provider = self.fileManager.currentFileProvider()
-      var path = self.fileManager.currentPath()
-      if (provider && path) {
+      var provider = self.fileManager.fileProviderOf(source.target)
+      var path = self.fileManager.extractPathOf(source.target)
+      if (provider) {
         compiler.visitContracts((contract) => {
           if (contract.file !== source.target) return
 
@@ -117,7 +118,7 @@ class CompilerMetadata extends Plugin {
         path = this.fileManager.currentPath()
       }
 
-      if (provider && path) {
+      if (provider) {
         this.blockchain.detectNetwork((err, { id, name } = {}) => {
           if (err) {
             console.log(err)

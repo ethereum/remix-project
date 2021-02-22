@@ -5,7 +5,7 @@ const remixPath = require('path')
 class TestTabLogic {
   constructor (fileManager) {
     this.fileManager = fileManager
-    this.currentPath = 'browser/tests'
+    this.currentPath = '/tests'
   }
 
   setCurrentPath (path) {
