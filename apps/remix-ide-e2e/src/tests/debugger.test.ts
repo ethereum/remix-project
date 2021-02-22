@@ -167,7 +167,6 @@ module.exports = {
   'Should debug using generated sources': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
-      // .setSolidityCompilerVersion('soljson-v0.7.2+commit.51b20bc0.js')
       .pause(2000)
       .testContracts('withGeneratedSources.sol', sources[4]['browser/withGeneratedSources.sol'], ['A'])
       .clickLaunchIcon('udapp')
@@ -190,8 +189,8 @@ module.exports = {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScript('remix.exeCurrent()')
-      .pause(3000)
-      .journalChildIncludes('{ "gas": "0x2dc6c0", "return": "0x", "structLogs":')
+      .pause(5000)
+      .journalChildIncludes('result { "gas": "0x5863", "return": "0x0000000000000000000000000000000000000000000000000000000000000000", "structLogs":')
   },
 
   'Should call the debugger api: debug': function (browser: NightwatchBrowser) {
@@ -209,7 +208,7 @@ module.exports = {
       => There is something going wrong with the nightwatch API here.
       As we are only testing if debugger is active, this is ok to keep that for now.
     */
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n9')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n154')
       .end()
   },
 
@@ -372,7 +371,7 @@ const localVariable_step717_ABIEncoder = { // eslint-disable-line
 
 const jsGetTrace = `(async () => {
   try {
-      const result = await remix.call('debugger', 'getTrace', '0x84a147f7cb39628f7aa586c61ef6a899bcab71ed504b0229d5dd050dda5bd2ca')
+      const result = await remix.call('debugger', 'getTrace', '0x4c490499df52a3b5f238535a21c28ad35d261e2d53b80343ce78f59f5a63ec9e')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
@@ -381,7 +380,7 @@ const jsGetTrace = `(async () => {
 
 const jsDebug = `(async () => {    
   try {
-      const result = await remix.call('debugger', 'debug', '0xb175c3c9a9cd6bee3b6cc8be3369a945ac9611516005f8cba27a43486ff2bc50')
+      const result = await remix.call('debugger', 'debug', '0x4c490499df52a3b5f238535a21c28ad35d261e2d53b80343ce78f59f5a63ec9e')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
