@@ -155,7 +155,8 @@ module.exports = {
       .debugTransaction(6)
       .waitForElementVisible('*[data-id="slider"]')
       // .setValue('*[data-id="slider"]', '5000') // Like this, setValue doesn't work properly for input type = range
-      .execute(function () { document.getElementById('slider').value = '7450' }) // It only moves slider to 7450 but vm traces are not updated
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '7450' }) // It only moves slider to 7450 but vm traces are not updated
       .setValue('*[data-id="slider"]', new Array(3).fill(browser.Keys.RIGHT_ARROW)) // This will press NEXT 3 times and will update the trace details
       .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
       .click('*[data-id="treeViewDivtreeViewItemarray"]')
