@@ -18,7 +18,7 @@ import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import FetchAndCompile from './app/compiler/compiler-sourceVerifier-fetchAndCompile'
 
-import migrateFileSystem from './migrateFileSystem'
+import migrateFileSystem, { migrateToWorkspace } from './migrateFileSystem'
 
 var isElectron = require('is-electron')
 var csjs = require('csjs-inject')
@@ -28,14 +28,13 @@ var registry = require('./global/registry')
 var loadFileFromParent = require('./loadFilesFromParent')
 var { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
 var QueryParams = require('./lib/query-params')
-var GistHandler = require('./lib/gist-handler')
 var Storage = remixLib.Storage
 var RemixDProvider = require('./app/files/remixDProvider')
 var Config = require('./config')
-var examples = require('./app/editor/examples')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var FileManager = require('./app/files/fileManager')
 var FileProvider = require('./app/files/fileProvider')
+var WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 var toolTip = require('./app/ui/tooltip')
 var CompilerMetadata = require('./app/files/compiler-metadata')
 var CompilerImport = require('./app/compiler/compiler-imports')
@@ -145,6 +144,9 @@ class App {
     registry.put({ api: self._components.filesProviders.browser, name: 'fileproviders/browser' })
     self._components.filesProviders.localhost = new RemixDProvider(self.appManager)
     registry.put({ api: self._components.filesProviders.localhost, name: 'fileproviders/localhost' })
+    self._components.filesProviders.workspace = new WorkspaceFileProvider()
+    registry.put({ api: self._components.filesProviders.workspace, name: 'fileproviders/workspace' })
+
     registry.put({ api: self._components.filesProviders, name: 'fileproviders' })
 
     migrateFileSystem(self._components.filesProviders.browser)
@@ -438,20 +440,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // get the file list from the parent iframe
   loadFileFromParent(fileManager)
 
-  // get the file from gist
-  const gistHandler = new GistHandler()
-  const loadedFromGist = gistHandler.loadFromGist(params, fileManager)
-  if (!loadedFromGist) {
-    // insert example contracts if there are no files to show
-    self._components.filesProviders.browser.resolveDirectory('/', (error, filesList) => {
-      if (error) console.error(error)
-      if (Object.keys(filesList).length === 0) {
-        for (const file in examples) {
-          fileManager.writeFile(examples[file].name, examples[file].content)
-        }
-      }
-    })
-  }
+  migrateToWorkspace(fileManager)
+
+  filePanel.initWorkspace()
 
   if (params.code) {
     try {

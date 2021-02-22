@@ -130,13 +130,12 @@ class PluginLoader {
 
   constructor () {
     const queryParams = new QueryParams()
-    this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
+    this.donotAutoReload = ['remixd', 'git'] // that would be a bad practice to force loading some plugins at page load.
     this.loaders = {}
     this.loaders.localStorage = {
       set: (plugin, actives) => {
-        if (!this.donotAutoReload.includes(plugin.name)) {
-          localStorage.setItem('workspace', JSON.stringify(actives))
-        }
+        const saved = actives.filter((name) => !this.donotAutoReload.includes(name))
+        localStorage.setItem('workspace', JSON.stringify(saved))
       },
       get: () => { return JSON.parse(localStorage.getItem('workspace')) }
     }

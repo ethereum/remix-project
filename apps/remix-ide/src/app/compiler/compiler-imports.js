@@ -77,7 +77,7 @@ module.exports = class CompilerImports extends Plugin {
       }
       cb(null, content, cleanUrl, type, url)
     } catch (e) {
-      return cb('Unable to import url : ' + e.message)
+      return cb(new Error('not found ' + url))
     }
   }
 
@@ -88,9 +88,9 @@ module.exports = class CompilerImports extends Plugin {
       (error, content, cleanUrl, type, url) => {
         if (error) return cb(error)
         if (this.fileManager) {
-          const browser = this.fileManager.fileProviderOf('browser/')
+          const workspace = this.fileManager.getProvider('workspace')
           const path = targetPath || type + '/' + cleanUrl
-          if (browser) browser.addExternal(path, content, url)
+          if (workspace) workspace.addExternal(path, content, url)
         }
         cb(null, content)
       })
@@ -123,7 +123,6 @@ module.exports = class CompilerImports extends Plugin {
         }
         provider.exists(url, (error, exist) => {
           if (error) return reject(error)
-          if (!exist && provider.type === 'localhost') return reject(new Error(`not found ${url}`))
 
           /*
             if the path is absolute and the file does not exist, we can stop here
