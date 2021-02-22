@@ -1,4 +1,4 @@
-import { NightwatchBrowser } from "nightwatch"
+import { NightwatchBrowser } from 'nightwatch'
 
 const EventEmitter = require('events')
 
@@ -18,15 +18,15 @@ class SelectContract extends EventEmitter {
 function signMsg (browser: NightwatchBrowser, msg: string, cb: (hash: { value: string }, signature: { value: string }) => void) {
   let hash, signature
   browser
-      .waitForElementPresent('i[id="remixRunSignMsg"]')
-      .click('i[id="remixRunSignMsg"]')
-      .waitForElementVisible('textarea[id="prompt_text"]')
-      .setValue('textarea[id="prompt_text"]', msg, () => {
-        browser.modalFooterOKClick().perform(
-          (client, done) => {
-            browser.waitForElementVisible('span[id="remixRunSignMsgHash"]').getText('span[id="remixRunSignMsgHash"]', (v) => { hash = v; done() })
-          }
-        )
+    .waitForElementPresent('i[id="remixRunSignMsg"]')
+    .click('i[id="remixRunSignMsg"]')
+    .waitForElementVisible('textarea[id="prompt_text"]')
+    .setValue('textarea[id="prompt_text"]', msg, () => {
+      browser.modalFooterOKClick().perform(
+        (client, done) => {
+          browser.waitForElementVisible('span[id="remixRunSignMsgHash"]').getText('span[id="remixRunSignMsgHash"]', (v) => { hash = v; done() })
+        }
+      )
         .perform(
           (client, done) => {
             browser.waitForElementVisible('span[id="remixRunSignMsgSignature"]').getText('span[id="remixRunSignMsgSignature"]', (v) => { signature = v; done() })
@@ -38,7 +38,7 @@ function signMsg (browser: NightwatchBrowser, msg: string, cb: (hash: { value: s
             cb(hash, signature)
           }
         )
-      })
+    })
 }
 
 module.exports = SelectContract

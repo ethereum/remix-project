@@ -1,5 +1,5 @@
 'use strict'
-import { NightwatchBrowser } from "nightwatch"
+import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import sauce from './sauce'
 
@@ -21,20 +21,20 @@ const gmbhTestContract = `contract gmbh {
 `
 const sources = [
   {
-    'localhost/folder1/contract2.sol': {content: 'contract test2 { function get () public returns (uint) { return 11; }}'}
+    'localhost/folder1/contract2.sol': { content: 'contract test2 { function get () public returns (uint) { return 11; }}' }
   },
   {
-    'localhost/src/gmbh/company.sol': {content: assetsTestContract}
+    'localhost/src/gmbh/company.sol': { content: assetsTestContract }
   },
   {
-    'localhost/src/gmbh/company.sol': {content: assetsTestContract},
-    'localhost/src/gmbh/contract.sol': {content: gmbhTestContract}
+    'localhost/src/gmbh/company.sol': { content: assetsTestContract },
+    'localhost/src/gmbh/contract.sol': { content: gmbhTestContract }
   },
   {
-    'browser/test_import_node_modules.sol': {content: 'import "openzeppelin-solidity/contracts/math/SafeMath.sol";'}
+    'browser/test_import_node_modules.sol': { content: 'import "openzeppelin-solidity/contracts/math/SafeMath.sol";' }
   },
   {
-    'browser/test_import_node_modules_with_github_import.sol': {content: 'import "openzeppelin-solidity/contracts/sample.sol";'}
+    'browser/test_import_node_modules_with_github_import.sol': { content: 'import "openzeppelin-solidity/contracts/sample.sol";' }
   }
 ]
 
@@ -47,7 +47,7 @@ module.exports = {
     return sources
   },
 
-  'Remixd': function (browser) {
+  Remixd: function (browser) {
     runTests(browser)
   },
   'Import from node_modules ': function (browser) {
@@ -57,32 +57,32 @@ module.exports = {
     */
 
     browser.waitForElementVisible('#icon-panel', 2000)
-    .clickLaunchIcon('fileExplorers')
-    .addFile('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'])
-    .clickLaunchIcon('solidity')
-    .testContracts('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'], ['SafeMath'])
+      .clickLaunchIcon('fileExplorers')
+      .addFile('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'])
+      .clickLaunchIcon('solidity')
+      .testContracts('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'], ['SafeMath'])
   },
   'Import from node_modules and reference a github import': function (browser) {
     browser.waitForElementVisible('#icon-panel', 2000)
-    .clickLaunchIcon('fileExplorers')
-    .addFile('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'])
-    .clickLaunchIcon('solidity')
-    .setSolidityCompilerVersion('soljson-v0.6.2+commit.bacdbe57.js') // open-zeppelin moved to pragma ^0.6.0
-    .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
-    },
+      .clickLaunchIcon('fileExplorers')
+      .addFile('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'])
+      .clickLaunchIcon('solidity')
+      .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0
+      .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
+  },
 
   'Run git status': function (browser) {
     browser
-    .executeScript('git status')
-    .pause(3000)
-    .journalLastChildIncludes('On branch ')
+      .executeScript('git status')
+      .pause(3000)
+      .journalLastChildIncludes('On branch ')
   },
 
   'Close Remixd': function (browser) {
     browser
-    .clickLaunchIcon('pluginManager')
-    .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
-    .end()
+      .clickLaunchIcon('pluginManager')
+      .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
+      .end()
   },
   tearDown: sauce
 }

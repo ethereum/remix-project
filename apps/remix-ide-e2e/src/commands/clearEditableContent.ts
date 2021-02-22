@@ -23,7 +23,7 @@ function clearContent (browser: NightwatchBrowser, cssSelector: string, callback
     selection.addRange(range)
   }, [cssSelector], function () {
     browser.sendKeys(cssSelector, browser.Keys.BACK_SPACE)
-    .pause(5000)
+      .pause(5000)
     callback()
   })
 }

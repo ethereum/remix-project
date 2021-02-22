@@ -15,13 +15,13 @@ class ClickElement extends EventEmitter {
 
 function _clickElement (browser: NightwatchBrowser, cssSelector: string, index: number, cb: VoidFunction) {
   browser.waitForElementPresent(cssSelector)
-  .execute(function (cssSelector: string, index: number) {
-    const elem = document.querySelectorAll(cssSelector)[index] as HTMLElement
-    
-    elem.click()
-  }, [cssSelector, index], function () {
-    cb()
-  })
+    .execute(function (cssSelector: string, index: number) {
+      const elem = document.querySelectorAll(cssSelector)[index] as HTMLElement
+
+      elem.click()
+    }, [cssSelector, index], function () {
+      cb()
+    })
 }
 
 module.exports = ClickElement

@@ -15,6 +15,7 @@ const copyToClipboard = require('../ui/copy-to-clipboard')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const parseContracts = require('./compileTab/contractParser')
 const addTooltip = require('../ui/tooltip')
+const Renderer = require('../ui/renderer')
 const globalRegistry = require('../../global/registry')
 
 var css = require('./styles/compile-tab-styles')
@@ -41,7 +42,7 @@ const profile = {
 // - methods: ['getCompilationResult']
 
 class CompileTab extends ViewPlugin {
-  constructor (editor, config, renderer, fileProvider, fileManager, contentImport) {
+  constructor (editor, config, fileProvider, fileManager, contentImport) {
     super(profile)
     this.events = new EventEmitter()
     this._view = {
@@ -56,7 +57,7 @@ class CompileTab extends ViewPlugin {
     // dependencies
     this.editor = editor
     this.config = config
-    this.renderer = renderer
+    this.renderer = new Renderer(this)
     this.fileManager = fileManager
 
     this.data = {
@@ -67,7 +68,12 @@ class CompileTab extends ViewPlugin {
   }
 
   onActivationInternal () {
-    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProvider, this.contentImport)
+    const miscApi = {
+      clearAnnotations: () => {
+        this.call('editor', 'clearAnnotations')
+      }
+    }
+    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProvider, this.contentImport, miscApi)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
 

@@ -10,10 +10,11 @@ var globlalRegistry = require('../../global/registry')
  * TODO: This don't need to be an object anymore. Simplify and just export the renderError function.
  *
  */
-function Renderer (localRegistry) {
+function Renderer (service) {
   const self = this
+  self.service = service
   self._components = {}
-  self._components.registry = localRegistry || globlalRegistry
+  self._components.registry = globlalRegistry
   // dependencies
   self._deps = {
     fileManager: self._components.registry.get('filemanager').api,
@@ -26,9 +27,8 @@ function Renderer (localRegistry) {
 
 Renderer.prototype._error = function (file, error) {
   const self = this
-  const editor = self._components.registry.get('editor').api
   if (file === self._deps.config.get('currentFile')) {
-    editor.addAnnotation(error)
+    self.service.call('editor', 'addAnnotation', error, file)
   }
 }
 

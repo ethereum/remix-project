@@ -1,5 +1,5 @@
 import { NightwatchBrowser } from 'nightwatch'
-import EventEmitter from "events"
+import EventEmitter from 'events'
 
 class VerifyCallReturnValue extends EventEmitter {
   command (this: NightwatchBrowser, address: string, checks: string[]): NightwatchBrowser {

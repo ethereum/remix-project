@@ -32,7 +32,6 @@ var GistHandler = require('./lib/gist-handler')
 var Storage = remixLib.Storage
 var RemixDProvider = require('./app/files/remixDProvider')
 var Config = require('./config')
-var Renderer = require('./app/ui/renderer')
 var examples = require('./app/editor/examples')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var FileManager = require('./app/files/fileManager')
@@ -42,7 +41,6 @@ var CompilerMetadata = require('./app/files/compiler-metadata')
 var CompilerImport = require('./app/compiler/compiler-imports')
 
 const Blockchain = require('./blockchain/blockchain.js')
-const PluginUDapp = require('./blockchain/pluginUDapp.js')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
@@ -257,7 +255,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const contentImport = new CompilerImport(fileManager)
 
   const blockchain = new Blockchain(registry.get('config').api)
-  const pluginUdapp = new PluginUDapp(blockchain)
 
   // ----------------- compilation metadata generation service ---------
   const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
@@ -352,14 +349,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const compileTab = new CompileTab(
     editor,
     registry.get('config').api,
-    new Renderer(),
     registry.get('fileproviders/browser').api,
     registry.get('filemanager').api,
     contentImport
   )
   const run = new RunTab(
     blockchain,
-    pluginUdapp,
     registry.get('config').api,
     registry.get('filemanager').api,
     registry.get('editor').api,
@@ -377,7 +372,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel,
     compileTab,
     appManager,
-    new Renderer(),
     contentImport
   )
 
@@ -390,6 +384,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel.remixdHandle,
     filePanel.gitHandle
   ])
+
+  if (isElectron()) {
+    appManager.activatePlugin('remixd')
+  }
 
   try {
     engine.register(await appManager.registeredPlugins())
@@ -455,9 +453,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     })
   }
 
-  if (isElectron()) {
-    appManager.activatePlugin('remixd')
+  if (params.code) {
+    try {
+      const path = 'browser/.code-sample/contract.sol'
+      await fileManager.writeFile(path, atob(params.code))
+      await fileManager.openFile(path)
+    } catch (e) {
+      console.error(e)
+    }
   }
-
   if (params.embed) framingService.embed()
 }

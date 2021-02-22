@@ -1,12 +1,12 @@
-import { default as category } from './categories'
+import category from './categories'
 import { isThisLocalCall, getCompilerVersion } from './staticAnalysisCommon'
-import { default as algorithm } from './algorithmCategories'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, SupportedVersion} from './../../types'
+import algorithm from './algorithmCategories'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, MemberAccessAstNode, SupportedVersion } from './../../types'
 
 export default class thisLocal implements AnalyzerModule {
   warningNodes: MemberAccessAstNode[] = []
-  name = `This on local calls: `
-  description = `Invocation of local functions via 'this'`
+  name = 'This on local calls: '
+  description = 'Invocation of local functions via \'this\''
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
@@ -22,7 +22,7 @@ export default class thisLocal implements AnalyzerModule {
     const version = getCompilerVersion(compilationResults.contracts)
     return this.warningNodes.map(function (item, i) {
       return {
-        warning: `Use of "this" for local functions: Never use "this" to call functions in the same contract, it only consumes more gas than normal local calls.`,
+        warning: 'Use of "this" for local functions: Never use "this" to call functions in the same contract, it only consumes more gas than normal local calls.',
         location: item.src,
         more: `https://solidity.readthedocs.io/en/${version}/control-structures.html#external-function-calls`
       }

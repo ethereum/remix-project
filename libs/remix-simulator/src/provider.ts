@@ -1,6 +1,5 @@
 import { Blocks } from './methods/blocks'
 import { execution } from '@remix-project/remix-lib'
-const { executionContext } = execution
 
 import { info } from './utils/logs'
 import merge from 'merge'
@@ -12,6 +11,7 @@ import { methods as netMethods } from './methods/net'
 import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
 import { generateBlock } from './genesis'
+const { executionContext } = execution
 
 export class Provider {
   options: Record<string, unknown>
@@ -79,13 +79,13 @@ export class Provider {
   isConnected () {
     return true
   }
-   
+
   disconnect () {
     return false
   };
 
   supportsSubscriptions () {
-      return true;
+    return true
   };
 
   on (type, cb) {

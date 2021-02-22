@@ -1,5 +1,5 @@
 import { NightwatchBrowser } from 'nightwatch'
-import EventEmitter from "events"
+import EventEmitter from 'events'
 
 class ScrollInto extends EventEmitter {
   command (this: NightwatchBrowser, target: string): NightwatchBrowser {
@@ -15,7 +15,7 @@ class ScrollInto extends EventEmitter {
 
 function _scrollInto (browser: NightwatchBrowser, target: string, cb: VoidFunction): void {
   browser.execute(function (target) {
-    document.querySelector(target).scrollIntoView(({block: 'center'}))
+    document.querySelector(target).scrollIntoView(({ block: 'center' }))
   }, [target], function () {
     cb()
   })

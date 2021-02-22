@@ -2,49 +2,59 @@
 [![CircleCI](https://circleci.com/gh/ethereum/remix-project.svg?style=svg)](https://circleci.com/gh/ethereum/remix-project)
 [![Documentation Status](https://readthedocs.org/projects/docs/badge/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
 
-# Remix
+# Remix Project
 
-Remix is a browser-based compiler and IDE that enables users to build **Ethereum contracts with Solidity language** and to debug transactions.
+**Remix Project** is a platform for development tools that use a plugin architecture. It encompasses sub-projects including Remix Plugin Engine, Remix Libraries, and of course Remix IDE.
 
-To try it out, visit [https://remix.ethereum.org](https://remix.ethereum.org).
+**Remix IDE** is an open source web and desktop application. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs. Remix is used for the **entire journey of contract development with [Solidity language](https://soliditylang.org/)** in as well as being a playground for learning and teaching Ethereum.
 
-https://github.com/ethereum/remix-project/releases also gives others ways to use Remix locally. Please check it out.
+To try web app, visit: [https://remix.ethereum.org](https://remix.ethereum.org).
 
-Remix consists of many modules and in this repository you will find Remix related apps, libs and plugins. (remix-ide, remix-analyzer, etc.).
+For desktop version, See releases: [https://github.com/ethereum/remix-desktop/releases](https://github.com/ethereum/remix-desktop/releases)
 
 ![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix_screenshot.png)
 
+**Remix libraries** work as a core of native plugins of Remix IDE. Read more about libraries [here](libs/README.md)
+
 ## Offline Usage
 
-The `gh-pages` branch has always the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.
+The `master` branch has always the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.
 
 Note: It contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.
 
 
-## INSTALLATION:
+## Setup
 
-Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/installing-node), then
+Install **npm** and **node.js** (see https://docs.npmjs.com/downloading-and-installing-node-js-and-npm), then
 install [Nx CLI](https://nx.dev/react/cli/overview) globally to enable running **nx executable commands**.
 ```bash
 npm install -g @nrwl/cli
 ```
 
-clone the github repository (`wget` need to be installed first) :
+Clone the github repository (`wget` need to be installed first):
 
 ```bash
 git clone https://github.com/ethereum/remix-project.git
+```
 
+And build it:
+```bash
 cd remix-project
 npm install
 nx build remix-ide --with-deps
 nx serve
 ```
 
+Run `nx serve` and open `http://127.0.0.1:8080` in your browser.
+
+Then open your `text editor` and start developing.
+The browser will automatically refresh when files are saved.
+
 ## Docker:
 
 Prerequisites: 
 * Docker (https://docs.docker.com/desktop/)
-* Docker-compose (https://docs.docker.com/compose/install/)
+* Docker Compose (https://docs.docker.com/compose/install/)
 
 ### Run with docker
 
@@ -74,21 +84,12 @@ Then go to http://localhost:8080 and you can use you Remix instance.
 
 To fetch docker-compose file without cloning this repo run:
 ```
-curl https://raw.githubusercontent.com/ethereum/remix-ide/master/docker-compose.yaml > docker-compose.yaml
+curl https://raw.githubusercontent.com/ethereum/remix-project/master/docker-compose.yaml > docker-compose.yaml
 ```
-
-## DEVELOPING:
-
-Run `nx serve` and open `http://127.0.0.1:8080` in your browser.
-
-Then open your `text editor` and start developing.
-The browser will automatically refresh when files are saved.
 
 ### Troubleshooting building
 
-Some things to consider if you have trouble building the package:
-
-- Make sure that you have the correct version of `node`, `npm` and `nvm`. Also ensure you have [Nx CLI](https://nx.dev/react/cli/overview) installed globally. You can find the version that is tested on Travis CI by looking at the log in the [build results](https://travis-ci.org/ethereum/remix-ide).
+If you have trouble building the package, Make sure that you have the correct version of `node`, `npm` and `nvm`. Also ensure you have [Nx CLI](https://nx.dev/react/cli/overview) installed globally.
 
 Run:
 
@@ -98,7 +99,7 @@ npm --version
 nvm --version
 ```
 
-- In Debian based OS such as Ubuntu 14.04LTS you may need to run `apt-get install build-essential`. After installing `build-essential` run `npm rebuild`.
+In Debian based OS such as Ubuntu 14.04LTS you may need to run `apt-get install build-essential`. After installing `build-essential`, run `npm rebuild`.
 
 ## Unit Testing
 
@@ -183,6 +184,9 @@ To run the Selenium tests via Nightwatch:
 **note that this token should have permission to create a gist.**
 
 
-## Documentation
+## Important Links
 
-To see details about how to use Remix for developing and/or debugging Solidity contracts, please see [our documentation page](https://remix-ide.readthedocs.io/en/latest/)
+- Official documentation: https://remix-ide.readthedocs.io/en/latest/
+- Curated list of Remix resources, tutorials etc.: https://github.com/ethereum/awesome-remix
+- Medium: https://medium.com/remix-ide
+- Twitter: https://twitter.com/ethereumremix

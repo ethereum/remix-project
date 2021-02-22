@@ -1,6 +1,6 @@
 import publishToStorage from '../../../publishToStorage'
-
 const yo = require('yo-yo')
+const ethJSUtil = require('ethereumjs-util')
 const css = require('../styles/run-tab-styles')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const remixLib = require('@remix-project/remix-lib')
@@ -97,7 +97,8 @@ class ContractDropdownUI {
 
   enableAtAddress (enable) {
     if (enable) {
-      if (this.atAddressButtonInput.value === '') return
+      const address = this.atAddressButtonInput.value
+      if (!address || !ethJSUtil.isValidChecksumAddress(address)) return
       this.atAddress.removeAttribute('disabled')
       this.atAddress.setAttribute('title', 'Interact with the given contract.')
     } else {
@@ -201,7 +202,10 @@ class ContractDropdownUI {
       this.selectContractNames.style.display = 'none'
       this.enableContractNames(true)
       this.enableAtAddress(true)
-    } else if (/.(.sol)$/.exec(currentFile)) {
+    } else if (/.(.sol)$/.exec(currentFile) ||
+        /.(.vy)$/.exec(currentFile) || // vyper
+        /.(.lex)$/.exec(currentFile) || // lexon
+        /.(.contract)$/.exec(currentFile)) {
       this.createPanel.style.display = 'block'
       this.orLabel.style.display = 'block'
       this.contractNamesContainer.style.display = 'block'

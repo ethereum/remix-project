@@ -97,7 +97,7 @@ export class DebuggerStepManager {
     if (!this.traceManager.inRange(step)) {
       return
     }
-    this.event.trigger('stepChanged', [step])
+    this.triggerStepChanged(step)
   }
 
   stepIntoForward (solidityMode) {
@@ -110,7 +110,7 @@ export class DebuggerStepManager {
     if (!this.traceManager.inRange(step)) {
       return
     }
-    this.event.trigger('stepChanged', [step])
+    this.triggerStepChanged(step)
   }
 
   stepOverBack (solidityMode) {
@@ -120,7 +120,7 @@ export class DebuggerStepManager {
       step = this.resolveToReducedTrace(step, -1)
     }
     this.currentStepIndex = step
-    this.event.trigger('stepChanged', [step])
+    this.triggerStepChanged(step)
   }
 
   stepOverForward (solidityMode) {
@@ -135,7 +135,7 @@ export class DebuggerStepManager {
       step = this.resolveToReducedTrace(step, 1)
     }
     this.currentStepIndex = step
-    this.event.trigger('stepChanged', [step])
+    this.triggerStepChanged(step)
   }
 
   jumpOut (solidityMode) {
@@ -145,13 +145,13 @@ export class DebuggerStepManager {
       step = this.resolveToReducedTrace(step, 0)
     }
     this.currentStepIndex = step
-    this.event.trigger('stepChanged', [step])
+    this.triggerStepChanged(step)
   }
 
   jumpTo (step) {
     if (!this.traceManager.inRange(step)) return
     this.currentStepIndex = step
-    this.event.trigger('stepChanged', [step])
+    this.triggerStepChanged(step)
   }
 
   jumpToException () {

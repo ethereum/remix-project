@@ -1,12 +1,12 @@
-import { default as category } from './categories'
+import category from './categories'
 import { isStatement, isSelfdestructCall } from './staticAnalysisCommon'
-import { default as algorithm } from './algorithmCategories'
-import  AbstractAst from './abstractAstView'
-import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VisitFunction, ReportFunction, SupportedVersion} from './../../types'
+import algorithm from './algorithmCategories'
+import AbstractAst from './abstractAstView'
+import { AnalyzerModule, ModuleAlgorithm, ModuleCategory, ReportObj, ContractHLAst, VisitFunction, ReportFunction, SupportedVersion } from './../../types'
 
 export default class selfdestruct implements AnalyzerModule {
-  name = `Selfdestruct: `
-  description = `Contracts using destructed contract can be broken`
+  name = 'Selfdestruct: '
+  description = 'Contracts using destructed contract can be broken'
   category: ModuleCategory = category.SECURITY
   algorithm: ModuleAlgorithm = algorithm.HEURISTIC
   version: SupportedVersion = {
@@ -16,7 +16,7 @@ export default class selfdestruct implements AnalyzerModule {
   abstractAst: AbstractAst = new AbstractAst()
 
   visit: VisitFunction = this.abstractAst.build_visit(
-    (node: any) => isStatement(node) || (node.nodeType=== 'FunctionCall' && isSelfdestructCall(node))
+    (node: any) => isStatement(node) || (node.nodeType === 'FunctionCall' && isSelfdestructCall(node))
   )
 
   report: ReportFunction = this.abstractAst.build_report(this._report.bind(this))
@@ -30,7 +30,7 @@ export default class selfdestruct implements AnalyzerModule {
         func.relevantNodes.forEach((node) => {
           if (isSelfdestructCall(node)) {
             warnings.push({
-              warning: `Use of selfdestruct: Can block calling contracts unexpectedly. Be especially careful if this contract is planned to be used by other contracts (i.e. library contracts, interactions). Selfdestruction of the callee contract can leave callers in an inoperable state.`,
+              warning: 'Use of selfdestruct: Can block calling contracts unexpectedly. Be especially careful if this contract is planned to be used by other contracts (i.e. library contracts, interactions). Selfdestruction of the callee contract can leave callers in an inoperable state.',
               location: node.src,
               more: 'https://paritytech.io/blog/security-alert.html'
             })
@@ -38,7 +38,7 @@ export default class selfdestruct implements AnalyzerModule {
           }
           if (isStatement(node) && hasSelf) {
             warnings.push({
-              warning: `Use of selfdestruct: No code after selfdestruct is executed. Selfdestruct is a terminal.`,
+              warning: 'Use of selfdestruct: No code after selfdestruct is executed. Selfdestruct is a terminal.',
               location: node.src,
               more: `https://solidity.readthedocs.io/en/${version}/introduction-to-smart-contracts.html#deactivate-and-self-destruct`
             })
