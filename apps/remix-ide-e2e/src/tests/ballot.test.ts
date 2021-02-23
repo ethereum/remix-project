@@ -20,8 +20,6 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('solidity')
-      .clickLaunchIcon('udapp')
-      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 105000)
       .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
