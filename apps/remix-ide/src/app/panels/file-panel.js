@@ -58,10 +58,12 @@ module.exports = class Filepanel extends ViewPlugin {
       fileManager: this._components.registry.get('filemanager').api,
       config: this._components.registry.get('config').api
     }
-    this.LOCALHOST = '<Connect Localhost>'
+    this.LOCALHOST = ' - connect to localhost - '
+    this.NO_WORKSPACE = ' - none - '
     this.hideRemixdExplorer = true
     this.remixdExplorer = {
       hide: () => {
+        if (this.currentWorkspace === this.LOCALHOST) this.setWorkspace(this.NO_WORKSPACE)        
         this._deps.fileManager.setMode('browser')
         this.hideRemixdExplorer = true
         this.renderComponent()
@@ -102,6 +104,11 @@ module.exports = class Filepanel extends ViewPlugin {
 
     this.currentWorkspace = null
 
+    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+    this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, fileTree) => {
+      if (error) return console.error(error)
+      this.setWorkspace(Object.keys(fileTree)[0].replace(workspacesPath + '/', ''))
+    })
     this.renderComponent()
   }
 
@@ -146,16 +153,16 @@ module.exports = class Filepanel extends ViewPlugin {
       if (error) console.error(error)
       const items = fileTree
       items[this.LOCALHOST] = { isLocalHost: true }
+      items[this.NO_WORKSPACE] = { isNone: true }
       ReactDOM.render(
         (
           Object.keys(items)
-            .filter((item) => fileTree[item].isDirectory || fileTree[item].isLocalHost)
+            .filter((item) => fileTree[item].isDirectory || fileTree[item].isLocalHost || fileTree[item].isNone)
             .map((folder) => {
               folder = folder.replace(workspacesPath + '/', '')
               return <option selected={this.currentWorkspace === folder} value={folder}>{folder}</option>
             })), document.getElementById('workspacesSelect')
       )
-      if (!this.currentWorkspace) this.setWorkspace(Object.keys(fileTree)[0].replace(workspacesPath + '/', ''))
     })
   }
 
@@ -188,16 +195,20 @@ module.exports = class Filepanel extends ViewPlugin {
     return this.el
   }
 
-  setWorkspace (name) {
+  async setWorkspace (name) {
     this._deps.fileManager.removeTabsOf(this._deps.fileProviders.workspace)
     this.currentWorkspace = name
     if (name === this.LOCALHOST) {
+      this._deps.fileProviders.workspace.clearWorkspace()
       this.call('manager', 'activatePlugin', 'remixd')
+    } else if (name === this.NO_WORKSPACE) {
+      this._deps.fileProviders.workspace.clearWorkspace()
     } else {
       this._deps.fileProviders.workspace.setWorkspace(name)
+    }
+    if (name !== this.LOCALHOST && await this.call('manager', 'isActive', 'remixd')) {
       this.call('manager', 'deactivatePlugin', 'remixd')
     }
-    // TODO remove the opened tabs from the previous workspace
     this.renderComponent()
   }
 
@@ -244,6 +255,7 @@ module.exports = class Filepanel extends ViewPlugin {
       const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
       this._deps.fileProviders.browser.remove(workspacesPath + '/' + this.currentWorkspace)
       this.currentWorkspace = null
+      this.setWorkspace(this.NO_WORKSPACE)
       this.renderComponent()
     })
   }
@@ -300,7 +312,7 @@ module.exports = class Filepanel extends ViewPlugin {
           <div className='remixui_fileExplorerTree'>
             <div>
               <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
-                { this.hideRemixdExplorer && this.currentWorkspace &&
+                { this.hideRemixdExplorer && this.currentWorkspace && this.currentWorkspace !== this.NO_WORKSPACE &&
                   <FileExplorer
                     name={this.currentWorkspace}
                     registry={this._components.registry}
