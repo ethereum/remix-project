@@ -79,9 +79,6 @@ module.exports = {
   'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js')
-      .pause(2000)
-      .clickLaunchIcon('udapp')
       .testContracts('externalImport.sol', sources[1]['browser/externalImport.sol'], ['ERC20'])
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 35000)
@@ -110,7 +107,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.6.12+commit.27d51765.js')
       .clickLaunchIcon('fileExplorers')
-      .click('li[data-id="treeViewLitreeViewItembrowser/externalImport.sol"')
+      .click('li[data-id="treeViewLitreeViewItembrowser/withABIEncoderV2.sol"')
       .testContracts('withABIEncoderV2.sol', sources[2]['browser/withABIEncoderV2.sol'], ['test'])
       .clickLaunchIcon('udapp')
       .selectContract('test')
@@ -372,7 +369,7 @@ const localVariable_step717_ABIEncoder = { // eslint-disable-line
 
 const jsGetTrace = `(async () => {
   try {
-      const result = await remix.call('debugger', 'getTrace', '0x4c490499df52a3b5f238535a21c28ad35d261e2d53b80343ce78f59f5a63ec9e')
+      const result = await remix.call('debugger', 'getTrace', '0xbf309c0d71579d595f04a42e89d66d1ec17523dd3edea710b03f46a9b82ee0af')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
@@ -381,7 +378,7 @@ const jsGetTrace = `(async () => {
 
 const jsDebug = `(async () => {    
   try {
-      const result = await remix.call('debugger', 'debug', '0x4c490499df52a3b5f238535a21c28ad35d261e2d53b80343ce78f59f5a63ec9e')
+      const result = await remix.call('debugger', 'debug', '0xbf309c0d71579d595f04a42e89d66d1ec17523dd3edea710b03f46a9b82ee0af')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
