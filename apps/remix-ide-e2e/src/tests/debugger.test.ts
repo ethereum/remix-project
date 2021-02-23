@@ -40,7 +40,6 @@ module.exports = {
   'Should debug transaction using slider': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementVisible('*[data-id="slider"]')
-      .click('*[data-id="slider"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.getElementById('slider')['value'] = '50' }) // It only moves slider to 50 but vm traces are not updated
       .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
@@ -200,8 +199,9 @@ module.exports = {
       .pause(3000)
       .clickLaunchIcon('debugger')
       .waitForElementVisible('*[data-id="slider"]')
-      .click('*[data-id="slider"]')
-      .setValue('*[data-id="slider"]', '5')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '153' }) // It only moves slider to 153 but vm traces are not updated
+      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
       .pause(1000)
     /*
       setting the slider to 5 leads to "vm trace step: 91" for chrome and "vm trace step: 92" for firefox
