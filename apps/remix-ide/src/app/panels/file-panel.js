@@ -63,7 +63,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.hideRemixdExplorer = true
     this.remixdExplorer = {
       hide: () => {
-        if (this.currentWorkspace === this.LOCALHOST) this.setWorkspace(this.NO_WORKSPACE)        
+        if (this.currentWorkspace === this.LOCALHOST) this.setWorkspace(this.NO_WORKSPACE)
         this._deps.fileManager.setMode('browser')
         this.hideRemixdExplorer = true
         this.renderComponent()
