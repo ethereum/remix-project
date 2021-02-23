@@ -218,10 +218,8 @@ module.exports = class Filepanel extends ViewPlugin {
   renameWorkspace () {
     modalDialog.prompt('Rename Workspace', 'Please choose a name for the workspace', this.currentWorkspace, async (value) => {
       const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-      await this._deps.fileManager.rename('browser/' + workspacesPath + '/' + this.currentWorkspace, 'browser/workspaces/' + value)
-      setTimeout(async () => {
-        this.setWorkspace(value)
-      }, 2000)
+      await this._deps.fileManager.rename('browser/' + workspacesPath + '/' + this.currentWorkspace, 'browser/' + workspacesPath + '/' + value)
+      this.setWorkspace(value)
     })
   }
 
