@@ -5,6 +5,7 @@ import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './styles/file-panel-styles.css'
+var ethutil = require('ethereumjs-util')
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 var { RemixdHandle } = require('../files/remixd-handle.js')
@@ -104,27 +105,38 @@ module.exports = class Filepanel extends ViewPlugin {
     this.renderComponent()
   }
 
-  initWorkspace () {
+  async initWorkspace () {
+    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
     const queryParams = new QueryParams()
     const params = queryParams.get()
     // get the file from gist
     const gistHandler = new GistHandler()
     const loadedFromGist = gistHandler.loadFromGist(params, this._deps.fileManager)
-    if (!loadedFromGist) {
-      // insert example contracts if there are no files to show
-      this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
-        if (error) console.error(error)
-        if (Object.keys(filesList).length === 0) {
-          const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-          for (const file in examples) {
-            await this._deps.fileManager.writeFile('browser/' + workspacesPath + '/default_workspace/' + examples[file].name, examples[file].content)
-          }
-          this.setWorkspace('default_workspace')
-        }
-      })
-    } else {
-      this.setWorkspace('gists')
+    if (loadedFromGist) return
+    if (params.code) {
+      try {
+        await this._deps.fileManager.createWorkspace('code-sample')
+        var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
+        const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
+        const path = 'browser/' + workspacesPath + '/code-sample/' + fileName
+        await this._deps.fileManager.writeFile(path, atob(params.code))
+        this.setWorkspace('code-sample')
+        await this._deps.fileManager.openFile(path)
+      } catch (e) {
+        console.error(e)
+      }
+      return
     }
+    // insert example contracts if there are no files to show
+    this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
+      if (error) console.error(error)
+      if (Object.keys(filesList).length === 0) {
+        for (const file in examples) {
+          await this._deps.fileManager.writeFile('browser/' + workspacesPath + '/default_workspace/' + examples[file].name, examples[file].content)
+        }
+        this.setWorkspace('default_workspace')
+      }
+    })
   }
 
   refreshWorkspacesList () {
