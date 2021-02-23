@@ -13,6 +13,10 @@ class WorkspaceFileProvider extends FileProvider {
     this.workspace = workspace
   }
 
+  clearWorkspace () {
+    this.workspace = null
+  }
+
   removePrefix (path) {
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
