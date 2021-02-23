@@ -266,7 +266,7 @@ module.exports = class Filepanel extends ViewPlugin {
         <div className='remixui_fileexplorer' onClick={() => this.resetFocus(true)}>
           <div>
             <header>
-              <div class="mb-2">
+              <div className="mb-2">
                 <label className="form-check-label" htmlFor="workspacesSelect">
                 Workspaces
                 </label>
