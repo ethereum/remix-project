@@ -240,11 +240,9 @@ module.exports = class Filepanel extends ViewPlugin {
       const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
       this._deps.fileProviders.browser.createDir(workspacesPath + '/' + value, async () => {
         this.setWorkspace(value)
-        setTimeout(async () => {
-          for (const file in examples) {
-            await this._deps.fileManager.writeFile(`${examples[file].name}`, examples[file].content)
-          }
-        }, 2000)
+        for (const file in examples) {
+          await this._deps.fileManager.writeFile(`${examples[file].name}`, examples[file].content)
+        }
       })
     })
   }
