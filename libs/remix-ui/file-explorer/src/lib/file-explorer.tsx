@@ -120,7 +120,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }]
 
       setState(prevState => {
-        return { ...prevState, fileManager, files, actions }
+        return { ...prevState, fileManager, files, actions, expandPath: [name] }
       })
     })()
   }, [name])
