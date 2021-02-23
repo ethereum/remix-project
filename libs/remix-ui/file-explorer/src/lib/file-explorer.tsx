@@ -1022,6 +1022,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     <div>
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
+          controlBehaviour={true}
           label={
             <div onClick={(e) => {
               e.stopPropagation()
@@ -1038,7 +1039,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               plugin.resetFocus(true)
             }}>
               <FileExplorerMenu
-                title={name}
+                title={''}
                 menuItems={props.menuItems}
                 createNewFile={handleNewFileInput}
                 createNewFolder={handleNewFolderInput}
@@ -1048,7 +1049,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               />
             </div>
           }
-          expand={state.expandPath.includes(props.name)}>
+          expand={true}>
           <div className='pb-2'>
             <TreeView id='treeViewMenu'>
               {
