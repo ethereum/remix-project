@@ -19,7 +19,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const { filesProvider, name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads } = props
   const [state, setState] = useState({
     focusElement: [{
-      key: name,
+      key: '',
       type: 'folder'
     }],
     focusPath: null,
