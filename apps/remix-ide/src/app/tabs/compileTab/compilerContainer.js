@@ -481,7 +481,7 @@ class CompilerContainer {
         <div>
           <b>Old compiler usage detected.</b>
           <p>You are using a compiler older than v0.4.12.</p>
-          <p>Some Functionallity may not work.</p>
+          <p>Some functionality may not work.</p>
         </div>`
       )
     }
