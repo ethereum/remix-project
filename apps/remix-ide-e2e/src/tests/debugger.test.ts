@@ -41,11 +41,13 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementVisible('*[data-id="slider"]')
       .click('*[data-id="slider"]')
-      .setValue('*[data-id="slider"]', '50')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '50' }) // It only moves slider to 50 but vm traces are not updated
+      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
       .pause(2000)
       .click('*[data-id="dropdownPanelSolidityLocals"]')
       .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n173')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n51')
   },
 
   'Should step back and forward transaction': function (browser: NightwatchBrowser) {
@@ -53,12 +55,12 @@ module.exports = {
       .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
       .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
       .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n172')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n172')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n50')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n50')
       .click('*[data-id="buttonNavigatorIntoForward"]')
       .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n173')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n173')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n51')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n51')
   },
 
   'Should jump through breakpoints': function (browser: NightwatchBrowser) {
