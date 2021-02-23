@@ -280,7 +280,7 @@ module.exports = class Filepanel extends ViewPlugin {
                     title='Create a new Workspace'>
                   </span>
                   <span
-                    hidden={this.currentWorkspace === this.LOCALHOST}
+                    hidden={this.currentWorkspace === this.LOCALHOST || this.currentWorkspace === this.NO_WORKSPACE}
                     id='workspaceRename'
                     data-id='workspaceRename'
                     onClick={(e) => {
@@ -291,7 +291,7 @@ module.exports = class Filepanel extends ViewPlugin {
                     title='Rename current Workspace'>
                   </span>
                   <span
-                    hidden={this.currentWorkspace === this.LOCALHOST}
+                    hidden={this.currentWorkspace === this.LOCALHOST || this.currentWorkspace === this.NO_WORKSPACE}
                     id='workspaceDelete'
                     data-id='workspaceDelete'
                     onClick={(e) => {
