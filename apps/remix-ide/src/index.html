@@ -34,18 +34,26 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<!-- Matomo -->
 		<script type="text/javascript">
-			var _paq = window._paq = window._paq || []
-			/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-			_paq.push(['disableCookies']);
-			_paq.push(['enableLinkTracking']);
-			_paq.push(['trackPageView']);
-			(function() {
-				var u="https://matomo.ethereum.org/";
-				_paq.push(['setTrackerUrl', u+'matomo.php'])
-				_paq.push(['setSiteId', '27'])
-				var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]
-				g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s)
-			})()
+			if (window.location.hostname.includes('remix')) {
+				var _paq = window._paq = window._paq || []
+				/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+				_paq.push(['disableCookies']);
+				_paq.push(['enableLinkTracking']);
+				_paq.push(['trackPageView']);
+				(function() {
+					var u="https://matomo.ethereum.org/";
+					_paq.push(['setTrackerUrl', u+'matomo.php'])
+					if (window.location.hostname === 'remix.ethereum.org') {
+						_paq.push(['setSiteId', '23'])
+					} else if (window.location.hostname === 'remix-alpha.ethereum.org') {
+						_paq.push(['setSiteId', '27'])
+					} else if (window.location.hostname === 'remix-beta.ethereum.org') {
+						_paq.push(['setSiteId', '25'])
+					}
+					var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]
+					g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s)
+				})()
+			}
 		</script>
 		<!-- End Matomo Code -->
 	</head>
@@ -70,8 +78,8 @@
 				}
 				return params
 			}
-	const defaultVersion = '0.8.0'
-        let versionToLoad = urlParams().appVersion ? urlParams().appVersion : defaultVersion
+			const defaultVersion = '0.8.0'
+			let versionToLoad = urlParams().appVersion ? urlParams().appVersion : defaultVersion
                 
 			let assets = {
 				'0.8.0': ['https://use.fontawesome.com/releases/v5.8.1/css/all.css', 'assets/css/pygment_trac.css'],
