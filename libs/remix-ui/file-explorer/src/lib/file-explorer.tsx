@@ -166,7 +166,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   useEffect(() => {
     if (focusRoot) {
       setState(prevState => {
-        return { ...prevState, focusElement: [{ key: name, type: 'folder' }] }
+        return { ...prevState, focusElement: [{ key: '', type: 'folder' }] }
       })
       plugin.resetFocus(false)
     }
