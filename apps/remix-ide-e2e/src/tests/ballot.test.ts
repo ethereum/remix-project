@@ -20,6 +20,8 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('solidity')
+      .clickLaunchIcon('udapp')
+      .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 105000)
       .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
@@ -40,7 +42,7 @@ module.exports = {
     browser.pause(500)
       .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
       .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-      .clickLaunchIcon('debugger')
+      // .clickLaunchIcon('debugger')
       .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .pause(2000)
       .waitForElementVisible('#stepdetail')
