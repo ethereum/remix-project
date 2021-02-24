@@ -26,8 +26,6 @@ export interface WorkspaceProps {
 }
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
-
-export const Workspace = (props: WorkspaceProps) => {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
 
@@ -233,12 +231,17 @@ export const Workspace = (props: WorkspaceProps) => {
       if (error) console.error(error)
       if (Object.keys(filesList).length === 0) {
         for (const file in props.examples) {
+          try {
           await props.fileManager.writeFile('browser/' + workspacesPath + '/default_workspace/' + props.examples[file].name, props.examples[file].content)
+          } catch (error) {
+            console.error(error)
+          }
         }
         setWorkspace('default_workspace')
       } else {
         // we've already got some workspaces
         const workspaces = await getWorkspaces()
+
         if (workspaces.length) setWorkspace(workspaces[0])
         else setWorkspace(NO_WORKSPACE)
       }
