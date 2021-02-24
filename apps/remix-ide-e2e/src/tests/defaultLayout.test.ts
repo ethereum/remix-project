@@ -58,16 +58,6 @@ module.exports = {
       .assert.visible('div[data-id="terminalContainerDisplay"]')
   },
 
-  'Toggles File Explorer Browser': function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcontracts"]')
-      .click('[data-path="default_workspace"]')
-      .waitForElementNotPresent('[data-id="treeViewLitreeViewItemcontracts"]')
-      .click('[data-path="default_workspace"]')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcontracts"]')
-  },
-
   'Switch Tabs using tabs icon': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
