@@ -1,1 +1,1 @@
-export * from './lib/remix-ui-solidity-compiler';
+export * from './lib/solidity-compiler'
