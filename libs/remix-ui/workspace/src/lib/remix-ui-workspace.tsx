@@ -26,6 +26,7 @@ export interface WorkspaceProps {
 }
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
+export const Workspace = (props: WorkspaceProps) => {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
 
