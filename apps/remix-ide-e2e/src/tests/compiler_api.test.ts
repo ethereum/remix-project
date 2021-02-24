@@ -58,7 +58,7 @@ module.exports = {
   tearDown: sauce
 }
 
-const simpleContract = `pragma solidity >=0.4.22 <0.8.1;
+const simpleContract = `pragma solidity >=0.4.22 <0.9.1;
 
 /**
 * @title Storage
