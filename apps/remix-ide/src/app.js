@@ -354,10 +354,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   //if (window.location.hostname.includes('.ethereum.org')) {
     modalDialog(
       'Help as to improve our IDE!',
-      yo `<div>
+      yo`<div>
         >p>Remix IDE uses Matomo ( https://matomo.org/ ), an open source data analytics software to improve the use of our website.</p>
         <p>All data collected through Matomo is stored at our own server - no data is given to third parties.</p>
         <p>We do not store any personally identifiable information (PII).</p>
+        <p>You can always change your choice from Settings</p>
       </div>`,
       {
         label: "I'am in",
