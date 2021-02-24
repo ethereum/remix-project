@@ -38,8 +38,8 @@ var canUpload = window.File || window.FileReader || window.FileList || window.Bl
 const profile = {
   name: 'fileExplorers',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile'],
-  events: [],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace'],
+  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
   kind: 'fileexplorer',
@@ -146,24 +146,18 @@ module.exports = class Filepanel extends ViewPlugin {
     })
   }
 
-  refreshWorkspacesList () {
+  async refreshWorkspacesList () {
     if (!document.getElementById('workspacesSelect')) return
-    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-    this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, fileTree) => {
-      if (error) console.error(error)
-      const items = fileTree
-      items[this.LOCALHOST] = { isLocalHost: true }
-      items[this.NO_WORKSPACE] = { isNone: true }
-      ReactDOM.render(
-        (
-          Object.keys(items)
-            .filter((item) => fileTree[item].isDirectory || fileTree[item].isLocalHost || fileTree[item].isNone)
-            .map((folder) => {
-              folder = folder.replace(workspacesPath + '/', '')
-              return <option selected={this.currentWorkspace === folder} value={folder}>{folder}</option>
-            })), document.getElementById('workspacesSelect')
-      )
-    })
+    const workspaces = await this.getWorkspaces()
+    workspaces.push(this.LOCALHOST)
+    workspaces.push(this.NO_WORKSPACE)
+    ReactDOM.render(
+      (
+        workspaces
+          .map((folder) => {
+            return <option selected={this.currentWorkspace === folder} value={folder}>{folder}</option>
+          })), document.getElementById('workspacesSelect')
+    )
   }
 
   resetFocus (value) {
@@ -195,6 +189,22 @@ module.exports = class Filepanel extends ViewPlugin {
     return this.el
   }
 
+  getWorkspaces () {
+    return new Promise((resolve, reject) => {
+      const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+      this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
+        if (error) return reject(error)
+        resolve(Object.keys(items)
+          .filter((item) => items[item].isDirectory)
+          .map((folder) => folder.replace(workspacesPath + '/', '')))
+      })
+    })
+  }
+
+  getCurrentWorkspace () {
+    return this.currentWorkspace
+  }
+
   async setWorkspace (name) {
     this._deps.fileManager.removeTabsOf(this._deps.fileProviders.workspace)
     this.currentWorkspace = name
@@ -210,6 +220,7 @@ module.exports = class Filepanel extends ViewPlugin {
       this.call('manager', 'deactivatePlugin', 'remixd')
     }
     this.renderComponent()
+    this.emit('setWorkspace', { name })
   }
 
   /**
@@ -231,19 +242,23 @@ module.exports = class Filepanel extends ViewPlugin {
       const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
       await this._deps.fileManager.rename('browser/' + workspacesPath + '/' + this.currentWorkspace, 'browser/' + workspacesPath + '/' + value)
       this.setWorkspace(value)
+      this.emit('renameWorkspace', { name: value })
     })
   }
 
-  async createWorkspace () {
-    const workspace = `workspace_${Date.now()}`
-    modalDialog.prompt('New Workspace', 'Please choose a name for the workspace', workspace, (value) => {
-      const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-      this._deps.fileProviders.browser.createDir(workspacesPath + '/' + value, async () => {
-        this.setWorkspace(value)
-        for (const file in examples) {
-          await this._deps.fileManager.writeFile(`${examples[file].name}`, examples[file].content)
-        }
-      })
+  createWorkspace () {
+    return new Promise((resolve, reject) => {
+      const workspace = `workspace_${Date.now()}`
+      modalDialog.prompt('New Workspace', 'Please choose a name for the workspace', workspace, (value) => {
+        const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+        this._deps.fileProviders.browser.createDir(workspacesPath + '/' + value, async () => {
+          this.setWorkspace(value)
+          for (const file in examples) {
+            await this._deps.fileManager.writeFile(`${examples[file].name}`, examples[file].content)
+          }
+          resolve(value)
+        })
+      }, () => reject(new Error('workspace creation rejected by user')))
     })
   }
 
@@ -252,9 +267,11 @@ module.exports = class Filepanel extends ViewPlugin {
     modalDialog.confirm('Delete Workspace', 'Please confirm workspace deletion', () => {
       const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
       this._deps.fileProviders.browser.remove(workspacesPath + '/' + this.currentWorkspace)
+      const name = this.currentWorkspace
       this.currentWorkspace = null
       this.setWorkspace(this.NO_WORKSPACE)
       this.renderComponent()
+      this.emit('deleteWorkspace', { name })
     })
   }
 
