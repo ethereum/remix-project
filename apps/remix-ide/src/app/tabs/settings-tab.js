@@ -11,7 +11,7 @@ const _paq = window._paq = window._paq || []
 const profile = {
   name: 'settings',
   displayName: 'Settings',
-  methods: ['getGithubAccessToken'],
+  methods: ['getGithubAccessToken', 'updateMatomoAnalyticsChoice'],
   events: [],
   icon: 'assets/img/settings.webp',
   description: 'Remix-IDE settings',
@@ -256,5 +256,10 @@ module.exports = class SettingsTab extends ViewPlugin {
 
   getGithubAccessToken () {
     return this.config.get('settings/gist-access-token')
+  }
+
+  updateMatomoAnalyticsChoice (isChecked) {
+    this.config.set('settings/matomo-analytics', isChecked)
+    this._view.useMatomoAnalytics.setAttribute('checked', isChecked ? 'checked' : '')
   }
 }
