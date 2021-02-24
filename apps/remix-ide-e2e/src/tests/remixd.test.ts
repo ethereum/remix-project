@@ -31,10 +31,10 @@ const sources = [
     'localhost/src/gmbh/contract.sol': { content: gmbhTestContract }
   },
   {
-    'browser/test_import_node_modules.sol': { content: 'import "openzeppelin-solidity/contracts/math/SafeMath.sol";' }
+    'test_import_node_modules.sol': { content: 'import "openzeppelin-solidity/contracts/math/SafeMath.sol";' }
   },
   {
-    'browser/test_import_node_modules_with_github_import.sol': { content: 'import "openzeppelin-solidity/contracts/sample.sol";' }
+    'test_import_node_modules_with_github_import.sol': { content: 'import "openzeppelin-solidity/contracts/sample.sol";' }
   }
 ]
 
@@ -57,18 +57,20 @@ module.exports = {
     */
 
     browser.waitForElementVisible('#icon-panel', 2000)
-      .clickLaunchIcon('fileExplorers')
-      .addFile('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'])
+      // .clickLaunchIcon('fileExplorers')
+      .click('[data-path="ballot.sol"]')
+      .addFile('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'])
       .clickLaunchIcon('solidity')
-      .testContracts('test_import_node_modules.sol', sources[3]['browser/test_import_node_modules.sol'], ['SafeMath'])
+      .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
+      .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
   },
   'Import from node_modules and reference a github import': function (browser) {
     browser.waitForElementVisible('#icon-panel', 2000)
       .clickLaunchIcon('fileExplorers')
-      .addFile('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'])
+      .addFile('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'])
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0
-      .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['browser/test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
+      .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
 
   'Run git status': function (browser) {
@@ -104,48 +106,48 @@ function runTests (browser: NightwatchBrowser) {
     .pause(2000)
     .click('#modal-footer-ok')
     .clickLaunchIcon('fileExplorers')
-    .waitForElementVisible('[data-path="localhost/folder1"]')
-    .click('[data-path="localhost/folder1"]')
-    .waitForElementVisible('[data-path="localhost/contract1.sol"]')
-    .assert.containsText('[data-path="localhost/contract1.sol"]', 'contract1.sol')
-    .assert.containsText('[data-path="localhost/contract2.sol"]', 'contract2.sol')
-    .waitForElementVisible('[data-path="localhost/folder1/contract1.sol"]')
-    .assert.containsText('[data-path="localhost/folder1/contract1.sol"]', 'contract1.sol')
-    .assert.containsText('[data-path="localhost/folder1/contract2.sol"]', 'contract2.sol') // load and test sub folder
-    .click('[data-path="localhost/folder1/contract2.sol"]')
-    .click('[data-path="localhost/folder1/contract1.sol"]') // open localhost/folder1/contract1.sol
+    .waitForElementVisible('[data-path="folder1"]')
+    .click('[data-path="folder1"]')
+    .waitForElementVisible('[data-path="contract1.sol"]')
+    .assert.containsText('[data-path="contract1.sol"]', 'contract1.sol')
+    .assert.containsText('[data-path="contract2.sol"]', 'contract2.sol')
+    .waitForElementVisible('[data-path="folder1/contract1.sol"]')
+    .assert.containsText('[data-path="folder1/contract1.sol"]', 'contract1.sol')
+    .assert.containsText('[data-path="folder1/contract2.sol"]', 'contract2.sol') // load and test sub folder
+    .click('[data-path="folder1/contract2.sol"]')
+    .click('[data-path="folder1/contract1.sol"]') // open localhost/folder1/contract1.sol
     .pause(1000)
     .testEditorValue('contract test1 { function get () returns (uint) { return 10; }}') // check the content and replace by another
     .setEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .setEditorValue('contract test1 { function get () returns (uint) { return 10; }}')
-    .click('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // rename a file and check
+    .click('[data-path="folder1/contract_' + browserName + '.sol"]') // rename a file and check
     .pause(1000)
-    .renamePath('localhost/folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol', 'localhost/folder1/renamed_contract_' + browserName + '.sol')
+    .renamePath('folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol', 'folder1/renamed_contract_' + browserName + '.sol')
     .pause(1000)
-    .removeFile('localhost/folder1/contract_' + browserName + '_toremove.sol')
+    .removeFile('folder1/contract_' + browserName + '_toremove.sol')
     .perform(function (done) {
       testImportFromRemixd(browser, () => { done() })
     })
     .clickLaunchIcon('fileExplorers')
-    .waitForElementVisible('[data-path="localhost/folder1"]')
-    .click('[data-path="localhost/folder1"]')
-    .click('[data-path="localhost/folder1"]') // click twice because remixd does not return nested folder details after update
-    .waitForElementVisible('[data-path="localhost/folder1/contract1.sol"]')
-    .waitForElementVisible('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]') // check if renamed file is preset
-    .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // check if renamed (old) file is not present
-    .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '_toremove.sol"]') // check if removed (old) file is not present
-    .click('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]')
+    .waitForElementVisible('[data-path="folder1"]')
+    .click('[data-path="folder1"]')
+    .click('[data-path="folder1"]') // click twice because remixd does not return nested folder details after update
+    .waitForElementVisible('[data-path="folder1/contract1.sol"]')
+    .waitForElementVisible('[data-path="folder1/renamed_contract_' + browserName + '.sol"]') // check if renamed file is preset
+    .waitForElementNotPresent('[data-path="folder1/contract_' + browserName + '.sol"]') // check if renamed (old) file is not present
+    .waitForElementNotPresent('[data-path="folder1/contract_' + browserName + '_toremove.sol"]') // check if removed (old) file is not present
+    // .click('[data-path="folder1/renamed_contract_' + browserName + '.sol"]')
 }
 
 function testImportFromRemixd (browser: NightwatchBrowser, callback: VoidFunction) {
   browser
-    .waitForElementVisible('[data-path="localhost/src"]', 100000)
-    .click('[data-path="localhost/src"]')
-    .waitForElementVisible('[data-path="localhost/src/gmbh"]', 100000)
-    .click('[data-path="localhost/src/gmbh"]')
-    .waitForElementVisible('[data-path="localhost/src/gmbh/company.sol"]', 100000)
-    .click('[data-path="localhost/src/gmbh/company.sol"]')
+    .waitForElementVisible('[data-path="src"]', 100000)
+    .click('[data-path="src"]')
+    .waitForElementVisible('[data-path="src/gmbh"]', 100000)
+    .click('[data-path="src/gmbh"]')
+    .waitForElementVisible('[data-path="src/gmbh/company.sol"]', 100000)
+    .click('[data-path="src/gmbh/company.sol"]')
     .pause(1000)
     .verifyContracts(['Assets', 'gmbh'])
     .perform(() => { callback() })
