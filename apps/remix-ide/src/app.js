@@ -486,6 +486,5 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   migrateToWorkspace(fileManager)
 
-  filePanel.initWorkspace()
   if (params.embed) framingService.embed()
 }

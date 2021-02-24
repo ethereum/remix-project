@@ -347,7 +347,11 @@
             "linter": "eslint",
             "config": "libs/remix-tests/.eslintrc",
             "tsConfig": ["libs/remix-tests/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "libs/remix-tests/tests/**/*", "**/dist/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "libs/remix-tests/tests/**/*",
+              "**/dist/**"
+            ]
           }
         },
         "test": {
@@ -702,6 +706,22 @@
           "options": {
             "tsConfig": ["apps/debugger/tsconfig.app.json"],
             "exclude": ["**/node_modules/**", "!apps/debugger/**/*"]
+          }
+        }
+      }
+    },
+    "remix-ui-workspace": {
+      "root": "libs/remix-ui/workspace",
+      "sourceRoot": "libs/remix-ui/workspace/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/workspace/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/workspace/**/*"]
           }
         }
       }
