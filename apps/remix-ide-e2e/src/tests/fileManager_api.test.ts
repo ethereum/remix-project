@@ -55,7 +55,7 @@ module.exports = {
       .addFile('copyFile.js', { content: executeCopyFile })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .journalLastChildIncludes('pragma solidity >=0.7.0 <0.8.0;')
+      .journalLastChildIncludes('pragma solidity >=0.7.0 <0.9.0;')
   },
 
   'Should execute `rename` api from file manager external api': function (browser: NightwatchBrowser) {

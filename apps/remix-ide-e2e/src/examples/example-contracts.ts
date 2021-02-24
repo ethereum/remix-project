@@ -1,6 +1,6 @@
 'use strict'
 
-const storage = `pragma solidity >=0.7.0 <0.8.0;
+const storage = `pragma solidity >=0.7.0 <0.9.0;
 
 /**
  * @title Storage
@@ -27,7 +27,7 @@ contract Storage {
     }
 }`
 
-const owner = `pragma solidity >=0.7.0 <0.8.0;
+const owner = `pragma solidity >=0.7.0 <0.9.0;
 
 /**
  * @title Owner
@@ -77,7 +77,7 @@ contract Owner {
     }
 }`
 
-const ballot = `pragma solidity >=0.7.0 <0.8.0;
+const ballot = `pragma solidity >=0.7.0 <0.9.0;
 
 /** 
  * @title Ballot
@@ -281,7 +281,7 @@ contract Ballot {
     }
 }`
 
-const ballotTest = `pragma solidity >=0.4.22 <0.8.0;
+const ballotTest = `pragma solidity >=0.4.22 <0.9.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 import "../3_Ballot.sol";
 
