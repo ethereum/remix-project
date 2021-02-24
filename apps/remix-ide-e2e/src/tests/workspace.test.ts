@@ -26,6 +26,28 @@ module.exports = {
   'Home page should be deactivated': function (browser: NightwatchBrowser) {
     browser
       .waitForElementNotPresent('[data-id="landingPageHomeContainer"]')
+  },
+
+  'Should create two workspace and switch to the first one': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('fileExplorers')
+      .click('*[data-id="workspaceCreate"]') // create workspace_name
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
+      .clearValue('*[data-id="modalDialogCustomPromptText"]')
+      .setValue('*[data-id="modalDialogCustomPromptText"]', 'workspace_name')
+      .modalFooterOKClick()
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .addFile('test.sol', { content: 'test' })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .click('*[data-id="workspaceCreate"]') // create workspace_name_1
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
+      .clearValue('*[data-id="modalDialogCustomPromptText"]')
+      .setValue('*[data-id="modalDialogCustomPromptText"]', 'workspace_name_1')
+      .modalFooterOKClick()
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .end()
   },
 

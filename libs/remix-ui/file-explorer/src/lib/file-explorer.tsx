@@ -19,12 +19,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const { filesProvider, name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads } = props
   const [state, setState] = useState({
     focusElement: [{
-      key: name,
+      key: '',
       type: 'folder'
     }],
     focusPath: null,
     files: [],
     fileManager: null,
+    filesProvider,
     ctrlKey: false,
     newFileName: '',
     actions: [],
@@ -119,10 +120,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }]
 
       setState(prevState => {
-        return { ...prevState, fileManager, files, actions }
+        return { ...prevState, fileManager, files, actions, expandPath: [name] }
       })
     })()
-  }, [])
+  }, [name])
 
   useEffect(() => {
     if (state.fileManager) {
@@ -165,7 +166,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   useEffect(() => {
     if (focusRoot) {
       setState(prevState => {
-        return { ...prevState, focusElement: [{ key: name, type: 'folder' }] }
+        return { ...prevState, focusElement: [{ key: '', type: 'folder' }] }
       })
       plugin.resetFocus(false)
     }
@@ -219,7 +220,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [state.modals])
 
   const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
-    if (!isChild && (state.focusEdit.element === `${name}/blank`) && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === `${name}/blank`) === -1)) {
+    if (!isChild && (state.focusEdit.element === '/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === '/blank') === -1)) {
       dir = state.focusEdit.type === 'file' ? [...dir, {
         path: state.focusEdit.element,
         name: '',
@@ -261,20 +262,21 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return new Promise((resolve) => {
       filesProvider.resolveDirectory(folderPath, (error, fileTree) => {
         if (error) console.error(error)
-        const files = normalize(folderPath, fileTree)
+        const files = normalize(fileTree)
 
         resolve(files)
       })
     })
   }
 
-  const normalize = (path, filesList): File[] => {
+  const normalize = (filesList): File[] => {
     const folders = []
     const files = []
-    const prefix = path.split('/')[0]
 
     Object.keys(filesList || {}).forEach(key => {
-      const path = prefix + '/' + key
+      key = key.replace(/^\/|\/$/g, '') // remove first and last slash
+      let path = key
+      path = path.replace(/^\/|\/$/g, '') // remove first and last slash
 
       if (filesList[key].isDirectory) {
         folders.push({
@@ -533,7 +535,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
         fileReader.readAsText(file)
       }
-      const name = filesProvider.type + '/' + file.name
+      const name = file.name
 
       filesProvider.exists(name, (error, exist) => {
         if (error) console.log(error)
@@ -607,7 +609,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
 
     // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
-    const folder = id ? 'browser/gists/' + id : 'browser/'
+    const folder = id ? '/gists/' + id : '/'
 
     packageFiles(filesProvider, folder, async (error, packaged) => {
       if (error) {
@@ -809,7 +811,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }, null)
       } else {
         if (state.focusEdit.isNew) {
-          state.focusEdit.type === 'file' ? createNewFile(parentFolder + '/' + content) : createNewFolder(parentFolder + '/' + content)
+          state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
           const files = removePath(state.focusEdit.element, state.files)
           const updatedFiles = files.filter(file => file)
 
@@ -1020,6 +1022,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     <div>
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
+          controlBehaviour={true}
           label={
             <div onClick={(e) => {
               e.stopPropagation()
@@ -1036,7 +1039,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               plugin.resetFocus(true)
             }}>
               <FileExplorerMenu
-                title={name}
+                title={''}
                 menuItems={props.menuItems}
                 createNewFile={handleNewFileInput}
                 createNewFolder={handleNewFolderInput}
@@ -1046,7 +1049,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               />
             </div>
           }
-          expand={state.expandPath.includes(props.name)}>
+          expand={true}>
           <div className='pb-2'>
             <TreeView id='treeViewMenu'>
               {
@@ -1099,4 +1102,10 @@ function packageFiles (filesProvider, directory, callback) {
       })
     }
   })
+}
+
+function joinPath (...paths) {
+  paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
+  if (paths.length === 1) return paths[0]
+  return paths.join('/')
 }

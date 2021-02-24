@@ -355,7 +355,6 @@ class Editor extends Plugin {
        - URL prepended with "browser"
        - URL not prepended with the file explorer. We assume (as it is in the whole app, that this is a "browser" URL
     */
-    if (!path.startsWith('localhost') && !path.startsWith('browser')) path = `browser/${path}`
     if (!this.sessions[path]) {
       const session = this._createSession(content, this._getMode(path))
       this.sessions[path] = session

@@ -14,7 +14,7 @@ module.exports = {
   },
 
   'Should launch debugger': function (browser: NightwatchBrowser) {
-    browser.addFile('blah.sol', sources[0]['browser/blah.sol'])
+    browser.addFile('blah.sol', sources[0]['blah.sol'])
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
       .click('*[title="Deploy - transact (not payable)"]')
@@ -80,7 +80,7 @@ module.exports = {
   'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
-      .testContracts('externalImport.sol', sources[1]['browser/externalImport.sol'], ['ERC20'])
+      .testContracts('externalImport.sol', sources[1]['externalImport.sol'], ['ERC20'])
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 35000)
       .selectContract('ERC20')
@@ -108,8 +108,8 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.6.12+commit.27d51765.js')
       .clickLaunchIcon('fileExplorers')
-      .click('li[data-id="treeViewLitreeViewItembrowser/externalImport.sol"')
-      .testContracts('withABIEncoderV2.sol', sources[2]['browser/withABIEncoderV2.sol'], ['test'])
+      .click('li[data-id="treeViewLitreeViewItemexternalImport.sol"')
+      .testContracts('withABIEncoderV2.sol', sources[2]['withABIEncoderV2.sol'], ['test'])
       .clickLaunchIcon('udapp')
       .selectContract('test')
       .createContract('')
@@ -142,7 +142,7 @@ module.exports = {
   'Should load more solidity locals array': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
-      .testContracts('locals.sol', sources[3]['browser/locals.sol'], ['testLocals'])
+      .testContracts('locals.sol', sources[3]['locals.sol'], ['testLocals'])
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 40000)
       .createContract('')
@@ -167,7 +167,7 @@ module.exports = {
     browser
       .clickLaunchIcon('solidity')
       .pause(2000)
-      .testContracts('withGeneratedSources.sol', sources[4]['browser/withGeneratedSources.sol'], ['A'])
+      .testContracts('withGeneratedSources.sol', sources[4]['withGeneratedSources.sol'], ['A'])
       .clickLaunchIcon('udapp')
       .createContract('')
       .clickInstance(4)
@@ -217,7 +217,7 @@ module.exports = {
 
 const sources = [
   {
-    'browser/blah.sol': {
+    'blah.sol': {
       content: `
     pragma solidity >=0.7.0 <0.9.0;
  
@@ -250,10 +250,10 @@ const sources = [
     }
   },
   {
-    'browser/externalImport.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol"; contract test7 {}' }
+    'externalImport.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol"; contract test7 {}' }
   },
   {
-    'browser/withABIEncoderV2.sol': {
+    'withABIEncoderV2.sol': {
       content: `
     pragma experimental ABIEncoderV2;
 
@@ -277,7 +277,7 @@ const sources = [
     }
   },
   {
-    'browser/locals.sol': {
+    'locals.sol': {
       content: `
       pragma solidity ^0.8.0;
       contract testLocals {
@@ -292,7 +292,7 @@ const sources = [
     }
   },
   {
-    'browser/withGeneratedSources.sol': {
+    'withGeneratedSources.sol': {
       content: `
       // SPDX-License-Identifier: GPL-3.0
       pragma experimental ABIEncoderV2; 

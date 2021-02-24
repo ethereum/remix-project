@@ -140,6 +140,7 @@ export class Debugger {
     this.step_manager = new DebuggerStepManager(this.debugger, this.debugger.traceManager)
 
     this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
+      if (!this.debugger.solidityProxy.contracts) return
       this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts).then((sourceLocation) => {
         this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [sourceLocation])
       })

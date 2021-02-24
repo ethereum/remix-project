@@ -23,23 +23,23 @@ module.exports = class RemixDProvider {
     })
 
     this._appManager.on('remixd', 'folderAdded', (path) => {
-      this.event.trigger('folderAdded', [this.addPrefix(path)])
+      this.event.trigger('folderAdded', [path])
     })
 
     this._appManager.on('remixd', 'fileAdded', (path) => {
-      this.event.trigger('fileAdded', [this.addPrefix(path)])
+      this.event.trigger('fileAdded', [path])
     })
 
     this._appManager.on('remixd', 'fileChanged', (path) => {
-      this.event.trigger('fileChanged', [this.addPrefix(path)])
+      this.event.trigger('fileChanged', [path])
     })
 
     this._appManager.on('remixd', 'fileRemoved', (path) => {
-      this.event.trigger('fileRemoved', [this.addPrefix(path)])
+      this.event.trigger('fileRemoved', [path])
     })
 
     this._appManager.on('remixd', 'fileRenamed', (oldPath, newPath) => {
-      this.event.trigger('fileRemoved', [this.addPrefix(oldPath), this.addPrefix(newPath)])
+      this.event.trigger('fileRemoved', [oldPath, newPath])
     })
 
     this._appManager.on('remixd', 'rootFolderChanged', () => {
@@ -136,7 +136,7 @@ module.exports = class RemixDProvider {
       const unprefixedpath = this.removePrefix(path)
       this._appManager.call('remixd', 'remove', { path: unprefixedpath })
         .then(result => {
-          const path = this.type + '/' + unprefixedpath
+          const path = unprefixedpath
 
           delete this.filesContent[path]
           resolve(true)
@@ -154,8 +154,8 @@ module.exports = class RemixDProvider {
     if (!this._isReady) return new Promise((resolve, reject) => reject(new Error('provider not ready')))
     return this._appManager.call('remixd', 'rename', { oldPath: unprefixedoldPath, newPath: unprefixednewPath })
       .then(result => {
-        const newPath = this.type + '/' + unprefixednewPath
-        const oldPath = this.type + '/' + unprefixedoldPath
+        const newPath = unprefixednewPath
+        const oldPath = unprefixedoldPath
 
         this.filesContent[newPath] = this.filesContent[oldPath]
         delete this.filesContent[oldPath]
@@ -179,12 +179,6 @@ module.exports = class RemixDProvider {
     if (path[0] === '/') return path.substring(1)
     if (path === '') return '/'
     return path
-  }
-
-  addPrefix (path) {
-    if (path.indexOf(this.type + '/') === 0) return path
-    if (path[0] === '/') return 'localhost' + path
-    return 'localhost/' + path
   }
 
   resolveDirectory (path, callback) {
