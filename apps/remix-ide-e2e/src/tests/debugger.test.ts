@@ -16,7 +16,7 @@ module.exports = {
   'Should launch debugger': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['browser/blah.sol'])
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 45000)
+      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
       .click('*[title="Deploy - transact (not payable)"]')
       .debugTransaction(0)
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER')
@@ -40,12 +40,13 @@ module.exports = {
   'Should debug transaction using slider': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementVisible('*[data-id="slider"]')
-      .click('*[data-id="slider"]')
-      .setValue('*[data-id="slider"]', '50')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '50' }) // It only moves slider to 50 but vm traces are not updated
+      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
       .pause(2000)
       .click('*[data-id="dropdownPanelSolidityLocals"]')
       .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n51')
   },
 
   'Should step back and forward transaction': function (browser: NightwatchBrowser) {
@@ -53,12 +54,12 @@ module.exports = {
       .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
       .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
       .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n91')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n91')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n50')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n50')
       .click('*[data-id="buttonNavigatorIntoForward"]')
       .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n92')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n92')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n51')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n51')
   },
 
   'Should jump through breakpoints': function (browser: NightwatchBrowser) {
@@ -71,17 +72,14 @@ module.exports = {
       .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n0')
       .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n0')
       .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
-      .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n184')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n184')
+      .pause(10000)
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n348')
+      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n348')
   },
 
   'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js')
-      .pause(2000)
-      .clickLaunchIcon('udapp')
       .testContracts('externalImport.sol', sources[1]['browser/externalImport.sol'], ['ERC20'])
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 35000)
@@ -154,8 +152,10 @@ module.exports = {
       .pause(2000)
       .debugTransaction(6)
       .waitForElementVisible('*[data-id="slider"]')
-      .click('*[data-id="slider"]')
-      .setValue('*[data-id="slider"]', '5000')
+      // .setValue('*[data-id="slider"]', '5000') // Like this, setValue doesn't work properly for input type = range
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '7450' }) // It only moves slider to 7450 but vm traces are not updated
+      .setValue('*[data-id="slider"]', new Array(3).fill(browser.Keys.RIGHT_ARROW)) // This will press NEXT 3 times and will update the trace details
       .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
       .click('*[data-id="treeViewDivtreeViewItemarray"]')
       .waitForElementPresent('*[data-id="treeViewDivtreeViewLoadMore"]')
@@ -166,7 +166,6 @@ module.exports = {
   'Should debug using generated sources': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.7.2+commit.51b20bc0.js')
       .pause(2000)
       .testContracts('withGeneratedSources.sol', sources[4]['browser/withGeneratedSources.sol'], ['A'])
       .clickLaunchIcon('udapp')
@@ -189,8 +188,8 @@ module.exports = {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScript('remix.exeCurrent()')
-      .pause(3000)
-      .journalChildIncludes('{ "gas": "0x2dc6c0", "return": "0x", "structLogs":')
+      .pause(5000)
+      .journalChildIncludes('result { "gas": "0x5863", "return": "0x0000000000000000000000000000000000000000000000000000000000000000", "structLogs":')
   },
 
   'Should call the debugger api: debug': function (browser: NightwatchBrowser) {
@@ -200,15 +199,16 @@ module.exports = {
       .pause(3000)
       .clickLaunchIcon('debugger')
       .waitForElementVisible('*[data-id="slider"]')
-      .click('*[data-id="slider"]')
-      .setValue('*[data-id="slider"]', '5')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.getElementById('slider')['value'] = '153' }) // It only moves slider to 153 but vm traces are not updated
+      .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
       .pause(1000)
     /*
       setting the slider to 5 leads to "vm trace step: 91" for chrome and "vm trace step: 92" for firefox
       => There is something going wrong with the nightwatch API here.
       As we are only testing if debugger is active, this is ok to keep that for now.
     */
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n9')
+      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n154')
       .end()
   },
 
@@ -219,7 +219,7 @@ const sources = [
   {
     'browser/blah.sol': {
       content: `
-    pragma solidity >=0.7.0 <0.8.0;
+    pragma solidity >=0.7.0 <0.9.0;
  
     contract Kickstarter {
 
@@ -279,7 +279,7 @@ const sources = [
   {
     'browser/locals.sol': {
       content: `
-      pragma solidity ^0.7.0;
+      pragma solidity ^0.8.0;
       contract testLocals {
         function t () public {
             uint[] memory array = new uint[](150);
@@ -369,9 +369,9 @@ const localVariable_step717_ABIEncoder = { // eslint-disable-line
   }
 }
 
-const jsGetTrace = `(async () => {    
+const jsGetTrace = `(async () => {
   try {
-      const result = await remix.call('debugger', 'getTrace', '0xb175c3c9a9cd6bee3b6cc8be3369a945ac9611516005f8cba27a43486ff2bc50')
+      const result = await remix.call('debugger', 'getTrace', '0xbf309c0d71579d595f04a42e89d66d1ec17523dd3edea710b03f46a9b82ee0af')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
@@ -380,7 +380,7 @@ const jsGetTrace = `(async () => {
 
 const jsDebug = `(async () => {    
   try {
-      const result = await remix.call('debugger', 'debug', '0xb175c3c9a9cd6bee3b6cc8be3369a945ac9611516005f8cba27a43486ff2bc50')
+      const result = await remix.call('debugger', 'debug', '0xbf309c0d71579d595f04a42e89d66d1ec17523dd3edea710b03f46a9b82ee0af')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)

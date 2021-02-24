@@ -3,6 +3,7 @@ import { EventEmitter } from 'events'
 import QueryParams from '../../lib/query-params'
 import * as packageJson from '../../../../../package.json'
 import yo from 'yo-yo'
+const _paq = window._paq = window._paq || []
 
 const themes = [
   { name: 'Dark', quality: 'dark', url: 'assets/css/themes/remix-dark_tvx1s2.css' },
@@ -77,6 +78,7 @@ export class ThemeModule extends Plugin {
     if (themeName && !Object.keys(this.themes).includes(themeName)) {
       throw new Error(`Theme ${themeName} doesn't exist`)
     }
+    _paq.push(['trackEvent', 'themeModule', 'switchTo', themeName])
     const next = themeName || this.active // Name
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)

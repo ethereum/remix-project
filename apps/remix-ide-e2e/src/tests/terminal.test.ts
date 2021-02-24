@@ -173,7 +173,7 @@ const resolveExternalUrlAndSaveToaPath = `
 (async () => {
   try {
       console.log('start')
-      console.log(await remix.call('contentImport', 'resolveAndSave', 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20Burnable.sol', 'github/newFile.sol'))
+      console.log(await remix.call('contentImport', 'resolveAndSave', 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Burnable.sol', 'github/newFile.sol'))
   } catch (e) {
       console.log(e.message)
   }
