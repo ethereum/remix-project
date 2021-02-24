@@ -353,15 +353,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
   //if (window.location.hostname.includes('.ethereum.org')) {
     modalDialog(
-      'Help as to improve our IDE!',
+      'Help us to improve our IDE!',
       yo`<div>
-        >p>Remix IDE uses Matomo ( https://matomo.org/ ), an open source data analytics software to improve the use of our website.</p>
+        >p>Remix IDE uses <a href="https://matomo.org">Matomo</a>, an open source data analytics software to improve the use of our website.</p>
         <p>All data collected through Matomo is stored at our own server - no data is given to third parties.</p>
         <p>We do not store any personally identifiable information (PII).</p>
-        <p>You can always change your choice from Settings</p>
+        <p>You can change your choice in the Settings panel.</p>
       </div>`,
       {
-        label: "I'am in",
+        label: "Sure",
         fn: () => {
           settings.updateMatomoAnalyticsChoice(true)
           _paq.push(['forgetUserOptOut'])
