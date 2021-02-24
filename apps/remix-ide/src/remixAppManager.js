@@ -68,7 +68,7 @@ export class RemixAppManager extends PluginManager {
   onPluginActivated (plugin) {
     this.pluginLoader.set(plugin, this.actives)
     this.event.emit('activate', plugin)
-    _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
+    if (!requiredModules.includes(plugin.name)) _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
   }
 
   getAll () {
