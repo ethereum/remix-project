@@ -185,7 +185,7 @@ const sources = [
   {
     'browser/simple_storage.sol': {
       content: `
-      pragma solidity >=0.4.22 <0.8.0;
+      pragma solidity >=0.4.22 <0.9.0;
 
       contract SimpleStorage {
         uint public storedData;
@@ -206,7 +206,7 @@ const sources = [
     },
     'browser/tests/simple_storage_test.sol': {
       content: `
-      pragma solidity >=0.4.22 <0.8.0;
+      pragma solidity >=0.4.22 <0.9.0;
       import "remix_tests.sol";
       import "../simple_storage.sol";
 
@@ -235,7 +235,7 @@ const sources = [
     },
     'browser/ks2a.sol': {
       content: `
-      pragma solidity >=0.4.22 <0.8.0;
+      pragma solidity >=0.4.22 <0.9.0;
       contract Kickstarter {
           enum State { Started, Completed }
       
@@ -289,7 +289,7 @@ const sources = [
     },
     'browser/tests/ks2b_test.sol': {
       content: `
-      pragma solidity >=0.4.22 <0.8.0;
+      pragma solidity >=0.4.22 <0.9.0;
       pragma experimental ABIEncoderV2;
 
       import "remix_tests.sol"; // this import is automatically injected by Remix.
