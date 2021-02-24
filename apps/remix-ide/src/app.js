@@ -20,24 +20,25 @@ import FetchAndCompile from './app/compiler/compiler-sourceVerifier-fetchAndComp
 
 import migrateFileSystem, { migrateToWorkspace } from './migrateFileSystem'
 
-var isElectron = require('is-electron')
-var csjs = require('csjs-inject')
-var yo = require('yo-yo')
-var remixLib = require('@remix-project/remix-lib')
-var registry = require('./global/registry')
-var loadFileFromParent = require('./loadFilesFromParent')
-var { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
-var QueryParams = require('./lib/query-params')
-var Storage = remixLib.Storage
-var RemixDProvider = require('./app/files/remixDProvider')
-var Config = require('./config')
-var modalDialogCustom = require('./app/ui/modal-dialog-custom')
-var FileManager = require('./app/files/fileManager')
-var FileProvider = require('./app/files/fileProvider')
-var WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
-var toolTip = require('./app/ui/tooltip')
-var CompilerMetadata = require('./app/files/compiler-metadata')
-var CompilerImport = require('./app/compiler/compiler-imports')
+const isElectron = require('is-electron')
+const csjs = require('csjs-inject')
+const yo = require('yo-yo')
+const remixLib = require('@remix-project/remix-lib')
+const registry = require('./global/registry')
+const loadFileFromParent = require('./loadFilesFromParent')
+const { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
+const QueryParams = require('./lib/query-params')
+const Storage = remixLib.Storage
+const RemixDProvider = require('./app/files/remixDProvider')
+const Config = require('./config')
+const modalDialogCustom = require('./app/ui/modal-dialog-custom')
+const modalDialog = require('./app/ui/modaldialog')
+const FileManager = require('./app/files/fileManager')
+const FileProvider = require('./app/files/fileProvider')
+const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
+const toolTip = require('./app/ui/tooltip')
+const CompilerMetadata = require('./app/files/compiler-metadata')
+const CompilerImport = require('./app/compiler/compiler-imports')
 
 const Blockchain = require('./blockchain/blockchain.js')
 
@@ -53,8 +54,9 @@ const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const ContextualListener = require('./app/editor/contextualListener')
+const _paq = window._paq = window._paq || []
 
-var css = csjs`
+const css = csjs`
   html { box-sizing: border-box; }
   *, *:before, *:after { box-sizing: inherit; }
   body                 {
@@ -347,6 +349,33 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     settings
   ])
 
+  if (!registry.get('config').api.exists('settings/matomo-analytics')) {
+  // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
+  //if (window.location.hostname.includes('.ethereum.org')) {
+    modalDialog(
+      'Help as to improve our IDE!',
+      yo `<div>
+        >p>Remix IDE uses Matomo ( https://matomo.org/ ), an open source data analytics software to improve the use of our website.</p>
+        <p>All data collected through Matomo is stored at our own server - no data is given to third parties.</p>
+        <p>We do not store any personally identifiable information (PII).</p>
+      </div>`,
+      {
+        label: "I'am in",
+        fn: () => {
+          settings.updateMatomoAnalyticsChoice(true)
+          _paq.push(['forgetUserOptOut'])
+        }
+      },
+      {
+        label: 'Decline',
+        fn: () => {
+          settings.updateMatomoAnalyticsChoice(false)
+          _paq.push(['optUserOut'])
+        }
+      }
+    )
+  //}
+  }
   // CONTENT VIEWS & DEFAULT PLUGINS
   const compileTab = new CompileTab(
     editor,
