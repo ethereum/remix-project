@@ -65,6 +65,11 @@ export class RemixClient extends PluginClient {
       this.provider.on("networkChanged", (networkId) => {
         this.internalEvents.emit('networkChanged', networkId)
       });
+
+      // Subscribe to networkId change
+      this.provider.on("disconnect", () => {
+        this.internalEvents.emit('disconnect')
+      });
     }
 
     getProviderOptions () {
