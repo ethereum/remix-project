@@ -58,14 +58,23 @@ module.exports = class Filepanel extends ViewPlugin {
    
     this.remixdHandle = new RemixdHandle(this.remixdExplorer, this._deps.fileProviders.localhost, appManager)
     this.gitHandle = new GitHandle()
-    
+    this.registeredMenuItems = []
     this.request = {}
+
+    this.renderComponent()    
+  }
+
+  render () {
+    return this.el
+  }
+
+  renderComponent() {
     ReactDOM.render(
       <Workspace 
         setWorkspace={this.setWorkspace.bind(this)}
-        renameWorkspace={this.renameWorkspace.bind(this)}
-        deleteWorkspace={this.deleteWorkspace.bind(this)}
-        createWorkspace={this.createWorkspace.bind(this)}
+        workspaceRenamed={this.workspaceRenamed.bind(this)}
+        workspaceDeleted={this.workspaceDeleted.bind(this)}
+        workspaceCreated={this.workspaceCreated.bind(this)}
         workspace={this._deps.fileProviders.workspace}
         browser={this._deps.fileProviders.browser}
         localhost={this._deps.fileProviders.localhost}
@@ -76,12 +85,22 @@ module.exports = class Filepanel extends ViewPlugin {
         registry={this._components.registry}
         plugin={this}
         request={this.request}
+        registeredMenuItems={this.registeredMenuItems}
       />
       , this.el)   
   }
 
-  render () {
-    return this.el
+   /**
+   * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }	
+   * @param callback (...args) => void	
+   */	
+  registerContextMenuItem (item) {	
+    if (!item) throw new Error('Invalid register context menu argument')	
+    if (!item.name || !item.id) throw new Error('Item name and id is mandatory')	
+    if (!item.type && !item.path && !item.extension && !item.pattern) throw new Error('Invalid file matching criteria provided')	
+
+    this.registeredMenuItems = [...this.registeredMenuItems, item]
+    this.renderComponent()
   }
 
   async getCurrentWorkspace () {
@@ -115,15 +134,15 @@ module.exports = class Filepanel extends ViewPlugin {
     this.emit('setWorkspace', workspace)
   }
   
-  renameWorkspace (workspace) {
+  workspaceRenamed (workspace) {
     this.emit('renameWorkspace', workspace)
   }
 
-  deleteWorkspace (workspace) {
+  workspaceDeleted (workspace) {
     this.emit('deleteWorkspace', workspace)
   }
 
-  createWorkspace (workspace) {
+  workspaceCreated (workspace) {
     this.emit('createWorkspace', workspace)
   }
   /** end section */  
