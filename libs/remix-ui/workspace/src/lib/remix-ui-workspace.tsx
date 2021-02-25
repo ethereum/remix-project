@@ -97,18 +97,13 @@ export const Workspace = (props: WorkspaceProps) => {
       message: 'Please choose a name for the workspace',
       ok: {
         label: '',
-        fn: () => onFinishRenameWorkspace()
+        fn: () => {}
       },
       cancel: {
         label: '',
         fn: () => {}
       },
-      handleHide: () => {
-        setState(prevState => {
-          state.renameModal.hide = true
-          return { ...prevState, ...state.renameModal }
-        })
-      }
+      handleHide: null
     },
     deleteModal: {
       id: 'deleteWorkspace',
@@ -117,18 +112,13 @@ export const Workspace = (props: WorkspaceProps) => {
       message: 'Please confirm workspace deletion',
       ok: {
         label: '',
-        fn: () => onFinishDeleteWorkspace()
+        fn: () => {}
       },
       cancel: {
         label: '',
         fn: () => {}
       },
-      handleHide: () => {
-        setState(prevState => {
-          state.deleteModal.hide = true
-          return { ...prevState, ...state.deleteModal }
-        })
-      }  
+      handleHide: null
     },
     createModal: {
       id: 'createWorkspace',
@@ -137,63 +127,96 @@ export const Workspace = (props: WorkspaceProps) => {
       message: 'Please choose a name for the workspace',
       ok: {
         label: '',
-        fn: () => onFinishCreateWorkspace()
+        fn: () => {}
       },
       cancel: {
         label: '',
         fn: () => {}
       },
-      handleHide: () => {
-        setState(prevState => {
-          state.createModal.hide = true
-          return { ...prevState, ...state.createModal }
-        })
-      }  
+      handleHide: null
     }
   })
 
   /* workspace creation, renaming and deletion */
 
-  // const modal = (title: string, message: string, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
-  //   setState(prevState => {
-  //     return {
-  //       ...prevState,
-  //       modals: [...prevState.modals,
-  //         {
-  //           message,
-  //           title,
-  //           ok,
-  //           cancel,
-  //           handleHide: handleHideModal
-  //         }]
-  //     }
-  //   })
-  // }
+  const renameCurrentWorkspace = () => {
+    setState(prevState => {
+      return {
+        ...prevState,
+        renameModal: {
+          ...prevState.renameModal,
+          hide: false,
+          ok: {
+            label: '',
+            fn: () => onFinishRenameWorkspace()
+          },
+          cancel: {
+            label: '',
+            fn: () => {}
+          },
+          handleHide: () => {
+            setState(prevState => {
+              return { ...prevState, renameModal: {...prevState.renameModal, hide: true }  } 
+            })   
+          }
+        },
+      }
+    })
+  }
+
+  const createWorkspace = () => {
+    setState(prevState => {
+      return {
+        ...prevState,
+        createModal: {
+          ...prevState.createModal,
+          hide: false,
+          ok: {
+            label: '',
+            fn: () => onFinishCreateWorkspace()
+          },
+          cancel: {
+            label: '',
+            fn: () => {}
+          },
+          handleHide: () => {
+            setState(prevState => {
+              return { ...prevState, createModal: {...prevState.createModal, hide: true }  } 
+            })   
+          }
+        }
+      }
+    })
+  }
+
+  const deleteCurrentWorkspace = () => {
+    setState(prevState => {
+      return {
+        ...prevState,
+        deleteModal: {
+          ...prevState.deleteModal,
+          hide: false,
+          ok: {
+            label: '',
+            fn: () => onFinishDeleteWorkspace()
+          },
+          cancel: {
+            label: '',
+            fn: () => {}
+          },
+          handleHide: () => {
+            setState(prevState => {
+              return { ...prevState, deleteModal: {...prevState.deleteModal, hide: true }  } 
+            })   
+          }
+        },
+      }
+    })
+  }
 
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
 
-  const createWorkspace = () => {
-    setState(prevState => {
-      state.createModal.hide = false
-      return { ...prevState, ...state.createModal }
-    })
-  }
-
-  const renameCurrentWorkspace = () => {
-    setState(prevState => {
-      state.renameModal.hide = false
-      return { ...prevState, ...state.renameModal }
-    })
-  }  
-
-  const deleteCurrentWorkspace = () => {
-    setState(prevState => {
-      state.deleteModal.hide = false
-      return { ...prevState, ...state.deleteModal }
-    })
-  }  
-  
   const onFinishRenameWorkspace = async () => {
     if (workspaceRenameInput.current === undefined) return
     // @ts-ignore: Object is possibly 'null'.
