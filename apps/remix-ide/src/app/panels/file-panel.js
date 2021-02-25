@@ -60,8 +60,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.gitHandle = new GitHandle()
     this.registeredMenuItems = []
     this.request = {}
-
-    this.renderComponent()    
+    this.getWorkspaces()   
   }
 
   render () {
@@ -85,6 +84,7 @@ module.exports = class Filepanel extends ViewPlugin {
         registry={this._components.registry}
         plugin={this}
         request={this.request}
+        workspaces={this.workspaces}
         registeredMenuItems={this.registeredMenuItems}
       />
       , this.el)   
@@ -108,7 +108,18 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async getWorkspaces () {
-    return await this.request.getWorkspaces()
+    const result = new Promise((resolve, reject) => {
+      const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+      this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
+        if (error) return reject(error)
+        resolve(Object.keys(items)
+          .filter((item) => items[item].isDirectory)
+          .map((folder) => folder.replace(workspacesPath + '/', '')))
+      })
+    })
+    this.workspaces = await result
+    this.renderComponent()
+    return this.workspaces
   }
 
   async createNewFile () {

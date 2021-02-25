@@ -23,6 +23,7 @@ export interface WorkspaceProps {
   registry: any // registry
   plugin: any // plugin call and resetFocus
   request: any // api request,
+  workspaces: any,
   registeredMenuItems: [] // menu items
 }
 
@@ -43,16 +44,15 @@ export const Workspace = (props: WorkspaceProps) => {
       return { ...prevState, displayNewFile: !state.displayNewFile }
     })
   }
-  /**** ****/
 
   /* implement an external API, consumed by the parent */
   props.request.createWorkspace = () => {
     return createWorkspace()
   }
 
-  props.request.getWorkspaces = () => {
-    return getWorkspaces()
-  }
+  // props.request.getWorkspaces = () => {
+  //   return getWorkspaces()
+  // }
 
   props.request.createNewFile = () => {
     props.plugin.resetNewFile()
@@ -67,9 +67,20 @@ export const Workspace = (props: WorkspaceProps) => {
   props.request.getCurrentWorkspace = () => {
     return state.currentWorkspace
   }
-  /**** ****/
 
   useEffect(() => { initWorkspace() }, [])
+
+  useEffect(() => {
+    const getWorkspaces = async () => {
+      if (props.workspaces && Array.isArray(props.workspaces)) {
+        setState(prevState => {
+          return { ...prevState, workspaces: props.workspaces }
+        })
+      }
+    }
+
+    getWorkspaces()
+  }, [props.workspaces])
 
   const [state, setState] = useState({
     workspaces: [],
@@ -143,27 +154,26 @@ export const Workspace = (props: WorkspaceProps) => {
 
   /* workspace creation, renaming and deletion */
 
-  const modal = (title: string, message: string, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
-    setState(prevState => {
-      return {
-        ...prevState,
-        modals: [...prevState.modals,
-          {
-            message,
-            title,
-            ok,
-            cancel,
-            handleHide: handleHideModal
-          }]
-      }
-    })
-  }
+  // const modal = (title: string, message: string, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
+  //   setState(prevState => {
+  //     return {
+  //       ...prevState,
+  //       modals: [...prevState.modals,
+  //         {
+  //           message,
+  //           title,
+  //           ok,
+  //           cancel,
+  //           handleHide: handleHideModal
+  //         }]
+  //     }
+  //   })
+  // }
 
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
 
   const createWorkspace = () => {
-    modal()
     setState(prevState => {
       state.createModal.hide = false
       return { ...prevState, ...state.createModal }
@@ -223,7 +233,7 @@ export const Workspace = (props: WorkspaceProps) => {
     })
   }  
 
-  const setWorkspace = async (name) => {        
+  const setWorkspace = async (name) => {
     if (name === LOCALHOST) {
       props.workspace.clearWorkspace()
     } else if (name === NO_WORKSPACE) {
@@ -231,9 +241,9 @@ export const Workspace = (props: WorkspaceProps) => {
     } else {
       props.workspace.setWorkspace(name)
     }
-    const workspaces = await getWorkspaces()
+    props.plugin.getWorkspaces()
     setState(prevState => {
-      return { ...prevState, workspaces, currentWorkspace: name }
+      return { ...prevState, currentWorkspace: name }
     })
     props.setWorkspace({ name, isLocalhost: name === LOCALHOST })
   }
@@ -272,26 +282,11 @@ export const Workspace = (props: WorkspaceProps) => {
         setWorkspace('default_workspace')
       } else {
         // we've already got some workspaces
-        const workspaces = await getWorkspaces()
-
-        if (workspaces.length) setWorkspace(workspaces[0])
-        else setWorkspace(NO_WORKSPACE)
+        setWorkspace(NO_WORKSPACE)
       }
     })
   }
 
-  const getWorkspaces = (): any => {
-    return new Promise((resolve, reject) => {
-      const workspacesPath = props.workspace.workspacesPath
-      props.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
-        if (error) return reject(error)
-        resolve(Object.keys(items)
-          .filter((item) => items[item].isDirectory)
-          .map((folder) => folder.replace(workspacesPath + '/', '')))
-      })
-    })
-  }
-  
   const remixdExplorer = {
     hide: () => {
       if (state.currentWorkspace === LOCALHOST) setWorkspace(NO_WORKSPACE)
