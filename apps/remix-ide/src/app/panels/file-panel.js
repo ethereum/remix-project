@@ -4,6 +4,7 @@ import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
+import ethutil from 'ethereumjs-util'
 var EventManager = require('../../lib/events')
 var { RemixdHandle } = require('../files/remixd-handle.js')
 var { GitHandle } = require('../files/git-handle.js')
@@ -61,7 +62,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.registeredMenuItems = []
     this.request = {}
     this.workspaces = []
-    this.renderComponent()
+    this.initWorkspace()
   }
 
   render () {
@@ -70,7 +71,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
   renderComponent() {
     ReactDOM.render(
-      <Workspace 
+      <Workspace
         setWorkspace={this.setWorkspace.bind(this)}
         workspaceRenamed={this.workspaceRenamed.bind(this)}
         workspaceDeleted={this.workspaceDeleted.bind(this)}
@@ -79,16 +80,15 @@ module.exports = class Filepanel extends ViewPlugin {
         browser={this._deps.fileProviders.browser}
         localhost={this._deps.fileProviders.localhost}
         fileManager={this._deps.fileManager}
-        examples={examples}
-        queryParams={new QueryParams()}
-        gistHandler={new GistHandler()}
         registry={this._components.registry}
         plugin={this}
         request={this.request}
+        examples={examples}
         workspaces={this.workspaces}
+        setWorkspaceName={this.setWorkspaceName}
         registeredMenuItems={this.registeredMenuItems}
       />
-      , this.el)   
+      , this.el)
   }
 
    /**
@@ -126,6 +126,45 @@ module.exports = class Filepanel extends ViewPlugin {
     return this.workspaces
   }
 
+  async initWorkspace () {
+    const queryParams = new QueryParams()
+    const gistHandler = new GistHandler()
+    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+    const params = queryParams.get()
+    // get the file from gist
+    const loadedFromGist = gistHandler.loadFromGist(params, this._deps.fileManager)
+
+    if (loadedFromGist) return
+    if (params.code) {
+      try {
+        await this._deps.fileManager.createWorkspace('code-sample')
+        var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
+        const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
+        const path = 'browser/' + workspacesPath + '/code-sample/' + fileName
+        await this._deps.fileManager.writeFile(path, atob(params.code))
+        this.setWorkspace({ name: 'code-sample', isLocalhost: false })
+        await this._deps.fileManager.openFile(path)
+      } catch (e) {
+        console.error(e)
+      }
+      return
+    }
+    // insert example contracts if there are no files to show
+    this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
+      if (error) console.error(error)
+      if (Object.keys(filesList).length === 0) {
+        for (const file in examples) {
+          try {
+            await this._deps.fileManager.writeFile('browser/' + workspacesPath + '/default_workspace/' + examples[file].name, examples[file].content)
+          } catch (error) {
+            console.error(error)
+          }
+        }
+      }
+      this.getWorkspaces()
+    })
+  }
+
   async createNewFile () {
     return await this.request.createNewFile()
   }
@@ -146,6 +185,7 @@ module.exports = class Filepanel extends ViewPlugin {
     } else if (await this.call('manager', 'isActive', 'remixd')) {
       this.call('manager', 'deactivatePlugin', 'remixd')
     }
+    this.setWorkspaceName = workspace.name
     this.emit('setWorkspace', workspace)
   }
   
