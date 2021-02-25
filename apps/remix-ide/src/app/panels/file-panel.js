@@ -60,7 +60,8 @@ module.exports = class Filepanel extends ViewPlugin {
     this.gitHandle = new GitHandle()
     this.registeredMenuItems = []
     this.request = {}
-    this.getWorkspaces()   
+    this.workspaces = []
+    this.renderComponent()
   }
 
   render () {
@@ -111,7 +112,10 @@ module.exports = class Filepanel extends ViewPlugin {
     const result = new Promise((resolve, reject) => {
       const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
       this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
-        if (error) return reject(error)
+        if (error) {
+          console.error(error)
+          return reject(error)
+        }
         resolve(Object.keys(items)
           .filter((item) => items[item].isDirectory)
           .map((folder) => folder.replace(workspacesPath + '/', '')))
