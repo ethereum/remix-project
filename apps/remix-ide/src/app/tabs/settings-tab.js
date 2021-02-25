@@ -11,7 +11,7 @@ const _paq = window._paq = window._paq || []
 const profile = {
   name: 'settings',
   displayName: 'Settings',
-  methods: ['getGithubAccessToken', 'updateMatomoAnalyticsChoice'],
+  methods: ['getGithubAccessToken'],
   events: [],
   icon: 'assets/img/settings.webp',
   description: 'Remix-IDE settings',
