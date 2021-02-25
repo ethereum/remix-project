@@ -73,9 +73,17 @@ export const Workspace = (props: WorkspaceProps) => {
   useEffect(() => {
     const getWorkspaces = async () => {
       if (props.workspaces && Array.isArray(props.workspaces)) {
-        setState(prevState => {
-          return { ...prevState, workspaces: props.workspaces }
-        })
+        if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
+          props.workspace.setWorkspace(props.workspaces[0])
+          setState(prevState => {
+            return { ...prevState, workspaces: props.workspaces, currentWorkspace: props.workspaces[0] }
+          })
+        } else {
+          props.workspace.clearWorkspace()
+          setState(prevState => {
+            return { ...prevState, workspaces: props.workspaces, currentWorkspace: NO_WORKSPACE }
+          })
+        }
       }
     }
 
@@ -302,10 +310,7 @@ export const Workspace = (props: WorkspaceProps) => {
             console.error(error)
           }
         }
-        setWorkspace('default_workspace')
-      } else {
-        // we've already got some workspaces
-        setWorkspace(NO_WORKSPACE)
+        props.plugin.getWorkspaces()
       }
     })
   }
@@ -420,7 +425,7 @@ export const Workspace = (props: WorkspaceProps) => {
                   })
                 }
                 <option selected={state.currentWorkspace === LOCALHOST} value={LOCALHOST}>{LOCALHOST}</option>
-                <option selected={state.currentWorkspace === NO_WORKSPACE} value={NO_WORKSPACE}>{NO_WORKSPACE}</option>
+                { state.workspaces.length <= 0 && <option selected={state.currentWorkspace === NO_WORKSPACE} value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
                 </select>
               </div>
             </header>
