@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ethutil from 'ethereumjs-util'
 import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css';
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
@@ -18,12 +17,11 @@ export interface WorkspaceProps {
   localhost: any // localhost provider
   fileManager : any
   examples: CodeExamples,
-  queryParams: any // URL parameters
-  gistHandler: any // handle load gist
   registry: any // registry
   plugin: any // plugin call and resetFocus
   request: any // api request,
   workspaces: any,
+  setWorkspaceName: string,
   registeredMenuItems: [] // menu items
 }
 
@@ -68,8 +66,6 @@ export const Workspace = (props: WorkspaceProps) => {
     return state.currentWorkspace
   }
 
-  useEffect(() => { initWorkspace() }, [])
-
   useEffect(() => {
     const getWorkspaces = async () => {
       if (props.workspaces && Array.isArray(props.workspaces)) {
@@ -90,6 +86,12 @@ export const Workspace = (props: WorkspaceProps) => {
     getWorkspaces()
   }, [props.workspaces])
 
+  useEffect(() => {
+    if (props.setWorkspaceName && (props.setWorkspaceName !== state.currentWorkspace)) {
+      setWorkspace(props.setWorkspaceName)
+    }
+  }, [props.setWorkspaceName])
+
   const [state, setState] = useState({
     workspaces: [],
     reset: false,
@@ -98,41 +100,10 @@ export const Workspace = (props: WorkspaceProps) => {
     displayNewFile: false,
     externalUploads: null,
     uploadFileEvent: null,
-    renameModal: {
-      id: 'renameWorkspace',
+    modal: {
       hide: true,
-      title: 'Rename Workspace',
-      message: 'Please choose a name for the workspace',
-      ok: {
-        label: '',
-        fn: () => {}
-      },
-      cancel: {
-        label: '',
-        fn: () => {}
-      },
-      handleHide: null
-    },
-    deleteModal: {
-      id: 'deleteWorkspace',
-      hide: true,
-      title: 'Remove Workspace',
-      message: 'Please confirm workspace deletion',
-      ok: {
-        label: '',
-        fn: () => {}
-      },
-      cancel: {
-        label: '',
-        fn: () => {}
-      },
-      handleHide: null
-    },
-    createModal: {
-      id: 'createWorkspace',
-      hide: true,
-      title: 'Create Workspace',
-      message: 'Please choose a name for the workspace',
+      title: '',
+      message: null,
       ok: {
         label: '',
         fn: () => {}
@@ -148,77 +119,32 @@ export const Workspace = (props: WorkspaceProps) => {
   /* workspace creation, renaming and deletion */
 
   const renameCurrentWorkspace = () => {
-    setState(prevState => {
-      return {
-        ...prevState,
-        renameModal: {
-          ...prevState.renameModal,
-          hide: false,
-          ok: {
-            label: '',
-            fn: () => onFinishRenameWorkspace()
-          },
-          cancel: {
-            label: '',
-            fn: () => {}
-          },
-          handleHide: () => {
-            setState(prevState => {
-              return { ...prevState, renameModal: {...prevState.renameModal, hide: true }  } 
-            })   
-          }
-        },
-      }
+    modal('Rename Workspace', renameModalMessage(), {
+      label: 'OK',
+      fn: onFinishRenameWorkspace
+    }, {
+      label: '',
+      fn: () => {}
     })
   }
 
   const createWorkspace = () => {
-    setState(prevState => {
-      return {
-        ...prevState,
-        createModal: {
-          ...prevState.createModal,
-          hide: false,
-          ok: {
-            label: '',
-            fn: () => onFinishCreateWorkspace()
-          },
-          cancel: {
-            label: '',
-            fn: () => {}
-          },
-          handleHide: () => {
-            setState(prevState => {
-              return { ...prevState, createModal: {...prevState.createModal, hide: true }  } 
-            })   
-          }
-        }
-      }
+    modal('Create Workspace', createModalMessage(), {
+      label: 'OK',
+      fn: onFinishCreateWorkspace
+    }, {
+      label: '',
+      fn: () => {}
     })
   }
 
   const deleteCurrentWorkspace = () => {
-    setState(prevState => {
-      return {
-        ...prevState,
-        deleteModal: {
-          ...prevState.deleteModal,
-          hide: false,
-          ok: {
-            label: '',
-            fn: () => onFinishDeleteWorkspace()
-          },
-          cancel: {
-            label: '',
-            fn: () => {}
-          },
-          handleHide: () => {
-            setState(prevState => {
-              return { ...prevState, deleteModal: {...prevState.deleteModal, hide: true }  } 
-            })   
-          }
-        },
-      }
+    modal('Remove Workspace', 'Please choose a name for the workspace', {
+      label: 'OK',
+      fn: onFinishDeleteWorkspace
+    }, {
+      label: '',
+      fn: () => {}
     })
   }
 
@@ -236,7 +162,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const onFinishCreateWorkspace = async () => {
-    if (workspaceCreateInput.current === undefined) return
+    if (!workspaceCreateInput.current) return
     // @ts-ignore: Object is possibly 'null'.
     const workspaceName = workspaceCreateInput.current.value
     const workspacesPath = props.workspace.workspacesPath
@@ -279,42 +205,6 @@ export const Workspace = (props: WorkspaceProps) => {
     props.setWorkspace({ name, isLocalhost: name === LOCALHOST })
   }
 
-  const initWorkspace = async () => {
-    const workspacesPath = props.workspace.workspacesPath
-    const params = props.queryParams.get()
-    // get the file from gist
-    const loadedFromGist = props.gistHandler.loadFromGist(params, props.fileManager)
-    if (loadedFromGist) return
-    if (params.code) {
-      try {
-        await props.fileManager.createWorkspace('code-sample')
-        var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
-        const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
-        const path = 'browser/' + workspacesPath + '/code-sample/' + fileName
-        await props.fileManager.writeFile(path, atob(params.code))
-        setWorkspace('code-sample')
-        await props.fileManager.openFile(path)
-      } catch (e) {
-        console.error(e)
-      }
-      return
-    }
-    // insert example contracts if there are no files to show
-    props.browser.resolveDirectory('/', async (error, filesList) => {
-      if (error) console.error(error)
-      if (Object.keys(filesList).length === 0) {
-        for (const file in props.examples) {
-          try {
-            await props.fileManager.writeFile('browser/' + workspacesPath + '/default_workspace/' + props.examples[file].name, props.examples[file].content)
-          } catch (error) {
-            console.error(error)
-          }
-        }
-        props.plugin.getWorkspaces()
-      }
-    })
-  }
-
   const remixdExplorer = {
     hide: () => {
       if (state.currentWorkspace === LOCALHOST) setWorkspace(NO_WORKSPACE)
@@ -344,37 +234,59 @@ export const Workspace = (props: WorkspaceProps) => {
   props.localhost.event.register('closed', (event) => {
     remixdExplorer.hide()
   })
+
+  const handleHideModal = () => {
+    setState(prevState => {
+      return { ...prevState, modal: { ...state.modal, hide: true } }
+    })
+  }
+
+  const modal = async (title: string, message: string | JSX.Element, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
+    await setState(prevState => {
+      return {
+        ...prevState,
+        modal: {
+          ...prevState.modal,
+          hide: false,
+          message,
+          title,
+          ok,
+          cancel,
+          handleHide: handleHideModal
+        }
+      }
+    })
+  }
+
+  const createModalMessage = () => {
+    return (
+      <>
+        <span>{ state.modal.message }</span>
+        <input placeholder={`workspace_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
+      </>
+    )
+  }
+
+  const renameModalMessage = () => {
+    return (
+      <>
+        <span>{ state.modal.message }</span>
+        <input placeholder={ state.currentWorkspace } ref={workspaceRenameInput} className="form-control" />
+      </>
+    )
+  }
   
   return (
     <div className='remixui_container'>
-        <ModalDialog 
-          id={ state.renameModal.id }
-          title={ state.renameModal.title }
-          hide={ state.renameModal.hide }
-          ok={ state.renameModal.ok }
-          cancel={ state.renameModal.cancel }
-          handleHide={ state.renameModal.handleHide }>
-           <span>{ state.renameModal.message }</span>
-           <input placeholder={ state.currentWorkspace } ref={workspaceRenameInput} className="form-control" />
-        </ModalDialog>
-        <ModalDialog 
-          id={ state.createModal.id }
-          title={ state.createModal.title }
-          hide={ state.createModal.hide }
-          ok={ state.createModal.ok }
-          cancel={ state.createModal.cancel }
-          handleHide={ state.createModal.handleHide }>
-            <span>{ state.createModal.message }</span>
-            <input placeholder={ `workspace_${Date.now()}` } ref={workspaceCreateInput} className="form-control" />
-        </ModalDialog>
-        <ModalDialog 
-          id={ state.deleteModal.id }
-          title={ state.deleteModal.title }
-          message={ state.deleteModal.message }
-          hide={ state.deleteModal.hide }
-          ok={ state.deleteModal.ok }
-          cancel={ state.deleteModal.cancel }
-          handleHide={ state.deleteModal.handleHide }>
+        <ModalDialog
+          id='workspacesModalDialog'
+          title={ state.modal.title }
+          message={ state.modal.message }
+          hide={ state.modal.hide }
+          ok={ state.modal.ok }
+          cancel={ state.modal.cancel }
+          handleHide={ handleHideModal }>
+            { (typeof state.modal.message !== 'string') && state.modal.message }
         </ModalDialog>
         <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
           <div>
