@@ -21,7 +21,6 @@ export interface WorkspaceProps {
   plugin: any // plugin call and resetFocus
   request: any // api request,
   workspaces: any,
-  setWorkspaceName: string,
   registeredMenuItems: [] // menu items
 }
 
@@ -48,10 +47,6 @@ export const Workspace = (props: WorkspaceProps) => {
     return createWorkspace()
   }
 
-  // props.request.getWorkspaces = () => {
-  //   return getWorkspaces()
-  // }
-
   props.request.createNewFile = () => {
     props.plugin.resetNewFile()
   }
@@ -75,9 +70,8 @@ export const Workspace = (props: WorkspaceProps) => {
             return { ...prevState, workspaces: props.workspaces, currentWorkspace: props.workspaces[0] }
           })
         } else {
-          props.workspace.clearWorkspace()
           setState(prevState => {
-            return { ...prevState, workspaces: props.workspaces, currentWorkspace: NO_WORKSPACE }
+            return { ...prevState, workspaces: props.workspaces }
           })
         }
       }
@@ -85,12 +79,6 @@ export const Workspace = (props: WorkspaceProps) => {
 
     getWorkspaces()
   }, [props.workspaces])
-
-  useEffect(() => {
-    if (props.setWorkspaceName && (props.setWorkspaceName !== state.currentWorkspace)) {
-      setWorkspace(props.setWorkspaceName)
-    }
-  }, [props.setWorkspaceName])
 
   const [state, setState] = useState({
     workspaces: [],
@@ -162,16 +150,20 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const onFinishCreateWorkspace = async () => {
-    if (!workspaceCreateInput.current) return
+    if (workspaceCreateInput.current === undefined) return
     // @ts-ignore: Object is possibly 'null'.
     const workspaceName = workspaceCreateInput.current.value
     const workspacesPath = props.workspace.workspacesPath
+
     props.browser.createDir(workspacesPath + '/' + workspaceName, async () => {
-      setWorkspace(workspaceName)
       for (const file in props.examples) {
-        await props.fileManager.writeFile(`${props.examples[file].name}`, props.examples[file].content)
+        try {
+          await props.fileManager.writeFile('browser/' + workspacesPath + '/' + workspaceName + '/' + props.examples[file].name, props.examples[file].content)
+        } catch (error) {
+          console.error(error)
+        }
       }
-      props.workspaceCreated({ name: state.currentWorkspace })
+      props.plugin.getWorkspaces()
     })
   }
 
@@ -237,7 +229,7 @@ export const Workspace = (props: WorkspaceProps) => {
 
   const handleHideModal = () => {
     setState(prevState => {
-      return { ...prevState, modal: { ...state.modal, hide: true } }
+      return { ...prevState, modal: { ...state.modal, hide: true, message: null } }
     })
   }
 
@@ -275,6 +267,12 @@ export const Workspace = (props: WorkspaceProps) => {
       </>
     )
   }
+
+  // const handleWorkspaceSelect = (e) => {
+  //   const value = e.target.value
+
+  //   setWorkspace(value)
+  // }
   
   return (
     <div className='remixui_container'>

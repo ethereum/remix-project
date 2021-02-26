@@ -85,7 +85,6 @@ module.exports = class Filepanel extends ViewPlugin {
         request={this.request}
         examples={examples}
         workspaces={this.workspaces}
-        setWorkspaceName={this.setWorkspaceName}
         registeredMenuItems={this.registeredMenuItems}
       />
       , this.el)
@@ -111,6 +110,7 @@ module.exports = class Filepanel extends ViewPlugin {
   async getWorkspaces () {
     const result = new Promise((resolve, reject) => {
       const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+
       this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         if (error) {
           console.error(error)
@@ -185,7 +185,6 @@ module.exports = class Filepanel extends ViewPlugin {
     } else if (await this.call('manager', 'isActive', 'remixd')) {
       this.call('manager', 'deactivatePlugin', 'remixd')
     }
-    this.setWorkspaceName = workspace.name
     this.emit('setWorkspace', workspace)
   }
   
