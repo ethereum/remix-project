@@ -5,7 +5,7 @@ import sauce from './sauce'
 
 const sources = [
   {
-    'browser/Untitled.sol': {
+    'Untitled.sol': {
       content: `
 pragma solidity >=0.6.0 <0.8.0;
 contract test1 { address test = tx.origin; }
@@ -40,7 +40,7 @@ function runTests (browser: NightwatchBrowser) {
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
     .pause(10000)
-    .testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TooMuchGas', 'test1', 'test2'])
+    .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TooMuchGas', 'test1', 'test2'])
     .clickLaunchIcon('solidityStaticAnalysis')
     .click('#staticanalysisView button')
     .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {

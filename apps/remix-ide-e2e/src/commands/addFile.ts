@@ -16,15 +16,13 @@ class AddFile extends EventEmitter {
 function addFile (browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
   browser.clickLaunchIcon('udapp')
     .clickLaunchIcon('fileExplorers')
-    .click('li[data-id="treeViewLitreeViewItembrowser/README.txt"]') // focus on root directory
+    .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
     .click('.newFile')
-    .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/blank"]')
-    // .scrollAndClick('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items')
-    .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', name)
-    .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', browser.Keys.ENTER)
+    .waitForElementVisible('*[data-id="treeViewLitreeViewItem/blank"]')
+    .sendKeys('*[data-id="treeViewLitreeViewItem/blank"] .remixui_items', name)
+    .sendKeys('*[data-id="treeViewLitreeViewItem/blank"] .remixui_items', browser.Keys.ENTER)
     .pause(2000)
-    .waitForElementVisible(`li[data-id="treeViewLitreeViewItembrowser/${name}"]`)
-    // .click(`li[data-id="treeViewLitreeViewItembrowser/${name}"]`)
+    .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`)
     .setEditorValue(content.content)
     .pause(1000)
     .perform(function () {

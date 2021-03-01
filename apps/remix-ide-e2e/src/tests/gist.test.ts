@@ -21,25 +21,26 @@ module.exports = {
        - switch to a file in the new gist
       */
     console.log('token', process.env.gist_token)
-    const runtimeBrowser = browser.options.desiredCapabilities.browserName
 
     browser
       .refresh()
       .pause(10000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
+      .waitForElementVisible('*[data-id="fileExplorerNewFilecreateNewFolder"]')
       .click('[data-id="fileExplorerNewFilecreateNewFolder"]')
       .pause(1000)
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/blank"]')
-      .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', 'Browser_Tests')
-      .sendKeys('*[data-id="treeViewLitreeViewItembrowser/blank"] .remixui_items', browser.Keys.ENTER)
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItembrowser/Browser_Tests"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItem/blank"]')
+      .sendKeys('*[data-id="treeViewLitreeViewItem/blank"] .remixui_items', 'Browser_Tests')
+      .sendKeys('*[data-id="treeViewLitreeViewItem/blank"] .remixui_items', browser.Keys.ENTER)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
       .addFile('File.sol', { content: '' })
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
-      .waitForElementVisible('*[data-id="browserModalDialogContainer-react"]')
       .pause(2000)
+      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
       .click('.modal-ok')
       .pause(10000)
-      .getText('[data-id="browserModalDialogModalBody-react"]', (result) => {
+      .getText('[data-id="default_workspaceModalDialogModalBody-react"]', (result) => {
         console.log(result)
         const value = typeof result.value === 'string' ? result.value : null
         const reg = /gist.github.com\/([^.]+)/
@@ -51,12 +52,12 @@ module.exports = {
         } else {
           const gistid = id[1]
           browser
-            .click('[data-id="browser-modal-footer-cancel-react"]')
+            .click('[data-id="default_workspace-modal-footer-cancel-react"]')
             .executeScript(`remix.loadgist('${gistid}')`)
-            .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('browser/gists') } done() })
-            .waitForElementVisible(`[data-id="treeViewLitreeViewItembrowser/gists/${gistid}"]`)
-            .click(`[data-id="treeViewLitreeViewItembrowser/gists/${gistid}"]`)
-            .openFile(`browser/gists/${gistid}/README.txt`)
+            // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
+            .waitForElementVisible(`[data-id="treeViewLitreeViewItem${gistid}"]`)
+            .click(`[data-id="treeViewLitreeViewItem${gistid}"]`)
+            .openFile(`${gistid}/README.txt`)
         }
       })
   },
@@ -96,14 +97,14 @@ module.exports = {
       .clickLaunchIcon('fileExplorers')
       .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
-      .waitForElementVisible('*[data-id="browserModalDialogContainer-react"]')
+      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
       .pause(2000)
       .click('.modal-ok')
       .pause(10000)
-      .getText('[data-id="browserModalDialogModalBody-react"]', (result) => {
+      .getText('[data-id="default_workspaceModalDialogModalBody-react"]', (result) => {
         browser.assert.ok(result.value === 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Assert failed. Gist token error message not displayed.')
       })
-      .click('[data-id="browser-modal-footer-ok-react"]')
+      .click('[data-id="default_workspace-modal-footer-ok-react"]')
   },
 
   'Import From Gist For Valid Gist ID': function (browser: NightwatchBrowser) {
@@ -118,9 +119,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
       .setValue('*[data-id="modalDialogCustomPromptText"]', testData.validGistId)
       .modalFooterOKClick()
-      .openFile(`browser/gists/${testData.validGistId}/ApplicationRegistry`)
-      .waitForElementVisible(`div[title='browser/gists/${testData.validGistId}/ApplicationRegistry']`)
-      .assert.containsText(`div[title='browser/gists/${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
+      .openFile(`${testData.validGistId}/ApplicationRegistry`)
+      .waitForElementVisible(`div[title='${testData.validGistId}/ApplicationRegistry']`)
+      .assert.containsText(`div[title='${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
       .end()
   },
 

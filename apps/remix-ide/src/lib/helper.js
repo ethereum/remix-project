@@ -79,6 +79,11 @@ module.exports = {
                 ? 'fak fa-vyper-mono' : path.endsWith('.lex')
                   ? 'fak fa-lexon' : path.endsWith('.contract')
                     ? 'fab fa-ethereum' : 'far fa-file'
+  },
+  joinPath (...paths) {
+    paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
+    if (paths.length === 1) return paths[0]
+    return paths.join('/')
   }
 }
 

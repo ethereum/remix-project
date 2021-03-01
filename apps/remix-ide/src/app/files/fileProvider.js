@@ -193,6 +193,39 @@ class FileProvider {
     })
   }
 
+  /**
+   * copy the folder recursively
+   * @param {string} path is the folder to be copied over
+   * @param {string} destination is the  destination folder
+   */
+  copyFolderToJson (path) {
+    return new Promise((resolve, reject) => {
+      const json = {}
+      path = this.removePrefix(path)
+      if (window.remixFileSystem.existsSync(path)) {
+        try {
+          const items = window.remixFileSystem.readdirSync(path)
+          if (items.length !== 0) {
+            items.forEach(async (item, index) => {
+              const file = {}
+              const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
+              if (window.remixFileSystem.statSync(curPath).isDirectory()) {
+                file.children = await this.copyFolderToJson(curPath)
+              } else {
+                file.content = window.remixFileSystem.readFileSync(curPath, 'utf8')
+              }
+              json[curPath] = file
+            })
+          }
+        } catch (e) {
+          console.log(e)
+          return reject(e)
+        }
+      }
+      return resolve(json)
+    })
+  }
+
   removeFile (path) {
     path = this.removePrefix(path)
     if (window.remixFileSystem.existsSync(path) && !window.remixFileSystem.statSync(path).isDirectory()) {
@@ -227,6 +260,8 @@ class FileProvider {
 
       if (files) {
         files.forEach(element => {
+          path = path.replace(/^\/|\/$/g, '') // remove first and last slash
+          element = element.replace(/^\/|\/$/g, '') // remove first and last slash
           const absPath = (path === '/' ? '' : path) + '/' + element
           ret[absPath.indexOf('/') === 0 ? absPath.substr(1, absPath.length) : absPath] = { isDirectory: window.remixFileSystem.statSync(absPath).isDirectory() }
           // ^ ret does not accept path starting with '/'
@@ -243,7 +278,6 @@ class FileProvider {
   }
 
   _normalizePath (path) {
-    if (path.indexOf('/') !== 0) path = '/' + path
     return this.type + path
   }
 }

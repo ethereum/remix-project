@@ -13,7 +13,7 @@ module.exports = {
   },
 
   'Add Lib Test File': function (browser: NightwatchBrowser) {
-    browser.addFile('Untitled5.sol', sources[0]['browser/Untitled5.sol'])
+    browser.addFile('Untitled5.sol', sources[0]['Untitled5.sol'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
   },
@@ -67,7 +67,7 @@ module.exports = {
 
 function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFunction) {
   let config
-  browser.openFile('browser/artifacts').openFile('browser/artifacts/test.json')
+  browser.openFile('artifacts/test.json')
     .getEditorValue((content) => {
       config = JSON.parse(content)
       config.deploy['VM:-'].autoDeployLib = false
@@ -75,7 +75,7 @@ function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFuncti
     .perform(() => {
       browser.setEditorValue(JSON.stringify(config))
     })
-    .openFile('browser/Untitled5.sol')
+    .openFile('Untitled5.sol')
     .clickLaunchIcon('udapp')
     .selectContract('test') // deploy lib
     .createContract('')
@@ -89,16 +89,16 @@ function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFuncti
 function checkDeployShouldSucceed (browser: NightwatchBrowser, address: string, callback: VoidFunction) {
   let addressRef: string
   let config
-  browser.openFile('browser/artifacts').openFile('browser/artifacts/test.json')
+  browser.openFile('artifacts/test.json')
     .getEditorValue((content) => {
       config = JSON.parse(content)
       config.deploy['VM:-'].autoDeployLib = false
-      config.deploy['VM:-'].linkReferences['browser/Untitled5.sol'].lib = address
+      config.deploy['VM:-'].linkReferences['Untitled5.sol'].lib = address
     })
     .perform(() => {
       browser.setEditorValue(JSON.stringify(config))
     })
-    .openFile('browser/Untitled5.sol')
+    .openFile('Untitled5.sol')
     .clickLaunchIcon('udapp')
     .selectContract('test') // deploy lib
     .createContract('')
@@ -116,7 +116,7 @@ function checkDeployShouldSucceed (browser: NightwatchBrowser, address: string, 
 
 const sources = [
   {
-    'browser/Untitled5.sol': {
+    'Untitled5.sol': {
       content: `library lib {
       function getInt () public view returns (uint) {
           return 45;
