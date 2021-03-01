@@ -3,9 +3,6 @@ import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css';
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 
-type CodeExamples = {
-  [key: string]: { name: string, content: string }
-};
 /* eslint-disable-next-line */
 export interface WorkspaceProps {
   setWorkspace: ({ name: string, isLocalhost: boolean }) => void,
@@ -17,12 +14,12 @@ export interface WorkspaceProps {
   browser: any // browser provider
   localhost: any // localhost provider
   fileManager : any
-  examples: CodeExamples,
   registry: any // registry
   plugin: any // plugin call and resetFocus
   request: any // api request,
   workspaces: any,
   registeredMenuItems: [] // menu items
+  initialWorkspace: string
 }
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
@@ -65,7 +62,12 @@ export const Workspace = (props: WorkspaceProps) => {
   useEffect(() => {
     const getWorkspaces = async () => {
       if (props.workspaces && Array.isArray(props.workspaces)) {
-        if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
+        if (props.initialWorkspace) {
+          props.workspace.setWorkspace(props.initialWorkspace)
+          setState(prevState => {
+            return { ...prevState, workspaces: props.workspaces, currentWorkspace: props.initialWorkspace }
+          })
+        } else if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
           props.workspace.setWorkspace(props.workspaces[0])
           setState(prevState => {
             return { ...prevState, workspaces: props.workspaces, currentWorkspace: props.workspaces[0] }
