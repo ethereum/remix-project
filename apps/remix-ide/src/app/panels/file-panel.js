@@ -66,7 +66,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   render () {
-    this.initWorkspace().then(() => this.getWorkspaces()).catch(console.error)    
+    this.initWorkspace().then(() => this.getWorkspaces()).catch(console.error)
     return this.el
   }
 
