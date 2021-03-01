@@ -72,6 +72,7 @@ module.exports = class Filepanel extends ViewPlugin {
   renderComponent() {
     ReactDOM.render(
       <Workspace
+        createWorkspace={this.createWorkspace.bind(this)}
         setWorkspace={this.setWorkspace.bind(this)}
         workspaceRenamed={this.workspaceRenamed.bind(this)}
         workspaceDeleted={this.workspaceDeleted.bind(this)}
@@ -153,13 +154,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
       if (error) console.error(error)
       if (Object.keys(filesList).length === 0) {
-        for (const file in examples) {
-          try {
-            await this._deps.fileManager.writeFile('browser/' + workspacesPath + '/default_workspace/' + examples[file].name, examples[file].content)
-          } catch (error) {
-            console.error(error)
-          }
-        }
+        await this.createWorkspace('default_workspace')
       }
       this.getWorkspaces()
     })
@@ -173,9 +168,18 @@ module.exports = class Filepanel extends ViewPlugin {
     return await this.request.uploadFile()
   }  
 
-  async createWorkspace () {
-    return await this.request.createWorkspace()
-  }
+  async createWorkspace (workspaceName) {
+    if (await this._deps.fileManager.workspaceExists(workspaceName)) throw new Error('workspace already exists')
+    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+    await this._deps.fileManager.createWorkspace(workspaceName)    
+    for (const file in examples) {
+      try {
+        await this._deps.fileManager.writeFile('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }  
 
   /** these are called by the react component, action is already finished whent it's called */
   async setWorkspace (workspace) {
