@@ -4,7 +4,7 @@ import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
-import ethutil from 'ethereumjs-util'
+import * as ethutil from 'ethereumjs-util'
 var EventManager = require('../../lib/events')
 var { RemixdHandle } = require('../files/remixd-handle.js')
 var { GitHandle } = require('../files/git-handle.js')
