@@ -54,6 +54,11 @@ module.exports = class RemixDProvider {
   close (cb) {
     this._isReady = false
     cb()
+    this.event.trigger('disconnected')
+  }
+
+  preInit () {
+    this._registerEvent()
   }
 
   init (cb) {
@@ -63,6 +68,7 @@ module.exports = class RemixDProvider {
         this._isReady = true
         this._readOnlyMode = result
         this._registerEvent()
+        this.event.trigger('connected')
         cb && cb()
       }).catch((error) => {
         cb && cb(error)
