@@ -62,10 +62,11 @@ module.exports = class Filepanel extends ViewPlugin {
     this.registeredMenuItems = []
     this.request = {}
     this.workspaces = []
-    this.initWorkspace()
+    this.initialWorkspace = null
   }
 
   render () {
+    this.initWorkspace().then(() => this.getWorkspaces()).catch(console.error)    
     return this.el
   }
 
@@ -84,9 +85,9 @@ module.exports = class Filepanel extends ViewPlugin {
         registry={this._components.registry}
         plugin={this}
         request={this.request}
-        examples={examples}
         workspaces={this.workspaces}
         registeredMenuItems={this.registeredMenuItems}
+        initialWorkspace={this.initialWorkspace}
       />
       , this.el)
   }
@@ -139,12 +140,13 @@ module.exports = class Filepanel extends ViewPlugin {
     if (params.code) {
       try {
         await this._deps.fileManager.createWorkspace('code-sample')
+        this._deps.fileProviders.workspace.setWorkspace('code-sample')
         var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
         const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
         const path = 'browser/' + workspacesPath + '/code-sample/' + fileName
         await this._deps.fileManager.writeFile(path, atob(params.code))
-        this.setWorkspace({ name: 'code-sample', isLocalhost: false })
-        await this._deps.fileManager.openFile(path)
+        this.initialWorkspace = 'code-sample'
+        await this._deps.fileManager.openFile(fileName)
       } catch (e) {
         console.error(e)
       }
