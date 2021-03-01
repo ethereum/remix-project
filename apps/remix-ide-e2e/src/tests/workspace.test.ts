@@ -35,14 +35,16 @@ module.exports = {
       .clickLaunchIcon('fileExplorers')
       .click('*[data-id="workspaceCreate"]') // create workspace_name
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name' })      
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name' })
       .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspaceCreate"]') // create workspace_name_1
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })      
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })    
       .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
