@@ -40,7 +40,7 @@ function removeFile (browser: NightwatchBrowser, path: string, done: VoidFunctio
       .perform(() => {
         console.log(path, 'to remove')
         browser.waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
-          .click('.modal-ok')
+          .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
           .waitForElementNotPresent('[data-path="' + path + '"]')
         done()
       })
