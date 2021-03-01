@@ -156,14 +156,14 @@ export const Workspace = (props: WorkspaceProps) => {
     const workspacesPath = props.workspace.workspacesPath
 
     props.browser.createDir(workspacesPath + '/' + workspaceName, async () => {
+      await setWorkspace(workspaceName)
       for (const file in props.examples) {
         try {
-          await props.fileManager.writeFile('browser/' + workspacesPath + '/' + workspaceName + '/' + props.examples[file].name, props.examples[file].content)
+          await props.fileManager.writeFile(props.examples[file].name, props.examples[file].content)
         } catch (error) {
           console.error(error)
         }
       }
-      props.plugin.getWorkspaces()
     })
   }
 
