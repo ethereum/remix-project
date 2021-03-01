@@ -264,7 +264,6 @@ module.exports = class SettingsTab extends ViewPlugin {
       this._view.useMatomoAnalytics.setAttribute('checked', '')
       this._view.useMatomoAnalyticsLabel.classList.remove('text-secondary')
       this._view.useMatomoAnalyticsLabel.classList.add('text-dark')
-
     } else {
       this._view.useMatomoAnalytics.removeAttribute('checked')
       this._view.useMatomoAnalyticsLabel.classList.remove('text-dark')
