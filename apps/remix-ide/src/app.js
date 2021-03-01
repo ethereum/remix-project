@@ -115,6 +115,9 @@ const css = csjs`
   .centered svg polygon {
     fill: var(--secondary);
   }
+  .matomoBtn {
+    width              : 100px;
+  }
 `
 
 class App {
@@ -349,32 +352,42 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     settings
   ])
 
+  const onAcceptMatomo = () => {
+    _paq.push(['forgetUserOptOut'])
+    settings.updateMatomoAnalyticsChoice(true)
+    const el = document.getElementById('modal-dialog')
+    el.parentElement.removeChild(el)
+  }
+  const onDeclineMatomo = () => {
+    settings.updateMatomoAnalyticsChoice(false)
+    _paq.push(['optUserOut'])
+    const el = document.getElementById('modal-dialog')
+    el.parentElement.removeChild(el)
+  }
+
   if (!registry.get('config').api.exists('settings/matomo-analytics')) {
   // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
   // if (window.location.hostname.includes('.ethereum.org')) {
-    const selectInput = yo`<input type="checkbox" checked='checked' />`
+
     modalDialog(
       'Help us to improve our IDE!',
-      yo`<div>
-        <p>Remix IDE uses <a href="https://matomo.org">Matomo</a>, an open source data analytics software to improve the use of our website.</p>
+      yo`
+      <div>
+        <p>Remix IDE uses <a href="https://matomo.org">Matomo</a>, an open source data analytics software, to improve the use of our website.</p>
+        <p>We realize that our users have sensitive information in their code and that the privacy of our users must be protected, therefor we do not store any personally identifiable information (PII).</p>
         <p>All data collected through Matomo is stored at our own server - no data is given to third parties.</p>
-        <p>We do not store any personally identifiable information (PII).</p>
-        <p>You can change your choice in the Settings panel.</p>
-          ${selectInput}
+        <p>You can change your choice in the Settings panel anytime.</p>
+        <div class="d-flex justify-content-around pt-3 border-top">
+          <button class="btn btn-primary ${css.matomoBtn}" onclick=${() => onAcceptMatomo()}>Sure</button>
+          <button class="btn btn-secondary ${css.matomoBtn}" onclick=${() => onDeclineMatomo()}>Decline</button>
+        </div>
       </div>`,
       {
-        label: 'Apply',
-        fn: () => {
-          settings.updateMatomoAnalyticsChoice(selectInput.checked)
-          if (selectInput.checked) {
-            _paq.push(['forgetUserOptOut'])
-          } else {
-            _paq.push(['optUserOut'])
-          }
-        }
+        label: '',
+        fn: null
       },
       {
-        label: null,
+        label: '',
         fn: null
       }
     )
