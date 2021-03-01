@@ -57,7 +57,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'fileExplorerView')
 
-    this.remixdHandle = new RemixdHandle(this.remixdExplorer, this._deps.fileProviders.localhost, appManager)
+    this.remixdHandle = new RemixdHandle(this._deps.fileProviders.localhost, appManager)
     this.gitHandle = new GitHandle()
     this.registeredMenuItems = []
     this.request = {}
@@ -106,7 +106,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async getCurrentWorkspace () {
-    return await this.request.getWorkspaces()
+    return await this.request.getCurrentWorkspace()
   }
 
   async getWorkspaces () {
