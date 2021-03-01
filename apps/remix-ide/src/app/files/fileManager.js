@@ -49,6 +49,10 @@ class FileManager extends Plugin {
     this.init()
   }
 
+  getOpenedFiles () {
+    return this.openedFiles
+  }
+
   setMode (mode) {
     this.mode = mode
   }
