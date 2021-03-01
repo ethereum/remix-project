@@ -30,15 +30,13 @@ const profile = {
 }
 
 export class RemixdHandle extends WebsocketPlugin {
-  constructor (fileSystemExplorer, locahostProvider, appManager) {
+  constructor (locahostProvider, appManager) {
     super(profile)
-    this.fileSystemExplorer = fileSystemExplorer
     this.locahostProvider = locahostProvider
     this.appManager = appManager
   }
 
   deactivate () {
-    this.fileSystemExplorer.hide()
     if (super.socket) super.deactivate()
     this.call('manager', 'deactivatePlugin', 'git')
     this.locahostProvider.close((error) => {
@@ -82,9 +80,7 @@ export class RemixdHandle extends WebsocketPlugin {
             this.canceled()
           }
         }, 3000)
-        this.locahostProvider.init(() => {
-          this.fileSystemExplorer.show()
-        })
+        this.locahostProvider.init(() => {})
         this.call('manager', 'activatePlugin', 'git')
       }
     }

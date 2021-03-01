@@ -83,6 +83,16 @@ export const Workspace = (props: WorkspaceProps) => {
     getWorkspaces()
   }, [props.workspaces])
 
+  useEffect(() => {
+    props.localhost.event.register('connected', (event) => {
+      remixdExplorer.show()
+    })
+  
+    props.localhost.event.register('disconnected', (event) => {
+      remixdExplorer.hide()
+    })
+  }, [])
+
   const [state, setState] = useState({
     workspaces: [],
     reset: false,
@@ -222,20 +232,6 @@ export const Workspace = (props: WorkspaceProps) => {
     }
   }
 
-  props.localhost.event.register('connecting', (event) => {})
-
-  props.localhost.event.register('connected', (event) => {
-    remixdExplorer.show()
-  })
-
-  props.localhost.event.register('errored', (event) => {
-    remixdExplorer.hide()
-  })
-
-  props.localhost.event.register('closed', (event) => {
-    remixdExplorer.hide()
-  })
-
   const handleHideModal = () => {
     setState(prevState => {
       return { ...prevState, modal: { ...state.modal, hide: true, message: null } }
@@ -352,7 +348,7 @@ export const Workspace = (props: WorkspaceProps) => {
           <div className='remixui_fileExplorerTree'>
             <div>
               <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
-                { state.hideRemixdExplorer && state.currentWorkspace && state.currentWorkspace !== NO_WORKSPACE &&
+                { state.hideRemixdExplorer && state.currentWorkspace && state.currentWorkspace !== NO_WORKSPACE && state.currentWorkspace !== LOCALHOST &&
                   <FileExplorer
                     name={state.currentWorkspace}
                     registry={props.registry}
