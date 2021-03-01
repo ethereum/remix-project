@@ -9,6 +9,7 @@ type CodeExamples = {
 /* eslint-disable-next-line */
 export interface WorkspaceProps {
   setWorkspace: ({ name: string, isLocalhost: boolean }) => void,
+  createWorkspace: (name: string) => void,
   workspaceRenamed: ({ name: string }) => void,
   workspaceCreated: ({ name: string }) => void,
   workspaceDeleted: ({ name: string }) => void,
@@ -136,6 +137,16 @@ export const Workspace = (props: WorkspaceProps) => {
     })
   }
 
+  const modalMessage = (title: string, body: string) => {
+    modal(title, body, {
+      label: 'OK',
+      fn: () => {}
+    }, {
+      label: null,
+      fn: null
+    })
+  }
+
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
 
@@ -153,18 +164,14 @@ export const Workspace = (props: WorkspaceProps) => {
     if (workspaceCreateInput.current === undefined) return
     // @ts-ignore: Object is possibly 'null'.
     const workspaceName = workspaceCreateInput.current.value
-    const workspacesPath = props.workspace.workspacesPath
 
-    props.browser.createDir(workspacesPath + '/' + workspaceName, async () => {
-      await setWorkspace(workspaceName)
-      for (const file in props.examples) {
-        try {
-          await props.fileManager.writeFile(props.examples[file].name, props.examples[file].content)
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    })
+    try {
+      await props.createWorkspace(workspaceName)
+    } catch (e) {
+      modalMessage('Workspace Creation', e.message)
+      console.error(e)
+    }
+    await setWorkspace(workspaceName)
   }
 
   const onFinishDeleteWorkspace = async () => {
