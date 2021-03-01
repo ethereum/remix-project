@@ -4,7 +4,8 @@ export interface SolidityCompilerProps {
   fileProvider: any,
   fileManager: any,
   contentImport: any,
-  plugin: any
+  plugin: any,
+  queryParams: any
 }
 
 export interface CompilerContainerProps {
@@ -12,4 +13,9 @@ export interface CompilerContainerProps {
   config: any,
   queryParams: any,
   compileTabLogic: any
+}
+export interface ContractSelectionProps {
+  contractMap: {
+    file: string
+  }
 }

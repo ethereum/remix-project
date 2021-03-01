@@ -4,9 +4,9 @@ import { CompilerContainerProps } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '../../../../../apps/remix-ide/src/app/compiler/compiler-utils' // eslint-disable-line
 
-import './css/compiler-container.css'
+import './css/style.css'
 
-export const RemixUiSolidityCompiler = (props: CompilerContainerProps) => {
+export const CompilerContainer = (props: CompilerContainerProps) => {
   const { editor, config, queryParams, compileTabLogic } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: config.get('hideWarnings') || false,
@@ -451,4 +451,4 @@ export const RemixUiSolidityCompiler = (props: CompilerContainerProps) => {
   )
 }
 
-export default RemixUiSolidityCompiler
+export default CompilerContainer
