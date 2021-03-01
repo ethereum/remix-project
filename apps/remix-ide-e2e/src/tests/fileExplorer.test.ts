@@ -43,7 +43,7 @@ module.exports = {
       .rightClick('[data-path="5_Renamed_Contract.sol"]')
       .click('*[id="menuitemdelete"]')
       .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
-      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
+      .click('*[data-id="default_workspace-modal-footer-ok-react"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"')
   },
 
