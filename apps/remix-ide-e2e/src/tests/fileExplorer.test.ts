@@ -43,8 +43,7 @@ module.exports = {
       .rightClick('[data-path="5_Renamed_Contract.sol"]')
       .click('*[id="menuitemdelete"]')
       .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
-      .pause(2000)
-      .click('.modal-ok')
+      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"')
   },
 
@@ -75,7 +74,7 @@ module.exports = {
       .click('*[id="menuitemdelete"]')
       .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
       .pause(2000)
-      .click('.modal-ok')
+      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
   },
 
@@ -88,11 +87,11 @@ module.exports = {
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
       .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
       .pause(2000)
-      .click('.modal-ok')
+      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
       .pause(2000)
       .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
       .pause(2000)
-      .click('.modal-ok')
+      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
       .pause(2000)
       .perform((done) => {
         if (runtimeBrowser === 'chrome') {
