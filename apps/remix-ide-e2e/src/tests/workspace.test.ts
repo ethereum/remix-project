@@ -18,6 +18,8 @@ module.exports = {
   'Editor should be focused on the 3_Ballot.sol': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
+      .refresh()
+      .pause(2000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('contract Ballot {') !== -1, 'content doesn\'t include Ballot contract')
       })
