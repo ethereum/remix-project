@@ -259,7 +259,7 @@ export const Workspace = (props: WorkspaceProps) => {
     return (
       <>
         <span>{ state.modal.message }</span>
-        <input placeholder={`workspace_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
+        <input data-id="modalDialogCustomPromptText" placeholder={`workspace_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
       </>
     )
   }
@@ -268,7 +268,7 @@ export const Workspace = (props: WorkspaceProps) => {
     return (
       <>
         <span>{ state.modal.message }</span>
-        <input placeholder={ state.currentWorkspace } ref={workspaceRenameInput} className="form-control" />
+        <input data-id="modalDialogCustomPromptText" placeholder={ state.currentWorkspace } ref={workspaceRenameInput} className="form-control" />
       </>
     )
   }
