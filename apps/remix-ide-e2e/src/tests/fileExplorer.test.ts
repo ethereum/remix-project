@@ -40,11 +40,7 @@ module.exports = {
   'Should delete file `5_Renamed_Contract.sol` from file explorer': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"]')
-      .rightClick('[data-path="5_Renamed_Contract.sol"]')
-      .click('*[id="menuitemdelete"]')
-      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
-      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
-      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
+      .removeFile('5_Renamed_Contract.sol', 'default_workspace')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"')
   },
 
