@@ -593,7 +593,7 @@ class FileManager extends Plugin {
   async workspaceExists (name) {
     const workspaceProvider = this._deps.filesProviders.workspace
     const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
-    return this.exists(workspacePath)    
+    return this.exists(workspacePath)
   }
 }
 

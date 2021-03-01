@@ -46,17 +46,17 @@ const profile = {
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
-    this.event = new EventManager() 
+    this.event = new EventManager()
     this._components = {}
     this._components.registry = globalRegistry
     this._deps = {
       fileProviders: this._components.registry.get('fileproviders').api,
       fileManager: this._components.registry.get('filemanager').api
     }
-    
+
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'fileExplorerView')
-   
+
     this.remixdHandle = new RemixdHandle(this.remixdExplorer, this._deps.fileProviders.localhost, appManager)
     this.gitHandle = new GitHandle()
     this.registeredMenuItems = []
@@ -69,7 +69,7 @@ module.exports = class Filepanel extends ViewPlugin {
     return this.el
   }
 
-  renderComponent() {
+  renderComponent () {
     ReactDOM.render(
       <Workspace
         createWorkspace={this.createWorkspace.bind(this)}
@@ -91,14 +91,14 @@ module.exports = class Filepanel extends ViewPlugin {
       , this.el)
   }
 
-   /**
-   * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }	
-   * @param callback (...args) => void	
-   */	
-  registerContextMenuItem (item) {	
-    if (!item) throw new Error('Invalid register context menu argument')	
-    if (!item.name || !item.id) throw new Error('Item name and id is mandatory')	
-    if (!item.type && !item.path && !item.extension && !item.pattern) throw new Error('Invalid file matching criteria provided')	
+  /**
+   * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
+   * @param callback (...args) => void
+   */
+  registerContextMenuItem (item) {
+    if (!item) throw new Error('Invalid register context menu argument')
+    if (!item.name || !item.id) throw new Error('Item name and id is mandatory')
+    if (!item.type && !item.path && !item.extension && !item.pattern) throw new Error('Invalid file matching criteria provided')
 
     this.registeredMenuItems = [...this.registeredMenuItems, item]
     this.renderComponent()
@@ -166,12 +166,12 @@ module.exports = class Filepanel extends ViewPlugin {
 
   async uploadFile () {
     return await this.request.uploadFile()
-  }  
+  }
 
   async createWorkspace (workspaceName) {
     if (await this._deps.fileManager.workspaceExists(workspaceName)) throw new Error('workspace already exists')
     const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-    await this._deps.fileManager.createWorkspace(workspaceName)    
+    await this._deps.fileManager.createWorkspace(workspaceName)
     for (const file in examples) {
       try {
         await this._deps.fileManager.writeFile('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
@@ -179,7 +179,7 @@ module.exports = class Filepanel extends ViewPlugin {
         console.error(error)
       }
     }
-  }  
+  }
 
   /** these are called by the react component, action is already finished whent it's called */
   async setWorkspace (workspace) {
@@ -191,7 +191,7 @@ module.exports = class Filepanel extends ViewPlugin {
     }
     this.emit('setWorkspace', workspace)
   }
-  
+
   workspaceRenamed (workspace) {
     this.emit('renameWorkspace', workspace)
   }
@@ -203,5 +203,5 @@ module.exports = class Filepanel extends ViewPlugin {
   workspaceCreated (workspace) {
     this.emit('createWorkspace', workspace)
   }
-  /** end section */  
+  /** end section */
 }
