@@ -247,10 +247,14 @@ export class LandingPage extends ViewPlugin {
             (loadingMsg) => { tooltip(loadingMsg) },
             (error, content, cleanUrl, type, url) => {
               if (error) {
-                modalDialogCustom.alert(error)
+                modalDialogCustom.alert(error.message || error)
               } else {
-                fileProviders.browser.addExternal(type + '/' + cleanUrl, content, url)
-                this.verticalIcons.select('fileExplorers')
+                try {
+                  fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
+                  this.verticalIcons.select('fileExplorers')              
+                } catch (e) {
+                  modalDialogCustom.alert(e.message)
+                }                
               }
             }
           )
