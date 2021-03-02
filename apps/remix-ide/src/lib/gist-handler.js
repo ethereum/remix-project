@@ -60,6 +60,8 @@ function GistHandler (_window) {
           if (!errorLoadingFile) {
             const provider = fileManager.getProvider('workspace')
             provider.lastLoadedGistId = gistId
+          } else {
+            modalDialogCustom.alert(errorLoadingFile.message || errorLoadingFile)
           }
         })
       })
