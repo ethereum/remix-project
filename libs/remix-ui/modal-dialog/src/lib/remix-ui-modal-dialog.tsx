@@ -40,6 +40,13 @@ export const ModalDialog = (props: ModalDialogProps) => {
     handleHide()
   }
 
+  const handleBlur = (e) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      e.stopPropagation()
+      handleHide()
+    }
+  }
+
   return (
     <div
       data-id={`${props.id}ModalDialogContainer-react`}
@@ -51,10 +58,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
     >
       <div className="modal-dialog" role="document">
         <div
-          onBlur={(e) => {
-            e.stopPropagation()
-            handleHide()
-          }}
+          onBlur={handleBlur}
           ref={modal}
           tabIndex={-1}
           className={'modal-content remixModalContent ' + (props.modalClass ? props.modalClass : '')}
