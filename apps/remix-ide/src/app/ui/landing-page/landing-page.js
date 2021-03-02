@@ -251,10 +251,10 @@ export class LandingPage extends ViewPlugin {
               } else {
                 try {
                   fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
-                  this.verticalIcons.select('fileExplorers')              
+                  this.verticalIcons.select('fileExplorers')
                 } catch (e) {
                   modalDialogCustom.alert(e.message)
-                }                
+                }
               }
             }
           )
