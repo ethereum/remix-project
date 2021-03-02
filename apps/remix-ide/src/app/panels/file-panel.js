@@ -131,7 +131,6 @@ module.exports = class Filepanel extends ViewPlugin {
   async initWorkspace () {
     const queryParams = new QueryParams()
     const gistHandler = new GistHandler()
-    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
     const params = queryParams.get()
     // get the file from gist
     const loadedFromGist = gistHandler.loadFromGist(params, this._deps.fileManager)
@@ -139,12 +138,12 @@ module.exports = class Filepanel extends ViewPlugin {
     if (loadedFromGist) return
     if (params.code) {
       try {
-        await this._deps.fileManager.createWorkspace('code-sample')
+        await this.processCreateWorkspace('code-sample')
         this._deps.fileProviders.workspace.setWorkspace('code-sample')
         var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
         const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
-        const path = 'browser/' + workspacesPath + '/code-sample/' + fileName
-        await this._deps.fileManager.writeFile(path, atob(params.code))
+        const path = fileName
+        await this._deps.fileProviders.workspace.set(path, atob(params.code))
         this.initialWorkspace = 'code-sample'
         await this._deps.fileManager.openFile(fileName)
       } catch (e) {
@@ -170,13 +169,30 @@ module.exports = class Filepanel extends ViewPlugin {
     return await this.request.uploadFile()
   }
 
+  async processCreateWorkspace (name) {
+    const workspaceProvider = this._deps.fileProviders.workspace
+    const browserProvider = this._deps.fileProviders.browser
+    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
+    const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
+    if (!browserProvider.exists(workspaceRootPath)) browserProvider.createDir(workspaceRootPath)
+    if (!browserProvider.exists(workspacePath)) browserProvider.createDir(workspacePath)
+  }
+
+  async workspaceExists (name) {
+    const workspaceProvider = this._deps.fileProviders.workspace
+    const browserProvider = this._deps.fileProviders.browser
+    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
+    return browserProvider.exists(workspacePath)
+  }
+
   async createWorkspace (workspaceName) {
-    if (await this._deps.fileManager.workspaceExists(workspaceName)) throw new Error('workspace already exists')
+    if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
+    const browserProvider = this._deps.fileProviders.browser
     const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-    await this._deps.fileManager.createWorkspace(workspaceName)
+    await this.processCreateWorkspace(workspaceName)
     for (const file in examples) {
       try {
-        await this._deps.fileManager.writeFile('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
+        await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
       } catch (error) {
         console.error(error)
       }
