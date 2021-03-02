@@ -58,8 +58,6 @@ class FileManager extends Plugin {
   }
 
   limitPluginScope (path) {
-    if (!this.currentRequest) return path // no plugin request, path shall not be modified.
-    if (this.appManager.isRequired(this.currentRequest.from)) return path // caller is a service plugin, path shall not be modified
     return path.replace(/^\/browser\//, '').replace(/^browser\//, '') // forbids plugin to access the root filesystem
   }
 
