@@ -37,7 +37,7 @@ module.exports = {
       .clickLaunchIcon('fileExplorers')
       .pause(10000)
       .openFile('tests/simple_storage_test.sol')
-      .removeFile('tests/simple_storage_test.sol')
+      .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },
 
   'Should run simple unit test `simple_storage_test.sol` ': function (browser: NightwatchBrowser) {
