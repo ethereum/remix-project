@@ -170,13 +170,30 @@ module.exports = class Filepanel extends ViewPlugin {
     return await this.request.uploadFile()
   }
 
+  async processCreateWorkspace (name) {
+    const workspaceProvider = this._deps.fileProviders.workspace
+    const browserProvider = this._deps.fileProviders.browser
+    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
+    const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
+    if (!browserProvider.exists(workspaceRootPath)) browserProvider.createDir(workspaceRootPath)
+    if (!browserProvider.exists(workspacePath)) browserProvider.createDir(workspacePath)
+  }
+
+  async workspaceExists (name) {
+    const workspaceProvider = this._deps.fileProviders.workspace
+    const browserProvider = this._deps.fileProviders.browser
+    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
+    return browserProvider.exists(workspacePath)
+  }
+
   async createWorkspace (workspaceName) {
-    if (await this._deps.fileManager.workspaceExists(workspaceName)) throw new Error('workspace already exists')
+    if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
+    const browserProvider = this._deps.fileProviders.browser
     const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-    await this._deps.fileManager.createWorkspace(workspaceName)
+    await this.processCreateWorkspace(workspaceName)
     for (const file in examples) {
       try {
-        await this._deps.fileManager.writeFile('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
+        await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
       } catch (error) {
         console.error(error)
       }
