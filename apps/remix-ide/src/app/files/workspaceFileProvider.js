@@ -6,6 +6,7 @@ class WorkspaceFileProvider extends FileProvider {
   constructor () {
     super('')
     this.workspacesPath = '.workspaces'
+    this.workspace = null
   }
 
   setWorkspace (workspace) {
@@ -13,11 +14,20 @@ class WorkspaceFileProvider extends FileProvider {
     this.workspace = workspace
   }
 
+  getWorkspace () {
+    return this.workspace
+  }
+
+  isReady () {
+    return this.workspace !== null
+  }
+
   clearWorkspace () {
     this.workspace = null
   }
 
   removePrefix (path) {
+    if (!this.workspace) throw new Error('No workspace has been opened.')
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
     if (path.startsWith(this.workspace)) return this.workspacesPath + '/' + this.workspace
@@ -27,6 +37,7 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   resolveDirectory (path, callback) {
+    if (!this.workspace) throw new Error('No workspace has been opened.')
     super.resolveDirectory(path, (error, files) => {
       if (error) return callback(error)
       const unscoped = {}
@@ -38,6 +49,7 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   _normalizePath (path) {
+    if (!this.workspace) throw new Error('No workspace has been opened.')
     return path.replace(this.workspacesPath + '/' + this.workspace + '/', '')
   }
 }
