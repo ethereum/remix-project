@@ -257,4 +257,17 @@ module.exports = class SettingsTab extends ViewPlugin {
   getGithubAccessToken () {
     return this.config.get('settings/gist-access-token')
   }
+
+  updateMatomoAnalyticsChoice (isChecked) {
+    this.config.set('settings/matomo-analytics', isChecked)
+    if (isChecked) {
+      this._view.useMatomoAnalytics.setAttribute('checked', '')
+      this._view.useMatomoAnalyticsLabel.classList.remove('text-secondary')
+      this._view.useMatomoAnalyticsLabel.classList.add('text-dark')
+    } else {
+      this._view.useMatomoAnalytics.removeAttribute('checked')
+      this._view.useMatomoAnalyticsLabel.classList.remove('text-dark')
+      this._view.useMatomoAnalyticsLabel.classList.add('text-secondary')
+    }
+  }
 }

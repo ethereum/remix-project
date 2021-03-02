@@ -20,24 +20,25 @@ import FetchAndCompile from './app/compiler/compiler-sourceVerifier-fetchAndComp
 
 import migrateFileSystem, { migrateToWorkspace } from './migrateFileSystem'
 
-var isElectron = require('is-electron')
-var csjs = require('csjs-inject')
-var yo = require('yo-yo')
-var remixLib = require('@remix-project/remix-lib')
-var registry = require('./global/registry')
-var loadFileFromParent = require('./loadFilesFromParent')
-var { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
-var QueryParams = require('./lib/query-params')
-var Storage = remixLib.Storage
-var RemixDProvider = require('./app/files/remixDProvider')
-var Config = require('./config')
-var modalDialogCustom = require('./app/ui/modal-dialog-custom')
-var FileManager = require('./app/files/fileManager')
-var FileProvider = require('./app/files/fileProvider')
-var WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
-var toolTip = require('./app/ui/tooltip')
-var CompilerMetadata = require('./app/files/compiler-metadata')
-var CompilerImport = require('./app/compiler/compiler-imports')
+const isElectron = require('is-electron')
+const csjs = require('csjs-inject')
+const yo = require('yo-yo')
+const remixLib = require('@remix-project/remix-lib')
+const registry = require('./global/registry')
+const loadFileFromParent = require('./loadFilesFromParent')
+const { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
+const QueryParams = require('./lib/query-params')
+const Storage = remixLib.Storage
+const RemixDProvider = require('./app/files/remixDProvider')
+const Config = require('./config')
+const modalDialogCustom = require('./app/ui/modal-dialog-custom')
+const modalDialog = require('./app/ui/modaldialog')
+const FileManager = require('./app/files/fileManager')
+const FileProvider = require('./app/files/fileProvider')
+const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
+const toolTip = require('./app/ui/tooltip')
+const CompilerMetadata = require('./app/files/compiler-metadata')
+const CompilerImport = require('./app/compiler/compiler-imports')
 
 const Blockchain = require('./blockchain/blockchain.js')
 
@@ -53,8 +54,9 @@ const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const ContextualListener = require('./app/editor/contextualListener')
+const _paq = window._paq = window._paq || []
 
-var css = csjs`
+const css = csjs`
   html { box-sizing: border-box; }
   *, *:before, *:after { box-sizing: inherit; }
   body                 {
@@ -112,6 +114,9 @@ var css = csjs`
   }
   .centered svg polygon {
     fill: var(--secondary);
+  }
+  .matomoBtn {
+    width              : 100px;
   }
 `
 
@@ -346,6 +351,45 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel,
     settings
   ])
+
+  const onAcceptMatomo = () => {
+    _paq.push(['forgetUserOptOut'])
+    settings.updateMatomoAnalyticsChoice(true)
+    const el = document.getElementById('modal-dialog')
+    el.parentElement.removeChild(el)
+  }
+  const onDeclineMatomo = () => {
+    settings.updateMatomoAnalyticsChoice(false)
+    _paq.push(['optUserOut'])
+    const el = document.getElementById('modal-dialog')
+    el.parentElement.removeChild(el)
+  }
+
+  // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
+  if (window.location.hostname.includes('.ethereum.org') && !registry.get('config').api.exists('settings/matomo-analytics')) {
+    modalDialog(
+      'Help us to improve our IDE!',
+      yo`
+      <div>
+        <p>Remix IDE uses <a href="https://matomo.org">Matomo</a>, an open source data analytics software, to improve the use of our website.</p>
+        <p>We realize that our users have sensitive information in their code and that the privacy of our users must be protected, therefor we do not store any personally identifiable information (PII).</p>
+        <p>All data collected through Matomo is stored at our own server - no data is given to third parties.</p>
+        <p>You can change your choice in the Settings panel anytime.</p>
+        <div class="d-flex justify-content-around pt-3 border-top">
+          <button class="btn btn-primary ${css.matomoBtn}" onclick=${() => onAcceptMatomo()}>Sure</button>
+          <button class="btn btn-secondary ${css.matomoBtn}" onclick=${() => onDeclineMatomo()}>Decline</button>
+        </div>
+      </div>`,
+      {
+        label: '',
+        fn: null
+      },
+      {
+        label: '',
+        fn: null
+      }
+    )
+  }
 
   // CONTENT VIEWS & DEFAULT PLUGINS
   const compileTab = new CompileTab(
