@@ -62,12 +62,7 @@ export const Workspace = (props: WorkspaceProps) => {
   useEffect(() => {
     const getWorkspaces = async () => {
       if (props.workspaces && Array.isArray(props.workspaces)) {
-        if (props.initialWorkspace) {
-          props.workspace.setWorkspace(props.initialWorkspace)
-          setState(prevState => {
-            return { ...prevState, workspaces: props.workspaces, currentWorkspace: props.initialWorkspace }
-          })
-        } else if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
+        if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
           props.workspace.setWorkspace(props.workspaces[0])
           setState(prevState => {
             return { ...prevState, workspaces: props.workspaces, currentWorkspace: props.workspaces[0] }
@@ -91,6 +86,13 @@ export const Workspace = (props: WorkspaceProps) => {
     props.localhost.event.register('disconnected', (event) => {
       remixdExplorer.hide()
     })
+
+    if (props.initialWorkspace) {
+      props.workspace.setWorkspace(props.initialWorkspace)
+      setState(prevState => {
+        return { ...prevState, currentWorkspace: props.initialWorkspace }
+      })
+    }
   }, [])
 
   const [state, setState] = useState({
