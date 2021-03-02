@@ -3,9 +3,9 @@ import { NightwatchBrowser } from 'nightwatch'
 const EventEmitter = require('events')
 
 class RemoveFile extends EventEmitter {
-  command (this: NightwatchBrowser, path: string): NightwatchBrowser {
+  command (this: NightwatchBrowser, path: string, workspace: string): NightwatchBrowser {
     this.api.perform((done) => {
-      removeFile(this.api, path, () => {
+      removeFile(this.api, path, workspace, () => {
         done()
         this.emit('complete')
       })
@@ -14,7 +14,7 @@ class RemoveFile extends EventEmitter {
   }
 }
 
-function removeFile (browser: NightwatchBrowser, path: string, done: VoidFunction) {
+function removeFile (browser: NightwatchBrowser, path: string, workspace: string, done: VoidFunction) {
   browser.execute(function (path) {
     function contextMenuClick (element) {
       const evt = element.ownerDocument.createEvent('MouseEvents')
@@ -39,8 +39,8 @@ function removeFile (browser: NightwatchBrowser, path: string, done: VoidFunctio
       .pause(2000)
       .perform(() => {
         console.log(path, 'to remove')
-        browser.waitForElementVisible('.modal-ok')
-          .click('.modal-ok')
+        browser.waitForElementVisible('*[data-id="' + workspace + 'ModalDialogContainer-react"] .modal-ok')
+          .click('*[data-id="' + workspace + 'ModalDialogContainer-react"] .modal-ok')
           .waitForElementNotPresent('[data-path="' + path + '"]')
         done()
       })
