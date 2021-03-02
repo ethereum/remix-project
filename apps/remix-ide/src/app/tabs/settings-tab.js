@@ -122,11 +122,11 @@ module.exports = class SettingsTab extends ViewPlugin {
     elementStateChanged(self._view.personalLabel, !this.config.get('settings/personal-mode'))
 
     this._view.useMatomoAnalytics = yo`<input onchange=${onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" class="custom-control-input">`
-    this._view.useMatomoAnalyticsMode = yo`<i class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
     this._view.useMatomoAnalyticsLabel = yo`
       <label class="form-check-label custom-control-label align-middle" for="settingsMatomoAnalytics">
-        <span>${this._view.useMatomoAnalyticsMode} Enable Matomo Analytics. The statystics we are collecting is helping to improve plugins usage. We choose Matomo Analytics which is </span>
-        <a target="_blank" href="https://matomo.org/free-software">open source</a>
+        <span>Enable Matomo Analytics. We do not collect personally identifiable information (PII). The info is used to improve the site’s UX & UI. See more about</span>
+        <a href="https://remix-ide.readthedocs.io/en/latest/FAQ.html#analytics" target="_blank">Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
+
       </label>
     `
     if (this.config.get('settings/matomo-analytics')) {
