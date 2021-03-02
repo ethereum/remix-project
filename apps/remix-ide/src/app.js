@@ -485,7 +485,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // get the file list from the parent iframe
   loadFileFromParent(fileManager)
 
-  migrateToWorkspace(fileManager)
+  migrateToWorkspace(fileManager, filePanel)
 
   if (params.embed) framingService.embed()
 }
