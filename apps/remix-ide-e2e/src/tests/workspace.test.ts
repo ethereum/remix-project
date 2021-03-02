@@ -18,6 +18,8 @@ module.exports = {
   'Editor should be focused on the 3_Ballot.sol': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
+      .refresh()
+      .pause(2000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('contract Ballot {') !== -1, 'content doesn\'t include Ballot contract')
       })
@@ -32,18 +34,18 @@ module.exports = {
     browser
       .clickLaunchIcon('fileExplorers')
       .click('*[data-id="workspaceCreate"]') // create workspace_name
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
-      .clearValue('*[data-id="modalDialogCustomPromptText"]')
-      .setValue('*[data-id="modalDialogCustomPromptText"]', 'workspace_name')
-      .modalFooterOKClick()
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name' })
+      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspaceCreate"]') // create workspace_name_1
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
-      .clearValue('*[data-id="modalDialogCustomPromptText"]')
-      .setValue('*[data-id="modalDialogCustomPromptText"]', 'workspace_name_1')
-      .modalFooterOKClick()
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })
+      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
