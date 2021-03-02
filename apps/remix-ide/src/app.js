@@ -365,10 +365,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     el.parentElement.removeChild(el)
   }
 
-  if (!registry.get('config').api.exists('settings/matomo-analytics')) {
   // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
-  // if (window.location.hostname.includes('.ethereum.org')) {
-
+  if (window.location.hostname.includes('.ethereum.org') && !registry.get('config').api.exists('settings/matomo-analytics')) {
     modalDialog(
       'Help us to improve our IDE!',
       yo`
@@ -391,8 +389,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         fn: null
       }
     )
-  // }
   }
+
   // CONTENT VIEWS & DEFAULT PLUGINS
   const compileTab = new CompileTab(
     editor,
