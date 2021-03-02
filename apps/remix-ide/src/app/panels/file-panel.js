@@ -139,12 +139,12 @@ module.exports = class Filepanel extends ViewPlugin {
     if (loadedFromGist) return
     if (params.code) {
       try {
-        await this._deps.fileManager.createWorkspace('code-sample')
+        await this.processCreateWorkspace('code-sample')
         this._deps.fileProviders.workspace.setWorkspace('code-sample')
         var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
         const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
-        const path = 'browser/' + workspacesPath + '/code-sample/' + fileName
-        await this._deps.fileManager.writeFile(path, atob(params.code))
+        const path = fileName
+        await this._deps.fileProviders.workspace.set(path, atob(params.code))
         this.initialWorkspace = 'code-sample'
         await this._deps.fileManager.openFile(fileName)
       } catch (e) {
