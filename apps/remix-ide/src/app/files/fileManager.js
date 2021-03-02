@@ -600,20 +600,6 @@ class FileManager extends Plugin {
       if (callback) callback(error)
     })
   }
-
-  async createWorkspace (name) {
-    const workspaceProvider = this._deps.filesProviders.workspace
-    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
-    const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
-    if (!this.exists(workspaceRootPath)) await this.mkdir(workspaceRootPath)
-    if (!this.exists(workspacePath)) await this.mkdir(workspacePath)
-  }
-
-  async workspaceExists (name) {
-    const workspaceProvider = this._deps.filesProviders.workspace
-    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
-    return this.exists(workspacePath)
-  }
 }
 
 module.exports = FileManager
