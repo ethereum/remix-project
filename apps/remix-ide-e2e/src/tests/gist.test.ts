@@ -38,7 +38,7 @@ module.exports = {
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
       .pause(2000)
       .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
-      .click('.modal-ok')
+      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
       .pause(10000)
       .getText('[data-id="default_workspaceModalDialogModalBody-react"]', (result) => {
         console.log(result)
@@ -99,7 +99,7 @@ module.exports = {
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
       .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
       .pause(2000)
-      .click('.modal-ok')
+      .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
       .pause(10000)
       .getText('[data-id="default_workspaceModalDialogModalBody-react"]', (result) => {
         browser.assert.ok(result.value === 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Assert failed. Gist token error message not displayed.')
