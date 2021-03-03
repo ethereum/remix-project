@@ -63,7 +63,7 @@ module.exports = {
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_1"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .click('*[data-id="workspacesSelect"] option[value="workspace_name_renamed"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')  
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
   },
 
   'Should delete a workspace': function (browser: NightwatchBrowser) {
