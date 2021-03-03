@@ -125,7 +125,7 @@ function runTests (browser: NightwatchBrowser) {
     .pause(1000)
     .renamePath('folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol', 'folder1/renamed_contract_' + browserName + '.sol')
     .pause(1000)
-    .removeFile('folder1/contract_' + browserName + '_toremove.sol')
+    .removeFile('folder1/contract_' + browserName + '_toremove.sol', 'localhost')
     .perform(function (done) {
       testImportFromRemixd(browser, () => { done() })
     })
