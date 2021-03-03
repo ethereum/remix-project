@@ -1,1 +1,1 @@
-export * from './lib/remix-ui-workspace';
+export * from './lib/remix-ui-workspace'
