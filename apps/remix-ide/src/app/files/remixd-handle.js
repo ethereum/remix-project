@@ -146,7 +146,7 @@ function remixdDialog () {
       </div>
       <div class=${css.dialogParagraph}>This feature is still in Alpha, so we recommend you to keep a copy of the shared folder.</div>
       <span class="text-danger">
-        Please make sure you have the <b>latest remixd version</b>. <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html?highlight=remixd#update-to-the-latest-remixd">Read here how to update it</a>
+        Please make sure you have the <b>latest remixd version</b>. <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
       </span>
     </div>
   `
