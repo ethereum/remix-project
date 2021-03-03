@@ -143,7 +143,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const deleteCurrentWorkspace = () => {
-    modal('Remove Workspace', 'Please choose a name for the workspace', {
+    modal('Remove Workspace', 'Are you sure to delete the current workspace?', {
       label: 'OK',
       fn: onFinishDeleteWorkspace
     }, {
