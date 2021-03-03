@@ -75,6 +75,7 @@ module.exports = class Filepanel extends ViewPlugin {
     ReactDOM.render(
       <Workspace
         createWorkspace={this.createWorkspace.bind(this)}
+        renameWorkspace={this.renameWorkspace.bind(this)}
         setWorkspace={this.setWorkspace.bind(this)}
         workspaceRenamed={this.workspaceRenamed.bind(this)}
         workspaceDeleted={this.workspaceDeleted.bind(this)}
@@ -200,6 +201,15 @@ module.exports = class Filepanel extends ViewPlugin {
         console.error(error)
       }
     }
+  }
+
+  async renameWorkspace (oldName, workspaceName) {
+    if (!workspaceName) throw new Error('name cannot be empty')
+    if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
+    if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
+    const browserProvider = this._deps.fileProviders.browser
+    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+    browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)      
   }
 
   /** these are called by the react component, action is already finished whent it's called */
