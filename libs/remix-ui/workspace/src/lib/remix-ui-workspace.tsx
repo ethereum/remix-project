@@ -7,6 +7,7 @@ import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 export interface WorkspaceProps {
   setWorkspace: ({ name: string, isLocalhost: boolean }) => void,
   createWorkspace: (name: string) => void,
+  renameWorkspace: (oldName: string, newName: string) => void
   workspaceRenamed: ({ name: string }) => void,
   workspaceCreated: ({ name: string }) => void,
   workspaceDeleted: ({ name: string }) => void,
@@ -20,10 +21,6 @@ export interface WorkspaceProps {
   workspaces: any,
   registeredMenuItems: [] // menu items
   initialWorkspace: string
-}
-
-const hasSpecialChar = (value) => {
-  return value.match(/[:*?"<>\\'|]/) != null || value.match(/\//) != null
 }
 
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
@@ -171,12 +168,15 @@ export const Workspace = (props: WorkspaceProps) => {
     if (workspaceRenameInput.current === undefined) return
     // @ts-ignore: Object is possibly 'null'.
     const workspaceName = workspaceRenameInput.current.value
-    if (hasSpecialChar(workspaceName)) return modalMessage('Workspace Rename', 'special characters are not allowed')
 
-    const workspacesPath = props.workspace.workspacesPath
-    await props.fileManager.rename('browser/' + workspacesPath + '/' + state.currentWorkspace, 'browser/' + workspacesPath + '/' + workspaceName)
-    setWorkspace(workspaceName)
-    props.workspaceRenamed({ name: state.currentWorkspace })
+    try {
+      await props.renameWorkspace(state.currentWorkspace, workspaceName)
+      setWorkspace(workspaceName)
+      props.workspaceRenamed({ name: workspaceName })
+    } catch (e) {
+      modalMessage('Workspace Rename', e.message)
+      console.error(e)
+    }
   }
 
   const onFinishCreateWorkspace = async () => {
