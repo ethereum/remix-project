@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 
+import { PluginClient } from "@remixproject/plugin";
+import { createClient } from "@remixproject/plugin-webview";
 import {
-  createIframeClient,
   CompilationFileSources,
   CompilationResult,
-  Status,
-} from "@remixproject/plugin";
+} from "@remixproject/plugin-api/";
+import { Status } from "@remixproject/plugin-utils";
 
 import { AppContext } from "./AppContext";
 import { Routes } from "./routes";
@@ -42,12 +43,12 @@ const App = () => {
 
   useEffect(() => {
     console.log("Remix EthDoc loading...");
-    const client = createIframeClient({ devMode });
+    const client = createClient(new PluginClient());
     const loadClient = async () => {
       await client.onload();
       setClientInstance(client);
       console.log("Remix EthDoc Plugin has been loaded");
-      await client.call("manager" as any, "activatePlugin", "ethdoc-viewer");
+      //await client.call("manager" as any, "activatePlugin", "ethdoc-viewer");
       client.solidity.on(
         "compilationFinished",
         (
