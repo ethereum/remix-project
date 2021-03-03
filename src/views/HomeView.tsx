@@ -3,12 +3,15 @@ import { AppContext } from "../AppContext";
 import { ContractName, Documentation } from "../types";
 import { publish } from "../utils";
 import { htmlTemplate } from "../utils/template";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export const HomeView: React.FC = () => {
   const [activeItem, setActiveItem] = useState("");
   const [isPublishing, setIsPublishing] = useState(false);
   const [htmlDocumentation, setHtmlDocumentation] = useState("");
   const [hasErrorOnPublishing, setHasErrorOnPublishing] = useState(false);
+  const [publishedURL, setPublishedURL] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
   const clearMessageFuncRef = useRef(undefined as any);
 
   useEffect(() => {
@@ -27,6 +30,7 @@ export const HomeView: React.FC = () => {
         const url = `https://ipfs.io/ipfs/${hash}`;
 
         window.open(url);
+        setPublishedURL(url);
       } catch (error) {
         if (retries < maxNumberOfRetries) {
           console.log("Retrying...");
@@ -82,6 +86,8 @@ export const HomeView: React.FC = () => {
                       }
                       aria-pressed="false"
                       onClick={() => {
+                        setPublishedURL("");
+                        setIsCopied(false);
                         setActiveItem(item);
                         displayDocumentation(
                           clientInstance,
@@ -104,22 +110,44 @@ export const HomeView: React.FC = () => {
                   onClick={() => {
                     setContracts(new Map());
                     displayDocumentation(clientInstance, "", "");
+                    setPublishedURL("");
+                    setIsCopied(false);
                   }}
                 >
                   Clear
                 </button>
               </div>
-              <div style={{ width: "16em" }}>
+              <div>
                 {activeItem !== "" && (
                   <PublishButton
                     isPublishing={isPublishing}
+                    item={activeItem}
                     onClick={() => {
                       console.log("Is publishing");
                       setIsPublishing(true);
+                      setIsCopied(false);
                     }}
                   />
                 )}
               </div>
+              {!isPublishing && publishedURL !== "" && (
+                <>
+                  <CopyToClipboard
+                    onCopy={() => setIsCopied(true)}
+                    text={publishedURL}
+                  >
+                    <button
+                      style={{ marginTop: "1em" }}
+                      className="btn btn-secondary btn-sm  btn-block"
+                    >
+                      Copy link to clipboard
+                    </button>
+                  </CopyToClipboard>
+                  {isCopied && (
+                    <div className="small mt-1">Link copied to clipboard</div>
+                  )}
+                </>
+              )}
 
               {hasErrorOnPublishing && (
                 <div>
@@ -137,11 +165,13 @@ export const HomeView: React.FC = () => {
 interface PublishButtonProps {
   isPublishing: boolean;
   onClick: any;
+  item: string;
 }
 
 export const PublishButton: React.FC<PublishButtonProps> = ({
   isPublishing,
   onClick,
+  item,
 }) => {
   return (
     <button
@@ -150,7 +180,7 @@ export const PublishButton: React.FC<PublishButtonProps> = ({
       disabled={isPublishing}
       onClick={onClick}
     >
-      {!isPublishing && "Publish"}
+      {!isPublishing && <span>Publish {item}</span>}
 
       {isPublishing && (
         <div
