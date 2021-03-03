@@ -776,6 +776,44 @@
           }
         }
       }
+    },
+    "remix-ui-solidity-compiler": {
+      "root": "libs/remix-ui/solidity-compiler",
+      "sourceRoot": "libs/remix-ui/solidity-compiler/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/solidity-compiler/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/solidity-compiler/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-publish-to-storage": {
+      "root": "libs/remix-ui/publish-to-storage",
+      "sourceRoot": "libs/remix-ui/publish-to-storage/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/publish-to-storage/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/publish-to-storage/**/*"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

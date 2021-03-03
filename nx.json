@@ -107,6 +107,9 @@
     },
     "remix-ui-solidity-compiler": {
       "tags": []
+    },
+    "remix-ui-publish-to-storage": {
+      "tags": []
     }
   }
 }
