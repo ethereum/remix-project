@@ -3,7 +3,7 @@ import {
   DevMethodDoc,
   DeveloperDocumentation,
   UserDocumentation,
-} from "@remixproject/plugin";
+} from "@remixproject/plugin-api/lib/compiler";
 
 export interface MethodsDocumentation {
   [x: string]: UserMethodDoc | DevMethodDoc;

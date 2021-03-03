@@ -4,7 +4,7 @@ import {
   FunctionDescription,
   ABIParameter,
   ABIDescription,
-} from "@remixproject/plugin";
+} from "@remixproject/plugin-api/lib/compiler";
 
 import { FileName, Documentation, ContractName } from "../types";
 import { template } from "./template";
