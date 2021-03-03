@@ -1,5 +1,7 @@
 import React from "react";
-import { PluginApi, IRemixApi, Api, PluginClient } from "@remixproject/plugin";
+import { PluginClient } from "@remixproject/plugin";
+import { PluginApi, Api } from "@remixproject/plugin-utils";
+import { IRemixApi } from "@remixproject/plugin-api";
 
 import { ContractName, Documentation, PublishedSite } from "./types";
 

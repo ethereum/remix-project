@@ -1,4 +1,4 @@
-import { CompiledContract, ABIParameter } from "@remixproject/plugin";
+import { CompiledContract, ABIParameter } from "@remixproject/plugin-api/lib/compiler";
 
 import sampleData from "./sample-data/sample-artifact.json";
 import sampleDataWithComments from "./sample-data/sample-artifact-with-comments.json";
