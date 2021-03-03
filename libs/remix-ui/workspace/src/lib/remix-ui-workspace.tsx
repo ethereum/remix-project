@@ -155,10 +155,7 @@ export const Workspace = (props: WorkspaceProps) => {
     modal(title, body, {
       label: 'OK',
       fn: () => {}
-    }, {
-      label: null,
-      fn: null
-    })
+    }, null)
   }
 
   const workspaceRenameInput = useRef()
