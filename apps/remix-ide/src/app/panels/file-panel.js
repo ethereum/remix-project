@@ -209,7 +209,7 @@ module.exports = class Filepanel extends ViewPlugin {
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
     const browserProvider = this._deps.fileProviders.browser
     const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-    browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)      
+    browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)
   }
 
   /** these are called by the react component, action is already finished whent it's called */
