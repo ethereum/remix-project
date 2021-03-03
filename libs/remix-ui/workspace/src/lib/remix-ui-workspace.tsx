@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react' // eslint-disable-line
 import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
-import './remix-ui-workspace.css';
+import './remix-ui-workspace.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 
 /* eslint-disable-next-line */
@@ -79,11 +79,11 @@ export const Workspace = (props: WorkspaceProps) => {
   }, [props.workspaces])
 
   useEffect(() => {
-    props.localhost.event.register('connected', (event) => {
+    props.localhost.event.register('connected', () => {
       remixdExplorer.show()
     })
-  
-    props.localhost.event.register('disconnected', (event) => {
+
+    props.localhost.event.register('disconnected', () => {
       remixdExplorer.hide()
     })
 
@@ -193,15 +193,15 @@ export const Workspace = (props: WorkspaceProps) => {
     props.browser.remove(workspacesPath + '/' + state.currentWorkspace)
     const name = state.currentWorkspace
     setWorkspace(NO_WORKSPACE)
-    props.workspaceDeleted({ name })    
+    props.workspaceDeleted({ name })
   }
-  /**** ****/
+  /** ** ****/
 
   const resetFocus = (reset) => {
     setState(prevState => {
       return { ...prevState, reset }
     })
-  }  
+  }
 
   const setWorkspace = async (name) => {
     if (name === LOCALHOST) {
@@ -280,77 +280,77 @@ export const Workspace = (props: WorkspaceProps) => {
 
   //   setWorkspace(value)
   // }
-  
+
   return (
     <div className='remixui_container'>
-        <ModalDialog
-          id='workspacesModalDialog'
-          title={ state.modal.title }
-          message={ state.modal.message }
-          hide={ state.modal.hide }
-          ok={ state.modal.ok }
-          cancel={ state.modal.cancel }
-          handleHide={ handleHideModal }>
-            { (typeof state.modal.message !== 'string') && state.modal.message }
-        </ModalDialog>
-        <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
-          <div>
-            <header>
-              <div className="mb-2">
-                <label className="form-check-label" htmlFor="workspacesSelect">
+      <ModalDialog
+        id='workspacesModalDialog'
+        title={ state.modal.title }
+        message={ state.modal.message }
+        hide={ state.modal.hide }
+        ok={ state.modal.ok }
+        cancel={ state.modal.cancel }
+        handleHide={ handleHideModal }>
+        { (typeof state.modal.message !== 'string') && state.modal.message }
+      </ModalDialog>
+      <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
+        <div>
+          <header>
+            <div className="mb-2">
+              <label className="form-check-label" htmlFor="workspacesSelect">
                 Workspaces
-                </label>
-                <span className="remixui_menu">
-                  <span
-                    id='workspaceCreate'
-                    data-id='workspaceCreate'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      createWorkspace()
-                    }}
-                    className='far fa-plus-square remixui_menuicon'
-                    title='Create a new Workspace'>
-                  </span>
-                  <span
-                    hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
-                    id='workspaceRename'
-                    data-id='workspaceRename'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      renameCurrentWorkspace()
-                    }}
-                    className='far fa-edit remixui_menuicon'
-                    title='Rename current Workspace'>
-                  </span>
-                  <span
-                    hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
-                    id='workspaceDelete'
-                    data-id='workspaceDelete'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      deleteCurrentWorkspace()
-                    }}
-                    className='fas fa-trash'
-                    title='Delete current Workspace'>
-                  </span>
+              </label>
+              <span className="remixui_menu">
+                <span
+                  id='workspaceCreate'
+                  data-id='workspaceCreate'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    createWorkspace()
+                  }}
+                  className='far fa-plus-square remixui_menuicon'
+                  title='Create a new Workspace'>
                 </span>
-                <select id="workspacesSelect" data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
+                <span
+                  hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
+                  id='workspaceRename'
+                  data-id='workspaceRename'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    renameCurrentWorkspace()
+                  }}
+                  className='far fa-edit remixui_menuicon'
+                  title='Rename current Workspace'>
+                </span>
+                <span
+                  hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
+                  id='workspaceDelete'
+                  data-id='workspaceDelete'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    deleteCurrentWorkspace()
+                  }}
+                  className='fas fa-trash'
+                  title='Delete current Workspace'>
+                </span>
+              </span>
+              <select id="workspacesSelect" data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
                 {
                   state.workspaces
-                  .map((folder) => {
-                    return <option selected={state.currentWorkspace === folder} value={folder}>{folder}</option>
-                  })
+                    .map((folder) => {
+                      return <option selected={state.currentWorkspace === folder} value={folder}>{folder}</option>
+                    })
                 }
                 <option selected={state.currentWorkspace === LOCALHOST} value={LOCALHOST}>{LOCALHOST}</option>
                 { state.workspaces.length <= 0 && <option selected={state.currentWorkspace === NO_WORKSPACE} value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
-                </select>
-              </div>
-            </header>
-          </div>
-          <div className='remixui_fileExplorerTree'>
-            <div>
-              <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
-                { state.hideRemixdExplorer && state.currentWorkspace && state.currentWorkspace !== NO_WORKSPACE && state.currentWorkspace !== LOCALHOST &&
+              </select>
+            </div>
+          </header>
+        </div>
+        <div className='remixui_fileExplorerTree'>
+          <div>
+            <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
+              { state.hideRemixdExplorer && state.currentWorkspace && state.currentWorkspace !== NO_WORKSPACE && state.currentWorkspace !== LOCALHOST &&
                   <FileExplorer
                     name={state.currentWorkspace}
                     registry={props.registry}
@@ -362,10 +362,10 @@ export const Workspace = (props: WorkspaceProps) => {
                     displayInput={state.displayNewFile}
                     externalUploads={state.uploadFileEvent}
                   />
-                }
-              </div>
-              <div className='pl-2 filesystemexplorer remixui_treeview'>
-                { !state.hideRemixdExplorer &&
+              }
+            </div>
+            <div className='pl-2 filesystemexplorer remixui_treeview'>
+              { !state.hideRemixdExplorer &&
                   <FileExplorer
                     name='localhost'
                     registry={props.registry}
@@ -375,27 +375,27 @@ export const Workspace = (props: WorkspaceProps) => {
                     focusRoot={state.reset}
                     contextMenuItems={props.registeredMenuItems}
                   />
-                }
-              </div>
-              <div className='pl-2 remixui_treeview'>
-                { false && <FileExplorer
-                  name='browser'
-                  registry={props.registry}
-                  filesProvider={props.browser}
-                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
-                  plugin={props.plugin}
-                  focusRoot={state.reset}
-                  contextMenuItems={props.registeredMenuItems}
-                  displayInput={state.displayNewFile}
-                  externalUploads={state.uploadFileEvent}
-                />
-                }
-              </div>
+              }
+            </div>
+            <div className='pl-2 remixui_treeview'>
+              { false && <FileExplorer
+                name='browser'
+                registry={props.registry}
+                filesProvider={props.browser}
+                menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
+                plugin={props.plugin}
+                focusRoot={state.reset}
+                contextMenuItems={props.registeredMenuItems}
+                displayInput={state.displayNewFile}
+                externalUploads={state.uploadFileEvent}
+              />
+              }
             </div>
           </div>
         </div>
       </div>
-  );
-};
+    </div>
+  )
+}
 
-export default Workspace;
+export default Workspace
