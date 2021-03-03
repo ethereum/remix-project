@@ -22,6 +22,10 @@ export interface WorkspaceProps {
   initialWorkspace: string
 }
 
+const hasSpecialChar = (value) => {
+  return value.match(/[:*?"<>\\'|]/) != null || value.match(/\//) != null
+}
+
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
 export const Workspace = (props: WorkspaceProps) => {
   const LOCALHOST = ' - connect to localhost - '
@@ -152,10 +156,12 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const modalMessage = (title: string, body: string) => {
-    modal(title, body, {
-      label: 'OK',
-      fn: () => {}
-    }, null)
+    setTimeout(() => { // wait for any previous modal a chance to close
+      modal(title, body, {
+        label: 'OK',
+        fn: () => {}
+      }, null)
+    }, 200)
   }
 
   const workspaceRenameInput = useRef()
@@ -165,6 +171,8 @@ export const Workspace = (props: WorkspaceProps) => {
     if (workspaceRenameInput.current === undefined) return
     // @ts-ignore: Object is possibly 'null'.
     const workspaceName = workspaceRenameInput.current.value
+    if (hasSpecialChar(workspaceName)) return modalMessage('Workspace Rename', 'special characters are not allowed')
+
     const workspacesPath = props.workspace.workspacesPath
     await props.fileManager.rename('browser/' + workspacesPath + '/' + state.currentWorkspace, 'browser/' + workspacesPath + '/' + workspaceName)
     setWorkspace(workspaceName)
