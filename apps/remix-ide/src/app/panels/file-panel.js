@@ -5,6 +5,7 @@ import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
 import * as ethutil from 'ethereumjs-util'
+import { checkSpecialChars, checkSlash } from '../../lib/helper'
 var EventManager = require('../../lib/events')
 var { RemixdHandle } = require('../files/remixd-handle.js')
 var { GitHandle } = require('../files/git-handle.js')
@@ -186,6 +187,8 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async createWorkspace (workspaceName) {
+    if (!workspaceName) throw new Error('name cannot be empty')
+    if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
     const browserProvider = this._deps.fileProviders.browser
     const workspacesPath = this._deps.fileProviders.workspace.workspacesPath

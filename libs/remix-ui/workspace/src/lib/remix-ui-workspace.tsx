@@ -181,11 +181,11 @@ export const Workspace = (props: WorkspaceProps) => {
 
     try {
       await props.createWorkspace(workspaceName)
+      await setWorkspace(workspaceName)
     } catch (e) {
       modalMessage('Workspace Creation', e.message)
       console.error(e)
     }
-    await setWorkspace(workspaceName)
   }
 
   const onFinishDeleteWorkspace = async () => {
