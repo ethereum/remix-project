@@ -15,6 +15,14 @@ Alternatively `remixd` can be used to setup a development environment that can b
 
 `npm install -g @remix-project/remixd`
 
+### Warning for old users
+There is a new version of remixd with a new npm address: https://npmjs.com/package/@remix-project/remixd
+If you were using the old one you need to:
+
+  1. uninstall the old one: `npm uninstall -g remixd`
+  2. install the new: `npm install -g @remix-project/remixd`
+
+
 ## HELP SECTION
 
 ```

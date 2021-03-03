@@ -49,8 +49,16 @@ class FileManager extends Plugin {
     this.init()
   }
 
+  getOpenedFiles () {
+    return this.openedFiles
+  }
+
   setMode (mode) {
     this.mode = mode
+  }
+
+  limitPluginScope (path) {
+    return path.replace(/^\/browser\//, '').replace(/^browser\//, '') // forbids plugin to access the root filesystem
   }
 
   /**
@@ -106,6 +114,7 @@ class FileManager extends Plugin {
    * @returns {boolean} true if the path exists
    */
   exists (path) {
+    path = this.limitPluginScope(path)
     const provider = this.fileProviderOf(path)
     const result = provider.exists(path, (err, result) => {
       if (err) return false
@@ -145,6 +154,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async open (path) {
+    path = this.limitPluginScope(path)
     await this._handleExists(path, `Cannot open file ${path}`)
     await this._handleIsFile(path, `Cannot open file ${path}`)
     return this.openFile(path)
@@ -157,6 +167,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async writeFile (path, data) {
+    path = this.limitPluginScope(path)
     if (await this.exists(path)) {
       await this._handleIsFile(path, `Cannot write file ${path}`)
       return await this.setFileContent(path, data)
@@ -173,6 +184,7 @@ class FileManager extends Plugin {
    * @returns {string} content of the file
    */
   async readFile (path) {
+    path = this.limitPluginScope(path)
     await this._handleExists(path, `Cannot read file ${path}`)
     await this._handleIsFile(path, `Cannot read file ${path}`)
     return this.getFileContent(path)
@@ -185,6 +197,8 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async copyFile (src, dest) {
+    src = this.limitPluginScope(src)
+    dest = this.limitPluginScope(dest)
     await this._handleExists(src, `Cannot copy from ${src}`)
     await this._handleIsFile(src, `Cannot copy from ${src}`)
     await this._handleIsFile(dest, `Cannot paste content into ${dest}`)
@@ -200,6 +214,8 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async rename (oldPath, newPath) {
+    oldPath = this.limitPluginScope(oldPath)
+    newPath = this.limitPluginScope(newPath)
     await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
     const isFile = await this.isFile(oldPath)
     const newPathExists = await this.exists(newPath)
@@ -226,6 +242,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async mkdir (path) {
+    path = this.limitPluginScope(path)
     if (await this.exists(path)) {
       throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
     }
@@ -240,6 +257,7 @@ class FileManager extends Plugin {
    * @returns {string[]} list of the file/directory name in this directory
    */
   async readdir (path) {
+    path = this.limitPluginScope(path)
     await this._handleExists(path)
     await this._handleIsDir(path)
 
@@ -259,6 +277,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async remove (path) {
+    path = this.limitPluginScope(path)
     await this._handleExists(path, `Cannot remove file or directory ${path}`)
     const provider = this.fileProviderOf(path)
 
@@ -580,14 +599,6 @@ class FileManager extends Plugin {
     }, (error) => {
       if (callback) callback(error)
     })
-  }
-
-  async createWorkspace (name) {
-    const workspaceProvider = this._deps.filesProviders.workspace
-    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
-    const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
-    if (!this.exists(workspaceRootPath)) await this.mkdir(workspaceRootPath)
-    if (!this.exists(workspacePath)) await this.mkdir(workspacePath)
   }
 }
 

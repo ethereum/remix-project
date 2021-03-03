@@ -20,7 +20,9 @@
       "@remix-project/remix-astwalker": ["dist/libs/remix-astwalker/index.js"],
       "@remix-project/remix-debug": ["dist/libs/remix-debug/src/index.js"],
       "@remix-project/remix-lib": ["dist/libs/remix-lib/src/index.js"],
-      "@remix-project/remix-simulator": ["dist/libs/remix-simulator/src/index.js"],
+      "@remix-project/remix-simulator": [
+        "dist/libs/remix-simulator/src/index.js"
+      ],
       "@remix-project/remix-solidity": ["dist/libs/remix-solidity/index.js"],
       "@remix-project/remix-tests": ["dist/libs/remix-tests/src/index.js"],
       "@remix-project/remix-url-resolver": [
@@ -35,7 +37,8 @@
       "@remix-project/remix-solidity-ts": ["libs/remix-solidity/src/index.ts"],
       "@remix-ui/modal-dialog": ["libs/remix-ui/modal-dialog/src/index.ts"],
       "@remix-ui/toaster": ["libs/remix-ui/toaster/src/index.ts"],
-      "@remix-ui/file-explorer": ["libs/remix-ui/file-explorer/src/index.ts"]
+      "@remix-ui/file-explorer": ["libs/remix-ui/file-explorer/src/index.ts"],
+      "@remix-ui/workspace": ["libs/remix-ui/workspace/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

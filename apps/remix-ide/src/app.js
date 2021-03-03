@@ -444,7 +444,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
   await appManager.activatePlugin(['mainPanel', 'menuicons'])
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
-  await appManager.activatePlugin(['home', 'hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile'])
+  await appManager.activatePlugin(['home'])
+  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile'])
 
   const queryParams = new QueryParams()
   const params = queryParams.get()
@@ -484,8 +485,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // get the file list from the parent iframe
   loadFileFromParent(fileManager)
 
-  migrateToWorkspace(fileManager)
+  migrateToWorkspace(fileManager, filePanel)
 
-  filePanel.initWorkspace()
   if (params.embed) framingService.embed()
 }

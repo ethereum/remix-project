@@ -21,7 +21,7 @@ export default (fileProvider) => {
   fileStorageBrowserFS.set(flag, 'done')
 }
 
-export async function migrateToWorkspace (fileManager) {
+export async function migrateToWorkspace (fileManager, filePanel) {
   const browserProvider = fileManager.getProvider('browser')
   const workspaceProvider = fileManager.getProvider('workspace')
   const flag = 'status'
@@ -31,19 +31,20 @@ export async function migrateToWorkspace (fileManager) {
   console.log(files)
   const workspaceName = 'default_workspace'
   const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
-  await fileManager.createWorkspace(workspaceName)
-  await populateWorkspace(workspacePath, files, fileManager)
+  await filePanel.createWorkspace(workspaceName)
+  filePanel.getWorkspaces() // refresh list
+  await populateWorkspace(workspacePath, files, browserProvider)
   fileStorageBrowserWorkspace.set(flag, 'done')
 }
 
-const populateWorkspace = async (workspace, json, fileManager) => {
+const populateWorkspace = async (workspace, json, browserProvider) => {
   for (const item in json) {
     const isFolder = json[item].content === undefined
     if (isFolder) {
-      await fileManager.mkdir(joinPath(workspace, item))
-      await populateWorkspace(workspace, json[item].children, fileManager)
+      browserProvider.createDir(joinPath(workspace, item))
+      await populateWorkspace(workspace, json[item].children, browserProvider)
     } else {
-      await fileManager.writeFile(joinPath(workspace, item), json[item].content)
+      await browserProvider.set(joinPath(workspace, item), json[item].content)
     }
   }
 }
