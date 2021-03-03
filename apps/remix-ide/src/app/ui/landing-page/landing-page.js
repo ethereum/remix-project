@@ -240,20 +240,21 @@ export class LandingPage extends ViewPlugin {
           <div>e.g ${examples.map((url) => { return yo`<div class="p-1"><a>${url}</a></div>` })}</div>
         </div>`
 
-      modalDialogCustom.prompt(`Import from ${service}`, msg, null, (target) => {
+      const title = `Import from ${service}`
+      modalDialogCustom.prompt(title, msg, null, (target) => {
         if (target !== '') {
           compilerImport.import(
             target,
             (loadingMsg) => { tooltip(loadingMsg) },
             (error, content, cleanUrl, type, url) => {
               if (error) {
-                modalDialogCustom.alert(error.message || error)
+                modalDialogCustom.alert(title, error.message || error)
               } else {
                 try {
                   fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
                   this.verticalIcons.select('fileExplorers')
                 } catch (e) {
-                  modalDialogCustom.alert(e.message)
+                  modalDialogCustom.alert(title, e.message)
                 }
               }
             }
