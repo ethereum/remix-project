@@ -7,6 +7,7 @@ import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 export interface WorkspaceProps {
   setWorkspace: ({ name: string, isLocalhost: boolean }) => void,
   createWorkspace: (name: string) => void,
+  renameWorkspace: (oldName: string, newName: string) => void
   workspaceRenamed: ({ name: string }) => void,
   workspaceCreated: ({ name: string }) => void,
   workspaceDeleted: ({ name: string }) => void,
@@ -28,9 +29,9 @@ export const Workspace = (props: WorkspaceProps) => {
   const NO_WORKSPACE = ' - none - '
 
   /* extends the parent 'plugin' with some function needed by the file explorer */
-  props.plugin.resetFocus = () => {
+  props.plugin.resetFocus = (reset) => {
     setState(prevState => {
-      return { ...prevState, reset: true }
+      return { ...prevState, reset }
     })
   }
 
@@ -39,6 +40,8 @@ export const Workspace = (props: WorkspaceProps) => {
       return { ...prevState, displayNewFile: !state.displayNewFile }
     })
   }
+
+  props.plugin.resetUploadFile = () => {}
 
   /* implement an external API, consumed by the parent */
   props.request.createWorkspace = () => {
@@ -142,7 +145,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const deleteCurrentWorkspace = () => {
-    modal('Remove Workspace', 'Please choose a name for the workspace', {
+    modal('Remove Workspace', 'Are you sure to delete the current workspace?', {
       label: 'OK',
       fn: onFinishDeleteWorkspace
     }, {
@@ -152,13 +155,12 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const modalMessage = (title: string, body: string) => {
-    modal(title, body, {
-      label: 'OK',
-      fn: () => {}
-    }, {
-      label: null,
-      fn: null
-    })
+    setTimeout(() => { // wait for any previous modal a chance to close
+      modal(title, body, {
+        label: 'OK',
+        fn: () => {}
+      }, null)
+    }, 200)
   }
 
   const workspaceRenameInput = useRef()
@@ -168,10 +170,15 @@ export const Workspace = (props: WorkspaceProps) => {
     if (workspaceRenameInput.current === undefined) return
     // @ts-ignore: Object is possibly 'null'.
     const workspaceName = workspaceRenameInput.current.value
-    const workspacesPath = props.workspace.workspacesPath
-    await props.fileManager.rename('browser/' + workspacesPath + '/' + state.currentWorkspace, 'browser/' + workspacesPath + '/' + workspaceName)
-    setWorkspace(workspaceName)
-    props.workspaceRenamed({ name: state.currentWorkspace })
+
+    try {
+      await props.renameWorkspace(state.currentWorkspace, workspaceName)
+      setWorkspace(workspaceName)
+      props.workspaceRenamed({ name: workspaceName })
+    } catch (e) {
+      modalMessage('Rename Workspace', e.message)
+      console.error(e)
+    }
   }
 
   const onFinishCreateWorkspace = async () => {
@@ -181,11 +188,11 @@ export const Workspace = (props: WorkspaceProps) => {
 
     try {
       await props.createWorkspace(workspaceName)
+      await setWorkspace(workspaceName)
     } catch (e) {
-      modalMessage('Workspace Creation', e.message)
+      modalMessage('Create Workspace', e.message)
       console.error(e)
     }
-    await setWorkspace(workspaceName)
   }
 
   const onFinishDeleteWorkspace = async () => {
@@ -261,7 +268,7 @@ export const Workspace = (props: WorkspaceProps) => {
     return (
       <>
         <span>{ state.modal.message }</span>
-        <input type="text" data-id="modalDialogCustomPromptTextCreate" placeholder={`workspace_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
+        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`workspace_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
       </>
     )
   }
@@ -270,7 +277,7 @@ export const Workspace = (props: WorkspaceProps) => {
     return (
       <>
         <span>{ state.modal.message }</span>
-        <input type="text" data-id="modalDialogCustomPromptTextRename" placeholder={ state.currentWorkspace } ref={workspaceRenameInput} className="form-control" />
+        <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={ state.currentWorkspace } ref={workspaceRenameInput} className="form-control" />
       </>
     )
   }

@@ -514,6 +514,8 @@ class FileManager extends Plugin {
     if (file.startsWith('browser')) {
       return this._deps.filesProviders.browser
     }
+    const provider = this._deps.filesProviders.workspace
+    if (!provider.isReady()) throw createError({ code: 'ECONNRESET', message: 'No workspace has been opened.' })
     return this._deps.filesProviders.workspace
   }
 
@@ -579,7 +581,11 @@ class FileManager extends Plugin {
 
     async.each(Object.keys(filesSet), (file, callback) => {
       if (override) {
-        self._deps.filesProviders[fileProvider].set(file, filesSet[file].content)
+        try {
+          self._deps.filesProviders[fileProvider].set(file, filesSet[file].content)
+        } catch (e) {
+          return callback(e.message || e)
+        }
         self.syncEditor(fileProvider + file)
         return callback()
       }
@@ -591,7 +597,11 @@ class FileManager extends Plugin {
           } else if (helper.checkSpecialChars(name)) {
             modalDialogCustom.alert('Special characters are not allowed')
           } else {
-            self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+            try {
+              self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+            } catch (e) {
+              return callback(e.message || e)
+            }
             self.syncEditor(fileProvider + name)
           }
           callback()
