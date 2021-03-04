@@ -368,12 +368,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
   if (window.location.hostname.includes('.ethereum.org') && !registry.get('config').api.exists('settings/matomo-analytics')) {
     modalDialog(
-      'Help us to improve our IDE!',
+      'Help us to improve our IDE',
       yo`
       <div>
-        <p>Remix IDE uses <a href="https://matomo.org">Matomo</a>, an open source data analytics software, to improve the use of our website.</p>
-        <p>We realize that our users have sensitive information in their code and that the privacy of our users must be protected, therefor we do not store any personally identifiable information (PII).</p>
-        <p>All data collected through Matomo is stored at our own server - no data is given to third parties.</p>
+        <p>Remix IDE uses <a href="https://matomo.org target="_blank">Matomo</a>, an open source data analytics platform, to improve our website. Matomo on Remix is opt-in - meaning that we won't collect any information unless you agree.</p>
+        <p>We realize that our users have sensitive information in their code and that the privacy of our users must be protected.</p>
+        <p>All data collected through Matomo is stored on our own server - no data is ever given to third parties.  Our analytics reports are public: <a href="https://matomo.ethereum.org/index.php?module=MultiSites&action=index&idSite=23&period=day&date=yesterday" target="_blank">take a look</a>.</p>
+        <p>We do not store any personally identifiable information (PII).</p>
+        <p>For more info see: <a href="https://medium.com/p/66ef69e14931/" target="_blank">Matomo Analyitcs on Remix iDE</a>.</p>
         <p>You can change your choice in the Settings panel anytime.</p>
         <div class="d-flex justify-content-around pt-3 border-top">
           <button class="btn btn-primary ${css.matomoBtn}" onclick=${() => onAcceptMatomo()}>Sure</button>
