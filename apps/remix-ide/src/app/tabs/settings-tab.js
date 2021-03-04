@@ -125,8 +125,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this._view.useMatomoAnalyticsLabel = yo`
       <label class="form-check-label custom-control-label align-middle" for="settingsMatomoAnalytics">
         <span>Enable Matomo Analytics. We do not collect personally identifiable information (PII). The info is used to improve the site’s UX & UI. See more about</span>
-        <a href="https://remix-ide.readthedocs.io/en/latest/FAQ.html#analytics" target="_blank">Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
-
+        <a href="https://medium.com/p/66ef69e14931/" target="_blank">Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
       </label>
     `
     if (this.config.get('settings/matomo-analytics')) {
