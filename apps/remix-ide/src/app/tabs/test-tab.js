@@ -573,18 +573,28 @@ module.exports = class TestTab extends ViewPlugin {
     this.inputPath = yo`<input
       placeholder=${this.defaultPath}
       list="utPathList"
-      class="custom-select"
+      class="${css.inputFolder} custom-select"
       id="utPath"
       data-id="uiPathInput"
       name="utPath"
       style="background-image: var(--primary);"
-      onkeydown=${(e) => { if (e.keyCode === 191) this.updateDirList() }}
-      onchange=${(e) => this.updateCurrentPath(e)}/>`
+      onkeydown=${(e) => { if (e.keyCode === 191) this.updateDirList() }}/>`
+
+    const createTestFolder = yo`<button
+      class="btn border ml-2"
+      data-id="testTabGenerateTestFolder"
+      title="Create a test folder"
+      onclick=${(e) => { this.testTabLogic.generateTestFolder(this.inputPath.value) }}>
+      Create
+      </button>`
 
     const availablePaths = yo`
       <div>
-          ${this.inputPath}
-          ${this.uiPathList}
+          <div class="d-flex p-2">
+            ${this.inputPath}
+            ${createTestFolder}
+            ${this.uiPathList}
+          </div>
       </div>
     `
     this.updateDirList()

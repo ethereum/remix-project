@@ -48,5 +48,8 @@ var css = csjs`
   .labelOnBtn {
     border: hidden;
   }
+  .inputFolder {
+    width: 80%;
+  }
 `
 module.exports = css
