@@ -20,7 +20,7 @@ function GistHandler (_window) {
           if (gistId) {
             cb(gistId)
           } else {
-            modalDialogCustom.alert('Error while loading gist. Please provide a valid Gist ID or URL.')
+            modalDialogCustom.alert('Gist load error', 'Error while loading gist. Please provide a valid Gist ID or URL.')
           }
         }
       })
@@ -49,7 +49,7 @@ function GistHandler (_window) {
         json: true
       }, async (error, response, data = {}) => {
         if (error || !data.files) {
-          modalDialogCustom.alert(`Gist load error: ${error || data.message}`)
+          modalDialogCustom.alert('Gist load error', error || data.message)
           return
         }
         const obj = {}
@@ -60,6 +60,8 @@ function GistHandler (_window) {
           if (!errorLoadingFile) {
             const provider = fileManager.getProvider('workspace')
             provider.lastLoadedGistId = gistId
+          } else {
+            modalDialogCustom.alert('Gist load error', errorLoadingFile.message || errorLoadingFile)
           }
         })
       })
