@@ -578,7 +578,8 @@ module.exports = class TestTab extends ViewPlugin {
       data-id="uiPathInput"
       name="utPath"
       style="background-image: var(--primary);"
-      onkeydown=${(e) => { if (e.keyCode === 191) this.updateDirList() }}/>`
+      onkeydown=${(e) => { if (e.keyCode === 191) this.updateDirList() }}
+      onchange=${(e) => this.updateCurrentPath(e)}/>`
 
     const createTestFolder = yo`<button
       class="btn border ml-2"
