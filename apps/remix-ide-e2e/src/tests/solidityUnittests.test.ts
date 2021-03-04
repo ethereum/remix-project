@@ -149,12 +149,14 @@ module.exports = {
       .addFile('myTests/simple_storage_test.sol', sources[0]['tests/simple_storage_test.sol'])
       .clickLaunchIcon('solidityUnitTesting')
       .setValue('*[data-id="uiPathInput"]', 'myTests')
+      .click('*[data-id="testTabGenerateTestFolder"]')
       .clickElementAtPosition('.singleTestLabel', 0)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
       .clearValue('*[data-id="uiPathInput"]')
       .setValue('*[data-id="uiPathInput"]', 'tests')
+      .click('*[data-id="testTabGenerateTestFolder"]')
   },
 
   'Solidity Unittests': function (browser: NightwatchBrowser) {
