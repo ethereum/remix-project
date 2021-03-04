@@ -167,8 +167,8 @@ module.exports = class Filepanel extends ViewPlugin {
     return await this.request.createNewFile()
   }
 
-  async uploadFile () {
-    return await this.request.uploadFile()
+  async uploadFile (event) {
+    return await this.request.uploadFile(event)
   }
 
   async processCreateWorkspace (name) {
