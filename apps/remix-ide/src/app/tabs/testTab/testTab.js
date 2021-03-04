@@ -44,9 +44,9 @@ class TestTabLogic {
     const provider = this.fileManager.fileProviderOf(this.currentPath)
     if (!provider) return cb(null, [])
     const tests = []
-    let files
+    let files = []
     try {
-      files = await this.fileManager.readdir(this.currentPath)
+      if (await this.fileManager.exists(this.currentPath)) files = await this.fileManager.readdir(this.currentPath)
     } catch (e) {
       cb(e.message)
     }
