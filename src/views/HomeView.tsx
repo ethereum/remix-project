@@ -132,20 +132,9 @@ export const HomeView: React.FC = () => {
               </div>
               {!isPublishing && publishedURL !== "" && (
                 <>
-                  <CopyToClipboard
-                    onCopy={() => setIsCopied(true)}
-                    text={publishedURL}
-                  >
-                    <button
-                      style={{ marginTop: "1em" }}
-                      className="btn btn-secondary btn-sm  btn-block"
-                    >
-                      Copy link to clipboard
-                    </button>
-                  </CopyToClipboard>
-                  {isCopied && (
-                    <div className="small mt-1">Link copied to clipboard</div>
-                  )}
+                  
+                    <div className="small mt-1"><a rel="noreferrer" href={publishedURL} target="_blank">{publishedURL}</a></div>
+                
                 </>
               )}
 
