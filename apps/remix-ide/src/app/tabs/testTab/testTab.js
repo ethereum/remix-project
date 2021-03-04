@@ -11,6 +11,9 @@ class TestTabLogic {
   setCurrentPath (path) {
     if (path.indexOf('/') === 0) return
     this.currentPath = path
+  }
+
+  generateTestFolder (path) {
     const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
     fileProvider.exists(path, (e, res) => { if (!res) fileProvider.createDir(path) })
   }
