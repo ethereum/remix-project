@@ -84,7 +84,7 @@ module.exports = {
       .setValue('*[data-id="modalDialogCustomPromptText"]', testData.invalidGistId)
       .modalFooterOKClick()
       .waitForElementVisible('*[data-id="modalDialogModalBody"]')
-      .assert.containsText('*[data-id="modalDialogModalBody"]', 'Gist load error: Not Found')
+      .assert.containsText('*[data-id="modalDialogModalBody"]', 'Not Found')
       .modalFooterOKClick()
   },
 

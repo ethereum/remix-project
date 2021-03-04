@@ -21,6 +21,7 @@ module.exports = {
       .addFile('Untitled2.sol', sources[1]['Untitled2.sol'])
       .openFile('Untitled1.sol')
       .verifyContracts(['test6', 'test4', 'test5'])
+      .pause(1000)
   },
 
   'Test Failed Import': function (browser: NightwatchBrowser) {

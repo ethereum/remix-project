@@ -29,17 +29,20 @@ export async function migrateToWorkspace (fileManager, filePanel) {
   if (fileStorageBrowserWorkspace.get(flag) === 'done') return
   const files = await browserProvider.copyFolderToJson('/')
   console.log(files)
-  const workspaceName = 'default_workspace'
-  const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
-  await filePanel.createWorkspace(workspaceName)
-  filePanel.getWorkspaces() // refresh list
-  await populateWorkspace(workspacePath, files, browserProvider)
+  if (Object.keys(files).length > 0) {
+    const workspaceName = 'default_workspace'
+    const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
+    await filePanel.processCreateWorkspace(workspaceName)
+    filePanel.getWorkspaces() // refresh list
+    await populateWorkspace(workspacePath, files, browserProvider)
+  }
   fileStorageBrowserWorkspace.set(flag, 'done')
 }
 
 const populateWorkspace = async (workspace, json, browserProvider) => {
   for (const item in json) {
     const isFolder = json[item].content === undefined
+    if (isFolder && item === '/.workspaces') continue // we don't want to replicate this one.
     if (isFolder) {
       browserProvider.createDir(joinPath(workspace, item))
       await populateWorkspace(workspace, json[item].children, browserProvider)
