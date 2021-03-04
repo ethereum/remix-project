@@ -29,11 +29,13 @@ export async function migrateToWorkspace (fileManager, filePanel) {
   if (fileStorageBrowserWorkspace.get(flag) === 'done') return
   const files = await browserProvider.copyFolderToJson('/')
   console.log(files)
-  const workspaceName = 'default_workspace'
-  const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
-  await filePanel.createWorkspace(workspaceName)
-  filePanel.getWorkspaces() // refresh list
-  await populateWorkspace(workspacePath, files, browserProvider)
+  if (Object.keys(files).length > 0) {
+    const workspaceName = 'default_workspace'
+    const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
+    await filePanel.createWorkspace(workspaceName)
+    filePanel.getWorkspaces() // refresh list
+    await populateWorkspace(workspacePath, files, browserProvider)
+  }
   fileStorageBrowserWorkspace.set(flag, 'done')
 }
 
