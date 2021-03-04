@@ -174,7 +174,7 @@ export const Workspace = (props: WorkspaceProps) => {
       setWorkspace(workspaceName)
       props.workspaceRenamed({ name: workspaceName })
     } catch (e) {
-      modalMessage('Workspace Rename', e.message)
+      modalMessage('Rename Workspace', e.message)
       console.error(e)
     }
   }
@@ -188,7 +188,7 @@ export const Workspace = (props: WorkspaceProps) => {
       await props.createWorkspace(workspaceName)
       await setWorkspace(workspaceName)
     } catch (e) {
-      modalMessage('Workspace Creation', e.message)
+      modalMessage('Create Workspace', e.message)
       console.error(e)
     }
   }

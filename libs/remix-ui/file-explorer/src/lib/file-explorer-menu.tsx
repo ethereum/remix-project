@@ -16,12 +16,12 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       },
       {
         action: 'publishToGist',
-        title: 'Publish all [browser] explorer files to a github gist',
+        title: 'Publish all the current workspace files (only root) to a github gist',
         icon: 'fab fa-github'
       },
       {
         action: 'uploadFile',
-        title: 'Load a local file into Remix\'s browser folder',
+        title: 'Load a local file into current workspace',
         icon: 'fa fa-upload'
       },
       {
