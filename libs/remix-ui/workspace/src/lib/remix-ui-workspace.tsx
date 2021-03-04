@@ -29,9 +29,9 @@ export const Workspace = (props: WorkspaceProps) => {
   const NO_WORKSPACE = ' - none - '
 
   /* extends the parent 'plugin' with some function needed by the file explorer */
-  props.plugin.resetFocus = () => {
+  props.plugin.resetFocus = (reset) => {
     setState(prevState => {
-      return { ...prevState, reset: true }
+      return { ...prevState, reset }
     })
   }
 
