@@ -38,7 +38,7 @@ export class RemixdHandle extends WebsocketPlugin {
 
   deactivate () {
     if (super.socket) super.deactivate()
-    this.call('manager', 'deactivatePlugin', 'git')
+    this.appManager.deactivatePlugin('git') // plugin call doesn't work..
     this.locahostProvider.close((error) => {
       if (error) console.log(error)
     })
@@ -49,8 +49,8 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   async canceled () {
-    this.call('manager', 'deactivatePlugin', 'git')
-    this.call('manager', 'deactivatePlugin', 'remixd')
+    await this.appManager.deactivatePlugin('git') // plugin call doesn't work..
+    await this.appManager.deactivatePlugin('remixd')
   }
 
   /**
