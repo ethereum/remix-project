@@ -3,7 +3,7 @@ import { AppContext } from "../AppContext";
 import { ContractName, Documentation } from "../types";
 import { publish } from "../utils";
 import { htmlTemplate } from "../utils/template";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+
 
 export const HomeView: React.FC = () => {
   const [activeItem, setActiveItem] = useState("");
@@ -11,7 +11,6 @@ export const HomeView: React.FC = () => {
   const [htmlDocumentation, setHtmlDocumentation] = useState("");
   const [hasErrorOnPublishing, setHasErrorOnPublishing] = useState(false);
   const [publishedURL, setPublishedURL] = useState("");
-  const [isCopied, setIsCopied] = useState(false);
   const clearMessageFuncRef = useRef(undefined as any);
 
   useEffect(() => {
@@ -87,7 +86,6 @@ export const HomeView: React.FC = () => {
                       aria-pressed="false"
                       onClick={() => {
                         setPublishedURL("");
-                        setIsCopied(false);
                         setActiveItem(item);
                         displayDocumentation(
                           clientInstance,
@@ -111,7 +109,6 @@ export const HomeView: React.FC = () => {
                     setContracts(new Map());
                     displayDocumentation(clientInstance, "", "");
                     setPublishedURL("");
-                    setIsCopied(false);
                   }}
                 >
                   Clear
@@ -125,16 +122,17 @@ export const HomeView: React.FC = () => {
                     onClick={() => {
                       console.log("Is publishing");
                       setIsPublishing(true);
-                      setIsCopied(false);
                     }}
                   />
                 )}
               </div>
               {!isPublishing && publishedURL !== "" && (
                 <>
-                  
-                    <div className="small mt-1"><a rel="noreferrer" href={publishedURL} target="_blank">{publishedURL}</a></div>
-                
+                  <div className="small mt-1">
+                    <a rel="noreferrer" href={publishedURL} target="_blank">
+                      {publishedURL}
+                    </a>
+                  </div>
                 </>
               )}
 
