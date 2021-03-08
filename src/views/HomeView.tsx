@@ -4,7 +4,6 @@ import { ContractName, Documentation } from "../types";
 import { publish } from "../utils";
 import { htmlTemplate } from "../utils/template";
 
-
 export const HomeView: React.FC = () => {
   const [activeItem, setActiveItem] = useState("");
   const [isPublishing, setIsPublishing] = useState(false);
