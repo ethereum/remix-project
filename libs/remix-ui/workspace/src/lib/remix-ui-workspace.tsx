@@ -88,6 +88,7 @@ export const Workspace = (props: WorkspaceProps) => {
 
     props.localhost.event.register('disconnected', () => {
       remixdExplorer.hide()
+      setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
     })
 
     if (props.initialWorkspace) {
