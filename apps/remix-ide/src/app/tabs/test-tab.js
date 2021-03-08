@@ -35,7 +35,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.runningTestsNumber = 0
     this.readyTestsNumber = 0
     this.areTestsRunning = false
-    this.defaultPath = 'browser/tests'
+    this.defaultPath = 'tests'
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
 
     appManager.event.on('activate', (name) => {
@@ -551,12 +551,17 @@ module.exports = class TestTab extends ViewPlugin {
 
   updateDirList () {
     for (var o of this.uiPathList.querySelectorAll('option')) o.remove()
-    this.uiPathList.appendChild(yo`<option>browser</option>`)
-    if (this.testTabLogic.isRemixDActive()) this.uiPathList.appendChild(yo`<option>localhost</option>`)
-    if (!this._view.el) return
-    this.testTabLogic.dirList(this.inputPath.value).then((options) => {
+    this.testTabLogic.dirList('/').then((options) => {
       options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
     })
+    /*
+      It is not possible anymore to see folder from outside of the current workspace
+      if (this.inputPath.value) {
+        this.testTabLogic.dirList(this.inputPath.value).then((options) => {
+          options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
+        })
+      }
+    */
   }
 
   render () {
@@ -568,7 +573,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.inputPath = yo`<input
       placeholder=${this.defaultPath}
       list="utPathList"
-      class="custom-select"
+      class="${css.inputFolder} custom-select"
       id="utPath"
       data-id="uiPathInput"
       name="utPath"
@@ -576,10 +581,21 @@ module.exports = class TestTab extends ViewPlugin {
       onkeydown=${(e) => { if (e.keyCode === 191) this.updateDirList() }}
       onchange=${(e) => this.updateCurrentPath(e)}/>`
 
+    const createTestFolder = yo`<button
+      class="btn border ml-2"
+      data-id="testTabGenerateTestFolder"
+      title="Create a test folder"
+      onclick=${(e) => { this.testTabLogic.generateTestFolder(this.inputPath.value) }}>
+      Create
+      </button>`
+
     const availablePaths = yo`
       <div>
-          ${this.inputPath}
-          ${this.uiPathList}
+          <div class="d-flex p-2">
+            ${this.inputPath}
+            ${createTestFolder}
+            ${this.uiPathList}
+          </div>
       </div>
     `
     this.updateDirList()

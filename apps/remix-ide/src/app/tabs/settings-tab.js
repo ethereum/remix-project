@@ -6,6 +6,7 @@ const tooltip = require('../ui/tooltip')
 const copyToClipboard = require('../ui/copy-to-clipboard')
 const EventManager = require('../../lib/events')
 const css = require('./styles/settings-tab-styles')
+const _paq = window._paq = window._paq || []
 
 const profile = {
   name: 'settings',
@@ -121,15 +122,19 @@ module.exports = class SettingsTab extends ViewPlugin {
     elementStateChanged(self._view.personalLabel, !this.config.get('settings/personal-mode'))
 
     this._view.useMatomoAnalytics = yo`<input onchange=${onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" class="custom-control-input">`
-    this._view.useMatomoAnalyticsMode = yo`<i class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
     this._view.useMatomoAnalyticsLabel = yo`
-      <label class="form-check-label custom-control-label text-secondary align-middle" for="settingsMatomoAnalytics">
-        <span>${this._view.useMatomoAnalyticsMode} Enable Matomo Analytics. The statystics we are collecting is helping to improve plugins usage. We choose Matomo Analytics which is </span>
-        <a target="_blank" href="https://matomo.org/free-software">open source</a>
+      <label class="form-check-label custom-control-label align-middle" for="settingsMatomoAnalytics">
+        <span>Enable Matomo Analytics. We do not collect personally identifiable information (PII). The info is used to improve the site’s UX & UI. See more about</span>
+        <a href="https://medium.com/p/66ef69e14931/" target="_blank">Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
       </label>
     `
-    if (this.config.get('settings/matomo-analytics')) this._view.useMatomoAnalytics.setAttribute('checked', '')
-    elementStateChanged(self._view.personalLabel, !this.config.get('settings/matomo-analytics'))
+    if (this.config.get('settings/matomo-analytics')) {
+      this._view.useMatomoAnalytics.setAttribute('checked', '')
+      _paq.push(['forgetUserOptOut'])
+    } else {
+      _paq.push(['optUserOut'])
+    }
+    elementStateChanged(self._view.useMatomoAnalyticsLabel, !this.config.get('settings/matomo-analytics'))
 
     this._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" class="custom-control-input">`
     this._view.generateContractMetadataLabel = yo`<label class="form-check-label custom-control-label align-middle" data-id="settingsTabGenerateContractMetadataLabel" for="generatecontractmetadata">Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.</label>`
@@ -199,12 +204,14 @@ module.exports = class SettingsTab extends ViewPlugin {
       self.config.set('settings/generate-contract-metadata', !isChecked)
       elementStateChanged(self._view.generateContractMetadataLabel, isChecked)
     }
+
     function onchangeOption (event) {
       const isChecked = self.config.get('settings/always-use-vm')
 
       self.config.set('settings/always-use-vm', !isChecked)
       elementStateChanged(self._view.optionVMLabel, isChecked)
     }
+
     function textWrapEvent (event) {
       const isChecked = self.config.get('settings/text-wrap')
 
@@ -212,16 +219,20 @@ module.exports = class SettingsTab extends ViewPlugin {
       elementStateChanged(self._view.textWrapLabel, isChecked)
       self.editor.resize(!isChecked)
     }
+
     function onchangePersonal (event) {
       const isChecked = self.config.get('settings/personal-mode')
 
       self.config.set('settings/personal-mode', !isChecked)
       elementStateChanged(self._view.personalLabel, isChecked)
     }
+
     function onchangeMatomoAnalytics (event) {
-      elementStateChanged(self._view.useMatomoAnalyticsLabel, event.target.checked)
-      const _paq = window._paq = window._paq || []
-      if (this.checked) {
+      const isChecked = self.config.get('settings/matomo-analytics')
+
+      self.config.set('settings/matomo-analytics', !isChecked)
+      elementStateChanged(self._view.useMatomoAnalyticsLabel, isChecked)
+      if (event.target.checked) {
         _paq.push(['forgetUserOptOut'])
       } else {
         _paq.push(['optUserOut'])
@@ -244,5 +255,18 @@ module.exports = class SettingsTab extends ViewPlugin {
 
   getGithubAccessToken () {
     return this.config.get('settings/gist-access-token')
+  }
+
+  updateMatomoAnalyticsChoice (isChecked) {
+    this.config.set('settings/matomo-analytics', isChecked)
+    if (isChecked) {
+      this._view.useMatomoAnalytics.setAttribute('checked', '')
+      this._view.useMatomoAnalyticsLabel.classList.remove('text-secondary')
+      this._view.useMatomoAnalyticsLabel.classList.add('text-dark')
+    } else {
+      this._view.useMatomoAnalytics.removeAttribute('checked')
+      this._view.useMatomoAnalyticsLabel.classList.remove('text-dark')
+      this._view.useMatomoAnalyticsLabel.classList.add('text-secondary')
+    }
   }
 }

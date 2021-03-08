@@ -1,4 +1,5 @@
 
+import toaster from '../../ui/tooltip'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '../../compiler/compiler-utils'
 const yo = require('yo-yo')
 const helper = require('../../../lib/helper')
@@ -22,7 +23,7 @@ class CompilerContainer {
       timeout: 300,
       allversions: null,
       selectedVersion: null,
-      defaultVersion: 'soljson-v0.7.4+commit.3f05b770.js' // this default version is defined: in makeMockCompiler (for browser test)
+      defaultVersion: 'soljson-v0.8.1+commit.df193b15.js' // this default version is defined: in makeMockCompiler (for browser test)
     }
   }
 
@@ -210,19 +211,19 @@ class CompilerContainer {
     }
 
     this._view.versionSelector = yo`
-      <select onchange="${this.onchangeLoadVersion.bind(this)}" class="custom-select" id="versionSelector" disabled>
+      <select onchange="${() => this.onchangeLoadVersion()}" class="custom-select" id="versionSelector" disabled>
         <option disabled selected>${this.data.defaultVersion}</option>
         <option disabled>builtin</option>
       </select>`
     this._view.languageSelector = yo`
-      <select onchange="${this.onchangeLanguage.bind(this)}" class="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
+      <select onchange="${() => this.onchangeLanguage()}" class="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
         <option>Solidity</option>
         <option>Yul</option>
       </select>`
     this._view.version = yo`<span id="version"></span>`
 
     this._view.evmVersionSelector = yo`
-      <select onchange="${this.onchangeEvmVersion.bind(this)}" class="custom-select" id="evmVersionSelector">
+      <select onchange="${() => this.onchangeEvmVersion()}" class="custom-select" id="evmVersionSelector">
         <option value="default" selected="selected">compiler default</option>
         <option>muirGlacier</option>
         <option>istanbul</option>
@@ -397,7 +398,6 @@ class CompilerContainer {
     The following functions map with the above event handlers.
     They are an external API for modifying the compiler configuration.
   */
-
   setConfiguration (settings) {
     this.setLanguage(settings.language)
     this.setEvmVersion(settings.evmVersion)
@@ -476,6 +476,15 @@ class CompilerContainer {
         this._view.versionSelector.appendChild(option)
       }
     })
+    if (semver.lt(this._retrieveVersion(), 'v0.4.12+commit.194ff033.js')) {
+      toaster(yo`
+        <div>
+          <b>Old compiler usage detected.</b>
+          <p>You are using a compiler older than v0.4.12.</p>
+          <p>Some functionality may not work.</p>
+        </div>`
+      )
+    }
 
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,

@@ -20,7 +20,7 @@ function GistHandler (_window) {
           if (gistId) {
             cb(gistId)
           } else {
-            modalDialogCustom.alert('Error while loading gist. Please provide a valid Gist ID or URL.')
+            modalDialogCustom.alert('Gist load error', 'Error while loading gist. Please provide a valid Gist ID or URL.')
           }
         }
       })
@@ -42,25 +42,26 @@ function GistHandler (_window) {
   }
 
   this.loadFromGist = (params, fileManager) => {
-    const gistProvider = fileManager.fileProviderOf('browser')
     const self = this
     return self.handleLoad(params, function (gistId) {
       request.get({
         url: `https://api.github.com/gists/${gistId}`,
         json: true
-      }, (error, response, data = {}) => {
+      }, async (error, response, data = {}) => {
         if (error || !data.files) {
-          modalDialogCustom.alert(`Gist load error: ${error || data.message}`)
+          modalDialogCustom.alert('Gist load error', error || data.message)
           return
         }
         const obj = {}
         Object.keys(data.files).forEach((element) => {
-          obj['/gists/' + gistId + '/' + element] = data.files[element]
+          obj['/' + gistId + '/' + element] = data.files[element]
         })
-        fileManager.setBatchFiles(obj, 'browser', true, (errorLoadingFile) => {
+        fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
           if (!errorLoadingFile) {
-            gistProvider.id = gistId
-            gistProvider.origGistFiles = data.files
+            const provider = fileManager.getProvider('workspace')
+            provider.lastLoadedGistId = gistId
+          } else {
+            modalDialogCustom.alert('Gist load error', errorLoadingFile.message || errorLoadingFile)
           }
         })
       })

@@ -39,6 +39,7 @@ const createError = (err) => {
 class FileManager extends Plugin {
   constructor (editor, appManager) {
     super(profile)
+    this.mode = 'browser'
     this.openedFiles = {} // list all opened files
     this.events = new EventEmitter()
     this.editor = editor
@@ -46,6 +47,18 @@ class FileManager extends Plugin {
     this._components.registry = globalRegistry
     this.appManager = appManager
     this.init()
+  }
+
+  getOpenedFiles () {
+    return this.openedFiles
+  }
+
+  setMode (mode) {
+    this.mode = mode
+  }
+
+  limitPluginScope (path) {
+    return path.replace(/^\/browser\//, '').replace(/^browser\//, '') // forbids plugin to access the root filesystem
   }
 
   /**
@@ -101,6 +114,7 @@ class FileManager extends Plugin {
    * @returns {boolean} true if the path exists
    */
   exists (path) {
+    path = this.limitPluginScope(path)
     const provider = this.fileProviderOf(path)
     const result = provider.exists(path, (err, result) => {
       if (err) return false
@@ -140,6 +154,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async open (path) {
+    path = this.limitPluginScope(path)
     await this._handleExists(path, `Cannot open file ${path}`)
     await this._handleIsFile(path, `Cannot open file ${path}`)
     return this.openFile(path)
@@ -152,6 +167,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async writeFile (path, data) {
+    path = this.limitPluginScope(path)
     if (await this.exists(path)) {
       await this._handleIsFile(path, `Cannot write file ${path}`)
       return await this.setFileContent(path, data)
@@ -168,6 +184,7 @@ class FileManager extends Plugin {
    * @returns {string} content of the file
    */
   async readFile (path) {
+    path = this.limitPluginScope(path)
     await this._handleExists(path, `Cannot read file ${path}`)
     await this._handleIsFile(path, `Cannot read file ${path}`)
     return this.getFileContent(path)
@@ -180,6 +197,8 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async copyFile (src, dest) {
+    src = this.limitPluginScope(src)
+    dest = this.limitPluginScope(dest)
     await this._handleExists(src, `Cannot copy from ${src}`)
     await this._handleIsFile(src, `Cannot copy from ${src}`)
     await this._handleIsFile(dest, `Cannot paste content into ${dest}`)
@@ -195,6 +214,8 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async rename (oldPath, newPath) {
+    oldPath = this.limitPluginScope(oldPath)
+    newPath = this.limitPluginScope(newPath)
     await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
     const isFile = await this.isFile(oldPath)
     const newPathExists = await this.exists(newPath)
@@ -221,6 +242,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async mkdir (path) {
+    path = this.limitPluginScope(path)
     if (await this.exists(path)) {
       throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
     }
@@ -235,6 +257,7 @@ class FileManager extends Plugin {
    * @returns {string[]} list of the file/directory name in this directory
    */
   async readdir (path) {
+    path = this.limitPluginScope(path)
     await this._handleExists(path)
     await this._handleIsDir(path)
 
@@ -254,6 +277,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async remove (path) {
+    path = this.limitPluginScope(path)
     await this._handleExists(path, `Cannot remove file or directory ${path}`)
     const provider = this.fileProviderOf(path)
 
@@ -265,6 +289,7 @@ class FileManager extends Plugin {
       config: this._components.registry.get('config').api,
       browserExplorer: this._components.registry.get('fileproviders/browser').api,
       localhostExplorer: this._components.registry.get('fileproviders/localhost').api,
+      workspaceExplorer: this._components.registry.get('fileproviders/workspace').api,
       filesProviders: this._components.registry.get('fileproviders').api
     }
     this._deps.browserExplorer.event.register('fileChanged', (path) => { this.fileChangedEvent(path) })
@@ -275,6 +300,11 @@ class FileManager extends Plugin {
     this._deps.localhostExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
     this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
+    this._deps.workspaceExplorer.event.register('fileChanged', (path) => { this.fileChangedEvent(path) })
+    this._deps.workspaceExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.workspaceExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.workspaceExplorer.event.register('fileAdded', (path) => { this.fileAddedEvent(path) })
+
     this.getCurrentFile = this.file
     this.getFile = this.readFile
     this.getFolder = this.readdir
@@ -349,7 +379,7 @@ class FileManager extends Plugin {
   extractPathOf (file) {
     var reg = /(.*)(\/).*/
     var path = reg.exec(file)
-    return path ? path[1] : null
+    return path ? path[1] : '/'
   }
 
   getFileContent (path) {
@@ -468,18 +498,8 @@ class FileManager extends Plugin {
     }
     if (file) return _openFile(file)
     else {
-      var browserProvider = this._deps.filesProviders.browser
-      browserProvider.resolveDirectory('browser', (error, filesProvider) => {
-        if (error) console.error(error)
-        var fileList = Object.keys(filesProvider)
-        if (fileList.length) {
-          _openFile(browserProvider.type + '/' + fileList[0])
-        } else {
-          // TODO: Only keep `this.emit` (issue#2210)
-          this.emit('noFileSelected')
-          this.events.emit('noFileSelected')
-        }
-      })
+      this.emit('noFileSelected')
+      this.events.emit('noFileSelected')
     }
   }
 
@@ -488,10 +508,15 @@ class FileManager extends Plugin {
   }
 
   fileProviderOf (file) {
-    if (file.indexOf('localhost') === 0) {
+    if (file.startsWith('localhost') || this.mode === 'localhost') {
       return this._deps.filesProviders.localhost
     }
-    return this._deps.filesProviders.browser
+    if (file.startsWith('browser')) {
+      return this._deps.filesProviders.browser
+    }
+    const provider = this._deps.filesProviders.workspace
+    if (!provider.isReady()) throw createError({ code: 'ECONNRESET', message: 'No workspace has been opened.' })
+    return this._deps.filesProviders.workspace
   }
 
   // returns the list of directories inside path
@@ -501,10 +526,8 @@ class FileManager extends Plugin {
       return new Promise((resolve, reject) => {
         this.readdir(path).then((ls) => {
           const promises = Object.keys(ls).map((item, index) => {
-            const root = (path.indexOf('/') === -1) ? path : path.substr(0, path.indexOf('/'))
-            const curPath = `${root}/${item}` // adding 'browser' or 'localhost'
-            if (ls[item].isDirectory && !dirPaths.includes(curPath)) {
-              dirPaths.push(curPath)
+            if (ls[item].isDirectory && !dirPaths.includes(item)) {
+              dirPaths.push(item)
               resolve(dirPaths)
             }
             return new Promise((resolve, reject) => { resolve() })
@@ -558,7 +581,11 @@ class FileManager extends Plugin {
 
     async.each(Object.keys(filesSet), (file, callback) => {
       if (override) {
-        self._deps.filesProviders[fileProvider].set(file, filesSet[file].content)
+        try {
+          self._deps.filesProviders[fileProvider].set(file, filesSet[file].content)
+        } catch (e) {
+          return callback(e.message || e)
+        }
         self.syncEditor(fileProvider + file)
         return callback()
       }
@@ -570,7 +597,11 @@ class FileManager extends Plugin {
           } else if (helper.checkSpecialChars(name)) {
             modalDialogCustom.alert('Special characters are not allowed')
           } else {
-            self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+            try {
+              self._deps.filesProviders[fileProvider].set(name, filesSet[file].content)
+            } catch (e) {
+              return callback(e.message || e)
+            }
             self.syncEditor(fileProvider + name)
           }
           callback()

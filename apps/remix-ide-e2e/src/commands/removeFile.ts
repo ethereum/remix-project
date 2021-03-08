@@ -3,9 +3,9 @@ import { NightwatchBrowser } from 'nightwatch'
 const EventEmitter = require('events')
 
 class RemoveFile extends EventEmitter {
-  command (this: NightwatchBrowser, path: string): NightwatchBrowser {
+  command (this: NightwatchBrowser, path: string, workspace: string): NightwatchBrowser {
     this.api.perform((done) => {
-      removeFile(this.api, path, () => {
+      removeFile(this.api, path, workspace, () => {
         done()
         this.emit('complete')
       })
@@ -14,7 +14,7 @@ class RemoveFile extends EventEmitter {
   }
 }
 
-function removeFile (browser: NightwatchBrowser, path: string, done: VoidFunction) {
+function removeFile (browser: NightwatchBrowser, path: string, workspace: string, done: VoidFunction) {
   browser.execute(function (path) {
     function contextMenuClick (element) {
       const evt = element.ownerDocument.createEvent('MouseEvents')
@@ -38,15 +38,10 @@ function removeFile (browser: NightwatchBrowser, path: string, done: VoidFunctio
       .click('#menuitemdelete')
       .pause(2000)
       .perform(() => {
-        if (path.indexOf('browser') !== -1) {
-          browser.waitForElementVisible('[data-id="browser-modal-footer-ok-react"]')
-            .click('[data-id="browser-modal-footer-ok-react"]')
-            .waitForElementNotPresent('[data-path="' + path + '"]')
-        } else if (path.indexOf('localhost') !== -1) {
-          browser.waitForElementVisible('[data-id="localhost-modal-footer-ok-react"]')
-            .click('[data-id="localhost-modal-footer-ok-react"]')
-            .waitForElementNotPresent('[data-path="' + path + '"]')
-        }
+        console.log(path, 'to remove')
+        browser.waitForElementVisible('*[data-id="' + workspace + 'ModalDialogContainer-react"] .modal-ok')
+          .click('*[data-id="' + workspace + 'ModalDialogContainer-react"] .modal-ok')
+          .waitForElementNotPresent('[data-path="' + path + '"]')
         done()
       })
   })

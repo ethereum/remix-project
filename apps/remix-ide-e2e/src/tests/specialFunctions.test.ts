@@ -20,7 +20,7 @@ module.exports = {
 
   'Use special functions receive/fallback - both are declared, sending data': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#icon-panel', 10000)
-      .testContracts('receiveAndFallback.sol', sources[0]['browser/receiveAndFallback.sol'], ['CheckSpecials']) // compile
+      .testContracts('receiveAndFallback.sol', sources[0]['receiveAndFallback.sol'], ['CheckSpecials']) // compile
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .selectContract('CheckSpecials')
@@ -89,7 +89,7 @@ module.exports = {
   },
   'Use special functions receive/fallback - only receive is declared, sending wei': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#icon-panel', 10000)
-      .testContracts('receiveOnly.sol', sources[1]['browser/receiveOnly.sol'], ['CheckSpecials'])
+      .testContracts('receiveOnly.sol', sources[1]['receiveOnly.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
       .selectContract('CheckSpecials')
       .createContract('')
@@ -119,7 +119,7 @@ module.exports = {
   },
   'Use special functions receive/fallback - only fallback declared and is payable, sending wei': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#icon-panel', 10000)
-      .testContracts('fallbackOnlyPayable.sol', sources[2]['browser/fallbackOnlyPayable.sol'], ['CheckSpecials'])
+      .testContracts('fallbackOnlyPayable.sol', sources[2]['fallbackOnlyPayable.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
       .selectContract('CheckSpecials')
       .createContract('')
@@ -150,7 +150,7 @@ module.exports = {
   },
   'Use special functions receive/fallback - only fallback is declared, fallback should fail cause not payable, sending wei': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#icon-panel', 10000)
-      .testContracts('fallbackOnlyNotPayable.sol', sources[3]['browser/fallbackOnlyNotPayable.sol'], ['CheckSpecials'])
+      .testContracts('fallbackOnlyNotPayable.sol', sources[3]['fallbackOnlyNotPayable.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
       .selectContract('CheckSpecials')
       .createContract('')
@@ -167,7 +167,7 @@ module.exports = {
   },
   'Use special functions receive/fallback - receive and fallback are declared, sending data and wei': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#icon-panel', 10000)
-      .testContracts('receiveAndFallbackBothPayable.sol', sources[4]['browser/receiveAndFallbackBothPayable.sol'], ['CheckSpecials'])
+      .testContracts('receiveAndFallbackBothPayable.sol', sources[4]['receiveAndFallbackBothPayable.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
       .selectContract('CheckSpecials')
       .waitForElementVisible('#value')
@@ -201,7 +201,7 @@ module.exports = {
   },
   'Use special functions receive/fallback - receive and fallback are not declared, sending nothing': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('#icon-panel', 10000)
-      .testContracts('notSpecial.sol', sources[5]['browser/notSpecial.sol'], ['CheckSpecials'])
+      .testContracts('notSpecial.sol', sources[5]['notSpecial.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
       .selectContract('CheckSpecials')
       .waitForElementVisible('#value')
@@ -226,7 +226,7 @@ module.exports = {
 
 const sources = [
   {
-    'browser/receiveAndFallback.sol': {
+    'receiveAndFallback.sol': {
       content: `
         contract CheckSpecials {
           receive() payable external{}
@@ -236,7 +236,7 @@ const sources = [
     }
   },
   {
-    'browser/receiveOnly.sol': {
+    'receiveOnly.sol': {
       content: `
         contract CheckSpecials {
           receive() payable external {}
@@ -245,7 +245,7 @@ const sources = [
     }
   },
   {
-    'browser/fallbackOnlyPayable.sol': {
+    'fallbackOnlyPayable.sol': {
       content: `
         contract CheckSpecials {
           fallback() payable external {}
@@ -254,7 +254,7 @@ const sources = [
     }
   },
   {
-    'browser/fallbackOnlyNotPayable.sol': {
+    'fallbackOnlyNotPayable.sol': {
       content: `
         contract CheckSpecials {
           fallback() external {}
@@ -263,7 +263,7 @@ const sources = [
     }
   },
   {
-    'browser/receiveAndFallbackBothPayable.sol': {
+    'receiveAndFallbackBothPayable.sol': {
       content: `
         contract CheckSpecials {
           receive() payable external {}
@@ -273,7 +273,7 @@ const sources = [
     }
   },
   {
-    'browser/notSpecial.sol': {
+    'notSpecial.sol': {
       content: `
         contract CheckSpecials {
           function otherFallback() payable external {}

@@ -3,16 +3,16 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
-import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
-import './styles/file-panel-styles.css'
-var yo = require('yo-yo')
+import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
+import * as ethutil from 'ethereumjs-util'
+import { checkSpecialChars, checkSlash } from '../../lib/helper'
 var EventManager = require('../../lib/events')
-// var FileExplorer = require('../files/file-explorer')
 var { RemixdHandle } = require('../files/remixd-handle.js')
 var { GitHandle } = require('../files/git-handle.js')
 var globalRegistry = require('../../global/registry')
-
-var canUpload = window.File || window.FileReader || window.FileList || window.Blob
+var examples = require('../editor/examples')
+var GistHandler = require('../../lib/gist-handler')
+var QueryParams = require('../../lib/query-params')
 
 /*
   Overview of APIs:
@@ -34,8 +34,8 @@ var canUpload = window.File || window.FileReader || window.FileList || window.Bl
 const profile = {
   name: 'fileExplorers',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile'],
-  events: [],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace'],
+  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
   kind: 'fileexplorer',
@@ -47,86 +47,54 @@ const profile = {
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
+    this.event = new EventManager()
     this._components = {}
     this._components.registry = globalRegistry
     this._deps = {
       fileProviders: this._components.registry.get('fileproviders').api,
-      fileManager: this._components.registry.get('filemanager').api,
-      config: this._components.registry.get('config').api
+      fileManager: this._components.registry.get('filemanager').api
     }
-    this.hideRemixdExplorer = true
-    this.remixdExplorer = {
-      hide: () => {
-        this.hideRemixdExplorer = true
-        this.renderComponent()
-      },
-      show: () => {
-        this.hideRemixdExplorer = false
-        this.renderComponent()
-      }
-    }
-    this.reset = false
-    this.registeredMenuItems = []
-    this.displayNewFile = false
-    this.uploadFileEvent = null
-    this.el = yo`
-      <div id="fileExplorerView">
-      </div>
-    `
 
-    this.remixdHandle = new RemixdHandle(this.remixdExplorer, this._deps.fileProviders.localhost, appManager)
+    this.el = document.createElement('div')
+    this.el.setAttribute('id', 'fileExplorerView')
+
+    this.remixdHandle = new RemixdHandle(this._deps.fileProviders.localhost, appManager)
     this.gitHandle = new GitHandle()
-
-    this.event = new EventManager()
-    this._deps.fileProviders.localhost.event.register('connecting', (event) => {
-    })
-
-    this._deps.fileProviders.localhost.event.register('connected', (event) => {
-      this.remixdExplorer.show()
-    })
-
-    this._deps.fileProviders.localhost.event.register('errored', (event) => {
-      this.remixdExplorer.hide()
-    })
-
-    this._deps.fileProviders.localhost.event.register('closed', (event) => {
-      this.remixdExplorer.hide()
-    })
-
-    this.renderComponent()
-  }
-
-  resetFocus (value) {
-    this.reset = value
-    this.renderComponent()
-  }
-
-  createNewFile () {
-    this.displayNewFile = true
-    this.renderComponent()
-  }
-
-  resetNewFile () {
-    this.displayNewFile = false
-    this.renderComponent()
-  }
-
-  uploadFile (target) {
-    this.uploadFileEvent = target
-    this.renderComponent()
-  }
-
-  resetUploadFile () {
-    this.uploadFileEvent = null
-    this.renderComponent()
+    this.registeredMenuItems = []
+    this.request = {}
+    this.workspaces = []
+    this.initialWorkspace = null
   }
 
   render () {
+    this.initWorkspace().then(() => this.getWorkspaces()).catch(console.error)
     return this.el
   }
 
+  renderComponent () {
+    ReactDOM.render(
+      <Workspace
+        createWorkspace={this.createWorkspace.bind(this)}
+        renameWorkspace={this.renameWorkspace.bind(this)}
+        setWorkspace={this.setWorkspace.bind(this)}
+        workspaceRenamed={this.workspaceRenamed.bind(this)}
+        workspaceDeleted={this.workspaceDeleted.bind(this)}
+        workspaceCreated={this.workspaceCreated.bind(this)}
+        workspace={this._deps.fileProviders.workspace}
+        browser={this._deps.fileProviders.browser}
+        localhost={this._deps.fileProviders.localhost}
+        fileManager={this._deps.fileManager}
+        registry={this._components.registry}
+        plugin={this}
+        request={this.request}
+        workspaces={this.workspaces}
+        registeredMenuItems={this.registeredMenuItems}
+        initialWorkspace={this.initialWorkspace}
+      />
+      , this.el)
+  }
+
   /**
-   *
    * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
    * @param callback (...args) => void
    */
@@ -139,42 +107,132 @@ module.exports = class Filepanel extends ViewPlugin {
     this.renderComponent()
   }
 
-  renderComponent () {
-    ReactDOM.render(
-      <div className='remixui_container'>
-        <div className='remixui_fileexplorer' onClick={() => this.resetFocus(true)}>
-          <div className='remixui_fileExplorerTree'>
-            <div>
-              <div className='pl-2 remixui_treeview' data-id='filePanelFileExplorerTree'>
-                <FileExplorer
-                  name='browser'
-                  registry={this._components.registry}
-                  filesProvider={this._deps.fileProviders.browser}
-                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
-                  plugin={this}
-                  focusRoot={this.reset}
-                  contextMenuItems={this.registeredMenuItems}
-                  displayInput={this.displayNewFile}
-                  externalUploads={this.uploadFileEvent}
-                />
-              </div>
-              <div className='pl-2 filesystemexplorer remixui_treeview'>
-                { !this.hideRemixdExplorer &&
-                  <FileExplorer
-                    name='localhost'
-                    registry={this._components.registry}
-                    filesProvider={this._deps.fileProviders.localhost}
-                    menuItems={['createNewFile', 'createNewFolder']}
-                    plugin={this}
-                    focusRoot={this.reset}
-                    contextMenuItems={this.registeredMenuItems}
-                  />
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      , this.el)
+  async getCurrentWorkspace () {
+    return await this.request.getCurrentWorkspace()
   }
+
+  async getWorkspaces () {
+    const result = new Promise((resolve, reject) => {
+      const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+
+      this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
+        if (error) {
+          console.error(error)
+          return reject(error)
+        }
+        resolve(Object.keys(items)
+          .filter((item) => items[item].isDirectory)
+          .map((folder) => folder.replace(workspacesPath + '/', '')))
+      })
+    })
+    this.workspaces = await result
+    this.renderComponent()
+    return this.workspaces
+  }
+
+  async initWorkspace () {
+    const queryParams = new QueryParams()
+    const gistHandler = new GistHandler()
+    const params = queryParams.get()
+    // get the file from gist
+    const loadedFromGist = gistHandler.loadFromGist(params, this._deps.fileManager)
+
+    if (loadedFromGist) return
+    if (params.code) {
+      try {
+        await this.processCreateWorkspace('code-sample')
+        this._deps.fileProviders.workspace.setWorkspace('code-sample')
+        var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
+        const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
+        const path = fileName
+        await this._deps.fileProviders.workspace.set(path, atob(params.code))
+        this.initialWorkspace = 'code-sample'
+        await this._deps.fileManager.openFile(fileName)
+      } catch (e) {
+        console.error(e)
+      }
+      return
+    }
+    // insert example contracts if there are no files to show
+    this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
+      if (error) console.error(error)
+      if (Object.keys(filesList).length === 0) {
+        await this.createWorkspace('default_workspace')
+      }
+      this.getWorkspaces()
+    })
+  }
+
+  async createNewFile () {
+    return await this.request.createNewFile()
+  }
+
+  async uploadFile (event) {
+    return await this.request.uploadFile(event)
+  }
+
+  async processCreateWorkspace (name) {
+    const workspaceProvider = this._deps.fileProviders.workspace
+    const browserProvider = this._deps.fileProviders.browser
+    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
+    const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
+    if (!browserProvider.exists(workspaceRootPath)) browserProvider.createDir(workspaceRootPath)
+    if (!browserProvider.exists(workspacePath)) browserProvider.createDir(workspacePath)
+  }
+
+  async workspaceExists (name) {
+    const workspaceProvider = this._deps.fileProviders.workspace
+    const browserProvider = this._deps.fileProviders.browser
+    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
+    return browserProvider.exists(workspacePath)
+  }
+
+  async createWorkspace (workspaceName) {
+    if (!workspaceName) throw new Error('name cannot be empty')
+    if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
+    if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
+    const browserProvider = this._deps.fileProviders.browser
+    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+    await this.processCreateWorkspace(workspaceName)
+    for (const file in examples) {
+      try {
+        await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
+
+  async renameWorkspace (oldName, workspaceName) {
+    if (!workspaceName) throw new Error('name cannot be empty')
+    if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
+    if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
+    const browserProvider = this._deps.fileProviders.browser
+    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+    browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)
+  }
+
+  /** these are called by the react component, action is already finished whent it's called */
+  async setWorkspace (workspace) {
+    this._deps.fileManager.removeTabsOf(this._deps.fileProviders.workspace)
+    if (workspace.isLocalhost) {
+      this.call('manager', 'activatePlugin', 'remixd')
+    } else if (await this.call('manager', 'isActive', 'remixd')) {
+      this.call('manager', 'deactivatePlugin', 'remixd')
+    }
+    this.emit('setWorkspace', workspace)
+  }
+
+  workspaceRenamed (workspace) {
+    this.emit('renameWorkspace', workspace)
+  }
+
+  workspaceDeleted (workspace) {
+    this.emit('deleteWorkspace', workspace)
+  }
+
+  workspaceCreated (workspace) {
+    this.emit('createWorkspace', workspace)
+  }
+  /** end section */
 }

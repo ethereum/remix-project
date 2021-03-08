@@ -5,12 +5,15 @@ const remixPath = require('path')
 class TestTabLogic {
   constructor (fileManager) {
     this.fileManager = fileManager
-    this.currentPath = 'browser/tests'
+    this.currentPath = '/tests'
   }
 
   setCurrentPath (path) {
     if (path.indexOf('/') === 0) return
     this.currentPath = path
+  }
+
+  generateTestFolder (path) {
     const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
     fileProvider.exists(path, (e, res) => { if (!res) fileProvider.createDir(path) })
   }
@@ -44,9 +47,9 @@ class TestTabLogic {
     const provider = this.fileManager.fileProviderOf(this.currentPath)
     if (!provider) return cb(null, [])
     const tests = []
-    let files
+    let files = []
     try {
-      files = await this.fileManager.readdir(this.currentPath)
+      if (await this.fileManager.exists(this.currentPath)) files = await this.fileManager.readdir(this.currentPath)
     } catch (e) {
       cb(e.message)
     }
@@ -64,7 +67,7 @@ class TestTabLogic {
     const comment = hasCurrent ? `import "${relative}/${remixPath.basename(fileToImport)}";` : '// Import here the file to test.'
     return `// SPDX-License-Identifier: GPL-3.0
     
-pragma solidity >=0.4.22 <0.8.0;
+pragma solidity >=0.4.22 <0.9.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 import "remix_accounts.sol";
 ${comment}

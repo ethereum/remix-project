@@ -240,17 +240,22 @@ export class LandingPage extends ViewPlugin {
           <div>e.g ${examples.map((url) => { return yo`<div class="p-1"><a>${url}</a></div>` })}</div>
         </div>`
 
-      modalDialogCustom.prompt(`Import from ${service}`, msg, null, (target) => {
+      const title = `Import from ${service}`
+      modalDialogCustom.prompt(title, msg, null, (target) => {
         if (target !== '') {
           compilerImport.import(
             target,
             (loadingMsg) => { tooltip(loadingMsg) },
             (error, content, cleanUrl, type, url) => {
               if (error) {
-                modalDialogCustom.alert(error)
+                modalDialogCustom.alert(title, error.message || error)
               } else {
-                fileProviders.browser.addExternal(type + '/' + cleanUrl, content, url)
-                this.verticalIcons.select('fileExplorers')
+                try {
+                  fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
+                  this.verticalIcons.select('fileExplorers')
+                } catch (e) {
+                  modalDialogCustom.alert(title, e.message)
+                }
               }
             }
           )
@@ -406,11 +411,10 @@ export class LandingPage extends ViewPlugin {
                       <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
                       <div class="btn-group">
                         <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
-                        <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'])}">GitHub</button>
+                        <button class="btn mx-1 btn-secondary" onclick="${() => load('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}">GitHub</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>'])}">Swarm</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}">Ipfs</button>
                         <button class="btn mx-1 btn-secondary" onclick="${() => load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])}">https</button>
-                        <button class="btn mx-1 btn-secondary  text-nowrap" onclick="${() => load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`)}">Resolver-engine</button>
                       </div><!-- end of btn-group -->
                     </div><!-- end of div.file -->
                     <div class="ml-4 pl-4">

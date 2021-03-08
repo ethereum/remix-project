@@ -91,7 +91,6 @@ var css = csjs`
     text-overflow               : ellipsis;
   }
   .searchIcon                   {
-    height                      : 100%;
     width                       : 25px;
     border-top-left-radius      : 3px;
     border-bottom-left-radius   : 3px;

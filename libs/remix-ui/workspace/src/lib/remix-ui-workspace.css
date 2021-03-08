@@ -1,14 +1,11 @@
-var csjs = require('csjs-inject')
-
-var css = csjs`
-  .container {
+.remixui_container {
     display           : flex;
     flex-direction    : row;
     width             : 100%;
     height            : 100%;
     box-sizing        : border-box;
   }
-  .fileexplorer       {
+  .remixui_fileexplorer       {
     display           : flex;
     flex-direction    : column;
     position          : relative;
@@ -16,47 +13,48 @@ var css = csjs`
     padding-left      : 6px;
     padding-top       : 6px;
   }
-  .fileExplorerTree   {
+  .remixui_fileExplorerTree   {
     cursor            : default;
   }
-  .gist            {
+  .remixui_gist            {
     padding           : 10px;
   }
-  .gist i          {
+  .remixui_gist i          {
     cursor            : pointer;
   }
-  .gist i:hover    {
+  .remixui_gist i:hover    {
     color             : orange;
   }
-  .connectToLocalhost {
+  .remixui_connectToLocalhost {
     padding           : 10px;
   }
-  .connectToLocalhost i {
+  .remixui_connectToLocalhost i {
     cursor            : pointer;
   }
-  .connectToLocalhost i:hover   {
+  .remixui_connectToLocalhost i:hover   {
     color             : var(--secondary)
   }
-  .uploadFile         {
+  .remixui_uploadFile         {
     padding           : 10px;
   }
-  .uploadFile label:hover   {
+  .remixui_uploadFile label:hover   {
     color             : var(--secondary)
   }
-  .uploadFile label   {
+  .remixui_uploadFile label   {
     cursor            : pointer;
   }
-  .treeview {
+  .remixui_treeview {
     overflow-y        : auto;
   }  
-  .dialog {
+  .remixui_dialog {
     display: flex;
     flex-direction: column;
   }
-  .dialogParagraph {
+  .remixui_dialogParagraph {
     margin-bottom: 2em;
     word-break: break-word;
   }
-`
-
-module.exports = css
+  .remixui_menuicon {
+    padding-right   : 10px;
+  }
+  

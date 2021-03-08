@@ -41,7 +41,7 @@ declare module "nightwatch" {
         getInstalledPlugins(cb: (plugins: string[]) => void): NightwatchBrowser,
         verifyCallReturnValue(address: string, checks: string[]): NightwatchBrowser,
         testEditorValue(testvalue: string): NightwatchBrowser,
-        removeFile(path: string): NightwatchBrowser,
+        removeFile(path: string, workspace: string): NightwatchBrowser,
         switchBrowserWindow(url: string, windowName: string, cb: (browser: NightwatchBrowser, window?: NightwatchCallbackResult<Window>) => void): NightwatchBrowser,
         setupMetamask(passphrase: string, password: string): NightwatchBrowser,
         signMessage(msg: string, callback: (hash: { value: string }, signature: { value: string }) => void): NightwatchBrowser,
@@ -55,6 +55,7 @@ declare module "nightwatch" {
         validateValueInput(selector: string, valueTosSet: string, expectedValue: string): NightwatchBrowser
         checkAnnotations(type: string, line: number): NightwatchBrowser
         checkAnnotationsNotPresent(type: string): NightwatchBrowser
+        getLastTransactionHash(callback: (hash: string) => void)
     }
 
     export interface NightwatchBrowser {

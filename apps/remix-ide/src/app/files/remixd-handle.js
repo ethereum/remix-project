@@ -30,17 +30,15 @@ const profile = {
 }
 
 export class RemixdHandle extends WebsocketPlugin {
-  constructor (fileSystemExplorer, locahostProvider, appManager) {
+  constructor (locahostProvider, appManager) {
     super(profile)
-    this.fileSystemExplorer = fileSystemExplorer
     this.locahostProvider = locahostProvider
     this.appManager = appManager
   }
 
   deactivate () {
-    this.fileSystemExplorer.hide()
     if (super.socket) super.deactivate()
-    this.call('manager', 'deactivatePlugin', 'git')
+    this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
     this.locahostProvider.close((error) => {
       if (error) console.log(error)
     })
@@ -51,8 +49,8 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   async canceled () {
-    this.call('manager', 'deactivatePlugin', 'remixd')
-    this.call('manager', 'deactivatePlugin', 'git')
+    await this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
+    await this.appManager.deactivatePlugin('remixd')
   }
 
   /**
@@ -82,9 +80,7 @@ export class RemixdHandle extends WebsocketPlugin {
             this.canceled()
           }
         }, 3000)
-        this.locahostProvider.init(() => {
-          this.fileSystemExplorer.show()
-        })
+        this.locahostProvider.init(() => {})
         this.call('manager', 'activatePlugin', 'git')
       }
     }
@@ -145,6 +141,9 @@ function remixdDialog () {
         <i class="fas fa-link"></i> will show you current connection status.
       </div>
       <div class=${css.dialogParagraph}>This feature is still in Alpha, so we recommend you to keep a copy of the shared folder.</div>
+      <span class="text-danger">
+        Please make sure you have the <b>latest remixd version</b>. <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
+      </span>
     </div>
   `
 }

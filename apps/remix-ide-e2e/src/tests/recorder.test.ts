@@ -37,7 +37,7 @@ module.exports = {
           .perform(() => done())
       })
       .click('*[data-id="deployAndRunClearInstances"]')
-      .testContracts('testRecorder.sol', sources[0]['browser/testRecorder.sol'], ['testRecorder'])
+      .testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
       .clickLaunchIcon('udapp')
       .createContract('12')
       .waitForElementPresent('.instance:nth-of-type(2)')
@@ -64,7 +64,7 @@ module.exports = {
     // deploy 2 contracts (2 different ABIs), save the record, reexecute and test one of the function.
     browser
       .click('*[data-id="deployAndRunClearInstances"]')
-      .testContracts('multipleContracts.sol', sources[1]['browser/multipleContracts.sol'], ['t1est', 't2est'])
+      .testContracts('multipleContracts.sol', sources[1]['multipleContracts.sol'], ['t1est', 't2est'])
       .clickLaunchIcon('udapp')
       .selectContract('t1est')
       .pause(1000)
@@ -81,10 +81,9 @@ module.exports = {
       .clickInstance(1)
       .pause(1000)
       .clickFunction('set2 - transact (not payable)', { types: 'uint256 _po', values: '10' })
-      .testFunction('0xa88bf726e706480f61f04a066452929030c0a0216cc6923106f863963339bdb7',
+      .testFunction('last',
         {
           status: 'true Transaction mined and execution succeed',
-          'transaction hash': '0xa88bf726e706480f61f04a066452929030c0a0216cc6923106f863963339bdb7',
           'decoded input': { 'uint256 _po': { type: 'BigNumber', hex: '0x0a' } }
         })
       .end()
@@ -93,7 +92,7 @@ module.exports = {
 }
 
 const sources = [{
-  'browser/testRecorder.sol': {
+  'testRecorder.sol': {
     content: `contract testRecorder {
   constructor(uint p) public {
       
@@ -105,7 +104,7 @@ const sources = [{
   }
 },
 {
-  'browser/multipleContracts.sol': {
+  'multipleContracts.sol': {
     content: `contract t1est {
   uint p;
   t2est t;
@@ -163,7 +162,7 @@ const records = `{
         "contractName": "test",
         "bytecode": "60606040526040516020806102b183398101604052808051906020019091905050806000819055505061027a806100376000396000f300606060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680632f30c6f61461006757806338cc48311461009e57806362738998146100f357806387cc10e11461011c575b600080fd5b61009c600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610145565b005b34156100a957600080fd5b6100b1610191565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156100fe57600080fd5b6101066101bb565b6040518082815260200191505060405180910390f35b341561012757600080fd5b61012f6101c4565b6040518082815260200191505060405180910390f35b8160008190555080600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505050565b6000600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60008054905090565b600073__browser/ballot.sol:testLib____________636d4ce63c6000604051602001526040518163ffffffff167c010000000000000000000000000000000000000000000000000000000002815260040160206040518083038186803b151561022e57600080fd5b6102c65a03f4151561023f57600080fd5b505050604051805190509050905600a165627a7a72305820e0b2510bb2890a0334bfe5613d96db3e72442e63b514cdeaee8fc2c6bbd19d3a0029",
         "linkReferences": {
-          "browser/ballot.sol": {
+          "ballot.sol": {
             "testLib": [
               {
                 "length": 20,

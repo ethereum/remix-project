@@ -6,7 +6,7 @@ import sauce from './sauce'
 import examples from '../examples/example-contracts'
 
 const sources = [
-  { 'browser/Untitled.sol': { content: examples.ballot.content } }
+  { 'Untitled.sol': { content: examples.ballot.content } }
 ]
 
 module.exports = {
