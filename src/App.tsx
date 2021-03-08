@@ -16,8 +16,6 @@ import { createDocumentation } from "./utils/utils";
 import "./App.css";
 import { ContractName, Documentation } from "./types";
 
-const devMode = { port: 8080 };
-
 export const getNewContractNames = (compilationResult: CompilationResult) => {
   const compiledContracts = compilationResult.contracts;
   let result: string[] = [];
