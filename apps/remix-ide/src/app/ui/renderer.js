@@ -112,7 +112,7 @@ Renderer.prototype.error = function (message, container, opt) {
     // Updated error reported includes '-->' before file details
     const errorDetails = text.split('-->')
     // errorDetails[1] will have file details
-    position = getPositionDetails(errorDetails[1])
+    if (errorDetails.length > 1) position = getPositionDetails(errorDetails[1])
   }
 
   opt.errLine = position.errLine
