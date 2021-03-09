@@ -52,6 +52,16 @@ module.exports = {
       .pause(5000)
       .addFile('test_updateConfiguration.sol', { content: simpleContract })
       .verifyContracts(['StorageTestUpdateConfiguration'], { wait: 5000, version: '0.6.8+commit.0bbfe453' })
+  },
+
+  'Should produce a stack too deep error': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('fileExplorers')
+      .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
+      .addFile('ContractStackLimit.sol', { content: contractStackLimit })
+      .clickLaunchIcon('solidity')
+      .waitForElementPresent('[data-id="compiledErrors"] div:nth-child(2)', 45000)
+      .waitForElementContainsText('*[data-id="compiledErrors"]', 'CompilerError: Stack too deep when compiling inline assembly: Variable headStart is 1 slot(s) too deep inside the stack.')
       .end()
   },
 
@@ -156,3 +166,12 @@ const updateConfiguration = `(async () => {
       console.log(e.message)   
   }
 })()`
+
+const contractStackLimit = `
+//SPDX-License-Identifier: MIT
+pragma solidity >=0.4.22 <0.9.1;
+contract DoesNotCompile {    
+    uint u;
+    function fStackLimit(uint u1, uint u2, uint u3, uint u4, uint u5, uint u6, uint u7, uint u8, uint u9, uint u10, uint u11, uint u12) public {        
+    }
+}`
