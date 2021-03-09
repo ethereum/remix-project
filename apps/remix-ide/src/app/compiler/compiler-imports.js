@@ -88,7 +88,7 @@ module.exports = class CompilerImports extends Plugin {
       (error, content, cleanUrl, type, url) => {
         if (error) return cb(error)
         if (this.fileManager) {
-          const workspace = this.fileManager.getProvider('workspace')
+          const workspace = this.fileManager.currentFileProvider()
           const path = targetPath || type + '/' + cleanUrl
           if (workspace) workspace.addExternal(path, content, url)
         }
