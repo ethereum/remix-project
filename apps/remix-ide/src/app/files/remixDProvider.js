@@ -1,11 +1,11 @@
 'use strict'
 var EventManager = require('../../lib/events')
+const FileProvider = require('./fileProvider')
 
-module.exports = class RemixDProvider {
+module.exports = class RemixDProvider extends FileProvider {
   constructor (appManager) {
-    this.event = new EventManager()
+    super('localhost')
     this._appManager = appManager
-    this.type = 'localhost'
     this.error = { EEXIST: 'File already exists' }
     this._isReady = false
     this._readOnlyFiles = {}
