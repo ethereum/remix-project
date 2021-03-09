@@ -90,7 +90,7 @@ module.exports = class CompilerImports extends Plugin {
         if (this.fileManager) {
           const workspace = this.fileManager.currentFileProvider()
           const path = targetPath || type + '/' + cleanUrl
-          if (workspace) workspace.addExternal(path, content, url)
+          if (workspace) workspace.addExternal('.deps/' + path, content, url)
         }
         cb(null, content)
       })
