@@ -27,6 +27,7 @@ function getCompiledContracts (browser: NightwatchBrowser, opts: { wait: number,
           .click('*[data-id="treeViewDivcompiler"]')
           .waitForElementVisible('*[data-id="treeViewLicompiler/version"]')
           .assert.containsText('*[data-id="treeViewLicompiler/version"]', `version:\n ${opts.version}`)
+          .modalFooterCancelClick()
           .perform(done)
       } else done()
     })
