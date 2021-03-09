@@ -91,7 +91,7 @@ module.exports = {
       .executeScript('remix.execute(\'resolveExternalUrlAndSave.js\')')
       .pause(6000)
       .journalLastChildIncludes('Implementation of the {IERC20} interface.')
-      .openFile('github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol')
+      .openFile('.deps/github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol')
   },
 
   'Call Remix File Resolver (internal URL) from a script': function (browser: NightwatchBrowser) {
@@ -114,7 +114,7 @@ module.exports = {
       .executeScript('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
       .pause(6000)
       .journalLastChildIncludes('abstract contract ERC20Burnable')
-      .openFile('github/newFile.sol')
+      .openFile('.deps/github/newFile.sol')
       .end()
   },
 
