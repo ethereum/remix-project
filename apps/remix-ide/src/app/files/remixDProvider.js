@@ -1,5 +1,4 @@
 'use strict'
-var EventManager = require('../../lib/events')
 const FileProvider = require('./fileProvider')
 
 module.exports = class RemixDProvider extends FileProvider {
