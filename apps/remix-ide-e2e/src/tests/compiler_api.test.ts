@@ -60,7 +60,7 @@ module.exports = {
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('ContractStackLimit.sol', { content: contractStackLimit })
       .clickLaunchIcon('solidity')
-      .waitForElementPresent('[data-id="compiledErrors"] div:nth-child(2)', 45000)
+      .pause(10000)
       .waitForElementContainsText('*[data-id="compiledErrors"]', 'CompilerError: Stack too deep when compiling inline assembly: Variable headStart is 1 slot(s) too deep inside the stack.')
       .end()
   },
