@@ -85,6 +85,8 @@ export const publishToIPFS = async (contract, fileManager) => {
       output: result
     })
   })
+
+  return { uploaded, item }
 }
 
 const ipfsVerifiedPublish = async (content, expectedHash, cb) => {
