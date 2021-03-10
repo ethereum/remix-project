@@ -74,7 +74,7 @@ export class Web3VmProvider {
     this.utils = Web3.utils || []
     this.txsMapBlock = {}
     this.blocks = {}
-    this.latestBlockNumber
+    this.latestBlockNumber = 0
   }
 
   setVM (vm) {
