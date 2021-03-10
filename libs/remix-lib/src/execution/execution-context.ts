@@ -343,5 +343,5 @@ export class ExecutionContext {
     if (transactionDetailsLinks[network]) {
       return transactionDetailsLinks[network] + hash
     }
-  }  
+  }
 }

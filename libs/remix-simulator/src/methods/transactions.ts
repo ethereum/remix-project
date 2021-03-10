@@ -7,7 +7,6 @@ export class Transactions {
   accounts
   tags
 
-
   constructor (vmContext) {
     this.vmContext = vmContext
     this.tags = {}
@@ -44,7 +43,7 @@ export class Transactions {
         const hash = '0x' + result.tx.hash().toString('hex')
         this.vmContext.trackTx(hash, result.block)
         this.vmContext.trackExecResult(hash, result.result.execResult)
-        return cb (null, result.transactionHash)
+        return cb(null, result.transactionHash)
       }
       cb(error)
     })
@@ -110,7 +109,7 @@ export class Transactions {
     }
 
     payload.params[0].value = undefined
-    
+
     const tag = payload.params[0].timestamp // e2e reference
 
     processTx(this.vmContext, this.accounts, payload, true, (error, result) => {
@@ -122,7 +121,7 @@ export class Transactions {
         this.tags[tag] = result.transactionHash
         // calls are not supposed to return a transaction hash. we do this for keeping track of it and allowing debugging calls.
         const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
-        return cb (null, returnValue)
+        return cb(null, returnValue)
       }
       cb(error)
     })

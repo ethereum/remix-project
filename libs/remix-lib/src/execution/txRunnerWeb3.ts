@@ -65,8 +65,8 @@ export class TxRunnerWeb3 {
       data = '0x' + data
     }
 
-    return this.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)  
-  } 
+    return this.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
+  }
 
   runInNode (from, to, data, value, gasLimit, useCall, timestamp, confirmCb, gasEstimationForceSend, promptCb, callback) {
     const tx = { from: from, to: to, data: data, value: value }
@@ -76,16 +76,16 @@ export class TxRunnerWeb3 {
       tx['gas'] = gasLimit
       tx['timestamp'] = timestamp
       return this.getWeb3().eth.call(tx, function (error, result: any) {
-        if (error) return callback(error)        
+        if (error) return callback(error)
         callback(null, {
-          result: result          
+          result: result
         })
       })
     }
     this.getWeb3().eth.estimateGas(tx, (err, gasEstimation) => {
       if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
         // // @todo(#378) this should be removed when https://github.com/WalletConnect/walletconnect-monorepo/issues/334 is fixed
-        new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.')
+        callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
       }
       gasEstimationForceSend(err, () => {
         // callback is called whenever no error

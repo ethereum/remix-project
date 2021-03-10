@@ -75,8 +75,8 @@ export class VMContext {
   web3vm
   logsManager
   exeResults
-  
-  constructor () {    
+
+  constructor () {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = 'muirGlacier'
@@ -94,7 +94,6 @@ export class VMContext {
     this.txs = {}
     this.exeResults = {}
     this.logsManager = new execution.LogsManager()
-    
   }
 
   createVm (hardfork) {
@@ -124,20 +123,20 @@ export class VMContext {
     return this.vms[this.currentFork].vm
   }
 
-  addBlock (block) {	
-    let blockNumber = '0x' + block.header.number.toString('hex')	
-    if (blockNumber === '0x') {	
-      blockNumber = '0x0'	
-    }	
-    
-    this.blocks['0x' + block.hash().toString('hex')] = block	
-    this.blocks[blockNumber] = block	
-    this.latestBlockNumber = blockNumber	
+  addBlock (block) {
+    let blockNumber = '0x' + block.header.number.toString('hex')
+    if (blockNumber === '0x') {
+      blockNumber = '0x0'
+    }
 
-    this.logsManager.checkBlock(blockNumber, block, this.web3vm)	
-  }	
+    this.blocks['0x' + block.hash().toString('hex')] = block
+    this.blocks[blockNumber] = block
+    this.latestBlockNumber = blockNumber
 
-  trackTx (tx, block) {	
+    this.logsManager.checkBlock(blockNumber, block, this.web3vm)
+  }
+
+  trackTx (tx, block) {
     this.txs[tx] = block
   }
 
