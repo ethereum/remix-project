@@ -91,6 +91,10 @@ export const Workspace = (props: WorkspaceProps) => {
       setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
     })
 
+    props.localhost.event.register('loading', () => {
+      remixdExplorer.loading()
+    })
+
     if (props.initialWorkspace) {
       props.workspace.setWorkspace(props.initialWorkspace)
       setState(prevState => {
@@ -120,7 +124,8 @@ export const Workspace = (props: WorkspaceProps) => {
         fn: () => {}
       },
       handleHide: null
-    }
+    },
+    loadingLocalhost: false
   })
 
   /* workspace creation, renaming and deletion */
@@ -231,13 +236,18 @@ export const Workspace = (props: WorkspaceProps) => {
       if (state.currentWorkspace === LOCALHOST) setWorkspace(NO_WORKSPACE)
       props.fileManager.setMode('browser')
       setState(prevState => {
-        return { ...prevState, hideRemixdExplorer: true }
+        return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
       })
     },
     show: () => {
       props.fileManager.setMode('localhost')
       setState(prevState => {
-        return { ...prevState, hideRemixdExplorer: false }
+        return { ...prevState, hideRemixdExplorer: false, loadingLocalhost: false }
+      })
+    },
+    loading: () => {
+      setState(prevState => {
+        return { ...prevState, loadingLocalhost: true }
       })
     }
   }
@@ -372,19 +382,22 @@ export const Workspace = (props: WorkspaceProps) => {
                   />
               }
             </div>
-            <div className='pl-2 filesystemexplorer remixui_treeview'>
-              { !state.hideRemixdExplorer &&
-                  <FileExplorer
-                    name='localhost'
-                    registry={props.registry}
-                    filesProvider={props.localhost}
-                    menuItems={['createNewFile', 'createNewFolder']}
-                    plugin={props.plugin}
-                    focusRoot={state.reset}
-                    contextMenuItems={props.registeredMenuItems}
-                  />
-              }
-            </div>
+            {
+              state.loadingLocalhost ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
+                : <div className='pl-2 filesystemexplorer remixui_treeview'>
+                  { !state.hideRemixdExplorer &&
+                      <FileExplorer
+                        name='localhost'
+                        registry={props.registry}
+                        filesProvider={props.localhost}
+                        menuItems={['createNewFile', 'createNewFolder']}
+                        plugin={props.plugin}
+                        focusRoot={state.reset}
+                        contextMenuItems={props.registeredMenuItems}
+                      />
+                  }
+                </div>
+            }
             <div className='pl-2 remixui_treeview'>
               { false && <FileExplorer
                 name='browser'
