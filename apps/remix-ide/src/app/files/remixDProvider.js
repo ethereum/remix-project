@@ -58,7 +58,7 @@ module.exports = class RemixDProvider {
   }
 
   preInit () {
-    this._registerEvent()
+    this.event.trigger('loading')
   }
 
   init (cb) {
