@@ -95,6 +95,7 @@ export class RemixdHandle extends WebsocketPlugin {
           label: 'Connect',
           fn: () => {
             try {
+              this.locahostProvider.event.trigger('loading')
               super.activate()
               setTimeout(() => {
                 if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
