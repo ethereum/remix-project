@@ -3,12 +3,11 @@ const TxExecution = execution.txExecution
 const TxRunnerVM = execution.TxRunnerVM
 const TxRunner = execution.TxRunner
 
-
 function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
   const finalCallback = function (err, result) {
     if (err) {
       return callback(err)
-    }    
+    }
     return callback(null, result)
   }
 

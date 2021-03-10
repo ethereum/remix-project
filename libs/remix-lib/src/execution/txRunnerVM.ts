@@ -27,7 +27,7 @@ export class TxRunnerVM {
     this.blockNumber = 0
     this.runAsync = true
     this.blockNumber = 0 // The VM is running in Homestead mode, which started at this block.
-    this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.    
+    this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
     this.queusTxs = []
@@ -110,11 +110,10 @@ export class TxRunnerVM {
         result: result,
         transactionHash: bufferToHex(Buffer.from(tx.hash())),
         block,
-        tx,
+        tx
       })
     }).catch(function (err) {
       callback(err)
     })
-  }  
+  }
 }
-
