@@ -1,11 +1,12 @@
 module.exports = {
     name: 'remix-tests',
     preset: '../../jest.config.js',
-    verbose: false,
+    verbose: true,
     silent: false, // Silent console messages, specially the 'remix-simulator' ones
     transform: {
       '^.+\\.[tj]sx?$': 'ts-jest',
     },
+    transformIgnorePatterns: ["/node_modules/", "\\.pnp\\.[^\\\/]+$"],
     rootDir: "./",
     testTimeout: 40000,
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html', 'json'],
