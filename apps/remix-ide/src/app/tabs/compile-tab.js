@@ -33,7 +33,7 @@ const profile = {
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
   version: packageJson.version,
-  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig']
+  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'getCompilerConfig']
 
 }
 
@@ -267,6 +267,22 @@ class CompileTab extends ViewPlugin {
         }
       }, 200)
     })
+  }
+
+  /**
+   * Get the compiler configuration
+   * This function is used by remix-plugin compiler API.
+   * @return {object} settings {version, evmVersion, optimize, runs, version, language}
+   */
+
+  getCompilerConfig () {
+    return {
+      version: this.compilerContainer.data.selectedVersion,
+      evmVersion: this.compileTabLogic.evmVersion,
+      optimize: this.compileTabLogic.optimize,
+      runs: this.compileTabLogic.runs,
+      language: this.compileTabLogic.language
+    }
   }
 
   /*********

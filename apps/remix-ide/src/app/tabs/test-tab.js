@@ -362,7 +362,7 @@ module.exports = class TestTab extends ViewPlugin {
     return new Promise((resolve, reject) => {
       const runningTest = {}
       runningTest[path] = { content }
-      const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCurrentCompilerConfig()
+      const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCompilerConfig()
       const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,
@@ -389,7 +389,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.fileManager.readFile(testFilePath).then((content) => {
       const runningTests = {}
       runningTests[testFilePath] = { content }
-      const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCurrentCompilerConfig()
+      const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCompilerConfig()
       const currentCompilerUrl = urlFromVersion(currentVersion)
       const compilerConfig = {
         currentCompilerUrl,

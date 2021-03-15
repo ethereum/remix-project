@@ -25,6 +25,8 @@ class CompileTab {
     this.queryParams.update({ runs: this.runs })
     this.compiler.set('runs', this.runs)
 
+    this.language = 'Solidity'
+
     this.evmVersion = this.queryParams.get().evmVersion
     if (this.evmVersion === 'undefined' || this.evmVersion === 'null' || !this.evmVersion) {
       this.evmVersion = null
@@ -57,6 +59,7 @@ class CompileTab {
    */
   setLanguage (lang) {
     this.compiler.set('language', lang)
+    this.language = lang
   }
 
   /**
