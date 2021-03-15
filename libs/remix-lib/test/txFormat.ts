@@ -5,8 +5,6 @@ import * as txHelper from '../src/execution/txHelper'
 import { hexToIntArray } from '../src/util'
 let compiler = require('solc')
 import { compilerInput } from '../src/helpers/compilerHelper'
-import { ExecutionContext } from '../src/execution/execution-context'
-const executionContext = new ExecutionContext()
 const solidityVersion = 'v0.6.0+commit.26b70077'
 
 /* tape *********************************************************** */
@@ -151,7 +149,6 @@ function testInvalidTupleInput (st, params) {
 /* tape *********************************************************** */
 
 tape('ContractParameters - (TxFormat.buildData) - link Libraries', function (t) {
-  executionContext.setContext('vm', null, null, null)
   const compileData = compiler.compile(compilerInput(deploySimpleLib))
 
   const fakeDeployedContracts = {

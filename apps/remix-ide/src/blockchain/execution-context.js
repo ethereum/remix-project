@@ -1,19 +1,17 @@
 /* global ethereum */
 'use strict'
 import Web3 from 'web3'
-import { EventManager } from '../eventManager'
+import EventManager from '../lib/events'
 import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
 import { Web3VmProvider } from '../web3Provider/web3VmProvider'
 import VM from '@ethereumjs/vm'
 import Common from '@ethereumjs/common'
 import StateManager from '@ethereumjs/vm/dist/state/stateManager'
-import { StorageDump } from '@ethereumjs/vm/dist/state/interface'
 
-declare let ethereum: any
 let web3
 
-if (typeof window !== 'undefined' && typeof window['ethereum'] !== 'undefined') {
-  var injectedProvider = window['ethereum']
+if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
+  var injectedProvider = window.ethereum
   web3 = new Web3(injectedProvider)
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
@@ -24,12 +22,13 @@ if (typeof window !== 'undefined' && typeof window['ethereum'] !== 'undefined') 
 */
 
 class StateManagerCommonStorageDump extends StateManager {
-  /*
-   * dictionary containing keccak(b) as key and b as value. used to get the initial value from its hash
-   */
-  keyHashes: { [key: string]: string }
+  
   constructor () {
     super()
+    /*
+     * dictionary containing keccak(b) as key and b as value. used to get the initial value from its hash.
+     * type:  { [key: string]: string }
+     */
     this.keyHashes = {}
   }
 
@@ -46,7 +45,7 @@ class StateManagerCommonStorageDump extends StateManager {
       console.log(e)
       throw e
     }
-    return new Promise<StorageDump>((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       try {
         const storage = {}
         const stream = trie.createReadStream()
@@ -66,14 +65,14 @@ class StateManagerCommonStorageDump extends StateManager {
     })
   }
 
-  async getStateRoot (force: boolean = false): Promise<Buffer> {
+  async getStateRoot (force = false) {
     await this._cache.flush()
 
     const stateRoot = this._trie.root
     return stateRoot
   }
 
-  async setStateRoot (stateRoot: Buffer): Promise<void> {
+  async setStateRoot (stateRoot) {
     await this._cache.flush()
 
     if (stateRoot === this._trie.EMPTY_TRIE_ROOT) {
@@ -98,20 +97,6 @@ class StateManagerCommonStorageDump extends StateManager {
   trigger contextChanged, web3EndpointChanged
 */
 export class ExecutionContext {
-  event
-  blockGasLimitDefault: number
-  blockGasLimit: number
-  customNetWorks
-  blocks
-  latestBlockNumber
-  txs
-  executionContext: string
-  listenOnLastBlockId
-  currentFork: string
-  vms
-  mainNetGenesisHash: string
-  customWeb3: { [key: string]: Web3 }
-
   constructor () {
     this.event = new EventManager()
     this.executionContext = null
@@ -171,7 +156,7 @@ export class ExecutionContext {
     return this.executionContext === 'vm'
   }
 
-  setWeb3 (context: string, web3: Web3) {
+  setWeb3 (context, web3) {
     this.customWeb3[context] = web3
   }
 

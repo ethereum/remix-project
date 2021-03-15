@@ -4,7 +4,6 @@ import { ethers } from 'ethers'
 import { toBuffer } from 'ethereumjs-util'
 import { EventManager } from '../eventManager'
 import { compareByteCode } from '../util'
-import { ExecutionContext } from './execution-context'
 import { decodeResponse } from './txFormat'
 import { getFunction, getReceiveInterface, getConstructorInterface, visitContracts, makeFullTypeDefinition } from './txHelper'
 
@@ -40,7 +39,7 @@ export class TxListener {
   constructor (opt, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
-    this.executionContext = executionContext || new ExecutionContext()
+    this.executionContext = executionContext
     this._api = opt.api
     this._resolvedTransactions = {}
     this._resolvedContracts = {}
