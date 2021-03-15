@@ -38,19 +38,43 @@ export class TabProxy extends Plugin {
     })
 
     fileManager.events.on('fileRemoved', (name) => {
-      this.removeTab(name)
+      const workspace = this.fileManager.getCurrentWorkspace()
+
+      workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
     })
 
     fileManager.events.on('fileClosed', (name) => {
-      this.removeTab(name)
+      const workspace = this.fileManager.getCurrentWorkspace()
+
+      workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
     })
 
     fileManager.events.on('currentFileChanged', (file) => {
-      if (this._handlers[file]) {
-        this._view.filetabs.activateTab(file)
+      const workspace = this.fileManager.getCurrentWorkspace()
+
+      if (workspace) {
+        const workspacePath = workspace + '/' + file
+
+        if (this._handlers[workspacePath]) {
+          this._view.filetabs.activateTab(workspacePath)
+          return
+        }
+        this.addTab(workspacePath, '', () => {
+          this.fileManager.open(file)
+          this.event.emit('openFile', file)
+        },
+        () => {
+          this.fileManager.closeFile(file)
+          this.event.emit('closeFile', file)
+        })
+      } else {
+        const path = this.fileManager.mode + '/' + file
+
+        if (this._handlers[path]) {
+          this._view.filetabs.activateTab(path)
         return
       }
-      this.addTab(file, '', () => {
+        this.addTab(path, '', () => {
         this.fileManager.open(file)
         this.event.emit('openFile', file)
       },
@@ -58,20 +82,37 @@ export class TabProxy extends Plugin {
         this.fileManager.closeFile(file)
         this.event.emit('closeFile', file)
       })
+      }
     })
 
     fileManager.events.on('fileRenamed', (oldName, newName, isFolder) => {
+      const workspace = this.fileManager.getCurrentWorkspace()
+
+      if (workspace) {
       if (isFolder) {
         for (const tab of this.loadedTabs) {
-          if (tab.name.indexOf(oldName + '/') === 0) {
-            const newTabName = newName + tab.name.slice(oldName.length, tab.name.length)
+            if (tab.name.indexOf(workspace + '/' + oldName + '/') === 0) {
+              const newTabName = workspace + '/' + newName + tab.name.slice(workspace + '/' + oldName.length, tab.name.length)
+              this.renameTab(tab.name, newTabName)
+            }
+          }
+          return
+        }
+        // should change the tab title too
+        this.renameTab(workspace + '/' + oldName, workspace + '/' + newName)
+      } else {
+        if (isFolder) {
+          for (const tab of this.loadedTabs) {
+            if (tab.name.indexOf(this.fileManager.mode + '/' + oldName + '/') === 0) {
+              const newTabName = this.fileManager.mode + '/' + newName + tab.name.slice(this.fileManager.mode + '/' + oldName.length, tab.name.length)
             this.renameTab(tab.name, newTabName)
           }
         }
         return
       }
       // should change the tab title too
-      this.renameTab(oldName, newName)
+        this.renameTab(this.fileManager.mode + '/' + oldName, workspace + '/' + newName)
+      }
     })
 
     appManager.event.on('activate', ({ name, location, displayName, icon }) => {
