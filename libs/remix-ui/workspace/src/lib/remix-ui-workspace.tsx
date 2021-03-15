@@ -131,7 +131,7 @@ export const Workspace = (props: WorkspaceProps) => {
   /* workspace creation, renaming and deletion */
 
   const renameCurrentWorkspace = () => {
-    modal('Rename Workspace', renameModalMessage(), {
+    modal('Rename Current Workspace', renameModalMessage(), {
       label: 'OK',
       fn: onFinishRenameWorkspace
     }, {
@@ -151,7 +151,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const deleteCurrentWorkspace = () => {
-    modal('Delete Workspace', 'Are you sure to delete the workspace?', {
+    modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', {
       label: 'OK',
       fn: onFinishDeleteWorkspace
     }, {
@@ -327,7 +327,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     createWorkspace()
                   }}
                   className='far fa-plus-square remixui_menuicon'
-                  title='Create workspace'>
+                  title='Create'>
                 </span>
                 <span
                   hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
@@ -338,7 +338,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     renameCurrentWorkspace()
                   }}
                   className='far fa-edit remixui_menuicon'
-                  title='Rename workspace'>
+                  title='Rename'>
                 </span>
                 <span
                   hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
@@ -349,7 +349,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     deleteCurrentWorkspace()
                   }}
                   className='fas fa-trash'
-                  title='Delete workspace'>
+                  title='Delete'>
                 </span>
               </span>
               <select id="workspacesSelect" data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
