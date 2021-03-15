@@ -38,19 +38,19 @@ export class TabProxy extends Plugin {
     })
 
     fileManager.events.on('fileRemoved', (name) => {
-      const workspace = this.fileManager.getCurrentWorkspace()
+      const workspace = this.fileManager.currentWorkspace()
 
       workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
     })
 
     fileManager.events.on('fileClosed', (name) => {
-      const workspace = this.fileManager.getCurrentWorkspace()
+      const workspace = this.fileManager.currentWorkspace()
 
       workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
     })
 
     fileManager.events.on('currentFileChanged', (file) => {
-      const workspace = this.fileManager.getCurrentWorkspace()
+      const workspace = this.fileManager.currentWorkspace()
 
       if (workspace) {
         const workspacePath = workspace + '/' + file
@@ -86,7 +86,7 @@ export class TabProxy extends Plugin {
     })
 
     fileManager.events.on('fileRenamed', (oldName, newName, isFolder) => {
-      const workspace = this.fileManager.getCurrentWorkspace()
+      const workspace = this.fileManager.currentWorkspace()
 
       if (workspace) {
         if (isFolder) {

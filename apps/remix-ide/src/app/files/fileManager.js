@@ -611,7 +611,7 @@ class FileManager extends Plugin {
     })
   }
 
-  getCurrentWorkspace () {
+  currentWorkspace () {
     const file = this.currentFile() || ''
     const provider = this.fileProviderOf(file)
 
