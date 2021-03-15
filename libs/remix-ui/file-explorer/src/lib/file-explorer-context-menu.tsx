@@ -16,7 +16,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
     const boundary = menuItemsContainer.getBoundingClientRect()
 
     if (boundary.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
-      menuItemsContainer.style.position = 'absolute'
+      menuItemsContainer.style.position = 'fixed'
       menuItemsContainer.style.bottom = '10px'
       menuItemsContainer.style.top = null
     }
