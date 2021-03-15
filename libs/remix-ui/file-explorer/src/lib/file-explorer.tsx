@@ -32,7 +32,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     focusContext: {
       element: null,
       x: null,
-      y: null
+      y: null,
+      type: ''
     },
     focusEdit: {
       element: null,
@@ -57,7 +58,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     },
     modals: [],
     toasterMsg: '',
-    mouseOverElement: null
+    mouseOverElement: null,
+    showContextMenu: false
   })
   const editRef = useRef(null)
 
@@ -755,20 +757,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const handleContextMenuFile = (pageX: number, pageY: number, path: string, content: string) => {
     if (!content) return
     setState(prevState => {
-      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY }, focusEdit: { ...prevState.focusEdit, lastEdit: content } }
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type: 'file' }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
     })
   }
 
   const handleContextMenuFolder = (pageX: number, pageY: number, path: string, content: string) => {
     if (!content) return
     setState(prevState => {
-      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY }, focusEdit: { ...prevState.focusEdit, lastEdit: content } }
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type: 'folder' }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
     })
   }
 
   const hideContextMenu = () => {
     setState(prevState => {
-      return { ...prevState, focusContext: { element: null, x: 0, y: 0 } }
+      return { ...prevState, focusContext: { element: null, x: 0, y: 0, type: '' }, showContextMenu: false }
     })
   }
 
@@ -907,113 +909,69 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
     if (file.isDirectory) {
       return (
-        <div key={index}>
-          <TreeViewItem
-            id={`treeViewItem${file.path}`}
-            iconX='pr-3 fa fa-folder'
-            iconY='pr-3 fa fa-folder-open'
-            key={`${file.path + index}`}
-            label={label(file)}
-            onClick={(e) => {
-              e.stopPropagation()
-              if (state.focusEdit.element !== file.path) handleClickFolder(file.path)
-            }}
-            onContextMenu={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent)
-            }}
-            labelClass={labelClass}
-            controlBehaviour={ state.ctrlKey }
-            expand={state.expandPath.includes(file.path)}
-            onMouseOver={(e) => {
-              e.stopPropagation()
-              handleMouseOver(file.path)
-            }}
-            onMouseOut={(e) => {
-              e.stopPropagation()
-              if (state.mouseOverElement === file.path) handleMouseOut()
-            }}
-          >
-            {
-              file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
-                file.child.map((file, index) => {
-                  return renderFiles(file, index)
-                })
-              }
-              </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
+        <TreeViewItem
+          id={`treeViewItem${file.path}`}
+          iconX='pr-3 fa fa-folder'
+          iconY='pr-3 fa fa-folder-open'
+          key={`${file.path + index}`}
+          label={label(file)}
+          onClick={(e) => {
+            e.stopPropagation()
+            if (state.focusEdit.element !== file.path) handleClickFolder(file.path)
+          }}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent)
+          }}
+          labelClass={labelClass}
+          controlBehaviour={ state.ctrlKey }
+          expand={state.expandPath.includes(file.path)}
+          onMouseOver={(e) => {
+            e.stopPropagation()
+            handleMouseOver(file.path)
+          }}
+          onMouseOut={(e) => {
+            e.stopPropagation()
+            if (state.mouseOverElement === file.path) handleMouseOut()
+          }}
+        >
+          {
+            file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
+              file.child.map((file, index) => {
+                return renderFiles(file, index)
+              })
             }
-          </TreeViewItem>
-          { ((state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)) &&
-            <FileExplorerContextMenu
-              actions={state.actions}
-              hideContextMenu={hideContextMenu}
-              createNewFile={handleNewFileInput}
-              createNewFolder={handleNewFolderInput}
-              deletePath={deletePath}
-              renamePath={editModeOn}
-              publishToGist={publishToGist}
-              emit={emitContextMenuEvent}
-              pageX={state.focusContext.x}
-              pageY={state.focusContext.y}
-              path={file.path}
-              type='folder'
-              onMouseOver={(e) => {
-                e.stopPropagation()
-                handleMouseOver(file.path)
-              }}
-            />
+            </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
           }
-        </div>
+        </TreeViewItem>
       )
     } else {
       return (
-        <div key={index}>
-          <TreeViewItem
-            id={`treeViewItem${file.path}`}
-            key={index}
-            label={label(file)}
-            onClick={(e) => {
-              e.stopPropagation()
-              if (state.focusEdit.element !== file.path) handleClickFile(file.path)
-            }}
-            onContextMenu={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent)
-            }}
-            icon={icon}
-            labelClass={labelClass}
-            onMouseOver={(e) => {
-              e.stopPropagation()
-              handleMouseOver(file.path)
-            }}
-            onMouseOut={(e) => {
-              e.stopPropagation()
-              if (state.mouseOverElement === file.path) handleMouseOut()
-            }}
-          />
-          { ((state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)) &&
-            <FileExplorerContextMenu
-              actions={state.actions}
-              hideContextMenu={hideContextMenu}
-              createNewFile={handleNewFileInput}
-              createNewFolder={handleNewFolderInput}
-              deletePath={deletePath}
-              renamePath={editModeOn}
-              runScript={runScript}
-              emit={emitContextMenuEvent}
-              pageX={state.focusContext.x}
-              pageY={state.focusContext.y}
-              path={file.path}
-              type='file'
-              onMouseOver={(e) => {
-                e.stopPropagation()
-                handleMouseOver(file.path)
-              }}
-            />
-          }
-        </div>
+        <TreeViewItem
+          id={`treeViewItem${file.path}`}
+          key={index}
+          label={label(file)}
+          onClick={(e) => {
+            e.stopPropagation()
+            if (state.focusEdit.element !== file.path) handleClickFile(file.path)
+          }}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent)
+          }}
+          icon={icon}
+          labelClass={labelClass}
+          onMouseOver={(e) => {
+            e.stopPropagation()
+            handleMouseOver(file.path)
+          }}
+          onMouseOut={(e) => {
+            e.stopPropagation()
+            if (state.mouseOverElement === file.path) handleMouseOut()
+          }}
+        />
       )
     }
   }
@@ -1073,6 +1031,26 @@ export const FileExplorer = (props: FileExplorerProps) => {
         />
       }
       <Toaster message={state.toasterMsg} />
+      { state.showContextMenu &&
+        <FileExplorerContextMenu
+          actions={state.actions}
+          hideContextMenu={hideContextMenu}
+          createNewFile={handleNewFileInput}
+          createNewFolder={handleNewFolderInput}
+          deletePath={deletePath}
+          renamePath={editModeOn}
+          runScript={runScript}
+          emit={emitContextMenuEvent}
+          pageX={state.focusContext.x}
+          pageY={state.focusContext.y}
+          path={state.focusContext.element}
+          type={state.focusContext.type}
+          onMouseOver={(e) => {
+            e.stopPropagation()
+            handleMouseOver(state.focusContext.element)
+          }}
+        />
+      }
     </div>
   )
 }
