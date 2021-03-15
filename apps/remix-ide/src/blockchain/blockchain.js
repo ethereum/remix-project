@@ -7,7 +7,7 @@ const TxRunner = remixLib.execution.TxRunner
 const TxRunnerWeb3 = remixLib.execution.TxRunnerWeb3
 const txHelper = remixLib.execution.txHelper
 const EventManager = remixLib.EventManager
-const executionContext = remixLib.execution.executionContext
+const { ExecutionContext } = require('./execution-context')
 const Web3 = require('web3')
 
 const async = require('async')
@@ -23,7 +23,7 @@ class Blockchain {
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor (config) {
     this.event = new EventManager()
-    this.executionContext = executionContext
+    this.executionContext = new ExecutionContext()
 
     this.events = new EventEmitter()
     this.config = config
