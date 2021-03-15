@@ -366,7 +366,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const isDir = state.fileManager.isDirectory(path)
 
     modal(`Delete ${isDir ? 'folder' : 'file'}`, `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, {
-      label: 'Ok',
+      label: 'OK',
       fn: async () => {
         try {
           const fileManager = state.fileManager
@@ -545,7 +545,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           loadFile(name)
         } else {
           modal('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, {
-            label: 'Ok',
+            label: 'OK',
             fn: () => {
               loadFile(name)
             }
@@ -560,7 +560,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const publishToGist = () => {
     modal('Create a public gist', 'Are you sure you want to publish all your files in browser directory anonymously as a public gist on github.com? Note: this will not include directories.', {
-      label: 'Ok',
+      label: 'OK',
       fn: toGist
     }, {
       label: 'Cancel',
@@ -578,7 +578,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       } else {
         if (data.html_url) {
           modal('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, {
-            label: 'Ok',
+            label: 'OK',
             fn: () => {
               window.open(data.html_url, '_blank')
             }
@@ -808,7 +808,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
       if (helper.checkSpecialChars(content)) {
         modal('Validation Error', 'Special characters are not allowed', {
-          label: 'Ok',
+          label: 'OK',
           fn: () => {}
         }, null)
       } else {
