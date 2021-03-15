@@ -72,16 +72,16 @@ export class TabProxy extends Plugin {
 
         if (this._handlers[path]) {
           this._view.filetabs.activateTab(path)
-        return
-      }
+          return
+        }
         this.addTab(path, '', () => {
-        this.fileManager.open(file)
-        this.event.emit('openFile', file)
-      },
-      () => {
-        this.fileManager.closeFile(file)
-        this.event.emit('closeFile', file)
-      })
+          this.fileManager.open(file)
+          this.event.emit('openFile', file)
+        },
+        () => {
+          this.fileManager.closeFile(file)
+          this.event.emit('closeFile', file)
+        })
       }
     })
 
@@ -89,8 +89,8 @@ export class TabProxy extends Plugin {
       const workspace = this.fileManager.getCurrentWorkspace()
 
       if (workspace) {
-      if (isFolder) {
-        for (const tab of this.loadedTabs) {
+        if (isFolder) {
+          for (const tab of this.loadedTabs) {
             if (tab.name.indexOf(workspace + '/' + oldName + '/') === 0) {
               const newTabName = workspace + '/' + newName + tab.name.slice(workspace + '/' + oldName.length, tab.name.length)
               this.renameTab(tab.name, newTabName)
@@ -105,12 +105,12 @@ export class TabProxy extends Plugin {
           for (const tab of this.loadedTabs) {
             if (tab.name.indexOf(this.fileManager.mode + '/' + oldName + '/') === 0) {
               const newTabName = this.fileManager.mode + '/' + newName + tab.name.slice(this.fileManager.mode + '/' + oldName.length, tab.name.length)
-            this.renameTab(tab.name, newTabName)
+              this.renameTab(tab.name, newTabName)
+            }
           }
+          return
         }
-        return
-      }
-      // should change the tab title too
+        // should change the tab title too
         this.renameTab(this.fileManager.mode + '/' + oldName, workspace + '/' + newName)
       }
     })
