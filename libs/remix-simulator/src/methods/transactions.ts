@@ -1,11 +1,16 @@
 import Web3 from 'web3'
 import { toChecksumAddress, BN, Address } from 'ethereumjs-util'
 import { processTx } from './txProcess'
+import { execution } from '@remix-project/remix-lib'
+const TxRunnerVM = execution.TxRunnerVM
+const TxRunner = execution.TxRunner
 
 export class Transactions {
   vmContext
   accounts
   tags
+  txRunnerVMInstance
+  txRunnerInstance
 
   constructor (vmContext) {
     this.vmContext = vmContext
@@ -14,6 +19,30 @@ export class Transactions {
 
   init (accounts) {
     this.accounts = accounts
+    const api = {
+      logMessage: (msg) => {
+      },
+      logHtmlMessage: (msg) => {
+      },
+      config: {
+        getUnpersistedProperty: (key) => {
+          return true
+        },
+        get: () => {
+          return true
+        }
+      },
+      detectNetwork: (cb) => {
+        cb()
+      },
+      personalMode: () => {
+        return false
+      }
+    }
+    
+    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => this.vmContext.vm())
+    this.txRunnerInstance = new TxRunner(this.txRunnerVMInstance, { runAsync: false })
+    this.txRunnerInstance.vmaccounts = accounts
   }
 
   methods () {
@@ -37,7 +66,7 @@ export class Transactions {
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = toChecksumAddress(payload.params[0].from)
     }
-    processTx(this.vmContext, this.accounts, payload, false, (error, result) => {
+    processTx(this.txRunnerInstance, payload, false, (error, result) => {
       if (!error && result) {
         this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
@@ -112,7 +141,7 @@ export class Transactions {
 
     const tag = payload.params[0].timestamp // e2e reference
 
-    processTx(this.vmContext, this.accounts, payload, true, (error, result) => {
+    processTx(this.txRunnerInstance, payload, true, (error, result) => {
       if (!error && result) {
         this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
