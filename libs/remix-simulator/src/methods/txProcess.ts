@@ -1,7 +1,5 @@
 import { execution } from '@remix-project/remix-lib'
 const TxExecution = execution.txExecution
-const TxRunnerVM = execution.TxRunnerVM
-const TxRunner = execution.TxRunner
 
 function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
   const finalCallback = function (err, result) {
@@ -36,38 +34,7 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
   TxExecution.createContract(from, data, value, gasLimit, txRunner, callbacks, finalCallback)
 }
 
-let txRunnerVMInstance
-let txRunnerInstance
-
-export function processTx (vmContext, accounts, payload, isCall, callback) {
-  const api = {
-    logMessage: (msg) => {
-    },
-    logHtmlMessage: (msg) => {
-    },
-    config: {
-      getUnpersistedProperty: (key) => {
-        return true
-      },
-      get: () => {
-        return true
-      }
-    },
-    detectNetwork: (cb) => {
-      cb()
-    },
-    personalMode: () => {
-      return false
-    }
-  }
-
-  if (!txRunnerVMInstance) {
-    txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => vmContext.vm())
-  }
-  if (!txRunnerInstance) {
-    txRunnerInstance = new TxRunner(txRunnerVMInstance, { runAsync: false })
-  }
-  txRunnerInstance.vmaccounts = accounts
+export function processTx (txRunnerInstance, payload, isCall, callback) {
   let { from, to, data, value, gas } = payload.params[0]
   gas = gas || 3000000
 
