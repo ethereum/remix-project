@@ -120,8 +120,8 @@ module.exports = {
       .setValue('*[data-id="modalDialogCustomPromptText"]', testData.validGistId)
       .modalFooterOKClick()
       .openFile(`${testData.validGistId}/ApplicationRegistry`)
-      .waitForElementVisible(`div[title='${testData.validGistId}/ApplicationRegistry']`)
-      .assert.containsText(`div[title='${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
+      .waitForElementVisible(`div[title='default_workspace/${testData.validGistId}/ApplicationRegistry']`)
+      .assert.containsText(`div[title='default_workspace/${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
       .end()
   },
 
