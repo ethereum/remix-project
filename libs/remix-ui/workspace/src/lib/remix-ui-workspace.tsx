@@ -327,7 +327,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     createWorkspace()
                   }}
                   className='far fa-plus-square remixui_menuicon'
-                  title='Create a new Workspace'>
+                  title='Create workspace'>
                 </span>
                 <span
                   hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
@@ -338,7 +338,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     renameCurrentWorkspace()
                   }}
                   className='far fa-edit remixui_menuicon'
-                  title='Rename current Workspace'>
+                  title='Rename workspace'>
                 </span>
                 <span
                   hidden={state.currentWorkspace === LOCALHOST || state.currentWorkspace === NO_WORKSPACE}
@@ -349,7 +349,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     deleteCurrentWorkspace()
                   }}
                   className='fas fa-trash'
-                  title='Delete current Workspace'>
+                  title='Delete workspace'>
                 </span>
               </span>
               <select id="workspacesSelect" data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
