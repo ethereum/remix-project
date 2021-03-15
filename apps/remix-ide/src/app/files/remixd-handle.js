@@ -64,7 +64,7 @@ export class RemixdHandle extends WebsocketPlugin {
       if (error) {
         console.log(error)
         modalDialogCustom.alert(
-          'Cannot connect to the remixd daemon.' +
+          'Cannot connect to the remixd daemon. ' +
           'Please make sure you have the remixd running in the background.'
         )
         this.canceled()
@@ -74,7 +74,7 @@ export class RemixdHandle extends WebsocketPlugin {
             clearInterval(intervalId)
             console.log(error)
             modalDialogCustom.alert(
-              'Connection to remixd terminated' +
+              'Connection to remixd terminated. ' +
               'Please make sure remixd is still running in the background.'
             )
             this.canceled()
