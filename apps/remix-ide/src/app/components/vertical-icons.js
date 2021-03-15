@@ -115,7 +115,7 @@ export class VerticalIcons extends Plugin {
   setIconStatus (name, status) {
     const el = this.icons[name]
     if (!el) return
-    const statusEl = el.querySelector('span')
+    const statusEl = el.querySelector('i')
     if (statusEl) {
       el.removeChild(statusEl)
     }
@@ -134,13 +134,13 @@ export class VerticalIcons extends Plugin {
     } else type = helper.checkSpecialChars(status.type) ? '' : status.type
     const title = helper.checkSpecialChars(status.title) ? '' : status.title
 
-    el.appendChild(yo`<span
+    el.appendChild(yo`<i
       title="${title}"
       class="${this.resolveClasses(key, type)}"
       aria-hidden="true"
     >
     ${text}
-    </span>`)
+    </i>`)
 
     el.classList.add(`${css.icon}`)
   }
