@@ -48,6 +48,10 @@ export const Workspace = (props: WorkspaceProps) => {
     return createWorkspace()
   }
 
+  props.request.setWorkspace = (workspaceName) => {
+    return setWorkspace(workspaceName)
+  }
+
   props.request.createNewFile = () => {
     props.plugin.resetNewFile()
   }
@@ -217,6 +221,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const setWorkspace = async (name) => {
+    props.setWorkspace({ name, isLocalhost: name === LOCALHOST })
     if (name === LOCALHOST) {
       props.workspace.clearWorkspace()
     } else if (name === NO_WORKSPACE) {
@@ -228,7 +233,6 @@ export const Workspace = (props: WorkspaceProps) => {
     setState(prevState => {
       return { ...prevState, currentWorkspace: name }
     })
-    props.setWorkspace({ name, isLocalhost: name === LOCALHOST })
   }
 
   const remixdExplorer = {
