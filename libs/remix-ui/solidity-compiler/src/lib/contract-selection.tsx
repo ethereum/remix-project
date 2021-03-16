@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react' // eslint-disable-line
 import { ContractSelectionProps } from './types'
+import { PublishToStorage } from '@remix-ui/publish-to-storage'
 
 import './css/style.css'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const { contractMap } = props
+  const { contractMap, fileManager, fileProvider } = props
   const [state, setState] = useState({
     contractList: null,
     selectedContract: ''
@@ -33,6 +34,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     })
   }
 
+  const handlePublishToStorage = (type, fileProvider, fileManager, contractDetails) => {
+
+  }
+
   return (
     // define swarm logo
     <>
@@ -41,10 +46,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         {/* Select Compiler Version */}
         <div className="mb-3">
           <label className="remixui_compilerLabel form-check-label" htmlFor="compiledContracts">Contract</label>
-          <select
-          onChange={(e) => selectContract(e.target.value)}
-          data-id="compiledContracts" id="compiledContracts" className="custom-select"
-        >
+          <select onChange={(e) => selectContract(e.target.value)} data-id="compiledContracts" id="compiledContracts" className="custom-select" >
           {state.contractList.map(({ name, file }) => <option value={name}>{name} ({file})</option>)}
         </select>
         </div>
@@ -80,6 +82,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         <span class="mt-2 mx-3 w-100 alert alert-warning" role="alert">No Contract Compiled Yet</span>
       </article></section>
       }
+      <PublishToStorage />
       </>
   
       if (contractList.length) {

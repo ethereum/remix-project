@@ -64,6 +64,7 @@ export default class CompileTab {
   compileFile (target) {
     if (!target) throw new Error('No target provided for compiliation')
     const provider = this.fileManager.fileProviderOf(target)
+
     if (!provider) throw new Error(`cannot compile ${target}. Does not belong to any explorer`)
     return new Promise((resolve, reject) => {
       provider.get(target, (error, content) => {
