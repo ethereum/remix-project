@@ -34,6 +34,7 @@ const Config = require('./config')
 const modalDialogCustom = require('./app/ui/modal-dialog-custom')
 const modalDialog = require('./app/ui/modaldialog')
 const FileManager = require('./app/files/fileManager')
+const DGitProvider = require('./app/files/dgit-provider')
 const FileProvider = require('./app/files/fileProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 const toolTip = require('./app/ui/tooltip')
@@ -258,6 +259,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const fileManager = new FileManager(editor, appManager)
   registry.put({ api: fileManager, name: 'filemanager' })
 
+  const dGitProvider = new DGitProvider()
+
   // ----------------- import content service ------------------------
   const contentImport = new CompilerImport(fileManager)
 
@@ -310,7 +313,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     contextualListener,
     terminal,
     web3Provider,
-    fetchAndCompile
+    fetchAndCompile,
+    dGitProvider
   ])
 
   // LAYOUT & SYSTEM VIEWS

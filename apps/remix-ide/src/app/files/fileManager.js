@@ -173,6 +173,7 @@ class FileManager extends Plugin {
       return await this.setFileContent(path, data)
     } else {
       const ret = await this.setFileContent(path, data)
+      console.log("file added from file write", path)
       this.emit('fileAdded', path)
       return ret
     }
@@ -313,6 +314,7 @@ class FileManager extends Plugin {
   }
 
   fileAddedEvent (path) {
+    console.log("file added event", path)
     this.emit('fileAdded', path)
   }
 

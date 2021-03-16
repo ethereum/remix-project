@@ -35,7 +35,7 @@ const profile = {
   name: 'fileExplorers',
   displayName: 'File explorers',
   methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace'],
-  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace'],
+  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace', 'createWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
   kind: 'fileexplorer',
@@ -178,6 +178,7 @@ module.exports = class Filepanel extends ViewPlugin {
     const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
     if (!browserProvider.exists(workspaceRootPath)) browserProvider.createDir(workspaceRootPath)
     if (!browserProvider.exists(workspacePath)) browserProvider.createDir(workspacePath)
+    this.workspaceCreated({ name })
   }
 
   async workspaceExists (name) {
@@ -194,9 +195,13 @@ module.exports = class Filepanel extends ViewPlugin {
     const browserProvider = this._deps.fileProviders.browser
     const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
     await this.processCreateWorkspace(workspaceName)
+    const workspaceProvider = this._deps.fileProviders.workspace
+    //await workspaceProvider.setWorkspace(workspaceName)
     for (const file in examples) {
       try {
-        await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
+        console.log('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name)
+        //await workspaceProvider.set(examples[file].name, examples[file].content)
+        //await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
       } catch (error) {
         console.error(error)
       }
@@ -224,14 +229,17 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   workspaceRenamed (workspace) {
+    console.log("rn WS ", workspace)
     this.emit('renameWorkspace', workspace)
   }
 
   workspaceDeleted (workspace) {
+    console.log("deleted WS ", workspace)
     this.emit('deleteWorkspace', workspace)
   }
 
   workspaceCreated (workspace) {
+    console.log("created WS ", workspace)
     this.emit('createWorkspace', workspace)
   }
   /** end section */

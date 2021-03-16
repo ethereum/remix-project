@@ -14,7 +14,7 @@ const requiredModules = [ // services + layout views + system views
 const dependentModules = ['git'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons']
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', '11111']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -101,6 +101,16 @@ export class RemixAppManager extends PluginManager {
     try {
       const res = await fetch(this.pluginsDirectory)
       plugins = await res.json()
+      plugins.push({
+        "name": "tester",
+        "displayName": "tester",
+        "methods": [],
+        "version": "0.0.1-dev",
+        "url": "http://localhost:3000",
+        "description": "Run remix plugin in your Remix project",
+        "icon": "https://dgitremix.web.app/dgitlogo.png",
+        "location": "sidePanel"
+      })
       localStorage.setItem('plugins-directory', JSON.stringify(plugins))
     } catch (e) {
       console.log('getting plugins list from localstorage...')
