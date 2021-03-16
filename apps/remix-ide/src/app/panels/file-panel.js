@@ -191,16 +191,18 @@ module.exports = class Filepanel extends ViewPlugin {
     if (!workspaceName) throw new Error('name cannot be empty')
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
-    const browserProvider = this._deps.fileProviders.browser
-    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+    const workspaceProvider = this._deps.fileProviders.workspace
     await this.processCreateWorkspace(workspaceName)
-    for (const file in examples) {
-      try {
-        await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
-      } catch (error) {
-        console.error(error)
+    await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
+    setTimeout(async () => { // needed for the react stack to update to the new workspace (workspace and fileexplorer)
+      for (const file in examples) {
+        try {
+          await workspaceProvider.set(examples[file].name, examples[file].content)
+        } catch (error) {
+          console.error(error)
+        }
       }
-    }
+    }, 500)
   }
 
   async renameWorkspace (oldName, workspaceName) {

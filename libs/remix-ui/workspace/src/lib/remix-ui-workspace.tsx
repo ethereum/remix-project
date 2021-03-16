@@ -48,6 +48,10 @@ export const Workspace = (props: WorkspaceProps) => {
     return createWorkspace()
   }
 
+  props.request.setWorkspace = (workspaceName) => {
+    return setWorkspace(workspaceName)
+  }
+
   props.request.createNewFile = () => {
     props.plugin.resetNewFile()
   }
