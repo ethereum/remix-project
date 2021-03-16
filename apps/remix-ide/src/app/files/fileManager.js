@@ -612,11 +612,10 @@ class FileManager extends Plugin {
   }
 
   currentWorkspace () {
-    if (self._deps) {
-      const provider = self._deps.filesProviders.workspace
+    const file = this.currentFile() || ''
+    const provider = this.fileProviderOf(file)
 
-      return provider.workspace
-    }
+    return provider.workspace
   }
 }
 
