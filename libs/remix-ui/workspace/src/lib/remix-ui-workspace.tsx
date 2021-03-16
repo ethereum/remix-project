@@ -81,6 +81,12 @@ export const Workspace = (props: WorkspaceProps) => {
     getWorkspaces()
   }, [props.workspaces])
 
+  const localhostDisconnect = () => {
+    if (state.currentWorkspace === LOCALHOST) setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
+  }
+  props.localhost.event.unregister('disconnected', localhostDisconnect)
+  props.localhost.event.register('disconnected', localhostDisconnect)
+
   useEffect(() => {
     props.localhost.event.register('connected', () => {
       remixdExplorer.show()
@@ -88,7 +94,6 @@ export const Workspace = (props: WorkspaceProps) => {
 
     props.localhost.event.register('disconnected', () => {
       remixdExplorer.hide()
-      setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
     })
 
     props.localhost.event.register('loading', () => {
