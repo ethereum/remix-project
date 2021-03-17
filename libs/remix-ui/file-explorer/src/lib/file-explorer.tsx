@@ -1077,7 +1077,13 @@ function packageFiles (filesProvider, directory, callback) {
             cb()
           })
         }
-      }, (error) => {
+      }, async (error) => {
+        try {
+          const json = await filesProvider.copyFolderToJson(directory)
+          ret['project.json'] = { content: JSON.stringify(json, null, '\t') }        
+        } catch (e) {
+          console.log(e)
+        }
         callback(error, ret)
       })
     }
