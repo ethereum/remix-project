@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from 'react' // eslint-disable-lin
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
-import * as async from 'async'
 import Gists from 'gists'
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
