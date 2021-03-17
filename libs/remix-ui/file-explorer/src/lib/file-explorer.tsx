@@ -587,7 +587,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
             fn: () => {}
           })
         } else {
-          modal('Publish to gist Failed', data.message + ' ' + data.documentation_url + ' ' + JSON.stringify(data.errors, null, '\t'), {
+          const error = JSON.stringify(data.errors, null, '\t') || ''
+          const message = data.message === 'Not Found' ? data.message + '. Please make sure the API token has right to create a gist.' : data.message
+          modal('Publish to gist Failed', message + ' ' + data.documentation_url + ' ' + error, {
             label: 'Close',
             fn: async () => {}
           }, null)
