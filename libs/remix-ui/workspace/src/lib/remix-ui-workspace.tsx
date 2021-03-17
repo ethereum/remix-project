@@ -319,7 +319,7 @@ export const Workspace = (props: WorkspaceProps) => {
       <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
         <div>
           <header>
-            <div className="mb-2">
+            <div className="mb-2 mr-2">
               <label className="form-check-label" htmlFor="workspacesSelect">
                 Workspaces
               </label>
@@ -331,7 +331,7 @@ export const Workspace = (props: WorkspaceProps) => {
                     e.stopPropagation()
                     createWorkspace()
                   }}
-                  className='far fa-plus-square remixui_menuicon'
+                  className='mt-1 far fa-plus-square remixui_menuicon'
                   title='Create'>
                 </span>
                 <span
@@ -357,7 +357,7 @@ export const Workspace = (props: WorkspaceProps) => {
                   title='Delete'>
                 </span>
               </span>
-              <select id="workspacesSelect" data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
+              <select id="workspacesSelect" data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="mt-1 form-control custom-select">
                 {
                   state.workspaces
                     .map((folder) => {
@@ -403,7 +403,7 @@ export const Workspace = (props: WorkspaceProps) => {
                   }
                 </div>
             }
-            <div className='pl-2 remixui_treeview'>
+            <div className='remixui_treeview'>
               { false && <FileExplorer
                 name='browser'
                 registry={props.registry}
