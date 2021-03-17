@@ -90,6 +90,7 @@ export const Workspace = (props: WorkspaceProps) => {
   useEffect(() => {
     props.localhost.event.register('connected', () => {
       remixdExplorer.show()
+      setWorkspace(LOCALHOST)
     })
 
     props.localhost.event.register('disconnected', () => {
