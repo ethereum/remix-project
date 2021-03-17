@@ -559,7 +559,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const publishToGist = () => {
-    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com? This also add an entry named 'project.json' which include all the folders and files.`, {
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, {
       label: 'OK',
       fn: toGist
     }, {
@@ -1059,35 +1059,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
 export default FileExplorer
 
-function packageFiles (filesProvider, directory, callback) {
+async function packageFiles (filesProvider, directory, callback) {
   const ret = {}
-  filesProvider.resolveDirectory(directory, (error, files) => {
-    if (error) callback(error)
-    else {
-      async.eachSeries(Object.keys(files), (path, cb) => {
-        if (filesProvider.isDirectory(path)) {
-          cb()
-        } else {
-          filesProvider.get(path, (error, content) => {
-            if (error) return cb(error)
-            if (/^\s+$/.test(content) || !content.length) {
-              content = '// this line is added to create a gist. Empty file is not allowed.'
-            }
-            ret[path] = { content }
-            cb()
-          })
-        }
-      }, async (error) => {
-        try {
-          const json = await filesProvider.copyFolderToJson(directory)
-          ret['project.json'] = { content: JSON.stringify(json, null, '\t') }
-        } catch (e) {
-          console.log(e)
-        }
-        callback(error, ret)
-      })
-    }
-  })
+  try {
+    await filesProvider.copyFolderToJson(directory, ({ path, content }) => {
+      if (/^\s+$/.test(content) || !content.length) {
+        content = '// this line is added to create a gist. Empty file is not allowed.'
+      }
+      path = path.replace(/\//g, '...')
+      ret[path] = { content }
+    })
+    callback(null, ret)
+  } catch (e) {
+    return callback(e)
+  }
 }
 
 function joinPath (...paths) {
