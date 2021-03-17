@@ -559,7 +559,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const publishToGist = () => {
-    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com? Note: this will not include directories.`, {
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com? This also add an entry named 'project.json' which include all the folders and files.`, {
       label: 'OK',
       fn: toGist
     }, {
