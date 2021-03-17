@@ -196,11 +196,11 @@ class FileProvider {
   }
 
   /**
-   * copy the folder recursively
+   * copy the folder recursively (internal use)
    * @param {string} path is the folder to be copied over
    * @param {string} destination is the  destination folder
    */
-  copyFolderToJson (path) {
+   _copyFolderToJsonInternal (path) {
     return new Promise((resolve, reject) => {
       const json = {}
       path = this.removePrefix(path)
@@ -212,7 +212,7 @@ class FileProvider {
               const file = {}
               const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
               if (window.remixFileSystem.statSync(curPath).isDirectory()) {
-                file.children = await this.copyFolderToJson(curPath)
+                file.children = await this._copyFolderToJsonInternal(curPath)
               } else {
                 file.content = window.remixFileSystem.readFileSync(curPath, 'utf8')
               }
@@ -226,6 +226,15 @@ class FileProvider {
       }
       return resolve(json)
     })
+  }
+
+  /**
+   * copy the folder recursively
+   * @param {string} path is the folder to be copied over
+   * @param {string} destination is the  destination folder
+   */
+  copyFolderToJson (path) {
+    return this._copyFolderToJsonInternal(path)
   }
 
   removeFile (path) {
