@@ -48,6 +48,16 @@ class WorkspaceFileProvider extends FileProvider {
     })
   }
 
+  async copyFolderToJson (directory, visitFile) {
+    visitFile = visitFile || (() => {})
+    const regex = new RegExp(`.workspaces/${this.workspace}/`, 'g')
+    let json = await super._copyFolderToJsonInternal(directory, ({ path, content }) => {
+      visitFile({ path: path.replace(regex, ''), content })
+    })
+    json = JSON.stringify(json).replace(regex, '')
+    return JSON.parse(json)
+  }
+
   _normalizePath (path) {
     if (!this.workspace) throw new Error('No workspace has been opened.')
     return path.replace(this.workspacesPath + '/' + this.workspace + '/', '')
