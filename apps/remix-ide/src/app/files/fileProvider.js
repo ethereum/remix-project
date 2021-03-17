@@ -200,7 +200,7 @@ class FileProvider {
    * @param {string} path is the folder to be copied over
    * @param {Function} visitFile is a function called for each visited files
    */
-   _copyFolderToJsonInternal (path, visitFile) {
+  _copyFolderToJsonInternal (path, visitFile) {
     visitFile = visitFile || (() => {})
     return new Promise((resolve, reject) => {
       const json = {}
