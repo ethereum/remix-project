@@ -196,11 +196,12 @@ class FileProvider {
   }
 
   /**
-   * copy the folder recursively
+   * copy the folder recursively (internal use)
    * @param {string} path is the folder to be copied over
-   * @param {string} destination is the  destination folder
+   * @param {Function} visitFile is a function called for each visited files
    */
-  copyFolderToJson (path) {
+  _copyFolderToJsonInternal (path, visitFile) {
+    visitFile = visitFile || (() => {})
     return new Promise((resolve, reject) => {
       const json = {}
       path = this.removePrefix(path)
@@ -212,9 +213,10 @@ class FileProvider {
               const file = {}
               const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
               if (window.remixFileSystem.statSync(curPath).isDirectory()) {
-                file.children = await this.copyFolderToJson(curPath)
+                file.children = await this._copyFolderToJsonInternal(curPath, visitFile)
               } else {
                 file.content = window.remixFileSystem.readFileSync(curPath, 'utf8')
+                visitFile({ path: curPath, content: file.content })
               }
               json[curPath] = file
             })
@@ -226,6 +228,16 @@ class FileProvider {
       }
       return resolve(json)
     })
+  }
+
+  /**
+   * copy the folder recursively
+   * @param {string} path is the folder to be copied over
+   * @param {Function} visitFile is a function called for each visited files
+   */
+  copyFolderToJson (path, visitFile) {
+    visitFile = visitFile || (() => {})
+    return this._copyFolderToJsonInternal(path, visitFile)
   }
 
   removeFile (path) {
