@@ -608,6 +608,7 @@ module.exports = class TestTab extends ViewPlugin {
       onclick=${(e) => {
         this.testTabLogic.generateTestFolder(this.inputPath.value)
         this.createTestFolder.disabled = true
+        this.updateDirList()
       }}>
       Create
       </button>`
