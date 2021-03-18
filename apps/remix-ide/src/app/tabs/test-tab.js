@@ -550,13 +550,15 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateDirList (keycode = 'none') {
+    // Initial load
     if (keycode === 'none') {
       this.testTabLogic.dirList('/').then((options) => {
         options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
       })
     } else {
       const presentOptions = this.uiPathList.querySelectorAll('option')
-      if(keycode === 191) {
+      // if '/' is pressed
+      if (keycode === 191) {
         for (var o of presentOptions) o.remove()
         this.testTabLogic.dirList('/').then((options) => {
           options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
@@ -564,13 +566,13 @@ module.exports = class TestTab extends ViewPlugin {
       } else {
         let matchFound = false
         for (var option of presentOptions) {
-          if (option.innerHTML.startsWith(this.inputPath.value))
-            matchFound = true
+          if (option.innerHTML.startsWith(this.inputPath.value)) { matchFound = true }
         }
-        if(!matchFound) this.createTestFolder.disabled = false
+        // If there is no matching folder in the workspace with entered text, enable create button
+        if (!matchFound) this.createTestFolder.disabled = false
       }
     }
-    
+
     /*
       It is not possible anymore to see folder from outside of the current workspace
       if (this.inputPath.value) {
@@ -603,9 +605,9 @@ module.exports = class TestTab extends ViewPlugin {
       data-id="testTabGenerateTestFolder"
       title="Create a test folder"
       disabled=true
-      onclick=${(e) => { 
+      onclick=${(e) => {
         this.testTabLogic.generateTestFolder(this.inputPath.value)
-        this.createTestFolder.disabled = true  
+        this.createTestFolder.disabled = true
       }}>
       Create
       </button>`
