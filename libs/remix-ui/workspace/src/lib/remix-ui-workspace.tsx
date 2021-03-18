@@ -201,6 +201,7 @@ export const Workspace = (props: WorkspaceProps) => {
     try {
       await props.createWorkspace(workspaceName)
       await setWorkspace(workspaceName)
+      props.workspaceCreated({ name: workspaceName })
     } catch (e) {
       modalMessage('Create Workspace', e.message)
       console.error(e)
