@@ -365,7 +365,7 @@ export const Workspace = (props: WorkspaceProps) => {
                       return <option selected={state.currentWorkspace === folder} value={folder}>{folder}</option>
                     })
                 }
-                <option selected={state.currentWorkspace === LOCALHOST} value={LOCALHOST}>{LOCALHOST}</option>
+                <option selected={state.currentWorkspace === LOCALHOST} value={LOCALHOST}>{state.currentWorkspace === LOCALHOST ? 'localhost' : LOCALHOST}</option>
                 { state.workspaces.length <= 0 && <option selected={state.currentWorkspace === NO_WORKSPACE} value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
               </select>
             </div>
