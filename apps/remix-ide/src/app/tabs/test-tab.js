@@ -566,10 +566,18 @@ module.exports = class TestTab extends ViewPlugin {
       } else {
         let matchFound = false
         for (var option of presentOptions) {
-          if (option.innerHTML.startsWith(this.inputPath.value)) { matchFound = true }
+          if (option.innerHTML.startsWith(this.inputPath.value)) matchFound = true
         }
-        // If there is no matching folder in the workspace with entered text, enable create button
-        if (!matchFound) this.createTestFolder.disabled = false
+        // If there is no matching folder in the workspace with entered text, enable Create button
+        if (!matchFound) {
+          // Enable Create button
+          this.createTestFolder.disabled = false
+          // Disable Generate button because dir is not existing
+          this.updateGenerateFileAction().disabled = true
+        } else {
+          this.createTestFolder.disabled = true
+          this.updateGenerateFileAction().disabled = false
+        }
       }
     }
 
@@ -608,6 +616,7 @@ module.exports = class TestTab extends ViewPlugin {
       onclick=${(e) => {
         this.testTabLogic.generateTestFolder(this.inputPath.value)
         this.createTestFolder.disabled = true
+        this.updateGenerateFileAction().disabled = false
         this.updateDirList()
       }}>
       Create
