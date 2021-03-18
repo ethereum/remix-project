@@ -12,7 +12,8 @@ export interface CompilerContainerProps {
   editor: any,
   config: any,
   queryParams: any,
-  compileTabLogic: any
+  compileTabLogic: any,
+  tooltip: (message: string) => void
 }
 export interface ContractSelectionProps {
   contractMap: {

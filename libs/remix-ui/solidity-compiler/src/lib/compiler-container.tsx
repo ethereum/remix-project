@@ -1,4 +1,4 @@
-import React, { useState } from 'react' // eslint-disable-line
+import React, { useEffect, useState } from 'react' // eslint-disable-line
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
@@ -7,19 +7,94 @@ import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promi
 import './css/style.css'
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { editor, config, queryParams, compileTabLogic } = props // eslint-disable-line
+  const { editor, config, queryParams, compileTabLogic, tooltip } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: config.get('hideWarnings') || false,
     autoCompile: config.get('autoCompile'),
     compileTimeout: null,
     timeout: 300,
-    allversions: null,
+    allversions: [],
     selectedVersion: null,
     defaultVersion: 'soljson-v0.7.4+commit.3f05b770.js', // this default version is defined: in makeMockCompiler (for browser test)
     selectedLanguage: '',
     runs: '',
     compiledFileName: ''
   })
+
+  useEffect(() => {
+    fetchAllVersion((allversions, selectedVersion, isURL) => {
+      console.log('selectedVersion: ', selectedVersion)
+      setState(prevState => {
+        return { ...prevState, allversions }
+      })
+      if (isURL) _updateVersionSelector(selectedVersion)
+      else {
+        setState(prevState => {
+          return { ...prevState, selectedVersion }
+        })
+        // if (this._view.versionSelector) this._updateVersionSelector()
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    if (compileTabLogic && compileTabLogic.compiler) {
+      compileTabLogic.compiler.event.register('compilerLoaded', compilerLoaded)
+    }
+  }, [compileTabLogic])
+
+  const compilerLoaded = (version: string) => {
+    setVersionText(version)
+  }
+
+  const setVersionText = (text) => {
+    // if (this._view.version) this._view.version.innerText = text
+  }
+
+  // fetching both normal and wasm builds and creating a [version, baseUrl] map
+  const fetchAllVersion = async (callback) => {
+    let selectedVersion, allVersionsWasm, isURL
+    let allVersions = [{ path: 'builtin', longVersion: 'latest local version - 0.7.4' }]
+    // fetch normal builds
+    const binRes = await promisedMiniXhr(`${baseURLBin}/list.json`)
+    // fetch wasm builds
+    const wasmRes = await promisedMiniXhr(`${baseURLWasm}/list.json`)
+    if (binRes.event.type === 'error' && wasmRes.event.type === 'error') {
+      selectedVersion = 'builtin'
+      return callback(allVersions, selectedVersion)
+    }
+    try {
+      const versions = JSON.parse(binRes.json).builds.slice().reverse()
+
+      allVersions = [...allVersions, ...versions]
+      selectedVersion = state.defaultVersion
+      if (queryParams.get().version) selectedVersion = queryParams.get().version
+      // Check if version is a URL and corresponding filename starts with 'soljson'
+      if (selectedVersion.startsWith('https://')) {
+        const urlArr = selectedVersion.split('/')
+
+        if (urlArr[urlArr.length - 1].startsWith('soljson')) isURL = true
+      }
+      if (wasmRes.event.type !== 'error') {
+        allVersionsWasm = JSON.parse(wasmRes.json).builds.slice().reverse()
+      }
+    } catch (e) {
+      tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload. Error: ' + e)
+    }
+    // replace in allVersions those compiler builds which exist in allVersionsWasm with new once
+    if (allVersionsWasm && allVersions) {
+      allVersions.forEach((compiler, index) => {
+        const wasmIndex = allVersionsWasm.findIndex(wasmCompiler => { return wasmCompiler.longVersion === compiler.longVersion })
+        if (wasmIndex !== -1) {
+          allVersions[index] = allVersionsWasm[wasmIndex]
+          pathToURL[compiler.path] = baseURLWasm
+        } else {
+          pathToURL[compiler.path] = baseURLBin
+        }
+      })
+    }
+    callback(allVersions, selectedVersion, isURL)
+  }
 
   const currentFile = (name: string = '') => { // eslint-disable-line
     if (name && name !== '') {
@@ -221,16 +296,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       url = `${urlFromVersion(selectedVersion)}`
     }
 
-    // state.allversions.forEach(build => {
-    // const option = build.path === state.selectedVersion
-    //   ? yo`<option value="${build.path}" selected>${build.longVersion}</option>`
-    //   : yo`<option value="${build.path}">${build.longVersion}</option>`
-
-    // if (_shouldBeAdded(option.innerText)) {
-    // this._view.versionSelector.appendChild(option)
-    // }
-    // })
-
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
@@ -261,7 +326,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     // )
   }
 
-  const onchangeLoadVersion = (e) => {
+  const handleLoadVersion = (e) => {
     setState(prevState => {
       return { ...prevState, selectedVersion: e.target.value }
     })
@@ -340,16 +405,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   return (
-  // this.compileTabLogic.compiler.event.register('compilerLoaded', (version) => this.setVersionText(version))
-  // this.fetchAllVersion((allversions, selectedVersion, isURL) => {
-  //   this.data.allversions = allversions
-  //   if (isURL) this._updateVersionSelector(selectedVersion)
-  //   else {
-  //     this.data.selectedVersion = selectedVersion
-  //     if (this._view.versionSelector) this._updateVersionSelector()
-  //   }
-  // })
-
   // this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fas fa-exclamation-triangle" aria-hidden="true"></i>`
   // this._view.compileIcon = yo`<i class="fas fa-sync ${css.icon}" aria-hidden="true"></i>`
   // this._view.autoCompile = yo`<input class="${css.autocompile} custom-control-input" onchange=${() => this.updateAutoCompile()} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile">`
@@ -385,23 +440,29 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               Compiler
               <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promtCompiler} title="Add a custom compiler with URL"></button>
             </label>
-            <select onChange={onchangeLoadVersion} className="custom-select" id="versionSelector" disabled>
-              <option disabled selected>{ state.defaultVersion }</option>
-              <option disabled>builtin</option>
+            <select onChange={handleLoadVersion} className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
+              { state.allversions.length > 0 && <option disabled selected>{ state.defaultVersion }</option> }
+              { state.allversions.length > 0 && <option disabled>builtin</option> }
+              { state.allversions.map(build => {
+                return _shouldBeAdded(build.longVersion)
+                  ? <option value={build.path} selected={build.path === state.selectedVersion}>{build.longVersion}</option>
+                  : null
+              })
+              }
             </select>
           </div>
-          <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
+          {/* <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={() => _updateVersionSelector()} />
             <label htmlFor="nightlies" className="form-check-label custom-control-label">Include nightly builds</label>
-          </div>
-          <div className="mb-2">
+          </div> */}
+          {/* <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
             <select onChange={onChangeLanguage} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
               <option>Solidity</option>
               <option>Yul</option>
             </select>
-          </div>
-          <div className="mb-2">
+          </div> */}
+          {/* <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
             <select onChange={onChangeEvmVersion} className="custom-select" id="evmVersionSelector">
               <option value="default" selected={true}>compiler default</option>
@@ -414,8 +475,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <option>tangerineWhistle</option>
               <option>homestead</option>
             </select>
-          </div>
-          <div className="mt-3">
+          </div> */}
+          {/* <div className="mt-3">
             <p className="mt-2 remixui_compilerLabel">Compiler Configuration</p>
             <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
               <input className="remixui_autocompile} custom-control-input" onChange={updateAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile" />
@@ -441,10 +502,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <input className="remixui_autocompile custom-control-input" onChange={hideWarnings} id="hideWarningsBox" type="checkbox" title="Hide warnings" />
               <label className="form-check-label custom-control-label" htmlFor="hideWarningsBox">Hide warnings</label>
             </div>
-          </div>
-          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile}>
+          </div> */}
+          {/* <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile}>
             <span><i className="fas fa-sync remixui_icon" aria-hidden="true"></i> Compile { state.compiledFileName || '<no file selected>' }</span>
-          </button>
+          </button> */}
         </header>
       </article>
     </section>
