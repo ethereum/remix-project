@@ -549,11 +549,28 @@ module.exports = class TestTab extends ViewPlugin {
     return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
   }
 
-  updateDirList () {
-    for (var o of this.uiPathList.querySelectorAll('option')) o.remove()
-    this.testTabLogic.dirList('/').then((options) => {
-      options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
-    })
+  updateDirList (keycode = 'none') {
+    if (keycode === 'none') {
+      this.testTabLogic.dirList('/').then((options) => {
+        options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
+      })
+    } else {
+      const presentOptions = this.uiPathList.querySelectorAll('option')
+      if(keycode === 191) {
+        for (var o of presentOptions) o.remove()
+        this.testTabLogic.dirList('/').then((options) => {
+          options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
+        })
+      } else {
+        let matchFound = false
+        for (var option of presentOptions) {
+          if (option.innerHTML.startsWith(this.inputPath.value))
+            matchFound = true
+        }
+        if(!matchFound) this.createTestFolder.disabled = false
+      }
+    }
+    
     /*
       It is not possible anymore to see folder from outside of the current workspace
       if (this.inputPath.value) {
@@ -578,14 +595,18 @@ module.exports = class TestTab extends ViewPlugin {
       data-id="uiPathInput"
       name="utPath"
       style="background-image: var(--primary);"
-      onkeydown=${(e) => { if (e.keyCode === 191) this.updateDirList() }}
+      onkeyup=${(e) => this.updateDirList(e.keyCode)}
       onchange=${(e) => this.updateCurrentPath(e)}/>`
 
-    const createTestFolder = yo`<button
+    this.createTestFolder = yo`<button
       class="btn border ml-2"
       data-id="testTabGenerateTestFolder"
       title="Create a test folder"
-      onclick=${(e) => { this.testTabLogic.generateTestFolder(this.inputPath.value) }}>
+      disabled=true
+      onclick=${(e) => { 
+        this.testTabLogic.generateTestFolder(this.inputPath.value)
+        this.createTestFolder.disabled = true  
+      }}>
       Create
       </button>`
 
@@ -593,7 +614,7 @@ module.exports = class TestTab extends ViewPlugin {
       <div>
           <div class="d-flex p-2">
             ${this.inputPath}
-            ${createTestFolder}
+            ${this.createTestFolder}
             ${this.uiPathList}
           </div>
       </div>
