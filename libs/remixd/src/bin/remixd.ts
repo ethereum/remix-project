@@ -80,6 +80,7 @@ function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS
         console.log(e)
       }
     }
+    process.exit(0)
   }
 
   process.on('SIGINT', kill) // catch ctrl-c

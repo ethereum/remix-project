@@ -81,14 +81,20 @@ export const Workspace = (props: WorkspaceProps) => {
     getWorkspaces()
   }, [props.workspaces])
 
+  const localhostDisconnect = () => {
+    if (state.currentWorkspace === LOCALHOST) setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
+  }
+  props.localhost.event.unregister('disconnected', localhostDisconnect)
+  props.localhost.event.register('disconnected', localhostDisconnect)
+
   useEffect(() => {
     props.localhost.event.register('connected', () => {
       remixdExplorer.show()
+      setWorkspace(LOCALHOST)
     })
 
     props.localhost.event.register('disconnected', () => {
       remixdExplorer.hide()
-      setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
     })
 
     props.localhost.event.register('loading', () => {
@@ -217,6 +223,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const setWorkspace = async (name) => {
+    props.setWorkspace({ name, isLocalhost: name === LOCALHOST })
     if (name === LOCALHOST) {
       props.workspace.clearWorkspace()
     } else if (name === NO_WORKSPACE) {
@@ -228,7 +235,6 @@ export const Workspace = (props: WorkspaceProps) => {
     setState(prevState => {
       return { ...prevState, currentWorkspace: name }
     })
-    props.setWorkspace({ name, isLocalhost: name === LOCALHOST })
   }
 
   const remixdExplorer = {
@@ -359,7 +365,7 @@ export const Workspace = (props: WorkspaceProps) => {
                       return <option selected={state.currentWorkspace === folder} value={folder}>{folder}</option>
                     })
                 }
-                <option selected={state.currentWorkspace === LOCALHOST} value={LOCALHOST}>{LOCALHOST}</option>
+                <option selected={state.currentWorkspace === LOCALHOST} value={LOCALHOST}>{state.currentWorkspace === LOCALHOST ? 'localhost' : LOCALHOST}</option>
                 { state.workspaces.length <= 0 && <option selected={state.currentWorkspace === NO_WORKSPACE} value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
               </select>
             </div>

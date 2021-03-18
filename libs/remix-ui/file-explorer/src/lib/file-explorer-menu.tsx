@@ -46,7 +46,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
   return (
     <>
       <span className='remixui_label' title={props.title} data-path={props.title} style={{ fontWeight: 'bold' }}>{ props.title }</span>
-      <span className="remixui_menu">{
+      <span className="pl-2">{
         state.menuItems.map(({ action, title, icon }, index) => {
           if (action === 'uploadFile') {
             return (

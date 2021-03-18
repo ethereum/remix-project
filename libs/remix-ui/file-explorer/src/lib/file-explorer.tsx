@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from 'react' // eslint-disable-lin
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
-import * as async from 'async'
 import Gists from 'gists'
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
@@ -559,7 +558,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const publishToGist = () => {
-    modal('Create a public gist', 'Are you sure you want to publish all your files in browser directory anonymously as a public gist on github.com? Note: this will not include directories.', {
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, {
       label: 'OK',
       fn: toGist
     }, {
@@ -587,7 +586,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
             fn: () => {}
           })
         } else {
-          modal('Publish to gist Failed', data.message + ' ' + data.documentation_url + ' ' + JSON.stringify(data.errors, null, '\t'), {
+          const error = JSON.stringify(data.errors, null, '\t') || ''
+          const message = data.message === 'Not Found' ? data.message + '. Please make sure the API token has right to create a gist.' : data.message
+          modal('Publish to gist Failed', message + ' ' + data.documentation_url + ' ' + error, {
             label: 'Close',
             fn: async () => {}
           }, null)
@@ -1057,29 +1058,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
 export default FileExplorer
 
-function packageFiles (filesProvider, directory, callback) {
+async function packageFiles (filesProvider, directory, callback) {
   const ret = {}
-  filesProvider.resolveDirectory(directory, (error, files) => {
-    if (error) callback(error)
-    else {
-      async.eachSeries(Object.keys(files), (path, cb) => {
-        if (filesProvider.isDirectory(path)) {
-          cb()
-        } else {
-          filesProvider.get(path, (error, content) => {
-            if (error) return cb(error)
-            if (/^\s+$/.test(content) || !content.length) {
-              content = '// this line is added to create a gist. Empty file is not allowed.'
-            }
-            ret[path] = { content }
-            cb()
-          })
-        }
-      }, (error) => {
-        callback(error, ret)
-      })
-    }
-  })
+  try {
+    await filesProvider.copyFolderToJson(directory, ({ path, content }) => {
+      if (/^\s+$/.test(content) || !content.length) {
+        content = '// this line is added to create a gist. Empty file is not allowed.'
+      }
+      path = path.replace(/\//g, '...')
+      ret[path] = { content }
+    })
+    callback(null, ret)
+  } catch (e) {
+    return callback(e)
+  }
 }
 
 function joinPath (...paths) {

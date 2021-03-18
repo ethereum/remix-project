@@ -612,6 +612,15 @@ class FileManager extends Plugin {
       if (callback) callback(error)
     })
   }
+
+  currentWorkspace () {
+    if (this.mode !== 'localhost') {
+      const file = this.currentFile() || ''
+      const provider = this.fileProviderOf(file)
+
+      return provider.workspace
+    }
+  }
 }
 
 module.exports = FileManager
