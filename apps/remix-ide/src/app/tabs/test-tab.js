@@ -552,12 +552,18 @@ module.exports = class TestTab extends ViewPlugin {
   updateDirList (keycode = 'none') {
     const presentOptions = this.uiPathList.querySelectorAll('option')
     // Initial load
-    if (keycode === 'none' || keycode === 191) {
+    if (keycode === 'none' ) {
       for (var o of presentOptions) o.remove()
       this.testTabLogic.dirList('/').then((options) => {
         options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
       })
-    } else {
+    } else if (this.inputPath.value && this.inputPath.value.endsWith('/')) {
+      for (var o of presentOptions) o.remove()
+      this.testTabLogic.dirList(this.inputPath.value).then((options) => {
+        options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
+      })
+    } 
+    else {
       let matchFound = false
       for (var option of presentOptions) {
         if (option.innerHTML.startsWith(this.inputPath.value)) matchFound = true
@@ -612,7 +618,6 @@ module.exports = class TestTab extends ViewPlugin {
         this.testTabLogic.generateTestFolder(this.inputPath.value)
         this.createTestFolder.disabled = true
         this.updateGenerateFileAction().disabled = false
-        this.updateDirList()
       }}>
       Create
       </button>`
