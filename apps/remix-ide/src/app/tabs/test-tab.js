@@ -550,34 +550,27 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateDirList (keycode = 'none') {
+    const presentOptions = this.uiPathList.querySelectorAll('option')
     // Initial load
-    if (keycode === 'none') {
+    if (keycode === 'none' || keycode === 191) {
+      for (var o of presentOptions) o.remove()
       this.testTabLogic.dirList('/').then((options) => {
         options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
       })
     } else {
-      const presentOptions = this.uiPathList.querySelectorAll('option')
-      // if '/' is pressed
-      if (keycode === 191) {
-        for (var o of presentOptions) o.remove()
-        this.testTabLogic.dirList('/').then((options) => {
-          options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
-        })
+      let matchFound = false
+      for (var option of presentOptions) {
+        if (option.innerHTML.startsWith(this.inputPath.value)) matchFound = true
+      }
+      // If there is no matching folder in the workspace with entered text, enable Create button
+      if (!matchFound) {
+        // Enable Create button
+        this.createTestFolder.disabled = false
+        // Disable Generate button because dir is not existing
+        this.updateGenerateFileAction().disabled = true
       } else {
-        let matchFound = false
-        for (var option of presentOptions) {
-          if (option.innerHTML.startsWith(this.inputPath.value)) matchFound = true
-        }
-        // If there is no matching folder in the workspace with entered text, enable Create button
-        if (!matchFound) {
-          // Enable Create button
-          this.createTestFolder.disabled = false
-          // Disable Generate button because dir is not existing
-          this.updateGenerateFileAction().disabled = true
-        } else {
-          this.createTestFolder.disabled = true
-          this.updateGenerateFileAction().disabled = false
-        }
+        this.createTestFolder.disabled = true
+        this.updateGenerateFileAction().disabled = false
       }
     }
 
@@ -605,7 +598,9 @@ module.exports = class TestTab extends ViewPlugin {
       data-id="uiPathInput"
       name="utPath"
       style="background-image: var(--primary);"
-      onkeyup=${(e) => this.updateDirList(e.keyCode)}
+      onkeyup=${(e) => {
+        if (e.keyCode) this.updateDirList(e.keyCode)
+      }}
       onchange=${(e) => this.updateCurrentPath(e)}/>`
 
     this.createTestFolder = yo`<button
