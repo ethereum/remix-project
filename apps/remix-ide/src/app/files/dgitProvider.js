@@ -1,17 +1,21 @@
 'use strict'
 
-import { Plugin } from '@remixproject/engine'
+import {
+  Plugin
+} from '@remixproject/engine'
 import git from 'isomorphic-git'
 import IpfsHttpClient from 'ipfs-http-client'
+import { saveAs } from 'file-saver'
+const JSZip = require('jszip')
+const path = require('path')
 
 const profile = {
   name: 'dGitProvider',
   displayName: 'Decentralized git',
   description: '',
   icon: 'assets/img/fileManager.webp',
-  permission: true,
   version: '0.0.1',
-  methods: ['init', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pull'],
+  methods: ['init', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pull', 'setIpfsConfig', 'zip'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -19,192 +23,200 @@ class DGitProvider extends Plugin {
     super(profile)
     this.fileManager = fileManager
     this.ipfsconfig = {
-      host: 'localhost',
-      port: 5001,
-      protocol: 'http',
+      host: 'ipfs.komputing.org',
+      port: 443,
+      protocol: 'https',
       ipfsurl: 'https://ipfsgw.komputing.org/ipfs/'
     }
   }
 
   async getGitConfig () {
-    const workspacename = await this.call('fileExplorers', 'getCurrentWorkspace')
-    return new Promise((resolve, reject) => {
-      resolve({
-        fs: window.remixFileSystem,
-        dir: `.workspaces/${workspacename}`
-      })
-    })
+    const workspace = await this.call('fileExplorers', 'getCurrentWorkspace')
+    return {
+      fs: window.remixFileSystem,
+      dir: `.workspaces/${workspace.name}`
+    }
   }
 
   async init () {
-    console.log('git init')
-    await git.init({ ...await this.getGitConfig(), defaultBranch: 'main' })
+    await git.init({
+      ...await this.getGitConfig(),
+      defaultBranch: 'main'
+    })
   }
 
-  async status (ref = 'HEAD') {
-    console.log('git status')
+  async status (cmd) {
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
-      ref: ref
+      ...cmd
     })
-    console.log('status', status)
     return status
   }
 
-  async add (fileName) {
-    console.log('add ', fileName)
+  async add (cmd) {
     await git.add({
       ...await this.getGitConfig(),
-      filepath: `${fileName}`
+      ...cmd
     })
   }
 
-  async rm (fileName) {
-    console.log('remove ', fileName)
+  async rm (cmd) {
     await git.remove({
       ...await this.getGitConfig(),
-      filepath: `${fileName}`
+      ...cmd
     })
   }
 
-  async checkout (ref) {
-    console.log('git checkout', ref)
-    const status = await git.checkout({
+  async checkout (cmd) {
+    await git.checkout({
       ...await this.getGitConfig(),
-      ref: ref
+      ...cmd
     })
-    return status
+    await this.call('fileManager', 'refresh')
   }
 
-  async log (ref = 'HEAD') {
-    console.log('git log')
+  async log (cmd) {
     const status = await git.log({
       ...await this.getGitConfig(),
-      ref: ref
+      ...cmd
     })
-    console.log('log', status)
     return status
   }
 
-  async branch (name) {
-    console.log('git branch')
+  async branch (cmd) {
     const status = await git.branch({
       ...await this.getGitConfig(),
-      ref: name
+      ...cmd
     })
     return status
   }
 
   async currentbranch () {
-    console.log('git current branch')
     const name = await git.currentBranch({
       ...await this.getGitConfig()
     })
-    console.log(name)
     return name
   }
 
   async branches () {
-    console.log('git branches')
     const branches = await git.listBranches({
       ...await this.getGitConfig()
     })
-    console.log('branches', branches)
     return branches
   }
 
-  async commit (author, message) {
-    console.log('git commit', author, message)
+  async commit (cmd) {
+    await this.init()
     try {
       const sha = await git.commit({
         ...await this.getGitConfig(),
-        message: message,
-        author: author
+        ...cmd
       })
-      console.log('commit ', sha)
+      await this.call('fileManager', 'refresh')
       return sha
     } catch (e) {
-      console.log(e)
     }
   }
 
-  async lsfiles (ref = 'HEAD') {
+  async lsfiles (cmd) {
     const filesInStaging = await git.listFiles({
       ...await this.getGitConfig(),
-      ref: ref
+      ...cmd
     })
     return filesInStaging
   }
 
-  async resolveref (ref = 'HEAD') {
+  async resolveref (cmd) {
     const oid = await git.resolveRef({
       ...await this.getGitConfig(),
-      ref: ref
+      ...cmd
     })
     return oid
   }
 
-  async readblob (oid, filepath) {
+  async readblob (cmd) {
     const readBlobResult = await git.readBlob({
       ...await this.getGitConfig(),
-      oid: oid,
-      filepath: filepath
+      ...cmd
     })
     return readBlobResult
   }
 
-  async config (config) {
+  async setIpfsConfig (config) {
     this.ipfsconfig = config
+    return new Promise((resolve, reject) => {
+      resolve(this.checkIpfsConfig())
+    })
+  }
+
+  async checkIpfsConfig () {
+    this.ipfs = IpfsHttpClient(this.ipfsconfig)
+    try {
+      await this.ipfs.config.getAll()
+      return true
+    } catch (e) {
+      return false
+    }
   }
 
   async push () {
-    const workspacename = await this.call('fileExplorers', 'getCurrentWorkspace')
-    const ipfs = IpfsHttpClient(this.ipfsconfig)
+    if (!this.checkIpfsConfig()) return false
+    const workspace = await this.call('fileExplorers', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
-    console.log(files)
     this.filesToSend = []
     for (const file of files) {
-      const c = window.remixFileSystem.readFileSync(`.workspaces/${workspacename}/${file}`)
-      console.log(`.workspaces/${workspacename}/${file}`, c)
+      const c = window.remixFileSystem.readFileSync(`.workspaces/${workspace.name}/${file}`)
       const ob = {
         path: file,
         content: c
       }
       this.filesToSend.push(ob)
     }
-    console.log(this.filesToSend)
     const addOptions = {
       wrapWithDirectory: true
     }
-    const r = await ipfs.add(this.filesToSend, addOptions)
-    console.log(r)
-    return r
+    const r = await this.ipfs.add(this.filesToSend, addOptions)
+    return r.cid.string
   }
 
-  async pull (cid) {
-    const ipfs = IpfsHttpClient(this.ipfsconfig)
-    const getDirName = require('path').dirname
-    const workspacename = await this.call('fileExplorers', 'getCurrentWorkspace')
-    for await (const file of ipfs.get(cid)) {
+  async pull (cmd) {
+    const cid = cmd.cid
+    if (!this.checkIpfsConfig()) return false
+    await this.call('fileExplorers', 'createWorkspace', `workspace_${Date.now()}`, false)
+    const workspace = await this.call('fileExplorers', 'getCurrentWorkspace')
+    for await (const file of this.ipfs.get(cid)) {
       file.path = file.path.replace(cid, '')
       if (!file.content) {
         continue
       }
-      console.log(file.content)
       const content = []
       for await (const chunk of file.content) {
         content.push(chunk)
       }
-      console.log(file.path, getDirName(file.path), content[0])
-      const dir = getDirName(file.path)
+      const dir = path.dirname(file.path)
       try {
-        console.log('create dir', `.workspaces/${workspacename}${dir}`)
-        this.createDirectories(`.workspaces/${workspacename}${dir}`)
+        this.createDirectories(`.workspaces/${workspace.name}${dir}`)
       } catch (e) {}
       try {
-        window.remixFileSystem.writeFileSync(`.workspaces/${workspacename}/${file.path}`, content[0] || new Uint8Array())
+        window.remixFileSystem.writeFileSync(`.workspaces/${workspace.name}/${file.path}`, content[0] || new Uint8Array())
       } catch (e) {}
     }
+    await this.call('fileManager', 'refresh')
+  }
+
+  async zip () {
+    const zip = new JSZip()
+    const workspace = await this.call('fileExplorers', 'getCurrentWorkspace')
+    const files = await this.getDirectory('/')
+    this.filesToSend = []
+    for (const file of files) {
+      const c = window.remixFileSystem.readFileSync(`.workspaces/${workspace.name}/${file}`)
+      zip.file(file, c)
+    }
+    await zip.generateAsync({ type: 'blob' })
+      .then(function (content) {
+        saveAs(content, `${workspace.name}.zip`)
+      })
   }
 
   async createDirectories (strdirectories) {
@@ -217,30 +229,26 @@ class DGitProvider extends Plugin {
       const finalPath = previouspath + '/' + directories[i]
       try {
         window.remixFileSystem.mkdirSync(finalPath)
-      } catch (e) {
-      }
+      } catch (e) {}
     }
   }
 
-  async getDirectory (dir, onlyDirectories = false) {
+  async getDirectory (dir) {
     let result = []
     const files = await this.fileManager.readdir(dir)
     const fileArray = normalize(files)
-    for (let i = 0; i < fileArray.length; i++) {
-      const fi = fileArray[i]
-      if (typeof fi !== 'undefined') {
+    for (const fi of fileArray) {
+      if (fi) {
         const type = fi.data.isDirectory
         if (type === true) {
-          if (onlyDirectories === true) result = [...result, fi.filename]
           result = [
             ...result,
             ...(await this.getDirectory(
-              `${fi.filename}`,
-              onlyDirectories
+              `${fi.filename}`
             ))
           ]
         } else {
-          if (onlyDirectories === false) result = [...result, fi.filename]
+          result = [...result, fi.filename]
         }
       }
     }

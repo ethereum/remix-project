@@ -188,22 +188,24 @@ module.exports = class Filepanel extends ViewPlugin {
     return browserProvider.exists(workspacePath)
   }
 
-  async createWorkspace (workspaceName) {
+  async createWorkspace (workspaceName, setDefaults = true) {
     if (!workspaceName) throw new Error('name cannot be empty')
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
     const workspaceProvider = this._deps.fileProviders.workspace
     await this.processCreateWorkspace(workspaceName)
     await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
-    setTimeout(async () => { // needed for the react stack to update to the new workspace (workspace and fileexplorer)
-      for (const file in examples) {
-        try {
-          await workspaceProvider.set(examples[file].name, examples[file].content)
-        } catch (error) {
-          console.error(error)
+    if (setDefaults) {
+      setTimeout(async () => { // needed for the react stack to update to the new workspace (workspace and fileexplorer)
+        for (const file in examples) {
+          try {
+            await workspaceProvider.set(examples[file].name, examples[file].content)
+          } catch (error) {
+            console.error(error)
+          }
         }
-      }
-    }, 500)
+      }, 500)
+    }
   }
 
   async renameWorkspace (oldName, workspaceName) {
@@ -227,17 +229,14 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   workspaceRenamed (workspace) {
-    console.log("rn WS ", workspace)
     this.emit('renameWorkspace', workspace)
   }
 
   workspaceDeleted (workspace) {
-    console.log("deleted WS ", workspace)
     this.emit('deleteWorkspace', workspace)
   }
 
   workspaceCreated (workspace) {
-    console.log("created WS ", workspace)
     this.emit('createWorkspace', workspace)
   }
   /** end section */

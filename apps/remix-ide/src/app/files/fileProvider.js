@@ -105,14 +105,12 @@ class FileProvider {
       this.createDir(path.substr(0, path.lastIndexOf('/')))
     }
     try {
-      console.log("FS WRITE", unprefixedpath)
       window.remixFileSystem.writeFileSync(unprefixedpath, content)
     } catch (e) {
       cb(e)
       return false
     }
     if (!exists) {
-      console.log("file added from provider", unprefixedpath)
       this.event.trigger('fileAdded', [this._normalizePath(unprefixedpath), false])
     } else {
       this.event.trigger('fileChanged', [this._normalizePath(unprefixedpath)])
@@ -129,7 +127,6 @@ class FileProvider {
     paths.forEach((value) => {
       currentCheck = currentCheck + '/' + value
       if (!window.remixFileSystem.existsSync(currentCheck)) {
-        console.log("FS MKDIR", currentCheck)
         window.remixFileSystem.mkdirSync(currentCheck)
         this.event.trigger('folderAdded', [this._normalizePath(currentCheck)])
       }

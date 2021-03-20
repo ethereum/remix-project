@@ -14,7 +14,7 @@ const requiredModules = [ // services + layout views + system views
 const dependentModules = ['git'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', '11111']
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -31,7 +31,7 @@ export function isNative (name) {
 export function canActivate (from, to) {
   return ['ethdoc'].includes(from.name) ||
   isNative(from.name) ||
-  (to && from && from.canActivate && from.canActivate.includes[to.name])
+  (to && from && from.canActivate && from.canActivate.includes(to.name))
 }
 
 export class RemixAppManager extends PluginManager {
@@ -102,14 +102,15 @@ export class RemixAppManager extends PluginManager {
       const res = await fetch(this.pluginsDirectory)
       plugins = await res.json()
       plugins.push({
-        "name": "tester",
-        "displayName": "tester",
-        "methods": [],
-        "version": "0.0.1-dev",
-        "url": "http://localhost:3000",
-        "description": "Run remix plugin in your Remix project",
-        "icon": "https://dgitremix.web.app/dgitlogo.png",
-        "location": "sidePanel"
+        name: 'dGit2',
+        displayName: 'dGit2',
+        methods: [],
+        version: '0.0.1-dev',
+        url: 'https://dgit2-remix.web.app',
+        description: 'dGit for workspaces',
+        icon: 'https://dgitremix.web.app/dgitlogo.png',
+        location: 'mainPanel',
+        canActivate: ['dGitProvider']
       })
       localStorage.setItem('plugins-directory', JSON.stringify(plugins))
     } catch (e) {

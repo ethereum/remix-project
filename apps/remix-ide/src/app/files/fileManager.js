@@ -22,7 +22,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -173,7 +173,7 @@ class FileManager extends Plugin {
       return await this.setFileContent(path, data)
     } else {
       const ret = await this.setFileContent(path, data)
-      console.log("file added from file write", path)
+      console.log('file added from file write', path)
       this.emit('fileAdded', path)
       return ret
     }
@@ -285,6 +285,13 @@ class FileManager extends Plugin {
     return await provider.remove(path)
   }
 
+  async refresh () {
+    const provider = this._deps.filesProviders.workspace
+    if (provider.isReady()) {
+      provider.event.trigger('refresh')
+    }
+  }
+
   init () {
     this._deps = {
       config: this._components.registry.get('config').api,
@@ -314,7 +321,7 @@ class FileManager extends Plugin {
   }
 
   fileAddedEvent (path) {
-    console.log("file added event", path)
+    console.log('file added event', path)
     this.emit('fileAdded', path)
   }
 

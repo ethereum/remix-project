@@ -158,10 +158,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (filesProvider.event.registered.folderAdded) filesProvider.event.unregister('folderAdded', folderAdded)
     if (filesProvider.event.registered.fileRemoved) filesProvider.event.unregister('fileRemoved', fileRemoved)
     if (filesProvider.event.registered.fileRenamed) filesProvider.event.unregister('fileRenamed', fileRenamed)
+    if (filesProvider.event.registered.fileRenamed) filesProvider.event.unregister('refresh', refresh)
     filesProvider.event.register('fileAdded', fileAdded)
     filesProvider.event.register('folderAdded', folderAdded)
     filesProvider.event.register('fileRemoved', fileRemoved)
     filesProvider.event.register('fileRenamed', fileRenamed)
+    filesProvider.event.register('refresh', refresh)
   }, [state.files])
 
   useEffect(() => {
@@ -478,6 +480,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const fileRenamed = async () => {
     const files = await fetchDirectoryContent(props.name)
 
+    setState(prevState => {
+      return { ...prevState, files, expandPath: [...prevState.expandPath] }
+    })
+  }
+
+  const refresh = async () => {
+    const files = await fetchDirectoryContent(props.name)
     setState(prevState => {
       return { ...prevState, files, expandPath: [...prevState.expandPath] }
     })
