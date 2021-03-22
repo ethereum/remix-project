@@ -15,7 +15,7 @@ const profile = {
   description: '',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pull', 'setIpfsConfig', 'zip'],
+  methods: ['init', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pull', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -203,6 +203,24 @@ class DGitProvider extends Plugin {
     }
     await this.call('fileManager', 'refresh')
   }
+
+  async getItem (name) {
+    if (typeof window !== 'undefined') {
+      return window.localStorage.getItem(name)
+    }
+  }
+
+  async setItem (name, content) {
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(name, content)
+      }
+    } catch (exception) {
+      return false
+    }
+    return true
+  }
+
 
   async zip () {
     const zip = new JSZip()
