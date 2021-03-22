@@ -11,6 +11,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [state, setState] = useState({
     hideWarnings: config.get('hideWarnings') || false,
     autoCompile: config.get('autoCompile'),
+    optimise: config.get('optimise'), // change implementation from cache to compileTabLogic.optimise
     compileTimeout: null,
     timeout: 300,
     allversions: [],
@@ -19,13 +20,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     selectedLanguage: '',
     runs: '',
     compiledFileName: '',
-    includeNightlies: false
+    includeNightlies: false,
+    language: '',
+    evmVersion: ''
   })
   const promptMessageInput = useRef(null)
 
   useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
-      console.log('selectedVersion: ', selectedVersion)
       setState(prevState => {
         return { ...prevState, allversions }
       })
@@ -270,8 +272,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         return { ...prevState, selectedVersion }
       })
     }
-    // this._view.versionSelector.innerHTML = ''
-    // this._view.versionSelector.removeAttribute('disabled')
     queryParams.update({ version: selectedVersion })
     let url
 
@@ -292,6 +292,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       if (!location.endsWith('/')) location += '/'
       url = location + 'soljson.js'
     } else {
+      console.log('selectedVersion: ', selectedVersion)
       if (selectedVersion.indexOf('soljson') !== 0 || helper.checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed')
       }
@@ -353,9 +354,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     _updateVersionSelector(url)
   }
 
-  const handleLoadVersion = (e) => {
+  const handleLoadVersion = (value) => {
     setState(prevState => {
-      return { ...prevState, selectedVersion: e.target.value }
+      return { ...prevState, selectedVersion: value }
     })
     _updateVersionSelector()
     _updateLanguageSelector()
@@ -400,20 +401,29 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIfAutoCompileOn()
   }
 
-  const updateAutoCompile = (e) => {
-    config.set('autoCompile', e.target.checked)
+  const handleAutoCompile = (e) => {
+    const checked = e.target.checked
+
+    config.set('autoCompile', checked)
+    setState(prevState => {
+      return { ...prevState, autoCompile: checked }
+    })
   }
 
-  const onChangeOptimize = (e) => {
-    compileTabLogic.setOptimize(!!e.target.checked)
+  const handleOptimizeChange = (e) => {
+    const checked = !!e.target.checked
+
+    config.set('optimise', checked)
+    compileTabLogic.setOptimize(checked)
     if (compileTabLogic.optimize) {
-      // this._view.runs.removeAttribute('disabled')
-      // compileTabLogic.setRuns(parseInt(this._view.runs.value))
+      compileTabLogic.setRuns(parseInt(state.runs))
     } else {
       compileTabLogic.setRuns(200)
-      // this._view.runs.setAttribute('disabled', '')
     }
     compileIfAutoCompileOn()
+    setState(prevState => {
+      return { ...prevState, optimise: checked }
+    })
   }
 
   const onChangeRuns = (e) => {
@@ -431,6 +441,32 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIfAutoCompileOn()
   }
 
+  const handleNightliesChange = () => {
+    setState(prevState => {
+      return { ...prevState, includeNightlies: !prevState.includeNightlies }
+    })
+  }
+
+  const handleLanguageChange = (value) => {
+    compileTabLogic.setLanguage(value)
+    compileIfAutoCompileOn()
+    setState(prevState => {
+      return { ...prevState, language: value }
+    })
+  }
+
+  const handleEvmVersionChange = (value) => {
+    let v = value
+    if (v === 'default') {
+      v = null
+    }
+    compileTabLogic.setEvmVersion(v)
+    compileIfAutoCompileOn()
+    setState(prevState => {
+      return { ...prevState, evmVersion: value }
+    })
+  }
+
   return (
   // this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fas fa-exclamation-triangle" aria-hidden="true"></i>`
   // this._view.compileIcon = yo`<i class="fas fa-sync ${css.icon}" aria-hidden="true"></i>`
@@ -439,25 +475,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   // if (this.data.autoCompile) this._view.autoCompile.setAttribute('checked', '')
   // if (this.data.hideWarnings) this._view.hideWarningsBox.setAttribute('checked', '')
 
-  // this._view.optimize = yo`<input onchange=${() => this.onchangeOptimize()} class="custom-control-input" id="optimize" type="checkbox">`
-  // if (this.compileTabLogic.optimize) this._view.optimize.setAttribute('checked', '')
-
-  // this._view.runs = yo`<input
-  //   min="1"
-  //   class="custom-select ml-2 ${css.runs}"
-  //   id="runs"
-  //   placeholder="200"
-  //   value="200"
-  //   type="number"
-  //   title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
-  //   onchange=${() => this.onchangeRuns()}
-  // >`
-  // if (this.compileTabLogic.optimize) {
-  //   this._view.runs.removeAttribute('disabled')
-  //   this._view.runs.value = this.compileTabLogic.runs
-  // } else {
-  //   this._view.runs.setAttribute('disabled', '')
-  // }
 
     <section>
       <article>
@@ -467,51 +484,51 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               Compiler
               <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promtCompiler} title="Add a custom compiler with URL"></button>
             </label>
-            <select onChange={handleLoadVersion} className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
+            <select onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
               { state.allversions.length <= 0 && <option disabled selected>{ state.defaultVersion }</option> }
               { state.allversions.length <= 0 && <option disabled>builtin</option> }
-              { state.allversions.map(build => {
+              { state.allversions.map((build, i) => {
                 return _shouldBeAdded(build.longVersion)
-                  ? <option value={build.path} selected={build.path === state.selectedVersion}>{build.longVersion}</option>
+                  ? <option key={i} value={build.path} selected={build.path === state.selectedVersion}>{build.longVersion}</option>
                   : null
               })
               }
             </select>
           </div>
-          {/* <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
-            <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={() => _updateVersionSelector()} />
+          <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
+            <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} />
             <label htmlFor="nightlies" className="form-check-label custom-control-label">Include nightly builds</label>
-          </div> */}
-          {/* <div className="mb-2">
+          </div>
+          <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
-            <select onChange={onChangeLanguage} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
+            <select onChange={(e) => handleLanguageChange(e.target.value)} className="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
               <option>Solidity</option>
               <option>Yul</option>
             </select>
-          </div> */}
-          {/* <div className="mb-2">
+          </div>
+          <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
-            <select onChange={onChangeEvmVersion} className="custom-select" id="evmVersionSelector">
-              <option value="default" selected={true}>compiler default</option>
-              <option>muirGlacier</option>
-              <option>istanbul</option>
-              <option>petersburg</option>
-              <option>constantinople</option>
-              <option>byzantium</option>
-              <option>spuriousDragon</option>
-              <option>tangerineWhistle</option>
-              <option>homestead</option>
+            <select onChange={(e) => handleEvmVersionChange(e.target.value)} className="custom-select" id="evmVersionSelector">
+              <option value="default">compiler default</option>
+              <option value="muirGlacier">muirGlacier</option>
+              <option value="istanbul">istanbul</option>
+              <option value="petersburg">petersburg</option>
+              <option value="constantinople">constantinople</option>
+              <option value="byzantium">byzantium</option>
+              <option value="spuriousDragon">spuriousDragon</option>
+              <option value="tangerineWhistle">tangerineWhistle</option>
+              <option value="homestead">homestead</option>
             </select>
-          </div> */}
-          {/* <div className="mt-3">
+          </div>
+          <div className="mt-3">
             <p className="mt-2 remixui_compilerLabel">Compiler Configuration</p>
             <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              <input className="remixui_autocompile} custom-control-input" onChange={updateAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile" />
+              <input className="remixui_autocompile custom-control-input" onChange={handleAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile" checked={state.autoCompile} />
               <label className="form-check-label custom-control-label" htmlFor="autoCompile">Auto compile</label>
             </div>
             <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
               <div className="justify-content-between align-items-center d-flex">
-                <input onChange={onChangeOptimize} className="custom-control-input" id="optimize" type="checkbox" />
+                <input onChange={handleOptimizeChange} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimise} />
                 <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
                 <input
                   min="1"
@@ -522,14 +539,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   type="number"
                   title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
                   onChange={onChangeRuns}
+                  disabled={!state.optimise}
                 />
               </div>
             </div>
-            <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
+            {/* <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
               <input className="remixui_autocompile custom-control-input" onChange={hideWarnings} id="hideWarningsBox" type="checkbox" title="Hide warnings" />
               <label className="form-check-label custom-control-label" htmlFor="hideWarningsBox">Hide warnings</label>
-            </div>
-          </div> */}
+            </div> */}
+          </div>
           {/* <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile}>
             <span><i className="fas fa-sync remixui_icon" aria-hidden="true"></i> Compile { state.compiledFileName || '<no file selected>' }</span>
           </button> */}
