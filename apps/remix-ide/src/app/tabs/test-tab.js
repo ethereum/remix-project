@@ -549,22 +549,19 @@ module.exports = class TestTab extends ViewPlugin {
     return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
   }
 
-  updateDirList (keycode = 'none') {
-    const presentOptions = this.uiPathList.querySelectorAll('option')
-    // Initial load
-    if (keycode === 'none') {
-      for (const o of presentOptions) o.remove()
-      this.testTabLogic.dirList('/').then((options) => {
-        options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
-      })
-    } else if (this.inputPath.value && this.inputPath.value.endsWith('/')) {
-      for (const o of presentOptions) o.remove()
-      this.testTabLogic.dirList(this.inputPath.value).then((options) => {
-        options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
-      })
+  updateDirList (path) {
+    for (const o of this.uiPathList.querySelectorAll('option')) o.remove()
+    this.testTabLogic.dirList(path).then((options) => {
+      options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
+    })
+  }
+
+  handleTestDirInput () {
+    if (this.inputPath.value && this.inputPath.value.endsWith('/')) {
+      this.updateDirList(this.inputPath.value)
     } else {
       let matchFound = false
-      for (var option of presentOptions) {
+      for (const option of this.uiPathList.querySelectorAll('option')) {
         if (option.innerHTML.startsWith(this.inputPath.value)) matchFound = true
       }
       // If there is no matching folder in the workspace with entered text, enable Create button
@@ -578,15 +575,6 @@ module.exports = class TestTab extends ViewPlugin {
         this.updateGenerateFileAction().disabled = false
       }
     }
-
-    /*
-      It is not possible anymore to see folder from outside of the current workspace
-      if (this.inputPath.value) {
-        this.testTabLogic.dirList(this.inputPath.value).then((options) => {
-          options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
-        })
-      }
-    */
   }
 
   render () {
@@ -604,7 +592,7 @@ module.exports = class TestTab extends ViewPlugin {
       name="utPath"
       style="background-image: var(--primary);"
       onkeyup=${(e) => {
-        if (e.keyCode) this.updateDirList(e.keyCode)
+        if (e.keyCode) this.handleTestDirInput()
       }}
       onchange=${(e) => this.updateCurrentPath(e)}/>`
 
@@ -630,7 +618,7 @@ module.exports = class TestTab extends ViewPlugin {
           </div>
       </div>
     `
-    this.updateDirList()
+    this.updateDirList('/')
     this.testsExecutionStopped.hidden = true
     this.testsExecutionStoppedError.hidden = true
     this.resultStatistics = this.createResultLabel()
