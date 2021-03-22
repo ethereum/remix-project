@@ -104,12 +104,10 @@ class PluginManagerComponent extends ViewPlugin {
 
   activateP (name) {
     this.appManager.activatePlugin(name)
-    _paq.push(['trackEvent', 'manager', 'activate', name])
   }
 
   deactivateP (name) {
     this.appManager.deactivatePlugin(name)
-    _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
 
   renderItem (profile) {
