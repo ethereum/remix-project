@@ -45,7 +45,7 @@ This document includes:
  - remove package-lock.json version and generate a new one with `npm install`
  - create a PR and merge it to origin/master
  
-## Remix IDE release Part 3. remix.ethereum.org update
+## Remix IDE release Part 4. remix.ethereum.org update
 
 This is not strictly speaking a release. Updating the remix site is done through the Travis build:
 
@@ -55,7 +55,7 @@ This is not strictly speaking a release. Updating the remix site is done through
 
  CircleCI will build automaticaly and remix.ethereum.org will be updated
 
-##  Remix IDE release Part 4. Update Zip in release
+##  Remix IDE release Part 5. Update Zip in release
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
  
 ## Remix-ide beta release
