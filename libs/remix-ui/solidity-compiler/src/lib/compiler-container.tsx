@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef } from 'react' // eslint-disable-line
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
@@ -7,7 +7,7 @@ import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promi
 import './css/style.css'
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { editor, config, queryParams, compileTabLogic, tooltip } = props // eslint-disable-line
+  const { editor, config, queryParams, compileTabLogic, tooltip, modal } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: config.get('hideWarnings') || false,
     autoCompile: config.get('autoCompile'),
@@ -18,8 +18,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     defaultVersion: 'soljson-v0.7.4+commit.3f05b770.js', // this default version is defined: in makeMockCompiler (for browser test)
     selectedLanguage: '',
     runs: '',
-    compiledFileName: ''
+    compiledFileName: '',
+    includeNightlies: false
   })
+  const promptMessageInput = useRef(null)
 
   useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
@@ -310,7 +312,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const _shouldBeAdded = (version) => {
     return !version.includes('nightly') ||
-           (version.includes('nightly') /** && this._view.includeNightlies.checked **/)
+           (version.includes('nightly') && state.includeNightlies)
   }
 
   // const setVersionText = (text) => {
@@ -318,12 +320,37 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   // }
 
   const promtCompiler = () => {
+    modal('Add a custom compiler', promptMessage('URL'), {
+      label: 'OK',
+      fn: addCustomCompiler
+    }, {
+      label: 'Cancel',
+      fn: null
+    })
     // modalDialogCustom.prompt(
     //   'Add a custom compiler',
     //   'URL',
     //   '',
     //   (url) => this.addCustomCompiler(url)
     // )
+  }
+
+  const promptMessage = (message) => {
+    return (
+      <>
+        <span>{ message }</span>
+        <input type="text" data-id="modalDialogCustomPromptCompiler" className="form-control" ref={promptMessageInput} />
+      </>
+    )
+  }
+
+  const addCustomCompiler = () => {
+    const url = promptMessageInput.current.value
+
+    setState(prevState => {
+      return { ...prevState, selectedVersion: url }
+    })
+    _updateVersionSelector(url)
   }
 
   const handleLoadVersion = (e) => {
@@ -441,8 +468,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promtCompiler} title="Add a custom compiler with URL"></button>
             </label>
             <select onChange={handleLoadVersion} className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
-              { state.allversions.length > 0 && <option disabled selected>{ state.defaultVersion }</option> }
-              { state.allversions.length > 0 && <option disabled>builtin</option> }
+              { state.allversions.length <= 0 && <option disabled selected>{ state.defaultVersion }</option> }
+              { state.allversions.length <= 0 && <option disabled>builtin</option> }
               { state.allversions.map(build => {
                 return _shouldBeAdded(build.longVersion)
                   ? <option value={build.path} selected={build.path === state.selectedVersion}>{build.longVersion}</option>
