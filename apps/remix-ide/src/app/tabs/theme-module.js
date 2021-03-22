@@ -78,8 +78,8 @@ export class ThemeModule extends Plugin {
     if (themeName && !Object.keys(this.themes).includes(themeName)) {
       throw new Error(`Theme ${themeName} doesn't exist`)
     }
-    _paq.push(['trackEvent', 'themeModule', 'switchTo', themeName])
     const next = themeName || this.active // Name
+    _paq.push(['trackEvent', 'themeModule', 'switchTo', next])
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
