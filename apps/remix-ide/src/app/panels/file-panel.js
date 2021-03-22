@@ -1,18 +1,18 @@
-import { ViewPlugin } from '@remixproject/engine-web'
+import { ViewPlugin } from '@remixproject/engine-web';
 
-import * as packageJson from '../../../../../package.json'
-import React from 'react' // eslint-disable-line
-import ReactDOM from 'react-dom'
-import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
-import * as ethutil from 'ethereumjs-util'
-import { checkSpecialChars, checkSlash } from '../../lib/helper'
-var EventManager = require('../../lib/events')
-var { RemixdHandle } = require('../files/remixd-handle.js')
-var { GitHandle } = require('../files/git-handle.js')
-var globalRegistry = require('../../global/registry')
-var examples = require('../editor/examples')
-var GistHandler = require('../../lib/gist-handler')
-var QueryParams = require('../../lib/query-params')
+import * as packageJson from '../../../../../package.json';
+import React from 'react'; // eslint-disable-line
+import ReactDOM from 'react-dom';
+import { Workspace } from '@remix-ui/workspace'; // eslint-disable-line
+import * as ethutil from 'ethereumjs-util';
+import { checkSpecialChars, checkSlash } from '../../lib/helper';
+var EventManager = require('../../lib/events');
+var { RemixdHandle } = require('../files/remixd-handle.js');
+var { GitHandle } = require('../files/git-handle.js');
+var globalRegistry = require('../../global/registry');
+var examples = require('../editor/examples');
+var GistHandler = require('../../lib/gist-handler');
+var QueryParams = require('../../lib/query-params');
 
 /*
   Overview of APIs:
@@ -34,44 +34,56 @@ var QueryParams = require('../../lib/query-params')
 const profile = {
   name: 'fileExplorers',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace'],
+  methods: [
+    'createNewFile',
+    'uploadFile',
+    'getCurrentWorkspace',
+    'getWorkspaces',
+    'createWorkspace'
+  ],
   events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
   kind: 'fileexplorer',
   location: 'sidePanel',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/file_explorer.html',
+  documentation:
+    'https://remix-ide.readthedocs.io/en/latest/file_explorer.html',
   version: packageJson.version
-}
+};
 
 module.exports = class Filepanel extends ViewPlugin {
-  constructor (appManager) {
-    super(profile)
-    this.event = new EventManager()
-    this._components = {}
-    this._components.registry = globalRegistry
+  constructor(appManager) {
+    super(profile);
+    this.event = new EventManager();
+    this._components = {};
+    this._components.registry = globalRegistry;
     this._deps = {
       fileProviders: this._components.registry.get('fileproviders').api,
       fileManager: this._components.registry.get('filemanager').api
-    }
+    };
 
-    this.el = document.createElement('div')
-    this.el.setAttribute('id', 'fileExplorerView')
+    this.el = document.createElement('div');
+    this.el.setAttribute('id', 'fileExplorerView');
 
-    this.remixdHandle = new RemixdHandle(this._deps.fileProviders.localhost, appManager)
-    this.gitHandle = new GitHandle()
-    this.registeredMenuItems = []
-    this.request = {}
-    this.workspaces = []
-    this.initialWorkspace = null
+    this.remixdHandle = new RemixdHandle(
+      this._deps.fileProviders.localhost,
+      appManager
+    );
+    this.gitHandle = new GitHandle();
+    this.registeredMenuItems = [];
+    this.request = {};
+    this.workspaces = [];
+    this.initialWorkspace = null;
   }
 
-  render () {
-    this.initWorkspace().then(() => this.getWorkspaces()).catch(console.error)
-    return this.el
+  render() {
+    this.initWorkspace()
+      .then(() => this.getWorkspaces())
+      .catch(console.error);
+    return this.el;
   }
 
-  renderComponent () {
+  renderComponent() {
     ReactDOM.render(
       <Workspace
         createWorkspace={this.createWorkspace.bind(this)}
@@ -90,149 +102,184 @@ module.exports = class Filepanel extends ViewPlugin {
         workspaces={this.workspaces}
         registeredMenuItems={this.registeredMenuItems}
         initialWorkspace={this.initialWorkspace}
-      />
-      , this.el)
+      />,
+      this.el
+    );
   }
 
   /**
    * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
    * @param callback (...args) => void
    */
-  registerContextMenuItem (item) {
-    if (!item) throw new Error('Invalid register context menu argument')
-    if (!item.name || !item.id) throw new Error('Item name and id is mandatory')
-    if (!item.type && !item.path && !item.extension && !item.pattern) throw new Error('Invalid file matching criteria provided')
+  registerContextMenuItem(item) {
+    if (!item) throw new Error('Invalid register context menu argument');
+    if (!item.name || !item.id)
+      throw new Error('Item name and id is mandatory');
+    if (!item.type && !item.path && !item.extension && !item.pattern)
+      throw new Error('Invalid file matching criteria provided');
 
-    this.registeredMenuItems = [...this.registeredMenuItems, item]
-    this.renderComponent()
+    this.registeredMenuItems = [...this.registeredMenuItems, item];
+    this.renderComponent();
   }
 
-  async getCurrentWorkspace () {
-    return await this.request.getCurrentWorkspace()
+  async getCurrentWorkspace() {
+    return await this.request.getCurrentWorkspace();
   }
 
-  async getWorkspaces () {
+  async getWorkspaces() {
     const result = new Promise((resolve, reject) => {
-      const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+      const workspacesPath = this._deps.fileProviders.workspace.workspacesPath;
 
-      this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
-        if (error) {
-          console.error(error)
-          return reject(error)
+      this._deps.fileProviders.browser.resolveDirectory(
+        '/' + workspacesPath,
+        (error, items) => {
+          if (error) {
+            console.error(error);
+            return reject(error);
+          }
+          resolve(
+            Object.keys(items)
+              .filter(item => items[item].isDirectory)
+              .map(folder => folder.replace(workspacesPath + '/', ''))
+          );
         }
-        resolve(Object.keys(items)
-          .filter((item) => items[item].isDirectory)
-          .map((folder) => folder.replace(workspacesPath + '/', '')))
-      })
-    })
-    this.workspaces = await result
-    this.renderComponent()
-    return this.workspaces
+      );
+    });
+    this.workspaces = await result;
+    this.renderComponent();
+    return this.workspaces;
   }
 
-  async initWorkspace () {
-    const queryParams = new QueryParams()
-    const gistHandler = new GistHandler()
-    const params = queryParams.get()
+  async initWorkspace() {
+    const queryParams = new QueryParams();
+    const gistHandler = new GistHandler();
+    const params = queryParams.get();
     // get the file from gist
-    const loadedFromGist = gistHandler.loadFromGist(params, this._deps.fileManager)
+    const loadedFromGist = gistHandler.loadFromGist(
+      params,
+      this._deps.fileManager
+    );
 
-    if (loadedFromGist) return
+    if (loadedFromGist) return;
     if (params.code) {
       try {
-        await this.processCreateWorkspace('code-sample')
-        this._deps.fileProviders.workspace.setWorkspace('code-sample')
-        var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
-        const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
-        const path = fileName
-        await this._deps.fileProviders.workspace.set(path, atob(params.code))
-        this.initialWorkspace = 'code-sample'
-        await this._deps.fileManager.openFile(fileName)
+        await this.processCreateWorkspace('code-sample');
+        this._deps.fileProviders.workspace.setWorkspace('code-sample');
+        var hash = ethutil.bufferToHex(ethutil.keccak(params.code));
+        const fileName =
+          'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol';
+        const path = fileName;
+        await this._deps.fileProviders.workspace.set(path, atob(params.code));
+        this.initialWorkspace = 'code-sample';
+        await this._deps.fileManager.openFile(fileName);
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
-      return
+      return;
     }
     // insert example contracts if there are no files to show
-    this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
-      if (error) console.error(error)
-      if (Object.keys(filesList).length === 0) {
-        await this.createWorkspace('default_workspace')
+    this._deps.fileProviders.browser.resolveDirectory(
+      '/',
+      async (error, filesList) => {
+        if (error) console.error(error);
+        if (Object.keys(filesList).length === 0) {
+          await this.createWorkspace('default_workspace');
+        }
+        this.getWorkspaces();
       }
-      this.getWorkspaces()
-    })
+    );
   }
 
-  async createNewFile () {
-    return await this.request.createNewFile()
+  async createNewFile() {
+    return await this.request.createNewFile();
   }
 
-  async uploadFile (event) {
-    return await this.request.uploadFile(event)
+  async uploadFile(event) {
+    return await this.request.uploadFile(event);
   }
 
-  async processCreateWorkspace (name) {
-    const workspaceProvider = this._deps.fileProviders.workspace
-    const browserProvider = this._deps.fileProviders.browser
-    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
-    const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
-    if (!browserProvider.exists(workspaceRootPath)) browserProvider.createDir(workspaceRootPath)
-    if (!browserProvider.exists(workspacePath)) browserProvider.createDir(workspacePath)
+  async processCreateWorkspace(name) {
+    const workspaceProvider = this._deps.fileProviders.workspace;
+    const browserProvider = this._deps.fileProviders.browser;
+    const workspacePath =
+      'browser/' + workspaceProvider.workspacesPath + '/' + name;
+    const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath;
+    if (!browserProvider.exists(workspaceRootPath))
+      browserProvider.createDir(workspaceRootPath);
+    if (!browserProvider.exists(workspacePath))
+      browserProvider.createDir(workspacePath);
   }
 
-  async workspaceExists (name) {
-    const workspaceProvider = this._deps.fileProviders.workspace
-    const browserProvider = this._deps.fileProviders.browser
-    const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
-    return browserProvider.exists(workspacePath)
+  async workspaceExists(name) {
+    const workspaceProvider = this._deps.fileProviders.workspace;
+    const browserProvider = this._deps.fileProviders.browser;
+    const workspacePath =
+      'browser/' + workspaceProvider.workspacesPath + '/' + name;
+    return browserProvider.exists(workspacePath);
   }
 
-  async createWorkspace (workspaceName) {
-    if (!workspaceName) throw new Error('name cannot be empty')
-    if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
-    if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
-    const browserProvider = this._deps.fileProviders.browser
-    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-    await this.processCreateWorkspace(workspaceName)
+  async createWorkspace(workspaceName) {
+    if (!workspaceName) throw new Error('name cannot be empty');
+    if (checkSpecialChars(workspaceName) || checkSlash(workspaceName))
+      throw new Error('special characters are not allowed');
+    if (await this.workspaceExists(workspaceName))
+      throw new Error('workspace already exists');
+    const browserProvider = this._deps.fileProviders.browser;
+    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath;
+    await this.processCreateWorkspace(workspaceName);
     for (const file in examples) {
       try {
-        await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
+        await browserProvider.set(
+          'browser/' +
+            workspacesPath +
+            '/' +
+            workspaceName +
+            '/' +
+            examples[file].name,
+          examples[file].content
+        );
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
   }
 
-  async renameWorkspace (oldName, workspaceName) {
-    if (!workspaceName) throw new Error('name cannot be empty')
-    if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
-    if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
-    const browserProvider = this._deps.fileProviders.browser
-    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-    browserProvider.rename('browser/' + workspacesPath + '/' + oldName, 'browser/' + workspacesPath + '/' + workspaceName, true)
+  async renameWorkspace(oldName, workspaceName) {
+    if (!workspaceName) throw new Error('name cannot be empty');
+    if (checkSpecialChars(workspaceName) || checkSlash(workspaceName))
+      throw new Error('special characters are not allowed');
+    if (await this.workspaceExists(workspaceName))
+      throw new Error('workspace already exists');
+    const browserProvider = this._deps.fileProviders.browser;
+    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath;
+    browserProvider.rename(
+      'browser/' + workspacesPath + '/' + oldName,
+      'browser/' + workspacesPath + '/' + workspaceName,
+      true
+    );
   }
 
   /** these are called by the react component, action is already finished whent it's called */
-  async setWorkspace (workspace) {
-    this._deps.fileManager.removeTabsOf(this._deps.fileProviders.workspace)
+  async setWorkspace(workspace) {
+    this._deps.fileManager.removeTabsOf(this._deps.fileProviders.workspace);
     if (workspace.isLocalhost) {
-      this.call('manager', 'activatePlugin', 'remixd')
+      this.call('manager', 'activatePlugin', 'remixd');
     } else if (await this.call('manager', 'isActive', 'remixd')) {
-      this.call('manager', 'deactivatePlugin', 'remixd')
+      this.call('manager', 'deactivatePlugin', 'remixd');
     }
-    this.emit('setWorkspace', workspace)
+    this.emit('setWorkspace', workspace);
   }
 
-  workspaceRenamed (workspace) {
-    this.emit('renameWorkspace', workspace)
+  workspaceRenamed(workspace) {
+    this.emit('renameWorkspace', workspace);
   }
 
-  workspaceDeleted (workspace) {
-    this.emit('deleteWorkspace', workspace)
+  workspaceDeleted(workspace) {
+    this.emit('deleteWorkspace', workspace);
   }
 
-  workspaceCreated (workspace) {
-    this.emit('createWorkspace', workspace)
+  workspaceCreated(workspace) {
+    this.emit('createWorkspace', workspace);
   }
   /** end section */
-}
+};

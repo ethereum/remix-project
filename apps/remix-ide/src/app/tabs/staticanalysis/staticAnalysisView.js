@@ -1,51 +1,63 @@
-'use strict'
-var StaticAnalysisRunner = require('@remix-project/remix-analyzer').CodeAnalysis
-var yo = require('yo-yo')
-var $ = require('jquery')
-var remixLib = require('@remix-project/remix-lib')
-var utils = remixLib.util
-var css = require('./styles/staticAnalysisView-styles')
-var Renderer = require('../../ui/renderer')
-const SourceHighlighter = require('../../editor/sourceHighlighter')
+'use strict';
+var StaticAnalysisRunner = require('@remix-project/remix-analyzer')
+  .CodeAnalysis;
+var yo = require('yo-yo');
+var $ = require('jquery');
+var remixLib = require('@remix-project/remix-lib');
+var utils = remixLib.util;
+var css = require('./styles/staticAnalysisView-styles');
+var Renderer = require('../../ui/renderer');
+const SourceHighlighter = require('../../editor/sourceHighlighter');
 
-var EventManager = require('../../../lib/events')
+var EventManager = require('../../../lib/events');
 
-function staticAnalysisView (localRegistry, analysisModule) {
-  var self = this
-  this.event = new EventManager()
-  this.view = null
-  this.runner = new StaticAnalysisRunner()
-  this.modulesView = this.renderModules()
-  this.lastCompilationResult = null
-  this.lastCompilationSource = null
-  this.currentFile = 'No file compiled'
-  this.sourceHighlighter = new SourceHighlighter()
-  this.analysisModule = analysisModule
+function staticAnalysisView(localRegistry, analysisModule) {
+  var self = this;
+  this.event = new EventManager();
+  this.view = null;
+  this.runner = new StaticAnalysisRunner();
+  this.modulesView = this.renderModules();
+  this.lastCompilationResult = null;
+  this.lastCompilationSource = null;
+  this.currentFile = 'No file compiled';
+  this.sourceHighlighter = new SourceHighlighter();
+  this.analysisModule = analysisModule;
   self._components = {
     renderer: new Renderer(analysisModule)
-  }
-  self._components.registry = localRegistry
+  };
+  self._components.registry = localRegistry;
   // dependencies
   self._deps = {
-    offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
-  }
+    offsetToLineColumnConverter: self._components.registry.get(
+      'offsettolinecolumnconverter'
+    ).api
+  };
 
-  analysisModule.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
-    self.lastCompilationResult = null
-    self.lastCompilationSource = null
-    if (languageVersion.indexOf('soljson') !== 0) return
-    self.lastCompilationResult = data
-    self.lastCompilationSource = source
-    self.currentFile = file
-    self.correctRunBtnDisabled()
-    if (self.view && self.view.querySelector('#autorunstaticanalysis').checked) {
-      self.run()
+  analysisModule.on(
+    'solidity',
+    'compilationFinished',
+    (file, source, languageVersion, data) => {
+      self.lastCompilationResult = null;
+      self.lastCompilationSource = null;
+      if (languageVersion.indexOf('soljson') !== 0) return;
+      self.lastCompilationResult = data;
+      self.lastCompilationSource = source;
+      self.currentFile = file;
+      self.correctRunBtnDisabled();
+      if (
+        self.view &&
+        self.view.querySelector('#autorunstaticanalysis').checked
+      ) {
+        self.run();
+      }
     }
-  })
+  );
 }
 
-staticAnalysisView.prototype.render = function () {
-  this.runBtn = yo`<button class="btn btn-sm w-25 btn-primary" onclick="${() => { this.run() }}" >Run</button>`
+staticAnalysisView.prototype.render = function() {
+  this.runBtn = yo`<button class="btn btn-sm w-25 btn-primary" onclick="${() => {
+    this.run();
+  }}" >Run</button>`;
   const view = yo`
     <div class="${css.analysis}">
       <div class="my-2 d-flex flex-column align-items-left">
@@ -53,7 +65,9 @@ staticAnalysisView.prototype.render = function () {
           <div class="pl-2 ${css.label}" for="checkAllEntries">
             <input id="checkAllEntries"
               type="checkbox"
-              onclick="${(event) => { this.checkAll(event) }}"
+              onclick="${event => {
+                this.checkAll(event);
+              }}"
               style="vertical-align:bottom"
               checked="true"
             >
@@ -79,99 +93,114 @@ staticAnalysisView.prototype.render = function () {
       </div>
       <div class="mt-2 p-2 d-flex border-top flex-column">
         <span>last results for:</span>
-        <span class="text-break break-word word-break font-weight-bold" id="staticAnalysisCurrentFile">${this.currentFile}</span>
+        <span class="text-break break-word word-break font-weight-bold" id="staticAnalysisCurrentFile">${
+          this.currentFile
+        }</span>
       </div>
       <div class="${css.result} my-1" id='staticanalysisresult'></div>
     </div>
-  `
+  `;
 
   if (!this.view) {
-    this.view = view
+    this.view = view;
   }
-  this.correctRunBtnDisabled()
-  return view
-}
+  this.correctRunBtnDisabled();
+  return view;
+};
 
-staticAnalysisView.prototype.selectedModules = function () {
+staticAnalysisView.prototype.selectedModules = function() {
   if (!this.view) {
-    return []
+    return [];
   }
-  const selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
-  var toRun = []
+  const selected = this.view.querySelectorAll(
+    '[name="staticanalysismodule"]:checked'
+  );
+  var toRun = [];
   for (var i = 0; i < selected.length; i++) {
-    toRun.push(selected[i].attributes.index.value)
+    toRun.push(selected[i].attributes.index.value);
   }
-  return toRun
-}
+  return toRun;
+};
 
-staticAnalysisView.prototype.run = function () {
+staticAnalysisView.prototype.run = function() {
   if (!this.view) {
-    return
+    return;
   }
   const highlightLocation = async (location, fileName) => {
-    await this.analysisModule.call('editor', 'discardHighlight')
-    await this.analysisModule.call('editor', 'highlight', location, fileName)
-  }
-  const selected = this.selectedModules()
-  const warningContainer = $('#staticanalysisresult')
-  warningContainer.empty()
-  this.view.querySelector('#staticAnalysisCurrentFile').innerText = this.currentFile
-  var self = this
+    await this.analysisModule.call('editor', 'discardHighlight');
+    await this.analysisModule.call('editor', 'highlight', location, fileName);
+  };
+  const selected = this.selectedModules();
+  const warningContainer = $('#staticanalysisresult');
+  warningContainer.empty();
+  this.view.querySelector(
+    '#staticAnalysisCurrentFile'
+  ).innerText = this.currentFile;
+  var self = this;
   if (this.lastCompilationResult && selected.length) {
-    this.runBtn.removeAttribute('disabled')
-    let warningCount = 0
-    this.runner.run(this.lastCompilationResult, selected, (results) => {
-      const groupedModules = utils.groupBy(preProcessModules(this.runner.modules()), 'categoryId')
+    this.runBtn.removeAttribute('disabled');
+    let warningCount = 0;
+    this.runner.run(this.lastCompilationResult, selected, results => {
+      const groupedModules = utils.groupBy(
+        preProcessModules(this.runner.modules()),
+        'categoryId'
+      );
       results.map((result, j) => {
-        let moduleName
-        Object.keys(groupedModules).map((key) => {
-          groupedModules[key].forEach((el) => {
+        let moduleName;
+        Object.keys(groupedModules).map(key => {
+          groupedModules[key].forEach(el => {
             if (el.name === result.name) {
-              moduleName = groupedModules[key][0].categoryDisplayName
+              moduleName = groupedModules[key][0].categoryDisplayName;
             }
-          })
-        })
-        const alreadyExistedEl = this.view.querySelector(`[id="staticAnalysisModule${moduleName}"]`)
+          });
+        });
+        const alreadyExistedEl = this.view.querySelector(
+          `[id="staticAnalysisModule${moduleName}"]`
+        );
         if (!alreadyExistedEl) {
           warningContainer.append(`
             <div class="mb-4" name="staticAnalysisModules" id="staticAnalysisModule${moduleName}">
               <span class="text-dark h6">${moduleName}</span>
             </div>
-          `)
+          `);
         }
 
         result.report.map((item, i) => {
-          let location = ''
-          let locationString = 'not available'
-          let column = 0
-          let row = 0
-          let fileName = this.currentFile
+          let location = '';
+          let locationString = 'not available';
+          let column = 0;
+          let row = 0;
+          let fileName = this.currentFile;
           if (item.location) {
-            var split = item.location.split(':')
-            var file = split[2]
+            var split = item.location.split(':');
+            var file = split[2];
             location = {
               start: parseInt(split[0]),
               length: parseInt(split[1])
-            }
+            };
             location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(
               location,
               parseInt(file),
               self.lastCompilationSource.sources,
               self.lastCompilationResult.sources
-            )
-            row = location.start.line
-            column = location.start.column
-            locationString = (row + 1) + ':' + column + ':'
-            fileName = Object.keys(self.lastCompilationResult.contracts)[file]
+            );
+            row = location.start.line;
+            column = location.start.column;
+            locationString = row + 1 + ':' + column + ':';
+            fileName = Object.keys(self.lastCompilationResult.contracts)[file];
           }
-          warningCount++
+          warningCount++;
           const msg = yo`
             <span class="d-flex flex-column">
               <span class="h6 font-weight-bold">${result.name}</span>
               ${item.warning}
-              ${item.more ? yo`<span><a href="${item.more}" target="_blank">more</a></span>` : yo`<span></span>`}
+              ${
+                item.more
+                  ? yo`<span><a href="${item.more}" target="_blank">more</a></span>`
+                  : yo`<span></span>`
+              }
               <span class="" title="Position in ${fileName}">Pos: ${locationString}</span>
-            </span>`
+            </span>`;
           self._components.renderer.error(
             msg,
             this.view.querySelector(`[id="staticAnalysisModule${moduleName}"]`),
@@ -183,65 +212,83 @@ staticAnalysisView.prototype.run = function () {
               errLine: row,
               errCol: column
             }
-          )
-        })
-      })
+          );
+        });
+      });
       // hide empty staticAnalysisModules sections
-      this.view.querySelectorAll('[name="staticAnalysisModules"]').forEach((section) => {
-        if (!section.getElementsByClassName('alert-warning').length) section.hidden = true
-      })
-      self.event.trigger('staticAnaysisWarning', [warningCount])
-    })
+      this.view
+        .querySelectorAll('[name="staticAnalysisModules"]')
+        .forEach(section => {
+          if (!section.getElementsByClassName('alert-warning').length)
+            section.hidden = true;
+        });
+      self.event.trigger('staticAnaysisWarning', [warningCount]);
+    });
   } else {
-    this.runBtn.setAttribute('disabled', 'disabled')
+    this.runBtn.setAttribute('disabled', 'disabled');
     if (selected.length) {
-      warningContainer.html('No compiled AST available')
+      warningContainer.html('No compiled AST available');
     }
-    self.event.trigger('staticAnaysisWarning', [-1])
+    self.event.trigger('staticAnaysisWarning', [-1]);
   }
-}
-staticAnalysisView.prototype.checkModule = function (event) {
-  const selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
-  const checkAll = this.view.querySelector('[id="checkAllEntries"]')
-  this.correctRunBtnDisabled()
+};
+staticAnalysisView.prototype.checkModule = function(event) {
+  const selected = this.view.querySelectorAll(
+    '[name="staticanalysismodule"]:checked'
+  );
+  const checkAll = this.view.querySelector('[id="checkAllEntries"]');
+  this.correctRunBtnDisabled();
   if (event.target.checked) {
-    checkAll.checked = true
+    checkAll.checked = true;
   } else if (!selected.length) {
-    checkAll.checked = false
+    checkAll.checked = false;
   }
-}
-staticAnalysisView.prototype.correctRunBtnDisabled = function () {
+};
+staticAnalysisView.prototype.correctRunBtnDisabled = function() {
   if (!this.view) {
-    return
+    return;
   }
-  const selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
+  const selected = this.view.querySelectorAll(
+    '[name="staticanalysismodule"]:checked'
+  );
   if (this.lastCompilationResult && selected.length !== 0) {
-    this.runBtn.removeAttribute('disabled')
+    this.runBtn.removeAttribute('disabled');
   } else {
-    this.runBtn.setAttribute('disabled', 'disabled')
+    this.runBtn.setAttribute('disabled', 'disabled');
   }
-}
-staticAnalysisView.prototype.checkAll = function (event) {
+};
+staticAnalysisView.prototype.checkAll = function(event) {
   if (!this.view) {
-    return
+    return;
   }
   // checks/unchecks all
-  const checkBoxes = this.view.querySelectorAll('[name="staticanalysismodule"]')
-  checkBoxes.forEach((checkbox) => { checkbox.checked = event.target.checked })
-  this.correctRunBtnDisabled()
-}
+  const checkBoxes = this.view.querySelectorAll(
+    '[name="staticanalysismodule"]'
+  );
+  checkBoxes.forEach(checkbox => {
+    checkbox.checked = event.target.checked;
+  });
+  this.correctRunBtnDisabled();
+};
 
-staticAnalysisView.prototype.handleCollapse = function (e) {
-  const downs = e.toElement.parentElement.getElementsByClassName('fas fa-angle-double-right')
-  const iEls = document.getElementsByTagName('i')
-  for (var i = 0; i < iEls.length; i++) { iEls[i].hidden = false }
-  downs[0].hidden = true
-}
+staticAnalysisView.prototype.handleCollapse = function(e) {
+  const downs = e.toElement.parentElement.getElementsByClassName(
+    'fas fa-angle-double-right'
+  );
+  const iEls = document.getElementsByTagName('i');
+  for (var i = 0; i < iEls.length; i++) {
+    iEls[i].hidden = false;
+  }
+  downs[0].hidden = true;
+};
 
-staticAnalysisView.prototype.renderModules = function () {
-  const groupedModules = utils.groupBy(preProcessModules(this.runner.modules()), 'categoryId')
+staticAnalysisView.prototype.renderModules = function() {
+  const groupedModules = utils.groupBy(
+    preProcessModules(this.runner.modules()),
+    'categoryId'
+  );
   const moduleEntries = Object.keys(groupedModules).map((categoryId, i) => {
-    const category = groupedModules[categoryId]
+    const category = groupedModules[categoryId];
     const entriesDom = category.map((item, i) => {
       return yo`
         <div class="form-check">
@@ -252,18 +299,19 @@ staticAnalysisView.prototype.renderModules = function () {
             index=${item._index}
             checked="true"
             style="vertical-align:bottom"
-            onclick="${(event) => this.checkModule(event)}"
+            onclick="${event => this.checkModule(event)}"
           >
           <label for="staticanalysismodule_${categoryId}_${i}" class="form-check-label mb-1">
             <p class="mb-0 font-weight-bold text-capitalize">${item.name}</p>
             ${item.description}
           </label>
         </div>
-      `
-    })
+      `;
+    });
     return yo`
       <div class="${css.block}">
-        <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}" onclick=${(e) => this.handleCollapse(e)}"/>
+        <input type="radio" name="accordion" class="w-100 d-none card" id="heading${categoryId}" onclick=${e =>
+      this.handleCollapse(e)}"/>
         <label for="heading${categoryId}" style="cursor: pointer;" class="pl-3 card-header h6 d-flex justify-content-between font-weight-bold border-left px-1 py-2 w-100">
           ${category[0].categoryDisplayName}
           <div>
@@ -274,29 +322,29 @@ staticAnalysisView.prototype.renderModules = function () {
           ${entriesDom}
         </div>
       </div>
-    `
-  })
+    `;
+  });
   // collaps first module
-  moduleEntries[0].getElementsByTagName('input')[0].checked = true
-  moduleEntries[0].getElementsByTagName('i')[0].hidden = true
+  moduleEntries[0].getElementsByTagName('input')[0].checked = true;
+  moduleEntries[0].getElementsByTagName('i')[0].hidden = true;
   return yo`
     <div class="accordion" id="accordionModules">
       ${moduleEntries}
-    </div>`
-}
+    </div>`;
+};
 
-module.exports = staticAnalysisView
+module.exports = staticAnalysisView;
 
 /**
  * @dev Process & categorize static analysis modules to show them on UI
  * @param arr list of static analysis modules received from remix-analyzer module
  */
-function preProcessModules (arr) {
+function preProcessModules(arr) {
   return arr.map((Item, i) => {
-    const itemObj = new Item()
-    itemObj._index = i
-    itemObj.categoryDisplayName = itemObj.category.displayName
-    itemObj.categoryId = itemObj.category.id
-    return itemObj
-  })
+    const itemObj = new Item();
+    itemObj._index = i;
+    itemObj.categoryDisplayName = itemObj.category.displayName;
+    itemObj.categoryId = itemObj.category.id;
+    return itemObj;
+  });
 }
