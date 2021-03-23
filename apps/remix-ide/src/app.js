@@ -370,8 +370,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
   const matomoDomains = {
     'remix-alpha.ethereum.org': 27,
-    'remix-beta.ethereum.org': 25
-    // 'remix.ethereum.org': 23
+    'remix-beta.ethereum.org': 25,
+    'remix.ethereum.org': 23
   }
   if (matomoDomains[window.location.hostname] && !registry.get('config').api.exists('settings/matomo-analytics')) {
     modalDialog(
