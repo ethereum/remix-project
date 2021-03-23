@@ -9,9 +9,9 @@ import './css/style.css'
 export const CompilerContainer = (props: CompilerContainerProps) => {
   const { editor, config, queryParams, compileTabLogic, tooltip, modal } = props // eslint-disable-line
   const [state, setState] = useState({
-    hideWarnings: config.get('hideWarnings') || false,
-    autoCompile: config.get('autoCompile'),
-    optimise: config.get('optimise'), // change implementation from cache to compileTabLogic.optimise
+    hideWarnings: false,
+    autoCompile: false,
+    optimise: false,
     compileTimeout: null,
     timeout: 300,
     allversions: [],
@@ -24,6 +24,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     language: '',
     evmVersion: ''
   })
+  const compileIcon = useRef(null)
+  const warningIcon = useRef(null)
   const promptMessageInput = useRef(null)
 
   useEffect(() => {
@@ -44,6 +46,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     if (compileTabLogic && compileTabLogic.compiler) {
       compileTabLogic.compiler.event.register('compilerLoaded', compilerLoaded)
+
+      setState(prevState => {
+        return { ...prevState, hideWarnings: config.get('hideWarnings'), autoCompile: config.get('autoCompile'), optimise: config.get('optimise') }
+      })
     }
   }, [compileTabLogic])
 
@@ -100,14 +106,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     callback(allVersions, selectedVersion, isURL)
   }
 
-  const currentFile = (name: string = '') => { // eslint-disable-line
+  /**
+   * Update the compilation button with the name of the current file
+   */
+  const currentFile = (name = '') => {
     if (name && name !== '') {
       _setCompilerVersionFromPragma(name)
     }
-    // if (!this._view.compilationButton) return
-    // const button = compilationButton(name.split('/').pop())
-    _disableCompileBtn(!name || (name && isSolFileSelected(name)))
-    // yo.update(this._view.compilationButton, button)
+    const compiledFileName = name.split('/').pop()
+
+    setState(prevState => {
+      return { ...prevState, compiledFileName }
+    })
   }
 
   // Load solc compiler version according to pragma in contract file
@@ -141,27 +151,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
-  // const compilationButton = (name = '') => {
-  //   const displayed = name || '<no file selected>'
-  //   const disabled = name && isSolFileSelected() ? '' : 'disabled'
-
-  // return yo`
-  //   <button id="compileBtn" data-id="compilerContainerCompileBtn" class="btn btn-primary btn-block ${disabled} mt-3" title="Compile" onclick="${this.compile.bind(this)}">
-  //     <span>${this._view.compileIcon} Compile ${displayed}</span>
-  //   </button>
-  // `
-  // }
-
-  const _disableCompileBtn = (shouldDisable) => {
-    const btn = document.getElementById('compileBtn')
-    if (!btn) return
-    if (shouldDisable) {
-      btn.classList.add('disabled')
-    } else if (isSolFileSelected()) {
-      btn.classList.remove('disabled')
-    }
-  }
-
   const isSolFileSelected = (currentFile = '') => {
     if (!currentFile) currentFile = config.get('currentFile')
     if (!currentFile) return false
@@ -169,79 +158,84 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
   }
 
-  // const deactivate  = () => {
-  //   // deactivate editor listeners
-  //   editor.event.unregister('contentChanged')
-  //   editor.event.unregister('sessionSwitched')
-  // }
+  const deactivate = () => {
+    // deactivate editor listeners
+    editor.event.unregister('contentChanged')
+    editor.event.unregister('sessionSwitched')
+  }
 
-  // const activate = () => {
-  //   const currentFileName = config.get('currentFile')
+  const activate = () => {
+    const currentFileName = config.get('currentFile')
 
-  //   currentFile(currentFileName)
-  //   listenToEvents()
-  // }
+    currentFile(currentFileName)
+    listenToEvents()
+  }
 
-  // const listenToEvents = () => {
-  //   editor.event.register('sessionSwitched', () => {
-  //     // if (!this._view.compileIcon) return
-  //     scheduleCompilation()
-  //   })
+  const listenToEvents = () => {
+    editor.event.register('sessionSwitched', () => {
+      if (!compileIcon.current) return
+      scheduleCompilation()
+    })
 
-  // this.compileTabLogic.event.on('startingCompilation', () => {
-  //   if (!this._view.compileIcon) return
-  //   this._view.compileIcon.setAttribute('title', 'compiling...')
-  //   this._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
-  //   this._view.compileIcon.classList.add(`${css.spinningIcon}`)
-  // })
+    compileTabLogic.event.on('startingCompilation', () => {
+      if (!compileIcon.current) return
+      compileIcon.current.setAttribute('title', 'compiling...')
+      compileIcon.current.classList.remove('remixui_bouncingIcon')
+      compileIcon.current.classList.add('remixui_spinningIcon')
+    })
 
-  // this.compileTabLogic.compiler.event.register('compilationDuration', (speed) => {
-  //   if (!this._view.warnCompilationSlow) return
-  //   if (speed > 1000) {
-  //     const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
-  //     this._view.warnCompilationSlow.setAttribute('title', msg)
-  //     this._view.warnCompilationSlow.style.visibility = 'visible'
-  //   } else {
-  //     this._view.warnCompilationSlow.style.visibility = 'hidden'
-  //   }
-  // })
+    compileTabLogic.compiler.event.register('compilationDuration', (speed) => {
+      if (!warningIcon.current) return
+      if (speed > 1000) {
+        const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
 
-  // editor.event.register('contentChanged', () => {
-  //   // if (!this._view.compileIcon) return
-  //   scheduleCompilation()
-  //   // this._view.compileIcon.classList.add(`${css.bouncingIcon}`) // @TODO: compileView tab
-  // })
+        warningIcon.current.setAttribute('title', msg)
+        warningIcon.current.style.visibility = 'visible'
+      } else {
+        warningIcon.current.style.visibility = 'hidden'
+      }
+    })
 
-  // this.compileTabLogic.compiler.event.register('loadingCompiler', () => {
-  //   if (!this._view.compileIcon) return
-  //   this._disableCompileBtn(true)
-  //   this._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
-  //   this._view.compileIcon.classList.add(`${css.spinningIcon}`)
-  //   this._view.warnCompilationSlow.style.visibility = 'hidden'
-  //   this._updateLanguageSelector()
-  // })
+    editor.event.register('contentChanged', () => {
+      if (!compileIcon.current) return
+      scheduleCompilation()
+      compileIcon.current.classList.add('remixui_bouncingIcon') // @TODO: compileView tab
+    })
 
-  // this.compileTabLogic.compiler.event.register('compilerLoaded', () => {
-  //   if (!this._view.compileIcon) return
-  //   this._disableCompileBtn(false)
-  //   this._view.compileIcon.setAttribute('title', '')
-  //   this._view.compileIcon.classList.remove(`${css.spinningIcon}`)
-  //   if (this.data.autoCompile) this.compileIfAutoCompileOn()
-  // })
+    compileTabLogic.compiler.event.register('loadingCompiler', () => {
+      if (!compileIcon.current) return
+      // _disableCompileBtn(true)
+      compileIcon.current.setAttribute('title', 'compiler is loading, please wait a few moments.')
+      compileIcon.current.classList.add('remixui_spinningIcon')
+      warningIcon.current.style.visibility = 'hidden'
+      _updateLanguageSelector()
+    })
 
-  //   this.compileTabLogic.compiler.event.register('compilationFinished', (success, data, source) => {
-  //     if (!this._view.compileIcon) return
-  //     this._view.compileIcon.setAttribute('title', 'idle')
-  //     this._view.compileIcon.classList.remove(`${css.spinningIcon}`)
-  //     this._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
-  //   })
-  // }
+    compileTabLogic.compiler.event.register('compilerLoaded', () => {
+      if (!compileIcon.current) return
+      // _disableCompileBtn(false)
+      compileIcon.current.setAttribute('title', '')
+      compileIcon.current.classList.remove('remixui_spinningIcon')
+      if (state.autoCompile) compileIfAutoCompileOn()
+    })
 
-  // const scheduleCompilation = () => {
-  //   if (!config.get('autoCompile')) return
-  //   if (state.compileTimeout) window.clearTimeout(state.compileTimeout)
-  //   state.compileTimeout = window.setTimeout(() => compileIfAutoCompileOn(), state.timeout)
-  // }
+    compileTabLogic.compiler.event.register('compilationFinished', (success, data, source) => {
+      if (!compileIcon.current) return
+      compileIcon.current.setAttribute('title', 'idle')
+      compileIcon.current.classList.remove('remixui_spinningIcon')
+      compileIcon.current.classList.remove('remixui_bouncingIcon')
+    })
+  }
+
+  const scheduleCompilation = () => {
+    if (!state.autoCompile) return
+    if (state.compileTimeout) window.clearTimeout(state.compileTimeout)
+    const compileTimeout = window.setTimeout(() => compileIfAutoCompileOn(), state.timeout)
+
+    setState(prevState => {
+      return { ...prevState, compileTimeout }
+    })
+  }
 
   const compileIfAutoCompileOn = () => {
     if (config.get('autoCompile')) {
@@ -373,34 +367,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     }
   }
 
-  const onChangeLanguage = (e) => {
-    const language = e.target.value
-
-    compileTabLogic.setLanguage(language)
-    setState(prevState => {
-      return { ...prevState, selectedLanguage: language }
-    })
-    compileIfAutoCompileOn()
-  }
-
-  const onChangeEvmVersion = (e) => {
-    let evmVersionSelector = e.target.value
-
-    if (evmVersionSelector === 'evmVersionSelector') {
-      evmVersionSelector = null
-    }
-    compileTabLogic.setEvmVersion(evmVersionSelector)
-    // for (let i = 0; i < s.options.length; i++) {
-    //   if (i === s.selectedIndex) {
-    //     s.options[s.selectedIndex].setAttribute('selected', 'selected')
-    //   } else {
-    //     s.options[i].removeAttribute('selected')
-    //   }
-    // }
-
-    compileIfAutoCompileOn()
-  }
-
   const handleAutoCompile = (e) => {
     const checked = e.target.checked
 
@@ -436,9 +402,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
-  const hideWarnings = (event) => {
-    config.set('hideWarnings', event.target.checked)
+  const handleHideWarningsChange = (e) => {
+    const checked = e.target.checked
+
+    config.set('hideWarnings', checked)
     compileIfAutoCompileOn()
+    setState(prevState => {
+      return { ...prevState, hideWarnings: checked }
+    })
   }
 
   const handleNightliesChange = () => {
@@ -468,14 +439,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   return (
-  // this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fas fa-exclamation-triangle" aria-hidden="true"></i>`
-  // this._view.compileIcon = yo`<i class="fas fa-sync ${css.icon}" aria-hidden="true"></i>`
-  // this._view.autoCompile = yo`<input class="${css.autocompile} custom-control-input" onchange=${() => this.updateAutoCompile()} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile">`
-  // this._view.hideWarningsBox = yo`<input class="${css.autocompile} custom-control-input" onchange=${() => this.hideWarnings()} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
-  // if (this.data.autoCompile) this._view.autoCompile.setAttribute('checked', '')
-  // if (this.data.hideWarnings) this._view.hideWarningsBox.setAttribute('checked', '')
-
-
     <section>
       <article>
         <header className='remixui_compilerSection border-bottom'>
@@ -543,14 +506,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 />
               </div>
             </div>
-            {/* <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              <input className="remixui_autocompile custom-control-input" onChange={hideWarnings} id="hideWarningsBox" type="checkbox" title="Hide warnings" />
+            <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
+              <input className="remixui_autocompile custom-control-input" onChange={handleHideWarningsChange} id="hideWarningsBox" type="checkbox" title="Hide warnings" checked={state.hideWarnings} />
               <label className="form-check-label custom-control-label" htmlFor="hideWarningsBox">Hide warnings</label>
-            </div> */}
+            </div>
           </div>
-          {/* <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile}>
-            <span><i className="fas fa-sync remixui_icon" aria-hidden="true"></i> Compile { state.compiledFileName || '<no file selected>' }</span>
-          </button> */}
+          <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block remixui_disabled mt-3" title="Compile" onClick={compile} disabled={!state.compiledFileName || (state.compiledFileName && !isSolFileSelected(state.compiledFileName))}>
+            <span>
+              <i ref={warningIcon} title="Compilation Slow" style={{ visibility: 'hidden' }} className="remixui_warnCompilationSlow fas fa-exclamation-triangle" aria-hidden="true"></i>
+              <i ref={compileIcon} className="fas fa-sync remixui_icon" aria-hidden="true"></i>
+              Compile { state.compiledFileName || '<no file selected>' }
+            </span>
+          </button>
         </header>
       </article>
     </section>

@@ -68,14 +68,9 @@ class CompileTab extends ViewPlugin {
       eventHandlers: {},
       loading: false
     }
-    this.compileTabLogic = new CompileTabLogic(
-      this.queryParams,
-      this.fileManager,
-      this.editor,
-      this.config,
-      this.fileProvider,
-      this.contentImport
-    )
+    this.el = document.createElement('div')
+    this.el.setAttribute('id', 'compileTabWrapper')
+    this.renderComponent()
   }
 
   onActivationInternal () {
