@@ -31,7 +31,7 @@ export function isNative (name) {
 export function canActivate (from, to) {
   return ['ethdoc'].includes(from.name) ||
   isNative(from.name) ||
-  (to && from && from.canActivate && from.canActivate.includes[to.name])
+  (to && from && from.canActivate && from.canActivate.includes(to.name))
 }
 
 export class RemixAppManager extends PluginManager {
