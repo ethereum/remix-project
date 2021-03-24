@@ -84,7 +84,7 @@ module.exports = {
 
   'Test NPM Import (with unpkg.com)': function (browser: NightwatchBrowser) {
     browser
-      // .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js')
+      .setSolidityCompilerVersion('soljson-v0.8.1+commit.df193b15.js')
       .clickLaunchIcon('fileExplorers')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled9.sol', sources[8]['Untitled9.sol'])
@@ -122,6 +122,6 @@ const sources = [
     'Untitled8.sol': { content: 'import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"; contract test12 {}' }
   },
   {
-    'Untitled9.sol': { content: 'pragma solidity >=0.6.0 <0.8.0; import "@openzeppelin/contracts/token/ERC20/ERC20.sol"; contract test13 {}' }
+    'Untitled9.sol': { content: 'pragma solidity ^0.8.0; import "@openzeppelin/contracts/token/ERC20/ERC20.sol"; contract test13 {}' }
   }
 ]
