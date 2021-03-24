@@ -491,7 +491,7 @@ export class LandingPage extends ViewPlugin {
                         <span class="${css.text}" onclick=${() => switchToPreviousVersion()}>Old experience</span>
                       </p>
                       <p>
-                        <i class="fab fa-ethereum ${css.image}"></i>
+                        <i class="fas fa-exclamation-triangle text-warning ${css.image}"></i>
                         <span class="${css.text}" onclick=${() => migrateWorkspace()}>Migrate old filesystem to workspace</span>
                       </p>
                     </div>
