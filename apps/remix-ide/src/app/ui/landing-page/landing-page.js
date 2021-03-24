@@ -1,11 +1,14 @@
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
+import { migrateToWorkspace } from '../../../migrateFileSystem'
+import JSZip from 'jszip'
 
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const globalRegistry = require('../../../global/registry')
 const CompilerImport = require('../../compiler/compiler-imports')
 const modalDialogCustom = require('../modal-dialog-custom')
+const modalDialog = require('../modaldialog')
 const tooltip = require('../tooltip')
 const GistHandler = require('../../../lib/gist-handler')
 const QueryParams = require('../../../lib/query-params.js')
@@ -112,9 +115,11 @@ const profile = {
 }
 
 export class LandingPage extends ViewPlugin {
-  constructor (appManager, verticalIcons) {
+  constructor (appManager, verticalIcons, fileManager, filePanel) {
     super(profile)
     this.profile = profile
+    this.fileManager = fileManager
+    this.filePanel = filePanel
     this.appManager = appManager
     this.verticalIcons = verticalIcons
     this.gistHandler = new GistHandler()
@@ -297,6 +302,44 @@ export class LandingPage extends ViewPlugin {
       this.call('fileExplorers', 'createNewFile')
     }
 
+    const saveAs = (blob, name) => {
+      const node = document.createElement('a')
+      node.download = name
+      node.rel = 'noopener'
+      node.href = URL.createObjectURL(blob)
+      setTimeout(function () { URL.revokeObjectURL(node.href) }, 4E4) // 40s
+      setTimeout(function () {
+        try {
+          node.dispatchEvent(new MouseEvent('click'))
+        } catch (e) {
+          var evt = document.createEvent('MouseEvents')
+          evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80,
+            20, false, false, false, false, 0, null)
+          node.dispatchEvent(evt)
+        }
+      }, 0) // 40s
+    }
+
+    const downloadFiles = async () => {
+      try {
+        tooltip('preparing files, please wait..')
+        const fileProviders = globalRegistry.get('fileproviders').api
+        const zip = new JSZip()
+        await fileProviders.browser.copyFolderToJson('/', ({ path, content }) => {
+          zip.file(path, content)
+        }, ({ path, content }) => {
+          zip.folder(path, content)
+        })
+        zip.generateAsync({ type: 'blob' }).then(function (blob) {
+          saveAs(blob, 'remixdbackup.zip')
+        }).catch((e) => {
+          tooltip(e.message)
+        })
+      } catch (e) {
+        tooltip(e.message)
+      }
+    }
+
     const uploadFile = (target) => {
       this.call('fileExplorers', 'uploadFile', target)
     }
@@ -357,6 +400,37 @@ export class LandingPage extends ViewPlugin {
       query.update({ appVersion: '0.7.7' })
       document.location.reload()
     }
+
+    const migrate = async () => {
+      tooltip('migrating workspace...')
+      try {
+        const workspaceName = await migrateToWorkspace(this.fileManager, this.filePanel)
+        tooltip('done. ' + workspaceName + ' created.')
+      } catch (e) {
+        return tooltip(e.message)
+      }
+    }
+
+    const migrateWorkspace = async () => {
+      modalDialog(
+        'File system Migration',
+        yo`<span>Do you want to download your files to local device first?</span>`,
+        {
+          label: 'Download and Migrate',
+          fn: async () => {
+            await downloadFiles()
+            migrate()
+          }
+        },
+        {
+          label: 'Migrate',
+          fn: () => {
+            migrate()
+          }
+        }
+      )
+    }
+
     const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
     const playRemi = async () => { await document.getElementById('remiAudio').play() }
     // to retrieve medium posts
@@ -408,6 +482,10 @@ export class LandingPage extends ViewPlugin {
                         <i class="far fa-hdd"></i>
                         <span class="ml-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
                       </p>
+                      <p class="mb-1">
+                        <i class="mr-1 far fa-file"></i>
+                        <span class="ml-1 mb-1 ${css.text}" onclick=${() => downloadFiles()}>Download all Files</span>
+                      </p>
                       <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
                       <div class="btn-group">
                         <button class="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onclick="${() => importFromGist()}">Gist</button>
@@ -431,9 +509,13 @@ export class LandingPage extends ViewPlugin {
                         ${this.websiteIcon}
                         <a class="${css.text}" target="__blank" href="https://remix-project.org">Featuring website</a>
                       </p>
-                      <p>
+                      <p class="mb-1">
                         <i class="fab fa-ethereum ${css.image}"></i>
                         <span class="${css.text}" onclick=${() => switchToPreviousVersion()}>Old experience</span>
+                      </p>
+                      <p>
+                        <i class="fas fa-exclamation-triangle text-warning ${css.image}"></i>
+                        <span class="${css.text}" onclick=${() => migrateWorkspace()}>Migrate old filesystem to workspace</span>
                       </p>
                     </div>
                   </div>
