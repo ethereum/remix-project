@@ -327,8 +327,8 @@ export class LandingPage extends ViewPlugin {
         const zip = new JSZip()
         await fileProviders.browser.copyFolderToJson('/', ({ path, content }) => {
           zip.file(path, content)
-        }, ({ path }) => {
-          zip.folder(path)
+        },({ path, content }) => {
+          zip.folder(path, content)
         })
         zip.generateAsync({ type: 'blob' }).then(function (blob) {
           saveAs(blob, 'remixdbackup.zip')
