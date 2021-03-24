@@ -1,7 +1,7 @@
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { migrateToWorkspace } from '../../../migrateFileSystem'
-import JSZip from "jszip"
+import JSZip from 'jszip'
 
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
@@ -327,7 +327,7 @@ export class LandingPage extends ViewPlugin {
         const zip = new JSZip()
         await fileProviders.browser.copyFolderToJson('/', ({ path, content }) => {
           zip.file(path, content)
-        },({ path }) => {
+        }, ({ path }) => {
           zip.folder(path)
         })
         zip.generateAsync({ type: 'blob' }).then(function (blob) {
@@ -417,7 +417,7 @@ export class LandingPage extends ViewPlugin {
         yo`<span>Do you want to download your files to local device first?</span>`,
         {
           label: 'Download and Migrate',
-          fn: async () => { 
+          fn: async () => {
             await downloadFiles()
             migrate()
           }
