@@ -302,8 +302,6 @@ export class LandingPage extends ViewPlugin {
         const fileProviders = globalRegistry.get('fileproviders').api
         const json = await fileProviders.browser.copyFolderToJson('/')
         const blob = new Blob([ JSON.stringify(json, null, '\t') ], { type: 'text/plain;charset=utf-8' })
-      const blob = new Blob([ JSON.stringify(json, null, '\t') ], { type: 'text/plain;charset=utf-8' })    
-        const blob = new Blob([ JSON.stringify(json, null, '\t') ], { type: 'text/plain;charset=utf-8' })
         const node = document.createElement('a')
         node.download = 'remix.json'
         node.rel = 'noopener'
