@@ -27,10 +27,10 @@ export async function migrateToWorkspace (fileManager, filePanel) {
   const files = await browserProvider.copyFolderToJson('/')
   console.log(files)
   const workspaceName = 'workspace_migrated_' + Date.now()
+  await filePanel.processCreateWorkspace(workspaceName)
+  filePanel.getWorkspaces() // refresh list
   if (Object.keys(files).length > 0) {    
     const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
-    await filePanel.processCreateWorkspace(workspaceName)
-    filePanel.getWorkspaces() // refresh list
     await populateWorkspace(workspacePath, files, browserProvider)
   }
   return workspaceName
