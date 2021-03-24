@@ -329,7 +329,7 @@ export class LandingPage extends ViewPlugin {
           zip.file(path, content)
         })
         zip.generateAsync({ type: 'blob' }).then(function (blob) {
-          saveAs(blob, 'remix.zip')
+          saveAs(blob, 'remixdbackup.zip')
         }).catch((e) => {
           tooltip(e.message)
         })
