@@ -509,7 +509,7 @@ export class LandingPage extends ViewPlugin {
                         <span class="ml-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
                       </p>
                       <p class="mb-1">
-                        <i class="mr-1 far fa-file"></i>
+                        <i class="mr-1 fas fa-download""></i>
                         <span class="ml-1 mb-1 ${css.text}" onclick=${() => downloadFiles()}>Download all Files</span>
                       </p>
                       <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
