@@ -383,8 +383,10 @@ export class LandingPage extends ViewPlugin {
       document.location.reload()
     }
 
-    const migrateWorkspace = () => {
-      migrateToWorkspace(globalRegistry.get('fileManager').api, globalRegistry.get('filePanel').api)
+    const migrateWorkspace = async () => {
+      tooltip('migrating workspace...')
+      await migrateToWorkspace(globalRegistry.get('fileManager').api, globalRegistry.get('filePanel').api)
+      tooltip('done.')
     }
 
     const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
