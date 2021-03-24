@@ -403,7 +403,9 @@ export class LandingPage extends ViewPlugin {
 
     const migrate = async () => {
       try {
-        tooltip('migrating workspace...')
+        setTimeout(() => {
+          tooltip('migrating workspace...')
+        }, 500)
         const workspaceName = await migrateToWorkspace(this.fileManager, this.filePanel)
         tooltip('done. ' + workspaceName + ' created.')
       } catch (e) {
