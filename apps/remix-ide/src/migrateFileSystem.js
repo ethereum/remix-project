@@ -29,7 +29,7 @@ export async function migrateToWorkspace (fileManager, filePanel) {
   const workspaceName = 'workspace_migrated_' + Date.now()
   await filePanel.processCreateWorkspace(workspaceName)
   filePanel.getWorkspaces() // refresh list
-  if (Object.keys(files).length > 0) {    
+  if (Object.keys(files).length > 0) {
     const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
     await populateWorkspace(workspacePath, files, browserProvider)
   }
