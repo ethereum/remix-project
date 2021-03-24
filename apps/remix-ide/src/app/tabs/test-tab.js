@@ -605,6 +605,7 @@ module.exports = class TestTab extends ViewPlugin {
         this.testTabLogic.generateTestFolder(this.inputPath.value)
         this.createTestFolder.disabled = true
         this.updateGenerateFileAction().disabled = false
+        this.uiPathList.appendChild(yo`<option>${this.inputPath.value}</option>`)
       }}>
       Create
       </button>`
