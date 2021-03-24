@@ -297,6 +297,27 @@ export class LandingPage extends ViewPlugin {
       this.call('fileExplorers', 'createNewFile')
     }
 
+    const downloadFiles = async () => {
+      const fileProviders = globalRegistry.get('fileproviders').api
+      const json = await fileProviders.browser.copyFolderToJson('/')
+      const blob = new Blob([ JSON.stringify(json, null, '\t') ], { type: 'text/plain;charset=utf-8' })    
+      const node = document.createElement('a')
+      node.download = 'remix.json'
+      node.rel = 'noopener'
+      node.href = URL.createObjectURL(blob)
+      setTimeout(function () { URL.revokeObjectURL(a.href) }, 4E4) // 40s
+      setTimeout(function () {
+        try {
+          node.dispatchEvent(new MouseEvent('click'))
+        } catch (e) {
+          var evt = document.createEvent('MouseEvents')
+          evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80,
+                                20, false, false, false, false, 0, null)
+          node.dispatchEvent(evt)
+        }
+      }, 0) // 40s
+    }
+
     const uploadFile = (target) => {
       this.call('fileExplorers', 'uploadFile', target)
     }
@@ -412,6 +433,10 @@ export class LandingPage extends ViewPlugin {
                       <p class="mb-1">
                         <i class="far fa-hdd"></i>
                         <span class="ml-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
+                      </p>
+                      <p class="mb-1">
+                        <i class="mr-1 far fa-file"></i>
+                        <span class="ml-1 mb-1 ${css.text}" onclick=${() => downloadFiles()}>Download all Files</span>
                       </p>
                       <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
                       <div class="btn-group">
