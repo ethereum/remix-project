@@ -557,7 +557,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   trimTestDirInput (input) {
-    if(input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
+    if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
     else return input.trim()
   }
 
