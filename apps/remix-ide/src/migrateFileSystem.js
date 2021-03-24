@@ -25,7 +25,6 @@ export async function migrateToWorkspace (fileManager, filePanel) {
   const browserProvider = fileManager.getProvider('browser')
   const workspaceProvider = fileManager.getProvider('workspace')
   const files = await browserProvider.copyFolderToJson('/')
-  console.log(files)
 
   if (Object.keys(files).length === 0) {
     // we don't have any root file, only .workspaces
