@@ -328,9 +328,8 @@ export class LandingPage extends ViewPlugin {
         await fileProviders.browser.copyFolderToJson('/', ({ path, content }) => {
           zip.file(path, content)
         })
-        zip.generateAsync({type:"blob"})
-        .then(function (blob) {
-          saveAs(blob, "remix.zip");
+        zip.generateAsync({ type: 'blob' }).then(function (blob) {
+          saveAs(blob, 'remix.zip')
         }).catch((e) => {
           tooltip(e.message)
         })
