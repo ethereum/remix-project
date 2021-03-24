@@ -322,6 +322,7 @@ export class LandingPage extends ViewPlugin {
 
     const downloadFiles = async () => {
       try {
+        tooltip('preparing files for download, please wait..')
         const fileProviders = globalRegistry.get('fileproviders').api
         const zip = new JSZip()
         await fileProviders.browser.copyFolderToJson('/', ({ path, content }) => {
@@ -330,7 +331,6 @@ export class LandingPage extends ViewPlugin {
           zip.folder(path, content)
         })
         zip.generateAsync({ type: 'blob' }).then(function (blob) {
-          tooltip('Files ready for download. Do not disconnect from the internet.')
           saveAs(blob, 'remixdbackup.zip')
         }).catch((e) => {
           tooltip(e.message)
@@ -403,8 +403,8 @@ export class LandingPage extends ViewPlugin {
 
     const migrate = async () => {
       try {
+        tooltip('migrating workspace...')
         const workspaceName = await migrateToWorkspace(this.fileManager, this.filePanel)
-
         tooltip('done. ' + workspaceName + ' created.')
       } catch (e) {
         setTimeout(() => {
