@@ -199,21 +199,24 @@ class FileProvider {
    * copy the folder recursively (internal use)
    * @param {string} path is the folder to be copied over
    * @param {Function} visitFile is a function called for each visited files
+   * @param {Function} visitFolder is a function called for each visited folders
    */
-  _copyFolderToJsonInternal (path, visitFile) {
+  _copyFolderToJsonInternal (path, visitFile, visitFolder) {
     visitFile = visitFile || (() => {})
+    visitFolder = visitFolder || (() => {})
     return new Promise((resolve, reject) => {
       const json = {}
       path = this.removePrefix(path)
       if (window.remixFileSystem.existsSync(path)) {
         try {
           const items = window.remixFileSystem.readdirSync(path)
+          visitFolder({ path })
           if (items.length !== 0) {
             items.forEach(async (item, index) => {
               const file = {}
               const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
               if (window.remixFileSystem.statSync(curPath).isDirectory()) {
-                file.children = await this._copyFolderToJsonInternal(curPath, visitFile)
+                file.children = await this._copyFolderToJsonInternal(curPath, visitFile, visitFolder)
               } else {
                 file.content = window.remixFileSystem.readFileSync(curPath, 'utf8')
                 visitFile({ path: curPath, content: file.content })
@@ -234,10 +237,12 @@ class FileProvider {
    * copy the folder recursively
    * @param {string} path is the folder to be copied over
    * @param {Function} visitFile is a function called for each visited files
+   * @param {Function} visitFolder is a function called for each visited folders
    */
-  copyFolderToJson (path, visitFile) {
+  copyFolderToJson (path, visitFile, visitFolder) {
     visitFile = visitFile || (() => {})
-    return this._copyFolderToJsonInternal(path, visitFile)
+    visitFolder = visitFolder || (() => {})
+    return this._copyFolderToJsonInternal(path, visitFile, visitFolder)
   }
 
   removeFile (path) {
