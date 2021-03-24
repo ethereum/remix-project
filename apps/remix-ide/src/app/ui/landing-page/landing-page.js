@@ -1,5 +1,6 @@
 import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
+import { migrateToWorkspace } from '../../../migrateFileSystem'
 
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
@@ -112,9 +113,11 @@ const profile = {
 }
 
 export class LandingPage extends ViewPlugin {
-  constructor (appManager, verticalIcons) {
+  constructor (appManager, verticalIcons, fileManager, filePanel) {
     super(profile)
     this.profile = profile
+    this.fileManager = fileManager
+    this.filePanel = filePanel
     this.appManager = appManager
     this.verticalIcons = verticalIcons
     this.gistHandler = new GistHandler()
@@ -385,8 +388,12 @@ export class LandingPage extends ViewPlugin {
 
     const migrateWorkspace = async () => {
       tooltip('migrating workspace...')
-      await migrateToWorkspace(globalRegistry.get('fileManager').api, globalRegistry.get('filePanel').api)
-      tooltip('done.')
+      try {
+        const workspaceName = await migrateToWorkspace(this.fileManager, this.filePanel)
+        tooltip('done. ' + workspaceName + ' created.')
+      } catch (e) {
+        return tooltip(e.message)
+      }      
     }
 
     const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
