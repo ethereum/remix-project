@@ -391,7 +391,7 @@ export class LandingPage extends ViewPlugin {
         'File system Migration',
         yo`<span>'Do you want to save your files first?'</span>`,
         {
-          label: 'Download und migrate',
+          label: 'Download und Migrate',
           fn: async () => { await downloadFiles() }
         },
         {
