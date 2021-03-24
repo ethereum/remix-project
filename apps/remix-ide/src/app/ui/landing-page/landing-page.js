@@ -389,7 +389,7 @@ export class LandingPage extends ViewPlugin {
     const migrateWorkspace = async () => {
       modalDialog(
         'File system Migration',
-        yo`<span>'Do you want to save your files first?'</span>`,
+        yo`<span>'Do you want to download your files to local device first?'</span>`,
         {
           label: 'Download und Migrate',
           fn: async () => { await downloadFiles() }
