@@ -2,7 +2,6 @@ import * as packageJson from '../../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { migrateToWorkspace } from '../../../migrateFileSystem'
 import JSZip from "jszip"
-import { fips } from 'crypto'
 
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
@@ -415,7 +414,7 @@ export class LandingPage extends ViewPlugin {
         'File system Migration',
         yo`<span>'Do you want to download your files to local device first?'</span>`,
         {
-          label: 'Download und Migrate',
+          label: 'Download and Migrate',
           fn: async () => { 
             await downloadFiles()
             migrate()
