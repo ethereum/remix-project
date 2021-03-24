@@ -100,6 +100,9 @@ const css = csjs`
     transition: .5s ease-out;
     z-index: 1000;
   }
+  .migrationBtn {
+    width: 100px;
+  }
 }
 `
 
@@ -414,23 +417,42 @@ export class LandingPage extends ViewPlugin {
         }, 1000)
       }
     }
+    const onAcceptDownloadn = async () => {
+      await downloadFiles()
+      const el = document.getElementById('modal-dialog')
+      el.parentElement.removeChild(el)
+      migrate()
+    }
+
+    const onDownload = () => {
+      const el = document.getElementById('modal-dialog')
+      el.parentElement.removeChild(el)
+      migrate()
+    }
+
+    const onCancel = () => {
+      const el = document.getElementById('modal-dialog')
+      el.parentElement.removeChild(el)
+    }
 
     const migrateWorkspace = async () => {
       modalDialog(
         'File system Migration',
-        yo`<span>Do you want to download your files to local device first?</span>`,
+        yo`
+          <span>Do you want to download your files to local device first?</span>
+          <div class="d-flex justify-content-around pt-3 mt-3 border-top">
+            <button class="btn btn-sm btn-primary" onclick=${async () => onAcceptDownloadn()}>Download and Migrate</button>
+            <button class="btn btn-sm btn-secondary ${css.migrationBtn}" onclick=${() => onDownload()}>Migrate</button>
+            <button class="btn btn-sm btn-secondary ${css.migrationBtn}" onclick=${() => onCancel()}>Cancel</button>
+          </div>
+        `,
         {
-          label: 'Download and Migrate',
-          fn: async () => {
-            await downloadFiles()
-            migrate()
-          }
+          label: '',
+          fn: null
         },
         {
-          label: 'Migrate',
-          fn: () => {
-            migrate()
-          }
+          label: '',
+          fn: null
         }
       )
     }
@@ -487,7 +509,7 @@ export class LandingPage extends ViewPlugin {
                         <span class="ml-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
                       </p>
                       <p class="mb-1">
-                        <i class="mr-1 far fa-file"></i>
+                        <i class="mr-1 fas fa-download""></i>
                         <span class="ml-1 mb-1 ${css.text}" onclick=${() => downloadFiles()}>Download all Files</span>
                       </p>
                       <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
