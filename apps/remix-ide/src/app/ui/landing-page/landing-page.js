@@ -391,11 +391,11 @@ export class LandingPage extends ViewPlugin {
         'File system Migration',
         yo`<span>'Do you want to save your files first?'</span>`,
         {
-          label: 'Yes',
+          label: 'Download und migrate',
           fn: async () => { await downloadFiles() }
         },
         {
-          label: 'No',
+          label: 'Migrate',
           fn: () => {}
         }
       )
