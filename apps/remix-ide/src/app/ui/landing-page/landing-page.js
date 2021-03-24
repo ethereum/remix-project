@@ -304,19 +304,19 @@ export class LandingPage extends ViewPlugin {
       try {
         const fileProviders = globalRegistry.get('fileproviders').api
         const json = await fileProviders.browser.copyFolderToJson('/')
-        const blob = new Blob([ JSON.stringify(json, null, '\t') ], { type: 'text/plain;charset=utf-8' })
+        const blob = new Blob([JSON.stringify(json, null, '\t')], { type: 'text/plain;charset=utf-8' })
         const node = document.createElement('a')
         node.download = 'remix.json'
         node.rel = 'noopener'
         node.href = URL.createObjectURL(blob)
-        setTimeout(function () { URL.revokeObjectURL(a.href) }, 4E4) // 40s
+        setTimeout(function () { URL.revokeObjectURL(node.href) }, 4E4) // 40s
         setTimeout(function () {
           try {
             node.dispatchEvent(new MouseEvent('click'))
           } catch (e) {
             var evt = document.createEvent('MouseEvents')
             evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80,
-                                  20, false, false, false, false, 0, null)
+              20, false, false, false, false, 0, null)
             node.dispatchEvent(evt)
           }
         }, 0) // 40s
@@ -393,7 +393,7 @@ export class LandingPage extends ViewPlugin {
         tooltip('done. ' + workspaceName + ' created.')
       } catch (e) {
         return tooltip(e.message)
-      }      
+      }
     }
 
     const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
