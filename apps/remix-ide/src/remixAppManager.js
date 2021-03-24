@@ -104,9 +104,9 @@ export class RemixAppManager extends PluginManager {
       plugins.push({
         name: 'dGit2',
         displayName: 'dGit2',
-        methods: [],
+        methods: ['pull'],
         version: '0.0.1-dev',
-        url: 'https://dgit2-remix.web.app',
+        url: 'http://localhost:3001',
         description: 'dGit for workspaces',
         icon: 'https://dgitremix.web.app/dgitlogo.png',
         location: 'mainPanel',

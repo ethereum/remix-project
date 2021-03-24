@@ -198,7 +198,7 @@ class DGitProvider extends Plugin {
         this.createDirectories(`.workspaces/${workspace.name}${dir}`)
       } catch (e) {}
       try {
-        window.remixFileSystem.writeFileSync(`.workspaces/${workspace.name}/${file.path}`, content[0] || new Uint8Array())
+        window.remixFileSystem.writeFileSync(`.workspaces/${workspace.name}/${file.path}`, Buffer.concat(content) || new Uint8Array())
       } catch (e) {}
     }
     await this.call('fileManager', 'refresh')
