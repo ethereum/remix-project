@@ -322,6 +322,7 @@ export class LandingPage extends ViewPlugin {
 
     const downloadFiles = async () => {
       try {
+        tooltip('preparing files, please wait..')
         const fileProviders = globalRegistry.get('fileproviders').api
         const zip = new JSZip()
         await fileProviders.browser.copyFolderToJson('/', ({ path, content }) => {
