@@ -299,12 +299,6 @@ export const Workspace = (props: WorkspaceProps) => {
     )
   }
 
-  // const handleWorkspaceSelect = (e) => {
-  //   const value = e.target.value
-
-  //   setWorkspace(value)
-  // }
-
   return (
     <div className='remixui_container'>
       <ModalDialog
@@ -358,15 +352,15 @@ export const Workspace = (props: WorkspaceProps) => {
                   title='Delete'>
                 </span>
               </span>
-              <select id="workspacesSelect" data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
+              <select id="workspacesSelect" value={state.currentWorkspace} data-id="workspacesSelect" onChange={(e) => setWorkspace(e.target.value)} className="form-control custom-select">
                 {
                   state.workspaces
-                    .map((folder) => {
-                      return <option selected={state.currentWorkspace === folder} value={folder}>{folder}</option>
+                    .map((folder, index) => {
+                      return <option key={index} value={folder}>{folder}</option>
                     })
                 }
-                <option selected={state.currentWorkspace === LOCALHOST} value={LOCALHOST}>{state.currentWorkspace === LOCALHOST ? 'localhost' : LOCALHOST}</option>
-                { state.workspaces.length <= 0 && <option selected={state.currentWorkspace === NO_WORKSPACE} value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
+                <option value={LOCALHOST}>{state.currentWorkspace === LOCALHOST ? 'localhost' : LOCALHOST}</option>
+                { state.workspaces.length <= 0 && <option value={NO_WORKSPACE}>{NO_WORKSPACE}</option> }
               </select>
             </div>
           </header>
@@ -404,20 +398,6 @@ export const Workspace = (props: WorkspaceProps) => {
                   }
                 </div>
             }
-            <div className='pl-2 remixui_treeview'>
-              { false && <FileExplorer
-                name='browser'
-                registry={props.registry}
-                filesProvider={props.browser}
-                menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
-                plugin={props.plugin}
-                focusRoot={state.reset}
-                contextMenuItems={props.registeredMenuItems}
-                displayInput={state.displayNewFile}
-                externalUploads={state.uploadFileEvent}
-              />
-              }
-            </div>
           </div>
         </div>
       </div>
