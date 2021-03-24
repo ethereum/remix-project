@@ -26,13 +26,24 @@ export async function migrateToWorkspace (fileManager, filePanel) {
   const workspaceProvider = fileManager.getProvider('workspace')
   const files = await browserProvider.copyFolderToJson('/')
   console.log(files)
+
+  if (Object.keys(files).length === 0) {
+    // we don't have any root file, only .workspaces
+    // don't need to create a workspace
+    throw new Error('No file to migrate')
+  }
+
+  if (Object.keys(files).length === 1 && files['/.workspaces']) {
+    // we don't have any root file, only .workspaces
+    // don't need to create a workspace
+    throw new Error('No file to migrate')
+  }
+
   const workspaceName = 'workspace_migrated_' + Date.now()
   await filePanel.processCreateWorkspace(workspaceName)
   filePanel.getWorkspaces() // refresh list
-  if (Object.keys(files).length > 0) {
-    const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
-    await populateWorkspace(workspacePath, files, browserProvider)
-  }
+  const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
+  await populateWorkspace(workspacePath, files, browserProvider)
   return workspaceName
 }
 
