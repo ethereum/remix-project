@@ -322,7 +322,7 @@ export class LandingPage extends ViewPlugin {
 
     const downloadFiles = async () => {
       try {
-        tooltip('preparing files, please wait..')
+        tooltip('preparing files for download, please wait..')
         const fileProviders = globalRegistry.get('fileproviders').api
         const zip = new JSZip()
         await fileProviders.browser.copyFolderToJson('/', ({ path, content }) => {
@@ -402,12 +402,16 @@ export class LandingPage extends ViewPlugin {
     }
 
     const migrate = async () => {
-      tooltip('migrating workspace...')
       try {
+        setTimeout(() => {
+          tooltip('migrating workspace...')
+        }, 500)
         const workspaceName = await migrateToWorkspace(this.fileManager, this.filePanel)
         tooltip('done. ' + workspaceName + ' created.')
       } catch (e) {
-        return tooltip(e.message)
+        setTimeout(() => {
+          tooltip(e.message)
+        }, 1000)
       }
     }
 
