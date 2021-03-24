@@ -357,6 +357,11 @@ export class LandingPage extends ViewPlugin {
       query.update({ appVersion: '0.7.7' })
       document.location.reload()
     }
+
+    const migrateWorkspace = () => {
+      migrateToWorkspace(globalRegistry.get('fileManager').api, globalRegistry.get('filePanel').api)
+    }
+
     const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
     const playRemi = async () => { await document.getElementById('remiAudio').play() }
     // to retrieve medium posts
@@ -434,6 +439,10 @@ export class LandingPage extends ViewPlugin {
                       <p>
                         <i class="fab fa-ethereum ${css.image}"></i>
                         <span class="${css.text}" onclick=${() => switchToPreviousVersion()}>Old experience</span>
+                      </p>
+                      <p>
+                        <i class="fab fa-ethereum ${css.image}"></i>
+                        <span class="${css.text}" onclick=${() => migrateWorkspace()}>Migrate old filesystem to workspace</span>
                       </p>
                     </div>
                   </div>

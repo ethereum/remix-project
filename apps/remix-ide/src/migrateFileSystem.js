@@ -24,19 +24,15 @@ export default (fileProvider) => {
 export async function migrateToWorkspace (fileManager, filePanel) {
   const browserProvider = fileManager.getProvider('browser')
   const workspaceProvider = fileManager.getProvider('workspace')
-  const flag = 'status'
-  const fileStorageBrowserWorkspace = new Storage('remix_browserWorkspace_migration:')
-  if (fileStorageBrowserWorkspace.get(flag) === 'done') return
   const files = await browserProvider.copyFolderToJson('/')
   console.log(files)
   if (Object.keys(files).length > 0) {
-    const workspaceName = 'default_workspace'
+    const workspaceName = 'workspace_migrated_' + Date.now()
     const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
     await filePanel.processCreateWorkspace(workspaceName)
     filePanel.getWorkspaces() // refresh list
     await populateWorkspace(workspacePath, files, browserProvider)
-  }
-  fileStorageBrowserWorkspace.set(flag, 'done')
+  }  
 }
 
 const populateWorkspace = async (workspace, json, browserProvider) => {
