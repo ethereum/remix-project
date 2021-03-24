@@ -556,24 +556,33 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
+  trimTestDirInput (input) {
+    if(input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
+    else return input.trim()
+  }
+
   handleTestDirInput () {
-    if (this.inputPath.value && this.inputPath.value.endsWith('/')) {
-      this.updateDirList(this.inputPath.value)
+    const testDirInput = this.trimTestDirInput(this.inputPath.value)
+    if (testDirInput) {
+      if (testDirInput.endsWith('/')) this.updateDirList(testDirInput)
+      else {
+        let matchFound = false
+        for (const option of this.uiPathList.querySelectorAll('option')) {
+          if (option.innerHTML === testDirInput) matchFound = true
+        }
+        // If there is no matching folder in the workspace with entered text, enable Create button
+        if (!matchFound) {
+          // Enable Create button
+          this.createTestFolder.disabled = false
+          // Disable Generate button because dir is not existing
+          this.updateGenerateFileAction().disabled = true
+        } else {
+          this.createTestFolder.disabled = true
+          this.updateGenerateFileAction().disabled = false
+        }
+      }
     } else {
-      let matchFound = false
-      for (const option of this.uiPathList.querySelectorAll('option')) {
-        if (option.innerHTML === this.inputPath.value) matchFound = true
-      }
-      // If there is no matching folder in the workspace with entered text, enable Create button
-      if (!matchFound) {
-        // Enable Create button
-        this.createTestFolder.disabled = false
-        // Disable Generate button because dir is not existing
-        this.updateGenerateFileAction().disabled = true
-      } else {
-        this.createTestFolder.disabled = true
-        this.updateGenerateFileAction().disabled = false
-      }
+      this.updateDirList('/')
     }
   }
 
@@ -600,6 +609,7 @@ module.exports = class TestTab extends ViewPlugin {
       title="Create a test folder"
       disabled=true
       onclick=${(e) => {
+        this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
         this.testTabLogic.generateTestFolder(this.inputPath.value)
         this.createTestFolder.disabled = true
         this.updateGenerateFileAction().disabled = false
