@@ -562,7 +562,7 @@ module.exports = class TestTab extends ViewPlugin {
     } else {
       let matchFound = false
       for (const option of this.uiPathList.querySelectorAll('option')) {
-        if (option.innerHTML.startsWith(this.inputPath.value)) matchFound = true
+        if (option.innerHTML === this.inputPath.value) matchFound = true
       }
       // If there is no matching folder in the workspace with entered text, enable Create button
       if (!matchFound) {
@@ -591,9 +591,7 @@ module.exports = class TestTab extends ViewPlugin {
       data-id="uiPathInput"
       name="utPath"
       style="background-image: var(--primary);"
-      onkeyup=${(e) => {
-        if (e.keyCode) this.handleTestDirInput()
-      }}
+      onkeyup=${(e) => this.handleTestDirInput()}
       onchange=${(e) => this.updateCurrentPath(e)}/>`
 
     this.createTestFolder = yo`<button
