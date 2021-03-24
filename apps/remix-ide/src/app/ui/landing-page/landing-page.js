@@ -400,19 +400,7 @@ export class LandingPage extends ViewPlugin {
       document.location.reload()
     }
 
-    const migrateWorkspace = async () => {
-      modalDialog(
-        'File system Migration',
-        yo`<span>'Do you want to download your files to local device first?'</span>`,
-        {
-          label: 'Download und Migrate',
-          fn: async () => { await downloadFiles() }
-        },
-        {
-          label: 'Migrate',
-          fn: () => {}
-        }
-      )
+    const migrate = async () => {
       tooltip('migrating workspace...')
       try {
         const workspaceName = await migrateToWorkspace(this.fileManager, this.filePanel)
@@ -420,6 +408,26 @@ export class LandingPage extends ViewPlugin {
       } catch (e) {
         return tooltip(e.message)
       }
+    }
+
+    const migrateWorkspace = async () => {
+      modalDialog(
+        'File system Migration',
+        yo`<span>'Do you want to download your files to local device first?'</span>`,
+        {
+          label: 'Download und Migrate',
+          fn: async () => { 
+            await downloadFiles()
+            migrate()
+          }
+        },
+        {
+          label: 'Migrate',
+          fn: () => {
+            migrate()
+          }
+        }
+      )
     }
 
     const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
