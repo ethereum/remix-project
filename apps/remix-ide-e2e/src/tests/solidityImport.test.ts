@@ -89,7 +89,7 @@ module.exports = {
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled9.sol', sources[8]['Untitled9.sol'])
       .clickLaunchIcon('fileExplorers')
-      .verifyContracts(['test13', 'ERC20', 'SafeMath'], { wait: 30000 })
+      .verifyContracts(['test13', 'ERC20'], { wait: 30000 })
       .end()
   },
   tearDown: sauce
