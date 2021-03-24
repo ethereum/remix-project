@@ -7,6 +7,7 @@ const csjs = require('csjs-inject')
 const globalRegistry = require('../../../global/registry')
 const CompilerImport = require('../../compiler/compiler-imports')
 const modalDialogCustom = require('../modal-dialog-custom')
+const modalDialog = require('../modaldialog')
 const tooltip = require('../tooltip')
 const GistHandler = require('../../../lib/gist-handler')
 const QueryParams = require('../../../lib/query-params.js')
@@ -315,8 +316,7 @@ export class LandingPage extends ViewPlugin {
             node.dispatchEvent(new MouseEvent('click'))
           } catch (e) {
             var evt = document.createEvent('MouseEvents')
-            evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80,
-              20, false, false, false, false, 0, null)
+            evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null)
             node.dispatchEvent(evt)
           }
         }, 0) // 40s
@@ -387,6 +387,18 @@ export class LandingPage extends ViewPlugin {
     }
 
     const migrateWorkspace = async () => {
+      modalDialog(
+        'File system Migration',
+        yo`<span>'Do you want to save your files first?'</span>`,
+        {
+          label: 'Yes',
+          fn: async () => { await downloadFiles() }
+        },
+        {
+          label: 'No',
+          fn: () => {}
+        }
+      )
       tooltip('migrating workspace...')
       try {
         const workspaceName = await migrateToWorkspace(this.fileManager, this.filePanel)
@@ -474,7 +486,7 @@ export class LandingPage extends ViewPlugin {
                         ${this.websiteIcon}
                         <a class="${css.text}" target="__blank" href="https://remix-project.org">Featuring website</a>
                       </p>
-                      <p>
+                      <p class="mb-1">
                         <i class="fab fa-ethereum ${css.image}"></i>
                         <span class="${css.text}" onclick=${() => switchToPreviousVersion()}>Old experience</span>
                       </p>
