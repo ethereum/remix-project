@@ -154,10 +154,6 @@
     "fs-extra": "^3.0.1",
     "http-server": "^0.11.1",
     "isbinaryfile": "^3.0.2",
-<<<<<<< HEAD
-    "isomorphic-git": "^1.8.1",
-=======
->>>>>>> 971eff0865b278c8075712c398ffc6e8eb8a3927
     "jszip": "^3.6.0",
     "merge": "^1.2.0",
     "npm-install-version": "^6.0.2",
