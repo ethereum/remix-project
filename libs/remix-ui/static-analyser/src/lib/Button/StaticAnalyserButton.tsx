@@ -1,9 +1,9 @@
-import React from 'react';
-import './StaticAnalyserButton.css';
+import React from 'react'
+import './StaticAnalyserButton.css'
 
 interface StaticAnalyserButtonProps {
-  onClick: (event) => void;
-  buttonText: string;
+  onClick: (event) => void
+  buttonText: string
 }
 
 const StaticAnalyserButton = ({
@@ -19,4 +19,4 @@ const StaticAnalyserButton = ({
   );
 };
 
-export default StaticAnalyserButton;
+export default StaticAnalyserButton

@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-
-import { staticAnalysisRunner } from '@remix-ui/static-analyser';
-import CheckBox from './Checkbox/StaticAnalyserCheckedBox';
-import Button from './Button/StaticAnalyserButton';
+import React, { useEffect, useState } from 'react'
+import { staticAnalysisRunner } from '@remix-ui/static-analyser'
+import CheckBox from './Checkbox/StaticAnalyserCheckedBox'
+import Button from './Button/StaticAnalyserButton'
 
 export interface RemixUiStaticAnalyserProps {
-  renderStaticAnalysis: any;
+  renderStaticAnalysis: any
 }
 
 export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
@@ -51,9 +50,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       </div>
       <div className="${``} my-1" id="staticanalysisresult"></div>
     </div>
-  );
+  )
 
-  return <div>{staticAnalysisViewRender()}</div>;
-};
+  return <div>{staticAnalysisViewRender()}</div>
+}
 
-export default RemixUiStaticAnalyser;
+export default RemixUiStaticAnalyser

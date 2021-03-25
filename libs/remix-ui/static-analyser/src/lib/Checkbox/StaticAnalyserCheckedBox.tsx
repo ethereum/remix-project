@@ -1,13 +1,13 @@
-import React from 'react';
-import './StaticAnalyserCheckedBox.css';
+import React from 'react'
+import './StaticAnalyserCheckedBox.css'
 
 interface StaticAnalyserCheckBoxProps {
-  onClick: (event) => void;
-  label: string;
-  inputType: string;
-  name?: string;
-  checked: boolean;
-  id: string;
+  onClick: (event) => void
+  label: string
+  inputType: string
+  name?: string
+  checked: boolean
+  id: string
 }
 
 const StaticAnalyserCheckedBox = ({
@@ -33,7 +33,7 @@ const StaticAnalyserCheckedBox = ({
         {label}
       </label>
     </div>
-  );
-};
+  )
+}
 
-export default StaticAnalyserCheckedBox;
+export default StaticAnalyserCheckedBox
