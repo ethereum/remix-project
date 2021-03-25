@@ -131,6 +131,8 @@ module.exports = class SettingsTab extends ViewPlugin {
     if (this.config.get('settings/matomo-analytics')) {
       this._view.useMatomoAnalytics.setAttribute('checked', '')
       _paq.push(['forgetUserOptOut'])
+      // @TODO remove next line when https://github.com/matomo-org/matomo/commit/9e10a150585522ca30ecdd275007a882a70c6df5 is used
+      document.cookie = 'mtm_consent_removed=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
     } else {
       _paq.push(['optUserOut'])
     }
@@ -234,6 +236,8 @@ module.exports = class SettingsTab extends ViewPlugin {
       elementStateChanged(self._view.useMatomoAnalyticsLabel, isChecked)
       if (event.target.checked) {
         _paq.push(['forgetUserOptOut'])
+        // @TODO remove next line when https://github.com/matomo-org/matomo/commit/9e10a150585522ca30ecdd275007a882a70c6df5 is used
+        document.cookie = 'mtm_consent_removed=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
       } else {
         _paq.push(['optUserOut'])
       }

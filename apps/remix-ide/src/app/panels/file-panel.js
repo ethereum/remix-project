@@ -135,9 +135,15 @@ module.exports = class Filepanel extends ViewPlugin {
     const gistHandler = new GistHandler()
     const params = queryParams.get()
     // get the file from gist
-    const loadedFromGist = gistHandler.loadFromGist(params, this._deps.fileManager)
-
+    let loadedFromGist = false
+    if (params.gist) {
+      await this.processCreateWorkspace('gist-sample')
+      this._deps.fileProviders.workspace.setWorkspace('gist-sample')
+      this.initialWorkspace = 'gist-sample'
+      loadedFromGist = gistHandler.loadFromGist(params, this._deps.fileManager)
+    }
     if (loadedFromGist) return
+
     if (params.code) {
       try {
         await this.processCreateWorkspace('code-sample')

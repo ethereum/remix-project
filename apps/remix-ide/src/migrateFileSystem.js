@@ -24,19 +24,26 @@ export default (fileProvider) => {
 export async function migrateToWorkspace (fileManager, filePanel) {
   const browserProvider = fileManager.getProvider('browser')
   const workspaceProvider = fileManager.getProvider('workspace')
-  const flag = 'status'
-  const fileStorageBrowserWorkspace = new Storage('remix_browserWorkspace_migration:')
-  if (fileStorageBrowserWorkspace.get(flag) === 'done') return
   const files = await browserProvider.copyFolderToJson('/')
-  console.log(files)
-  if (Object.keys(files).length > 0) {
-    const workspaceName = 'default_workspace'
-    const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
-    await filePanel.processCreateWorkspace(workspaceName)
-    filePanel.getWorkspaces() // refresh list
-    await populateWorkspace(workspacePath, files, browserProvider)
+
+  if (Object.keys(files).length === 0) {
+    // we don't have any root file, only .workspaces
+    // don't need to create a workspace
+    throw new Error('No file to migrate')
   }
-  fileStorageBrowserWorkspace.set(flag, 'done')
+
+  if (Object.keys(files).length === 1 && files['/.workspaces']) {
+    // we don't have any root file, only .workspaces
+    // don't need to create a workspace
+    throw new Error('No file to migrate')
+  }
+
+  const workspaceName = 'workspace_migrated_' + Date.now()
+  await filePanel.processCreateWorkspace(workspaceName)
+  filePanel.getWorkspaces() // refresh list
+  const workspacePath = joinPath('browser', workspaceProvider.workspacesPath, workspaceName)
+  await populateWorkspace(workspacePath, files, browserProvider)
+  return workspaceName
 }
 
 const populateWorkspace = async (workspace, json, browserProvider) => {

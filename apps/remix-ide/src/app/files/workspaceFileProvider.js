@@ -48,11 +48,14 @@ class WorkspaceFileProvider extends FileProvider {
     })
   }
 
-  async copyFolderToJson (directory, visitFile) {
+  async copyFolderToJson (directory, visitFile, visitFolder) {
     visitFile = visitFile || (() => {})
+    visitFolder = visitFolder || (() => {})
     const regex = new RegExp(`.workspaces/${this.workspace}/`, 'g')
     let json = await super._copyFolderToJsonInternal(directory, ({ path, content }) => {
       visitFile({ path: path.replace(regex, ''), content })
+    }, ({ path }) => {
+      visitFolder({ path: path.replace(regex, '') })
     })
     json = JSON.stringify(json).replace(regex, '')
     return JSON.parse(json)
