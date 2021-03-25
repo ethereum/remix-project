@@ -85,9 +85,7 @@ export class ThemeModule extends Plugin {
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('themeChanged', nextTheme)
-    this.events.emit('themeChanged', nextTheme)
   }
 
   /**

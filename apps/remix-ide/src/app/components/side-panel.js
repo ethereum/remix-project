@@ -70,23 +70,17 @@ export class SidePanel extends AbstractPanel {
     verticalIcons.events.on('toggleContent', (name) => {
       if (!this.contents[name]) return
       if (this.active === name) {
-        // TODO: Only keep `this.emit` (issue#2210)
         this.emit('toggle', name)
-        this.events.emit('toggle', name)
         return
       }
       this.showContent(name)
-      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('showing', name)
-      this.events.emit('showing', name)
     })
     // Force opening
     verticalIcons.events.on('showContent', (name) => {
       if (!this.contents[name]) return
       this.showContent(name)
-      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('showing', name)
-      this.events.emit('showing', name)
     })
   }
 

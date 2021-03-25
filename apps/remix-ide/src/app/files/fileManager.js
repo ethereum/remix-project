@@ -341,9 +341,7 @@ class FileManager extends Plugin {
         }
       }
     }
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRenamed', oldName, newName, isFolder)
-    this.events.emit('fileRenamed', oldName, newName, isFolder)
   }
 
   currentFileProvider () {
@@ -362,13 +360,9 @@ class FileManager extends Plugin {
     delete this.openedFiles[name]
     if (!Object.keys(this.openedFiles).length) {
       this._deps.config.set('currentFile', '')
-      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
     }
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileClosed', name)
-    this.events.emit('fileClosed', name)
   }
 
   currentPath () {
@@ -459,18 +453,14 @@ class FileManager extends Plugin {
     }
     this.editor.discard(path)
     delete this.openedFiles[path]
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRemoved', path)
-    this.events.emit('fileRemoved', path)
     this.openFile()
   }
 
   unselectCurrentFile () {
     this.saveCurrentFile()
     this._deps.config.set('currentFile', '')
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('noFileSelected')
-    this.events.emit('noFileSelected')
   }
 
   openFile (file) {
@@ -490,16 +480,13 @@ class FileManager extends Plugin {
           } else {
             this.editor.open(file, content)
           }
-          // TODO: Only keep `this.emit` (issue#2210)
           this.emit('currentFileChanged', file)
-          this.events.emit('currentFileChanged', file)
         }
       })
     }
     if (file) return _openFile(file)
     else {
       this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
     }
   }
 

@@ -25,13 +25,13 @@ export class NetworkModule extends Plugin {
     /*
     // Events that could be implemented later
     executionContext.event.register('removeProvider', (provider) => {
-      this.events.emit('networkRemoved', provider)
+      this.emit('networkRemoved', provider)
     })
     executionContext.event.register('addProvider', (provider) => {
-      this.events.emit('networkAdded', provider)
+      this.emit('networkAdded', provider)
     })
     executionContext.event.register('web3EndpointChanged', (provider) => {
-      this.events.emit('web3EndpointChanged', provider)
+      this.emit('web3EndpointChanged', provider)
     })
     */
   }
