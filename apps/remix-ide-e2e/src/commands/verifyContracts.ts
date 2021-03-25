@@ -17,7 +17,7 @@ function getCompiledContracts (browser: NightwatchBrowser, opts: { wait: number,
   browser
     .clickLaunchIcon('solidity')
     .pause(opts.wait)
-    .waitForElementPresent('*[data-id="compiledContracts"] option')
+    .waitForElementPresent('*[data-id="compiledContracts"] option', 60000)
     .perform((done) => {
       if (opts.version) {
         browser
