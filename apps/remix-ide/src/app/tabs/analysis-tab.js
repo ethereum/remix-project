@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ViewPlugin } from '@remixproject/engine-web';
 import { EventEmitter } from 'events';
-import RemixUiStaticAnalyser from '../../../../../libs/remix-ui/static-analyser/src/index';
+import RemixUiStaticAnalyser from '../../../../../libs/remix-ui/static-analyser/src/lib/static-analyser';
 import * as packageJson from '../../../../../package.json';
 
 var yo = require('yo-yo');
@@ -30,6 +30,9 @@ class AnalysisTab extends ViewPlugin {
     this.event = new EventManager();
     this.events = new EventEmitter();
     this.registry = registry;
+    this.element = document.createElement('div');
+    this.element.setAttribute('id', 'staticAnalyserView');
+    this.renderComponent();
   }
 
   render() {
@@ -53,10 +56,22 @@ class AnalysisTab extends ViewPlugin {
       }
     });
     this.registry.put({ api: this.staticanalysis, name: 'staticanalysis' });
-    this.element = document.createElement('div');
-    this.element.setAttribute('id', 'staticAnalyserView');
-    return ReactDOM.render(<RemixUiStaticAnalyser />, this.element);
-    //return yo`<div class="px-3 pb-1" id="staticanalysisView">${this.staticanalysis.render()}</div>`;
+
+    // return ReactDOM.render(<RemixUiStaticAnalyser />, this.element);
+    return this.element; //yo`<div class="px-3 pb-1" id="staticanalysisView">${this.staticanalysis.render()}</div>`;
+  }
+
+  renderComponent() {
+    ReactDOM.render(
+      <RemixUiStaticAnalyser
+        renderStaticAnalysis={this.renderStaticAnalysis.bind(this)}
+      />,
+      this.element
+    );
+  }
+
+  renderStaticAnalysis() {
+    this.staticanalysis.render();
   }
 }
 
