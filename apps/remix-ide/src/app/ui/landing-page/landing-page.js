@@ -398,9 +398,9 @@ export class LandingPage extends ViewPlugin {
     this.moreEnv.getElementsByTagName('img')[0].style.filter = `invert(${invertNum})`
     this.websiteIcon.style.filter = `invert(${invertNum})`
 
-    const switchToPreviousVersion = () => {
+    const switchToVersion = (appVersion) => {
       const query = new QueryParams()
-      query.update({ appVersion: '0.7.7' })
+      query.update({ appVersion })
       document.location.reload()
     }
 
@@ -537,7 +537,11 @@ export class LandingPage extends ViewPlugin {
                       </p>
                       <p class="mb-1">
                         <i class="fab fa-ethereum ${css.image}"></i>
-                        <span class="${css.text}" onclick=${() => switchToPreviousVersion()}>Old experience</span>
+                        <span class="${css.text}" onclick=${() => switchToVersion('0.7.7')}>Old experience</span>
+                      </p>
+                      <p class="mb-1">
+                        <i class="fab fa-ethereum ${css.image}"></i>
+                        <span class="${css.text}" onclick=${() => switchToVersion('0.10.0')}>Use Remix 0.10.0</span>
                       </p>
                       <p>
                         <i class="fas fa-exclamation-triangle text-warning ${css.image}"></i>
