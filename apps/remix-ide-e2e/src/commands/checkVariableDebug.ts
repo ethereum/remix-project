@@ -22,7 +22,6 @@ function checkDebug (browser: NightwatchBrowser, id: string, debugValue: Nightwa
 
     return elem.innerText
   }, [id], function (result) {
-    console.log(id + ' ' + result.value)
     let value
     try {
       value = JSON.parse(<string>result.value)
