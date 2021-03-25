@@ -1,0 +1,10 @@
+.block input[type='radio']:checked ~ .entries {
+  height: auto;
+  transition: 0.5s ease-in;
+}
+
+.entries {
+  height: 0;
+  overflow : hidden;
+  transition: 0.5s ease-out;
+}
