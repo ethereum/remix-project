@@ -346,7 +346,7 @@ workflows:
   build_all:
     jobs:
       - lint
-      - remix-libs
+      - remix-libs:
           requires:
             - lint
       - remix-ide-chrome-1:          
