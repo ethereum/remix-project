@@ -2,22 +2,23 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class WaitForElementContainsText extends EventEmitter {
-  command (this: NightwatchBrowser, id: string, value: string): NightwatchBrowser {
-    let incr = 0
+  command (this: NightwatchBrowser, id: string, value: string, timeout = 10000): NightwatchBrowser {
+    let waitId // eslint-disable-line
     const runid = setInterval(() => {
       this.api.getText(id, (result) => {
-        if (typeof result.value === 'string' && value.indexOf(result.value || '') !== -1) {
+        if (typeof result.value === 'string' && result.value.indexOf(value) !== -1) {
           clearInterval(runid)
-          this.api.assert.ok(true, `WaitForElementContainsText ${id} contains ${value}`)
+          clearTimeout(waitId)
+          this.api.assert.ok(true, `WaitForElementContainsText ${id} contains ${value} after ${timeout}`)
           this.emit('complete')
-        } else incr++
-        if (incr > 50) {
-          clearInterval(runid)
-          this.api.assert.fail(`WaitForElementContainsText - expected ${value} but got ${result.value}`)
-          // throw new Error(`WaitForElementContainsText ${id} ${value}`)
         }
       })
     }, 200)
+
+    waitId = setTimeout(() => {
+      clearInterval(runid)
+      this.api.assert.fail(`TimeoutError: An error occurred while running .waitForElementContainsText() command on ${id}`)
+    }, timeout)
     return this
   }
 }
