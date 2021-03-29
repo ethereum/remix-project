@@ -9,7 +9,7 @@ class WaitForElementContainsText extends EventEmitter {
         if (typeof result.value === 'string' && result.value.indexOf(value) !== -1) {
           clearInterval(runid)
           clearTimeout(waitId)
-          this.api.assert.ok(true, `WaitForElementContainsText ${id} contains ${value} after ${timeout}`)
+          this.api.assert.ok(true, `WaitForElementContainsText ${id} contains ${value}`)
           this.emit('complete')
         }
       })
@@ -17,7 +17,7 @@ class WaitForElementContainsText extends EventEmitter {
 
     waitId = setTimeout(() => {
       clearInterval(runid)
-      this.api.assert.fail(`TimeoutError: An error occurred while running .waitForElementContainsText() command on ${id}`)
+      this.api.assert.fail(`TimeoutError: An error occurred while running .waitForElementContainsText() command on ${id} after ${timeout} milliseconds`)
     }, timeout)
     return this
   }
