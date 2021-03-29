@@ -59,11 +59,12 @@ function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS
         sharedFolderClient.setupNotifications(program.sharedFolder)
         sharedFolderClient.sharedFolder(program.sharedFolder, program.readOnly || false)
       })
-
+      /*
       startService('git', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
         sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.sharedFolder(program.sharedFolder, program.readOnly || false)
       })
+      */
     } catch (error) {
       throw new Error(error)
     }
