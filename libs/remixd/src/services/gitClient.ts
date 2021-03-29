@@ -10,7 +10,7 @@ export class GitClient extends PluginClient {
 
   constructor () {
     super()
-    this.methods = ['execute']  
+    this.methods = ['execute']
   }
 
   setWebSocket (websocket: WS): void {
