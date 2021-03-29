@@ -25,7 +25,6 @@ const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
 const registry = require('./global/registry')
-const loadFileFromParent = require('./loadFilesFromParent')
 const { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
@@ -490,9 +489,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
   framingService.start(params)
-
-  // get the file list from the parent iframe
-  loadFileFromParent(fileManager)
 
   if (params.embed) framingService.embed()
 }
