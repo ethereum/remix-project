@@ -9,6 +9,7 @@ const confirmDialog = require('../../ui/confirmDialog')
 const modalDialog = require('../../ui/modaldialog')
 const MultiParamManager = require('../../ui/multiParamManager')
 const helper = require('../../../lib/helper')
+const _paq = window._paq = window._paq || []
 
 class ContractDropdownUI {
   constructor (blockchain, dropdownLogic, logCallback, runView) {
@@ -300,13 +301,16 @@ class ContractDropdownUI {
       if (error) {
         return this.logCallback(error)
       }
-
+      _paq.push(['trackEvent', 'udapp', 'txTo', this.networkName])
       self.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
 
       const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
       self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
       if (self.ipfsCheckedState) {
+        _paq.push(['trackEvent', 'udapp', 'ipfsPublishChecked'])
         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
+      } else {
+        _paq.push(['trackEvent', 'udapp', 'ipfsPublishNotChecked'])
       }
     }
 
