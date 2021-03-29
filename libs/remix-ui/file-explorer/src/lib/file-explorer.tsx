@@ -314,6 +314,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const createNewFile = (newFilePath: string) => {
     const fileManager = state.fileManager
 
+    if (helper.checkSpecialChars(newFilePath) || helper.checkSlash(newFilePath)) return toast('special characters are not allowed')
     helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
       if (error) {
         modal('Create File Failed', error, {
@@ -392,6 +393,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           fn: () => {}
         }, null)
       } else {
+        if (helper.checkSpecialChars(newPath) || helper.checkSlash(newPath)) throw new Error('special characters are not allowed')
         await fileManager.rename(oldPath, newPath)
       }
     } catch (error) {
