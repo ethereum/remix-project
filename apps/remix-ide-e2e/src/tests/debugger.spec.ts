@@ -188,8 +188,7 @@ module.exports = {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScript('remix.exeCurrent()')
-      .pause(5000)
-      .journalChildIncludes('result { "gas": "0x5863", "return": "0x0000000000000000000000000000000000000000000000000000000000000000", "structLogs":')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'result { "gas": "0x5863", "return": "0x0000000000000000000000000000000000000000000000000000000000000000", "structLogs":', 60000)
   },
 
   'Should call the debugger api: debug': function (browser: NightwatchBrowser) {
