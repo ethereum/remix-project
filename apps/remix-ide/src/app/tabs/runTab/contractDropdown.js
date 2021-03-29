@@ -301,13 +301,12 @@ class ContractDropdownUI {
       if (error) {
         return this.logCallback(error)
       }
-      _paq.push(['trackEvent', 'udapp', 'txTo', this.networkName])
       self.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
 
       const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
       self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
       if (self.ipfsCheckedState) {
-        _paq.push(['trackEvent', 'udapp', 'ipfsPublishChecked'])
+        _paq.push(['trackEvent', 'udapp', `ipfsPublishTo_${this.networkName}`])
         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
       } else {
         _paq.push(['trackEvent', 'udapp', 'ipfsPublishNotChecked'])
@@ -344,6 +343,7 @@ class ContractDropdownUI {
   }
 
   deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
+    _paq.push(['trackEvent', 'udapp', 'DeployContractTo', this.networkName])
     const { statusCb } = callbacks
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
       return this.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
