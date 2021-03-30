@@ -1,7 +1,6 @@
 import { Plugin } from '@remixproject/engine'
 const yo = require('yo-yo')
 const $ = require('jquery')
-const EventEmitter = require('events')
 const globalRegistry = require('../../global/registry')
 const csjs = require('csjs-inject')
 const helper = require('../../lib/helper')
