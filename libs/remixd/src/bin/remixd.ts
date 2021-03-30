@@ -9,8 +9,8 @@ import * as path from 'path'
 import * as program from 'commander'
 
 const services = {
-  git: () => new servicesList.GitClient(),
-  folder: () => new servicesList.Sharedfolder()
+  git: (readOnly: boolean) => new servicesList.GitClient(readOnly),
+  folder: (readOnly: boolean) => new servicesList.Sharedfolder(readOnly)
 }
 
 const ports = {
@@ -20,7 +20,7 @@ const ports = {
 
 const killCallBack: Array<Function> = []
 function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => void) {
-  const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () => services[service]())
+  const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () => services[service](program.readOnly || false))
   socket.start(callback)
   killCallBack.push(socket.close.bind(socket))
 }
@@ -57,12 +57,12 @@ function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS
       startService('folder', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
         sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.setupNotifications(program.sharedFolder)
-        sharedFolderClient.sharedFolder(program.sharedFolder, program.readOnly || false)
+        sharedFolderClient.sharedFolder(program.sharedFolder)
       })
       /*
       startService('git', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
         sharedFolderClient.setWebSocket(ws)
-        sharedFolderClient.sharedFolder(program.sharedFolder, program.readOnly || false)
+        sharedFolderClient.sharedFolder(program.sharedFolder)
       })
       */
     } catch (error) {
