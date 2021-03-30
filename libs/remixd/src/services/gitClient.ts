@@ -3,10 +3,15 @@ import { PluginClient } from '@remixproject/plugin'
 const { spawn } = require('child_process')
 
 export class GitClient extends PluginClient {
-  methods: ['execute']
+  methods: Array<string>
   websocket: WS
   currentSharedFolder: string
   readOnly: boolean
+
+  constructor () {
+    super()
+    this.methods = ['execute']
+  }
 
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
