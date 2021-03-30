@@ -6,9 +6,8 @@ export class GitClient extends PluginClient {
   methods: Array<string>
   websocket: WS
   currentSharedFolder: string
-  readOnly: boolean
 
-  constructor () {
+  constructor (private readOnly = false) {
     super()
     this.methods = ['execute']
   }
@@ -17,9 +16,8 @@ export class GitClient extends PluginClient {
     this.websocket = websocket
   }
 
-  sharedFolder (currentSharedFolder: string, readOnly: boolean): void {
+  sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
-    this.readOnly = readOnly
   }
 
   execute (cmd: string) {
