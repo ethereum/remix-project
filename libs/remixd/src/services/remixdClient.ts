@@ -7,11 +7,16 @@ import * as fs from 'fs-extra'
 import * as isbinaryfile from 'isbinaryfile'
 
 export class RemixdClient extends PluginClient {
-  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'list', 'isDirectory', 'createDir']
+  methods: Array<string>
   trackDownStreamUpdate: TrackDownStreamUpdate = {}
   websocket: WS
   currentSharedFolder: string
   readOnly: boolean
+
+  constructor () {
+    super()
+    this.methods = ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir']
+  }
 
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
