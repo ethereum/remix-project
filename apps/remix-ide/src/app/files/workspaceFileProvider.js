@@ -1,7 +1,7 @@
 'use strict'
 
 const FileProvider = require('./fileProvider')
-const path = require('path')
+const pathModule = require('path')
 
 class WorkspaceFileProvider extends FileProvider {
   constructor () {
@@ -43,9 +43,9 @@ class WorkspaceFileProvider extends FileProvider {
   isSubDirectory (parent, child) {
     if (!parent) return false
     if (parent === child) return true
-    const relative = path.relative(parent, child)
+    const relative = pathModule.relative(parent, child)
 
-    return !!relative && relative.split(path.sep)[0] !== '..'
+    return !!relative && relative.split(pathModule.sep)[0] !== '..'
   }
 
   resolveDirectory (path, callback) {
