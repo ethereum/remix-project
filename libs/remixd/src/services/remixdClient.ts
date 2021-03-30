@@ -11,9 +11,8 @@ export class RemixdClient extends PluginClient {
   trackDownStreamUpdate: TrackDownStreamUpdate = {}
   websocket: WS
   currentSharedFolder: string
-  readOnly: boolean
 
-  constructor () {
+  constructor (private readOnly = false) {
     super()
     this.methods = ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir']
   }
@@ -22,9 +21,8 @@ export class RemixdClient extends PluginClient {
     this.websocket = websocket
   }
 
-  sharedFolder (currentSharedFolder: string, readOnly: boolean): void {
+  sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
-    this.readOnly = readOnly
     if (this.isLoaded) this.emit('rootFolderChanged')
   }
 
