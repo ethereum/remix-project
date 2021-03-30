@@ -9,7 +9,6 @@ const globalRegistry = require('../../global/registry')
 const toaster = require('../ui/tooltip')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const helper = require('../../lib/helper.js')
-const path = require('path')
 
 /*
   attach to files event (removed renamed)
@@ -59,14 +58,7 @@ class FileManager extends Plugin {
   }
 
   limitPluginScope (path) {
-    const workspace = this.fileManager.currentWorkspace()
-
-    if (workspace) {
-
-    } else {
-      
-    }
-
+    return path.replace(/^\/browser\//, '').replace(/^browser\//, '') // forbids plugin to access the root filesystem
   }
 
   /**
