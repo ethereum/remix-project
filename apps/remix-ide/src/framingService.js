@@ -8,10 +8,10 @@ export class FramingService {
   }
 
   start (params) {
-    this.sidePanel.events.on('toggle', () => {
+    this.sidePanel.on('toggle', () => {
       this.resizeFeature.panel.clientWidth !== 0 ? this.resizeFeature.hidePanel() : this.resizeFeature.showPanel()
     })
-    this.sidePanel.events.on('showing', () => {
+    this.sidePanel.on('showing', () => {
       if (this.resizeFeature.panel.clientWidth === 0) this.resizeFeature.showPanel()
     })
     this.mainPanel.events.on('toggle', () => {

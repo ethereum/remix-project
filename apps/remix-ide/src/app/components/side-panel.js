@@ -67,7 +67,7 @@ export class SidePanel extends AbstractPanel {
     this.verticalIcons = verticalIcons
 
     // Toggle content
-    verticalIcons.events.on('toggleContent', (name) => {
+    verticalIcons.on('toggleContent', (name) => {
       if (!this.contents[name]) return
       if (this.active === name) {
         this.emit('toggle', name)
@@ -77,7 +77,7 @@ export class SidePanel extends AbstractPanel {
       this.emit('showing', name)
     })
     // Force opening
-    verticalIcons.events.on('showContent', (name) => {
+    verticalIcons.on('showContent', (name) => {
       if (!this.contents[name]) return
       this.showContent(name)
       this.emit('showing', name)

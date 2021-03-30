@@ -123,7 +123,7 @@ class CompileTab extends ViewPlugin {
     this.data.eventHandlers.onNoFileSelected = () => {
       this.compilerContainer.currentFile = ''
     }
-    this.fileManager.events.on('noFileSelected', this.data.eventHandlers.onNoFileSelected)
+    this.fileManager.on('noFileSelected', this.data.eventHandlers.onNoFileSelected)
 
     this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
       this._view.errorContainer.appendChild(yo`<span data-id="compilationFinishedWith_${this.getCurrentVersion()}"></span>`)
@@ -488,8 +488,8 @@ class CompileTab extends ViewPlugin {
     this.compiler.event.unregister('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
     this.compiler.event.unregister('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
     this.compileTabLogic.event.removeListener('startingCompilation', this.data.eventHandlers.onStartingCompilation)
-    this.fileManager.events.removeListener('currentFileChanged', this.data.eventHandlers.onCurrentFileChanged)
-    this.fileManager.events.removeListener('noFileSelected', this.data.eventHandlers.onNoFileSelected)
+    this.fileManager.off('currentFileChanged', this.data.eventHandlers.onCurrentFileChanged)
+    this.fileManager.off('noFileSelected', this.data.eventHandlers.onNoFileSelected)
     this.compiler.event.unregister('compilationFinished', this.data.eventHandlers.onCompilationFinished)
     globalRegistry.get('themeModule').api.events.removeListener('themeChanged', this.data.eventHandlers.onThemeChanged)
   }

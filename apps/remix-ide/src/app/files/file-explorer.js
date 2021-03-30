@@ -319,7 +319,7 @@ function fileExplorer (localRegistry, files, menuItems, plugin) {
   })
 
   // register to main app, trigger when the current file in the editor changed
-  self._deps.fileManager.events.on('currentFileChanged', (newFile) => {
+  self._deps.fileManager.on('currentFileChanged', (newFile) => {
     const provider = self._deps.fileManager.fileProviderOf(newFile)
     if (self.focusElement && self.focusPath !== newFile) {
       self.focusElement.classList.remove('bg-secondary')
@@ -335,7 +335,7 @@ function fileExplorer (localRegistry, files, menuItems, plugin) {
     }
   })
 
-  self._deps.fileManager.events.on('noFileSelected', () => {
+  self._deps.fileManager.on('noFileSelected', () => {
     if (self.focusElement) {
       self.focusElement.classList.remove('bg-secondary')
       self.focusElement = null

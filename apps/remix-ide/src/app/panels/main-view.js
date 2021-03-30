@@ -65,20 +65,20 @@ export class MainView {
       self._view.mainPanel.style.display = 'none'
       self._components.contextView.show()
     })
-    self.tabProxy.event.on('openFile', (file) => {
+    self.tabProxy.on('openFile', (file) => {
       self._view.editor.style.display = 'block'
       self._view.mainPanel.style.display = 'none'
       self._components.contextView.show()
     })
-    self.tabProxy.event.on('closeFile', (file) => {
+    self.tabProxy.on('closeFile', (file) => {
     })
-    self.tabProxy.event.on('switchApp', self.showApp.bind(self))
-    self.tabProxy.event.on('closeApp', (name) => {
+    self.tabProxy.on('switchApp', self.showApp.bind(self))
+    self.tabProxy.on('closeApp', (name) => {
       self._view.editor.style.display = 'block'
       self._components.contextView.show()
       self._view.mainPanel.style.display = 'none'
     })
-    self.tabProxy.event.on('tabCountChanged', (count) => {
+    self.tabProxy.on('tabCountChanged', (count) => {
       if (!count) this.editor.displayEmptyReadOnlySession()
     })
     self.data = {

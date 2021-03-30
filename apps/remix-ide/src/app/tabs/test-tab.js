@@ -60,10 +60,10 @@ module.exports = class TestTab extends ViewPlugin {
       this.data.selectedTests.push(file)
     })
 
-    this.fileManager.events.on('noFileSelected', () => {
+    this.fileManager.on('noFileSelected', () => {
     })
 
-    this.fileManager.events.on('currentFileChanged', (file, provider) => this.updateForNewCurrent(file))
+    this.fileManager.on('currentFileChanged', (file, provider) => this.updateForNewCurrent(file))
   }
 
   updateForNewCurrent (file) {

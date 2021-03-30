@@ -23,7 +23,6 @@ const profile = {
 export class TabProxy extends Plugin {
   constructor (fileManager, editor, appManager) {
     super(profile)
-    this.event = new EventEmitter()
     this.fileManager = fileManager
     this.appManager = appManager
     this.editor = editor
@@ -37,19 +36,19 @@ export class TabProxy extends Plugin {
       this.updateImgStyles()
     })
 
-    fileManager.events.on('fileRemoved', (name) => {
+    fileManager.on('fileRemoved', (name) => {
       const workspace = this.fileManager.currentWorkspace()
 
       workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
     })
 
-    fileManager.events.on('fileClosed', (name) => {
+    fileManager.on('fileClosed', (name) => {
       const workspace = this.fileManager.currentWorkspace()
 
       workspace ? this.removeTab(workspace + '/' + name) : this.removeTab(this.fileManager.mode + '/' + name)
     })
 
-    fileManager.events.on('currentFileChanged', (file) => {
+    fileManager.on('currentFileChanged', (file) => {
       const workspace = this.fileManager.currentWorkspace()
 
       if (workspace) {
@@ -61,11 +60,11 @@ export class TabProxy extends Plugin {
         }
         this.addTab(workspacePath, '', () => {
           this.fileManager.open(file)
-          this.event.emit('openFile', file)
+          this.emit('openFile', file)
         },
         () => {
           this.fileManager.closeFile(file)
-          this.event.emit('closeFile', file)
+          this.emit('closeFile', file)
         })
       } else {
         const path = this.fileManager.mode + '/' + file
@@ -76,11 +75,11 @@ export class TabProxy extends Plugin {
         }
         this.addTab(path, '', () => {
           this.fileManager.open(file)
-          this.event.emit('openFile', file)
+          this.emit('openFile', file)
         },
         () => {
           this.fileManager.closeFile(file)
-          this.event.emit('closeFile', file)
+          this.emit('closeFile', file)
         })
       }
     })
@@ -120,9 +119,9 @@ export class TabProxy extends Plugin {
         this.addTab(
           name,
           displayName,
-          () => this.event.emit('switchApp', name),
+          () => this.emit('switchApp', name),
           () => {
-            this.event.emit('closeApp', name)
+            this.emit('closeApp', name)
             this.appManager.deactivatePlugin(name)
           },
           icon
@@ -137,7 +136,7 @@ export class TabProxy extends Plugin {
   }
 
   focus (name) {
-    this.event.emit('switchApp', name)
+    this.emit('switchApp', name)
     this._view.filetabs.activateTab(name)
   }
 
@@ -189,11 +188,11 @@ export class TabProxy extends Plugin {
   renameTab (oldName, newName) {
     this.addTab(newName, '', () => {
       this.fileManager.open(newName)
-      this.event.emit('openFile', newName)
+      this.emit('openFile', newName)
     },
     () => {
       this.fileManager.closeFile(newName)
-      this.event.emit('closeFile', newName)
+      this.emit('closeFile', newName)
     })
     this.removeTab(oldName)
   }
@@ -283,11 +282,11 @@ export class TabProxy extends Plugin {
     this._view.filetabs = yo`<remix-tabs class=${css.remix_tabs}></remix-tabs>`
     this._view.filetabs.addEventListener('tabClosed', (event) => {
       if (this._handlers[event.detail]) this._handlers[event.detail].close()
-      this.event.emit('tabCountChanged', this._view.filetabs.tabs.length)
+      this.emit('tabCountChanged', this._view.filetabs.tabs.length)
     })
     this._view.filetabs.addEventListener('tabActivated', (event) => {
       if (this._handlers[event.detail]) this._handlers[event.detail].switchTo()
-      this.event.emit('tabCountChanged', this._view.filetabs.tabs.length)
+      this.emit('tabCountChanged', this._view.filetabs.tabs.length)
     })
 
     this._view.filetabs.canAdd = false
