@@ -314,26 +314,32 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const createNewFile = (newFilePath: string) => {
     const fileManager = state.fileManager
 
-    if (helper.checkSpecialChars(newFilePath) || helper.checkSlash(newFilePath)) return toast('special characters are not allowed')
-    helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
-      if (error) {
-        modal('Create File Failed', error, {
-          label: 'Close',
-          fn: async () => {}
-        }, null)
-      } else {
-        const createFile = await fileManager.writeFile(newName, '')
-
-        if (!createFile) {
-          return toast('Failed to create file ' + newName)
+    try {
+      helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
+        if (error) {
+          modal('Create File Failed', error, {
+            label: 'Close',
+            fn: async () => {}
+          }, null)
         } else {
-          await fileManager.open(newName)
-          setState(prevState => {
-            return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
-          })
+          const createFile = await fileManager.writeFile(newName, '')
+
+          if (!createFile) {
+            return toast('Failed to create file ' + newName)
+          } else {
+            await fileManager.open(newName)
+            setState(prevState => {
+              return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
+            })
+          }
         }
-      }
-    })
+      })
+    } catch (error) {
+      return modal('File Creation Failed', error.message, {
+        label: 'Close',
+        fn: async () => {}
+      }, null)
+    }
   }
 
   const createNewFolder = async (newFolderPath: string) => {
@@ -354,8 +360,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
       })
     } catch (e) {
-      console.log('error: ', e)
-      toast('Failed to create folder: ' + newFolderPath)
+      return modal('File Creation Failed', e.message, {
+        label: 'Close',
+        fn: async () => {}
+      }, null)
     }
   }
 
@@ -393,7 +401,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
           fn: () => {}
         }, null)
       } else {
-        if (helper.checkSpecialChars(newPath) || helper.checkSlash(newPath)) throw new Error('special characters are not allowed')
         await fileManager.rename(oldPath, newPath)
       }
     } catch (error) {
