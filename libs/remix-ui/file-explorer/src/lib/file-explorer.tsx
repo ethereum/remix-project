@@ -360,7 +360,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
       })
     } catch (e) {
-      return modal('File Creation Failed', e.message, {
+      return modal('Folder Creation Failed', e.message, {
         label: 'Close',
         fn: async () => {}
       }, null)
