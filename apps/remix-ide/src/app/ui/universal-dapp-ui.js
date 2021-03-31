@@ -14,6 +14,7 @@ var txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
 var TreeView = require('./TreeView')
 var txCallBacks = require('./sendTxCallbacks')
+const _paq = window._paq = window._paq || []
 
 function UniversalDAppUI (blockchain, logCallback) {
   this.blockchain = blockchain
@@ -243,6 +244,7 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
       outputOverride.appendChild(decoded)
     }
   }
+  _paq.push(['trackEvent', 'udapp', lookupOnly ? 'call' : args.funABI.type !== 'fallback' ? 'lowLevelInteracions' : 'transact'])
   const params = args.funABI.type !== 'fallback' ? inputsValues : ''
   this.blockchain.runOrCallContractMethod(
     args.contractName,
