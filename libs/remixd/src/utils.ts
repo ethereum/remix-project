@@ -12,7 +12,23 @@ import * as pathModule from 'path'
 function absolutePath (path: string, sharedFolder:string): string {
   path = normalizePath(path)
   path = pathModule.resolve(sharedFolder, path)
+  if (!isSubDirectory(pathModule.resolve(process.cwd(), sharedFolder), path)) throw new Error('Cannot read/write to path outside shared folder.')
   return path
+}
+
+/**
+ * returns a true if child is sub-directory of parent.
+ *
+ * @param {String} parent - path to parent directory
+ * @param {String} child - child path
+ * @return {Boolean}
+ */
+function isSubDirectory (parent: string, child: string) {
+  if (!parent) return false
+  if (parent === child) return true
+  const relative = pathModule.relative(parent, child)
+
+  return !!relative && relative.split(pathModule.sep)[0] !== '..'
 }
 
 /**
