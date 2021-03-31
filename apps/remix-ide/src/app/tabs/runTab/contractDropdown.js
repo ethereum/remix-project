@@ -306,10 +306,10 @@ class ContractDropdownUI {
       const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
       self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
       if (self.ipfsCheckedState) {
-        _paq.push(['trackEvent', 'udapp', `ipfsPublishTo_${this.networkName}`])
+        _paq.push(['trackEvent', 'udapp', `DeployAndPublish_${this.networkName}`])
         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
       } else {
-        _paq.push(['trackEvent', 'udapp', 'ipfsPublishNotChecked'])
+        _paq.push(['trackEvent', 'udapp', 'DeployOnly'])
       }
     }
 
@@ -399,6 +399,7 @@ class ContractDropdownUI {
           return modalDialogCustom.alert(error)
         }
         if (loadType === 'abi') {
+          _paq.push(['trackEvent', 'udapp', 'AtAddressFromABI'])
           return this.event.trigger('newContractABIAdded', [abi, address])
         }
         var selectedContract = this.getSelectedContract()
