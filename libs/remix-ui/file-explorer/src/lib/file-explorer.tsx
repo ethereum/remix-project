@@ -335,7 +335,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
       })
     } catch (error) {
-      return modal('File Creation Failed', error.message, {
+      return modal('File Creation Failed', typeof error === 'string' ? error : error.message, {
         label: 'Close',
         fn: async () => {}
       }, null)
@@ -360,7 +360,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
       })
     } catch (e) {
-      return modal('Folder Creation Failed', e.message, {
+      return modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, {
         label: 'Close',
         fn: async () => {}
       }, null)
@@ -404,7 +404,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         await fileManager.rename(oldPath, newPath)
       }
     } catch (error) {
-      modal('Rename File Failed', 'Unexpected error while renaming: ' + error, {
+      modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, {
         label: 'Close',
         fn: async () => {}
       }, null)
