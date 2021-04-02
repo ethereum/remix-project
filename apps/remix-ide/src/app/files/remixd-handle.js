@@ -130,21 +130,20 @@ export class RemixdHandle extends WebsocketPlugin {
 function remixdDialog () {
   return yo`
     <div class=${css.dialog}>
-      <div class=${css.dialogParagraph}>Interact with your file system from Remix. Click connect and find shared folder in the Remix file explorer (under localhost).
-        Before you get started, check out the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
-        to find out how to run Remixd.
+      <div class=${css.dialogParagraph}>Interact with your file system from Remix. <br>See the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a> for more info.
       </div>
-      <div class=${css.dialogParagraph}>If you have looked at that tutorial and are just looking for the remixd command, <br> here it is:
+      <div class=${css.dialogParagraph}>If you have looked at the Remixd docs and just need remixd command, <br> here it is:
         <br><b>remixd -s absolute-path-to-the-shared-folder --remix-ide your-remix-ide-URL-instance</b>
       </div>
       <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.href}</em> and your local file system <i>ws://127.0.0.1:65520</i>
         so please make sure your system is secured enough (port 65520 neither opened nor forwarded).
-        <i class="fas fa-link"></i> will show you current connection status.
+      </div>
+      <div class=${css.dialogParagraph}>
+        <h6 class="text-danger">
+          Before using, make sure you have the <b>latest remixd version</b>.<br><a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
+        </h6>
       </div>
       <div class=${css.dialogParagraph}>This feature is still in Alpha, so we recommend you to keep a copy of the shared folder.</div>
-      <span class="text-danger">
-        Please make sure you have the <b>latest remixd version</b>. <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
-      </span>
     </div>
   `
 }
