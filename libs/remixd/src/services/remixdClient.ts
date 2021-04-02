@@ -14,7 +14,7 @@ export class RemixdClient extends PluginClient {
 
   constructor (private readOnly = false) {
     super()
-    this.methods = ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir']
+    this.methods = ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir', 'canDeactivate']
   }
 
   setWebSocket (websocket: WS): void {
