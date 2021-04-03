@@ -18,14 +18,13 @@ import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
 import FetchAndCompile from './app/compiler/compiler-sourceVerifier-fetchAndCompile'
 
-import migrateFileSystem, { migrateToWorkspace } from './migrateFileSystem'
+import migrateFileSystem from './migrateFileSystem'
 
 const isElectron = require('is-electron')
 const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
 const registry = require('./global/registry')
-const loadFileFromParent = require('./loadFilesFromParent')
 const { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
@@ -325,11 +324,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // those views depend on app_manager
   const menuicons = new VerticalIcons(appManager)
-  const landingPage = new LandingPage(appManager, menuicons)
   const sidePanel = new SidePanel(appManager, menuicons)
   const hiddenPanel = new HiddenPanel()
   const pluginManagerComponent = new PluginManagerComponent(appManager, engine)
   const filePanel = new FilePanel(appManager)
+  const landingPage = new LandingPage(appManager, menuicons, fileManager, filePanel)
   const settings = new SettingsTab(
     registry.get('config').api,
     editor,
@@ -370,8 +369,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // Ask to opt in to Matomo for remix, remix-alpha and remix-beta
   const matomoDomains = {
     'remix-alpha.ethereum.org': 27,
-    'remix-beta.ethereum.org': 25
-    // 'remix.ethereum.org': 23
+    'remix-beta.ethereum.org': 25,
+    'remix.ethereum.org': 23
   }
   if (matomoDomains[window.location.hostname] && !registry.get('config').api.exists('settings/matomo-analytics')) {
     modalDialog(
@@ -490,11 +489,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
   framingService.start(params)
-
-  // get the file list from the parent iframe
-  loadFileFromParent(fileManager)
-
-  migrateToWorkspace(fileManager, filePanel)
 
   if (params.embed) framingService.embed()
 }
