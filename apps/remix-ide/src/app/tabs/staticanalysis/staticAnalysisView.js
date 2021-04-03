@@ -12,6 +12,7 @@ const SourceHighlighter = require('../../editor/sourceHighlighter')
 var EventManager = require('../../../lib/events')
 
 function staticAnalysisView(localRegistry, analysisModule) {
+  
   var self = this
   this.event = new EventManager()
   this.view = null
@@ -29,8 +30,7 @@ function staticAnalysisView(localRegistry, analysisModule) {
   // dependencies
   self._deps = {
     offsetToLineColumnConverter: self._components.registry.get(
-      'offsettolinecolumnconverter'
-    ).api
+      'offsettolinecolumnconverter').api
   }
 
   analysisModule.on(
@@ -131,12 +131,14 @@ staticAnalysisView.prototype.run = function() {
     await this.analysisModule.call('editor', 'highlight', location, fileName)
   }
   const selected = this.selectedModules()
+  console.log({selected})
   const warningContainer = $('#staticanalysisresult')
   warningContainer.empty()
   this.view.querySelector(
     '#staticAnalysisCurrentFile'
   ).innerText = this.currentFile
   var self = this
+  console.log(this.lastCompilationResult, ' last compilation result')
   if (this.lastCompilationResult && selected.length) {
     this.runBtn.removeAttribute('disabled')
     let warningCount = 0

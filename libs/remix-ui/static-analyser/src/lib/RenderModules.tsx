@@ -1,49 +1,37 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Checkbox from './Checkbox/StaticAnalyserCheckedBox'
-import RadioButton from './RadioButton/StaticAnalysisRadioButton'
+import CategorySection from './RadioButton/StaticAnalysisRadioButton'
 
-interface RenderModuleProops {
+interface RenderModuleProps {
   groupedModules: any
+  checkAll: boolean;
+  checkAllCategory: boolean
+  //CheckboxCategory: React.ReactNode;
+
 }
 
-const RenderModules = ({ groupedModules }: RenderModuleProops) => {
+const RenderModules = ({ groupedModules, checkAll, checkAllCategory }: RenderModuleProps) => {
+  const [checkCategories, setCheckCategories] = useState(false)
+
+  const handleCheckCategory = () => {
+    setCheckCategories(prevState => !prevState)
+  }
+
   console.log({ groupedModules }, ' Render Module')
   const moduleEntries = Object.keys(groupedModules).map((categoryId, i) => {
     const category = groupedModules[categoryId]
-    const entriesDom = category.map((item, i) => {
-      return (
-        <div className="form-check" key={i}>
-          <Checkbox
-            id={`staticanalysismodule_${categoryId}_${i}`}
-            inputType="checkbox"
-            // className="form-check-input staticAnalysisItem"
-            name="staticanalysismodule"
-            // index={item._index}
-            checked={true}
-            itemName={item.name}
-            label={item.description}
-            // style={{ verticalAlign: 'bottom' }}
-            //onClick={event => this.checkModule(event)}
-            onClick={() => {}}
-            onChange={() => {}}
-          />
-          {/* <label
-            htmlFor={`staticanalysismodule_${categoryId}_${i}`}
-            className="form-check-label mb-1"
-          >
-            <p className="mb-0 font-weight-bold text-capitalize">{item.name}</p>
-            ${}
-          </label> */}
-        </div>
-      )
-    })
+    console.log({category}, " category")
+ 
     return (
       <div className="${css.block}" key={i}>
-        <RadioButton
-          onClick={() => {}}
+        <CategorySection
+          onClick={handleCheckCategory}
           category={category}
-          entriesDom={entriesDom}
+          entriesDom={category}
           categoryId={categoryId}
+          checkAll={checkAll}
+         // CheckboxCategory={<Checkbox />}
+          checkAllCategory={checkAllCategory}
         />
         {/* <label
           htmlFor={`heading${categoryId}`}

@@ -3,16 +3,18 @@ import './StaticAnalyserButton.css'
 
 interface StaticAnalyserButtonProps {
   onClick: (event) => void
-  buttonText: string
+  buttonText: string,
+  disabled?: boolean
 }
 
 const StaticAnalyserButton = ({
   onClick,
-  buttonText
+  buttonText,
+  disabled
 }: StaticAnalyserButtonProps) => {
   return (
     <div className="remixui-button-container">
-      <button className="btn btn-sm w-31 btn-primary" onClick={onClick}>
+      <button className="btn btn-sm w-31 btn-primary" onClick={onClick} disabled={disabled}>
         {buttonText}
       </button>
     </div>

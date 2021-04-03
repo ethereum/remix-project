@@ -1,17 +1,10 @@
-import React from 'react'
+import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { ViewPlugin } from '@remixproject/engine-web'
-
 import { EventEmitter } from 'events'
-import RemixUiStaticAnalyser from '../../../../../libs/remix-ui/static-analyser/src/lib/static-analyser'
 import * as packageJson from '../../../../../package.json'
-
-var yo = require('yo-yo')
-var StaticAnalysis = require('./staticanalysis/staticAnalysisView')
-var EventManager = require('../../lib/events')
-
-const StaticAnalysisRunner = require('@remix-project/remix-analyzer')
-  .CodeAnalysis
+// import SourceHighlighter from '../editor/SourceHighlighters'
+import { RefactorRemixAnalyser } from '@remix-ui/static-analyser' // eslint-disable-line
 
 const profile = {
   name: 'solidityStaticAnalysis',
@@ -29,59 +22,62 @@ const profile = {
 }
 
 class AnalysisTab extends ViewPlugin {
-  constructor(registry) {
+  constructor (registry) {
     super(profile)
-    this.event = new EventManager()
     this.events = new EventEmitter()
-    this.runner = new StaticAnalysisRunner()
     this.registry = registry
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'staticAnalyserView')
+    // this.lastCompilationResult = null
+    // this.lastCompilationSource = null
+    // this.isPluginActivated = false
+    // this.renderComponent()
+  }
+
+  onActivation () {
     this.renderComponent()
   }
 
-  render() {
-    this.staticanalysis = new StaticAnalysis(this.registry, this)
-    this.staticanalysis.event.register('staticAnaysisWarning', count => {
-      if (count > 0) {
-        this.emit('statusChanged', {
-          key: count,
-          title: `${count} warning${count === 1 ? '' : 's'}`,
-          type: 'warning'
-        })
-      } else if (count === 0) {
-        this.emit('statusChanged', {
-          key: 'succeed',
-          title: 'no warning',
-          type: 'success'
-        })
-      } else {
-        // count ==-1 no compilation result
-        this.emit('statusChanged', { key: 'none' })
-      }
-    })
-    this.registry.put({ api: this.staticanalysis, name: 'staticanalysis' })
-
-    // return ReactDOM.render(<RemixUiStaticAnalyser />, this.element)
-    return this.element //yo`<div class="px-3 pb-1" id="staticanalysisView">${this.staticanalysis.render()}</div>`
+  render () {
+    return this.element
+    // this.registry.put({ api: this.staticanalysis, name: 'staticanalysis' })
   }
 
-  renderComponent() {
+  renderComponent () {
     ReactDOM.render(
-      <RemixUiStaticAnalyser
+      <RefactorRemixAnalyser
         analysisRunner={this.runner}
-        renderStaticAnalysis={this.renderStaticAnalysis.bind(this)}
-        event={this.event}
-        events={this.events}
         registry={this.registry}
         staticanalysis={this.staticanalysis}
+        // lastCompilationResult={this.lastCompilationResult}
+        // lastCompilationSource={this.lastCompilationSource}
+        analysisModule={this}
       />,
       this.element
     )
   }
 
-  renderStaticAnalysis() {
-    this.staticanalysis.render()
+  listenOnCompilationFinished () {
+    this.on(
+      'solidity',
+      'compilationFinished',
+      (file, source, languageVersion, data) => {
+        console.log('file: ', file, 'source: ', source, languageVersion, data)
+        // self.lastCompilationResult = null
+        // self.lastCompilationSource = null
+        // if (languageVersion.indexOf('soljson') !== 0) return
+        // self.lastCompilationResult = data
+        // self.lastCompilationSource = source
+        // self.currentFile = file
+        // self.correctRunBtnDisabled()
+        // if (
+        //   self.view &&
+        //   self.view.querySelector('#autorunstaticanalysis').checked
+        // ) {
+        //   self.run()
+        // }
+      }
+    )
   }
 }
 

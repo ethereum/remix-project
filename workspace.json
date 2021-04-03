@@ -54,7 +54,7 @@
           "builder": "@nrwl/web:dev-server",
           "options": {
             "buildTarget": "remix-ide:build",
-            "port": 8080,
+            "port": 8081,
             "exclude": [
               "**/node_modules/**",
               "apps/remix-ide/build/**/*.js",

@@ -15,6 +15,7 @@ export interface RemixUiStaticAnalyserProps {
 
 export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [modules, setModules] = useState({})
+  const [checkAllModules, setCheckAllModules] = useState(false)
 
   const preProcessModules = (arr: any) => {
     return arr.map((Item, i) => {
@@ -31,18 +32,26 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     'categoryId'
   )
 
+  const run = () => {
+   console.log(props.staticanalysis, 'static analysis')
+  }
+
+  const handleCheckAllModules = () => {
+    
+    // console.log(event.target.checked)
+    setCheckAllModules(prevState => !prevState)
+  }
+
   const staticAnalysisViewRender = (groupedModules: any) => (
     <div>
       <div className="my-2 d-flex flex-column align-items-left">
         <div className="${``} d-flex justify-content-between">
-          <div className="${``}">
+          <div className="${``}" onClick={handleCheckAllModules}>
             <CheckBox
               id="checkAllEntries"
               inputType="checkbox"
-              onClick={() => {}}
-              checked={true}
+              checked={checkAllModules}
               label="Select all"
-              onChange={() => {}}
             />
           </div>
           <div className="${``}">
@@ -52,14 +61,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               onClick={() => {}}
               checked={true}
               label="Autorun"
-              onChange={() => {}}
             />
           </div>
-          <Button buttonText="Run" onClick={() => {}} />
+          <Button buttonText="Run" onClick={run} />
         </div>
       </div>
       <div id="staticanalysismodules" className="list-group list-group-flush">
-        <RenderModules groupedModules={groupedModules} />
+        <RenderModules groupedModules={groupedModules} checkAll={checkAllModules} checkAllCategory={true} />
         {/* ${``}this.modulesView */}
       </div>
       <div className="mt-2 p-2 d-flex border-top flex-column">
@@ -78,7 +86,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   )
   return (
     <div>
-      {console.log({ groupedModules })}
       {staticAnalysisViewRender(groupedModules)}
     </div>
   )
