@@ -195,9 +195,9 @@ class ContextualListener extends Plugin {
         const fnName = node.name
         const fn = fnName + this._getInputParams(node)
         if (visibility === 'public' || visibility === 'external') {
-          executionCost = this.estimationObj.external[fn]
+          executionCost = this.estimationObj === null ? '-' : this.estimationObj.external[fn]
         } else if (visibility === 'private' || visibility === 'internal') {
-          executionCost = this.estimationObj.internal[fn]
+          executionCost = this.estimationObj === null ? '-' : this.estimationObj.internal[fn]
         }
       } else {
         executionCost = this.creationCost
@@ -215,8 +215,8 @@ class ContextualListener extends Plugin {
         const contract = this.nodes[i]
         this.contract = this.results.data.contracts[this.results.source.target][contract.name]
         this.estimationObj = this.contract.evm.gasEstimates
-        this.creationCost = this.estimationObj === null ? '<not applicable>' : this.estimationObj.creation.totalCost
-        this.codeDepositCost = this.estimationObj === null ? '<not applicable>' : this.estimationObj.creation.codeDepositCost
+        this.creationCost = this.estimationObj === null ? '-' : this.estimationObj.creation.totalCost
+        this.codeDepositCost = this.estimationObj === null ? '-' : this.estimationObj.creation.codeDepositCost
       }
     }
   }
