@@ -399,6 +399,7 @@ export class LandingPage extends ViewPlugin {
     const switchToPreviousVersion = () => {
       const query = new QueryParams()
       query.update({ appVersion: '0.7.7' })
+      _paq.push(['trackEvent', 'LoadingType', 'oldExperience_0.7.7'])
       document.location.reload()
     }
 
