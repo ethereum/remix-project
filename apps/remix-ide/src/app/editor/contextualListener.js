@@ -215,8 +215,8 @@ class ContextualListener extends Plugin {
         const contract = this.nodes[i]
         this.contract = this.results.data.contracts[this.results.source.target][contract.name]
         this.estimationObj = this.contract.evm.gasEstimates
-        this.creationCost = this.estimationObj.creation.totalCost
-        this.codeDepositCost = this.estimationObj.creation.codeDepositCost
+        this.creationCost = this.estimationObj === null ? '<not applicable>' : this.estimationObj.creation.totalCost
+        this.codeDepositCost = this.estimationObj === null ? '<not applicable>' : this.estimationObj.creation.codeDepositCost
       }
     }
   }
