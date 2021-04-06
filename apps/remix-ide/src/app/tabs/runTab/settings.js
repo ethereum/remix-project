@@ -390,14 +390,15 @@ class SettingsUI {
   }
 
   // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
-  fillAccountsList () {
+  async fillAccountsList () {
     this.accountListCallId++
-    var callid = this.accountListCallId
-    var txOrigin = this.el.querySelector('#txorigin')
-    this.blockchain.getAccounts((err, accounts) => {
+    const callid = this.accountListCallId
+    const txOrigin = this.el.querySelector('#txorigin')
+    try {
+      let accounts = await this.blockchain.getAccounts()
       if (this.accountListCallId > callid) return
       this.accountListCallId++
-      if (err) { addTooltip(`Cannot get account list: ${err}`) }
+      if (!accounts) accounts = []
       for (var loadedaddress in this.loadedAccounts) {
         if (accounts.indexOf(loadedaddress) === -1) {
           txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
@@ -405,14 +406,16 @@ class SettingsUI {
         }
       }
       for (var i in accounts) {
-        var address = accounts[i]
+        const address = accounts[i]
         if (!this.loadedAccounts[address]) {
           txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
           this.loadedAccounts[address] = 1
         }
       }
       txOrigin.setAttribute('value', accounts[0])
-    })
+    } catch (e) {
+      addTooltip(`Cannot get account list: ${e}`)
+    }
   }
 }
 
