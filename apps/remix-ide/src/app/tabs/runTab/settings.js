@@ -394,28 +394,29 @@ class SettingsUI {
     this.accountListCallId++
     const callid = this.accountListCallId
     const txOrigin = this.el.querySelector('#txorigin')
+    let accounts = []
     try {
-      let accounts = await this.blockchain.getAccounts()
-      if (this.accountListCallId > callid) return
-      this.accountListCallId++
-      if (!accounts) accounts = []
-      for (var loadedaddress in this.loadedAccounts) {
-        if (accounts.indexOf(loadedaddress) === -1) {
-          txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
-          delete this.loadedAccounts[loadedaddress]
-        }
-      }
-      for (var i in accounts) {
-        const address = accounts[i]
-        if (!this.loadedAccounts[address]) {
-          txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
-          this.loadedAccounts[address] = 1
-        }
-      }
-      txOrigin.setAttribute('value', accounts[0])
+      accounts = await this.blockchain.getAccounts()
     } catch (e) {
       addTooltip(`Cannot get account list: ${e}`)
     }
+    if (!accounts) accounts = []
+    if (this.accountListCallId > callid) return
+    this.accountListCallId++
+    for (var loadedaddress in this.loadedAccounts) {
+      if (accounts.indexOf(loadedaddress) === -1) {
+        txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
+        delete this.loadedAccounts[loadedaddress]
+      }
+    }
+    for (var i in accounts) {
+      const address = accounts[i]
+      if (!this.loadedAccounts[address]) {
+        txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
+        this.loadedAccounts[address] = 1
+      }
+    }
+    txOrigin.setAttribute('value', accounts[0])
   }
 }
 
