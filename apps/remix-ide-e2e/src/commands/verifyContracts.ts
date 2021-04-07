@@ -1,4 +1,4 @@
-import { NightwatchBrowser   } from 'nightwatch'
+import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class VerifyContracts extends EventEmitter {
