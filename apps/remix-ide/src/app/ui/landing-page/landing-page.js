@@ -466,9 +466,21 @@ export class LandingPage extends ViewPlugin {
           <div class="d-flex justify-content-between">
             <div class="d-flex flex-column">
               <div class="border-bottom d-flex justify-content-between clearfix py-3 mb-4">
-                <div class="mx-4 w-100">
+                <div class="mx-4 w-100 d-flex">
                   ${img}
                   <audio id="remiAudio" muted=false src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"></audio>
+                  <div class="w-80 pl-5">
+                    <h6 class="mb-0">Issues with File Explorer?</h6>
+                    <li>use [Migrate File system] tool</p>
+                    <p class="mb-0">or</p>
+                    <li>[Download your old files] in a zip manully</li>
+                    <li>Use [UploadZipp] tool to load them in your current workspace</li>
+                    <br>
+                    <h6 class="mb-0">Still not working?</h6>
+                    <li>find help in [Gitter Channel]</li>
+                    <p class="mb-0">or</p>
+                    <li>Open an issue in [GithubIssues]</li>
+                  </div>
                 </div>
               </div>
               <div class="row ${css.hpSections} mx-4" data-id="landingPageHpSections">
