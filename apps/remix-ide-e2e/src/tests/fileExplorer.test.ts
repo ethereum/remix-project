@@ -1,11 +1,10 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 import * as path from 'path'
 
 const testData = {
-  testFile1: path.resolve(__dirname + '/editor.test.js'), // eslint-disable-line
+  testFile1: path.resolve(__dirname + '/editor.spec.js'), // eslint-disable-line
   testFile2: path.resolve(__dirname + '/fileExplorer.test.js'), // eslint-disable-line
   testFile3: path.resolve(__dirname + '/generalSettings.test.js') // eslint-disable-line
 }
@@ -69,7 +68,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
       .rightClick('[data-path="Browser_E2E_Tests"]')
       .click('*[id="menuitemdelete"]')
-      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
+      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]', 60000)
       .pause(2000)
       .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
@@ -82,11 +81,11 @@ module.exports = {
       .pause(10000)
       .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
-      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
+      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]', 60000)
       .pause(2000)
       .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
       .pause(2000)
-      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
+      .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]', 60000)
       .pause(2000)
       .click('*[data-id="default_workspaceModalDialogContainer-react"] .modal-ok')
       .pause(2000)
@@ -105,11 +104,9 @@ module.exports = {
       .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile1)
       .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile2)
       .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile3)
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemeditor.test.js"]')
+      .waitForElementVisible('[data-id="treeViewLitreeViewItemeditor.spec.js"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemfileExplorer.test.js"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemgeneralSettings.test.js"]')
       .end()
-  },
-
-  tearDown: sauce
+  }
 }

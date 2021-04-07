@@ -2,7 +2,6 @@
 
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 import examples from '../examples/example-contracts'
 
 const sources = [
@@ -90,9 +89,7 @@ module.exports = {
       .journalLastChildIncludes('Ballot.delegate(address)')
       .journalLastChildIncludes('data: 0x5c1...a733c')
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
 
 const ballotABI = `[
