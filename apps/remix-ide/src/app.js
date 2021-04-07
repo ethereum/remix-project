@@ -480,6 +480,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
           appManager.call(...callDetails).catch(console.error)
         }
       }
+      appManager.finishActivation()
     }).catch(console.error)
   } else {
     // activate solidity plugin

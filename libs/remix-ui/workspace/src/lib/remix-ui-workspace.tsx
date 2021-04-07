@@ -44,6 +44,10 @@ export const Workspace = (props: WorkspaceProps) => {
   props.plugin.resetUploadFile = () => {}
 
   /* implement an external API, consumed by the parent */
+  props.request.setWorkspace = (name: string) => {
+    setWorkspace(name)
+  }
+
   props.request.createWorkspace = () => {
     return createWorkspace()
   }

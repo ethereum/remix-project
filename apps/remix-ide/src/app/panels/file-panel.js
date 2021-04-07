@@ -48,6 +48,7 @@ module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
     this.event = new EventManager()
+    this.appManager = appManager
     this._components = {}
     this._components.registry = globalRegistry
     this._deps = {
@@ -136,6 +137,18 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async initWorkspace () {
+    this.on('manager', 'activationFinished', () => {
+      this.on('manager', 'pluginActivated', async (profile) => {
+        if (profile.name === 'LearnEth') {
+          const name = "learneth"
+          if (!this.workspaces.includes(name)) {
+            await this.processCreateWorkspace(name)
+            this.getWorkspaces()
+          }
+          return await this.request.setWorkspace(name)
+        }
+      })
+    })
     const queryParams = new QueryParams()
     const gistHandler = new GistHandler()
     const params = queryParams.get()
