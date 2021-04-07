@@ -22,6 +22,7 @@ const css = csjs`
     user-select: none;
   }
   .text:hover {
+    cursor: pointer;
     text-decoration: underline;
   }
   .homeContainer {
@@ -471,15 +472,29 @@ export class LandingPage extends ViewPlugin {
                   <audio id="remiAudio" muted=false src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"></audio>
                   <div class="w-80 pl-5">
                     <h6 class="mb-0">Issues with File Explorer?</h6>
-                    <li>use [Migrate File system] tool</p>
+                    <span class="d-flex">
+                      <li>use</li>
+                      <u class="${css.text} px-1" onclick=${() => migrateWorkspace()}>Migrate File system</u>
+                      <span>tool</span>
+                    </span>
                     <p class="mb-0">or</p>
-                    <li>[Download your old files] in a zip manully</li>
-                    <li>Use [UploadZipp] tool to load them in your current workspace</li>
+                    <span class="d-flex">
+                      <li>manually</li>
+                      <u class="${css.text} px-1" onclick=${() => downloadFiles()}>Download all Files</u>
+                      <span>as a zip</span>
+                    </span>
+                    <li>use [UploadZipp] tool to load them in your current workspace</li>
                     <br>
                     <h6 class="mb-0">Still not working?</h6>
-                    <li>find help in [Gitter Channel]</li>
+                    <span class="d-flex">
+                      <li>find help in</li>
+                        <a class="${css.text} mx-1" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
+                    </span>
                     <p class="mb-0">or</p>
-                    <li>Open an issue in [GithubIssues]</li>
+                    <span class="d-flex">
+                      <li>open an issue in</li>
+                        <a class="${css.text} mx-1" target="__blank" href="https://github.com/ethereum/remix-project/issues">Github</a>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -541,7 +556,7 @@ export class LandingPage extends ViewPlugin {
                       <p class="mb-1">
                         <i class="mr-1 fab fa-gitter"></i>
                         <a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
-                        </p>
+                      </p>
                       <p class="mb-1">
                         ${this.websiteIcon}
                         <a class="${css.text}" target="__blank" href="https://remix-project.org">Featuring website</a>
