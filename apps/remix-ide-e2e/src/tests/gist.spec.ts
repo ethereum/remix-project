@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 const testData = {
   validGistId: '1859c97c6e1efc91047d725d5225888e',
@@ -123,7 +122,5 @@ module.exports = {
       .waitForElementVisible(`div[title='default_workspace/${testData.validGistId}/ApplicationRegistry']`)
       .assert.containsText(`div[title='default_workspace/${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
       .end()
-  },
-
-  tearDown: sauce
+  }
 }

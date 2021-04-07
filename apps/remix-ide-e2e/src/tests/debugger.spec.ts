@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
 
@@ -209,9 +208,7 @@ module.exports = {
     */
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
 
 const sources = [
