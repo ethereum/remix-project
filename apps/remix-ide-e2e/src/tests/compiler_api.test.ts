@@ -2,7 +2,6 @@
 
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 import examples from '../examples/example-contracts'
 
 const sources = [
@@ -58,9 +57,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .waitForElementContainsText('*[data-id="compiledErrors"]', 'CompilerError: Stack too deep when compiling inline assembly: Variable headStart is 1 slot(s) too deep inside the stack.', 60000)
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
 
 const simpleContract = `pragma solidity >=0.4.22 <0.9.1;
