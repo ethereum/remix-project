@@ -1,79 +1,43 @@
-# Release process 
+# Release Management
 
-This document includes:
- - how to publish remix libs to NPM
- - how to update remix.ethereum.org
- - how to update remix-alpha.ethereum.org
- - how to release remix IDE
+Release managers are responsible for the release management lifecycle, focusing on coordinating various aspects of production and projects into one integrated solution. They are responsible for ensuring that resources, timelines, and the overall quality of the process are all considered and accounted for. 
 
-## Remix libs release
- - git fetch origin master
- - git checkout origin/master
- - git checkout -b bumpLibsVersion
- - npm run publish:libs (this command uses lerna)
- - commit
+# Steps of Release Management
 
-## Remix IDE release Part 1. First push master to beta. Feature Freeze
- - git co -b remix_beta origin/remix_beta
- - git reset --hard -master-commit-hash-
- - git push -f origin remix_beta
- 
-## Testing phase
-## In case of fixing bugs push PR's also to beta to include in Release
- 
-## Remix IDE release Part 2. Bump the version in beta and release
+## Release planning: 
+In this stage, release manager will elaborate a plan for the coming release. 
+Together with the team, the release manager will form a list of issues and PRs that should be addressed during the release.
+More generally and a non negligeable part of the planning is to properly ensure that bugs, issues that weren't totally identified in the roadmap, and the roadmap issues are still being processed as they should.
 
- - git fetch origin remix_beta
- - git checkout origin/remix_beta
- - git checkout -b bumpVersion
- - update package.json version
- - remove package-lock.json version and generate a new one with `npm install`
- - merge PR to origin/remix_beta
- - git fetch origin remix_beta
- - git checkout origin/remix_beta
- - git tag v(version-number)
- - git push --tags
- - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --branch remix_beta --only-merges --between-tags previous_version...next_version
- - publish a release in github using the changelog
- 
-## Remix IDE release Part 3. Bump dev branch (master)
+## Configuring releases: 
+Release managers will oversee the various aspects of a project before it is due to be deployed, ensuring everyone is on track and meeting the agreed timeline.
 
- - git fetch origin master
- - git checkout origin/master
- - git checkout -b bumpDevVersion
- - update package.json version: bump the version and add the tag `dev` if not already present.
- - remove package-lock.json version and generate a new one with `npm install`
- - create a PR and merge it to origin/master
- 
-## Remix IDE release Part 4. remix.ethereum.org update
+## Quality Checks:
+The quality of the release needs to be reviewed before a project is officially launched.
+The release manager is in charge of ensuring manual testing is properly planned and done.
+Also that unit testing and e2e for new feaures have been included.
 
-This is not strictly speaking a release. Updating the remix site is done through the Travis build:
+## Deployment: 
+After being quality checked, the project is ready to be deployed. 
+The release manager is still responsible for ensuring a project is rolled out smoothly and efficiently.
 
- - git co -b remix_live origin/remix_live
- - git reset --hard -master-commit-hash- (or remix_beta-commit-hash-)
- - git push -f origin remix_live
 
- CircleCI will build automaticaly and remix.ethereum.org will be updated
+# Responsibilities
 
-##  Remix IDE release Part 5. Update Zip in release
- - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
- 
-## Remix-ide beta release
- - git fetch origin master
- - git checkout origin/master
- - git checkout -b bumpVersion
- - update package.json version to the new version "vx.x.x-beta.1"
- - remove package-lock/json version and generate a new one with `npm install`
- - merge PR
- - git fetch origin master
- - git checkout origin/master
- - git tag v(version-number) (with "vx.x.x-beta.1")
- - git push --tags
- - github-changes -o ethereum -r remix-project -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
- - publish a beta release in github using the changelog
- - drop zip file to the beta release (from https://github.com/ethereum/remix-live-alpha)
- 
-## remix-alpha.ethereum.org update
+ - Planning release windows and the overall release lifecycle.
+ - Managing risks that may affect release scope.
+ - Measure and monitor progress.
+ - Ensure releases are delivered within requirements.
+ - Manage relationships and coordinate projects.
 
-remix-alpha.ethereum.org is automaticaly updated every time commits are pushed to master
- 
+# Miscellaneous
+
+ - Regular check for new filed issues, identify those that requires to be published (included in the release)
+ - In some really specific situation, it could be required to deploy intermediate releases (e.g critical bug fixes).
+ - Planning, refinement, retrospective meetings have to be organized by the release manager and any other required meetings.
+ - Release manager should feel free to implement new techniques and put their own finger print to their release, this could potentially benefit upcoming releases.
+
+
+# Release Management Role
+
+Aniket, Liana, David, Rob, Filip
