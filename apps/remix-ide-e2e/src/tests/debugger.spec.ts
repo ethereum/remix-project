@@ -19,7 +19,7 @@ module.exports = {
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
       .click('*[title="Deploy - transact (not payable)"]')
       .debugTransaction(0)
-      .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER')
+      .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
   },
 
   'Should debug failing transaction': function (browser: NightwatchBrowser) {
@@ -33,8 +33,8 @@ module.exports = {
       .debugTransaction(1)
       .pause(2000)
       .scrollAndClick('*[data-id="solidityLocals"]')
-      .assert.containsText('*[data-id="solidityLocals"]', 'toast')
-      .assert.containsText('*[data-id="solidityLocals"]', '999')
+      .waitForElementContainsText('*[data-id="solidityLocals"]', 'toast', 60000)
+      .waitForElementContainsText('*[data-id="solidityLocals"]', '999', 60000)
   },
 
   'Should debug transaction using slider': function (browser: NightwatchBrowser) {
@@ -45,8 +45,8 @@ module.exports = {
       .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
       .pause(2000)
       .click('*[data-id="dropdownPanelSolidityLocals"]')
-      .assert.containsText('*[data-id="solidityLocals"]', 'no locals')
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n51')
+      .waitForElementContainsText('*[data-id="solidityLocals"]', 'no locals', 60000)
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n51', 60000)
   },
 
   'Should step back and forward transaction': function (browser: NightwatchBrowser) {
@@ -54,12 +54,12 @@ module.exports = {
       .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
       .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
       .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n50')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n50')
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n50', 60000)
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n50', 60000)
       .click('*[data-id="buttonNavigatorIntoForward"]')
       .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n51')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n51')
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n51', 60000)
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n51', 60000)
   },
 
   'Should jump through breakpoints': function (browser: NightwatchBrowser) {
@@ -69,12 +69,12 @@ module.exports = {
       .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .pause(2000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n0')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n0')
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n0', 60000)
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n0', 60000)
       .click('*[data-id="buttonNavigatorJumpNextBreakpoint"]')
       .pause(10000)
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n348')
-      .assert.containsText('*[data-id="stepdetail"]', 'execution step:\n348')
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n348', 60000)
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'execution step:\n348', 60000)
   },
 
   'Should display solidity imported code while debugging github import': function (browser: NightwatchBrowser) {
@@ -159,7 +159,7 @@ module.exports = {
       .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
       .click('*[data-id="treeViewDivtreeViewItemarray"]')
       .waitForElementPresent('*[data-id="treeViewDivtreeViewLoadMore"]')
-      .assert.containsText('*[data-id="solidityLocals"]', '9: 9 uint256')
+      .waitForElementContainsText('*[data-id="solidityLocals"]', '9: 9 uint256', 60000)
       .notContainsText('*[data-id="solidityLocals"]', '10: 10 uint256')
   },
 
@@ -207,7 +207,7 @@ module.exports = {
       => There is something going wrong with the nightwatch API here.
       As we are only testing if debugger is active, this is ok to keep that for now.
     */
-      .assert.containsText('*[data-id="stepdetail"]', 'vm trace step:\n154')
+      .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
       .end()
   },
 
