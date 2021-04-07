@@ -26,6 +26,9 @@ function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS
 }
 
 (async () => {
+  const { version } = require('../package.json')
+  program.version(version, '-v, --version')
+
   program
     .usage('-s <shared folder>')
     .description('Provide a two-way connection between the local computer and Remix IDE')
