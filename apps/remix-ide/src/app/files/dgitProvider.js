@@ -6,8 +6,10 @@ import {
 import git from 'isomorphic-git'
 import IpfsHttpClient from 'ipfs-http-client'
 import { saveAs } from 'file-saver'
+
 const JSZip = require('jszip')
 const path = require('path')
+
 
 const profile = {
   name: 'dGitProvider',
@@ -28,6 +30,7 @@ class DGitProvider extends Plugin {
       protocol: 'https',
       ipfsurl: 'https://ipfsgw.komputing.org/ipfs/'
     }
+
   }
 
   async getGitConfig () {
@@ -180,6 +183,8 @@ class DGitProvider extends Plugin {
   }
 
   async pull (cmd) {
+    const permission = await this.askUserPermission('pull', 'Import multiple files into your workspaces.')
+    if (!permission) return false
     const cid = cmd.cid
     if (!this.checkIpfsConfig()) return false
     await this.call('fileExplorers', 'createWorkspace', `workspace_${Date.now()}`, false)
