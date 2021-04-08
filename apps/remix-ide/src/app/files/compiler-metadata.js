@@ -29,6 +29,28 @@ class CompilerMetadata extends Plugin {
     return joinPath(path, this.innerPath, contractName + '_metadata.json')
   }
 
+  createHardhatArtifacts (compiledContract, provider) {
+    const contract = compiledContract
+    var hhArtifactsFileName = joinPath('artifacts',contract.file, contract.name + '.json')
+    const hhArtifactsdata = {
+      '_format': 'hh-sol-artifact-1',
+      'contractName': contract.name,
+      'sourceName': contract.file,
+      'abi': contract.object.abi,
+      'bytecode': contract.object.evm.bytecode.object,
+      'deployedBytecode': contract.object.evm.deployedBytecode.object,
+      'linkReferences': contract.object.evm.bytecode.linkReferences,
+      'deployedLinkReferences': contract.object.evm.deployedBytecode.linkReferences,
+    }
+    provider.set(hhArtifactsFileName, JSON.stringify(hhArtifactsdata, null, '\t'))
+
+    var hhArtifactsDbgFileName = joinPath('artifacts',contract.file, contract.name + '.dbg.json')
+    const hhArtifactsDbgdata = {
+      '_format': 'hh-sol-dbg-1',
+    }
+    provider.set(hhArtifactsDbgFileName, JSON.stringify(hhArtifactsDbgdata, null, '\t'))
+  }
+
   onActivation () {
     var self = this
     this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
@@ -58,6 +80,7 @@ class CompilerMetadata extends Plugin {
               })
 
               let parsedMetadata
+              self.createHardhatArtifacts(contract, provider)
               try {
                 parsedMetadata = JSON.parse(contract.object.metadata)
               } catch (e) {
