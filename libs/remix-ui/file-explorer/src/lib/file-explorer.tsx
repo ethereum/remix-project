@@ -515,6 +515,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     // the files module. Please ask the user here if they want to overwrite
     // a file and then just use `files.add`. The file explorer will
     // pick that up via the 'fileAdded' event from the files module.
+    const parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    const expandPath = [...new Set([...state.expandPath, parentFolder])]
+
+    setState(prevState => {
+      return { ...prevState, expandPath }
+    });
 
     [...target.files].forEach((file) => {
       const loadFile = (name: string): void => {
@@ -545,7 +551,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
         fileReader.readAsText(file)
       }
-      const name = file.name
+      const name = `${parentFolder}/${file.name}`
 
       filesProvider.exists(name, (error, exist) => {
         if (error) console.log(error)
@@ -995,6 +1001,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             <div onClick={(e) => {
               e.stopPropagation()
               if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerUploadFileuploadFile') return // we don't want to let propagate the input of type file
+
               let expandPath = []
 
               if (!state.expandPath.includes(props.name)) {
