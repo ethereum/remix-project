@@ -28,7 +28,10 @@ function verifyContracts (browser: NightwatchBrowser, compiledContractNames: str
           .waitForElementVisible('*[data-id="treeViewLicompiler/version"]')
           .assert.containsText('*[data-id="treeViewLicompiler/version"]', `version:\n ${opts.version}`)
           .modalFooterCancelClick()
-          .perform(done)
+          .perform(() => {
+            done()
+            callback()
+          })
       } else {
         compiledContractNames.forEach((name) => {
           browser.waitForElementContainsText('[data-id="compiledContracts"]', name, 60000)
