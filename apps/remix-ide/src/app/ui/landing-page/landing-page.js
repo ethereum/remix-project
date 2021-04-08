@@ -301,6 +301,11 @@ export class LandingPage extends ViewPlugin {
       await this.appManager.activatePlugin('pluginManager')
       this.verticalIcons.select('pluginManager')
     }
+    const startRestoreBackupZip = async () => {
+      await this.appManager.activatePlugin(['restoreBackupZip'])
+      this.verticalIcons.select('restoreBackupZip')
+      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restoreBackupZip'])
+    }
 
     const createNewFile = () => {
       this.call('fileExplorers', 'createNewFile')
@@ -457,7 +462,7 @@ export class LandingPage extends ViewPlugin {
       )
     }
 
-    const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
+    const img = yo`<img class="m-4 ${css.logoImg}" src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
     const playRemi = async () => { await document.getElementById('remiAudio').play() }
     // to retrieve medium posts
     document.body.appendChild(yo`<script src="https://www.twilik.com/assets/retainable/rss-embed/retainable-rss-embed.js"></script>`)
@@ -470,31 +475,29 @@ export class LandingPage extends ViewPlugin {
                 <div class="mx-4 w-100 d-flex">
                   ${img}
                   <audio id="remiAudio" muted=false src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"></audio>
-                  <div class="w-80 pl-5">
-                    <h6 class="mb-0">Issues with File Explorer?</h6>
-                    <span class="d-flex">
-                      <li>use</li>
-                      <u class="${css.text} px-1" onclick=${() => migrateWorkspace()}>Migrate File system</u>
-                      <span>tool</span>
-                    </span>
-                    <p class="mb-0">or</p>
-                    <span class="d-flex">
-                      <li>manually</li>
+                  <div class="w-80 pl-5 ml-5">
+                    <h6 class="mb-1">Quicklinks</h6>
+                    <spam class="pl-0">
+                      <u class="${css.text} pr-1" onclick=${() => migrateWorkspace()}>Migrate File system</u>
+                      to workspace
+                    </spam>
+                    <p class="font-weight-bold mb-0">2-step solution:</p>
+                    <li class="pl-1">
+                      manually
                       <u class="${css.text} px-1" onclick=${() => downloadFiles()}>Download all Files</u>
-                      <span>as a zip</span>
-                    </span>
-                    <li>use [UploadZipp] tool to load them in your current workspace</li>
-                    <br>
-                    <h6 class="mb-0">Still not working?</h6>
-                    <span class="d-flex">
-                      <li>find help in</li>
-                        <a class="${css.text} mx-1" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
-                    </span>
-                    <p class="mb-0">or</p>
-                    <span class="d-flex">
-                      <li>open an issue in</li>
-                        <a class="${css.text} mx-1" target="__blank" href="https://github.com/ethereum/remix-project/issues">Github</a>
-                    </span>
+                      as a backup zip
+                    </li>
+                    <li class="pl-1">
+                      use
+                      <u class="${css.text} px-1" onclick=${() => startRestoreBackupZip()}>Restore Backup Zip</u>
+                      to current workspace
+                    </li>
+                    <p class="font-weight-bold mb-0 mt-2">Help:</p>
+                    <dir class="d-flex flex-column mt-1 pl-0">
+                      <a class="${css.text} mx-1" target="__blank" href=" https://medium.com/remix-ide/migrating-files-to-workspaces-8e34737c751c">Guide for migrating the File System to workspace</a>
+                      <a class="${css.text} mx-1" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
+                      <a class="${css.text} mx-1" target="__blank" href="https://github.com/ethereum/remix-project/issues">Report on Github</a>
+                    </dir>
                   </div>
                 </div>
               </div>
@@ -522,21 +525,16 @@ export class LandingPage extends ViewPlugin {
                         <i class="mr-1 far fa-file-alt"></i>
                         <label class="ml-1 ${css.labelIt} ${css.bigLabelSize} ${css.text}">
                           Open Files
-                          <input title="open file" type="file" onchange="${
-                            (event) => {
-                              event.stopPropagation()
-                              uploadFile(event.target)
-                            }
-                          }" multiple />
+                          <input title="open file" type="file" onchange="${(event) => {
+                            event.stopPropagation()
+                            uploadFile(event.target)
+                          }
+                        }" multiple />
                         </label>
                       </p>
                       <p class="mb-1">
                         <i class="far fa-hdd"></i>
                         <span class="ml-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
-                      </p>
-                      <p class="mb-1">
-                        <i class="mr-1 fas fa-download""></i>
-                        <span class="ml-1 mb-1 ${css.text}" onclick=${() => downloadFiles()}>Download all Files</span>
                       </p>
                       <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
                       <div class="btn-group">
@@ -564,10 +562,6 @@ export class LandingPage extends ViewPlugin {
                       <p class="mb-1">
                         <i class="fab fa-ethereum ${css.image}"></i>
                         <span class="${css.text}" onclick=${() => switchToPreviousVersion()}>Old experience</span>
-                      </p>
-                      <p>
-                        <i class="fas fa-exclamation-triangle text-warning ${css.image}"></i>
-                        <span class="${css.text}" onclick=${() => migrateWorkspace()}>Migrate old filesystem to workspace</span>
                       </p>
                     </div>
                   </div>
