@@ -62,7 +62,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 20
+    parallelism: 10
     steps:
       - checkout
       - run: npm install
@@ -96,7 +96,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 20
+    parallelism: 10
     steps:
       - checkout
       - run: npm install
@@ -130,7 +130,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 20
+    parallelism: 10
     steps:
       - checkout
       - run: npm install
@@ -170,7 +170,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 20
+    parallelism: 10
     steps:
       - checkout
       - run: npm install
