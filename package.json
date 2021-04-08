@@ -64,7 +64,7 @@
     "nightwatch_local_recorder": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/recorder.spec.js --env=chrome",
     "nightwatch_local_transactionExecution": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/transactionExecution.test.js --env=chrome",
     "nightwatch_local_staticAnalysis": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/staticAnalysis.test.js --env=chrome",
-    "nightwatch_local_signingMessage": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/signingMessage.test.js --env=chrome",
+    "nightwatch_local_signingMessage": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/signingMessage.test.js --env=firefox",
     "nightwatch_local_specialFunctions": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/specialFunctions.test.js --env=chrome",
     "nightwatch_local_solidityUnitTests": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/solidityUnittests.test.js --env=chrome",
     "nightwatch_local_remixd": "npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/remixd.test.js --env=chrome",
