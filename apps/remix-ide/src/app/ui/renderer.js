@@ -131,7 +131,7 @@ Renderer.prototype.error = function (message, container, opt) {
   var $pre = $(opt.useSpan ? yo`<span></span>` : yo`<pre></pre>`).html(message)
 
   const classList = opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning'
-  var $error = $(yo`<div class="sol ${opt.type} ${classList}"><div class="close" data-id="renderer"><i class="fas fa-times"></i></div></div>`).prepend($pre)
+  var $error = $(yo`<div class="sol ${opt.type} ${classList}" data-id="${opt.errFile}"><div class="close" data-id="renderer"><i class="fas fa-times"></i></div></div>`).prepend($pre)
   $(container).append($error)
 
   $error.click((ev) => {
