@@ -994,6 +994,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           label={
             <div onClick={(e) => {
               e.stopPropagation()
+              if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerUploadFileuploadFile') return // we don't want to let propagate the input of type file
               let expandPath = []
 
               if (!state.expandPath.includes(props.name)) {
