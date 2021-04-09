@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -88,8 +87,7 @@ module.exports = {
       .clickLaunchIcon('fileExplorers')
       .verifyContracts(['test13', 'ERC20'], { wait: 30000 })
       .end()
-  },
-  tearDown: sauce
+  }
 }
 
 const sources = [

@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 const sources = [
   {
@@ -49,7 +48,5 @@ module.exports = {
         elem.checked = false
       })
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
