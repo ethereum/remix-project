@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 import examples from '../examples/example-contracts'
 
 const sources = [
@@ -45,7 +44,5 @@ module.exports = {
           'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
         })
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
