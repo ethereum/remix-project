@@ -66,8 +66,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run build:libs      
-      - run: npm run build
+      - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
@@ -100,8 +99,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run build:libs      
-      - run: npm run build
+      - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
@@ -134,8 +132,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run build:libs
-      - run: npm run build
+      - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
@@ -143,12 +140,6 @@ jobs:
           name: Start Selenium
           command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
           background: true
-      - run:
-          name: Download Latest Firefox
-          command: sudo apt-get purge -y firefox && wget https://sourceforge.net/projects/ubuntuzilla/files/mozilla/apt/pool/main/f/firefox-mozilla-build/firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      - run:
-          name: Install Firefox
-          command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
       - run: ./apps/remix-ide/ci/browser_tests_firefox_1.sh
       - store_test_results:
           path: ./reports/tests
@@ -174,8 +165,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run build:libs
-      - run: npm run build
+      - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
@@ -183,12 +173,6 @@ jobs:
           name: Start Selenium
           command: ./node_modules/.bin/selenium-standalone start --config=../remix-project/apps/remix-ide-e2e/seleniumConfig.js
           background: true
-      - run:
-          name: Download Latest Firefox
-          command: sudo apt-get purge -y firefox && wget https://sourceforge.net/projects/ubuntuzilla/files/mozilla/apt/pool/main/f/firefox-mozilla-build/firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
-      - run:
-          name: Install Firefox
-          command: sudo dpkg -i firefox-mozilla-build_73.0.1-0ubuntu1_amd64.deb
       - run: ./apps/remix-ide/ci/browser_tests_firefox_2.sh
       - store_test_results:
           path: ./reports/tests
@@ -214,8 +198,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run build:libs
-      - run: npm run build
+      - run: npx nx build remix-ide --with-deps
       - run:
           name: Download Selenium
           command: ./node_modules/.bin/selenium-standalone install --drivers.chrome.version=2.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
@@ -249,8 +232,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run build:libs
-      - run: npm run build
+      - run: npx nx build remix-ide --with-deps
       - run: 
           name: Deploy
           command: |
@@ -278,8 +260,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: npm install
-      - run: npm run build:libs
-      - run: npm run build
+      - run: npx nx build remix-ide --with-deps
       - run: ./apps/remix-ide/ci/copy_resources.sh     
       - run: ./apps/remix-ide/ci/publishIpfs
       - run: ./apps/remix-ide/ci/build_and_publish_docker_images.sh
@@ -303,9 +284,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run lint
-      - run: npm run build:libs
-      - run: npm run build
+      - run: npx nx build remix-ide --with-deps
       - run: 
           name: Deploy
           command: |
