@@ -345,11 +345,7 @@ workflows:
             - remix-libs
       - publish:
           requires:
-            - remix-ide-chrome-1
-            - remix-ide-chrome-2
-            - remix-ide-firefox-1
-            - remix-ide-firefox-2
-            - remix-ide-run-deploy
+            - remix-libs
       - deploy-remix-live:          
           requires:
             - remix-ide-chrome-1
