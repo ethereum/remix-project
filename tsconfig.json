@@ -11,7 +11,7 @@
     "target": "es2015",
     "module": "commonjs",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"],
+    "lib": ["es2017", "es2019", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
@@ -38,7 +38,8 @@
       "@remix-ui/modal-dialog": ["libs/remix-ui/modal-dialog/src/index.ts"],
       "@remix-ui/toaster": ["libs/remix-ui/toaster/src/index.ts"],
       "@remix-ui/file-explorer": ["libs/remix-ui/file-explorer/src/index.ts"],
-      "@remix-ui/workspace": ["libs/remix-ui/workspace/src/index.ts"]
+      "@remix-ui/workspace": ["libs/remix-ui/workspace/src/index.ts"],
+      "@remix-ui/static-analyser": ["libs/remix-ui/static-analyser/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
