@@ -476,25 +476,23 @@ export class LandingPage extends ViewPlugin {
                   ${img}
                   <audio id="remiAudio" muted=false src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"></audio>
                   <div class="w-80 pl-5 ml-5">
-                    <h6 class="mb-1">Quicklinks</h6>
-                    <spam class="pl-0">
-                      <u class="${css.text} pr-1" onclick=${() => migrateWorkspace()}>Migrate File system</u>
-                      to workspace
-                    </spam>
-                    <p class="font-weight-bold mb-0">2-step solution:</p>
+                    <h5 class="mb-1">Quicklinks</h5>
+                    <a class="${css.text} mr-1" target="__blank" href="https://medium.com/remix-ide/migrating-files-to-workspaces-8e34737c751c?source=friends_link&sk=b75cfd9093aa23c78be13cce49e4a5e8">Guide </a>for migrating the old File System
+                    <p class="font-weight-bold mb-0 py-1">Migration tools:</p>
                     <li class="pl-1">
-                      manually
-                      <u class="${css.text} px-1" onclick=${() => downloadFiles()}>Download all Files</u>
+                      <spam class="pl-0">
+                        <u class="${css.text} pr-1" onclick=${() => migrateWorkspace()}>Basic migration</u>
+                      </spam>
+                    </li>
+                    <li class="pl-1">
+                      <u class="${css.text} pr-1" onclick=${() => downloadFiles()}>Download all Files</u>
                       as a backup zip
                     </li>
                     <li class="pl-1">
-                      use
-                      <u class="${css.text} px-1" onclick=${() => startRestoreBackupZip()}>Restore Backup Zip</u>
-                      to current workspace
-                    </li>
+                      <u class="${css.text} pr-1" onclick=${() => startRestoreBackupZip()}>Restore files</u>from backup zip
+                     </li>
                     <p class="font-weight-bold mb-0 mt-2">Help:</p>
                     <dir class="d-flex flex-column mt-1 pl-0">
-                      <a class="${css.text} mx-1" target="__blank" href=" https://medium.com/remix-ide/migrating-files-to-workspaces-8e34737c751c">Guide for migrating the File System to workspace</a>
                       <a class="${css.text} mx-1" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
                       <a class="${css.text} mx-1" target="__blank" href="https://github.com/ethereum/remix-project/issues">Report on Github</a>
                     </dir>
@@ -504,16 +502,16 @@ export class LandingPage extends ViewPlugin {
               <div class="row ${css.hpSections} mx-4" data-id="landingPageHpSections">
                 <div class="ml-3">
                   <div class="plugins mb-5">
-                  <h4>Featured Plugins</h4>
-                  <div class="d-flex flex-row pt-2">
-                    ${this.solEnv}
-                    ${this.learnEthEnv}
-                    ${this.solhintEnv}
-                    ${this.sourcifyEnv}
-                    ${this.debuggerEnv}
-                    ${this.moreEnv}
+                    <h4>Featured Plugins</h4>
+                    <div class="d-flex flex-row pt-2">
+                      ${this.solEnv}
+                      ${this.learnEthEnv}
+                      ${this.solhintEnv}
+                      ${this.sourcifyEnv}
+                      ${this.debuggerEnv}
+                      ${this.moreEnv}
+                    </div>
                   </div>
-                </div>
                   <div class="d-flex">
                     <div class="file">
                       <h4>File</h4>
