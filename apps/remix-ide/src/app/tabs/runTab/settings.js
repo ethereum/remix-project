@@ -403,13 +403,13 @@ class SettingsUI {
     if (!accounts) accounts = []
     if (this.accountListCallId > callid) return
     this.accountListCallId++
-    for (var loadedaddress in this.loadedAccounts) {
+    for (let loadedaddress in this.loadedAccounts) {
       if (accounts.indexOf(loadedaddress) === -1) {
         txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
         delete this.loadedAccounts[loadedaddress]
       }
     }
-    for (var i in accounts) {
+    for (let i in accounts) {
       const address = accounts[i]
       if (!this.loadedAccounts[address]) {
         txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
