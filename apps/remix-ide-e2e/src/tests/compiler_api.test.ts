@@ -2,7 +2,6 @@
 
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 import examples from '../examples/example-contracts'
 
 const sources = [
@@ -22,8 +21,7 @@ module.exports = {
     browser
       .addFile('test_jsCompile.js', { content: jsCompile })
       .executeScript('remix.exeCurrent()')
-      .pause(5000)
-      .journalChildIncludes('"languageversion": "0.6.8+commit.0bbfe453"')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '"languageversion": "0.6.8+commit.0bbfe453"', 60000)
       .click('*[data-id="terminalClearConsole"]')
   },
 
@@ -31,8 +29,7 @@ module.exports = {
     browser
       .addFile('test_jsCompileWithOptimization.js', { content: jsCompileWithOptimization })
       .executeScript('remix.exeCurrent()')
-      .pause(10000)
-      .journalChildIncludes('\\"optimizer\\":{\\"enabled\\":true,\\"runs\\":300}')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '\\"optimizer\\":{\\"enabled\\":true,\\"runs\\":300}', 60000)
       .click('*[data-id="terminalClearConsole"]')
   },
 
@@ -40,8 +37,7 @@ module.exports = {
     browser
       .addFile('test_jsCompileWithOptimizationDefault.js', { content: jsCompileWithOptimizationDefault })
       .executeScript('remix.exeCurrent()')
-      .pause(10000)
-      .journalChildIncludes('\\"optimizer\\":{\\"enabled\\":false,\\"runs\\":200}')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '\\"optimizer\\":{\\"enabled\\":false,\\"runs\\":200}', 60000)
       .click('*[data-id="terminalClearConsole"]')
   },
 
@@ -56,16 +52,12 @@ module.exports = {
 
   'Should produce a stack too deep error': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('fileExplorers')
-      .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
+      .setSolidityCompilerVersion('soljson-v0.8.1+commit.df193b15.js')
       .addFile('ContractStackLimit.sol', { content: contractStackLimit })
       .clickLaunchIcon('solidity')
-      .pause(10000)
-      .waitForElementContainsText('*[data-id="compiledErrors"]', 'CompilerError: Stack too deep when compiling inline assembly: Variable headStart is 1 slot(s) too deep inside the stack.')
+      .waitForElementContainsText('*[data-id="compiledErrors"]', 'CompilerError: Stack too deep when compiling inline assembly: Variable headStart is 1 slot(s) too deep inside the stack.', 60000)
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
 
 const simpleContract = `pragma solidity >=0.4.22 <0.9.1;

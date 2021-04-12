@@ -6,7 +6,7 @@ class ClickInstance extends EventEmitter {
     index = index + 2
     const selector = '.instance:nth-of-type(' + index + ') > div > button'
 
-    this.api.waitForElementPresent(selector).scrollAndClick(selector).perform(() => { this.emit('complete') })
+    this.api.waitForElementContainsText(selector, '', 60000).scrollAndClick(selector).perform(() => { this.emit('complete') })
     return this
   }
 }
