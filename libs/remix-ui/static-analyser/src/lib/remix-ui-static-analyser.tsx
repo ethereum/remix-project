@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import ReactDOM from 'react-dom' //eslint-disable-line
 import CheckBox from './Checkbox/StaticAnalyserCheckedBox' // eslint-disable-line
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import remixLib from '@remix-project/remix-lib'
@@ -18,7 +19,8 @@ export interface RemixUiStaticAnalyserProps {
   registry: any,
   event: any,
   analysisModule: any
-  _deps: any
+  _deps: any,
+  emit: any
 }
 
 export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
@@ -63,7 +65,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const warningContainer = React.useRef(null)
   const [runButtonState, setRunButtonState] = useState(true)
-  const [autoRun, setAutoRun] = useState(true)
+  const [autoRun, setAutoRun] = useState(false)
   const [result, setResult] = useState({
     lastCompilationResult: null,
     lastCompilationSource: null,
@@ -96,7 +98,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           }
         )
       }
+    } else {
+      setAutoRun(true)
     }
+
     return () => { }
   }, [autoRun])
 
@@ -105,6 +110,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     //   await props.analysisModule.call('editor', 'discardHighlight')
     //   await props.analysisModule.call('editor', 'highlight', location, fileName)
     // }
+    console.log({ autoRun }, ' auto run in run function')
     setResult({ lastCompilationResult, lastCompilationSource, currentFile })
     if (lastCompilationResult && categoryIndex.length) {
       setRunButtonState(false)
@@ -193,6 +199,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         const groupedCategory = groupBy(resultArray, 'warningModuleName')
         setWarningState(groupedCategory)
       })
+
       props.event.trigger('staticAnaysisWarning', [warningCount])
     } else {
       setRunButtonState(true)
@@ -202,14 +209,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       props.event.trigger('staticAnaysisWarning', [-1])
     }
   }
-
-  // const correctRunBtnDisabled = () => {
-  //   if (props.lastCompilationResult && selectedCategoryIndex.length !== 0) {
-  //     setRunButtonState(false)
-  //   } else {
-  //     setRunButtonState(true)
-  //   }
-  // }
 
   const handleCheckAllModules = (groupedModules) => {
     const index = groupedModuleIndex(groupedModules)
