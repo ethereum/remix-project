@@ -329,12 +329,10 @@ export class LandingPage extends ViewPlugin {
         const fileProviders = globalRegistry.get('fileproviders').api
         const zip = new JSZip()
         await fileProviders.browser.copyFolderToJson('/', ({ path, content }) => {
-          zip.file(path, content)
-        }, ({ path, content }) => {
-          zip.folder(path, content)
+          zip.file(`remixbackup${path}`, content)
         })
         zip.generateAsync({ type: 'blob' }).then(function (blob) {
-          saveAs(blob, 'remixdbackup.zip')
+          saveAs(blob, 'remixbackup.zip')
         }).catch((e) => {
           tooltip(e.message)
         })
@@ -401,6 +399,7 @@ export class LandingPage extends ViewPlugin {
     const switchToPreviousVersion = () => {
       const query = new QueryParams()
       query.update({ appVersion: '0.7.7' })
+      _paq.push(['trackEvent', 'LoadingType', 'oldExperience_0.7.7'])
       document.location.reload()
     }
 

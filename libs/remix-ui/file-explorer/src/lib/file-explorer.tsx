@@ -314,25 +314,32 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const createNewFile = (newFilePath: string) => {
     const fileManager = state.fileManager
 
-    helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
-      if (error) {
-        modal('Create File Failed', error, {
-          label: 'Close',
-          fn: async () => {}
-        }, null)
-      } else {
-        const createFile = await fileManager.writeFile(newName, '')
-
-        if (!createFile) {
-          return toast('Failed to create file ' + newName)
+    try {
+      helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
+        if (error) {
+          modal('Create File Failed', error, {
+            label: 'Close',
+            fn: async () => {}
+          }, null)
         } else {
-          await fileManager.open(newName)
-          setState(prevState => {
-            return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
-          })
+          const createFile = await fileManager.writeFile(newName, '')
+
+          if (!createFile) {
+            return toast('Failed to create file ' + newName)
+          } else {
+            await fileManager.open(newName)
+            setState(prevState => {
+              return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
+            })
+          }
         }
-      }
-    })
+      })
+    } catch (error) {
+      return modal('File Creation Failed', typeof error === 'string' ? error : error.message, {
+        label: 'Close',
+        fn: async () => {}
+      }, null)
+    }
   }
 
   const createNewFolder = async (newFolderPath: string) => {
@@ -353,8 +360,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
       })
     } catch (e) {
-      console.log('error: ', e)
-      toast('Failed to create folder: ' + newFolderPath)
+      return modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, {
+        label: 'Close',
+        fn: async () => {}
+      }, null)
     }
   }
 
@@ -395,7 +404,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         await fileManager.rename(oldPath, newPath)
       }
     } catch (error) {
-      modal('Rename File Failed', 'Unexpected error while renaming: ' + error, {
+      modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, {
         label: 'Close',
         fn: async () => {}
       }, null)
@@ -506,6 +515,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     // the files module. Please ask the user here if they want to overwrite
     // a file and then just use `files.add`. The file explorer will
     // pick that up via the 'fileAdded' event from the files module.
+    const parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    const expandPath = [...new Set([...state.expandPath, parentFolder])]
+
+    setState(prevState => {
+      return { ...prevState, expandPath }
+    });
 
     [...target.files].forEach((file) => {
       const loadFile = (name: string): void => {
@@ -536,7 +551,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
         fileReader.readAsText(file)
       }
-      const name = file.name
+      const name = `${parentFolder}/${file.name}`
 
       filesProvider.exists(name, (error, exist) => {
         if (error) console.log(error)
@@ -985,6 +1000,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           label={
             <div onClick={(e) => {
               e.stopPropagation()
+              if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerUploadFileuploadFile') return // we don't want to let propagate the input of type file
+
               let expandPath = []
 
               if (!state.expandPath.includes(props.name)) {

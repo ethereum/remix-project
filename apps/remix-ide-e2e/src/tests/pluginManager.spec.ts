@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 const testData = {
   pluginName: 'remixIde',
@@ -45,23 +44,23 @@ module.exports = {
       .click('*[data-id="pluginManagerComponentPluginManager"]')
       .scrollAndClick('*[data-id="pluginManagerComponentActivateButtondebugger"]')
       .pause(2000)
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]', 60000)
       .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonvyper"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]', 60000)
       .scrollAndClick('*[data-id="pluginManagerComponentActivateButtonZoKrates"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonZoKrates"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonZoKrates"]', 60000)
   },
 
   'Should deactivate plugins': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentPluginManager"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]', 60000)
       .pause(2000)
       .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtondebugger"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtondebugger"]', 60000)
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonvyper"]', 60000)
       .scrollAndClick('*[data-id="pluginManagerComponentDeactivateButtonvyper"]')
-      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]', 60000)
   },
 
   /*
@@ -115,7 +114,7 @@ module.exports = {
       .click('*[data-id="localPluginRadioButtonsidePanel"]')
       .click('*[data-id="modalDialogModalFooter"]')
       .modalFooterOKClick()
-      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]')
+      .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonremixIde"]', 60000)
   },
 
   'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {
@@ -153,7 +152,5 @@ module.exports = {
           })
       })
       .end()
-  },
-
-  tearDown: sauce
+  }
 }

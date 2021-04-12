@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -87,8 +86,7 @@ module.exports = {
           'decoded input': { 'uint256 _po': { type: 'BigNumber', hex: '0x0a' } }
         })
       .end()
-  },
-  tearDown: sauce
+  }
 }
 
 const sources = [{

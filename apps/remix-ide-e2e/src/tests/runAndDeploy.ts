@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 const passphrase = process.env.account_passphrase
 const password = process.env.account_password
@@ -197,8 +196,7 @@ module.exports = {
       .pause(2000)
       .journalLastChildIncludes('[ "0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f" ]')
       .end()
-  },
-  tearDown: sauce
+  }
 }
 
 const sources = [

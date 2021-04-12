@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 const assetsTestContract = `import "./contract.sol";
 contract Assets {
@@ -73,7 +72,7 @@ module.exports = {
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
 
-  'Run git status': function (browser) {
+  'Run git status': '' + function (browser) {
     browser
       .executeScript('git status')
       .pause(3000)
@@ -85,8 +84,7 @@ module.exports = {
       .clickLaunchIcon('pluginManager')
       .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
       .end()
-  },
-  tearDown: sauce
+  }
 }
 
 function runTests (browser: NightwatchBrowser) {

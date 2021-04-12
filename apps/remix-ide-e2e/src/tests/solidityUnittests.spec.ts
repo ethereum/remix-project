@@ -2,7 +2,6 @@
 
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
 
@@ -48,15 +47,13 @@ module.exports = {
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 1)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 80000)
-      .pause(5000)
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'MyTest (/tests/simple_storage_test.sol)')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Initial value should be100')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Value is set200')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Should fail for wrong value200')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Passing: 2')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Failing: 1')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAIL MyTest (/tests/simple_storage_test.sol)')
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'MyTest (/tests/simple_storage_test.sol)', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Initial value should be100', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Value is set200', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Should fail for wrong value200', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Passing: 2', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Failing: 1', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'FAIL MyTest (/tests/simple_storage_test.sol)', 120000)
   },
 
   'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser: NightwatchBrowser) {
@@ -68,18 +65,15 @@ module.exports = {
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 2)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
-      .pause(5000)
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/ks2b_test.sol')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Check project exists')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong project owner')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong sender')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong value')
-      .pause(5000)
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Check project is fundable')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'owner is incorrect')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'wrong sender')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'wrong value')
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/ks2b_test.sol', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Check project exists', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong project owner', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong sender', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✘ Check wrong value', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '✓ Check project is fundable', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'owner is incorrect', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'wrong sender', 120000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'wrong value', 120000)
   },
 
   'Should stop unit tests during test execution` ': function (browser: NightwatchBrowser) {
@@ -90,14 +84,11 @@ module.exports = {
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .pause(5000)
       .click('*[data-id="testTabRunTestsTabStopAction"]')
-    // .pause(1000)
-      .assert.containsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping')
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/ks2b_test.sol')
+      .waitForElementContainsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping', 60000)
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/ks2b_test.sol', 120000)
       .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/4_Ballot_test.sol')
       .notContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/simple_storage_test.sol')
-      .pause(7000)
-      .assert.containsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped')
+      .waitForElementContainsText('*[data-id="testTabTestsExecutionStopped"]', 'The test execution has been stopped', 60000)
   },
 
   'Should fail on compilation': function (browser: NightwatchBrowser) {
@@ -109,10 +100,8 @@ module.exports = {
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 3)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'SyntaxError: No visibility specified')
-      .assert.containsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error(s) in your test file')
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'SyntaxError: No visibility specified', 120000)
+      .waitForElementContainsText('*[data-id="testTabTestsExecutionStoppedError"]', 'The test execution has been stopped because of error(s) in your test file', 120000)
   },
 
   'Should fail on deploy': function (browser: NightwatchBrowser) {
@@ -124,9 +113,7 @@ module.exports = {
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 4)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'contract deployment failed after trying twice')
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'contract deployment failed after trying twice', 120000)
   },
 
   'Should fail when parameters are to method in test contract': function (browser: NightwatchBrowser) {
@@ -138,9 +125,7 @@ module.exports = {
       .click('*[data-id="testTabCheckAllTests"]')
       .clickElementAtPosition('.singleTestLabel', 5)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
-      .assert.containsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Method \'add\' can not have parameters inside a test contract')
+      .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', 'Method \'add\' can not have parameters inside a test contract', 120000)
   },
 
   'Changing current path': function (browser: NightwatchBrowser) {
@@ -152,7 +137,7 @@ module.exports = {
       .click('*[data-id="testTabGenerateTestFolder"]')
       .clickElementAtPosition('.singleTestLabel', 0)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
+      .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 60000)
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutput"]')
       .clearValue('*[data-id="uiPathInput"]')
       .setValue('*[data-id="uiPathInput"]', 'tests')
@@ -161,9 +146,7 @@ module.exports = {
 
   'Solidity Unittests': function (browser: NightwatchBrowser) {
     runTests(browser)
-  },
-
-  tearDown: sauce
+  }
 }
 
 function runTests (browser: NightwatchBrowser) {
@@ -175,11 +158,11 @@ function runTests (browser: NightwatchBrowser) {
     .clickLaunchIcon('solidityUnitTesting')
     .pause(500)
     .scrollAndClick('#runTestsTabRunAction')
-    .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 40000)
-    .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 10000)
-    .assert.containsText('#solidityUnittestsOutput', '/tests/4_Ballot_test.sol')
-    .assert.containsText('#solidityUnittestsOutput', '✓ Check winning proposal')
-    .assert.containsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value')
+    .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
+    .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
+    .waitForElementContainsText('#solidityUnittestsOutput', '/tests/4_Ballot_test.sol', 60000)
+    .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winning proposal', 60000)
+    .waitForElementContainsText('#solidityUnittestsOutput', '✓ Check winnin proposal with return value', 60000)
     .end()
 }
 

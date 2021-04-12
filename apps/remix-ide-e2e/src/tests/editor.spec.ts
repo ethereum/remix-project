@@ -2,7 +2,6 @@
 
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
 
@@ -37,7 +36,7 @@ module.exports = {
       .click('*[class="ace_content"]')
       .sendKeys('*[class="ace_text-input"]', 'error')
       .pause(2000)
-      .waitForElementVisible('.ace_error')
+      .waitForElementVisible('.ace_error', 60000)
       .checkAnnotations('error', 28)
       .clickLaunchIcon('udapp')
       .checkAnnotationsNotPresent('error')
@@ -93,11 +92,11 @@ module.exports = {
       .openFile('sourcehighlight.js')
       .executeScript('remix.exeCurrent()')
       .editorScroll('down', 60)
-      .waitForElementPresent('.highlightLine32')
+      .waitForElementPresent('.highlightLine32', 60000)
       .checkElementStyle('.highlightLine32', 'background-color', 'rgb(8, 108, 181)')
-      .waitForElementPresent('.highlightLine40')
+      .waitForElementPresent('.highlightLine40', 60000)
       .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
-      .waitForElementPresent('.highlightLine50')
+      .waitForElementPresent('.highlightLine50', 60000)
       .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
   },
 
@@ -110,7 +109,7 @@ module.exports = {
       .click('li[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .click('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
-      .waitForElementNotPresent('.highlightLine32')
+      .waitForElementNotPresent('.highlightLine32', 60000)
       .checkElementStyle('.highlightLine40', 'background-color', 'rgb(8, 108, 181)')
       .checkElementStyle('.highlightLine50', 'background-color', 'rgb(8, 108, 181)')
   },
@@ -123,13 +122,11 @@ module.exports = {
       .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .click('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .pause(2000)
-      .waitForElementNotPresent('.highlightLine32')
-      .waitForElementNotPresent('.highlightLine40')
-      .waitForElementNotPresent('.highlightLine50')
+      .waitForElementNotPresent('.highlightLine32', 60000)
+      .waitForElementNotPresent('.highlightLine40', 60000)
+      .waitForElementNotPresent('.highlightLine50', 60000)
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
 
 const aceThemes = {
