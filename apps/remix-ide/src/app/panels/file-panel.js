@@ -13,7 +13,7 @@ var globalRegistry = require('../../global/registry')
 var examples = require('../editor/examples')
 var GistHandler = require('../../lib/gist-handler')
 var QueryParams = require('../../lib/query-params')
-
+const modalDialogCustom = require('../ui/modal-dialog-custom')
 /*
   Overview of APIs:
    * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
@@ -125,7 +125,12 @@ module.exports = class Filepanel extends ViewPlugin {
           .map((folder) => folder.replace(workspacesPath + '/', '')))
       })
     })
-    this.workspaces = await result
+    try {
+      this.workspaces = await result
+    } catch (e) {
+      modalDialogCustom.alert('Workspaces have not been created on your system. Please use "Migrate old filesystem to workspace" on the home page to transfer your files or start by creating a new workspace in the File Explorers.')
+      console.log(e)
+    }
     this.renderComponent()
     return this.workspaces
   }
