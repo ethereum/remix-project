@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useReducer } from 'react'
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import remixLib from '@remix-project/remix-lib'
@@ -71,7 +70,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       if (state.data !== null) {
         run(state.data, state.source, state.file)
       }
+    } else {
+      setAutoRun(true)
     }
+
     return () => { }
   }, [autoRun, categoryIndex, state])
 
