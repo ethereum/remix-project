@@ -14,7 +14,6 @@ function goToVMtraceStep (browser: NightwatchBrowser, step: number, incr: number
   browser.execute(function () {
     return document.querySelector('#stepdetail').innerHTML
   }, [], function (result) {
-    console.log('goToVMtraceStep', result)
     if (typeof result.value === 'string' && (result.value.indexOf('vm trace step:') !== -1 && result.value.indexOf(step.toString()) !== -1)) {
       done()
     } else if (incr > 1000) {
