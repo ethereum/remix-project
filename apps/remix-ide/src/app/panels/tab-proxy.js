@@ -37,6 +37,10 @@ export class TabProxy extends Plugin {
       this.updateImgStyles()
     })
 
+    fileManager.events.on('filesAllClosed', () => {
+      this._view.filetabs.active = ''
+    })
+
     fileManager.events.on('fileRemoved', (name) => {
       const workspace = this.fileManager.currentWorkspace()
 
