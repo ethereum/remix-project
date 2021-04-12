@@ -288,9 +288,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   data-bs-target={`#heading${categoryId}`}
                 >
                   {category[0].categoryDisplayName}
-                  <div>
-                    <i className="fas fa-angle-double-right"></i>
-                  </div>
                 </label>
               }
               expand={true}
