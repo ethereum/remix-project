@@ -1,6 +1,6 @@
 import { Storage } from '@remix-project/remix-lib'
 import { joinPath } from './lib/helper'
-var modalDialogCustom = require('./app/ui/modal-dialog-custom')
+const modalDialogCustom = require('./app/ui/modal-dialog-custom')
 /*
   Migrating the files to the BrowserFS storage instead or raw localstorage
 */
