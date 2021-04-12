@@ -56,10 +56,21 @@ class AnalysisTab extends ViewPlugin {
         analysisModule={this}
         event={this.event}
       />,
-      this.element
+      this.element,
+      () => {
+        this.event.register('staticAnaysisWarning', (count) => {
+          if (count > 0) {
+            this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning' })
+          } else if (count === 0) {
+            this.emit('statusChanged', { key: 'succeed', title: 'no warning', type: 'success' })
+          } else {
+            // count ==-1 no compilation result
+            this.emit('statusChanged', { key: 'none' })
+          }
+        })
+      }
     )
   }
-
 }
 
 module.exports = AnalysisTab
