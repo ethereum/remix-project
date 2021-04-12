@@ -463,7 +463,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const queryParams = new QueryParams()
   const params = queryParams.get()
-  console.log("PARAMS", params, workspace)
   // Set workspace after initial activation
   if (Array.isArray(workspace)) {
     appManager.activatePlugin(workspace).then(async () => {
@@ -478,7 +477,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       // If plugins are loaded from the URL params, we focus on the last one.
       if (pluginLoader.current === 'queryParams' && workspace.length > 0) menuicons.select(workspace[workspace.length - 1])
 
-      console.log("PARAMS", params)
       if (params.call) {
         const callDetails = params.call.split('//')
         if (callDetails.length > 1) {
