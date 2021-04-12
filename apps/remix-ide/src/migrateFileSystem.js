@@ -15,7 +15,6 @@ export default (fileProvider) => {
       fileProvider.set(path, content)
       // TODO https://github.com/ethereum/remix-ide/issues/2377
       // fileStorage.remove(path) we don't want to remove it as we are still supporting the old version
-      console.log('file migrated', path)
     }
   })
   fileStorageBrowserFS.set(flag, 'done')

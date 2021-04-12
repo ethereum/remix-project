@@ -1,6 +1,7 @@
 'use strict'
 
 const FileProvider = require('./fileProvider')
+const pathModule = require('path')
 
 class WorkspaceFileProvider extends FileProvider {
   constructor () {
@@ -32,8 +33,19 @@ class WorkspaceFileProvider extends FileProvider {
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
     if (path.startsWith(this.workspace)) return this.workspacesPath + '/' + this.workspace
     path = super.removePrefix(path)
-    const ret = this.workspacesPath + '/' + this.workspace + '/' + (path === '/' ? '' : path)
-    return ret.replace(/^\/|\/$/g, '')
+    let ret = this.workspacesPath + '/' + this.workspace + '/' + (path === '/' ? '' : path)
+
+    ret = ret.replace(/^\/|\/$/g, '')
+    if (!this.isSubDirectory(this.workspacesPath + '/' + this.workspace, ret)) throw new Error('Cannot read/write to path outside workspace')
+    return ret
+  }
+
+  isSubDirectory (parent, child) {
+    if (!parent) return false
+    if (parent === child) return true
+    const relative = pathModule.relative(parent, child)
+
+    return !!relative && relative.split(pathModule.sep)[0] !== '..'
   }
 
   resolveDirectory (path, callback) {

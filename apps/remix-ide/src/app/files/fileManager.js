@@ -102,10 +102,14 @@ class FileManager extends Plugin {
 
   /** The current opened file */
   file () {
-    const file = this.currentFile()
+    try {
+      const file = this.currentFile()
 
-    if (!file) throw createError({ code: 'ENOENT', message: 'No file selected' })
-    return file
+      if (!file) throw createError({ code: 'ENOENT', message: 'No file selected' })
+      return file
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -114,14 +118,18 @@ class FileManager extends Plugin {
    * @returns {boolean} true if the path exists
    */
   exists (path) {
-    path = this.limitPluginScope(path)
-    const provider = this.fileProviderOf(path)
-    const result = provider.exists(path, (err, result) => {
-      if (err) return false
-      return result
-    })
+    try {
+      path = this.limitPluginScope(path)
+      const provider = this.fileProviderOf(path)
+      const result = provider.exists(path, (err, result) => {
+        if (err) return false
+        return result
+      })
 
-    return result
+      return result
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -154,10 +162,14 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async open (path) {
-    path = this.limitPluginScope(path)
-    await this._handleExists(path, `Cannot open file ${path}`)
-    await this._handleIsFile(path, `Cannot open file ${path}`)
-    return this.openFile(path)
+    try {
+      path = this.limitPluginScope(path)
+      await this._handleExists(path, `Cannot open file ${path}`)
+      await this._handleIsFile(path, `Cannot open file ${path}`)
+      return this.openFile(path)
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -167,14 +179,18 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async writeFile (path, data) {
-    path = this.limitPluginScope(path)
-    if (await this.exists(path)) {
-      await this._handleIsFile(path, `Cannot write file ${path}`)
-      return await this.setFileContent(path, data)
-    } else {
-      const ret = await this.setFileContent(path, data)
-      this.emit('fileAdded', path)
-      return ret
+    try {
+      path = this.limitPluginScope(path)
+      if (await this.exists(path)) {
+        await this._handleIsFile(path, `Cannot write file ${path}`)
+        return await this.setFileContent(path, data)
+      } else {
+        const ret = await this.setFileContent(path, data)
+        this.emit('fileAdded', path)
+        return ret
+      }
+    } catch (e) {
+      throw new Error(e)
     }
   }
 
@@ -184,10 +200,14 @@ class FileManager extends Plugin {
    * @returns {string} content of the file
    */
   async readFile (path) {
-    path = this.limitPluginScope(path)
-    await this._handleExists(path, `Cannot read file ${path}`)
-    await this._handleIsFile(path, `Cannot read file ${path}`)
-    return this.getFileContent(path)
+    try {
+      path = this.limitPluginScope(path)
+      await this._handleExists(path, `Cannot read file ${path}`)
+      await this._handleIsFile(path, `Cannot read file ${path}`)
+      return this.getFileContent(path)
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -197,14 +217,18 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async copyFile (src, dest) {
-    src = this.limitPluginScope(src)
-    dest = this.limitPluginScope(dest)
-    await this._handleExists(src, `Cannot copy from ${src}`)
-    await this._handleIsFile(src, `Cannot copy from ${src}`)
-    await this._handleIsFile(dest, `Cannot paste content into ${dest}`)
-    const content = await this.readFile(src)
+    try {
+      src = this.limitPluginScope(src)
+      dest = this.limitPluginScope(dest)
+      await this._handleExists(src, `Cannot copy from ${src}`)
+      await this._handleIsFile(src, `Cannot copy from ${src}`)
+      await this._handleIsFile(dest, `Cannot paste content into ${dest}`)
+      const content = await this.readFile(src)
 
-    await this.writeFile(dest, content)
+      await this.writeFile(dest, content)
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -214,25 +238,29 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async rename (oldPath, newPath) {
-    oldPath = this.limitPluginScope(oldPath)
-    newPath = this.limitPluginScope(newPath)
-    await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
-    const isFile = await this.isFile(oldPath)
-    const newPathExists = await this.exists(newPath)
-    const provider = this.fileProviderOf(oldPath)
+    try {
+      oldPath = this.limitPluginScope(oldPath)
+      newPath = this.limitPluginScope(newPath)
+      await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
+      const isFile = await this.isFile(oldPath)
+      const newPathExists = await this.exists(newPath)
+      const provider = this.fileProviderOf(oldPath)
 
-    if (isFile) {
-      if (newPathExists) {
-        modalDialogCustom.alert('File already exists.')
-        return
+      if (isFile) {
+        if (newPathExists) {
+          modalDialogCustom.alert('File already exists.')
+          return
+        }
+        return provider.rename(oldPath, newPath, false)
+      } else {
+        if (newPathExists) {
+          modalDialogCustom.alert('Folder already exists.')
+          return
+        }
+        return provider.rename(oldPath, newPath, true)
       }
-      return provider.rename(oldPath, newPath, false)
-    } else {
-      if (newPathExists) {
-        modalDialogCustom.alert('Folder already exists.')
-        return
-      }
-      return provider.rename(oldPath, newPath, true)
+    } catch (e) {
+      throw new Error(e)
     }
   }
 
@@ -242,13 +270,17 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async mkdir (path) {
-    path = this.limitPluginScope(path)
-    if (await this.exists(path)) {
-      throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
-    }
-    const provider = this.fileProviderOf(path)
+    try {
+      path = this.limitPluginScope(path)
+      if (await this.exists(path)) {
+        throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
+      }
+      const provider = this.fileProviderOf(path)
 
-    provider.createDir(path)
+      return provider.createDir(path)
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -257,18 +289,22 @@ class FileManager extends Plugin {
    * @returns {string[]} list of the file/directory name in this directory
    */
   async readdir (path) {
-    path = this.limitPluginScope(path)
-    await this._handleExists(path)
-    await this._handleIsDir(path)
+    try {
+      path = this.limitPluginScope(path)
+      await this._handleExists(path)
+      await this._handleIsDir(path)
 
-    return new Promise((resolve, reject) => {
-      const provider = this.fileProviderOf(path)
+      return new Promise((resolve, reject) => {
+        const provider = this.fileProviderOf(path)
 
-      provider.resolveDirectory(path, (error, filesProvider) => {
-        if (error) reject(error)
-        resolve(filesProvider)
+        provider.resolveDirectory(path, (error, filesProvider) => {
+          if (error) reject(error)
+          resolve(filesProvider)
+        })
       })
-    })
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -277,11 +313,15 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async remove (path) {
-    path = this.limitPluginScope(path)
-    await this._handleExists(path, `Cannot remove file or directory ${path}`)
-    const provider = this.fileProviderOf(path)
+    try {
+      path = this.limitPluginScope(path)
+      await this._handleExists(path, `Cannot remove file or directory ${path}`)
+      const provider = this.fileProviderOf(path)
 
-    return await provider.remove(path)
+      return await provider.remove(path)
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   async refresh () {

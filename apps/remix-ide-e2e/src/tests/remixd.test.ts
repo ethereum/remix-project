@@ -73,7 +73,7 @@ module.exports = {
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
 
-  'Run git status': function (browser) {
+  'Run git status': '' + function (browser) {
     browser
       .executeScript('git status')
       .pause(3000)

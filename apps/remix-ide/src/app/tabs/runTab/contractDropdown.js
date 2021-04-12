@@ -142,7 +142,7 @@ class ContractDropdownUI {
           for="deployAndRunPublishToIPFS"
           data-id="contractDropdownIpfsCheckboxLabel"
           class="m-0 form-check-label custom-control-label ${css.checkboxAlign}"
-          title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
+          title="Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
         >
           Publish to IPFS
         </label>
