@@ -302,9 +302,9 @@ export class LandingPage extends ViewPlugin {
       this.verticalIcons.select('pluginManager')
     }
     const startRestoreBackupZip = async () => {
-      await this.appManager.activatePlugin(['restoreBackupZip'])
-      this.verticalIcons.select('restoreBackupZip')
-      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restoreBackupZip'])
+      await this.appManager.activatePlugin(['restorebackupzip'])
+      this.verticalIcons.select('restorebackupzip')
+      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restorebackupzip'])
     }
 
     const createNewFile = () => {
