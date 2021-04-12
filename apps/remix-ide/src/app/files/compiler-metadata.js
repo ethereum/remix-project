@@ -29,7 +29,7 @@ class CompilerMetadata extends Plugin {
     return joinPath(path, this.innerPath, contractName + '_metadata.json')
   }
 
-  createHardhatArtifacts (compiledContract, provider) {
+  createHardhatArtifacts (compiledContract, provider, output, versionString) {
     const contract = compiledContract
     var hhArtifactsFileName = joinPath('artifacts',contract.file, contract.name + '.json')
     const hhArtifactsdata = {
@@ -49,6 +49,16 @@ class CompilerMetadata extends Plugin {
       '_format': 'hh-sol-dbg-1',
     }
     provider.set(hhArtifactsDbgFileName, JSON.stringify(hhArtifactsDbgdata, null, '\t'))
+    let id = '12wqe23'
+    var hhArtifactsBuildFileName = joinPath('artifacts','build-info', id + '.json')
+    const hhArtifactsBuilddata = {
+      'id': id,
+      '_format': 'hh-sol-build-info-1',
+      'solcVersion': versionString.substring(0, versionString.indexOf('+commit')),
+      'solcLongVersion': versionString,
+      'output': output
+    }
+    provider.set(hhArtifactsBuildFileName, JSON.stringify(hhArtifactsBuilddata, null, '\t'))
   }
 
   onActivation () {
@@ -80,15 +90,17 @@ class CompilerMetadata extends Plugin {
               })
 
               let parsedMetadata
-              self.createHardhatArtifacts(contract, provider)
               try {
                 parsedMetadata = JSON.parse(contract.object.metadata)
               } catch (e) {
                 console.log(e)
               }
-              if (parsedMetadata) provider.set(metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
+              if (parsedMetadata) {
+                provider.set(metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
+                self.createHardhatArtifacts(contract, provider, data, parsedMetadata.compiler.version)
+              }
 
-              var data = {
+              var evmData = {
                 deploy,
                 data: {
                   bytecode: contract.object.evm.bytecode,
@@ -99,7 +111,7 @@ class CompilerMetadata extends Plugin {
                 abi: contract.object.abi
               }
 
-              provider.set(fileName, JSON.stringify(data, null, '\t'))
+              provider.set(fileName, JSON.stringify(evmData, null, '\t'))
             }
           })
         })
