@@ -38,7 +38,8 @@ export class TabProxy extends Plugin {
     })
 
     fileManager.events.on('filesAllClosed', () => {
-      this._view.filetabs.active = ''
+      this.call('manager', 'activatePlugin', 'home')
+      this._view.filetabs.active = 'home'
     })
 
     fileManager.events.on('fileRemoved', (name) => {
