@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -68,7 +67,5 @@ module.exports = {
       .click('#homeItem')
       .assert.containsText('div[title="home"]', 'Home')
       .end()
-  },
-
-  tearDown: sauce
+  }
 }

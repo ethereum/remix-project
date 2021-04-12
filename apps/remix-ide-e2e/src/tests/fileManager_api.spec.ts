@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -12,25 +11,22 @@ module.exports = {
     browser
       .addFile('file.js', { content: executeFile })
       .executeScript('remix.exeCurrent()')
-      .pause(5000)
-      .journalLastChildIncludes('file.js')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'file.js', 60000)
   },
 
   'Should execute `exists` api from file manager external api': function (browser: NightwatchBrowser) {
     browser
       .addFile('exists.js', { content: executeExists })
       .executeScript('remix.exeCurrent()')
-      .pause(2000)
-      .journalChildIncludes('exists.js true')
-      .journalChildIncludes('non-exists.js false')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'exists.js true', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'non-exists.js false', 60000)
   },
 
   'Should execute `open` api from file manager external api': function (browser: NightwatchBrowser) {
     browser
       .addFile('open.js', { content: executeOpen })
       .executeScript('remix.exeCurrent()')
-      .pause(2000)
-      .journalLastChildIncludes('contracts/3_Ballot.sol')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'contracts/3_Ballot.sol', 60000)
   },
 
   'Should execute `writeFile` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -46,16 +42,14 @@ module.exports = {
     browser
       .addFile('readFile.js', { content: executeReadFile })
       .executeScript('remix.exeCurrent()')
-      .pause(2000)
-      .journalLastChildIncludes('pragma solidity ^0.6.0')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'pragma solidity ^0.6.0', 60000)
   },
 
   'Should execute `copyFile` api from file manager external api': function (browser: NightwatchBrowser) {
     browser
       .addFile('copyFile.js', { content: executeCopyFile })
       .executeScript('remix.exeCurrent()')
-      .pause(2000)
-      .journalLastChildIncludes('pragma solidity >=0.7.0 <0.9.0;')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'pragma solidity >=0.7.0 <0.9.0;', 60000)
   },
 
   'Should execute `rename` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -63,7 +57,7 @@ module.exports = {
       .addFile('renameFile.js', { content: executeRename })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemold_contract.sol"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemold_contract.sol"]', 60000)
   },
 
   'Should execute `mkdir` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -71,15 +65,14 @@ module.exports = {
       .addFile('mkdirFile.js', { content: executeMkdir })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemTest_Folder"]')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemTest_Folder"]', 60000)
   },
 
   'Should execute `readdir` api from file manager external api': function (browser: NightwatchBrowser) {
     browser
       .addFile('readdirFile.js', { content: executeReaddir })
       .executeScript('remix.exeCurrent()')
-      .pause(2000)
-      .journalLastChildIncludes('Test_Folder isDirectory true')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Test_Folder isDirectory true', 60000)
   },
 
   'Should execute `remove` api from file manager external api': function (browser: NightwatchBrowser) {
@@ -87,7 +80,7 @@ module.exports = {
       .addFile('removeFile.js', { content: executeRemove })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .waitForElementNotPresent('[data-id="treeViewLitreeViewItemold_contract.sol"]')
+      .waitForElementNotPresent('[data-id="treeViewLitreeViewItemold_contract.sol"]', 60000)
   },
 
   // TODO: Fix remove root directory prefix for browser and localhost
@@ -96,11 +89,9 @@ module.exports = {
       .addFile('test_jsRemoveFolder.js', { content: executeRemoveOnFolder })
       .executeScript('remix.exeCurrent()')
       .pause(2000)
-      .waitForElementNotPresent('[data-id="treeViewLitreeViewItemTest_Folder"]')
+      .waitForElementNotPresent('[data-id="treeViewLitreeViewItemTest_Folder"]', 60000)
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
 
 const executeFile = `

@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 const sources = [
   {
@@ -31,8 +30,7 @@ module.exports = {
   },
   'Static Analysis': function (browser: NightwatchBrowser) {
     runTests(browser)
-  },
-  tearDown: sauce
+  }
 }
 
 function runTests (browser: NightwatchBrowser) {
