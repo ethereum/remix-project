@@ -106,7 +106,7 @@ export class RemixAppManager extends PluginManager {
         displayName: 'dGit2',
         methods: ['pull'],
         version: '0.0.1-dev',
-        url: 'http://localhost:3000',
+        url: 'https://dgit2-remix.web.app',
         description: 'dGit for workspaces',
         icon: 'https://dgitremix.web.app/dgitlogo.png',
         location: 'mainPanel',
