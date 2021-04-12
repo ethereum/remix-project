@@ -244,7 +244,8 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
       outputOverride.appendChild(decoded)
     }
   }
-  _paq.push(['trackEvent', 'udapp', lookupOnly ? 'call' : args.funABI.type !== 'fallback' ? 'lowLevelInteracions' : 'transact'])
+  const info = `${lookupOnly ? 'call' : args.funABI.type !== 'fallback' ? 'lowLevelInteracions' : 'transact'}_${this.blockchain.executionContext.executionContext}`
+  _paq.push(['trackEvent', 'udapp', info])
   const params = args.funABI.type !== 'fallback' ? inputsValues : ''
   this.blockchain.runOrCallContractMethod(
     args.contractName,
