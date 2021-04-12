@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -12,7 +11,7 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
       .executeScript('console.log(1 + 1)')
-      .journalLastChild('2')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '2', 60000)
   },
 
   'Should clear console': function (browser: NightwatchBrowser) {
@@ -20,7 +19,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="terminalCli"]')
       .journalChildIncludes('Welcome to Remix')
       .click('#clearConsole')
-      .assert.containsText('*[data-id="terminalJournal"]', '')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '', 60000)
   },
 
   'Should display auto-complete menu': function (browser: NightwatchBrowser) {
@@ -35,11 +34,11 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]')
       .executeScript('remix.help()')
-      .journalChildIncludes('remix.loadgist(id)')
-      .journalChildIncludes('remix.loadurl(url)')
-      .journalChildIncludes('remix.execute(filepath)')
-      .journalChildIncludes('remix.exeCurrent()')
-      .journalChildIncludes('remix.help()')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.loadgist(id)', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.loadurl(url)', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.execute(filepath)', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.exeCurrent()', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'remix.help()', 60000)
   },
 
   'Async/Await Script': function (browser: NightwatchBrowser) {
@@ -47,9 +46,8 @@ module.exports = {
       .addFile('asyncAwait.js', { content: asyncAwait })
       .openFile('asyncAwait.js')
       .executeScript('remix.execute(\'asyncAwait.js\')')
-      .journalLastChild('Waiting Promise')
-      .pause(5500)
-      .journalLastChild('result - Promise Resolved')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Waiting Promise', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'result - Promise Resolved', 60000)
   },
 
   'Call Remix File Manager from a script': function (browser: NightwatchBrowser) {
@@ -58,15 +56,13 @@ module.exports = {
       .openFile('asyncAwaitWithFileManagerAccess.js')
       .pause(5000)
       .executeScript('remix.execute(\'asyncAwaitWithFileManagerAccess.js\')')
-      .pause(6000)
-      .journalLastChildIncludes('contract Ballot {')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'contract Ballot {', 60000)
   },
 
   'Call web3.eth.getAccounts() using JavaScript VM': function (browser: NightwatchBrowser) {
     browser
       .executeScript('web3.eth.getAccounts()')
-      .pause(2000)
-      .journalLastChildIncludes('[ "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4", "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db", "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB", "0x617F2E2fD72FD9D5503197092aC168c91465E7f2", "0x17F6AD8Ef982297579C203069C1DbfFE4348c372", "0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678", "0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7", "0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C", "0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC", "0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c", "0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C", "0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB", "0x583031D1113aD414F02576BD6afaBfb302140225", "0xdD870fA1b7C4700F2BD7f44238821C26f7392148" ]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '[ "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4", "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db", "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB", "0x617F2E2fD72FD9D5503197092aC168c91465E7f2", "0x17F6AD8Ef982297579C203069C1DbfFE4348c372", "0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678", "0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7", "0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C", "0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC", "0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c", "0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C", "0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB", "0x583031D1113aD414F02576BD6afaBfb302140225", "0xdD870fA1b7C4700F2BD7f44238821C26f7392148" ]', 60000)
   },
 
   'Call web3.eth.getAccounts() using Web3 Provider': function (browser: NightwatchBrowser) {
@@ -76,10 +72,9 @@ module.exports = {
       .click('*[data-id="settingsWeb3Mode"]')
       .modalFooterOKClick()
       .executeScript('web3.eth.getAccounts()')
-      .pause(2000)
-      .journalLastChildIncludes('[ "') // we check if an array is present, don't need to check for the content
-      .journalLastChildIncludes('" ]')
-      .journalLastChildIncludes('", "')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '[ "', 60000) // we check if an array is present, don't need to check for the content
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '" ]', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '", "', 60000)
   },
 
   'Call Remix File Resolver (external URL) from a script': function (browser: NightwatchBrowser) {
@@ -89,8 +84,7 @@ module.exports = {
       .openFile('resolveExternalUrlAndSave.js')
       .pause(1000)
       .executeScript('remix.execute(\'resolveExternalUrlAndSave.js\')')
-      .pause(6000)
-      .journalLastChildIncludes('Implementation of the {IERC20} interface.')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Implementation of the {IERC20} interface.', 60000)
       .openFile('.deps/github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol')
   },
 
@@ -101,8 +95,7 @@ module.exports = {
       .openFile('resolveUrl.js')
       .pause(1000)
       .executeScript('remix.execute(\'resolveUrl.js\')')
-      .pause(6000)
-      .journalLastChildIncludes('contract Ballot {')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'contract Ballot {', 60000)
   },
 
   'Call Remix File Resolver (internal URL) from a script and specify a path': function (browser: NightwatchBrowser) {
@@ -112,13 +105,10 @@ module.exports = {
       .openFile('resolveExternalUrlAndSaveToaPath.js')
       .pause(1000)
       .executeScript('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
-      .pause(6000)
-      .journalLastChildIncludes('abstract contract ERC20Burnable')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'abstract contract ERC20Burnable', 60000)
       .openFile('.deps/github/newFile.sol')
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
 
 const asyncAwait = `

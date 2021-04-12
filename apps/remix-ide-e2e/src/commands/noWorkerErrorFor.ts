@@ -17,7 +17,7 @@ function noWorkerErrorFor (browser: NightwatchBrowser, version: string, callback
   browser
     .setSolidityCompilerVersion(version)
     .click('*[data-id="compilerContainerCompileBtn"]')
-    .waitForElementPresent('*[data-id="compilationFinishedWith_' + version + '"]', 10000)
+    .waitForElementPresent('*[data-id="compilationFinishedWith_' + version + '"]', 60000)
     .notContainsText('*[data-id="compiledErrors"]', 'worker error:undefined')
     .notContainsText('*[data-id="compiledErrors"]', 'Uncaught RangeError: Maximum call stack size exceeded')
     .notContainsText('*[data-id="compiledErrors"]', 'RangeError: Maximum call stack size exceeded')

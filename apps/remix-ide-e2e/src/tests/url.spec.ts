@@ -2,7 +2,6 @@
 
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 import examples from '../examples/example-contracts'
 
 const sources = [
@@ -51,7 +50,5 @@ module.exports = {
       .click('[for="optimize"')
       .verify.attributeEquals('#runs', 'value', '200')
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
