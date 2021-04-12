@@ -1,10 +1,12 @@
+import { extractNameFromKey, extractParentFromKey } from '../utils'
 interface Action {
     type: string;
-    payload: Record<string, string | number | boolean>;
+    payload: Record<string, any>;
 }
 
 export const initialState = {
   files: [],
+  expandPath: [],
   isRequesting: false,
   isSuccessful: false,
   hasError: null
@@ -22,7 +24,8 @@ export const reducer = (state = initialState, action: Action) => {
     }
     case 'FETCH_DIRECTORY_SUCCESS': {
       return {
-        files: [],
+        files: action.payload.files,
+        expandPath: [...action.payload.path],
         isRequesting: false,
         isSuccessful: true,
         hasError: null
