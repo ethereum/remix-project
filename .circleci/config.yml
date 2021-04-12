@@ -22,6 +22,15 @@ jobs:
     steps:
       - checkout
       - run: npm install
+      - run:
+          name: Remix Libs Linting
+          command: npm run lint:libs
+      - run:
+          name: Remix IDE Linting
+          command: npm run lint
+      - run:
+          name: Remix IDE e2e Linting
+          command: npm run lint remix-ide-e2e      
       - run: npm run lint:libs
       - run: npm run lint
       - run: npm run lint remix-ide-e2e
@@ -330,22 +339,22 @@ workflows:
             - lint
       - remix-ide-chrome-1:          
           requires:
-            - remix-libs
+            - lint
       - remix-ide-chrome-2:          
           requires:
-            - remix-libs
+            - lint
       - remix-ide-firefox-1:          
           requires:
-            - remix-libs
+            - lint
       - remix-ide-firefox-2:          
           requires:
-            - remix-libs
+            - lint
       - remix-ide-run-deploy:          
           requires:
-            - remix-libs
+            - lint
       - publish:
           requires:
-            - remix-libs
+            - lint
       - deploy-remix-live:          
           requires:
             - remix-ide-chrome-1
