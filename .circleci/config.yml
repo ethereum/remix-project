@@ -330,22 +330,22 @@ workflows:
             - lint
       - remix-ide-chrome-1:          
           requires:
-            - remix-libs
+            - lint
       - remix-ide-chrome-2:          
           requires:
-            - remix-libs
+            - lint
       - remix-ide-firefox-1:          
           requires:
-            - remix-libs
+            - lint
       - remix-ide-firefox-2:          
           requires:
-            - remix-libs
+            - lint
       - remix-ide-run-deploy:          
           requires:
-            - remix-libs
+            - lint
       - publish:
           requires:
-            - remix-libs
+            - lint
       - deploy-remix-live:          
           requires:
             - remix-ide-chrome-1
