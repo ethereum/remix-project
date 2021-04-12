@@ -2,7 +2,6 @@
 
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 import examples from '../examples/example-contracts'
 
 const sources = [
@@ -34,7 +33,7 @@ module.exports = {
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
       .setValue('input[placeholder="uint8 _numProposals"]', '2')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .click('*[data-id="universalDappUiTitleExpander"]')
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
@@ -65,7 +64,7 @@ module.exports = {
       .clickLaunchIcon('fileExplorers')
       .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
       .pause(500)
-      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]')
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .click('*[data-id="universalDappUiTitleExpander"]')
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
@@ -90,9 +89,7 @@ module.exports = {
       .journalLastChildIncludes('Ballot.delegate(address)')
       .journalLastChildIncludes('data: 0x5c1...a733c')
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
 
 const ballotABI = `[

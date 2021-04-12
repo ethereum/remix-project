@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -68,7 +67,5 @@ module.exports = {
       .waitForElementPresent('*[data-id="contractDropdownIpfsCheckbox"]')
       .verify.elementPresent('*[data-id="contractDropdownIpfsCheckbox"]:checked')
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
