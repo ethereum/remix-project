@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -73,13 +72,10 @@ module.exports = {
       .addFile('Untitled8.sol', sources[7]['Untitled8.sol'])
       .clickLaunchIcon('fileExplorers')
       .clickLaunchIcon('solidity')
-      .waitForElementPresent('[data-id="compiledErrors"] div:nth-child(3)', 45000)
-      .scrollAndClick('[data-id="compiledErrors"] div:nth-child(3)') // click on error which point to ERC20 code
+      .waitForElementVisible('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]', 120000)
+      .scrollAndClick('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]') // click on error which point to ERC20 code
       .pause(5000)
-      .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf('contract ERC20 is Context, IERC20') !== -1,
-          'current displayed content should be from the ERC20 source code')
-      })
+      .waitForElementContainsText('#input', 'contract ERC20 is Context, IERC20', 60000)
   },
 
   'Test NPM Import (with unpkg.com)': function (browser: NightwatchBrowser) {
@@ -91,8 +87,7 @@ module.exports = {
       .clickLaunchIcon('fileExplorers')
       .verifyContracts(['test13', 'ERC20'], { wait: 30000 })
       .end()
-  },
-  tearDown: sauce
+  }
 }
 
 const sources = [
