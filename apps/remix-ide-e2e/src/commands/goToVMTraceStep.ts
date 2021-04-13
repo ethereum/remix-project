@@ -10,25 +10,11 @@ class GoToVmTraceStep extends EventEmitter {
 }
 
 function goToVMtraceStep (browser: NightwatchBrowser, step: number, incr: number, done: VoidFunction) {
-  if (!incr) incr = 0
-  browser.execute(function () {
-    return document.querySelector('#stepdetail').innerHTML
-  }, [], function (result) {
-    if (typeof result.value === 'string' && (result.value.indexOf('vm trace step:') !== -1 && result.value.indexOf(step.toString()) !== -1)) {
-      done()
-    } else if (incr > 1000) {
-      browser.assert.fail('goToVMtraceStep fails', 'info about error', '')
-      done()
-    } else {
-      incr++
-      browser.click('#intoforward')
-        .perform(() => {
-          setTimeout(() => {
-            goToVMtraceStep(browser, step, incr, done)
-          }, 200)
+  browser.execute(function () { document.getElementById('slider')['value'] = number - 1 }) // It only moves slider to 50 but vm traces are not updated
+   .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+   .perform(() => {
+          done()
         })
-    }
-  })
 }
 
 module.exports = GoToVmTraceStep
