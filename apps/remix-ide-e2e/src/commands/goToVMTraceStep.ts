@@ -10,11 +10,11 @@ class GoToVmTraceStep extends EventEmitter {
 }
 
 function goToVMtraceStep (browser: NightwatchBrowser, step: number, incr: number, done: VoidFunction) {
-  browser.execute(function () { document.getElementById('slider')['value'] = step - 1 })
-   .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
-   .perform(() => {
-          done()
-        })
+  browser.execute(function () { (document.getElementById('slider') as HTMLInputElement).value = (step - 1).toString() })
+    .setValue('*[data-id="slider"]', new Array(1).fill(browser.Keys.RIGHT_ARROW))
+    .perform(() => {
+      done()
+    })
 }
 
 module.exports = GoToVmTraceStep
