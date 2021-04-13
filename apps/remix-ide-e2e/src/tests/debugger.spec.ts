@@ -127,7 +127,7 @@ module.exports = {
       But the debugger uses now validSourcelocation, which means file is not -1.
       In that case the source highlight at 261 should be the same as for step 262
     */
-      .waitForElementPresent('.highlightLine6')
+      .waitForElementPresent('.highlightLine7')
       .goToVMTraceStep(266)
       .pause(1000)
       .checkVariableDebug('soliditylocals', localVariable_step266_ABIEncoder) // locals should not be initiated at this point, only idAsk should
