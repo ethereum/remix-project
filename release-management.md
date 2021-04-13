@@ -12,7 +12,7 @@ More generally and a non negligeable part of the planning is to properly ensure 
 ## Configuring releases: 
 Release managers will oversee the various aspects of a project before it is due to be deployed, ensuring everyone is on track and meeting the agreed timeline.
 
-## Quality Checks:
+## Quality checks:
 The quality of the release needs to be reviewed before a project is officially launched.
 The release manager is in charge of ensuring manual testing is properly planned and done.
 Also that unit testing and e2e for new feaures have been included.
