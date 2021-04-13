@@ -14,12 +14,12 @@ class debugTransaction extends EventEmitter {
 }
 
 function checkStyle (browser: NightwatchBrowser, index: number, callback: VoidFunction) {
-  browser.pause(2000).execute(function (index: number) {
+  browser.pause(5000).execute(function (index: number) {
     const debugBtn = document.querySelectorAll('*[data-shared="txLoggerDebugButton"]')[index] as HTMLInputElement
 
     debugBtn && debugBtn.click()
   }, [index], function () {
-    browser.waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]').perform(() => callback())
+    browser.waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]', 60000).perform(() => callback())
   })
 }
 
