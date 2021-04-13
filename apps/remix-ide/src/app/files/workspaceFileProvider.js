@@ -1,5 +1,6 @@
 'use strict'
 
+const EventManager = require('../../lib/events')
 const FileProvider = require('./fileProvider')
 const pathModule = require('path')
 
@@ -8,6 +9,7 @@ class WorkspaceFileProvider extends FileProvider {
     super('')
     this.workspacesPath = '.workspaces'
     this.workspace = null
+    this.event = new EventManager()
   }
 
   setWorkspace (workspace) {
@@ -28,7 +30,7 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   removePrefix (path) {
-    if (!this.workspace) throw new Error('No workspace has been opened.')
+    if (!this.workspace) this.createDefaultWorkspace()
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
     if (path.startsWith(this.workspace)) return this.workspacesPath + '/' + this.workspace
@@ -49,7 +51,7 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   resolveDirectory (path, callback) {
-    if (!this.workspace) throw new Error('No workspace has been opened.')
+    if (!this.workspace) this.createDefaultWorkspace()
     super.resolveDirectory(path, (error, files) => {
       if (error) return callback(error)
       const unscoped = {}
@@ -74,8 +76,13 @@ class WorkspaceFileProvider extends FileProvider {
   }
 
   _normalizePath (path) {
-    if (!this.workspace) throw new Error('No workspace has been opened.')
+    if (!this.workspace) this.createDefaultWorkspace()
     return path.replace(this.workspacesPath + '/' + this.workspace + '/', '')
+  }
+
+  createDefaultWorkspace() {
+    this.workspace = 'workspace_default'
+    this.event.trigger('create_workspace_default', [this.workspace])
   }
 }
 
