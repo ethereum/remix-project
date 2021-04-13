@@ -175,12 +175,10 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async createNewFile () {
-    if (!this.workspaceExists()) this.createWorkspace('default_workspace')
     return await this.request.createNewFile()
   }
 
   async uploadFile (event) {
-    if (!this.workspaceExists()) this.createWorkspace('default_workspace')
     return await this.request.uploadFile(event)
   }
 
@@ -204,14 +202,17 @@ module.exports = class Filepanel extends ViewPlugin {
     if (!workspaceName) throw new Error('name cannot be empty')
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
-    const browserProvider = this._deps.fileProviders.browser
-    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-    await this.processCreateWorkspace(workspaceName)
-    for (const file in examples) {
-      try {
-        await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
-      } catch (error) {
-        console.error(error)
+    else {
+      this._deps.fileProviders.workspace.setWorkspace(workspaceName)
+      const browserProvider = this._deps.fileProviders.browser
+      const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+      await this.processCreateWorkspace(workspaceName)
+      for (const file in examples) {
+        try {
+          await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
+        } catch (error) {
+          console.error(error)
+        }
       }
     }
   }

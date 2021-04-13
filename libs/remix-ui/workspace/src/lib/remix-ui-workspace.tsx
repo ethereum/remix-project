@@ -50,10 +50,13 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   props.request.createNewFile = () => {
+    if (!state.workspaces.length) createNewWorkspace('default_workspace')
     props.plugin.resetNewFile()
   }
 
   props.request.uploadFile = (target) => {
+    if (!state.workspaces.length) createNewWorkspace('default_workspace')
+
     setState(prevState => {
       return { ...prevState, uploadFileEvent: target }
     })
@@ -102,15 +105,8 @@ export const Workspace = (props: WorkspaceProps) => {
       remixdExplorer.loading()
     })
 
-    props.workspace.event.register('create_workspace_default', async (workspaceName) => {
-      try {
-        await props.createWorkspace(workspaceName)
-        await setWorkspace(workspaceName)
-        toast('New default workspace has been created.')
-      } catch (e) {
-        modalMessage('Create Default Workspace', e.message)
-        console.error(e)
-      }
+    props.workspace.event.register('create_workspace', (name) => {
+      createNewWorkspace(name)
     })
 
     if (props.initialWorkspace) {
@@ -121,6 +117,16 @@ export const Workspace = (props: WorkspaceProps) => {
     }
   }, [])
 
+  const createNewWorkspace = async (workspaceName) => {
+    try {
+      await props.createWorkspace(workspaceName)
+      await setWorkspace(workspaceName)
+      toast('New default workspace has been created.')
+    } catch (e) {
+      modalMessage('Create Default Workspace', e.message)
+      console.error(e)
+    }
+  }
   const [state, setState] = useState({
     workspaces: [],
     reset: false,
