@@ -563,7 +563,6 @@ class FileManager extends Plugin {
     if (file.startsWith('browser')) {
       return this._deps.filesProviders.browser
     }
-    const provider = this._deps.filesProviders.workspace
     return this._deps.filesProviders.workspace
   }
 
