@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react' // eslint-disable-lin
 import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster'
 
 /* eslint-disable-next-line */
 export interface WorkspaceProps {
@@ -101,6 +102,17 @@ export const Workspace = (props: WorkspaceProps) => {
       remixdExplorer.loading()
     })
 
+    props.workspace.event.register('create_workspace_default', async (workspaceName) => {
+      try {
+        await props.createWorkspace(workspaceName)
+        await setWorkspace(workspaceName)
+        toast("New default workspace has been created.")
+      } catch (e) {
+        modalMessage('Create Default Workspace', e.message)
+        console.error(e)
+      }
+    })
+
     if (props.initialWorkspace) {
       props.workspace.setWorkspace(props.initialWorkspace)
       setState(prevState => {
@@ -131,8 +143,15 @@ export const Workspace = (props: WorkspaceProps) => {
       },
       handleHide: null
     },
-    loadingLocalhost: false
+    loadingLocalhost: false,
+    toasterMsg: '',
   })
+
+  const toast = (message: string) => {
+    setState(prevState => {
+      return { ...prevState, toasterMsg: message }
+    })
+  }
 
   /* workspace creation, renaming and deletion */
 
@@ -312,6 +331,7 @@ export const Workspace = (props: WorkspaceProps) => {
         handleHide={ handleHideModal }>
         { (typeof state.modal.message !== 'string') && state.modal.message }
       </ModalDialog>
+      <Toaster message={state.toasterMsg} />
       <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
         <div>
           <header>
