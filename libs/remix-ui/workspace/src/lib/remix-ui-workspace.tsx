@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react' // eslint-disable-lin
 import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import { Toaster } from '@remix-ui/toaster'
+import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 
 /* eslint-disable-next-line */
 export interface WorkspaceProps {
@@ -106,7 +106,7 @@ export const Workspace = (props: WorkspaceProps) => {
       try {
         await props.createWorkspace(workspaceName)
         await setWorkspace(workspaceName)
-        toast("New default workspace has been created.")
+        toast('New default workspace has been created.')
       } catch (e) {
         modalMessage('Create Default Workspace', e.message)
         console.error(e)
@@ -144,7 +144,7 @@ export const Workspace = (props: WorkspaceProps) => {
       handleHide: null
     },
     loadingLocalhost: false,
-    toasterMsg: '',
+    toasterMsg: ''
   })
 
   const toast = (message: string) => {
