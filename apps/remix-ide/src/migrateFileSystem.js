@@ -1,5 +1,6 @@
 import { Storage } from '@remix-project/remix-lib'
 import { joinPath } from './lib/helper'
+import yo from 'yo-yo'
 const modalDialogCustom = require('./app/ui/modal-dialog-custom')
 /*
   Migrating the files to the BrowserFS storage instead or raw localstorage
@@ -55,7 +56,7 @@ const populateWorkspace = async (workspace, json, browserProvider) => {
     } else {
       await browserProvider.set(joinPath(workspace, item), json[item].content, (err) => {
         if (err && err.message) {
-          modalDialogCustom.alert(`There was an error migrating your files: ${err.message}`)
+          modalDialogCustom.alert(yo`<div>There was an error migrating your files:${err.message} <div>Please use the ‘Download all Files' action, clear the local storage and re-import your files manually or use the 'Restore files' action.</div></div>`)
         }
       })
     }
