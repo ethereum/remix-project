@@ -52,6 +52,16 @@ export class RemixAppManager extends PluginManager {
     return isNative(from.name)
   }
 
+  async deactivatePlugin (name) {
+    const [to, from] = [
+      await this.getProfile(name),
+      await this.getProfile(this.requestFrom)
+    ]
+    if (this.canDeactivatePlugin(from, to)) {
+      await this.toggleActive(name)
+    }
+  }
+
   async canCall (from, to, method, message) {
     // Make sure the caller of this methods is the target plugin
     if (to !== this.currentRequest.from) {
