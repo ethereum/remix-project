@@ -175,10 +175,12 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async createNewFile () {
+    if (!this.workspaceExists()) this.createWorkspace('generated_workspace')
     return await this.request.createNewFile()
   }
 
   async uploadFile (event) {
+    if (!this.workspaceExists()) this.createWorkspace('generated_workspace')
     return await this.request.uploadFile(event)
   }
 
