@@ -208,6 +208,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const onFinishDeleteWorkspace = async () => {
+    await props.fileManager.closeAllFiles()
     const workspacesPath = props.workspace.workspacesPath
     props.browser.remove(workspacesPath + '/' + state.currentWorkspace)
     const name = state.currentWorkspace
