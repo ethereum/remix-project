@@ -22,6 +22,7 @@ const css = csjs`
     user-select: none;
   }
   .text:hover {
+    cursor: pointer;
     text-decoration: underline;
   }
   .homeContainer {
@@ -300,6 +301,11 @@ export class LandingPage extends ViewPlugin {
       await this.appManager.activatePlugin('pluginManager')
       this.verticalIcons.select('pluginManager')
     }
+    const startRestoreBackupZip = async () => {
+      await this.appManager.activatePlugin(['restorebackupzip'])
+      this.verticalIcons.select('restorebackupzip')
+      _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restorebackupzip'])
+    }
 
     const createNewFile = () => {
       this.call('fileExplorers', 'createNewFile')
@@ -456,7 +462,7 @@ export class LandingPage extends ViewPlugin {
       )
     }
 
-    const img = yo`<img class=${css.logoImg} src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
+    const img = yo`<img class="m-4 ${css.logoImg}" src="assets/img/guitarRemiCroped.webp" onclick="${() => playRemi()}"></img>`
     const playRemi = async () => { await document.getElementById('remiAudio').play() }
     // to retrieve medium posts
     document.body.appendChild(yo`<script src="https://www.twilik.com/assets/retainable/rss-embed/retainable-rss-embed.js"></script>`)
@@ -466,24 +472,46 @@ export class LandingPage extends ViewPlugin {
           <div class="d-flex justify-content-between">
             <div class="d-flex flex-column">
               <div class="border-bottom d-flex justify-content-between clearfix py-3 mb-4">
-                <div class="mx-4 w-100">
+                <div class="mx-4 w-100 d-flex">
                   ${img}
                   <audio id="remiAudio" muted=false src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"></audio>
+                  <div class="w-80 pl-5 ml-5">
+                    <h5 class="mb-1">Quicklinks</h5>
+                    <a class="${css.text} mr-1" target="__blank" href="https://medium.com/remix-ide/migrating-files-to-workspaces-8e34737c751c?source=friends_link&sk=b75cfd9093aa23c78be13cce49e4a5e8">Guide </a>for migrating the old File System
+                    <p class="font-weight-bold mb-0 py-1">Migration tools:</p>
+                    <li class="pl-1">
+                      <spam class="pl-0">
+                        <u class="${css.text} pr-1" onclick=${() => migrateWorkspace()}>Basic migration</u>
+                      </spam>
+                    </li>
+                    <li class="pl-1">
+                      <u class="${css.text} pr-1" onclick=${() => downloadFiles()}>Download all Files</u>
+                      as a backup zip
+                    </li>
+                    <li class="pl-1">
+                      <u class="${css.text} pr-1" onclick=${() => startRestoreBackupZip()}>Restore files</u>from backup zip
+                     </li>
+                    <p class="font-weight-bold mb-0 mt-2">Help:</p>
+                    <dir class="d-flex flex-column mt-1 pl-0">
+                      <a class="${css.text} mx-1" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
+                      <a class="${css.text} mx-1" target="__blank" href="https://github.com/ethereum/remix-project/issues">Report on Github</a>
+                    </dir>
+                  </div>
                 </div>
               </div>
               <div class="row ${css.hpSections} mx-4" data-id="landingPageHpSections">
                 <div class="ml-3">
                   <div class="plugins mb-5">
-                  <h4>Featured Plugins</h4>
-                  <div class="d-flex flex-row pt-2">
-                    ${this.solEnv}
-                    ${this.learnEthEnv}
-                    ${this.solhintEnv}
-                    ${this.sourcifyEnv}
-                    ${this.debuggerEnv}
-                    ${this.moreEnv}
+                    <h4>Featured Plugins</h4>
+                    <div class="d-flex flex-row pt-2">
+                      ${this.solEnv}
+                      ${this.learnEthEnv}
+                      ${this.solhintEnv}
+                      ${this.sourcifyEnv}
+                      ${this.debuggerEnv}
+                      ${this.moreEnv}
+                    </div>
                   </div>
-                </div>
                   <div class="d-flex">
                     <div class="file">
                       <h4>File</h4>
@@ -495,21 +523,16 @@ export class LandingPage extends ViewPlugin {
                         <i class="mr-1 far fa-file-alt"></i>
                         <label class="ml-1 ${css.labelIt} ${css.bigLabelSize} ${css.text}">
                           Open Files
-                          <input title="open file" type="file" onchange="${
-                            (event) => {
-                              event.stopPropagation()
-                              uploadFile(event.target)
-                            }
-                          }" multiple />
+                          <input title="open file" type="file" onchange="${(event) => {
+                            event.stopPropagation()
+                            uploadFile(event.target)
+                          }
+                        }" multiple />
                         </label>
                       </p>
                       <p class="mb-1">
                         <i class="far fa-hdd"></i>
                         <span class="ml-1 ${css.text}" onclick=${() => connectToLocalhost()}>Connect to Localhost</span>
-                      </p>
-                      <p class="mb-1">
-                        <i class="mr-1 fas fa-download""></i>
-                        <span class="ml-1 mb-1 ${css.text}" onclick=${() => downloadFiles()}>Download all Files</span>
                       </p>
                       <p class="mt-3 mb-0"><label>IMPORT FROM:</label></p>
                       <div class="btn-group">
@@ -529,7 +552,7 @@ export class LandingPage extends ViewPlugin {
                       <p class="mb-1">
                         <i class="mr-1 fab fa-gitter"></i>
                         <a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a>
-                        </p>
+                      </p>
                       <p class="mb-1">
                         ${this.websiteIcon}
                         <a class="${css.text}" target="__blank" href="https://remix-project.org">Featuring website</a>
@@ -537,10 +560,6 @@ export class LandingPage extends ViewPlugin {
                       <p class="mb-1">
                         <i class="fab fa-ethereum ${css.image}"></i>
                         <span class="${css.text}" onclick=${() => switchToPreviousVersion()}>Old experience</span>
-                      </p>
-                      <p>
-                        <i class="fas fa-exclamation-triangle text-warning ${css.image}"></i>
-                        <span class="${css.text}" onclick=${() => migrateWorkspace()}>Migrate old filesystem to workspace</span>
                       </p>
                     </div>
                   </div>
