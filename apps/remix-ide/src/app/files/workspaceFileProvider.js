@@ -80,8 +80,8 @@ class WorkspaceFileProvider extends FileProvider {
     return path.replace(this.workspacesPath + '/' + this.workspace + '/', '')
   }
 
-  createDefaultWorkspace() {
-    this.workspace = 'workspace_default'
+  createDefaultWorkspace () {
+    this.workspace = 'generated_workspace'
     this.event.trigger('create_workspace_default', [this.workspace])
   }
 }
