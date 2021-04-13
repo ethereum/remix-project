@@ -208,6 +208,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const onFinishDeleteWorkspace = async () => {
+    await props.fileManager.closeAllFiles()
     const workspacesPath = props.workspace.workspacesPath
     props.browser.remove(workspacesPath + '/' + state.currentWorkspace)
     const name = state.currentWorkspace
@@ -223,7 +224,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const setWorkspace = async (name) => {
-    props.setWorkspace({ name, isLocalhost: name === LOCALHOST })
+    await props.setWorkspace({ name, isLocalhost: name === LOCALHOST })
     if (name === LOCALHOST) {
       props.workspace.clearWorkspace()
     } else if (name === NO_WORKSPACE) {
@@ -238,8 +239,8 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const remixdExplorer = {
-    hide: () => {
-      if (state.currentWorkspace === LOCALHOST) setWorkspace(NO_WORKSPACE)
+    hide: async () => {
+      await setWorkspace(NO_WORKSPACE)
       props.fileManager.setMode('browser')
       setState(prevState => {
         return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
