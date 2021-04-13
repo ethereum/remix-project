@@ -564,7 +564,6 @@ class FileManager extends Plugin {
       return this._deps.filesProviders.browser
     }
     const provider = this._deps.filesProviders.workspace
-    if (!provider.isReady()) throw createError({ code: 'ECONNRESET', message: 'No workspace has been opened.' })
     return this._deps.filesProviders.workspace
   }
 
