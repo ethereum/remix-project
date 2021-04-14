@@ -119,6 +119,7 @@ export const Workspace = (props: WorkspaceProps) => {
 
   const createNewWorkspace = async (workspaceName) => {
     try {
+      await props.fileManager.closeAllFiles()
       await props.createWorkspace(workspaceName)
       await setWorkspace(workspaceName)
       toast('New default workspace has been created.')
@@ -127,6 +128,7 @@ export const Workspace = (props: WorkspaceProps) => {
       console.error(e)
     }
   }
+
   const [state, setState] = useState({
     workspaces: [],
     reset: false,
@@ -224,6 +226,7 @@ export const Workspace = (props: WorkspaceProps) => {
     const workspaceName = workspaceCreateInput.current.value
 
     try {
+      await props.fileManager.closeAllFiles()
       await props.createWorkspace(workspaceName)
       await setWorkspace(workspaceName)
     } catch (e) {
