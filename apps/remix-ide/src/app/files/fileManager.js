@@ -329,18 +329,18 @@ class FileManager extends Plugin {
       workspaceExplorer: this._components.registry.get('fileproviders/workspace').api,
       filesProviders: this._components.registry.get('fileproviders').api
     }
-    this._deps.browserExplorer.event.register('fileChanged', (path) => { this.fileChangedEvent(path) })
-    this._deps.browserExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.localhostExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.browserExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.browserExplorer.event.register('fileAdded', (path) => { this.fileAddedEvent(path) })
-    this._deps.localhostExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
-    this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
-    this._deps.workspaceExplorer.event.register('fileChanged', (path) => { this.fileChangedEvent(path) })
-    this._deps.workspaceExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.workspaceExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.workspaceExplorer.event.register('fileAdded', (path) => { this.fileAddedEvent(path) })
+    this._deps.browserExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
+    this._deps.browserExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.localhostExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.browserExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.browserExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
+    this._deps.localhostExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.localhostExplorer.event.on('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
+    this._deps.localhostExplorer.event.on('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
+    this._deps.workspaceExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
+    this._deps.workspaceExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.workspaceExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.workspaceExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
 
     this.getCurrentFile = this.file
     this.getFile = this.readFile
