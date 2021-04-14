@@ -97,24 +97,24 @@ export const Workspace = (props: WorkspaceProps) => {
       props.fileManager.setMode('browser')
     }
   }
-  props.localhost.event.unregister('disconnected', localhostDisconnect)
-  props.localhost.event.register('disconnected', localhostDisconnect)
+  props.localhost.event.off('disconnected', localhostDisconnect)
+  props.localhost.event.on('disconnected', localhostDisconnect)
 
   useEffect(() => {
-    props.localhost.event.register('connected', () => {
+    props.localhost.event.on('connected', () => {
       remixdExplorer.show()
       setWorkspace(LOCALHOST)
     })
 
-    props.localhost.event.register('disconnected', () => {
+    props.localhost.event.on('disconnected', () => {
       remixdExplorer.hide()
     })
 
-    props.localhost.event.register('loading', () => {
+    props.localhost.event.on('loading', () => {
       remixdExplorer.loading()
     })
 
-    props.workspace.event.register('createWorkspace', (name) => {
+    props.workspace.event.on('createWorkspace', (name) => {
       createNewWorkspace(name)
     })
 
