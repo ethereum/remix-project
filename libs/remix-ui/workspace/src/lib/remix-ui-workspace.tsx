@@ -105,7 +105,7 @@ export const Workspace = (props: WorkspaceProps) => {
       remixdExplorer.loading()
     })
 
-    props.workspace.event.register('create_workspace', (name) => {
+    props.workspace.event.register('createWorkspace', (name) => {
       createNewWorkspace(name)
     })
 

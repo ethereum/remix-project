@@ -82,7 +82,7 @@ class WorkspaceFileProvider extends FileProvider {
 
   createWorkspace (name) {
     if (!name) name = 'default_workspace'
-    this.event.trigger('create_workspace', [name])
+    this.event.trigger('createWorkspace', [name])
   }
 }
 
