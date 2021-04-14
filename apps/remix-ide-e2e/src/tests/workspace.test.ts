@@ -47,7 +47,7 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_name_1' })
       .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-      .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]', 60000)
       .click('*[data-id="workspacesSelect"] option[value="workspace_name"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
   },
