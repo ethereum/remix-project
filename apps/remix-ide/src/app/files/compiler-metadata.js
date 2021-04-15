@@ -31,32 +31,32 @@ class CompilerMetadata extends Plugin {
 
   createHardhatArtifacts (compiledContract, provider, output, versionString) {
     const contract = compiledContract
-    var hhArtifactsFileName = joinPath('artifacts',contract.file, contract.name + '.json')
+    var hhArtifactsFileName = joinPath('artifacts', contract.file, contract.name + '.json')
     const hhArtifactsdata = {
-      '_format': 'hh-sol-artifact-1',
-      'contractName': contract.name,
-      'sourceName': contract.file,
-      'abi': contract.object.abi,
-      'bytecode': contract.object.evm.bytecode.object,
-      'deployedBytecode': contract.object.evm.deployedBytecode.object,
-      'linkReferences': contract.object.evm.bytecode.linkReferences,
-      'deployedLinkReferences': contract.object.evm.deployedBytecode.linkReferences,
+      _format: 'hh-sol-artifact-1',
+      contractName: contract.name,
+      sourceName: contract.file,
+      abi: contract.object.abi,
+      bytecode: contract.object.evm.bytecode.object,
+      deployedBytecode: contract.object.evm.deployedBytecode.object,
+      linkReferences: contract.object.evm.bytecode.linkReferences,
+      deployedLinkReferences: contract.object.evm.deployedBytecode.linkReferences
     }
     provider.set(hhArtifactsFileName, JSON.stringify(hhArtifactsdata, null, '\t'))
 
-    var hhArtifactsDbgFileName = joinPath('artifacts',contract.file, contract.name + '.dbg.json')
+    var hhArtifactsDbgFileName = joinPath('artifacts', contract.file, contract.name + '.dbg.json')
     const hhArtifactsDbgdata = {
-      '_format': 'hh-sol-dbg-1',
+      _format: 'hh-sol-dbg-1'
     }
     provider.set(hhArtifactsDbgFileName, JSON.stringify(hhArtifactsDbgdata, null, '\t'))
-    let id = '12wqe23'
-    var hhArtifactsBuildFileName = joinPath('artifacts','build-info', id + '.json')
+    const id = '12wqe23'
+    var hhArtifactsBuildFileName = joinPath('artifacts', 'build-info', id + '.json')
     const hhArtifactsBuilddata = {
-      'id': id,
-      '_format': 'hh-sol-build-info-1',
-      'solcVersion': versionString.substring(0, versionString.indexOf('+commit')),
-      'solcLongVersion': versionString,
-      'output': output
+      id: id,
+      _format: 'hh-sol-build-info-1',
+      solcVersion: versionString.substring(0, versionString.indexOf('+commit')),
+      solcLongVersion: versionString,
+      output: output
     }
     provider.set(hhArtifactsBuildFileName, JSON.stringify(hhArtifactsBuilddata, null, '\t'))
   }
