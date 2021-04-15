@@ -30,10 +30,7 @@ jobs:
           command: npm run lint
       - run:
           name: Remix IDE e2e Linting
-          command: npm run lint remix-ide-e2e      
-      - run: npm run lint:libs
-      - run: npm run lint
-      - run: npm run lint remix-ide-e2e
+          command: npm run lint remix-ide-e2e
 
   remix-libs:
     docker:

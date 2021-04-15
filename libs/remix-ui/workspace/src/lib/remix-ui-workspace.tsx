@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react' // eslint-disable-lin
 import { FileExplorer } from '@remix-ui/file-explorer' // eslint-disable-line
 import './remix-ui-workspace.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 
 /* eslint-disable-next-line */
 export interface WorkspaceProps {
@@ -49,10 +50,13 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   props.request.createNewFile = () => {
+    if (!state.workspaces.length) createNewWorkspace('default_workspace')
     props.plugin.resetNewFile()
   }
 
   props.request.uploadFile = (target) => {
+    if (!state.workspaces.length) createNewWorkspace('default_workspace')
+
     setState(prevState => {
       return { ...prevState, uploadFileEvent: target }
     })
@@ -101,6 +105,10 @@ export const Workspace = (props: WorkspaceProps) => {
       remixdExplorer.loading()
     })
 
+    props.workspace.event.register('createWorkspace', (name) => {
+      createNewWorkspace(name)
+    })
+
     if (props.initialWorkspace) {
       props.workspace.setWorkspace(props.initialWorkspace)
       setState(prevState => {
@@ -108,6 +116,18 @@ export const Workspace = (props: WorkspaceProps) => {
       })
     }
   }, [])
+
+  const createNewWorkspace = async (workspaceName) => {
+    try {
+      await props.fileManager.closeAllFiles()
+      await props.createWorkspace(workspaceName)
+      await setWorkspace(workspaceName)
+      toast('New default workspace has been created.')
+    } catch (e) {
+      modalMessage('Create Default Workspace', e.message)
+      console.error(e)
+    }
+  }
 
   const [state, setState] = useState({
     workspaces: [],
@@ -131,8 +151,15 @@ export const Workspace = (props: WorkspaceProps) => {
       },
       handleHide: null
     },
-    loadingLocalhost: false
+    loadingLocalhost: false,
+    toasterMsg: ''
   })
+
+  const toast = (message: string) => {
+    setState(prevState => {
+      return { ...prevState, toasterMsg: message }
+    })
+  }
 
   /* workspace creation, renaming and deletion */
 
@@ -199,6 +226,7 @@ export const Workspace = (props: WorkspaceProps) => {
     const workspaceName = workspaceCreateInput.current.value
 
     try {
+      await props.fileManager.closeAllFiles()
       await props.createWorkspace(workspaceName)
       await setWorkspace(workspaceName)
     } catch (e) {
@@ -208,6 +236,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   const onFinishDeleteWorkspace = async () => {
+    await props.fileManager.closeAllFiles()
     const workspacesPath = props.workspace.workspacesPath
     props.browser.remove(workspacesPath + '/' + state.currentWorkspace)
     const name = state.currentWorkspace
@@ -311,6 +340,7 @@ export const Workspace = (props: WorkspaceProps) => {
         handleHide={ handleHideModal }>
         { (typeof state.modal.message !== 'string') && state.modal.message }
       </ModalDialog>
+      <Toaster message={state.toasterMsg} />
       <div className='remixui_fileexplorer' onClick={() => resetFocus(true)}>
         <div>
           <header>
