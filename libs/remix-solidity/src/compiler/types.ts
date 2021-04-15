@@ -185,6 +185,7 @@ export interface MessageToWorker {
 export interface MessageFromWorker {
   cmd: string,
   job?: number,
+  input?: CompilerInput
   missingInputs?: string[],
   data?: string
 }

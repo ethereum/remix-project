@@ -29,7 +29,7 @@ class CompilerMetadata extends Plugin {
     return joinPath(path, this.innerPath, contractName + '_metadata.json')
   }
 
-  createHardhatArtifacts (compiledContract, provider, output, versionString) {
+  createHardhatArtifacts (compiledContract, provider, input, output, versionString) {
     const contract = compiledContract
     var hhArtifactsFileName = joinPath('artifacts', contract.file, contract.name + '.json')
     const hhArtifactsdata = {
@@ -56,6 +56,7 @@ class CompilerMetadata extends Plugin {
       _format: 'hh-sol-build-info-1',
       solcVersion: versionString.substring(0, versionString.indexOf('+commit')),
       solcLongVersion: versionString,
+      input: input,
       output: output
     }
     provider.set(hhArtifactsBuildFileName, JSON.stringify(hhArtifactsBuilddata, null, '\t'))
@@ -63,7 +64,7 @@ class CompilerMetadata extends Plugin {
 
   onActivation () {
     var self = this
-    this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
+    this.on('solidity', 'compilationFinished', (file, source, languageVersion, data, compilerInput) => {
       if (!self.config.get('settings/generate-contract-metadata')) return
       const compiler = new CompilerAbstract(languageVersion, data, source)
       var provider = self.fileManager.fileProviderOf(source.target)
@@ -90,14 +91,16 @@ class CompilerMetadata extends Plugin {
               })
 
               let parsedMetadata
+              let parsedInput
               try {
                 parsedMetadata = JSON.parse(contract.object.metadata)
+                parsedInput = JSON.parse(compilerInput)
               } catch (e) {
                 console.log(e)
               }
               if (parsedMetadata) {
                 provider.set(metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
-                self.createHardhatArtifacts(contract, provider, data, parsedMetadata.compiler.version)
+                self.createHardhatArtifacts(contract, provider, parsedInput, data, parsedMetadata.compiler.version)
               }
 
               var evmData = {

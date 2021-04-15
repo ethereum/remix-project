@@ -9,7 +9,8 @@ import {
   Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult,
   visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError,
   gatherImportsCallbackInterface,
-  isFunctionDescription
+  isFunctionDescription,
+  CompilerInput
 } from './types'
 
 /*
@@ -111,16 +112,17 @@ export class Compiler {
           return { error: 'Deferred import' }
         }
         let result: CompilationResult = {}
+        let input
         try {
           if (source && source.sources) {
             const { optimize, runs, evmVersion, language } = this.state
-            const input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+            input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
             result = JSON.parse(compiler.compile(input, { import: missingInputsCallback }))
           }
         } catch (exception) {
           result = { error: { formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' } }
         }
-        this.onCompilationFinished(result, missingInputs, source)
+        this.onCompilationFinished(result, missingInputs, source, input)
       }
       this.onCompilerLoaded(compiler.version())
     }
@@ -133,7 +135,7 @@ export class Compiler {
    * @param source Source
    */
 
-  onCompilationFinished (data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget): void {
+  onCompilationFinished (data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, compilerInput?: CompilerInput): void {
     let noFatalErrors = true // ie warnings are ok
 
     const checkIfFatalError = (error: CompilationError) => {
@@ -159,7 +161,7 @@ export class Compiler {
           source: source
         }
       }
-      this.event.trigger('compilationFinished', [true, data, source])
+      this.event.trigger('compilationFinished', [true, data, source, compilerInput])
     }
   }
 
@@ -182,16 +184,17 @@ export class Compiler {
             return { error: 'Deferred import' }
           }
           let result: CompilationResult = {}
+          let input
           try {
             if (source && source.sources) {
               const { optimize, runs, evmVersion, language } = this.state
-              const input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+              input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
               result = JSON.parse(remoteCompiler.compile(input, { import: missingInputsCallback }))
             }
           } catch (exception) {
             result = { error: { formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' } }
           }
-          this.onCompilationFinished(result, missingInputs, source)
+          this.onCompilationFinished(result, missingInputs, source, input)
         }
         this.onCompilerLoaded(version)
       }
@@ -273,7 +276,7 @@ export class Compiler {
               sources = jobs[data.job].sources
               delete jobs[data.job]
             }
-            this.onCompilationFinished(result, data.missingInputs, sources)
+            this.onCompilationFinished(result, data.missingInputs, sources, data.input)
           }
           break
         }

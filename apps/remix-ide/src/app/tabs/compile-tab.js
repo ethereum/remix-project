@@ -125,11 +125,11 @@ class CompileTab extends ViewPlugin {
     }
     this.fileManager.events.on('noFileSelected', this.data.eventHandlers.onNoFileSelected)
 
-    this.data.eventHandlers.onCompilationFinished = (success, data, source) => {
+    this.data.eventHandlers.onCompilationFinished = (success, data, source, compilerInput) => {
       this._view.errorContainer.appendChild(yo`<span data-id="compilationFinishedWith_${this.getCurrentVersion()}"></span>`)
       if (success) {
         // forwarding the event to the appManager infra
-        this.emit('compilationFinished', source.target, source, 'soljson', data)
+        this.emit('compilationFinished', source.target, source, 'soljson', data, compilerInput)
         if (data.errors && data.errors.length > 0) {
           this.emit('statusChanged', {
             key: data.errors.length,
