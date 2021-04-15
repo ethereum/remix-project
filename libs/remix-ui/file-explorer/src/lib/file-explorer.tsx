@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint-disable-line
 // import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
@@ -7,6 +7,8 @@ import Gists from 'gists'
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
+import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem'
+import { fetchDirectory } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 
@@ -60,6 +62,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     mouseOverElement: null,
     showContextMenu: false
   })
+  const [fileSystem, dispatch] = useReducer(fileSystemReducer, fileSystemInitialState)
   const editRef = useRef(null)
 
   useEffect(() => {
@@ -74,8 +77,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     (async () => {
+      await fetchDirectory(filesProvider, name)(dispatch)
       const fileManager = registry.get('filemanager').api
-      const files = await fetchDirectoryContent(name)
       const actions = [{
         id: 'newFile',
         name: 'New File',
@@ -121,7 +124,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }]
 
       setState(prevState => {
-        return { ...prevState, fileManager, files, actions, expandPath: [name] }
+        return { ...prevState, fileManager, actions, expandPath: [name] }
       })
     })()
   }, [name])
@@ -134,35 +137,35 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [state.fileManager])
 
-  useEffect(() => {
-    const { expandPath } = state
-    const expandFn = async () => {
-      let files = state.files
+  // useEffect(() => {
+  //   const { expandPath } = state
+  //   const expandFn = async () => {
+  //     let files = state.files
 
-      for (let i = 0; i < expandPath.length; i++) {
-        files = await resolveDirectory(expandPath[i], files)
-        await setState(prevState => {
-          return { ...prevState, files }
-        })
-      }
-    }
+  //     for (let i = 0; i < expandPath.length; i++) {
+  //       files = await resolveDirectory(expandPath[i], files)
+  //       await setState(prevState => {
+  //         return { ...prevState, files }
+  //       })
+  //     }
+  //   }
 
-    if (expandPath && expandPath.length > 0) {
-      expandFn()
-    }
-  }, [state.expandPath])
+  //   if (expandPath && expandPath.length > 0) {
+  //     expandFn()
+  //   }
+  // }, [state.expandPath])
 
-  useEffect(() => {
-    // unregister event to update state in callback
-    if (filesProvider.event.registered.fileAdded) filesProvider.event.unregister('fileAdded', fileAdded)
-    if (filesProvider.event.registered.folderAdded) filesProvider.event.unregister('folderAdded', folderAdded)
-    if (filesProvider.event.registered.fileRemoved) filesProvider.event.unregister('fileRemoved', fileRemoved)
-    if (filesProvider.event.registered.fileRenamed) filesProvider.event.unregister('fileRenamed', fileRenamed)
-    filesProvider.event.register('fileAdded', fileAdded)
-    filesProvider.event.register('folderAdded', folderAdded)
-    filesProvider.event.register('fileRemoved', fileRemoved)
-    filesProvider.event.register('fileRenamed', fileRenamed)
-  }, [state.files])
+  // useEffect(() => {
+  //   // unregister event to update state in callback
+  //   if (filesProvider.event.registered.fileAdded) filesProvider.event.unregister('fileAdded', fileAdded)
+  //   if (filesProvider.event.registered.folderAdded) filesProvider.event.unregister('folderAdded', folderAdded)
+  //   if (filesProvider.event.registered.fileRemoved) filesProvider.event.unregister('fileRemoved', fileRemoved)
+  //   if (filesProvider.event.registered.fileRenamed) filesProvider.event.unregister('fileRenamed', fileRenamed)
+  //   filesProvider.event.register('fileAdded', fileAdded)
+  //   filesProvider.event.register('folderAdded', folderAdded)
+  //   filesProvider.event.register('fileRemoved', fileRemoved)
+  //   filesProvider.event.register('fileRenamed', fileRenamed)
+  // }, [state.files])
 
   useEffect(() => {
     if (focusRoot) {
@@ -220,44 +223,44 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [state.modals])
 
-  const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
-    if (!isChild && (state.focusEdit.element === '/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === '/blank') === -1)) {
-      dir = state.focusEdit.type === 'file' ? [...dir, {
-        path: state.focusEdit.element,
-        name: '',
-        isDirectory: false
-      }] : [{
-        path: state.focusEdit.element,
-        name: '',
-        isDirectory: true
-      }, ...dir]
-    }
-    dir = await Promise.all(dir.map(async (file) => {
-      if (file.path === folderPath) {
-        if ((extractParentFromKey(state.focusEdit.element) === folderPath) && state.focusEdit.isNew) {
-          file.child = state.focusEdit.type === 'file' ? [...await fetchDirectoryContent(folderPath), {
-            path: state.focusEdit.element,
-            name: '',
-            isDirectory: false
-          }] : [{
-            path: state.focusEdit.element,
-            name: '',
-            isDirectory: true
-          }, ...await fetchDirectoryContent(folderPath)]
-        } else {
-          file.child = await fetchDirectoryContent(folderPath)
-        }
-        return file
-      } else if (file.child) {
-        file.child = await resolveDirectory(folderPath, file.child, true)
-        return file
-      } else {
-        return file
-      }
-    }))
+  // const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
+  //   if (!isChild && (state.focusEdit.element === '/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === '/blank') === -1)) {
+  //     dir = state.focusEdit.type === 'file' ? [...dir, {
+  //       path: state.focusEdit.element,
+  //       name: '',
+  //       isDirectory: false
+  //     }] : [{
+  //       path: state.focusEdit.element,
+  //       name: '',
+  //       isDirectory: true
+  //     }, ...dir]
+  //   }
+  //   dir = await Promise.all(dir.map(async (file) => {
+  //     if (file.path === folderPath) {
+  //       if ((extractParentFromKey(state.focusEdit.element) === folderPath) && state.focusEdit.isNew) {
+  //         file.child = state.focusEdit.type === 'file' ? [...await fetchDirectoryContent(folderPath), {
+  //           path: state.focusEdit.element,
+  //           name: '',
+  //           isDirectory: false
+  //         }] : [{
+  //           path: state.focusEdit.element,
+  //           name: '',
+  //           isDirectory: true
+  //         }, ...await fetchDirectoryContent(folderPath)]
+  //       } else {
+  //         file.child = await fetchDirectoryContent(folderPath)
+  //       }
+  //       return file
+  //     } else if (file.child) {
+  //       file.child = await resolveDirectory(folderPath, file.child, true)
+  //       return file
+  //     } else {
+  //       return file
+  //     }
+  //   }))
 
-    return dir
-  }
+  //   return dir
+  // }
 
   const fetchDirectoryContent = async (folderPath: string): Promise<File[]> => {
     console.log('folderPath: ', folderPath)
@@ -312,61 +315,61 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return keyPath.join('/')
   }
 
-  const createNewFile = (newFilePath: string) => {
-    const fileManager = state.fileManager
+  // const createNewFile = (newFilePath: string) => {
+  //   const fileManager = state.fileManager
 
-    try {
-      helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
-        if (error) {
-          modal('Create File Failed', error, {
-            label: 'Close',
-            fn: async () => {}
-          }, null)
-        } else {
-          const createFile = await fileManager.writeFile(newName, '')
+  //   try {
+  //     helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
+  //       if (error) {
+  //         modal('Create File Failed', error, {
+  //           label: 'Close',
+  //           fn: async () => {}
+  //         }, null)
+  //       } else {
+  //         const createFile = await fileManager.writeFile(newName, '')
 
-          if (!createFile) {
-            return toast('Failed to create file ' + newName)
-          } else {
-            await fileManager.open(newName)
-            setState(prevState => {
-              return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
-            })
-          }
-        }
-      })
-    } catch (error) {
-      return modal('File Creation Failed', typeof error === 'string' ? error : error.message, {
-        label: 'Close',
-        fn: async () => {}
-      }, null)
-    }
-  }
+  //         if (!createFile) {
+  //           return toast('Failed to create file ' + newName)
+  //         } else {
+  //           await fileManager.open(newName)
+  //           setState(prevState => {
+  //             return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
+  //           })
+  //         }
+  //       }
+  //     })
+  //   } catch (error) {
+  //     return modal('File Creation Failed', typeof error === 'string' ? error : error.message, {
+  //       label: 'Close',
+  //       fn: async () => {}
+  //     }, null)
+  //   }
+  // }
 
-  const createNewFolder = async (newFolderPath: string) => {
-    const fileManager = state.fileManager
-    const dirName = newFolderPath + '/'
+  // const createNewFolder = async (newFolderPath: string) => {
+  //   const fileManager = state.fileManager
+  //   const dirName = newFolderPath + '/'
 
-    try {
-      const exists = await fileManager.exists(dirName)
+  //   try {
+  //     const exists = await fileManager.exists(dirName)
 
-      if (exists) {
-        return modal('Rename File Failed', `A file or folder ${extractNameFromKey(newFolderPath)} already exists at this location. Please choose a different name.`, {
-          label: 'Close',
-          fn: () => {}
-        }, null)
-      }
-      await fileManager.mkdir(dirName)
-      setState(prevState => {
-        return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
-      })
-    } catch (e) {
-      return modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, {
-        label: 'Close',
-        fn: async () => {}
-      }, null)
-    }
-  }
+  //     if (exists) {
+  //       return modal('Rename File Failed', `A file or folder ${extractNameFromKey(newFolderPath)} already exists at this location. Please choose a different name.`, {
+  //         label: 'Close',
+  //         fn: () => {}
+  //       }, null)
+  //     }
+  //     await fileManager.mkdir(dirName)
+  //     setState(prevState => {
+  //       return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
+  //     })
+  //   } catch (e) {
+  //     return modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, {
+  //       label: 'Close',
+  //       fn: async () => {}
+  //     }, null)
+  //   }
+  // }
 
   const deletePath = async (path: string) => {
     if (filesProvider.isReadOnly(path)) {
@@ -391,72 +394,72 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const renamePath = async (oldPath: string, newPath: string) => {
-    try {
-      const fileManager = state.fileManager
-      const exists = await fileManager.exists(newPath)
+  // const renamePath = async (oldPath: string, newPath: string) => {
+  //   try {
+  //     const fileManager = state.fileManager
+  //     const exists = await fileManager.exists(newPath)
 
-      if (exists) {
-        modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, {
-          label: 'Close',
-          fn: () => {}
-        }, null)
-      } else {
-        await fileManager.rename(oldPath, newPath)
-      }
-    } catch (error) {
-      modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, {
-        label: 'Close',
-        fn: async () => {}
-      }, null)
-    }
-  }
+  //     if (exists) {
+  //       modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, {
+  //         label: 'Close',
+  //         fn: () => {}
+  //       }, null)
+  //     } else {
+  //       await fileManager.rename(oldPath, newPath)
+  //     }
+  //   } catch (error) {
+  //     modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, {
+  //       label: 'Close',
+  //       fn: async () => {}
+  //     }, null)
+  //   }
+  // }
 
-  const removePath = (path: string, files: File[]): File[] => {
-    return files.map(file => {
-      if (file.path === path) {
-        return null
-      } else if (file.child) {
-        const childFiles = removePath(path, file.child)
+  // const removePath = (path: string, files: File[]): File[] => {
+  //   return files.map(file => {
+  //     if (file.path === path) {
+  //       return null
+  //     } else if (file.child) {
+  //       const childFiles = removePath(path, file.child)
 
-        file.child = childFiles.filter(file => file)
-        return file
-      } else {
-        return file
-      }
-    })
-  }
+  //       file.child = childFiles.filter(file => file)
+  //       return file
+  //     } else {
+  //       return file
+  //     }
+  //   })
+  // }
 
-  const fileAdded = async (filePath: string) => {
-    const pathArr = filePath.split('/')
-    const expandPath = pathArr.map((path, index) => {
-      return [...pathArr.slice(0, index)].join('/')
-    }).filter(path => path && (path !== props.name))
-    const files = await fetchDirectoryContent(props.name)
+  // const fileAdded = async (filePath: string) => {
+  //   const pathArr = filePath.split('/')
+  //   const expandPath = pathArr.map((path, index) => {
+  //     return [...pathArr.slice(0, index)].join('/')
+  //   }).filter(path => path && (path !== props.name))
+  //   const files = await fetchDirectoryContent(props.name)
 
-    setState(prevState => {
-      const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
+  //   setState(prevState => {
+  //     const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
 
-      return { ...prevState, files, expandPath: uniquePaths }
-    })
-    if (filePath.includes('_test.sol')) {
-      plugin.event.trigger('newTestFileCreated', [filePath])
-    }
-  }
+  //     return { ...prevState, files, expandPath: uniquePaths }
+  //   })
+  //   if (filePath.includes('_test.sol')) {
+  //     plugin.event.trigger('newTestFileCreated', [filePath])
+  //   }
+  // }
 
-  const folderAdded = async (folderPath: string) => {
-    const pathArr = folderPath.split('/')
-    const expandPath = pathArr.map((path, index) => {
-      return [...pathArr.slice(0, index)].join('/')
-    }).filter(path => path && (path !== props.name))
-    const files = await fetchDirectoryContent(props.name)
+  // const folderAdded = async (folderPath: string) => {
+  //   const pathArr = folderPath.split('/')
+  //   const expandPath = pathArr.map((path, index) => {
+  //     return [...pathArr.slice(0, index)].join('/')
+  //   }).filter(path => path && (path !== props.name))
+  //   const files = await fetchDirectoryContent(props.name)
 
-    setState(prevState => {
-      const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
+  //   setState(prevState => {
+  //     const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
 
-      return { ...prevState, files, expandPath: uniquePaths }
-    })
-  }
+  //     return { ...prevState, files, expandPath: uniquePaths }
+  //   })
+  // }
 
   const fileExternallyChanged = (path: string, file: { content: string }) => {
     const config = registry.get('config').api
@@ -476,22 +479,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const fileRemoved = (filePath) => {
-    const files = removePath(filePath, state.files)
-    const updatedFiles = files.filter(file => file)
+  // const fileRemoved = (filePath) => {
+  //   const files = removePath(filePath, state.files)
+  //   const updatedFiles = files.filter(file => file)
 
-    setState(prevState => {
-      return { ...prevState, files: updatedFiles }
-    })
-  }
+  //   setState(prevState => {
+  //     return { ...prevState, files: updatedFiles }
+  //   })
+  // }
 
-  const fileRenamed = async () => {
-    const files = await fetchDirectoryContent(props.name)
+  // const fileRenamed = async () => {
+  //   const files = await fetchDirectoryContent(props.name)
 
-    setState(prevState => {
-      return { ...prevState, files, expandPath: [...prevState.expandPath] }
-    })
-  }
+  //   setState(prevState => {
+  //     return { ...prevState, files, expandPath: [...prevState.expandPath] }
+  //   })
+  // }
 
   // register to event of the file provider
   // files.event.register('fileRenamed', fileRenamed)
@@ -798,59 +801,59 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const editModeOff = async (content: string) => {
-    if (typeof content === 'string') content = content.trim()
-    const parentFolder = extractParentFromKey(state.focusEdit.element)
+  // const editModeOff = async (content: string) => {
+  //   if (typeof content === 'string') content = content.trim()
+  //   const parentFolder = extractParentFromKey(state.focusEdit.element)
 
-    if (!content || (content.trim() === '')) {
-      if (state.focusEdit.isNew) {
-        const files = removePath(state.focusEdit.element, state.files)
-        const updatedFiles = files.filter(file => file)
+  //   if (!content || (content.trim() === '')) {
+  //     if (state.focusEdit.isNew) {
+  //       const files = removePath(state.focusEdit.element, state.files)
+  //       const updatedFiles = files.filter(file => file)
 
-        setState(prevState => {
-          return { ...prevState, files: updatedFiles, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
-        })
-      } else {
-        editRef.current.textContent = state.focusEdit.lastEdit
-        setState(prevState => {
-          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
-        })
-      }
-    } else {
-      if (state.focusEdit.lastEdit === content) {
-        editRef.current.textContent = content
-        return setState(prevState => {
-          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
-        })
-      }
-      if (helper.checkSpecialChars(content)) {
-        modal('Validation Error', 'Special characters are not allowed', {
-          label: 'OK',
-          fn: () => {}
-        }, null)
-      } else {
-        if (state.focusEdit.isNew) {
-          state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
-          const files = removePath(state.focusEdit.element, state.files)
-          const updatedFiles = files.filter(file => file)
+  //       setState(prevState => {
+  //         return { ...prevState, files: updatedFiles, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+  //       })
+  //     } else {
+  //       editRef.current.textContent = state.focusEdit.lastEdit
+  //       setState(prevState => {
+  //         return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+  //       })
+  //     }
+  //   } else {
+  //     if (state.focusEdit.lastEdit === content) {
+  //       editRef.current.textContent = content
+  //       return setState(prevState => {
+  //         return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+  //       })
+  //     }
+  //     if (helper.checkSpecialChars(content)) {
+  //       modal('Validation Error', 'Special characters are not allowed', {
+  //         label: 'OK',
+  //         fn: () => {}
+  //       }, null)
+  //     } else {
+  //       if (state.focusEdit.isNew) {
+  //         state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
+  //         const files = removePath(state.focusEdit.element, state.files)
+  //         const updatedFiles = files.filter(file => file)
 
-          setState(prevState => {
-            return { ...prevState, files: updatedFiles }
-          })
-        } else {
-          const oldPath: string = state.focusEdit.element
-          const oldName = extractNameFromKey(oldPath)
-          const newPath = oldPath.replace(oldName, content)
+  //         setState(prevState => {
+  //           return { ...prevState, files: updatedFiles }
+  //         })
+  //       } else {
+  //         const oldPath: string = state.focusEdit.element
+  //         const oldName = extractNameFromKey(oldPath)
+  //         const newPath = oldPath.replace(oldName, content)
 
-          editRef.current.textContent = extractNameFromKey(oldPath)
-          renamePath(oldPath, newPath)
-        }
-        setState(prevState => {
-          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
-        })
-      }
-    }
-  }
+  //         editRef.current.textContent = extractNameFromKey(oldPath)
+  //         renamePath(oldPath, newPath)
+  //       }
+  //       setState(prevState => {
+  //         return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+  //       })
+  //     }
+  //   }
+  // }
 
   const handleNewFileInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
@@ -873,12 +876,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     editModeOn(parentFolder + '/blank', 'folder', true)
   }
 
-  const handleEditInput = (event) => {
-    if (event.which === 13) {
-      event.preventDefault()
-      editModeOff(editRef.current.innerText)
-    }
-  }
+  // const handleEditInput = (event) => {
+  //   if (event.which === 13) {
+  //     event.preventDefault()
+  //     editModeOff(editRef.current.innerText)
+  //   }
+  // }
 
   const handleMouseOver = (path: string) => {
     setState(prevState => {
@@ -899,11 +902,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
         ref={state.focusEdit.element === file.path ? editRef : null}
         suppressContentEditableWarning={true}
         contentEditable={state.focusEdit.element === file.path}
-        onKeyDown={handleEditInput}
-        onBlur={(e) => {
-          e.stopPropagation()
-          editModeOff(editRef.current.innerText)
-        }}
+        // onKeyDown={handleEditInput}
+        // onBlur={(e) => {
+        //   e.stopPropagation()
+        //   editModeOff(editRef.current.innerText)
+        // }}
       >
         <span
           title={file.path}
@@ -1030,7 +1033,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           <div className='pb-2'>
             <TreeView id='treeViewMenu'>
               {
-                state.files.map((file, index) => {
+                fileSystem.files.files.map((file, index) => {
                   return renderFiles(file, index)
                 })
               }
@@ -1092,8 +1095,8 @@ async function packageFiles (filesProvider, directory, callback) {
   }
 }
 
-function joinPath (...paths) {
-  paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
-  if (paths.length === 1) return paths[0]
-  return paths.join('/')
-}
+// function joinPath (...paths) {
+//   paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
+//   if (paths.length === 1) return paths[0]
+//   return paths.join('/')
+// }

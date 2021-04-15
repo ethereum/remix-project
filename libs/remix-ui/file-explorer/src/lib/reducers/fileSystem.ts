@@ -4,39 +4,91 @@ interface Action {
     payload: Record<string, any>;
 }
 
-export const initialState = {
-  files: [],
-  expandPath: [],
-  isRequesting: false,
-  isSuccessful: false,
-  hasError: null
+export const fileSystemInitialState = {
+  files: {
+    files: [],
+    expandPath: [],
+    isRequesting: false,
+    isSuccessful: false,
+    error: null
+  },
+  provider: {
+    provider: null,
+    isRequesting: false,
+    isSuccessful: false,
+    error: null
+  }
 }
 
-export const reducer = (state = initialState, action: Action) => {
+export const fileSystemReducer = (state = fileSystemInitialState, action: Action) => {
   switch (action.type) {
     case 'FETCH_DIRECTORY_REQUEST': {
       return {
         ...state,
-        isRequesting: true,
-        isSuccessful: false,
-        hasError: null
+        files: {
+          ...state.files,
+          isRequesting: true,
+          isSuccessful: false,
+          error: null
+        }
       }
     }
     case 'FETCH_DIRECTORY_SUCCESS': {
       return {
-        files: action.payload.files,
-        expandPath: [...action.payload.path],
-        isRequesting: false,
-        isSuccessful: true,
-        hasError: null
+        ...state,
+        files: {
+          ...state.files,
+          files: action.payload.files,
+          expandPath: [...state.files.expandPath, action.payload.path],
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
+        }
       }
     }
     case 'FETCH_DIRECTORY_ERROR': {
       return {
         ...state,
-        isRequesting: false,
-        isSuccessful: false,
-        hasError: action.payload
+        files: {
+          ...state.files,
+          isRequesting: false,
+          isSuccessful: false,
+          error: action.payload
+        }
+      }
+    }
+    case 'FETCH_PROVIDER_REQUEST': {
+      return {
+        ...state,
+        provider: {
+          ...state.provider,
+          isRequesting: true,
+          isSuccessful: false,
+          error: null
+        }
+      }
+    }
+    case 'FETCH_PROVIDER_SUCCESS': {
+      return {
+        ...state,
+        provider: {
+          ...state.provider,
+          provider: action.payload,
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
+        }
+      }
+    }
+    case 'FETCH_PROVIDER_ERROR': {
+      return {
+        ...state,
+        provider: {
+          ...state.provider,
+          isRequesting: false,
+          isSuccessful: false,
+          error: action.payload
+        }
       }
     }
     default:
