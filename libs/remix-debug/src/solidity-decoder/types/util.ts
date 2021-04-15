@@ -1,5 +1,5 @@
 'use strict'
-import { BN, bufferToHex, unpad } from 'ethereumjs-util'
+import { BN, bufferToHex, unpadHexString } from 'ethereumjs-util'
 
 export function decodeIntFromHex (value, byteLength, signed) {
   let bigNumber = new BN(value, 16)
@@ -57,7 +57,7 @@ export function toBN (value) {
   if (value instanceof BN) {
     return value
   } else if (value.match && value.match(/^(0x)?([a-f0-9]*)$/)) {
-    value = unpad(value.replace(/^(0x)/, ''))
+    value = unpadHexString(value.replace(/^(0x)/, ''))
     value = new BN(value === '' ? '0' : value, 16)
   } else if (!isNaN(value)) {
     value = new BN(value)
