@@ -3,10 +3,12 @@ import { File } from '../types'
 import { extractNameFromKey, extractParentFromKey } from '../utils'
 
 const globalRegistry = require('../../../../../../apps/remix-ide/src/global/registry')
-const fileProviders = globalRegistry.get('fileproviders').api
-const browser = fileProviders.browser // eslint-disable-line
-const workspace = fileProviders.workspace
-const localhost = fileProviders.localhost // eslint-disable-line
+const initializeProvider = () => {
+  const fileProviders = globalRegistry.get('fileproviders').api
+  const browser = fileProviders.browser // eslint-disable-line
+  const workspace = fileProviders.workspace
+  const localhost = fileProviders.localhost // eslint-disable-line
+}
 
 export const fetchDirectoryError = (error: any) => {
   return {
@@ -62,9 +64,9 @@ const normalize = (filesList): File[] => {
   return [...folders, ...files]
 }
 
-const fetchDirectoryContent = async (folderPath: string): Promise<File[]> => {
+const fetchDirectoryContent = async (provider, folderPath: string): Promise<File[]> => {
   return new Promise((resolve) => {
-    workspace.resolveDirectory(folderPath, (error, fileTree) => {
+    provider.resolveDirectory(folderPath, (error, fileTree) => {
       if (error) console.error(error)
       const files = normalize(fileTree)
 
@@ -73,8 +75,43 @@ const fetchDirectoryContent = async (folderPath: string): Promise<File[]> => {
   })
 }
 
-export const fetchDirectory = (path: string) => (dispatch: React.Dispatch<any>) => {
-  const promise = fetchDirectoryContent(path)
+export const fetchDirectory = (provider, path: string) => (dispatch: React.Dispatch<any>) => {
+  initializeProvider()
+  const promise = fetchDirectoryContent(provider, path)
+
+  dispatch(fetchDirectoryRequest(promise))
+  promise.then((files) => {
+    dispatch(fetchDirectorySuccess(path, files))
+  }).catch((error) => {
+    dispatch(fetchDirectoryError({ error }))
+  })
+  return promise
+}
+
+export const fetchProviderError = (error: any) => {
+  return {
+    type: 'FETCH_PROVIDER_ERROR',
+    payload: error
+  }
+}
+
+export const fetchProviderRequest = (promise: Promise<any>) => {
+  return {
+    type: 'FETCH_PROVIDER_REQUEST',
+    payload: promise
+  }
+}
+
+export const fetchProviderSuccess = (provider: any) => {
+  return {
+    type: 'FETCH_PROVIDER_SUCCESS',
+    payload: provider
+  }
+}
+
+export const setProvider = () => (dispatch: React.Dispatch<any>) => {
+  initializeProvider()
+  const promise = fetchDirectoryContent(provider, path)
 
   dispatch(fetchDirectoryRequest(promise))
   promise.then((files) => {
