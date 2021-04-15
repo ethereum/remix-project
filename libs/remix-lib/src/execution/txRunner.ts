@@ -1,7 +1,7 @@
 'use strict'
-import { Transaction } from 'ethereumjs-tx'
-import Block from 'ethereumjs-block'
-import { BN, bufferToHex } from 'ethereumjs-util'
+import { Transaction } from '@ethereumjs/tx'
+import { Block, BlockHeader } from '@ethereumjs/block'
+import { BN, bufferToHex, Address } from 'ethereumjs-util'
 import { ExecutionContext } from './execution-context'
 import { EventManager } from '../eventManager'
 
@@ -15,11 +15,13 @@ export class TxRunner {
   vmaccounts
   queusTxs
   blocks
+  commonContext
 
   constructor (vmaccounts, api, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
     this.executionContext = executionContext || new ExecutionContext()
+    this.commonContext = this.executionContext.vmObject().common
     this._api = api
     this.blockNumber = 0
     this.runAsync = true
@@ -109,48 +111,45 @@ export class TxRunner {
       return callback('Invalid account selected')
     }
 
-    this.executionContext.vm().stateManager.getAccount(Buffer.from(from.replace('0x', ''), 'hex'), (err, res) => {
-      if (err) {
-        callback('Account not found')
+    this.executionContext.vm().stateManager.getAccount(Address.fromString(from)).then((res) => {
+      // See https://github.com/ethereumjs/ethereumjs-tx/blob/master/docs/classes/transaction.md#constructor
+      // for initialization fields and their types
+      value = value ? parseInt(value) : 0
+      const tx = Transaction.fromTxData({
+        nonce: new BN(res.nonce),
+        gasPrice: '0x1',
+        gasLimit: gasLimit,
+        to: to,
+        value: value,
+        data: Buffer.from(data.slice(2), 'hex')
+      }, { common: this.commonContext }).sign(account.privateKey)
+
+      const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
+      const difficulties = [new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10)]
+
+      const header: BlockHeader = BlockHeader.fromHeaderData({
+        timestamp: timestamp || (new Date().getTime() / 1000 | 0),
+        number: self.blockNumber,
+        coinbase: coinbases[self.blockNumber % coinbases.length],
+        difficulty: difficulties[self.blockNumber % difficulties.length],
+        gasLimit: new BN(gasLimit.replace('0x', ''), 16).imuln(2)
+      }, { common: this.commonContext })
+
+      const block = new Block(header, [tx], [])
+      if (!useCall) {
+        ++self.blockNumber
+        this.runBlockInVm(tx, block, callback)
       } else {
-        // See https://github.com/ethereumjs/ethereumjs-tx/blob/master/docs/classes/transaction.md#constructor
-        // for initialization fields and their types
-        value = value ? parseInt(value) : 0
-        const tx = new Transaction({
-          nonce: new BN(res.nonce),
-          gasPrice: '0x1',
-          gasLimit: gasLimit,
-          to: to,
-          value: value,
-          data: Buffer.from(data.slice(2), 'hex')
-        })
-        tx.sign(account.privateKey)
-        const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
-        const difficulties = [new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10)]
-        const block = new Block({
-          header: {
-            timestamp: timestamp || (new Date().getTime() / 1000 | 0),
-            number: self.blockNumber,
-            coinbase: coinbases[self.blockNumber % coinbases.length],
-            difficulty: difficulties[self.blockNumber % difficulties.length],
-            gasLimit: new BN(gasLimit, 10).imuln(2)
-          },
-          transactions: [tx],
-          uncleHeaders: []
-        })
-        if (!useCall) {
-          ++self.blockNumber
-          this.runBlockInVm(tx, block, callback)
-        } else {
-          this.executionContext.vm().stateManager.checkpoint(() => {
-            this.runBlockInVm(tx, block, (err, result) => {
-              this.executionContext.vm().stateManager.revert(() => {
-                callback(err, result)
-              })
+        this.executionContext.vm().stateManager.checkpoint().then(() => {
+          this.runBlockInVm(tx, block, (err, result) => {
+            this.executionContext.vm().stateManager.revert().then(() => {
+              callback(err, result)
             })
           })
-        }
+        })
       }
+    }).catch(() => {
+      callback('Account not found')
     })
   }
 
@@ -167,7 +166,7 @@ export class TxRunner {
         result: result,
         transactionHash: bufferToHex(Buffer.from(tx.hash()))
       })
-    }).catch(function (err) {
+    }).catch((err) => {
       callback(err)
     })
   }
