@@ -1,7 +1,8 @@
 'use strict'
+import { Block, BlockHeader } from '@ethereumjs/block'
+import VM from '@ethereumjs/vm'
 var utileth = require('ethereumjs-util')
-var Tx = require('ethereumjs-tx').Transaction
-var Block = require('ethereumjs-block')
+var Tx = require('@ethereumjs/tx').Transaction
 var BN = require('ethereumjs-util').BN
 var remixLib = require('@remix-project/remix-lib')
 
@@ -15,14 +16,13 @@ function sendTx (vm, from, to, value, data, cb) {
     data: Buffer.from(data, 'hex')
   })
   tx.sign(from.privateKey)
-  var block = new Block({
-    header: {
-      timestamp: new Date().getTime() / 1000 | 0,
-      number: 0
-    },
-    transactions: [],
-    uncleHeaders: []
+
+  var header = BlockHeader.fromHeaderData({
+    timestamp: new Date().getTime() / 1000 | 0,
+    number: 0
   })
+
+  var block = new Block(header, [], [])
   vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}).then(function (result) {
     setTimeout(() => {
       cb(null, utileth.bufferToHex(tx.hash()))
@@ -37,19 +37,18 @@ function sendTx (vm, from, to, value, data, cb) {
   Init VM / Send Transaction
 */
 function initVM (privateKey) {
-  var VM = require('ethereumjs-vm').default
   var address = utileth.privateToAddress(privateKey)
   var vm = new VM({
-    enableHomestead: true,
     activatePrecompiles: true
   })
 
-  vm.stateManager.getAccount(address, (error, account) => {
-    if (error) return console.log(error)
-    account.balance = '0xf00000000000000001'
-    vm.stateManager.putAccount(address, account, function cb (error) {
-      if (error) console.log(error)
+  vm.stateManager.getAccount(address).then((account) => {    
+    account.balance = new BN('f00000000000000001', 16)
+    vm.stateManager.putAccount(address, account).catch((error) => {
+      console.log(error)
     })
+  }).catch((error) => {
+    console.log(error)
   })
 
   var web3Provider = new remixLib.vm.Web3VMProvider()

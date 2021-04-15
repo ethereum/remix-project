@@ -1,5 +1,4 @@
-import { BN, privateToAddress, toChecksumAddress, isValidPrivate } from 'ethereumjs-util'
-import { stripHexPrefix } from 'ethjs-util'
+import { BN, privateToAddress, toChecksumAddress, isValidPrivate, Address } from 'ethereumjs-util'
 import Web3 from 'web3'
 import * as crypto from 'crypto'
 
@@ -44,19 +43,21 @@ export class Accounts {
     return new Promise((resolve, reject) => {
       privateKey = Buffer.from(privateKey, 'hex')
       const address: Buffer = privateToAddress(privateKey)
-
-      this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
-      this.accountsKeys[toChecksumAddress('0x' + address.toString('hex'))] = '0x' + privateKey.toString('hex')
+      const addressStr = toChecksumAddress('0x' + address.toString('hex'))
+      this.accounts[addressStr] = { privateKey, nonce: 0 }
+      this.accountsKeys[addressStr] = '0x' + privateKey.toString('hex')
 
       const stateManager = this.executionContext.vm().stateManager
-      stateManager.getAccount(address, (error, account) => {
-        if (error) {
-          console.log(error)
+      stateManager.getAccount(Address.fromString(addressStr)).then((account) => {        
+        account.balance = new BN(balance.replace('0x', '') || 'f00000000000000001', 16)
+        stateManager.putAccount(Address.fromString(addressStr), account).catch((error) => {
           reject(error)
-          return
-        }
-        account.balance = balance || '0xf00000000000000001'
-        resolve()
+        }).then(() => { 
+          resolve({})
+        })
+      }).catch((error) => {
+        reject(error)
+        return
       })
     })
   }
@@ -84,13 +85,12 @@ export class Accounts {
 
   eth_getBalance (payload, cb) {
     let address = payload.params[0]
-    address = stripHexPrefix(address)
+    
 
-    this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, account) => {
-      if (err) {
-        return cb(err)
-      }
+    this.executionContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {     
       cb(null, new BN(account.balance).toString(10))
+    }).catch((error) => {
+      cb(error)
     })
   }
 

@@ -168,8 +168,7 @@ export function sha3_256 (value) {
   if (typeof value === 'string' && value.indexOf('0x') !== 0) {
     value = '0x' + value
   }
-  const ret: string = bufferToHex(setLengthLeft(value, 32))
-  const retInBuffer: Buffer = keccak(ret)
+  const retInBuffer: Buffer = keccak(setLengthLeft(Buffer.from(value.replace('0x', ''), 'hex'), 32))
   return bufferToHex(retInBuffer)
 }
 

@@ -69,8 +69,7 @@ function getMappingLocation (key, position) {
   let mappingP = intToBuffer(position)
   mappingP = setLengthLeft(mappingP, 32)
   const mappingKeyBuf = concatTypedArrays(mappingK, mappingP)
-  const mappingKeyPreimage: string = '0x' + mappingKeyBuf.toString('hex')
-  const mappingStorageLocation: Buffer = keccak(mappingKeyPreimage)
+  const mappingStorageLocation: Buffer = keccak(mappingKeyBuf)
   const mappingStorageLocationinBn: BN = new BN(mappingStorageLocation, 16)
   return mappingStorageLocationinBn
 }
