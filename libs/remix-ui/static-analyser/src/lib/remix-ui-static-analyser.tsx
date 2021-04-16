@@ -164,6 +164,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               }
                 <span class="" title="Position in ${fileName}">Pos: ${locationString}</span>
               </span>`
+              console.log(result.name, ' result name now')
             const options = {
               type: 'warning',
               useSpan: true,
