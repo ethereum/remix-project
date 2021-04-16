@@ -3,7 +3,6 @@ import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { joinPath } from '../../lib/helper'
 import { relative, dirname, join } from 'path'
-import { CardColumns } from 'react-bootstrap'
 var CompilerAbstract = require('../compiler/compiler-abstract')
 
 const profile = {
@@ -64,7 +63,6 @@ class CompilerMetadata extends Plugin {
       buildInfo: join(relative(dirname(hhArtifactsDbgFileName), dirname(hhArtifactsBuildFileName)), id + '.json')
     }
     provider.set(hhArtifactsDbgFileName, JSON.stringify(hhArtifactsDbgdata, null, '\t'))
-
   }
 
   onActivation () {
