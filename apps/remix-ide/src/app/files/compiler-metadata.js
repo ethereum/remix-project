@@ -21,6 +21,12 @@ class CompilerMetadata extends Plugin {
     this.config = config
     this.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'görli:5', 'Custom']
     this.innerPath = 'artifacts'
+    this.hardhdatConstants = {
+      ARTIFACT_FORMAT_VERSION: "hh-sol-artifact-1",
+      DEBUG_FILE_FORMAT_VERSION: "hh-sol-dbg-1",
+      BUILD_INFO_FORMAT_VERSION: "hh-sol-build-info-1",
+      BUILD_INFO_DIR_NAME: "build-info"
+    }
   }
 
   _JSONFileName (path, contractName) {
@@ -31,9 +37,9 @@ class CompilerMetadata extends Plugin {
     return joinPath(path, this.innerPath, contractName + '_metadata.json')
   }
 
-  _getBuildInfoName (solcVersion, solcLongVersion, input) {
+  _getBuildInfoId (solcVersion, solcLongVersion, input) {
     const json = JSON.stringify({
-      _format: 'hh-sol-build-info-1',
+      _format: this.hardhdatConstants.BUILD_INFO_FORMAT_VERSION,
       solcVersion,
       solcLongVersion,
       input
@@ -44,8 +50,8 @@ class CompilerMetadata extends Plugin {
   createHardhatArtifacts (compiledContract, provider, input, output, versionString) {
     const contract = compiledContract
     const hhArtifactsFileName = joinPath('artifacts', contract.file, contract.name + '.json')
-    const hhArtifactsdata = {
-      _format: 'hh-sol-artifact-1',
+    const hhArtifactsData = {
+      _format: this.hardhdatConstants.ARTIFACT_FORMAT_VERSION,
       contractName: contract.name,
       sourceName: contract.file,
       abi: contract.object.abi,
@@ -54,27 +60,27 @@ class CompilerMetadata extends Plugin {
       linkReferences: contract.object.evm.bytecode.linkReferences,
       deployedLinkReferences: contract.object.evm.deployedBytecode.linkReferences
     }
-    provider.set(hhArtifactsFileName, JSON.stringify(hhArtifactsdata, null, '\t'))
+    provider.set(hhArtifactsFileName, JSON.stringify(hhArtifactsData, null, '\t'))
 
     const solcVersion = versionString.substring(0, versionString.indexOf('+commit'))
-    const buildInfoId = this._getBuildInfoName(solcVersion, versionString, input)
-    const hhArtifactsBuildFileName = joinPath('artifacts', 'build-info', buildInfoId + '.json')
-    const hhArtifactsBuilddata = {
+    const buildInfoId = this._getBuildInfoId(solcVersion, versionString, input)
+    const hhArtifactsBuildFileName = joinPath('artifacts', this.hardhdatConstants.BUILD_INFO_DIR_NAME, buildInfoId + '.json')
+    const hhArtifactsBuildData = {
       id: buildInfoId,
-      _format: 'hh-sol-build-info-1',
+      _format: this.hardhdatConstants.BUILD_INFO_FORMAT_VERSION,
       solcVersion,
       solcLongVersion: versionString,
       input,
       output
     }
-    provider.set(hhArtifactsBuildFileName, JSON.stringify(hhArtifactsBuilddata, null, '\t'))
+    provider.set(hhArtifactsBuildFileName, JSON.stringify(hhArtifactsBuildData, null, '\t'))
 
     const hhArtifactsDbgFileName = joinPath('artifacts', contract.file, contract.name + '.dbg.json')
-    const hhArtifactsDbgdata = {
-      _format: 'hh-sol-dbg-1',
+    const hhArtifactsDbgData = {
+      _format: this.hardhdatConstants.DEBUG_FILE_FORMAT_VERSION,
       buildInfo: join(relative(dirname(hhArtifactsDbgFileName), dirname(hhArtifactsBuildFileName)), buildInfoId + '.json')
     }
-    provider.set(hhArtifactsDbgFileName, JSON.stringify(hhArtifactsDbgdata, null, '\t'))
+    provider.set(hhArtifactsDbgFileName, JSON.stringify(hhArtifactsDbgData, null, '\t'))
   }
 
   onActivation () {
