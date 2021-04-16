@@ -22,10 +22,10 @@ class CompilerMetadata extends Plugin {
     this.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'görli:5', 'Custom']
     this.innerPath = 'artifacts'
     this.hardhdatConstants = {
-      ARTIFACT_FORMAT_VERSION: "hh-sol-artifact-1",
-      DEBUG_FILE_FORMAT_VERSION: "hh-sol-dbg-1",
-      BUILD_INFO_FORMAT_VERSION: "hh-sol-build-info-1",
-      BUILD_INFO_DIR_NAME: "build-info"
+      ARTIFACT_FORMAT_VERSION: 'hh-sol-artifact-1',
+      DEBUG_FILE_FORMAT_VERSION: 'hh-sol-dbg-1',
+      BUILD_INFO_FORMAT_VERSION: 'hh-sol-build-info-1',
+      BUILD_INFO_DIR_NAME: 'build-info'
     }
   }
 
