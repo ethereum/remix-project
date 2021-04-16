@@ -3,6 +3,7 @@ import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { joinPath } from '../../lib/helper'
 import { relative, dirname, join } from 'path'
+const { createHash } = require('crypto')
 var CompilerAbstract = require('../compiler/compiler-abstract')
 
 const profile = {
@@ -30,6 +31,16 @@ class CompilerMetadata extends Plugin {
     return joinPath(path, this.innerPath, contractName + '_metadata.json')
   }
 
+  _getBuildInfoName (solcVersion, solcLongVersion, input) {
+    const json = JSON.stringify({
+      _format: 'hh-sol-build-info-1',
+      solcVersion,
+      solcLongVersion,
+      input
+    })
+    return createHash('md5').update(Buffer.from(json)).digest().toString('hex')
+  }
+
   createHardhatArtifacts (compiledContract, provider, input, output, versionString) {
     const contract = compiledContract
     const hhArtifactsFileName = joinPath('artifacts', contract.file, contract.name + '.json')
@@ -45,22 +56,23 @@ class CompilerMetadata extends Plugin {
     }
     provider.set(hhArtifactsFileName, JSON.stringify(hhArtifactsdata, null, '\t'))
 
-    const id = '12wqe23'
-    const hhArtifactsBuildFileName = joinPath('artifacts', 'build-info', id + '.json')
+    const solcVersion = versionString.substring(0, versionString.indexOf('+commit'))
+    const buildInfoId = this._getBuildInfoName(solcVersion, versionString, input)
+    const hhArtifactsBuildFileName = joinPath('artifacts', 'build-info', buildInfoId + '.json')
     const hhArtifactsBuilddata = {
-      id: id,
+      id: buildInfoId,
       _format: 'hh-sol-build-info-1',
-      solcVersion: versionString.substring(0, versionString.indexOf('+commit')),
+      solcVersion,
       solcLongVersion: versionString,
-      input: input,
-      output: output
+      input,
+      output
     }
     provider.set(hhArtifactsBuildFileName, JSON.stringify(hhArtifactsBuilddata, null, '\t'))
 
     const hhArtifactsDbgFileName = joinPath('artifacts', contract.file, contract.name + '.dbg.json')
     const hhArtifactsDbgdata = {
       _format: 'hh-sol-dbg-1',
-      buildInfo: join(relative(dirname(hhArtifactsDbgFileName), dirname(hhArtifactsBuildFileName)), id + '.json')
+      buildInfo: join(relative(dirname(hhArtifactsDbgFileName), dirname(hhArtifactsBuildFileName)), buildInfoId + '.json')
     }
     provider.set(hhArtifactsDbgFileName, JSON.stringify(hhArtifactsDbgdata, null, '\t'))
   }
