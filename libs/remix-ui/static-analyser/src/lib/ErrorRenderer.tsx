@@ -60,7 +60,7 @@ const ErrorRenderer = ({ message, opt }: ErrorRendererProps) => {
           <i className="fas fa-times"></i>
         </div>
         <span className='d-flex flex-column'>
-          <span className='h6 font-weight-bold'>{opt.item.name}</span>
+          <span className='h6 font-weight-bold'>{opt.name}</span>
           { opt.item.warning }
           {opt.item.more
             ? <span><a href={opt.item.more} target='_blank'>more</a></span>
