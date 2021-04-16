@@ -41,7 +41,7 @@ function runTests (browser: NightwatchBrowser) {
     .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TooMuchGas', 'test1', 'test2'])
     .clickLaunchIcon('solidityStaticAnalysis')
     .click('#staticanalysisView button')
-    .waitForElementPresent('#staticanalysisresult .warning', 2000, false, function () {
+    .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
       listSelectorContains(['Use of tx.origin',
         'Fallback function of contract TooMuchGas requires too much gas',
         'TooMuchGas.() : Variables have very similar names "test" and "test1".',
