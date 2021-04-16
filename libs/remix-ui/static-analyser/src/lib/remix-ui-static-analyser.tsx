@@ -313,7 +313,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   return (
     <div style={{ marginLeft: '10px', marginRight: '10px' }}>
       <div className="my-2 d-flex flex-column align-items-left">
-        <div className="staticanalysisView  d-flex justify-content-between">
+        <div className="d-flex justify-content-between" id='staticanalysisView'>
           <div >
             <CheckBox
               id="checkAllEntries"
