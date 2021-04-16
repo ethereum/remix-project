@@ -2,6 +2,8 @@
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { joinPath } from '../../lib/helper'
+import { relative, dirname, join } from 'path'
+import { CardColumns } from 'react-bootstrap'
 var CompilerAbstract = require('../compiler/compiler-abstract')
 
 const profile = {
@@ -31,7 +33,7 @@ class CompilerMetadata extends Plugin {
 
   createHardhatArtifacts (compiledContract, provider, input, output, versionString) {
     const contract = compiledContract
-    var hhArtifactsFileName = joinPath('artifacts', contract.file, contract.name + '.json')
+    const hhArtifactsFileName = joinPath('artifacts', contract.file, contract.name + '.json')
     const hhArtifactsdata = {
       _format: 'hh-sol-artifact-1',
       contractName: contract.name,
@@ -44,13 +46,8 @@ class CompilerMetadata extends Plugin {
     }
     provider.set(hhArtifactsFileName, JSON.stringify(hhArtifactsdata, null, '\t'))
 
-    var hhArtifactsDbgFileName = joinPath('artifacts', contract.file, contract.name + '.dbg.json')
-    const hhArtifactsDbgdata = {
-      _format: 'hh-sol-dbg-1'
-    }
-    provider.set(hhArtifactsDbgFileName, JSON.stringify(hhArtifactsDbgdata, null, '\t'))
     const id = '12wqe23'
-    var hhArtifactsBuildFileName = joinPath('artifacts', 'build-info', id + '.json')
+    const hhArtifactsBuildFileName = joinPath('artifacts', 'build-info', id + '.json')
     const hhArtifactsBuilddata = {
       id: id,
       _format: 'hh-sol-build-info-1',
@@ -60,6 +57,14 @@ class CompilerMetadata extends Plugin {
       output: output
     }
     provider.set(hhArtifactsBuildFileName, JSON.stringify(hhArtifactsBuilddata, null, '\t'))
+
+    const hhArtifactsDbgFileName = joinPath('artifacts', contract.file, contract.name + '.dbg.json')
+    const hhArtifactsDbgdata = {
+      _format: 'hh-sol-dbg-1',
+      buildInfo: join(relative(dirname(hhArtifactsDbgFileName), dirname(hhArtifactsBuildFileName)), id + '.json')
+    }
+    provider.set(hhArtifactsDbgFileName, JSON.stringify(hhArtifactsDbgdata, null, '\t'))
+
   }
 
   onActivation () {
