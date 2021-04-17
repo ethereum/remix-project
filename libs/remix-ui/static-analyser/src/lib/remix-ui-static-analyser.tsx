@@ -336,7 +336,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               label="Autorun"
             />
           </div>
-          <Button buttonText="Run" onClick={() => run(result.lastCompilationResult, result.lastCompilationSource, result.currentFile)} />
+          <Button buttonText="Run" onClick={() => run(result.lastCompilationResult, result.lastCompilationSource, result.currentFile)} disabled={runButtonState || categoryIndex.length === 0}/>
         </div>
       </div>
       <div id="staticanalysismodules" className="list-group list-group-flush">
