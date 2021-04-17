@@ -40,18 +40,6 @@ function runTests (browser: NightwatchBrowser) {
     .pause(10000)
     .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TooMuchGas', 'test1', 'test2'])
     .clickLaunchIcon('solidityStaticAnalysis')
-    //.click('#staticanalysisButton button')
-    // .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
-    //   listSelectorContains(['Use of tx.origin',
-    //     'Fallback function of contract TooMuchGas requires too much gas',
-    //     'TooMuchGas.() : Variables have very similar names "test" and "test1".',
-    //     'TooMuchGas.() : Variables have very similar names "test" and "test1".'],
-    //   '#staticanalysisresult .warning',
-    //   browser, function () {
-    //     browser.end()
-    //   }
-    //   )
-    // })
 }
 
 function listSelectorContains (textsToFind: string[], selector: string, browser: NightwatchBrowser, callback: VoidFunction) {
