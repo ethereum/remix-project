@@ -65,10 +65,23 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     compilation(props.analysisModule, dispatch)
   }, [])
 
+<<<<<<< HEAD
   useEffect(() => {
     if (autoRun) {
       if (state.data !== null) {
         run(state.data, state.source, state.file)
+=======
+      if (props.analysisModule) {
+        props.analysisModule.on(
+          'solidity',
+          'compilationFinished',
+          (file, source, languageVersion, data) => {
+            if (languageVersion.indexOf('soljson') !== 0) return
+            setCompilationResult(data, source, file)
+            run(data, source, file)
+          }
+        )
+>>>>>>> 19de4ba6b (commiting code to detect failing test)
       }
     } else {
       setAutoRun(true)
@@ -92,10 +105,22 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
+<<<<<<< HEAD
     if (autoRun) {
       if (lastCompilationResult && categoryIndex.length > 0) {
         let warningCount = 0
         const warningMessage = []
+=======
+    // const highlightLocation = async (location, fileName) => {
+    //   await props.analysisModule.call('editor', 'discardHighlight')
+    //   await props.analysisModule.call('editor', 'highlight', location, fileName)
+    // }
+    setResult({ lastCompilationResult, lastCompilationSource, currentFile })
+    if (lastCompilationResult && categoryIndex.length) {
+      setRunButtonState(false)
+      let warningCount = 0
+      const warningMessage = []
+>>>>>>> 19de4ba6b (commiting code to detect failing test)
 
         runner.run(lastCompilationResult, categoryIndex, results => {
           results.map((result) => {
