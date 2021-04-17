@@ -87,7 +87,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       }
 
       if (props.analysisModule) {
-        console.log({ autoRun })
         props.analysisModule.on(
           'solidity',
           'compilationFinished',
@@ -110,7 +109,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     //   await props.analysisModule.call('editor', 'discardHighlight')
     //   await props.analysisModule.call('editor', 'highlight', location, fileName)
     // }
-    console.log({ autoRun }, ' auto run in run function')
     setResult({ lastCompilationResult, lastCompilationSource, currentFile })
     if (lastCompilationResult && categoryIndex.length) {
       setRunButtonState(false)
@@ -164,7 +162,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               }
                 <span class="" title="Position in ${fileName}">Pos: ${locationString}</span>
               </span>`
-              console.log(result.name, ' result name now')
             const options = {
               type: 'warning',
               useSpan: true,
@@ -243,7 +240,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     } else {
       setAutoRun(true)
     }
-    console.log(' auton run function')
   }
 
   const handleCheckSingle = (event, _index) => {
