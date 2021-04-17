@@ -41,5 +41,3 @@ function runTests (browser: NightwatchBrowser) {
     .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TooMuchGas', 'test1', 'test2'])
     .clickLaunchIcon('solidityStaticAnalysis')
 }
-
-
