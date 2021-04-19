@@ -62,6 +62,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [state, dispatch] = useReducer(analysisReducer, initialState)
 
   useEffect(() => {
+<<<<<<< HEAD
     compilation(props.analysisModule, dispatch)
   }, [])
 
@@ -71,14 +72,26 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       if (state.data !== null) {
         run(state.data, state.source, state.file)
 =======
+=======
+    
+    if (autoRun) {
+      const setCompilationResult = async (data, source, file) => {
+        await setResult({ lastCompilationResult: data, lastCompilationSource: source, currentFile: file })
+      }
+      
+>>>>>>> 8a85ae84e (fix failing test)
       if (props.analysisModule) {
+       
         props.analysisModule.on(
           'solidity',
           'compilationFinished',
           (file, source, languageVersion, data) => {
             if (languageVersion.indexOf('soljson') !== 0) return
             setCompilationResult(data, source, file)
-            run(data, source, file)
+            if(categoryIndex.length > 0){
+              run(data, source, file)
+            }
+
           }
         )
 >>>>>>> 19de4ba6b (commiting code to detect failing test)
@@ -88,6 +101,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
 
     return () => { }
+<<<<<<< HEAD
   }, [autoRun, categoryIndex, state])
 
   const message = (name, warning, more, fileName, locationString) : string => {
@@ -103,6 +117,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     </span>`
     )
   }
+=======
+  }, [autoRun, categoryIndex])
+>>>>>>> 8a85ae84e (fix failing test)
 
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
 <<<<<<< HEAD
@@ -198,11 +215,25 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         if (categoryIndex.length > 0) {
           props.event.trigger('staticAnaysisWarning', [warningCount])
         }
+<<<<<<< HEAD
       } else {
         if (categoryIndex.length) {
           warningContainer.current.innerText = 'No compiled AST available'
         }
         props.event.trigger('staticAnaysisWarning', [-1])
+=======
+
+        const groupedCategory = groupBy(resultArray, 'warningModuleName')
+        setWarningState(groupedCategory)
+      })
+      if(categoryIndex.length > 0){
+        props.event.trigger('staticAnaysisWarning', [warningCount])
+      }
+    } else {
+      setRunButtonState(true)
+      if (categoryIndex.length) {
+        warningContainer.current.innerText = 'No compiled AST available'
+>>>>>>> 8a85ae84e (fix failing test)
       }
     }
   }
@@ -216,8 +247,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         })
       )
     } else {
-      setCategoryIndex(_.uniq([...categoryIndex, ...index]))
+      setCategoryIndex(_.uniq([...categoryIndex]))
     }
+
   }
 
   const handleCheckOrUncheckCategory = (category) => {
