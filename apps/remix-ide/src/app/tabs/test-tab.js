@@ -415,11 +415,16 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
-  updateCurrentPath (e) {
-    const newValue = e.target.value === '' ? this.defaultPath : e.target.value
-    this.testTabLogic.setCurrentPath(newValue)
+  handleCreateFolder () {
+    this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
+    if (this.inputPath.value === '') this.inputPath.value = this.defaultPath
+    this.testTabLogic.generateTestFolder(this.inputPath.value)
+    this.createTestFolder.disabled = true
+    this.updateGenerateFileAction().disabled = false
+    this.testTabLogic.setCurrentPath(this.inputPath.value)
     this.updateRunAction()
     this.updateForNewCurrent()
+    this.uiPathList.appendChild(yo`<option>${this.inputPath.value}</option>`)
   }
 
   runTests () {
@@ -561,24 +566,33 @@ module.exports = class TestTab extends ViewPlugin {
     else return input.trim()
   }
 
+  doesOptionAlreadyAdded (text) {
+    for (const option of this.uiPathList.querySelectorAll('option')) {
+      if (option.innerHTML === text) return true
+    }
+    return false
+  }
+
   handleTestDirInput () {
     const testDirInput = this.trimTestDirInput(this.inputPath.value)
     if (testDirInput) {
-      if (testDirInput.endsWith('/')) this.updateDirList(testDirInput)
-      else {
-        let matchFound = false
-        for (const option of this.uiPathList.querySelectorAll('option')) {
-          if (option.innerHTML === testDirInput) matchFound = true
+      if (testDirInput.endsWith('/')) {
+        // check if the options list already contains the options
+        if (this.doesOptionAlreadyAdded(testDirInput) || this.testTabLogic.currentPath === testDirInput) {
+          this.createTestFolder.disabled = true
+          this.updateGenerateFileAction().disabled = true
         }
+        this.updateDirList(testDirInput)
+      } else {
         // If there is no matching folder in the workspace with entered text, enable Create button
-        if (!matchFound) {
+        if (this.doesOptionAlreadyAdded(testDirInput)) {
+          this.createTestFolder.disabled = true
+          this.updateGenerateFileAction().disabled = false
+        } else {
           // Enable Create button
           this.createTestFolder.disabled = false
           // Disable Generate button because dir is not existing
           this.updateGenerateFileAction().disabled = true
-        } else {
-          this.createTestFolder.disabled = true
-          this.updateGenerateFileAction().disabled = false
         }
       }
     } else {
@@ -601,30 +615,27 @@ module.exports = class TestTab extends ViewPlugin {
       name="utPath"
       style="background-image: var(--primary);"
       onkeyup=${(e) => this.handleTestDirInput()}
-      onchange=${(e) => this.updateCurrentPath(e)}/>`
+      onchange=${(e) => { if (!this.createTestFolder.disabled) this.handleCreateFolder() }}
+    />`
 
-    this.createTestFolder = yo`<button
-      class="btn border ml-2"
-      data-id="testTabGenerateTestFolder"
-      title="Create a test folder"
-      disabled=true
-      onclick=${(e) => {
-        this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
-        this.testTabLogic.generateTestFolder(this.inputPath.value)
-        this.createTestFolder.disabled = true
-        this.updateGenerateFileAction().disabled = false
-        this.uiPathList.appendChild(yo`<option>${this.inputPath.value}</option>`)
-      }}>
-      Create
-      </button>`
+    this.createTestFolder = yo`
+      <button
+        class="btn border ml-2"
+        data-id="testTabGenerateTestFolder"
+        title="Create a test folder"
+        disabled=true
+        onclick=${(e) => this.handleCreateFolder()}>
+        Create
+      </button>
+    `
 
     const availablePaths = yo`
       <div>
-          <div class="d-flex p-2">
-            ${this.inputPath}
-            ${this.createTestFolder}
-            ${this.uiPathList}
-          </div>
+        <div class="d-flex p-2">
+          ${this.inputPath}
+          ${this.createTestFolder}
+          ${this.uiPathList}
+        </div>
       </div>
     `
     this.updateDirList('/')
