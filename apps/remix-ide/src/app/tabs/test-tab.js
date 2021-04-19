@@ -578,7 +578,7 @@ module.exports = class TestTab extends ViewPlugin {
     if (testDirInput) {
       if (testDirInput.endsWith('/')) {
         // check if the options list already contains the options
-        if (this.doesOptionAlreadyAdded(testDirInput) || this.testTabLogic.currentPath === testDirInput) {
+        if (this.testTabLogic.currentPath === testDirInput) {
           this.createTestFolder.disabled = true
           this.updateGenerateFileAction().disabled = true
         }
