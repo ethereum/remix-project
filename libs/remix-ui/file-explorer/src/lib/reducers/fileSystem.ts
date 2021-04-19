@@ -1,4 +1,5 @@
-import { File } from '../types'
+import * as _ from 'lodash'
+import { extractNameFromKey } from '../utils'
 interface Action {
     type: string;
     payload: Record<string, any>;
@@ -7,8 +8,7 @@ interface Action {
 export const fileSystemInitialState = {
   files: {
     files: [],
-    activeDirectory: {},
-    expandPath: [],
+    workspaceName: null,
     isRequesting: false,
     isSuccessful: false,
     error: null
@@ -40,7 +40,6 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         files: {
           ...state.files,
           files: action.payload.files,
-          expandPath: [...state.files.expandPath, action.payload.path],
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -74,8 +73,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         ...state,
         files: {
           ...state.files,
-          files: action.payload.files,
-          expandPath: [...state.files.expandPath, action.payload.path],
+          files: resolveDirectory(state.files.workspaceName, action.payload.path, state.files.files, action.payload.files),
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -127,12 +125,12 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         }
       }
     }
-    case 'ADD_EMPTY_FILE': {
+    case 'SET_CURRENT_WORKSPACE': {
       return {
         ...state,
         files: {
           ...state.files,
-          files: []
+          workspaceName: action.payload
         }
       }
     }
@@ -141,31 +139,16 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
   }
 }
 
-const addEmptyFile = (path: string, files: File[]): File[] => {
-  if (path === name) {
-    files.push({
-      path: 'browser/blank',
-      name: '',
-      isDirectory: false
-    })
-    return files
-  }
-  return files.map(file => {
-    if (file.child) {
-      if (file.path === path) {
-        file.child = [...file.child, {
-          path: file.path + '/blank',
-          name: '',
-          isDirectory: false
-        }]
-        return file
-      } else {
-        file.child = addEmptyFile(path, file.child)
+const resolveDirectory = (root, path: string, files, content) => {
+  const pathArr = path.split('/')
+  if (pathArr[0] !== root) pathArr.unshift(root)
 
-        return file
-      }
-    } else {
-      return file
-    }
+  files = _.set(files, pathArr, {
+    isDirectory: true,
+    path,
+    name: extractNameFromKey(path),
+    child: { ...content[pathArr[pathArr.length - 1]] }
   })
+
+  return files
 }
