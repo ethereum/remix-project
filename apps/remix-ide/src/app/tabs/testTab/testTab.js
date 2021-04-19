@@ -67,11 +67,17 @@ class TestTabLogic {
   generateTestContractSample (hasCurrent, fileToImport, contractName = 'testSuite') {
     let relative = remixPath.relative(this.currentPath, remixPath.dirname(fileToImport))
     if (relative === '') relative = '.'
-    const comment = hasCurrent ? `import "${relative}/${remixPath.basename(fileToImport)}";` : '// Import here the file to test.'
+    const comment = hasCurrent ? `import "${relative}/${remixPath.basename(fileToImport)}";` : '// <import file to test>'
     return `// SPDX-License-Identifier: GPL-3.0
     
 pragma solidity >=0.4.22 <0.9.0;
-import "remix_tests.sol"; // this import is automatically injected by Remix.
+
+// This import is automatically injected by Remix
+import "remix_tests.sol"; 
+
+// This import is required to use custom transaction context
+// Although it may fail compilation in 'Solidity Compiler' plugin
+// But it will work fine in 'Solidity Unit Testing' plugin
 import "remix_accounts.sol";
 ${comment}
 
@@ -81,15 +87,15 @@ contract ${contractName} {
     /// 'beforeAll' runs before all other tests
     /// More special functions are: 'beforeEach', 'beforeAll', 'afterEach' & 'afterAll'
     function beforeAll() public {
-        // Here should instantiate tested contract
+        // <instantiate contract>
         Assert.equal(uint(1), uint(1), "1 should be equal to 1");
     }
 
     function checkSuccess() public {
-        // Use 'Assert' to test the contract, 
-        // See documentation: https://remix-ide.readthedocs.io/en/latest/assert_library.html
-        Assert.equal(uint(2), uint(2), "2 should be equal to 2");
-        Assert.notEqual(uint(2), uint(3), "2 should not be equal to 3");
+        // Use 'Assert' methods: https://remix-ide.readthedocs.io/en/latest/assert_library.html
+        Assert.ok(2 == 2, 'should be true');
+        Assert.greaterThan(uint(2), uint(1), "2 should be greater than to 1");
+        Assert.lesserThan(uint(2), uint(3), "2 should be lesser than to 3");
     }
 
     function checkSuccess2() public pure returns (bool) {
@@ -98,11 +104,10 @@ contract ${contractName} {
     }
     
     function checkFailure() public {
-        Assert.equal(uint(1), uint(2), "1 is not equal to 2");
+        Assert.notEqual(uint(1), uint(1), "1 should not be equal to 1");
     }
 
-    /// Custom Transaction Context
-    /// See more: https://remix-ide.readthedocs.io/en/latest/unittesting.html#customization
+    /// Custom Transaction Context: https://remix-ide.readthedocs.io/en/latest/unittesting.html#customization
     /// #sender: account-1
     /// #value: 100
     function checkSenderAndValue() public payable {
