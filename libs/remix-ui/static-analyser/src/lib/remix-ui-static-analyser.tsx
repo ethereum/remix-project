@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react' 
 import ReactDOM from 'react-dom' //eslint-disable-line
 import CheckBox from './Checkbox/StaticAnalyserCheckedBox' // eslint-disable-line
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
@@ -81,19 +81,24 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [warningState, setWarningState] = useState([])
 
   useEffect(() => {
+    
     if (autoRun) {
       const setCompilationResult = async (data, source, file) => {
         await setResult({ lastCompilationResult: data, lastCompilationSource: source, currentFile: file })
       }
-
+      
       if (props.analysisModule) {
+       
         props.analysisModule.on(
           'solidity',
           'compilationFinished',
           (file, source, languageVersion, data) => {
             if (languageVersion.indexOf('soljson') !== 0) return
             setCompilationResult(data, source, file)
-            run(data, source, file)
+            if(categoryIndex.length > 0){
+              run(data, source, file)
+            }
+
           }
         )
       }
@@ -102,7 +107,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
 
     return () => { }
-  }, [autoRun])
+  }, [autoRun, categoryIndex])
 
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
     // const highlightLocation = async (location, fileName) => {
@@ -197,8 +202,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         const groupedCategory = groupBy(resultArray, 'warningModuleName')
         setWarningState(groupedCategory)
       })
-
-      props.event.trigger('staticAnaysisWarning', [warningCount])
+      if(categoryIndex.length > 0){
+        props.event.trigger('staticAnaysisWarning', [warningCount])
+      }
     } else {
       setRunButtonState(true)
       if (categoryIndex.length) {
@@ -217,8 +223,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         })
       )
     } else {
-      setCategoryIndex(_.uniq([...categoryIndex, ...index]))
+      setCategoryIndex(_.uniq([...categoryIndex]))
     }
+
   }
 
   const handleCheckOrUncheckCategory = (category) => {
@@ -353,9 +360,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           {result.currentFile && result.currentFile}
         </span>
       </div>
-      { Object.entries(warningState).length > 0 &&
+      { categoryIndex.length > 0 && Object.entries(warningState).length > 0 &&
         <div id='staticanalysisresult' >
-          <div className="mb-4 warning">
+          <div className="mb-4">
             {
               (Object.entries(warningState).map((element) => (
                 <>
