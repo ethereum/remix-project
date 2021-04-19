@@ -39,13 +39,13 @@ const normalize = (filesList): any => {
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
 
     if (filesList[key].isDirectory) {
-      folders[key] = {
+      folders[extractNameFromKey(key)] = {
         path,
         name: extractNameFromKey(path),
         isDirectory: filesList[key].isDirectory
       }
     } else {
-      files[key] = {
+      files[extractNameFromKey(key)] = {
         path,
         name: extractNameFromKey(path),
         isDirectory: filesList[key].isDirectory
@@ -138,5 +138,18 @@ export const setProvider = (provider) => (dispatch: React.Dispatch<any>) => {
     dispatch(fetchProviderSuccess(provider))
   } else {
     dispatch(fetchProviderError('No provider available'))
+  }
+}
+
+export const setCurrentWorkspace = (name: string) => {
+  return {
+    type: 'SET_CURRENT_WORKSPACE',
+    payload: name
+  }
+}
+
+export const setWorkspace = (name: string) => (dispatch: React.Dispatch<any>) => {
+  if (name) {
+    dispatch(setCurrentWorkspace(name))
   }
 }

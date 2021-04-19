@@ -8,7 +8,7 @@ import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
 import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem'
-import { fetchDirectory, setProvider, resolveDirectory } from './actions/fileSystem'
+import { fetchDirectory, setProvider, resolveDirectory, setWorkspace } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 
@@ -109,6 +109,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   useEffect(() => {
     if (props.filesProvider) {
       setProvider(props.filesProvider)(dispatch)
+      setWorkspace(props.name)(dispatch)
     }
   }, [props.filesProvider])
 
@@ -215,45 +216,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       })
     }
   }, [state.modals])
-
-  // const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
-  //   if (!isChild && (state.focusEdit.element === '/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === '/blank') === -1)) {
-  //     dir = state.focusEdit.type === 'file' ? [...dir, {
-  //       path: state.focusEdit.element,
-  //       name: '',
-  //       isDirectory: false
-  //     }] : [{
-  //       path: state.focusEdit.element,
-  //       name: '',
-  //       isDirectory: true
-  //     }, ...dir]
-  //   }
-  //   dir = await Promise.all(dir.map(async (file) => {
-  //     if (file.path === folderPath) {
-  //       if ((extractParentFromKey(state.focusEdit.element) === folderPath) && state.focusEdit.isNew) {
-  //         file.child = state.focusEdit.type === 'file' ? [...await fetchDirectoryContent(folderPath), {
-  //           path: state.focusEdit.element,
-  //           name: '',
-  //           isDirectory: false
-  //         }] : [{
-  //           path: state.focusEdit.element,
-  //           name: '',
-  //           isDirectory: true
-  //         }, ...await fetchDirectoryContent(folderPath)]
-  //       } else {
-  //         file.child = await fetchDirectoryContent(folderPath)
-  //       }
-  //       return file
-  //     } else if (file.child) {
-  //       file.child = await resolveDirectory(folderPath, file.child, true)
-  //       return file
-  //     } else {
-  //       return file
-  //     }
-  //   }))
-
-  //   return dir
-  // }
 
 
   const extractNameFromKey = (key: string):string => {
@@ -726,7 +688,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       setState(prevState => {
         return { ...prevState, focusElement: [{ key: path, type: 'folder' }], expandPath }
       })
-      resolveDirectory(path)(dispatch)
+      resolveDirectory(fileSystem.provider.provider, path)(dispatch)
     }
   }
 
@@ -914,8 +876,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
         >
           {
             file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
-              file.child.map((file, index) => {
-                return renderFiles(file, index)
+              Object.keys(file.child).map((key, index) => {
+                return renderFiles(file.child[key], index)
               })
             }
             </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
