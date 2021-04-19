@@ -94,11 +94,11 @@ function fileExplorer (localRegistry, files, menuItems, plugin) {
   })
 
   // register to event of the file provider
-  files.event.register('fileRemoved', fileRemoved)
-  files.event.register('fileRenamed', fileRenamed)
-  files.event.register('fileRenamedError', fileRenamedError)
-  files.event.register('fileAdded', fileAdded)
-  files.event.register('folderAdded', folderAdded)
+  files.event.on('fileRemoved', fileRemoved)
+  files.event.on('fileRenamed', fileRenamed)
+  files.event.on('fileRenamedError', fileRenamedError)
+  files.event.on('fileAdded', fileAdded)
+  files.event.on('folderAdded', folderAdded)
 
   function fileRenamedError (error) {
     modalDialogCustom.alert(error)
