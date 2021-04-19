@@ -1,14 +1,6 @@
 import React from 'react'
 import { File } from '../types'
-import { extractNameFromKey, extractParentFromKey } from '../utils'
-
-const globalRegistry = require('../../../../../../apps/remix-ide/src/global/registry')
-const initializeProvider = () => {
-  const fileProviders = globalRegistry.get('fileproviders').api
-  const browser = fileProviders.browser // eslint-disable-line
-  const workspace = fileProviders.workspace
-  const localhost = fileProviders.localhost // eslint-disable-line
-}
+import { extractNameFromKey } from '../utils'
 
 export const fetchDirectoryError = (error: any) => {
   return {
@@ -37,9 +29,9 @@ export const fileSystemReset = () => {
   }
 }
 
-const normalize = (filesList): File[] => {
-  const folders = []
-  const files = []
+const normalize = (filesList): any => {
+  const folders = {}
+  const files = {}
 
   Object.keys(filesList || {}).forEach(key => {
     key = key.replace(/^\/|\/$/g, '') // remove first and last slash
@@ -47,36 +39,35 @@ const normalize = (filesList): File[] => {
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
 
     if (filesList[key].isDirectory) {
-      folders.push({
+      folders[key] = {
         path,
         name: extractNameFromKey(path),
         isDirectory: filesList[key].isDirectory
-      })
+      }
     } else {
-      files.push({
+      files[key] = {
         path,
         name: extractNameFromKey(path),
         isDirectory: filesList[key].isDirectory
-      })
+      }
     }
   })
 
-  return [...folders, ...files]
+  return Object.assign({}, folders, files)
 }
 
-const fetchDirectoryContent = async (provider, folderPath: string): Promise<File[]> => {
+const fetchDirectoryContent = async (provider, folderPath: string): Promise<any> => {
   return new Promise((resolve) => {
     provider.resolveDirectory(folderPath, (error, fileTree) => {
       if (error) console.error(error)
       const files = normalize(fileTree)
 
-      resolve(files)
+      resolve({ [extractNameFromKey(folderPath)]: files })
     })
   })
 }
 
 export const fetchDirectory = (provider, path: string) => (dispatch: React.Dispatch<any>) => {
-  initializeProvider()
   const promise = fetchDirectoryContent(provider, path)
 
   dispatch(fetchDirectoryRequest(promise))
@@ -84,6 +75,39 @@ export const fetchDirectory = (provider, path: string) => (dispatch: React.Dispa
     dispatch(fetchDirectorySuccess(path, files))
   }).catch((error) => {
     dispatch(fetchDirectoryError({ error }))
+  })
+  return promise
+}
+
+export const resolveDirectoryError = (error: any) => {
+  return {
+    type: 'RESOLVE_DIRECTORY_ERROR',
+    payload: error
+  }
+}
+
+export const resolveDirectoryRequest = (promise: Promise<any>) => {
+  return {
+    type: 'RESOLVE_DIRECTORY_REQUEST',
+    payload: promise
+  }
+}
+
+export const resolveDirectorySuccess = (path: string, files: File[]) => {
+  return {
+    type: 'RESOLVE_DIRECTORY_SUCCESS',
+    payload: { path, files }
+  }
+}
+
+export const resolveDirectory = (provider, path: string) => (dispatch: React.Dispatch<any>) => {
+  const promise = fetchDirectoryContent(provider, path)
+
+  dispatch(resolveDirectoryRequest(promise))
+  promise.then((files) => {
+    dispatch(resolveDirectorySuccess(path, files))
+  }).catch((error) => {
+    dispatch(resolveDirectoryError({ error }))
   })
   return promise
 }
@@ -109,15 +133,10 @@ export const fetchProviderSuccess = (provider: any) => {
   }
 }
 
-export const setProvider = () => (dispatch: React.Dispatch<any>) => {
-  initializeProvider()
-  const promise = fetchDirectoryContent(provider, path)
-
-  dispatch(fetchDirectoryRequest(promise))
-  promise.then((files) => {
-    dispatch(fetchDirectorySuccess(path, files))
-  }).catch((error) => {
-    dispatch(fetchDirectoryError({ error }))
-  })
-  return promise
+export const setProvider = (provider) => (dispatch: React.Dispatch<any>) => {
+  if (provider) {
+    dispatch(fetchProviderSuccess(provider))
+  } else {
+    dispatch(fetchProviderError('No provider available'))
+  }
 }
