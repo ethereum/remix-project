@@ -63,11 +63,13 @@ async getStateRoot (force: boolean = false): Promise<Buffer> {
     // throw new Error('Cannot get state root with uncommitted checkpoints')
   }
 
+  /*
   try {
     await this._cache.flush()
   } catch (e) {
     console.error(e)
   }
+  */
 
   const stateRoot = this._trie.root
   return stateRoot
