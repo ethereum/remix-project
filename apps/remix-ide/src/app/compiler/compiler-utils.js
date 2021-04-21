@@ -25,9 +25,9 @@ export function canUseWorker (selectedVersion) {
   const version = semver.coerce(selectedVersion)
   const isNightly = selectedVersion.includes('nightly')
   return browserSupportWorker() && (
-    // All compiler versions (including nightlies) after 0.6.3 are wasm compiled
-    semver.gt(version, '0.6.3') ||
-    // Only releases are wasm compiled starting with 0.3.6
+    // All compiler versions starting with 0.6.2 (including nightlies) are wasm compiled
+    semver.gte(version, '0.6.2') ||
+    // For older versions wasm builds are only available for official releases (starting with 0.3.6)
     (semver.gte(version, '0.3.6') && !isNightly)
   )
 }
