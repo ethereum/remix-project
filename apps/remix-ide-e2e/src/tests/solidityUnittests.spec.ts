@@ -154,6 +154,7 @@ function runTests (browser: NightwatchBrowser) {
     .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
     .clickLaunchIcon('solidityUnitTesting')
     .pause(500)
+    .clearValue('*[data-id="uiPathInput"]')
     .setValue('*[data-id="uiPathInput"]', 'tests')
     .pause(2000)
     .scrollAndClick('#runTestsTabRunAction')
