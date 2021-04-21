@@ -8,7 +8,7 @@ import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
 import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem'
-import { fetchDirectory, setProvider, resolveDirectory, setWorkspace } from './actions/fileSystem'
+import { fetchDirectory, setProvider, resolveDirectory, setWorkspace, addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 
@@ -713,70 +713,64 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const editModeOn = (path: string, type: string, isNew: boolean = false) => {
-    if (filesProvider.isReadOnly(path)) return
+    if (fileSystem.provider.provider.isReadOnly(path)) return
     setState(prevState => {
       return { ...prevState, focusEdit: { ...prevState.focusEdit, element: path, isNew, type } }
     })
   }
 
-  // const editModeOff = async (content: string) => {
-  //   if (typeof content === 'string') content = content.trim()
-  //   const parentFolder = extractParentFromKey(state.focusEdit.element)
+  const editModeOff = async (content: string) => {
+    if (typeof content === 'string') content = content.trim()
+    const parentFolder = extractParentFromKey(state.focusEdit.element)
 
-  //   if (!content || (content.trim() === '')) {
-  //     if (state.focusEdit.isNew) {
-  //       const files = removePath(state.focusEdit.element, state.files)
-  //       const updatedFiles = files.filter(file => file)
+    if (!content || (content.trim() === '')) {
+      if (state.focusEdit.isNew) {
+        removeInputField(fileSystem.provider.provider, parentFolder)(dispatch)
+        setState(prevState => {
+          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+        })
+      } else {
+        editRef.current.textContent = state.focusEdit.lastEdit
+        setState(prevState => {
+          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+        })
+      }
+    } else {
+      if (state.focusEdit.lastEdit === content) {
+        editRef.current.textContent = content
+        return setState(prevState => {
+          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+        })
+      }
+      if (helper.checkSpecialChars(content)) {
+        modal('Validation Error', 'Special characters are not allowed', {
+          label: 'OK',
+          fn: () => {}
+        }, null)
+      } else {
+        if (state.focusEdit.isNew) {
+          // state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
+          removeInputField(fileSystem.provider.provider, parentFolder)(dispatch)
+        } else {
+          const oldPath: string = state.focusEdit.element
+          // const oldName = extractNameFromKey(oldPath)
+          // const newPath = oldPath.replace(oldName, content)
 
-  //       setState(prevState => {
-  //         return { ...prevState, files: updatedFiles, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
-  //       })
-  //     } else {
-  //       editRef.current.textContent = state.focusEdit.lastEdit
-  //       setState(prevState => {
-  //         return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
-  //       })
-  //     }
-  //   } else {
-  //     if (state.focusEdit.lastEdit === content) {
-  //       editRef.current.textContent = content
-  //       return setState(prevState => {
-  //         return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
-  //       })
-  //     }
-  //     if (helper.checkSpecialChars(content)) {
-  //       modal('Validation Error', 'Special characters are not allowed', {
-  //         label: 'OK',
-  //         fn: () => {}
-  //       }, null)
-  //     } else {
-  //       if (state.focusEdit.isNew) {
-  //         state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
-  //         const files = removePath(state.focusEdit.element, state.files)
-  //         const updatedFiles = files.filter(file => file)
-
-  //         setState(prevState => {
-  //           return { ...prevState, files: updatedFiles }
-  //         })
-  //       } else {
-  //         const oldPath: string = state.focusEdit.element
-  //         const oldName = extractNameFromKey(oldPath)
-  //         const newPath = oldPath.replace(oldName, content)
-
-  //         editRef.current.textContent = extractNameFromKey(oldPath)
-  //         renamePath(oldPath, newPath)
-  //       }
-  //       setState(prevState => {
-  //         return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
-  //       })
-  //     }
-  //   }
-  // }
+          editRef.current.textContent = extractNameFromKey(oldPath)
+          // renamePath(oldPath, newPath)
+        }
+        setState(prevState => {
+          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+        })
+      }
+    }
+  }
 
   const handleNewFileInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key ? state.focusElement[0].key : name : extractParentFromKey(state.focusElement[0].key) : name
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
+    await addInputField(fileSystem.provider.provider, 'file', parentFolder)(dispatch)
     setState(prevState => {
       return { ...prevState, expandPath }
     })
@@ -784,22 +778,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleNewFolderInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key ? state.focusElement[0].key : name : extractParentFromKey(state.focusElement[0].key) : name
     else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
+    await addInputField(fileSystem.provider.provider, 'folder', parentFolder)(dispatch)
     setState(prevState => {
       return { ...prevState, expandPath }
     })
     editModeOn(parentFolder + '/blank', 'folder', true)
   }
 
-  // const handleEditInput = (event) => {
-  //   if (event.which === 13) {
-  //     event.preventDefault()
-  //     editModeOff(editRef.current.innerText)
-  //   }
-  // }
+  const handleEditInput = (event) => {
+    if (event.which === 13) {
+      event.preventDefault()
+      editModeOff(editRef.current.innerText)
+    }
+  }
 
   const handleMouseOver = (path: string) => {
     setState(prevState => {
@@ -820,11 +815,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
         ref={state.focusEdit.element === file.path ? editRef : null}
         suppressContentEditableWarning={true}
         contentEditable={state.focusEdit.element === file.path}
-        // onKeyDown={handleEditInput}
-        // onBlur={(e) => {
-        //   e.stopPropagation()
-        //   editModeOff(editRef.current.innerText)
-        // }}
+        onKeyDown={handleEditInput}
+        onBlur={(e) => {
+          e.stopPropagation()
+          editModeOff(editRef.current.innerText)
+        }}
       >
         <span
           title={file.path}

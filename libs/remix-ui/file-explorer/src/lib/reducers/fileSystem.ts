@@ -9,6 +9,7 @@ export const fileSystemInitialState = {
   files: {
     files: [],
     workspaceName: null,
+    blankPath: null,
     isRequesting: false,
     isSuccessful: false,
     error: null
@@ -134,6 +135,32 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         }
       }
     }
+    case 'ADD_INPUT_FIELD': {
+      return {
+        ...state,
+        files: {
+          ...state.files,
+          files: addInputField(state.files.workspaceName, action.payload.path, state.files.files, action.payload.files),
+          blankPath: action.payload.path,
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
+        }
+      }
+    }
+    case 'REMOVE_INPUT_FIELD': {
+      return {
+        ...state,
+        files: {
+          ...state.files,
+          files: removeInputField(state.files.workspaceName, state.files.blankPath, state.files.files, action.payload.files),
+          blankPath: null,
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
+        }
+      }
+    }
     default:
       throw new Error()
   }
@@ -141,8 +168,8 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
 
 const resolveDirectory = (root, path: string, files, content) => {
   const pathArr = path.split('/')
-  if (pathArr[0] !== root) pathArr.unshift(root)
 
+  if (pathArr[0] !== root) pathArr.unshift(root)
   files = _.set(files, pathArr, {
     isDirectory: true,
     path,
@@ -151,4 +178,17 @@ const resolveDirectory = (root, path: string, files, content) => {
   })
 
   return files
+}
+
+const addInputField = (root, path: string, files, content) => {
+  if (Object.keys(content)[0] === root) return { [Object.keys(content)[0]]: { ...content[Object.keys(content)[0]], ...files[Object.keys(content)[0]] } }
+  return resolveDirectory(root, path, files, content)
+}
+
+const removeInputField = (root, path: string, files, content) => {
+  if (Object.keys(content)[0] === root) {
+    delete files[root][path + '/' + 'blank']
+    return files
+  }
+  return resolveDirectory(root, path, files, content)
 }
