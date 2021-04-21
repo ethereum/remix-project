@@ -455,7 +455,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
-  await appManager.activatePlugin(['mainPanel', 'menuicons'])
+  await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
   await appManager.activatePlugin(['home'])
   await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile'])

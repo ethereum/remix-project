@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 const assetsTestContract = `import "./contract.sol";
 contract Assets {
@@ -85,8 +84,7 @@ module.exports = {
       .clickLaunchIcon('pluginManager')
       .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
       .end()
-  },
-  tearDown: sauce
+  }
 }
 
 function runTests (browser: NightwatchBrowser) {

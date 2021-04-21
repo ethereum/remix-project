@@ -405,6 +405,15 @@ class FileManager extends Plugin {
     return this._deps.config.get('currentFile')
   }
 
+  closeAllFiles () {
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('filesAllClosed')
+    this.events.emit('filesAllClosed')
+    for (const file in this.openedFiles) {
+      this.closeFile(file)
+    }
+  }
+
   closeFile (name) {
     delete this.openedFiles[name]
     if (!Object.keys(this.openedFiles).length) {
@@ -561,8 +570,6 @@ class FileManager extends Plugin {
     if (file.startsWith('browser')) {
       return this._deps.filesProviders.browser
     }
-    const provider = this._deps.filesProviders.workspace
-    if (!provider.isReady()) throw createError({ code: 'ECONNRESET', message: 'No workspace has been opened.' })
     return this._deps.filesProviders.workspace
   }
 
