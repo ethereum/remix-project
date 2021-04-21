@@ -1,5 +1,5 @@
 'use strict'
-import { Block, BlockHeader } from '@ethereumjs/block'
+import { Block } from '@ethereumjs/block'
 import VM from '@ethereumjs/vm'
 var utileth = require('ethereumjs-util')
 var Tx = require('@ethereumjs/tx').Transaction
@@ -17,12 +17,12 @@ function sendTx (vm, from, to, value, data, cb) {
   })
   tx.sign(from.privateKey)
 
-  var header = BlockHeader.fromHeaderData({
-    timestamp: new Date().getTime() / 1000 | 0,
-    number: 0
-  })
-
-  var block = new Block(header, [], [])
+  var block = Block.fromBlockData({
+    header: {
+      timestamp: new Date().getTime() / 1000 | 0,
+      number: 0
+    }
+  }) // still using default common
   vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}).then(function (result) {
     setTimeout(() => {
       cb(null, utileth.bufferToHex(tx.hash()))
