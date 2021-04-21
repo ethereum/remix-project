@@ -2,8 +2,8 @@ const semver = require('semver')
 const minixhr = require('minixhr')
 /* global Worker */
 
-export const baseURLBin = 'https://solc-bin.ethereum.org/bin'
-export const baseURLWasm = 'https://solc-bin.ethereum.org/wasm'
+export const baseURLBin = 'https://binaries.soliditylang.org/bin'
+export const baseURLWasm = 'https://binaries.soliditylang.org/wasm'
 
 export const pathToURL = {}
 
