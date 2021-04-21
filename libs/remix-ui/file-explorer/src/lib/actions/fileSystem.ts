@@ -1,6 +1,6 @@
 import React from 'react'
 import { File } from '../types'
-import { extractNameFromKey } from '../utils'
+import { extractNameFromKey, extractParentFromKey } from '../utils'
 
 export const fetchDirectoryError = (error: any) => {
   return {
@@ -29,7 +29,7 @@ export const fileSystemReset = () => {
   }
 }
 
-const normalize = (filesList): any => {
+const normalize = (parent, filesList, newInputType?: string): any => {
   const folders = {}
   const files = {}
 
@@ -53,14 +53,32 @@ const normalize = (filesList): any => {
     }
   })
 
+  if (newInputType === 'folder') {
+    const path = parent + '/blank'
+
+    folders[path] = {
+      path: path,
+      name: '',
+      isDirectory: true
+    }
+  } else if (newInputType === 'file') {
+    const path = parent + '/blank'
+
+    files[path] = {
+      path: path,
+      name: '',
+      isDirectory: false
+    }
+  }
+
   return Object.assign({}, folders, files)
 }
 
-const fetchDirectoryContent = async (provider, folderPath: string): Promise<any> => {
+const fetchDirectoryContent = async (provider, folderPath: string, newInputType?: string): Promise<any> => {
   return new Promise((resolve) => {
     provider.resolveDirectory(folderPath, (error, fileTree) => {
       if (error) console.error(error)
-      const files = normalize(fileTree)
+      const files = normalize(folderPath, fileTree, newInputType)
 
       resolve({ [extractNameFromKey(folderPath)]: files })
     })
@@ -152,4 +170,40 @@ export const setWorkspace = (name: string) => (dispatch: React.Dispatch<any>) =>
   if (name) {
     dispatch(setCurrentWorkspace(name))
   }
+}
+
+export const addInputFieldSuccess = (path: string, files: File[]) => {
+  return {
+    type: 'ADD_INPUT_FIELD',
+    payload: { path, files }
+  }
+}
+
+export const addInputField = (provider, type: string, path: string) => (dispatch: React.Dispatch<any>) => {
+  const promise = fetchDirectoryContent(provider, path, type)
+
+  promise.then((files) => {
+    dispatch(addInputFieldSuccess(path, files))
+  }).catch((error) => {
+    console.error(error)
+  })
+  return promise
+}
+
+export const removeInputFieldSuccess = (path: string, files: File[]) => {
+  return {
+    type: 'REMOVE_INPUT_FIELD',
+    payload: { path, files }
+  }
+}
+
+export const removeInputField = (provider, path: string) => (dispatch: React.Dispatch<any>) => {
+  const promise = fetchDirectoryContent(provider, path)
+
+  promise.then((files) => {
+    dispatch(removeInputFieldSuccess(path, files))
+  }).catch((error) => {
+    console.error(error)
+  })
+  return promise
 }
