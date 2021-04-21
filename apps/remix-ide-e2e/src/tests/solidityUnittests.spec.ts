@@ -152,11 +152,10 @@ module.exports = {
 function runTests (browser: NightwatchBrowser) {
   browser
     .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
-    .clickLaunchIcon('filePanel')
-    .click('*[data-id="treeViewLitreeViewItemcontracts"]')
-    .openFile('contracts/3_Ballot.sol')
     .clickLaunchIcon('solidityUnitTesting')
     .pause(500)
+    .setValue('*[data-id="uiPathInput"]', 'tests')
+    .pause(2000)
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
