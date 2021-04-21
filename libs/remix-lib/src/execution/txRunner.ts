@@ -134,9 +134,10 @@ export class TxRunner {
           coinbase: coinbases[self.blockNumber % coinbases.length],
           difficulty: difficulties[self.blockNumber % difficulties.length],
           gasLimit: new BN(gasLimit.replace('0x', ''), 16).imuln(2)
-        }
+        },
+        transactions: [tx]
       }, { common: this.commonContext })
-      
+
       if (!useCall) {
         ++self.blockNumber
         this.runBlockInVm(tx, block, callback)
