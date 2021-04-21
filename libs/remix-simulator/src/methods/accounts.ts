@@ -48,16 +48,15 @@ export class Accounts {
       this.accountsKeys[addressStr] = '0x' + privateKey.toString('hex')
 
       const stateManager = this.executionContext.vm().stateManager
-      stateManager.getAccount(Address.fromString(addressStr)).then((account) => {        
+      stateManager.getAccount(Address.fromString(addressStr)).then((account) => {
         account.balance = new BN(balance.replace('0x', '') || 'f00000000000000001', 16)
         stateManager.putAccount(Address.fromString(addressStr), account).catch((error) => {
           reject(error)
-        }).then(() => { 
+        }).then(() => {
           resolve({})
         })
       }).catch((error) => {
         reject(error)
-        return
       })
     })
   }
@@ -84,10 +83,9 @@ export class Accounts {
   }
 
   eth_getBalance (payload, cb) {
-    let address = payload.params[0]
-    
+    const address = payload.params[0]
 
-    this.executionContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {     
+    this.executionContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
       cb(null, new BN(account.balance).toString(10))
     }).catch((error) => {
       cb(error)
