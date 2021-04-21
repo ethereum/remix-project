@@ -101,9 +101,9 @@ export class Web3VmProvider {
     }
     const tx = {}
     tx['hash'] = this.processingHash
-    tx['from'] = toChecksumAddress(hexConvert(data.getSenderAddress().buf))
-    if (data.to && data.to.length) {
-      tx['to'] = toChecksumAddress(hexConvert(data.to.buf))
+    tx['from'] = toChecksumAddress(data.getSenderAddress().toString())
+    if (data.to) {
+      tx['to'] = toChecksumAddress(data.to.toString())
     }
     this.processingAddress = tx['to']
     // tx['data'] = hexConvert(data.data)
@@ -155,8 +155,8 @@ export class Web3VmProvider {
     const status = data.execResult.exceptionError ? 0 : 1
     this.txsReceipt[this.processingHash].status = `0x${status}`
 
-    if (data.createdAddress && data.createdAddress.buf) {
-      const address = hexConvert(data.createdAddress.buf)
+    if (data.createdAddress) {
+      const address = data.createdAddress.toString()
       this.vmTraces[this.processingHash].return = toChecksumAddress(address)
       this.txsReceipt[this.processingHash].contractAddress = toChecksumAddress(address)
     } else if (data.execResult.returnValue) {
