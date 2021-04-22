@@ -156,6 +156,7 @@ function runTests (browser: NightwatchBrowser) {
     .pause(500)
     .clearValue('*[data-id="uiPathInput"]')
     .setValue('*[data-id="uiPathInput"]', 'tests')
+    .click('*[data-id="testTabGenerateTestFolder"]')
     .pause(2000)
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
