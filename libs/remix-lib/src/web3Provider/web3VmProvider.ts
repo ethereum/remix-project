@@ -115,9 +115,8 @@ export class Web3VmProvider {
     this.txs[this.processingHash] = tx
     this.txsReceipt[this.processingHash] = tx
     this.storageCache[this.processingHash] = {}
-    if (tx['to']) {
-      const account = toBuffer(tx['to'])
-      this.vm.stateManager.dumpStorage(account).then((storage) => {
+    if (data.to) {
+      this.vm.stateManager.dumpStorage(data.to).then((storage) => {
         this.storageCache[this.processingHash][tx['to']] = storage
         this.lastProcessedStorageTxHash[tx['to']] = this.processingHash
       })
@@ -205,7 +204,7 @@ export class Web3VmProvider {
         this.processingAddress = normalizeHexAddress(step.stack[step.stack.length - 2])
         this.processingAddress = toChecksumAddress(this.processingAddress)
         if (!this.storageCache[this.processingHash][this.processingAddress]) {
-          const account = toBuffer(this.processingAddress)
+          const account = Address.fromString(this.processingAddress)
           this.vm.stateManager.dumpStorage(account).then((storage) => {
             this.storageCache[this.processingHash][this.processingAddress] = storage
             this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
