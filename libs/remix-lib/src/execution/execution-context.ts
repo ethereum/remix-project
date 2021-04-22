@@ -63,13 +63,7 @@ async getStateRoot (force: boolean = false): Promise<Buffer> {
     // throw new Error('Cannot get state root with uncommitted checkpoints')
   }
 
-  /*
-  try {
-    await this._cache.flush()
-  } catch (e) {
-    console.error(e)
-  }
-  */
+  await this._cache.flush()
 
   const stateRoot = this._trie.root
   return stateRoot
@@ -152,7 +146,6 @@ export class ExecutionContext {
 
   createVm (hardfork) {
     const stateManager = new StateManagerCommonStorageDump()
-    stateManager.checkpoint()
     const common = new Common({ chain: 'mainnet', hardfork })
     const vm = new VM({
       common,
@@ -253,9 +246,11 @@ export class ExecutionContext {
     if (!infoCb) infoCb = () => {}
     if (context === 'vm') {
       this.executionContext = context
+      /*
       this.vms[this.currentFork].stateManager.revert().then(() => {
         this.vms[this.currentFork].stateManager.checkpoint()
       })
+      */
       this.event.trigger('contextChanged', ['vm'])
       return cb()
     }
