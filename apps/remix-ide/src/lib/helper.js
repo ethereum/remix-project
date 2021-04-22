@@ -52,6 +52,27 @@ module.exports = {
   createNonClashingName (name, fileProvider, cb) {
     this.createNonClashingNameWithPrefix(name, fileProvider, '', cb)
   },
+  async checkNonClashingNameAsync (name, fileManager, prefix = '') {
+    if (!name) name = 'Undefined'
+    let counter = ''
+    let ext = 'sol'
+    const reg = /(.*)\.([^.]+)/g
+    const split = reg.exec(name)
+    if (split) {
+      name = split[1]
+      ext = split[2]
+    }
+    let exist = true
+
+    do {
+      const isDuplicate = await fileManager.exists(name + counter + prefix + '.' + ext)
+
+      if (isDuplicate) counter = (counter | 0) + 1
+      else exist = false
+    } while (exist)
+
+    return name + counter + prefix + '.' + ext
+  },
   checkSpecialChars (name) {
     return name.match(/[:*?"<>\\'|]/) != null
   },
