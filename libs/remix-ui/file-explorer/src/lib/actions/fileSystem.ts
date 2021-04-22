@@ -151,9 +151,13 @@ export const fetchProviderSuccess = (provider: any) => {
   }
 }
 
-export const setProvider = (provider) => (dispatch: React.Dispatch<any>) => {
+export const setProvider = (provider, workspaceName) => (dispatch: React.Dispatch<any>) => {
   if (provider) {
+    provider.event.register('fileAdded', async (filePath) => {
+      resolveDirectory(provider, extractParentFromKey(filePath) || workspaceName)(dispatch)
+    })
     dispatch(fetchProviderSuccess(provider))
+    dispatch(setCurrentWorkspace(workspaceName))
   } else {
     dispatch(fetchProviderError('No provider available'))
   }
@@ -163,12 +167,6 @@ export const setCurrentWorkspace = (name: string) => {
   return {
     type: 'SET_CURRENT_WORKSPACE',
     payload: name
-  }
-}
-
-export const setWorkspace = (name: string) => (dispatch: React.Dispatch<any>) => {
-  if (name) {
-    dispatch(setCurrentWorkspace(name))
   }
 }
 

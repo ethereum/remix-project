@@ -8,7 +8,7 @@ import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
 import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem'
-import { fetchDirectory, setProvider, resolveDirectory, setWorkspace, addInputField, removeInputField } from './actions/fileSystem'
+import { fetchDirectory, setProvider, resolveDirectory, addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 
@@ -108,8 +108,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     if (props.filesProvider) {
-      setProvider(props.filesProvider)(dispatch)
-      setWorkspace(props.name)(dispatch)
+      setProvider(props.filesProvider, props.name)(dispatch)
     }
   }, [props.filesProvider])
 
@@ -217,7 +216,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [state.modals])
 
-
   const extractNameFromKey = (key: string):string => {
     const keyPath = key.split('/')
 
@@ -232,36 +230,28 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return keyPath.join('/')
   }
 
-  // const createNewFile = (newFilePath: string) => {
-  //   const fileManager = state.fileManager
+  const createNewFile = async (newFilePath: string) => {
+    const fileManager = state.fileManager
 
-  //   try {
-  //     helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
-  //       if (error) {
-  //         modal('Create File Failed', error, {
-  //           label: 'Close',
-  //           fn: async () => {}
-  //         }, null)
-  //       } else {
-  //         const createFile = await fileManager.writeFile(newName, '')
+    try {
+      const newName = await helper.checkNonClashingNameAsync(newFilePath, fileManager)
+      const createFile = await fileManager.writeFile(newName, '')
 
-  //         if (!createFile) {
-  //           return toast('Failed to create file ' + newName)
-  //         } else {
-  //           await fileManager.open(newName)
-  //           setState(prevState => {
-  //             return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
-  //           })
-  //         }
-  //       }
-  //     })
-  //   } catch (error) {
-  //     return modal('File Creation Failed', typeof error === 'string' ? error : error.message, {
-  //       label: 'Close',
-  //       fn: async () => {}
-  //     }, null)
-  //   }
-  // }
+      if (!createFile) {
+        return toast('Failed to create file ' + newName)
+      } else {
+        await fileManager.open(newName)
+        setState(prevState => {
+          return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
+        })
+      }
+    } catch (error) {
+      return modal('File Creation Failed', typeof error === 'string' ? error : error.message, {
+        label: 'Close',
+        fn: async () => {}
+      }, null)
+    }
+  }
 
   // const createNewFolder = async (newFolderPath: string) => {
   //   const fileManager = state.fileManager
@@ -345,23 +335,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   //       return file
   //     }
   //   })
-  // }
-
-  // const fileAdded = async (filePath: string) => {
-  //   const pathArr = filePath.split('/')
-  //   const expandPath = pathArr.map((path, index) => {
-  //     return [...pathArr.slice(0, index)].join('/')
-  //   }).filter(path => path && (path !== props.name))
-  //   const files = await fetchDirectoryContent(props.name)
-
-  //   setState(prevState => {
-  //     const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
-
-  //     return { ...prevState, files, expandPath: uniquePaths }
-  //   })
-  //   if (filePath.includes('_test.sol')) {
-  //     plugin.event.trigger('newTestFileCreated', [filePath])
-  //   }
   // }
 
   // const folderAdded = async (folderPath: string) => {
@@ -659,6 +632,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleClickFile = (path: string) => {
+    console.log('path: ', path)
     state.fileManager.open(path)
     setState(prevState => {
       return { ...prevState, focusElement: [{ key: path, type: 'file' }] }
@@ -750,6 +724,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       } else {
         if (state.focusEdit.isNew) {
           // state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
+          createNewFile(joinPath(parentFolder, content))
           removeInputField(fileSystem.provider.provider, parentFolder)(dispatch)
         } else {
           const oldPath: string = state.focusEdit.element
@@ -767,7 +742,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleNewFileInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key ? state.focusElement[0].key : name : extractParentFromKey(state.focusElement[0].key) : name
+    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key ? state.focusElement[0].key : name : extractParentFromKey(state.focusElement[0].key) ? extractParentFromKey(state.focusElement[0].key) : name : name
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
     await addInputField(fileSystem.provider.provider, 'file', parentFolder)(dispatch)
@@ -778,7 +753,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleNewFolderInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key ? state.focusElement[0].key : name : extractParentFromKey(state.focusElement[0].key) : name
+    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key ? state.focusElement[0].key : name : extractParentFromKey(state.focusElement[0].key) ? extractParentFromKey(state.focusElement[0].key) : name : name
     else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
@@ -1008,8 +983,8 @@ async function packageFiles (filesProvider, directory, callback) {
   }
 }
 
-// function joinPath (...paths) {
-//   paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
-//   if (paths.length === 1) return paths[0]
-//   return paths.join('/')
-// }
+function joinPath (...paths) {
+  paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
+  if (paths.length === 1) return paths[0]
+  return paths.join('/')
+}
