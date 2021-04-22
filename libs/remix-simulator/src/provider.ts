@@ -38,7 +38,7 @@ export class Provider {
     this.methods = merge(this.methods, (new Filters(this.executionContext)).methods())
     this.methods = merge(this.methods, netMethods())
     this.methods = merge(this.methods, this.Transactions.methods())
-    this.methods = merge(this.methods, (new Debug(this.executionContext)).methods())    
+    this.methods = merge(this.methods, (new Debug(this.executionContext)).methods())
     // this.init()
   }
 

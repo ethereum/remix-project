@@ -12,10 +12,10 @@ export function generateBlock (executionContext) {
         gasLimit: new BN('8000000').imuln(1)
       }
     }, { common: executionContext.vmObject().common })
-  
+
     executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then(() => {
       executionContext.addBlock(block)
       resolve({})
     }).catch((e) => reject(e))
-  })  
+  })
 }
