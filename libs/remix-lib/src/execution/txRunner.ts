@@ -111,6 +111,10 @@ export class TxRunner {
       return callback('Invalid account selected')
     }
 
+    if (Number.isInteger(gasLimit)) {
+      gasLimit = '0x' + gasLimit.toString(16)
+    }
+
     this.executionContext.vm().stateManager.getAccount(Address.fromString(from)).then((res) => {
       // See https://github.com/ethereumjs/ethereumjs-tx/blob/master/docs/classes/transaction.md#constructor
       // for initialization fields and their types
@@ -150,8 +154,8 @@ export class TxRunner {
           })
         })
       }
-    }).catch(() => {
-      callback('Account not found')
+    }).catch((e) => {
+      callback(e)
     })
   }
 
