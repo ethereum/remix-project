@@ -38,13 +38,12 @@ export class Provider {
     this.methods = merge(this.methods, (new Filters(this.executionContext)).methods())
     this.methods = merge(this.methods, netMethods())
     this.methods = merge(this.methods, this.Transactions.methods())
-    this.methods = merge(this.methods, (new Debug(this.executionContext)).methods())
-
-    generateBlock(this.executionContext)
-    this.init()
+    this.methods = merge(this.methods, (new Debug(this.executionContext)).methods())    
+    // this.init()
   }
 
   async init () {
+    await generateBlock(this.executionContext)
     await this.Accounts.resetAccounts()
     this.Transactions.init(this.Accounts.accounts)
   }
