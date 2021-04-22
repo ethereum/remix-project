@@ -167,6 +167,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
 }
 
 const resolveDirectory = (root, path: string, files, content) => {
+  if (path === root) return { [root]: { ...content[root], ...files[root] } }
   const pathArr = path.split('/')
 
   if (pathArr[0] !== root) pathArr.unshift(root)

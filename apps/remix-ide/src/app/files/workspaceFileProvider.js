@@ -33,7 +33,7 @@ class WorkspaceFileProvider extends FileProvider {
     if (!this.workspace) this.createWorkspace()
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
-    if (path.startsWith(this.workspace)) return this.workspacesPath + '/' + this.workspace
+    if (path.startsWith(this.workspace)) return path.replace(this.workspace, this.workspacesPath + '/' + this.workspace)
     path = super.removePrefix(path)
     let ret = this.workspacesPath + '/' + this.workspace + '/' + (path === '/' ? '' : path)
 
