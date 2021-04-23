@@ -98,6 +98,9 @@
     },
     "remix-ui-static-analyser": {
       "tags": []
+    },
+    "remix-ui-checkbox": {
+      "tags": []
     }
   }
 }
