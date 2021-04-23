@@ -118,6 +118,20 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     )
   }
 
+  const message = (name, warning, more, fileName, locationString) : string => {
+    return (`
+    <span className='d-flex flex-column'>
+    <span className='h6 font-weight-bold'>${name}</span>
+    ${warning}
+    ${more
+      ? (<span><a href={more} target='_blank'>more</a></span>)
+      : (<span> </span>)
+    }
+    <span className="" title={Position in ${fileName}}>Pos: ${locationString}</span>
+  </span>`
+    )
+  }
+
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
     if (autoRun) {
       if (lastCompilationResult && categoryIndex.length > 0) {
