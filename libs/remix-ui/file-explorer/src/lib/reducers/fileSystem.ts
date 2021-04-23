@@ -168,10 +168,14 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
 
 const resolveDirectory = (root, path: string, files, content) => {
   if (path === root) return { [root]: { ...content[root], ...files[root] } }
-  const pathArr = path.split('/')
+  const pathArr: string[] = path.split('/')
 
   if (pathArr[0] !== root) pathArr.unshift(root)
-  files = _.set(files, pathArr, {
+  const _path = pathArr.map((key, index) => index > 1 ? ['child', key] : key).reduce((acc: string[], cur) => {
+    return Array.isArray(cur) ? [...acc, ...cur] : [...acc, cur]
+  }, [])
+
+  files = _.set(files, _path, {
     isDirectory: true,
     path,
     name: extractNameFromKey(path),
@@ -183,7 +187,9 @@ const resolveDirectory = (root, path: string, files, content) => {
 
 const addInputField = (root, path: string, files, content) => {
   if (Object.keys(content)[0] === root) return { [Object.keys(content)[0]]: { ...content[Object.keys(content)[0]], ...files[Object.keys(content)[0]] } }
-  return resolveDirectory(root, path, files, content)
+  const result = resolveDirectory(root, path, files, content)
+
+  return result
 }
 
 const removeInputField = (root, path: string, files, content) => {
