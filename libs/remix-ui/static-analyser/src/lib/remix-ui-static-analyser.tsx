@@ -105,6 +105,20 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     return () => { }
   }, [autoRun, categoryIndex])
 
+  const message = (name, warning, more, fileName, locationString) : string => {
+    return (`
+    <span className='d-flex flex-column'>
+    <span className='h6 font-weight-bold'>${name}</span>
+    ${warning}
+    ${more
+      ? (<span><a href={more} target='_blank'>more</a></span>)
+      : (<span> </span>)
+    }
+    <span className="" title={Position in ${fileName}}>Pos: ${locationString}</span>
+  </span>`
+    )
+  }
+
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
     if (autoRun) {
       setResult({ lastCompilationResult, lastCompilationSource, currentFile })
@@ -150,16 +164,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 fileName = Object.keys(lastCompilationResult.contracts)[file]
               }
               warningCount++
-              const msg = `
-                <span class='d-flex flex-column'>
-                  <span class='h6 font-weight-bold'>${result.name}</span>
-                  ${item.warning}
-                  ${item.more
-                  ? `<span><a href=${item.more} target='_blank'>more</a></span>`
-                  : '<span> </span>'
-                }
-                  <span class="" title="Position in ${fileName}">Pos: ${locationString}</span>
-                </span>`
+              const msg = message(item.name, item.warning, item.more, fileName, locationString)
               const options = {
                 type: 'warning',
                 useSpan: true,
