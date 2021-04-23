@@ -12,11 +12,9 @@ const StaticAnalyserButton = ({
   disabled
 }: StaticAnalyserButtonProps) => {
   return (
-    <div className="remixui-button-container" id='staticanalysisButton'>
-      <button className="btn btn-sm w-31 btn-primary" onClick={onClick} disabled={disabled}>
-        {buttonText}
-      </button>
-    </div>
+    <button className="btn btn-sm w-25 btn-primary" onClick={onClick} disabled={disabled}>
+      {buttonText}
+    </button>
   )
 }
 
