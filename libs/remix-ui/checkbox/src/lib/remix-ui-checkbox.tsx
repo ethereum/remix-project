@@ -1,6 +1,8 @@
-import React from 'react' //eslint-disable-line
+import React from 'react'  //eslint-disable-line
+import './remix-ui-checkbox.css'
 
-interface StaticAnalyserCheckBoxProps {
+/* eslint-disable-next-line */
+export interface RemixUiCheckboxProps {
   onClick?: (event) => void
   onChange?: (event) => void
   label?: string
@@ -12,7 +14,7 @@ interface StaticAnalyserCheckBoxProps {
   categoryId?: string
 }
 
-const StaticAnalyserCheckedBox = ({
+export const RemixUiCheckbox = ({
   id,
   label,
   onClick,
@@ -22,7 +24,7 @@ const StaticAnalyserCheckedBox = ({
   onChange,
   itemName,
   categoryId
-}: StaticAnalyserCheckBoxProps) => {
+}: RemixUiCheckboxProps) => {
   return (
     <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: 'flex', alignItems: 'center' }} onClick={onClick}>
       <input
@@ -42,4 +44,4 @@ const StaticAnalyserCheckedBox = ({
   )
 }
 
-export default StaticAnalyserCheckedBox
+export default RemixUiCheckbox
