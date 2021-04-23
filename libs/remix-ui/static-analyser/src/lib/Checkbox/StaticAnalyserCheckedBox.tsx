@@ -24,7 +24,7 @@ const StaticAnalyserCheckedBox = ({
   categoryId
 }: StaticAnalyserCheckBoxProps) => {
   return (
-    <div className="pt-1 h-80 mx-3 align-items-center listenOnNetwork_2A0YE0 custom-control custom-checkbox " onClick={onClick}>
+    <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: 'flex', alignItems: 'center' }} onClick={onClick}>
       <input
         id={id}
         type={inputType}
@@ -34,9 +34,9 @@ const StaticAnalyserCheckedBox = ({
         className="custom-control-input"
         checked={checked}
       />
-      <label className="pt-1 form-check-label custom-control-label" id={`heading${categoryId}`} >
-        {name ? <h6>{itemName}</h6> : ''}
-        <p>{label}</p>
+      <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }}>
+        {name ? <div className="font-weight-bold">{itemName}</div> : ''}
+        {label}
       </label>
     </div>
   )
