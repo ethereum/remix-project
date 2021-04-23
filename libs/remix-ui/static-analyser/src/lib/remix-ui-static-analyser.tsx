@@ -58,50 +58,50 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
 
   const warningContainer = React.useRef(null)
+  const [runButtonState, setRunButtonState] = useState(true)
+
+  const [result, setResult] = useState({
+    lastCompilationResult: null,
+    lastCompilationSource: null,
+    currentFile: 'No file compiled'
+  })
+  const [, setModuleNameResult] = useState(null)
+  const [, setWarning] = useState({
+    msg: '',
+    options: {},
+    hasWarning: false,
+    warningErrors: []
+  })
   const [warningState, setWarningState] = useState([])
   const [state, dispatch] = useReducer(analysisReducer, initialState)
 
   useEffect(() => {
-<<<<<<< HEAD
     compilation(props.analysisModule, dispatch)
   }, [])
 
-<<<<<<< HEAD
   useEffect(() => {
     if (autoRun) {
       if (state.data !== null) {
         run(state.data, state.source, state.file)
-=======
-=======
-    
     if (autoRun) {
       const setCompilationResult = async (data, source, file) => {
         await setResult({ lastCompilationResult: data, lastCompilationSource: source, currentFile: file })
       }
-      
->>>>>>> 8a85ae84e (fix failing test)
       if (props.analysisModule) {
-       
         props.analysisModule.on(
           'solidity',
           'compilationFinished',
           (file, source, languageVersion, data) => {
             if (languageVersion.indexOf('soljson') !== 0) return
             setCompilationResult(data, source, file)
-            if(categoryIndex.length > 0){
+            if (categoryIndex.length > 0) {
               run(data, source, file)
             }
-
           }
         )
->>>>>>> 19de4ba6b (commiting code to detect failing test)
       }
-    } else {
-      setAutoRun(true)
     }
-
     return () => { }
-<<<<<<< HEAD
   }, [autoRun, categoryIndex, state])
 
   const message = (name, warning, more, fileName, locationString) : string => {
@@ -117,27 +117,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     </span>`
     )
   }
-=======
-  }, [autoRun, categoryIndex])
->>>>>>> 8a85ae84e (fix failing test)
 
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
-<<<<<<< HEAD
     if (autoRun) {
       if (lastCompilationResult && categoryIndex.length > 0) {
         let warningCount = 0
         const warningMessage = []
-=======
-    // const highlightLocation = async (location, fileName) => {
-    //   await props.analysisModule.call('editor', 'discardHighlight')
-    //   await props.analysisModule.call('editor', 'highlight', location, fileName)
-    // }
-    setResult({ lastCompilationResult, lastCompilationSource, currentFile })
-    if (lastCompilationResult && categoryIndex.length) {
-      setRunButtonState(false)
-      let warningCount = 0
-      const warningMessage = []
->>>>>>> 19de4ba6b (commiting code to detect failing test)
 
         runner.run(lastCompilationResult, categoryIndex, results => {
           results.map((result) => {
@@ -215,25 +200,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         if (categoryIndex.length > 0) {
           props.event.trigger('staticAnaysisWarning', [warningCount])
         }
-<<<<<<< HEAD
       } else {
         if (categoryIndex.length) {
           warningContainer.current.innerText = 'No compiled AST available'
         }
         props.event.trigger('staticAnaysisWarning', [-1])
-=======
-
-        const groupedCategory = groupBy(resultArray, 'warningModuleName')
-        setWarningState(groupedCategory)
-      })
-      if(categoryIndex.length > 0){
-        props.event.trigger('staticAnaysisWarning', [warningCount])
-      }
-    } else {
-      setRunButtonState(true)
-      if (categoryIndex.length) {
-        warningContainer.current.innerText = 'No compiled AST available'
->>>>>>> 8a85ae84e (fix failing test)
       }
     }
   }
@@ -247,9 +218,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         })
       )
     } else {
-      setCategoryIndex(_.uniq([...categoryIndex]))
+      setCategoryIndex(_.uniq([...categoryIndex, ...index]))
     }
-
   }
 
   const handleCheckOrUncheckCategory = (category) => {
@@ -342,6 +312,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
         <div className="d-flex justify-content-between" id="staticanalysisButton">
+        <div className="d-flex justify-content-between">
           <RemixUiCheckbox
             id="checkAllEntries"
             inputType="checkbox"
