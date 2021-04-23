@@ -153,8 +153,14 @@ export const fetchProviderSuccess = (provider: any) => {
 
 export const setProvider = (provider, workspaceName) => (dispatch: React.Dispatch<any>) => {
   if (provider) {
-    provider.event.register('fileAdded', async (filePath) => {
+    provider.event.register('fileAdded', (filePath) => {
       resolveDirectory(provider, extractParentFromKey(filePath) || workspaceName)(dispatch)
+    })
+    provider.event.register('folderAdded', (folderPath) => {
+      resolveDirectory(provider, extractParentFromKey(folderPath) || workspaceName)(dispatch)
+    })
+    provider.event.register('fileRemoved', (path) => {
+      resolveDirectory(provider, extractParentFromKey(path) || workspaceName)(dispatch)
     })
     dispatch(fetchProviderSuccess(provider))
     dispatch(setCurrentWorkspace(workspaceName))
