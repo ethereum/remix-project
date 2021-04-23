@@ -4,20 +4,12 @@ interface ErrorRendererProps {
   message: any;
   opt: any,
   warningErrors: any
+  editor: any
 }
 
-const ErrorRenderer = ({ message, opt }: ErrorRendererProps) => {
-  const [, setError] = useState(
-    {
-      row: null,
-      column: null,
-      text: null,
-      type: null,
-      errFile: null
-    }
-  )
+const ErrorRenderer = ({ message, opt, editor }: ErrorRendererProps) => {
   const getPositionDetails = (msg: any) => {
-    const result = { } as any
+    const result = { } as Record<string, number | string>
 
     // To handle some compiler warning without location like SPDX license warning etc
     if (!msg.includes(':')) return { errLine: -1, errCol: -1, errFile: msg }
@@ -32,6 +24,12 @@ const ErrorRenderer = ({ message, opt }: ErrorRendererProps) => {
     result.errFile = position ? position[1] : ''
     return result
   }
+
+  const handlePointToErrorOnClick = () => {
+    const result = opt.locationString.split(':')
+    editor._components.registry.get('editor').api.gotoLine(parseInt(result[0]) - 1, parseInt(result[1]))
+  }
+
   if (!message) return
   let position = getPositionDetails(message)
   if (!position.errFile || (opt.errorType && opt.errorType === position.errFile)) {
@@ -43,15 +41,6 @@ const ErrorRenderer = ({ message, opt }: ErrorRendererProps) => {
   opt.errLine = position.errLine
   opt.errCol = position.errCol
   opt.errFile = position.errFile.trim()
-  if (!opt.noAnnotations && opt.errFile) {
-    setError({
-      errFile: opt.errFile,
-      row: opt.errLine,
-      column: opt.errCol,
-      text: message,
-      type: opt.type
-    })
-  }
   const classList = opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning'
   return (
     <div>
@@ -59,7 +48,7 @@ const ErrorRenderer = ({ message, opt }: ErrorRendererProps) => {
         <div className="close" data-id="renderer">
           <i className="fas fa-times"></i>
         </div>
-        <span className='d-flex flex-column'>
+        <span className='d-flex flex-column' onClick={handlePointToErrorOnClick}>
           <span className='h6 font-weight-bold'>{opt.name}</span>
           { opt.item.warning }
           {opt.item.more
