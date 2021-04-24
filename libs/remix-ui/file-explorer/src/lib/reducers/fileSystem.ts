@@ -215,6 +215,18 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         }
       }
     }
+    case 'FILE_RENAMED': {
+      return {
+        ...state,
+        files: {
+          ...state.files,
+          files: fileRenamed(state.files.workspaceName, action.payload.parentPath, action.payload.oldPath, action.payload.newPath, state.files.files),
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
+        }
+      }
+    }
     default:
       throw new Error()
   }
@@ -250,7 +262,7 @@ const removePath = (root, path: string, pathName, files) => {
   }, [])
   const prevFiles = _.get(files, _path)
 
-  pathName && delete prevFiles.child[pathName]
+  prevFiles.child[pathName] && delete prevFiles.child[pathName]
   files = _.set(files, _path, {
     isDirectory: true,
     path,
@@ -291,4 +303,39 @@ const fileRemoved = (root, path: string, removedPath: string, files) => {
     return files
   }
   return removePath(root, path, extractNameFromKey(removedPath), files)
+}
+
+const fileRenamed = (root, parentPath: string, oldPath: string, newPath: string, files) => {
+  if (parentPath === root) {
+    const newPathName = extractNameFromKey(newPath) || newPath
+    files[root][newPathName] = {
+      ...files[root][oldPath],
+      path: newPath,
+      name: newPathName
+    }
+    delete files[root][extractNameFromKey(oldPath) || oldPath]
+    return files
+  }
+  const pathArr: string[] = parentPath.split('/').filter(value => value)
+
+  if (pathArr[0] !== root) pathArr.unshift(root)
+  const _path = pathArr.map((key, index) => index > 1 ? ['child', key] : key).reduce((acc: string[], cur) => {
+    return Array.isArray(cur) ? [...acc, ...cur] : [...acc, cur]
+  }, [])
+  const prevFiles = _.get(files, _path)
+
+  prevFiles.child[extractNameFromKey(newPath)] = {
+    ...prevFiles.child[oldPath],
+    path: newPath,
+    name: extractNameFromKey(newPath)
+  }
+  delete prevFiles.child[extractNameFromKey(oldPath)]
+  files = _.set(files, _path, {
+    isDirectory: true,
+    path: parentPath,
+    name: extractNameFromKey(parentPath),
+    child: prevFiles.child
+  })
+
+  return files
 }
