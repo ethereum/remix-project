@@ -153,7 +153,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         ...state,
         files: {
           ...state.files,
-          files: removeInputField(state.files.workspaceName, state.files.blankPath, state.files.files, action.payload.files),
+          files: removeInputField(state.files.workspaceName, state.files.blankPath, state.files.files),
           blankPath: null,
           isRequesting: false,
           isSuccessful: true,
@@ -190,7 +190,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         ...state,
         files: {
           ...state.files,
-          files: fileRemoved(state.files.workspaceName, action.payload.path, action.payload.removePath, state.files.files, action.payload.files),
+          files: fileRemoved(state.files.workspaceName, action.payload.path, action.payload.removePath, state.files.files),
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -211,29 +211,51 @@ const resolveDirectory = (root, path: string, files, content) => {
     return Array.isArray(cur) ? [...acc, ...cur] : [...acc, cur]
   }, [])
 
+  const prevFiles = _.get(files, _path)
+
   files = _.set(files, _path, {
     isDirectory: true,
     path,
     name: extractNameFromKey(path),
-    child: { ...content[pathArr[pathArr.length - 1]] }
+    child: { ...content[pathArr[pathArr.length - 1]], ...prevFiles.child }
+  })
+
+  return files
+}
+
+const removePath = (root, path: string, pathName, files) => {
+  const pathArr: string[] = path.split('/').filter(value => value)
+
+  if (pathArr[0] !== root) pathArr.unshift(root)
+  const _path = pathArr.map((key, index) => index > 1 ? ['child', key] : key).reduce((acc: string[], cur) => {
+    return Array.isArray(cur) ? [...acc, ...cur] : [...acc, cur]
+  }, [])
+  const prevFiles = _.get(files, _path)
+
+  pathName && delete prevFiles.child[pathName]
+  files = _.set(files, _path, {
+    isDirectory: true,
+    path,
+    name: extractNameFromKey(path),
+    child: prevFiles.child
   })
 
   return files
 }
 
 const addInputField = (root, path: string, files, content) => {
-  if (Object.keys(content)[0] === root) return { [Object.keys(content)[0]]: { ...content[Object.keys(content)[0]], ...files[Object.keys(content)[0]] } }
+  if (path === root) return { [root]: { ...content[root], ...files[root] } }
   const result = resolveDirectory(root, path, files, content)
 
   return result
 }
 
-const removeInputField = (root, path: string, files, content) => {
-  if (Object.keys(content)[0] === root) {
+const removeInputField = (root, path: string, files) => {
+  if (path === root) {
     delete files[root][path + '/' + 'blank']
     return files
   }
-  return resolveDirectory(root, path, files, content)
+  return removePath(root, path, path + '/' + 'blank', files)
 }
 
 const fileAdded = (root, path: string, files, content) => {
@@ -244,12 +266,11 @@ const folderAdded = (root, path: string, files, content) => {
   return resolveDirectory(root, path, files, content)
 }
 
-const fileRemoved = (root, path: string, removedPath: string, files, content) => {
+const fileRemoved = (root, path: string, removedPath: string, files) => {
   if (path === root) {
-    const allFiles = { [root]: { ...content[root], ...files[root] } }
+    delete files[root][removedPath]
 
-    delete allFiles[root][removedPath]
-    return allFiles
+    return files
   }
-  return resolveDirectory(root, path, files, content)
+  return removePath(root, path, extractNameFromKey(removedPath), files)
 }

@@ -165,10 +165,10 @@ export const folderAddedSuccess = (path: string, files) => {
   }
 }
 
-export const fileRemovedSuccess = (path: string, removePath: string, files) => {
+export const fileRemovedSuccess = (path: string, removePath: string) => {
   return {
     type: 'FILE_REMOVED',
-    payload: { path, removePath, files }
+    payload: { path, removePath }
   }
 }
 
@@ -184,15 +184,12 @@ export const setProvider = (provider, workspaceName) => (dispatch: React.Dispatc
       const path = extractParentFromKey(folderPath) || workspaceName
       const data = await fetchDirectoryContent(provider, path)
 
-      console.log('data: ', data)
-
       dispatch(folderAddedSuccess(path, data))
     })
     provider.event.register('fileRemoved', async (removePath) => {
       const path = extractParentFromKey(removePath) || workspaceName
-      const data = await fetchDirectoryContent(provider, path)
 
-      dispatch(fileRemovedSuccess(path, removePath, data))
+      dispatch(fileRemovedSuccess(path, removePath))
     })
     provider.event.register('fileRenamed', async () => {
 
@@ -229,20 +226,13 @@ export const addInputField = (provider, type: string, path: string) => (dispatch
   return promise
 }
 
-export const removeInputFieldSuccess = (path: string, files: File[]) => {
+export const removeInputFieldSuccess = (path: string) => {
   return {
     type: 'REMOVE_INPUT_FIELD',
-    payload: { path, files }
+    payload: { path }
   }
 }
 
-export const removeInputField = (provider, path: string) => (dispatch: React.Dispatch<any>) => {
-  const promise = fetchDirectoryContent(provider, path)
-
-  promise.then((files) => {
-    dispatch(removeInputFieldSuccess(path, files))
-  }).catch((error) => {
-    console.error(error)
-  })
-  return promise
+export const removeInputField = (path: string) => (dispatch: React.Dispatch<any>) => {
+  return dispatch(removeInputFieldSuccess(path))
 }
