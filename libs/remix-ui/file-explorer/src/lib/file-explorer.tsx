@@ -654,7 +654,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
     if (!content || (content.trim() === '')) {
       if (state.focusEdit.isNew) {
-        removeInputField(fileSystem.provider.provider, parentFolder)(dispatch)
+        removeInputField(parentFolder)(dispatch)
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
@@ -679,7 +679,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       } else {
         if (state.focusEdit.isNew) {
           state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
-          removeInputField(fileSystem.provider.provider, parentFolder)(dispatch)
+          removeInputField(parentFolder)(dispatch)
         } else {
           const oldPath: string = state.focusEdit.element
           // const oldName = extractNameFromKey(oldPath)
@@ -768,6 +768,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
           ? 'bg-light border' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)
             ? 'bg-light border' : ''
     const icon = helper.getPathIcon(file.path)
+    const spreadProps = {
+      onClick: (e) => e.stopPropagation()
+    }
 
     if (file.isDirectory) {
       return (
@@ -799,12 +802,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
           }}
         >
           {
-            file.child ? <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`}>{
+            file.child ? <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }>{
               Object.keys(file.child).map((key, index) => {
                 return renderFiles(file.child[key], index)
               })
             }
-            </TreeView> : <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} />
+            </TreeView> : <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }/>
           }
         </TreeViewItem>
       )
