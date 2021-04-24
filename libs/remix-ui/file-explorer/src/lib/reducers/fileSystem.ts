@@ -19,6 +19,12 @@ export const fileSystemInitialState = {
     isRequesting: false,
     isSuccessful: false,
     error: null
+  },
+  plugin: {
+    plugin: null,
+    isRequesting: false,
+    isSuccessful: false,
+    error: null
   }
 }
 
@@ -132,6 +138,18 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         files: {
           ...state.files,
           workspaceName: action.payload
+        }
+      }
+    }
+    case 'SET_PLUGIN': {
+      return {
+        ...state,
+        plugin: {
+          ...state.plugin,
+          plugin: action.payload,
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
         }
       }
     }

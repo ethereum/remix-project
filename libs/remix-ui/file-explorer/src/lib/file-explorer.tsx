@@ -8,7 +8,7 @@ import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
 import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem'
-import { fetchDirectory, setProvider, resolveDirectory, addInputField, removeInputField } from './actions/fileSystem'
+import { fetchDirectory, init, resolveDirectory, addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 
@@ -108,7 +108,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     if (props.filesProvider) {
-      setProvider(props.filesProvider, props.name)(dispatch)
+      init(props.filesProvider, props.name, props.plugin)(dispatch)
     }
   }, [props.filesProvider])
 
@@ -361,6 +361,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const uploadFile = (target) => {
+    const filesProvider = fileSystem.provider.provider
     // TODO The file explorer is merely a view on the current state of
     // the files module. Please ask the user here if they want to overwrite
     // a file and then just use `files.add`. The file explorer will
@@ -433,6 +434,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const toGist = (id?: string) => {
+    const filesProvider = fileSystem.provider.provider
     const proccedResult = function (error, data) {
       if (error) {
         modal('Publish to gist Failed', 'Failed to manage gist: ' + error, {
@@ -549,6 +551,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const runScript = async (path: string) => {
+    const filesProvider = fileSystem.provider.provider
+
     filesProvider.get(path, (error, content: string) => {
       if (error) return console.log(error)
       plugin.call('scriptRunner', 'execute', content)
