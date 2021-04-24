@@ -25,9 +25,9 @@ const ErrorRenderer = ({ message, opt, editor }: ErrorRendererProps) => {
     return result
   }
 
-  const handlePointToErrorOnClick = () => {
-    const result = opt.locationString.split(':')
-    editor._components.registry.get('editor').api.gotoLine(parseInt(result[0]) - 1, parseInt(result[1]))
+  const handlePointToErrorOnClick = (location, fileName) => {
+    editor.call('editor', 'discardHighlight')
+    editor.call('editor', 'highlight', location, fileName)
   }
 
   if (!message) return
@@ -48,7 +48,7 @@ const ErrorRenderer = ({ message, opt, editor }: ErrorRendererProps) => {
         <div className="close" data-id="renderer">
           <i className="fas fa-times"></i>
         </div>
-        <span className='d-flex flex-column' onClick={handlePointToErrorOnClick}>
+        <span className='d-flex flex-column' onClick={() => handlePointToErrorOnClick(opt.location, opt.fileName)}>
           <span className='h6 font-weight-bold'>{opt.name}</span>
           { opt.item.warning }
           {opt.item.more
