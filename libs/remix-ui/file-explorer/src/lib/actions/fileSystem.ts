@@ -151,16 +151,51 @@ export const fetchProviderSuccess = (provider: any) => {
   }
 }
 
+export const fileAddedSuccess = (path: string, files) => {
+  return {
+    type: 'FILE_ADDED',
+    payload: { path, files }
+  }
+}
+
+export const folderAddedSuccess = (path: string, files) => {
+  return {
+    type: 'FOLDER_ADDED',
+    payload: { path, files }
+  }
+}
+
+export const fileRemovedSuccess = (path: string, removePath: string, files) => {
+  return {
+    type: 'FILE_REMOVED',
+    payload: { path, removePath, files }
+  }
+}
+
 export const setProvider = (provider, workspaceName) => (dispatch: React.Dispatch<any>) => {
   if (provider) {
-    provider.event.register('fileAdded', (filePath) => {
-      resolveDirectory(provider, extractParentFromKey(filePath) || workspaceName)(dispatch)
+    provider.event.register('fileAdded', async (filePath) => {
+      const path = extractParentFromKey(filePath) || workspaceName
+      const data = await fetchDirectoryContent(provider, path)
+
+      dispatch(fileAddedSuccess(path, data))
     })
-    provider.event.register('folderAdded', (folderPath) => {
-      resolveDirectory(provider, extractParentFromKey(folderPath) || workspaceName)(dispatch)
+    provider.event.register('folderAdded', async (folderPath) => {
+      const path = extractParentFromKey(folderPath) || workspaceName
+      const data = await fetchDirectoryContent(provider, path)
+
+      console.log('data: ', data)
+
+      dispatch(folderAddedSuccess(path, data))
     })
-    provider.event.register('fileRemoved', (path) => {
-      resolveDirectory(provider, extractParentFromKey(path) || workspaceName)(dispatch)
+    provider.event.register('fileRemoved', async (removePath) => {
+      const path = extractParentFromKey(removePath) || workspaceName
+      const data = await fetchDirectoryContent(provider, path)
+
+      dispatch(fileRemovedSuccess(path, removePath, data))
+    })
+    provider.event.register('fileRenamed', async () => {
+
     })
     dispatch(fetchProviderSuccess(provider))
     dispatch(setCurrentWorkspace(workspaceName))
