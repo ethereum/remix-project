@@ -169,12 +169,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 type: 'warning',
                 useSpan: true,
                 errFile: fileName,
+                fileName,
                 errLine: row,
                 errCol: column,
                 item: item,
                 name: result.name,
                 locationString,
-                more: item.more
+                more: item.more,
+                location: location
               }
               warningErrors.push(options)
               setWarning({ msg, hasWarning: true, options, warningErrors: warningErrors })
@@ -314,7 +316,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   return (
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-between" id="staticanalysisButton">
           <RemixUiCheckbox
             id="checkAllEntries"
             inputType="checkbox"
