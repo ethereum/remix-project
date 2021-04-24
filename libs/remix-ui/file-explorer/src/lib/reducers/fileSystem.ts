@@ -161,6 +161,42 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         }
       }
     }
+    case 'FILE_ADDED': {
+      return {
+        ...state,
+        files: {
+          ...state.files,
+          files: fileAdded(state.files.workspaceName, action.payload.path, state.files.files, action.payload.files),
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
+        }
+      }
+    }
+    case 'FOLDER_ADDED': {
+      return {
+        ...state,
+        files: {
+          ...state.files,
+          files: folderAdded(state.files.workspaceName, action.payload.path, state.files.files, action.payload.files),
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
+        }
+      }
+    }
+    case 'FILE_REMOVED': {
+      return {
+        ...state,
+        files: {
+          ...state.files,
+          files: fileRemoved(state.files.workspaceName, action.payload.path, action.payload.removePath, state.files.files, action.payload.files),
+          isRequesting: false,
+          isSuccessful: true,
+          error: null
+        }
+      }
+    }
     default:
       throw new Error()
   }
@@ -168,7 +204,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
 
 const resolveDirectory = (root, path: string, files, content) => {
   if (path === root) return { [root]: { ...content[root], ...files[root] } }
-  const pathArr: string[] = path.split('/')
+  const pathArr: string[] = path.split('/').filter(value => value)
 
   if (pathArr[0] !== root) pathArr.unshift(root)
   const _path = pathArr.map((key, index) => index > 1 ? ['child', key] : key).reduce((acc: string[], cur) => {
@@ -196,6 +232,24 @@ const removeInputField = (root, path: string, files, content) => {
   if (Object.keys(content)[0] === root) {
     delete files[root][path + '/' + 'blank']
     return files
+  }
+  return resolveDirectory(root, path, files, content)
+}
+
+const fileAdded = (root, path: string, files, content) => {
+  return resolveDirectory(root, path, files, content)
+}
+
+const folderAdded = (root, path: string, files, content) => {
+  return resolveDirectory(root, path, files, content)
+}
+
+const fileRemoved = (root, path: string, removedPath: string, files, content) => {
+  if (path === root) {
+    const allFiles = { [root]: { ...content[root], ...files[root] } }
+
+    delete allFiles[root][removedPath]
+    return allFiles
   }
   return resolveDirectory(root, path, files, content)
 }
