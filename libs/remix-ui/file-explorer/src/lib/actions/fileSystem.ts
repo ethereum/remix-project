@@ -172,7 +172,7 @@ export const fileRemovedSuccess = (path: string, removePath: string) => {
   }
 }
 
-export const setProvider = (provider, workspaceName) => (dispatch: React.Dispatch<any>) => {
+export const init = (provider, workspaceName: string, plugin) => (dispatch: React.Dispatch<any>) => {
   if (provider) {
     provider.event.register('fileAdded', async (filePath) => {
       const path = extractParentFromKey(filePath) || workspaceName
@@ -196,6 +196,7 @@ export const setProvider = (provider, workspaceName) => (dispatch: React.Dispatc
     })
     dispatch(fetchProviderSuccess(provider))
     dispatch(setCurrentWorkspace(workspaceName))
+    dispatch(setPlugin(plugin))
   } else {
     dispatch(fetchProviderError('No provider available'))
   }
@@ -205,6 +206,13 @@ export const setCurrentWorkspace = (name: string) => {
   return {
     type: 'SET_CURRENT_WORKSPACE',
     payload: name
+  }
+}
+
+export const setPlugin = (plugin) => {
+  return {
+    type: 'SET_PLUGIN',
+    payload: plugin
   }
 }
 
