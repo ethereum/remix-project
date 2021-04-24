@@ -172,6 +172,13 @@ export const fileRemovedSuccess = (path: string, removePath: string) => {
   }
 }
 
+export const fileRenamedSuccess = (parentPath: string, oldPath: string, newPath: string) => {
+  return {
+    type: 'FILE_RENAMED',
+    payload: { parentPath, oldPath, newPath }
+  }
+}
+
 export const init = (provider, workspaceName: string, plugin) => (dispatch: React.Dispatch<any>) => {
   if (provider) {
     provider.event.register('fileAdded', async (filePath) => {
@@ -179,6 +186,9 @@ export const init = (provider, workspaceName: string, plugin) => (dispatch: Reac
       const data = await fetchDirectoryContent(provider, path)
 
       dispatch(fileAddedSuccess(path, data))
+      if (filePath.includes('_test.sol')) {
+        plugin.event.trigger('newTestFileCreated', [filePath])
+      }
     })
     provider.event.register('folderAdded', async (folderPath) => {
       const path = extractParentFromKey(folderPath) || workspaceName
@@ -191,8 +201,12 @@ export const init = (provider, workspaceName: string, plugin) => (dispatch: Reac
 
       dispatch(fileRemovedSuccess(path, removePath))
     })
-    provider.event.register('fileRenamed', async () => {
+    provider.event.register('fileRenamed', async (oldPath, newPath) => {
+      console.log('oldPath: ', oldPath)
+      console.log('newPath: ', newPath)
+      const parentPath = extractParentFromKey(oldPath) || workspaceName
 
+      dispatch(fileRenamedSuccess(parentPath, oldPath, newPath))
     })
     dispatch(fetchProviderSuccess(provider))
     dispatch(setCurrentWorkspace(workspaceName))

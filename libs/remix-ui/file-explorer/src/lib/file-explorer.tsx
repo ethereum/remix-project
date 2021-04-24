@@ -148,18 +148,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   //   }
   // }, [state.fileManager])
 
-  // useEffect(() => {
-  //   // unregister event to update state in callback
-  //   if (filesProvider.event.registered.fileAdded) filesProvider.event.unregister('fileAdded', fileAdded)
-  //   if (filesProvider.event.registered.folderAdded) filesProvider.event.unregister('folderAdded', folderAdded)
-  //   if (filesProvider.event.registered.fileRemoved) filesProvider.event.unregister('fileRemoved', fileRemoved)
-  //   if (filesProvider.event.registered.fileRenamed) filesProvider.event.unregister('fileRenamed', fileRenamed)
-  //   filesProvider.event.register('fileAdded', fileAdded)
-  //   filesProvider.event.register('folderAdded', folderAdded)
-  //   filesProvider.event.register('fileRemoved', fileRemoved)
-  //   filesProvider.event.register('fileRenamed', fileRenamed)
-  // }, [state.files])
-
   useEffect(() => {
     if (focusRoot) {
       setState(prevState => {
@@ -303,26 +291,26 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  // const renamePath = async (oldPath: string, newPath: string) => {
-  //   try {
-  //     const fileManager = state.fileManager
-  //     const exists = await fileManager.exists(newPath)
+  const renamePath = async (oldPath: string, newPath: string) => {
+    try {
+      const fileManager = state.fileManager
+      const exists = await fileManager.exists(newPath)
 
-  //     if (exists) {
-  //       modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, {
-  //         label: 'Close',
-  //         fn: () => {}
-  //       }, null)
-  //     } else {
-  //       await fileManager.rename(oldPath, newPath)
-  //     }
-  //   } catch (error) {
-  //     modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, {
-  //       label: 'Close',
-  //       fn: async () => {}
-  //     }, null)
-  //   }
-  // }
+      if (exists) {
+        modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, {
+          label: 'Close',
+          fn: () => {}
+        }, null)
+      } else {
+        await fileManager.rename(oldPath, newPath)
+      }
+    } catch (error) {
+      modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, {
+        label: 'Close',
+        fn: async () => {}
+      }, null)
+    }
+  }
 
   const fileExternallyChanged = (path: string, file: { content: string }) => {
     const config = registry.get('config').api
@@ -686,11 +674,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
           removeInputField(parentFolder)(dispatch)
         } else {
           const oldPath: string = state.focusEdit.element
-          // const oldName = extractNameFromKey(oldPath)
-          // const newPath = oldPath.replace(oldName, content)
+          const oldName = extractNameFromKey(oldPath)
+          const newPath = oldPath.replace(oldName, content)
 
           editRef.current.textContent = extractNameFromKey(oldPath)
-          // renamePath(oldPath, newPath)
+          renamePath(oldPath, newPath)
         }
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
