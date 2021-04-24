@@ -326,7 +326,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
         <div className="d-flex justify-content-between" id="staticanalysisButton">
+<<<<<<< HEAD
         <div className="d-flex justify-content-between">
+=======
+>>>>>>> 691f449c6 (fix editor highlighter)
           <RemixUiCheckbox
             id="checkAllEntries"
             inputType="checkbox"
