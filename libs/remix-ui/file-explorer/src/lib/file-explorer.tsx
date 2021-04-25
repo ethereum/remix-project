@@ -108,7 +108,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     if (props.filesProvider) {
-      init(props.filesProvider, props.name, props.plugin)(dispatch)
+      init(props.filesProvider, props.name, props.plugin, props.registry)(dispatch)
     }
   }, [props.filesProvider])
 
@@ -119,6 +119,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
       fetchDirectory(provider, props.name)(dispatch)
     }
   }, [fileSystem.provider.provider])
+
+  useEffect(() => {
+    if (fileSystem.notification.message) {
+      modal(fileSystem.notification.title, fileSystem.notification.message, {
+        label: fileSystem.notification.labelOk,
+        fn: fileSystem.notification.actionOk
+      }, {
+        label: fileSystem.notification.labelCancel,
+        fn: fileSystem.notification.actionCancel
+      })
+    }
+  }, [fileSystem.notification.message])
 
   useEffect(() => {
     if (state.focusEdit.element) {
@@ -139,14 +151,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       })
     })()
   }, [name])
-
-  // useEffect(() => {
-  //   if (state.fileManager) {
-  //     filesProvider.event.register('fileExternallyChanged', fileExternallyChanged)
-  //     filesProvider.event.register('fileRenamedError', fileRenamedError)
-  //     filesProvider.event.register('rootFolderChanged', rootFolderChanged)
-  //   }
-  // }, [state.fileManager])
 
   useEffect(() => {
     if (focusRoot) {
@@ -310,42 +314,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
         fn: async () => {}
       }, null)
     }
-  }
-
-  const fileExternallyChanged = (path: string, file: { content: string }) => {
-    const config = registry.get('config').api
-    const editor = registry.get('editor').api
-
-    if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
-      if (filesProvider.isReadOnly(path)) return editor.setText(file.content)
-      modal(path + ' changed', 'This file has been changed outside of Remix IDE.', {
-        label: 'Replace by the new content',
-        fn: () => {
-          editor.setText(file.content)
-        }
-      }, {
-        label: 'Keep the content displayed in Remix',
-        fn: () => {}
-      })
-    }
-  }
-
-  // register to event of the file provider
-  // files.event.register('fileRenamed', fileRenamed)
-  const fileRenamedError = (error: string) => {
-    modal('File Renamed Failed', error, {
-      label: 'Close',
-      fn: () => {}
-    }, null)
-  }
-
-  // register to event of the file provider
-  // files.event.register('rootFolderChanged', rootFolderChanged)
-  const rootFolderChanged = async () => {
-    const files = await fetchDirectoryContent(name)
-    setState(prevState => {
-      return { ...prevState, files }
-    })
   }
 
   const uploadFile = (target) => {

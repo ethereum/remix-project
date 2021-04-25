@@ -20,11 +20,13 @@ export const fileSystemInitialState = {
     isSuccessful: false,
     error: null
   },
-  plugin: {
-    plugin: null,
-    isRequesting: false,
-    isSuccessful: false,
-    error: null
+  notification: {
+    title: null,
+    message: null,
+    actionOk: () => {},
+    actionCancel: () => {},
+    labelOk: null,
+    labelCancel: null
   }
 }
 
@@ -141,18 +143,6 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         }
       }
     }
-    case 'SET_PLUGIN': {
-      return {
-        ...state,
-        plugin: {
-          ...state.plugin,
-          plugin: action.payload,
-          isRequesting: false,
-          isSuccessful: true,
-          error: null
-        }
-      }
-    }
     case 'ADD_INPUT_FIELD': {
       return {
         ...state,
@@ -225,6 +215,25 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
           isSuccessful: true,
           error: null
         }
+      }
+    }
+    case 'DISPLAY_NOTIFICATION': {
+      return {
+        ...state,
+        notification: {
+          title: action.payload.title,
+          message: action.payload.message,
+          actionOk: action.payload.actionOk || fileSystemInitialState.notification.actionOk,
+          actionCancel: action.payload.actionCancel || fileSystemInitialState.notification.actionCancel,
+          labelOk: action.payload.labelOk,
+          labelCancel: action.payload.labelCancel
+        }
+      }
+    }
+    case 'HIDE_NOTIFICATION': {
+      return {
+        ...state,
+        notification: fileSystemInitialState.notification
       }
     }
     default:
