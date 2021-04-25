@@ -220,7 +220,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         ...state,
         files: {
           ...state.files,
-          files: fileRenamed(state.files.workspaceName, action.payload.parentPath, action.payload.oldPath, action.payload.newPath, state.files.files),
+          files: fileRenamed(state.files.workspaceName, action.payload.path, action.payload.removePath, state.files.files, action.payload.files),
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -305,18 +305,14 @@ const fileRemoved = (root, path: string, removedPath: string, files) => {
   return removePath(root, path, extractNameFromKey(removedPath), files)
 }
 
-const fileRenamed = (root, parentPath: string, oldPath: string, newPath: string, files) => {
-  if (parentPath === root) {
-    const newPathName = extractNameFromKey(newPath) || newPath
-    files[root][newPathName] = {
-      ...files[root][oldPath],
-      path: newPath,
-      name: newPathName
-    }
-    delete files[root][extractNameFromKey(oldPath) || oldPath]
-    return files
+const fileRenamed = (root, path: string, removePath: string, files, content) => {
+  if (path === root) {
+    const allFiles = { [root]: { ...content[root], ...files[root] } }
+
+    delete allFiles[root][extractNameFromKey(removePath) || removePath]
+    return allFiles
   }
-  const pathArr: string[] = parentPath.split('/').filter(value => value)
+  const pathArr: string[] = path.split('/').filter(value => value)
 
   if (pathArr[0] !== root) pathArr.unshift(root)
   const _path = pathArr.map((key, index) => index > 1 ? ['child', key] : key).reduce((acc: string[], cur) => {
@@ -324,17 +320,12 @@ const fileRenamed = (root, parentPath: string, oldPath: string, newPath: string,
   }, [])
   const prevFiles = _.get(files, _path)
 
-  prevFiles.child[extractNameFromKey(newPath)] = {
-    ...prevFiles.child[oldPath],
-    path: newPath,
-    name: extractNameFromKey(newPath)
-  }
-  delete prevFiles.child[extractNameFromKey(oldPath)]
+  delete prevFiles.child[extractNameFromKey(removePath)]
   files = _.set(files, _path, {
     isDirectory: true,
-    path: parentPath,
-    name: extractNameFromKey(parentPath),
-    child: prevFiles.child
+    path,
+    name: extractNameFromKey(path),
+    child: { ...content[pathArr[pathArr.length - 1]], ...prevFiles.child }
   })
 
   return files
