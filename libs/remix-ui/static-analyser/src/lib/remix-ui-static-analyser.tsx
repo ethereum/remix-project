@@ -81,27 +81,30 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   })
   const [warningState, setWarningState] = useState([])
 
-  useEffect(() => {
-    if (autoRun) {
-      const setCompilationResult = async (data, source, file) => {
-        await setResult({ lastCompilationResult: data, lastCompilationSource: source, currentFile: file })
-      }
-
-      if (props.analysisModule) {
-        props.analysisModule.on(
-          'solidity',
-          'compilationFinished',
-          (file, source, languageVersion, data) => {
-            if (languageVersion.indexOf('soljson') !== 0) return
-            setCompilationResult(data, source, file)
-            if (categoryIndex.length > 0) {
-              run(data, source, file)
-            }
-          }
-        )
-      }
+  const executeCompilation = () => {
+    const setCompilationResult = async (data, source, file) => {
+      await setResult({ lastCompilationResult: data, lastCompilationSource: source, currentFile: file })
     }
 
+    if (props.analysisModule) {
+      props.analysisModule.on(
+        'solidity',
+        'compilationFinished',
+        (file, source, languageVersion, data) => {
+          if (languageVersion.indexOf('soljson') !== 0) return
+          setCompilationResult(data, source, file)
+          if (categoryIndex.length > 0) {
+            run(data, source, file)
+          }
+        }
+      )
+    }
+  }
+
+  useEffect(() => {
+    if (autoRun) {
+      executeCompilation()
+    }
     return () => { }
   }, [autoRun, categoryIndex])
 
@@ -270,6 +273,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           label={item.description}
           onClick={event => handleCheckSingle(event, item._index)}
           checked={categoryIndex.includes(item._index.toString())}
+          onChange={() => {}}
         />
       </div>
     )
@@ -297,7 +301,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               expand={false}
             >
               <div>
-                <RemixUiCheckbox onClick={() => handleCheckOrUncheckCategory(category)} id={categoryId} inputType="checkbox" label={`Select ${category[0].categoryDisplayName}`} name='checkCategoryEntry' checked={category.map(x => x._index.toString()).every(el => categoryIndex.includes(el))} />
+                <RemixUiCheckbox onClick={() => handleCheckOrUncheckCategory(category)} id={categoryId} inputType="checkbox" label={`Select ${category[0].categoryDisplayName}`} name='checkCategoryEntry' checked={category.map(x => x._index.toString()).every(el => categoryIndex.includes(el))} onChange={() => {}}/>
               </div>
               <div className="w-100 d-block px-2 my-1 entries collapse multi-collapse" id={`heading${categoryId}`}>
                 {category.map((item, i) => {
@@ -327,6 +331,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             }).flat().every(el => categoryIndex.includes(el))}
             label="Select all"
             onClick={() => handleCheckAllModules(groupedModules)}
+            onChange={() => {}}
           />
           <RemixUiCheckbox
             id="autorunstaticanalysis"
@@ -334,6 +339,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             onClick={handleAutoRun}
             checked={autoRun}
             label="Autorun"
+            onChange={() => {}}
           />
           <Button buttonText="Run" onClick={() => run(result.lastCompilationResult, result.lastCompilationSource, result.currentFile)} disabled={runButtonState || categoryIndex.length === 0}/>
         </div>
