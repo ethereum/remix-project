@@ -179,7 +179,7 @@ export const fileRenamedSuccess = (path: string, removePath: string, files) => {
   }
 }
 
-export const init = (provider, workspaceName: string, plugin) => (dispatch: React.Dispatch<any>) => {
+export const init = (provider, workspaceName: string, plugin, registry) => (dispatch: React.Dispatch<any>) => {
   if (provider) {
     provider.event.register('fileAdded', async (filePath) => {
       const path = extractParentFromKey(filePath) || workspaceName
@@ -201,15 +201,36 @@ export const init = (provider, workspaceName: string, plugin) => (dispatch: Reac
 
       dispatch(fileRemovedSuccess(path, removePath))
     })
-    provider.event.register('fileRenamed', async (oldPath, newPath) => {
+    provider.event.register('fileRenamed', async (oldPath) => {
       const path = extractParentFromKey(oldPath) || workspaceName
       const data = await fetchDirectoryContent(provider, path)
 
       dispatch(fileRenamedSuccess(path, oldPath, data))
     })
+    provider.event.register('fileExternallyChanged', async (path: string, file: { content: string }) => {
+      const config = registry.get('config').api
+      const editor = registry.get('editor').api
+
+      if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
+        if (provider.isReadOnly(path)) return editor.setText(file.content)
+        dispatch(displayNotification(
+          path + ' changed',
+          'This file has been changed outside of Remix IDE.',
+          'Replace by the new content', 'Keep the content displayed in Remix',
+          () => {
+            editor.setText(file.content)
+          }
+        ))
+      }
+    })
+    provider.event.register('fileRenamedError', async () => {
+      dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
+    })
+    provider.event.register('rootFolderChanged', async () => {
+      fetchDirectory(provider, workspaceName)(dispatch)
+    })
     dispatch(fetchProviderSuccess(provider))
     dispatch(setCurrentWorkspace(workspaceName))
-    dispatch(setPlugin(plugin))
   } else {
     dispatch(fetchProviderError('No provider available'))
   }
@@ -219,13 +240,6 @@ export const setCurrentWorkspace = (name: string) => {
   return {
     type: 'SET_CURRENT_WORKSPACE',
     payload: name
-  }
-}
-
-export const setPlugin = (plugin) => {
-  return {
-    type: 'SET_PLUGIN',
-    payload: plugin
   }
 }
 
@@ -256,4 +270,21 @@ export const removeInputFieldSuccess = (path: string) => {
 
 export const removeInputField = (path: string) => (dispatch: React.Dispatch<any>) => {
   return dispatch(removeInputFieldSuccess(path))
+}
+
+export const displayNotification = (title: string, message: string, labelOk: string, labelCancel: string, actionOk?: (...args) => void, actionCancel?: (...args) => void) => {
+  return {
+    type: 'DISPLAY_NOTIFICATION',
+    payload: { title, message, labelOk, labelCancel, actionOk, actionCancel }
+  }
+}
+
+export const hideNotification = () => {
+  return {
+    type: 'DISPLAY_NOTIFICATION'
+  }
+}
+
+export const closeNotificationModal = () => (dispatch: React.Dispatch<any>) => {
+  dispatch(hideNotification())
 }
