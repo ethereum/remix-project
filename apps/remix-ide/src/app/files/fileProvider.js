@@ -87,17 +87,14 @@ class FileProvider {
     var unprefixedpath = this.removePrefix(path)
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (!exists) return cb(null, null)
-    window.remixFileSystem.readFile(unprefixedpath, 'utf8', (err, content) => {
-      cb(err, content)
-    })
-  }
-
-  getSync (path) {
-    path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
-    var unprefixedpath = this.removePrefix(path)
-    var exists = window.remixFileSystem.existsSync(unprefixedpath)
-    if (!exists) return null
-    return window.remixFileSystem.readFileSync(unprefixedpath, 'utf8')
+    try {
+      var content = window.remixFileSystem.readFileSync(unprefixedpath, 'utf8')
+      if (cb) cb(null, content)
+      return content
+    } catch (e) {
+      if (cb) cb(e)
+      return e
+    }
   }
 
   set (path, content, cb) {

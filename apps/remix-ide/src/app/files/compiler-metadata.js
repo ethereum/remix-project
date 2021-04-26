@@ -4,7 +4,7 @@ import * as packageJson from '../../../../../package.json'
 import { joinPath } from '../../lib/helper'
 import { relative, dirname, join } from 'path'
 import { createHash } from 'crypto'
-import { isDeepStrictEqual } from 'util'
+var equal = require('deep-equal')
 var CompilerAbstract = require('../compiler/compiler-abstract')
 
 const profile = {
@@ -54,17 +54,17 @@ class CompilerMetadata extends Plugin {
     const cacheData = {
       _format: this.hardhdatConstants.CACHE_FILE_FORMAT_VERSION
     }
-    const fileContent = provider.getSync(compiledContract.file)
+    const fileContent = provider.get(compiledContract.file)
     const contentHash = createHash('md5').update(Buffer.from(fileContent)).digest().toString('hex')
     const solcConfig = {
       version: versionString.substring(0, versionString.indexOf('+commit')),
       settings: input.settings
     }
     if (provider.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)) {
-      let cache = provider.getSync('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
+      let cache = provider.get('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
       cache = JSON.parse(cache)
       const fileCache = cache[compiledContract.file]
-      if (!fileCache || fileCache.contentHash !== contentHash || (solcConfig && !isDeepStrictEqual(fileCache.solcConfig, solcConfig))) {
+      if (!fileCache || fileCache.contentHash !== contentHash || (solcConfig && !equal(fileCache.solcConfig, solcConfig))) {
         cache[compiledContract.file] = {
           lastModificationDate: Date.now(),
           contentHash,
