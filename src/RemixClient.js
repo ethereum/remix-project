@@ -28,12 +28,10 @@ export class RemixClient extends PluginClient {
 
   async init() {
     const currentTheme = await this.call('theme', 'currentTheme')
-    console.log('theme', currentTheme)
     this.web3Modal.updateTheme(currentTheme.quality)
 
     this.on('theme', 'themeChanged', (theme) => {
       this.web3Modal.updateTheme(theme.quality)
-      console.log('theme', theme)
     })
 
   }
@@ -43,11 +41,10 @@ export class RemixClient extends PluginClient {
    */
   async onConnect() {
 
-    console.log("Opening a dialog", this.web3Modal);
     try {
       this.provider = await this.web3Modal.connect();
     } catch (e) {
-      console.log("Could not get a wallet connection", e);
+      console.error("Could not get a wallet connection", e);
       return;
     }
 
