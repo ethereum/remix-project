@@ -8,6 +8,7 @@ interface Action {
 export const fileSystemInitialState = {
   files: {
     files: [],
+    expandPath: [],
     workspaceName: null,
     blankPath: null,
     isRequesting: false,
@@ -175,6 +176,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         files: {
           ...state.files,
           files: fileAdded(state.files.workspaceName, action.payload.path, state.files.files, action.payload.files),
+          expandPath: [...new Set([...state.files.expandPath, action.payload.path])],
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -187,6 +189,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         files: {
           ...state.files,
           files: folderAdded(state.files.workspaceName, action.payload.path, state.files.files, action.payload.files),
+          expandPath: [...new Set([...state.files.expandPath, action.payload.path])],
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -271,12 +274,12 @@ const removePath = (root, path: string, pathName, files) => {
   }, [])
   const prevFiles = _.get(files, _path)
 
-  prevFiles.child[pathName] && delete prevFiles.child[pathName]
+  prevFiles && prevFiles.child && prevFiles.child[pathName] && delete prevFiles.child[pathName]
   files = _.set(files, _path, {
     isDirectory: true,
     path,
     name: extractNameFromKey(path),
-    child: prevFiles.child
+    child: prevFiles ? prevFiles.child : {}
   })
 
   return files
