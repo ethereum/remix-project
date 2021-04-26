@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
 import { RemixClient } from './RemixClient'
-
+const p = new RemixClient()
 function App() {
-  const p = new RemixClient()
+
   const openModal = () => {
     p.onConnect()
   }
@@ -22,11 +22,12 @@ function App() {
     for(const account of accounts){
       document.getElementById('accounts').innerHTML += `<li className="list-group-item">${account}</li>`
     }
-    showButtons(accounts.length > 0)
+    
   })
 
   p.internalEvents.on('chainChanged', (chain) => {
     document.getElementById('chain').innerHTML = chain
+    showButtons(chain)
   })
 
   p.internalEvents.on('disconnect', (chain) => {
