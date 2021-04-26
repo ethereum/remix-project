@@ -1,5 +1,5 @@
 'use strict'
-import { BN, bufferToHex, keccak, setLengthLeft } from 'ethereumjs-util'
+import { BN, bufferToHex, keccak, setLengthLeft, intToBuffer } from 'ethereumjs-util'
 
 /*
  contains misc util: @TODO should be splitted
@@ -165,10 +165,13 @@ export function buildCallPath (index, rootCall) {
   */
 // eslint-disable-next-line camelcase
 export function sha3_256 (value) {
-  if (typeof value === 'string' && value.indexOf('0x') !== 0) {
-    value = '0x' + value
+  if (typeof value === 'string') {
+    value = Buffer.from(value.replace('0x', ''), 'hex')
   }
-  const retInBuffer: Buffer = keccak(setLengthLeft(Buffer.from(value.replace('0x', ''), 'hex'), 32))
+  if (Number.isInteger(value)) {
+    value = intToBuffer(value)
+  }
+  const retInBuffer: Buffer = keccak(setLengthLeft(value, 32))
   return bufferToHex(retInBuffer)
 }
 
