@@ -133,6 +133,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [fileSystem.notification.message])
 
   useEffect(() => {
+    if (fileSystem.files.expandPath.length > 0) {
+      setState(prevState => {
+        return { ...prevState, expandPath: [...new Set([...prevState.expandPath, ...fileSystem.files.expandPath])] }
+      })
+    }
+  }, [fileSystem.files.expandPath])
+
+  useEffect(() => {
     if (state.focusEdit.element) {
       setTimeout(() => {
         if (editRef && editRef.current) {
