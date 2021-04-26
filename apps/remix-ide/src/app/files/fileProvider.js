@@ -95,6 +95,7 @@ class FileProvider {
       if (cb) cb(e)
       return e
     }
+<<<<<<< HEAD
   }
 
   getSync (path) {
@@ -103,6 +104,8 @@ class FileProvider {
     var exists = window.remixFileSystem.existsSync(unprefixedpath)
     if (!exists) return null
     return window.remixFileSystem.readFileSync(unprefixedpath, 'utf8')
+=======
+>>>>>>> c324fdfe9... method update
   }
 
   set (path, content, cb) {
