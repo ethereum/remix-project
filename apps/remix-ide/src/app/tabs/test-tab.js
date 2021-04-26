@@ -69,6 +69,7 @@ module.exports = class TestTab extends ViewPlugin {
   updateForNewCurrent (file) {
     this.updateGenerateFileAction(file)
     if (!this.areTestsRunning) this.updateRunAction(file)
+    this.updateTestFileList()
     this.testTabLogic.getTests((error, tests) => {
       if (error) return tooltip(error)
       this.data.allTests = tests
@@ -566,15 +567,24 @@ module.exports = class TestTab extends ViewPlugin {
     else return input.trim()
   }
 
-  doesOptionAlreadyAdded (text) {
+  pathAdded (text) {
     for (const option of this.uiPathList.querySelectorAll('option')) {
       if (option.innerHTML === text) return true
     }
     return false
   }
 
-  handleTestDirInput () {
+  async handleTestDirInput (e) {
     const testDirInput = this.trimTestDirInput(this.inputPath.value)
+    if (e.key === 'Enter') {
+      this.inputPath.value = this.trimTestDirInput(testDirInput)
+      if (await this.testTabLogic.pathExists(testDirInput)) {
+        this.testTabLogic.setCurrentPath(testDirInput)
+        this.updateForNewCurrent()
+        return
+      }
+    }
+
     if (testDirInput) {
       if (testDirInput.endsWith('/')) {
         // check if the options list already contains the options
@@ -585,7 +595,7 @@ module.exports = class TestTab extends ViewPlugin {
         this.updateDirList(testDirInput)
       } else {
         // If there is no matching folder in the workspace with entered text, enable Create button
-        if (this.doesOptionAlreadyAdded(testDirInput)) {
+        if (this.pathAdded(testDirInput)) {
           this.createTestFolder.disabled = true
           this.updateGenerateFileAction().disabled = false
         } else {
@@ -614,8 +624,19 @@ module.exports = class TestTab extends ViewPlugin {
       data-id="uiPathInput"
       name="utPath"
       style="background-image: var(--primary);"
-      onkeyup=${(e) => this.handleTestDirInput()}
-      onchange=${(e) => { if (!this.createTestFolder.disabled) this.handleCreateFolder() }}
+      onkeyup=${(e) => this.handleTestDirInput(e)}
+      onchange=${(e) => {
+        console.log("onchange")
+        if (!this.createTestFolder.disabled) return // this.handleCreateFolder()
+        else {
+          this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
+          if (this.testTabLogic.pathExists(this.inputPath.value)) {
+            this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
+            this.testTabLogic.setCurrentPath(this.inputPath.value)
+            this.updateForNewCurrent()
+          }
+        }
+      }}
     />`
 
     this.createTestFolder = yo`
