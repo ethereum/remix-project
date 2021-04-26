@@ -14,14 +14,13 @@ import EventManager from "events"
 
 
 export class RemixClient extends PluginClient {
-
+  provider
   constructor() {
     super();
+    createClient(this);
     this.methods = ["sendAsync"];
     this.internalEvents = new EventManager()
-    createClient(this);
     this.onload()
-
     this.web3Modal = new Web3Modal({
       providerOptions: this.getProviderOptions() // required
     });
@@ -79,7 +78,7 @@ export class RemixClient extends PluginClient {
   async detectNetwork(id) {
 
     let networkName = null;
-
+    id = parseInt(id)
     // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
     if (id === 1) networkName = "Main";
     else if (id === 2) networkName = "Morden (deprecated)";
@@ -119,6 +118,7 @@ export class RemixClient extends PluginClient {
         package: WalletConnectProvider,
         options: {
           infuraId: '83d4d660ce3546299cbe048ed95b6fad',
+          bridge: 'https://static.225.91.181.135.clients.your-server.de:9090/'
         }
       },
       torus: {
@@ -182,12 +182,11 @@ export class RemixClient extends PluginClient {
     return new Promise((resolve, reject) => {
       if (this.provider) {
         this.provider.sendAsync(data, (error, message) => {
-          // console.log('in plugin', data, error, message)
           if (error) return reject(error)
           resolve(message)
         })
       } else {
-        return reject('Provider not loaded')
+        resolve({"jsonrpc": "2.0", "result": [], "id": data.id})
       }
     })
   }
