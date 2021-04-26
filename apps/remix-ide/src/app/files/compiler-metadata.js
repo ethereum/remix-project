@@ -3,7 +3,8 @@ import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { joinPath } from '../../lib/helper'
 import { relative, dirname, join } from 'path'
-const { createHash } = require('crypto')
+import { createHash } from 'crypto'
+import { isDeepStrictEqual } from 'util'
 var CompilerAbstract = require('../compiler/compiler-abstract')
 
 const profile = {
@@ -25,7 +26,9 @@ class CompilerMetadata extends Plugin {
       ARTIFACT_FORMAT_VERSION: 'hh-sol-artifact-1',
       DEBUG_FILE_FORMAT_VERSION: 'hh-sol-dbg-1',
       BUILD_INFO_FORMAT_VERSION: 'hh-sol-build-info-1',
-      BUILD_INFO_DIR_NAME: 'build-info'
+      BUILD_INFO_DIR_NAME: 'build-info',
+      SOLIDITY_FILES_CACHE_FILENAME: 'solidity-files-cache.json',
+      CACHE_FILE_FORMAT_VERSION: 'hh-sol-cache-2'
     }
   }
 
@@ -46,6 +49,45 @@ class CompilerMetadata extends Plugin {
     })
     return createHash('md5').update(Buffer.from(json)).digest().toString('hex')
   }
+
+  checkHardhatCache (compiledContract, provider, input, output, versionString) {
+    let cacheData = {
+      _format: this.hardhdatConstants.CACHE_FILE_FORMAT_VERSION
+    }
+    let fileContent = provider.getSync(compiledContract.file)
+    let contentHash = createHash('md5').update(Buffer.from(fileContent)).digest().toString('hex')
+    let solcConfig = {
+      version: versionString.substring(0, versionString.indexOf('+commit')),
+      settings: input.settings
+    }
+    if(provider.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)) {
+      let cache = provider.getSync('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
+      cache = JSON.parse(cache)
+      const fileCache = cache[compiledContract.file]
+      if(!fileCache || fileCache.contentHash !== contentHash || ( solcConfig && !isDeepStrictEqual (fileCache.solcConfig, solcConfig))) {
+        cache[compiledContract.file] = {
+          lastModificationDate: Date.now(),
+          contentHash,
+          sourceName: compiledContract.file,
+          solcConfig,
+          artifacts: [compiledContract.name]
+        }
+        provider.set('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME, JSON.stringify(cache, null, '\t'))
+        this.createHardhatArtifacts (compiledContract, provider, input, output, versionString)
+      } else { console.log('No compilation needed') }
+    } else {
+      cacheData[compiledContract.file] = {
+        lastModificationDate: Date.now(),
+        contentHash,
+        sourceName: compiledContract.file,
+        solcConfig,
+        artifacts: [compiledContract.name]
+      }
+      provider.set('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME, JSON.stringify(cacheData, null, '\t'))
+      this.createHardhatArtifacts (compiledContract, provider, input, output, versionString)
+    }
+  }
+
 
   createHardhatArtifacts (compiledContract, provider, input, output, versionString) {
     const contract = compiledContract
@@ -121,7 +163,7 @@ class CompilerMetadata extends Plugin {
               }
               if (parsedMetadata) {
                 provider.set(metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
-                self.createHardhatArtifacts(contract, provider, parsedInput, data, parsedMetadata.compiler.version)
+                self.checkHardhatCache(contract, provider, parsedInput, data, parsedMetadata.compiler.version)
               }
 
               var evmData = {
