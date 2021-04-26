@@ -51,20 +51,20 @@ class CompilerMetadata extends Plugin {
   }
 
   checkHardhatCache (compiledContract, provider, input, output, versionString) {
-    let cacheData = {
+    const cacheData = {
       _format: this.hardhdatConstants.CACHE_FILE_FORMAT_VERSION
     }
-    let fileContent = provider.getSync(compiledContract.file)
-    let contentHash = createHash('md5').update(Buffer.from(fileContent)).digest().toString('hex')
-    let solcConfig = {
+    const fileContent = provider.getSync(compiledContract.file)
+    const contentHash = createHash('md5').update(Buffer.from(fileContent)).digest().toString('hex')
+    const solcConfig = {
       version: versionString.substring(0, versionString.indexOf('+commit')),
       settings: input.settings
     }
-    if(provider.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)) {
+    if (provider.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)) {
       let cache = provider.getSync('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
       cache = JSON.parse(cache)
       const fileCache = cache[compiledContract.file]
-      if(!fileCache || fileCache.contentHash !== contentHash || ( solcConfig && !isDeepStrictEqual (fileCache.solcConfig, solcConfig))) {
+      if (!fileCache || fileCache.contentHash !== contentHash || (solcConfig && !isDeepStrictEqual(fileCache.solcConfig, solcConfig))) {
         cache[compiledContract.file] = {
           lastModificationDate: Date.now(),
           contentHash,
@@ -73,7 +73,7 @@ class CompilerMetadata extends Plugin {
           artifacts: [compiledContract.name]
         }
         provider.set('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME, JSON.stringify(cache, null, '\t'))
-        this.createHardhatArtifacts (compiledContract, provider, input, output, versionString)
+        this.createHardhatArtifacts(compiledContract, provider, input, output, versionString)
       } else { console.log('No compilation needed') }
     } else {
       cacheData[compiledContract.file] = {
@@ -84,10 +84,9 @@ class CompilerMetadata extends Plugin {
         artifacts: [compiledContract.name]
       }
       provider.set('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME, JSON.stringify(cacheData, null, '\t'))
-      this.createHardhatArtifacts (compiledContract, provider, input, output, versionString)
+      this.createHardhatArtifacts(compiledContract, provider, input, output, versionString)
     }
   }
-
 
   createHardhatArtifacts (compiledContract, provider, input, output, versionString) {
     const contract = compiledContract
