@@ -55,7 +55,32 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     return indexOfCategory
   }
   const [autoRun, setAutoRun] = useState(true)
-  const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
+
+  // const initialState = { categoryIndex: [] }
+
+  // const reducer = (state, action) => {
+  //   console.log({ action })
+  //   switch (action.type) {
+  //     case 'initialize':
+  //       return { categoryIndex: groupedModuleIndex(groupedModules) }
+  //     case 'uncheck':
+  //       return {
+  //         categoryIndex: state.categoryIndex.filter((el) => {
+  //           return !action.payload.includes(el)
+  //         })
+  //       }
+  //     case 'check':
+  //       return { categoryIndex: _.uniq([...state.categoryIndex, ...action.payload]) }
+  //     case 'uncheckSingle':
+  //       return { categoryIndex: state.categoryIndex.filter(val => val !== action.payload) }
+  //     case 'checkSingle':
+  //       return { categoryIndex: _.uniq([...state.categoryIndex, action.payload]) }
+  //     default:
+  //       return { categoryIndex: groupedModuleIndex(groupedModules) }
+  //   }
+  // }
+
+  const [state, dispatch] = useReducer(analysisReducer, initialState)
 
   const warningContainer = React.useRef(null)
   const [runButtonState, setRunButtonState] = useState(true)
@@ -67,7 +92,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   })
   const [, setModuleNameResult] = useState(null)
   const [, setWarning] = useState({
-    msg: '',
     options: {},
     hasWarning: false,
     warningErrors: []
@@ -127,10 +151,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       ? (<span><a href={more} target='_blank'>more</a></span>)
       : (<span> </span>)
     }
-    <span className="" title={Position in ${fileName}}>Pos: ${locationString}</span>
-  </span>`
-    )
-  }
+  }, [autoRun, state, props.analysisModule, setWarning])
 
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
     if (autoRun) {
@@ -138,7 +159,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         let warningCount = 0
         const warningMessage = []
 
-        runner.run(lastCompilationResult, categoryIndex, results => {
+        runner.run(lastCompilationResult, state.categoryIndex, results => {
           results.map((result) => {
             let moduleName
             Object.keys(groupedModules).map(key => {
@@ -174,7 +195,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 fileName = Object.keys(lastCompilationResult.contracts)[file]
               }
               warningCount++
-              const msg = message(item.name, item.warning, item.more, fileName, locationString)
               const options = {
                 type: 'warning',
                 useSpan: true,
@@ -207,11 +227,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               return acc
             }, {})
           }
-
           const groupedCategory = groupBy(resultArray, 'warningModuleName')
+          console.log({ warningCount }, ' 221')
+          console.log({ groupedCategory })
           setWarningState(groupedCategory)
+          console.log({ warningState })
+          console.log({ warningCount }, ' 223')
         })
-        if (categoryIndex.length > 0) {
+        console.log({ warningCount }, ' CategoryIndex outside function')
+        if (state.categoryIndex.length > 0) {
+          console.log(state.categoryIndex, ' CategoryIndex in execute funtions')
           props.event.trigger('staticAnaysisWarning', [warningCount])
         }
       } else {
@@ -225,27 +250,19 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const handleCheckAllModules = (groupedModules) => {
     const index = groupedModuleIndex(groupedModules)
-    if (index.every(el => categoryIndex.includes(el))) {
-      setCategoryIndex(
-        categoryIndex.filter((el) => {
-          return !index.includes(el)
-        })
-      )
+    if (index.every(el => state.categoryIndex.includes(el))) {
+      dispatch({ type: 'uncheck', payload: index })
     } else {
-      setCategoryIndex(_.uniq([...categoryIndex, ...index]))
+      dispatch({ type: 'check', payload: index })
     }
   }
 
   const handleCheckOrUncheckCategory = (category) => {
     const index = groupedModuleIndex(category)
-    if (index.every(el => categoryIndex.includes(el))) {
-      setCategoryIndex(
-        categoryIndex.filter((el) => {
-          return !index.includes(el)
-        })
-      )
+    if (index.every(el => state.categoryIndex.includes(el))) {
+      dispatch({ type: 'uncheck', payload: index })
     } else {
-      setCategoryIndex(_.uniq([...categoryIndex, ...index]))
+      dispatch({ type: 'check', payload: index })
     }
   }
 
@@ -259,10 +276,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const handleCheckSingle = (event, _index) => {
     _index = _index.toString()
-    if (categoryIndex.includes(_index)) {
-      setCategoryIndex(categoryIndex.filter(val => val !== _index))
+    if (state.categoryIndex.includes(_index)) {
+      dispatch({ type: 'uncheckSingle', payload: _index })
     } else {
-      setCategoryIndex(_.uniq([...categoryIndex, _index]))
+      dispatch({ type: 'checkSingle', payload: _index })
     }
   }
 
@@ -277,7 +294,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           itemName={item.name}
           label={item.description}
           onClick={event => handleCheckSingle(event, item._index)}
-          checked={categoryIndex.includes(item._index.toString())}
+          checked={state.categoryIndex.includes(item._index.toString())}
           onChange={() => {}}
         />
       </div>
@@ -306,7 +323,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               expand={false}
             >
               <div>
-                <RemixUiCheckbox onClick={() => handleCheckOrUncheckCategory(category)} id={categoryId} inputType="checkbox" label={`Select ${category[0].categoryDisplayName}`} name='checkCategoryEntry' checked={category.map(x => x._index.toString()).every(el => categoryIndex.includes(el))} onChange={() => {}}/>
+                <RemixUiCheckbox onClick={() => handleCheckOrUncheckCategory(category)} id={categoryId} inputType="checkbox" label={`Select ${category[0].categoryDisplayName}`} name='checkCategoryEntry' checked={category.map(x => x._index.toString()).every(el => state.categoryIndex.includes(el))} onChange={() => {}}/>
               </div>
               <div className="w-100 d-block px-2 my-1 entries collapse multi-collapse" id={`heading${categoryId}`}>
                 {category.map((item, i) => {
@@ -334,7 +351,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               return (value.map(x => {
                 return x._index.toString()
               }))
-            }).flat().every(el => categoryIndex.includes(el))}
+            }).flat().every(el => state.categoryIndex.includes(el))}
             label="Select all"
             onClick={() => handleCheckAllModules(groupedModules)}
             onChange={() => {}}
@@ -368,10 +385,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           {state.file}
         </span>
       </div>
-      { categoryIndex.length > 0 && Object.entries(warningState).length > 0 &&
+      { console.log({ warningState }) }
+      { state.categoryIndex.length > 0 && Object.entries(warningState).length > 0 &&
         <div id='staticanalysisresult' >
           <div className="mb-4">
-            {
+            {/* {
               (Object.entries(warningState).map((element) => (
                 <>
                   <span className="text-dark h6">{element[0]}</span>
@@ -385,7 +403,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   ))}
                 </>
               )))
-            }
+            } */}
           </div>
         </div>
       }

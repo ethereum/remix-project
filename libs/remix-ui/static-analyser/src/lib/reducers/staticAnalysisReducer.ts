@@ -1,4 +1,3 @@
-
 export const initialState = {
   file: null,
   source: null,
