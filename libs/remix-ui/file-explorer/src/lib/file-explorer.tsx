@@ -110,7 +110,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (props.filesProvider) {
       init(props.filesProvider, props.name, props.plugin, props.registry)(dispatch)
     }
-  }, [props.filesProvider])
+  }, [props.filesProvider, props.name])
 
   useEffect(() => {
     const provider = fileSystem.provider.provider
@@ -118,7 +118,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (provider) {
       fetchDirectory(provider, props.name)(dispatch)
     }
-  }, [fileSystem.provider.provider])
+  }, [fileSystem.provider.provider, props.name])
 
   useEffect(() => {
     if (fileSystem.notification.message) {
