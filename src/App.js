@@ -43,7 +43,7 @@ function App() {
       </div>
       <div id='accounts-container'>
         <div><label><b>Accounts: </b></label><br></br><ul className="list-group list-group-flush" id="accounts"></ul></div>
-        <div><label><b>ChainId: </b></label><label className="ml-1" id="chain"> - </label></div>
+        <div><label><b>Network: </b></label><label className="ml-1" id="chain"> - </label></div>
       </div>
     </div>
   );
