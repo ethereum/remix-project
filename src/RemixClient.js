@@ -115,7 +115,7 @@ export class RemixClient extends PluginClient {
         package: WalletConnectProvider,
         options: {
           infuraId: '83d4d660ce3546299cbe048ed95b6fad',
-          bridge: 'https://static.225.91.181.135.clients.your-server.de:9090/'
+          bridge: 'https://wallet-connect-bridge.dyn.plugin.remixproject.org:8080/'
         }
       },
       torus: {
