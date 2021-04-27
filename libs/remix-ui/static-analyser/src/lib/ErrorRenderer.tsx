@@ -1,4 +1,4 @@
-import React, { useState } from 'react' //eslint-disable-line
+import React from 'react' //eslint-disable-line
 
 interface ErrorRendererProps {
   message: any;
@@ -32,6 +32,7 @@ const ErrorRenderer = ({ message, opt, editor }: ErrorRendererProps) => {
 
   if (!message) return
   let position = getPositionDetails(message)
+  console.log({ position })
   if (!position.errFile || (opt.errorType && opt.errorType === position.errFile)) {
     // Updated error reported includes '-->' before file details
     const errorDetails = message.split('-->')
