@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useReducer } from 'react'
 import ReactDOM from 'react-dom' //eslint-disable-line
 import CheckBox from './Checkbox/StaticAnalyserCheckedBox' // eslint-disable-line
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
@@ -7,6 +7,9 @@ import _ from 'lodash'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { RemixUiCheckbox } from '@remix-ui/checkbox' // eslint-disable-line
 import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
+import { compilation, setCompilationResult } from './actions/staticAnalysisActions'
+import { analysisReducer, initialState } from './reducers/staticAnalysisReducer'
+
 const StaticAnalysisRunner = require('@remix-project/remix-analyzer').CodeAnalysis
 const utils = remixLib.util
 
@@ -62,7 +65,32 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     return indexOfCategory
   }
   const [autoRun, setAutoRun] = useState(true)
-  const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
+
+  // const initialState = { categoryIndex: [] }
+
+  // const reducer = (state, action) => {
+  //   console.log({ action })
+  //   switch (action.type) {
+  //     case 'initialize':
+  //       return { categoryIndex: groupedModuleIndex(groupedModules) }
+  //     case 'uncheck':
+  //       return {
+  //         categoryIndex: state.categoryIndex.filter((el) => {
+  //           return !action.payload.includes(el)
+  //         })
+  //       }
+  //     case 'check':
+  //       return { categoryIndex: _.uniq([...state.categoryIndex, ...action.payload]) }
+  //     case 'uncheckSingle':
+  //       return { categoryIndex: state.categoryIndex.filter(val => val !== action.payload) }
+  //     case 'checkSingle':
+  //       return { categoryIndex: _.uniq([...state.categoryIndex, action.payload]) }
+  //     default:
+  //       return { categoryIndex: groupedModuleIndex(groupedModules) }
+  //   }
+  // }
+
+  const [state, dispatch] = useReducer(analysisReducer, initialState)
 
   const warningContainer = React.useRef(null)
   const [runButtonState, setRunButtonState] = useState(true)
@@ -74,63 +102,51 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   })
   const [, setModuleNameResult] = useState(null)
   const [, setWarning] = useState({
-    msg: '',
     options: {},
     hasWarning: false,
     warningErrors: []
   })
   const [warningState, setWarningState] = useState([])
 
-  const executeCompilation = () => {
-    const setCompilationResult = async (data, source, file) => {
-      await setResult({ lastCompilationResult: data, lastCompilationSource: source, currentFile: file })
-    }
-
-    if (props.analysisModule) {
-      props.analysisModule.on(
-        'solidity',
-        'compilationFinished',
-        (file, source, languageVersion, data) => {
-          if (languageVersion.indexOf('soljson') !== 0) return
-          setCompilationResult(data, source, file)
-          if (categoryIndex.length > 0) {
-            run(data, source, file)
-          }
-        }
-      )
-    }
-  }
+  // const executeCompilation = (categoryIndex) => {
+  //   const setCompilationResult = async (data, source, file) => {
+  //     await setResult({ lastCompilationResult: data, lastCompilationSource: source, currentFile: file })
+  //   }
+  //   if (props.analysisModule) {
+  //     props.analysisModule.on(
+  //       'solidity',
+  //       'compilationFinished',
+  //       (file, source, languageVersion, data) => {
+  //         if (languageVersion.indexOf('soljson') !== 0) return
+  //         setCompilationResult(data, source, file)
+  //         console.log(categoryIndex, ' inside execute funtions')
+  //         if (state.categoryIndex.length > 0) {
+  //           run(data, source, file)
+  //         }
+  //       }
+  //     )
+  //   }
+  // }
 
   useEffect(() => {
     if (autoRun) {
-      executeCompilation()
+      if (props.analysisModule && state.categoryIndex.length > 0) {
+        compilation(props.analysisModule, state, run)
+      }
     }
-    return () => { }
-  }, [autoRun, categoryIndex])
-
-  const message = (name, warning, more, fileName, locationString) : string => {
-    return (`
-    <span className='d-flex flex-column'>
-    <span className='h6 font-weight-bold'>${name}</span>
-    ${warning}
-    ${more
-      ? (<span><a href={more} target='_blank'>more</a></span>)
-      : (<span> </span>)
+    return () => {
     }
-    <span className="" title={Position in ${fileName}}>Pos: ${locationString}</span>
-  </span>`
-    )
-  }
+  }, [autoRun, state, props.analysisModule, setWarning])
 
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
     if (autoRun) {
       setResult({ lastCompilationResult, lastCompilationSource, currentFile })
-      if (lastCompilationResult && categoryIndex.length > 0) {
+      if (lastCompilationResult && state.categoryIndex.length > 0) {
         setRunButtonState(false)
         let warningCount = 0
         const warningMessage = []
 
-        runner.run(lastCompilationResult, categoryIndex, results => {
+        runner.run(lastCompilationResult, state.categoryIndex, results => {
           results.map((result) => {
             let moduleName
             Object.keys(groupedModules).map(key => {
@@ -167,7 +183,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 fileName = Object.keys(lastCompilationResult.contracts)[file]
               }
               warningCount++
-              const msg = message(item.name, item.warning, item.more, fileName, locationString)
               const options = {
                 type: 'warning',
                 useSpan: true,
@@ -182,8 +197,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 location: location
               }
               warningErrors.push(options)
-              setWarning({ msg, hasWarning: true, options, warningErrors: warningErrors })
-              warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
+              setWarning({ hasWarning: true, options, warningErrors: warningErrors })
+              warningMessage.push({ options, hasWarning: true, warningModuleName: moduleName })
             })
           })
           const resultArray = []
@@ -201,16 +216,21 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               return acc
             }, {})
           }
-
           const groupedCategory = groupBy(resultArray, 'warningModuleName')
+          console.log({ warningCount }, ' 221')
+          console.log({ groupedCategory })
           setWarningState(groupedCategory)
+          console.log({ warningState })
+          console.log({ warningCount }, ' 223')
         })
-        if (categoryIndex.length > 0) {
+        console.log({ warningCount }, ' CategoryIndex outside function')
+        if (state.categoryIndex.length > 0) {
+          console.log(state.categoryIndex, ' CategoryIndex in execute funtions')
           props.event.trigger('staticAnaysisWarning', [warningCount])
         }
       } else {
         setRunButtonState(true)
-        if (categoryIndex.length) {
+        if (state.categoryIndex.length) {
           warningContainer.current.innerText = 'No compiled AST available'
         }
         props.event.trigger('staticAnaysisWarning', [-1])
@@ -220,27 +240,19 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const handleCheckAllModules = (groupedModules) => {
     const index = groupedModuleIndex(groupedModules)
-    if (index.every(el => categoryIndex.includes(el))) {
-      setCategoryIndex(
-        categoryIndex.filter((el) => {
-          return !index.includes(el)
-        })
-      )
+    if (index.every(el => state.categoryIndex.includes(el))) {
+      dispatch({ type: 'uncheck', payload: index })
     } else {
-      setCategoryIndex(_.uniq([...categoryIndex, ...index]))
+      dispatch({ type: 'check', payload: index })
     }
   }
 
   const handleCheckOrUncheckCategory = (category) => {
     const index = groupedModuleIndex(category)
-    if (index.every(el => categoryIndex.includes(el))) {
-      setCategoryIndex(
-        categoryIndex.filter((el) => {
-          return !index.includes(el)
-        })
-      )
+    if (index.every(el => state.categoryIndex.includes(el))) {
+      dispatch({ type: 'uncheck', payload: index })
     } else {
-      setCategoryIndex(_.uniq([...categoryIndex, ...index]))
+      dispatch({ type: 'check', payload: index })
     }
   }
 
@@ -254,10 +266,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const handleCheckSingle = (event, _index) => {
     _index = _index.toString()
-    if (categoryIndex.includes(_index)) {
-      setCategoryIndex(categoryIndex.filter(val => val !== _index))
+    if (state.categoryIndex.includes(_index)) {
+      dispatch({ type: 'uncheckSingle', payload: _index })
     } else {
-      setCategoryIndex(_.uniq([...categoryIndex, _index]))
+      dispatch({ type: 'checkSingle', payload: _index })
     }
   }
 
@@ -272,7 +284,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           itemName={item.name}
           label={item.description}
           onClick={event => handleCheckSingle(event, item._index)}
-          checked={categoryIndex.includes(item._index.toString())}
+          checked={state.categoryIndex.includes(item._index.toString())}
           onChange={() => {}}
         />
       </div>
@@ -301,7 +313,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               expand={false}
             >
               <div>
-                <RemixUiCheckbox onClick={() => handleCheckOrUncheckCategory(category)} id={categoryId} inputType="checkbox" label={`Select ${category[0].categoryDisplayName}`} name='checkCategoryEntry' checked={category.map(x => x._index.toString()).every(el => categoryIndex.includes(el))} onChange={() => {}}/>
+                <RemixUiCheckbox onClick={() => handleCheckOrUncheckCategory(category)} id={categoryId} inputType="checkbox" label={`Select ${category[0].categoryDisplayName}`} name='checkCategoryEntry' checked={category.map(x => x._index.toString()).every(el => state.categoryIndex.includes(el))} onChange={() => {}}/>
               </div>
               <div className="w-100 d-block px-2 my-1 entries collapse multi-collapse" id={`heading${categoryId}`}>
                 {category.map((item, i) => {
@@ -328,7 +340,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               return (value.map(x => {
                 return x._index.toString()
               }))
-            }).flat().every(el => categoryIndex.includes(el))}
+            }).flat().every(el => state.categoryIndex.includes(el))}
             label="Select all"
             onClick={() => handleCheckAllModules(groupedModules)}
             onChange={() => {}}
@@ -341,7 +353,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Autorun"
             onChange={() => {}}
           />
-          <Button buttonText="Run" onClick={() => run(result.lastCompilationResult, result.lastCompilationSource, result.currentFile)} disabled={runButtonState || categoryIndex.length === 0}/>
+          <Button buttonText="Run" onClick={() => run(result.lastCompilationResult, result.lastCompilationSource, result.currentFile)} disabled={runButtonState || state.categoryIndex.length === 0}/>
         </div>
       </div>
       <div id="staticanalysismodules" className="list-group list-group-flush">
@@ -362,10 +374,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           {result.currentFile && result.currentFile}
         </span>
       </div>
-      { categoryIndex.length > 0 && Object.entries(warningState).length > 0 &&
+      { console.log({ warningState }) }
+      { state.categoryIndex.length > 0 && Object.entries(warningState).length > 0 &&
         <div id='staticanalysisresult' >
           <div className="mb-4">
-            {
+            {/* {
               (Object.entries(warningState).map((element) => (
                 <>
                   <span className="text-dark h6">{element[0]}</span>
@@ -379,7 +392,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   ))}
                 </>
               )))
-            }
+            } */}
           </div>
         </div>
       }
