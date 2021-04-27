@@ -626,9 +626,7 @@ module.exports = class TestTab extends ViewPlugin {
       style="background-image: var(--primary);"
       onkeyup=${(e) => this.handleTestDirInput(e)}
       onchange=${(e) => {
-        console.log("onchange")
-        if (!this.createTestFolder.disabled) return // this.handleCreateFolder()
-        else {
+        if (this.createTestFolder.disabled) {
           this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
           if (this.testTabLogic.pathExists(this.inputPath.value)) {
             this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
