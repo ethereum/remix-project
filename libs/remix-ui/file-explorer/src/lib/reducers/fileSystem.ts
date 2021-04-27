@@ -259,7 +259,7 @@ const resolveDirectory = (root, path: string, files, content) => {
     isDirectory: true,
     path,
     name: extractNameFromKey(path),
-    child: { ...content[pathArr[pathArr.length - 1]], ...prevFiles.child }
+    child: { ...content[pathArr[pathArr.length - 1]], ...(prevFiles ? prevFiles.child : {}) }
   })
 
   return files
