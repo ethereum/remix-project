@@ -83,7 +83,7 @@ module.exports = {
       .testFunction('last',
         {
           status: 'true Transaction mined and execution succeed',
-          'decoded input': { 'uint256 _po': { type: 'BigNumber', hex: '0x0a' } }
+          'decoded input': "{ \"uint256 _po\": \"10\" }"
         })
       .end()
   }
