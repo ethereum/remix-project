@@ -15,7 +15,7 @@ function sendTx (vm, from, to, value, data, cb) {
     value: new BN(value, 10),
     data: Buffer.from(data, 'hex')
   })
-  tx.sign(from.privateKey)
+  tx = tx.sign(from.privateKey)
 
   var block = Block.fromBlockData({
     header: {
@@ -36,12 +36,12 @@ function sendTx (vm, from, to, value, data, cb) {
 /*
   Init VM / Send Transaction
 */
-function initVM (privateKey) {
-  var address = utileth.privateToAddress(privateKey)
+async function initVM (privateKey) {
+  var address = utileth.Address.fromPrivateKey(privateKey)
   var vm = new VM({
     activatePrecompiles: true
   })
-
+  await vm.init()
   vm.stateManager.getAccount(address).then((account) => {    
     account.balance = new BN('f00000000000000001', 16)
     vm.stateManager.putAccount(address, account).catch((error) => {
