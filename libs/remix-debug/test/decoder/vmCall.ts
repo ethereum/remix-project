@@ -16,7 +16,7 @@ export function sendTx (vm, from, to, value, data, cb) {
     value: new BN(value, 10),
     data: Buffer.from(data, 'hex')
   })
-  tx.sign(from.privateKey)
+  tx = tx.sign(from.privateKey)
 
   var block = Block.fromBlockData({
     header: {
@@ -39,9 +39,10 @@ export function sendTx (vm, from, to, value, data, cb) {
   }
 }
 
-function createVm (hardfork) {
+async function createVm (hardfork) {
   const common = new Common({ chain: 'mainnet', hardfork })
   const vm = new VM({ common })   
+  await vm.init()
   // vm.blockchain.validate = false
   return { vm, stateManager: vm.stateManager }
 }
@@ -49,12 +50,11 @@ function createVm (hardfork) {
 /*
   Init VM / Send Transaction
 */
-export function initVM (st, privateKey) {
-  var VM = createVm('berlin')
+export async function initVM (st, privateKey) {
+  var VM = await createVm('berlin')
   const vm = VM.vm
 
-  var address = utileth.privateToAddress(privateKey)
-
+  var address = utileth.Address.fromPrivateKey(privateKey)
   vm.stateManager.getAccount(address).then((account) => {    
     account.balance = new BN('f00000000000000001', 16)
     vm.stateManager.putAccount(address, account).catch((error) => {
