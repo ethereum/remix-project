@@ -217,7 +217,7 @@ export class Web3VmProvider {
             this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
           } catch (e) {
             console.log(e)
-          }          
+          }
         }
       }
     }
