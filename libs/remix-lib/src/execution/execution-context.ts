@@ -31,32 +31,32 @@ class StateManagerCommonStorageDump extends StateManager {
     this.keyHashes = {}
   }
 
-S
-putContractStorage (address, key, value) {
-  this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
-  return super.putContractStorage(address, key, value)
-}
 
-dumpStorage (address) {
-  return new Promise<StorageDump>((resolve, reject) => {
-    this._getStorageTrie(address).then((trie) => {
-      const storage = {}
-      const stream = trie.createReadStream()
-      stream.on('data', (val) => {
-        const value = rlp.decode(val.value)
-        storage['0x' + val.key.toString('hex')] = {
-          key: this.keyHashes[val.key.toString('hex')],
-          value: '0x' + value.toString('hex')
-        }
+  putContractStorage (address, key, value) {
+    this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
+    return super.putContractStorage(address, key, value)
+  }
+
+  dumpStorage (address) {
+    return new Promise<StorageDump>((resolve, reject) => {
+      this._getStorageTrie(address).then((trie) => {
+        const storage = {}
+        const stream = trie.createReadStream()
+        stream.on('data', (val) => {
+          const value = rlp.decode(val.value)
+          storage['0x' + val.key.toString('hex')] = {
+            key: this.keyHashes[val.key.toString('hex')],
+            value: '0x' + value.toString('hex')
+          }
+        })
+        stream.on('end', function () {
+          resolve(storage)
+        })
+      }).catch((error) => {
+        reject(error)
       })
-      stream.on('end', function () {
-        resolve(storage)
-      })
-    }).catch((error) => {
-      reject(error)
     })
-  })
-}
+  }
 
 async getStateRoot (force: boolean = false): Promise<Buffer> {
   if (!force && this._checkpointCount !== 0) {
