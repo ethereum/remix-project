@@ -74,14 +74,17 @@ export class Web3VmProvider {
   setVM (vm) {
     if (this.vm === vm) return
     this.vm = vm
-    this.vm.on('step', (data) => {
-      this.pushTrace(data)
+    this.vm.on('step', async (data, next) => {
+      await this.pushTrace(data)
+      next()
     })
-    this.vm.on('afterTx', (data) => {
-      this.txProcessed(data)
+    this.vm.on('afterTx', async (data, next) => {
+      await this.txProcessed(data)
+      next()
     })
-    this.vm.on('beforeTx', (data) => {
-      this.txWillProcess(data)
+    this.vm.on('beforeTx', async (data, next) => {
+      await this.txWillProcess(data)
+      next()
     })
   }
 
@@ -91,7 +94,7 @@ export class Web3VmProvider {
     return ret
   }
 
-  txWillProcess (data) {
+  async txWillProcess (data) {
     this.incr++
     this.processingHash = hexConvert(data.hash())
     this.vmTraces[this.processingHash] = {
@@ -116,15 +119,18 @@ export class Web3VmProvider {
     this.txsReceipt[this.processingHash] = tx
     this.storageCache[this.processingHash] = {}
     if (data.to) {
-      this.vm.stateManager.dumpStorage(data.to).then((storage) => {
+      try {
+        const storage = await this.vm.stateManager.dumpStorage(data.to)
         this.storageCache[this.processingHash][tx['to']] = storage
         this.lastProcessedStorageTxHash[tx['to']] = this.processingHash
-      })
+      } catch (e) {
+        console.log(e)
+      }
     }
     this.processingIndex = 0
   }
 
-  txProcessed (data) {
+  async txProcessed (data) {
     const lastOp = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
     if (lastOp) {
       lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'thisDESTRUCT'
@@ -168,7 +174,7 @@ export class Web3VmProvider {
     this.previousDepth = 0
   }
 
-  pushTrace (data) {
+  async pushTrace (data) {
     const depth = data.depth + 1 // geth starts the depth from 1
     if (!this.processingHash) {
       console.log('no tx processing')
@@ -205,10 +211,13 @@ export class Web3VmProvider {
         this.processingAddress = toChecksumAddress(this.processingAddress)
         if (!this.storageCache[this.processingHash][this.processingAddress]) {
           const account = Address.fromString(this.processingAddress)
-          this.vm.stateManager.dumpStorage(account).then((storage) => {
+          try {
+            const storage = await this.vm.stateManager.dumpStorage(account)
             this.storageCache[this.processingHash][this.processingAddress] = storage
             this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
-          })
+          } catch (e) {
+            console.log(e)
+          }          
         }
       }
     }
