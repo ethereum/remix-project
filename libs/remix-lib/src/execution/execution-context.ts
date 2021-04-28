@@ -31,7 +31,6 @@ class StateManagerCommonStorageDump extends StateManager {
     this.keyHashes = {}
   }
 
-
   putContractStorage (address, key, value) {
     this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
     return super.putContractStorage(address, key, value)
@@ -58,40 +57,40 @@ class StateManagerCommonStorageDump extends StateManager {
     })
   }
 
-async getStateRoot (force: boolean = false): Promise<Buffer> {
-  if (!force && this._checkpointCount !== 0) {
+  async getStateRoot (force: boolean = false): Promise<Buffer> {
+    if (!force && this._checkpointCount !== 0) {
     // throw new Error('Cannot get state root with uncommitted checkpoints')
+    }
+
+    await this._cache.flush()
+
+    const stateRoot = this._trie.root
+    return stateRoot
   }
 
-  await this._cache.flush()
-
-  const stateRoot = this._trie.root
-  return stateRoot
-}
-
-async setStateRoot (stateRoot: Buffer): Promise<void> {
-  if (this._checkpointCount !== 0) {
+  async setStateRoot (stateRoot: Buffer): Promise<void> {
+    if (this._checkpointCount !== 0) {
     // throw new Error('Cannot set state root with uncommitted checkpoints')
-  }
+    }
 
-  await this._cache.flush()
+    await this._cache.flush()
 
-  if (stateRoot === this._trie.EMPTY_TRIE_ROOT) {
+    if (stateRoot === this._trie.EMPTY_TRIE_ROOT) {
+      this._trie.root = stateRoot
+      this._cache.clear()
+      this._storageTries = {}
+      return
+    }
+
+    const hasRoot = await this._trie.checkRoot(stateRoot)
+    if (!hasRoot) {
+      throw new Error('State trie does not contain state root')
+    }
+
     this._trie.root = stateRoot
     this._cache.clear()
     this._storageTries = {}
-    return
   }
-
-  const hasRoot = await this._trie.checkRoot(stateRoot)
-  if (!hasRoot) {
-    throw new Error('State trie does not contain state root')
-  }
-
-  this._trie.root = stateRoot
-  this._cache.clear()
-  this._storageTries = {}
-}
 }
 
 /*
