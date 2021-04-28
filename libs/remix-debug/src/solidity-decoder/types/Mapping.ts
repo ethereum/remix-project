@@ -2,7 +2,6 @@
 import { RefType } from './RefType'
 import { normalizeHex } from './util'
 import { toBuffer, setLengthLeft, keccak, BN, bufferToHex } from 'ethereumjs-util'
-import { intToBuffer } from 'ethjs-util'
 
 export class Mapping extends RefType {
   keyType
