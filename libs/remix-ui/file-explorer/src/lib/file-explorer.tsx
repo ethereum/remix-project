@@ -368,8 +368,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
       const name = `${parentFolder}/${file.name}`
 
-      filesProvider.exists(name, (error, exist) => {
-        if (error) console.log(error)
+      filesProvider.exists(name).then(exist => {
         if (!exist) {
           loadFile(name)
         } else {
@@ -383,6 +382,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
             fn: () => {}
           })
         }
+      }).catch(error => {
+        if (error) console.log(error)
       })
     })
   }
@@ -730,6 +731,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const renderFiles = (file: File, index: number) => {
+    if (!file || !file.path || typeof file === 'string' || typeof file === 'number' || typeof file === 'boolean') return
     const labelClass = state.focusEdit.element === file.path
       ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1
         ? 'bg-secondary' : state.mouseOverElement === file.path
