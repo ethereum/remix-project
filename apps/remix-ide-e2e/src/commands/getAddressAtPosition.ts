@@ -15,7 +15,7 @@ class GetAddressAtPosition extends EventEmitter {
 }
 
 function getAddressAtPosition (browser: NightwatchBrowser, index: number, callback: (pos: string) => void) {
-  browser.waitForElementPresent('*[data-shared="universalDappUiInstance"]', 60000)
+  browser.waitForElementPresent('*[data-shared="universalDappUiInstance"]')
     .execute(function (index) {
       const deployedContracts = document.querySelectorAll('*[data-shared="universalDappUiInstance"]')
       const id = deployedContracts[index].getAttribute('id')
