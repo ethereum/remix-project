@@ -121,7 +121,7 @@ class FileManager extends Plugin {
     try {
       path = this.limitPluginScope(path)
       const provider = this.fileProviderOf(path)
-      const result = provider.exists(path, () => {})
+      const result = provider.exists(path)
 
       return result
     } catch (e) {

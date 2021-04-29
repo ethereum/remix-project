@@ -36,14 +36,12 @@ module.exports = {
     async.whilst(
       () => { return exist },
       (callback) => {
-        fileProvider.exists(name + counter + prefix + '.' + ext, (error, currentExist) => {
-          if (error) {
-            callback(error)
-          } else {
-            exist = currentExist
-            if (exist) counter = (counter | 0) + 1
-            callback()
-          }
+        fileProvider.exists(name + counter + prefix + '.' + ext).then(currentExist => {
+          exist = currentExist
+          if (exist) counter = (counter | 0) + 1
+          callback()
+        }).catch(error => {
+          if (error) console.log(error)
         })
       },
       (error) => { cb(error, name + counter + prefix + '.' + ext) }
