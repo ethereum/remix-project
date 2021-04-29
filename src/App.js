@@ -27,7 +27,7 @@ function App() {
 
   p.internalEvents.on('chainChanged', (chain) => {
     document.getElementById('chain').innerHTML = chain
-    showButtons(chain)
+    showButtons(true)
   })
 
   p.internalEvents.on('disconnect', (chain) => {
