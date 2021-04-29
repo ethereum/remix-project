@@ -4,6 +4,7 @@ import { EventManager } from '../eventManager'
 import { isContractCreation } from '../trace/traceHelper'
 import { findNodeAtInstructionIndex } from '../source/sourceMappingDecoder'
 import { CodeResolver } from './codeResolver'
+import { TraceManager } from '../trace/traceManager'
 
 /*
   resolve contract code referenced by vmtrace in order to be used by asm listview.
@@ -15,7 +16,7 @@ import { CodeResolver } from './codeResolver'
 export class CodeManager {
   event
   isLoading: boolean
-  traceManager
+  traceManager: TraceManager
   codeResolver
 
   constructor (_traceManager) {
@@ -32,7 +33,8 @@ export class CodeManager {
             return resolve(code)
           })
         })
-      }
+      },
+      fork: this.traceManager.getFork()
     })
   }
 

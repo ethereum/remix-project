@@ -26,7 +26,8 @@ export class Debugger {
     this.debugger = new Ethdebugger({
       web3: options.web3,
       debugWithGeneratedSources: options.debugWithGeneratedSources,
-      compilationResult: this.compilationResult
+      compilationResult: this.compilationResult,
+      fork: options.fork
     })
 
     const { traceManager, callTree, solidityProxy } = this.debugger

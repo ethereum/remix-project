@@ -1,14 +1,23 @@
 'use strict'
-import opcodes from './opcodes'
+import Common from '@ethereumjs/common'
+import { getOpcodesForHF } from '@ethereumjs/vm/dist/evm/opcodes'
 
-export function nameOpCodes (raw) {
+export function nameOpCodes (raw, hardfork) {
+  const common = new Common({ chain: 'mainnet', hardfork })
+  const opcodes = getOpcodesForHF(common)
+
   let pushData = ''
   const codeMap = {}
   const code = []
 
   for (let i = 0; i < raw.length; i++) {
     const pc = i
-    const curOpCode = opcodes(raw[pc], false).name
+    let curOpCode
+    try {
+      curOpCode = opcodes.get(raw[pc]).fullName
+    } catch (e) {
+      curOpCode = 'INVALID'
+    }    
     codeMap[i] = code.length
     // no destinations into the middle of PUSH
     if (curOpCode.slice(0, 4) === 'PUSH') {
@@ -30,9 +39,17 @@ export function nameOpCodes (raw) {
  * information about the opcode.
  */
 export function parseCode (raw) {
+  const common = new Common({ chain: 'mainnet', hardfork: 'berlin' })
+  const opcodes = getOpcodesForHF(common)
+
   const code = []
   for (let i = 0; i < raw.length; i++) {
-    const opcode = opcodes(raw[i], true)
+    let opcode
+    try {
+      opcode = opcodes.get(raw[i]).fullName
+    } catch (e) {
+      opcode = 'INVALID'
+    }
     if (opcode.name.slice(0, 4) === 'PUSH') {
       const length = raw[i] - 0x5f
       opcode['pushData'] = raw.slice(i + 1, i + length + 1)
@@ -60,5 +77,7 @@ export function log (num, base) {
 }
 
 export function roundLog (num, base) {
-  return Math.ceil(this.log(num, base))
+  return Math.ceil(log(num, base))
 }
+
+

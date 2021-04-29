@@ -6,12 +6,14 @@ export class CodeResolver {
   bytecodeByAddress
   instructionsByAddress
   instructionsIndexByBytesOffset
+  fork
 
-  constructor ({ getCode }) {
+  constructor ({ getCode, fork }) {
     this.getCode = getCode
     this.bytecodeByAddress = {} // bytes code by contract addesses
     this.instructionsByAddress = {} // assembly items instructions list by contract addesses
     this.instructionsIndexByBytesOffset = {} // mapping between bytes offset and instructions index.
+    this.fork = fork
   }
 
   clear () {
@@ -39,7 +41,7 @@ export class CodeResolver {
   }
 
   formatCode (hexCode) {
-    const [code, instructionsIndexByBytesOffset] = nameOpCodes(Buffer.from(hexCode.substring(2), 'hex'))
+    const [code, instructionsIndexByBytesOffset] = nameOpCodes(Buffer.from(hexCode.substring(2), 'hex'), this.fork)
     return { code, instructionsIndexByBytesOffset }
   }
 

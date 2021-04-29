@@ -108,8 +108,10 @@ export class ExecutionContext {
   executionContext
   listenOnLastBlockId
   currentFork: string
-  vms
+  defaultFork: string
   mainNetGenesisHash: string
+  stateManager
+  currentVm
 
   constructor () {
     this.event = new EventManager()
@@ -117,16 +119,9 @@ export class ExecutionContext {
     this.executionContext = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = 'berlin'
-    this.vms = {
-      /*
-      byzantium: createVm('byzantium'),
-      constantinople: createVm('constantinople'),
-      petersburg: createVm('petersburg'),
-      istanbul: createVm('istanbul'),
-      */
-      berlin: this.createVm('berlin')
-    }
+    this.defaultFork = 'berlin'
+    this.currentFork = this.defaultFork
+    this.currentVm = this.createVm(this.currentFork)
     this.mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
     this.customNetWorks = {}
     this.blocks = {}
@@ -149,7 +144,7 @@ export class ExecutionContext {
     const vm = new VM({
       common,
       activatePrecompiles: true,
-      stateManager: stateManager
+      stateManager
     })
 
     const web3vm = new Web3VmProvider()
@@ -166,12 +161,16 @@ export class ExecutionContext {
     return this.executionContext
   }
 
+  getCurrentFork () {
+    return this.currentFork
+  }
+
   isVM () {
     return this.executionContext === 'vm'
   }
 
   web3 () {
-    return this.isVM() ? this.vms[this.currentFork].web3vm : web3
+    return this.isVM() ? this.currentVm.web3vm : web3
   }
 
   detectNetwork (callback) {
@@ -227,11 +226,11 @@ export class ExecutionContext {
   }
 
   vm () {
-    return this.vms[this.currentFork].vm
+    return this.currentVm.vm
   }
 
   vmObject () {
-    return this.vms[this.currentFork]
+    return this.currentVm
   }
 
   setContext (context, endPointUrl, confirmCb, infoCb) {
@@ -239,15 +238,21 @@ export class ExecutionContext {
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
   }
 
-  executionContextChange (context, endPointUrl, confirmCb, infoCb, cb) {
+  executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
+    const context = value.context
+    const fork = value.fork || this.defaultFork
     if (!cb) cb = () => {}
     if (!confirmCb) confirmCb = () => {}
     if (!infoCb) infoCb = () => {}
     if (context === 'vm') {
       this.executionContext = context
+      this.currentFork = fork
+      this.currentVm = this.createVm(fork)
       this.event.trigger('contextChanged', ['vm'])
       return cb()
     }
+
+    this.currentFork = this.defaultFork
 
     if (context === 'injected') {
       if (injectedProvider === undefined) {
@@ -269,7 +274,7 @@ export class ExecutionContext {
 
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
-      this.setProviderFromEndpoint(network.provider, network.name, (error) => {
+      this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
         if (error) infoCb(error)
         cb()
       })
@@ -306,9 +311,10 @@ export class ExecutionContext {
 
   // TODO: remove this when this function is moved
 
-  setProviderFromEndpoint (endpoint, context, cb) {
+  setProviderFromEndpoint (endpoint, value, cb) {
     const oldProvider = web3.currentProvider
-
+    const context = value.context
+    
     web3.setProvider(endpoint)
 
     web3.eth.net.isListening((err, isConnected) => {

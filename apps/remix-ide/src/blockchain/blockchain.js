@@ -212,6 +212,10 @@ class Blockchain {
     return this.executionContext.getProvider()
   }
 
+  getFork () {
+    return this.executionContext.getCurrentFork()
+  }
+
   isWeb3Provider () {
     const isVM = this.getProvider() === 'vm'
     const isInjected = this.getProvider() === 'injected'
