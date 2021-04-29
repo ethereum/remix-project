@@ -26,7 +26,7 @@ module.exports = {
   'Test Failed Import': function (browser: NightwatchBrowser) {
     browser.addFile('Untitled3.sol', sources[2]['Untitled3.sol'])
       .clickLaunchIcon('solidity')
-      .assert.containsText('#compileTabView .error pre', 'not found Untitled11.sol')
+      .assert.containsText('#compileTabView .error pre', 'not found default_workspace/Untitled11.sol')
   },
 
   'Test Github Import - from master branch': function (browser: NightwatchBrowser) {
