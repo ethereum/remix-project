@@ -166,6 +166,19 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     }
 
     const web3 = await debuggerModule.getDebugWeb3()
+    try {
+      if (await web3.eth.net.getId() === 42) {
+        setState(prevState => {
+          return {
+            ...prevState,
+            validationError: `The Kovan network is unfortunately not supported.`
+          }
+        })
+        return
+      }
+    } catch (e) {
+      console.error(e)
+    }
     let currentReceipt
     try {
       currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
