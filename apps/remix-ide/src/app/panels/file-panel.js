@@ -32,7 +32,7 @@ const modalDialogCustom = require('../ui/modal-dialog-custom')
 */
 
 const profile = {
-  name: 'fileExplorers',
+  name: 'filePanel',
   displayName: 'File explorers',
   methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace'],
   events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace'],
