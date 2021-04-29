@@ -245,11 +245,6 @@ export class ExecutionContext {
     if (!infoCb) infoCb = () => {}
     if (context === 'vm') {
       this.executionContext = context
-      /*
-      this.vms[this.currentFork].stateManager.revert().then(() => {
-        this.vms[this.currentFork].stateManager.checkpoint()
-      })
-      */
       this.event.trigger('contextChanged', ['vm'])
       return cb()
     }
