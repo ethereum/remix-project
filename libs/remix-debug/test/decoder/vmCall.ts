@@ -43,7 +43,6 @@ async function createVm (hardfork) {
   const common = new Common({ chain: 'mainnet', hardfork })
   const vm = new VM({ common })   
   await vm.init()
-  // vm.blockchain.validate = false
   return { vm, stateManager: vm.stateManager }
 }
 
