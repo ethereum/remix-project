@@ -109,7 +109,6 @@ export class Web3VmProvider {
       tx['to'] = toChecksumAddress(data.to.toString())
     }
     this.processingAddress = tx['to']
-    // tx['data'] = hexConvert(data.data)
     tx['input'] = hexConvert(data.data)
     tx['gas'] = data.gasLimit.toString(10)
     if (data.value) {
