@@ -229,7 +229,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
   /** these are called by the react component, action is already finished whent it's called */
   async setWorkspace (workspace) {
-    this._deps.fileManager.removeTabsOf(this._deps.fileProviders.workspace)
+    this._deps.fileManager.closeAllFiles()
     if (workspace.isLocalhost) {
       this.call('manager', 'activatePlugin', 'remixd')
     } else if (await this.call('manager', 'isActive', 'remixd')) {
