@@ -234,7 +234,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     const fileManager = state.fileManager
 
     try {
-      const newName = await helper.checkNonClashingNameAsync(newFilePath, fileManager)
+      const newName = await helper.createNonClashingNameAsync(newFilePath, fileManager)
       const createFile = await fileManager.writeFile(newName, '')
 
       if (!createFile) {
