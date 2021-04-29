@@ -50,7 +50,7 @@ module.exports = {
   createNonClashingName (name, fileProvider, cb) {
     this.createNonClashingNameWithPrefix(name, fileProvider, '', cb)
   },
-  async checkNonClashingNameAsync (name, fileManager, prefix = '') {
+  async createNonClashingNameAsync (name, fileManager, prefix = '') {
     if (!name) name = 'Undefined'
     let counter = ''
     let ext = 'sol'
