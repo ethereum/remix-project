@@ -7,6 +7,7 @@ import { util } from '@remix-project/remix-lib'
 
 export class TraceManager {
   web3
+  fork: string
   isLoading: boolean
   trace
   traceCache
@@ -16,6 +17,7 @@ export class TraceManager {
 
   constructor (options) {
     this.web3 = options.web3
+    this.fork = options.fork
     this.isLoading = false
     this.trace = null
     this.traceCache = new TraceCache()
@@ -68,6 +70,10 @@ export class TraceManager {
   init () {
     this.trace = null
     this.traceCache.init()
+  }
+
+  getFork () {
+    return this.fork
   }
 
   // API section

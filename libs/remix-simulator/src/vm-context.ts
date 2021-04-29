@@ -91,24 +91,18 @@ export class VMContext {
   blocks
   latestBlockNumber
   txs
-  vms
+  defaultFork
+  currentVm
   web3vm
   logsManager
   exeResults
 
-  constructor () {
+  constructor (fork?) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = 'berlin'
-    this.vms = {
-      /*
-      byzantium: createVm('byzantium'),
-      constantinople: createVm('constantinople'),
-      petersburg: createVm('petersburg'),
-      istanbul: createVm('istanbul'),
-      */
-      berlin: this.createVm('berlin')
-    }
+    this.defaultFork = fork || 'berlin'
+    this.currentFork = this.defaultFork
+    this.currentVm = this.createVm(this.currentFork)
     this.blocks = {}
     this.latestBlockNumber = 0
     this.txs = {}
@@ -122,7 +116,7 @@ export class VMContext {
     const vm = new VM({
       common,
       activatePrecompiles: true,
-      stateManager: stateManager,
+      stateManager,
       allowUnlimitedContractSize: true
     })
 
@@ -131,8 +125,12 @@ export class VMContext {
     return { vm, web3vm, stateManager, common }
   }
 
+  getCurrentFork () {
+    return this.currentFork
+  }
+
   web3 () {
-    return this.vms[this.currentFork].web3vm
+    return this.currentVm.web3vm
   }
 
   blankWeb3 () {
@@ -140,11 +138,11 @@ export class VMContext {
   }
 
   vm () {
-    return this.vms[this.currentFork].vm
+    return this.currentVm.vm
   }
 
   vmObject () {
-    return this.vms[this.currentFork]
+    return this.currentVm
   }
 
   addBlock (block) {
