@@ -27,7 +27,7 @@ function testConstantFunction (browser: NightwatchBrowser, address: string, fnFu
   })
     .click('.instance button[title="' + fnFullName + '"]')
     .pause(1000)
-    .waitForElementPresent('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
+    .waitForElementPresent('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]', 60000)
     .scrollInto('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
     .assert.containsText('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]', expectedOutput).perform(() => {
       cb()

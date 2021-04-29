@@ -80,7 +80,7 @@ function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFuncti
     .getText('div[class^="terminal"]', (value) => {
       console.log('value: ', value)
     })
-    .assert.containsText('div[class^="terminal"]', '<address> is not a valid address')
+    .waitForElementContainsText('div[class^="terminal"]', '<address> is not a valid address', 60000)
     .perform(() => { callback() })
 }
 
@@ -100,14 +100,14 @@ function checkDeployShouldSucceed (browser: NightwatchBrowser, address: string, 
     .clickLaunchIcon('udapp')
     .selectContract('test') // deploy lib
     .createContract('')
-    .getAddressAtPosition(1, (address) => {
+    .getAddressAtPosition(0, (address) => {
       addressRef = address
     })
-    .waitForElementPresent('.instance:nth-of-type(3)')
-    .click('.instance:nth-of-type(3) > div > button')
+    .waitForElementPresent('.instance')
+    .click('.instance > div > button')
     .perform(() => {
       browser
-        .testConstantFunction(addressRef, 'get - call', null, '0:\nuint256: 45')
+        .testConstantFunction(addressRef, 'getInt - call', null, '0:\nuint256: 45')
         .perform(() => { callback() })
     })
 }
