@@ -33,7 +33,7 @@ module.exports = {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
       .addFile('Untitled4.sol', sources[3]['Untitled4.sol'])
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .verifyContracts(['test7', 'ERC20'], { wait: 10000 })
   },
 
@@ -41,36 +41,36 @@ module.exports = {
     browser
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js') // switch back to 0.5.0 : release-v2.3.0 branch is not solidity 0.6 compliant
       .addFile('Untitled5.sol', sources[4]['Untitled5.sol'])
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .verifyContracts(['test8', 'ERC20', 'SafeMath'], { wait: 10000 })
   },
 
   'Test Github Import - no branch specified': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled6.sol', sources[5]['Untitled6.sol'])
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .verifyContracts(['test10', 'ERC20'], { wait: 10000 })
   },
 
   'Test Github Import - raw URL': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled7.sol', sources[6]['Untitled7.sol'])
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .verifyContracts(['test11', 'ERC20'], { wait: 10000 })
   },
 
   'Test switch to a github import from a solidity warning': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.7.4+commit.3f05b770.js')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled8.sol', sources[7]['Untitled8.sol'])
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .clickLaunchIcon('solidity')
       .waitForElementVisible('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]', 120000)
       .scrollAndClick('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]') // click on error which point to ERC20 code
@@ -81,10 +81,10 @@ module.exports = {
   'Test NPM Import (with unpkg.com)': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.1+commit.df193b15.js')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled9.sol', sources[8]['Untitled9.sol'])
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .verifyContracts(['test13', 'ERC20'], { wait: 30000 })
       .end()
   }

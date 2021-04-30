@@ -14,8 +14,8 @@ module.exports = {
   },
 
   'Should launch solidity unit test plugin': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-      .clickLaunchIcon('fileExplorers')
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .clickLaunchIcon('filePanel')
       .addFile('simple_storage.sol', sources[0]['simple_storage.sol'])
       .addFile('ks2a.sol', sources[0]['ks2a.sol'])
       .clickLaunchIcon('pluginManager')
@@ -26,21 +26,21 @@ module.exports = {
   },
 
   'Should generate test file': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-      .clickLaunchIcon('fileExplorers')
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .clickLaunchIcon('filePanel')
       .openFile('simple_storage.sol')
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
       .click('*[data-id="testTabGenerateTestFile"]')
       .waitForElementPresent('*[title="tests/simple_storage_test.sol"]')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .pause(10000)
       .openFile('tests/simple_storage_test.sol')
       .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },
 
   'Should run simple unit test `simple_storage_test.sol` ': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/simple_storage_test.sol', sources[0]['tests/simple_storage_test.sol'])
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
@@ -57,8 +57,8 @@ module.exports = {
   },
 
   'Should run advance unit test using natspec and experimental ABIEncoderV2 `ks2b_test.sol` ': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-      .clickLaunchIcon('fileExplorers')
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .clickLaunchIcon('filePanel')
       .addFile('tests/ks2b_test.sol', sources[0]['tests/ks2b_test.sol'])
       .click('*[data-id="verticalIconsKindsolidityUnitTesting"]')
       .waitForElementPresent('*[data-id="testTabCheckAllTests"]')
@@ -77,7 +77,7 @@ module.exports = {
   },
 
   'Should stop unit tests during test execution` ': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .waitForElementPresent('*[data-id="testTabRunTestsTabRunAction"]')
       .clickElementAtPosition('.singleTestLabel', 0)
       .clickElementAtPosition('.singleTestLabel', 1)
@@ -92,9 +92,9 @@ module.exports = {
   },
 
   'Should fail on compilation': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/compilationError_test.sol', sources[0]['compilationError_test.sol'])
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .openFile('tests/compilationError_test.sol')
       .clickLaunchIcon('solidityUnitTesting')
       .click('*[data-id="testTabCheckAllTests"]')
@@ -105,9 +105,9 @@ module.exports = {
   },
 
   'Should fail on deploy': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/deployError_test.sol', sources[0]['tests/deployError_test.sol'])
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .openFile('tests/deployError_test.sol')
       .clickLaunchIcon('solidityUnitTesting')
       .click('*[data-id="testTabCheckAllTests"]')
@@ -117,9 +117,9 @@ module.exports = {
   },
 
   'Should fail when parameters are to method in test contract': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+    browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/methodFailure_test.sol', sources[0]['tests/methodFailure_test.sol'])
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .openFile('tests/methodFailure_test.sol')
       .clickLaunchIcon('solidityUnitTesting')
       .click('*[data-id="testTabCheckAllTests"]')
@@ -130,7 +130,7 @@ module.exports = {
 
   'Changing current path': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('myTests/simple_storage_test.sol', sources[0]['tests/simple_storage_test.sol'])
       .clickLaunchIcon('solidityUnitTesting')
       .setValue('*[data-id="uiPathInput"]', 'myTests')
@@ -151,8 +151,8 @@ module.exports = {
 
 function runTests (browser: NightwatchBrowser) {
   browser
-    .waitForElementPresent('*[data-id="verticalIconsKindfileExplorers"]')
-    .clickLaunchIcon('fileExplorers')
+    .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+    .clickLaunchIcon('filePanel')
     .click('*[data-id="treeViewLitreeViewItemcontracts"]')
     .openFile('contracts/3_Ballot.sol')
     .clickLaunchIcon('solidityUnitTesting')
