@@ -128,7 +128,7 @@ export class TabProxy extends Plugin {
           () => this.event.emit('switchApp', name),
           () => {
             this.event.emit('closeApp', name)
-            this.appManager.deactivatePlugin(name)
+            this.call('manager', 'deactivatePlugin', name)
           },
           icon
         )
