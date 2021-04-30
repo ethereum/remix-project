@@ -22,7 +22,7 @@ module.exports = {
       .pause(8000)
       .getModalBody((value, done) => {
         if (value.indexOf('Metadata of "ballot" was published successfully.') === -1) browser.assert.fail('ipfs deploy failed', '', '')
-        if (value.indexOf('dweb:/ipfs') === -1) browser.assert.fail('ipfs deploy failed', '', '')
+        if (value.indexOf('ipfs://') === -1) browser.assert.fail('ipfs deploy failed', '', '')
         done()
       })
       .modalFooterOKClick()
