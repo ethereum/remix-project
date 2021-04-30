@@ -182,7 +182,7 @@ export const fileRenamedSuccess = (path: string, removePath: string, files) => {
 export const init = (provider, workspaceName: string, plugin, registry) => (dispatch: React.Dispatch<any>) => {
   if (provider) {
     provider.event.register('fileAdded', async (filePath) => {
-      const path = extractParentFromKey(filePath) || workspaceName
+      const path = extractParentFromKey(filePath) ? extractParentFromKey(filePath) === '/.workspaces' ? workspaceName : extractParentFromKey(filePath) : workspaceName
       const data = await fetchDirectoryContent(provider, path)
 
       dispatch(fileAddedSuccess(path, data))
@@ -191,7 +191,7 @@ export const init = (provider, workspaceName: string, plugin, registry) => (disp
       }
     })
     provider.event.register('folderAdded', async (folderPath) => {
-      const path = extractParentFromKey(folderPath) || workspaceName
+      const path = extractParentFromKey(folderPath) ? extractParentFromKey(folderPath) === '/.workspaces' ? workspaceName : extractParentFromKey(folderPath) : workspaceName
       const data = await fetchDirectoryContent(provider, path)
 
       dispatch(folderAddedSuccess(path, data))
