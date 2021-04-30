@@ -51,7 +51,7 @@ module.exports = {
       .click('*[data-id="universalDappUiUdappClose"]')
       .addFile('ballot.abi', { content: ballotABI })
       .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
       .pause(500)
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)

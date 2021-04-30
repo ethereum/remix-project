@@ -9,7 +9,7 @@ const _paq = window._paq = window._paq || []
 const requiredModules = [ // services + layout views + system views
   'manager', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
   'fileManager', 'contentImport', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'fileExplorers', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp']
+  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp']
 
 const dependentModules = ['git'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
