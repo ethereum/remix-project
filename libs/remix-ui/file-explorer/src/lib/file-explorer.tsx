@@ -240,7 +240,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
       if (!createFile) {
         return toast('Failed to create file ' + newName)
       } else {
-        await fileManager.open(newName)
+        const path = newName.indexOf(props.name + '/') === 0 ? newName.replace(props.name + '/', '') : newName
+
+        await fileManager.open(path)
         setState(prevState => {
           return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
         })
@@ -557,6 +559,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleClickFile = (path: string) => {
+    path = path.indexOf(props.name + '/') === 0 ? path.replace(props.name + '/', '') : path
     state.fileManager.open(path)
     setState(prevState => {
       return { ...prevState, focusElement: [{ key: path, type: 'file' }] }
