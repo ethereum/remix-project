@@ -108,7 +108,7 @@ class PluginManagerComponent extends ViewPlugin {
   }
 
   deactivateP (name) {
-    this.appManager.deactivatePlugin(name)
+    this.call('manager', 'deactivatePlugin', name)
     _paq.push(['trackEvent', 'manager', 'deactivate', name])
   }
 
