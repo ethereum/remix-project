@@ -320,6 +320,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           className="text-break break-word word-break font-weight-bold"
           id="staticAnalysisCurrentFile"
         >
+          {state.file}
         </span>
       </div>
       { categoryIndex.length > 0 && Object.entries(warningState).length > 0 &&
