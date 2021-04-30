@@ -136,6 +136,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async initWorkspace () {
+    this.renderComponent()
     const queryParams = new QueryParams()
     const gistHandler = new GistHandler()
     const params = queryParams.get()
@@ -203,13 +204,13 @@ module.exports = class Filepanel extends ViewPlugin {
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
     else {
-      this._deps.fileProviders.workspace.setWorkspace(workspaceName)
-      const browserProvider = this._deps.fileProviders.browser
-      const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+      const workspaceProvider = this._deps.fileProviders.workspace
       await this.processCreateWorkspace(workspaceName)
+      workspaceProvider.setWorkspace(workspaceName)
+      await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
       for (const file in examples) {
         try {
-          await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
+          await workspaceProvider.set(examples[file].name, examples[file].content)
         } catch (error) {
           console.error(error)
         }
