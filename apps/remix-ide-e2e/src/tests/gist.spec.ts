@@ -64,7 +64,7 @@ module.exports = {
   'Load Gist Modal': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
       .waitForElementVisible('*[data-id="modalDialogModalTitle"]')
       .assert.containsText('*[data-id="modalDialogModalTitle"]', 'Load a Gist')
@@ -77,7 +77,7 @@ module.exports = {
   'Display Error Message For Invalid Gist ID': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
       .setValue('*[data-id="modalDialogCustomPromptText"]', testData.invalidGistId)
@@ -93,7 +93,7 @@ module.exports = {
       .clickLaunchIcon('settings')
       .waitForElementVisible('[data-id="settingsTabRemoveGistToken"]')
       .click('[data-id="settingsTabRemoveGistToken"]')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
       .waitForElementVisible('*[data-id="default_workspaceModalDialogContainer-react"]')
@@ -113,7 +113,7 @@ module.exports = {
       .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
       .setValue('[data-id="settingsTabGistAccessToken"]', process.env.gist_token)
       .click('[data-id="settingsTabSaveGistToken"]')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
       .setValue('*[data-id="modalDialogCustomPromptText"]', testData.validGistId)
