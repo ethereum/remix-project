@@ -11,7 +11,7 @@ module.exports = {
 
   'Should zoom in editor': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('contracts')
       .openFile('contracts/1_Storage.sol')
