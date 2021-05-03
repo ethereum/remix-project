@@ -53,8 +53,6 @@ module.exports = class TestTab extends ViewPlugin {
 
   listenToEvents () {
     this.filePanel.event.register('newTestFileCreated', file => {
-      console.log('newTestFileCreated')
-
       var testList = this._view.el.querySelector("[class^='testList']")
       var test = this.createSingleTest(file)
       testList.appendChild(test)
@@ -62,7 +60,7 @@ module.exports = class TestTab extends ViewPlugin {
       this.data.selectedTests.push(file)
     })
 
-    this.on('fileExplorers', 'setWorkspace', async () => {
+    this.on('filePanel', 'setWorkspace', () => {
       this.testTabLogic.setCurrentPath(this.defaultPath)
       this.inputPath.value = this.defaultPath
       this.updateForNewCurrent()
