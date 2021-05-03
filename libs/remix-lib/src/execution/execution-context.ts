@@ -25,7 +25,10 @@ if (typeof window !== 'undefined' && typeof window['ethereum'] !== 'undefined') 
 */
 
 class StateManagerCommonStorageDump extends StateManager {
-  keyHashes
+  /*
+   * dictionary containing keccak(b) as key and b as value. used to get the initial value from its hash
+   */
+  keyHashes: { [key: string]: string }
   constructor () {
     super()
     this.keyHashes = {}
