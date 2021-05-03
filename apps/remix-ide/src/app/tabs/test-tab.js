@@ -53,11 +53,19 @@ module.exports = class TestTab extends ViewPlugin {
 
   listenToEvents () {
     this.filePanel.event.register('newTestFileCreated', file => {
+      console.log('newTestFileCreated')
+
       var testList = this._view.el.querySelector("[class^='testList']")
       var test = this.createSingleTest(file)
       testList.appendChild(test)
       this.data.allTests.push(file)
       this.data.selectedTests.push(file)
+    })
+
+    this.on('fileExplorers', 'setWorkspace', async () => {
+      this.testTabLogic.setCurrentPath(this.defaultPath)
+      this.inputPath.value = this.defaultPath
+      this.updateForNewCurrent()
     })
 
     this.fileManager.events.on('noFileSelected', () => {
@@ -67,7 +75,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateForNewCurrent (file) {
-    this.updateGenerateFileAction(file)
+    this.updateGenerateFileAction()
     if (!this.areTestsRunning) this.updateRunAction(file)
     this.updateTestFileList()
     this.testTabLogic.getTests((error, tests) => {
@@ -462,7 +470,7 @@ module.exports = class TestTab extends ViewPlugin {
     runBtn.setAttribute('disabled', 'disabled')
   }
 
-  updateGenerateFileAction (currentFile) {
+  updateGenerateFileAction () {
     const el = yo`
       <button
         class="btn border w-50"
@@ -588,7 +596,7 @@ module.exports = class TestTab extends ViewPlugin {
     if (testDirInput) {
       if (testDirInput.endsWith('/')) {
         // check if the options list already contains the options
-        if (this.testTabLogic.currentPath === testDirInput) {
+        if (this.testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
           this.createTestFolder.disabled = true
           this.updateGenerateFileAction().disabled = true
         }
