@@ -39,10 +39,16 @@ class StateManagerCommonStorageDump extends StateManager {
     return super.putContractStorage(address, key, value)
   }
 
-  dumpStorage (address) {
-    return new Promise<StorageDump>(async (resolve, reject) => {
+  async dumpStorage (address) {
+    let trie
+    try {
+      trie = await this._getStorageTrie(address)
+    } catch (e) {
+      console.log(e)
+      throw e
+    }
+    return new Promise<StorageDump>((resolve, reject) => {
       try {
-        const trie = await this._getStorageTrie(address) 
         const storage = {}
         const stream = trie.createReadStream()
         stream.on('data', (val) => {
