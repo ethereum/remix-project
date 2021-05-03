@@ -144,6 +144,24 @@ module.exports = {
       .click('*[data-id="testTabGenerateTestFolder"]')
   },
 
+  'Changing current path when workspace changed': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .clickLaunchIcon('solidityUnitTesting')
+      .clearValue('*[data-id="uiPathInput"]')
+      .setValue('*[data-id="uiPathInput"]', 'tests1')
+      .click('*[data-id="testTabGenerateTestFolder"]')
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspaceCreate"]') // create workspace_name
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
+      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .clickLaunchIcon('solidityUnitTesting')
+      .assert.containsText('*[data-id="uiPathInput"]', 'tests')
+  },
+
+
   'Solidity Unittests': function (browser: NightwatchBrowser) {
     runTests(browser)
   }

@@ -595,7 +595,6 @@ module.exports = class TestTab extends ViewPlugin {
 
     if (testDirInput) {
       if (testDirInput.endsWith('/')) {
-        // check if the options list already contains the options
         if (this.testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
           this.createTestFolder.disabled = true
           this.updateGenerateFileAction().disabled = true
@@ -603,7 +602,7 @@ module.exports = class TestTab extends ViewPlugin {
         this.updateDirList(testDirInput)
       } else {
         // If there is no matching folder in the workspace with entered text, enable Create button
-        if (this.pathAdded(testDirInput)) {
+        if (this.testTabLogic.pathExists(testDirInput)) {
           this.createTestFolder.disabled = true
           this.updateGenerateFileAction().disabled = false
         } else {
