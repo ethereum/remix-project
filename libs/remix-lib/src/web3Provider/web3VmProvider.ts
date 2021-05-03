@@ -1,6 +1,6 @@
-import { hexConvert, hexListFromBNs, formatMemory } from '../util'
+import { hexListFromBNs, formatMemory } from '../util'
 import { normalizeHexAddress } from '../helpers/uiHelper'
-import { toChecksumAddress, BN, toBuffer } from 'ethereumjs-util'
+import { toChecksumAddress, BN, bufferToHex, Address } from 'ethereumjs-util'
 import Web3 from 'web3'
 
 export class Web3VmProvider {
@@ -74,14 +74,17 @@ export class Web3VmProvider {
   setVM (vm) {
     if (this.vm === vm) return
     this.vm = vm
-    this.vm.on('step', (data) => {
-      this.pushTrace(data)
+    this.vm.on('step', async (data, next) => {
+      await this.pushTrace(data)
+      next()
     })
-    this.vm.on('afterTx', (data) => {
-      this.txProcessed(data)
+    this.vm.on('afterTx', async (data, next) => {
+      await this.txProcessed(data)
+      next()
     })
-    this.vm.on('beforeTx', (data) => {
-      this.txWillProcess(data)
+    this.vm.on('beforeTx', async (data, next) => {
+      await this.txWillProcess(data)
+      next()
     })
   }
 
@@ -91,9 +94,9 @@ export class Web3VmProvider {
     return ret
   }
 
-  txWillProcess (data) {
+  async txWillProcess (data) {
     this.incr++
-    this.processingHash = hexConvert(data.hash())
+    this.processingHash = bufferToHex(data.hash())
     this.vmTraces[this.processingHash] = {
       gas: '0x0',
       return: '0x0',
@@ -101,31 +104,32 @@ export class Web3VmProvider {
     }
     const tx = {}
     tx['hash'] = this.processingHash
-    tx['from'] = toChecksumAddress(hexConvert(data.getSenderAddress()))
-    if (data.to && data.to.length) {
-      tx['to'] = toChecksumAddress(hexConvert(data.to))
+    tx['from'] = toChecksumAddress(data.getSenderAddress().toString())
+    if (data.to) {
+      tx['to'] = toChecksumAddress(data.to.toString())
     }
     this.processingAddress = tx['to']
-    tx['data'] = hexConvert(data.data)
-    tx['input'] = hexConvert(data.input)
-    tx['gas'] = (new BN(hexConvert(data.gas).replace('0x', ''), 16)).toString(10)
+    tx['input'] = bufferToHex(data.data)
+    tx['gas'] = data.gasLimit.toString(10)
     if (data.value) {
-      tx['value'] = hexConvert(data.value)
+      tx['value'] = data.value.toString(10)
     }
     this.txs[this.processingHash] = tx
     this.txsReceipt[this.processingHash] = tx
     this.storageCache[this.processingHash] = {}
-    if (tx['to']) {
-      const account = toBuffer(tx['to'])
-      this.vm.stateManager.dumpStorage(account, (storage) => {
+    if (data.to) {
+      try {
+        const storage = await this.vm.stateManager.dumpStorage(data.to)
         this.storageCache[this.processingHash][tx['to']] = storage
         this.lastProcessedStorageTxHash[tx['to']] = this.processingHash
-      })
+      } catch (e) {
+        console.log(e)
+      }
     }
     this.processingIndex = 0
   }
 
-  txProcessed (data) {
+  async txProcessed (data) {
     const lastOp = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
     if (lastOp) {
       lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'thisDESTRUCT'
@@ -156,11 +160,11 @@ export class Web3VmProvider {
     this.txsReceipt[this.processingHash].status = `0x${status}`
 
     if (data.createdAddress) {
-      const address = hexConvert(data.createdAddress)
+      const address = data.createdAddress.toString()
       this.vmTraces[this.processingHash].return = toChecksumAddress(address)
       this.txsReceipt[this.processingHash].contractAddress = toChecksumAddress(address)
     } else if (data.execResult.returnValue) {
-      this.vmTraces[this.processingHash].return = hexConvert(data.execResult.returnValue)
+      this.vmTraces[this.processingHash].return = bufferToHex(data.execResult.returnValue)
     } else {
       this.vmTraces[this.processingHash].return = '0x'
     }
@@ -169,7 +173,7 @@ export class Web3VmProvider {
     this.previousDepth = 0
   }
 
-  pushTrace (data) {
+  async pushTrace (data) {
     const depth = data.depth + 1 // geth starts the depth from 1
     if (!this.processingHash) {
       console.log('no tx processing')
@@ -205,11 +209,14 @@ export class Web3VmProvider {
         this.processingAddress = normalizeHexAddress(step.stack[step.stack.length - 2])
         this.processingAddress = toChecksumAddress(this.processingAddress)
         if (!this.storageCache[this.processingHash][this.processingAddress]) {
-          const account = toBuffer(this.processingAddress)
-          this.vm.stateManager.dumpStorage(account, (storage) => {
+          const account = Address.fromString(this.processingAddress)
+          try {
+            const storage = await this.vm.stateManager.dumpStorage(account)
             this.storageCache[this.processingHash][this.processingAddress] = storage
             this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
-          })
+          } catch (e) {
+            console.log(e)
+          }
         }
       }
     }
@@ -227,9 +234,10 @@ export class Web3VmProvider {
 
   getCode (address, cb) {
     address = toChecksumAddress(address)
-    const account = toBuffer(address)
-    this.vm.stateManager.getContractCode(account, (error, result) => {
-      cb(error, hexConvert(result))
+    this.vm.stateManager.getContractCode(Address.fromString(address)).then((result) => {
+      cb(null, bufferToHex(result))
+    }).catch((error) => {
+      cb(error)
     })
   }
 
