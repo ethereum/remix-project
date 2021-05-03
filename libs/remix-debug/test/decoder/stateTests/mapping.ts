@@ -6,10 +6,10 @@ import { sendTx, initVM } from '../vmCall'
 import { StorageResolver } from '../../../src/storage/storageResolver'
 import { StorageViewer } from '../../../src/storage/storageViewer'
 
-module.exports = function testMappingStorage (st, cb) {
+module.exports = async function testMappingStorage (st, cb) {
   var mappingStorage = require('../contracts/mappingStorage')
   var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
-  var vm = initVM(st, privateKey)
+  var vm = await initVM(st, privateKey)
   var output = compile(compilerInput(mappingStorage.contract))
   output = JSON.parse(output)
   sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, txHash) {

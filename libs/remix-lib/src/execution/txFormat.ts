@@ -309,7 +309,7 @@ export function deployLibrary (libraryName, libraryShortName, library, contracts
     }, callbackStep, callbackDeployLibrary)
   } else {
     callbackStep(`creation of library ${libraryName} pending...`)
-    const data = { dataHex: bytecode, funAbi: { type: 'constructor' }, funArgs: [], contractBytecode: bytecode, contractName: libraryShortName }
+    const data = { dataHex: bytecode, funAbi: { type: 'constructor' }, funArgs: [], contractBytecode: bytecode, contractName: libraryShortName, contractABI: library.abi }
     callbackDeployLibrary({ data: data, useCall: false }, (err, txResult) => {
       if (err) {
         return callback(err)
