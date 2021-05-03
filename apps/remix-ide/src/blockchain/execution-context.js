@@ -2,11 +2,6 @@
 'use strict'
 import Web3 from 'web3'
 import EventManager from '../lib/events'
-import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
-import { Web3VmProvider } from '../web3Provider/web3VmProvider'
-import VM from '@ethereumjs/vm'
-import Common from '@ethereumjs/common'
-import StateManager from '@ethereumjs/vm/dist/state/stateManager'
 
 let web3
 
@@ -15,82 +10,6 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
   web3 = new Web3(injectedProvider)
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-}
-
-/*
-  extend vm state manager and instanciate VM
-*/
-
-class StateManagerCommonStorageDump extends StateManager {
-  
-  constructor () {
-    super()
-    /*
-     * dictionary containing keccak(b) as key and b as value. used to get the initial value from its hash.
-     * type:  { [key: string]: string }
-     */
-    this.keyHashes = {}
-  }
-
-  putContractStorage (address, key, value) {
-    this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
-    return super.putContractStorage(address, key, value)
-  }
-
-  async dumpStorage (address) {
-    let trie
-    try {
-      trie = await this._getStorageTrie(address)
-    } catch (e) {
-      console.log(e)
-      throw e
-    }
-    return new Promise((resolve, reject) => {
-      try {
-        const storage = {}
-        const stream = trie.createReadStream()
-        stream.on('data', (val) => {
-          const value = rlp.decode(val.value)
-          storage['0x' + val.key.toString('hex')] = {
-            key: this.keyHashes[val.key.toString('hex')],
-            value: '0x' + value.toString('hex')
-          }
-        })
-        stream.on('end', function () {
-          resolve(storage)
-        })
-      } catch (e) {
-        reject(e)
-      }
-    })
-  }
-
-  async getStateRoot (force = false) {
-    await this._cache.flush()
-
-    const stateRoot = this._trie.root
-    return stateRoot
-  }
-
-  async setStateRoot (stateRoot) {
-    await this._cache.flush()
-
-    if (stateRoot === this._trie.EMPTY_TRIE_ROOT) {
-      this._trie.root = stateRoot
-      this._cache.clear()
-      this._storageTries = {}
-      return
-    }
-
-    const hasRoot = await this._trie.checkRoot(stateRoot)
-    if (!hasRoot) {
-      throw new Error('State trie does not contain state root')
-    }
-
-    this._trie.root = stateRoot
-    this._cache.clear()
-    this._storageTries = {}
-  }
 }
 
 /*
@@ -103,15 +22,6 @@ export class ExecutionContext {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = 'berlin'
-    this.vms = {
-      /*
-      byzantium: createVm('byzantium'),
-      constantinople: createVm('constantinople'),
-      petersburg: createVm('petersburg'),
-      istanbul: createVm('istanbul'),
-      */
-      berlin: this.createVm('berlin')
-    }
     this.mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
     this.customNetWorks = {}
     this.blocks = {}
@@ -127,20 +37,6 @@ export class ExecutionContext {
       this.executionContext = injectedProvider ? 'injected' : 'vm'
       if (this.executionContext === 'injected') this.askPermission()
     }
-  }
-
-  createVm (hardfork) {
-    const stateManager = new StateManagerCommonStorageDump()
-    const common = new Common({ chain: 'mainnet', hardfork })
-    const vm = new VM({
-      common,
-      activatePrecompiles: true,
-      stateManager: stateManager
-    })
-
-    const web3vm = new Web3VmProvider()
-    web3vm.setVM(vm)
-    return { vm, web3vm, stateManager, common }
   }
 
   askPermission () {
@@ -215,14 +111,6 @@ export class ExecutionContext {
 
   blankWeb3 () {
     return new Web3()
-  }
-
-  vm () {
-    return this.vms[this.currentFork].vm
-  }
-
-  vmObject () {
-    return this.vms[this.currentFork]
   }
 
   setContext (context, endPointUrl, confirmCb, infoCb) {

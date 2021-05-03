@@ -40,7 +40,7 @@ export class Transactions {
       }
     }
 
-    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => this.vmContext.vm())
+    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => this.vmContext.vmObject())
     this.txRunnerInstance = new TxRunner(this.txRunnerVMInstance, { runAsync: false })
     this.txRunnerInstance.vmaccounts = accounts
   }
