@@ -54,7 +54,7 @@ class CompilerMetadata extends Plugin {
     const cacheData = {
       _format: this.hardhdatConstants.CACHE_FILE_FORMAT_VERSION
     }
-    let fileContent = await this.fileManager.getFileContent(compiledContract.file)
+    const fileContent = await this.fileManager.getFileContent(compiledContract.file)
     const contentHash = createHash('md5').update(Buffer.from(fileContent)).digest().toString('hex')
     const solcConfig = {
       version: versionString.substring(0, versionString.indexOf('+commit')),
@@ -162,7 +162,6 @@ class CompilerMetadata extends Plugin {
               }
               if (parsedMetadata) provider.set(metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
               if (parsedInput) self.checkHardhatCache(contract, provider, parsedInput, data, parsedMetadata.compiler.version).then(console.log)
-                
 
               var evmData = {
                 deploy,
