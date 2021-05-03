@@ -1,6 +1,6 @@
-import { hexConvert, hexListFromBNs, formatMemory } from '../util'
+import { hexListFromBNs, formatMemory } from '../util'
 import { normalizeHexAddress } from '../helpers/uiHelper'
-import { toChecksumAddress, BN, toBuffer, Address } from 'ethereumjs-util'
+import { toChecksumAddress, BN, bufferToHex, Address } from 'ethereumjs-util'
 import Web3 from 'web3'
 
 export class Web3VmProvider {
@@ -96,7 +96,7 @@ export class Web3VmProvider {
 
   async txWillProcess (data) {
     this.incr++
-    this.processingHash = hexConvert(data.hash())
+    this.processingHash = bufferToHex(data.hash())
     this.vmTraces[this.processingHash] = {
       gas: '0x0',
       return: '0x0',
@@ -109,7 +109,7 @@ export class Web3VmProvider {
       tx['to'] = toChecksumAddress(data.to.toString())
     }
     this.processingAddress = tx['to']
-    tx['input'] = hexConvert(data.data)
+    tx['input'] = bufferToHex(data.data)
     tx['gas'] = data.gasLimit.toString(10)
     if (data.value) {
       tx['value'] = data.value.toString(10)
@@ -164,7 +164,7 @@ export class Web3VmProvider {
       this.vmTraces[this.processingHash].return = toChecksumAddress(address)
       this.txsReceipt[this.processingHash].contractAddress = toChecksumAddress(address)
     } else if (data.execResult.returnValue) {
-      this.vmTraces[this.processingHash].return = hexConvert(data.execResult.returnValue)
+      this.vmTraces[this.processingHash].return = bufferToHex(data.execResult.returnValue)
     } else {
       this.vmTraces[this.processingHash].return = '0x'
     }
@@ -235,7 +235,7 @@ export class Web3VmProvider {
   getCode (address, cb) {
     address = toChecksumAddress(address)
     this.vm.stateManager.getContractCode(Address.fromString(address)).then((result) => {
-      cb(null, hexConvert(result))
+      cb(null, bufferToHex(result))
     }).catch((error) => {
       cb(error)
     })
