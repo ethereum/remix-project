@@ -13,7 +13,6 @@ import { StorageDump } from '@ethereumjs/vm/dist/state/interface'
 */
 
 class StateManagerCommonStorageDump extends StateManager {
-
   keyHashes: { [key: string]: string }
   constructor () {
     super()
