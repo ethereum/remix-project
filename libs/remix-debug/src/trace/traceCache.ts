@@ -104,7 +104,7 @@ export class TraceCache {
       address: address,
       key: key,
       value: value,
-      hashedKey: sha3_256(key)
+      hashedKey: key && sha3_256(key)
     }
     this.storageChanges.push(index)
   }

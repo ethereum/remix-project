@@ -31,6 +31,9 @@ export class Blocks {
       blockIndex = this.executionContext.latestBlockNumber
     }
 
+    if (Number.isInteger(blockIndex)) {
+      blockIndex = '0x' + blockIndex.toString(16)
+    }
     const block = this.executionContext.blocks[blockIndex]
 
     if (!block) {
@@ -57,7 +60,6 @@ export class Blocks {
       transactions: block.transactions.map((t) => '0x' + t.hash().toString('hex')),
       uncles: []
     }
-
     cb(null, b)
   }
 

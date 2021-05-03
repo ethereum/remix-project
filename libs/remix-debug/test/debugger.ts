@@ -148,48 +148,50 @@ contract Ballot {
         winnerName_ = proposals[winningProposal()].name;
     }
 }
-`
+`;
 
-var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
-var vm = vmCall.initVM(privateKey)
-var output = compiler.compile(compilerInput(ballot))
-output = JSON.parse(output)
-var web3VM = new remixLib.vm.Web3VMProvider()
-web3VM.setVM(vm)
-const param = '0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000148656c6c6f20576f726c64210000000000000000000000000000000000000000'
-vmCall.sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['Ballot'].evm.bytecode.object + param, (error, txHash) => {
-  console.log(error, txHash)
-  if (error) {
-    throw error
-  } else {
-    web3VM.eth.getTransaction(txHash, (error, tx) => {
-      if (error) {
-        throw error
-      } else {
-        var debugManager = new Debugger({
-          compilationResult: function () {
-            return { data: output }
-          },
-          web3: web3VM
-        })
-
-        debugManager.callTree.event.register('callTreeReady', () => {
-          testDebugging(debugManager)
-        })
-        debugManager.callTree.event.register('callTreeNotReady', (error) => {
-          console.error(error)
+(async () => {
+  var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
+  var vm = await vmCall.initVM(privateKey)
+  var output = compiler.compile(compilerInput(ballot))
+  output = JSON.parse(output)
+  var web3VM = new remixLib.vm.Web3VMProvider()
+  web3VM.setVM(vm)
+  const param = '0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000148656c6c6f20576f726c64210000000000000000000000000000000000000000'
+  vmCall.sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['Ballot'].evm.bytecode.object + param, (error, txHash) => {
+    console.log(error, txHash)
+    if (error) {
+      throw error
+    } else {
+      web3VM.eth.getTransaction(txHash, (error, tx) => {
+        if (error) {
           throw error
-        })
-        debugManager.callTree.event.register('callTreeBuildFailed', (error) => {
-          console.error(error)
-          throw error
-        })
-
-        debugManager.debug(tx)
-      }
-    })
-  }
-})
+        } else {
+          var debugManager = new Debugger({
+            compilationResult: function () {
+              return { data: output }
+            },
+            web3: web3VM
+          })
+  
+          debugManager.callTree.event.register('callTreeReady', () => {
+            testDebugging(debugManager)
+          })
+          debugManager.callTree.event.register('callTreeNotReady', (error) => {
+            console.error(error)
+            throw error
+          })
+          debugManager.callTree.event.register('callTreeBuildFailed', (error) => {
+            console.error(error)
+            throw error
+          })
+  
+          debugManager.debug(tx)
+        }
+      })
+    }
+  })
+})()
 
 function testDebugging (debugManager) {
   // stack
