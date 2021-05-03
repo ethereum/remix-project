@@ -154,13 +154,17 @@ module.exports = {
       .setValue('*[data-id="uiPathInput"]', 'tests1')
       .click('*[data-id="testTabGenerateTestFolder"]')
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspaceCreate"]') // create workspace_name
+      // creating a new workspace
+      .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
       .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .click('*[data-id="workspacesSelect"] option[value="workspace_new"]')
+      // end of creating
       .clickLaunchIcon('solidityUnitTesting')
-      .assert.containsText('*[data-id="uiPathInput"]', 'tests')
+      .pause(2000)
+      .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
   },
 
   'Solidity Unittests': function (browser: NightwatchBrowser) {
