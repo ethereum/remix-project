@@ -14,7 +14,7 @@ import { BN, bufferToHex, keccak, setLengthLeft, toBuffer } from 'ethereumjs-uti
     ints: IntArray
   */
 
- /**
+/**
    * Converts a hex string to an array of integers.
    */
 export function hexToIntArray (hexString) {
