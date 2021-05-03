@@ -2,61 +2,82 @@
 'use strict'
 import Web3 from 'web3'
 import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
-import { vm, execution } from '@remix-project/remix-lib'
-const EthJSVM = require('ethereumjs-vm').default
-const StateManager = require('ethereumjs-vm/dist/state/stateManager').default
+import { vm as remixLibVm, execution } from '@remix-project/remix-lib'
+import VM from '@ethereumjs/vm'
+import Common from '@ethereumjs/common'
+import StateManager from '@ethereumjs/vm/dist/state/stateManager'
+import { StorageDump } from '@ethereumjs/vm/dist/state/interface'
 
 /*
   extend vm state manager and instanciate VM
 */
 
 class StateManagerCommonStorageDump extends StateManager {
-  constructor (arg) {
-    super(arg)
+
+  keyHashes: { [key: string]: string }
+  constructor () {
+    super()
     this.keyHashes = {}
   }
 
-  putContractStorage (address, key, value, cb) {
+  putContractStorage (address, key, value) {
     this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
-    super.putContractStorage(address, key, value, cb)
+    return super.putContractStorage(address, key, value)
   }
 
-  dumpStorage (address, cb) {
-    this._getStorageTrie(address, (err, trie) => {
-      if (err) {
-        return cb(err)
+  async dumpStorage (address) {
+    let trie
+    try {
+      trie = await this._getStorageTrie(address)
+    } catch (e) {
+      console.log(e)
+      throw e
+    }
+    return new Promise<StorageDump>((resolve, reject) => {
+      try {
+        const storage = {}
+        const stream = trie.createReadStream()
+        stream.on('data', (val) => {
+          const value = rlp.decode(val.value)
+          storage['0x' + val.key.toString('hex')] = {
+            key: this.keyHashes[val.key.toString('hex')],
+            value: '0x' + value.toString('hex')
+          }
+        })
+        stream.on('end', function () {
+          resolve(storage)
+        })
+      } catch (e) {
+        reject(e)
       }
-      const storage = {}
-      const stream = trie.createReadStream()
-      stream.on('data', (val) => {
-        const value = rlp.decode(val.value)
-        storage['0x' + val.key.toString('hex')] = {
-          key: this.keyHashes[val.key.toString('hex')],
-          value: '0x' + value.toString('hex')
-        }
-      })
-      stream.on('end', function () {
-        cb(storage)
-      })
     })
   }
 
-  getStateRoot (cb) {
-    const checkpoint = this._checkpointCount
-    this._checkpointCount = 0
-    super.getStateRoot((err, stateRoot) => {
-      this._checkpointCount = checkpoint
-      cb(err, stateRoot)
-    })
+  async getStateRoot (force = false) {
+    await this._cache.flush()
+
+    const stateRoot = this._trie.root
+    return stateRoot
   }
 
-  setStateRoot (stateRoot, cb) {
-    const checkpoint = this._checkpointCount
-    this._checkpointCount = 0
-    super.setStateRoot(stateRoot, (err) => {
-      this._checkpointCount = checkpoint
-      cb(err)
-    })
+  async setStateRoot (stateRoot) {
+    await this._cache.flush()
+
+    if (stateRoot === this._trie.EMPTY_TRIE_ROOT) {
+      this._trie.root = stateRoot
+      this._cache.clear()
+      this._storageTries = {}
+      return
+    }
+
+    const hasRoot = await this._trie.checkRoot(stateRoot)
+    if (!hasRoot) {
+      throw new Error('State trie does not contain state root')
+    }
+
+    this._trie.root = stateRoot
+    this._cache.clear()
+    this._storageTries = {}
   }
 }
 
@@ -79,7 +100,7 @@ export class VMContext {
   constructor () {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = 'muirGlacier'
+    this.currentFork = 'berlin'
     this.vms = {
       /*
       byzantium: createVm('byzantium'),
@@ -87,7 +108,7 @@ export class VMContext {
       petersburg: createVm('petersburg'),
       istanbul: createVm('istanbul'),
       */
-      muirGlacier: this.createVm('muirGlacier')
+      berlin: this.createVm('berlin')
     }
     this.blocks = {}
     this.latestBlockNumber = 0
@@ -97,22 +118,21 @@ export class VMContext {
   }
 
   createVm (hardfork) {
-    const stateManager = new StateManagerCommonStorageDump({})
-    stateManager.checkpoint(() => {})
-    const ethvm = new EthJSVM({
+    const stateManager = new StateManagerCommonStorageDump()
+    const common = new Common({ chain: 'mainnet', hardfork })
+    const vm = new VM({
+      common,
       activatePrecompiles: true,
-      blockchain: stateManager.blockchain,
-      stateManager: stateManager,
-      hardfork: hardfork
+      stateManager: stateManager
     })
-    ethvm.blockchain.validate = false
-    this.web3vm = new vm.Web3VMProvider()
-    this.web3vm.setVM(ethvm)
-    return { vm: ethvm, web3vm: this.web3vm, stateManager }
+
+    const web3vm = new remixLibVm.Web3VMProvider()
+    web3vm.setVM(vm)
+    return { vm, web3vm, stateManager, common }
   }
 
   web3 () {
-    return this.web3vm
+    return this.vms[this.currentFork].web3vm
   }
 
   blankWeb3 () {
@@ -121,6 +141,10 @@ export class VMContext {
 
   vm () {
     return this.vms[this.currentFork].vm
+  }
+
+  vmObject () {
+    return this.vms[this.currentFork]
   }
 
   addBlock (block) {
@@ -133,7 +157,7 @@ export class VMContext {
     this.blocks[blockNumber] = block
     this.latestBlockNumber = blockNumber
 
-    this.logsManager.checkBlock(blockNumber, block, this.web3vm)
+    this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
   trackTx (tx, block) {
