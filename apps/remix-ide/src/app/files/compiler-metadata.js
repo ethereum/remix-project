@@ -50,18 +50,18 @@ class CompilerMetadata extends Plugin {
     return createHash('md5').update(Buffer.from(json)).digest().toString('hex')
   }
 
-  checkHardhatCache (compiledContract, provider, input, output, versionString) {
+  async checkHardhatCache (compiledContract, provider, input, output, versionString) {
     const cacheData = {
       _format: this.hardhdatConstants.CACHE_FILE_FORMAT_VERSION
     }
-    const fileContent = provider.get(compiledContract.file)
+    let fileContent = await this.fileManager.getFileContent(compiledContract.file)
     const contentHash = createHash('md5').update(Buffer.from(fileContent)).digest().toString('hex')
     const solcConfig = {
       version: versionString.substring(0, versionString.indexOf('+commit')),
       settings: input.settings
     }
-    if (provider.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)) {
-      let cache = provider.get('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
+    if (this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)) {
+      let cache = await this.fileManager.getFileContent('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
       cache = JSON.parse(cache)
       const fileCache = cache[compiledContract.file]
       if (!fileCache || fileCache.contentHash !== contentHash || (solcConfig && !equal(fileCache.solcConfig, solcConfig))) {
@@ -72,7 +72,7 @@ class CompilerMetadata extends Plugin {
           solcConfig,
           artifacts: [compiledContract.name]
         }
-        provider.set('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME, JSON.stringify(cache, null, '\t'))
+        await this.fileManager.setFileContent('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME, JSON.stringify(cache, null, '\t'))
         this.createHardhatArtifacts(compiledContract, provider, input, output, versionString)
       } else { console.log('No compilation needed') }
     } else {
@@ -83,7 +83,7 @@ class CompilerMetadata extends Plugin {
         solcConfig,
         artifacts: [compiledContract.name]
       }
-      provider.set('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME, JSON.stringify(cacheData, null, '\t'))
+      await this.fileManager.setFileContent('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME, JSON.stringify(cacheData, null, '\t'))
       this.createHardhatArtifacts(compiledContract, provider, input, output, versionString)
     }
   }
@@ -160,10 +160,9 @@ class CompilerMetadata extends Plugin {
               } catch (e) {
                 console.log(e)
               }
-              if (parsedMetadata) {
-                provider.set(metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
-                self.checkHardhatCache(contract, provider, parsedInput, data, parsedMetadata.compiler.version)
-              }
+              if (parsedMetadata) provider.set(metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
+              if (parsedInput) self.checkHardhatCache(contract, provider, parsedInput, data, parsedMetadata.compiler.version).then(console.log)
+                
 
               var evmData = {
                 deploy,
