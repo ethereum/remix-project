@@ -42,14 +42,14 @@ async function initVM (privateKey) {
     activatePrecompiles: true
   })
   await vm.init()
-  vm.stateManager.getAccount(address).then((account) => {    
+
+  try {
+    let account = await vm.stateManager.getAccount(address)
     account.balance = new BN('f00000000000000001', 16)
-    vm.stateManager.putAccount(address, account).catch((error) => {
-      console.log(error)
-    })
-  }).catch((error) => {
+    await vm.stateManager.putAccount(address, account)
+  } catch (error) {
     console.log(error)
-  })
+  } 
 
   var web3Provider = new remixLib.vm.Web3VMProvider()
   web3Provider.setVM(vm)
