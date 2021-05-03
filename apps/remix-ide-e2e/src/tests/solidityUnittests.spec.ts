@@ -163,7 +163,6 @@ module.exports = {
       .assert.containsText('*[data-id="uiPathInput"]', 'tests')
   },
 
-
   'Solidity Unittests': function (browser: NightwatchBrowser) {
     runTests(browser)
   }
