@@ -1,10 +1,10 @@
 'use strict'
-var utileth = require('ethereumjs-util')
-var Tx = require('ethereumjs-tx').Transaction
-var Block = require('ethereumjs-block')
-var BN = require('ethereumjs-util').BN
-var remixLib = require('@remix-project/remix-lib')
-var EthJSVM = require('ethereumjs-vm').default
+import { Transaction as Tx } from '@ethereumjs/tx'
+import { Block } from '@ethereumjs/block'
+import { BN, bufferToHex, Address } from 'ethereumjs-util'
+import { vm as remixlibVM } from '@remix-project/remix-lib'
+import VM from '@ethereumjs/vm'
+import Common from '@ethereumjs/common'
 
 export function sendTx (vm, from, to, value, data, cb) {
   var tx = new Tx({
@@ -15,19 +15,19 @@ export function sendTx (vm, from, to, value, data, cb) {
     value: new BN(value, 10),
     data: Buffer.from(data, 'hex')
   })
-  tx.sign(from.privateKey)
-  var block = new Block({
+  tx = tx.sign(from.privateKey)
+
+  var block = Block.fromBlockData({
     header: {
       timestamp: new Date().getTime() / 1000 | 0,
       number: 0
-    },
-    transactions: [],
-    uncleHeaders: []
-  })
+    }
+  }) // still using default common
+
   try {
     vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}).then(function (result) {
       setTimeout(() => {
-        cb(null, utileth.bufferToHex(tx.hash()))
+        cb(null, bufferToHex(tx.hash()))
       }, 500)
     }).catch((error) => {
       console.error(error)
@@ -38,35 +38,31 @@ export function sendTx (vm, from, to, value, data, cb) {
   }
 }
 
-function createVm (hardfork) {
-  // const stateManager = new StateManagerCommonStorageDump({})
-  // stateManager.checkpoint(() => {})
-  const vm = new EthJSVM({
-    activatePrecompiles: true,
-    hardfork
-  })
-  vm.blockchain.validate = false
+async function createVm (hardfork) {
+  const common = new Common({ chain: 'mainnet', hardfork })
+  const vm = new VM({ common })   
+  await vm.init()
   return { vm, stateManager: vm.stateManager }
 }
 
 /*
   Init VM / Send Transaction
 */
-export function initVM (st, privateKey) {
-  var VM = createVm('muirGlacier')
+export async function initVM (st, privateKey) {
+  var VM = await createVm('berlin')
   const vm = VM.vm
 
-  var address = utileth.privateToAddress(privateKey)
+  var address = Address.fromPrivateKey(privateKey)
 
-  vm.stateManager.getAccount(address, (error, account) => {
-    if (error) return console.log(error)
-    account.balance = '0xf00000000000000001'
-    vm.stateManager.putAccount(address, account, function cb (error) {
-      if (error) console.log(error)
-    })
-  })
-
-  var web3Provider = new remixLib.vm.Web3VMProvider()
+  try {
+    let account = await vm.stateManager.getAccount(address)
+    account.balance = new BN('f00000000000000001', 16)
+    await vm.stateManager.putAccount(address, account)
+  } catch (error) {
+    console.log(error)
+  }
+  
+  var web3Provider = new remixlibVM.Web3VMProvider()
   web3Provider.setVM(vm)
   vm.web3 = web3Provider
   return vm
