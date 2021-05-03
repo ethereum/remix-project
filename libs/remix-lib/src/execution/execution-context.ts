@@ -40,8 +40,9 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   dumpStorage (address) {
-    return new Promise<StorageDump>((resolve, reject) => {
-      this._getStorageTrie(address).then((trie) => {
+    return new Promise<StorageDump>(async (resolve, reject) => {
+      try {
+        const trie = await this._getStorageTrie(address) 
         const storage = {}
         const stream = trie.createReadStream()
         stream.on('data', (val) => {
@@ -54,9 +55,9 @@ class StateManagerCommonStorageDump extends StateManager {
         stream.on('end', function () {
           resolve(storage)
         })
-      }).catch((error) => {
-        reject(error)
-      })
+      } catch (e) {
+        reject(e)
+      }
     })
   }
 
