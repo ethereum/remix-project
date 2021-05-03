@@ -62,10 +62,6 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   async getStateRoot (force: boolean = false): Promise<Buffer> {
-    if (!force && this._checkpointCount !== 0) {
-    // throw new Error('Cannot get state root with uncommitted checkpoints')
-    }
-
     await this._cache.flush()
 
     const stateRoot = this._trie.root
@@ -73,10 +69,6 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   async setStateRoot (stateRoot: Buffer): Promise<void> {
-    if (this._checkpointCount !== 0) {
-    // throw new Error('Cannot set state root with uncommitted checkpoints')
-    }
-
     await this._cache.flush()
 
     if (stateRoot === this._trie.EMPTY_TRIE_ROOT) {
