@@ -1,9 +1,8 @@
 'use strict'
-var utileth = require('ethereumjs-util')
-var Tx = require('@ethereumjs/tx').Transaction
+import { Transaction as Tx } from '@ethereumjs/tx'
 import { Block } from '@ethereumjs/block'
-var BN = require('ethereumjs-util').BN
-var remixLib = require('@remix-project/remix-lib')
+import { BN, bufferToHex, Address } from 'ethereumjs-util'
+import { vm as remixlibVM } from '@remix-project/remix-lib'
 import VM from '@ethereumjs/vm'
 import Common from '@ethereumjs/common'
 
@@ -28,7 +27,7 @@ export function sendTx (vm, from, to, value, data, cb) {
   try {
     vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}).then(function (result) {
       setTimeout(() => {
-        cb(null, utileth.bufferToHex(tx.hash()))
+        cb(null, bufferToHex(tx.hash()))
       }, 500)
     }).catch((error) => {
       console.error(error)
@@ -53,7 +52,7 @@ export async function initVM (st, privateKey) {
   var VM = await createVm('berlin')
   const vm = VM.vm
 
-  var address = utileth.Address.fromPrivateKey(privateKey)
+  var address = Address.fromPrivateKey(privateKey)
 
   try {
     let account = await vm.stateManager.getAccount(address)
@@ -63,7 +62,7 @@ export async function initVM (st, privateKey) {
     console.log(error)
   }
   
-  var web3Provider = new remixLib.vm.Web3VMProvider()
+  var web3Provider = new remixlibVM.Web3VMProvider()
   web3Provider.setVM(vm)
   vm.web3 = web3Provider
   return vm
