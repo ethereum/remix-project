@@ -147,7 +147,9 @@ module.exports = {
   'Changing current path when workspace changed': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .clickLaunchIcon('settings')
       .clickLaunchIcon('solidityUnitTesting')
+      .waitForElementPresent('*[data-id="uiPathInput"]', 3000)
       .clearValue('*[data-id="uiPathInput"]')
       .setValue('*[data-id="uiPathInput"]', 'tests1')
       .click('*[data-id="testTabGenerateTestFolder"]')
