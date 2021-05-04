@@ -106,7 +106,7 @@ module.exports = {
     browser
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.6.12+commit.27d51765.js')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemexternalImport.sol"')
       .testContracts('withABIEncoderV2.sol', sources[2]['withABIEncoderV2.sol'], ['test'])
       .clickLaunchIcon('udapp')
@@ -187,7 +187,7 @@ module.exports = {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScript('remix.exeCurrent()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'result { "gas": "0x5863", "return": "0x0000000000000000000000000000000000000000000000000000000000000000", "structLogs":', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'result { "gas": "0x575f", "return": "0x0000000000000000000000000000000000000000000000000000000000000000", "structLogs":', 60000)
   },
 
   'Should call the debugger api: debug': function (browser: NightwatchBrowser) {

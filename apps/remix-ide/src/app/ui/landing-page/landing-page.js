@@ -261,7 +261,7 @@ export class LandingPage extends ViewPlugin {
               } else {
                 try {
                   fileProviders.workspace.addExternal(type + '/' + cleanUrl, content, url)
-                  this.verticalIcons.select('fileExplorers')
+                  this.verticalIcons.select('filePanel')
                 } catch (e) {
                   modalDialogCustom.alert(title, e.message)
                 }
@@ -308,7 +308,7 @@ export class LandingPage extends ViewPlugin {
     }
 
     const createNewFile = () => {
-      this.call('fileExplorers', 'createNewFile')
+      this.call('filePanel', 'createNewFile')
     }
 
     const saveAs = (blob, name) => {
@@ -348,7 +348,7 @@ export class LandingPage extends ViewPlugin {
     }
 
     const uploadFile = (target) => {
-      this.call('fileExplorers', 'uploadFile', target)
+      this.call('filePanel', 'uploadFile', target)
     }
 
     const connectToLocalhost = () => {
@@ -356,7 +356,7 @@ export class LandingPage extends ViewPlugin {
     }
     const importFromGist = () => {
       this.gistHandler.loadFromGist({ gist: '' }, globalRegistry.get('filemanager').api)
-      this.verticalIcons.select('fileExplorers')
+      this.verticalIcons.select('filePanel')
     }
 
     globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {

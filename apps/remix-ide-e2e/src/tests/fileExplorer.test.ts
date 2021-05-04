@@ -17,7 +17,7 @@ module.exports = {
 
   'Should create a new file `5_New_contract.sol` in file explorer': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
       .click('*[data-id="fileExplorerNewFilecreateNewFile"]')

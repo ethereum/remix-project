@@ -47,7 +47,7 @@ module.exports = {
 
   'Should deploy contract on JavascriptVM': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
@@ -95,7 +95,7 @@ module.exports = {
 
   'Should deploy contract on Goerli Test Network using MetaMask': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
@@ -147,7 +147,7 @@ module.exports = {
 
   'Should deploy contract on Ethereum Main Network using MetaMask': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')

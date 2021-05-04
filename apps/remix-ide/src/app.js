@@ -458,7 +458,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
   await appManager.activatePlugin(['home'])
-  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile'])
+  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile'])
 
   const queryParams = new QueryParams()
   const params = queryParams.get()

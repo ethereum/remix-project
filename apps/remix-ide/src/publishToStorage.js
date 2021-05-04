@@ -34,7 +34,7 @@ export default function publish (storage, fileProvider, fileManager, contract) {
             ${err}</span>`)
           } else {
             var result = yo`<div>${uploaded.map((value) => {
-              return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
+              return yo`<div><b>${value.filename}</b> : <pre>${value.output.url.replace('dweb:/ipfs/', 'ipfs://')}</pre></div>`
             })}</div>`
             modalDialogCustom.alert(`Published ${contract.name}'s Metadata`, yo`<span>Metadata of "${contract.name.toLowerCase()}" was published successfully.<br> <pre>${result}</pre> </span>`)
           }
