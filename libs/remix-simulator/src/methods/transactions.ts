@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import { toChecksumAddress, BN } from 'ethereumjs-util'
+import { toChecksumAddress, BN, Address } from 'ethereumjs-util'
 import { processTx } from './txProcess'
 
 export class Transactions {
@@ -98,12 +98,11 @@ export class Transactions {
   eth_getTransactionCount (payload, cb) {
     const address = payload.params[0]
 
-    this.executionContext.vm().stateManager.getAccount(address, (err, account) => {
-      if (err) {
-        return cb(err)
-      }
+    this.executionContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
       const nonce = new BN(account.nonce).toString(10)
       cb(null, nonce)
+    }).catch((error) => {
+      cb(error)
     })
   }
 
