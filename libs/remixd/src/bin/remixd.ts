@@ -16,7 +16,7 @@ async function warnLatestVersion () {
   if (semver.eq(latest, pjson.version)) {
     console.log('\x1b[32m%s\x1b[0m', `[INFO] you are using the latest version ${latest}`)
   } else if (semver.gt(latest, pjson.version)) {
-    console.log('\x1b[33m%s\x1b[0m', `[WARN] latest update is ${latest}, you are using ${pjson.version}`)
+    console.log('\x1b[33m%s\x1b[0m', `[WARN] latest version of remixd is ${latest}, you are using ${pjson.version}`)
     console.log('\x1b[33m%s\x1b[0m', '[WARN] please update using the following command:')
     console.log('\x1b[33m%s\x1b[0m', '[WARN] npm install @remix-project/remixd -g')
   }
