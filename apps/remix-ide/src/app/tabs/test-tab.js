@@ -60,6 +60,12 @@ module.exports = class TestTab extends ViewPlugin {
       this.data.selectedTests.push(file)
     })
 
+    this.on('filePanel', 'setWorkspace', () => {
+      this.testTabLogic.setCurrentPath(this.defaultPath)
+      this.inputPath.value = this.defaultPath
+      this.updateForNewCurrent()
+    })
+
     this.fileManager.events.on('noFileSelected', () => {
     })
 
@@ -67,8 +73,9 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   updateForNewCurrent (file) {
-    this.updateGenerateFileAction(file)
+    this.updateGenerateFileAction()
     if (!this.areTestsRunning) this.updateRunAction(file)
+    this.updateTestFileList()
     this.testTabLogic.getTests((error, tests) => {
       if (error) return tooltip(error)
       this.data.allTests = tests
@@ -415,11 +422,16 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
-  updateCurrentPath (e) {
-    const newValue = e.target.value === '' ? this.defaultPath : e.target.value
-    this.testTabLogic.setCurrentPath(newValue)
+  handleCreateFolder () {
+    this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
+    if (this.inputPath.value === '') this.inputPath.value = this.defaultPath
+    this.testTabLogic.generateTestFolder(this.inputPath.value)
+    this.createTestFolder.disabled = true
+    this.updateGenerateFileAction().disabled = false
+    this.testTabLogic.setCurrentPath(this.inputPath.value)
     this.updateRunAction()
     this.updateForNewCurrent()
+    this.uiPathList.appendChild(yo`<option>${this.inputPath.value}</option>`)
   }
 
   runTests () {
@@ -456,7 +468,7 @@ module.exports = class TestTab extends ViewPlugin {
     runBtn.setAttribute('disabled', 'disabled')
   }
 
-  updateGenerateFileAction (currentFile) {
+  updateGenerateFileAction () {
     const el = yo`
       <button
         class="btn border w-50"
@@ -537,7 +549,7 @@ module.exports = class TestTab extends ViewPlugin {
 
   infoButton () {
     return yo`
-      <a class="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#generate-test-file">
+      <a class="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
         <label class="btn p-1 ml-2 m-0">How to use...</label>
       </a>
     `
@@ -549,19 +561,58 @@ module.exports = class TestTab extends ViewPlugin {
     return yo`<span class='text-info h6'>Progress: ${ready} finished (of ${this.runningTestsNumber})</span>`
   }
 
-  updateDirList () {
-    for (var o of this.uiPathList.querySelectorAll('option')) o.remove()
-    this.testTabLogic.dirList('/').then((options) => {
+  updateDirList (path) {
+    for (const o of this.uiPathList.querySelectorAll('option')) o.remove()
+    this.testTabLogic.dirList(path).then((options) => {
       options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
     })
-    /*
-      It is not possible anymore to see folder from outside of the current workspace
-      if (this.inputPath.value) {
-        this.testTabLogic.dirList(this.inputPath.value).then((options) => {
-          options.forEach((path) => this.uiPathList.appendChild(yo`<option>${path}</option>`))
-        })
+  }
+
+  trimTestDirInput (input) {
+    if (input.includes('/')) return input.split('/').map(e => e.trim()).join('/')
+    else return input.trim()
+  }
+
+  pathAdded (text) {
+    for (const option of this.uiPathList.querySelectorAll('option')) {
+      if (option.innerHTML === text) return true
+    }
+    return false
+  }
+
+  async handleTestDirInput (e) {
+    const testDirInput = this.trimTestDirInput(this.inputPath.value)
+    if (e.key === 'Enter') {
+      this.inputPath.value = this.trimTestDirInput(testDirInput)
+      if (await this.testTabLogic.pathExists(testDirInput)) {
+        this.testTabLogic.setCurrentPath(testDirInput)
+        this.updateForNewCurrent()
+        return
       }
-    */
+    }
+
+    if (testDirInput) {
+      if (testDirInput.endsWith('/')) {
+        if (this.testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
+          this.createTestFolder.disabled = true
+          this.updateGenerateFileAction().disabled = true
+        }
+        this.updateDirList(testDirInput)
+      } else {
+        // If there is no matching folder in the workspace with entered text, enable Create button
+        if (this.testTabLogic.pathExists(testDirInput)) {
+          this.createTestFolder.disabled = true
+          this.updateGenerateFileAction().disabled = false
+        } else {
+          // Enable Create button
+          this.createTestFolder.disabled = false
+          // Disable Generate button because dir is not existing
+          this.updateGenerateFileAction().disabled = true
+        }
+      }
+    } else {
+      this.updateDirList('/')
+    }
   }
 
   render () {
@@ -578,27 +629,40 @@ module.exports = class TestTab extends ViewPlugin {
       data-id="uiPathInput"
       name="utPath"
       style="background-image: var(--primary);"
-      onkeydown=${(e) => { if (e.keyCode === 191) this.updateDirList() }}
-      onchange=${(e) => this.updateCurrentPath(e)}/>`
+      onkeyup=${(e) => this.handleTestDirInput(e)}
+      onchange=${(e) => {
+        if (this.createTestFolder.disabled) {
+          this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
+          if (this.testTabLogic.pathExists(this.inputPath.value)) {
+            this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
+            this.testTabLogic.setCurrentPath(this.inputPath.value)
+            this.updateForNewCurrent()
+          }
+        }
+      }}
+    />`
 
-    const createTestFolder = yo`<button
-      class="btn border ml-2"
-      data-id="testTabGenerateTestFolder"
-      title="Create a test folder"
-      onclick=${(e) => { this.testTabLogic.generateTestFolder(this.inputPath.value) }}>
-      Create
-      </button>`
+    this.createTestFolder = yo`
+      <button
+        class="btn border ml-2"
+        data-id="testTabGenerateTestFolder"
+        title="Create a test folder"
+        disabled=true
+        onclick=${(e) => this.handleCreateFolder()}>
+        Create
+      </button>
+    `
 
     const availablePaths = yo`
       <div>
-          <div class="d-flex p-2">
-            ${this.inputPath}
-            ${createTestFolder}
-            ${this.uiPathList}
-          </div>
+        <div class="d-flex p-2">
+          ${this.inputPath}
+          ${this.createTestFolder}
+          ${this.uiPathList}
+        </div>
       </div>
     `
-    this.updateDirList()
+    this.updateDirList('/')
     this.testsExecutionStopped.hidden = true
     this.testsExecutionStoppedError.hidden = true
     this.resultStatistics = this.createResultLabel()

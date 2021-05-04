@@ -21,6 +21,13 @@ class TestTabLogic {
     fileProvider.exists(path, (e, res) => { if (!res) fileProvider.createDir(path) })
   }
 
+  pathExists (path) {
+    // Checking to ignore the value which contains only whitespaces
+    if (!path || !(/\S/.test(path))) return
+    const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
+    return fileProvider.exists(path, (e, res) => { return res })
+  }
+
   generateTestFile () {
     let fileName = this.fileManager.currentFile()
     const hasCurrent = !!fileName && this.fileManager.currentFile().split('.').pop().toLowerCase() === 'sol'
