@@ -54,7 +54,7 @@ function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS
     }).parse(process.argv)
   // eslint-disable-next-line
 
-  warnLatestVersion()
+  await warnLatestVersion()
 
   if (!program.remixIde) {
     console.log('\x1b[33m%s\x1b[0m', '[WARN] You can only connect to remixd from one of the supported origins.')
