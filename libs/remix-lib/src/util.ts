@@ -1,5 +1,5 @@
 'use strict'
-import { BN, bufferToHex, keccak, setLengthLeft } from 'ethereumjs-util'
+import { BN, bufferToHex, keccak, setLengthLeft, toBuffer } from 'ethereumjs-util'
 
 /*
  contains misc util: @TODO should be splitted
@@ -13,18 +13,6 @@ import { BN, bufferToHex, keccak, setLengthLeft } from 'ethereumjs-util'
 /*
     ints: IntArray
   */
-export function hexConvert (ints) {
-  let ret = '0x'
-  for (let i = 0; i < ints.length; i++) {
-    const h = ints[i]
-    if (h) {
-      ret += (h <= 0xf ? '0' : '') + h.toString(16)
-    } else {
-      ret += '00'
-    }
-  }
-  return ret
-}
 
 /**
    * Converts a hex string to an array of integers.
@@ -57,21 +45,10 @@ export function hexListFromBNs (bnList) {
 }
 
 /*
-  ints: list of IntArrays
-*/
-export function hexListConvert (intsList) {
-  const ret = []
-  for (const k in intsList) {
-    ret.push(this.hexConvert(intsList[k]))
-  }
-  return ret
-}
-
-/*
   ints: ints: IntArray
 */
 export function formatMemory (mem) {
-  const hexMem = this.hexConvert(mem).substr(2)
+  const hexMem = bufferToHex(mem).substr(2)
   const ret = []
   for (let k = 0; k < hexMem.length; k += 32) {
     const row = hexMem.substr(k, 32)
@@ -165,11 +142,8 @@ export function buildCallPath (index, rootCall) {
   */
 // eslint-disable-next-line camelcase
 export function sha3_256 (value) {
-  if (typeof value === 'string' && value.indexOf('0x') !== 0) {
-    value = '0x' + value
-  }
-  const ret: string = bufferToHex(setLengthLeft(value, 32))
-  const retInBuffer: Buffer = keccak(ret)
+  value = toBuffer(value)
+  const retInBuffer: Buffer = keccak(setLengthLeft(value, 32))
   return bufferToHex(retInBuffer)
 }
 

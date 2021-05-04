@@ -49,6 +49,10 @@ export const Workspace = (props: WorkspaceProps) => {
     return createWorkspace()
   }
 
+  props.request.setWorkspace = (workspaceName) => {
+    return setWorkspace(workspaceName)
+  }
+
   props.request.createNewFile = () => {
     if (!state.workspaces.length) createNewWorkspace('default_workspace')
     props.plugin.resetNewFile()

@@ -12,9 +12,9 @@ var structArrayLocalTest = require('./localsTests/structArray')
 var compilerInput = require('../helpers/compilerHelper').compilerInput
 
 tape('solidity', function (t) {
-  t.test('local decoder', function (st) {
+  t.test('local decoder', async function (st) {
     var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
-    var vm = vmCall.initVM(st, privateKey)
+    var vm = await vmCall.initVM(st, privateKey)
     test(st, vm, privateKey)
   })
 })
