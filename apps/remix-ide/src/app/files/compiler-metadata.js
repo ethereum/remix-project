@@ -61,10 +61,7 @@ class CompilerMetadata extends Plugin {
       settings: input.settings
     }
     let cacheExists
-    if (this.fileManager.mode === 'localhost')
-      cacheExists = await this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
-    else 
-      cacheExists = this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
+    if (this.fileManager.mode === 'localhost') { cacheExists = await this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME) } else { cacheExists = this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME) }
     if (cacheExists) {
       let cache = await this.fileManager.getFileContent('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
       cache = JSON.parse(cache)
