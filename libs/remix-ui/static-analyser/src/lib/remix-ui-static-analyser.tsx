@@ -69,23 +69,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     if (autoRun) {
       if (state.data !== null) {
         run(state.data, state.source, state.file)
-    if (autoRun) {
-      const setCompilationResult = async (data, source, file) => {
-        await setResult({ lastCompilationResult: data, lastCompilationSource: source, currentFile: file })
       }
-      if (props.analysisModule) {
-        props.analysisModule.on(
-          'solidity',
-          'compilationFinished',
-          (file, source, languageVersion, data) => {
-            if (languageVersion.indexOf('soljson') !== 0) return
-            setCompilationResult(data, source, file)
-            if (categoryIndex.length > 0) {
-              run(data, source, file)
-            }
-          }
-        }
-      )
     }
     return () => { }
   }, [autoRun, categoryIndex, state])
@@ -104,22 +88,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     )
   }
 
-  const message = (name, warning, more, fileName, locationString) : string => {
-    return (`
-    <span className='d-flex flex-column'>
-    <span className='h6 font-weight-bold'>${name}</span>
-    ${warning}
-    ${more
-      ? (<span><a href={more} target='_blank'>more</a></span>)
-      : (<span> </span>)
-    }
-    <span className="" title={Position in ${fileName}}>Pos: ${locationString}</span>
-    </span>`
-    )
-  }
-
   const run = (lastCompilationResult, lastCompilationSource, currentFile) => {
-    if (autoRun) {
+    if (state.data !== null) {
       if (lastCompilationResult && categoryIndex.length > 0) {
         let warningCount = 0
         const warningMessage = []
@@ -312,7 +282,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
         <div className="d-flex justify-content-between" id="staticanalysisButton">
-        <div className="d-flex justify-content-between">
           <RemixUiCheckbox
             id="checkAllEntries"
             inputType="checkbox"
