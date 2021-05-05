@@ -34,7 +34,7 @@ class DGitProvider extends Plugin {
   }
 
   async getGitConfig () {
-    const workspace = await this.call('fileExplorers', 'getCurrentWorkspace')
+    const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     return {
       fs: window.remixFileSystem,
       dir: `.workspaces/${workspace.name}`
@@ -164,7 +164,7 @@ class DGitProvider extends Plugin {
 
   async push () {
     if (!this.checkIpfsConfig()) return false
-    const workspace = await this.call('fileExplorers', 'getCurrentWorkspace')
+    const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
@@ -187,8 +187,8 @@ class DGitProvider extends Plugin {
     if (!permission) return false
     const cid = cmd.cid
     if (!this.checkIpfsConfig()) return false
-    await this.call('fileExplorers', 'createWorkspace', `workspace_${Date.now()}`, false)
-    const workspace = await this.call('fileExplorers', 'getCurrentWorkspace')
+    await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, false)
+    const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     for await (const file of this.ipfs.get(cid)) {
       file.path = file.path.replace(cid, '')
       if (!file.content) {
@@ -226,10 +226,9 @@ class DGitProvider extends Plugin {
     return true
   }
 
-
   async zip () {
     const zip = new JSZip()
-    const workspace = await this.call('fileExplorers', 'getCurrentWorkspace')
+    const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
