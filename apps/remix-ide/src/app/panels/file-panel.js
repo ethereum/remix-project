@@ -4,7 +4,7 @@ import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
-import * as ethutil from 'ethereumjs-util'
+import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import { checkSpecialChars, checkSlash } from '../../lib/helper'
 var EventManager = require('../../lib/events')
 var { RemixdHandle } = require('../files/remixd-handle.js')
@@ -32,7 +32,7 @@ const modalDialogCustom = require('../ui/modal-dialog-custom')
 */
 
 const profile = {
-  name: 'fileExplorers',
+  name: 'filePanel',
   displayName: 'File explorers',
   methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace'],
   events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace'],
@@ -136,6 +136,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   async initWorkspace () {
+    this.renderComponent()
     const queryParams = new QueryParams()
     const gistHandler = new GistHandler()
     const params = queryParams.get()
@@ -153,7 +154,7 @@ module.exports = class Filepanel extends ViewPlugin {
       try {
         await this.processCreateWorkspace('code-sample')
         this._deps.fileProviders.workspace.setWorkspace('code-sample')
-        var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
+        var hash = bufferToHex(keccakFromString(params.code))
         const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
         const path = fileName
         await this._deps.fileProviders.workspace.set(path, atob(params.code))
@@ -203,13 +204,13 @@ module.exports = class Filepanel extends ViewPlugin {
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
     else {
-      this._deps.fileProviders.workspace.setWorkspace(workspaceName)
-      const browserProvider = this._deps.fileProviders.browser
-      const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
+      const workspaceProvider = this._deps.fileProviders.workspace
       await this.processCreateWorkspace(workspaceName)
+      workspaceProvider.setWorkspace(workspaceName)
+      await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
       for (const file in examples) {
         try {
-          await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
+          await workspaceProvider.set(examples[file].name, examples[file].content)
         } catch (error) {
           console.error(error)
         }

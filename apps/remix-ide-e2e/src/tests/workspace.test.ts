@@ -32,7 +32,7 @@ module.exports = {
 
   'Should create two workspace and switch to the first one': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]') // create workspace_name
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       // eslint-disable-next-line dot-notation
