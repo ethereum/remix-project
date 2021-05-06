@@ -5,11 +5,15 @@ import {
 } from '@remixproject/engine'
 import git from 'isomorphic-git'
 import IpfsHttpClient from 'ipfs-http-client'
-import { saveAs } from 'file-saver'
+import {
+  saveAs
+} from 'file-saver'
 
 const JSZip = require('jszip')
 const path = require('path')
-
+const FormData = require('form-data')
+const axios = require('axios')
+var streamBuffers = require('stream-buffers');
 
 const profile = {
   name: 'dGitProvider',
@@ -17,11 +21,11 @@ const profile = {
   description: '',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pull', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
+  methods: ['init', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pinata', 'pull', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
-  constructor (fileManager) {
+  constructor(fileManager) {
     super(profile)
     this.fileManager = fileManager
     this.ipfsconfig = {
@@ -30,10 +34,9 @@ class DGitProvider extends Plugin {
       protocol: 'https',
       ipfsurl: 'https://ipfsgw.komputing.org/ipfs/'
     }
-
   }
 
-  async getGitConfig () {
+  async getGitConfig() {
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     return {
       fs: window.remixFileSystem,
@@ -41,14 +44,14 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async init () {
+  async init() {
     await git.init({
       ...await this.getGitConfig(),
       defaultBranch: 'main'
     })
   }
 
-  async status (cmd) {
+  async status(cmd) {
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
@@ -56,21 +59,21 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async add (cmd) {
+  async add(cmd) {
     await git.add({
       ...await this.getGitConfig(),
       ...cmd
     })
   }
 
-  async rm (cmd) {
+  async rm(cmd) {
     await git.remove({
       ...await this.getGitConfig(),
       ...cmd
     })
   }
 
-  async checkout (cmd) {
+  async checkout(cmd) {
     await git.checkout({
       ...await this.getGitConfig(),
       ...cmd
@@ -78,7 +81,7 @@ class DGitProvider extends Plugin {
     await this.call('fileManager', 'refresh')
   }
 
-  async log (cmd) {
+  async log(cmd) {
     const status = await git.log({
       ...await this.getGitConfig(),
       ...cmd
@@ -86,7 +89,7 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async branch (cmd) {
+  async branch(cmd) {
     const status = await git.branch({
       ...await this.getGitConfig(),
       ...cmd
@@ -94,21 +97,21 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async currentbranch () {
+  async currentbranch() {
     const name = await git.currentBranch({
       ...await this.getGitConfig()
     })
     return name
   }
 
-  async branches () {
+  async branches() {
     const branches = await git.listBranches({
       ...await this.getGitConfig()
     })
     return branches
   }
 
-  async commit (cmd) {
+  async commit(cmd) {
     await this.init()
     try {
       const sha = await git.commit({
@@ -117,11 +120,10 @@ class DGitProvider extends Plugin {
       })
       await this.call('fileManager', 'refresh')
       return sha
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
-  async lsfiles (cmd) {
+  async lsfiles(cmd) {
     const filesInStaging = await git.listFiles({
       ...await this.getGitConfig(),
       ...cmd
@@ -129,7 +131,7 @@ class DGitProvider extends Plugin {
     return filesInStaging
   }
 
-  async resolveref (cmd) {
+  async resolveref(cmd) {
     const oid = await git.resolveRef({
       ...await this.getGitConfig(),
       ...cmd
@@ -137,7 +139,7 @@ class DGitProvider extends Plugin {
     return oid
   }
 
-  async readblob (cmd) {
+  async readblob(cmd) {
     const readBlobResult = await git.readBlob({
       ...await this.getGitConfig(),
       ...cmd
@@ -145,14 +147,14 @@ class DGitProvider extends Plugin {
     return readBlobResult
   }
 
-  async setIpfsConfig (config) {
+  async setIpfsConfig(config) {
     this.ipfsconfig = config
     return new Promise((resolve, reject) => {
       resolve(this.checkIpfsConfig())
     })
   }
 
-  async checkIpfsConfig () {
+  async checkIpfsConfig() {
     this.ipfs = IpfsHttpClient(this.ipfsconfig)
     try {
       await this.ipfs.config.getAll()
@@ -162,7 +164,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async push () {
+  async push() {
     if (!this.checkIpfsConfig()) return false
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
@@ -182,7 +184,55 @@ class DGitProvider extends Plugin {
     return r.cid.string
   }
 
-  async pull (cmd) {
+  async pinata() {
+    if (!this.checkIpfsConfig()) return false
+    const workspace = await this.call('filePanel', 'getCurrentWorkspace')
+    const files = await this.getDirectory('/')
+    this.filesToSend = []
+
+    const data = new FormData()
+    files.forEach((file) => {
+      const c = window.remixFileSystem.readFileSync(`.workspaces/${workspace.name}/${file}`)
+      var myblob = new Blob([c], {
+        type: 'text/plain'
+      });
+      data.append('file',myblob, {
+        filepath: `.workspaces/${workspace.name}/${file}`
+      })
+    })
+
+    console.log(data)
+
+    const metadata = JSON.stringify({
+      name: `${workspace.name}`,
+      keyvalues: {
+        exampleKey: 'exampleValue'
+      }
+    })
+    data.append('pinataMetadata', metadata)
+    const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS'
+    const pinataApiKey = '124def6d9115e0c2c521'
+    const pinataSecretApiKey = '130c1a8b18fd0c77f9ee8c1614146d277c3def661506dbf1c78618325cc53c8b'
+    await axios
+      .post(url, data, {
+        maxBodyLength: 'Infinity',
+        headers: {
+          'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+          pinata_api_key: pinataApiKey,
+          pinata_secret_api_key: pinataSecretApiKey
+        }
+      })
+      .then(function (response) {
+        console.log(response)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+
+    return 'test'
+  }
+
+  async pull(cmd) {
     const permission = await this.askUserPermission('pull', 'Import multiple files into your workspaces.')
     if (!permission) return false
     const cid = cmd.cid
@@ -209,13 +259,13 @@ class DGitProvider extends Plugin {
     await this.call('fileManager', 'refresh')
   }
 
-  async getItem (name) {
+  async getItem(name) {
     if (typeof window !== 'undefined') {
       return window.localStorage.getItem(name)
     }
   }
 
-  async setItem (name, content) {
+  async setItem(name, content) {
     try {
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(name, content)
@@ -226,7 +276,7 @@ class DGitProvider extends Plugin {
     return true
   }
 
-  async zip () {
+  async zip() {
     const zip = new JSZip()
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
@@ -235,13 +285,15 @@ class DGitProvider extends Plugin {
       const c = window.remixFileSystem.readFileSync(`.workspaces/${workspace.name}/${file}`)
       zip.file(file, c)
     }
-    await zip.generateAsync({ type: 'blob' })
+    await zip.generateAsync({
+        type: 'blob'
+      })
       .then(function (content) {
         saveAs(content, `${workspace.name}.zip`)
       })
   }
 
-  async createDirectories (strdirectories) {
+  async createDirectories(strdirectories) {
     const ignore = ['.', '/.', '']
     if (ignore.indexOf(strdirectories) > -1) return false
     const directories = strdirectories.split('/')
@@ -255,7 +307,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async getDirectory (dir) {
+  async getDirectory(dir) {
     let result = []
     const files = await this.fileManager.readdir(dir)
     const fileArray = normalize(files)
