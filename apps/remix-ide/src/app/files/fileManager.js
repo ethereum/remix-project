@@ -566,6 +566,13 @@ class FileManager extends Plugin {
     return this._deps.filesProviders.workspace
   }
 
+  async sharedFolder () {
+    if (this.mode === 'localhost') {
+      const provider = this.getProvider('localhost')
+      return await provider.sharedFolder()
+    }
+  }
+
   // returns the list of directories inside path
   dirList (path) {
     const dirPaths = []

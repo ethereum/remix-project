@@ -14,7 +14,7 @@ export class RemixdClient extends PluginClient {
 
   constructor (private readOnly = false) {
     super()
-    this.methods = ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir', 'canDeactivate']
+    this.methods = ['folderIsReadOnly', 'resolveDirectory', 'get', 'getAbsoluteSharedFolder', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir', 'canDeactivate']
   }
 
   setWebSocket (websocket: WS): void {
@@ -24,6 +24,10 @@ export class RemixdClient extends PluginClient {
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     if (this.isLoaded) this.emit('rootFolderChanged')
+  }
+
+  getAbsoluteSharedFolder (): string {
+    return utils.absolutePath('./', this.currentSharedFolder)
   }
 
   list (): Filelist {

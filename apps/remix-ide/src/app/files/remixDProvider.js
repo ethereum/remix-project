@@ -112,6 +112,15 @@ module.exports = class RemixDProvider extends FileProvider {
       })
   }
 
+  async sharedFolder () {
+    try {
+      let result = await this._appManager.call('remixd', 'getAbsoluteSharedFolder', {})
+      return result
+    } catch (error) { 
+      throw new Error(error)
+    }
+  }
+
   async set (path, content, cb) {
     if (!this._isReady) return cb && cb('provider not ready')
     const unprefixedpath = this.removePrefix(path)

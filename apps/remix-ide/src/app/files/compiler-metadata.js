@@ -51,6 +51,8 @@ class CompilerMetadata extends Plugin {
   }
 
   async checkHardhatCache (compiledContract, provider, input, output, versionString) {
+    if (this.fileManager.mode === 'localhost')
+      console.log('Absolute shared folder path', await this.fileManager.sharedFolder())
     const cacheData = {
       _format: this.hardhdatConstants.CACHE_FILE_FORMAT_VERSION
     }
@@ -163,7 +165,30 @@ class CompilerMetadata extends Plugin {
                 console.log(e)
               }
               if (parsedMetadata) provider.set(metadataFileName, JSON.stringify(parsedMetadata, null, '\t'))
-              if (parsedInput) self.checkHardhatCache(contract, provider, parsedInput, data, parsedMetadata.compiler.version).then(console.log)
+              if (parsedInput) {
+                // let { outputSelection } = parsedInput.settings
+                // const fields = outputSelection['*']['*']
+                parsedInput.settings = {
+                  "optimizer": {
+                    "enabled": false,
+                    "runs": 200
+                  },
+                  "outputSelection": {
+                    "*": {
+                      "*": [
+                        "abi",
+                        "evm.bytecode",
+                        "evm.deployedBytecode",
+                        "evm.methodIdentifiers"
+                      ],
+                      "": [
+                        "ast"
+                      ]
+                    }
+                  }
+                }
+                self.checkHardhatCache(contract, provider, parsedInput, data, parsedMetadata.compiler.version).then(console.log)
+              }
 
               var evmData = {
                 deploy,
