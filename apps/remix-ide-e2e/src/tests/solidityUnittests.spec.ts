@@ -81,6 +81,7 @@ module.exports = {
       .waitForElementPresent('*[data-id="testTabRunTestsTabRunAction"]')
       .clickElementAtPosition('.singleTestLabel', 0)
       .clickElementAtPosition('.singleTestLabel', 1)
+      .pause(5000)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .pause(5000)
       .click('*[data-id="testTabRunTestsTabStopAction"]')
