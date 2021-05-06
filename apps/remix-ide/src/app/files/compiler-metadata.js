@@ -62,20 +62,19 @@ class CompilerMetadata extends Plugin {
     }
     let cacheExists
     let filepath
-    if (this.fileManager.mode === 'localhost') { 
+    if (this.fileManager.mode === 'localhost') {
       cacheExists = await this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
-      filepath =  await this.fileManager.sharedFolder() + '/' + compiledContract.file
-    } 
-    else { 
-      cacheExists = this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME) 
+      filepath = await this.fileManager.sharedFolder() + '/' + compiledContract.file
+    } else {
+      cacheExists = this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
       filepath = compiledContract.file
     }
     if (cacheExists) {
       let cache = await this.fileManager.getFileContent('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
       cache = JSON.parse(cache)
-      const fileCache = cache['files'][filepath]
+      const fileCache = cache.files[filepath]
       if (!fileCache || fileCache.contentHash !== contentHash || (solcConfig && !equal(fileCache.solcConfig, solcConfig))) {
-        cache['files'][filepath] = {
+        cache.files[filepath] = {
           lastModificationDate: Date.now(),
           contentHash,
           sourceName: compiledContract.file,
@@ -86,7 +85,7 @@ class CompilerMetadata extends Plugin {
         this.createHardhatArtifacts(compiledContract, provider, input, output, versionString)
       } else { console.log('No compilation needed') }
     } else {
-      let fileCache= {} 
+      const fileCache = {}
       fileCache[filepath] = {
         lastModificationDate: Date.now(),
         contentHash,
@@ -94,7 +93,7 @@ class CompilerMetadata extends Plugin {
         solcConfig,
         artifacts: [compiledContract.name]
       }
-      cacheData['files'] = fileCache
+      cacheData.files = fileCache
       await this.fileManager.setFileContent('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME, JSON.stringify(cacheData, null, '\t'))
       this.createHardhatArtifacts(compiledContract, provider, input, output, versionString)
     }
