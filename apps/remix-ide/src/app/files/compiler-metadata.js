@@ -51,7 +51,6 @@ class CompilerMetadata extends Plugin {
   }
 
   async checkHardhatCache (compiledContract, provider, input, output, versionString) {
-    if (this.fileManager.mode === 'localhost') { console.log('Absolute shared folder path', await this.fileManager.sharedFolder()) }
     const cacheData = {
       _format: this.hardhdatConstants.CACHE_FILE_FORMAT_VERSION
     }
@@ -62,13 +61,21 @@ class CompilerMetadata extends Plugin {
       settings: input.settings
     }
     let cacheExists
-    if (this.fileManager.mode === 'localhost') { cacheExists = await this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME) } else { cacheExists = this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME) }
+    let filepath
+    if (this.fileManager.mode === 'localhost') { 
+      cacheExists = await this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
+      filepath =  await this.fileManager.sharedFolder() + '/' + compiledContract.file
+    } 
+    else { 
+      cacheExists = this.fileManager.exists('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME) 
+      filepath = compiledContract.file
+    }
     if (cacheExists) {
       let cache = await this.fileManager.getFileContent('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME)
       cache = JSON.parse(cache)
-      const fileCache = cache[compiledContract.file]
+      const fileCache = cache['files'][filepath]
       if (!fileCache || fileCache.contentHash !== contentHash || (solcConfig && !equal(fileCache.solcConfig, solcConfig))) {
-        cache[compiledContract.file] = {
+        cache['files'][filepath] = {
           lastModificationDate: Date.now(),
           contentHash,
           sourceName: compiledContract.file,
@@ -79,13 +86,15 @@ class CompilerMetadata extends Plugin {
         this.createHardhatArtifacts(compiledContract, provider, input, output, versionString)
       } else { console.log('No compilation needed') }
     } else {
-      cacheData[compiledContract.file] = {
+      let fileCache= {} 
+      fileCache[filepath] = {
         lastModificationDate: Date.now(),
         contentHash,
         sourceName: compiledContract.file,
         solcConfig,
         artifacts: [compiledContract.name]
       }
+      cacheData['files'] = fileCache
       await this.fileManager.setFileContent('cache/' + this.hardhdatConstants.SOLIDITY_FILES_CACHE_FILENAME, JSON.stringify(cacheData, null, '\t'))
       this.createHardhatArtifacts(compiledContract, provider, input, output, versionString)
     }
