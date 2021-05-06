@@ -113,12 +113,7 @@ module.exports = class RemixDProvider extends FileProvider {
   }
 
   async sharedFolder () {
-    try {
-      let result = await this._appManager.call('remixd', 'getAbsoluteSharedFolder', {})
-      return result
-    } catch (error) { 
-      throw new Error(error)
-    }
+    return await this._appManager.call('remixd', 'getAbsoluteSharedFolder', {})
   }
 
   async set (path, content, cb) {

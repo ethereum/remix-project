@@ -51,8 +51,7 @@ class CompilerMetadata extends Plugin {
   }
 
   async checkHardhatCache (compiledContract, provider, input, output, versionString) {
-    if (this.fileManager.mode === 'localhost')
-      console.log('Absolute shared folder path', await this.fileManager.sharedFolder())
+    if (this.fileManager.mode === 'localhost') { console.log('Absolute shared folder path', await this.fileManager.sharedFolder()) }
     const cacheData = {
       _format: this.hardhdatConstants.CACHE_FILE_FORMAT_VERSION
     }
@@ -169,20 +168,20 @@ class CompilerMetadata extends Plugin {
                 // let { outputSelection } = parsedInput.settings
                 // const fields = outputSelection['*']['*']
                 parsedInput.settings = {
-                  "optimizer": {
-                    "enabled": false,
-                    "runs": 200
+                  optimizer: {
+                    enabled: false,
+                    runs: 200
                   },
-                  "outputSelection": {
-                    "*": {
-                      "*": [
-                        "abi",
-                        "evm.bytecode",
-                        "evm.deployedBytecode",
-                        "evm.methodIdentifiers"
+                  outputSelection: {
+                    '*': {
+                      '*': [
+                        'abi',
+                        'evm.bytecode',
+                        'evm.deployedBytecode',
+                        'evm.methodIdentifiers'
                       ],
-                      "": [
-                        "ast"
+                      '': [
+                        'ast'
                       ]
                     }
                   }
