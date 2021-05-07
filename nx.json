@@ -101,6 +101,9 @@
     },
     "remix-ui-checkbox": {
       "tags": []
+    },
+    "remix-ui-settings": {
+      "tags": []
     }
   }
 }
