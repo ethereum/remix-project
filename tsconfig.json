@@ -38,7 +38,8 @@
       "@remix-ui/modal-dialog": ["libs/remix-ui/modal-dialog/src/index.ts"],
       "@remix-ui/toaster": ["libs/remix-ui/toaster/src/index.ts"],
       "@remix-ui/file-explorer": ["libs/remix-ui/file-explorer/src/index.ts"],
-      "@remix-ui/workspace": ["libs/remix-ui/workspace/src/index.ts"]
+      "@remix-ui/workspace": ["libs/remix-ui/workspace/src/index.ts"],
+      "@remix-ui/settings": ["libs/remix-ui/settings/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -95,6 +95,9 @@
     },
     "remix-ui-workspace": {
       "tags": []
+    },
+    "remix-ui-settings": {
+      "tags": []
     }
   }
 }
