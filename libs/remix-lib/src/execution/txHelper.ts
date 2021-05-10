@@ -102,14 +102,10 @@ export function extractSize (type) {
   return size ? size[2] : ''
 }
 
-export function getError (abi, fnName) {
-  return getFromInterface(abi, fnName, 'error')
-}
-
-export function getFromInterface (abi, fnName, type) {
+export function getFunction (abi, fnName) {
   for (let i = 0; i < abi.length; i++) {
     const fn = abi[i]
-    if (fn.type === type && fnName === fn.name + '(' + fn.inputs.map((value) => {
+    if (fn.type === 'function' && fnName === fn.name + '(' + fn.inputs.map((value) => {
       if (value.components) {
         const fullType = this.makeFullTypeDefinition(value)
         return fullType.replace(/tuple/g, '') // return of makeFullTypeDefinition might contain `tuple`, need to remove it cause `methodIdentifier` (fnName) does not include `tuple` keyword
@@ -121,10 +117,6 @@ export function getFromInterface (abi, fnName, type) {
     }
   }
   return null
-}
-
-export function getFunction (abi, fnName) {
-  return getFromInterface(abi, fnName, 'function')
 }
 
 export function getFallbackInterface (abi) {
