@@ -131,6 +131,6 @@ export function checkVMError (txResult, abi) {
     msg = '\tState changes is not allowed in Static Call context\n'
     ret.error = true
   }
-  ret.message = `${error}\n${exceptionError}\n${msg}\Debug the transaction to get more information.`
+  ret.message = `${error}\n${exceptionError}\n${msg}\nDebug the transaction to get more information.`
   return ret
 }
