@@ -75,8 +75,8 @@ class SettingsUI {
       // - not valid (for ex 4345-54)
       // - contains only '0's (for ex 0000) copy past or edit
       valueEl.value = 0
-    }    
-    
+    }
+
     // if giveen value is negative(possible with copy-pasting) set to 0
     if (v.lt(0)) valueEl.value = 0
   }
