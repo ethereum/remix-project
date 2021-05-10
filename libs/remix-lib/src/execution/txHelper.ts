@@ -38,6 +38,11 @@ export function encodeFunctionId (funABI) {
   return abi.getSighash(funABI.name)
 }
 
+export function getFunctionFragment (funABI): ethers.utils.Interface {
+  if (funABI.type === 'fallback' || funABI.type === 'receive') return null
+  return new ethers.utils.Interface([funABI])  
+}
+
 export function sortAbiFunction (contractabi) {
   // Check if function is constant (introduced with Solidity 0.6.0)
   const isConstant = ({ stateMutability }) => stateMutability === 'view' || stateMutability === 'pure'
@@ -97,10 +102,14 @@ export function extractSize (type) {
   return size ? size[2] : ''
 }
 
-export function getFunction (abi, fnName) {
+export function getError (abi, fnName) {
+  return getFromInterface(abi, fnName, 'error')
+}
+
+export function getFromInterface (abi, fnName, type) {
   for (let i = 0; i < abi.length; i++) {
     const fn = abi[i]
-    if (fn.type === 'function' && fnName === fn.name + '(' + fn.inputs.map((value) => {
+    if (fn.type === type && fnName === fn.name + '(' + fn.inputs.map((value) => {
       if (value.components) {
         const fullType = this.makeFullTypeDefinition(value)
         return fullType.replace(/tuple/g, '') // return of makeFullTypeDefinition might contain `tuple`, need to remove it cause `methodIdentifier` (fnName) does not include `tuple` keyword
@@ -111,7 +120,12 @@ export function getFunction (abi, fnName) {
       return fn
     }
   }
-  return null
+  return null 
+}
+
+
+export function getFunction (abi, fnName) {
+  return getFromInterface(abi, fnName, 'function')
 }
 
 export function getFallbackInterface (abi) {
