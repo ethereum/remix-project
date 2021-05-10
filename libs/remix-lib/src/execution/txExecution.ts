@@ -91,14 +91,14 @@ export function checkVMError (txResult, abi) {
     const returnData = txResult.result.execResult.returnValue
     const returnDataHex = returnData.slice(0, 4).toString('hex')
     let customError
-    if (abi) {      
+    if (abi) {
       let decodedCustomErrorInputs
       for (const item of abi) {
         if (item.type === 'error') {
           // ethers doesn't crash anymore if "error" type is specified, but it doesn't extract the errors. see:
           // https://github.com/ethers-io/ethers.js/commit/bd05aed070ac9e1421a3e2bff2ceea150bedf9b7
           // we need here to fake the type, so the "getSighash" function works properly
-          const fn = getFunctionFragment({ ...item, type: 'function', stateMutability: "nonpayable" })
+          const fn = getFunctionFragment({ ...item, type: 'function', stateMutability: 'nonpayable' })
           if (!fn) continue
           const sign = fn.getSighash(item.name)
           if (!sign) continue
@@ -110,9 +110,9 @@ export function checkVMError (txResult, abi) {
         }
       }
       if (decodedCustomErrorInputs) {
-        msg = `\tThe transaction has been reverted to the initial state.\nError provided by the contract:`
+        msg = '\tThe transaction has been reverted to the initial state.\nError provided by the contract:'
         msg += `\n${customError}`
-        msg += `\nParameters:`
+        msg += '\nParameters:'
         msg += `\n${decodedCustomErrorInputs}`
       }
     }
