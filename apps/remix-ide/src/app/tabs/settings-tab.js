@@ -1,11 +1,15 @@
+import React from 'react' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
 import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../package.json'
 import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
 const yo = require('yo-yo')
 const globalRegistry = require('../../global/registry')
+const tooltip = require('../ui/tooltip')
+const copyToClipboard = require('../ui/copy-to-clipboard')
 const EventManager = require('../../lib/events')
 const css = require('./styles/settings-tab-styles')
+const _paq = window._paq = window._paq || []
 
 const profile = {
   name: 'settings',
@@ -45,13 +49,13 @@ module.exports = class SettingsTab extends ViewPlugin {
       generateContractMetadataLabel: null,
       config: {
         general: null, themes: null
-      },
+      },              
       textWrap: null,
       textWrapLabel: null
     } /* eslint-enable */
     this.event = new EventManager()
     this.element = document.createElement('div')
-    this.element.setAttribute('id', 'settings-tab')
+    this.element.setAttribute('id', 'settingsTab')
   }
 
   onActivation () {
@@ -81,6 +85,16 @@ module.exports = class SettingsTab extends ViewPlugin {
     return this.element
   }
 
+  renderComponent () {
+    ReactDOM.render(
+      <RemixUiSettings
+        config = { this.config }
+        editor = { this.editor }
+      />,
+      this.element
+    )
+  }
+
   getGithubAccessToken () {
     return this.config.get('settings/gist-access-token')
   }
@@ -96,13 +110,5 @@ module.exports = class SettingsTab extends ViewPlugin {
       this._view.useMatomoAnalyticsLabel.classList.remove('text-dark')
       this._view.useMatomoAnalyticsLabel.classList.add('text-secondary')
     }
-  }
-
-  renderComponent () {
-    ReactDOM.render(
-      <RemixUiSettings
-      />,
-      this.element
-    )
   }
 }
