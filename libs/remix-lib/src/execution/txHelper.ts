@@ -40,7 +40,7 @@ export function encodeFunctionId (funABI) {
 
 export function getFunctionFragment (funABI): ethers.utils.Interface {
   if (funABI.type === 'fallback' || funABI.type === 'receive') return null
-  return new ethers.utils.Interface([funABI])  
+  return new ethers.utils.Interface([funABI])
 }
 
 export function sortAbiFunction (contractabi) {
@@ -120,9 +120,8 @@ export function getFromInterface (abi, fnName, type) {
       return fn
     }
   }
-  return null 
+  return null
 }
-
 
 export function getFunction (abi, fnName) {
   return getFromInterface(abi, fnName, 'function')
