@@ -118,7 +118,7 @@ export class TxRunner {
     this.executionContext.vm().stateManager.getAccount(Address.fromString(from)).then((res) => {
       // See https://github.com/ethereumjs/ethereumjs-tx/blob/master/docs/classes/transaction.md#constructor
       // for initialization fields and their types
-      value = value ? parseInt(value) : 0
+      value = value ? new BN(value, 10) : 0
       const tx = Transaction.fromTxData({
         nonce: new BN(res.nonce),
         gasPrice: '0x1',
