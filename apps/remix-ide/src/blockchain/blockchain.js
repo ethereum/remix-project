@@ -262,6 +262,10 @@ class Blockchain {
       }
       if (funABI.type === 'fallback') data.dataHex = value
 
+      if (data) {
+        data.contractName = contractName
+        data.contractABI = contractAbi
+      }
       const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
       this.runTx({ to: address, data, useCall }, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
         if (error) {
@@ -477,7 +481,7 @@ class Blockchain {
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
           returnValue = (execResult && isVM) ? execResult.returnValue : txResult
-          const vmError = txExecution.checkVMError(execResult)
+          const vmError = txExecution.checkVMError(execResult, args.data.contractABI)
           if (vmError.error) {
             return cb(vmError.message)
           }
