@@ -82,7 +82,7 @@ module.exports = {
       .clickElementAtPosition('.singleTestLabel', 0)
       .clickElementAtPosition('.singleTestLabel', 1)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .pause(5000)
+      .pause(2000)
       .click('*[data-id="testTabRunTestsTabStopAction"]')
       .waitForElementContainsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping', 60000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/ks2b_test.sol', 120000)
@@ -144,6 +144,29 @@ module.exports = {
       .click('*[data-id="testTabGenerateTestFolder"]')
   },
 
+  'Changing current path when workspace changed': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
+      .clickLaunchIcon('settings')
+      .clickLaunchIcon('solidityUnitTesting')
+      .waitForElementPresent('*[data-id="uiPathInput"]', 3000)
+      .clearValue('*[data-id="uiPathInput"]')
+      .setValue('*[data-id="uiPathInput"]', 'tests1')
+      .click('*[data-id="testTabGenerateTestFolder"]')
+      .clickLaunchIcon('filePanel')
+      // creating a new workspace
+      .click('*[data-id="workspaceCreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_new' })
+      .click('*[data-id="workspacesModalDialogModalDialogModalFooter-react"] .modal-ok')
+      .click('*[data-id="workspacesSelect"] option[value="workspace_new"]')
+      // end of creating
+      .clickLaunchIcon('solidityUnitTesting')
+      .pause(2000)
+      .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
+  },
+
   'Solidity Unittests': function (browser: NightwatchBrowser) {
     runTests(browser)
   }
@@ -157,6 +180,8 @@ function runTests (browser: NightwatchBrowser) {
     .openFile('contracts/3_Ballot.sol')
     .clickLaunchIcon('solidityUnitTesting')
     .pause(500)
+    .setValue('*[data-id="uiPathInput"]', 'tests')
+    .pause(2000)
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
