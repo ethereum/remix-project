@@ -1,3 +1,4 @@
+import { BN } from 'ethereumjs-util'
 const $ = require('jquery')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
@@ -65,14 +66,19 @@ class SettingsUI {
 
   validateValue () {
     const valueEl = this.el.querySelector('#value')
-    valueEl.value = parseInt(valueEl.value)
-    // assign 0 if given value is
-    // - empty
-    // - not valid (for ex 4345-54)
-    // - contains only '0's (for ex 0000) copy past or edit
-    if (!valueEl.value) valueEl.value = 0
+    let v
+    try {
+      v = new BN(valueEl.value, 10)
+    } catch (e) {
+      // assign 0 if given value is
+      // - empty
+      // - not valid (for ex 4345-54)
+      // - contains only '0's (for ex 0000) copy past or edit
+      valueEl.value = 0
+    }    
+    
     // if giveen value is negative(possible with copy-pasting) set to 0
-    if (valueEl.value < 0) valueEl.value = 0
+    if (v.lt(0)) valueEl.value = 0
   }
 
   render () {
