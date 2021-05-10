@@ -25,7 +25,7 @@ class Recorder {
         var record = { value, parameters: payLoad.funArgs }
         if (!to) {
           var abi = payLoad.contractABI
-          var keccak = ethutil.bufferToHex(ethutil.keccak(JSON.stringify(abi)))
+          var keccak = ethutil.bufferToHex(ethutil.keccakFromString(JSON.stringify(abi)))
           record.abi = keccak
           record.contractName = payLoad.contractName
           record.bytecode = payLoad.contractBytecode

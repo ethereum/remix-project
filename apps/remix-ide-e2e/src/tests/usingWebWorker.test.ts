@@ -29,7 +29,7 @@ module.exports = {
   'Using Web Worker': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .addFile('basic.sol', sources[0]['basic.sol'])
       .clickLaunchIcon('solidity')
       .execute(function () {

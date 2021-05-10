@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const { stripHexPrefix, hashPersonalMessage } = require('ethereumjs-util')
+const { hashPersonalMessage } = require('ethereumjs-util')
 
 class InjectedProvider {
   constructor (executionContext) {
@@ -20,7 +20,6 @@ class InjectedProvider {
   }
 
   getBalanceInEther (address, cb) {
-    address = stripHexPrefix(address)
     this.executionContext.web3().eth.getBalance(address, (err, res) => {
       if (err) {
         return cb(err)
