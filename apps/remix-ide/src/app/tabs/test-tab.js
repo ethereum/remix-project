@@ -76,6 +76,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.updateGenerateFileAction()
     if (!this.areTestsRunning) this.updateRunAction(file)
     this.updateTestFileList()
+    this.clearResults()
     this.testTabLogic.getTests((error, tests) => {
       if (error) return tooltip(error)
       this.data.allTests = tests
@@ -434,21 +435,26 @@ module.exports = class TestTab extends ViewPlugin {
     this.uiPathList.appendChild(yo`<option>${this.inputPath.value}</option>`)
   }
 
-  runTests () {
-    this.areTestsRunning = true
-    this.hasBeenStopped = false
-    this.readyTestsNumber = 0
-    this.runningTestsNumber = this.data.selectedTests.length
-    yo.update(this.resultStatistics, this.createResultLabel())
-    const stopBtn = document.getElementById('runTestsTabStopAction')
-    stopBtn.removeAttribute('disabled')
-    const runBtn = document.getElementById('runTestsTabRunAction')
-    runBtn.setAttribute('disabled', 'disabled')
+  clearResults () {
+    yo.update(this.resultStatistics, yo`<span></span>`)
     this.call('editor', 'clearAnnotations')
     this.testsOutput.innerHTML = ''
     this.testsOutput.hidden = true
     this.testsExecutionStopped.hidden = true
     this.testsExecutionStoppedError.hidden = true
+  }
+
+  runTests () {
+    this.areTestsRunning = true
+    this.hasBeenStopped = false
+    this.readyTestsNumber = 0
+    this.runningTestsNumber = this.data.selectedTests.length
+    const stopBtn = document.getElementById('runTestsTabStopAction')
+    stopBtn.removeAttribute('disabled')
+    const runBtn = document.getElementById('runTestsTabRunAction')
+    runBtn.setAttribute('disabled', 'disabled')
+    this.clearResults()
+    yo.update(this.resultStatistics, this.createResultLabel())
     const tests = this.data.selectedTests
     if (!tests) return
     this.resultStatistics.hidden = tests.length === 0

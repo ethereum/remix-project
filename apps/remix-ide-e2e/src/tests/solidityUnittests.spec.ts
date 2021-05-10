@@ -82,7 +82,7 @@ module.exports = {
       .clickElementAtPosition('.singleTestLabel', 0)
       .clickElementAtPosition('.singleTestLabel', 1)
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
-      .pause(5000)
+      .pause(2000)
       .click('*[data-id="testTabRunTestsTabStopAction"]')
       .waitForElementContainsText('*[data-id="testTabRunTestsTabStopAction"]', 'Stopping', 60000)
       .waitForElementContainsText('*[data-id="testTabSolidityUnitTestsOutput"]', '/tests/ks2b_test.sol', 120000)
