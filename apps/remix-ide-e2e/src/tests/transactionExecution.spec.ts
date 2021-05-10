@@ -137,6 +137,22 @@ module.exports = {
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
+  },
+
+  'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal': function (browser: NightwatchBrowser) {
+    browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
+      .clickLaunchIcon('udapp')
+      .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
+      .click('#runTabView button[class^="instanceButton"]')
+      .waitForElementPresent('.instance:nth-of-type(3)')
+      .click('.instance:nth-of-type(3) > div > button')
+      .clickFunction('g - transact (not payable)', { types: '', values: '' })
+      .testFunction('latest', {})
+      .journalLastChildIncludes(`Error provided by the contract:
+      E
+      Parameters:
+      2
+      Debug the transaction to get more information.`)      
       .end()
   }
 }
@@ -217,6 +233,24 @@ pragma solidity >= 0.7.0;
 contract C {
     event Test(function() external);
 }`
+    }
+  },
+  // https://github.com/ethereum/remix-project/issues/1152
+  {
+    'customError.sol': {
+      content: `// SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity ^0.8.4;
+      
+      error E(uint a);
+      contract C {
+          function f() public pure {
+              revert E(2);
+          }
+          function g() public {
+              revert E(2);
+          }          
+      }`
     }
   }
 ]
