@@ -120,14 +120,14 @@ export class TxRunner {
       // for initialization fields and their types
       if (!value) value = 0
       if (typeof value === 'string') {
-        if (value.startsWith('0x')) value =  new BN(value.replace('0x', ''), 'hex')  
+        if (value.startsWith('0x')) value = new BN(value.replace('0x', ''), 'hex')
         else {
           try {
             value = new BN(value, 10)
           } catch (e) {
             return callback('Unable to parse the value ' + e.message)
           }
-        }  
+        }
       }
       const tx = Transaction.fromTxData({
         nonce: new BN(res.nonce),
