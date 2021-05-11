@@ -76,6 +76,7 @@ class SettingsUI {
     let v
     try {
       v = new BN(valueEl.value, 10)
+      valueEl.value = v.toString(10)
     } catch (e) {
       // assign 0 if given value is
       // - not valid (for ex 4345-54)
