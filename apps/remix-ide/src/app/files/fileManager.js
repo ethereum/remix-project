@@ -57,6 +57,11 @@ class FileManager extends Plugin {
     this.mode = mode
   }
 
+  async compileWithHardhat (cmd) {
+    console.log('Inside compileWithHardhat, calling hardhat compile using appManager')
+    return await this.appManager.call('hardhat', 'compile', cmd)
+  }
+
   limitPluginScope (path) {
     return path.replace(/^\/browser\//, '').replace(/^browser\//, '') // forbids plugin to access the root filesystem
   }
