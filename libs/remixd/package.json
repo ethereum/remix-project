@@ -44,7 +44,9 @@
     "commander": "^2.20.3",
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
-    "ws": "^7.3.0"
+    "ws": "^7.3.0",
+    "latest-version": "^5.1.0",
+    "semver": "^6.3.0"
   },
   "python": {
     "execPath": "python3",
