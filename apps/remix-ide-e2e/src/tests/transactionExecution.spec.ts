@@ -146,11 +146,11 @@ module.exports = {
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(3)')
       .click('.instance:nth-of-type(3) > div > button')
-      .clickFunction('g - transact (not payable)', { types: '', values: '' })
+      .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
       .journalLastChildIncludes('CustomError')
       .journalLastChildIncludes('Parameters:')
-      .journalLastChildIncludes('2, 3, error_string_2')
+      .journalLastChildIncludes('2,3,error_string_2')
       .journalLastChildIncludes('Debug the transaction to get more information.')
       .end()
   }
@@ -241,7 +241,7 @@ contract C {
 
       pragma solidity ^0.8.4;
       
-      error CustomError(uint a, uint b, uint c);
+      error CustomError(uint a, uint b, string c);
       contract C {
           function f() public pure {
               revert CustomError(2, 3, "error_string");
