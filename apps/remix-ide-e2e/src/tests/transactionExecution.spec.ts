@@ -147,11 +147,11 @@ module.exports = {
       .waitForElementPresent('.instance:nth-of-type(3)')
       .click('.instance:nth-of-type(3) > div > button')
       .clickFunction('g - transact (not payable)', { types: '', values: '' })
-      .journalLastChildIncludes(`Error provided by the contract:
-      E
-      Parameters:
-      2
-      Debug the transaction to get more information.`)
+      .journalLastChildIncludes('Error provided by the contract:')
+      .journalLastChildIncludes('CustomError')
+      .journalLastChildIncludes('Parameters:')
+      .journalLastChildIncludes('2, 3, error_string_2')
+      .journalLastChildIncludes('Debug the transaction to get more information.')
       .end()
   }
 }
@@ -241,13 +241,13 @@ contract C {
 
       pragma solidity ^0.8.4;
       
-      error E(uint a);
+      error CustomError(uint a, uint b, uint c);
       contract C {
           function f() public pure {
-              revert E(2);
+              revert CustomError(2, 3, "error_string");
           }
           function g() public {
-              revert E(2);
+              revert CustomError(2, 3, "error_string_2");
           }          
       }`
     }
