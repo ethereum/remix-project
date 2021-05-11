@@ -81,7 +81,7 @@ class CompileTab {
   runCompiler () {
     try {
       console.log('mode is - ', this.fileManager.mode)
-      if(this.fileManager.mode === 'localhost') {
+      if (this.fileManager.mode === 'localhost') {
         console.log('calling compilehardhat')
         this.fileManager.compileWithHardhat('npx hardhat compile').then(console.log)
       }
