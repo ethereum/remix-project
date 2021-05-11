@@ -11,7 +11,7 @@ const profile = {
   version: packageJson.version
 }
 
-export class hardhatHandle extends WebsocketPlugin {
+export class HardhatHandle extends WebsocketPlugin {
   constructor () {
     super(profile)
   }

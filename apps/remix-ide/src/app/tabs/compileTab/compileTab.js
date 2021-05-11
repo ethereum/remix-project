@@ -83,7 +83,7 @@ class CompileTab {
       console.log('mode is - ', this.fileManager.mode)
       if(this.fileManager.mode === 'localhost') {
         console.log('calling compilehardhat')
-        // this.fileProvider.compileWithHardhat().then(console.log)
+        this.fileManager.compileWithHardhat('npx hardhat compile').then(console.log)
       }
       this.fileManager.saveCurrentFile()
       this.miscApi.clearAnnotations()

@@ -9,6 +9,7 @@ import { checkSpecialChars, checkSlash } from '../../lib/helper'
 var EventManager = require('../../lib/events')
 var { RemixdHandle } = require('../files/remixd-handle.js')
 var { GitHandle } = require('../files/git-handle.js')
+var { HardhatHandle } = require('../files/hardhat-handle.js')
 var globalRegistry = require('../../global/registry')
 var examples = require('../editor/examples')
 var GistHandler = require('../../lib/gist-handler')
@@ -60,6 +61,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
     this.remixdHandle = new RemixdHandle(this._deps.fileProviders.localhost, appManager)
     this.gitHandle = new GitHandle()
+    this.hardhatHandle = new HardhatHandle()
     this.registeredMenuItems = []
     this.request = {}
     this.workspaces = []

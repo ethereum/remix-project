@@ -81,7 +81,7 @@ export class RemixdHandle extends WebsocketPlugin {
           }
         }, 3000)
         this.locahostProvider.init(() => {})
-        // this.call('manager', 'activatePlugin', 'git')
+        this.call('manager', 'activatePlugin', 'hardhat')
       }
     }
     if (this.locahostProvider.isConnected()) {
