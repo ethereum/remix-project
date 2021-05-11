@@ -147,7 +147,6 @@ module.exports = {
       .waitForElementPresent('.instance:nth-of-type(3)')
       .click('.instance:nth-of-type(3) > div > button')
       .clickFunction('g - transact (not payable)', { types: '', values: '' })
-      .testFunction('latest', {})
       .journalLastChildIncludes(`Error provided by the contract:
       E
       Parameters:
