@@ -152,7 +152,7 @@ module.exports = {
       E
       Parameters:
       2
-      Debug the transaction to get more information.`) 
+      Debug the transaction to get more information.`)
       .end()
   }
 }
