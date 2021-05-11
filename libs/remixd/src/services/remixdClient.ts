@@ -5,7 +5,6 @@ import * as utils from '../utils'
 import * as chokidar from 'chokidar'
 import * as fs from 'fs-extra'
 import * as isbinaryfile from 'isbinaryfile'
-const hre = require("hardhat");
 
 export class RemixdClient extends PluginClient {
   methods: Array<string>
