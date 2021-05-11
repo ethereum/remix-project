@@ -50,6 +50,11 @@ module.exports = class RemixDProvider extends FileProvider {
     return this._isReady
   }
 
+  async compileWithHardhat () {
+    console.log('Inside compileWithHardhat, calling hardhatCompile using _appManager')
+    return await this._appManager.call('remixd', 'hardhatCompile', {})
+  }
+
   close (cb) {
     this._isReady = false
     cb()

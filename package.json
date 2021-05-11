@@ -155,6 +155,7 @@
     "ethers": "^5.1.4",
     "express-ws": "^4.0.0",
     "fs-extra": "^3.0.1",
+    "hardhat": "^2.2.1",
     "http-server": "^0.11.1",
     "isbinaryfile": "^3.0.2",
     "jquery": "^3.3.1",
