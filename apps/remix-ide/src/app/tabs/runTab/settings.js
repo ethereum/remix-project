@@ -66,12 +66,18 @@ class SettingsUI {
 
   validateValue () {
     const valueEl = this.el.querySelector('#value')
+    if (!valueEl.value) {
+      // assign 0 if given value is
+      // - empty
+      valueEl.value = 0
+      return
+    }
+
     let v
     try {
       v = new BN(valueEl.value, 10)
     } catch (e) {
       // assign 0 if given value is
-      // - empty
       // - not valid (for ex 4345-54)
       // - contains only '0's (for ex 0000) copy past or edit
       valueEl.value = 0
