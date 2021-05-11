@@ -5,6 +5,7 @@ import * as utils from '../utils'
 import * as chokidar from 'chokidar'
 import * as fs from 'fs-extra'
 import * as isbinaryfile from 'isbinaryfile'
+const hre = require("hardhat");
 
 export class RemixdClient extends PluginClient {
   methods: Array<string>
@@ -14,7 +15,7 @@ export class RemixdClient extends PluginClient {
 
   constructor (private readOnly = false) {
     super()
-    this.methods = ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir', 'canDeactivate']
+    this.methods = ['folderIsReadOnly', 'hardhatCompile', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir', 'canDeactivate']
   }
 
   setWebSocket (websocket: WS): void {
@@ -24,6 +25,12 @@ export class RemixdClient extends PluginClient {
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     if (this.isLoaded) this.emit('rootFolderChanged')
+  }
+
+  async hardhatCompile() {
+    console.log('inside hardhatCompile')
+    console.log('here is hre-->', hre.tasks)
+    // await hre.tasks.accounts.action();
   }
 
   list (): Filelist {
