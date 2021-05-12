@@ -85,11 +85,10 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  set (args: SharedFolderArgs): Promise<void> {
+  set (args: SharedFolderArgs) {
     try {
       return new Promise((resolve, reject) => {
         if (this.readOnly) return reject(new Error('Cannot write file: read-only mode selected'))
-        const isFolder = args.path.endsWith('/')
         const path = utils.absolutePath(args.path, this.currentSharedFolder)
         const exists = fs.existsSync(path)
 
@@ -99,31 +98,25 @@ export class RemixdClient extends PluginClient {
           return reject(new Error('trying to write "undefined" ! stopping.'))
         }
         this.trackDownStreamUpdate[path] = path
-        if (isFolder) {
-          fs.mkdirp(path).then(() => {
-            let splitPath = args.path.split('/')
-
-            splitPath = splitPath.filter(dir => dir)
-            const dir = '/' + splitPath.join('/')
-
-            this.emit('folderAdded', dir)
-            resolve()
-          }).catch((e: Error) => reject(e))
+        if (!exists && args.path.indexOf('/') !== -1) {
+          // the last element is the filename and we should remove it
+          this.createDir({ path: args.path.substr(0, args.path.lastIndexOf('/')) })
+        }
+        try {
+          fs.writeFile(path, args.content, 'utf8', (error: Error) => {
+            if (error) {
+              console.log(error)
+              return reject(error)
+            }
+            resolve(true)
+          })
+        } catch (e) {
+          return reject(e)
+        }
+        if (!exists) {
+          this.emit('fileAdded', args.path)
         } else {
-          fs.ensureFile(path).then(() => {
-            fs.writeFile(path, args.content, 'utf8', (error: Error) => {
-              if (error) {
-                console.log(error)
-                return reject(error)
-              }
-              resolve()
-            })
-          }).catch((e: Error) => reject(e))
-          if (!exists) {
-            this.emit('fileAdded', args.path)
-          } else {
-            this.emit('fileChanged', args.path)
-          }
+          this.emit('fileChanged', args.path)
         }
       })
     } catch (error) {
@@ -131,24 +124,22 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  createDir (args: SharedFolderArgs): Promise<void> {
+  createDir (args: SharedFolderArgs) {
     try {
       return new Promise((resolve, reject) => {
         if (this.readOnly) return reject(new Error('Cannot create folder: read-only mode selected'))
-        const path = utils.absolutePath(args.path, this.currentSharedFolder)
-        const exists = fs.existsSync(path)
-
-        if (exists && !isRealPath(path)) return reject(new Error(''))
-        this.trackDownStreamUpdate[path] = path
-        fs.mkdirp(path).then(() => {
-          let splitPath = args.path.split('/')
-
-          splitPath = splitPath.filter(dir => dir)
-          const dir = '/' + splitPath.join('/')
-
-          this.emit('folderAdded', dir)
-          resolve()
-        }).catch((e: Error) => reject(e))
+        const paths = args.path.split('/').filter(value => value)
+        if (paths.length && paths[0] === '') paths.shift()
+        let currentCheck = ''
+        paths.forEach((value) => {
+          currentCheck = currentCheck ? currentCheck + '/' + value : value
+          const path = utils.absolutePath(currentCheck, this.currentSharedFolder)
+          if (!fs.existsSync(path)) {
+            fs.mkdirp(path)
+            this.emit('folderAdded', currentCheck)
+          }
+        })
+        resolve(true)
       })
     } catch (error) {
       throw new Error(error)
