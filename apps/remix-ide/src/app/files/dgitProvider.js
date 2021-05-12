@@ -33,6 +33,12 @@ class DGitProvider extends Plugin {
       protocol: 'https',
       ipfsurl: 'https://ipfsgw.komputing.org/ipfs/'
     }
+    this.globalIPFSConfig = {
+      host: 'ipfs.io',
+      port: 443,
+      protocol: 'https',
+      ipfsurl: 'https://ipfs.io/ipfs/'
+    }
   }
 
   async getGitConfig () {
@@ -153,8 +159,8 @@ class DGitProvider extends Plugin {
     })
   }
 
-  async checkIpfsConfig () {
-    this.ipfs = IpfsHttpClient(this.ipfsconfig)
+  async checkIpfsConfig (config) {
+    this.ipfs = IpfsHttpClient(config || this.ipfsconfig)
     try {
       await this.ipfs.config.getAll()
       return true
@@ -184,7 +190,6 @@ class DGitProvider extends Plugin {
   }
 
   async pin (pinataApiKey, pinataSecretApiKey) {
-    if (!this.checkIpfsConfig()) return false
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
     this.filesToSend = []
@@ -270,9 +275,14 @@ class DGitProvider extends Plugin {
 
   async pull (cmd) {
     const permission = await this.askUserPermission('pull', 'Import multiple files into your workspaces.')
+    console.log(this.ipfsconfig)
     if (!permission) return false
     const cid = cmd.cid
-    if (!this.checkIpfsConfig()) return false
+    if (!cmd.local) {
+      this.ipfs = IpfsHttpClient(this.globalIPFSConfig)
+    } else {
+      if (!this.checkIpfsConfig()) return false
+    }
     await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, false)
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     for await (const file of this.ipfs.get(cid)) {
