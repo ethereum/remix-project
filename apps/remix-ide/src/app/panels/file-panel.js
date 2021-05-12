@@ -4,7 +4,7 @@ import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
-import * as ethutil from 'ethereumjs-util'
+import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import { checkSpecialChars, checkSlash } from '../../lib/helper'
 var EventManager = require('../../lib/events')
 var { RemixdHandle } = require('../files/remixd-handle.js')
@@ -154,7 +154,7 @@ module.exports = class Filepanel extends ViewPlugin {
       try {
         await this.processCreateWorkspace('code-sample')
         this._deps.fileProviders.workspace.setWorkspace('code-sample')
-        var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
+        var hash = bufferToHex(keccakFromString(params.code))
         const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
         const path = fileName
         await this._deps.fileProviders.workspace.set(path, atob(params.code))
@@ -166,16 +166,12 @@ module.exports = class Filepanel extends ViewPlugin {
       return
     }
     // insert example contracts if there are no files to show
-    return new Promise((resolve, reject) => {
-      this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
-        if (error) console.error(error)
-        if (Object.keys(filesList).length === 0) {
-          await this.createWorkspace('default_workspace')
-        }
-        const workspaces = await this.getWorkspaces()
-
-        resolve(workspaces)
-      })
+    this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
+      if (error) console.error(error)
+      if (Object.keys(filesList).length === 0) {
+        await this.createWorkspace('default_workspace')
+      }
+      this.getWorkspaces()
     })
   }
 
