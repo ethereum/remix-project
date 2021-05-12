@@ -183,7 +183,7 @@ export const init = (provider, workspaceName: string, plugin, registry) => (disp
   if (provider) {
     provider.event.register('fileAdded', async (filePath) => {
       if (extractParentFromKey(filePath) === '/.workspaces') return
-      const path = extractParentFromKey(filePath) || workspaceName
+      const path = extractParentFromKey(filePath) || provider.workspace || provider.type || ''
       const data = await fetchDirectoryContent(provider, path)
 
       dispatch(fileAddedSuccess(path, data))
@@ -193,18 +193,18 @@ export const init = (provider, workspaceName: string, plugin, registry) => (disp
     })
     provider.event.register('folderAdded', async (folderPath) => {
       if (extractParentFromKey(folderPath) === '/.workspaces') return
-      const path = extractParentFromKey(folderPath) || workspaceName
+      const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
       const data = await fetchDirectoryContent(provider, path)
 
       dispatch(folderAddedSuccess(path, data))
     })
     provider.event.register('fileRemoved', async (removePath) => {
-      const path = extractParentFromKey(removePath) || workspaceName
+      const path = extractParentFromKey(removePath) || provider.workspace || provider.type || ''
 
       dispatch(fileRemovedSuccess(path, removePath))
     })
     provider.event.register('fileRenamed', async (oldPath) => {
-      const path = extractParentFromKey(oldPath) || workspaceName
+      const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
       const data = await fetchDirectoryContent(provider, path)
 
       dispatch(fileRenamedSuccess(path, oldPath, data))
@@ -229,6 +229,7 @@ export const init = (provider, workspaceName: string, plugin, registry) => (disp
       dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
     })
     provider.event.register('rootFolderChanged', async () => {
+      workspaceName = provider.workspace || provider.type || ''
       fetchDirectory(provider, workspaceName)(dispatch)
     })
     dispatch(fetchProviderSuccess(provider))

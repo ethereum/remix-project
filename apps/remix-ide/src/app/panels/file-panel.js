@@ -218,7 +218,7 @@ module.exports = class Filepanel extends ViewPlugin {
           } catch (error) {
             console.error(error)
           }
-        }, 200)
+        }, 10)
       }
     }
   }
