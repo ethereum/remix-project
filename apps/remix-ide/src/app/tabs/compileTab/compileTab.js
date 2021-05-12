@@ -83,7 +83,18 @@ class CompileTab {
       console.log('mode is - ', this.fileManager.mode)
       if (this.fileManager.mode === 'localhost') {
         console.log('calling compilehardhat')
-        this.fileManager.compileWithHardhat('npx hardhat compile').then(console.log)
+        const { currentVersion, optimize, runs } = this.compiler.state
+        const fileContent = `module.exports = {
+          solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
+          settings: {
+            optimizer: {
+              enabled: ${optimize},
+              runs: ${runs}
+            }
+          }
+        }
+        `
+        this.fileManager.compileWithHardhat(fileContent).then(console.log)
       }
       this.fileManager.saveCurrentFile()
       this.miscApi.clearAnnotations()
