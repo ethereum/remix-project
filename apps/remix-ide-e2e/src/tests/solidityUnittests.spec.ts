@@ -179,10 +179,8 @@ function runTests (browser: NightwatchBrowser) {
     .click('*[data-id="treeViewLitreeViewItemcontracts"]')
     .openFile('contracts/3_Ballot.sol')
     .clickLaunchIcon('solidityUnitTesting')
-    .pause(500)
-    .setValue('*[data-id="uiPathInput"]', '') // clear before input chrome hack
-    .setValue('*[data-id="uiPathInput"]', 'test')
     .pause(2000)
+    .verify.attributeEquals('*[data-id="uiPathInput"]', 'value', 'tests')
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
     .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
