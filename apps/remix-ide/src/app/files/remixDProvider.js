@@ -74,16 +74,15 @@ module.exports = class RemixDProvider extends FileProvider {
       })
   }
 
-  exists (path, cb) {
-    if (!this._isReady) return cb && cb('provider not ready')
+  exists (path) {
+    if (!this._isReady) throw new Error('provider not ready')
     const unprefixedpath = this.removePrefix(path)
 
     return this._appManager.call('remixd', 'exists', { path: unprefixedpath })
       .then((result) => {
-        if (cb) return cb(null, result)
         return result
-      }).catch((error) => {
-        if (cb) return cb(error)
+      })
+      .catch((error) => {
         throw new Error(error)
       })
   }
