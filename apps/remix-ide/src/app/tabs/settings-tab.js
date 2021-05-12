@@ -3,13 +3,8 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import ReactDOM from 'react-dom'
 import * as packageJson from '../../../../../package.json'
 import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
-const yo = require('yo-yo')
 const globalRegistry = require('../../global/registry')
-const tooltip = require('../ui/tooltip')
-const copyToClipboard = require('../ui/copy-to-clipboard')
 const EventManager = require('../../lib/events')
-const css = require('./styles/settings-tab-styles')
-const _paq = window._paq = window._paq || []
 
 const profile = {
   name: 'settings',
@@ -62,25 +57,6 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.renderComponent()
   }
 
-  createThemeCheckies () {
-    const themes = this._deps.themeModule.getThemes()
-    const onswitchTheme = (event, name) => {
-      this._deps.themeModule.switchTheme(name)
-    }
-    if (themes) {
-      return yo`<div class="card-text themes-container">
-        ${themes.map((aTheme) => {
-          const el = yo`<div class="radio custom-control custom-radio mb-1 form-check ${css.crow}">
-          <input type="radio" onchange=${event => { onswitchTheme(event, aTheme.name) }} class="align-middle custom-control-input" name="theme" id="${aTheme.name}" data-id="settingsTabTheme${aTheme.name}">
-          <label class="form-check-label custom-control-label" data-id="settingsTabThemeLabel${aTheme.name}" for="${aTheme.name}">${aTheme.name} (${aTheme.quality})</label>
-        </div>`
-          if (this._deps.themeModule.active === aTheme.name) el.querySelector('input').setAttribute('checked', 'checked')
-          return el
-        })}
-      </div>`
-    }
-  }
-
   render () {
     return this.element
   }
@@ -90,6 +66,7 @@ module.exports = class SettingsTab extends ViewPlugin {
       <RemixUiSettings
         config = { this.config }
         editor = { this.editor }
+        _deps = { this._deps }
       />,
       this.element
     )
