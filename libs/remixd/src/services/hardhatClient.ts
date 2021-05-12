@@ -22,7 +22,6 @@ export class HardhatClient extends PluginClient {
   }
 
   compile (cmd: string) {
-    // assertCommand(cmd)
     const options = { cwd: this.currentSharedFolder, shell: true }
     const child = spawn(cmd, options)
     let result = ''
@@ -40,16 +39,5 @@ export class HardhatClient extends PluginClient {
         else resolve(result)
       })
     })
-  }
-}
-
-/**
- * Validate that command can be run by service
- * @param cmd
- */
-function assertCommand (cmd) {
-  const regex = '^hardhat\\s[^&|;]*$'
-  if (!RegExp(regex).test(cmd)) { // git then space and then everything else
-    throw new Error('Invalid command for service!')
   }
 }
