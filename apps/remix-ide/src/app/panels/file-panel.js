@@ -188,8 +188,11 @@ module.exports = class Filepanel extends ViewPlugin {
     const browserProvider = this._deps.fileProviders.browser
     const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
     const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
-    if (!browserProvider.exists(workspaceRootPath)) browserProvider.createDir(workspaceRootPath)
-    if (!browserProvider.exists(workspacePath)) browserProvider.createDir(workspacePath)
+    const workspaceRootPathExists = await browserProvider.exists(workspaceRootPath)
+    const workspacePathExists = await browserProvider.exists(workspacePath)
+
+    if (!workspaceRootPathExists) browserProvider.createDir(workspaceRootPath)
+    if (!workspacePathExists) browserProvider.createDir(workspacePath)
   }
 
   async workspaceExists (name) {
