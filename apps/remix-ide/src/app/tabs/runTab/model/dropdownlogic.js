@@ -1,8 +1,7 @@
-const remixLib = require('@remix-project/remix-lib')
-const txHelper = remixLib.execution.txHelper
-const CompilerAbstract = require('../../../compiler/compiler-abstract')
-const EventManager = remixLib.EventManager
-const _paq = window._paq = window._paq || []
+var remixLib = require('@remix-project/remix-lib')
+var txHelper = remixLib.execution.txHelper
+var CompilerAbstract = require('../../../compiler/compiler-abstract')
+var EventManager = remixLib.EventManager
 
 class DropdownLogic {
   constructor (compilersArtefacts, config, editor, runView) {
@@ -51,11 +50,9 @@ class DropdownLogic {
         } catch (e) {
           return cb('Failed to parse the current file as JSON ABI.')
         }
-        _paq.push(['trackEvent', 'udapp', 'AtAddressLoadWithABI'])
         cb(null, 'abi', abi)
       })
     } else {
-      _paq.push(['trackEvent', 'udapp', 'AtAddressLoadWithInstance'])
       cb(null, 'instance')
     }
   }

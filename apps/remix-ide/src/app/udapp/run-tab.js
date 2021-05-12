@@ -15,7 +15,6 @@ const RecorderUI = require('../tabs/runTab/recorder.js')
 const DropdownLogic = require('../tabs/runTab/model/dropdownlogic.js')
 const ContractDropdownUI = require('../tabs/runTab/contractDropdown.js')
 const toaster = require('../ui/tooltip')
-const _paq = window._paq = window._paq || []
 
 const UniversalDAppUI = require('../ui/universal-dapp-ui')
 
@@ -92,7 +91,6 @@ export class RunTab extends ViewPlugin {
   }
 
   sendTransaction (tx) {
-    _paq.push(['trackEvent', 'udapp', 'sendTx'])
     return this.blockchain.sendTransaction(tx)
   }
 
