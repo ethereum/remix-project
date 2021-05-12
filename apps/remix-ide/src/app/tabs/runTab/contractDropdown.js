@@ -9,6 +9,7 @@ const confirmDialog = require('../../ui/confirmDialog')
 const modalDialog = require('../../ui/modaldialog')
 const MultiParamManager = require('../../ui/multiParamManager')
 const helper = require('../../../lib/helper')
+const _paq = window._paq = window._paq || []
 
 class ContractDropdownUI {
   constructor (blockchain, dropdownLogic, logCallback, runView) {
@@ -300,13 +301,15 @@ class ContractDropdownUI {
       if (error) {
         return this.logCallback(error)
       }
-
       self.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
 
       const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
       self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
       if (self.ipfsCheckedState) {
+        _paq.push(['trackEvent', 'udapp', `DeployAndPublish_${this.networkName}`])
         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
+      } else {
+        _paq.push(['trackEvent', 'udapp', `DeployOnly_${this.networkName}`])
       }
     }
 
@@ -340,6 +343,7 @@ class ContractDropdownUI {
   }
 
   deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
+    _paq.push(['trackEvent', 'udapp', 'DeployContractTo', this.networkName])
     const { statusCb } = callbacks
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
       return this.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
