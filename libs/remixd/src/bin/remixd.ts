@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import latestVersion from 'latest-version'
+import * as semver from 'semver'
 import WebSocket from '../websocket'
 import * as servicesList from '../serviceList'
 import * as WS from 'ws' // eslint-disable-line
@@ -7,6 +9,18 @@ import Axios from 'axios'
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as program from 'commander'
+
+async function warnLatestVersion () {
+  const latest = await latestVersion('@remix-project/remixd')
+  const pjson = require('../package.json')
+  if (semver.eq(latest, pjson.version)) {
+    console.log('\x1b[32m%s\x1b[0m', `[INFO] you are using the latest version ${latest}`)
+  } else if (semver.gt(latest, pjson.version)) {
+    console.log('\x1b[33m%s\x1b[0m', `[WARN] latest version of remixd is ${latest}, you are using ${pjson.version}`)
+    console.log('\x1b[33m%s\x1b[0m', '[WARN] please update using the following command:')
+    console.log('\x1b[33m%s\x1b[0m', '[WARN] npm install @remix-project/remixd -g')
+  }
+}
 
 const services = {
   git: (readOnly: boolean) => new servicesList.GitClient(readOnly),
@@ -39,6 +53,8 @@ function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS
       console.log('\nExample:\n\n    remixd -s ./ --remix-ide http://localhost:8080')
     }).parse(process.argv)
   // eslint-disable-next-line
+
+  await warnLatestVersion()
 
   if (!program.remixIde) {
     console.log('\x1b[33m%s\x1b[0m', '[WARN] You can only connect to remixd from one of the supported origins.')

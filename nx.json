@@ -97,6 +97,12 @@
       "tags": []
     },
     "remix-ui-settings": {
+       "tags": []
+    },
+    "remix-ui-static-analyser": {
+      "tags": []
+    },
+    "remix-ui-checkbox": {
       "tags": []
     }
   }

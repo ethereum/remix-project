@@ -188,8 +188,11 @@ module.exports = class Filepanel extends ViewPlugin {
     const browserProvider = this._deps.fileProviders.browser
     const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
     const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
-    if (!browserProvider.exists(workspaceRootPath)) browserProvider.createDir(workspaceRootPath)
-    if (!browserProvider.exists(workspacePath)) browserProvider.createDir(workspacePath)
+    const workspaceRootPathExists = await browserProvider.exists(workspaceRootPath)
+    const workspacePathExists = await browserProvider.exists(workspacePath)
+
+    if (!workspaceRootPathExists) browserProvider.createDir(workspaceRootPath)
+    if (!workspacePathExists) browserProvider.createDir(workspacePath)
   }
 
   async workspaceExists (name) {
@@ -209,11 +212,13 @@ module.exports = class Filepanel extends ViewPlugin {
       workspaceProvider.setWorkspace(workspaceName)
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
       for (const file in examples) {
-        try {
-          await workspaceProvider.set(examples[file].name, examples[file].content)
-        } catch (error) {
-          console.error(error)
-        }
+        setTimeout(async () => { // space creation of files to give react ui time to update.
+          try {
+            await workspaceProvider.set(examples[file].name, examples[file].content)
+          } catch (error) {
+            console.error(error)
+          }
+        }, 10)
       }
     }
   }

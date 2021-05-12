@@ -741,6 +741,41 @@
           }
         }
       }
+    },
+    "remix-ui-static-analyser": {
+      "root": "libs/remix-ui/static-analyser",
+      "sourceRoot": "libs/remix-ui/static-analyser/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/static-analyser/tsconfig.lib.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-ui/static-analyser/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "remix-ui-checkbox": {
+      "root": "libs/remix-ui/checkbox",
+      "sourceRoot": "libs/remix-ui/checkbox/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/checkbox/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/checkbox/**/*"]
+          }
+        }
+      }
     }
   },
   "cli": {
