@@ -183,6 +183,10 @@ class CompilerContainer {
       }
     })
 
+    this.hardhatCompilation = yo`<div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox" style="display:none">
+        <input class="${css.autocompile} custom-control-input" id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation">
+        <label class="form-check-label custom-control-label" for="enableHardhat">Enable Hardhat Compilation</label>
+      </div>`
     this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fas fa-exclamation-triangle" aria-hidden="true"></i>`
     this._view.compileIcon = yo`<i class="fas fa-sync ${css.icon}" aria-hidden="true"></i>`
     this._view.autoCompile = yo`<input class="${css.autocompile} custom-control-input" onchange=${() => this.updateAutoCompile()} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile">`
@@ -299,6 +303,7 @@ class CompilerContainer {
                 <label class="form-check-label custom-control-label" for="hideWarningsBox">Hide warnings</label>
               </div>
             </div>
+            ${this.hardhatCompilation}
             ${this._view.compilationButton}
           </header>
         </article>
