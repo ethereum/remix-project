@@ -36,14 +36,12 @@ module.exports = {
     async.whilst(
       () => { return exist },
       (callback) => {
-        fileProvider.exists(name + counter + prefix + '.' + ext, (error, currentExist) => {
-          if (error) {
-            callback(error)
-          } else {
-            exist = currentExist
-            if (exist) counter = (counter | 0) + 1
-            callback()
-          }
+        fileProvider.exists(name + counter + prefix + '.' + ext).then(currentExist => {
+          exist = currentExist
+          if (exist) counter = (counter | 0) + 1
+          callback()
+        }).catch(error => {
+          if (error) console.log(error)
         })
       },
       (error) => { cb(error, name + counter + prefix + '.' + ext) }
@@ -51,6 +49,27 @@ module.exports = {
   },
   createNonClashingName (name, fileProvider, cb) {
     this.createNonClashingNameWithPrefix(name, fileProvider, '', cb)
+  },
+  async createNonClashingNameAsync (name, fileManager, prefix = '') {
+    if (!name) name = 'Undefined'
+    let counter = ''
+    let ext = 'sol'
+    const reg = /(.*)\.([^.]+)/g
+    const split = reg.exec(name)
+    if (split) {
+      name = split[1]
+      ext = split[2]
+    }
+    let exist = true
+
+    do {
+      const isDuplicate = await fileManager.exists(name + counter + prefix + '.' + ext)
+
+      if (isDuplicate) counter = (counter | 0) + 1
+      else exist = false
+    } while (exist)
+
+    return name + counter + prefix + '.' + ext
   },
   checkSpecialChars (name) {
     return name.match(/[:*?"<>\\'|]/) != null
