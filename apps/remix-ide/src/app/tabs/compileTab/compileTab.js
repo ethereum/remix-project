@@ -78,11 +78,16 @@ class CompileTab {
     })
   }
 
+  async isHardhatProject () {
+    if (this.fileManager.mode === 'localhost') {
+      return await this.fileManager.exists('hardhat.config.js')
+    } else return false
+  }
+
   runCompiler () {
     try {
       console.log('mode is - ', this.fileManager.mode)
       if (this.fileManager.mode === 'localhost') {
-        console.log('calling compilehardhat')
         const { currentVersion, optimize, runs } = this.compiler.state
         const fileContent = `module.exports = {
           solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
