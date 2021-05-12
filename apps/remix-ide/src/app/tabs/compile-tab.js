@@ -85,6 +85,15 @@ class CompileTab extends ViewPlugin {
     )
   }
 
+  resetResults () {
+    if (this._view.errorContainer) {
+      this._view.errorContainer.innerHTML = ''
+    }
+    this.compilerContainer.currentFile = ''
+    this.data.contractsDetails = {}
+    yo.update(this._view.contractSelection, this.contractSelection())
+  }
+
   /************
    * EVENTS
    */
@@ -113,6 +122,9 @@ class CompileTab extends ViewPlugin {
       }
       this.emit('statusChanged', { key: 'loading', title: 'compiling...', type: 'info' })
     }
+
+    this.on('filePanel', 'setWorkspace', () => this.resetResults())
+
     this.compileTabLogic.event.on('startingCompilation', this.data.eventHandlers.onStartingCompilation)
 
     this.data.eventHandlers.onCurrentFileChanged = (name) => {
