@@ -399,6 +399,7 @@ class ContractDropdownUI {
           return modalDialogCustom.alert(error)
         }
         if (loadType === 'abi') {
+          _paq.push(['trackEvent', 'udapp', 'AtAddressFromABI'])
           return this.event.trigger('newContractABIAdded', [abi, address])
         }
         var selectedContract = this.getSelectedContract()
