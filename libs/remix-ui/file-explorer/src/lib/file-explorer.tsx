@@ -261,8 +261,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const fetchDirectoryContent = async (folderPath: string): Promise<File[]> => {
     return new Promise((resolve) => {
-      filesProvider.resolveDirectory(folderPath, (error, fileTree) => {
-        if (error) console.error(error)
+      filesProvider.resolveDirectory(folderPath, (_error, fileTree) => {
         const files = normalize(fileTree)
 
         resolve(files)
