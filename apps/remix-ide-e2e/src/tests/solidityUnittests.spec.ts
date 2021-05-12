@@ -180,7 +180,8 @@ function runTests (browser: NightwatchBrowser) {
     .openFile('contracts/3_Ballot.sol')
     .clickLaunchIcon('solidityUnitTesting')
     .pause(500)
-    .setValue('*[data-id="uiPathInput"]', 'tests')
+    .setValue('*[data-id="uiPathInput"]', '') // clear before input chrome hack
+    .setValue('*[data-id="uiPathInput"]', 'test')
     .pause(2000)
     .scrollAndClick('#runTestsTabRunAction')
     .waitForElementVisible('*[data-id="testTabSolidityUnitTestsOutputheader"]', 120000)
