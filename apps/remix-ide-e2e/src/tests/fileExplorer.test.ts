@@ -22,9 +22,9 @@ module.exports = {
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
       .click('*[data-id="fileExplorerNewFilecreateNewFile"]')
       .pause(1000)
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItem/blank"]')
-      .sendKeys('*[data-id="treeViewLitreeViewItem/blank"] .remixui_items', '5_New_contract.sol')
-      .sendKeys('*[data-id="treeViewLitreeViewItem/blank"] .remixui_items', browser.Keys.ENTER)
+      .waitForElementVisible('*[data-id$="/blank"]')
+      .sendKeys('*[data-id$="/blank"] .remixui_items', '5_New_contract.sol')
+      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]', 7000)
   },
 
@@ -49,9 +49,9 @@ module.exports = {
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
       .click('[data-id="fileExplorerNewFilecreateNewFolder"]')
       .pause(1000)
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItem/blank"]')
-      .sendKeys('*[data-id="treeViewLitreeViewItem/blank"] .remixui_items', 'Browser_Tests')
-      .sendKeys('*[data-id="treeViewLitreeViewItem/blank"] .remixui_items', browser.Keys.ENTER)
+      .waitForElementVisible('*[data-id$="/blank"]')
+      .sendKeys('*[data-id$="/blank"] .remixui_items', 'Browser_Tests')
+      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
   },
 
