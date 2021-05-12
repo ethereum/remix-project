@@ -90,6 +90,12 @@ class CompileTab extends ViewPlugin {
    */
 
   listenToEvents () {
+    this.on('filePanel', 'setWorkspace', (workspace) => {
+      this.compileTabLogic.isHardhatProject().then((result) => {
+        if (result) this.compilerContainer.hardhatCompilation.style.display = 'flex'
+      })
+    })
+
     this.data.eventHandlers.onContentChanged = () => {
       this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
     }
