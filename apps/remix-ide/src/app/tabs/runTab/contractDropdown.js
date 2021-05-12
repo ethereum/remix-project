@@ -309,7 +309,7 @@ class ContractDropdownUI {
         _paq.push(['trackEvent', 'udapp', `DeployAndPublish_${this.networkName}`])
         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
       } else {
-        _paq.push(['trackEvent', 'udapp', `DeployOnly_${this.networkName}`])
+        _paq.push(['trackEvent', 'udapp', 'DeployOnly'])
       }
     }
 
