@@ -21,7 +21,8 @@ export class HardhatClient extends PluginClient {
     this.currentSharedFolder = currentSharedFolder
   }
 
-  compile (cmd: string) {
+  compile (configPath: string) {
+    const cmd = `npx hardhat compile --config ${configPath}`
     const options = { cwd: this.currentSharedFolder, shell: true }
     const child = spawn(cmd, options)
     let result = ''

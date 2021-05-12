@@ -57,9 +57,10 @@ class FileManager extends Plugin {
     this.mode = mode
   }
 
-  async compileWithHardhat (cmd) {
-    console.log('Inside compileWithHardhat, calling hardhat compile using appManager')
-    return await this.appManager.call('hardhat', 'compile', cmd)
+  async compileWithHardhat (fileContent) {
+    const configFilePath = 'remixCompiler.config.js'
+    this.setFileContent(configFilePath, fileContent)
+    return await this.appManager.call('hardhat', 'compile', configFilePath)
   }
 
   limitPluginScope (path) {
