@@ -2,11 +2,18 @@ import { NightwatchBrowser } from 'nightwatch'
 
 require('dotenv').config()
 
-export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true): void {
+export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, closeWorkspaceAlert = true): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
     .pause(5000)
     .switchBrowserTab(0)
+    .perform((done) => {
+      if (closeWorkspaceAlert) {
+        browser.waitForElementVisible('*[data-id="modalDialogModalBody"]', 60000)
+          .modalFooterOKClick()
+      }
+      done()
+    })
     .fullscreenWindow(() => {
       if (preloadPlugins) {
         initModules(browser, () => {

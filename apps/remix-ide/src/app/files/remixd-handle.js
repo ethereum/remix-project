@@ -135,7 +135,7 @@ function remixdDialog () {
       <div class=${css.dialogParagraph}>If you have looked at the Remixd docs and just need remixd command, <br> here it is:
         <br><b>remixd -s absolute-path-to-the-shared-folder --remix-ide your-remix-ide-URL-instance</b>
       </div>
-      <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.href}</em> and your local file system <i>ws://127.0.0.1:65520</i>
+      <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.origin}</em> and your local file system <i>ws://127.0.0.1:65520</i>
         so please make sure your system is secured enough (port 65520 neither opened nor forwarded).
       </div>
       <div class=${css.dialogParagraph}>

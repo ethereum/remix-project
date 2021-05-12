@@ -6,7 +6,7 @@ export interface FileExplorerProps {
     menuItems?: string[],
     plugin: any,
     focusRoot: boolean,
-    contextMenuItems: { name: string, type: string[], path: string[], extension: string[], pattern: string[] }[],
+    contextMenuItems: { id: string, name: string, type: string[], path: string[], extension: string[], pattern: string[] }[],
     displayInput?: boolean,
     externalUploads?: EventTarget & HTMLInputElement
 }
