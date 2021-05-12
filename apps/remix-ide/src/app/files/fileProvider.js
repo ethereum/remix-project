@@ -63,11 +63,11 @@ class FileProvider {
     })
   }
 
-  exists (path, cb) {
+  async exists (path) {
     // todo check the type (directory/file) as well #2386
     // currently it is not possible to have a file and folder with same path
     const ret = this._exists(path)
-    if (cb) cb(null, ret)
+
     return ret
   }
 
