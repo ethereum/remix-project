@@ -9,7 +9,6 @@ export class HardhatClient extends PluginClient {
 
   constructor (private readOnly = false) {
     super()
-    console.log('this is HardhatClient constructor')
     this.methods = ['compile']
   }
 
@@ -22,12 +21,13 @@ export class HardhatClient extends PluginClient {
   }
 
   compile (configPath: string) {
-    const cmd = `npx hardhat compile --config ${configPath}`
-    const options = { cwd: this.currentSharedFolder, shell: true }
-    const child = spawn(cmd, options)
-    let result = ''
-    let error = ''
     return new Promise((resolve, reject) => {
+      if (this.readOnly) return reject(new Error('Cannot run Hardhat compilation in read-only mode'))
+      const cmd = `npx hardhat compile --config ${configPath}`
+      const options = { cwd: this.currentSharedFolder, shell: true }
+      const child = spawn(cmd, options)
+      let result = ''
+      let error = ''
       child.stdout.on('data', (data) => {
         console.log('data in compile in HardhatClient', data)
         result += data.toString()
