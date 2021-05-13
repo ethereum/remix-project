@@ -15,6 +15,7 @@ class CompilerContainer {
     this.editor = editor
     this.config = config
     this.queryParams = queryParams
+    this.hhCompilation = false
 
     this.data = {
       hideWarnings: config.get('hideWarnings') || false,
@@ -184,7 +185,7 @@ class CompilerContainer {
     })
 
     this.hardhatCompilation = yo`<div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox" style="display:none">
-        <input class="${css.autocompile} custom-control-input" id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation">
+        <input class="${css.autocompile} custom-control-input" onchange=${(e) => this.updatehhCompilation(e)} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation">
         <label class="form-check-label custom-control-label" for="enableHardhat">Enable Hardhat Compilation</label>
       </div>`
     this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fas fa-exclamation-triangle" aria-hidden="true"></i>`
@@ -331,12 +332,16 @@ class CompilerContainer {
     this.config.set('autoCompile', this._view.autoCompile.checked)
   }
 
+  updatehhCompilation (event) {
+    this.hhCompilation = event.target.checked
+  }
+
   compile (event) {
     const currentFile = this.config.get('currentFile')
     if (!this.isSolFileSelected()) return
 
     this._setCompilerVersionFromPragma(currentFile)
-    this.compileTabLogic.runCompiler()
+    this.compileTabLogic.runCompiler(this.hhCompilation)
   }
 
   compileIfAutoCompileOn () {
