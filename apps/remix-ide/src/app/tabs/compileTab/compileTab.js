@@ -84,10 +84,10 @@ class CompileTab {
     } else return false
   }
 
-  runCompiler () {
+  runCompiler (hhCompilation) {
     try {
       console.log('mode is - ', this.fileManager.mode)
-      if (this.fileManager.mode === 'localhost') {
+      if (this.fileManager.mode === 'localhost' && hhCompilation) {
         const { currentVersion, optimize, runs } = this.compiler.state
         const fileContent = `module.exports = {
           solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
