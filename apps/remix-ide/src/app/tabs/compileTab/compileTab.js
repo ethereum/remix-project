@@ -86,7 +86,6 @@ class CompileTab {
 
   runCompiler (hhCompilation) {
     try {
-      console.log('mode is - ', this.fileManager.mode)
       if (this.fileManager.mode === 'localhost' && hhCompilation) {
         const { currentVersion, optimize, runs } = this.compiler.state
         const fileContent = `module.exports = {
