@@ -93,6 +93,7 @@ class CompileTab extends ViewPlugin {
     this.on('filePanel', 'setWorkspace', (workspace) => {
       this.compileTabLogic.isHardhatProject().then((result) => {
         if (result) this.compilerContainer.hardhatCompilation.style.display = 'flex'
+        else this.compilerContainer.hardhatCompilation.style.display = 'none'
       })
     })
 
