@@ -228,7 +228,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     const keyPressHandler = (e: KeyboardEvent) => {
-      if (e.key === 'Shift') {
+      if (e.shiftKey) {
         setState(prevState => {
           return { ...prevState, ctrlKey: true }
         })
@@ -236,7 +236,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
 
     const keyUpHandler = (e: KeyboardEvent) => {
-      if (e.key === 'Shift') {
+      if (!e.shiftKey) {
         setState(prevState => {
           return { ...prevState, ctrlKey: false }
         })
