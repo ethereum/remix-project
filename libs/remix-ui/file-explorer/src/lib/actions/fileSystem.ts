@@ -41,14 +41,16 @@ const normalize = (parent, filesList, newInputType?: string): any => {
     if (filesList[key].isDirectory) {
       folders[extractNameFromKey(key)] = {
         path,
-        name: extractNameFromKey(path),
-        isDirectory: filesList[key].isDirectory
+        name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+        isDirectory: filesList[key].isDirectory,
+        type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder'
       }
     } else {
       files[extractNameFromKey(key)] = {
         path,
         name: extractNameFromKey(path),
-        isDirectory: filesList[key].isDirectory
+        isDirectory: filesList[key].isDirectory,
+        type: 'file'
       }
     }
   })
@@ -59,7 +61,8 @@ const normalize = (parent, filesList, newInputType?: string): any => {
     folders[path] = {
       path: path,
       name: '',
-      isDirectory: true
+      isDirectory: true,
+      type: 'folder'
     }
   } else if (newInputType === 'file') {
     const path = parent + '/blank'
@@ -67,7 +70,8 @@ const normalize = (parent, filesList, newInputType?: string): any => {
     files[path] = {
       path: path,
       name: '',
-      isDirectory: false
+      isDirectory: false,
+      type: 'file'
     }
   }
 

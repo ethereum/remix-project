@@ -50,7 +50,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               deletePath(path)
               break
             case 'Push changes to gist':
-              publishToGist()
+              publishToGist(path, type)
               break
             case 'Run':
               runScript(path)

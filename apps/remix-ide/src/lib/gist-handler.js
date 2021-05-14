@@ -54,7 +54,7 @@ function GistHandler (_window) {
         }
         const obj = {}
         Object.keys(data.files).forEach((element) => {
-          obj['/' + gistId + '/' + element] = data.files[element]
+          obj['/' + 'gist-' + gistId + '/' + element] = data.files[element]
         })
         fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
           if (!errorLoadingFile) {
