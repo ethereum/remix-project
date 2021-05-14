@@ -9,6 +9,8 @@ declare global {
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const generateContractMetadat = (element, event, dispatch) => {
+  const checked = element.config.set('settings/generate-contract-metadata')
+  console.log({ checked }, ' checked in general contract metadata')
   element.config.set('settings/generate-contract-metadata', !event.target.checked)
   dispatch({ type: 'contractMetadata', payload: { name: event.target.name, isChecked: event.target.checked, textClass: event.target.checked ? textDark : textSecondary } })
 }
