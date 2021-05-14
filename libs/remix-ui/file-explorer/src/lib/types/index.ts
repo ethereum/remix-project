@@ -1,3 +1,5 @@
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
     name: string,
@@ -37,7 +39,7 @@ export interface FileExplorerContextMenuProps {
     hideContextMenu: () => void,
     publishToGist?: () => void,
     runScript?: (path: string) => void,
-    emit?: (id: string, path: string) => void,
+    emit?: (cmd: customAction) => void,
     pageX: number,
     pageY: number,
     path: string,

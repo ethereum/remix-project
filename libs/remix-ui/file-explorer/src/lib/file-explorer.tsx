@@ -11,6 +11,7 @@ import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem
 import { fetchDirectory, init, resolveDirectory, addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
+import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 
 import './css/file-explorer.css'
 
@@ -526,8 +527,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const emitContextMenuEvent = (id: string, path: string) => {
-    plugin.emit(id, path)
+  const emitContextMenuEvent = (cmd: customAction) => {
+    plugin.call(cmd.id, cmd.name, cmd)
   }
 
   const handleHideModal = () => {

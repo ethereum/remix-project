@@ -34,7 +34,7 @@ const modalDialogCustom = require('../ui/modal-dialog-custom')
 const profile = {
   name: 'filePanel',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'registerContextMenuItem'],
   events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
@@ -64,6 +64,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.request = {}
     this.workspaces = []
     this.initialWorkspace = null
+    this.appManager = appManager
   }
 
   render () {
@@ -102,9 +103,17 @@ module.exports = class Filepanel extends ViewPlugin {
     if (!item) throw new Error('Invalid register context menu argument')
     if (!item.name || !item.id) throw new Error('Item name and id is mandatory')
     if (!item.type && !item.path && !item.extension && !item.pattern) throw new Error('Invalid file matching criteria provided')
-
+    if (this.registeredMenuItems.filter((o) => {
+      return o.id === item.id & o.name === item.name
+    }).length) throw new Error(`Action ${item.name} already exists on ${item.id}`)
     this.registeredMenuItems = [...this.registeredMenuItems, item]
     this.renderComponent()
+  }
+
+  removePluginActions (plugin) {
+    this.registeredMenuItems = this.registeredMenuItems.filter((item) => {
+      return item.id !== plugin.name
+    })
   }
 
   async getCurrentWorkspace () {
@@ -173,6 +182,9 @@ module.exports = class Filepanel extends ViewPlugin {
       }
       this.getWorkspaces()
     })
+
+    const self = this
+    this.appManager.on('manager', 'pluginDeactivated', self.removePluginActions.bind(this))
   }
 
   async createNewFile () {
