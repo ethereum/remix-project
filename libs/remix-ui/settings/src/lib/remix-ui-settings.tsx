@@ -29,6 +29,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   })
 
   const onchangeGenerateContractMetadata = (event) => {
+    const checked = props.config.set('settings/generate-contract-metadata')
+
+    console.log(props.config.set, ' checked in Generate Contract')
     generateContractMetadat(props, event, dispatch)
   }
 
