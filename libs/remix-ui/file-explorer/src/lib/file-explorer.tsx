@@ -67,13 +67,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: ['.js'],
       pattern: []
-    }, {
-      id: 'test',
-      name: 'test',
-      type: ['file', 'folder', 'multi'],
-      path: [],
-      extension: [],
-      pattern: []
     }],
     focusContext: {
       element: null,
