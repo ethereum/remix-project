@@ -1,12 +1,11 @@
 import React, { useRef, useEffect } from 'react' // eslint-disable-line
-import { FileExplorerContextMenuProps } from './types'
+import { action, FileExplorerContextMenuProps } from './types'
 
 import './css/file-explorer-context-menu.css'
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, publishToGist, runScript, emit, pageX, pageY, path, type, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, publishToGist, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
   const contextMenuRef = useRef(null)
-
   useEffect(() => {
     contextMenuRef.current.focus()
   }, [])
@@ -22,13 +21,42 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
     }
   }, [pageX, pageY])
 
+  const filterItem = (item: action) => {
+    /**
+     * if there are multiple elements focused we need to take this and all conditions must be met plus the action must be set to 'multi'
+     * for example : 'downloadAsZip' with type ['file','folder','multi'] will work on files and folders when multiple are selected
+    **/
+    const nonRootFocus = focus.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+    if (nonRootFocus.length > 1) {
+      for (const element of nonRootFocus) {
+        if (!itemMatchesCondition(item, element.type, element.key)) return false
+      }
+      return (item.type.includes('multi'))
+    } else {
+      return itemMatchesCondition(item, type, path)
+    }
+  }
+
+  const itemMatchesCondition = (item: action, itemType: string, itemPath: string) => {
+    if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === itemType) !== -1)) return true
+    else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === itemPath) !== -1)) return true
+    else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => itemPath.endsWith(ext)) !== -1)) return true
+    else if (item.pattern && Array.isArray(item.pattern) && (item.pattern.filter(value => itemPath.match(new RegExp(value))).length > 0)) return true
+    else return false
+  }
+
+  const getPath = () => {
+    const nonRootFocus = focus.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+    if (nonRootFocus.length > 1) {
+      return nonRootFocus.map((element) => { return element.key })
+    } else {
+      return path
+    }
+  }
+
   const menu = () => {
     return actions.filter(item => {
-      if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === type) !== -1)) return true
-      else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === path) !== -1)) return true
-      else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => path.endsWith(ext)) !== -1)) return true
-      else if (item.pattern && Array.isArray(item.pattern) && (item.pattern.filter(value => path.match(new RegExp(value))).length > 0)) return true
-      else return false
+      return filterItem(item)
     }).map((item, index) => {
       return <li
         id={`menuitem${item.name.toLowerCase()}`}
@@ -47,7 +75,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               renamePath(path, type)
               break
             case 'Delete':
-              deletePath(path)
+              deletePath(getPath())
               break
             case 'Push changes to gist':
               publishToGist()
@@ -56,7 +84,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               runScript(path)
               break
             default:
-              emit && emit(item.id, path)
+              emit && emit(item.id, getPath())
               break
           }
           hideContextMenu()
