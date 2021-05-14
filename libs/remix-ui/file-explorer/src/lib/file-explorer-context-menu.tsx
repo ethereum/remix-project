@@ -52,6 +52,12 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
             case 'Push changes to gist':
               publishToGist(path, type)
               break
+            case 'Publish folder to gist':
+              publishToGist(path, type)
+              break
+            case 'Publish file to gist':
+              publishToGist(path, type)
+              break
             case 'Run':
               runScript(path)
               break
