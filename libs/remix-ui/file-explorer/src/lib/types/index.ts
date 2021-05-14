@@ -15,6 +15,7 @@ export interface File {
     path: string,
     name: string,
     isDirectory: boolean,
+    type: string,
     child?: File[]
 }
 
@@ -24,7 +25,7 @@ export interface FileExplorerMenuProps {
     fileManager: any,
     createNewFile: (folder?: string) => void,
     createNewFolder: (parentFolder?: string) => void,
-    publishToGist: () => void,
+    publishToGist: (path?: string) => void,
     uploadFile: (target: EventTarget & HTMLInputElement) => void
 }
 
@@ -35,7 +36,7 @@ export interface FileExplorerContextMenuProps {
     deletePath: (path: string) => void,
     renamePath: (path: string, type: string) => void,
     hideContextMenu: () => void,
-    publishToGist?: () => void,
+    publishToGist?: (path?: string, type?: string) => void,
     runScript?: (path: string) => void,
     emit?: (id: string, path: string) => void,
     pageX: number,
