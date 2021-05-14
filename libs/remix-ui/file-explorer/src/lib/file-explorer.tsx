@@ -51,7 +51,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }, {
       id: 'delete',
       name: 'Delete',
-      type: ['file', 'folder', 'gist'],
+      type: ['file', 'folder', 'gist', 'multi'],
       path: [],
       extension: [],
       pattern: []
@@ -90,6 +90,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
       path: [],
       extension: [],
       pattern: []
+    }, {
+      id: 'test',
+      name: 'test',
+      type: ['file', 'folder', 'multi'],
+      path: [],
+      extension: [],
+      pattern: []
     }],
     focusContext: {
       element: null,
@@ -108,6 +115,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       hide: true,
       title: '',
       message: '',
+      children: <></>,
       okLabel: '',
       okFn: () => {},
       cancelLabel: '',
@@ -211,7 +219,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           okFn: prevState.modals[0].okFn,
           cancelLabel: prevState.modals[0].cancelLabel,
           cancelFn: prevState.modals[0].cancelFn,
-          handleHide: prevState.modals[0].handleHide
+          handleHide: prevState.modals[0].handleHide,
+          children: prevState.modals[0].children
         }
 
         prevState.modals.shift()
@@ -223,6 +232,31 @@ export const FileExplorer = (props: FileExplorerProps) => {
       })
     }
   }, [state.modals])
+
+  useEffect(() => {
+    const keyPressHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') {
+        setState(prevState => {
+          return { ...prevState, ctrlKey: true }
+        })
+      }
+    }
+
+    const keyUpHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') {
+        setState(prevState => {
+          return { ...prevState, ctrlKey: false }
+        })
+      }
+    }
+
+    document.addEventListener('keydown', keyPressHandler)
+    document.addEventListener('keyup', keyUpHandler)
+    return () => {
+      document.removeEventListener('keydown', keyPressHandler)
+      document.removeEventListener('keyup', keyUpHandler)
+    }
+  }, [])
 
   useEffect(() => {
     if (canPaste) {
@@ -325,23 +359,26 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const deletePath = async (path: string) => {
+  const deletePath = async (path: string | string[]) => {
     const filesProvider = fileSystem.provider.provider
-
-    if (filesProvider.isReadOnly(path)) {
-      return toast('cannot delete file. ' + name + ' is a read only explorer')
-    }
-    const isDir = state.fileManager.isDirectory(path)
-
-    modal(`Delete ${isDir ? 'folder' : 'file'}`, `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, 'OK', async () => {
-      try {
-        const fileManager = state.fileManager
-
-        await fileManager.remove(path)
-      } catch (e) {
-        toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${path}.`)
+    if (!Array.isArray(path)) path = [path]
+    const children: React.ReactFragment = <div><div>Are you sure you want to delete {path.length > 1 ? 'these items' : 'this item'}?</div>{path.map((item, i) => (<li key={i}>{item}</li>))}</div>
+    for (const p of path) {
+      if (filesProvider.isReadOnly(p)) {
+        return toast('cannot delete file. ' + name + ' is a read only explorer')
       }
-    }, 'Cancel', () => {})
+    }
+    modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, '', 'OK', async () => {
+      const fileManager = state.fileManager
+      for (const p of path) {
+        try {
+          await fileManager.remove(p)
+        } catch (e) {
+          const isDir = state.fileManager.isDirectory(p)
+          toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`)
+        }
+      }
+    }, 'Cancel', () => {}, children)
   }
 
   const renamePath = async (oldPath: string, newPath: string) => {
@@ -556,7 +593,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const emitContextMenuEvent = (id: string, path: string) => {
+  const emitContextMenuEvent = (id: string, path: string | string[]) => {
     plugin.emit(id, path)
   }
 
@@ -566,13 +603,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const modal = (title: string, message: string, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
+  const modal = (title: string, message: string, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, children?:React.ReactNode) => {
     setState(prevState => {
       return {
         ...prevState,
         modals: [...prevState.modals,
           {
             message,
+            children,
             title,
             okLabel,
             okFn,
@@ -592,10 +630,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleClickFile = (path: string, type: string) => {
     path = path.indexOf(props.name + '/') === 0 ? path.replace(props.name + '/', '') : path
-    state.fileManager.open(path)
-    setState(prevState => {
-      return { ...prevState, focusElement: [{ key: path, type }] }
-    })
+    if (!state.ctrlKey) {
+      state.fileManager.open(path)
+      setState(prevState => {
+        return { ...prevState, focusElement: [{ key: path, type }] }
+      })
+    } else {
+      if (state.focusElement.findIndex(item => item.key === path) !== -1) {
+        setState(prevState => {
+          return { ...prevState, focusElement: [...prevState.focusElement.filter(item => item.key !== path)] }
+        })
+      } else {
+        setState(prevState => {
+          return { ...prevState, focusElement: [...prevState.focusElement, { key: path, type }] }
+        })
+      }
+    }
   }
 
   const handleClickFolder = async (path: string, type: string) => {
@@ -918,6 +968,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           id={ props.name }
           title={ state.focusModal.title }
           message={ state.focusModal.message }
+          children={ state.focusModal.children }
           hide={ state.focusModal.hide }
           okLabel={ state.focusModal.okLabel }
           okFn={ state.focusModal.okFn }
@@ -943,6 +994,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           pageY={state.focusContext.y}
           path={state.focusContext.element}
           type={state.focusContext.type}
+          focus={state.focusElement}
           onMouseOver={(e) => {
             e.stopPropagation()
             handleMouseOver(state.focusContext.element)
