@@ -58,7 +58,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       pattern: []
     }, {
       id: 'pushChangesToGist',
-      name: 'Push back changes to gist',
+      name: 'Push changes to gist',
       type: ['gist'],
       path: [],
       extension: [],
@@ -67,6 +67,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
       id: 'publishFolderToGist',
       name: 'Publish folder to gist',
       type: ['folder'],
+      path: [],
+      extension: [],
+      pattern: []
+    }, {
+      id: 'publishFileToGist',
+      name: 'Publish file to gist',
+      type: ['file'],
       path: [],
       extension: [],
       pattern: []
