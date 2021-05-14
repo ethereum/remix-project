@@ -159,7 +159,6 @@
     "isbinaryfile": "^3.0.2",
     "jquery": "^3.3.1",
     "jszip": "^3.6.0",
-    "lodash": "^4.17.21",
     "latest-version": "^5.1.0",
     "lodash": "^4.17.21",
     "merge": "^1.2.0",

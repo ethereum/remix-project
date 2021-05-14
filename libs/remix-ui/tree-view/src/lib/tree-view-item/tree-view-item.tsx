@@ -14,7 +14,7 @@ export const TreeViewItem = (props: TreeViewItemProps) => {
   return (
     <li ref={innerRef} key={`treeViewLi${id}`} data-id={`treeViewLi${id}`} className='li_tv' {...otherProps}>
       <div key={`treeViewDiv${id}`} data-id={`treeViewDiv${id}`} className={`d-flex flex-row align-items-center ${labelClass}`} onClick={() => !controlBehaviour && setIsExpanded(!isExpanded)}>
-        { controlBehaviour ? null : children ? <div className={isExpanded ? `px-1 ${iconY} caret caret_tv` : `px-1 ${iconX} caret caret_tv`} style={{ visibility: children ? 'visible' : 'hidden' }}></div> : icon ? <div className={`pr-3 pl-1 ${icon} caret caret_tv`}></div> : null }
+        { children ? <div className={isExpanded ? `px-1 ${iconY} caret caret_tv` : `px-1 ${iconX} caret caret_tv`} style={{ visibility: children ? 'visible' : 'hidden' }}></div> : icon ? <div className={`pr-3 pl-1 ${icon} caret caret_tv`}></div> : null }
         <span className='w-100 pl-1'>
           { label }
         </span>
