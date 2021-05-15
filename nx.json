@@ -95,6 +95,12 @@
     },
     "remix-ui-workspace": {
       "tags": []
+    },
+    "remix-ui-static-analyser": {
+      "tags": []
+    },
+    "remix-ui-checkbox": {
+      "tags": []
     }
   }
 }
