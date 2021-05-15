@@ -16,7 +16,7 @@ export interface RemixUiSettingsProps {
 }
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
-  const [state, dispatch] = useReducer(settingReducer, initialState)
+  const [, dispatch] = useReducer(settingReducer, initialState)
   const [tokenValue, setTokenValue] = useState('')
   const [saveTokenState, setSaveTokenState] = useState(false)
   const [removeTokenState, setRemoveTokenState] = useState(false)
@@ -29,9 +29,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   })
 
   const onchangeGenerateContractMetadata = (event) => {
-    const checked = props.config.set('settings/generate-contract-metadata')
-
-    console.log(props.config.set, ' checked in Generate Contract')
     generateContractMetadat(props, event, dispatch)
   }
 
@@ -51,32 +48,44 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     useMatomoAnalytics(props, event, dispatch)
   }
 
+  const onswitchTheme = (event, name) => {
+    props._deps.themeModule.switchTheme(name)
+  }
+
+  const getTextClass = (key) => {
+    if (props.config.get(key)) {
+      return 'text-dark'
+    } else {
+      return 'text-secondary'
+    }
+  }
+
   const generalConfig = () => (
     <div className="$border-top">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">General settings</h6>
         <div className="mt-2 custom-control custom-checkbox mb-1">
-          <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata"/>
-          <label className={`form-check-label custom-control-label align-middle ${state.elementState[0].textClass}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">{generateContractMetadataText}</label>
+          <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" checked = { props.config.get('settings/generate-contract-metadata') }/>
+          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">{generateContractMetadataText}</label>
         </div>
         <div className="fmt-2 custom-control custom-checkbox mb-1">
-          <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM"/>
-          <label className={`form-check-label custom-control-label align-middle ${state.elementState[1].textClass}`} htmlFor="alwaysUseVM">Always use Ethereum VM at Load</label>
+          <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={ props.config.get('settings/always-use-vm') }/>
+          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">Always use Ethereum VM at Load</label>
         </div>
         <div className="mt-2 custom-control custom-checkbox mb-1">
-          <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} />
-          <label className={`form-check-label custom-control-label align-middle ${state.elementState[2].textClass}`} htmlFor="editorWrap">Text Wrap</label>
+          <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked = { props.config.get('settings/text-wrap')}/>
+          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">Text Wrap</label>
         </div>
         <div className="custom-control custom-checkbox mb-1">
-          <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" />
-          <label className={`form-check-label custom-control-label align-middle ${state.elementState[3].textClass}`} htmlFor="personal">
+          <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked = { props.config.get('settings/personal-mode')}/>
+          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
             <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span>   </span>
             <span>   </span>Enable Personal Mode for web3 provider. {warnText}
           </label>
         </div>
         <div className="custom-control custom-checkbox mb-1">
-          <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" />
-          <label className={`form-check-label custom-control-label align-middle ${state.elementState[4].textClass}`} htmlFor="settingsMatomoAnalytics">
+          <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={ props.config.get('settings/matomo-analytics')}/>
+          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
             <span>Enable Matomo Analytics. We do not collect personally identifiable information (PII). The info is used to improve the site’s UX & UI. See more about </span>
             <a href="https://medium.com/p/66ef69e14931/" target="_blank"> Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
           </label>
@@ -123,16 +132,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const themes = () => {
     const themes = props._deps.themeModule.getThemes()
-    const onswitchTheme = (event, name) => {
-      props._deps.themeModule.switchTheme(name)
-    }
     if (themes) {
-      return themes.map((aTheme) => (
-        <div className="radio custom-control custom-radio mb-1 form-check">
-          <input type="radio" onChange={event => { onswitchTheme(event, aTheme.name) }} className="align-middle custom-control-input" name="theme" id={aTheme.name} data-id={`settingsTabTheme${aTheme.name}`} />
+      return themes.map((aTheme, index) => (
+        <div className="radio custom-control custom-radio mb-1 form-check" key={index}>
+          <input type="radio" onChange={event => { onswitchTheme(event, aTheme.name) }} className="align-middle custom-control-input" name='theme' id={aTheme.name} data-id={`settingsTabTheme${aTheme.name}`} checked = {props._deps.themeModule.active === aTheme.name ? true : null}/>
           <label className="form-check-label custom-control-label" data-id={`settingsTabThemeLabel${aTheme.name}`} htmlFor={aTheme.name}>{aTheme.name} ({aTheme.quality})</label>
         </div>
-      ))
+      )
+      )
     }
   }
 
