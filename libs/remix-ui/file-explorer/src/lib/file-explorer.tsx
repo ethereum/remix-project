@@ -378,8 +378,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const publishToGist = () => {
-    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', toGist, 'Cancel', () => {})
+  const publishToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
   const toGist = (path?: string, type?: string) => {
@@ -875,18 +875,36 @@ export const FileExplorer = (props: FileExplorerProps) => {
 export default FileExplorer
 
 async function packageFiles (filesProvider, directory, callback) {
+  const isFile = filesProvider.isFile(directory)
   const ret = {}
-  try {
-    await filesProvider.copyFolderToJson(directory, ({ path, content }) => {
-      if (/^\s+$/.test(content) || !content.length) {
-        content = '// this line is added to create a gist. Empty file is not allowed.'
-      }
-      path = path.replace(/\//g, '...')
-      ret[path] = { content }
-    })
-    callback(null, ret)
-  } catch (e) {
-    return callback(e)
+
+  if (isFile) {
+    try {
+      filesProvider.get(directory, (error, content) => {
+        if (error) throw new Error('An error ocurred while getting file content. ' + directory)
+        if (/^\s+$/.test(content) || !content.length) {
+          content = '// this line is added to create a gist. Empty file is not allowed.'
+        }
+        directory = directory.replace(/\//g, '...')
+        ret[directory] = { content }
+        callback(null, ret)
+      })
+    } catch (e) {
+      return callback(e)
+    }
+  } else {
+    try {
+      await filesProvider.copyFolderToJson(directory, ({ path, content }) => {
+        if (/^\s+$/.test(content) || !content.length) {
+          content = '// this line is added to create a gist. Empty file is not allowed.'
+        }
+        path = path.replace(/\//g, '...')
+        ret[path] = { content }
+      })
+      callback(null, ret)
+    } catch (e) {
+      return callback(e)
+    }
   }
 }
 
