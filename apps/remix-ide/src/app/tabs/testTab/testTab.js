@@ -18,7 +18,9 @@ class TestTabLogic {
     // Checking to ignore the value which contains only whitespaces
     if (!path || !(/\S/.test(path))) return
     const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
-    fileProvider.exists(path, (e, res) => { if (!res) fileProvider.createDir(path) })
+    fileProvider.exists(path).then(res => {
+      if (!res) fileProvider.createDir(path)
+    })
   }
 
   pathExists (path) {
