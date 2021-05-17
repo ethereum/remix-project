@@ -201,34 +201,43 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
     if (!sourceLocation) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
+    if ((isExternalCall && callDepthChange(step, tree.traceManager.trace)) || (!isExternalCall && sourceLocation.jump === 'o')) {
+      // if not, we might be returning from a CALL or internal function. This is what is checked here.
+      tree.scopes[scopeId].lastStep = step
+      return { outStep: step + 1 }
+    }
+
+    const contractObj = await tree.solidityProxy.contractObjectAt(step)
+    const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
+
     const isCallInstrn = isCallInstruction(tree.traceManager.trace[step])
     const isCreateInstrn = isCreateInstruction(tree.traceManager.trace[step])
     // we are checking if we are jumping in a new CALL or in an internal function
     if (isCallInstrn || sourceLocation.jump === 'i') {
       try {
-        const externalCallResult = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, isCallInstrn, isCreateInstrn)
-        if (externalCallResult.error) {
-          return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
-        } else {
-          step = externalCallResult.outStep
-          subScope++
+        const newScope = scopeId === '' ? subScope.toString() : scopeId + '.' + subScope
+        const functionDefinition = resolveFunctionDefinition(tree, sourceLocation, generatedSources)
+        if (functionDefinition) {
+          const externalCallResult = await buildTree(tree, step + 1, newScope, isCallInstrn, isCreateInstrn)
+          if (externalCallResult.error) {
+            return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
+          } else {
+            step = externalCallResult.outStep
+            subScope++
+            continue
+          }
         }
       } catch (e) {
         return { outStep: step, error: 'InternalCallTree - ' + e.message }
       }
-    } else if ((isExternalCall && callDepthChange(step, tree.traceManager.trace)) || (!isExternalCall && sourceLocation.jump === 'o')) {
-      // if not, we might be returning from a CALL or internal function. This is what is checked here.
-      tree.scopes[scopeId].lastStep = step
-      return { outStep: step + 1 }
-    } else {
-      // if not, we are in the current scope.
-      // We check in `includeVariableDeclaration` if there is a new local variable in scope for this specific `step`
-      if (tree.includeLocalVariables) {
-        await includeVariableDeclaration(tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation)
-      }
-      previousSourceLocation = sourceLocation
-      step++
     }
+    // if not, we are in the current scope.
+    // We check in `includeVariableDeclaration` if there is a new local variable in scope for this specific `step`
+    if (tree.includeLocalVariables) {
+      await includeVariableDeclaration(tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation, contractObj, generatedSources)
+    }
+    previousSourceLocation = sourceLocation
+    step++
   }
   return { outStep: step }
 }
@@ -245,10 +254,8 @@ function getGeneratedSources (tree, scopeId, contractObj) {
   return null
 }
 
-async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation) {
-  const contractObj = await tree.solidityProxy.contractObjectAt(step)
+async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation, contractObj, generatedSources) {
   let states = null
-  const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
   const variableDeclarations = resolveVariableDeclaration(tree, sourceLocation, generatedSources)
   // using the vm trace step, the current source location and the ast,
   // we check if the current vm trace step target a new ast node of type VariableDeclaration
