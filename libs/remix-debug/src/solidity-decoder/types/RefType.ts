@@ -63,10 +63,10 @@ export class RefType {
     const ethersAbi = new ethers.utils.Interface(variableDetails.abi)
     const fnSign = calldata.substr(0, 10)
     const decodedData = ethersAbi.decodeFunctionData(ethersAbi.getFunction(fnSign), calldata)
-    let decodedValue = decodedData[variableDetails.name]
+    const decodedValue = decodedData[variableDetails.name]
     const isArray = Array.isArray(decodedValue)
     if (isArray) {
-      return  this._decodeCallDataArray(decodedValue, this)
+      return this._decodeCallDataArray(decodedValue, this)
     }
     return {
       length: isArray ? '0x' + decodedValue.length.toString(16) : undefined,
