@@ -91,6 +91,7 @@ export const Workspace = (props: WorkspaceProps) => {
 
   const localhostDisconnect = () => {
     if (state.currentWorkspace === LOCALHOST) setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
+    else setWorkspace(state.currentWorkspace) // Useful to switch to last selcted workspace when remixd is disconnected
   }
   props.localhost.event.unregister('disconnected', localhostDisconnect)
   props.localhost.event.register('disconnected', localhostDisconnect)
@@ -247,11 +248,19 @@ export const Workspace = (props: WorkspaceProps) => {
 
   const remixdExplorer = {
     hide: async () => {
-      await setWorkspace(NO_WORKSPACE)
-      props.fileManager.setMode('browser')
-      setState(prevState => {
-        return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
-      })
+      // If 'connect to localhost' is clicked from home tab, mode is not 'localhost'
+      if (props.fileManager.mode === 'localhost') {
+        await setWorkspace(NO_WORKSPACE)
+        props.fileManager.setMode('browser')
+        setState(prevState => {
+          return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
+        })
+      } else {
+        // Hide spinner in file explorer
+        setState(prevState => {
+          return { ...prevState, loadingLocalhost: false }
+        })
+      }
     },
     show: () => {
       props.fileManager.setMode('localhost')
