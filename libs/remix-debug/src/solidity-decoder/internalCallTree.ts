@@ -52,6 +52,7 @@ export class InternalCallTree {
         // each recursive call to buildTree represent a new context (either call, delegatecall, internal function)
         const calledAddress = traceManager.getCurrentCalledAddressAt(0)
         const isCreation = isContractCreation(calledAddress)
+        _initScope(this, 0, '', isCreation)
         buildTree(this, 0, '', true, isCreation).then((result) => {
           if (result.error) {
             this.event.trigger('callTreeBuildFailed', [result.error])
@@ -164,8 +165,6 @@ export class InternalCallTree {
 async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
-  tree.scopes[scopeId] = { firstStep: step, locals: {}, isCreation }
-
   function callDepthChange (step, trace) {
     if (step + 1 < trace.length) {
       return trace[step].depth !== trace[step + 1].depth
@@ -205,12 +204,23 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
     // we are checking if we are jumping in a new CALL or in an internal function
     if (isCallInstrn || sourceLocation.jump === 'i') {
       try {
-        const externalCallResult = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, isCallInstrn, isCreateInstrn)
-        if (externalCallResult.error) {
-          return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
+        const nextStep = step + 1
+        const newScope = scopeId === '' ? subScope.toString() : scopeId + '.' + subScope
+        _initScope(tree, step, newScope, isCreateInstrn)
+        const result  =  await includeFunctionParameters(tree, nextStep, newScope, sourceLocation)
+
+        if (result === 'NOTFOUND') {
+          // nothing to do, we stay in the same scope
+          delete tree.scopes[newScope]
         } else {
-          step = externalCallResult.outStep
-          subScope++
+          const externalCallResult = await buildTree(tree, nextStep, newScope, isCallInstrn, isCreateInstrn)
+          if (externalCallResult.error) {
+            return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
+          } else {
+            step = externalCallResult.outStep
+            subScope++
+            return { outStep: step }
+          }
         }
       } catch (e) {
         return { outStep: step, error: 'InternalCallTree - ' + e.message }
@@ -219,15 +229,14 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
       // if not, we might be returning from a CALL or internal function. This is what is checked here.
       tree.scopes[scopeId].lastStep = step
       return { outStep: step + 1 }
-    } else {
-      // if not, we are in the current scope.
-      // We check in `includeVariableDeclaration` if there is a new local variable in scope for this specific `step`
-      if (tree.includeLocalVariables) {
-        await includeVariableDeclaration(tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation)
-      }
-      previousSourceLocation = sourceLocation
-      step++
     }
+    // if not, we are in the current scope.
+    // We check in `includeVariableDeclaration` if there is a new local variable in scope for this specific `step`
+    if (tree.includeLocalVariables) {
+      await includeVariableDeclaration(tree, step, sourceLocation, scopeId)
+    }
+    previousSourceLocation = sourceLocation
+    step++
   }
   return { outStep: step }
 }
@@ -244,7 +253,7 @@ function getGeneratedSources (tree, scopeId, contractObj) {
   return null
 }
 
-async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation) {
+async function includeVariableDeclaration (tree, step, sourceLocation, scopeId) {
   const contractObj = await tree.solidityProxy.contractObjectAt(step)
   let states = null
   const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
@@ -276,50 +285,53 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
         }
       }
     }
-  }
+  }  
+}
 
+function _initScope (tree, step, scopeId, isCreation) {
+  tree.scopes[scopeId] = { firstStep: step, locals: {}, isCreation }
+}
+
+async function includeFunctionParameters (tree, step, scopeId, sourceLocation) {
   // we check here if we are at the beginning inside a new function.
   // if that is the case, we have to add to locals tree the inputs and output params
-  const functionDefinition = resolveFunctionDefinition(tree, previousSourceLocation, generatedSources)
-  if (!functionDefinition) return
+  const contractObj = await tree.solidityProxy.contractObjectAt(step)
+  const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
+  const functionDefinition = resolveFunctionDefinition(tree, sourceLocation, generatedSources)
+  if (!functionDefinition) return 'NOTFOUND'
 
-  const previousIsJumpDest2 = isJumpDestInstruction(tree.traceManager.trace[step - 2])
-  const previousIsJumpDest1 = isJumpDestInstruction(tree.traceManager.trace[step - 1])
-  const isConstructor = functionDefinition.kind === 'constructor'
-  if (newLocation && (previousIsJumpDest1 || previousIsJumpDest2 || isConstructor)) {
-    tree.functionCallStack.push(step)
-    const functionDefinitionAndInputs = { functionDefinition, inputs: [] }
-    // means: the previous location was a function definition && JUMPDEST
-    // => we are at the beginning of the function and input/output are setup
+  tree.functionCallStack.push(step)
+  const functionDefinitionAndInputs = { functionDefinition, inputs: [] }
+  // means: the previous location was a function definition && JUMPDEST
+  // => we are at the beginning of the function and input/output are setup
 
-    try {
-      const stack = tree.traceManager.getStackAt(step)
-      states = tree.solidityProxy.extractStatesDefinitions()
-      if (functionDefinition.parameters) {
-        const inputs = functionDefinition.parameters
-        const outputs = functionDefinition.returnParameters
-        // for (const element of functionDefinition.parameters) {
-        //   if (element.nodeType === 'ParameterList') {
-        //     if (!inputs) inputs = element
-        //     else {
-        //       outputs = element
-        //       break
-        //     }
-        //   }
-        // }
-        // input params
-        if (inputs && inputs.parameters) {
-          functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractObj, previousSourceLocation, stack.length, inputs.parameters.length, -1)
-        }
-        // output params
-        if (outputs) addParams(outputs, tree, scopeId, states, contractObj, previousSourceLocation, stack.length, 0, 1)
+  try {
+    const stack = tree.traceManager.getStackAt(step)
+    const states = tree.solidityProxy.extractStatesDefinitions()
+    if (functionDefinition.parameters) {
+      const inputs = functionDefinition.parameters
+      const outputs = functionDefinition.returnParameters
+      // for (const element of functionDefinition.parameters) {
+      //   if (element.nodeType === 'ParameterList') {
+      //     if (!inputs) inputs = element
+      //     else {
+      //       outputs = element
+      //       break
+      //     }
+      //   }
+      // }
+      // input params
+      if (inputs && inputs.parameters) {
+        functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractObj, sourceLocation, stack.length, inputs.parameters.length, -1)
       }
-    } catch (error) {
-      console.log(error)
+      // output params
+      if (outputs) addParams(outputs, tree, scopeId, states, contractObj, sourceLocation, stack.length, 0, 1)
     }
-
-    tree.functionDefinitionsByScope[scopeId] = functionDefinitionAndInputs
+  } catch (error) {
+    console.log(error)
   }
+
+  tree.functionDefinitionsByScope[scopeId] = functionDefinitionAndInputs
 }
 
 // this extract all the variable declaration for a given ast and file
