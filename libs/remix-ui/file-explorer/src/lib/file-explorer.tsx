@@ -246,7 +246,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (state.focusElement[0]) {
       if (state.focusElement[0].type === 'folder' && state.focusElement[0].key) return state.focusElement[0].key
       else if (state.focusElement[0].type === 'gist' && state.focusElement[0].key) return state.focusElement[0].key
-      else if (state.focusElement[0].type === 'file' && state.focusElement[0].key) return extractParentFromKey(state.focusElement[0].key)
+      else if (state.focusElement[0].type === 'file' && state.focusElement[0].key) return extractParentFromKey(state.focusElement[0].key) ? extractParentFromKey(state.focusElement[0].key) : name
       else return name
     }
   }
