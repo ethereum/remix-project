@@ -22,7 +22,7 @@ module.exports = {
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
       .click('*[data-id="verticalIconsKindsolidity"]')
-      .pause(2000)
+      .pause(3000)
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(3000)
       .click('*[data-id="verticalIconsKindfilePanel"]')
