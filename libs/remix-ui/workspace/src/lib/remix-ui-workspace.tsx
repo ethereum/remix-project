@@ -146,14 +146,10 @@ export const Workspace = (props: WorkspaceProps) => {
       hide: true,
       title: '',
       message: null,
-      ok: {
-        label: '',
-        fn: () => {}
-      },
-      cancel: {
-        label: '',
-        fn: () => {}
-      },
+      okLabel: '',
+      okFn: () => {},
+      cancelLabel: '',
+      cancelFn: () => {},
       handleHide: null
     },
     loadingLocalhost: false,
@@ -169,41 +165,20 @@ export const Workspace = (props: WorkspaceProps) => {
   /* workspace creation, renaming and deletion */
 
   const renameCurrentWorkspace = () => {
-    modal('Rename Current Workspace', renameModalMessage(), {
-      label: 'OK',
-      fn: onFinishRenameWorkspace
-    }, {
-      label: '',
-      fn: () => {}
-    })
+    modal('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '', () => {})
   }
 
   const createWorkspace = () => {
-    modal('Create Workspace', createModalMessage(), {
-      label: 'OK',
-      fn: onFinishCreateWorkspace
-    }, {
-      label: '',
-      fn: () => {}
-    })
+    modal('Create Workspace', createModalMessage(), 'OK', onFinishCreateWorkspace, '', () => {})
   }
 
   const deleteCurrentWorkspace = () => {
-    modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', {
-      label: 'OK',
-      fn: onFinishDeleteWorkspace
-    }, {
-      label: '',
-      fn: () => {}
-    })
+    modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '', () => {})
   }
 
   const modalMessage = (title: string, body: string) => {
     setTimeout(() => { // wait for any previous modal a chance to close
-      modal(title, body, {
-        label: 'OK',
-        fn: () => {}
-      }, null)
+      modal(title, body, 'OK', () => {}, '', null)
     }, 200)
   }
 
@@ -306,7 +281,7 @@ export const Workspace = (props: WorkspaceProps) => {
     })
   }
 
-  const modal = async (title: string, message: string | JSX.Element, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
+  const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel: string, cancelFn: () => void) => {
     await setState(prevState => {
       return {
         ...prevState,
@@ -315,8 +290,10 @@ export const Workspace = (props: WorkspaceProps) => {
           hide: false,
           message,
           title,
-          ok,
-          cancel,
+          okLabel,
+          okFn,
+          cancelLabel,
+          cancelFn,
           handleHide: handleHideModal
         }
       }
@@ -348,8 +325,10 @@ export const Workspace = (props: WorkspaceProps) => {
         title={ state.modal.title }
         message={ state.modal.message }
         hide={ state.modal.hide }
-        ok={ state.modal.ok }
-        cancel={ state.modal.cancel }
+        okLabel={ state.modal.okLabel }
+        okFn={ state.modal.okFn }
+        cancelLabel={ state.modal.cancelLabel }
+        cancelFn={ state.modal.cancelFn }
         handleHide={ handleHideModal }>
         { (typeof state.modal.message !== 'string') && state.modal.message }
       </ModalDialog>
