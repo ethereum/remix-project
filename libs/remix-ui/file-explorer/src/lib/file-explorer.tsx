@@ -382,6 +382,36 @@ export const FileExplorer = (props: FileExplorerProps) => {
     modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
+  const pushChangesToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', 'Are you sure you want to push changes to remote gist file on github.com?', {
+      label: 'OK',
+      fn: () => toGist(path, type)
+    }, {
+      label: 'Cancel',
+      fn: () => {}
+    })
+  }
+
+  const publishFolderToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${path} folder as a public gist on github.com?`, {
+      label: 'OK',
+      fn: () => toGist(path, type)
+    }, {
+      label: 'Cancel',
+      fn: () => {}
+    })
+  }
+
+  const publishFileToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', `Are you sure you want to anonymously publish ${path} file as a public gist on github.com?`, {
+      label: 'OK',
+      fn: () => toGist(path, type)
+    }, {
+      label: 'Cancel',
+      fn: () => {}
+    })
+  }
+
   const toGist = (path?: string, type?: string) => {
     const filesProvider = fileSystem.provider.provider
     const proccedResult = function (error, data) {
@@ -865,7 +895,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
             e.stopPropagation()
             handleMouseOver(state.focusContext.element)
           }}
-          publishToGist={publishToGist}
+          pushChangesToGist={pushChangesToGist}
+          publishFolderToGist={publishFolderToGist}
+          publishFileToGist={publishFileToGist}
         />
       }
     </div>
