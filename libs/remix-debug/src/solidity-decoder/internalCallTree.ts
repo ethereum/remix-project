@@ -310,10 +310,10 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
         // }
         // input params
         if (inputs && inputs.parameters) {
-          functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractObj.name, previousSourceLocation, stack.length, inputs.parameters.length, -1)
+          functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractObj, previousSourceLocation, stack.length, inputs.parameters.length, -1)
         }
         // output params
-        if (outputs) addParams(outputs, tree, scopeId, states, contractObj.name, previousSourceLocation, stack.length, 0, 1)
+        if (outputs) addParams(outputs, tree, scopeId, states, contractObj, previousSourceLocation, stack.length, 0, 1)
       }
     } catch (error) {
       console.log(error)
@@ -373,7 +373,8 @@ function extractFunctionDefinitions (ast, astWalker) {
   return ret
 }
 
-function addParams (parameterList, tree, scopeId, states, contractName, sourceLocation, stackLength, stackPosition, dir) {
+function addParams (parameterList, tree, scopeId, states, contractObj, sourceLocation, stackLength, stackPosition, dir) {
+  const contractName = contractObj.name
   const params = []
   for (const inputParam in parameterList.parameters) {
     const param = parameterList.parameters[inputParam]
@@ -386,7 +387,8 @@ function addParams (parameterList, tree, scopeId, states, contractName, sourceLo
         name: attributesName,
         type: parseType(param.typeDescriptions.typeString, states, contractName, location),
         stackDepth: stackDepth,
-        sourceLocation: sourceLocation
+        sourceLocation: sourceLocation,
+        abi: contractObj.contract.abi
       }
       params.push(attributesName)
     }
