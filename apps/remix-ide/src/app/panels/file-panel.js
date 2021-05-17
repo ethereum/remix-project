@@ -73,6 +73,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   renderComponent () {
+    console.log("render", this.registeredMenuItems)
     ReactDOM.render(
       <Workspace
         createWorkspace={this.createWorkspace.bind(this)}
@@ -112,8 +113,9 @@ module.exports = class Filepanel extends ViewPlugin {
 
   removePluginActions (plugin) {
     this.registeredMenuItems = this.registeredMenuItems.filter((item) => {
-      return item.id !== plugin.name
+      return item.id !== plugin.name || item.sticky === true
     })
+    this.renderComponent()
   }
 
   async getCurrentWorkspace () {
