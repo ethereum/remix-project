@@ -52,27 +52,45 @@ export class RefType {
       offset = parseInt(offset, 16)
       return this.decodeFromMemoryInternal(offset, memory, cursor)
     } else if (this.isInCallData()) {
-      calldata = calldata.length > 0 ? calldata[0] : '0x'
-      const ethersAbi = new ethers.utils.Interface(variableDetails.abi)
-      const fnSign = calldata.substr(0, 10)
-      const decodedData = ethersAbi.decodeFunctionData(ethersAbi.getFunction(fnSign), calldata)
-      let decodedValue = decodedData[variableDetails.name]
-      const isArray = Array.isArray(decodedValue)
-      if (isArray) {
-        decodedValue = decodedValue.map((el) => {
-          return {
-            value: el.toString(),
-            type: this.underlyingType.typeName
-          }
-        })
-      }
-      return {
-        length: Array.isArray(decodedValue) ? '0x' + decodedValue.length.toString(16) : undefined,
-        value: decodedValue,
-        type: this.typeName
-      }
+      return this._decodeFromCallData(variableDetails, calldata)
     } else {
       return { error: '<decoding failed - no decoder for ' + this.location + '>', type: this.typeName }
+    }
+  }
+
+  _decodeFromCallData (variableDetails, calldata) {
+    calldata = calldata.length > 0 ? calldata[0] : '0x'
+    const ethersAbi = new ethers.utils.Interface(variableDetails.abi)
+    const fnSign = calldata.substr(0, 10)
+    const decodedData = ethersAbi.decodeFunctionData(ethersAbi.getFunction(fnSign), calldata)
+    let decodedValue = decodedData[variableDetails.name]
+    const isArray = Array.isArray(decodedValue)
+    if (isArray) {
+      return  this._decodeCallDataArray(decodedValue, this)
+    }
+    return {
+      length: isArray ? '0x' + decodedValue.length.toString(16) : undefined,
+      value: decodedValue,
+      type: this.typeName
+    }
+  }
+
+  _decodeCallDataArray (value, type) {
+    const isArray = Array.isArray(value)
+    if (isArray) {
+      value = value.map((el) => {
+        return this._decodeCallDataArray(el, this.underlyingType)
+      })
+      return {
+        length: value.length.toString(16),
+        value: value,
+        type: type.typeName
+      }
+    } else {
+      return {
+        value: value.toString(),
+        type: type.underlyingType.typeName
+      }
     }
   }
 
