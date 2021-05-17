@@ -87,6 +87,7 @@ class CompileTab extends ViewPlugin {
     this.compilerContainer.currentFile = ''
     this.data.contractsDetails = {}
     yo.update(this._view.contractSelection, this.contractSelection())
+    this.emit('statusChanged', { key: 'none' })
   }
 
   /************
