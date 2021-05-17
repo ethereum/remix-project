@@ -54,9 +54,9 @@ module.exports = {
             .click('[data-id="default_workspace-modal-footer-cancel-react"]')
             .executeScript(`remix.loadgist('${gistid}')`)
             // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
-            .waitForElementVisible(`[data-id="treeViewLitreeViewItem${gistid}"]`)
-            .click(`[data-id="treeViewLitreeViewItem${gistid}"]`)
-            .openFile(`${gistid}/README.txt`)
+            .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
+            .click(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
+            .openFile(`gist-${gistid}/README.txt`)
         }
       })
   },
