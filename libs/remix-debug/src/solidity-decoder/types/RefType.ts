@@ -1,4 +1,5 @@
 'use strict'
+import { ethers } from 'ethers'
 import { toBN } from './util'
 
 export class RefType {
@@ -7,6 +8,7 @@ export class RefType {
   storageBytes
   typeName
   basicType
+  underlyingType
 
   constructor (storageSlots, storageBytes, typeName, location) {
     this.location = location
@@ -33,7 +35,7 @@ export class RefType {
     * @param {Object} - storageResolver
     * @return {Object} decoded value
     */
-  async decodeFromStack (stackDepth, stack, memory, storageResolver, cursor): Promise<any> {
+  async decodeFromStack (stackDepth, stack, memory, storageResolver, calldata, cursor, variableDetails?): Promise<any> {
     if (stack.length - 1 < stackDepth) {
       return { error: '<decoding failed - stack underflow ' + stackDepth + '>', type: this.typeName }
     }
@@ -49,6 +51,26 @@ export class RefType {
     } else if (this.isInMemory()) {
       offset = parseInt(offset, 16)
       return this.decodeFromMemoryInternal(offset, memory, cursor)
+    } else if (this.isInCallData()) {
+      calldata = calldata.length > 0 ? calldata[0] : '0x'
+      const ethersAbi = new ethers.utils.Interface(variableDetails.abi)
+      const fnSign = calldata.substr(0, 10)
+      const decodedData = ethersAbi.decodeFunctionData(ethersAbi.getFunction(fnSign), calldata)
+      let decodedValue = decodedData[variableDetails.name]
+      const isArray = Array.isArray(decodedValue)
+      if (isArray) {
+        decodedValue = decodedValue.map((el) => {
+          return {
+            value: el.toString(),
+            type: this.underlyingType.typeName
+          }
+        })
+      }
+      return {
+        length: Array.isArray(decodedValue) ? '0x' + decodedValue.length.toString(16) : undefined,
+        value: decodedValue,
+        type: this.typeName
+      }
     } else {
       return { error: '<decoding failed - no decoder for ' + this.location + '>', type: this.typeName }
     }
@@ -83,5 +105,14 @@ export class RefType {
     */
   isInMemory () {
     return this.location.indexOf('memory') === 0
+  }
+
+  /**
+    * current type defined in storage
+    *
+    * @return {Bool} - return true if the type is defined in the storage
+    */
+  isInCallData () {
+    return this.location.indexOf('calldata') === 0
   }
 }
