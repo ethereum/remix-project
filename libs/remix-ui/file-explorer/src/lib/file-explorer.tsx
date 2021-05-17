@@ -17,6 +17,50 @@ import './css/file-explorer.css'
 
 const queryParams = new QueryParams()
 
+const initialActions = [{
+  id: 'newFile',
+  name: 'New File',
+  type: ['folder'],
+  path: [],
+  extension: [],
+  pattern: []
+}, {
+  id: 'newFolder',
+  name: 'New Folder',
+  type: ['folder'],
+  path: [],
+  extension: [],
+  pattern: []
+}, {
+  id: 'rename',
+  name: 'Rename',
+  type: ['file', 'folder'],
+  path: [],
+  extension: [],
+  pattern: []
+}, {
+  id: 'delete',
+  name: 'Delete',
+  type: ['file', 'folder'],
+  path: [],
+  extension: [],
+  pattern: []
+}, {
+  id: 'pushChangesToGist',
+  name: 'Push changes to gist',
+  type: [],
+  path: [],
+  extension: [],
+  pattern: ['^browser/gists/([0-9]|[a-z])*$']
+}, {
+  id: 'run',
+  name: 'Run',
+  type: [],
+  path: [],
+  extension: ['.js'],
+  pattern: []
+}]
+
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads } = props
   const [state, setState] = useState({
@@ -29,49 +73,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     fileManager: null,
     ctrlKey: false,
     newFileName: '',
-    actions: [{
-      id: 'newFile',
-      name: 'New File',
-      type: ['folder'],
-      path: [],
-      extension: [],
-      pattern: []
-    }, {
-      id: 'newFolder',
-      name: 'New Folder',
-      type: ['folder'],
-      path: [],
-      extension: [],
-      pattern: []
-    }, {
-      id: 'rename',
-      name: 'Rename',
-      type: ['file', 'folder'],
-      path: [],
-      extension: [],
-      pattern: []
-    }, {
-      id: 'delete',
-      name: 'Delete',
-      type: ['file', 'folder'],
-      path: [],
-      extension: [],
-      pattern: []
-    }, {
-      id: 'pushChangesToGist',
-      name: 'Push changes to gist',
-      type: [],
-      path: [],
-      extension: [],
-      pattern: ['^browser/gists/([0-9]|[a-z])*$']
-    }, {
-      id: 'run',
-      name: 'Run',
-      type: [],
-      path: [],
-      extension: ['.js'],
-      pattern: []
-    }],
+    actions: initialActions,
     focusContext: {
       element: null,
       x: null,
@@ -173,10 +175,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   useEffect(() => {
     if (contextMenuItems) {
       setState(prevState => {
-        // filter duplicate items
-        const items = contextMenuItems.filter(({ name }) => prevState.actions.findIndex(action => action.name === name) === -1)
-
-        return { ...prevState, actions: [...prevState.actions, ...items] }
+        return { ...prevState, actions: [...initialActions, ...contextMenuItems] }
       })
     }
   }, [contextMenuItems])
