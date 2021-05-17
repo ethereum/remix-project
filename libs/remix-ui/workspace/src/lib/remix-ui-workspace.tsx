@@ -278,6 +278,10 @@ export const Workspace = (props: WorkspaceProps) => {
         setState(prevState => {
           return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
         })
+      } else {
+        setState(prevState => {
+          return { ...prevState, loadingLocalhost: false }
+        })
       }
     },
     show: () => {
