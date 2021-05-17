@@ -18,7 +18,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
 
   const modalKeyEvent = (keyCode) => {
     if (keyCode === 27) { // Esc
-      if (props.cancel && props.cancel.fn) props.cancel.fn()
+      if (props.cancelFn) props.cancelFn()
       handleHide()
     } else if (keyCode === 13) { // Enter
       enterHandler()
@@ -33,9 +33,9 @@ export const ModalDialog = (props: ModalDialogProps) => {
 
   const enterHandler = () => {
     if (state.toggleBtn) {
-      if (props.ok && props.ok.fn) props.ok.fn()
+      if (props.okFn) props.okFn()
     } else {
-      if (props.cancel && props.cancel.fn) props.cancel.fn()
+      if (props.cancelFn) props.cancelFn()
     }
     handleHide()
   }
@@ -79,29 +79,29 @@ export const ModalDialog = (props: ModalDialogProps) => {
           </div>
           <div className="modal-footer" data-id={`${props.id}ModalDialogModalFooter-react`}>
             {/* todo add autofocus ^^ */}
-            { props.ok &&
+            { props.okLabel &&
               <span
                 data-id={`${props.id}-modal-footer-ok-react`}
                 className={'modal-ok btn btn-sm ' + (state.toggleBtn ? 'btn-dark' : 'btn-light')}
                 onClick={() => {
-                  if (props.ok.fn) props.ok.fn()
+                  if (props.okFn) props.okFn()
                   handleHide()
                 }}
               >
-                { props.ok.label ? props.ok.label : 'OK' }
+                { props.okLabel ? props.okLabel : 'OK' }
               </span>
             }
-            { props.cancel &&
+            { props.cancelLabel &&
               <span
                 data-id={`${props.id}-modal-footer-cancel-react`}
                 className={'modal-cancel btn btn-sm ' + (state.toggleBtn ? 'btn-light' : 'btn-dark')}
                 data-dismiss="modal"
                 onClick={() => {
-                  if (props.cancel.fn) props.cancel.fn()
+                  if (props.cancelFn) props.cancelFn()
                   handleHide()
                 }}
               >
-                { props.cancel.label ? props.cancel.label : 'Cancel' }
+                { props.cancelLabel ? props.cancelLabel : 'Cancel' }
               </span>
             }
           </div>
