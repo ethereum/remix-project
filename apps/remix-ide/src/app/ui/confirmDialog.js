@@ -26,7 +26,7 @@ function confirmDialog (tx, amount, gasEstimation, self, newGasPriceCb, initialP
 
   var el = yo`
     <div>
-      <div>You are about to create a transaction on the main network. Confirm details to send to your provider.</div>
+      <div>You are about to create a transaction on the main network. Confirm the details to send to your provider.</div>
       <div class="mt-3 ${css.txInfoBox}">
         <div>
           <span class="text-dark mr-2">From:</span>
@@ -55,7 +55,7 @@ function confirmDialog (tx, amount, gasEstimation, self, newGasPriceCb, initialP
         <div class="d-flex align-items-center my-1">
           <span class="text-dark mr-2">Gas price:</span>
           <input class="form-control mr-1" style='width: 40px; height: 28px;'id='gasprice' oninput=${onGasPriceChange} />
-          <span>Gwei (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> to get more info about gas price)</span>
+          <span>Gwei (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> for current gas price info.)</span>
         </div>
         <div class="d-flex align-items-center">
           <span class="text-dark mr-2 mb-3">Data:</span>
