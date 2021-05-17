@@ -584,15 +584,31 @@ export const FileExplorer = (props: FileExplorerProps) => {
         modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
       } else {
         if (state.focusEdit.isNew) {
-          state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
-          removeInputField(parentFolder)(dispatch)
+          if ((content === props.name) || (content.indexOf('gist-') === 0)) {
+            removeInputField(parentFolder)(dispatch)
+            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, {
+              label: 'Close',
+              fn: () => {}
+            }, null)
+          } else {
+            state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
+            removeInputField(parentFolder)(dispatch)
+          }
         } else {
-          const oldPath: string = state.focusEdit.element
-          const oldName = extractNameFromKey(oldPath)
-          const newPath = oldPath.replace(oldName, content)
+          if ((content === props.name) || (content.indexOf('gist-') === 0)) {
+            editRef.current.textContent = state.focusEdit.lastEdit
+            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, {
+              label: 'Close',
+              fn: () => {}
+            }, null)
+          } else {
+            const oldPath: string = state.focusEdit.element
+            const oldName = extractNameFromKey(oldPath)
+            const newPath = oldPath.replace(oldName, content)
 
-          editRef.current.textContent = extractNameFromKey(oldPath)
-          renamePath(oldPath, newPath)
+            editRef.current.textContent = extractNameFromKey(oldPath)
+            renamePath(oldPath, newPath)
+          }
         }
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
