@@ -272,11 +272,13 @@ export const Workspace = (props: WorkspaceProps) => {
 
   const remixdExplorer = {
     hide: async () => {
-      await setWorkspace(NO_WORKSPACE)
-      props.fileManager.setMode('browser')
-      setState(prevState => {
-        return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
-      })
+      if (props.fileManager.mode === 'localhost') {
+        await setWorkspace(NO_WORKSPACE)
+        props.fileManager.setMode('browser')
+        setState(prevState => {
+          return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
+        })
+      }
     },
     show: () => {
       props.fileManager.setMode('localhost')
