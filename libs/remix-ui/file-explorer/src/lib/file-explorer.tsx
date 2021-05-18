@@ -97,7 +97,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     modals: [],
     toasterMsg: '',
     mouseOverElement: null,
-    showContextMenu: false
+    showContextMenu: false,
+    reservedKeywords: [name, 'gist-']
   })
   const [fileSystem, dispatch] = useReducer(fileSystemReducer, fileSystemInitialState)
   const editRef = useRef(null)
@@ -220,6 +221,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
     keyPath.pop()
 
     return keyPath.join('/')
+  }
+
+  const hasReservedKeyword = (content: string): boolean => {
+    if (state.reservedKeywords.findIndex(value => content.startsWith(value)) !== -1) return true
+    else return false
   }
 
   const createNewFile = async (newFilePath: string) => {
@@ -584,15 +590,25 @@ export const FileExplorer = (props: FileExplorerProps) => {
         modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
       } else {
         if (state.focusEdit.isNew) {
-          state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
-          removeInputField(parentFolder)(dispatch)
+          if (hasReservedKeyword(content)) {
+            removeInputField(parentFolder)(dispatch)
+            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
+          } else {
+            state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
+            removeInputField(parentFolder)(dispatch)
+          }
         } else {
-          const oldPath: string = state.focusEdit.element
-          const oldName = extractNameFromKey(oldPath)
-          const newPath = oldPath.replace(oldName, content)
+          if (hasReservedKeyword(content)) {
+            editRef.current.textContent = state.focusEdit.lastEdit
+            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
+          } else {
+            const oldPath: string = state.focusEdit.element
+            const oldName = extractNameFromKey(oldPath)
+            const newPath = oldPath.replace(oldName, content)
 
-          editRef.current.textContent = extractNameFromKey(oldPath)
-          renamePath(oldPath, newPath)
+            editRef.current.textContent = extractNameFromKey(oldPath)
+            renamePath(oldPath, newPath)
+          }
         }
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
