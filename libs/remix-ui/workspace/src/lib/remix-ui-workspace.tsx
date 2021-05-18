@@ -255,7 +255,6 @@ export const Workspace = (props: WorkspaceProps) => {
       // If 'connect to localhost' is clicked from home tab, mode is not 'localhost'
       if (props.fileManager.mode === 'localhost') {
         await setWorkspace(NO_WORKSPACE)
-        console.log('remixdExplorer.hide')
         props.fileManager.setMode('browser')
         setState(prevState => {
           return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
