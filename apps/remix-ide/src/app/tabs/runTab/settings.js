@@ -198,7 +198,7 @@ class SettingsUI {
         return
       }
       const networkProvider = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
-      this.netUI.innerHTML = (networkProvider() !== 'vm') ? `${network.name} (${network.id || '-'}) network` : ''    
+      this.netUI.innerHTML = (networkProvider() !== 'vm') ? `${network.name} (${network.id || '-'}) network` : ''
     })
 
     setInterval(() => {

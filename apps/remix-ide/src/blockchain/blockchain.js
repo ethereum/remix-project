@@ -41,7 +41,7 @@ class Blockchain {
     this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
 
     this.networkcallid = 0
-    this.networkStatus = { name: ' - ', id: ' - ' } 
+    this.networkStatus = { name: ' - ', id: ' - ' }
     this.setupEvents()
     this.setupProviders()
   }
