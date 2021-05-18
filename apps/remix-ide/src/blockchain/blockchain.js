@@ -41,6 +41,7 @@ class Blockchain {
     this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
 
     this.networkcallid = 0
+    this.networkStatus = { name: ' - ', id: ' - ' } 
     this.setupEvents()
     this.setupProviders()
   }
@@ -57,6 +58,17 @@ class Blockchain {
     this.executionContext.event.register('removeProvider', (name) => {
       this.event.trigger('removeProvider', [name])
     })
+
+    setInterval(() => {
+      this.detectNetwork((error, network) => {
+        this.networkStatus = { network, error }
+        this.event.trigger('networkStatus', [this.networkStatus])
+      })
+    }, 1000)
+  }
+
+  getCurrentNetworkStatus () {
+    return this.networkStatus
   }
 
   setupProviders () {
@@ -195,15 +207,6 @@ class Blockchain {
 
   setProviderFromEndpoint (target, context, cb) {
     return this.executionContext.setProviderFromEndpoint(target, context, cb)
-  }
-
-  updateNetwork (cb) {
-    this.executionContext.detectNetwork((err, { id, name } = {}) => {
-      if (err) {
-        return cb(err)
-      }
-      cb(null, { id, name })
-    })
   }
 
   detectNetwork (cb) {
