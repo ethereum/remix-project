@@ -1,10 +1,19 @@
 const EventEmitter = require('events')
 var Compiler = require('@remix-project/remix-solidity').Compiler
+import * as packageJson from '../../../../../../package.json'
+import { Plugin } from '@remixproject/engine'
 
-class CompileTab {
-  constructor (queryParams, fileManager, editor, config, fileProvider, contentImport, miscApi) {
+const profile = {
+  name: 'solidity-logic',
+  displayName: 'Solidity compiler logic',
+  description: 'Compile solidity contracts - Logic',
+  version: packageJson.version
+}
+
+class CompileTab extends Plugin {
+  constructor (queryParams, fileManager, editor, config, fileProvider, contentImport) {
+    super(profile)
     this.event = new EventEmitter()
-    this.miscApi = miscApi
     this.queryParams = queryParams
     this.compilerImport = contentImport
     this.compiler = new Compiler((url, cb) => this.compilerImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
@@ -100,10 +109,10 @@ class CompileTab {
         `
         const configFilePath = 'remix-compiler.config.js'
         this.fileManager.setFileContent(configFilePath, fileContent)
-        this.fileManager.call('hardhat', 'compile', configFilePath)
+        this.call('hardhat', 'compile', configFilePath)
       }
       this.fileManager.saveCurrentFile()
-      this.miscApi.clearAnnotations()
+      this.call('editor', 'clearAnnotations')
       var currentFile = this.config.get('currentFile')
       return this.compileFile(currentFile)
     } catch (err) {

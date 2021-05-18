@@ -65,15 +65,10 @@ class CompileTab extends ViewPlugin {
       eventHandlers: {},
       loading: false
     }
+    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProvider, this.contentImport)
   }
 
   onActivationInternal () {
-    const miscApi = {
-      clearAnnotations: () => {
-        this.call('editor', 'clearAnnotations')
-      }
-    }
-    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProvider, this.contentImport, miscApi)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
 
@@ -486,6 +481,7 @@ class CompileTab extends ViewPlugin {
   }
 
   onActivation () {
+    this.call('manager', 'activatePlugin', 'solidity-logic')
     this.listenToEvents()
   }
 
@@ -499,6 +495,7 @@ class CompileTab extends ViewPlugin {
     this.fileManager.events.removeListener('noFileSelected', this.data.eventHandlers.onNoFileSelected)
     this.compiler.event.unregister('compilationFinished', this.data.eventHandlers.onCompilationFinished)
     globalRegistry.get('themeModule').api.events.removeListener('themeChanged', this.data.eventHandlers.onThemeChanged)
+    this.call('manager', 'deactivatePlugin', 'solidity-logic')
   }
 }
 
