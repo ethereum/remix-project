@@ -97,7 +97,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     modals: [],
     toasterMsg: '',
     mouseOverElement: null,
-    showContextMenu: false
+    showContextMenu: false,
+    reservedKeywords: [name, 'gist-']
   })
   const [fileSystem, dispatch] = useReducer(fileSystemReducer, fileSystemInitialState)
   const editRef = useRef(null)
@@ -220,6 +221,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
     keyPath.pop()
 
     return keyPath.join('/')
+  }
+
+  const hasReservedKeyword = (content: string): boolean => {
+    if (state.reservedKeywords.findIndex(value => content.startsWith(value)) !== -1) return true
+    else return false
   }
 
   const createNewFile = async (newFilePath: string) => {
@@ -584,7 +590,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
       } else {
         if (state.focusEdit.isNew) {
-          if ((content === props.name) || (content.indexOf('gist-') === 0)) {
+          if (hasReservedKeyword(content)) {
             removeInputField(parentFolder)(dispatch)
             modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, {
               label: 'Close',
@@ -595,7 +601,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             removeInputField(parentFolder)(dispatch)
           }
         } else {
-          if ((content === props.name) || (content.indexOf('gist-') === 0)) {
+          if (hasReservedKeyword(content)) {
             editRef.current.textContent = state.focusEdit.lastEdit
             modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, {
               label: 'Close',
