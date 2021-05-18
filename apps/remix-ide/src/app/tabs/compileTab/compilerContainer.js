@@ -517,7 +517,7 @@ class CompilerContainer {
   // fetching both normal and wasm builds and creating a [version, baseUrl] map
   async fetchAllVersion (callback) {
     let selectedVersion, allVersionsWasm, isURL
-    let allVersions = [{ path: 'builtin', longVersion: 'latest local version - 0.7.4' }]
+    let allVersions = [{ path: 'builtin', longVersion: 'Stable local version - 0.7.4' }]
     // fetch normal builds
     const binRes = await promisedMiniXhr(`${baseURLBin}/list.json`)
     // fetch wasm builds
