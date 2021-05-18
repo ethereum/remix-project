@@ -206,7 +206,7 @@ class CompileTab extends ViewPlugin {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
         e.preventDefault()
-        this.compileTabLogic.runCompiler()
+        this.compileTabLogic.runCompiler(this.compilerContainer.hhCompilation)
       }
     })
   }
