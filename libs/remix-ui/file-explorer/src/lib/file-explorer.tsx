@@ -592,10 +592,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         if (state.focusEdit.isNew) {
           if (hasReservedKeyword(content)) {
             removeInputField(parentFolder)(dispatch)
-            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, {
-              label: 'Close',
-              fn: () => {}
-            }, null)
+            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
           } else {
             state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
             removeInputField(parentFolder)(dispatch)
@@ -603,10 +600,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         } else {
           if (hasReservedKeyword(content)) {
             editRef.current.textContent = state.focusEdit.lastEdit
-            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, {
-              label: 'Close',
-              fn: () => {}
-            }, null)
+            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
           } else {
             const oldPath: string = state.focusEdit.element
             const oldName = extractNameFromKey(oldPath)
