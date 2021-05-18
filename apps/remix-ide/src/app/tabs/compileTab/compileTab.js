@@ -1,7 +1,7 @@
-const EventEmitter = require('events')
-var Compiler = require('@remix-project/remix-solidity').Compiler
 import * as packageJson from '../../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
+const EventEmitter = require('events')
+var Compiler = require('@remix-project/remix-solidity').Compiler
 
 const profile = {
   name: 'solidity-logic',
