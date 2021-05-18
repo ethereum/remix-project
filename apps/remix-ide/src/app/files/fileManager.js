@@ -57,12 +57,6 @@ class FileManager extends Plugin {
     this.mode = mode
   }
 
-  async compileWithHardhat (fileContent) {
-    const configFilePath = 'remixCompiler.config.js'
-    this.setFileContent(configFilePath, fileContent)
-    return await this.appManager.call('hardhat', 'compile', configFilePath)
-  }
-
   limitPluginScope (path) {
     return path.replace(/^\/browser\//, '').replace(/^browser\//, '') // forbids plugin to access the root filesystem
   }
