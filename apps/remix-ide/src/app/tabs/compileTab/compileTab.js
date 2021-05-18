@@ -98,7 +98,9 @@ class CompileTab {
           }
         }
         `
-        this.fileManager.compileWithHardhat(fileContent).then(console.log)
+        const configFilePath = 'remix-compiler.config.js'
+        this.fileManager.setFileContent(configFilePath, fileContent)
+        this.fileManager.appManager.call('hardhat', 'compile', configFilePath)
       }
       this.fileManager.saveCurrentFile()
       this.miscApi.clearAnnotations()
