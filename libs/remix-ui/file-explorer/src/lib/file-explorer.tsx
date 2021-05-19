@@ -742,9 +742,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleCopyClick = (path: string, type: string) => {
     setState(prevState => {
-      return { ...prevState, copyElement: [...prevState.copyElement, { key: path, type }] }
+      return { ...prevState, copyElement: [{ key: path, type }] }
     })
     setCanPaste(true)
+    // TODO: Reset toaster text after timeout.
     toast('Copied to clipboard')
   }
 
