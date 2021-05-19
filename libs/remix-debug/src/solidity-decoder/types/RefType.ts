@@ -89,7 +89,7 @@ export class RefType {
     } else {
       return {
         value: value.toString(),
-        type: type.underlyingType.typeName
+        type: (type.underlyingType && type.underlyingType.typeName) || type.typeName
       }
     }
   }
