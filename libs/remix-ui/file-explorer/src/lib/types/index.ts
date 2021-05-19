@@ -46,5 +46,7 @@ export interface FileExplorerContextMenuProps {
     pageY: number,
     path: string,
     type: string,
-    onMouseOver?: (...args) => void
+    onMouseOver?: (...args) => void,
+    copy?: (path: string, type: string) => void
+    paste?: (destination: string) => void
 }
