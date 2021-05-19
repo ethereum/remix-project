@@ -217,12 +217,14 @@ class FileManager extends Plugin {
     try {
       src = this.limitPluginScope(src)
       dest = this.limitPluginScope(dest)
-      await this._handleExists(src, `Cannot copy from ${src}`)
-      await this._handleIsFile(src, `Cannot copy from ${src}`)
-      await this._handleIsFile(dest, `Cannot paste content into ${dest}`)
+      await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
+      await this._handleIsFile(src, `Cannot copy from ${src}. Path is not a file.`)
+      await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
+      await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
       const content = await this.readFile(src)
+      const copiedFileName = `/Copy_${src.split('/')[src.split('/').length - 1]}`
 
-      await this.writeFile(dest, content)
+      await this.writeFile(dest + copiedFileName, content)
     } catch (e) {
       throw new Error(e)
     }
