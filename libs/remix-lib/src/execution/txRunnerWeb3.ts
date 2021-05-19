@@ -141,7 +141,7 @@ async function tryTillTxAvailable (txhash, web3) {
     const tx = await web3.eth.getTransaction(txhash)
     if (tx) return tx
   } catch (e) {}
-  return await tryTillTxAvailable(txhash, web3) 
+  return await tryTillTxAvailable(txhash, web3)
 }
 
 async function pause () { return new Promise((resolve, reject) => { setTimeout(resolve, 500) }) }
