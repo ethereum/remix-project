@@ -17,32 +17,32 @@ module.exports = class RemixDProvider extends FileProvider {
     var remixdEvents = ['connecting', 'connected', 'errored', 'closed']
     remixdEvents.forEach((value) => {
       this._appManager.on('remixd', value, (event) => {
-        this.event.trigger(value, [event])
+        this.event.emit(value, event)
       })
     })
 
     this._appManager.on('remixd', 'folderAdded', (path) => {
-      this.event.trigger('folderAdded', [path])
+      this.event.emit('folderAdded', path)
     })
 
     this._appManager.on('remixd', 'fileAdded', (path) => {
-      this.event.trigger('fileAdded', [path])
+      this.event.emit('fileAdded', path)
     })
 
     this._appManager.on('remixd', 'fileChanged', (path) => {
-      this.event.trigger('fileChanged', [path])
+      this.event.emit('fileChanged', path)
     })
 
     this._appManager.on('remixd', 'fileRemoved', (path) => {
-      this.event.trigger('fileRemoved', [path])
+      this.event.emit('fileRemoved', path)
     })
 
     this._appManager.on('remixd', 'fileRenamed', (oldPath, newPath) => {
-      this.event.trigger('fileRemoved', [oldPath, newPath])
+      this.event.emit('fileRemoved', oldPath, newPath)
     })
 
     this._appManager.on('remixd', 'rootFolderChanged', () => {
-      this.event.trigger('rootFolderChanged', [])
+      this.event.emit('rootFolderChanged')
     })
   }
 
@@ -53,11 +53,11 @@ module.exports = class RemixDProvider extends FileProvider {
   close (cb) {
     this._isReady = false
     cb()
-    this.event.trigger('disconnected')
+    this.event.emit('disconnected')
   }
 
   preInit () {
-    this.event.trigger('loading')
+    this.event.emit('loading')
   }
 
   init (cb) {
@@ -67,23 +67,22 @@ module.exports = class RemixDProvider extends FileProvider {
         this._isReady = true
         this._readOnlyMode = result
         this._registerEvent()
-        this.event.trigger('connected')
+        this.event.emit('connected')
         cb && cb()
       }).catch((error) => {
         cb && cb(error)
       })
   }
 
-  exists (path, cb) {
-    if (!this._isReady) return cb && cb('provider not ready')
+  exists (path) {
+    if (!this._isReady) throw new Error('provider not ready')
     const unprefixedpath = this.removePrefix(path)
 
     return this._appManager.call('remixd', 'exists', { path: unprefixedpath })
       .then((result) => {
-        if (cb) return cb(null, result)
         return result
-      }).catch((error) => {
-        if (cb) return cb(error)
+      })
+      .catch((error) => {
         throw new Error(error)
       })
   }
@@ -165,13 +164,13 @@ module.exports = class RemixDProvider extends FileProvider {
         this.filesContent[newPath] = this.filesContent[oldPath]
         delete this.filesContent[oldPath]
         this.init(() => {
-          this.event.trigger('fileRenamed', [oldPath, newPath, isFolder])
+          this.event.emit('fileRenamed', oldPath, newPath, isFolder)
         })
         return result
       }).catch(error => {
         console.log(error)
         if (this.error[error.code]) error = this.error[error.code]
-        this.event.trigger('fileRenamedError', [this.error[error.code]])
+        this.event.emit('fileRenamedError', this.error[error.code])
       })
   }
 

@@ -2,8 +2,10 @@ export interface ModalDialogProps {
   id?: string
   title?: string,
   message?: string,
-  ok?: { label: string, fn: () => void },
-  cancel: { label: string, fn: () => void },
+  okLabel?: string,
+  okFn?: () => void,
+  cancelLabel?: string,
+  cancelFn?: () => void,
   modalClass?: string,
   showCancelIcon?: boolean,
   hide: boolean,
