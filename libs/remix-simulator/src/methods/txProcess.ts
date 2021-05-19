@@ -1,15 +1,12 @@
 import { execution } from '@remix-project/remix-lib'
 const TxExecution = execution.txExecution
-const TxRunner = execution.txRunner
 
 function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
   const finalCallback = function (err, result) {
     if (err) {
       return callback(err)
     }
-    const returnValue = result.result.execResult.returnValue.toString('hex')
-    const toReturn = `0x${returnValue || '0'}`
-    return callback(null, toReturn)
+    return callback(null, result)
   }
 
   TxExecution.callFunction(from, to, data, value, gasLimit, { constant: true }, txRunner, callbacks, finalCallback)
@@ -20,7 +17,7 @@ function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, c
     if (err) {
       return callback(err)
     }
-    callback(null, result.transactionHash)
+    callback(null, result)
   }
 
   TxExecution.callFunction(from, to, data, value, gasLimit, { constant: false }, txRunner, callbacks, finalCallback)
@@ -31,43 +28,13 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
     if (err) {
       return callback(err)
     }
-    callback(null, result.transactionHash)
+    callback(null, result)
   }
 
   TxExecution.createContract(from, data, value, gasLimit, txRunner, callbacks, finalCallback)
 }
 
-let txRunnerInstance
-
-export function processTx (executionContext, accounts, payload, isCall, callback) {
-  const api = {
-    logMessage: (msg) => {
-    },
-    logHtmlMessage: (msg) => {
-    },
-    config: {
-      getUnpersistedProperty: (key) => {
-        return true
-      },
-      get: () => {
-        return true
-      }
-    },
-    detectNetwork: (cb) => {
-      cb()
-    },
-    personalMode: () => {
-      return false
-    }
-  }
-
-  executionContext.init(api.config)
-
-  // let txRunner = new TxRunner(accounts, api)
-  if (!txRunnerInstance) {
-    txRunnerInstance = new TxRunner(accounts, api, executionContext)
-  }
-  txRunnerInstance.vmaccounts = accounts
+export function processTx (txRunnerInstance, payload, isCall, callback) {
   let { from, to, data, value, gas } = payload.params[0]
   gas = gas || 3000000
 

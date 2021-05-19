@@ -181,35 +181,35 @@ export const fileRenamedSuccess = (path: string, removePath: string, files) => {
 
 export const init = (provider, workspaceName: string, plugin, registry) => (dispatch: React.Dispatch<any>) => {
   if (provider) {
-    provider.event.register('fileAdded', async (filePath) => {
+    provider.event.on('fileAdded', async (filePath) => {
       if (extractParentFromKey(filePath) === '/.workspaces') return
       const path = extractParentFromKey(filePath) || provider.workspace || provider.type || ''
       const data = await fetchDirectoryContent(provider, path)
 
       dispatch(fileAddedSuccess(path, data))
       if (filePath.includes('_test.sol')) {
-        plugin.event.trigger('newTestFileCreated', [filePath])
+        plugin.emit('newTestFileCreated', filePath)
       }
     })
-    provider.event.register('folderAdded', async (folderPath) => {
+    provider.event.on('folderAdded', async (folderPath) => {
       if (extractParentFromKey(folderPath) === '/.workspaces') return
       const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
       const data = await fetchDirectoryContent(provider, path)
 
       dispatch(folderAddedSuccess(path, data))
     })
-    provider.event.register('fileRemoved', async (removePath) => {
+    provider.event.on('fileRemoved', async (removePath) => {
       const path = extractParentFromKey(removePath) || provider.workspace || provider.type || ''
 
       dispatch(fileRemovedSuccess(path, removePath))
     })
-    provider.event.register('fileRenamed', async (oldPath) => {
+    provider.event.on('fileRenamed', async (oldPath) => {
       const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
       const data = await fetchDirectoryContent(provider, path)
 
       dispatch(fileRenamedSuccess(path, oldPath, data))
     })
-    provider.event.register('fileExternallyChanged', async (path: string, file: { content: string }) => {
+    provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
       const config = registry.get('config').api
       const editor = registry.get('editor').api
 
@@ -225,10 +225,10 @@ export const init = (provider, workspaceName: string, plugin, registry) => (disp
         ))
       }
     })
-    provider.event.register('fileRenamedError', async () => {
+    provider.event.on('fileRenamedError', async () => {
       dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
     })
-    provider.event.register('rootFolderChanged', async () => {
+    provider.event.on('rootFolderChanged', async () => {
       workspaceName = provider.workspace || provider.type || ''
       fetchDirectory(provider, workspaceName)(dispatch)
     })
