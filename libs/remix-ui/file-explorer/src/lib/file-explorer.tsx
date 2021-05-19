@@ -383,33 +383,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const pushChangesToGist = (path?: string, type?: string) => {
-    modal('Create a public gist', 'Are you sure you want to push changes to remote gist file on github.com?', {
-      label: 'OK',
-      fn: () => toGist(path, type)
-    }, {
-      label: 'Cancel',
-      fn: () => {}
-    })
+    modal('Create a public gist', 'Are you sure you want to push changes to remote gist file on github.com?', 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
   const publishFolderToGist = (path?: string, type?: string) => {
-    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${path} folder as a public gist on github.com?`, {
-      label: 'OK',
-      fn: () => toGist(path, type)
-    }, {
-      label: 'Cancel',
-      fn: () => {}
-    })
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${path} folder as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
   const publishFileToGist = (path?: string, type?: string) => {
-    modal('Create a public gist', `Are you sure you want to anonymously publish ${path} file as a public gist on github.com?`, {
-      label: 'OK',
-      fn: () => toGist(path, type)
-    }, {
-      label: 'Cancel',
-      fn: () => {}
-    })
+    modal('Create a public gist', `Are you sure you want to anonymously publish ${path} file as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
   const toGist = (path?: string, type?: string) => {
