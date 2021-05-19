@@ -15,6 +15,7 @@ class CompilerContainer {
     this.editor = editor
     this.config = config
     this.queryParams = queryParams
+    this.hhCompilation = false
 
     this.data = {
       hideWarnings: config.get('hideWarnings') || false,
@@ -183,6 +184,10 @@ class CompilerContainer {
       }
     })
 
+    this.hardhatCompilation = yo`<div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox" style="display:none">
+        <input class="${css.autocompile} custom-control-input" onchange=${(e) => this.updatehhCompilation(e)} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation">
+        <label class="form-check-label custom-control-label" for="enableHardhat">Enable Hardhat Compilation</label>
+      </div>`
     this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fas fa-exclamation-triangle" aria-hidden="true"></i>`
     this._view.compileIcon = yo`<i class="fas fa-sync ${css.icon}" aria-hidden="true"></i>`
     this._view.autoCompile = yo`<input class="${css.autocompile} custom-control-input" onchange=${() => this.updateAutoCompile()} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile">`
@@ -299,6 +304,7 @@ class CompilerContainer {
                 <label class="form-check-label custom-control-label" for="hideWarningsBox">Hide warnings</label>
               </div>
             </div>
+            ${this.hardhatCompilation}
             ${this._view.compilationButton}
           </header>
         </article>
@@ -326,12 +332,16 @@ class CompilerContainer {
     this.config.set('autoCompile', this._view.autoCompile.checked)
   }
 
+  updatehhCompilation (event) {
+    this.hhCompilation = event.target.checked
+  }
+
   compile (event) {
     const currentFile = this.config.get('currentFile')
     if (!this.isSolFileSelected()) return
 
     this._setCompilerVersionFromPragma(currentFile)
-    this.compileTabLogic.runCompiler()
+    this.compileTabLogic.runCompiler(this.hhCompilation)
   }
 
   compileIfAutoCompileOn () {
@@ -517,7 +527,7 @@ class CompilerContainer {
   // fetching both normal and wasm builds and creating a [version, baseUrl] map
   async fetchAllVersion (callback) {
     let selectedVersion, allVersionsWasm, isURL
-    let allVersions = [{ path: 'builtin', longVersion: 'latest local version - 0.7.4' }]
+    let allVersions = [{ path: 'builtin', longVersion: 'Stable local version - 0.7.4' }]
     // fetch normal builds
     const binRes = await promisedMiniXhr(`${baseURLBin}/list.json`)
     // fetch wasm builds

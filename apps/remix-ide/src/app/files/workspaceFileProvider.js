@@ -1,6 +1,6 @@
 'use strict'
 
-const EventManager = require('../../lib/events')
+const EventManager = require('events')
 const FileProvider = require('./fileProvider')
 const pathModule = require('path')
 
@@ -33,7 +33,7 @@ class WorkspaceFileProvider extends FileProvider {
     if (!this.workspace) this.createWorkspace()
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
     if (path.startsWith(this.workspacesPath + '/' + this.workspace)) return path
-    if (path.startsWith(this.workspace)) return this.workspacesPath + '/' + this.workspace
+    if (path.startsWith(this.workspace)) return path.replace(this.workspace, this.workspacesPath + '/' + this.workspace)
     path = super.removePrefix(path)
     let ret = this.workspacesPath + '/' + this.workspace + '/' + (path === '/' ? '' : path)
 
@@ -82,7 +82,7 @@ class WorkspaceFileProvider extends FileProvider {
 
   createWorkspace (name) {
     if (!name) name = 'default_workspace'
-    this.event.trigger('createWorkspace', [name])
+    this.event.emit('createWorkspace', name)
   }
 }
 

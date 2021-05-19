@@ -6,13 +6,13 @@ import ReactDOM from 'react-dom'
 import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import { checkSpecialChars, checkSlash } from '../../lib/helper'
-var EventManager = require('../../lib/events')
-var { RemixdHandle } = require('../files/remixd-handle.js')
-var { GitHandle } = require('../files/git-handle.js')
-var globalRegistry = require('../../global/registry')
-var examples = require('../editor/examples')
-var GistHandler = require('../../lib/gist-handler')
-var QueryParams = require('../../lib/query-params')
+const { RemixdHandle } = require('../files/remixd-handle.js')
+const { GitHandle } = require('../files/git-handle.js')
+const { HardhatHandle } = require('../files/hardhat-handle.js')
+const globalRegistry = require('../../global/registry')
+const examples = require('../editor/examples')
+const GistHandler = require('../../lib/gist-handler')
+const QueryParams = require('../../lib/query-params')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 /*
   Overview of APIs:
@@ -47,7 +47,6 @@ const profile = {
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
-    this.event = new EventManager()
     this._components = {}
     this._components.registry = globalRegistry
     this._deps = {
@@ -60,6 +59,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
     this.remixdHandle = new RemixdHandle(this._deps.fileProviders.localhost, appManager)
     this.gitHandle = new GitHandle()
+    this.hardhatHandle = new HardhatHandle()
     this.registeredMenuItems = []
     this.request = {}
     this.workspaces = []
@@ -188,8 +188,11 @@ module.exports = class Filepanel extends ViewPlugin {
     const browserProvider = this._deps.fileProviders.browser
     const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
     const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
-    if (!browserProvider.exists(workspaceRootPath)) browserProvider.createDir(workspaceRootPath)
-    if (!browserProvider.exists(workspacePath)) browserProvider.createDir(workspacePath)
+    const workspaceRootPathExists = await browserProvider.exists(workspaceRootPath)
+    const workspacePathExists = await browserProvider.exists(workspacePath)
+
+    if (!workspaceRootPathExists) browserProvider.createDir(workspaceRootPath)
+    if (!workspacePathExists) browserProvider.createDir(workspacePath)
   }
 
   async workspaceExists (name) {
@@ -209,11 +212,13 @@ module.exports = class Filepanel extends ViewPlugin {
       workspaceProvider.setWorkspace(workspaceName)
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
       for (const file in examples) {
-        try {
-          await workspaceProvider.set(examples[file].name, examples[file].content)
-        } catch (error) {
-          console.error(error)
-        }
+        setTimeout(async () => { // space creation of files to give react ui time to update.
+          try {
+            await workspaceProvider.set(examples[file].name, examples[file].content)
+          } catch (error) {
+            console.error(error)
+          }
+        }, 10)
       }
     }
   }
