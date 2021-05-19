@@ -51,7 +51,6 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run build:libs
-      - run: export NODE_OPTIONS="--max_old_space_size=8192"
       - run: npm run test:libs
 
   remix-ide-chrome-1:
