@@ -930,6 +930,11 @@ async function packageFiles (filesProvider, directory, callback) {
         if (/^\s+$/.test(content) || !content.length) {
           content = '// this line is added to create a gist. Empty file is not allowed.'
         }
+        if (path.indexOf('gist-') === 0) {
+          path = path.split('/')
+          path.shift()
+          path = path.join('/')
+        }
         path = path.replace(/\//g, '...')
         ret[path] = { content }
       })
