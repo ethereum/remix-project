@@ -1,7 +1,7 @@
-import React, { useState, useReducer, useEffect } from 'react' // eslint-disable-line
+import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { generateContractMetadataText, warnText } from './constants'
+import { generateContractMetadataText, gitAccessTokenLink, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenTitle, warnText } from './constants'
 
 import './remix-ui-settings.css'
 import { etherumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics } from './settingsAction'
@@ -22,11 +22,16 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [removeTokenState, setRemoveTokenState] = useState(false)
 
   useEffect(() => {
+    props._deps.themeModule.switchTheme()
     const token = props.config.get('settings/gist-access-token')
+    if (token === undefined) {
+      props.config.set('settings/generate-contract-metadata', true)
+      dispatch({ type: 'contractMetadata', payload: { name: 'contractMetadata', isChecked: true, textClass: 'text-dart' } })
+    }
     if (token) {
       setTokenValue(token)
     }
-  })
+  }, [])
 
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props, event, dispatch)
@@ -74,7 +79,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
         <div className="mt-2 custom-control custom-checkbox mb-1">
           <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked = { props.config.get('settings/text-wrap')}/>
-          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">Text Wrap</label>
+          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">Word wrap in editor</label>
         </div>
         <div className="custom-control custom-checkbox mb-1">
           <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked = { props.config.get('settings/personal-mode')}/>
@@ -105,26 +110,28 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     props.config.set('settings/gist-access-token', '')
   }
 
+  const handleSaveTokenState = useCallback(
+    (event) => {
+      setTokenValue(event.target.value)
+    },
+    [tokenValue]
+  )
+
   const gistToken = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">Github Access Token</h6>
-        <p className="mb-1">Manage the access token used to publish to Gist and retrieve Github contents.</p>
-        <p className="">Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only 'create gist' permission.</p>
-        <p className="mb-1"><a className="text-primary" target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
+        <h6 className="card-title">{ gitAccessTokenTitle }</h6>
+        <p className="mb-1">{ gitAccessTokenText }</p>
+        <p className="">{ gitAccessTokenText2 }</p>
+        <p className="mb-1"><a className="text-primary" target="_blank" href="https://github.com/settings/tokens">{ gitAccessTokenLink }</a></p>
         <div className=""><label>TOKEN:</label>
           <div className="text-secondary mb-0 h6">
-            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={event => setTokenValue(event.target.value)} value={ tokenValue } />
+            <input id="gistaccesstoken" data-id="settingsTabGistAccessToken" type="password" className="form-control" onChange={handleSaveTokenState} value={ tokenValue } />
             <div className="d-flex justify-content-end pt-2">
-              <CopyToClipboard content={tokenValue} data-id='settingsTabGistAccessToken' />
-
+              <CopyToClipboard content={tokenValue} data-id='copyToClipboardCopyIcon' />
               <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken()} value="Save" type="button" disabled={tokenValue === ''}></input>
               <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onClick={removeToken}>Remove</button>
             </div>
-            <p className="pt-1">
-              <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
-              <span className="text-warning">Please reload Remix after having saved the token.</span>
-            </p>
           </div></div>
       </div>
     </div>
@@ -145,8 +152,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   return (
     <div>
-      {saveTokenState ? <Toaster message='Access token has been saved. RELOAD the page to apply it.' /> : null}
-      {removeTokenState ? <Toaster message='Access token removed.' /> : null}
+      {saveTokenState ? <Toaster message='Access token has been saved' /> : null}
+      {removeTokenState ? <Toaster message='Access token removed' /> : null}
       {generalConfig()}
       {gistToken()}
       <div className="border-top">
