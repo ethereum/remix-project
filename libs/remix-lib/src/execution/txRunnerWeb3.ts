@@ -128,29 +128,20 @@ export class TxRunnerWeb3 {
 }
 
 async function tryTillReceiptAvailable (txhash, web3) {
-  return new Promise((resolve, reject) => {
-    web3.eth.getTransactionReceipt(txhash, async (err, receipt) => {
-      if (err || !receipt) {
-        // Try again with a bit of delay if error or if result still null
-        await pause()
-        return resolve(await tryTillReceiptAvailable(txhash, web3))
-      }
-      return resolve(receipt)
-    })
-  })
+  try {
+    const receipt = await web3.eth.getTransactionReceipt(txhash)
+    if (receipt) return receipt
+  } catch (e) {}
+  await pause()
+  return await tryTillReceiptAvailable(txhash, web3)
 }
 
 async function tryTillTxAvailable (txhash, web3) {
-  return new Promise((resolve, reject) => {
-    web3.eth.getTransaction(txhash, async (err, tx) => {
-      if (err || !tx) {
-        // Try again with a bit of delay if error or if result still null
-        await pause()
-        return resolve(await tryTillTxAvailable(txhash, web3))
-      }
-      return resolve(tx)
-    })
-  })
+  try {
+    const tx = await web3.eth.getTransaction(txhash)
+    if (tx) return tx
+  } catch (e) {}
+  return await tryTillTxAvailable(txhash, web3) 
 }
 
 async function pause () { return new Promise((resolve, reject) => { setTimeout(resolve, 500) }) }
