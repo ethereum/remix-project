@@ -121,7 +121,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     reservedKeywords: [name, 'gist-'],
     copyElement: []
   })
-  const [canPaste, setcanPaste] = useState(false)
+  const [canPaste, setCanPaste] = useState(false)
   const [fileSystem, dispatch] = useReducer(fileSystemReducer, fileSystemInitialState)
   const editRef = useRef(null)
 
@@ -411,6 +411,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
         if (error) console.log(error)
       })
     })
+  }
+
+  const copyFile = (src: string, dest: string) => {
+    const fileManager = state.fileManager
+
+    try {
+      fileManager.copyFile(src, dest)
+    } catch (error) {
+      console.log('Oops! An error ocurred while performing copyFile operation.' + error)
+    }
   }
 
   const publishToGist = (path?: string, type?: string) => {
@@ -734,15 +744,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
     setState(prevState => {
       return { ...prevState, copyElement: [...prevState.copyElement, { key: path, type }] }
     })
-    setcanPaste(true)
+    setCanPaste(true)
+    toast('Copied to clipboard')
   }
 
-  const handlePasteClick = (dest: string) => {
-    console.log('destination: ', dest)
+  const handlePasteClick = (dest: string, destType: string) => {
+    dest = destType === 'file' ? extractParentFromKey(dest) || props.name : dest
+    state.copyElement.map(({ key, type }) => {
+      type === 'file' ? copyFile(key, dest) : copyFile(key, dest)
+    })
     setState(prevState => {
       return { ...prevState, copyElement: [] }
     })
-    setcanPaste(false)
+    setCanPaste(false)
   }
 
   const label = (file: File) => {
