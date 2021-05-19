@@ -6,36 +6,42 @@ import { vm as remixlibVM } from '@remix-project/remix-lib'
 import VM from '@ethereumjs/vm'
 import Common from '@ethereumjs/common'
 
-export function sendTx (vm, from, to, value, data, cb) {
-  var tx = new Tx({
-    nonce: new BN(from.nonce++),
-    gasPrice: new BN(1),
-    gasLimit: new BN(3000000, 10),
-    to: to,
-    value: new BN(value, 10),
-    data: Buffer.from(data, 'hex')
-  })
-  tx = tx.sign(from.privateKey)
-
-  var block = Block.fromBlockData({
-    header: {
-      timestamp: new Date().getTime() / 1000 | 0,
-      number: 0
-    }
-  }) // still using default common
-
-  try {
-    vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}).then(function (result) {
-      setTimeout(() => {
-        cb(null, bufferToHex(tx.hash()))
-      }, 500)
-    }).catch((error) => {
-      console.error(error)
-      cb(error)
+export function sendTx (vm, from, to, value, data, cb?) {
+  cb = cb || (() => {})
+  return new Promise ((resolve, reject) => {
+    var tx = new Tx({
+      nonce: new BN(from.nonce++),
+      gasPrice: new BN(1),
+      gasLimit: new BN(3000000, 10),
+      to: to,
+      value: new BN(value, 10),
+      data: Buffer.from(data, 'hex')
     })
-  } catch (e) {
-    console.error(e)
-  }
+    tx = tx.sign(from.privateKey)
+  
+    var block = Block.fromBlockData({
+      header: {
+        timestamp: new Date().getTime() / 1000 | 0,
+        number: 0
+      }
+    }) // still using default common
+  
+    try {
+      vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}).then(function (result) {
+        setTimeout(() => {
+          const hash = bufferToHex(tx.hash())
+          cb(null, { hash, result })
+          resolve({ hash, result })
+        }, 500)
+      }).catch((error) => {
+        console.error(error)
+        cb(error)
+        reject(error)
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  })
 }
 
 async function createVm (hardfork) {
