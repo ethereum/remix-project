@@ -17,7 +17,6 @@ describe('testRunner: remix-tests CLI', () => {
     describe('test various CLI options', () => {
       test('remix-tests version', () => {
         const res = spawnSync(executablePath, ['-V'])
-        console.log(res.stdout.toString())
         expect(res.stdout.toString().trim()).toBe(require('../package.json').version)
       })
 
