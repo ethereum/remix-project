@@ -47,7 +47,6 @@ const profile = {
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
-    this.event = new EventEmitter()
     this._components = {}
     this._components.registry = globalRegistry
     this._deps = {
