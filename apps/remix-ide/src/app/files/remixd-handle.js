@@ -39,6 +39,7 @@ export class RemixdHandle extends WebsocketPlugin {
   deactivate () {
     if (super.socket) super.deactivate()
     // this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
+    this.appManager.deactivatePlugin('hardhat')
     this.locahostProvider.close((error) => {
       if (error) console.log(error)
     })
@@ -51,6 +52,7 @@ export class RemixdHandle extends WebsocketPlugin {
   async canceled () {
     // await this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
     await this.appManager.deactivatePlugin('remixd')
+    await this.appManager.deactivatePlugin('hardhat')
   }
 
   /**
@@ -81,7 +83,7 @@ export class RemixdHandle extends WebsocketPlugin {
           }
         }, 3000)
         this.locahostProvider.init(() => {})
-        // this.call('manager', 'activatePlugin', 'git')
+        this.call('manager', 'activatePlugin', 'hardhat')
       }
     }
     if (this.locahostProvider.isConnected()) {
@@ -135,7 +137,7 @@ function remixdDialog () {
       <div class=${css.dialogParagraph}>If you have looked at the Remixd docs and just need remixd command, <br> here it is:
         <br><b>remixd -s absolute-path-to-the-shared-folder --remix-ide your-remix-ide-URL-instance</b>
       </div>
-      <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.href}</em> and your local file system <i>ws://127.0.0.1:65520</i>
+      <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.origin}</em> and your local file system <i>ws://127.0.0.1:65520</i>
         so please make sure your system is secured enough (port 65520 neither opened nor forwarded).
       </div>
       <div class=${css.dialogParagraph}>

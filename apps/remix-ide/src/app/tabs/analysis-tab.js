@@ -1,9 +1,11 @@
+import React from 'react' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
+import ReactDOM from 'react-dom'
 import { EventEmitter } from 'events'
+import {RemixUiStaticAnalyser} from '@remix-ui/static-analyser' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
+var Renderer = require('../ui/renderer')
 
-var yo = require('yo-yo')
-var StaticAnalysis = require('./staticanalysis/staticAnalysisView')
 var EventManager = require('../../lib/events')
 
 const profile = {
@@ -25,23 +27,49 @@ class AnalysisTab extends ViewPlugin {
     this.event = new EventManager()
     this.events = new EventEmitter()
     this.registry = registry
+    this.element = document.createElement('div')
+    this.element.setAttribute('id', 'staticAnalyserView')
+    this._components = {
+      renderer: new Renderer(this)
+    }
+    this._components.registry = this.registry
+    this._deps = {
+      offsetToLineColumnConverter: this.registry.get(
+        'offsettolinecolumnconverter').api
+    }
+  }
+
+  onActivation () {
+    this.renderComponent()
   }
 
   render () {
-    this.staticanalysis = new StaticAnalysis(this.registry, this)
-    this.staticanalysis.event.register('staticAnaysisWarning', (count) => {
-      if (count > 0) {
-        this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning' })
-      } else if (count === 0) {
-        this.emit('statusChanged', { key: 'succeed', title: 'no warning', type: 'success' })
-      } else {
-        // count ==-1 no compilation result
-        this.emit('statusChanged', { key: 'none' })
-      }
-    })
-    this.registry.put({ api: this.staticanalysis, name: 'staticanalysis' })
+    return this.element
+  }
 
-    return yo`<div class="px-3 pb-1" id="staticanalysisView">${this.staticanalysis.render()}</div>`
+  renderComponent () {
+    ReactDOM.render(
+      <RemixUiStaticAnalyser
+        analysisRunner={this.runner}
+        registry={this.registry}
+        staticanalysis={this.staticanalysis}
+        analysisModule={this}
+        event={this.event}
+      />,
+      this.element,
+      () => {
+        this.event.register('staticAnaysisWarning', (count) => {
+          if (count > 0) {
+            this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning' })
+          } else if (count === 0) {
+            this.emit('statusChanged', { key: 'succeed', title: 'no warning', type: 'success' })
+          } else {
+            // count ==-1 no compilation result
+            this.emit('statusChanged', { key: 'none' })
+          }
+        })
+      }
+    )
   }
 }
 
