@@ -37,7 +37,7 @@ async function test (st, vm, privateKey) {
 
   output = compiler.compile(compilerInput(calldataLocal.contract))
   output = JSON.parse(output)
-  await calldataLocalTest(st, vm, privateKey, output.contracts['test.sol']['structArrayLocal'].evm.bytecode.object, output)
+  await calldataLocalTest(st, vm, privateKey, output.contracts['test.sol']['calldataLocal'].evm.bytecode.object, output)
 
   st.end()
 }
