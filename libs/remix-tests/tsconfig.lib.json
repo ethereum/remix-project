@@ -9,7 +9,7 @@
   },
   "exclude": [
     "**/*.spec.ts",
-    "test/"
+    "tests/"
   ],
   "include": ["**/*.ts"]
 }
