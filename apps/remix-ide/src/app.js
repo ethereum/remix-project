@@ -431,12 +431,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   engine.register([
     compileTab,
+    compileTab.compileTabLogic,
     run,
     debug,
     analysis,
     test,
     filePanel.remixdHandle,
-    filePanel.gitHandle
+    filePanel.gitHandle,
+    filePanel.hardhatHandle
   ])
 
   if (isElectron()) {

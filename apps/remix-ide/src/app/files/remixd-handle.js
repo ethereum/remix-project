@@ -39,6 +39,7 @@ export class RemixdHandle extends WebsocketPlugin {
   deactivate () {
     if (super.socket) super.deactivate()
     // this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
+    this.appManager.deactivatePlugin('hardhat')
     this.locahostProvider.close((error) => {
       if (error) console.log(error)
     })
@@ -51,6 +52,7 @@ export class RemixdHandle extends WebsocketPlugin {
   async canceled () {
     // await this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
     await this.appManager.deactivatePlugin('remixd')
+    await this.appManager.deactivatePlugin('hardhat')
   }
 
   /**
@@ -81,7 +83,7 @@ export class RemixdHandle extends WebsocketPlugin {
           }
         }, 3000)
         this.locahostProvider.init(() => {})
-        // this.call('manager', 'activatePlugin', 'git')
+        this.call('manager', 'activatePlugin', 'hardhat')
       }
     }
     if (this.locahostProvider.isConnected()) {

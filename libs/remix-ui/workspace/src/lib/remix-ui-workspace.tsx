@@ -91,7 +91,11 @@ export const Workspace = (props: WorkspaceProps) => {
 
   const localhostDisconnect = () => {
     if (state.currentWorkspace === LOCALHOST) setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
-    else setWorkspace(state.currentWorkspace) // Useful to switch to last selcted workspace when remixd is disconnected
+    // This should be removed some time after refactoring: https://github.com/ethereum/remix-project/issues/1197
+    else {
+      setWorkspace(state.currentWorkspace) // Useful to switch to last selcted workspace when remixd is disconnected
+      props.fileManager.setMode('browser')
+    }
   }
   props.localhost.event.unregister('disconnected', localhostDisconnect)
   props.localhost.event.register('disconnected', localhostDisconnect)
