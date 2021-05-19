@@ -18,13 +18,18 @@ module.exports = {
   'Should activate `generate contract metadata`': function (browser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadataLabel"]', 5000)
+      .execute(function () {
+        const elem = document.getElementById('generatecontractmetadata') as HTMLInputElement
+        elem.checked = true
+      })
+      .verify.elementPresent('[data-id="settingsTabGenerateContractMetadata"]:checked')
       .click('*[data-id="verticalIconsFileExplorerIcons"]')
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
       .click('*[data-id="verticalIconsKindsolidity"]')
-      .pause(3000)
+      .pause(2000)
       .click('*[data-id="compilerContainerCompileBtn"]')
-      .pause(3000)
+      .pause(30000)
       .click('*[data-id="verticalIconsKindfilePanel"]')
       .openFile('contracts/artifacts/Ballot.json')
       .openFile('contracts/artifacts/Ballot_metadata.json')
@@ -39,22 +44,29 @@ module.exports = {
       .click('*[data-id="verticalIconsKindsettings"]')
       .setValue('*[data-id="settingsTabGistAccessToken"]', '**********')
       .click('*[data-id="settingsTabSaveGistToken"]')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
-      .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token has been saved')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'Access token has been saved')
+      .pause(3000)
+      // :nth-last-of-type(1)
   },
 
   'Should copy github access token to clipboard': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
       .click('*[data-id="copyToClipboardCopyIcon"]')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
-      .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Copied value to clipboard.')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+      // .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1) , 5000)
+      // .assert.containsText('*[data-shared="tooltipPopup"]', 'Copied value to clipboard.')
+      // .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Copied value to clipboard.')
   },
 
   'Should remove github access token': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
+      .pause(1000)
       .click('*[data-id="settingsTabRemoveGistToken"]')
-      .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
-      .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token removed')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+      // .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'Access token removed')
+      // .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token removed')
       .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
   },
 
