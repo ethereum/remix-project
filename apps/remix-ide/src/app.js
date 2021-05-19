@@ -29,6 +29,7 @@ const { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConvert
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
+const HardhatProvider = require('./app/tabs/hardhat-provider')
 const Config = require('./config')
 const modalDialogCustom = require('./app/ui/modal-dialog-custom')
 const modalDialog = require('./app/ui/modaldialog')
@@ -296,6 +297,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
 
   const contextualListener = new ContextualListener({ editor })
+  const hardhatProvider = new HardhatProvider()
 
   engine.register([
     contentImport,
@@ -309,7 +311,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     contextualListener,
     terminal,
     web3Provider,
-    fetchAndCompile
+    fetchAndCompile,
+    hardhatProvider
   ])
 
   // LAYOUT & SYSTEM VIEWS
