@@ -109,7 +109,11 @@ class CompileTab extends Plugin {
         `
         const configFilePath = 'remix-compiler.config.js'
         this.fileManager.setFileContent(configFilePath, fileContent)
-        this.call('hardhat', 'compile', configFilePath)
+        this.call('hardhat', 'compile', configFilePath).then((result) => {
+          this.emit('hardhatCompilationFinished', result)
+        }).catch((error) => {
+          this.emit('hardhatCompilationFinished', error)
+        })
       }
       this.fileManager.saveCurrentFile()
       this.call('editor', 'clearAnnotations')
