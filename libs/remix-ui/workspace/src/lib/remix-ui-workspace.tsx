@@ -91,25 +91,30 @@ export const Workspace = (props: WorkspaceProps) => {
 
   const localhostDisconnect = () => {
     if (state.currentWorkspace === LOCALHOST) setWorkspace(props.workspaces.length > 0 ? props.workspaces[0] : NO_WORKSPACE)
+    // This should be removed some time after refactoring: https://github.com/ethereum/remix-project/issues/1197
+    else {
+      setWorkspace(state.currentWorkspace) // Useful to switch to last selcted workspace when remixd is disconnected
+      props.fileManager.setMode('browser')
+    }
   }
-  props.localhost.event.unregister('disconnected', localhostDisconnect)
-  props.localhost.event.register('disconnected', localhostDisconnect)
+  props.localhost.event.off('disconnected', localhostDisconnect)
+  props.localhost.event.on('disconnected', localhostDisconnect)
 
   useEffect(() => {
-    props.localhost.event.register('connected', () => {
+    props.localhost.event.on('connected', () => {
       remixdExplorer.show()
       setWorkspace(LOCALHOST)
     })
 
-    props.localhost.event.register('disconnected', () => {
+    props.localhost.event.on('disconnected', () => {
       remixdExplorer.hide()
     })
 
-    props.localhost.event.register('loading', () => {
+    props.localhost.event.on('loading', () => {
       remixdExplorer.loading()
     })
 
-    props.workspace.event.register('createWorkspace', (name) => {
+    props.workspace.event.on('createWorkspace', (name) => {
       createNewWorkspace(name)
     })
 
@@ -145,14 +150,10 @@ export const Workspace = (props: WorkspaceProps) => {
       hide: true,
       title: '',
       message: null,
-      ok: {
-        label: '',
-        fn: () => {}
-      },
-      cancel: {
-        label: '',
-        fn: () => {}
-      },
+      okLabel: '',
+      okFn: () => {},
+      cancelLabel: '',
+      cancelFn: () => {},
       handleHide: null
     },
     loadingLocalhost: false,
@@ -168,41 +169,20 @@ export const Workspace = (props: WorkspaceProps) => {
   /* workspace creation, renaming and deletion */
 
   const renameCurrentWorkspace = () => {
-    modal('Rename Current Workspace', renameModalMessage(), {
-      label: 'OK',
-      fn: onFinishRenameWorkspace
-    }, {
-      label: '',
-      fn: () => {}
-    })
+    modal('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '', () => {})
   }
 
   const createWorkspace = () => {
-    modal('Create Workspace', createModalMessage(), {
-      label: 'OK',
-      fn: onFinishCreateWorkspace
-    }, {
-      label: '',
-      fn: () => {}
-    })
+    modal('Create Workspace', createModalMessage(), 'OK', onFinishCreateWorkspace, '', () => {})
   }
 
   const deleteCurrentWorkspace = () => {
-    modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', {
-      label: 'OK',
-      fn: onFinishDeleteWorkspace
-    }, {
-      label: '',
-      fn: () => {}
-    })
+    modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '', () => {})
   }
 
   const modalMessage = (title: string, body: string) => {
     setTimeout(() => { // wait for any previous modal a chance to close
-      modal(title, body, {
-        label: 'OK',
-        fn: () => {}
-      }, null)
+      modal(title, body, 'OK', () => {}, '', null)
     }, 200)
   }
 
@@ -272,11 +252,19 @@ export const Workspace = (props: WorkspaceProps) => {
 
   const remixdExplorer = {
     hide: async () => {
-      await setWorkspace(NO_WORKSPACE)
-      props.fileManager.setMode('browser')
-      setState(prevState => {
-        return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
-      })
+      // If 'connect to localhost' is clicked from home tab, mode is not 'localhost'
+      if (props.fileManager.mode === 'localhost') {
+        await setWorkspace(NO_WORKSPACE)
+        props.fileManager.setMode('browser')
+        setState(prevState => {
+          return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
+        })
+      } else {
+        // Hide spinner in file explorer
+        setState(prevState => {
+          return { ...prevState, loadingLocalhost: false }
+        })
+      }
     },
     show: () => {
       props.fileManager.setMode('localhost')
@@ -297,7 +285,7 @@ export const Workspace = (props: WorkspaceProps) => {
     })
   }
 
-  const modal = async (title: string, message: string | JSX.Element, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
+  const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel: string, cancelFn: () => void) => {
     await setState(prevState => {
       return {
         ...prevState,
@@ -306,8 +294,10 @@ export const Workspace = (props: WorkspaceProps) => {
           hide: false,
           message,
           title,
-          ok,
-          cancel,
+          okLabel,
+          okFn,
+          cancelLabel,
+          cancelFn,
           handleHide: handleHideModal
         }
       }
@@ -339,8 +329,10 @@ export const Workspace = (props: WorkspaceProps) => {
         title={ state.modal.title }
         message={ state.modal.message }
         hide={ state.modal.hide }
-        ok={ state.modal.ok }
-        cancel={ state.modal.cancel }
+        okLabel={ state.modal.okLabel }
+        okFn={ state.modal.okFn }
+        cancelLabel={ state.modal.cancelLabel }
+        cancelFn={ state.modal.cancelFn }
         handleHide={ handleHideModal }>
         { (typeof state.modal.message !== 'string') && state.modal.message }
       </ModalDialog>

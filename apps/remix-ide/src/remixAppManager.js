@@ -11,10 +11,10 @@ const requiredModules = [ // services + layout views + system views
   'fileManager', 'contentImport', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
   'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp']
 
-const dependentModules = ['git'] // module which shouldn't be manually activated (e.g git is activated by remixd)
+const dependentModules = ['git', 'hardhat'] // module which shouldn't be manually activated (e.g git is activated by remixd)
 
 export function isNative (name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons']
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
