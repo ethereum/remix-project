@@ -1,10 +1,19 @@
+import * as packageJson from '../../../../../../package.json'
+import { Plugin } from '@remixproject/engine'
 const EventEmitter = require('events')
 var Compiler = require('@remix-project/remix-solidity').Compiler
 
-class CompileTab {
-  constructor (queryParams, fileManager, editor, config, fileProvider, contentImport, miscApi) {
+const profile = {
+  name: 'solidity-logic',
+  displayName: 'Solidity compiler logic',
+  description: 'Compile solidity contracts - Logic',
+  version: packageJson.version
+}
+
+class CompileTab extends Plugin {
+  constructor (queryParams, fileManager, editor, config, fileProvider, contentImport) {
+    super(profile)
     this.event = new EventEmitter()
-    this.miscApi = miscApi
     this.queryParams = queryParams
     this.compilerImport = contentImport
     this.compiler = new Compiler((url, cb) => this.compilerImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
@@ -78,10 +87,32 @@ class CompileTab {
     })
   }
 
-  runCompiler () {
+  async isHardhatProject () {
+    if (this.fileManager.mode === 'localhost') {
+      return await this.fileManager.exists('hardhat.config.js')
+    } else return false
+  }
+
+  runCompiler (hhCompilation) {
     try {
+      if (this.fileManager.mode === 'localhost' && hhCompilation) {
+        const { currentVersion, optimize, runs } = this.compiler.state
+        const fileContent = `module.exports = {
+          solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
+          settings: {
+            optimizer: {
+              enabled: ${optimize},
+              runs: ${runs}
+            }
+          }
+        }
+        `
+        const configFilePath = 'remix-compiler.config.js'
+        this.fileManager.setFileContent(configFilePath, fileContent)
+        this.call('hardhat', 'compile', configFilePath)
+      }
       this.fileManager.saveCurrentFile()
-      this.miscApi.clearAnnotations()
+      this.call('editor', 'clearAnnotations')
       var currentFile = this.config.get('currentFile')
       return this.compileFile(currentFile)
     } catch (err) {

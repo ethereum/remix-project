@@ -1,5 +1,4 @@
 import { Blocks } from './methods/blocks'
-import { execution } from '@remix-project/remix-lib'
 
 import { info } from './utils/logs'
 import merge from 'merge'
@@ -11,11 +10,11 @@ import { methods as netMethods } from './methods/net'
 import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
 import { generateBlock } from './genesis'
-const { executionContext } = execution
+import { VMContext } from './vm-context'
 
 export class Provider {
   options: Record<string, unknown>
-  executionContext
+  vmContext
   Accounts
   Transactions
   methods
@@ -26,23 +25,23 @@ export class Provider {
     this.options = options
     this.host = host
     this.connected = true
-    // TODO: init executionContext here
-    this.executionContext = executionContext
-    this.Accounts = new Accounts(this.executionContext)
-    this.Transactions = new Transactions(this.executionContext)
+    this.vmContext = new VMContext()
+
+    this.Accounts = new Accounts(this.vmContext)
+    this.Transactions = new Transactions(this.vmContext)
 
     this.methods = {}
     this.methods = merge(this.methods, this.Accounts.methods())
-    this.methods = merge(this.methods, (new Blocks(this.executionContext, options)).methods())
+    this.methods = merge(this.methods, (new Blocks(this.vmContext, options)).methods())
     this.methods = merge(this.methods, miscMethods())
-    this.methods = merge(this.methods, (new Filters(this.executionContext)).methods())
+    this.methods = merge(this.methods, (new Filters(this.vmContext)).methods())
     this.methods = merge(this.methods, netMethods())
     this.methods = merge(this.methods, this.Transactions.methods())
-    this.methods = merge(this.methods, (new Debug(this.executionContext)).methods())
+    this.methods = merge(this.methods, (new Debug(this.vmContext)).methods())
   }
 
   async init () {
-    await generateBlock(this.executionContext)
+    await generateBlock(this.vmContext)
     await this.Accounts.resetAccounts()
     this.Transactions.init(this.Accounts.accounts)
   }
@@ -87,6 +86,39 @@ export class Provider {
   };
 
   on (type, cb) {
-    this.executionContext.logsManager.addListener(type, cb)
+    this.vmContext.logsManager.addListener(type, cb)
+  }
+}
+
+export function extend (web3) {
+  if (!web3.extend) {
+    return
+  }
+  // DEBUG
+  const methods = []
+  if (!(web3.eth && web3.eth.getExecutionResultFromSimulator)) {
+    methods.push(new web3.extend.Method({
+      name: 'getExecutionResultFromSimulator',
+      call: 'eth_getExecutionResultFromSimulator',
+      inputFormatter: [null],
+      params: 1
+    }))
+  }
+
+  if (!(web3.eth && web3.eth.getHashFromTagBySimulator)) {
+    methods.push(new web3.extend.Method({
+      name: 'getHashFromTagBySimulator',
+      call: 'eth_getHashFromTagBySimulator',
+      inputFormatter: [null],
+      params: 1
+    }))
+  }
+
+  if (methods.length > 0) {
+    web3.extend({
+      property: 'eth',
+      methods: methods,
+      properties: []
+    })
   }
 }

@@ -63,10 +63,10 @@ class Recorder {
       }
     })
 
-    this.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp, _payload, rawAddress) => {
+    this.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp, _payload) => {
       if (error) return console.log(error)
       if (call) return
-
+      const rawAddress = txResult.receipt.contractAddress
       if (!rawAddress) return // not a contract creation
       const address = helper.addressToString(rawAddress)
       // save back created addresses for the convertion from tokens to real adresses
