@@ -88,20 +88,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
       hide: true,
       title: '',
       message: '',
-      ok: {
-        label: '',
-        fn: () => {}
-      },
-      cancel: {
-        label: '',
-        fn: () => {}
-      },
+      okLabel: '',
+      okFn: () => {},
+      cancelLabel: '',
+      cancelFn: () => {},
       handleHide: null
     },
     modals: [],
     toasterMsg: '',
     mouseOverElement: null,
-    showContextMenu: false
+    showContextMenu: false,
+    reservedKeywords: [name, 'gist-']
   })
   const [fileSystem, dispatch] = useReducer(fileSystemReducer, fileSystemInitialState)
   const editRef = useRef(null)
@@ -122,13 +119,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     if (fileSystem.notification.message) {
-      modal(fileSystem.notification.title, fileSystem.notification.message, {
-        label: fileSystem.notification.labelOk,
-        fn: fileSystem.notification.actionOk
-      }, {
-        label: fileSystem.notification.labelCancel,
-        fn: fileSystem.notification.actionCancel
-      })
+      modal(fileSystem.notification.title, fileSystem.notification.message, fileSystem.notification.labelOk, fileSystem.notification.actionOk, fileSystem.notification.labelCancel, fileSystem.notification.actionCancel)
     }
   }, [fileSystem.notification.message])
 
@@ -201,8 +192,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
           hide: false,
           title: prevState.modals[0].title,
           message: prevState.modals[0].message,
-          ok: prevState.modals[0].ok,
-          cancel: prevState.modals[0].cancel,
+          okLabel: prevState.modals[0].okLabel,
+          okFn: prevState.modals[0].okFn,
+          cancelLabel: prevState.modals[0].cancelLabel,
+          cancelFn: prevState.modals[0].cancelFn,
           handleHide: prevState.modals[0].handleHide
         }
 
@@ -230,6 +223,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return keyPath.join('/')
   }
 
+  const hasReservedKeyword = (content: string): boolean => {
+    if (state.reservedKeywords.findIndex(value => content.startsWith(value)) !== -1) return true
+    else return false
+  }
+
   const createNewFile = async (newFilePath: string) => {
     const fileManager = state.fileManager
 
@@ -248,10 +246,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       }
     } catch (error) {
-      return modal('File Creation Failed', typeof error === 'string' ? error : error.message, {
-        label: 'Close',
-        fn: async () => {}
-      }, null)
+      return modal('File Creation Failed', typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
   }
 
@@ -263,20 +258,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const exists = await fileManager.exists(dirName)
 
       if (exists) {
-        return modal('Rename File Failed', `A file or folder ${extractNameFromKey(newFolderPath)} already exists at this location. Please choose a different name.`, {
-          label: 'Close',
-          fn: () => {}
-        }, null)
+        return modal('Rename File Failed', `A file or folder ${extractNameFromKey(newFolderPath)} already exists at this location. Please choose a different name.`, 'Close', () => {})
       }
       await fileManager.mkdir(dirName)
       setState(prevState => {
         return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
       })
     } catch (e) {
-      return modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, {
-        label: 'Close',
-        fn: async () => {}
-      }, null)
+      return modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, 'Close', async () => {})
     }
   }
 
@@ -288,21 +277,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
     const isDir = state.fileManager.isDirectory(path)
 
-    modal(`Delete ${isDir ? 'folder' : 'file'}`, `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, {
-      label: 'OK',
-      fn: async () => {
-        try {
-          const fileManager = state.fileManager
+    modal(`Delete ${isDir ? 'folder' : 'file'}`, `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, 'OK', async () => {
+      try {
+        const fileManager = state.fileManager
 
-          await fileManager.remove(path)
-        } catch (e) {
-          toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${path}.`)
-        }
+        await fileManager.remove(path)
+      } catch (e) {
+        toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${path}.`)
       }
-    }, {
-      label: 'Cancel',
-      fn: () => {}
-    })
+    }, 'Cancel', () => {})
   }
 
   const renamePath = async (oldPath: string, newPath: string) => {
@@ -311,18 +294,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const exists = await fileManager.exists(newPath)
 
       if (exists) {
-        modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, {
-          label: 'Close',
-          fn: () => {}
-        }, null)
+        modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, 'Close', () => {})
       } else {
         await fileManager.rename(oldPath, newPath)
       }
     } catch (error) {
-      modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, {
-        label: 'Close',
-        fn: async () => {}
-      }, null)
+      modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
   }
 
@@ -345,19 +322,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
         fileReader.onload = async function (event) {
           if (helper.checkSpecialChars(file.name)) {
-            modal('File Upload Failed', 'Special characters are not allowed', {
-              label: 'Close',
-              fn: async () => {}
-            }, null)
+            modal('File Upload Failed', 'Special characters are not allowed', 'Close', async () => {})
             return
           }
           const success = await filesProvider.set(name, event.target.result)
 
           if (!success) {
-            return modal('File Upload Failed', 'Failed to create file ' + name, {
-              label: 'Close',
-              fn: async () => {}
-            }, null)
+            return modal('File Upload Failed', 'Failed to create file ' + name, 'Close', async () => {})
           }
           const config = registry.get('config').api
           const editor = registry.get('editor').api
@@ -374,15 +345,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
         if (!exist) {
           loadFile(name)
         } else {
-          modal('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, {
-            label: 'OK',
-            fn: () => {
-              loadFile(name)
-            }
-          }, {
-            label: 'Cancel',
-            fn: () => {}
-          })
+          modal('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', () => {
+            loadFile(name)
+          }, 'Cancel', () => {})
         }
       }).catch(error => {
         if (error) console.log(error)
@@ -391,41 +356,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const publishToGist = () => {
-    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, {
-      label: 'OK',
-      fn: toGist
-    }, {
-      label: 'Cancel',
-      fn: () => {}
-    })
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', toGist, 'Cancel', () => {})
   }
 
   const toGist = (id?: string) => {
     const filesProvider = fileSystem.provider.provider
     const proccedResult = function (error, data) {
       if (error) {
-        modal('Publish to gist Failed', 'Failed to manage gist: ' + error, {
-          label: 'Close',
-          fn: async () => {}
-        }, null)
+        modal('Publish to gist Failed', 'Failed to manage gist: ' + error, 'Close', () => {})
       } else {
         if (data.html_url) {
-          modal('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, {
-            label: 'OK',
-            fn: () => {
-              window.open(data.html_url, '_blank')
-            }
-          }, {
-            label: 'Cancel',
-            fn: () => {}
-          })
+          modal('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, 'OK', () => {
+            window.open(data.html_url, '_blank')
+          }, 'Cancel', () => {})
         } else {
           const error = JSON.stringify(data.errors, null, '\t') || ''
           const message = data.message === 'Not Found' ? data.message + '. Please make sure the API token has right to create a gist.' : data.message
-          modal('Publish to gist Failed', message + ' ' + data.documentation_url + ' ' + error, {
-            label: 'Close',
-            fn: async () => {}
-          }, null)
+          modal('Publish to gist Failed', message + ' ' + data.documentation_url + ' ' + error, 'Close', () => {})
         }
       }
     }
@@ -451,20 +398,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     packageFiles(filesProvider, folder, async (error, packaged) => {
       if (error) {
         console.log(error)
-        modal('Publish to gist Failed', 'Failed to create gist: ' + error.message, {
-          label: 'Close',
-          fn: async () => {}
-        }, null)
+        modal('Publish to gist Failed', 'Failed to create gist: ' + error.message, 'Close', async () => {})
       } else {
         // check for token
         const config = registry.get('config').api
         const accessToken = config.get('settings/gist-access-token')
 
         if (!accessToken) {
-          modal('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', {
-            label: 'Close',
-            fn: async () => {}
-          }, null)
+          modal('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Close', () => {})
         } else {
           const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
             queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs=' + queryParams.get().runs + '&gist='
@@ -536,7 +477,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const modal = (title: string, message: string, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
+  const modal = (title: string, message: string, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setState(prevState => {
       return {
         ...prevState,
@@ -544,8 +485,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
           {
             message,
             title,
-            ok,
-            cancel,
+            okLabel,
+            okFn,
+            cancelLabel,
+            cancelFn,
             handleHide: handleHideModal
           }]
       }
@@ -644,21 +587,28 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       }
       if (helper.checkSpecialChars(content)) {
-        modal('Validation Error', 'Special characters are not allowed', {
-          label: 'OK',
-          fn: () => {}
-        }, null)
+        modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
       } else {
         if (state.focusEdit.isNew) {
-          state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
-          removeInputField(parentFolder)(dispatch)
+          if (hasReservedKeyword(content)) {
+            removeInputField(parentFolder)(dispatch)
+            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
+          } else {
+            state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
+            removeInputField(parentFolder)(dispatch)
+          }
         } else {
-          const oldPath: string = state.focusEdit.element
-          const oldName = extractNameFromKey(oldPath)
-          const newPath = oldPath.replace(oldName, content)
+          if (hasReservedKeyword(content)) {
+            editRef.current.textContent = state.focusEdit.lastEdit
+            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
+          } else {
+            const oldPath: string = state.focusEdit.element
+            const oldName = extractNameFromKey(oldPath)
+            const newPath = oldPath.replace(oldName, content)
 
-          editRef.current.textContent = extractNameFromKey(oldPath)
-          renamePath(oldPath, newPath)
+            editRef.current.textContent = extractNameFromKey(oldPath)
+            renamePath(oldPath, newPath)
+          }
         }
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
@@ -865,8 +815,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
           title={ state.focusModal.title }
           message={ state.focusModal.message }
           hide={ state.focusModal.hide }
-          ok={ state.focusModal.ok }
-          cancel={ state.focusModal.cancel }
+          okLabel={ state.focusModal.okLabel }
+          okFn={ state.focusModal.okFn }
+          cancelLabel={ state.focusModal.cancelLabel }
+          cancelFn={ state.focusModal.cancelFn }
           handleHide={ handleHideModal }
         />
       }

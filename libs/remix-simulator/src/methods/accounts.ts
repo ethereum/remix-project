@@ -6,22 +6,20 @@ export class Accounts {
   web3
   accounts: Record<string, unknown>
   accountsKeys: Record<string, unknown>
-  executionContext
+  vmContext
 
-  constructor (executionContext) {
+  constructor (vmContext) {
     this.web3 = new Web3()
-    this.executionContext = executionContext
+    this.vmContext = vmContext
     // TODO: make it random and/or use remix-libs
 
     this.accounts = {}
     this.accountsKeys = {}
-    this.executionContext.init({ get: () => { return true } })
   }
 
   async resetAccounts (): Promise<void> {
-    // TODO: setting this to {} breaks the app currently, unclear why still
-    // this.accounts = {}
-    // this.accountsKeys = {}
+    this.accounts = {}
+    this.accountsKeys = {}
     await this._addAccount('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', '0x56BC75E2D63100000')
     await this._addAccount('7e5bfb82febc4c2c8529167104271ceec190eafdca277314912eaabdb67c6e5f', '0x56BC75E2D63100000')
     await this._addAccount('cc6d63f85de8fef05446ebdd3c537c72152d0fc437fd7aa62b3019b79bd1fdd4', '0x56BC75E2D63100000')
@@ -47,7 +45,7 @@ export class Accounts {
       this.accounts[addressStr] = { privateKey, nonce: 0 }
       this.accountsKeys[addressStr] = '0x' + privateKey.toString('hex')
 
-      const stateManager = this.executionContext.vm().stateManager
+      const stateManager = this.vmContext.vm().stateManager
       stateManager.getAccount(Address.fromString(addressStr)).then((account) => {
         account.balance = new BN(balance.replace('0x', '') || 'f00000000000000001', 16)
         stateManager.putAccount(Address.fromString(addressStr), account).catch((error) => {
@@ -85,7 +83,7 @@ export class Accounts {
   eth_getBalance (payload, cb) {
     const address = payload.params[0]
 
-    this.executionContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
+    this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
       cb(null, new BN(account.balance).toString(10))
     }).catch((error) => {
       cb(error)

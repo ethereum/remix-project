@@ -314,7 +314,7 @@ export function deployLibrary (libraryName, libraryShortName, library, contracts
       if (err) {
         return callback(err)
       }
-      const address = txResult.result.createdAddress || txResult.result.contractAddress
+      const address = txResult.receipt.contractAddress
       library.address = address
       callback(err, address)
     })
