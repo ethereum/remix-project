@@ -57,7 +57,7 @@ export function callFunction (from, to, data, value, gasLimit, funAbi, txRunner,
   * @param {Object} execResult    - execution result given by the VM
   * @return {Object} -  { error: true/false, message: DOMNode }
   */
-export function checkVMError (txResult, abi) {
+export function checkVMError (execResult, abi) {
   const errorCode = {
     OUT_OF_GAS: 'out of gas',
     STACK_UNDERFLOW: 'stack underflow',
@@ -75,10 +75,10 @@ export function checkVMError (txResult, abi) {
     error: false,
     message: ''
   }
-  if (!txResult.result.execResult.exceptionError) {
+  if (!execResult.exceptionError) {
     return ret
   }
-  const exceptionError = txResult.result.execResult.exceptionError.error || ''
+  const exceptionError = execResult.exceptionError.error || ''
   const error = `VM error: ${exceptionError}.\n`
   let msg
   if (exceptionError === errorCode.INVALID_OPCODE) {
@@ -88,7 +88,7 @@ export function checkVMError (txResult, abi) {
     msg = '\tThe transaction ran out of gas. Please increase the Gas Limit.\n'
     ret.error = true
   } else if (exceptionError === errorCode.REVERT) {
-    const returnData = txResult.result.execResult.returnValue
+    const returnData = execResult.returnValue
     const returnDataHex = returnData.slice(0, 4).toString('hex')
     let customError
     if (abi) {
