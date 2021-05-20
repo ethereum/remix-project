@@ -97,7 +97,7 @@ class SettingsUI {
           Environment
         </label>
         <div class="${css.environment}">
-          <select id="selectExEnvOptions" data-id="settingsSelectEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select} custom-select">
+          <select id="selectExEnvOptions" data-id="settingsSelectEnvOptions" class="form-control ${css.select} custom-select">
             <option id="vm-mode"
               title="Execution environment does not connect to any node, everything is local and in memory only."
               value="vm" name="executionContext"> JavaScript VM
@@ -192,8 +192,17 @@ class SettingsUI {
       this.setFinalContext()
     })
 
+    this.blockchain.event.register('networkStatus', ({ error, network }) => {
+      if (error) {
+        this.netUI.innerHTML = 'can\'t detect network '
+        return
+      }
+      const networkProvider = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
+      this.netUI.innerHTML = (networkProvider() !== 'vm') ? `${network.name} (${network.id || '-'}) network` : ''
+    })
+
     setInterval(() => {
-      this.updateNetwork()
+      this.fillAccountsList()
     }, 1000)
 
     this.el = el
@@ -273,7 +282,6 @@ class SettingsUI {
     // set the final context. Cause it is possible that this is not the one we've originaly selected
     this.selectExEnv.value = this.blockchain.getProvider()
     this.event.trigger('clearInstance', [])
-    this.updateNetwork()
     this.updatePlusButton()
   }
 
@@ -388,18 +396,6 @@ class SettingsUI {
       }
       promptCb()
     })
-  }
-
-  updateNetwork () {
-    this.blockchain.updateNetwork((err, { id, name } = {}) => {
-      if (err) {
-        this.netUI.innerHTML = 'can\'t detect network '
-        return
-      }
-      const network = this._components.networkModule.getNetworkProvider.bind(this._components.networkModule)
-      this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
-    })
-    this.fillAccountsList()
   }
 
   // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
