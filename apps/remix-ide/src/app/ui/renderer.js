@@ -39,10 +39,11 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
     // TODO: refactor with this._components.contextView.jumpTo
     var provider = self._deps.fileManager.fileProviderOf(errFile)
     if (provider) {
-      provider.exists(errFile, (error, exist) => {
-        if (error) return console.log(error)
+      provider.exists(errFile).then(exist => {
         self._deps.fileManager.open(errFile)
         editor.gotoLine(errLine, errCol)
+      }).catch(error => {
+        if (error) return console.log(error)
       })
     }
   } else {
