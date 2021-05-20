@@ -8,6 +8,7 @@ module.exports = {
     return modal('Alert', yo`<div>${title}</div>`, null, { label: null })
   },
   prompt: function (title, text, inputValue, ok, cancel, focus) {
+    console.log('inside prompt -> 1', title)
     return prompt(title, text, false, inputValue, ok, cancel, focus)
   },
   promptPassphrase: function (title, text, inputValue, ok, cancel) {
@@ -88,6 +89,7 @@ const validateInput = (e) => {
 }
 
 function prompt (title, text, hidden, inputValue, ok, cancel, focus) {
+  console.log('inside prompt -> 2', title)
   if (!inputValue) inputValue = ''
   var type = hidden ? 'password' : 'text'
   var input = yo`
