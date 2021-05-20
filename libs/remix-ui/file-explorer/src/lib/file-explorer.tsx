@@ -423,6 +423,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
+  const copyFolder = (src: string, dest: string) => {
+    const fileManager = state.fileManager
+
+    try {
+      fileManager.copyDir(src, dest)
+    } catch (error) {
+      console.log('Oops! An error ocurred while performing copyDir operation.' + error)
+    }
+  }
+
   const publishToGist = (path?: string, type?: string) => {
     modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
@@ -745,14 +755,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
       return { ...prevState, copyElement: [{ key: path, type }] }
     })
     setCanPaste(true)
-    // TODO: Reset toaster text after timeout.
-    toast('Copied to clipboard')
+    toast(`Copied to clipboard ${path}`)
   }
 
   const handlePasteClick = (dest: string, destType: string) => {
     dest = destType === 'file' ? extractParentFromKey(dest) || props.name : dest
     state.copyElement.map(({ key, type }) => {
-      type === 'file' ? copyFile(key, dest) : copyFile(key, dest)
+      type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
     })
     setState(prevState => {
       return { ...prevState, copyElement: [] }
