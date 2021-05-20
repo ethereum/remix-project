@@ -4,17 +4,16 @@ import { ethers } from 'ethers'
 import { toBuffer } from 'ethereumjs-util'
 import { EventManager } from '../eventManager'
 import { compareByteCode } from '../util'
-import { ExecutionContext } from './execution-context'
 import { decodeResponse } from './txFormat'
 import { getFunction, getReceiveInterface, getConstructorInterface, visitContracts, makeFullTypeDefinition } from './txHelper'
 
-function addExecutionCosts (txResult, tx) {
-  if (txResult && txResult.result) {
-    if (txResult.result.execResult) {
-      tx.returnValue = txResult.result.execResult.returnValue
-      if (txResult.result.execResult.gasUsed) tx.executionCost = txResult.result.execResult.gasUsed.toString(10)
+function addExecutionCosts (txResult, tx, execResult) {
+  if (txResult) {
+    if (execResult) {
+      tx.returnValue = execResult.returnValue
+      if (execResult.gasUsed) tx.executionCost = execResult.gasUsed.toString(10)
     }
-    if (txResult.result.gasUsed) tx.transactionCost = txResult.result.gasUsed.toString(10)
+    if (txResult.receipt && txResult.receipt.gasUsed) tx.transactionCost = txResult.receipt.gasUsed.toString(10)
   }
 }
 
@@ -40,7 +39,7 @@ export class TxListener {
   constructor (opt, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
-    this.executionContext = executionContext || new ExecutionContext()
+    this.executionContext = executionContext
     this._api = opt.api
     this._resolvedTransactions = {}
     this._resolvedContracts = {}
@@ -55,7 +54,7 @@ export class TxListener {
       }
     })
 
-    opt.event.udapp.register('callExecuted', (error, from, to, data, lookupOnly, txResult) => {
+    opt.event.udapp.register('callExecuted', async (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
       // we go for that case if
       // in VM mode
@@ -63,17 +62,25 @@ export class TxListener {
       if (!this._isListening) return // we don't listen
       if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
 
+      let returnValue
+      let execResult
+      if (this.executionContext.isVM()) {
+        execResult = await this.executionContext.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
+        returnValue = execResult.returnValue
+      } else {
+        returnValue = toBuffer(txResult.result)
+      }
       const call = {
         from: from,
         to: to,
         input: data,
         hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
         isCall: true,
-        returnValue: this.executionContext.isVM() ? txResult.result.execResult.returnValue : toBuffer(txResult.result),
+        returnValue,
         envMode: this.executionContext.getProvider()
       }
 
-      addExecutionCosts(txResult, call)
+      addExecutionCosts(txResult, call, execResult)
       this._resolveTx(call, call, (error, resolvedData) => {
         if (!error) {
           this.event.trigger('newCall', [call])
@@ -89,12 +96,17 @@ export class TxListener {
       // in web3 mode && listen remix txs only
       if (!this._isListening) return // we don't listen
       if (this._loopId && this.executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
-      this.executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
+      this.executionContext.web3().eth.getTransaction(txResult.transactionHash, async (error, tx) => {
         if (error) return console.log(error)
 
-        addExecutionCosts(txResult, tx)
+        let execResult
+        if (this.executionContext.isVM()) {
+          execResult = await this.executionContext.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
+        }
+
+        addExecutionCosts(txResult, tx, execResult)
         tx.envMode = this.executionContext.getProvider()
-        tx.status = txResult.result.status // 0x0 or 0x1
+        tx.status = txResult.receipt.status // 0x0 or 0x1
         this._resolve([tx], () => {
         })
       })
