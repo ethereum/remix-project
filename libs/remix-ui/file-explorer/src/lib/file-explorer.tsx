@@ -31,14 +31,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     actions: [{
       id: 'newFile',
       name: 'New File',
-      type: ['folder'],
+      type: ['folder', 'gist'],
       path: [],
       extension: [],
       pattern: []
     }, {
       id: 'newFolder',
       name: 'New Folder',
-      type: ['folder'],
+      type: ['folder', 'gist'],
       path: [],
       extension: [],
       pattern: []
@@ -52,17 +52,31 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }, {
       id: 'delete',
       name: 'Delete',
-      type: ['file', 'folder'],
+      type: ['file', 'folder', 'gist'],
       path: [],
       extension: [],
       pattern: []
     }, {
       id: 'pushChangesToGist',
       name: 'Push changes to gist',
-      type: [],
+      type: ['gist'],
       path: [],
       extension: [],
-      pattern: ['^browser/gists/([0-9]|[a-z])*$']
+      pattern: []
+    }, {
+      id: 'publishFolderToGist',
+      name: 'Publish folder to gist',
+      type: ['folder'],
+      path: [],
+      extension: [],
+      pattern: []
+    }, {
+      id: 'publishFileToGist',
+      name: 'Publish file to gist',
+      type: ['file'],
+      path: [],
+      extension: [],
+      pattern: []
     }, {
       id: 'run',
       name: 'Run',
@@ -228,6 +242,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
     else return false
   }
 
+  const getFocusedFolder = () => {
+    if (state.focusElement[0]) {
+      if (state.focusElement[0].type === 'folder' && state.focusElement[0].key) return state.focusElement[0].key
+      else if (state.focusElement[0].type === 'gist' && state.focusElement[0].key) return state.focusElement[0].key
+      else if (state.focusElement[0].type === 'file' && state.focusElement[0].key) return extractParentFromKey(state.focusElement[0].key) ? extractParentFromKey(state.focusElement[0].key) : name
+      else return name
+    }
+  }
+
   const createNewFile = async (newFilePath: string) => {
     const fileManager = state.fileManager
 
@@ -309,7 +332,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     // the files module. Please ask the user here if they want to overwrite
     // a file and then just use `files.add`. The file explorer will
     // pick that up via the 'fileAdded' event from the files module.
-    const parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    const parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
     setState(prevState => {
@@ -355,11 +378,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const publishToGist = () => {
-    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', toGist, 'Cancel', () => {})
+  const publishToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
-  const toGist = (id?: string) => {
+  const pushChangesToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', 'Are you sure you want to push changes to remote gist file on github.com?', 'OK', () => toGist(path, type), 'Cancel', () => {})
+  }
+
+  const publishFolderToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${path} folder as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+  }
+
+  const publishFileToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', `Are you sure you want to anonymously publish ${path} file as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+  }
+
+  const toGist = (path?: string, type?: string) => {
     const filesProvider = fileSystem.provider.provider
     const proccedResult = function (error, data) {
       if (error) {
@@ -393,7 +428,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
 
     // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
-    const folder = id ? '/gists/' + id : '/'
+    const folder = path || '/'
+    const id = type === 'gist' ? extractNameFromKey(path).split('-')[1] : null
 
     packageFiles(filesProvider, folder, async (error, packaged) => {
       if (error) {
@@ -501,15 +537,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const handleClickFile = (path: string) => {
+  const handleClickFile = (path: string, type: string) => {
     path = path.indexOf(props.name + '/') === 0 ? path.replace(props.name + '/', '') : path
     state.fileManager.open(path)
     setState(prevState => {
-      return { ...prevState, focusElement: [{ key: path, type: 'file' }] }
+      return { ...prevState, focusElement: [{ key: path, type }] }
     })
   }
 
-  const handleClickFolder = async (path: string) => {
+  const handleClickFolder = async (path: string, type: string) => {
     if (state.ctrlKey) {
       if (state.focusElement.findIndex(item => item.key === path) !== -1) {
         setState(prevState => {
@@ -517,7 +553,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       } else {
         setState(prevState => {
-          return { ...prevState, focusElement: [...prevState.focusElement, { key: path, type: 'folder' }] }
+          return { ...prevState, focusElement: [...prevState.focusElement, { key: path, type }] }
         })
       }
     } else {
@@ -531,22 +567,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
 
       setState(prevState => {
-        return { ...prevState, focusElement: [{ key: path, type: 'folder' }], expandPath }
+        return { ...prevState, focusElement: [{ key: path, type }], expandPath }
       })
     }
   }
 
-  const handleContextMenuFile = (pageX: number, pageY: number, path: string, content: string) => {
+  const handleContextMenuFile = (pageX: number, pageY: number, path: string, content: string, type: string) => {
     if (!content) return
     setState(prevState => {
-      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type: 'file' }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
     })
   }
 
-  const handleContextMenuFolder = (pageX: number, pageY: number, path: string, content: string) => {
+  const handleContextMenuFolder = (pageX: number, pageY: number, path: string, content: string, type: string) => {
     if (!content) return
     setState(prevState => {
-      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type: 'folder' }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
     })
   }
 
@@ -618,7 +654,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleNewFileInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key ? state.focusElement[0].key : name : extractParentFromKey(state.focusElement[0].key) ? extractParentFromKey(state.focusElement[0].key) : name : name
+    if (!parentFolder) parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
     await addInputField(fileSystem.provider.provider, 'file', parentFolder)(dispatch)
@@ -629,7 +665,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleNewFolderInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key ? state.focusElement[0].key : name : extractParentFromKey(state.focusElement[0].key) ? extractParentFromKey(state.focusElement[0].key) : name : name
+    if (!parentFolder) parentFolder = getFocusedFolder()
     else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
@@ -705,12 +741,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
           label={label(file)}
           onClick={(e) => {
             e.stopPropagation()
-            if (state.focusEdit.element !== file.path) handleClickFolder(file.path)
+            if (state.focusEdit.element !== file.path) handleClickFolder(file.path, file.type)
           }}
           onContextMenu={(e) => {
             e.preventDefault()
             e.stopPropagation()
-            handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent)
+            handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent, file.type)
           }}
           labelClass={labelClass}
           controlBehaviour={ state.ctrlKey }
@@ -742,12 +778,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
           label={label(file)}
           onClick={(e) => {
             e.stopPropagation()
-            if (state.focusEdit.element !== file.path) handleClickFile(file.path)
+            if (state.focusEdit.element !== file.path) handleClickFile(file.path, file.type)
           }}
           onContextMenu={(e) => {
             e.preventDefault()
             e.stopPropagation()
-            handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent)
+            handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent, file.type)
           }}
           icon={icon}
           labelClass={labelClass}
@@ -841,6 +877,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
             e.stopPropagation()
             handleMouseOver(state.focusContext.element)
           }}
+          pushChangesToGist={pushChangesToGist}
+          publishFolderToGist={publishFolderToGist}
+          publishFileToGist={publishFileToGist}
         />
       }
     </div>
@@ -850,18 +889,41 @@ export const FileExplorer = (props: FileExplorerProps) => {
 export default FileExplorer
 
 async function packageFiles (filesProvider, directory, callback) {
+  const isFile = filesProvider.isFile(directory)
   const ret = {}
-  try {
-    await filesProvider.copyFolderToJson(directory, ({ path, content }) => {
-      if (/^\s+$/.test(content) || !content.length) {
-        content = '// this line is added to create a gist. Empty file is not allowed.'
-      }
-      path = path.replace(/\//g, '...')
-      ret[path] = { content }
-    })
-    callback(null, ret)
-  } catch (e) {
-    return callback(e)
+
+  if (isFile) {
+    try {
+      filesProvider.get(directory, (error, content) => {
+        if (error) throw new Error('An error ocurred while getting file content. ' + directory)
+        if (/^\s+$/.test(content) || !content.length) {
+          content = '// this line is added to create a gist. Empty file is not allowed.'
+        }
+        directory = directory.replace(/\//g, '...')
+        ret[directory] = { content }
+        callback(null, ret)
+      })
+    } catch (e) {
+      return callback(e)
+    }
+  } else {
+    try {
+      await filesProvider.copyFolderToJson(directory, ({ path, content }) => {
+        if (/^\s+$/.test(content) || !content.length) {
+          content = '// this line is added to create a gist. Empty file is not allowed.'
+        }
+        if (path.indexOf('gist-') === 0) {
+          path = path.split('/')
+          path.shift()
+          path = path.join('/')
+        }
+        path = path.replace(/\//g, '...')
+        ret[path] = { content }
+      })
+      callback(null, ret)
+    } catch (e) {
+      return callback(e)
+    }
   }
 }
 
