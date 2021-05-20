@@ -65,15 +65,10 @@ class CompileTab extends ViewPlugin {
       eventHandlers: {},
       loading: false
     }
+    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProvider, this.contentImport)
   }
 
   onActivationInternal () {
-    const miscApi = {
-      clearAnnotations: () => {
-        this.call('editor', 'clearAnnotations')
-      }
-    }
-    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProvider, this.contentImport, miscApi)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
 
@@ -85,11 +80,28 @@ class CompileTab extends ViewPlugin {
     )
   }
 
+  resetResults () {
+    if (this._view.errorContainer) {
+      this._view.errorContainer.innerHTML = ''
+    }
+    this.compilerContainer.currentFile = ''
+    this.data.contractsDetails = {}
+    yo.update(this._view.contractSelection, this.contractSelection())
+    this.emit('statusChanged', { key: 'none' })
+  }
+
   /************
    * EVENTS
    */
 
   listenToEvents () {
+    this.on('filePanel', 'setWorkspace', (workspace) => {
+      this.compileTabLogic.isHardhatProject().then((result) => {
+        if (result && workspace.isLocalhost) this.compilerContainer.hardhatCompilation.style.display = 'flex'
+        else this.compilerContainer.hardhatCompilation.style.display = 'none'
+      })
+    })
+
     this.data.eventHandlers.onContentChanged = () => {
       this.emit('statusChanged', { key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
     }
@@ -113,6 +125,9 @@ class CompileTab extends ViewPlugin {
       }
       this.emit('statusChanged', { key: 'loading', title: 'compiling...', type: 'info' })
     }
+
+    this.on('filePanel', 'setWorkspace', () => this.resetResults())
+
     this.compileTabLogic.event.on('startingCompilation', this.data.eventHandlers.onStartingCompilation)
 
     this.data.eventHandlers.onCurrentFileChanged = (name) => {
@@ -199,7 +214,7 @@ class CompileTab extends ViewPlugin {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
         e.preventDefault()
-        this.compileTabLogic.runCompiler()
+        this.compileTabLogic.runCompiler(this.compilerContainer.hhCompilation)
       }
     })
   }
@@ -479,6 +494,7 @@ class CompileTab extends ViewPlugin {
   }
 
   onActivation () {
+    this.call('manager', 'activatePlugin', 'solidity-logic')
     this.listenToEvents()
   }
 
@@ -492,6 +508,7 @@ class CompileTab extends ViewPlugin {
     this.fileManager.events.removeListener('noFileSelected', this.data.eventHandlers.onNoFileSelected)
     this.compiler.event.unregister('compilationFinished', this.data.eventHandlers.onCompilationFinished)
     globalRegistry.get('themeModule').api.events.removeListener('themeChanged', this.data.eventHandlers.onThemeChanged)
+    this.call('manager', 'deactivatePlugin', 'solidity-logic')
   }
 }
 

@@ -24,16 +24,18 @@ async function warnLatestVersion () {
 
 const services = {
   git: (readOnly: boolean) => new servicesList.GitClient(readOnly),
+  hardhat: (readOnly: boolean) => new servicesList.HardhatClient(readOnly),
   folder: (readOnly: boolean) => new servicesList.Sharedfolder(readOnly)
 }
 
 const ports = {
   git: 65521,
+  hardhat: 65522,
   folder: 65520
 }
 
 const killCallBack: Array<Function> = []
-function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => void) {
+function startService<S extends 'git' | 'hardhat' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => void) {
   const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () => services[service](program.readOnly || false))
   socket.start(callback)
   killCallBack.push(socket.close.bind(socket))
@@ -76,6 +78,10 @@ function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS
       startService('folder', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
         sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.setupNotifications(program.sharedFolder)
+        sharedFolderClient.sharedFolder(program.sharedFolder)
+      })
+      startService('hardhat', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
+        sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.sharedFolder(program.sharedFolder)
       })
       /*
