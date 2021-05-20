@@ -54,7 +54,7 @@ function GistHandler (_window) {
         }
         const obj = {}
         Object.keys(data.files).forEach((element) => {
-          const path = element.replace('...', '/')
+          const path = element.replace(/\.\.\./g, '/')
 
           obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
         })
