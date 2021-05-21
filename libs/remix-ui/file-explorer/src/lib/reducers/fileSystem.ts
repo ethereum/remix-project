@@ -258,7 +258,8 @@ const resolveDirectory = (root, path: string, files, content) => {
   files = _.set(files, _path, {
     isDirectory: true,
     path,
-    name: extractNameFromKey(path),
+    name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+    type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
     child: { ...content[pathArr[pathArr.length - 1]], ...(prevFiles ? prevFiles.child : {}) }
   })
 
@@ -278,7 +279,8 @@ const removePath = (root, path: string, pathName, files) => {
   files = _.set(files, _path, {
     isDirectory: true,
     path,
-    name: extractNameFromKey(path),
+    name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+    type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
     child: prevFiles ? prevFiles.child : {}
   })
 
@@ -336,7 +338,8 @@ const fileRenamed = (root, path: string, removePath: string, files, content) => 
   files = _.set(files, _path, {
     isDirectory: true,
     path,
-    name: extractNameFromKey(path),
+    name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+    type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
     child: { ...content[pathArr[pathArr.length - 1]], ...prevFiles.child }
   })
 
