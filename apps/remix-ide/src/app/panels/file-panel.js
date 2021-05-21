@@ -72,7 +72,6 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   renderComponent () {
-    console.log("render", this.registeredMenuItems)
     ReactDOM.render(
       <Workspace
         createWorkspace={this.createWorkspace.bind(this)}
