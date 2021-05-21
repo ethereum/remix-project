@@ -111,17 +111,6 @@ export class RemixAppManager extends PluginManager {
     try {
       const res = await fetch(this.pluginsDirectory)
       plugins = await res.json()
-      plugins.push({
-        name: 'dGit2',
-        displayName: 'dGit2',
-        methods: ['pull'],
-        version: '0.0.1-dev',
-        url: 'https://dgit2-remix.web.app',
-        description: 'dGit for workspaces',
-        icon: 'https://dgitremix.web.app/dgitlogo.png',
-        location: 'mainPanel',
-        canActivate: ['dGitProvider']
-      })
       localStorage.setItem('plugins-directory', JSON.stringify(plugins))
     } catch (e) {
       console.log('getting plugins list from localstorage...')
