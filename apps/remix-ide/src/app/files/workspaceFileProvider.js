@@ -1,6 +1,6 @@
 'use strict'
 
-const EventManager = require('../../lib/events')
+const EventManager = require('events')
 const FileProvider = require('./fileProvider')
 const pathModule = require('path')
 
@@ -82,7 +82,7 @@ class WorkspaceFileProvider extends FileProvider {
 
   createWorkspace (name) {
     if (!name) name = 'default_workspace'
-    this.event.trigger('createWorkspace', [name])
+    this.event.emit('createWorkspace', name)
   }
 }
 

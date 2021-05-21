@@ -48,24 +48,22 @@ class ContractDropdownUI {
   }
 
   listenToContextChange () {
-    this.blockchain.event.register('contextChanged', () => {
-      this.blockchain.updateNetwork((err, { name } = {}) => {
-        if (err) {
-          console.log('can\'t detect network')
-          return
-        }
-        this.exEnvironment = this.blockchain.getProvider()
-        this.networkName = name
+    this.blockchain.event.register('networkStatus', ({ error, network }) => {
+      if (error) {
+        console.log('can\'t detect network')
+        return
+      }
+      this.exEnvironment = this.blockchain.getProvider()
+      this.networkName = network.name
 
-        const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
+      const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
 
-        // check if an already selected option exist else use default workflow
-        if (savedConfig !== null) {
-          this.setCheckedState(savedConfig)
-        } else {
-          this.setCheckedState(this.networkName === 'Main')
-        }
-      })
+      // check if an already selected option exist else use default workflow
+      if (savedConfig !== null) {
+        this.setCheckedState(savedConfig)
+      } else {
+        this.setCheckedState(this.networkName === 'Main')
+      }
     })
   }
 
@@ -306,10 +304,10 @@ class ContractDropdownUI {
       const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
       self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
       if (self.ipfsCheckedState) {
-        _paq.push(['trackEvent', 'udapp', `DeployAndPublish_${this.networkName}`])
+        _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', this.networkName])
         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
       } else {
-        _paq.push(['trackEvent', 'udapp', `DeployOnly_${this.networkName}`])
+        _paq.push(['trackEvent', 'udapp', 'DeployOnly', this.networkName])
       }
     }
 

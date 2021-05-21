@@ -22,7 +22,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -213,18 +213,55 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destrination file
    * @returns {void}
    */
-  async copyFile (src, dest) {
+  async copyFile (src, dest, customName) {
     try {
       src = this.limitPluginScope(src)
       dest = this.limitPluginScope(dest)
-      await this._handleExists(src, `Cannot copy from ${src}`)
-      await this._handleIsFile(src, `Cannot copy from ${src}`)
-      await this._handleIsFile(dest, `Cannot paste content into ${dest}`)
+      await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
+      await this._handleIsFile(src, `Cannot copy from ${src}. Path is not a file.`)
+      await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
+      await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
       const content = await this.readFile(src)
+      const copiedFileName = customName ? '/' + customName : '/' + `Copy_${helper.extractNameFromKey(src)}`
 
-      await this.writeFile(dest, content)
+      await this.writeFile(dest + copiedFileName, content)
     } catch (e) {
       throw new Error(e)
+    }
+  }
+
+  /**
+   * Upsert a directory with the content of the source directory
+   * @param {string} src path of the source dir
+   * @param {string} dest path of the destination dir
+   * @returns {void}
+   */
+  async copyDir (src, dest) {
+    try {
+      src = this.limitPluginScope(src)
+      dest = this.limitPluginScope(dest)
+      await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
+      await this._handleIsDir(src, `Cannot copy from ${src}. Path is not a directory.`)
+      await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
+      await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
+      await this.inDepthCopy(src, dest)
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
+  async inDepthCopy (src, dest, count = 0) {
+    const content = await this.readdir(src)
+    const copiedFolderPath = count === 0 ? dest + '/' + `Copy_${helper.extractNameFromKey(src)}` : dest + '/' + helper.extractNameFromKey(src)
+
+    await this.mkdir(copiedFolderPath)
+
+    for (const [key, value] of Object.entries(content)) {
+      if (!value.isDirectory) {
+        await this.copyFile(key, copiedFolderPath, helper.extractNameFromKey(key))
+      } else {
+        await this.inDepthCopy(key, copiedFolderPath, count + 1)
+      }
     }
   }
 
@@ -329,18 +366,18 @@ class FileManager extends Plugin {
       workspaceExplorer: this._components.registry.get('fileproviders/workspace').api,
       filesProviders: this._components.registry.get('fileproviders').api
     }
-    this._deps.browserExplorer.event.register('fileChanged', (path) => { this.fileChangedEvent(path) })
-    this._deps.browserExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.localhostExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.browserExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.browserExplorer.event.register('fileAdded', (path) => { this.fileAddedEvent(path) })
-    this._deps.localhostExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
-    this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
-    this._deps.workspaceExplorer.event.register('fileChanged', (path) => { this.fileChangedEvent(path) })
-    this._deps.workspaceExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.workspaceExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.workspaceExplorer.event.register('fileAdded', (path) => { this.fileAddedEvent(path) })
+    this._deps.browserExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
+    this._deps.browserExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.localhostExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.browserExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.browserExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
+    this._deps.localhostExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.localhostExplorer.event.on('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
+    this._deps.localhostExplorer.event.on('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
+    this._deps.workspaceExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
+    this._deps.workspaceExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.workspaceExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.workspaceExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
 
     this.getCurrentFile = this.file
     this.getFile = this.readFile
