@@ -45,7 +45,7 @@ class DGitProvider extends Plugin {
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     return {
       fs: window.remixFileSystem,
-      dir: `.workspaces/${workspace.name}`
+      dir: `${workspace.workSpacesPath}/${workspace.name}`
     }
   }
 
@@ -175,7 +175,7 @@ class DGitProvider extends Plugin {
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
-      const c = window.remixFileSystem.readFileSync(`.workspaces/${workspace.name}/${file}`)
+      const c = window.remixFileSystem.readFileSync(`${workspace.workSpacesPath}/${workspace.name}/${file}`)
       const ob = {
         path: file,
         content: c
@@ -196,7 +196,7 @@ class DGitProvider extends Plugin {
 
     const data = new FormData()
     files.forEach(async (file) => {
-      const c = window.remixFileSystem.readFileSync(`.workspaces/${workspace.name}/${file}`)
+      const c = window.remixFileSystem.readFileSync(`${workspace.workSpacesPath}/${workspace.name}/${file}`)
       data.append('file', new Blob([c]), `base/${file}`)
     })
     // get last commit data
@@ -296,10 +296,10 @@ class DGitProvider extends Plugin {
       }
       const dir = path.dirname(file.path)
       try {
-        this.createDirectories(`.workspaces/${workspace.name}${dir}`)
+        this.createDirectories(`${workspace.workSpacesPath}/${workspace.name}${dir}`)
       } catch (e) {}
       try {
-        window.remixFileSystem.writeFileSync(`.workspaces/${workspace.name}/${file.path}`, Buffer.concat(content) || new Uint8Array())
+        window.remixFileSystem.writeFileSync(`${workspace.workSpacesPath}/${workspace.name}/${file.path}`, Buffer.concat(content) || new Uint8Array())
       } catch (e) {}
     }
     await this.call('fileManager', 'refresh')
@@ -328,7 +328,7 @@ class DGitProvider extends Plugin {
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
-      const c = window.remixFileSystem.readFileSync(`.workspaces/${workspace.name}/${file}`)
+      const c = window.remixFileSystem.readFileSync(`${workspace.workSpacesPath}/${workspace.name}/${file}`)
       zip.file(file, c)
     }
     await zip.generateAsync({
