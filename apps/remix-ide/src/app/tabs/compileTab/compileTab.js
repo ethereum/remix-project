@@ -97,23 +97,25 @@ class CompileTab extends Plugin {
     try {
       if (this.fileManager.mode === 'localhost' && hhCompilation) {
         const { currentVersion, optimize, runs } = this.compiler.state
-        const fileContent = `module.exports = {
-          solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
-          settings: {
-            optimizer: {
-              enabled: ${optimize},
-              runs: ${runs}
+        if (currentVersion) {
+          const fileContent = `module.exports = {
+            solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
+            settings: {
+              optimizer: {
+                enabled: ${optimize},
+                runs: ${runs}
+              }
             }
           }
+          `
+          const configFilePath = 'remix-compiler.config.js'
+          this.fileManager.setFileContent(configFilePath, fileContent)
+          this.call('hardhat', 'compile', configFilePath).then((result) => {
+            this.call('terminal', 'log', { type: 'info', value: result})
+          }).catch((error) => {
+            this.call('terminal', 'log', { type: 'error', value: result})
+          })
         }
-        `
-        const configFilePath = 'remix-compiler.config.js'
-        this.fileManager.setFileContent(configFilePath, fileContent)
-        this.call('hardhat', 'compile', configFilePath).then((result) => {
-          this.emit('hardhatCompilationFinished', result)
-        }).catch((error) => {
-          this.emit('hardhatCompilationFinished', error)
-        })
       }
       this.fileManager.saveCurrentFile()
       this.call('editor', 'clearAnnotations')
