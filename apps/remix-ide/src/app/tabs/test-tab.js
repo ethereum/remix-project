@@ -52,7 +52,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   listenToEvents () {
-    this.filePanel.event.register('newTestFileCreated', file => {
+    this.on('filePanel', 'newTestFileCreated', file => {
       var testList = this._view.el.querySelector("[class^='testList']")
       var test = this.createSingleTest(file)
       testList.appendChild(test)
