@@ -55,7 +55,7 @@ class DropdownLogic {
         cb(null, 'abi', abi)
       })
     } else {
-      _paq.push(['trackEvent', 'udapp', 'AtAddressLoadWithInstance'])
+      _paq.push(['trackEvent', 'udapp', 'AtAddressLoadWithArtifacts'])
       cb(null, 'instance')
     }
   }
