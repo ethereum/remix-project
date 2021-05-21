@@ -22,7 +22,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -318,13 +318,6 @@ class FileManager extends Plugin {
       return await provider.remove(path)
     } catch (e) {
       throw new Error(e)
-    }
-  }
-
-  async refresh () {
-    const provider = this._deps.filesProviders.workspace
-    if (provider.isReady()) {
-      provider.event.trigger('refresh')
     }
   }
 

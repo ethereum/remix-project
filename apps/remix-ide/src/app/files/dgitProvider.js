@@ -83,7 +83,6 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    await this.call('fileManager', 'refresh')
   }
 
   async log (cmd) {
@@ -123,7 +122,6 @@ class DGitProvider extends Plugin {
         ...await this.getGitConfig(),
         ...cmd
       })
-      await this.call('fileManager', 'refresh')
       return sha
     } catch (e) {}
   }
@@ -302,7 +300,6 @@ class DGitProvider extends Plugin {
         window.remixFileSystem.writeFileSync(`${workspace.workSpacesPath}/${workspace.name}/${file.path}`, Buffer.concat(content) || new Uint8Array())
       } catch (e) {}
     }
-    await this.call('fileManager', 'refresh')
   }
 
   async getItem (name) {
