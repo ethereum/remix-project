@@ -20,6 +20,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [tokenValue, setTokenValue] = useState('')
   const [saveTokenState, setSaveTokenState] = useState(false)
   const [removeTokenState, setRemoveTokenState] = useState(false)
+  const [themeName, setThemeName] = useState('')
 
   useEffect(() => {
     props._deps.themeModule.switchTheme()
@@ -31,7 +32,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (token) {
       setTokenValue(token)
     }
-  }, [])
+  }, [themeName])
 
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props, event, dispatch)
@@ -55,6 +56,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const onswitchTheme = (event, name) => {
     props._deps.themeModule.switchTheme(name)
+    setThemeName(name)
   }
 
   const getTextClass = (key) => {
