@@ -93,9 +93,6 @@ class Terminal extends Plugin {
   }
 
   onActivation () {
-    this.on('solidity-logic', 'hardhatCompilationFinished', (msg) => {
-      this.commands.log(msg)
-    })
     this.on('scriptRunner', 'log', (msg) => {
       this.commands.log.apply(this.commands, msg.data)
     })
