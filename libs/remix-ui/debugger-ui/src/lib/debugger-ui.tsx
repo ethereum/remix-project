@@ -9,6 +9,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 const helper = require('../../../../../apps/remix-ide/src/lib/helper')
+const _paq = (window as any)._paq = (window as any)._paq || []
 
 export const DebuggerUI = (props: DebuggerUIProps) => {
   const debuggerModule = props.debuggerAPI
@@ -167,7 +168,9 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
 
     const web3 = await debuggerModule.getDebugWeb3()
     try {
-      if (await web3.eth.net.getId() === 42) {
+      const networkId = await web3.eth.net.getId()
+      _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
+      if (networkId === 42) {
         setState(prevState => {
           return {
             ...prevState,

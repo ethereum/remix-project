@@ -4,7 +4,7 @@ import { FileExplorerContextMenuProps } from './types'
 import './css/file-explorer-context-menu.css'
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, publishToGist, runScript, emit, pageX, pageY, path, type, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, emit, pageX, pageY, path, type, ...otherProps } = props
   const contextMenuRef = useRef(null)
 
   useEffect(() => {
@@ -50,10 +50,22 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               deletePath(path)
               break
             case 'Push changes to gist':
-              publishToGist()
+              pushChangesToGist(path, type)
+              break
+            case 'Publish folder to gist':
+              publishFolderToGist(path, type)
+              break
+            case 'Publish file to gist':
+              publishFileToGist(path, type)
               break
             case 'Run':
               runScript(path)
+              break
+            case 'Copy':
+              copy(path, type)
+              break
+            case 'Paste':
+              paste(path, type)
               break
             default:
               emit && emit(item.id, path)
