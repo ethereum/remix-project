@@ -47,7 +47,6 @@ module.exports = {
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Access token has been saved')
       .pause(3000)
-      // :nth-last-of-type(1)
   },
 
   'Should copy github access token to clipboard': function (browser: NightwatchBrowser) {
@@ -64,9 +63,7 @@ module.exports = {
       .pause(1000)
       .click('*[data-id="settingsTabRemoveGistToken"]')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
-      // .waitForElementVisible('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 5000)
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Access token removed')
-      // .assert.containsText('*[data-shared="tooltipPopup"]:nth-last-of-type(1)', 'Access token removed')
       .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
   },
 
