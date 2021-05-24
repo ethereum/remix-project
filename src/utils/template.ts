@@ -53,17 +53,16 @@ export const template = (
 
     <div id="ethdoc-viewer">
     
-        ${
-          functions.length === 0
-            ? "No contract to display"
-            : renderHeader(name, contractDoc)
-        }
+        ${functions.length === 0
+    ? "No contract to display"
+    : renderHeader(name, contractDoc)
+  }
 
         ${functions
-          .map(
-            (item) => `
+    .map(
+      (item) => `
           <hr>
-            <h6>${item.name} - ${item.type} </h6>
+            <h6>${item.name}</h6>
 
             ${getMethodDetails(item.devdoc)}
 
@@ -73,8 +72,8 @@ export const template = (
            
             ${renderParameterDocumentation(item.outputs)}
             `
-          )
-          .join("\n")}
+    )
+    .join("\n")}
     
     </div>
 `;
@@ -92,23 +91,22 @@ export const renderHeader = (
   name: string,
   contractDoc: ContractDocumentation
 ) => `
-    <h3>${name} ${
-  contractDoc.title ? `<small>: ${contractDoc.title}</small>` : ""
-}</h3>
+    <h3>${name} ${contractDoc.title ? `<small>: ${contractDoc.title}</small>` : ""
+  }</h3>
 
     ${contractDoc.notice ? `<p class="lead">${contractDoc.notice}</p>` : ""}
 
     ${contractDoc.author ? `<p>Author: ${contractDoc.author}</p>` : ""}
 
+    <br />
     <p><strong>Functions</strong></p>
 `;
 
 export const renderParameterDocumentation = (
   parameters: ParameterDocumentation[]
 ) =>
-  `${
-    parameters.length > 0
-      ? `<table class="table table-sm table-bordered table-striped">
+  `${parameters.length > 0
+    ? `<table class="table table-sm table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -128,25 +126,25 @@ export const renderParameterDocumentation = (
       .join("")}
               </tbody>
       </table>`
-      : "<p>No parameters</p>"
+    : "<p>No parameters</p>"
   }`;
 
 export const getMethodDetails = (devMethod?: Partial<MethodDoc>) => {
   const finalResult = !devMethod
     ? "<p><strong>**Add Documentation for the method here**</strong></p>"
     : Object.keys(devMethod)
-        .filter((key) => key !== "params")
-        .map((key) => {
-          const funcToGetTemplate = (devMethodDocTemplate as any)[key];
+      .filter((key) => key !== "params")
+      .map((key) => {
+        const funcToGetTemplate = (devMethodDocTemplate as any)[key];
 
-          if (!funcToGetTemplate) {
-            return "";
-          }
-          const funcParameter = (devMethod as any)[key];
-          const result = funcToGetTemplate(funcParameter);
-          return result;
-        })
-        .join("\n");
+        if (!funcToGetTemplate) {
+          return "";
+        }
+        const funcParameter = (devMethod as any)[key];
+        const result = funcToGetTemplate(funcParameter);
+        return result;
+      })
+      .join("\n");
 
   console.log("finalResult", finalResult);
   return finalResult;
