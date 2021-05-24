@@ -64,7 +64,10 @@ export const HomeView: React.FC = () => {
   return (
     <AppContext.Consumer>
       {({ clientInstance, contracts, setContracts, themeType }) => (
-        <div id="ethdoc" style={{ color: themeType === "dark" ? "white" : "black" }}>
+        <div
+          id="ethdoc"
+          style={{ color: themeType === "dark" ? "white" : "black" }}
+        >
           {[...contracts.keys()].length === 0 && (
             <p>Compile a contract with Solidity Compiler</p>
           )}
