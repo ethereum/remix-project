@@ -16,4 +16,5 @@ export const AppContext = React.createContext({
   setSites: (sites: PublishedSite[]) => {
     console.log("Calling Set Sites");
   },
+  themeType: "dark"
 });
