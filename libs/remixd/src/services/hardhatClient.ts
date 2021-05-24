@@ -24,7 +24,6 @@ export class HardhatClient extends PluginClient {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
         const errMsg = '[Hardhat Compilation]: Cannot compile in read-only mode'
-        console.log('\x1b[31m%s\x1b[0m', `${errMsg}`)
         return reject(new Error(errMsg))
       }
       const cmd = `npx hardhat compile --config ${configPath}`
@@ -38,8 +37,7 @@ export class HardhatClient extends PluginClient {
         result += msg + '\n'
       })
       child.stderr.on('data', (err) => {
-        console.log('\x1b[31m%s\x1b[0m', `[Hardhat Compilation]: ${err.toString()}`)
-        error += err.toString()
+        error += `[Hardhat Compilation]: ${err.toString()}`
       })
       child.on('close', () => {
         if (error) reject(error)
