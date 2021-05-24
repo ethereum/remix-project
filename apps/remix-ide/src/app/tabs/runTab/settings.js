@@ -294,7 +294,7 @@ class SettingsUI {
   hardhatProviderDialogBody () {
     return yo`
       <div class="">
-        Hardhat Provider Endpoint
+        Hardhat JSON-RPC Endpoint
       </div>
     `
   }

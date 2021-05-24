@@ -11,15 +11,16 @@ const profile = {
 }
 
 export default class HardhatProvider extends Plugin {
-  constructor () {
+  constructor (blockchain) {
     super(profile)
-    this.provider = null
+    this.blockchain = blockchain
   }
 
   sendAsync (data) {
     return new Promise((resolve, reject) => {
-      if (this.provider) {
-        this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
+      const provider = this.blockchain.web3().currentProvider
+      if (provider) {
+        provider[provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
           if (error) return reject(error)
           resolve(message)
         })
