@@ -86,3 +86,18 @@ export const settingReducer = (state, action) => {
       return initialState
   }
 }
+
+export const toastInitialState = {
+  message: ''
+}
+
+export const toastReducer = (state, action) => {
+  switch (action.type) {
+    case 'save' :
+      return { ...state, message: action.payload.message }
+    case 'removed' :
+      return { ...state, message: action.payload.message }
+    default :
+      return { ...state, message: '' }
+  }
+}

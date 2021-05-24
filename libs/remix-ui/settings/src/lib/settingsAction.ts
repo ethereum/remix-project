@@ -40,3 +40,13 @@ export const useMatomoAnalytics = (element, event, dispatch) => {
     _paq.push(['optUserOut'])
   }
 }
+
+export const saveTokenToast = (props, dispatch, tokenValue) => {
+  props.config.set('settings/gist-access-token', tokenValue)
+  dispatch({ type: 'save', payload: { message: 'Access token has been saved' } })
+}
+
+export const removeTokenToast = (props, dispatch) => {
+  props.config.set('settings/gist-access-token', '')
+  dispatch({ type: 'removed', payload: { message: 'Access token removed' } })
+}

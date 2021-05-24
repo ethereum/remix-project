@@ -1,11 +1,11 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { generateContractMetadataText, gitAccessTokenLink, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenTitle, textDark, warnText } from './constants'
+import { generateContractMetadataText, gitAccessTokenLink, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenTitle, textDark, textSecondary, warnText } from './constants'
 
 import './remix-ui-settings.css'
-import { etherumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics } from './settingsAction'
-import { initialState, settingReducer } from './settingsReducer'
+import { etherumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast } from './settingsAction'
+import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 
 /* eslint-disable-next-line */
@@ -17,9 +17,8 @@ export interface RemixUiSettingsProps {
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [, dispatch] = useReducer(settingReducer, initialState)
+  const [state, dispatchToast] = useReducer(toastReducer, toastInitialState)
   const [tokenValue, setTokenValue] = useState('')
-  const [saveTokenState, setSaveTokenState] = useState(false)
-  const [removeTokenState, setRemoveTokenState] = useState(false)
   const [themeName, setThemeName] = useState('')
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (token) {
       setTokenValue(token)
     }
-  }, [themeName])
+  }, [themeName, state.message])
 
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props, event, dispatch)
@@ -61,9 +60,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const getTextClass = (key) => {
     if (props.config.get(key)) {
-      return 'text-dark'
+      return textDark
     } else {
-      return 'text-secondary'
+      return textSecondary
     }
   }
 
@@ -102,14 +101,12 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   )
 
   const saveToken = () => {
-    setSaveTokenState(true)
-    props.config.set('settings/gist-access-token', tokenValue)
+    saveTokenToast(props, dispatchToast, tokenValue)
   }
 
   const removeToken = () => {
-    setRemoveTokenState(true)
     setTokenValue('')
-    props.config.set('settings/gist-access-token', '')
+    removeTokenToast(props, dispatchToast)
   }
 
   const handleSaveTokenState = useCallback(
@@ -132,7 +129,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             <div className="d-flex justify-content-end pt-2">
               <CopyToClipboard content={tokenValue} data-id='copyToClipboardCopyIcon' />
               <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={() => saveToken()} value="Save" type="button" disabled={tokenValue === ''}></input>
-              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onClick={removeToken}>Remove</button>
+              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete Github access token" onClick={() => removeToken()}>Remove</button>
             </div>
           </div></div>
       </div>
@@ -154,8 +151,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   return (
     <div>
-      {saveTokenState ? <Toaster message='Access token has been saved' /> : null}
-      {removeTokenState ? <Toaster message='Access token removed' /> : null}
+      {state.message ? <Toaster message= {state.message}/> : null}
       {generalConfig()}
       {gistToken()}
       <div className="border-top">
