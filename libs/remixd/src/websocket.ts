@@ -16,9 +16,13 @@ export default class WebSocket {
       response.end()
     })
     const loopback = '127.0.0.1'
-
+    const listeners = {
+      65520: 'remixd',
+      65521: 'git',
+      65522: 'hardhat'
+    }
     this.server.listen(this.port, loopback, () => {
-      console.log(`${new Date()} remixd is listening on ${loopback}:${this.port}`)
+      console.log('\x1b[32m%s\x1b[0m', `[INFO] ${new Date()} ${listeners[this.port]} is listening on ${loopback}:${this.port}`)
     })
     this.wsServer = new WS.Server({
       server: this.server,
