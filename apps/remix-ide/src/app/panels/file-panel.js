@@ -211,14 +211,16 @@ module.exports = class Filepanel extends ViewPlugin {
       await this.processCreateWorkspace(workspaceName)
       workspaceProvider.setWorkspace(workspaceName)
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
-      for (const file in examples) {
-        setTimeout(async () => { // space creation of files to give react ui time to update.
-          try {
-            await workspaceProvider.set(examples[file].name, examples[file].content)
-          } catch (error) {
-            console.error(error)
-          }
-        }, 10)
+      if (setDefaults) {
+        for (const file in examples) {
+          setTimeout(async () => { // space creation of files to give react ui time to update.
+            try {
+              await workspaceProvider.set(examples[file].name, examples[file].content)
+            } catch (error) {
+              console.error(error)
+            }
+          }, 10)
+        }
       }
     }
   }

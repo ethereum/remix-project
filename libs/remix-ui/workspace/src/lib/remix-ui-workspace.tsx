@@ -67,7 +67,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   props.request.getCurrentWorkspace = () => {
-    return { name: state.currentWorkspace, isLocalhost: state.currentWorkspace === LOCALHOST, workSpacesPath: props.workspace.workspacesPath }
+    return { name: state.currentWorkspace, isLocalhost: state.currentWorkspace === LOCALHOST, absolutePath: `${props.workspace.workspacesPath}/${state.currentWorkspace}` }
   }
 
   useEffect(() => {
