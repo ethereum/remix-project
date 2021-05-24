@@ -106,6 +106,11 @@ module.exports = {
     paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
     if (paths.length === 1) return paths[0]
     return paths.join('/')
+  },
+  extractNameFromKey (key) {
+    const keyPath = key.split('/')
+
+    return keyPath[keyPath.length - 1]
   }
 }
 
