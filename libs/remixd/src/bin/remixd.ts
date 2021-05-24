@@ -4,7 +4,7 @@ import * as semver from 'semver'
 import WebSocket from '../websocket'
 import * as servicesList from '../serviceList'
 import * as WS from 'ws' // eslint-disable-line
-import { getDomain } from '../utils'
+import { getDomain, absolutePath } from '../utils'
 import Axios from 'axios'
 import * as fs from 'fs-extra'
 import * as path from 'path'
@@ -81,10 +81,15 @@ function startService<S extends 'git' | 'hardhat' | 'folder'> (service: S, callb
         sharedFolderClient.setupNotifications(program.sharedFolder)
         sharedFolderClient.sharedFolder(program.sharedFolder)
       })
-      startService('hardhat', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
-        sharedFolderClient.setWebSocket(ws)
-        sharedFolderClient.sharedFolder(program.sharedFolder)
-      })
+      // Run hardhat service if a hardhat project is shared as folder
+      const hardhatConfigFilePath = absolutePath('./', program.sharedFolder) + '/hardhat.config.js'
+      const isHardhatProject = fs.existsSync(hardhatConfigFilePath)
+      if (isHardhatProject) {
+        startService('hardhat', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
+          sharedFolderClient.setWebSocket(ws)
+          sharedFolderClient.sharedFolder(program.sharedFolder)
+        })
+      }
       /*
       startService('git', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
         sharedFolderClient.setWebSocket(ws)
