@@ -28,6 +28,7 @@ const services = {
   folder: (readOnly: boolean) => new servicesList.Sharedfolder(readOnly)
 }
 
+// Similar object is also defined in websocket.ts
 const ports = {
   git: 65521,
   hardhat: 65522,
