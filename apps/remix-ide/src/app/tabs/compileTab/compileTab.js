@@ -111,9 +111,9 @@ class CompileTab extends Plugin {
           const configFilePath = 'remix-compiler.config.js'
           this.fileManager.setFileContent(configFilePath, fileContent)
           this.call('hardhat', 'compile', configFilePath).then((result) => {
-            this.call('terminal', 'log', { type: 'info', value: result})
+            this.call('terminal', 'log', { type: 'info', value: result })
           }).catch((error) => {
-            this.call('terminal', 'log', { type: 'error', value: result})
+            this.call('terminal', 'log', { type: 'error', value: error })
           })
         }
       }
