@@ -20,7 +20,7 @@ export const etherumVM = (element, event, dispatch) => {
 
 export const textWrapEventAction = (element, event, dispatch) => {
   element.config.set('settings/text-wrap', event.target.checked)
-  element.editor.resize(!event.target.checked)
+  element.editor.resize(event.target.checked)
   dispatch({ type: 'textWrap', payload: { name: event.target.name, isChecked: event.target.checked, textClass: event.target.checked ? textDark : textSecondary } })
 }
 

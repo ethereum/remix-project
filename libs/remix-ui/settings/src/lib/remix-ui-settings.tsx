@@ -76,7 +76,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
         <div className="fmt-2 custom-control custom-checkbox mb-1">
           <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={ props.config.get('settings/always-use-vm') }/>
-          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">Always use Ethereum VM at Load</label>
+          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">Always use Ethereum VM at load</label>
         </div>
         <div className="mt-2 custom-control custom-checkbox mb-1">
           <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked = { props.config.get('settings/text-wrap')}/>
