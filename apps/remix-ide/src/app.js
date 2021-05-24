@@ -275,6 +275,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const networkModule = new NetworkModule(blockchain)
   // ----------------- represent the current selected web3 provider ----
   const web3Provider = new Web3ProviderModule(blockchain)
+  const hardhatProvider = new HardhatProvider(blockchain)
   // ----------------- convert offset to line/column service -----------
   const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({ api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter' })
@@ -297,7 +298,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
 
   const contextualListener = new ContextualListener({ editor })
-  const hardhatProvider = new HardhatProvider()
 
   engine.register([
     contentImport,
