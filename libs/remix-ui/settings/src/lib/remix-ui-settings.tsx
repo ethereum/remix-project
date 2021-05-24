@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { generateContractMetadataText, gitAccessTokenLink, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenTitle, warnText } from './constants'
+import { generateContractMetadataText, gitAccessTokenLink, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenTitle, textDark, warnText } from './constants'
 
 import './remix-ui-settings.css'
 import { etherumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics } from './settingsAction'
@@ -27,7 +27,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const token = props.config.get('settings/gist-access-token')
     if (token === undefined) {
       props.config.set('settings/generate-contract-metadata', true)
-      dispatch({ type: 'contractMetadata', payload: { name: 'contractMetadata', isChecked: true, textClass: 'text-dart' } })
+      dispatch({ type: 'contractMetadata', payload: { name: 'contractMetadata', isChecked: true, textClass: textDark } })
     }
     if (token) {
       setTokenValue(token)

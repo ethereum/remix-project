@@ -18,10 +18,6 @@ module.exports = {
   'Should activate `generate contract metadata`': function (browser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .waitForElementVisible('*[data-id="settingsTabGenerateContractMetadataLabel"]', 5000)
-      .execute(function () {
-        const elem = document.getElementById('generatecontractmetadata') as HTMLInputElement
-        elem.checked = true
-      })
       .verify.elementPresent('[data-id="settingsTabGenerateContractMetadata"]:checked')
       .click('*[data-id="verticalIconsFileExplorerIcons"]')
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
@@ -29,7 +25,7 @@ module.exports = {
       .click('*[data-id="verticalIconsKindsolidity"]')
       .pause(2000)
       .click('*[data-id="compilerContainerCompileBtn"]')
-      .pause(30000)
+      .pause(3000)
       .click('*[data-id="verticalIconsKindfilePanel"]')
       .openFile('contracts/artifacts/Ballot.json')
       .openFile('contracts/artifacts/Ballot_metadata.json')
