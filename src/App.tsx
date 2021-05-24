@@ -38,6 +38,7 @@ const App = () => {
   clientInstanceRef.current = clientInstance;
   const contractsRef = useRef(contracts);
   contractsRef.current = contracts;
+  const [themeType, setThemeType] = useState<string>("dark")
 
   useEffect(() => {
     console.log("Remix EthDoc loading...");
@@ -76,6 +77,17 @@ const App = () => {
           setContracts(newMap);
         }
       );
+
+      const currentTheme = await client.call("theme", "currentTheme")
+      console.log("Current theme", currentTheme)
+
+      setThemeType(currentTheme.brightness || currentTheme.quality)
+
+      client.on("theme", "themeChanged", (theme: any) => {
+        console.log("themeChanged")
+        setThemeType(theme.quality)
+      })
+
     };
 
     loadClient();
@@ -89,6 +101,7 @@ const App = () => {
         setContracts,
         sites,
         setSites,
+        themeType
       }}
     >
       <Routes />
