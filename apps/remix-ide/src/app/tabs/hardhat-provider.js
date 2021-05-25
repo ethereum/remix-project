@@ -1,5 +1,8 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
+import Web3 from 'web3'
+const yo = require('yo-yo')
+const modalDialogCustom = require('../ui/modal-dialog-custom')
 
 const profile = {
   name: 'hardhat-provider',
@@ -13,20 +16,34 @@ const profile = {
 export default class HardhatProvider extends Plugin {
   constructor (blockchain) {
     super(profile)
+    this.provider = null
     this.blockchain = blockchain
   }
 
+  hardhatProviderDialogBody () {
+    return yo`
+      <div class="">
+        Hardhat JSON-RPC Endpoint
+      </div>
+    `
+  }
+
   sendAsync (data) {
-    return new Promise((resolve, reject) => {
-      const provider = this.blockchain.web3().currentProvider
-      if (provider) {
-        provider[provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
-          if (error) return reject(error)
-          resolve(message)
-        })
-      } else {
-        resolve({ jsonrpc: '2.0', result: [], id: data.id })
-      }
+    modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
+          this.blockchain.setProviderFromEndpoint(target, 'Hardhat Provider', (alertMsg) => {
+            console.log('target-->', target)
+            this.provider = new Web3.providers.HttpProvider(target)
+            return new Promise((resolve, reject) => {
+              if (this.provider) {
+                this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
+                  if (error) return reject(error)
+                  resolve(message)
+                })
+              } else {
+                resolve({ jsonrpc: '2.0', result: [], id: data.id })
+              }
+            })
+          })
     })
   }
 }
