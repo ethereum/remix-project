@@ -20,6 +20,10 @@ export default class HardhatProvider extends Plugin {
     this.blockchain = blockchain
   }
 
+  onDeactivation () {
+    this.provider = null
+  }
+
   hardhatProviderDialogBody () {
     return yo`
       <div class="">
@@ -29,22 +33,32 @@ export default class HardhatProvider extends Plugin {
   }
 
   sendAsync (data) {
-    modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
-          this.blockchain.setProviderFromEndpoint(target, 'Hardhat Provider', (alertMsg) => {
-            console.log('target-->', target)
-            this.provider = new Web3.providers.HttpProvider(target)
-            return new Promise((resolve, reject) => {
-              if (this.provider) {
-                this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
-                  if (error) return reject(error)
-                  resolve(message)
-                })
-              } else {
-                resolve({ jsonrpc: '2.0', result: [], id: data.id })
-              }
-            })
-          })
+    return new Promise((resolve, reject) => {
+      if (!this.provider) {
+        modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {     
+          this.provider = new Web3.providers.HttpProvider(target)     
+          sendAsyncInternal(this.provider, data, resolve, reject)
+        }, () => {
+          console.log('cancel clicked', this.provider)
+          console.log('inside if--->', this.blockchain.getProvider())
+          console.log('inside if-2-->', this.blockchain.getCurrentProvider())
+          this.call('udapp', 'setEnvironmentMode', this.blockchain.getProvider())
+        })
+      } else {
+        sendAsyncInternal(this.provider, data, resolve, reject)
+      }
     })
+  }
+}
+
+const sendAsyncInternal = (provider, data, resolve, reject) => {
+  if (provider) {
+    provider[provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
+      if (error) return reject(error)
+      resolve(message)
+    })
+  } else {
+    resolve({ jsonrpc: '2.0', result: [], id: data.id })
   }
 }
 
