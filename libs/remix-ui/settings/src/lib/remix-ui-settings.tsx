@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
-import { generateContractMetadataText, gitAccessTokenLink, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenTitle, textDark, textSecondary, warnText } from './constants'
+import { enablePersonalModeText, ethereunVMText, generateContractMetadataText, gitAccessTokenLink, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenTitle, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText } from './constants'
 
 import './remix-ui-settings.css'
 import { etherumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast } from './settingsAction'
@@ -22,7 +22,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [themeName, setThemeName] = useState('')
 
   useEffect(() => {
-    props._deps.themeModule.switchTheme()
     const token = props.config.get('settings/gist-access-token')
     if (token === undefined) {
       props.config.set('settings/generate-contract-metadata', true)
@@ -76,23 +75,23 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
         <div className="fmt-2 custom-control custom-checkbox mb-1">
           <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={ props.config.get('settings/always-use-vm') }/>
-          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">Always use Ethereum VM at load</label>
+          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">{ethereunVMText}</label>
         </div>
         <div className="mt-2 custom-control custom-checkbox mb-1">
           <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked = { props.config.get('settings/text-wrap')}/>
-          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">Word wrap in editor</label>
+          <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">{wordWrapText}</label>
         </div>
         <div className="custom-control custom-checkbox mb-1">
           <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked = { props.config.get('settings/personal-mode')}/>
           <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
             <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span>   </span>
-            <span>   </span>Enable Personal Mode for web3 provider. {warnText}
+            <span>   </span>{enablePersonalModeText} {warnText}
           </label>
         </div>
         <div className="custom-control custom-checkbox mb-1">
           <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={ props.config.get('settings/matomo-analytics')}/>
           <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
-            <span>Enable Matomo Analytics. We do not collect personally identifiable information (PII). The info is used to improve the site’s UX & UI. See more about </span>
+            <span>{matomoAnalytics}</span>
             <a href="https://medium.com/p/66ef69e14931/" target="_blank"> Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
           </label>
         </div>
