@@ -22,7 +22,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -127,6 +127,16 @@ class FileManager extends Plugin {
     } catch (e) {
       throw new Error(e)
     }
+  }
+
+  /*
+  * refresh the file explorer
+  * TODO: it's a hack, can be better
+  */
+
+  refresh () {
+    const provider = this.fileProviderOf('/')
+    provider.event.emit('folderAdded', '/')
   }
 
   /**
