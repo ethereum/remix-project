@@ -142,7 +142,7 @@ export class ExecutionContext {
       }
     }
 
-    if (context === 'web3' || context === 'Hardhat Provider') {
+    if (context === 'web3') {
       confirmCb(cb)
     }
 
