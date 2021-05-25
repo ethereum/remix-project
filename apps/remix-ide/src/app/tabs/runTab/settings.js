@@ -245,16 +245,7 @@ class SettingsUI {
 
   setExecutionContext (context) {
     if (context === 'Hardhat Provider') {
-      this.blockchain.changeExecutionContext(context, () => {
-        modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
-          this.blockchain.setProviderFromEndpoint(target, context, (alertMsg) => {
-            if (alertMsg) addTooltip(alertMsg)
-            this.setFinalContext()
-          })
-        }, this.setFinalContext.bind(this))
-      }, (alertMsg) => {
-        addTooltip(alertMsg)
-      }, this.setFinalContext.bind(this))
+      this.blockchain.changeExecutionContext(context)
     } else {
       this.blockchain.changeExecutionContext(context, () => {
         modalDialogCustom.prompt('External node request', this.web3ProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
@@ -287,14 +278,6 @@ class SettingsUI {
         <br>
         <br> 
         Web3 Provider Endpoint
-      </div>
-    `
-  }
-
-  hardhatProviderDialogBody () {
-    return yo`
-      <div class="">
-        Hardhat JSON-RPC Endpoint
       </div>
     `
   }
