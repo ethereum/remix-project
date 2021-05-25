@@ -300,7 +300,7 @@ class DGitProvider extends Plugin {
         window.remixFileSystem.writeFileSync(`${workspace.absolutePath}${file.path}`, Buffer.concat(content) || new Uint8Array())
       } catch (e) {}
     }
-    this.call("fileManager", 'refresh')
+    this.call('fileManager', 'refresh')
   }
 
   async getItem (name) {

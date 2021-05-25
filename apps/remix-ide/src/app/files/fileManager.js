@@ -129,9 +129,9 @@ class FileManager extends Plugin {
     }
   }
 
-  refresh(){
-    const provider = this.fileProviderOf("/")
-    provider.event.emit("folderAdded","/")
+  refresh () {
+    const provider = this.fileProviderOf('/')
+    provider.event.emit('folderAdded', '/')
   }
 
   /**
