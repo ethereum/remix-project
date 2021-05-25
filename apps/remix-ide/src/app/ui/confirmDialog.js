@@ -26,7 +26,8 @@ function confirmDialog (tx, amount, gasEstimation, self, newGasPriceCb, initialP
 
   var el = yo`
     <div>
-      <div>You are about to create a transaction on the main network. Confirm the details to send to your provider.</div>
+      <div>You are about to create a transaction on the Main Network. Confirm the details to send the info to your provider.
+        <br>The provider for many users is MetaMask. The provider will ask you to sign the transaction before it is sent to the Main Network.</div>
       <div class="mt-3 ${css.txInfoBox}">
         <div>
           <span class="text-dark mr-2">From:</span>
