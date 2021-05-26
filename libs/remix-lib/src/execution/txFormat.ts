@@ -357,14 +357,12 @@ export function decodeResponse (response, fnabi) {
   if (fnabi.outputs && fnabi.outputs.length > 0) {
     try {
       let i
-
       const outputTypes = []
       for (i = 0; i < fnabi.outputs.length; i++) {
         const type = fnabi.outputs[i].type
         outputTypes.push(type.indexOf('tuple') === 0 ? makeFullTypeDefinition(fnabi.outputs[i]) : type)
       }
-
-      if (!response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
+      if (!response || !response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
       // decode data
       const abiCoder = new ethers.utils.AbiCoder()
       const decodedObj = abiCoder.decode(outputTypes, response)
