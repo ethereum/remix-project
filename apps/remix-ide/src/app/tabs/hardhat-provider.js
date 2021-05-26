@@ -42,26 +42,29 @@ export default class HardhatProvider extends Plugin {
       if (!this.provider) {
         modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
           this.provider = new Web3.providers.HttpProvider(target)
-          sendAsyncInternal(this.provider, data, resolve, reject)
+          this.sendAsyncInternal(data, resolve, reject)
         }, () => {
-          sendAsyncInternal(this.provider, data, resolve, reject)
+          this.sendAsyncInternal(data, resolve, reject)
         })
       } else {
-        sendAsyncInternal(this.provider, data, resolve, reject)
+        this.sendAsyncInternal(data, resolve, reject)
       }
     })
   }
-}
 
-const sendAsyncInternal = (provider, data, resolve, reject) => {
-  if (provider) {
-    provider[provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
-      if (error) return reject(error)
-      resolve(message)
-    })
-  } else {
-    const result = data.method === 'net_listening' ? 'canceled' : []
-    resolve({ jsonrpc: '2.0', result: result, id: data.id })
+  sendAsyncInternal (data, resolve, reject) {
+    if (this.provider) {
+      this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
+        if (error) {
+          this.provider = null
+          return reject(error)
+        }
+        resolve(message)
+      })
+    } else {
+      const result = data.method === 'net_listening' ? 'canceled' : []
+      resolve({ jsonrpc: '2.0', result: result, id: data.id })
+    }
   }
 }
 
