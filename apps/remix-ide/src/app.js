@@ -29,6 +29,7 @@ const { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConvert
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
+const HardhatProvider = require('./app/tabs/hardhat-provider')
 const Config = require('./config')
 const modalDialogCustom = require('./app/ui/modal-dialog-custom')
 const modalDialog = require('./app/ui/modaldialog')
@@ -277,6 +278,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const networkModule = new NetworkModule(blockchain)
   // ----------------- represent the current selected web3 provider ----
   const web3Provider = new Web3ProviderModule(blockchain)
+  const hardhatProvider = new HardhatProvider(blockchain)
   // ----------------- convert offset to line/column service -----------
   const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({ api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter' })
@@ -313,7 +315,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     terminal,
     web3Provider,
     fetchAndCompile,
-    dGitProvider
+    dGitProvider,
+    hardhatProvider
   ])
 
   // LAYOUT & SYSTEM VIEWS
