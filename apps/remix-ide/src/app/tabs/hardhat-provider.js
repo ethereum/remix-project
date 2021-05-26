@@ -26,7 +26,12 @@ export default class HardhatProvider extends Plugin {
 
   hardhatProviderDialogBody () {
     return yo`
-      <div class="">
+        <div class="">
+          Note: To run Hardhat network node on your system, go to hardhat project folder and run command:
+          <div class="border p-1">npx hardhat node</div>
+        <br>
+        For more info, visit: <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">Hardhat Documentation</a>
+        <br><br>
         Hardhat JSON-RPC Endpoint
       </div>
     `
