@@ -71,6 +71,20 @@ module.exports = {
 
     return name + counter + prefix + '.' + ext
   },
+  async createNonClashingDirNameAsync (name, fileManager) {
+    if (!name) name = 'Undefined'
+    let counter = ''
+    let exist = true
+
+    do {
+      const isDuplicate = await fileManager.exists(name + counter)
+
+      if (isDuplicate) counter = (counter | 0) + 1
+      else exist = false
+    } while (exist)
+
+    return name + counter
+  },
   checkSpecialChars (name) {
     return name.match(/[:*?"<>\\'|]/) != null
   },
