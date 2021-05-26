@@ -35,14 +35,11 @@ export default class HardhatProvider extends Plugin {
   sendAsync (data) {
     return new Promise((resolve, reject) => {
       if (!this.provider) {
-        modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {     
-          this.provider = new Web3.providers.HttpProvider(target)     
+        modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
+          this.provider = new Web3.providers.HttpProvider(target)
           sendAsyncInternal(this.provider, data, resolve, reject)
         }, () => {
-          console.log('cancel clicked', this.provider)
-          console.log('inside if--->', this.blockchain.getProvider())
-          console.log('inside if-2-->', this.blockchain.getCurrentProvider())
-          this.call('udapp', 'setEnvironmentMode', this.blockchain.getProvider())
+          sendAsyncInternal(this.provider, data, resolve, reject)
         })
       } else {
         sendAsyncInternal(this.provider, data, resolve, reject)
@@ -58,7 +55,8 @@ const sendAsyncInternal = (provider, data, resolve, reject) => {
       resolve(message)
     })
   } else {
-    resolve({ jsonrpc: '2.0', result: [], id: data.id })
+    const result = data.method === 'net_listening' ? 'canceled' : []
+    resolve({ jsonrpc: '2.0', result: result, id: data.id })
   }
 }
 
