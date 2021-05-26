@@ -222,9 +222,10 @@ class FileManager extends Plugin {
       await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
       await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
       const content = await this.readFile(src)
-      const copiedFileName = customName ? '/' + customName : '/' + `Copy_${helper.extractNameFromKey(src)}`
+      let copiedFilePath = dest + (customName ? '/' + customName : '/' + `Copy_${helper.extractNameFromKey(src)}`)
+      copiedFilePath = await helper.createNonClashingNameAsync(copiedFilePath, this)
 
-      await this.writeFile(dest + copiedFileName, content)
+      await this.writeFile(copiedFilePath, content)
     } catch (e) {
       throw new Error(e)
     }
@@ -252,7 +253,8 @@ class FileManager extends Plugin {
 
   async inDepthCopy (src, dest, count = 0) {
     const content = await this.readdir(src)
-    const copiedFolderPath = count === 0 ? dest + '/' + `Copy_${helper.extractNameFromKey(src)}` : dest + '/' + helper.extractNameFromKey(src)
+    let copiedFolderPath = count === 0 ? dest + '/' + `Copy_${helper.extractNameFromKey(src)}` : dest + '/' + helper.extractNameFromKey(src)
+    copiedFolderPath = await helper.createNonClashingDirNameAsync(copiedFolderPath, this)
 
     await this.mkdir(copiedFolderPath)
 
