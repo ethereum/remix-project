@@ -463,12 +463,12 @@ class Blockchain {
                 try { error = 'error: ' + JSON.stringify(error) } catch (e) {}
               }
             }
-            next(error, result)
+            next(error, result, tx)
           }
         )
       }
     ],
-    async (error, txResult) => {
+    async (error, txResult, tx) => {
       if (error) {
         return cb(error)
       }
@@ -486,6 +486,10 @@ class Blockchain {
             return cb(vmError.message)
           }
         }
+      }
+      
+      if (!isVM && tx && tx.useCall) {
+        returnValue = toBuffer(txResult.result)
       }
 
       let address = null
