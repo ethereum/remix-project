@@ -145,7 +145,6 @@ export class ExecutionContext {
     if (context === 'web3') {
       confirmCb(cb)
     }
-
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
       this.setProviderFromEndpoint(network.provider, network.name, (error) => {
@@ -189,13 +188,15 @@ export class ExecutionContext {
     const oldProvider = web3.currentProvider
 
     web3.setProvider(endpoint)
-
     web3.eth.net.isListening((err, isConnected) => {
-      if (!err && isConnected) {
+      if (!err && isConnected === true) {
         this.executionContext = context
         this._updateBlockGasLimit()
         this.event.trigger('contextChanged', [context])
         this.event.trigger('web3EndpointChanged')
+        cb()
+      } else if (isConnected === 'canceled') {
+        web3.setProvider(oldProvider)
         cb()
       } else {
         web3.setProvider(oldProvider)
