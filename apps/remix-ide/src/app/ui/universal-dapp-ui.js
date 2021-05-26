@@ -253,7 +253,7 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
   const params = args.funABI.type !== 'fallback' ? inputsValues : ''
   this.blockchain.runOrCallContractMethod(
     args.contractName,
-    args.contractAbi,
+    args.contractABI,
     args.funABI,
     inputsValues,
     args.address,
