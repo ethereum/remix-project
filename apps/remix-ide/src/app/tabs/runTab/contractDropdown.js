@@ -97,10 +97,7 @@ class ContractDropdownUI {
   enableAtAddress (enable) {
     if (enable) {
       const address = this.atAddressButtonInput.value
-      if (!address || !ethJSUtil.isValidAddress(address)) {
-        this.enableAtAddress(false)
-        return
-      }
+      if (!address || !ethJSUtil.isValidChecksumAddress(address)) return
       this.atAddress.removeAttribute('disabled')
       this.atAddress.setAttribute('title', 'Interact with the given contract.')
     } else {
@@ -390,10 +387,7 @@ class ContractDropdownUI {
   loadFromAddress () {
     this.event.trigger('clearInstance')
 
-    let address = this.atAddressButtonInput.value
-    if (!ethJSUtil.isValidChecksumAddress(address)) {
-      address = ethJSUtil.toChecksumAddress(address)
-    }
+    var address = this.atAddressButtonInput.value
     this.dropdownLogic.loadContractFromAddress(address,
       (cb) => {
         modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition?', cb)
