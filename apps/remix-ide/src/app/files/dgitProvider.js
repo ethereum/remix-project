@@ -24,9 +24,8 @@ const profile = {
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
-  constructor (fileManager) {
+  constructor () {
     super(profile)
-    this.fileManager = fileManager
     this.ipfsconfig = {
       host: 'ipfs.komputing.org',
       port: 443,
@@ -357,7 +356,7 @@ class DGitProvider extends Plugin {
 
   async getDirectory (dir) {
     let result = []
-    const files = await this.fileManager.readdir(dir)
+    const files = await this.call('fileManager', 'readdir', dir)
     const fileArray = normalize(files)
     for (const fi of fileArray) {
       if (fi) {
