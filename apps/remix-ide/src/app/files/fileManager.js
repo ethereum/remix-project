@@ -131,11 +131,10 @@ class FileManager extends Plugin {
 
   /*
   * refresh the file explorer
-  * TODO: it's a hack, can be better
   */
-
   refresh () {
     const provider = this.fileProviderOf('/')
+    // emit folderAdded so that File Explorer reloads the file tree
     provider.event.emit('folderAdded', '/')
   }
 

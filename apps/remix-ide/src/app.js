@@ -259,7 +259,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const fileManager = new FileManager(editor, appManager)
   registry.put({ api: fileManager, name: 'filemanager' })
   // ----------------- dGit provider ---------------------------------
-  const dGitProvider = new DGitProvider(fileManager)
+  const dGitProvider = new DGitProvider()
 
   // ----------------- import content service ------------------------
   const contentImport = new CompilerImport(fileManager)
