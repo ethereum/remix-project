@@ -464,6 +464,14 @@ class Blockchain {
         return cb(error)
       }
 
+      /*
+      value of txResult is inconsistent:
+          - transact to contract:
+            {"receipt": { ... }, "tx":{ ... }, "transactionHash":"0x7ba4c05075210fdbcf4e6660258379db5cc559e15703f9ac6f970a320c2dee09"}
+          - call to contract:
+            {"result":"0x0000000000000000000000000000000000000000000000000000000000000000","transactionHash":"0x5236a76152054a8aad0c7135bcc151f03bccb773be88fbf4823184e47fc76247"}
+      */
+
       const isVM = this.executionContext.isVM()
       let execResult
       let returnValue = null
@@ -471,7 +479,7 @@ class Blockchain {
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
-          returnValue = (execResult && isVM) ? execResult.returnValue : txResult
+          returnValue = execResult ? execResult.returnValue : toBuffer(txResult.result || '0x0000000000000000000000000000000000000000000000000000000000000000')
           const vmError = txExecution.checkVMError(execResult, args.data.contractABI)
           if (vmError.error) {
             return cb(vmError.message)
