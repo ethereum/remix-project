@@ -34,50 +34,50 @@ module.exports = {
         })
   },
 
-  // 'Call method from Ballot to check return value': function (browser: NightwatchBrowser) {
-  //   browser
-  //     .clickFunction('winnerName - call')
-  //     // Test in terminal
-  //     .testFunction('last',
-  //       {
-  //         to: 'Ballot.winnerName() 0x692a70D2e424a56D2C6C27aA97D1a86395877b3A',
-  //         'decoded output': { "0": "bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000" }
-  //       })
-  //     // Test in Udapp UI
-  //     .assert.containsText('*[data-id="treeViewDiv0"]', "bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000")
-  // },
+  'Call method from Ballot to check return value': function (browser: NightwatchBrowser) {
+    browser
+      .clickFunction('winnerName - call')
+      // Test in terminal
+      .testFunction('last',
+        {
+          to: 'Ballot.winnerName() 0x692a70D2e424a56D2C6C27aA97D1a86395877b3A',
+          'decoded output': { 0: 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' }
+        })
+      // Test in Udapp UI
+      .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
+  },
 
-  // 'Debug Ballot / delegate': function (browser: NightwatchBrowser) {
-  //   browser.pause(500)
-  //     .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
-  //     .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-  //     .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
-  //     .pause(2000)
-  //     .waitForElementVisible('#stepdetail')
-  //     .goToVMTraceStep(144)
-  //     .pause(2000)
-  //     .checkVariableDebug('soliditystate', stateCheck)
-  //     .checkVariableDebug('soliditylocals', localsCheck)
-  // },
+  'Debug Ballot / delegate': function (browser: NightwatchBrowser) {
+    browser.pause(500)
+      .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
+      .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
+      .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
+      .pause(2000)
+      .waitForElementVisible('#stepdetail')
+      .goToVMTraceStep(144)
+      .pause(2000)
+      .checkVariableDebug('soliditystate', stateCheck)
+      .checkVariableDebug('soliditylocals', localsCheck)
+  },
 
-  // 'Access Ballot via at address': function (browser: NightwatchBrowser) {
-  //   browser.clickLaunchIcon('udapp')
-  //     .click('*[data-id="universalDappUiUdappClose"]')
-  //     .addFile('ballot.abi', { content: ballotABI })
-  //     // we are not changing the visibility for not checksumed contracts
-  //     // .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)
-  //     .clickLaunchIcon('filePanel')
-  //     .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
-  //     .pause(500)
-  //     .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-  //     .click('*[data-id="universalDappUiTitleExpander"]')
-  //     .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
-  //     .testFunction('last',
-  //       {
-  //         status: 'false Transaction mined but execution failed',
-  //         'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-  //       })
-  // },
+  'Access Ballot via at address': function (browser: NightwatchBrowser) {
+    browser.clickLaunchIcon('udapp')
+      .click('*[data-id="universalDappUiUdappClose"]')
+      .addFile('ballot.abi', { content: ballotABI })
+      // we are not changing the visibility for not checksumed contracts
+      // .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)
+      .clickLaunchIcon('filePanel')
+      .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
+      .pause(500)
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+      .click('*[data-id="universalDappUiTitleExpander"]')
+      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
+      .testFunction('last',
+        {
+          status: 'false Transaction mined but execution failed',
+          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+        })
+  },
 
   'Deploy and use Ballot using external web3': function (browser: NightwatchBrowser) {
     browser
@@ -97,10 +97,10 @@ module.exports = {
       // Test in terminal
       .testFunction('last',
         {
-          'decoded output': { "0": "bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000" }
+          'decoded output': { 0: 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' }
         })
       // Test in Udapp UI
-      .assert.containsText('*[data-id="treeViewDiv0"]', "bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000")
+      .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
       .end()
   }
 }
