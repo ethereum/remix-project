@@ -35,7 +35,7 @@ const profile = {
   name: 'filePanel',
   displayName: 'File explorers',
   methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace'],
-  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace'],
+  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace', 'createWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
   kind: 'fileexplorer',
@@ -202,7 +202,7 @@ module.exports = class Filepanel extends ViewPlugin {
     return browserProvider.exists(workspacePath)
   }
 
-  async createWorkspace (workspaceName) {
+  async createWorkspace (workspaceName, setDefaults = true) {
     if (!workspaceName) throw new Error('name cannot be empty')
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
@@ -211,14 +211,16 @@ module.exports = class Filepanel extends ViewPlugin {
       await this.processCreateWorkspace(workspaceName)
       workspaceProvider.setWorkspace(workspaceName)
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
-      for (const file in examples) {
-        setTimeout(async () => { // space creation of files to give react ui time to update.
-          try {
-            await workspaceProvider.set(examples[file].name, examples[file].content)
-          } catch (error) {
-            console.error(error)
-          }
-        }, 10)
+      if (setDefaults) {
+        for (const file in examples) {
+          setTimeout(async () => { // space creation of files to give react ui time to update.
+            try {
+              await workspaceProvider.set(examples[file].name, examples[file].content)
+            } catch (error) {
+              console.error(error)
+            }
+          }, 10)
+        }
       }
     }
   }
