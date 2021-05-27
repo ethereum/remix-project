@@ -1,24 +1,14 @@
+import Web3 from 'web3'
 import { toBuffer } from 'ethereumjs-util'
-const remixLib = require('@remix-project/remix-lib')
-const txFormat = remixLib.execution.txFormat
-const txExecution = remixLib.execution.txExecution
-const typeConversion = remixLib.execution.typeConversion
-const Txlistener = remixLib.execution.txListener
-const TxRunner = remixLib.execution.TxRunner
-const TxRunnerWeb3 = remixLib.execution.TxRunnerWeb3
-const txHelper = remixLib.execution.txHelper
-const EventManager = remixLib.EventManager
-const { ExecutionContext } = require('./execution-context')
-const Web3 = require('web3')
-
-const async = require('async')
-const { EventEmitter } = require('events')
-
-const { resultToRemixTx } = remixLib.helpers.txResultHelper
-
-const VMProvider = require('./providers/vm.js')
-const InjectedProvider = require('./providers/injected.js')
-const NodeProvider = require('./providers/node.js')
+import { waterfall } from 'async'
+import { EventEmitter } from 'events'
+import { ExecutionContext } from './execution-context'
+import VMProvider from './providers/vm.js'
+import InjectedProvider from './providers/injected.js'
+import NodeProvider from './providers/node.js'
+import { execution, EventManager, helpers } from '@remix-project/remix-lib'
+const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
+const { txResultHelper: resultToRemixTx } = helpers
 
 class Blockchain {
   // NOTE: the config object will need to be refactored out in remix-lib
@@ -397,7 +387,7 @@ class Blockchain {
 
   runTx (args, confirmationCb, continueCb, promptCb, cb) {
     const self = this
-    async.waterfall([
+    waterfall([
       function getGasLimit (next) {
         if (self.transactionContextAPI.getGasLimit) {
           return self.transactionContextAPI.getGasLimit(next)
