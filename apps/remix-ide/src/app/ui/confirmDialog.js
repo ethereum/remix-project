@@ -25,24 +25,49 @@ function confirmDialog (tx, amount, gasEstimation, self, newGasPriceCb, initialP
   }
 
   var el = yo`
-  <div>
-    <div>You are creating a transaction on the main network. Click confirm if you are sure to continue.</div>
-    <div class=${css.txInfoBox}>
-      <div>From: ${tx.from}</div>
-      <div>To: ${tx.to ? tx.to : '(Contract Creation)'}</div>
-      <div>Amount: ${amount} Ether</div>
-      <div>Gas estimation: ${gasEstimation}</div>
-      <div>Gas limit: ${tx.gas}</div>
-      <div>Gas price: <input id='gasprice' oninput=${onGasPriceChange} /> Gwei <span> (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> to get more info about gas price)</span></div>
-      <div>Max transaction fee:<span id='txfee'></span></div>
-      <div>Data:</div>
-      <pre class=${css.wrapword}>${tx.data && tx.data.length > 50 ? tx.data.substring(0, 49) + '...' : tx.data} ${copyToClipboard(() => { return tx.data })}</pre>
+    <div>
+      <div>You are about to create a transaction on the Main Network. Confirm the details to send the info to your provider.
+        <br>The provider for many users is MetaMask. The provider will ask you to sign the transaction before it is sent to the Main Network.</div>
+      <div class="mt-3 ${css.txInfoBox}">
+        <div>
+          <span class="text-dark mr-2">From:</span>
+          <span>${tx.from}</span>
+        </div>
+        <div>
+          <span class="text-dark mr-2">To:</span>
+          <span>${tx.to ? tx.to : '(Contract Creation)'}</span>
+        </div>
+        <div>
+          <span class="text-dark mr-2">Amount:</span>
+          <span>${amount} Ether</span>
+        </div>
+        <div>
+          <span class="text-dark mr-2">Gas estimation:</span>
+          <span>${gasEstimation}</span>
+        </div>
+        <div>
+          <span class="text-dark mr-2">Gas limit:</span>
+          <span>${tx.gas}</span>
+        </div>
+        <div>
+          <span class="text-dark mr-2">Max transaction fee:</span>
+          <span id='txfee'></span>
+        </div>
+        <div class="d-flex align-items-center my-1">
+          <span class="text-dark mr-2">Gas price:</span>
+          <input class="form-control mr-1" style='width: 40px; height: 28px;'id='gasprice' oninput=${onGasPriceChange} />
+          <span>Gwei (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> for current gas price info.)</span>
+        </div>
+        <div class="d-flex align-items-center">
+          <span class="text-dark mr-2 mb-3">Data:</span>
+          <pre class=${css.wrapword}>${tx.data && tx.data.length > 50 ? tx.data.substring(0, 49) + '...' : tx.data} ${copyToClipboard(() => { return tx.data })}</pre>
+        </div>
+      </div>
+      <div class="d-flex py-1 align-items-center custom-control custom-checkbox ${css.checkbox}">
+        <input class="form-check-input custom-control-input" id='confirmsetting' type="checkbox">
+        <label class="m-0 form-check-label custom-control-label">Do not show this warning again.</label>
+      </div>
     </div>
-    <div class=${css.checkbox}>
-      <input id='confirmsetting' type="checkbox">
-      <i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Do not ask for confirmation again. (the setting will not be persisted for the next page reload)
-    </div>
-  </div>
   `
 
   initialParamsCb((txFeeText, gasPriceValue, gasPriceStatus) => {
