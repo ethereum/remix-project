@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import { toBuffer } from 'ethereumjs-util'
+import { toBuffer, addHexPrefix } from 'ethereumjs-util'
 import { waterfall } from 'async'
 import { EventEmitter } from 'events'
 import { ExecutionContext } from './execution-context'
@@ -479,7 +479,7 @@ class Blockchain {
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
-          returnValue = execResult ? execResult.returnValue : toBuffer(txResult.result || '0x0000000000000000000000000000000000000000000000000000000000000000')
+          returnValue = execResult ? execResult.returnValue : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
           const vmError = txExecution.checkVMError(execResult, args.data.contractABI)
           if (vmError.error) {
             return cb(vmError.message)
@@ -488,7 +488,7 @@ class Blockchain {
       }
 
       if (!isVM && tx && tx.useCall) {
-        returnValue = toBuffer(txResult.result)
+        returnValue = toBuffer(addHexPrefix(txResult.result))
       }
 
       let address = null
