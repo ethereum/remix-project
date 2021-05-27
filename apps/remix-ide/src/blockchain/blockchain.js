@@ -1,3 +1,4 @@
+import { toBuffer } from 'ethereumjs-util'
 const remixLib = require('@remix-project/remix-lib')
 const txFormat = remixLib.execution.txFormat
 const txExecution = remixLib.execution.txExecution
@@ -487,7 +488,7 @@ class Blockchain {
           }
         }
       }
-      
+
       if (!isVM && tx && tx.useCall) {
         returnValue = toBuffer(txResult.result)
       }
