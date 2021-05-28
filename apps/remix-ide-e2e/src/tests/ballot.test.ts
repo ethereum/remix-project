@@ -43,7 +43,7 @@ module.exports = {
           to: 'Ballot.winnerName() 0x692a70D2e424a56D2C6C27aA97D1a86395877b3A',
           'decoded output': { 0: 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' }
         })
-      // Test in Udapp UI
+      // Test in Udapp UI , treeViewDiv0 shows returned value on method click
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
   },
 
@@ -93,16 +93,21 @@ module.exports = {
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c' })
       .journalLastChildIncludes('Ballot.delegate(address)')
       .journalLastChildIncludes('data: 0x5c1...a733c')
+    },
+
+  'Call method from Ballot to check return value using external web3': function (browser: NightwatchBrowser) {
+    browser
       .clickFunction('winnerName - call')
       // Test in terminal
+      .journalLastChildIncludes('Ballot.winnerName()')
       .testFunction('last',
         {
           'decoded output': { 0: 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' }
         })
-      // Test in Udapp UI
+      // Test in Udapp UI , treeViewDiv0 shows returned value on method click
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
       .end()
-  }
+  },
 }
 
 const localsCheck = {
