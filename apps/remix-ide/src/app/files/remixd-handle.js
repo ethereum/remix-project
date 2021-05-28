@@ -53,7 +53,6 @@ export class RemixdHandle extends WebsocketPlugin {
   async canceled () {
     // await this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
     await this.appManager.deactivatePlugin('remixd')
-    await this.appManager.deactivatePlugin('hardhat')
   }
 
   /**
