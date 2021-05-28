@@ -6,7 +6,7 @@ export interface FileExplorerProps {
     menuItems?: string[],
     plugin: any,
     focusRoot: boolean,
-    contextMenuItems: { id: string, name: string, type: string[], path: string[], extension: string[], pattern: string[] }[],
+    contextMenuItems: MenuItems,
     displayInput?: boolean,
     externalUploads?: EventTarget & HTMLInputElement
 }
@@ -28,7 +28,10 @@ export interface FileExplorerMenuProps {
     publishToGist: (path?: string) => void,
     uploadFile: (target: EventTarget & HTMLInputElement) => void
 }
-export type action = { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string }
+
+export type action = { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string, multiselect: boolean }
+
+export type MenuItems = action[]
 export interface FileExplorerContextMenuProps {
     actions: action[],
     createNewFile: (folder?: string) => void,

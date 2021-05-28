@@ -6,7 +6,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import Gists from 'gists'
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
-import { FileExplorerProps, File } from './types'
+import { FileExplorerProps, File, MenuItems } from './types'
 import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem'
 import { fetchDirectory, init, resolveDirectory, addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
@@ -33,63 +33,80 @@ export const FileExplorer = (props: FileExplorerProps) => {
       type: ['folder', 'gist'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'newFolder',
       name: 'New Folder',
       type: ['folder', 'gist'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'rename',
       name: 'Rename',
       type: ['file', 'folder'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'delete',
       name: 'Delete',
-      type: ['file', 'folder', 'gist', 'multi'],
+      type: ['file', 'folder', 'gist'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'run',
       name: 'Run',
       type: [],
       path: [],
       extension: ['.js'],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'pushChangesToGist',
       name: 'Push changes to gist',
       type: ['gist'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'publishFolderToGist',
       name: 'Publish folder to gist',
       type: ['folder'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'publishFileToGist',
       name: 'Publish file to gist',
       type: ['file'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
     }, {
       id: 'copy',
       name: 'Copy',
       type: ['folder', 'file'],
       path: [],
       extension: [],
-      pattern: []
+      pattern: [],
+      multiselect: false
+    }, {
+      id: 'deleteAll',
+      name: 'Delete All',
+      type: ['folder', 'file'],
+      path: [],
+      extension: [],
+      pattern: [],
+      multiselect: true
     }],
     focusContext: {
       element: null,
@@ -108,7 +125,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       hide: true,
       title: '',
       message: '',
-      children: <></>,
       okLabel: '',
       okFn: () => {},
       cancelLabel: '',
@@ -212,8 +228,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           okFn: prevState.modals[0].okFn,
           cancelLabel: prevState.modals[0].cancelLabel,
           cancelFn: prevState.modals[0].cancelFn,
-          handleHide: prevState.modals[0].handleHide,
-          children: prevState.modals[0].children
+          handleHide: prevState.modals[0].handleHide
         }
 
         prevState.modals.shift()
@@ -259,14 +274,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
         type: ['folder', 'file'],
         path: [],
         extension: [],
-        pattern: []
+        pattern: [],
+        multiselect: false
       }])
     } else {
       removeMenuItems(['paste'])
     }
   }, [canPaste])
 
-  const addMenuItems = (items: { id: string, name: string, type: string[], path: string[], extension: string[], pattern: string[] }[]) => {
+  const addMenuItems = (items: MenuItems) => {
     setState(prevState => {
       // filter duplicate items
       const actions = items.filter(({ name }) => prevState.actions.findIndex(action => action.name === name) === -1)
@@ -355,13 +371,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const deletePath = async (path: string | string[]) => {
     const filesProvider = fileSystem.provider.provider
     if (!Array.isArray(path)) path = [path]
-    const children: React.ReactFragment = <div><div>Are you sure you want to delete {path.length > 1 ? 'these items' : 'this item'}?</div>{path.map((item, i) => (<li key={i}>{item}</li>))}</div>
     for (const p of path) {
       if (filesProvider.isReadOnly(p)) {
         return toast('cannot delete file. ' + name + ' is a read only explorer')
       }
     }
-    modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, '', 'OK', async () => {
+    modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, deleteMessage(path), 'OK', async () => {
       const fileManager = state.fileManager
       for (const p of path) {
         try {
@@ -371,7 +386,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${p}.`)
         }
       }
-    }, 'Cancel', () => {}, children)
+    }, 'Cancel', () => {})
   }
 
   const renamePath = async (oldPath: string, newPath: string) => {
@@ -596,14 +611,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const modal = (title: string, message: string, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, children?:React.ReactNode) => {
+  const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setState(prevState => {
       return {
         ...prevState,
         modals: [...prevState.modals,
           {
             message,
-            children,
             title,
             okLabel,
             okFn,
@@ -631,11 +645,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     } else {
       if (state.focusElement.findIndex(item => item.key === path) !== -1) {
         setState(prevState => {
-          return { ...prevState, focusElement: [...prevState.focusElement.filter(item => item.key !== path)] }
+          return { ...prevState, focusElement: prevState.focusElement.filter(item => item.key !== path) }
         })
       } else {
         setState(prevState => {
-          return { ...prevState, focusElement: [...prevState.focusElement, { key: path, type }] }
+          const nonRootFocus = prevState.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+
+          nonRootFocus.push({ key: path, type })
+          return { ...prevState, focusElement: nonRootFocus }
         })
       }
     }
@@ -649,7 +666,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       } else {
         setState(prevState => {
-          return { ...prevState, focusElement: [...prevState.focusElement, { key: path, type }] }
+          const nonRootFocus = prevState.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+
+          nonRootFocus.push({ key: path, type })
+          return { ...prevState, focusElement: nonRootFocus }
         })
       }
     } else {
@@ -804,6 +824,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
     state.copyElement.map(({ key, type }) => {
       type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
     })
+  }
+
+  const deleteMessage = (path: string[]) => {
+    return (
+      <div>
+        <div>Are you sure you want to delete {path.length > 1 ? 'these items' : 'this item'}?</div>
+        {
+          path.map((item, i) => (<li key={i}>{item}</li>))
+        }
+      </div>
+    )
   }
 
   const label = (file: File) => {
@@ -961,7 +992,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
           id={ props.name }
           title={ state.focusModal.title }
           message={ state.focusModal.message }
-          children={ state.focusModal.children }
           hide={ state.focusModal.hide }
           okLabel={ state.focusModal.okLabel }
           okFn={ state.focusModal.okFn }
@@ -973,7 +1003,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       <Toaster message={state.toasterMsg} />
       { state.showContextMenu &&
         <FileExplorerContextMenu
-          actions={state.actions}
+          actions={state.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
           hideContextMenu={hideContextMenu}
           createNewFile={handleNewFileInput}
           createNewFolder={handleNewFolderInput}
