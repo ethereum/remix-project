@@ -487,7 +487,7 @@ class CompilerContainer {
         this._view.versionSelector.appendChild(option)
       }
     })
-    if (semver.lt(this._retrieveVersion(), 'v0.4.12+commit.194ff033.js')) {
+    if (this.data.selectedVersion !== 'builtin' && semver.lt(this._retrieveVersion(), 'v0.4.12+commit.194ff033.js')) {
       toaster(yo`
         <div>
           <b>Old compiler usage detected.</b>
