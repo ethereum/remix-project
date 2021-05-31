@@ -1,6 +1,7 @@
 /* global Node, requestAnimationFrame */
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import * as remixBleach from '../../lib/remixBleach'
 
 var yo = require('yo-yo')
 var javascriptserialize = require('javascript-serialize')
@@ -26,7 +27,7 @@ var ghostbar = yo`<div class=${css.ghostbar} bg-secondary></div>`
 const profile = {
   displayName: 'Terminal',
   name: 'terminal',
-  methods: [],
+  methods: ['log'],
   events: [],
   description: ' - ',
   version: packageJson.version
@@ -111,6 +112,32 @@ class Terminal extends Plugin {
     this.off('scriptRunner', 'info')
     this.off('scriptRunner', 'warn')
     this.off('scriptRunner', 'error')
+  }
+
+  log (message) {
+    var command = this.commands[message.type]
+    if (typeof command === 'function') {
+      if (typeof message.value === 'string' && message.type === 'html') {
+        var el = document.createElement('div')
+        el.innerHTML = remixBleach.sanitize(message.value, {
+          list: [
+            'a',
+            'b',
+            'p',
+            'em',
+            'strong',
+            'div',
+            'span',
+            'ul',
+            'li',
+            'ol',
+            'hr'
+          ]
+        })
+        message.value = el
+      }
+      command(message.value)
+    };
   }
 
   logHtml (html) {
@@ -653,7 +680,11 @@ class Terminal extends Plugin {
       return function logger (args, scopedCommands, append) {
         var types = args.filter(filterUndefined).map(type)
         var values = javascriptserialize.apply(null, args.filter(filterUndefined)).map(function (val, idx) {
-          if (typeof args[idx] === 'string') val = args[idx]
+          if (typeof args[idx] === 'string') {
+            const el = document.createElement('div')
+            el.innerHTML = args[idx].replace(/(\r\n|\n|\r)/gm, '<br>')
+            val = el.children.length === 0 ? el.firstChild : el
+          }
           if (types[idx] === 'element') val = jsbeautify.html(val)
           return val
         })

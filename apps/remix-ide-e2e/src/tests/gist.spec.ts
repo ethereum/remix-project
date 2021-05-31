@@ -54,9 +54,9 @@ module.exports = {
             .click('[data-id="default_workspace-modal-footer-cancel-react"]')
             .executeScript(`remix.loadgist('${gistid}')`)
             // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
-            .waitForElementVisible(`[data-id="treeViewLitreeViewItem${gistid}"]`)
-            .click(`[data-id="treeViewLitreeViewItem${gistid}"]`)
-            .openFile(`${gistid}/README.txt`)
+            .waitForElementVisible(`[data-id="treeViewLitreeViewItem/gist-${gistid}"]`)
+            .click(`[data-id="treeViewLitreeViewItem/gist-${gistid}"]`)
+            .openFile(`gist-${gistid}/README.txt`)
         }
       })
   },
@@ -118,9 +118,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptText"]')
       .setValue('*[data-id="modalDialogCustomPromptText"]', testData.validGistId)
       .modalFooterOKClick()
-      .openFile(`${testData.validGistId}/ApplicationRegistry`)
-      .waitForElementVisible(`div[title='default_workspace/${testData.validGistId}/ApplicationRegistry']`)
-      .assert.containsText(`div[title='default_workspace/${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
+      .openFile(`gist-${testData.validGistId}/ApplicationRegistry`)
+      .waitForElementVisible(`div[title='default_workspace/gist-${testData.validGistId}/ApplicationRegistry']`)
+      .assert.containsText(`div[title='default_workspace/gist-${testData.validGistId}/ApplicationRegistry'] > span`, 'ApplicationRegistry')
       .end()
   }
 }

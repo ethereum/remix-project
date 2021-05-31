@@ -147,8 +147,8 @@ const executeReadFile = `
 
 const executeCopyFile = `
   const run = async () => {
-    await remix.call('fileManager', 'copyFile', 'contracts/3_Ballot.sol', 'new_contract.sol')
-    const result = await remix.call('fileManager', 'readFile', 'new_contract.sol')
+    await remix.call('fileManager', 'copyFile', 'contracts/3_Ballot.sol', '/', 'copy_contract.sol')
+    const result = await remix.call('fileManager', 'readFile', 'copy_contract.sol')
 
     console.log(result)
   }
