@@ -21,11 +21,27 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
     }
   }, [pageX, pageY])
 
-  const itemMatchesCondition = (item: action) => {
-    if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === type) !== -1)) return true
-    else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === path) !== -1)) return true
-    else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => path.endsWith(ext)) !== -1)) return true
-    else if (item.pattern && Array.isArray(item.pattern) && (item.pattern.filter(value => path.match(new RegExp(value))).length > 0)) return true
+  const filterItem = (item: action) => {
+    /**
+     * if there are multiple elements focused we need to take this and all conditions must be met
+     * for example : 'downloadAsZip' with type ['file','folder','multi'] will work on files and folders when multiple are selected
+    **/
+    const nonRootFocus = focus.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+    if (nonRootFocus.length > 1) {
+      for (const element of nonRootFocus) {
+        if (!itemMatchesCondition(item, element.type, element.key)) return false
+      }
+      return true
+    } else {
+      return itemMatchesCondition(item, type, path)
+    }
+  }
+
+  const itemMatchesCondition = (item: action, itemType: string, itemPath: string) => {
+    if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === itemType) !== -1)) return true
+    else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === itemPath) !== -1)) return true
+    else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => itemPath.endsWith(ext)) !== -1)) return true
+    else if (item.pattern && Array.isArray(item.pattern) && (item.pattern.filter(value => itemPath.match(new RegExp(value))).length > 0)) return true
     else return false
   }
 
@@ -38,7 +54,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   }
 
   const menu = () => {
-    return actions.filter(item => itemMatchesCondition(item)).map((item, index) => {
+    return actions.filter(item => filterItem(item)).map((item, index) => {
       return <li
         id={`menuitem${item.name.toLowerCase()}`}
         key={index}
