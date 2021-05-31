@@ -31,17 +31,17 @@ const profile = {
 }
 
 export class RemixdHandle extends WebsocketPlugin {
-  constructor (locahostProvider, appManager) {
+  constructor (localhostProvider, appManager) {
     super(profile)
-    this.locahostProvider = locahostProvider
+    this.localhostProvider = localhostProvider
     this.appManager = appManager
   }
 
   deactivate () {
     if (super.socket) super.deactivate()
     // this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
-    this.appManager.deactivatePlugin('hardhat')
-    this.locahostProvider.close((error) => {
+    if (this.appManager.actives.includes('hardhat')) this.appManager.deactivatePlugin('hardhat')
+    this.localhostProvider.close((error) => {
       if (error) console.log(error)
     })
   }
@@ -53,7 +53,6 @@ export class RemixdHandle extends WebsocketPlugin {
   async canceled () {
     // await this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
     await this.appManager.deactivatePlugin('remixd')
-    await this.appManager.deactivatePlugin('hardhat')
   }
 
   /**
@@ -83,11 +82,11 @@ export class RemixdHandle extends WebsocketPlugin {
             this.canceled()
           }
         }, 3000)
-        this.locahostProvider.init(() => {})
+        this.localhostProvider.init(() => {})
         this.call('manager', 'activatePlugin', 'hardhat')
       }
     }
-    if (this.locahostProvider.isConnected()) {
+    if (this.localhostProvider.isConnected()) {
       this.deactivate()
     } else if (!isElectron()) {
       // warn the user only if he/she is in the browser context
@@ -98,7 +97,7 @@ export class RemixdHandle extends WebsocketPlugin {
           label: 'Connect',
           fn: () => {
             try {
-              this.locahostProvider.preInit()
+              this.localhostProvider.preInit()
               super.activate()
               setTimeout(() => {
                 if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
