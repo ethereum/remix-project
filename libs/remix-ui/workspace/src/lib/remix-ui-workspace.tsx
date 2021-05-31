@@ -67,7 +67,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   props.request.getCurrentWorkspace = () => {
-    return state.currentWorkspace
+    return { name: state.currentWorkspace, isLocalhost: state.currentWorkspace === LOCALHOST, absolutePath: `${props.workspace.workspacesPath}/${state.currentWorkspace}` }
   }
 
   useEffect(() => {
@@ -97,10 +97,10 @@ export const Workspace = (props: WorkspaceProps) => {
       props.fileManager.setMode('browser')
     }
   }
-  props.localhost.event.off('disconnected', localhostDisconnect)
-  props.localhost.event.on('disconnected', localhostDisconnect)
 
   useEffect(() => {
+    props.localhost.event.off('disconnected', localhostDisconnect)
+    props.localhost.event.on('disconnected', localhostDisconnect)
     props.localhost.event.on('connected', () => {
       remixdExplorer.show()
       setWorkspace(LOCALHOST)
@@ -253,18 +253,18 @@ export const Workspace = (props: WorkspaceProps) => {
   const remixdExplorer = {
     hide: async () => {
       // If 'connect to localhost' is clicked from home tab, mode is not 'localhost'
-      if (props.fileManager.mode === 'localhost') {
-        await setWorkspace(NO_WORKSPACE)
-        props.fileManager.setMode('browser')
-        setState(prevState => {
-          return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
-        })
-      } else {
-        // Hide spinner in file explorer
-        setState(prevState => {
-          return { ...prevState, loadingLocalhost: false }
-        })
-      }
+      // if (props.fileManager.mode === 'localhost') {
+      await setWorkspace(NO_WORKSPACE)
+      props.fileManager.setMode('browser')
+      setState(prevState => {
+        return { ...prevState, hideRemixdExplorer: true, loadingLocalhost: false }
+      })
+      // } else {
+      //   // Hide spinner in file explorer
+      //   setState(prevState => {
+      //     return { ...prevState, loadingLocalhost: false }
+      //   })
+      // }
     },
     show: () => {
       props.fileManager.setMode('localhost')
