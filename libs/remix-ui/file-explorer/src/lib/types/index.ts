@@ -6,7 +6,7 @@ export interface FileExplorerProps {
     menuItems?: string[],
     plugin: any,
     focusRoot: boolean,
-    contextMenuItems: { id: string, name: string, type: string[], path: string[], extension: string[], pattern: string[] }[],
+    contextMenuItems: MenuItems,
     displayInput?: boolean,
     externalUploads?: EventTarget & HTMLInputElement
 }
@@ -15,6 +15,7 @@ export interface File {
     path: string,
     name: string,
     isDirectory: boolean,
+    type: string,
     child?: File[]
 }
 
@@ -24,10 +25,13 @@ export interface FileExplorerMenuProps {
     fileManager: any,
     createNewFile: (folder?: string) => void,
     createNewFolder: (parentFolder?: string) => void,
-    publishToGist: () => void,
+    publishToGist: (path?: string) => void,
     uploadFile: (target: EventTarget & HTMLInputElement) => void
 }
-export type action = { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string }
+
+export type action = { name: string, type: string[], path: string[], extension: string[], pattern: string[], id: string, multiselect: boolean }
+
+export type MenuItems = action[]
 export interface FileExplorerContextMenuProps {
     actions: action[],
     createNewFile: (folder?: string) => void,
@@ -35,13 +39,18 @@ export interface FileExplorerContextMenuProps {
     deletePath: (path: string | string[]) => void,
     renamePath: (path: string, type: string) => void,
     hideContextMenu: () => void,
-    publishToGist?: () => void,
+    publishToGist?: (path?: string, type?: string) => void,
+    pushChangesToGist?: (path?: string, type?: string) => void,
+    publishFolderToGist?: (path?: string, type?: string) => void,
+    publishFileToGist?: (path?: string, type?: string) => void,
     runScript?: (path: string) => void,
     emit?: (id: string, path: string | string[]) => void,
     pageX: number,
     pageY: number,
     path: string,
     type: string,
-    focus: {key:string, type:string}[]
-    onMouseOver?: (...args) => void
+    focus: {key:string, type:string}[],
+    onMouseOver?: (...args) => void,
+    copy?: (path: string, type: string) => void,
+    paste?: (destination: string, type: string) => void
 }

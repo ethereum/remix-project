@@ -4,6 +4,7 @@ import * as packageJson from '../../../../../package.json'
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
+var copyToClipboard = require('../ui/copy-to-clipboard')
 
 var csjs = require('csjs-inject')
 
@@ -30,16 +31,17 @@ const profile = {
 }
 
 export class RemixdHandle extends WebsocketPlugin {
-  constructor (locahostProvider, appManager) {
+  constructor (localhostProvider, appManager) {
     super(profile)
-    this.locahostProvider = locahostProvider
+    this.localhostProvider = localhostProvider
     this.appManager = appManager
   }
 
   deactivate () {
     if (super.socket) super.deactivate()
     // this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
-    this.locahostProvider.close((error) => {
+    if (this.appManager.actives.includes('hardhat')) this.appManager.deactivatePlugin('hardhat')
+    this.localhostProvider.close((error) => {
       if (error) console.log(error)
     })
   }
@@ -80,11 +82,11 @@ export class RemixdHandle extends WebsocketPlugin {
             this.canceled()
           }
         }, 3000)
-        this.locahostProvider.init(() => {})
-        // this.call('manager', 'activatePlugin', 'git')
+        this.localhostProvider.init(() => {})
+        this.call('manager', 'activatePlugin', 'hardhat')
       }
     }
-    if (this.locahostProvider.isConnected()) {
+    if (this.localhostProvider.isConnected()) {
       this.deactivate()
     } else if (!isElectron()) {
       // warn the user only if he/she is in the browser context
@@ -95,7 +97,7 @@ export class RemixdHandle extends WebsocketPlugin {
           label: 'Connect',
           fn: () => {
             try {
-              this.locahostProvider.preInit()
+              this.localhostProvider.preInit()
               super.activate()
               setTimeout(() => {
                 if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
@@ -128,22 +130,27 @@ export class RemixdHandle extends WebsocketPlugin {
 }
 
 function remixdDialog () {
+  const commandText = 'remixd -s absolute-path-to-the-shared-folder --remix-ide your-remix-ide-URL-instance'
   return yo`
     <div class=${css.dialog}>
-      <div class=${css.dialogParagraph}>Interact with your file system from Remix. <br>See the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a> for more info.
+      <div class=${css.dialogParagraph}>
+        Access your file system from Remix IDE. Remixd the NPM module needs to be running in the background to use the Remixd plugin. For more info please check the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
       </div>
-      <div class=${css.dialogParagraph}>If you have looked at the Remixd docs and just need remixd command, <br> here it is:
-        <br><b>remixd -s absolute-path-to-the-shared-folder --remix-ide your-remix-ide-URL-instance</b>
+      <div class=${css.dialogParagraph}>If you are just looking for the remixd command here it is:
+        <br><br><b>remixd -s absolute-path-to-the-shared-folder --remix-ide your-remix-ide-URL-instance</b>
+        <span class="">${copyToClipboard(() => commandText)}</span>
       </div>
-      <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.origin}</em> and your local file system <i>ws://127.0.0.1:65520</i>
-        so please make sure your system is secured enough (port 65520 neither opened nor forwarded).
+      <div class=${css.dialogParagraph}>A connection will start a session between <em>${window.location.origin}</em> and your local file system <i>ws://127.0.0.1:65520</i>
+        <br>To see that a connection has been made, check that there is a localhost section in the Files Explorer
+      </div>
+      <div class=${css.dialogParagraph}>Please make sure your system is secured enough (port 65520 should not be opened nor forwarded).
+        This feature is still in Alpha, so we recommend you to keep a copy of the shared folder.
       </div>
       <div class=${css.dialogParagraph}>
         <h6 class="text-danger">
           Before using, make sure you have the <b>latest remixd version</b>.<br><a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
         </h6>
       </div>
-      <div class=${css.dialogParagraph}>This feature is still in Alpha, so we recommend you to keep a copy of the shared folder.</div>
     </div>
   `
 }

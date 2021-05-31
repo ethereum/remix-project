@@ -15,7 +15,7 @@
     }
   ],
   "dependencies": {
-    "@remix-project/remix-lib": "^0.4.34",
+    "@remix-project/remix-lib": "../remix-lib",
     "eslint-scope": "^5.0.0",
     "@ethereumjs/vm": "^5.3.2",
     "@ethereumjs/block": "^3.2.1",

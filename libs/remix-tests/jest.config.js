@@ -6,6 +6,7 @@ module.exports = {
     transform: {
       '^.+\\.[tj]sx?$': 'ts-jest',
     },
+    transformIgnorePatterns: ["/node_modules/", "\\.pnp\\.[^\\\/]+$"],
     rootDir: "./",
     testTimeout: 40000,
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html', 'json'],
@@ -18,6 +19,6 @@ module.exports = {
       "!src/types.ts",
       "!src/logger.ts"
     ],
-    coverageDirectory: '../../coverage/libs/remix-tests',
+    coverageDirectory: '../../coverage/libs/remix-tests'
   };
   

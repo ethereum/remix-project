@@ -1,7 +1,7 @@
 import { Block } from '@ethereumjs/block'
 import { BN } from 'ethereumjs-util'
 
-export function generateBlock (executionContext) {
+export function generateBlock (vmContext) {
   return new Promise((resolve, reject) => {
     const block: Block = Block.fromBlockData({
       header: {
@@ -11,10 +11,10 @@ export function generateBlock (executionContext) {
         difficulty: new BN('69762765929000', 10),
         gasLimit: new BN('8000000').imuln(1)
       }
-    }, { common: executionContext.vmObject().common })
+    }, { common: vmContext.vmObject().common })
 
-    executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then(() => {
-      executionContext.addBlock(block)
+    vmContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }).then(() => {
+      vmContext.addBlock(block)
       resolve({})
     }).catch((e) => reject(e))
   })

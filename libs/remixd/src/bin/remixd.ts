@@ -4,7 +4,7 @@ import * as semver from 'semver'
 import WebSocket from '../websocket'
 import * as servicesList from '../serviceList'
 import * as WS from 'ws' // eslint-disable-line
-import { getDomain } from '../utils'
+import { getDomain, absolutePath } from '../utils'
 import Axios from 'axios'
 import * as fs from 'fs-extra'
 import * as path from 'path'
@@ -24,16 +24,19 @@ async function warnLatestVersion () {
 
 const services = {
   git: (readOnly: boolean) => new servicesList.GitClient(readOnly),
+  hardhat: (readOnly: boolean) => new servicesList.HardhatClient(readOnly),
   folder: (readOnly: boolean) => new servicesList.Sharedfolder(readOnly)
 }
 
+// Similar object is also defined in websocket.ts
 const ports = {
   git: 65521,
+  hardhat: 65522,
   folder: 65520
 }
 
 const killCallBack: Array<Function> = []
-function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => void) {
+function startService<S extends 'git' | 'hardhat' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => void) {
   const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () => services[service](program.readOnly || false))
   socket.start(callback)
   killCallBack.push(socket.close.bind(socket))
@@ -78,6 +81,15 @@ function startService<S extends 'git' | 'folder'> (service: S, callback: (ws: WS
         sharedFolderClient.setupNotifications(program.sharedFolder)
         sharedFolderClient.sharedFolder(program.sharedFolder)
       })
+      // Run hardhat service if a hardhat project is shared as folder
+      const hardhatConfigFilePath = absolutePath('./', program.sharedFolder) + '/hardhat.config.js'
+      const isHardhatProject = fs.existsSync(hardhatConfigFilePath)
+      if (isHardhatProject) {
+        startService('hardhat', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
+          sharedFolderClient.setWebSocket(ws)
+          sharedFolderClient.sharedFolder(program.sharedFolder)
+        })
+      }
       /*
       startService('git', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
         sharedFolderClient.setWebSocket(ws)

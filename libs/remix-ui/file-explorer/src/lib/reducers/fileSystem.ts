@@ -9,7 +9,6 @@ export const fileSystemInitialState = {
   files: {
     files: [],
     expandPath: [],
-    workspaceName: null,
     blankPath: null,
     isRequesting: false,
     isSuccessful: false,
@@ -83,7 +82,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         ...state,
         files: {
           ...state.files,
-          files: resolveDirectory(state.files.workspaceName, action.payload.path, state.files.files, action.payload.files),
+          files: resolveDirectory(state.provider.provider, action.payload.path, state.files.files, action.payload.files),
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -135,21 +134,12 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         }
       }
     }
-    case 'SET_CURRENT_WORKSPACE': {
-      return {
-        ...state,
-        files: {
-          ...state.files,
-          workspaceName: action.payload
-        }
-      }
-    }
     case 'ADD_INPUT_FIELD': {
       return {
         ...state,
         files: {
           ...state.files,
-          files: addInputField(state.files.workspaceName, action.payload.path, state.files.files, action.payload.files),
+          files: addInputField(state.provider.provider, action.payload.path, state.files.files, action.payload.files),
           blankPath: action.payload.path,
           isRequesting: false,
           isSuccessful: true,
@@ -162,7 +152,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         ...state,
         files: {
           ...state.files,
-          files: removeInputField(state.files.workspaceName, state.files.blankPath, state.files.files),
+          files: removeInputField(state.provider.provider, state.files.blankPath, state.files.files),
           blankPath: null,
           isRequesting: false,
           isSuccessful: true,
@@ -175,7 +165,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         ...state,
         files: {
           ...state.files,
-          files: fileAdded(state.files.workspaceName, action.payload.path, state.files.files, action.payload.files),
+          files: fileAdded(state.provider.provider, action.payload.path, state.files.files, action.payload.files),
           expandPath: [...new Set([...state.files.expandPath, action.payload.path])],
           isRequesting: false,
           isSuccessful: true,
@@ -188,7 +178,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         ...state,
         files: {
           ...state.files,
-          files: folderAdded(state.files.workspaceName, action.payload.path, state.files.files, action.payload.files),
+          files: folderAdded(state.provider.provider, action.payload.path, state.files.files, action.payload.files),
           expandPath: [...new Set([...state.files.expandPath, action.payload.path])],
           isRequesting: false,
           isSuccessful: true,
@@ -201,7 +191,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         ...state,
         files: {
           ...state.files,
-          files: fileRemoved(state.files.workspaceName, action.payload.path, action.payload.removePath, state.files.files),
+          files: fileRemoved(state.provider.provider, action.payload.path, action.payload.removePath, state.files.files),
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -213,7 +203,7 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
         ...state,
         files: {
           ...state.files,
-          files: fileRenamed(state.files.workspaceName, action.payload.path, action.payload.removePath, state.files.files, action.payload.files),
+          files: fileRenamed(state.provider.provider, action.payload.path, action.payload.removePath, state.files.files, action.payload.files),
           isRequesting: false,
           isSuccessful: true,
           error: null
@@ -244,7 +234,9 @@ export const fileSystemReducer = (state = fileSystemInitialState, action: Action
   }
 }
 
-const resolveDirectory = (root, path: string, files, content) => {
+const resolveDirectory = (provider, path: string, files, content) => {
+  const root = provider.workspace || provider.type
+
   if (path === root) return { [root]: { ...content[root], ...files[root] } }
   const pathArr: string[] = path.split('/').filter(value => value)
 
@@ -258,7 +250,8 @@ const resolveDirectory = (root, path: string, files, content) => {
   files = _.set(files, _path, {
     isDirectory: true,
     path,
-    name: extractNameFromKey(path),
+    name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+    type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
     child: { ...content[pathArr[pathArr.length - 1]], ...(prevFiles ? prevFiles.child : {}) }
   })
 
@@ -278,21 +271,26 @@ const removePath = (root, path: string, pathName, files) => {
   files = _.set(files, _path, {
     isDirectory: true,
     path,
-    name: extractNameFromKey(path),
+    name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+    type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
     child: prevFiles ? prevFiles.child : {}
   })
 
   return files
 }
 
-const addInputField = (root, path: string, files, content) => {
+const addInputField = (provider, path: string, files, content) => {
+  const root = provider.workspace || provider.type || ''
+
   if (path === root) return { [root]: { ...content[root], ...files[root] } }
-  const result = resolveDirectory(root, path, files, content)
+  const result = resolveDirectory(provider, path, files, content)
 
   return result
 }
 
-const removeInputField = (root, path: string, files) => {
+const removeInputField = (provider, path: string, files) => {
+  const root = provider.workspace || provider.type || ''
+
   if (path === root) {
     delete files[root][path + '/' + 'blank']
     return files
@@ -300,15 +298,17 @@ const removeInputField = (root, path: string, files) => {
   return removePath(root, path, path + '/' + 'blank', files)
 }
 
-const fileAdded = (root, path: string, files, content) => {
-  return resolveDirectory(root, path, files, content)
+const fileAdded = (provider, path: string, files, content) => {
+  return resolveDirectory(provider, path, files, content)
 }
 
-const folderAdded = (root, path: string, files, content) => {
-  return resolveDirectory(root, path, files, content)
+const folderAdded = (provider, path: string, files, content) => {
+  return resolveDirectory(provider, path, files, content)
 }
 
-const fileRemoved = (root, path: string, removedPath: string, files) => {
+const fileRemoved = (provider, path: string, removedPath: string, files) => {
+  const root = provider.workspace || provider.type || ''
+
   if (path === root) {
     delete files[root][removedPath]
 
@@ -317,7 +317,9 @@ const fileRemoved = (root, path: string, removedPath: string, files) => {
   return removePath(root, path, extractNameFromKey(removedPath), files)
 }
 
-const fileRenamed = (root, path: string, removePath: string, files, content) => {
+const fileRenamed = (provider, path: string, removePath: string, files, content) => {
+  const root = provider.workspace || provider.type || ''
+
   if (path === root) {
     const allFiles = { [root]: { ...content[root], ...files[root] } }
 
@@ -336,7 +338,8 @@ const fileRenamed = (root, path: string, removePath: string, files, content) => 
   files = _.set(files, _path, {
     isDirectory: true,
     path,
-    name: extractNameFromKey(path),
+    name: extractNameFromKey(path).indexOf('gist-') === 0 ? extractNameFromKey(path).split('-')[1] : extractNameFromKey(path),
+    type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
     child: { ...content[pathArr[pathArr.length - 1]], ...prevFiles.child }
   })
 

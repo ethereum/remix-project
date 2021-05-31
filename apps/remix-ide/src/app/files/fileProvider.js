@@ -1,7 +1,7 @@
 'use strict'
 
 const CompilerImport = require('../compiler/compiler-imports')
-const EventManager = require('../../lib/events')
+const EventManager = require('events')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const tooltip = require('../ui/tooltip')
 const remixLib = require('@remix-project/remix-lib')
@@ -111,9 +111,9 @@ class FileProvider {
       return false
     }
     if (!exists) {
-      this.event.trigger('fileAdded', [this._normalizePath(unprefixedpath), false])
+      this.event.emit('fileAdded', this._normalizePath(unprefixedpath), false)
     } else {
-      this.event.trigger('fileChanged', [this._normalizePath(unprefixedpath)])
+      this.event.emit('fileChanged', this._normalizePath(unprefixedpath))
     }
     cb()
     return true
@@ -128,7 +128,7 @@ class FileProvider {
       currentCheck = currentCheck + '/' + value
       if (!window.remixFileSystem.existsSync(currentCheck)) {
         window.remixFileSystem.mkdirSync(currentCheck)
-        this.event.trigger('folderAdded', [this._normalizePath(currentCheck)])
+        this.event.emit('folderAdded', this._normalizePath(currentCheck))
       }
     })
     if (cb) cb()
@@ -184,7 +184,7 @@ class FileProvider {
               // folder is empty
               window.remixFileSystem.rmdirSync(path, console.log)
             }
-            this.event.trigger('fileRemoved', [this._normalizePath(path)])
+            this.event.emit('fileRemoved', this._normalizePath(path))
           }
         } catch (e) {
           console.log(e)
@@ -249,7 +249,7 @@ class FileProvider {
     path = this.removePrefix(path)
     if (window.remixFileSystem.existsSync(path) && !window.remixFileSystem.statSync(path).isDirectory()) {
       window.remixFileSystem.unlinkSync(path, console.log)
-      this.event.trigger('fileRemoved', [this._normalizePath(path)])
+      this.event.emit('fileRemoved', this._normalizePath(path))
       return true
     } else return false
   }
@@ -259,11 +259,11 @@ class FileProvider {
     var unprefixednewPath = this.removePrefix(newPath)
     if (this._exists(unprefixedoldPath)) {
       window.remixFileSystem.renameSync(unprefixedoldPath, unprefixednewPath)
-      this.event.trigger('fileRenamed', [
+      this.event.emit('fileRenamed',
         this._normalizePath(unprefixedoldPath),
         this._normalizePath(unprefixednewPath),
         isFolder
-      ])
+      )
       return true
     }
     return false

@@ -12,11 +12,12 @@ module.exports = async function testMappingStorage (st, cb) {
   var vm = await initVM(st, privateKey)
   var output = compile(compilerInput(mappingStorage.contract))
   output = JSON.parse(output)
-  sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, txHash) {
+  sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, data) {
     if (error) {
       console.log(error)
       st.end(error)
     } else {
+      const txHash = data.hash
       vm.web3.eth.getTransaction(txHash, (error, tx) => {
         if (error) {
           console.log(error)
@@ -31,12 +32,12 @@ module.exports = async function testMappingStorage (st, cb) {
 
 function testMapping (st, vm, privateKey, contractAddress, output, cb) {
   sendTx(vm, {nonce: 1, privateKey: privateKey}, contractAddress, 0, '2fd0a83a00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000001074686973206973206120737472696e6700000000000000000000000000000000',
-        function (error, txHash) {
+        function (error, data) {
           if (error) {
             console.log(error)
             st.end(error)
           } else {
-            console.log(txHash)
+            const txHash = data.hash
             vm.web3.eth.getTransaction(txHash, (error, tx) => {
               if (error) {
                 console.log(error)
