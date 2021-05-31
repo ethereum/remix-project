@@ -1,8 +1,8 @@
 export class Filters {
-  executionContext
+  vmContext
 
-  constructor (executionContext) {
-    this.executionContext = executionContext
+  constructor (vmContext) {
+    this.vmContext = vmContext
   }
 
   methods () {
@@ -14,49 +14,49 @@ export class Filters {
   }
 
   eth_getLogs (payload, cb) {
-    const results = this.executionContext.logsManager.getLogsFor(payload.params[0])
+    const results = this.vmContext.logsManager.getLogsFor(payload.params[0])
     cb(null, results)
   }
 
   eth_subscribe (payload, cb) {
-    const subscriptionId = this.executionContext.logsManager.subscribe(payload.params)
+    const subscriptionId = this.vmContext.logsManager.subscribe(payload.params)
     cb(null, subscriptionId)
   }
 
   eth_unsubscribe (payload, cb) {
-    this.executionContext.logsManager.unsubscribe(payload.params[0])
+    this.vmContext.logsManager.unsubscribe(payload.params[0])
     cb(null, true)
   }
 
   eth_newFilter (payload, cb) {
-    const filterId = this.executionContext.logsManager.newFilter('filter', payload.params[0])
+    const filterId = this.vmContext.logsManager.newFilter('filter', payload.params[0])
     cb(null, filterId)
   }
 
   eth_newBlockFilter (payload, cb) {
-    const filterId = this.executionContext.logsManager.newFilter('block')
+    const filterId = this.vmContext.logsManager.newFilter('block')
     cb(null, filterId)
   }
 
   eth_newPendingTransactionFilter (payload, cb) {
-    const filterId = this.executionContext.logsManager.newFilter('pendingTransactions')
+    const filterId = this.vmContext.logsManager.newFilter('pendingTransactions')
     cb(null, filterId)
   }
 
   eth_uninstallfilter (payload, cb) {
-    const result = this.executionContext.logsManager.uninstallFilter(payload.params[0])
+    const result = this.vmContext.logsManager.uninstallFilter(payload.params[0])
     cb(null, result)
   }
 
   eth_getFilterChanges (payload, cb) {
     const filterId = payload.params[0]
-    const results = this.executionContext.logsManager.getLogsForFilter(filterId)
+    const results = this.vmContext.logsManager.getLogsForFilter(filterId)
     cb(null, results)
   }
 
   eth_getFilterLogs (payload, cb) {
     const filterId = payload.params[0]
-    const results = this.executionContext.logsManager.getLogsForFilter(filterId, true)
+    const results = this.vmContext.logsManager.getLogsForFilter(filterId, true)
     cb(null, results)
   }
 }

@@ -18,12 +18,13 @@ const GAS_USED_INT = 75427
 const GAS_USED_HEX = '0x126a3'
 
 const NODE_CALL_RESULT = {
+  receipt: {},
   result: RETURN_VALUE_HEX,
   transactionHash: undefined
 }
 
 const NODE_TX_RESULT = {
-  result: {
+  receipt: {
     blockHash: '0x380485a4e6372a42e36489783c7f7cb66257612133cd245859c206fd476e9c44',
     blockNumber: 5994,
     contractAddress: CONTRACT_ADDRESS_HEX,
@@ -39,26 +40,31 @@ const NODE_TX_RESULT = {
 }
 
 const VM_RESULT = {
-  result: {
+  receipt: {
     amountSpent: new BN(1),
-    createdAddress: CONTRACT_ADDRESS_BUFFER,
+    contractAddress: CONTRACT_ADDRESS_BUFFER,
     gasRefund: new BN(0),
     gasUsed: new BN(GAS_USED_INT),
     status: STATUS_OK,
-    execResult: {
-      exceptionError: null,
-      gasRefund: new BN(0),
-      gasUsed: new BN(GAS_USED_INT),
-      returnValue: RETURN_VALUE_BUFFER
-    }
   },
   transactionHash: TRANSACTION_HASH
+}
+
+const EXEC_RESULT = {
+  exceptionError: null,
+  gasRefund: new BN(0),
+  gasUsed: new BN(GAS_USED_INT),
+  returnValue: RETURN_VALUE_BUFFER
+}
+
+const EXEC_RESULT_ERROR = {
+  exceptionError: 'this is an error'  
 }
 
 tape('converts node transaction result to RemixTx', function (t) {
   // contract creation
   let txResult = { ...NODE_TX_RESULT }
-  let remixTx = resultToRemixTx(txResult)
+  let remixTx = resultToRemixTx(txResult, {})
 
   t.equal(remixTx.transactionHash, TRANSACTION_HASH)
   t.equal(remixTx.createdAddress, CONTRACT_ADDRESS_HEX)
@@ -68,8 +74,8 @@ tape('converts node transaction result to RemixTx', function (t) {
   t.equal(remixTx.error, undefined)
 
   // contract method tx
-  txResult.result.contractAddress = null
-  remixTx = resultToRemixTx(txResult)
+  txResult.receipt.contractAddress = null
+  remixTx = resultToRemixTx(txResult, {})
   t.equal(remixTx.createdAddress, null)
 
   t.end()
@@ -77,7 +83,7 @@ tape('converts node transaction result to RemixTx', function (t) {
 
 tape('converts node call result to RemixTx', function (t) {
   let txResult = { ...NODE_CALL_RESULT }
-  let remixTx = resultToRemixTx(txResult)
+  let remixTx = resultToRemixTx(txResult, {})
 
   t.equal(remixTx.transactionHash, undefined)
   t.equal(remixTx.createdAddress, undefined)
@@ -91,7 +97,7 @@ tape('converts node call result to RemixTx', function (t) {
 
 tape('converts VM result to RemixTx', function (t) {
   let txResult = { ...VM_RESULT }
-  let remixTx = resultToRemixTx(txResult)
+  let remixTx = resultToRemixTx(txResult, EXEC_RESULT)
 
   t.equal(remixTx.transactionHash,
     TRANSACTION_HASH)
@@ -101,8 +107,7 @@ tape('converts VM result to RemixTx', function (t) {
   t.equal(remixTx.return, RETURN_VALUE_HEX)
   t.equal(remixTx.error, null)
 
-  txResult.result.execResult.exceptionError = 'this is an error'
-  remixTx = resultToRemixTx(txResult)
+  remixTx = resultToRemixTx(VM_RESULT, EXEC_RESULT_ERROR)
   t.equal(remixTx.error, 'this is an error')
 
   t.end()

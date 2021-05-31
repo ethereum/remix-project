@@ -69,6 +69,9 @@ module.exports = {
       .testFunction('last', {
         status: 'true Transaction mined and execution succeed'
       })
+      // When this is removed and tests are running by connecting to metamask
+      // Consider adding tests to check return value of contract call
+      // See: https://github.com/ethereum/remix-project/pull/1229
       .end()
   },
 

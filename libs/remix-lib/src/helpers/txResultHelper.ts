@@ -20,9 +20,9 @@ function convertToPrefixedHex (input) {
  Also, VM results use BN and Buffers, Node results use hex strings/ints,
  So we need to normalize the values to prefixed hex strings
 */
-export function resultToRemixTx (txResult) {
-  const { result, transactionHash } = txResult
-  const { status, execResult, gasUsed, createdAddress, contractAddress } = result
+export function resultToRemixTx (txResult, execResult) {
+  const { receipt, transactionHash, result } = txResult
+  const { status, gasUsed, contractAddress } = receipt
   let returnValue, errorMessage
 
   if (isHexString(result)) {
@@ -38,6 +38,6 @@ export function resultToRemixTx (txResult) {
     gasUsed: convertToPrefixedHex(gasUsed),
     error: errorMessage,
     return: convertToPrefixedHex(returnValue),
-    createdAddress: convertToPrefixedHex(createdAddress || contractAddress)
+    createdAddress: convertToPrefixedHex(contractAddress)
   }
 }
