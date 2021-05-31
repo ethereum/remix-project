@@ -237,7 +237,6 @@ export const init = (provider, workspaceName: string, plugin, registry) => (disp
       fetchDirectory(provider, workspaceName)(dispatch)
     })
     dispatch(fetchProviderSuccess(provider))
-    dispatch(setCurrentWorkspace(workspaceName))
   } else {
     dispatch(fetchProviderError('No provider available'))
   }

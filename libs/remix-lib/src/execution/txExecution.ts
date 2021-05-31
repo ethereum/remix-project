@@ -1,5 +1,6 @@
 'use strict'
 import { ethers } from 'ethers'
+import { getFunctionFragment } from './txHelper'
 
 /**
   * deploy the given contract
@@ -56,7 +57,7 @@ export function callFunction (from, to, data, value, gasLimit, funAbi, txRunner,
   * @param {Object} execResult    - execution result given by the VM
   * @return {Object} -  { error: true/false, message: DOMNode }
   */
-export function checkVMError (execResult) {
+export function checkVMError (execResult, abi) {
   const errorCode = {
     OUT_OF_GAS: 'out of gas',
     STACK_UNDERFLOW: 'stack underflow',
@@ -88,19 +89,48 @@ export function checkVMError (execResult) {
     ret.error = true
   } else if (exceptionError === errorCode.REVERT) {
     const returnData = execResult.returnValue
-    // It is the hash of Error(string)
-    if (returnData && (returnData.slice(0, 4).toString('hex') === '08c379a0')) {
-      const abiCoder = new ethers.utils.AbiCoder()
-      const reason = abiCoder.decode(['string'], returnData.slice(4))[0]
-      msg = `\tThe transaction has been reverted to the initial state.\nReason provided by the contract: "${reason}".`
-    } else {
-      msg = '\tThe transaction has been reverted to the initial state.\nNote: The called function should be payable if you send value and the value you send should be less than your current balance.'
+    const returnDataHex = returnData.slice(0, 4).toString('hex')
+    let customError
+    if (abi) {
+      let decodedCustomErrorInputs
+      for (const item of abi) {
+        if (item.type === 'error') {
+          // ethers doesn't crash anymore if "error" type is specified, but it doesn't extract the errors. see:
+          // https://github.com/ethers-io/ethers.js/commit/bd05aed070ac9e1421a3e2bff2ceea150bedf9b7
+          // we need here to fake the type, so the "getSighash" function works properly
+          const fn = getFunctionFragment({ ...item, type: 'function', stateMutability: 'nonpayable' })
+          if (!fn) continue
+          const sign = fn.getSighash(item.name)
+          if (!sign) continue
+          if (returnDataHex === sign.replace('0x', '')) {
+            customError = item.name
+            decodedCustomErrorInputs = fn.decodeFunctionData(fn.getFunction(item.name), returnData)
+            break
+          }
+        }
+      }
+      if (decodedCustomErrorInputs) {
+        msg = '\tThe transaction has been reverted to the initial state.\nError provided by the contract:'
+        msg += `\n${customError}`
+        msg += '\nParameters:'
+        msg += `\n${decodedCustomErrorInputs}`
+      }
+    }
+    if (!customError) {
+      // It is the hash of Error(string)
+      if (returnData && (returnDataHex === '08c379a0')) {
+        const abiCoder = new ethers.utils.AbiCoder()
+        const reason = abiCoder.decode(['string'], returnData.slice(4))[0]
+        msg = `\tThe transaction has been reverted to the initial state.\nReason provided by the contract: "${reason}".`
+      } else {
+        msg = '\tThe transaction has been reverted to the initial state.\nNote: The called function should be payable if you send value and the value you send should be less than your current balance.'
+      }
     }
     ret.error = true
   } else if (exceptionError === errorCode.STATIC_STATE_CHANGE) {
     msg = '\tState changes is not allowed in Static Call context\n'
     ret.error = true
   }
-  ret.message = `${error}${exceptionError}${msg}\tDebug the transaction to get more information.`
+  ret.message = `${error}\n${exceptionError}\n${msg}\nDebug the transaction to get more information.`
   return ret
 }

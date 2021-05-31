@@ -1,7 +1,7 @@
 'use strict'
 import { each } from 'async'
 import { ethers } from 'ethers'
-import { toBuffer } from 'ethereumjs-util'
+import { toBuffer, addHexPrefix } from 'ethereumjs-util'
 import { EventManager } from '../eventManager'
 import { compareByteCode } from '../util'
 import { decodeResponse } from './txFormat'
@@ -68,7 +68,7 @@ export class TxListener {
         execResult = await this.executionContext.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         returnValue = execResult.returnValue
       } else {
-        returnValue = toBuffer(txResult.result)
+        returnValue = toBuffer(addHexPrefix(txResult.result))
       }
       const call = {
         from: from,
@@ -358,7 +358,7 @@ export class TxListener {
   }
 
   _decodeInputParams (data, abi) {
-    data = toBuffer('0x' + data)
+    data = toBuffer(addHexPrefix(data))
     if (!data.length) data = new Uint8Array(32 * abi.inputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
 
     const inputTypes = []

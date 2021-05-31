@@ -127,10 +127,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const editRef = useRef(null)
 
   useEffect(() => {
-    if (props.filesProvider) {
-      init(props.filesProvider, props.name, props.plugin, props.registry)(dispatch)
-    }
-  }, [props.filesProvider, props.name])
+    init(props.filesProvider, props.name, props.plugin, props.registry)(dispatch)
+  }, [])
 
   useEffect(() => {
     const provider = fileSystem.provider.provider
@@ -764,10 +762,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     state.copyElement.map(({ key, type }) => {
       type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
     })
-    setState(prevState => {
-      return { ...prevState, copyElement: [] }
-    })
-    setCanPaste(false)
   }
 
   const label = (file: File) => {
