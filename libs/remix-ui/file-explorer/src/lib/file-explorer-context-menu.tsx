@@ -24,7 +24,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   const filterItem = (item: action) => {
     /**
      * if there are multiple elements focused we need to take this and all conditions must be met
-     * for example : 'downloadAsZip' with type ['file','folder','multi'] will work on files and folders when multiple are selected
+     * for example : 'downloadAsZip' with type ['file','folder'] will work on files and folders when multiple are selected
     **/
     const nonRootFocus = focus.filter((el) => { return !(el.key === '' && el.type === 'folder') })
     if (nonRootFocus.length > 1) {
