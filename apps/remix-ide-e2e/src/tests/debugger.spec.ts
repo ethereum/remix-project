@@ -207,6 +207,25 @@ module.exports = {
       As we are only testing if debugger is active, this is ok to keep that for now.
     */
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
+  },
+
+  'Should start debugging using remix debug nodes (rinkeby)': function (browser: NightwatchBrowser) {
+    browser.addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="settingsWeb3Mode"]') // select web3 provider with debug nodes URL
+      .clearValue('*[data-id="modalDialogCustomPromptText"]')
+      .setValue('*[data-id="modalDialogCustomPromptText"]', 'https://remix-rinkeby.ethdevops.io')
+      .modalFooterOKClick()
+      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000) // wait for the compilation to succeed
+      .clickLaunchIcon('debugger')
+      .clearValue('*[data-id="debuggerTransactionInput"]')
+      .setValue('*[data-id="debuggerTransactionInput"]', '0x156dbf7d0f9b435dd900cfc8f3264d523dd25733418ddbea1ce53e294f421013')
+      .click('*[data-id="debugGeneratedSourcesLabel"]') // unselect debug with generated sources
+      .click('*[data-id="debuggerTransactionStartButton"]')
+      .waitForElementVisible('*[data-id="solidityLocals"]', 60000)
+      .pause(10000)
+      .checkVariableDebug('soliditylocals', { num: { value: '2', type: 'uint256' } })
+      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false } })
       .end()
   }
 }
@@ -294,6 +313,40 @@ const sources = [
       pragma experimental ABIEncoderV2; 
       contract A { 
         function f(uint[] memory) public returns (uint256) { } 
+      }
+      `
+    }
+  },
+  {
+    'useDebugNodes.sol': {
+      content: `
+      // SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.7.0 <0.9.0;
+
+      /**
+       * @title Storage
+       * @dev Store & retrieve value in a variable
+       */
+      contract Storage {
+
+          uint256 number;
+
+          /**
+           * @dev Store value in variable
+           * @param num value to store
+           */
+          function store(uint256 num) public {
+              number = num;
+          }
+
+          /**
+           * @dev Return value 
+           * @return value of 'number'
+           */
+          function retrieve() public view returns (uint256){
+              return number;
+          }
       }
       `
     }
