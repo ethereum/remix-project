@@ -114,6 +114,8 @@ class PluginManagerComponent extends ViewPlugin {
 
   renderItem (profile) {
     const displayName = (profile.displayName) ? profile.displayName : profile.name
+    const doclink = profile.documentation ? yo`<a href="${profile.documentation}" class="px-1" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>`
+      : yo``
 
     // Check version of the plugin
     let versionWarning
@@ -147,8 +149,11 @@ class PluginManagerComponent extends ViewPlugin {
       <article id="remixPluginManagerListItem_${profile.name}" class="list-group-item py-1 mb-1 plugins-list-group-item" title="${displayName}" >
         <div class="${css.row} justify-content-between align-items-center mb-2">
           <h6 class="${css.displayName} plugin-name">
-            ${displayName}
-            ${versionWarning}
+            <div>
+              ${displayName}
+              ${doclink}
+              ${versionWarning}
+            </div>
             ${activationButton}
           </h6>
         </div>
