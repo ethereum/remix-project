@@ -53,8 +53,6 @@ export class RemixAppManager extends PluginManager {
   }
 
   async deactivatePlugin (name) {
-    const isActive = await this.isActive(name)
-    if (!isActive) return
     const [to, from] = [
       await this.getProfile(name),
       await this.getProfile(this.requestFrom)
