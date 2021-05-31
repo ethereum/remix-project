@@ -170,6 +170,7 @@ class CompilerContainer {
 
   _retrieveVersion (version) {
     if (!version) version = this._view.versionSelector.value
+    if (version === 'builtin') version = this.data.defaultVersion
     return semver.coerce(version) ? semver.coerce(version).version : ''
   }
 
@@ -500,7 +501,7 @@ class CompilerContainer {
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
-    if (this.data.selectedVersion !== 'builtin' && canUseWorker(this.data.selectedVersion)) {
+    if (canUseWorker(this._retrieveVersion())) {
       this.compileTabLogic.compiler.loadVersion(true, url)
       this.setVersionText('(loading using worker)')
     } else {
