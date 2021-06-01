@@ -238,8 +238,8 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npx nx build remix-ide --with-deps
       - run: npm run downloadsolc_assets
+      - run: npx nx build remix-ide --with-deps
       - run: 
           name: Deploy
           command: |
@@ -267,8 +267,8 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: npm install
-      - run: npx nx build remix-ide --with-deps
       - run: npm run downloadsolc_assets
+      - run: npx nx build remix-ide --with-deps
       - run: ./apps/remix-ide/ci/copy_resources.sh     
       - run: ./apps/remix-ide/ci/publishIpfs
       - run: ./apps/remix-ide/ci/build_and_publish_docker_images.sh
@@ -292,8 +292,8 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npx nx build remix-ide --with-deps
       - run: npm run downloadsolc_assets
+      - run: npx nx build remix-ide --with-deps
       - run: 
           name: Deploy
           command: |
@@ -321,8 +321,8 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run build:libs
-      - run: npm run build
       - run: npm run downloadsolc_assets
+      - run: npm run build
       - run: 
           name: Deploy
           command: |
