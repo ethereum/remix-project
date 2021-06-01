@@ -992,7 +992,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
           id={ props.name }
           title={ state.focusModal.title }
           message={ state.focusModal.message }
-          children={ state.focusModal.children }
           hide={ state.focusModal.hide }
           okLabel={ state.focusModal.okLabel }
           okFn={ state.focusModal.okFn }
