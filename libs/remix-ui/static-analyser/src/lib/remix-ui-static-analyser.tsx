@@ -302,7 +302,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Autorun"
             onChange={() => {}}
           />
-          {console.log({categoryIndex})}
           <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={state.data === null || categoryIndex.length === 0 }/>
         </div>
       </div>
