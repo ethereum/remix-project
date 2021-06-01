@@ -14,6 +14,7 @@ const examples = require('../editor/examples')
 const GistHandler = require('../../lib/gist-handler')
 const QueryParams = require('../../lib/query-params')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
+const path = require('path')
 /*
   Overview of APIs:
    * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
@@ -67,7 +68,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   render () {
-    this.initWorkspace().then(() => this.getWorkspaces()).catch(console.error)
+    this.initWorkspace().then(async () => await this.getWorkspaces()).catch((error) => console.log(error))
     return this.el
   }
 
@@ -165,13 +166,17 @@ module.exports = class Filepanel extends ViewPlugin {
       }
       return
     }
+    const workspaceProvider = this._deps.fileProviders.workspace
+    workspaceProvider.setWorkspace('default_workspace')
     // insert example contracts if there are no files to show
-    this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
-      if (error) console.error(error)
-      if (Object.keys(filesList).length === 0) {
-        await this.createWorkspace('default_workspace')
-      }
-      this.getWorkspaces()
+    return new Promise((resolve, reject) => {
+      this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
+        if (error) reject(error)
+        if (Object.keys(filesList).length === 0) {
+          await this.createWorkspace('default_workspace')
+        }
+        resolve(true)
+      })
     })
   }
 
@@ -205,22 +210,23 @@ module.exports = class Filepanel extends ViewPlugin {
   async createWorkspace (workspaceName, setDefaults = true) {
     if (!workspaceName) throw new Error('name cannot be empty')
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
-    if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
+    if (await this.workspaceExists(workspaceName)) throw new Error(`workspace already exists ${workspaceName}`)
     else {
       const workspaceProvider = this._deps.fileProviders.workspace
       await this.processCreateWorkspace(workspaceName)
       workspaceProvider.setWorkspace(workspaceName)
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
+      const workspace = await this.getCurrentWorkspace()
       if (setDefaults) {
         for (const file in examples) {
-          setTimeout(async () => { // space creation of files to give react ui time to update.
-            try {
-              await workspaceProvider.set(examples[file].name, examples[file].content)
-            } catch (error) {
-              console.error(error)
-            }
-          }, 10)
+          const dir = path.dirname(examples[file].name)
+          try {
+            workspaceProvider.createDir(`${workspace.absolutePath}/${dir}`)
+            window.remixFileSystem.writeFileSync(`${workspace.absolutePath}/${examples[file].name}`, examples[file].content)
+          } catch (e) {
+          }
         }
+        this.call('fileManager', 'refresh')
       }
     }
   }

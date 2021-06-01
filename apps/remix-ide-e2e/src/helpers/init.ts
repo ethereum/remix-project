@@ -2,7 +2,7 @@ import { NightwatchBrowser } from 'nightwatch'
 
 require('dotenv').config()
 
-export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, closeWorkspaceAlert = true): void {
+export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, closeWorkspaceAlert = false): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
     .pause(5000)
