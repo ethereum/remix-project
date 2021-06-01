@@ -328,7 +328,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           <div className="mb-4">
             {
               (Object.entries(warningState).map((element, index) => (
-                <div  key={index}>
+                <div key={index}>
                   <span className="text-dark h6">{element[0]}</span>
                   {element[1].map((x, i) => (
                     x.hasWarning ? (
