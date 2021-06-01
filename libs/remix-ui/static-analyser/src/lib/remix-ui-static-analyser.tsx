@@ -327,18 +327,18 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         <div id='staticanalysisresult' >
           <div className="mb-4">
             {
-              (Object.entries(warningState).map((element) => (
-                <>
+              (Object.entries(warningState).map((element, index) => (
+                <div  key={index}>
                   <span className="text-dark h6">{element[0]}</span>
-                  {element[1].map(x => (
+                  {element[1].map((x, i) => (
                     x.hasWarning ? (
-                      <div id={`staticAnalysisModule${element[1].warningModuleName}`}>
+                      <div id={`staticAnalysisModule${element[1].warningModuleName}`} key={i}>
                         <ErrorRenderer message={x.msg} opt={x.options} warningErrors={ x.warningErrors} editor={props.analysisModule}/>
                       </div>
 
                     ) : null
                   ))}
-                </>
+                </div>
               )))
             }
           </div>
