@@ -323,7 +323,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           {state.file}
         </span>
       </div>
-      { categoryIndex.length > 0 && Object.entries(warningState).length > 0 &&
+      {Object.entries(warningState).length > 0 &&
         <div id='staticanalysisresult' >
           <div className="mb-4">
             {
