@@ -238,7 +238,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         sender = opts.accounts[sender]
       }
     }
-    let sendParams: Record<string, string> | null = null
+    let sendParams: Record<string, any> | null = null
     if (sender) sendParams = { from: sender }
     if (func.inputs && func.inputs.length > 0) { return resultsCallback(new Error(`Method '${func.name}' can not have parameters inside a test contract`), { passingNum, failureNum, timePassed }) }
     const method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
@@ -280,6 +280,8 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
           else sendParams = { value }
         }
       }
+      if (!sendParams) sendParams = {}
+      sendParams.gas = 9000000000000000
       method.send(sendParams).on('receipt', (receipt) => {
         try {
           const time: number = (Date.now() - startTime) / 1000.0
