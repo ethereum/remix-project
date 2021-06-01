@@ -71,7 +71,7 @@ export const Workspace = (props: WorkspaceProps) => {
   }
 
   useEffect(() => {
-    const getWorkspaces = async () => {
+    let getWorkspaces = async () => {
       if (props.workspaces && Array.isArray(props.workspaces)) {
         if (props.workspaces.length > 0 && state.currentWorkspace === NO_WORKSPACE) {
           props.workspace.setWorkspace(props.workspaces[0])
@@ -87,6 +87,10 @@ export const Workspace = (props: WorkspaceProps) => {
     }
 
     getWorkspaces()
+
+    return () => {
+      getWorkspaces = async () => {}
+    }
   }, [props.workspaces])
 
   const localhostDisconnect = () => {
