@@ -72,7 +72,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       }
     }
     return () => { }
-  }, [autoRun, categoryIndex, state])
+  }, [autoRun, state])
 
   const message = (name, warning, more, fileName, locationString) : string => {
     return (`
