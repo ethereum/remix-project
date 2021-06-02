@@ -66,8 +66,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }, [])
 
   useEffect(() => {
+    setWarningState([])
     if (autoRun) {
-      setWarningState([])
       if (state.data !== null) {
         run(state.data, state.source, state.file)
       }
