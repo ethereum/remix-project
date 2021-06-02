@@ -606,7 +606,7 @@ module.exports = class TestTab extends ViewPlugin {
         this.updateDirList(testDirInput)
       } else {
         // If there is no matching folder in the workspace with entered text, enable Create button
-        if (this.testTabLogic.pathExists(testDirInput)) {
+        if (await this.testTabLogic.pathExists(testDirInput)) {
           this.createTestFolder.disabled = true
           this.updateGenerateFileAction().disabled = false
         } else {
@@ -636,10 +636,10 @@ module.exports = class TestTab extends ViewPlugin {
       name="utPath"
       style="background-image: var(--primary);"
       onkeyup=${(e) => this.handleTestDirInput(e)}
-      onchange=${(e) => {
+      onchange=${async (e) => {
         if (this.createTestFolder.disabled) {
           this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
-          if (this.testTabLogic.pathExists(this.inputPath.value)) {
+          if (await this.testTabLogic.pathExists(this.inputPath.value)) {
             this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
             this.testTabLogic.setCurrentPath(this.inputPath.value)
             this.updateForNewCurrent()
