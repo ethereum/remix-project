@@ -281,7 +281,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         }
       }
       if (!sendParams) sendParams = {}
-      sendParams.gas = 9000000000000000
+      sendParams.gas = 10000000 * 8
       method.send(sendParams).on('receipt', (receipt) => {
         try {
           const time: number = (Date.now() - startTime) / 1000.0
