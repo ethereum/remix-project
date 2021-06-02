@@ -49,7 +49,7 @@ module.exports = {
 
   'Debug Ballot / delegate': function (browser: NightwatchBrowser) {
     browser.pause(500)
-      .click('*[data-id="txLoggerDebugButton0x41fab8ea5b1d9fba5e0a6545ca1a2d62fff518578802c033c2b9a031a01c31b3"]')
+      .click('*[data-id="txLoggerDebugButton0xf88bc0ac0761f78d8c883b32550c68dadcdb095595c30e1a1b7c583e5e958dcb"]')
       .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .pause(2000)
