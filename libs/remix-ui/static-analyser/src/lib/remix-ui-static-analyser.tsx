@@ -67,12 +67,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   useEffect(() => {
     if (autoRun) {
+      setWarningState([])
       if (state.data !== null) {
         run(state.data, state.source, state.file)
       }
     }
     return () => { }
-  }, [autoRun, state])
+  }, [state])
 
   const message = (name, warning, more, fileName, locationString) : string => {
     return (`
