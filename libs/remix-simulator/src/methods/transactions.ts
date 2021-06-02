@@ -113,7 +113,7 @@ export class Transactions {
   }
 
   eth_estimateGas (payload, cb) {
-    cb(null, 9000000000000000)
+    cb(null, 10000000 * 8)
   }
 
   eth_getCode (payload, cb) {
