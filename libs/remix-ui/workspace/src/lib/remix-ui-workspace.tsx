@@ -53,13 +53,13 @@ export const Workspace = (props: WorkspaceProps) => {
     return setWorkspace(workspaceName)
   }
 
-  props.request.createNewFile = () => {
-    if (!state.workspaces.length) createNewWorkspace('default_workspace')
+  props.request.createNewFile = async () => {
+    if (!state.workspaces.length) await createNewWorkspace('default_workspace')
     props.plugin.resetNewFile()
   }
 
-  props.request.uploadFile = (target) => {
-    if (!state.workspaces.length) createNewWorkspace('default_workspace')
+  props.request.uploadFile = async (target) => {
+    if (!state.workspaces.length) await createNewWorkspace('default_workspace')
 
     setState(prevState => {
       return { ...prevState, uploadFileEvent: target }
