@@ -168,21 +168,21 @@ module.exports = class Filepanel extends ViewPlugin {
     // insert example contracts if there are no files to show
     return new Promise((resolve, reject) => {
       this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
-        if (error) console.error(error)
+        if (error) return reject(error)
         if (Object.keys(filesList).length === 0) {
           await this.createWorkspace('default_workspace')
           resolve('default_workspace')
         } else {
           this._deps.fileProviders.browser.resolveDirectory('.workspaces', async (error, filesList) => {
-            if (error) console.error(error)
+            if (error) return reject(error)
             if (Object.keys(filesList).length > 0) {
               const workspacePath = Object.keys(filesList)[0].split('/').filter(val => val)
               const workspaceName = workspacePath[workspacePath.length - 1]
 
               this._deps.fileProviders.workspace.setWorkspace(workspaceName)
-              resolve(workspaceName)
+              return resolve(workspaceName)
             }
-            reject(new Error('Can\'t find available workspace.'))
+            return reject(new Error('Can\'t find available workspace.'))
           })
         }
       })
