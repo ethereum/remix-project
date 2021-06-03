@@ -14,7 +14,7 @@ export interface CompilerContainerProps {
   queryParams: any,
   compileTabLogic: any,
   tooltip: (message: string) => void,
-  modal: (title: string, message: string | JSX.Element, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => void
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void
 }
 export interface ContractSelectionProps {
   contractMap: {

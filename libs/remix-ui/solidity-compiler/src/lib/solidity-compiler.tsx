@@ -20,14 +20,10 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       hide: true,
       title: '',
       message: null,
-      ok: {
-        label: '',
-        fn: () => {}
-      },
-      cancel: {
-        label: '',
-        fn: () => {}
-      },
+      okLabel: '',
+      okFn: () => {},
+      cancelLabel: '',
+      cancelFn: () => {},
       handleHide: null
     }
   })
@@ -53,18 +49,18 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     plugin.call('editor', 'clearAnnotations')
   }
 
-  const modal = async (title: string, message: string | JSX.Element, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
+  const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     await setState(prevState => {
       return {
         ...prevState,
         modal: {
           ...prevState.modal,
-          hide: false,
           message,
           title,
-          ok,
-          cancel,
-          handleHide: handleHideModal
+          okLabel,
+          okFn,
+          cancelLabel,
+          cancelFn
         }
       }
     })
@@ -89,8 +85,8 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
         title={ state.modal.title }
         message={ state.modal.message }
         hide={ state.modal.hide }
-        ok={ state.modal.ok }
-        cancel={ state.modal.cancel }
+        okLabel={ state.modal.okLabel }
+        cancelLabel={ state.modal.cancelLabel }
         handleHide={ handleHideModal }>
         { (typeof state.modal.message !== 'string') && state.modal.message }
       </ModalDialog>

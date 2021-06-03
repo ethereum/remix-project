@@ -315,13 +315,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   // }
 
   const promtCompiler = () => {
-    modal('Add a custom compiler', promptMessage('URL'), {
-      label: 'OK',
-      fn: addCustomCompiler
-    }, {
-      label: 'Cancel',
-      fn: null
-    })
+    modal('Add a custom compiler', promptMessage('URL'), 'OK', addCustomCompiler, 'Cancel', () => {})
     // modalDialogCustom.prompt(
     //   'Add a custom compiler',
     //   'URL',
