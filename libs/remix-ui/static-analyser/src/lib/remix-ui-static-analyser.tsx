@@ -71,6 +71,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       if (state.data !== null) {
         run(state.data, state.source, state.file)
       }
+    } else {
+      props.event.trigger('staticAnaysisWarning', [])
+
     }
     return () => { }
   }, [state])
