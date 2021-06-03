@@ -73,7 +73,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       }
     } else {
       props.event.trigger('staticAnaysisWarning', [])
-
     }
     return () => { }
   }, [state])
