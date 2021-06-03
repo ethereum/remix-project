@@ -2,6 +2,12 @@ import React from 'react'
 import { File } from '../types'
 import { extractNameFromKey, extractParentFromKey } from '../utils'
 
+const queuedEvents = []
+const pendingEvents = {}
+let provider = null
+let plugin = null
+let dispatch: React.Dispatch<any> = null
+
 export const fetchDirectoryError = (error: any) => {
   return {
     type: 'FETCH_DIRECTORY_ERROR',
@@ -183,35 +189,25 @@ export const fileRenamedSuccess = (path: string, removePath: string, files) => {
   }
 }
 
-export const init = (provider, workspaceName: string, plugin, registry) => (dispatch: React.Dispatch<any>) => {
+export const init = (fileProvider, filePanel, registry) => (reducerDispatch: React.Dispatch<any>) => {
+  provider = fileProvider
+  plugin = filePanel
+  dispatch = reducerDispatch
   if (provider) {
     provider.event.on('fileAdded', async (filePath) => {
-      if (extractParentFromKey(filePath) === '/.workspaces') return
-      const path = extractParentFromKey(filePath) || provider.workspace || provider.type || ''
-      const data = await fetchDirectoryContent(provider, path)
-
-      dispatch(fileAddedSuccess(path, data))
-      if (filePath.includes('_test.sol')) {
-        plugin.emit('newTestFileCreated', filePath)
-      }
+      await executeEvent('fileAdded', filePath)
     })
     provider.event.on('folderAdded', async (folderPath) => {
-      if (extractParentFromKey(folderPath) === '/.workspaces') return
-      const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
-      const data = await fetchDirectoryContent(provider, path)
-
-      dispatch(folderAddedSuccess(path, data))
+      await executeEvent('folderAdded', folderPath)
     })
     provider.event.on('fileRemoved', async (removePath) => {
-      const path = extractParentFromKey(removePath) || provider.workspace || provider.type || ''
-
-      dispatch(fileRemovedSuccess(path, removePath))
+      await executeEvent('fileRemoved', removePath)
     })
     provider.event.on('fileRenamed', async (oldPath) => {
-      const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
-      const data = await fetchDirectoryContent(provider, path)
-
-      dispatch(fileRenamedSuccess(path, oldPath, data))
+      await executeEvent('fileRenamed', oldPath)
+    })
+    provider.event.on('rootFolderChanged', async () => {
+      await executeEvent('rootFolderChanged')
     })
     provider.event.on('fileExternallyChanged', async (path: string, file: { content: string }) => {
       const config = registry.get('config').api
@@ -231,10 +227,6 @@ export const init = (provider, workspaceName: string, plugin, registry) => (disp
     })
     provider.event.on('fileRenamedError', async () => {
       dispatch(displayNotification('File Renamed Failed', '', 'Ok', 'Cancel'))
-    })
-    provider.event.on('rootFolderChanged', async () => {
-      workspaceName = provider.workspace || provider.type || ''
-      fetchDirectory(provider, workspaceName)(dispatch)
     })
     dispatch(fetchProviderSuccess(provider))
   } else {
@@ -293,4 +285,100 @@ export const hideNotification = () => {
 
 export const closeNotificationModal = () => (dispatch: React.Dispatch<any>) => {
   dispatch(hideNotification())
+}
+
+const fileAdded = async (filePath: string) => {
+  if (extractParentFromKey(filePath) === '/.workspaces') return
+  const path = extractParentFromKey(filePath) || provider.workspace || provider.type || ''
+  const data = await fetchDirectoryContent(provider, path)
+
+  await dispatch(fileAddedSuccess(path, data))
+  if (filePath.includes('_test.sol')) {
+    plugin.emit('newTestFileCreated', filePath)
+  }
+}
+
+const folderAdded = async (folderPath: string) => {
+  if (extractParentFromKey(folderPath) === '/.workspaces') return
+  const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
+  const data = await fetchDirectoryContent(provider, path)
+
+  await dispatch(folderAddedSuccess(path, data))
+}
+
+const fileRemoved = async (removePath: string) => {
+  const path = extractParentFromKey(removePath) || provider.workspace || provider.type || ''
+
+  await dispatch(fileRemovedSuccess(path, removePath))
+}
+
+const fileRenamed = async (oldPath: string) => {
+  const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
+  const data = await fetchDirectoryContent(provider, path)
+
+  await dispatch(fileRenamedSuccess(path, oldPath, data))
+}
+
+const rootFolderChanged = async () => {
+  const workspaceName = provider.workspace || provider.type || ''
+
+  await fetchDirectory(provider, workspaceName)(dispatch)
+}
+
+const executeEvent = async (eventName: 'fileAdded' | 'folderAdded' | 'fileRemoved' | 'fileRenamed' | 'rootFolderChanged', path?: string) => {
+  if (Object.keys(pendingEvents).length) {
+    return queuedEvents.push({ eventName, path })
+  }
+  pendingEvents[eventName + path] = { eventName, path }
+  switch (eventName) {
+    case 'fileAdded':
+      await fileAdded(path)
+      delete pendingEvents[eventName + path]
+      if (queuedEvents.length) {
+        const next = queuedEvents.pop()
+
+        await executeEvent(next.eventName, next.path)
+      }
+      break
+
+    case 'folderAdded':
+      await folderAdded(path)
+      delete pendingEvents[eventName + path]
+      if (queuedEvents.length) {
+        const next = queuedEvents.pop()
+
+        await executeEvent(next.eventName, next.path)
+      }
+      break
+
+    case 'fileRemoved':
+      await fileRemoved(path)
+      delete pendingEvents[eventName + path]
+      if (queuedEvents.length) {
+        const next = queuedEvents.pop()
+
+        await executeEvent(next.eventName, next.path)
+      }
+      break
+
+    case 'fileRenamed':
+      await fileRenamed(path)
+      delete pendingEvents[eventName + path]
+      if (queuedEvents.length) {
+        const next = queuedEvents.pop()
+
+        await executeEvent(next.eventName, next.path)
+      }
+      break
+
+    case 'rootFolderChanged':
+      await rootFolderChanged()
+      delete pendingEvents[eventName + path]
+      if (queuedEvents.length) {
+        const next = queuedEvents.pop()
+
+        await executeEvent(next.eventName, next.path)
+      }
+      break
+  }
 }
