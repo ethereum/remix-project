@@ -110,7 +110,7 @@ export function deployAll (compileResult: compilationInterface, web3: Web3, with
         const params = '' // we suppose that the test contract does not have any param in the constructor
         execution.txFormat.encodeConstructorCallAndDeployLibraries(contractName, contract.raw, compileResult, params, funAbi, encodeDataFinalCallback, encodeDataStepCallback, encodeDataDeployLibraryCallback)
       }, function (err) {
-        if (err) next(err)
+        if (err) return next(err)
         next(null, contracts)
       })
     }
