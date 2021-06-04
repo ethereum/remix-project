@@ -104,6 +104,14 @@ module.exports = {
     const hexValue = hash.slice(2, hash.length)
     return this.is0XPrefixed(hash) && /^[0-9a-fA-F]{64}$/.test(hexValue)
   },
+  removeTrailingSlashes (text) {
+    // Single or consecutive leading slashes:
+    return text.replace(/^\/+/g, '')
+  },
+  removeMultipleSlashes (text) {
+    // Replace consecutive slashes with '/'
+    return text.replace(/\/+/g, '/')
+  },
   find: find,
   getPathIcon (path) {
     return path.endsWith('.txt')
