@@ -1,6 +1,7 @@
 import isElectron from 'is-electron'
 import { WebsocketPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
+import { version as remixdVersion} from '../../../../../libs/remixd/package.json'
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
@@ -150,7 +151,8 @@ function remixdDialog () {
       </div>
       <div class=${css.dialogParagraph}>
         <h6 class="text-danger">
-          Before using, make sure you have the <b>latest remixd version</b>.<br><a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
+          Before using, make sure remixd version is latest i.e. <b>${remixdVersion}</b>
+          <br><a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
         </h6>
       </div>
     </div>
