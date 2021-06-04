@@ -26,18 +26,20 @@ If you were using the old one you need to:
 ## HELP SECTION
 
 ```
-  Usage: remixd -s <shared folder> --remix-ide https://remix.ethereum.org
+Usage: remixd -s <shared folder>
 
-  Provide a two-way connection between the local computer and Remix IDE.
-  
+Provide a two-way connection between the local computer and Remix IDE
 
-  Options:
+Options:
+  -v, --version               output the version number
+  -u, --remix-ide  <url>      URL of remix instance allowed to connect to this web sockect connection
+  -s, --shared-folder <path>  Folder to share with Remix IDE
+  -r, --read-only             Treat shared folder as read-only (experimental)
+  -h, --help                  output usage information
 
-  --remix-ide  <url>                    URL of remix instance allowed to connect to this 
-                                        web sockect connection
-  -s, --shared-folder <path>            Folder to share with Remix IDE
-  --read-only                           Treat shared folder as read-only (experimental)
-  -h, --help                            output usage information
+Example:
+
+    remixd -s ./ -u http://localhost:8080
 
 ```
 

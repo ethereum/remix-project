@@ -62,7 +62,7 @@ function errorHandler (error: any, service: string) {
     .option('-s, --shared-folder <path>', 'Folder to share with Remix IDE')
     .option('-r, --read-only', 'Treat shared folder as read-only (experimental)')
     .on('--help', function () {
-      console.log('\nExample:\n\n    remixd -s ./ --remix-ide http://localhost:8080')
+      console.log('\nExample:\n\n    remixd -s ./ -u http://localhost:8080')
     }).parse(process.argv)
   // eslint-disable-next-line
 
