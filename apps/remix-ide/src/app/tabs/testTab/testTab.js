@@ -17,6 +17,7 @@ class TestTabLogic {
     // Todo move this check to File Manager after refactoring
     // Checking to ignore the value which contains only whitespaces
     if (!path || !(/\S/.test(path))) return
+    path = helper.removeMultipleSlashes(path)
     const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
     fileProvider.exists(path).then(res => {
       if (!res) fileProvider.createDir(path)
