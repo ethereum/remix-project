@@ -1,5 +1,7 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
+import * as helper from '../../lib/helper'
+
 var yo = require('yo-yo')
 var async = require('async')
 var tooltip = require('../ui/tooltip')
@@ -52,18 +54,26 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   listenToEvents () {
-    this.on('filePanel', 'newTestFileCreated', file => {
-      var testList = this._view.el.querySelector("[class^='testList']")
-      var test = this.createSingleTest(file)
-      testList.appendChild(test)
+    this.on('filePanel', 'newTestFileCreated', async file => {
+      try {
+        await this.testTabLogic.getTests((error, tests) => {
+          if (error) return tooltip(error)
+          this.data.allTests = tests
+          this.data.selectedTests = [...this.data.allTests]
+          this.updateTestFileList(tests)
+          if (!this.testsOutput) return // eslint-disable-line
+        })
+      } catch (e) {
+        console.log(e)
+      }
       this.data.allTests.push(file)
       this.data.selectedTests.push(file)
     })
 
-    this.on('filePanel', 'setWorkspace', () => {
+    this.on('filePanel', 'setWorkspace', async () => {
       this.testTabLogic.setCurrentPath(this.defaultPath)
       this.inputPath.value = this.defaultPath
-      this.updateForNewCurrent()
+      await this.updateForNewCurrent()
     })
 
     this.fileManager.events.on('noFileSelected', () => {
@@ -72,18 +82,23 @@ module.exports = class TestTab extends ViewPlugin {
     this.fileManager.events.on('currentFileChanged', (file, provider) => this.updateForNewCurrent(file))
   }
 
-  updateForNewCurrent (file) {
-    this.updateGenerateFileAction()
-    if (!this.areTestsRunning) this.updateRunAction(file)
+  async updateForNewCurrent (file) {
+    this.data.allTests = []
     this.updateTestFileList()
     this.clearResults()
-    this.testTabLogic.getTests((error, tests) => {
-      if (error) return tooltip(error)
-      this.data.allTests = tests
-      this.data.selectedTests = [...this.data.allTests]
-      this.updateTestFileList(tests)
-      if (!this.testsOutput) return // eslint-disable-line
-    })
+    this.updateGenerateFileAction()
+    if (!this.areTestsRunning) this.updateRunAction(file)
+    try {
+      await this.testTabLogic.getTests((error, tests) => {
+        if (error) return tooltip(error)
+        this.data.allTests = tests
+        this.data.selectedTests = [...this.data.allTests]
+        this.updateTestFileList(tests)
+        if (!this.testsOutput) return // eslint-disable-line
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   createSingleTest (testFile) {
@@ -96,7 +111,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   listTests () {
-    if (!this.data.allTests) return []
+    if (!this.data.allTests || !this.data.allTests.length) return []
     return this.data.allTests.map(
       testFile => this.createSingleTest(testFile)
     )
@@ -587,9 +602,10 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   async handleTestDirInput (e) {
-    const testDirInput = this.trimTestDirInput(this.inputPath.value)
+    let testDirInput = this.trimTestDirInput(this.inputPath.value)
+    testDirInput = helper.removeMultipleSlashes(testDirInput)
     if (e.key === 'Enter') {
-      this.inputPath.value = this.trimTestDirInput(testDirInput)
+      this.inputPath.value = testDirInput
       if (await this.testTabLogic.pathExists(testDirInput)) {
         this.testTabLogic.setCurrentPath(testDirInput)
         this.updateForNewCurrent()
@@ -599,6 +615,7 @@ module.exports = class TestTab extends ViewPlugin {
 
     if (testDirInput) {
       if (testDirInput.endsWith('/')) {
+        testDirInput = helper.removeTrailingSlashes(testDirInput)
         if (this.testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
           this.createTestFolder.disabled = true
           this.updateGenerateFileAction().disabled = true
@@ -612,12 +629,22 @@ module.exports = class TestTab extends ViewPlugin {
         } else {
           // Enable Create button
           this.createTestFolder.disabled = false
-          // Disable Generate button because dir is not existing
+          // Disable Generate button because dir does not exist
           this.updateGenerateFileAction().disabled = true
         }
       }
     } else {
       this.updateDirList('/')
+    }
+  }
+
+  async handleEnter (e) {
+    this.inputPath.value = helper.removeMultipleSlashes(this.trimTestDirInput(this.inputPath.value))
+    if (this.createTestFolder.disabled) {
+      if (await this.testTabLogic.pathExists(this.inputPath.value)) {
+        this.testTabLogic.setCurrentPath(this.inputPath.value)
+        this.updateForNewCurrent()
+      }
     }
   }
 
@@ -636,16 +663,7 @@ module.exports = class TestTab extends ViewPlugin {
       name="utPath"
       style="background-image: var(--primary);"
       onkeyup=${(e) => this.handleTestDirInput(e)}
-      onchange=${async (e) => {
-        if (this.createTestFolder.disabled) {
-          this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
-          if (await this.testTabLogic.pathExists(this.inputPath.value)) {
-            this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
-            this.testTabLogic.setCurrentPath(this.inputPath.value)
-            this.updateForNewCurrent()
-          }
-        }
-      }}
+      onchange=${async (e) => this.handleEnter(e)}
     />`
 
     this.createTestFolder = yo`
@@ -654,7 +672,8 @@ module.exports = class TestTab extends ViewPlugin {
         data-id="testTabGenerateTestFolder"
         title="Create a test folder"
         disabled=true
-        onclick=${(e) => this.handleCreateFolder()}>
+        onclick=${(e) => this.handleCreateFolder()}
+      >
         Create
       </button>
     `
