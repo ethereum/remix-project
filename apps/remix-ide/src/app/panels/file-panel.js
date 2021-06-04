@@ -166,12 +166,26 @@ module.exports = class Filepanel extends ViewPlugin {
       return
     }
     // insert example contracts if there are no files to show
-    this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
-      if (error) console.error(error)
-      if (Object.keys(filesList).length === 0) {
-        await this.createWorkspace('default_workspace')
-      }
-      this.getWorkspaces()
+    return new Promise((resolve, reject) => {
+      this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
+        if (error) return reject(error)
+        if (Object.keys(filesList).length === 0) {
+          await this.createWorkspace('default_workspace')
+          resolve('default_workspace')
+        } else {
+          this._deps.fileProviders.browser.resolveDirectory('.workspaces', async (error, filesList) => {
+            if (error) return reject(error)
+            if (Object.keys(filesList).length > 0) {
+              const workspacePath = Object.keys(filesList)[0].split('/').filter(val => val)
+              const workspaceName = workspacePath[workspacePath.length - 1]
+
+              this._deps.fileProviders.workspace.setWorkspace(workspaceName)
+              return resolve(workspaceName)
+            }
+            return reject(new Error('Can\'t find available workspace.'))
+          })
+        }
+      })
     })
   }
 
@@ -213,13 +227,11 @@ module.exports = class Filepanel extends ViewPlugin {
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
       if (setDefaults) {
         for (const file in examples) {
-          setTimeout(async () => { // space creation of files to give react ui time to update.
-            try {
-              await workspaceProvider.set(examples[file].name, examples[file].content)
-            } catch (error) {
-              console.error(error)
-            }
-          }, 10)
+          try {
+            await workspaceProvider.set(examples[file].name, examples[file].content)
+          } catch (error) {
+            console.error(error)
+          }
         }
       }
     }
