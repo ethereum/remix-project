@@ -122,7 +122,8 @@ export class VMContext {
     const vm = new VM({
       common,
       activatePrecompiles: true,
-      stateManager: stateManager
+      stateManager: stateManager,
+      allowUnlimitedContractSize: true
     })
 
     const web3vm = new remixLibVm.Web3VMProvider()
