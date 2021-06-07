@@ -142,9 +142,9 @@ function remixdDialog () {
         <br><br><b>${commandText}</b>
         <span class="">${copyToClipboard(() => commandText)}</span>
       </div>
-      <div class=${css.dialogParagraph}>On successful connection, a session will be started between <em>${window.location.origin}</em> and your local file system at <i>ws://127.0.0.1:65520</i>
-         and files will be loaded under localhost workspace in the File Explorers. 
-        <br/>Please note, if shared folder is a hardhat project, an additional hardhat websocket plugin will be listening at <i>ws://127.0.0.1:65522</i>
+      <div class=${css.dialogParagraph}>When connected, a session will be started between <em>${window.location.origin}</em> and your local file system at <i>ws://127.0.0.1:65520</i>
+         and the shared folder will be in the File Explorers workspace named "localhost". 
+        <br/>Note, if the shared folder is a Hardhat project, an additional Hardhat websocket plugin will be listening at <i>ws://127.0.0.1:65522</i>
       </div>
       <div class=${css.dialogParagraph}>Please make sure your system is secured enough and ports 65520, 65522 are not opened nor forwarded.
         This feature is still in Alpha, so we recommend to keep a copy of the shared folder.
