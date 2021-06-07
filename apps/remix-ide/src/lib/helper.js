@@ -105,8 +105,8 @@ module.exports = {
     return this.is0XPrefixed(hash) && /^[0-9a-fA-F]{64}$/.test(hexValue)
   },
   removeTrailingSlashes (text) {
-    // Single or consecutive leading slashes:
-    return text.replace(/^\/+/g, '')
+    // Remove single or consecutive trailing slashes
+    return text.replace(/\/+$/g, '')
   },
   removeMultipleSlashes (text) {
     // Replace consecutive slashes with '/'
