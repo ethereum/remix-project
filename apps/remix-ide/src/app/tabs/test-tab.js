@@ -1,6 +1,6 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import { canUseWorker, urlFromVersion } from '../compiler/compiler-utils'
-import * as helper from '../../lib/helper'
+import { removeMultipleSlashes, removeTrailingSlashes } from '../../lib/helper'
 
 var yo = require('yo-yo')
 var async = require('async')
@@ -440,7 +440,10 @@ module.exports = class TestTab extends ViewPlugin {
 
   handleCreateFolder () {
     this.inputPath.value = this.trimTestDirInput(this.inputPath.value)
+    let path = removeMultipleSlashes(this.inputPath.value)
+    if (path !== '/') path = removeTrailingSlashes(path)
     if (this.inputPath.value === '') this.inputPath.value = this.defaultPath
+    this.inputPath.value = path
     this.testTabLogic.generateTestFolder(this.inputPath.value)
     this.createTestFolder.disabled = true
     this.updateGenerateFileAction().disabled = false
@@ -603,7 +606,8 @@ module.exports = class TestTab extends ViewPlugin {
 
   async handleTestDirInput (e) {
     let testDirInput = this.trimTestDirInput(this.inputPath.value)
-    testDirInput = helper.removeMultipleSlashes(testDirInput)
+    testDirInput = removeMultipleSlashes(testDirInput)
+    if (testDirInput !== '/') testDirInput = removeTrailingSlashes(testDirInput)
     if (e.key === 'Enter') {
       this.inputPath.value = testDirInput
       if (await this.testTabLogic.pathExists(testDirInput)) {
@@ -614,8 +618,8 @@ module.exports = class TestTab extends ViewPlugin {
     }
 
     if (testDirInput) {
-      if (testDirInput.endsWith('/')) {
-        testDirInput = helper.removeTrailingSlashes(testDirInput)
+      if (testDirInput.endsWith('/') && testDirInput !== '/') {
+        testDirInput = removeTrailingSlashes(testDirInput)
         if (this.testTabLogic.currentPath === testDirInput.substr(0, testDirInput.length - 1)) {
           this.createTestFolder.disabled = true
           this.updateGenerateFileAction().disabled = true
@@ -639,7 +643,7 @@ module.exports = class TestTab extends ViewPlugin {
   }
 
   async handleEnter (e) {
-    this.inputPath.value = helper.removeMultipleSlashes(this.trimTestDirInput(this.inputPath.value))
+    this.inputPath.value = removeMultipleSlashes(this.trimTestDirInput(this.inputPath.value))
     if (this.createTestFolder.disabled) {
       if (await this.testTabLogic.pathExists(this.inputPath.value)) {
         this.testTabLogic.setCurrentPath(this.inputPath.value)
