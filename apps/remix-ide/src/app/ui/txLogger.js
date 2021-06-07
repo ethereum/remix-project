@@ -354,6 +354,17 @@ module.exports = TxLogger
 
 // helpers
 
+function isDescendant (parent, child) {
+  var node = child.parentNode
+  while (node != null) {
+    if (node === parent) {
+      return true
+    }
+    node = node.parentNode
+  }
+  return false
+}
+
 function txDetails (e, tx, data, obj) {
   const from = obj.from
   const to = obj.to
@@ -368,9 +379,13 @@ function txDetails (e, tx, data, obj) {
     } else break
   }
 
-  let table = blockElement.querySelector(`#${tx.id} [class^="txTable"]`)
-  const log = blockElement.querySelector(`#${tx.id} [class^='log']`)
-  const arrow = blockElement.querySelector(`#${tx.id} [class^='arrow']`)
+  const tables = blockElement.querySelectorAll(`#${tx.id} [class^="txTable"]`)
+  const logs = blockElement.querySelectorAll(`#${tx.id} [class^='log']`)
+  const arrows = blockElement.querySelectorAll(`#${tx.id} [class^='arrow']`)
+
+  let table = [...tables].filter((t) => isDescendant(tx, t))[0]
+  const log = [...logs].filter((t) => isDescendant(tx, t))[0]
+  const arrow = [...arrows].filter((t) => isDescendant(tx, t))[0]
 
   if (table && table.parentNode) {
     tx.removeChild(table)
