@@ -10,7 +10,7 @@ class TestTabLogic {
 
   setCurrentPath (path) {
     if (path.indexOf('/') === 0) return
-    this.currentPath = path
+    this.currentPath = helper.removeMultipleSlashes(helper.removeTrailingSlashes(path))
   }
 
   generateTestFolder (path) {
