@@ -265,7 +265,7 @@ const sources = [
     }
   },
   {
-    'externalImport.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol"; contract test7 {}' }
+    'externalImport.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.1/contracts/token/ERC20/ERC20.sol"; contract test7 {}' }
   },
   {
     'withABIEncoderV2.sol': {
