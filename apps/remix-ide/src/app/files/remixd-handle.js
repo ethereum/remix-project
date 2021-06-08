@@ -1,6 +1,7 @@
 import isElectron from 'is-electron'
 import { WebsocketPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
+import { version as remixdVersion } from '../../../../../libs/remixd/package.json'
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
@@ -130,25 +131,28 @@ export class RemixdHandle extends WebsocketPlugin {
 }
 
 function remixdDialog () {
-  const commandText = 'remixd -s absolute-path-to-the-shared-folder --remix-ide your-remix-ide-URL-instance'
+  const commandText = 'remixd -s path-to-the-shared-folder --remix-ide remix-ide-instance-URL'
   return yo`
     <div class=${css.dialog}>
       <div class=${css.dialogParagraph}>
-        Access your file system from Remix IDE. Remixd the NPM module needs to be running in the background to use the Remixd plugin. For more info please check the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
+        Access your local file system from Remix IDE using <a target="_blank" href="https://www.npmjs.com/package/@remix-project/remixd">Remixd NPM package</a>.<br/><br/> 
+        Remixd needs to be running in the background to load the files in localhost workspace. For more info, please check the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
       </div>
-      <div class=${css.dialogParagraph}>If you are just looking for the remixd command here it is:
-        <br><br><b>remixd -s absolute-path-to-the-shared-folder --remix-ide your-remix-ide-URL-instance</b>
+      <div class=${css.dialogParagraph}>If you are just looking for the remixd command, here it is:
+        <br><br><b>${commandText}</b>
         <span class="">${copyToClipboard(() => commandText)}</span>
       </div>
-      <div class=${css.dialogParagraph}>A connection will start a session between <em>${window.location.origin}</em> and your local file system <i>ws://127.0.0.1:65520</i>
-        <br>To see that a connection has been made, check that there is a localhost section in the Files Explorer
+      <div class=${css.dialogParagraph}>When connected, a session will be started between <em>${window.location.origin}</em> and your local file system at <i>ws://127.0.0.1:65520</i>
+         and the shared folder will be in the File Explorers workspace named "localhost". 
+        <br/>Note, if the shared folder is a Hardhat project, an additional Hardhat websocket plugin will be listening at <i>ws://127.0.0.1:65522</i>
       </div>
-      <div class=${css.dialogParagraph}>Please make sure your system is secured enough (port 65520 should not be opened nor forwarded).
-        This feature is still in Alpha, so we recommend you to keep a copy of the shared folder.
+      <div class=${css.dialogParagraph}>Please make sure your system is secured enough and ports 65520, 65522 are not opened nor forwarded.
+        This feature is still in Alpha, so we recommend to keep a copy of the shared folder.
       </div>
       <div class=${css.dialogParagraph}>
         <h6 class="text-danger">
-          Before using, make sure you have the <b>latest remixd version</b>.<br><a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
+          Before using, make sure remixd version is latest i.e. <b>${remixdVersion}</b>
+          <br><a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
         </h6>
       </div>
     </div>
