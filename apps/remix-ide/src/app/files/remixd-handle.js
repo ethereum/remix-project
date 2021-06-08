@@ -19,6 +19,7 @@ var css = csjs`
     word-break: break-word;
   }
 `
+const LOCALHOST = ' - connect to localhost - '
 
 const profile = {
   name: 'remixd',
@@ -83,7 +84,9 @@ export class RemixdHandle extends WebsocketPlugin {
             this.canceled()
           }
         }, 3000)
-        this.localhostProvider.init(() => {})
+        this.localhostProvider.init(() => {
+          this.call('filePanel', 'setWorkspace', { name: LOCALHOST, isLocalhost: true }, true)
+        })
         this.call('manager', 'activatePlugin', 'hardhat')
       }
     }
