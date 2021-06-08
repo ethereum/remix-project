@@ -34,7 +34,7 @@ const modalDialogCustom = require('../ui/modal-dialog-custom')
 const profile = {
   name: 'filePanel',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace'],
   events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace', 'createWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
@@ -43,7 +43,6 @@ const profile = {
   documentation: 'https://remix-ide.readthedocs.io/en/latest/file_explorer.html',
   version: packageJson.version
 }
-
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
@@ -114,7 +113,6 @@ module.exports = class Filepanel extends ViewPlugin {
   async getWorkspaces () {
     const result = new Promise((resolve, reject) => {
       const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-
       this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         if (error) {
           console.error(error)
@@ -247,14 +245,16 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   /** these are called by the react component, action is already finished whent it's called */
-  async setWorkspace (workspace) {
-    this._deps.fileManager.closeAllFiles()
+  async setWorkspace (workspace, setEvent = true) {
     if (workspace.isLocalhost) {
       this.call('manager', 'activatePlugin', 'remixd')
     } else if (await this.call('manager', 'isActive', 'remixd')) {
       this.call('manager', 'deactivatePlugin', 'remixd')
     }
-    this.emit('setWorkspace', workspace)
+    if (setEvent) {
+      this._deps.fileManager.setMode(workspace.isLocalhost ? 'localhost' : 'browser')
+      this.emit('setWorkspace', workspace)
+    }
   }
 
   workspaceRenamed (workspace) {
