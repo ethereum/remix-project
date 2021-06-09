@@ -5,7 +5,7 @@ const profile = {
   name: 'slither',
   displayName: 'Slither',
   url: 'ws://127.0.0.1:65523',
-  methods: [],
+  methods: ['analyse'],
   description: 'Using Remixd daemon, run slither static analysis',
   kind: 'other',
   version: packageJson.version
