@@ -73,6 +73,7 @@ module.exports = class TestTab extends ViewPlugin {
     this.on('filePanel', 'setWorkspace', async () => {
       this.testTabLogic.setCurrentPath(this.defaultPath)
       this.inputPath.value = this.defaultPath
+      this.updateDirList(this.defaultPath)
       await this.updateForNewCurrent()
     })
 
@@ -608,7 +609,7 @@ module.exports = class TestTab extends ViewPlugin {
     let testDirInput = this.trimTestDirInput(this.inputPath.value)
     testDirInput = removeMultipleSlashes(testDirInput)
     if (testDirInput !== '/') testDirInput = removeTrailingSlashes(testDirInput)
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' || e.type === 'keyup  ') {
       this.inputPath.value = testDirInput
       if (await this.testTabLogic.pathExists(testDirInput)) {
         this.testTabLogic.setCurrentPath(testDirInput)
