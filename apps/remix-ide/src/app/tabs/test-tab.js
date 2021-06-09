@@ -609,7 +609,7 @@ module.exports = class TestTab extends ViewPlugin {
     let testDirInput = this.trimTestDirInput(this.inputPath.value)
     testDirInput = removeMultipleSlashes(testDirInput)
     if (testDirInput !== '/') testDirInput = removeTrailingSlashes(testDirInput)
-    if (e.key === 'Enter' || e.type === 'keyup  ') {
+    if (e.key === 'Enter') {
       this.inputPath.value = testDirInput
       if (await this.testTabLogic.pathExists(testDirInput)) {
         this.testTabLogic.setCurrentPath(testDirInput)
@@ -666,6 +666,7 @@ module.exports = class TestTab extends ViewPlugin {
       id="utPath"
       data-id="uiPathInput"
       name="utPath"
+      title="Press 'Enter' to change the path for test files."
       style="background-image: var(--primary);"
       onkeyup=${(e) => this.handleTestDirInput(e)}
       onchange=${async (e) => this.handleEnter(e)}
