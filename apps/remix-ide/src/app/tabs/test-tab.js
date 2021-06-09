@@ -53,6 +53,12 @@ module.exports = class TestTab extends ViewPlugin {
     this.listenToEvents()
   }
 
+  onDeactivation () {
+    this.off('filePanel', 'newTestFileCreated')
+    this.off('filePanel', 'setWorkspace')
+    this.fileManager.events.removeListener('currentFileChanged', this.updateForNewCurrent)
+  }
+
   listenToEvents () {
     this.on('filePanel', 'newTestFileCreated', async file => {
       try {
