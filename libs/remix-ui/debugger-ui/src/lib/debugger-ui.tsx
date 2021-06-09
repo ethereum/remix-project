@@ -282,7 +282,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             }} type="checkbox" title="Debug with generated sources" />
             <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (from Solidity v0.7.2)</label>
           </div>
-          { (state.validationError && !state.txNumberIsEmpty) && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
+          { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
         </div>
         <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } updateTxNumberFlag={ updateTxNumberFlag } transactionNumber={ state.txNumber } debugging={ state.debugging } />
         { state.debugging && <StepManager stepManager={ stepManager } /> }
