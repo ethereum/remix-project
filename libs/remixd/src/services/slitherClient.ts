@@ -26,8 +26,8 @@ export class SlitherClient extends PluginClient {
         const errMsg = '[Slither Analysis]: Cannot analyse in read-only mode'
         return reject(new Error(errMsg))
       }
-      const outputFile = 'slither-report.json'
-      const cmd = `slither ${filePath} --disable-solc-warnings --json ${outputFile}`
+      const outputFile = 'remix-slitherReport_' + Date.now() + '.json' 
+      const cmd = `slither ${filePath} --json ${outputFile}`
       const options = { cwd: this.currentSharedFolder, shell: true }
       const child = spawn(cmd, options)
       let result = ''
