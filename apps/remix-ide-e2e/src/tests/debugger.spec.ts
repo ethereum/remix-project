@@ -178,7 +178,7 @@ module.exports = {
       .click('*[data-id="debuggerTransactionStartButton"]') // start debugging
       .pause(2000)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32) { revert(0, 0) }') !== -1, 'current displayed content is not a generated source')
+        browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32)') !== -1, 'current displayed content is not a generated source')
       })
       .click('*[data-id="debuggerTransactionStartButton"]')
   },
@@ -210,7 +210,10 @@ module.exports = {
   },
 
   'Should start debugging using remix debug nodes (rinkeby)': function (browser: NightwatchBrowser) {
-    browser.addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
+    browser
+      .clickLaunchIcon('solidity')
+      .setSolidityCompilerVersion('soljson-v0.8.4+commit.c7e474f2.js')
+      .addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]') // select web3 provider with debug nodes URL
       .clearValue('*[data-id="modalDialogCustomPromptText"]')
