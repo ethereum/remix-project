@@ -65,7 +65,14 @@ class CompileTab extends ViewPlugin {
       eventHandlers: {},
       loading: false
     }
-    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProvider, this.contentImport)
+    this.compileTabLogic = new CompileTabLogic(
+      this.queryParams,
+      this.fileManager,
+      this.editor,
+      this.config,
+      this.fileProvider,
+      this.contentImport
+    )
   }
 
   onActivationInternal () {
@@ -126,9 +133,14 @@ class CompileTab extends ViewPlugin {
       this.emit('statusChanged', { key: 'loading', title: 'compiling...', type: 'info' })
     }
 
+    this.data.eventHandlers.onRemoveAnnotations = () => {
+      this.call('editor', 'clearAnnotations')
+    }
+
     this.on('filePanel', 'setWorkspace', () => this.resetResults())
 
     this.compileTabLogic.event.on('startingCompilation', this.data.eventHandlers.onStartingCompilation)
+    this.compileTabLogic.event.on('removeAnnotations', this.data.eventHandlers.onRemoveAnnotations)
 
     this.data.eventHandlers.onCurrentFileChanged = (name) => {
       this.compilerContainer.currentFile = name
