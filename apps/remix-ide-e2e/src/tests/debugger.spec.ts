@@ -210,7 +210,10 @@ module.exports = {
   },
 
   'Should start debugging using remix debug nodes (rinkeby)': function (browser: NightwatchBrowser) {
-    browser.addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
+    browser
+      .clickLaunchIcon('solidity')
+      .setSolidityCompilerVersion('soljson-v0.8.4+commit.c7e474f2.js')
+      .addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
       .clickLaunchIcon('udapp')
       .click('*[data-id="settingsWeb3Mode"]') // select web3 provider with debug nodes URL
       .clearValue('*[data-id="modalDialogCustomPromptText"]')
