@@ -178,7 +178,7 @@ module.exports = {
       .click('*[data-id="debuggerTransactionStartButton"]') // start debugging
       .pause(2000)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32) { revert(0, 0) }') !== -1, 'current displayed content is not a generated source')
+        browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32)') !== -1, 'current displayed content is not a generated source')
       })
       .click('*[data-id="debuggerTransactionStartButton"]')
   },
