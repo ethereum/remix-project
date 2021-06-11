@@ -118,7 +118,7 @@ class CompileTab extends Plugin {
         }
       }
       this.fileManager.saveCurrentFile()
-      this.call('editor', 'clearAnnotations')
+      this.event.emit('removeAnnotations')
       var currentFile = this.config.get('currentFile')
       return this.compileFile(currentFile)
     } catch (err) {

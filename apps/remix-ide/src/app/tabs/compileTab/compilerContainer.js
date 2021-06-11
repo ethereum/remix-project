@@ -24,7 +24,7 @@ class CompilerContainer {
       timeout: 300,
       allversions: null,
       selectedVersion: null,
-      defaultVersion: 'soljson-v0.8.1+commit.df193b15.js' // this default version is defined: in makeMockCompiler (for browser test)
+      defaultVersion: 'soljson-v0.8.4+commit.c7e474f2.js' // this default version is defined: in makeMockCompiler (for browser test)
     }
   }
 
@@ -170,6 +170,7 @@ class CompilerContainer {
 
   _retrieveVersion (version) {
     if (!version) version = this._view.versionSelector.value
+    if (version === 'builtin') version = this.data.defaultVersion
     return semver.coerce(version) ? semver.coerce(version).version : ''
   }
 
@@ -487,7 +488,7 @@ class CompilerContainer {
         this._view.versionSelector.appendChild(option)
       }
     })
-    if (semver.lt(this._retrieveVersion(), 'v0.4.12+commit.194ff033.js')) {
+    if (this.data.selectedVersion !== 'builtin' && semver.lt(this._retrieveVersion(), 'v0.4.12+commit.194ff033.js')) {
       toaster(yo`
         <div>
           <b>Old compiler usage detected.</b>
@@ -500,7 +501,7 @@ class CompilerContainer {
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
-    if (this.data.selectedVersion !== 'builtin' && canUseWorker(this.data.selectedVersion)) {
+    if (canUseWorker(this._retrieveVersion())) {
       this.compileTabLogic.compiler.loadVersion(true, url)
       this.setVersionText('(loading using worker)')
     } else {
@@ -527,7 +528,7 @@ class CompilerContainer {
   // fetching both normal and wasm builds and creating a [version, baseUrl] map
   async fetchAllVersion (callback) {
     let selectedVersion, allVersionsWasm, isURL
-    let allVersions = [{ path: 'builtin', longVersion: 'Stable local version - 0.7.4' }]
+    let allVersions = [{ path: 'builtin', longVersion: 'Stable local version - 0.8.4' }]
     // fetch normal builds
     const binRes = await promisedMiniXhr(`${baseURLBin}/list.json`)
     // fetch wasm builds
