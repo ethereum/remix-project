@@ -36,10 +36,19 @@ const ports = {
 }
 
 const killCallBack: Array<Function> = []
-function startService<S extends 'git' | 'hardhat' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => void) {
+function startService<S extends 'git' | 'hardhat' | 'folder'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error?:Error) => void) {
   const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () => services[service](program.readOnly || false))
   socket.start(callback)
   killCallBack.push(socket.close.bind(socket))
+}
+
+function errorHandler (error: any, service: string) {
+  const port = ports[service]
+  if (error.code && error.code === 'EADDRINUSE') {
+    console.log('\x1b[31m%s\x1b[0m', `[ERR] There is already a client running on port ${port}!`)
+  } else {
+    console.log('\x1b[31m%s\x1b[0m', '[ERR]', error)
+  }
 }
 
 (async () => {
@@ -76,7 +85,11 @@ function startService<S extends 'git' | 'hardhat' | 'folder'> (service: S, callb
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolic links are not forwarded to Remix IDE\n')
     try {
-      startService('folder', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
+      startService('folder', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: any) => {
+        if (error) {
+          errorHandler(error, 'hardhat')
+          return false
+        }
         sharedFolderClient.setWebSocket(ws)
         sharedFolderClient.setupNotifications(program.sharedFolder)
         sharedFolderClient.sharedFolder(program.sharedFolder)
@@ -85,7 +98,11 @@ function startService<S extends 'git' | 'hardhat' | 'folder'> (service: S, callb
       const hardhatConfigFilePath = absolutePath('./', program.sharedFolder) + '/hardhat.config.js'
       const isHardhatProject = fs.existsSync(hardhatConfigFilePath)
       if (isHardhatProject) {
-        startService('hardhat', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
+        startService('hardhat', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: Error) => {
+          if (error) {
+            errorHandler(error, 'hardhat')
+            return false
+          }
           sharedFolderClient.setWebSocket(ws)
           sharedFolderClient.sharedFolder(program.sharedFolder)
         })
