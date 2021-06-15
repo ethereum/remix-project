@@ -78,6 +78,9 @@ export class TxRunnerWeb3 {
         if (err) {
           console.log(err)
           return
+        // Remove `timestamp` from tx if network is Kovan
+        // It shows: 'Error: Returned error: Invalid params: unknown field `timestamp`'
+        // See: https://github.com/ethereum/remix-project/issues/1282
         } else if (network && network.name === 'Kovan') delete tx['timestamp']
 
         return this.getWeb3().eth.call(tx, function (error, result: any) {
