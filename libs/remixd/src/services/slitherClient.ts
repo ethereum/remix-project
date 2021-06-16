@@ -28,7 +28,7 @@ export class SlitherClient extends PluginClient {
       }
       const options = { cwd: this.currentSharedFolder, shell: true }
       const { currentVersion, optimize, evmVersion } = compilerConfig
-      if(currentVersion) {
+      if (currentVersion) {
         const versionString = currentVersion.substring(0, currentVersion.indexOf('+commit') + 16)
         const solcOutput = execSync('solc --version', options)
         if (!solcOutput.toString().includes(versionString)) {
@@ -40,23 +40,26 @@ export class SlitherClient extends PluginClient {
           execSync(`solc-select use ${version}`, options)
         }
       }
-      // const outputFile = 'remix-slitherReport_' + Date.now() + '.json'
-      // const cmd = `slither ${filePath} --json ${outputFile}`
-      // const child = spawn(cmd, options)
-      // let result = ''
-      // let error = ''
-      // child.stdout.on('data', (data) => {
-      //   const msg = `[Slither Analysis]: ${data.toString()}`
-      //   console.log('\x1b[32m%s\x1b[0m', msg)
-      //   result += msg + '\n'
-      // })
-      // child.stderr.on('data', (err) => {
-      //   error += `[Slither Analysis]: ${err.toString()}`
-      // })
-      // child.on('close', () => {
-      //   if (error) reject(error)
-      //   else resolve(result)
-      // })
+      const outputFile = 'remix-slitherReport_' + Date.now() + '.json'
+      const optimizeOption = optimize ? '--optimize ' : ''
+      const evmOption = evmVersion ? `--evm-version ${evmVersion}` : ''
+      const solcArgs = optimizeOption || evmOption ? `--solc-args '${optimizeOption}${evmOption}'` : ''
+      const cmd = `slither ${filePath} ${solcArgs} --json ${outputFile}`
+      const child = spawn(cmd, options)
+      let result = ''
+      let error = ''
+      child.stdout.on('data', (data) => {
+        const msg = `[Slither Analysis]: ${data.toString()}`
+        console.log('\x1b[32m%s\x1b[0m', msg)
+        result += msg + '\n'
+      })
+      child.stderr.on('data', (err) => {
+        error += `[Slither Analysis]: ${err.toString()}`
+      })
+      child.on('close', () => {
+        if (error) reject(error)
+        else resolve(result)
+      })
     })
   }
 }
