@@ -1,3 +1,5 @@
+/* eslint dot-notation: "off" */
+
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
 import { existsSync, readFileSync } from 'fs'
@@ -24,8 +26,8 @@ export class SlitherClient extends PluginClient {
 
   transform (detectors) {
     const standardReport = []
-    for (let e of detectors) {
-      let obj = {}
+    for (const e of detectors) {
+      const obj = {}
       obj['description'] = e['description']
       obj['title'] = e.check
       obj['confidence'] = e.confidence
@@ -66,20 +68,10 @@ export class SlitherClient extends PluginClient {
       const solcArgs = optimizeOption || evmOption ? `--solc-args '${optimizeOption}${evmOption}'` : ''
       const cmd = `slither ${filePath} ${solcArgs} --json ${outputFile}`
       const child = spawn(cmd, options)
-      let result = ''
-      let error = ''
-      let response = {}
-      child.stdout.on('data', (data) => {
-        const msg = `[Slither Analysis]: ${data.toString()}`
-        console.log('\x1b[32m%s\x1b[0m', msg)
-        result += msg + '\n'
-      })
-      child.stderr.on('data', (err) => {
-        error += `[Slither Analysis]: ${err.toString()}`
-      })
+      const response = {}
       child.on('close', () => {
         const outputFileAbsPath = `${this.currentSharedFolder}/${outputFile}`
-        if (existsSync (outputFileAbsPath)) {
+        if (existsSync(outputFileAbsPath)) {
           let report = readFileSync(outputFileAbsPath, 'utf8')
           report = JSON.parse(report)
           if (report['success']) {
@@ -87,7 +79,7 @@ export class SlitherClient extends PluginClient {
             if (!report['results'] || !report['results'].detectors || !report['results'].detectors.length) {
               response['count'] = 0
             } else {
-              const { detectors }  = report['results']
+              const { detectors } = report['results']
               response['count'] = detectors.length
               response['data'] = this.transform(detectors)
             }
