@@ -34,16 +34,16 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     return ret
   }
   const formatSelfDefault = (key: string | number, data: ExtractData) => {
-    let value    
-    if (hexHighlight && typeof(data.self) === 'string') {
-        const isHex = data.self.startsWith('0x') || hexHighlight
-        if (isHex) {
-          let regex = /^(0+)(.*)/g
-          let split = regex.exec(data.self.replace('0x', ''))        
-          if (split && split[1]) {
-            value = (<span><span className="m-0 label_value">0x</span><span className="m-0 label_value">{split[1]}</span>{ split[2] && <span className="m-0 label_value font-weight-bold text-dark">{split[2]}</span> }</span>)
-          } else value = (<span><span className="m-0 label_value">0x</span><span className="m-0 label_value font-weight-bold text-dark">{data.self.replace('0x', '')}</span></span>)      
-        } else value = <span className="m-0 label_value">{data.self}</span>
+    let value
+    if (hexHighlight && typeof (data.self) === 'string') {
+      const isHex = data.self.startsWith('0x') || hexHighlight
+      if (isHex) {
+        const regex = /^(0+)(.*)/g
+        const split = regex.exec(data.self.replace('0x', ''))
+        if (split && split[1]) {
+          value = (<span><span className="m-0 label_value">0x</span><span className="m-0 label_value">{split[1]}</span>{ split[2] && <span className="m-0 label_value font-weight-bold text-dark">{split[2]}</span> }</span>)
+        } else value = (<span><span className="m-0 label_value">0x</span><span className="m-0 label_value font-weight-bold text-dark">{data.self.replace('0x', '')}</span></span>)
+      } else value = <span className="m-0 label_value">{data.self}</span>
     } else value = <span className="m-0 label_value">{data.self}</span>
     return (
       <div className="d-flex mr-1 flex-row label_item">
