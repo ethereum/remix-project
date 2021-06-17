@@ -15,11 +15,11 @@ export function resolveCalledAddress (vmTraceIndex, trace) {
 }
 
 export function isCallInstruction (step) {
-  return ['CALL', 'STATICCALL', 'CALLCODE', 'CREATE', 'DELEGATECALL'].includes(step.op)
+  return ['CALL', 'STATICCALL', 'CALLCODE', 'CREATE', 'DELEGATECALL', 'CREATE2'].includes(step.op)
 }
 
 export function isCreateInstruction (step) {
-  return step.op === 'CREATE'
+  return step.op === 'CREATE' || step.op === 'CREATE2'
 }
 
 export function isReturnInstruction (step) {
@@ -47,7 +47,7 @@ export function isSHA3Instruction (step) {
 }
 
 export function newContextStorage (step) {
-  return step.op === 'CREATE' || step.op === 'CALL'
+  return step.op === 'CREATE' || step.op === 'CALL' || step.op === 'CREATE2'
 }
 
 export function isCallToPrecompiledContract (index, trace) {
