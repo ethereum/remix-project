@@ -1,5 +1,6 @@
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
+import { existsSync, readFileSync } from 'fs'
 const { spawn, execSync } = require('child_process')
 
 export class SlitherClient extends PluginClient {
@@ -18,6 +19,17 @@ export class SlitherClient extends PluginClient {
 
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
+  }
+
+  transform (detectors) {
+    // detectors
+    // I/O standard mapping
+// Analysis Description -> description
+// Analysis Short title -> check
+// Confidence -> confidence
+// Severity -> impact
+// Source Map -> elements[i].source_mapping (remove filename_used, filename_absolute)
+
   }
 
   analyse (filePath: string, compilerConfig) {
@@ -48,6 +60,7 @@ export class SlitherClient extends PluginClient {
       const child = spawn(cmd, options)
       let result = ''
       let error = ''
+      let response = {}
       child.stdout.on('data', (data) => {
         const msg = `[Slither Analysis]: ${data.toString()}`
         console.log('\x1b[32m%s\x1b[0m', msg)
@@ -57,8 +70,28 @@ export class SlitherClient extends PluginClient {
         error += `[Slither Analysis]: ${err.toString()}`
       })
       child.on('close', () => {
-        if (error) reject(error)
-        else resolve(result)
+        const outputFileAbsPath = `${this.currentSharedFolder}/${outputFile}`
+        if (existsSync (outputFileAbsPath)) {
+          const report = readFileSync(outputFileAbsPath, 'utf8')
+          console.log('report--->', report)
+          if (report['success']) {
+            response['status'] = true
+            if (!report['results'] || !report['results'].detectors || !report['results'].detectors.length) {
+              response['count'] = 0
+            } else {
+              const { detectors }  = report['results']
+              response['count'] = detectors.length
+              response['data'] = this.transform(detectors)
+            }
+            resolve(response)
+          } else {
+            console.log('[Slither Analysis]: Error in running Slither Analysis')
+            console.log(report['error'])
+            reject(new Error('Error in running Slither Analysis. See remixd console.'))
+          }
+        } else reject(new Error('Error in generating Slither Analysis Report. See remixd console.'))
+        // if (error) reject(error)
+        // else resolve(result)
       })
     })
   }
