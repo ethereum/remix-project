@@ -20,6 +20,7 @@ import { MainPanel } from './app/components/main-panel'
 import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports } from '@remix-project/core-plugin'
 
 import migrateFileSystem from './migrateFileSystem'
+const introJs = require('intro.js')
 
 const isElectron = require('is-electron')
 const csjs = require('csjs-inject')
@@ -499,4 +500,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   framingService.start(params)
 
   if (params.embed) framingService.embed()
+  //if (!params) {
+    if (!localStorage.getItem('hadTour_initial')) {
+      introJs().start()
+      localStorage.setItem('hadTour_initial', true)
+    }
+  //}
 }

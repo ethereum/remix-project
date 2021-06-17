@@ -270,16 +270,18 @@ export class VerticalIcons extends Plugin {
     this.iconKind.settings = yo`<div id='settingsIcons' data-id="verticalIconsSettingsIcons"></div>`
 
     this.view = yo`
-      <div class=${css.icons}>
-        ${home}
-        ${this.iconKind.fileexplorer}
-        ${this.iconKind.compiler}
-        ${this.iconKind.udapp}
-        ${this.iconKind.testing}
-        ${this.iconKind.analysis}
-        ${this.iconKind.debugging}
-        ${this.iconKind.none}
-        ${this.iconKind.settings}
+      <div class="h-100" data-title="Welcome!" data-intro="Hello World!">
+        <div class=${css.icons} data-intro="Intro.js can highlight on elements">
+          ${home}
+          ${this.iconKind.fileexplorer}
+          ${this.iconKind.compiler}
+          ${this.iconKind.udapp}
+          ${this.iconKind.testing}
+          ${this.iconKind.analysis}
+          ${this.iconKind.debugging}
+          ${this.iconKind.none}
+          ${this.iconKind.settings}
+        </div>
       </div>
     `
     return this.view
