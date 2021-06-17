@@ -34,10 +34,19 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     return ret
   }
   const formatSelfDefault = (key: string | number, data: ExtractData) => {
+    let value
+    if (typeof(data.self) === 'string') {
+        let regex = /^(0+)(.*)/g
+        let split = regex.exec(data.self.replace('0x', ''))
+        if (split && split[1] && split[2]) {
+          split[1] = data.self.indexOf('0x') === 0 ? '0x' + split[1] : split[1]
+          value = (<span><span className="m-0 label_value">{split[1]}</span><span className="m-0 label_value font-weight-bold text-dark">{split[2]}</span></span>)
+        }
+    } else value = data.self
     return (
       <div className="d-flex mr-1 flex-row label_item">
         <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
-        <label className="m-0 label_value">{data.self}</label>
+        <label className="m-0 label_value">{value}</label>
       </div>
     )
   }
