@@ -56,6 +56,7 @@ declare module "nightwatch" {
         checkAnnotations(type: string, line: number): NightwatchBrowser
         checkAnnotationsNotPresent(type: string): NightwatchBrowser
         getLastTransactionHash(callback: (hash: string) => void)
+        currentWorkspace(name: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
