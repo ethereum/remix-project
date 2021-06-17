@@ -24,17 +24,17 @@ export class SlitherClient extends PluginClient {
     this.currentSharedFolder = currentSharedFolder
   }
 
-  transform (detectors) {
-    const standardReport = []
+  transform (detectors: Record<string, any>[]): OutputStandard[] {
+    const standardReport: OutputStandard[] = []
     for (const e of detectors) {
-      const obj = {}
-      obj['description'] = e['description']
-      obj['title'] = e.check
-      obj['confidence'] = e.confidence
-      obj['severity'] = e.impact
-      obj['sourceMap'] = e.elements.map((element) => {
-        delete element.source_mapping['filename_used']
-        delete element.source_mapping['filename_absolute']
+      const obj = {} as OutputStandard
+      obj.description = e.description
+      obj.title = e.check
+      obj.confidence = e.confidence
+      obj.severity = e.impact
+      obj.sourceMap = e.elements.map((element) => {
+        delete element.source_mapping.filename_used
+        delete element.source_mapping.filename_absolute
         return element
       })
       standardReport.push(obj)
@@ -42,35 +42,35 @@ export class SlitherClient extends PluginClient {
     return standardReport
   }
 
-  analyse (filePath: string, compilerConfig) {
+  analyse (filePath: string, compilerConfig: Record<string, any>) {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
-        const errMsg = '[Slither Analysis]: Cannot analyse in read-only mode'
+        const errMsg: string = '[Slither Analysis]: Cannot analyse in read-only mode'
         return reject(new Error(errMsg))
       }
       const options = { cwd: this.currentSharedFolder, shell: true }
       const { currentVersion, optimize, evmVersion } = compilerConfig
       if (currentVersion) {
-        const versionString = currentVersion.substring(0, currentVersion.indexOf('+commit') + 16)
-        const solcOutput = execSync('solc --version', options)
+        const versionString: string = currentVersion.substring(0, currentVersion.indexOf('+commit') + 16)
+        const solcOutput: Buffer = execSync('solc --version', options)
         if (!solcOutput.toString().includes(versionString)) {
-          const version = versionString.substring(0, versionString.indexOf('+commit'))
-          const solcSelectInstalledVersions = execSync('solc-select versions', options)
+          const version: string = versionString.substring(0, versionString.indexOf('+commit'))
+          const solcSelectInstalledVersions: Buffer = execSync('solc-select versions', options)
           if (!solcSelectInstalledVersions.toString().includes(version)) {
             execSync(`solc-select install ${version}`, options)
           }
           execSync(`solc-select use ${version}`, options)
         }
       }
-      const outputFile = 'remix-slitherReport_' + Date.now() + '.json'
-      const optimizeOption = optimize ? '--optimize ' : ''
-      const evmOption = evmVersion ? `--evm-version ${evmVersion}` : ''
-      const solcArgs = optimizeOption || evmOption ? `--solc-args '${optimizeOption}${evmOption}'` : ''
-      const cmd = `slither ${filePath} ${solcArgs} --json ${outputFile}`
+      const outputFile: string = 'remix-slitherReport_' + Date.now() + '.json'
+      const optimizeOption: string = optimize ? '--optimize ' : ''
+      const evmOption: string = evmVersion ? `--evm-version ${evmVersion}` : ''
+      const solcArgs: string = optimizeOption || evmOption ? `--solc-args '${optimizeOption}${evmOption}'` : ''
+      const cmd: string = `slither ${filePath} ${solcArgs} --json ${outputFile}`
       const child = spawn(cmd, options)
       const response = {}
       child.on('close', () => {
-        const outputFileAbsPath = `${this.currentSharedFolder}/${outputFile}`
+        const outputFileAbsPath: string = `${this.currentSharedFolder}/${outputFile}`
         if (existsSync(outputFileAbsPath)) {
           let report = readFileSync(outputFileAbsPath, 'utf8')
           report = JSON.parse(report)
