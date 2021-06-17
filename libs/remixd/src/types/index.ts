@@ -1,7 +1,7 @@
 import * as ServiceList from '../serviceList'
 import * as Websocket from 'ws'
 
-export type OutputStandard = {
+export interface OutputStandard {
     description: string
     title: string
     confidence: string
