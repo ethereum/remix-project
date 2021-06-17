@@ -7,7 +7,7 @@ import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
   const [calldataObj, dispatch] = useReducer(reducer, initialState)
-  const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc, registerEvent, triggerEvent, loadMoreEvent, loadMoreCompletedEvent } = props
+  const { dropdownName, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc, registerEvent, triggerEvent, loadMoreEvent, loadMoreCompletedEvent, headStyle, bodyStyle } = props
   const extractDataDefault: ExtractFunc = (item, parent?) => {
     const ret: ExtractData = {}
 
@@ -193,14 +193,14 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
 
   return (
     <div className="border rounded px-1 mt-1 bg-light">
-      <div className="py-0 px-1 title">
+      <div className="py-0 px-1 title" style={headStyle}>
         <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div>
         <div className="name" data-id={`dropdownPanel${uniquePanelName}`} onClick={handleToggle}>{dropdownName}</div><span className="nameDetail" onClick={handleToggle}>{header}</span>
         <CopyToClipboard content={state.copiableContent} data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`} />
       </div>
       <div className='dropdownpanel' style={{ display: state.toggleDropdown ? 'block' : 'none' }}>
         <i className="refresh fas fa-sync" style={{ display: state.updating ? 'inline-block' : 'none' }} aria-hidden="true"></i>
-        <div className='dropdowncontent' style={{ display: state.dropdownContent.display }}>
+        <div className='dropdowncontent' style={{ display: state.dropdownContent.display, ...bodyStyle }}>
           {
             state.data &&
             <TreeView id="treeView">
