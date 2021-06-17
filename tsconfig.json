@@ -42,9 +42,9 @@
       "@remix-ui/static-analyser": ["libs/remix-ui/static-analyser/src/index.ts"],
       "@remix-ui/checkbox": ["libs/remix-ui/checkbox/src/index.ts"],
       "@remix-ui/settings": ["libs/remix-ui/settings/src/index.ts"],
-      "@remix-project/core-plugin": [
-        "libs/remix-core-plugin/src/index.ts"
-      ]
+      "@remix-project/core-plugin": ["libs/remix-core-plugin/src/index.ts"],
+      "@remix-ui/solidity-compiler": ["libs/remix-ui/solidity-compiler/src/index.ts"],
+      "@remix-project/publish-to-storage": ["libs/remix-ui/publish-to-storage/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
