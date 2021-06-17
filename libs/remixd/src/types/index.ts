@@ -1,6 +1,18 @@
 import * as ServiceList from '../serviceList'
 import * as Websocket from 'ws'
 
+export type OutputStandard = {
+    description: string
+    title: string
+    confidence: string
+    severity: string
+    sourceMap: any
+    category?: string
+    reference?: string
+    example?: any
+    [key: string]: any
+}
+
 type ServiceListKeys = keyof typeof ServiceList;
 
 export type Service = typeof ServiceList[ServiceListKeys]
