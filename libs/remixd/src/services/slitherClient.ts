@@ -1,6 +1,7 @@
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
 import { existsSync, readFileSync } from 'fs'
+import { OutputStandard } from '../types' // eslint-disable-line
 const { spawn, execSync } = require('child_process')
 
 export class SlitherClient extends PluginClient {
@@ -22,14 +23,21 @@ export class SlitherClient extends PluginClient {
   }
 
   transform (detectors) {
-    // detectors
-    // I/O standard mapping
-// Analysis Description -> description
-// Analysis Short title -> check
-// Confidence -> confidence
-// Severity -> impact
-// Source Map -> elements[i].source_mapping (remove filename_used, filename_absolute)
-
+    const standardReport = []
+    for (let e of detectors) {
+      let obj = {}
+      obj['description'] = e['description']
+      obj['title'] = e.check
+      obj['confidence'] = e.confidence
+      obj['severity'] = e.impact
+      obj['sourceMap'] = e.elements.map((element) => {
+        delete element.source_mapping['filename_used']
+        delete element.source_mapping['filename_absolute']
+        return element
+      })
+      standardReport.push(obj)
+    }
+    return standardReport
   }
 
   analyse (filePath: string, compilerConfig) {
@@ -72,8 +80,8 @@ export class SlitherClient extends PluginClient {
       child.on('close', () => {
         const outputFileAbsPath = `${this.currentSharedFolder}/${outputFile}`
         if (existsSync (outputFileAbsPath)) {
-          const report = readFileSync(outputFileAbsPath, 'utf8')
-          console.log('report--->', report)
+          let report = readFileSync(outputFileAbsPath, 'utf8')
+          report = JSON.parse(report)
           if (report['success']) {
             response['status'] = true
             if (!report['results'] || !report['results'].detectors || !report['results'].detectors.length) {
@@ -90,8 +98,6 @@ export class SlitherClient extends PluginClient {
             reject(new Error('Error in running Slither Analysis. See remixd console.'))
           }
         } else reject(new Error('Error in generating Slither Analysis Report. See remixd console.'))
-        // if (error) reject(error)
-        // else resolve(result)
       })
     })
   }
