@@ -62,6 +62,14 @@ export class DebuggerSolidityLocals {
         } catch (error) {
           next(error)
         }
+      },
+      function getCallDataAt (stepIndex, next) {
+        try {
+          const calldata = self.traceManager.getCallDataAt(stepIndex)
+          next(null, calldata)
+        } catch (error) {
+          next(error)
+        }
       }],
     this.stepManager.currentStepIndex,
     (error, result) => {
@@ -70,9 +78,10 @@ export class DebuggerSolidityLocals {
       }
       var stack = result[0].value
       var memory = result[1].value
+      var calldata = result[3].value
       try {
         var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: result[2].value }, this.storageResolver, this.traceManager)
-        solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation, cursor).then((locals) => {
+        solidityLocals(this.stepManager.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, calldata, sourceLocation, cursor).then((locals) => {
           if (!cursor) {
             if (!locals['error']) {
               this.event.trigger('solidityLocals', [locals])

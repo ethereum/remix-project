@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -11,7 +10,7 @@ module.exports = {
   'Loads Icon\'s Panel': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .waitForElementVisible('div[data-id="verticalIconsHomeIcon"]')
-      .waitForElementVisible('div[plugin="fileExplorers"]')
+      .waitForElementVisible('div[plugin="filePanel"]')
       .waitForElementVisible('div[plugin="pluginManager"]')
       .waitForElementVisible('div[plugin="settings"]')
   },
@@ -42,9 +41,9 @@ module.exports = {
   'Toggles Side Panel': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
       .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .assert.hidden('div[data-id="remixIdeSidePanel"]')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .assert.visible('div[data-id="remixIdeSidePanel"]')
       .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
   },
@@ -68,7 +67,5 @@ module.exports = {
       .click('#homeItem')
       .assert.containsText('div[title="home"]', 'Home')
       .end()
-  },
-
-  tearDown: sauce
+  }
 }

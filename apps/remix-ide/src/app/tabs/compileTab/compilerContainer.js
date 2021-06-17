@@ -15,6 +15,7 @@ class CompilerContainer {
     this.editor = editor
     this.config = config
     this.queryParams = queryParams
+    this.hhCompilation = false
 
     this.data = {
       hideWarnings: config.get('hideWarnings') || false,
@@ -23,7 +24,7 @@ class CompilerContainer {
       timeout: 300,
       allversions: null,
       selectedVersion: null,
-      defaultVersion: 'soljson-v0.8.1+commit.df193b15.js' // this default version is defined: in makeMockCompiler (for browser test)
+      defaultVersion: 'soljson-v0.8.4+commit.c7e474f2.js' // this default version is defined: in makeMockCompiler (for browser test)
     }
   }
 
@@ -169,6 +170,7 @@ class CompilerContainer {
 
   _retrieveVersion (version) {
     if (!version) version = this._view.versionSelector.value
+    if (version === 'builtin') version = this.data.defaultVersion
     return semver.coerce(version) ? semver.coerce(version).version : ''
   }
 
@@ -183,6 +185,10 @@ class CompilerContainer {
       }
     })
 
+    this.hardhatCompilation = yo`<div class="mt-2 ${css.compilerConfig} custom-control custom-checkbox" style="display:none">
+        <input class="${css.autocompile} custom-control-input" onchange=${(e) => this.updatehhCompilation(e)} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation">
+        <label class="form-check-label custom-control-label" for="enableHardhat">Enable Hardhat Compilation</label>
+      </div>`
     this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fas fa-exclamation-triangle" aria-hidden="true"></i>`
     this._view.compileIcon = yo`<i class="fas fa-sync ${css.icon}" aria-hidden="true"></i>`
     this._view.autoCompile = yo`<input class="${css.autocompile} custom-control-input" onchange=${() => this.updateAutoCompile()} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile">`
@@ -225,6 +231,7 @@ class CompilerContainer {
     this._view.evmVersionSelector = yo`
       <select onchange="${() => this.onchangeEvmVersion()}" class="custom-select" id="evmVersionSelector">
         <option value="default" selected="selected">compiler default</option>
+        <option>berlin</option>
         <option>muirGlacier</option>
         <option>istanbul</option>
         <option>petersburg</option>
@@ -298,6 +305,7 @@ class CompilerContainer {
                 <label class="form-check-label custom-control-label" for="hideWarningsBox">Hide warnings</label>
               </div>
             </div>
+            ${this.hardhatCompilation}
             ${this._view.compilationButton}
           </header>
         </article>
@@ -325,12 +333,16 @@ class CompilerContainer {
     this.config.set('autoCompile', this._view.autoCompile.checked)
   }
 
+  updatehhCompilation (event) {
+    this.hhCompilation = event.target.checked
+  }
+
   compile (event) {
     const currentFile = this.config.get('currentFile')
     if (!this.isSolFileSelected()) return
 
     this._setCompilerVersionFromPragma(currentFile)
-    this.compileTabLogic.runCompiler()
+    this.compileTabLogic.runCompiler(this.hhCompilation)
   }
 
   compileIfAutoCompileOn () {
@@ -476,7 +488,7 @@ class CompilerContainer {
         this._view.versionSelector.appendChild(option)
       }
     })
-    if (semver.lt(this._retrieveVersion(), 'v0.4.12+commit.194ff033.js')) {
+    if (this.data.selectedVersion !== 'builtin' && semver.lt(this._retrieveVersion(), 'v0.4.12+commit.194ff033.js')) {
       toaster(yo`
         <div>
           <b>Old compiler usage detected.</b>
@@ -489,7 +501,7 @@ class CompilerContainer {
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
-    if (this.data.selectedVersion !== 'builtin' && canUseWorker(this.data.selectedVersion)) {
+    if (canUseWorker(this._retrieveVersion())) {
       this.compileTabLogic.compiler.loadVersion(true, url)
       this.setVersionText('(loading using worker)')
     } else {
@@ -516,7 +528,7 @@ class CompilerContainer {
   // fetching both normal and wasm builds and creating a [version, baseUrl] map
   async fetchAllVersion (callback) {
     let selectedVersion, allVersionsWasm, isURL
-    let allVersions = [{ path: 'builtin', longVersion: 'latest local version - 0.7.4' }]
+    let allVersions = [{ path: 'builtin', longVersion: 'Stable local version - 0.8.4' }]
     // fetch normal builds
     const binRes = await promisedMiniXhr(`${baseURLBin}/list.json`)
     // fetch wasm builds

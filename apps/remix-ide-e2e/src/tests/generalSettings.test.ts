@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -26,7 +25,7 @@ module.exports = {
       .pause(2000)
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(3000)
-      .click('*[data-id="verticalIconsKindfileExplorers"]')
+      .click('*[data-id="verticalIconsKindfilePanel"]')
       .openFile('contracts/artifacts/Ballot.json')
       .openFile('contracts/artifacts/Ballot_metadata.json')
       .getEditorValue((content) => {
@@ -129,9 +128,7 @@ module.exports = {
       .checkElementStyle(':root', '--info', remixIdeThemes.cyborg.info)
       .checkElementStyle(':root', '--warning', remixIdeThemes.cyborg.warning)
       .checkElementStyle(':root', '--danger', remixIdeThemes.cyborg.danger)
-  },
-
-  tearDown: sauce
+  }
 }
 
 const remixIdeThemes = {

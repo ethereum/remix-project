@@ -21,7 +21,8 @@ function getLastTransactionHash (browser: NightwatchBrowser, callback: (hash: st
       for (let i = deployedContracts.length - 1; i >= 0; i--) {
         const current = deployedContracts[i]
         const attr = current.getAttribute('data-id')
-        if (attr && attr.replace('block_tx', '').startsWith('0x')) {
+        // For web3 provider, a contract call simulates a tx hash starting with 'block_txcall'
+        if (attr && (attr.replace('block_tx', '').startsWith('0x') || attr.replace('block_txcall', '').startsWith('0x'))) {
           return attr.replace('block_tx', '')
         }
       }

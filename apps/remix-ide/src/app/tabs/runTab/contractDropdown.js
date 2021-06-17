@@ -9,6 +9,8 @@ const confirmDialog = require('../../ui/confirmDialog')
 const modalDialog = require('../../ui/modaldialog')
 const MultiParamManager = require('../../ui/multiParamManager')
 const helper = require('../../../lib/helper')
+const addTooltip = require('../../ui/tooltip')
+const _paq = window._paq = window._paq || []
 
 class ContractDropdownUI {
   constructor (blockchain, dropdownLogic, logCallback, runView) {
@@ -47,24 +49,22 @@ class ContractDropdownUI {
   }
 
   listenToContextChange () {
-    this.blockchain.event.register('contextChanged', () => {
-      this.blockchain.updateNetwork((err, { name } = {}) => {
-        if (err) {
-          console.log('can\'t detect network')
-          return
-        }
-        this.exEnvironment = this.blockchain.getProvider()
-        this.networkName = name
+    this.blockchain.event.register('networkStatus', ({ error, network }) => {
+      if (error) {
+        console.log('can\'t detect network')
+        return
+      }
+      this.exEnvironment = this.blockchain.getProvider()
+      this.networkName = network.name
 
-        const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
+      const savedConfig = window.localStorage.getItem(`ipfs/${this.exEnvironment}/${this.networkName}`)
 
-        // check if an already selected option exist else use default workflow
-        if (savedConfig !== null) {
-          this.setCheckedState(savedConfig)
-        } else {
-          this.setCheckedState(this.networkName === 'Main')
-        }
-      })
+      // check if an already selected option exist else use default workflow
+      if (savedConfig !== null) {
+        this.setCheckedState(savedConfig)
+      } else {
+        this.setCheckedState(this.networkName === 'Main')
+      }
     })
   }
 
@@ -98,7 +98,10 @@ class ContractDropdownUI {
   enableAtAddress (enable) {
     if (enable) {
       const address = this.atAddressButtonInput.value
-      if (!address || !ethJSUtil.isValidChecksumAddress(address)) return
+      if (!address || !ethJSUtil.isValidAddress(address)) {
+        this.enableAtAddress(false)
+        return
+      }
       this.atAddress.removeAttribute('disabled')
       this.atAddress.setAttribute('title', 'Interact with the given contract.')
     } else {
@@ -142,7 +145,7 @@ class ContractDropdownUI {
           for="deployAndRunPublishToIPFS"
           data-id="contractDropdownIpfsCheckboxLabel"
           class="m-0 form-check-label custom-control-label ${css.checkboxAlign}"
-          title="Publishing the source code and ABI to IPFS facilitates source code verification and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
+          title="Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
         >
           Publish to IPFS
         </label>
@@ -300,13 +303,15 @@ class ContractDropdownUI {
       if (error) {
         return this.logCallback(error)
       }
-
       self.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
 
       const data = self.runView.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
       self.runView.compilersArtefacts.addResolvedContract(helper.addressToString(address), data)
       if (self.ipfsCheckedState) {
+        _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', this.networkName])
         publishToStorage('ipfs', self.runView.fileProvider, self.runView.fileManager, selectedContract)
+      } else {
+        _paq.push(['trackEvent', 'udapp', 'DeployOnly', this.networkName])
       }
     }
 
@@ -340,6 +345,7 @@ class ContractDropdownUI {
   }
 
   deployContract (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
+    _paq.push(['trackEvent', 'udapp', 'DeployContractTo', this.networkName])
     const { statusCb } = callbacks
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
       return this.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
@@ -385,10 +391,19 @@ class ContractDropdownUI {
   loadFromAddress () {
     this.event.trigger('clearInstance')
 
-    var address = this.atAddressButtonInput.value
+    let address = this.atAddressButtonInput.value
+    if (!ethJSUtil.isValidChecksumAddress(address)) {
+      addTooltip(yo`
+        <span>
+          It seems you are not using a checksumed address.
+          <br>A checksummed address is an address that contains uppercase letters, as specified in <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank">EIP-55</a>.
+          <br>Checksummed addresses are meant to help prevent users from sending transactions to the wrong address.
+        </span>`)
+      address = ethJSUtil.toChecksumAddress(address)
+    }
     this.dropdownLogic.loadContractFromAddress(address,
       (cb) => {
-        modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition?', cb)
+        modalDialogCustom.confirm('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, cb)
       },
       (error, loadType, abi) => {
         if (error) {

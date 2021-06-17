@@ -20,9 +20,9 @@ export class StringType extends DynamicByteArray {
     return format(decoded)
   }
 
-  async decodeFromStack (stackDepth, stack, memory) {
+  async decodeFromStack (stackDepth, stack, memory, calldata, variableDetails?) {
     try {
-      return await super.decodeFromStack(stackDepth, stack, memory, null, null)
+      return await super.decodeFromStack(stackDepth, stack, memory, null, calldata, variableDetails)
     } catch (e) {
       console.log(e)
       return '<decoding failed - ' + e.message + '>'

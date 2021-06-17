@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -45,6 +44,7 @@ module.exports = {
       .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
       .clickLaunchIcon('solidity')
       .click('#compileTabView button[title="Compile"]') // that should generate the JSON artefact
+      .clickLaunchIcon('udapp')
       .verifyContracts(['test'])
       .clickLaunchIcon('udapp')
       .selectContract('lib') // deploy lib
@@ -60,9 +60,7 @@ module.exports = {
         })
       })
       .end()
-  },
-
-  tearDown: sauce
+  }
 }
 
 function checkDeployShouldFail (browser: NightwatchBrowser, callback: VoidFunction) {

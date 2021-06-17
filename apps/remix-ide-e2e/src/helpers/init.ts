@@ -27,7 +27,7 @@ function initModules (browser: NightwatchBrowser, callback: VoidFunction) {
     .click('[data-id="verticalIconsKindpluginManager"]')
     .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityStaticAnalysis"]')
     .scrollAndClick('[data-id="pluginManagerComponentActivateButtondebugger"]')
-    .scrollAndClick('[data-id="verticalIconsKindfileExplorers"]')
+    .scrollAndClick('[data-id="verticalIconsKindfilePanel"]')
     .clickLaunchIcon('settings')
     .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
     .setValue('[data-id="settingsTabGistAccessToken"]', process.env.gist_token)

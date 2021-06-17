@@ -22,13 +22,21 @@ export function decodeLocals (st, index, traceManager, callTree, verifier) {
         } catch (error) {
           callback(error)
         }
+      },
+      function getCallDataAt (stepIndex, callback) {
+        try {
+          const result = traceManager.getCallDataAt(stepIndex)
+          callback(null, result)
+        } catch (error) {
+          callback(error)
+        }
       }],
       index,
       function (error, result) {
         if (error) {
           return st.fail(error)
         }
-        solidityLocals(index, callTree, result[0].value, result[1].value, {}, { start: 5000 }, null).then((locals) => {
+        solidityLocals(index, callTree, result[0].value, result[1].value, {}, result[2].value, { start: 5000 }, null).then((locals) => {
           verifier(locals)
         })
       })

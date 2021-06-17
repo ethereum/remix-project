@@ -30,7 +30,7 @@ declare module "nightwatch" {
         editorScroll(direction: 'up' | 'down', numberOfTimes: number): NightwatchBrowser,
         renamePath(path: string, newFileName: string, renamedPath: string): NightwatchBrowser,
         rightClick(cssSelector: string): NightwatchBrowser,
-        waitForElementContainsText(id: string, value: string): NightwatchBrowser,
+        waitForElementContainsText(id: string, value: string, timeout?: number): NightwatchBrowser,
         getModalBody(callback: (value: string, cb: VoidFunction) => void): NightwatchBrowser,
         modalFooterCancelClick(): NightwatchBrowser,
         selectContract(contractName: string): NightwatchBrowser,

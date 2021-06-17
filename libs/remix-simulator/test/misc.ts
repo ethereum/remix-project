@@ -5,8 +5,9 @@ const web3 = new Web3()
 import * as assert from 'assert'
 
 describe('Misc', () => {
-  before(() => {
+  before(async () => {
     const provider = new Provider()
+    await provider.init()
     web3.setProvider(provider)
   })
 

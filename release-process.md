@@ -4,6 +4,7 @@ This document includes:
  - how to publish remix libs to NPM
  - how to update remix.ethereum.org
  - how to update remix-alpha.ethereum.org
+ - how to update remix-beta.ethereum.org
  - how to release remix IDE
 
 ## Remix libs release
@@ -76,4 +77,3 @@ This is not strictly speaking a release. Updating the remix site is done through
 ## remix-alpha.ethereum.org update
 
 remix-alpha.ethereum.org is automaticaly updated every time commits are pushed to master
- 

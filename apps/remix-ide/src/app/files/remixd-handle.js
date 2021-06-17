@@ -1,9 +1,11 @@
 import isElectron from 'is-electron'
 import { WebsocketPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
+import { version as remixdVersion } from '../../../../../libs/remixd/package.json'
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
+var copyToClipboard = require('../ui/copy-to-clipboard')
 
 var csjs = require('csjs-inject')
 
@@ -17,6 +19,7 @@ var css = csjs`
     word-break: break-word;
   }
 `
+const LOCALHOST = ' - connect to localhost - '
 
 const profile = {
   name: 'remixd',
@@ -30,16 +33,17 @@ const profile = {
 }
 
 export class RemixdHandle extends WebsocketPlugin {
-  constructor (locahostProvider, appManager) {
+  constructor (localhostProvider, appManager) {
     super(profile)
-    this.locahostProvider = locahostProvider
+    this.localhostProvider = localhostProvider
     this.appManager = appManager
   }
 
   deactivate () {
     if (super.socket) super.deactivate()
-    this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
-    this.locahostProvider.close((error) => {
+    // this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
+    if (this.appManager.actives.includes('hardhat')) this.appManager.deactivatePlugin('hardhat')
+    this.localhostProvider.close((error) => {
       if (error) console.log(error)
     })
   }
@@ -49,7 +53,7 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   async canceled () {
-    await this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
+    // await this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
     await this.appManager.deactivatePlugin('remixd')
   }
 
@@ -80,11 +84,13 @@ export class RemixdHandle extends WebsocketPlugin {
             this.canceled()
           }
         }, 3000)
-        this.locahostProvider.init(() => {})
-        this.call('manager', 'activatePlugin', 'git')
+        this.localhostProvider.init(() => {
+          this.call('filePanel', 'setWorkspace', { name: LOCALHOST, isLocalhost: true }, true)
+        })
+        this.call('manager', 'activatePlugin', 'hardhat')
       }
     }
-    if (this.locahostProvider.isConnected()) {
+    if (this.localhostProvider.isConnected()) {
       this.deactivate()
     } else if (!isElectron()) {
       // warn the user only if he/she is in the browser context
@@ -95,7 +101,7 @@ export class RemixdHandle extends WebsocketPlugin {
           label: 'Connect',
           fn: () => {
             try {
-              this.locahostProvider.preInit()
+              this.localhostProvider.preInit()
               super.activate()
               setTimeout(() => {
                 if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
@@ -128,23 +134,30 @@ export class RemixdHandle extends WebsocketPlugin {
 }
 
 function remixdDialog () {
+  const commandText = 'remixd -s path-to-the-shared-folder --remix-ide remix-ide-instance-URL'
   return yo`
     <div class=${css.dialog}>
-      <div class=${css.dialogParagraph}>Interact with your file system from Remix. Click connect and find shared folder in the Remix file explorer (under localhost).
-        Before you get started, check out the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
-        to find out how to run Remixd.
+      <div class=${css.dialogParagraph}>
+        Access your local file system from Remix IDE using <a target="_blank" href="https://www.npmjs.com/package/@remix-project/remixd">Remixd NPM package</a>.<br/><br/> 
+        Remixd needs to be running in the background to load the files in localhost workspace. For more info, please check the <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
       </div>
-      <div class=${css.dialogParagraph}>If you have looked at that tutorial and are just looking for the remixd command, <br> here it is:
-        <br><b>remixd -s absolute-path-to-the-shared-folder --remix-ide your-remix-ide-URL-instance</b>
+      <div class=${css.dialogParagraph}>If you are just looking for the remixd command, here it is:
+        <br><br><b>${commandText}</b>
+        <span class="">${copyToClipboard(() => commandText)}</span>
       </div>
-      <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.href}</em> and your local file system <i>ws://127.0.0.1:65520</i>
-        so please make sure your system is secured enough (port 65520 neither opened nor forwarded).
-        <i class="fas fa-link"></i> will show you current connection status.
+      <div class=${css.dialogParagraph}>When connected, a session will be started between <em>${window.location.origin}</em> and your local file system at <i>ws://127.0.0.1:65520</i>
+         and the shared folder will be in the File Explorers workspace named "localhost". 
+        <br/>Note, if the shared folder is a Hardhat project, an additional Hardhat websocket plugin will be listening at <i>ws://127.0.0.1:65522</i>
       </div>
-      <div class=${css.dialogParagraph}>This feature is still in Alpha, so we recommend you to keep a copy of the shared folder.</div>
-      <span class="text-danger">
-        Please make sure you have the <b>latest remixd version</b>. <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
-      </span>
+      <div class=${css.dialogParagraph}>Please make sure your system is secured enough and ports 65520, 65522 are not opened nor forwarded.
+        This feature is still in Alpha, so we recommend to keep a copy of the shared folder.
+      </div>
+      <div class=${css.dialogParagraph}>
+        <h6 class="text-danger">
+          Before using, make sure remixd version is latest i.e. <b>${remixdVersion}</b>
+          <br><a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
+        </h6>
+      </div>
     </div>
   `
 }

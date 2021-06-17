@@ -22,18 +22,6 @@ export class NetworkModule extends Plugin {
     this.blockchain.event.register('contextChanged', (provider) => {
       this.emit('providerChanged', provider)
     })
-    /*
-    // Events that could be implemented later
-    executionContext.event.register('removeProvider', (provider) => {
-      this.events.emit('networkRemoved', provider)
-    })
-    executionContext.event.register('addProvider', (provider) => {
-      this.events.emit('networkAdded', provider)
-    })
-    executionContext.event.register('web3EndpointChanged', (provider) => {
-      this.events.emit('web3EndpointChanged', provider)
-    })
-    */
   }
 
   /** Return the current network provider (web3, vm, injected) */

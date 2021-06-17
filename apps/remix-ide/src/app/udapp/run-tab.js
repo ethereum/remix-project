@@ -15,6 +15,7 @@ const RecorderUI = require('../tabs/runTab/recorder.js')
 const DropdownLogic = require('../tabs/runTab/model/dropdownlogic.js')
 const ContractDropdownUI = require('../tabs/runTab/contractDropdown.js')
 const toaster = require('../ui/tooltip')
+const _paq = window._paq = window._paq || []
 
 const UniversalDAppUI = require('../ui/universal-dapp-ui')
 
@@ -40,7 +41,7 @@ export class RunTab extends ViewPlugin {
     this.blockchain = blockchain
     this.fileManager = fileManager
     this.editor = editor
-    this.logCallback = (msg) => { mainView.getTerminal().logHtml(msg) }
+    this.logCallback = (msg) => { mainView.getTerminal().logHtml(yo`<pre>${msg}</pre>`) }
     this.filePanel = filePanel
     this.compilersArtefacts = compilersArtefacts
     this.networkModule = networkModule
@@ -91,6 +92,7 @@ export class RunTab extends ViewPlugin {
   }
 
   sendTransaction (tx) {
+    _paq.push(['trackEvent', 'udapp', 'sendTx'])
     return this.blockchain.sendTransaction(tx)
   }
 

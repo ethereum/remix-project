@@ -38,6 +38,11 @@ export function encodeFunctionId (funABI) {
   return abi.getSighash(funABI.name)
 }
 
+export function getFunctionFragment (funABI): ethers.utils.Interface {
+  if (funABI.type === 'fallback' || funABI.type === 'receive') return null
+  return new ethers.utils.Interface([funABI])
+}
+
 export function sortAbiFunction (contractabi) {
   // Check if function is constant (introduced with Solidity 0.6.0)
   const isConstant = ({ stateMutability }) => stateMutability === 'view' || stateMutability === 'pure'

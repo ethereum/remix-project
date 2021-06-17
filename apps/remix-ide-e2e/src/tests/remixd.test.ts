@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 const assetsTestContract = `import "./contract.sol";
 contract Assets {
@@ -57,7 +56,7 @@ module.exports = {
     */
 
     browser.waitForElementVisible('#icon-panel', 2000)
-      // .clickLaunchIcon('fileExplorers')
+      // .clickLaunchIcon('filePanel')
       .click('[data-path="ballot.sol"]')
       .addFile('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'])
       .clickLaunchIcon('solidity')
@@ -66,14 +65,14 @@ module.exports = {
   },
   'Import from node_modules and reference a github import': function (browser) {
     browser.waitForElementVisible('#icon-panel', 2000)
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .addFile('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'])
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
 
-  'Run git status': function (browser) {
+  'Run git status': '' + function (browser) {
     browser
       .executeScript('git status')
       .pause(3000)
@@ -85,8 +84,7 @@ module.exports = {
       .clickLaunchIcon('pluginManager')
       .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
       .end()
-  },
-  tearDown: sauce
+  }
 }
 
 function runTests (browser: NightwatchBrowser) {
@@ -99,13 +97,13 @@ function runTests (browser: NightwatchBrowser) {
 
   browser
     .waitForElementVisible('#icon-panel', 2000)
-    .clickLaunchIcon('fileExplorers')
+    .clickLaunchIcon('filePanel')
     .clickLaunchIcon('pluginManager')
     .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_remixd"] button')
     .waitForElementVisible('#modal-footer-ok', 2000)
     .pause(2000)
     .click('#modal-footer-ok')
-    .clickLaunchIcon('fileExplorers')
+    .clickLaunchIcon('filePanel')
     .waitForElementVisible('[data-path="folder1"]')
     .click('[data-path="folder1"]')
     .waitForElementVisible('[data-path="contract1.sol"]')
@@ -129,7 +127,7 @@ function runTests (browser: NightwatchBrowser) {
     .perform(function (done) {
       testImportFromRemixd(browser, () => { done() })
     })
-    .clickLaunchIcon('fileExplorers')
+    .clickLaunchIcon('filePanel')
     .waitForElementVisible('[data-path="folder1"]')
     .click('[data-path="folder1"]')
     .click('[data-path="folder1"]') // click twice because remixd does not return nested folder details after update

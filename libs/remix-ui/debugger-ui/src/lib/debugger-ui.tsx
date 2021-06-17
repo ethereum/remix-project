@@ -9,6 +9,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 const helper = require('../../../../../apps/remix-ide/src/lib/helper')
+const _paq = (window as any)._paq = (window as any)._paq || []
 
 export const DebuggerUI = (props: DebuggerUIProps) => {
   const debuggerModule = props.debuggerAPI
@@ -166,6 +167,21 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     }
 
     const web3 = await debuggerModule.getDebugWeb3()
+    try {
+      const networkId = await web3.eth.net.getId()
+      _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
+      if (networkId === 42) {
+        setState(prevState => {
+          return {
+            ...prevState,
+            validationError: 'Unfortunately, the Kovan network is not supported.'
+          }
+        })
+        return
+      }
+    } catch (e) {
+      console.error(e)
+    }
     let currentReceipt
     try {
       currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
@@ -266,7 +282,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             }} type="checkbox" title="Debug with generated sources" />
             <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (from Solidity v0.7.2)</label>
           </div>
-          { (state.validationError && !state.txNumberIsEmpty) && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
+          { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
         </div>
         <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } updateTxNumberFlag={ updateTxNumberFlag } transactionNumber={ state.txNumber } debugging={ state.debugging } />
         { state.debugging && <StepManager stepManager={ stepManager } /> }

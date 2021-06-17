@@ -18,12 +18,12 @@ export class FramingService {
       this.resizeFeature.showPanel()
     })
 
-    this.verticalIcon.select('fileExplorers')
+    this.verticalIcon.select('filePanel')
 
     document.addEventListener('keypress', (e) => {
       if (e.shiftKey && e.ctrlKey) {
         if (e.code === 'KeyF') { // Ctrl+Shift+F
-          this.verticalIcon.select('fileExplorers')
+          this.verticalIcon.select('filePanel')
         } else if (e.code === 'KeyA') { // Ctrl+Shift+A
           this.verticalIcon.select('pluginManager')
         } else if (e.code === 'KeyS') { //  Ctrl+Shift+S

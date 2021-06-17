@@ -150,7 +150,7 @@ export interface CompilerInputOptions {
     language?: Language
 }
 
-export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'muirGlacier' | null
+export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'muirGlacier' | 'berlin' | null
 
 export type Language = 'Solidity' | 'Yul'
 

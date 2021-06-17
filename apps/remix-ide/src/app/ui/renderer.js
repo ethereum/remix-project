@@ -39,10 +39,11 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
     // TODO: refactor with this._components.contextView.jumpTo
     var provider = self._deps.fileManager.fileProviderOf(errFile)
     if (provider) {
-      provider.exists(errFile, (error, exist) => {
-        if (error) return console.log(error)
+      provider.exists(errFile).then(exist => {
         self._deps.fileManager.open(errFile)
         editor.gotoLine(errLine, errCol)
+      }).catch(error => {
+        if (error) return console.log(error)
       })
     }
   } else {
@@ -131,7 +132,7 @@ Renderer.prototype.error = function (message, container, opt) {
   var $pre = $(opt.useSpan ? yo`<span></span>` : yo`<pre></pre>`).html(message)
 
   const classList = opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning'
-  var $error = $(yo`<div class="sol ${opt.type} ${classList}"><div class="close" data-id="renderer"><i class="fas fa-times"></i></div></div>`).prepend($pre)
+  var $error = $(yo`<div class="sol ${opt.type} ${classList}" data-id="${opt.errFile}"><div class="close" data-id="renderer"><i class="fas fa-times"></i></div></div>`).prepend($pre)
   $(container).append($error)
 
   $error.click((ev) => {

@@ -1,4 +1,4 @@
-import { NightwatchBrowser, NightwatchCallbackResult } from 'nightwatch'
+import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class VerifyContracts extends EventEmitter {
@@ -13,11 +13,11 @@ class VerifyContracts extends EventEmitter {
   }
 }
 
-function getCompiledContracts (browser: NightwatchBrowser, opts: { wait: number, version?: string }, callback: (result: NightwatchCallbackResult<any>) => void) {
+function verifyContracts (browser: NightwatchBrowser, compiledContractNames: string[], opts: { wait: number, version?: string }, callback: VoidFunction) {
   browser
     .clickLaunchIcon('solidity')
     .pause(opts.wait)
-    .waitForElementPresent('*[data-id="compiledContracts"] option')
+    .waitForElementPresent('*[data-id="compiledContracts"] option', 60000)
     .perform((done) => {
       if (opts.version) {
         browser
@@ -28,45 +28,18 @@ function getCompiledContracts (browser: NightwatchBrowser, opts: { wait: number,
           .waitForElementVisible('*[data-id="treeViewLicompiler/version"]')
           .assert.containsText('*[data-id="treeViewLicompiler/version"]', `version:\n ${opts.version}`)
           .modalFooterCancelClick()
-          .perform(done)
-      } else done()
-    })
-    .execute(function () {
-      const contracts = document.querySelectorAll('*[data-id="compiledContracts"] option') as NodeListOf<HTMLInputElement>
-
-      if (!contracts) {
-        return null
+          .perform(() => {
+            done()
+            callback()
+          })
       } else {
-        const ret = []
-
-        for (let c = 0; c < contracts.length; c++) {
-          ret.push(contracts[c].value)
-        }
-        return ret
+        compiledContractNames.forEach((name) => {
+          browser.waitForElementContainsText('[data-id="compiledContracts"]', name, 60000)
+        })
+        done()
+        callback()
       }
-    }, [], function (result) {
-      callback(result)
     })
-}
-
-function verifyContracts (browser: NightwatchBrowser, compiledContractNames: string[], opts: { wait: number, version?: string }, callback: VoidFunction) {
-  getCompiledContracts(browser, opts, (result: NightwatchCallbackResult<any>) => {
-    if (result.value) {
-      for (const contract in compiledContractNames) {
-        console.log(' - ' + compiledContractNames[contract], result.value)
-        if (result.value.indexOf(compiledContractNames[contract]) === -1) {
-          browser.assert.fail('compiled contract ' + compiledContractNames + ' not found', 'info about error', '')
-          browser.end()
-          return
-        }
-      }
-    } else {
-      browser.assert.fail('compiled contract ' + compiledContractNames + ' not found - none found', 'info about error', '')
-      browser.end()
-    }
-    console.log('contracts all found ' + compiledContractNames)
-    callback()
-  })
 }
 
 module.exports = VerifyContracts

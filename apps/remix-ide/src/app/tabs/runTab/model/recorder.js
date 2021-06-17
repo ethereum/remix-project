@@ -25,7 +25,7 @@ class Recorder {
         var record = { value, parameters: payLoad.funArgs }
         if (!to) {
           var abi = payLoad.contractABI
-          var keccak = ethutil.bufferToHex(ethutil.keccak(JSON.stringify(abi)))
+          var keccak = ethutil.bufferToHex(ethutil.keccakFromString(JSON.stringify(abi)))
           record.abi = keccak
           record.contractName = payLoad.contractName
           record.bytecode = payLoad.contractBytecode
@@ -63,10 +63,10 @@ class Recorder {
       }
     })
 
-    this.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp, _payload, rawAddress) => {
+    this.blockchain.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp, _payload) => {
       if (error) return console.log(error)
       if (call) return
-
+      const rawAddress = txResult.receipt.contractAddress
       if (!rawAddress) return // not a contract creation
       const address = helper.addressToString(rawAddress)
       // save back created addresses for the convertion from tokens to real adresses

@@ -1,5 +1,4 @@
-import { BN, privateToAddress, toChecksumAddress, isValidPrivate } from 'ethereumjs-util'
-import { stripHexPrefix } from 'ethjs-util'
+import { BN, privateToAddress, toChecksumAddress, isValidPrivate, Address } from 'ethereumjs-util'
 import Web3 from 'web3'
 import * as crypto from 'crypto'
 
@@ -7,22 +6,20 @@ export class Accounts {
   web3
   accounts: Record<string, unknown>
   accountsKeys: Record<string, unknown>
-  executionContext
+  vmContext
 
-  constructor (executionContext) {
+  constructor (vmContext) {
     this.web3 = new Web3()
-    this.executionContext = executionContext
+    this.vmContext = vmContext
     // TODO: make it random and/or use remix-libs
 
     this.accounts = {}
     this.accountsKeys = {}
-    this.executionContext.init({ get: () => { return true } })
   }
 
   async resetAccounts (): Promise<void> {
-    // TODO: setting this to {} breaks the app currently, unclear why still
-    // this.accounts = {}
-    // this.accountsKeys = {}
+    this.accounts = {}
+    this.accountsKeys = {}
     await this._addAccount('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', '0x56BC75E2D63100000')
     await this._addAccount('7e5bfb82febc4c2c8529167104271ceec190eafdca277314912eaabdb67c6e5f', '0x56BC75E2D63100000')
     await this._addAccount('cc6d63f85de8fef05446ebdd3c537c72152d0fc437fd7aa62b3019b79bd1fdd4', '0x56BC75E2D63100000')
@@ -44,19 +41,20 @@ export class Accounts {
     return new Promise((resolve, reject) => {
       privateKey = Buffer.from(privateKey, 'hex')
       const address: Buffer = privateToAddress(privateKey)
+      const addressStr = toChecksumAddress('0x' + address.toString('hex'))
+      this.accounts[addressStr] = { privateKey, nonce: 0 }
+      this.accountsKeys[addressStr] = '0x' + privateKey.toString('hex')
 
-      this.accounts[toChecksumAddress('0x' + address.toString('hex'))] = { privateKey, nonce: 0 }
-      this.accountsKeys[toChecksumAddress('0x' + address.toString('hex'))] = '0x' + privateKey.toString('hex')
-
-      const stateManager = this.executionContext.vm().stateManager
-      stateManager.getAccount(address, (error, account) => {
-        if (error) {
-          console.log(error)
+      const stateManager = this.vmContext.vm().stateManager
+      stateManager.getAccount(Address.fromString(addressStr)).then((account) => {
+        account.balance = new BN(balance.replace('0x', '') || 'f00000000000000001', 16)
+        stateManager.putAccount(Address.fromString(addressStr), account).catch((error) => {
           reject(error)
-          return
-        }
-        account.balance = balance || '0xf00000000000000001'
-        resolve()
+        }).then(() => {
+          resolve({})
+        })
+      }).catch((error) => {
+        reject(error)
       })
     })
   }
@@ -83,14 +81,12 @@ export class Accounts {
   }
 
   eth_getBalance (payload, cb) {
-    let address = payload.params[0]
-    address = stripHexPrefix(address)
+    const address = payload.params[0]
 
-    this.executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, account) => {
-      if (err) {
-        return cb(err)
-      }
+    this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
       cb(null, new BN(account.balance).toString(10))
+    }).catch((error) => {
+      cb(error)
     })
   }
 

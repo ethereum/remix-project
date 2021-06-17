@@ -2,8 +2,8 @@ const semver = require('semver')
 const minixhr = require('minixhr')
 /* global Worker */
 
-export const baseURLBin = 'https://solc-bin.ethereum.org/bin'
-export const baseURLWasm = 'https://solc-bin.ethereum.org/wasm'
+export const baseURLBin = 'https://binaries.soliditylang.org/bin'
+export const baseURLWasm = 'https://binaries.soliditylang.org/wasm'
 
 export const pathToURL = {}
 
@@ -25,8 +25,10 @@ export function canUseWorker (selectedVersion) {
   const version = semver.coerce(selectedVersion)
   const isNightly = selectedVersion.includes('nightly')
   return browserSupportWorker() && (
+    // All compiler versions (including nightlies) after 0.6.3 are wasm compiled
     semver.gt(version, '0.6.3') ||
-    (semver.gt(version, '0.3.6') && !isNightly)
+    // Only releases are wasm compiled starting with 0.3.6
+    (semver.gte(version, '0.3.6') && !isNightly)
   )
 }
 

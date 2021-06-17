@@ -37,6 +37,11 @@ export class TabProxy extends Plugin {
       this.updateImgStyles()
     })
 
+    fileManager.events.on('filesAllClosed', () => {
+      this.call('manager', 'activatePlugin', 'home')
+      this._view.filetabs.active = 'home'
+    })
+
     fileManager.events.on('fileRemoved', (name) => {
       const workspace = this.fileManager.currentWorkspace()
 
@@ -123,7 +128,7 @@ export class TabProxy extends Plugin {
           () => this.event.emit('switchApp', name),
           () => {
             this.event.emit('closeApp', name)
-            this.appManager.deactivatePlugin(name)
+            this.call('manager', 'deactivatePlugin', name)
           },
           icon
         )

@@ -91,10 +91,8 @@ export const Toaster = (props: ToasterProps) => {
     <>
       <ModalDialog
         message={props.message}
-        cancel={{
-          label: 'Close',
-          fn: () => {}
-        }}
+        cancelLabel='Close'
+        cancelFn={() => {}}
         hide={!state.showModal}
         handleHide={hideFullMessage}
       />

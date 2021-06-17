@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint-disable-line
 // import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
@@ -7,6 +7,8 @@ import Gists from 'gists'
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, File } from './types'
+import { fileSystemReducer, fileSystemInitialState } from './reducers/fileSystem'
+import { fetchDirectory, init, resolveDirectory, addInputField, removeInputField } from './actions/fileSystem'
 import * as helper from '../../../../../apps/remix-ide/src/lib/helper'
 import QueryParams from '../../../../../apps/remix-ide/src/lib/query-params'
 
@@ -15,19 +17,80 @@ import './css/file-explorer.css'
 const queryParams = new QueryParams()
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { filesProvider, name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads } = props
+  const { name, registry, plugin, focusRoot, contextMenuItems, displayInput, externalUploads } = props
   const [state, setState] = useState({
     focusElement: [{
       key: '',
       type: 'folder'
     }],
-    focusPath: null,
     files: [],
     fileManager: null,
-    filesProvider,
     ctrlKey: false,
     newFileName: '',
-    actions: [],
+    actions: [{
+      id: 'newFile',
+      name: 'New File',
+      type: ['folder', 'gist'],
+      path: [],
+      extension: [],
+      pattern: []
+    }, {
+      id: 'newFolder',
+      name: 'New Folder',
+      type: ['folder', 'gist'],
+      path: [],
+      extension: [],
+      pattern: []
+    }, {
+      id: 'rename',
+      name: 'Rename',
+      type: ['file', 'folder'],
+      path: [],
+      extension: [],
+      pattern: []
+    }, {
+      id: 'delete',
+      name: 'Delete',
+      type: ['file', 'folder', 'gist'],
+      path: [],
+      extension: [],
+      pattern: []
+    }, {
+      id: 'run',
+      name: 'Run',
+      type: [],
+      path: [],
+      extension: ['.js'],
+      pattern: []
+    }, {
+      id: 'pushChangesToGist',
+      name: 'Push changes to gist',
+      type: ['gist'],
+      path: [],
+      extension: [],
+      pattern: []
+    }, {
+      id: 'publishFolderToGist',
+      name: 'Publish folder to gist',
+      type: ['folder'],
+      path: [],
+      extension: [],
+      pattern: []
+    }, {
+      id: 'publishFileToGist',
+      name: 'Publish file to gist',
+      type: ['file'],
+      path: [],
+      extension: [],
+      pattern: []
+    }, {
+      id: 'copy',
+      name: 'Copy',
+      type: ['folder', 'file'],
+      path: [],
+      extension: [],
+      pattern: []
+    }],
     focusContext: {
       element: null,
       x: null,
@@ -45,22 +108,48 @@ export const FileExplorer = (props: FileExplorerProps) => {
       hide: true,
       title: '',
       message: '',
-      ok: {
-        label: '',
-        fn: () => {}
-      },
-      cancel: {
-        label: '',
-        fn: () => {}
-      },
+      okLabel: '',
+      okFn: () => {},
+      cancelLabel: '',
+      cancelFn: () => {},
       handleHide: null
     },
     modals: [],
     toasterMsg: '',
     mouseOverElement: null,
-    showContextMenu: false
+    showContextMenu: false,
+    reservedKeywords: [name, 'gist-'],
+    copyElement: []
   })
+  const [canPaste, setCanPaste] = useState(false)
+  const [fileSystem, dispatch] = useReducer(fileSystemReducer, fileSystemInitialState)
   const editRef = useRef(null)
+
+  useEffect(() => {
+    init(props.filesProvider, props.plugin, props.registry)(dispatch)
+  }, [])
+
+  useEffect(() => {
+    const provider = fileSystem.provider.provider
+
+    if (provider) {
+      fetchDirectory(provider, props.name)(dispatch)
+    }
+  }, [fileSystem.provider.provider, props.name])
+
+  useEffect(() => {
+    if (fileSystem.notification.message) {
+      modal(fileSystem.notification.title, fileSystem.notification.message, fileSystem.notification.labelOk, fileSystem.notification.actionOk, fileSystem.notification.labelCancel, fileSystem.notification.actionCancel)
+    }
+  }, [fileSystem.notification.message])
+
+  useEffect(() => {
+    if (fileSystem.files.expandPath.length > 0) {
+      setState(prevState => {
+        return { ...prevState, expandPath: [...new Set([...prevState.expandPath, ...fileSystem.files.expandPath])] }
+      })
+    }
+  }, [fileSystem.files.expandPath])
 
   useEffect(() => {
     if (state.focusEdit.element) {
@@ -75,94 +164,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
   useEffect(() => {
     (async () => {
       const fileManager = registry.get('filemanager').api
-      const files = await fetchDirectoryContent(name)
-      const actions = [{
-        id: 'newFile',
-        name: 'New File',
-        type: ['folder'],
-        path: [],
-        extension: [],
-        pattern: []
-      }, {
-        id: 'newFolder',
-        name: 'New Folder',
-        type: ['folder'],
-        path: [],
-        extension: [],
-        pattern: []
-      }, {
-        id: 'rename',
-        name: 'Rename',
-        type: ['file', 'folder'],
-        path: [],
-        extension: [],
-        pattern: []
-      }, {
-        id: 'delete',
-        name: 'Delete',
-        type: ['file', 'folder'],
-        path: [],
-        extension: [],
-        pattern: []
-      }, {
-        id: 'pushChangesToGist',
-        name: 'Push changes to gist',
-        type: [],
-        path: [],
-        extension: [],
-        pattern: ['^browser/gists/([0-9]|[a-z])*$']
-      }, {
-        id: 'run',
-        name: 'Run',
-        type: [],
-        path: [],
-        extension: ['.js'],
-        pattern: []
-      }]
 
       setState(prevState => {
-        return { ...prevState, fileManager, files, actions, expandPath: [name] }
+        return { ...prevState, fileManager, expandPath: [name] }
       })
     })()
   }, [name])
-
-  useEffect(() => {
-    if (state.fileManager) {
-      filesProvider.event.register('fileExternallyChanged', fileExternallyChanged)
-      filesProvider.event.register('fileRenamedError', fileRenamedError)
-      filesProvider.event.register('rootFolderChanged', rootFolderChanged)
-    }
-  }, [state.fileManager])
-
-  useEffect(() => {
-    const { expandPath } = state
-    const expandFn = async () => {
-      let files = state.files
-
-      for (let i = 0; i < expandPath.length; i++) {
-        files = await resolveDirectory(expandPath[i], files)
-        await setState(prevState => {
-          return { ...prevState, files }
-        })
-      }
-    }
-
-    if (expandPath && expandPath.length > 0) {
-      expandFn()
-    }
-  }, [state.expandPath])
-
-  useEffect(() => {
-    // unregister event to update state in callback
-    if (filesProvider.event.registered.fileAdded) filesProvider.event.unregister('fileAdded', fileAdded)
-    if (filesProvider.event.registered.folderAdded) filesProvider.event.unregister('folderAdded', folderAdded)
-    if (filesProvider.event.registered.fileRemoved) filesProvider.event.unregister('fileRemoved', fileRemoved)
-    if (filesProvider.event.registered.fileRenamed) filesProvider.event.unregister('fileRenamed', fileRenamed)
-    filesProvider.event.register('fileAdded', fileAdded)
-    filesProvider.event.register('folderAdded', folderAdded)
-    filesProvider.event.register('fileRemoved', fileRemoved)
-    filesProvider.event.register('fileRenamed', fileRenamed)
-  }, [state.files])
 
   useEffect(() => {
     if (focusRoot) {
@@ -175,12 +182,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     if (contextMenuItems) {
-      setState(prevState => {
-        // filter duplicate items
-        const items = contextMenuItems.filter(({ name }) => prevState.actions.findIndex(action => action.name === name) === -1)
-
-        return { ...prevState, actions: [...prevState.actions, ...items] }
-      })
+      addMenuItems(contextMenuItems)
     }
   }, [contextMenuItems])
 
@@ -205,8 +207,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
           hide: false,
           title: prevState.modals[0].title,
           message: prevState.modals[0].message,
-          ok: prevState.modals[0].ok,
-          cancel: prevState.modals[0].cancel,
+          okLabel: prevState.modals[0].okLabel,
+          okFn: prevState.modals[0].okFn,
+          cancelLabel: prevState.modals[0].cancelLabel,
+          cancelFn: prevState.modals[0].cancelFn,
           handleHide: prevState.modals[0].handleHide
         }
 
@@ -220,81 +224,36 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [state.modals])
 
-  const resolveDirectory = async (folderPath, dir: File[], isChild = false): Promise<File[]> => {
-    if (!isChild && (state.focusEdit.element === '/blank') && state.focusEdit.isNew && (dir.findIndex(({ path }) => path === '/blank') === -1)) {
-      dir = state.focusEdit.type === 'file' ? [...dir, {
-        path: state.focusEdit.element,
-        name: '',
-        isDirectory: false
-      }] : [{
-        path: state.focusEdit.element,
-        name: '',
-        isDirectory: true
-      }, ...dir]
+  useEffect(() => {
+    if (canPaste) {
+      addMenuItems([{
+        id: 'paste',
+        name: 'Paste',
+        type: ['folder', 'file'],
+        path: [],
+        extension: [],
+        pattern: []
+      }])
+    } else {
+      removeMenuItems(['paste'])
     }
-    dir = await Promise.all(dir.map(async (file) => {
-      if (file.path === folderPath) {
-        if ((extractParentFromKey(state.focusEdit.element) === folderPath) && state.focusEdit.isNew) {
-          file.child = state.focusEdit.type === 'file' ? [...await fetchDirectoryContent(folderPath), {
-            path: state.focusEdit.element,
-            name: '',
-            isDirectory: false
-          }] : [{
-            path: state.focusEdit.element,
-            name: '',
-            isDirectory: true
-          }, ...await fetchDirectoryContent(folderPath)]
-        } else {
-          file.child = await fetchDirectoryContent(folderPath)
-        }
-        return file
-      } else if (file.child) {
-        file.child = await resolveDirectory(folderPath, file.child, true)
-        return file
-      } else {
-        return file
-      }
-    }))
+  }, [canPaste])
 
-    return dir
-  }
+  const addMenuItems = (items: { id: string, name: string, type: string[], path: string[], extension: string[], pattern: string[] }[]) => {
+    setState(prevState => {
+      // filter duplicate items
+      const actions = items.filter(({ name }) => prevState.actions.findIndex(action => action.name === name) === -1)
 
-  const fetchDirectoryContent = async (folderPath: string): Promise<File[]> => {
-    return new Promise((resolve) => {
-      filesProvider.resolveDirectory(folderPath, (error, fileTree) => {
-        if (error) console.error(error)
-        const files = normalize(fileTree)
-
-        resolve(files)
-      })
+      return { ...prevState, actions: [...prevState.actions, ...actions] }
     })
   }
 
-  const normalize = (filesList): File[] => {
-    const folders = []
-    const files = []
+  const removeMenuItems = (ids: string[]) => {
+    setState(prevState => {
+      const actions = prevState.actions.filter(({ id }) => ids.findIndex(value => value === id) === -1)
 
-    Object.keys(filesList || {}).forEach(key => {
-      key = key.replace(/^\/|\/$/g, '') // remove first and last slash
-      let path = key
-      path = path.replace(/^\/|\/$/g, '') // remove first and last slash
-
-      if (filesList[key].isDirectory) {
-        folders.push({
-          path,
-          name: extractNameFromKey(path),
-          isDirectory: filesList[key].isDirectory
-        })
-      } else {
-        files.push({
-          path,
-          name: extractNameFromKey(path),
-          isDirectory: filesList[key].isDirectory
-        })
-      }
+      return { ...prevState, actions }
     })
-
-    return [...folders, ...files]
   }
 
   const extractNameFromKey = (key: string):string => {
@@ -311,28 +270,40 @@ export const FileExplorer = (props: FileExplorerProps) => {
     return keyPath.join('/')
   }
 
-  const createNewFile = (newFilePath: string) => {
+  const hasReservedKeyword = (content: string): boolean => {
+    if (state.reservedKeywords.findIndex(value => content.startsWith(value)) !== -1) return true
+    else return false
+  }
+
+  const getFocusedFolder = () => {
+    if (state.focusElement[0]) {
+      if (state.focusElement[0].type === 'folder' && state.focusElement[0].key) return state.focusElement[0].key
+      else if (state.focusElement[0].type === 'gist' && state.focusElement[0].key) return state.focusElement[0].key
+      else if (state.focusElement[0].type === 'file' && state.focusElement[0].key) return extractParentFromKey(state.focusElement[0].key) ? extractParentFromKey(state.focusElement[0].key) : name
+      else return name
+    }
+  }
+
+  const createNewFile = async (newFilePath: string) => {
     const fileManager = state.fileManager
 
-    helper.createNonClashingName(newFilePath, filesProvider, async (error, newName) => {
-      if (error) {
-        modal('Create File Failed', error, {
-          label: 'Close',
-          fn: async () => {}
-        }, null)
-      } else {
-        const createFile = await fileManager.writeFile(newName, '')
+    try {
+      const newName = await helper.createNonClashingNameAsync(newFilePath, fileManager)
+      const createFile = await fileManager.writeFile(newName, '')
 
-        if (!createFile) {
-          return toast('Failed to create file ' + newName)
-        } else {
-          await fileManager.open(newName)
-          setState(prevState => {
-            return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
-          })
-        }
+      if (!createFile) {
+        return toast('Failed to create file ' + newName)
+      } else {
+        const path = newName.indexOf(props.name + '/') === 0 ? newName.replace(props.name + '/', '') : newName
+
+        await fileManager.open(path)
+        setState(prevState => {
+          return { ...prevState, focusElement: [{ key: newName, type: 'file' }] }
+        })
       }
-    })
+    } catch (error) {
+      return modal('File Creation Failed', typeof error === 'string' ? error : error.message, 'Close', async () => {})
+    }
   }
 
   const createNewFolder = async (newFolderPath: string) => {
@@ -343,42 +314,34 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const exists = await fileManager.exists(dirName)
 
       if (exists) {
-        return modal('Rename File Failed', `A file or folder ${extractNameFromKey(newFolderPath)} already exists at this location. Please choose a different name.`, {
-          label: 'Close',
-          fn: () => {}
-        }, null)
+        return modal('Rename File Failed', `A file or folder ${extractNameFromKey(newFolderPath)} already exists at this location. Please choose a different name.`, 'Close', () => {})
       }
       await fileManager.mkdir(dirName)
       setState(prevState => {
         return { ...prevState, focusElement: [{ key: newFolderPath, type: 'folder' }] }
       })
     } catch (e) {
-      console.log('error: ', e)
-      toast('Failed to create folder: ' + newFolderPath)
+      return modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, 'Close', async () => {})
     }
   }
 
   const deletePath = async (path: string) => {
+    const filesProvider = fileSystem.provider.provider
+
     if (filesProvider.isReadOnly(path)) {
       return toast('cannot delete file. ' + name + ' is a read only explorer')
     }
     const isDir = state.fileManager.isDirectory(path)
 
-    modal(`Delete ${isDir ? 'folder' : 'file'}`, `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, {
-      label: 'OK',
-      fn: async () => {
-        try {
-          const fileManager = state.fileManager
+    modal(`Delete ${isDir ? 'folder' : 'file'}`, `Are you sure you want to delete ${path} ${isDir ? 'folder' : 'file'}?`, 'OK', async () => {
+      try {
+        const fileManager = state.fileManager
 
-          await fileManager.remove(path)
-        } catch (e) {
-          toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${path}.`)
-        }
+        await fileManager.remove(path)
+      } catch (e) {
+        toast(`Failed to remove ${isDir ? 'folder' : 'file'} ${path}.`)
       }
-    }, {
-      label: 'Cancel',
-      fn: () => {}
-    })
+    }, 'Cancel', () => {})
   }
 
   const renamePath = async (oldPath: string, newPath: string) => {
@@ -387,125 +350,27 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const exists = await fileManager.exists(newPath)
 
       if (exists) {
-        modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, {
-          label: 'Close',
-          fn: () => {}
-        }, null)
+        modal('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, 'Close', () => {})
       } else {
         await fileManager.rename(oldPath, newPath)
       }
     } catch (error) {
-      modal('Rename File Failed', 'Unexpected error while renaming: ' + error, {
-        label: 'Close',
-        fn: async () => {}
-      }, null)
+      modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
-  }
-
-  const removePath = (path: string, files: File[]): File[] => {
-    return files.map(file => {
-      if (file.path === path) {
-        return null
-      } else if (file.child) {
-        const childFiles = removePath(path, file.child)
-
-        file.child = childFiles.filter(file => file)
-        return file
-      } else {
-        return file
-      }
-    })
-  }
-
-  const fileAdded = async (filePath: string) => {
-    const pathArr = filePath.split('/')
-    const expandPath = pathArr.map((path, index) => {
-      return [...pathArr.slice(0, index)].join('/')
-    }).filter(path => path && (path !== props.name))
-    const files = await fetchDirectoryContent(props.name)
-
-    setState(prevState => {
-      const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
-
-      return { ...prevState, files, expandPath: uniquePaths }
-    })
-    if (filePath.includes('_test.sol')) {
-      plugin.event.trigger('newTestFileCreated', [filePath])
-    }
-  }
-
-  const folderAdded = async (folderPath: string) => {
-    const pathArr = folderPath.split('/')
-    const expandPath = pathArr.map((path, index) => {
-      return [...pathArr.slice(0, index)].join('/')
-    }).filter(path => path && (path !== props.name))
-    const files = await fetchDirectoryContent(props.name)
-
-    setState(prevState => {
-      const uniquePaths = [...new Set([...prevState.expandPath, ...expandPath])]
-
-      return { ...prevState, files, expandPath: uniquePaths }
-    })
-  }
-
-  const fileExternallyChanged = (path: string, file: { content: string }) => {
-    const config = registry.get('config').api
-    const editor = registry.get('editor').api
-
-    if (config.get('currentFile') === path && editor.currentContent() !== file.content) {
-      if (filesProvider.isReadOnly(path)) return editor.setText(file.content)
-      modal(path + ' changed', 'This file has been changed outside of Remix IDE.', {
-        label: 'Replace by the new content',
-        fn: () => {
-          editor.setText(file.content)
-        }
-      }, {
-        label: 'Keep the content displayed in Remix',
-        fn: () => {}
-      })
-    }
-  }
-
-  const fileRemoved = (filePath) => {
-    const files = removePath(filePath, state.files)
-    const updatedFiles = files.filter(file => file)
-
-    setState(prevState => {
-      return { ...prevState, files: updatedFiles }
-    })
-  }
-
-  const fileRenamed = async () => {
-    const files = await fetchDirectoryContent(props.name)
-
-    setState(prevState => {
-      return { ...prevState, files, expandPath: [...prevState.expandPath] }
-    })
-  }
-
-  // register to event of the file provider
-  // files.event.register('fileRenamed', fileRenamed)
-  const fileRenamedError = (error: string) => {
-    modal('File Renamed Failed', error, {
-      label: 'Close',
-      fn: () => {}
-    }, null)
-  }
-
-  // register to event of the file provider
-  // files.event.register('rootFolderChanged', rootFolderChanged)
-  const rootFolderChanged = async () => {
-    const files = await fetchDirectoryContent(name)
-    setState(prevState => {
-      return { ...prevState, files }
-    })
   }
 
   const uploadFile = (target) => {
+    const filesProvider = fileSystem.provider.provider
     // TODO The file explorer is merely a view on the current state of
     // the files module. Please ask the user here if they want to overwrite
     // a file and then just use `files.add`. The file explorer will
     // pick that up via the 'fileAdded' event from the files module.
+    const parentFolder = getFocusedFolder()
+    const expandPath = [...new Set([...state.expandPath, parentFolder])]
+
+    setState(prevState => {
+      return { ...prevState, expandPath }
+    });
 
     [...target.files].forEach((file) => {
       const loadFile = (name: string): void => {
@@ -513,19 +378,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
         fileReader.onload = async function (event) {
           if (helper.checkSpecialChars(file.name)) {
-            modal('File Upload Failed', 'Special characters are not allowed', {
-              label: 'Close',
-              fn: async () => {}
-            }, null)
+            modal('File Upload Failed', 'Special characters are not allowed', 'Close', async () => {})
             return
           }
           const success = await filesProvider.set(name, event.target.result)
 
           if (!success) {
-            return modal('File Upload Failed', 'Failed to create file ' + name, {
-              label: 'Close',
-              fn: async () => {}
-            }, null)
+            return modal('File Upload Failed', 'Failed to create file ' + name, 'Close', async () => {})
           }
           const config = registry.get('config').api
           const editor = registry.get('editor').api
@@ -536,62 +395,72 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
         fileReader.readAsText(file)
       }
-      const name = file.name
+      const name = `${parentFolder}/${file.name}`
 
-      filesProvider.exists(name, (error, exist) => {
-        if (error) console.log(error)
+      filesProvider.exists(name).then(exist => {
         if (!exist) {
           loadFile(name)
         } else {
-          modal('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, {
-            label: 'OK',
-            fn: () => {
-              loadFile(name)
-            }
-          }, {
-            label: 'Cancel',
-            fn: () => {}
-          })
+          modal('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', () => {
+            loadFile(name)
+          }, 'Cancel', () => {})
         }
+      }).catch(error => {
+        if (error) console.log(error)
       })
     })
   }
 
-  const publishToGist = () => {
-    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, {
-      label: 'OK',
-      fn: toGist
-    }, {
-      label: 'Cancel',
-      fn: () => {}
-    })
+  const copyFile = (src: string, dest: string) => {
+    const fileManager = state.fileManager
+
+    try {
+      fileManager.copyFile(src, dest)
+    } catch (error) {
+      console.log('Oops! An error ocurred while performing copyFile operation.' + error)
+    }
   }
 
-  const toGist = (id?: string) => {
+  const copyFolder = (src: string, dest: string) => {
+    const fileManager = state.fileManager
+
+    try {
+      fileManager.copyDir(src, dest)
+    } catch (error) {
+      console.log('Oops! An error ocurred while performing copyDir operation.' + error)
+    }
+  }
+
+  const publishToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+  }
+
+  const pushChangesToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', 'Are you sure you want to push changes to remote gist file on github.com?', 'OK', () => toGist(path, type), 'Cancel', () => {})
+  }
+
+  const publishFolderToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${path} folder as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+  }
+
+  const publishFileToGist = (path?: string, type?: string) => {
+    modal('Create a public gist', `Are you sure you want to anonymously publish ${path} file as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+  }
+
+  const toGist = (path?: string, type?: string) => {
+    const filesProvider = fileSystem.provider.provider
     const proccedResult = function (error, data) {
       if (error) {
-        modal('Publish to gist Failed', 'Failed to manage gist: ' + error, {
-          label: 'Close',
-          fn: async () => {}
-        }, null)
+        modal('Publish to gist Failed', 'Failed to manage gist: ' + error, 'Close', () => {})
       } else {
         if (data.html_url) {
-          modal('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, {
-            label: 'OK',
-            fn: () => {
-              window.open(data.html_url, '_blank')
-            }
-          }, {
-            label: 'Cancel',
-            fn: () => {}
-          })
+          modal('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, 'OK', () => {
+            window.open(data.html_url, '_blank')
+          }, 'Cancel', () => {})
         } else {
           const error = JSON.stringify(data.errors, null, '\t') || ''
           const message = data.message === 'Not Found' ? data.message + '. Please make sure the API token has right to create a gist.' : data.message
-          modal('Publish to gist Failed', message + ' ' + data.documentation_url + ' ' + error, {
-            label: 'Close',
-            fn: async () => {}
-          }, null)
+          modal('Publish to gist Failed', message + ' ' + data.documentation_url + ' ' + error, 'Close', () => {})
         }
       }
     }
@@ -612,25 +481,20 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
 
     // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
-    const folder = id ? '/gists/' + id : '/'
+    const folder = path || '/'
+    const id = type === 'gist' ? extractNameFromKey(path).split('-')[1] : null
 
     packageFiles(filesProvider, folder, async (error, packaged) => {
       if (error) {
         console.log(error)
-        modal('Publish to gist Failed', 'Failed to create gist: ' + error.message, {
-          label: 'Close',
-          fn: async () => {}
-        }, null)
+        modal('Publish to gist Failed', 'Failed to create gist: ' + error.message, 'Close', async () => {})
       } else {
         // check for token
         const config = registry.get('config').api
         const accessToken = config.get('settings/gist-access-token')
 
         if (!accessToken) {
-          modal('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', {
-            label: 'Close',
-            fn: async () => {}
-          }, null)
+          modal('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Close', () => {})
         } else {
           const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
             queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&runs=' + queryParams.get().runs + '&gist='
@@ -684,6 +548,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const runScript = async (path: string) => {
+    const filesProvider = fileSystem.provider.provider
+
     filesProvider.get(path, (error, content: string) => {
       if (error) return console.log(error)
       plugin.call('scriptRunner', 'execute', content)
@@ -700,7 +566,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const modal = (title: string, message: string, ok: { label: string, fn: () => void }, cancel: { label: string, fn: () => void }) => {
+  const modal = (title: string, message: string, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setState(prevState => {
       return {
         ...prevState,
@@ -708,8 +574,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
           {
             message,
             title,
-            ok,
-            cancel,
+            okLabel,
+            okFn,
+            cancelLabel,
+            cancelFn,
             handleHide: handleHideModal
           }]
       }
@@ -722,14 +590,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
     })
   }
 
-  const handleClickFile = (path: string) => {
+  const handleClickFile = (path: string, type: string) => {
+    path = path.indexOf(props.name + '/') === 0 ? path.replace(props.name + '/', '') : path
     state.fileManager.open(path)
     setState(prevState => {
-      return { ...prevState, focusElement: [{ key: path, type: 'file' }] }
+      return { ...prevState, focusElement: [{ key: path, type }] }
     })
   }
 
-  const handleClickFolder = async (path: string) => {
+  const handleClickFolder = async (path: string, type: string) => {
     if (state.ctrlKey) {
       if (state.focusElement.findIndex(item => item.key === path) !== -1) {
         setState(prevState => {
@@ -737,7 +606,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       } else {
         setState(prevState => {
-          return { ...prevState, focusElement: [...prevState.focusElement, { key: path, type: 'folder' }] }
+          return { ...prevState, focusElement: [...prevState.focusElement, { key: path, type }] }
         })
       }
     } else {
@@ -745,27 +614,28 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
       if (!state.expandPath.includes(path)) {
         expandPath = [...new Set([...state.expandPath, path])]
+        resolveDirectory(fileSystem.provider.provider, path)(dispatch)
       } else {
         expandPath = [...new Set(state.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(path)))]
       }
 
       setState(prevState => {
-        return { ...prevState, focusElement: [{ key: path, type: 'folder' }], expandPath }
+        return { ...prevState, focusElement: [{ key: path, type }], expandPath }
       })
     }
   }
 
-  const handleContextMenuFile = (pageX: number, pageY: number, path: string, content: string) => {
+  const handleContextMenuFile = (pageX: number, pageY: number, path: string, content: string, type: string) => {
     if (!content) return
     setState(prevState => {
-      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type: 'file' }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
     })
   }
 
-  const handleContextMenuFolder = (pageX: number, pageY: number, path: string, content: string) => {
+  const handleContextMenuFolder = (pageX: number, pageY: number, path: string, content: string, type: string) => {
     if (!content) return
     setState(prevState => {
-      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type: 'folder' }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
     })
   }
 
@@ -776,7 +646,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const editModeOn = (path: string, type: string, isNew: boolean = false) => {
-    if (filesProvider.isReadOnly(path)) return
+    if (fileSystem.provider.provider.isReadOnly(path)) return
     setState(prevState => {
       return { ...prevState, focusEdit: { ...prevState.focusEdit, element: path, isNew, type } }
     })
@@ -788,11 +658,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
     if (!content || (content.trim() === '')) {
       if (state.focusEdit.isNew) {
-        const files = removePath(state.focusEdit.element, state.files)
-        const updatedFiles = files.filter(file => file)
-
+        removeInputField(parentFolder)(dispatch)
         setState(prevState => {
-          return { ...prevState, files: updatedFiles, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
         })
       } else {
         editRef.current.textContent = state.focusEdit.lastEdit
@@ -808,26 +676,28 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       }
       if (helper.checkSpecialChars(content)) {
-        modal('Validation Error', 'Special characters are not allowed', {
-          label: 'OK',
-          fn: () => {}
-        }, null)
+        modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
       } else {
         if (state.focusEdit.isNew) {
-          state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
-          const files = removePath(state.focusEdit.element, state.files)
-          const updatedFiles = files.filter(file => file)
-
-          setState(prevState => {
-            return { ...prevState, files: updatedFiles }
-          })
+          if (hasReservedKeyword(content)) {
+            removeInputField(parentFolder)(dispatch)
+            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
+          } else {
+            state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
+            removeInputField(parentFolder)(dispatch)
+          }
         } else {
-          const oldPath: string = state.focusEdit.element
-          const oldName = extractNameFromKey(oldPath)
-          const newPath = oldPath.replace(oldName, content)
+          if (hasReservedKeyword(content)) {
+            editRef.current.textContent = state.focusEdit.lastEdit
+            modal('Reserved Keyword', `File name contains remix reserved keywords. '${content}'`, 'Close', () => {})
+          } else {
+            const oldPath: string = state.focusEdit.element
+            const oldName = extractNameFromKey(oldPath)
+            const newPath = oldPath.replace(oldName, content)
 
-          editRef.current.textContent = extractNameFromKey(oldPath)
-          renamePath(oldPath, newPath)
+            editRef.current.textContent = extractNameFromKey(oldPath)
+            renamePath(oldPath, newPath)
+          }
         }
         setState(prevState => {
           return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
@@ -837,9 +707,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleNewFileInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    if (!parentFolder) parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
+    await addInputField(fileSystem.provider.provider, 'file', parentFolder)(dispatch)
     setState(prevState => {
       return { ...prevState, expandPath }
     })
@@ -847,10 +718,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleNewFolderInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = state.focusElement[0] ? state.focusElement[0].type === 'folder' ? state.focusElement[0].key : extractParentFromKey(state.focusElement[0].key) : name
+    if (!parentFolder) parentFolder = getFocusedFolder()
     else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
     const expandPath = [...new Set([...state.expandPath, parentFolder])]
 
+    await addInputField(fileSystem.provider.provider, 'folder', parentFolder)(dispatch)
     setState(prevState => {
       return { ...prevState, expandPath }
     })
@@ -873,6 +745,21 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const handleMouseOut = () => {
     setState(prevState => {
       return { ...prevState, mouseOverElement: null }
+    })
+  }
+
+  const handleCopyClick = (path: string, type: string) => {
+    setState(prevState => {
+      return { ...prevState, copyElement: [{ key: path, type }] }
+    })
+    setCanPaste(true)
+    toast(`Copied to clipboard ${path}`)
+  }
+
+  const handlePasteClick = (dest: string, destType: string) => {
+    dest = destType === 'file' ? extractParentFromKey(dest) || props.name : dest
+    state.copyElement.map(({ key, type }) => {
+      type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
     })
   }
 
@@ -901,12 +788,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const renderFiles = (file: File, index: number) => {
+    if (!file || !file.path || typeof file === 'string' || typeof file === 'number' || typeof file === 'boolean') return
     const labelClass = state.focusEdit.element === file.path
       ? 'bg-light' : state.focusElement.findIndex(item => item.key === file.path) !== -1
         ? 'bg-secondary' : state.mouseOverElement === file.path
           ? 'bg-light border' : (state.focusContext.element === file.path) && (state.focusEdit.element !== file.path)
             ? 'bg-light border' : ''
     const icon = helper.getPathIcon(file.path)
+    const spreadProps = {
+      onClick: (e) => e.stopPropagation()
+    }
 
     if (file.isDirectory) {
       return (
@@ -918,12 +809,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
           label={label(file)}
           onClick={(e) => {
             e.stopPropagation()
-            if (state.focusEdit.element !== file.path) handleClickFolder(file.path)
+            if (state.focusEdit.element !== file.path) handleClickFolder(file.path, file.type)
           }}
           onContextMenu={(e) => {
             e.preventDefault()
             e.stopPropagation()
-            handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent)
+            handleContextMenuFolder(e.pageX, e.pageY, file.path, e.target.textContent, file.type)
           }}
           labelClass={labelClass}
           controlBehaviour={ state.ctrlKey }
@@ -938,12 +829,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
           }}
         >
           {
-            file.child ? <TreeView id={`treeView${file.path}`} key={index}>{
-              file.child.map((file, index) => {
-                return renderFiles(file, index)
+            file.child ? <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }>{
+              Object.keys(file.child).map((key, index) => {
+                return renderFiles(file.child[key], index)
               })
             }
-            </TreeView> : <TreeView id={`treeView${file.path}`} key={index} />
+            </TreeView> : <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps }/>
           }
         </TreeViewItem>
       )
@@ -951,16 +842,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
       return (
         <TreeViewItem
           id={`treeViewItem${file.path}`}
-          key={index}
+          key={`treeView${file.path}`}
           label={label(file)}
           onClick={(e) => {
             e.stopPropagation()
-            if (state.focusEdit.element !== file.path) handleClickFile(file.path)
+            if (state.focusEdit.element !== file.path) handleClickFile(file.path, file.type)
           }}
           onContextMenu={(e) => {
             e.preventDefault()
             e.stopPropagation()
-            handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent)
+            handleContextMenuFile(e.pageX, e.pageY, file.path, e.target.textContent, file.type)
           }}
           icon={icon}
           labelClass={labelClass}
@@ -985,6 +876,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           label={
             <div onClick={(e) => {
               e.stopPropagation()
+              if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerUploadFileuploadFile') return // we don't want to let propagate the input of type file
+              if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerFileUpload') return // we don't want to let propagate the input of type file
               let expandPath = []
 
               if (!state.expandPath.includes(props.name)) {
@@ -1012,8 +905,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           <div className='pb-2'>
             <TreeView id='treeViewMenu'>
               {
-                state.files.map((file, index) => {
-                  return renderFiles(file, index)
+                fileSystem.files.files[props.name] && Object.keys(fileSystem.files.files[props.name]).map((key, index) => {
+                  return renderFiles(fileSystem.files.files[props.name][key], index)
                 })
               }
             </TreeView>
@@ -1026,8 +919,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
           title={ state.focusModal.title }
           message={ state.focusModal.message }
           hide={ state.focusModal.hide }
-          ok={ state.focusModal.ok }
-          cancel={ state.focusModal.cancel }
+          okLabel={ state.focusModal.okLabel }
+          okFn={ state.focusModal.okFn }
+          cancelLabel={ state.focusModal.cancelLabel }
+          cancelFn={ state.focusModal.cancelFn }
           handleHide={ handleHideModal }
         />
       }
@@ -1041,6 +936,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           deletePath={deletePath}
           renamePath={editModeOn}
           runScript={runScript}
+          copy={handleCopyClick}
+          paste={handlePasteClick}
           emit={emitContextMenuEvent}
           pageX={state.focusContext.x}
           pageY={state.focusContext.y}
@@ -1050,6 +947,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
             e.stopPropagation()
             handleMouseOver(state.focusContext.element)
           }}
+          pushChangesToGist={pushChangesToGist}
+          publishFolderToGist={publishFolderToGist}
+          publishFileToGist={publishFileToGist}
         />
       }
     </div>
@@ -1059,18 +959,41 @@ export const FileExplorer = (props: FileExplorerProps) => {
 export default FileExplorer
 
 async function packageFiles (filesProvider, directory, callback) {
+  const isFile = filesProvider.isFile(directory)
   const ret = {}
-  try {
-    await filesProvider.copyFolderToJson(directory, ({ path, content }) => {
-      if (/^\s+$/.test(content) || !content.length) {
-        content = '// this line is added to create a gist. Empty file is not allowed.'
-      }
-      path = path.replace(/\//g, '...')
-      ret[path] = { content }
-    })
-    callback(null, ret)
-  } catch (e) {
-    return callback(e)
+
+  if (isFile) {
+    try {
+      filesProvider.get(directory, (error, content) => {
+        if (error) throw new Error('An error ocurred while getting file content. ' + directory)
+        if (/^\s+$/.test(content) || !content.length) {
+          content = '// this line is added to create a gist. Empty file is not allowed.'
+        }
+        directory = directory.replace(/\//g, '...')
+        ret[directory] = { content }
+        callback(null, ret)
+      })
+    } catch (e) {
+      return callback(e)
+    }
+  } else {
+    try {
+      await filesProvider.copyFolderToJson(directory, ({ path, content }) => {
+        if (/^\s+$/.test(content) || !content.length) {
+          content = '// this line is added to create a gist. Empty file is not allowed.'
+        }
+        if (path.indexOf('gist-') === 0) {
+          path = path.split('/')
+          path.shift()
+          path = path.join('/')
+        }
+        path = path.replace(/\//g, '...')
+        ret[path] = { content }
+      })
+      callback(null, ret)
+    } catch (e) {
+      return callback(e)
+    }
   }
 }
 

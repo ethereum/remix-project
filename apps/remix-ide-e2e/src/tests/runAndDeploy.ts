@@ -1,7 +1,6 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
-import sauce from './sauce'
 
 const passphrase = process.env.account_passphrase
 const password = process.env.account_password
@@ -48,7 +47,7 @@ module.exports = {
 
   'Should deploy contract on JavascriptVM': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
@@ -70,6 +69,9 @@ module.exports = {
       .testFunction('last', {
         status: 'true Transaction mined and execution succeed'
       })
+      // When this is removed and tests are running by connecting to metamask
+      // Consider adding tests to check return value of contract call
+      // See: https://github.com/ethereum/remix-project/pull/1229
       .end()
   },
 
@@ -96,7 +98,7 @@ module.exports = {
 
   'Should deploy contract on Goerli Test Network using MetaMask': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
@@ -148,7 +150,7 @@ module.exports = {
 
   'Should deploy contract on Ethereum Main Network using MetaMask': '' + function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
-      .clickLaunchIcon('fileExplorers')
+      .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
@@ -197,8 +199,7 @@ module.exports = {
       .pause(2000)
       .journalLastChildIncludes('[ "0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f" ]')
       .end()
-  },
-  tearDown: sauce
+  }
 }
 
 const sources = [

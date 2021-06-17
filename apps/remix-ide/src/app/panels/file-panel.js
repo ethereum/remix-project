@@ -4,16 +4,16 @@ import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import ReactDOM from 'react-dom'
 import { Workspace } from '@remix-ui/workspace' // eslint-disable-line
-import * as ethutil from 'ethereumjs-util'
+import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import { checkSpecialChars, checkSlash } from '../../lib/helper'
-var EventManager = require('../../lib/events')
-var { RemixdHandle } = require('../files/remixd-handle.js')
-var { GitHandle } = require('../files/git-handle.js')
-var globalRegistry = require('../../global/registry')
-var examples = require('../editor/examples')
-var GistHandler = require('../../lib/gist-handler')
-var QueryParams = require('../../lib/query-params')
-
+const { RemixdHandle } = require('../files/remixd-handle.js')
+const { GitHandle } = require('../files/git-handle.js')
+const { HardhatHandle } = require('../files/hardhat-handle.js')
+const globalRegistry = require('../../global/registry')
+const examples = require('../editor/examples')
+const GistHandler = require('../../lib/gist-handler')
+const QueryParams = require('../../lib/query-params')
+const modalDialogCustom = require('../ui/modal-dialog-custom')
 /*
   Overview of APIs:
    * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
@@ -32,10 +32,10 @@ var QueryParams = require('../../lib/query-params')
 */
 
 const profile = {
-  name: 'fileExplorers',
+  name: 'filePanel',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace'],
-  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace'],
+  events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace', 'createWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
   kind: 'fileexplorer',
@@ -43,11 +43,9 @@ const profile = {
   documentation: 'https://remix-ide.readthedocs.io/en/latest/file_explorer.html',
   version: packageJson.version
 }
-
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
-    this.event = new EventManager()
     this._components = {}
     this._components.registry = globalRegistry
     this._deps = {
@@ -60,6 +58,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
     this.remixdHandle = new RemixdHandle(this._deps.fileProviders.localhost, appManager)
     this.gitHandle = new GitHandle()
+    this.hardhatHandle = new HardhatHandle()
     this.registeredMenuItems = []
     this.request = {}
     this.workspaces = []
@@ -114,7 +113,6 @@ module.exports = class Filepanel extends ViewPlugin {
   async getWorkspaces () {
     const result = new Promise((resolve, reject) => {
       const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-
       this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         if (error) {
           console.error(error)
@@ -125,12 +123,18 @@ module.exports = class Filepanel extends ViewPlugin {
           .map((folder) => folder.replace(workspacesPath + '/', '')))
       })
     })
-    this.workspaces = await result
+    try {
+      this.workspaces = await result
+    } catch (e) {
+      modalDialogCustom.alert('Workspaces have not been created on your system. Please use "Migrate old filesystem to workspace" on the home page to transfer your files or start by creating a new workspace in the File Explorers.')
+      console.log(e)
+    }
     this.renderComponent()
     return this.workspaces
   }
 
   async initWorkspace () {
+    this.renderComponent()
     const queryParams = new QueryParams()
     const gistHandler = new GistHandler()
     const params = queryParams.get()
@@ -148,7 +152,7 @@ module.exports = class Filepanel extends ViewPlugin {
       try {
         await this.processCreateWorkspace('code-sample')
         this._deps.fileProviders.workspace.setWorkspace('code-sample')
-        var hash = ethutil.bufferToHex(ethutil.keccak(params.code))
+        var hash = bufferToHex(keccakFromString(params.code))
         const fileName = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
         const path = fileName
         await this._deps.fileProviders.workspace.set(path, atob(params.code))
@@ -160,12 +164,26 @@ module.exports = class Filepanel extends ViewPlugin {
       return
     }
     // insert example contracts if there are no files to show
-    this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
-      if (error) console.error(error)
-      if (Object.keys(filesList).length === 0) {
-        await this.createWorkspace('default_workspace')
-      }
-      this.getWorkspaces()
+    return new Promise((resolve, reject) => {
+      this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
+        if (error) return reject(error)
+        if (Object.keys(filesList).length === 0) {
+          await this.createWorkspace('default_workspace')
+          resolve('default_workspace')
+        } else {
+          this._deps.fileProviders.browser.resolveDirectory('.workspaces', async (error, filesList) => {
+            if (error) return reject(error)
+            if (Object.keys(filesList).length > 0) {
+              const workspacePath = Object.keys(filesList)[0].split('/').filter(val => val)
+              const workspaceName = workspacePath[workspacePath.length - 1]
+
+              this._deps.fileProviders.workspace.setWorkspace(workspaceName)
+              return resolve(workspaceName)
+            }
+            return reject(new Error('Can\'t find available workspace.'))
+          })
+        }
+      })
     })
   }
 
@@ -182,8 +200,11 @@ module.exports = class Filepanel extends ViewPlugin {
     const browserProvider = this._deps.fileProviders.browser
     const workspacePath = 'browser/' + workspaceProvider.workspacesPath + '/' + name
     const workspaceRootPath = 'browser/' + workspaceProvider.workspacesPath
-    if (!browserProvider.exists(workspaceRootPath)) browserProvider.createDir(workspaceRootPath)
-    if (!browserProvider.exists(workspacePath)) browserProvider.createDir(workspacePath)
+    const workspaceRootPathExists = await browserProvider.exists(workspaceRootPath)
+    const workspacePathExists = await browserProvider.exists(workspacePath)
+
+    if (!workspaceRootPathExists) browserProvider.createDir(workspaceRootPath)
+    if (!workspacePathExists) browserProvider.createDir(workspacePath)
   }
 
   async workspaceExists (name) {
@@ -193,18 +214,23 @@ module.exports = class Filepanel extends ViewPlugin {
     return browserProvider.exists(workspacePath)
   }
 
-  async createWorkspace (workspaceName) {
+  async createWorkspace (workspaceName, setDefaults = true) {
     if (!workspaceName) throw new Error('name cannot be empty')
     if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
     if (await this.workspaceExists(workspaceName)) throw new Error('workspace already exists')
-    const browserProvider = this._deps.fileProviders.browser
-    const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-    await this.processCreateWorkspace(workspaceName)
-    for (const file in examples) {
-      try {
-        await browserProvider.set('browser/' + workspacesPath + '/' + workspaceName + '/' + examples[file].name, examples[file].content)
-      } catch (error) {
-        console.error(error)
+    else {
+      const workspaceProvider = this._deps.fileProviders.workspace
+      await this.processCreateWorkspace(workspaceName)
+      workspaceProvider.setWorkspace(workspaceName)
+      await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
+      if (setDefaults) {
+        for (const file in examples) {
+          try {
+            await workspaceProvider.set(examples[file].name, examples[file].content)
+          } catch (error) {
+            console.error(error)
+          }
+        }
       }
     }
   }
@@ -219,14 +245,16 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   /** these are called by the react component, action is already finished whent it's called */
-  async setWorkspace (workspace) {
-    this._deps.fileManager.removeTabsOf(this._deps.fileProviders.workspace)
+  async setWorkspace (workspace, setEvent = true) {
     if (workspace.isLocalhost) {
       this.call('manager', 'activatePlugin', 'remixd')
     } else if (await this.call('manager', 'isActive', 'remixd')) {
       this.call('manager', 'deactivatePlugin', 'remixd')
     }
-    this.emit('setWorkspace', workspace)
+    if (setEvent) {
+      this._deps.fileManager.setMode(workspace.isLocalhost ? 'localhost' : 'browser')
+      this.emit('setWorkspace', workspace)
+    }
   }
 
   workspaceRenamed (workspace) {

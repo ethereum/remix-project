@@ -109,10 +109,11 @@ class ContextView {
       if (filename !== this._deps.config.get('currentFile')) {
         const provider = this._deps.fileManager.fileProviderOf(filename)
         if (provider) {
-          provider.exists(filename, (error, exist) => {
-            if (error) return console.log(error)
+          provider.exists(filename).then(exist => {
             this._deps.fileManager.open(filename)
             jumpToLine(lineColumn)
+          }).catch(error => {
+            if (error) return console.log(error)
           })
         }
       } else {

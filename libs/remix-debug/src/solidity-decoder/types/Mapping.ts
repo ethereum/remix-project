@@ -1,8 +1,7 @@
 'use strict'
 import { RefType } from './RefType'
 import { normalizeHex } from './util'
-import { toBuffer, setLengthLeft, keccak, BN, bufferToHex } from 'ethereumjs-util'
-import { intToBuffer } from 'ethjs-util'
+import { toBuffer, setLengthLeft, keccak, BN, bufferToHex, addHexPrefix } from 'ethereumjs-util'
 
 export class Mapping extends RefType {
   keyType
@@ -65,12 +64,11 @@ function getMappingLocation (key, position) {
   // > the value corresponding to a mapping key k is located at keccak256(k . p) where . is concatenation.
 
   // key should be a hex string, and position an int
-  const mappingK = toBuffer('0x' + key)
-  let mappingP = intToBuffer(position)
+  const mappingK = toBuffer(addHexPrefix(key))
+  let mappingP = toBuffer(addHexPrefix(position))
   mappingP = setLengthLeft(mappingP, 32)
   const mappingKeyBuf = concatTypedArrays(mappingK, mappingP)
-  const mappingKeyPreimage: string = '0x' + mappingKeyBuf.toString('hex')
-  const mappingStorageLocation: Buffer = keccak(mappingKeyPreimage)
+  const mappingStorageLocation: Buffer = keccak(mappingKeyBuf)
   const mappingStorageLocationinBn: BN = new BN(mappingStorageLocation, 16)
   return mappingStorageLocationinBn
 }

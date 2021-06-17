@@ -36,14 +36,12 @@ module.exports = {
     async.whilst(
       () => { return exist },
       (callback) => {
-        fileProvider.exists(name + counter + prefix + '.' + ext, (error, currentExist) => {
-          if (error) {
-            callback(error)
-          } else {
-            exist = currentExist
-            if (exist) counter = (counter | 0) + 1
-            callback()
-          }
+        fileProvider.exists(name + counter + prefix + '.' + ext).then(currentExist => {
+          exist = currentExist
+          if (exist) counter = (counter | 0) + 1
+          callback()
+        }).catch(error => {
+          if (error) console.log(error)
         })
       },
       (error) => { cb(error, name + counter + prefix + '.' + ext) }
@@ -51,6 +49,41 @@ module.exports = {
   },
   createNonClashingName (name, fileProvider, cb) {
     this.createNonClashingNameWithPrefix(name, fileProvider, '', cb)
+  },
+  async createNonClashingNameAsync (name, fileManager, prefix = '') {
+    if (!name) name = 'Undefined'
+    let counter = ''
+    let ext = 'sol'
+    const reg = /(.*)\.([^.]+)/g
+    const split = reg.exec(name)
+    if (split) {
+      name = split[1]
+      ext = split[2]
+    }
+    let exist = true
+
+    do {
+      const isDuplicate = await fileManager.exists(name + counter + prefix + '.' + ext)
+
+      if (isDuplicate) counter = (counter | 0) + 1
+      else exist = false
+    } while (exist)
+
+    return name + counter + prefix + '.' + ext
+  },
+  async createNonClashingDirNameAsync (name, fileManager) {
+    if (!name) name = 'Undefined'
+    let counter = ''
+    let exist = true
+
+    do {
+      const isDuplicate = await fileManager.exists(name + counter)
+
+      if (isDuplicate) counter = (counter | 0) + 1
+      else exist = false
+    } while (exist)
+
+    return name + counter
   },
   checkSpecialChars (name) {
     return name.match(/[:*?"<>\\'|]/) != null
@@ -71,6 +104,14 @@ module.exports = {
     const hexValue = hash.slice(2, hash.length)
     return this.is0XPrefixed(hash) && /^[0-9a-fA-F]{64}$/.test(hexValue)
   },
+  removeTrailingSlashes (text) {
+    // Remove single or consecutive trailing slashes
+    return text.replace(/\/+$/g, '')
+  },
+  removeMultipleSlashes (text) {
+    // Replace consecutive slashes with '/'
+    return text.replace(/\/+/g, '/')
+  },
   find: find,
   getPathIcon (path) {
     return path.endsWith('.txt')
@@ -87,6 +128,11 @@ module.exports = {
     paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
     if (paths.length === 1) return paths[0]
     return paths.join('/')
+  },
+  extractNameFromKey (key) {
+    const keyPath = key.split('/')
+
+    return keyPath[keyPath.length - 1]
   }
 }
 

@@ -25,16 +25,17 @@ const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
 const registry = require('./global/registry')
-const loadFileFromParent = require('./loadFilesFromParent')
 const { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
+const HardhatProvider = require('./app/tabs/hardhat-provider')
 const Config = require('./config')
 const modalDialogCustom = require('./app/ui/modal-dialog-custom')
 const modalDialog = require('./app/ui/modaldialog')
 const FileManager = require('./app/files/fileManager')
 const FileProvider = require('./app/files/fileProvider')
+const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 const toolTip = require('./app/ui/tooltip')
 const CompilerMetadata = require('./app/files/compiler-metadata')
@@ -257,6 +258,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- fileManager service ----------------------------
   const fileManager = new FileManager(editor, appManager)
   registry.put({ api: fileManager, name: 'filemanager' })
+  // ----------------- dGit provider ---------------------------------
+  const dGitProvider = new DGitProvider()
 
   // ----------------- import content service ------------------------
   const contentImport = new CompilerImport(fileManager)
@@ -275,6 +278,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const networkModule = new NetworkModule(blockchain)
   // ----------------- represent the current selected web3 provider ----
   const web3Provider = new Web3ProviderModule(blockchain)
+  const hardhatProvider = new HardhatProvider(blockchain)
   // ----------------- convert offset to line/column service -----------
   const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({ api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter' })
@@ -310,7 +314,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     contextualListener,
     terminal,
     web3Provider,
-    fetchAndCompile
+    fetchAndCompile,
+    dGitProvider,
+    hardhatProvider
   ])
 
   // LAYOUT & SYSTEM VIEWS
@@ -432,12 +438,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   engine.register([
     compileTab,
+    compileTab.compileTabLogic,
     run,
     debug,
     analysis,
     test,
     filePanel.remixdHandle,
-    filePanel.gitHandle
+    filePanel.gitHandle,
+    filePanel.hardhatHandle
   ])
 
   if (isElectron()) {
@@ -451,10 +459,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
-  await appManager.activatePlugin(['mainPanel', 'menuicons'])
+  await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
   await appManager.activatePlugin(['home'])
-  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'fileExplorers', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile'])
+  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile'])
 
   const queryParams = new QueryParams()
   const params = queryParams.get()
@@ -490,9 +498,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
   framingService.start(params)
-
-  // get the file list from the parent iframe
-  loadFileFromParent(fileManager)
 
   if (params.embed) framingService.embed()
 }

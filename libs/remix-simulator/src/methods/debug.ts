@@ -1,8 +1,8 @@
 export class Debug {
-  executionContext
+  vmContext
 
-  constructor (executionContext) {
-    this.executionContext = executionContext
+  constructor (vmContext) {
+    this.vmContext = vmContext
   }
 
   methods () {
@@ -14,15 +14,15 @@ export class Debug {
   }
 
   debug_traceTransaction (payload, cb) {
-    this.executionContext.web3().debug.traceTransaction(payload.params[0], {}, cb)
+    this.vmContext.web3().debug.traceTransaction(payload.params[0], {}, cb)
   }
 
   debug_preimage (payload, cb) {
-    this.executionContext.web3().debug.preimage(payload.params[0], cb)
+    this.vmContext.web3().debug.preimage(payload.params[0], cb)
   }
 
   debug_storageRangeAt (payload, cb) {
-    this.executionContext.web3().debug.storageRangeAt(
+    this.vmContext.web3().debug.storageRangeAt(
       payload.params[0],
       payload.params[1],
       payload.params[2],

@@ -3,9 +3,9 @@
   "compilerOptions": {
     "types": ["node", "jest"],
     "module": "commonjs",
+    "esModuleInterop": true,
     "allowJs": true,
     "rootDir": "./",
-    "esModuleInterop": true 
   },
   "include": ["**/*.ts"]
 }

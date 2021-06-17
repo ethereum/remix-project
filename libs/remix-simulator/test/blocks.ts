@@ -5,10 +5,11 @@ const web3 = new Web3()
 import * as assert from 'assert'
 
 describe('blocks', () => {
-  before(() => {
+  before(async () => {
     const provider = new Provider('vm', {
       coinbase: '0x0000000000000000000000000000000000000001'
     })
+    await provider.init()
     web3.setProvider(provider)
   })
 
@@ -29,7 +30,7 @@ describe('blocks', () => {
         parentHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
         sha3Uncles: '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
         size: 163591,
-        stateRoot: '0x63e1738ea12d4e7d12b71f0f4604706417921eb6a62c407ca5f1d66b9e67f579',
+        stateRoot: '0x0000000000000000000000000000000000000000000000000000000000000000',
         timestamp: block.timestamp,
         totalDifficulty: '0',
         transactions: [],

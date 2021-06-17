@@ -121,9 +121,7 @@ module.exports = class CompilerImports extends Plugin {
         if (provider.type === 'localhost' && !provider.isConnected()) {
           return reject(new Error(`file provider ${provider.type} not available while trying to resolve ${url}`))
         }
-        provider.exists(url, (error, exist) => {
-          if (error) return reject(error)
-
+        provider.exists(url).then(exist => {
           /*
             if the path is absolute and the file does not exist, we can stop here
             Doesn't make sense to try to resolve "localhost/node_modules/localhost/node_modules/<path>" and we'll end in an infinite loop.
@@ -162,6 +160,8 @@ module.exports = class CompilerImports extends Plugin {
             if (error) return reject(error)
             resolve(content)
           })
+        }).catch(error => {
+          return reject(error)
         })
       }
     })

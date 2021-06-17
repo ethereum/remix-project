@@ -22,7 +22,7 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile'],
+  methods: ['file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -102,10 +102,14 @@ class FileManager extends Plugin {
 
   /** The current opened file */
   file () {
-    const file = this.currentFile()
+    try {
+      const file = this.currentFile()
 
-    if (!file) throw createError({ code: 'ENOENT', message: 'No file selected' })
-    return file
+      if (!file) throw createError({ code: 'ENOENT', message: 'No file selected' })
+      return file
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -114,14 +118,24 @@ class FileManager extends Plugin {
    * @returns {boolean} true if the path exists
    */
   exists (path) {
-    path = this.limitPluginScope(path)
-    const provider = this.fileProviderOf(path)
-    const result = provider.exists(path, (err, result) => {
-      if (err) return false
-      return result
-    })
+    try {
+      path = this.limitPluginScope(path)
+      const provider = this.fileProviderOf(path)
+      const result = provider.exists(path)
 
-    return result
+      return result
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
+  /*
+  * refresh the file explorer
+  */
+  refresh () {
+    const provider = this.fileProviderOf('/')
+    // emit folderAdded so that File Explorer reloads the file tree
+    provider.event.emit('folderAdded', '/')
   }
 
   /**
@@ -154,10 +168,14 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async open (path) {
-    path = this.limitPluginScope(path)
-    await this._handleExists(path, `Cannot open file ${path}`)
-    await this._handleIsFile(path, `Cannot open file ${path}`)
-    return this.openFile(path)
+    try {
+      path = this.limitPluginScope(path)
+      await this._handleExists(path, `Cannot open file ${path}`)
+      await this._handleIsFile(path, `Cannot open file ${path}`)
+      return this.openFile(path)
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -167,14 +185,18 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async writeFile (path, data) {
-    path = this.limitPluginScope(path)
-    if (await this.exists(path)) {
-      await this._handleIsFile(path, `Cannot write file ${path}`)
-      return await this.setFileContent(path, data)
-    } else {
-      const ret = await this.setFileContent(path, data)
-      this.emit('fileAdded', path)
-      return ret
+    try {
+      path = this.limitPluginScope(path)
+      if (await this.exists(path)) {
+        await this._handleIsFile(path, `Cannot write file ${path}`)
+        return await this.setFileContent(path, data)
+      } else {
+        const ret = await this.setFileContent(path, data)
+        this.emit('fileAdded', path)
+        return ret
+      }
+    } catch (e) {
+      throw new Error(e)
     }
   }
 
@@ -184,10 +206,14 @@ class FileManager extends Plugin {
    * @returns {string} content of the file
    */
   async readFile (path) {
-    path = this.limitPluginScope(path)
-    await this._handleExists(path, `Cannot read file ${path}`)
-    await this._handleIsFile(path, `Cannot read file ${path}`)
-    return this.getFileContent(path)
+    try {
+      path = this.limitPluginScope(path)
+      await this._handleExists(path, `Cannot read file ${path}`)
+      await this._handleIsFile(path, `Cannot read file ${path}`)
+      return this.getFileContent(path)
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -196,15 +222,58 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destrination file
    * @returns {void}
    */
-  async copyFile (src, dest) {
-    src = this.limitPluginScope(src)
-    dest = this.limitPluginScope(dest)
-    await this._handleExists(src, `Cannot copy from ${src}`)
-    await this._handleIsFile(src, `Cannot copy from ${src}`)
-    await this._handleIsFile(dest, `Cannot paste content into ${dest}`)
-    const content = await this.readFile(src)
+  async copyFile (src, dest, customName) {
+    try {
+      src = this.limitPluginScope(src)
+      dest = this.limitPluginScope(dest)
+      await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
+      await this._handleIsFile(src, `Cannot copy from ${src}. Path is not a file.`)
+      await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
+      await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
+      const content = await this.readFile(src)
+      let copiedFilePath = dest + (customName ? '/' + customName : '/' + `Copy_${helper.extractNameFromKey(src)}`)
+      copiedFilePath = await helper.createNonClashingNameAsync(copiedFilePath, this)
 
-    await this.writeFile(dest, content)
+      await this.writeFile(copiedFilePath, content)
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
+  /**
+   * Upsert a directory with the content of the source directory
+   * @param {string} src path of the source dir
+   * @param {string} dest path of the destination dir
+   * @returns {void}
+   */
+  async copyDir (src, dest) {
+    try {
+      src = this.limitPluginScope(src)
+      dest = this.limitPluginScope(dest)
+      await this._handleExists(src, `Cannot copy from ${src}. Path does not exist.`)
+      await this._handleIsDir(src, `Cannot copy from ${src}. Path is not a directory.`)
+      await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
+      await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
+      await this.inDepthCopy(src, dest)
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
+  async inDepthCopy (src, dest, count = 0) {
+    const content = await this.readdir(src)
+    let copiedFolderPath = count === 0 ? dest + '/' + `Copy_${helper.extractNameFromKey(src)}` : dest + '/' + helper.extractNameFromKey(src)
+    copiedFolderPath = await helper.createNonClashingDirNameAsync(copiedFolderPath, this)
+
+    await this.mkdir(copiedFolderPath)
+
+    for (const [key, value] of Object.entries(content)) {
+      if (!value.isDirectory) {
+        await this.copyFile(key, copiedFolderPath, helper.extractNameFromKey(key))
+      } else {
+        await this.inDepthCopy(key, copiedFolderPath, count + 1)
+      }
+    }
   }
 
   /**
@@ -214,25 +283,29 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async rename (oldPath, newPath) {
-    oldPath = this.limitPluginScope(oldPath)
-    newPath = this.limitPluginScope(newPath)
-    await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
-    const isFile = await this.isFile(oldPath)
-    const newPathExists = await this.exists(newPath)
-    const provider = this.fileProviderOf(oldPath)
+    try {
+      oldPath = this.limitPluginScope(oldPath)
+      newPath = this.limitPluginScope(newPath)
+      await this._handleExists(oldPath, `Cannot rename ${oldPath}`)
+      const isFile = await this.isFile(oldPath)
+      const newPathExists = await this.exists(newPath)
+      const provider = this.fileProviderOf(oldPath)
 
-    if (isFile) {
-      if (newPathExists) {
-        modalDialogCustom.alert('File already exists.')
-        return
+      if (isFile) {
+        if (newPathExists) {
+          modalDialogCustom.alert('File already exists.')
+          return
+        }
+        return provider.rename(oldPath, newPath, false)
+      } else {
+        if (newPathExists) {
+          modalDialogCustom.alert('Folder already exists.')
+          return
+        }
+        return provider.rename(oldPath, newPath, true)
       }
-      return provider.rename(oldPath, newPath, false)
-    } else {
-      if (newPathExists) {
-        modalDialogCustom.alert('Folder already exists.')
-        return
-      }
-      return provider.rename(oldPath, newPath, true)
+    } catch (e) {
+      throw new Error(e)
     }
   }
 
@@ -242,13 +315,17 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async mkdir (path) {
-    path = this.limitPluginScope(path)
-    if (await this.exists(path)) {
-      throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
-    }
-    const provider = this.fileProviderOf(path)
+    try {
+      path = this.limitPluginScope(path)
+      if (await this.exists(path)) {
+        throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
+      }
+      const provider = this.fileProviderOf(path)
 
-    provider.createDir(path)
+      return provider.createDir(path)
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -257,18 +334,22 @@ class FileManager extends Plugin {
    * @returns {string[]} list of the file/directory name in this directory
    */
   async readdir (path) {
-    path = this.limitPluginScope(path)
-    await this._handleExists(path)
-    await this._handleIsDir(path)
+    try {
+      path = this.limitPluginScope(path)
+      await this._handleExists(path)
+      await this._handleIsDir(path)
 
-    return new Promise((resolve, reject) => {
-      const provider = this.fileProviderOf(path)
+      return new Promise((resolve, reject) => {
+        const provider = this.fileProviderOf(path)
 
-      provider.resolveDirectory(path, (error, filesProvider) => {
-        if (error) reject(error)
-        resolve(filesProvider)
+        provider.resolveDirectory(path, (error, filesProvider) => {
+          if (error) reject(error)
+          resolve(filesProvider)
+        })
       })
-    })
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   /**
@@ -277,11 +358,15 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   async remove (path) {
-    path = this.limitPluginScope(path)
-    await this._handleExists(path, `Cannot remove file or directory ${path}`)
-    const provider = this.fileProviderOf(path)
+    try {
+      path = this.limitPluginScope(path)
+      await this._handleExists(path, `Cannot remove file or directory ${path}`)
+      const provider = this.fileProviderOf(path)
 
-    return await provider.remove(path)
+      return await provider.remove(path)
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   init () {
@@ -292,18 +377,18 @@ class FileManager extends Plugin {
       workspaceExplorer: this._components.registry.get('fileproviders/workspace').api,
       filesProviders: this._components.registry.get('fileproviders').api
     }
-    this._deps.browserExplorer.event.register('fileChanged', (path) => { this.fileChangedEvent(path) })
-    this._deps.browserExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.localhostExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.browserExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.browserExplorer.event.register('fileAdded', (path) => { this.fileAddedEvent(path) })
-    this._deps.localhostExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
-    this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
-    this._deps.workspaceExplorer.event.register('fileChanged', (path) => { this.fileChangedEvent(path) })
-    this._deps.workspaceExplorer.event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.workspaceExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.workspaceExplorer.event.register('fileAdded', (path) => { this.fileAddedEvent(path) })
+    this._deps.browserExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
+    this._deps.browserExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.localhostExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.browserExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.browserExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
+    this._deps.localhostExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.localhostExplorer.event.on('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
+    this._deps.localhostExplorer.event.on('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
+    this._deps.workspaceExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
+    this._deps.workspaceExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.workspaceExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.workspaceExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
 
     this.getCurrentFile = this.file
     this.getFile = this.readFile
@@ -356,6 +441,15 @@ class FileManager extends Plugin {
 
   currentFile () {
     return this._deps.config.get('currentFile')
+  }
+
+  closeAllFiles () {
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('filesAllClosed')
+    this.events.emit('filesAllClosed')
+    for (const file in this.openedFiles) {
+      this.closeFile(file)
+    }
   }
 
   closeFile (name) {
@@ -514,8 +608,6 @@ class FileManager extends Plugin {
     if (file.startsWith('browser')) {
       return this._deps.filesProviders.browser
     }
-    const provider = this._deps.filesProviders.workspace
-    if (!provider.isReady()) throw createError({ code: 'ECONNRESET', message: 'No workspace has been opened.' })
     return this._deps.filesProviders.workspace
   }
 

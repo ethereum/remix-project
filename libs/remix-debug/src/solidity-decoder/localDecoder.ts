@@ -1,6 +1,6 @@
 'use strict'
 
-export async function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory, storageResolver, currentSourceLocation, cursor) {
+export async function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory, storageResolver, calldata, currentSourceLocation, cursor) {
   const scope = internalTreeCall.findScope(vmtraceIndex)
   if (!scope) {
     const error = { message: 'Can\'t display locals. reason: compilation result might not have been provided' }
@@ -18,7 +18,7 @@ export async function solidityLocals (vmtraceIndex, internalTreeCall, stack, mem
         anonymousIncr++
       }
       try {
-        locals[name] = await variable.type.decodeFromStack(variable.stackDepth, stack, memory, storageResolver, cursor)
+        locals[name] = await variable.type.decodeFromStack(variable.stackDepth, stack, memory, storageResolver, calldata, cursor, variable)
       } catch (e) {
         console.log(e)
         locals[name] = '<decoding failed - ' + e.message + '>'
