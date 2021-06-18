@@ -109,10 +109,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       if (lastCompilationResult && categoryIndex.length > 0) {
         let warningCount = 0
         const warningMessage = []
-        props.analysisModule.call('solidity-logic', 'getCompilerState').then((compilerState) => {
-          const { currentVersion, optimize, evmVersion } = compilerState
-          props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then(console.log)
-        })
+        if(slitherEnabled) {
+          props.analysisModule.call('solidity-logic', 'getCompilerState').then((compilerState) => {
+            const { currentVersion, optimize, evmVersion } = compilerState
+            props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then(console.log)
+          })
+        }
         runner.run(lastCompilationResult, categoryIndex, results => {
           results.map((result) => {
             let moduleName
