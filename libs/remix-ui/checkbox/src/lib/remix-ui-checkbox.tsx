@@ -12,6 +12,7 @@ export interface RemixUiCheckboxProps {
   id?: string
   itemName?: string
   categoryId?: string
+  visibility?: string
 }
 
 export const RemixUiCheckbox = ({
@@ -23,10 +24,11 @@ export const RemixUiCheckbox = ({
   checked,
   onChange,
   itemName,
-  categoryId
+  categoryId,
+  visibility
 }: RemixUiCheckboxProps) => {
   return (
-    <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: 'flex', alignItems: 'center' }} onClick={onClick}>
+    <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: 'flex', alignItems: 'center', visibility: `${visibility}` }} onClick={onClick}>
       <input
         id={id}
         type={inputType}
