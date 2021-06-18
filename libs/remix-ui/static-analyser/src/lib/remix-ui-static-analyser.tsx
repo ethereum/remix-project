@@ -56,6 +56,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
+  const [showSlither, setShowSlither] = useState('hidden')
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
 
   const warningContainer = React.useRef(null)
@@ -77,6 +78,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
     return () => { }
   }, [state])
+
+  useEffect(() => {
+    props.analysisModule.on('filePanel', 'setWorkspace', (currentWorkspace) => {
+      if(currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither('visible')
+    })
+    return () => { }
+  })
 
   const message = (name, warning, more, fileName, locationString) : string => {
     return (`
@@ -329,6 +337,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             checked={slitherEnabled}
             label="Enable Slither Analysis"
             onChange={() => {}}
+            visibility = {showSlither}
           />
         </div>
       </div>
