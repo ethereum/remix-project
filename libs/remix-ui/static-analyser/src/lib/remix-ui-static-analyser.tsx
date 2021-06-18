@@ -56,6 +56,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
+  const [showSlither, setShowSlither] = useState('hidden')
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
 
   const warningContainer = React.useRef(null)
@@ -341,6 +342,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             checked={slitherEnabled}
             label="Enable Slither Analysis"
             onChange={() => {}}
+            visibility = {showSlither}
           />
         </div>
       </div>
