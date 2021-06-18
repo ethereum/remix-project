@@ -228,7 +228,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="solidityLocals"]', 60000)
       .pause(10000)
       .checkVariableDebug('soliditylocals', { num: { value: '2', type: 'uint256' } })
-      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false } })
+      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })
       .end()
   }
 }
