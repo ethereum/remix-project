@@ -55,6 +55,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     return indexOfCategory
   }
   const [autoRun, setAutoRun] = useState(true)
+  const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
 
   const warningContainer = React.useRef(null)
@@ -223,6 +224,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
   }
 
+  const handleSlitherEnabled = () => {
+    if (slitherEnabled) {
+      setSlitherEnabled(false)
+    } else {
+      setSlitherEnabled(true)
+    }
+  }
+
   const handleAutoRun = () => {
     if (autoRun) {
       setAutoRun(false)
@@ -321,6 +330,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             onChange={() => {}}
           />
           <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={state.data === null || categoryIndex.length === 0 }/>
+        </div> 
+        <div className="d-flex" id="enableSlitherAnalysis">
+          <RemixUiCheckbox
+            id="enableSlither"
+            inputType="checkbox"
+            onClick={handleSlitherEnabled}
+            checked={slitherEnabled}
+            label="Enable Slither Analysis"
+            onChange={() => {}}
+          />
         </div>
       </div>
       <div id="staticanalysismodules" className="list-group list-group-flush">
