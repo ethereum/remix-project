@@ -174,7 +174,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         setState(prevState => {
           return {
             ...prevState,
-            validationError: 'Unfortunately, the Kovan network is not supported.'
+            validationError: 'The Kovan network is unfortunately not supported.'
           }
         })
         return
