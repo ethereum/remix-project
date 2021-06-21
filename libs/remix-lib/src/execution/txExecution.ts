@@ -92,7 +92,7 @@ export function checkVMError (execResult, abi) {
     const returnDataHex = returnData.slice(0, 4).toString('hex')
     let customError
     if (abi) {
-      let decodedCustomErrorInputs
+      let decodedCustomErrorInputsClean
       for (const item of abi) {
         if (item.type === 'error') {
           // ethers doesn't crash anymore if "error" type is specified, but it doesn't extract the errors. see:
@@ -104,16 +104,22 @@ export function checkVMError (execResult, abi) {
           if (!sign) continue
           if (returnDataHex === sign.replace('0x', '')) {
             customError = item.name
-            decodedCustomErrorInputs = fn.decodeFunctionData(fn.getFunction(item.name), returnData)
+            let functionDesc = fn.getFunction(item.name)
+            let decodedCustomErrorInputs = fn.decodeFunctionData(functionDesc, returnData)
+            decodedCustomErrorInputsClean = {}
+            for (const input of functionDesc.inputs) {
+              const v = decodedCustomErrorInputs[input.name]
+              decodedCustomErrorInputsClean[input.name] = v.toString ? v.toString() : v
+            }
             break
           }
         }
       }
-      if (decodedCustomErrorInputs) {
+      if (decodedCustomErrorInputsClean) {
         msg = '\tThe transaction has been reverted to the initial state.\nError provided by the contract:'
         msg += `\n${customError}`
         msg += '\nParameters:'
-        msg += `\n${decodedCustomErrorInputs}`
+        msg += `\n${JSON.stringify(decodedCustomErrorInputsClean, null, ' ')}`
       }
     }
     if (!customError) {
