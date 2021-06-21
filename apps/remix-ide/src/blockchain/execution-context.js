@@ -136,7 +136,7 @@ export class ExecutionContext {
       return cb()
     }
 
-    this.currentFork = this.defaultFork
+    this.currentFork = this.defaultFork // in the case of injected and web3, we default to the last fork.
 
     if (context === 'injected') {
       if (injectedProvider === undefined) {

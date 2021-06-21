@@ -295,7 +295,7 @@ class SettingsUI {
    */
   _getProviderDropdownValue () {
     const provider = this.blockchain.getProvider()
-    const fork = this.blockchain.getFork()
+    const fork = this.blockchain.getCurrentFork()
     return provider === 'vm' ? provider + '-' + fork : provider
   }
 
