@@ -189,7 +189,7 @@ export class VmDebuggerLogic {
       })
     })
 
-    this.debugger.event.register('indexChanged', this, async (index) => {
+    this.debugger.event.register('indexChanged', this, (index) => {
       if (index < 0) return
       if (this.stepManager.currentStepIndex !== index) return
       if (!this.storageResolver) return
@@ -201,13 +201,11 @@ export class VmDebuggerLogic {
       for (var k in this.addresses) {
         var address = this.addresses[k]
         var storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
-        try {
-          storageJSON[address] = await storageViewer.storageRange()
-        } catch (e) {
-          console.error(e)
-        }
+        storageViewer.storageRange().then((result) => {
+          storageJSON[address] = result
+          this.event.trigger('traceStorageUpdate', [storageJSON])
+        })
       }
-      this.event.trigger('traceStorageUpdate', [storageJSON])
     })
   }
 
