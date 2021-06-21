@@ -44,14 +44,14 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
     noInstances.parentNode.removeChild(noInstances)
   }
   const abi = txHelper.sortAbiFunction(contract.abi)
-  return this.renderInstanceFromABI(abi, address, contractName)
+  return this.renderInstanceFromABI(abi, address, contractName, contract)
 }
 
 // TODO this function was named before "appendChild".
 // this will render an instance: contract name, contract address, and all the public functions
 // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
 // this returns a DOM element
-UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
+UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName, contract) {
   const self = this
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   address = ethJSUtil.toChecksumAddress(address)
@@ -117,7 +117,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       funABI: funABI,
       address: address,
       contractABI: contractABI,
-      contractName: contractName
+      contractName: contractName,
+      contract
     }))
   })
 
@@ -255,6 +256,7 @@ UniversalDAppUI.prototype.runTransaction = function (lookupOnly, args, valArr, i
     args.contractName,
     args.contractABI,
     args.funABI,
+    args.contract,
     inputsValues,
     args.address,
     params,
