@@ -110,7 +110,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       if (lastCompilationResult && categoryIndex.length > 0) {
         let warningCount = 0
         const warningMessage = []
-        if(slitherEnabled) {
+        if (slitherEnabled) {
           props.analysisModule.call('solidity-logic', 'getCompilerState').then((compilerState) => {
             const { currentVersion, optimize, evmVersion } = compilerState
             props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion }).then(console.log)
@@ -333,7 +333,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             onChange={() => {}}
           />
           <Button buttonText="Run" onClick={() => run(state.data, state.source, state.file)} disabled={state.data === null || categoryIndex.length === 0 }/>
-        </div> 
+        </div>
         <div className="d-flex" id="enableSlitherAnalysis">
           <RemixUiCheckbox
             id="enableSlither"
