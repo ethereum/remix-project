@@ -208,7 +208,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }
         return null
       },
-      debugWithGeneratedSources: state.opt.debugWithGeneratedSources
+      debugWithGeneratedSources: state.opt.debugWithGeneratedSources,
+      fork: 'berlin'
     })
 
     debuggerInstance.debug(blockNumber, txNumber, tx, () => {
