@@ -142,6 +142,23 @@ module.exports = {
   'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal': function (browser: NightwatchBrowser) {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
+      .click('*[data-id="settingsWeb3Mode"]')
+      .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
+      .click('#runTabView button[class^="instanceButton"]')
+      .waitForElementPresent('.instance:nth-of-type(3)')
+      .click('.instance:nth-of-type(3) > div > button')
+      .clickFunction('g - transact (not payable)')
+      .journalLastChildIncludes('Error provided by the contract:')
+      .journalLastChildIncludes('CustomError')
+      .journalLastChildIncludes('Parameters:')
+      .journalLastChildIncludes('2,3,error_string_2')
+      .journalLastChildIncludes('Debug the transaction to get more information.')
+  },
+
+  'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal , using London VM Fork': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="settingsVMLondonMode"]') // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(3)')
