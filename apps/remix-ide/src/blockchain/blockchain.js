@@ -208,7 +208,10 @@ class Blockchain {
     return this.executionContext.getProvider()
   }
 
-  getFork () {
+  /**
+   * return the fork name applied to the current envionment
+   * @return {String} - fork name
+   */
     return this.executionContext.getCurrentFork()
   }
 
