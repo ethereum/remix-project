@@ -34,7 +34,7 @@ export class CodeManager {
           })
         })
       },
-      fork: this.traceManager.getFork()
+      fork: this.traceManager.getCurrentFork()
     })
   }
 

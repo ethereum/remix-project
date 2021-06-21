@@ -72,7 +72,7 @@ export class TraceManager {
     this.traceCache.init()
   }
 
-  getFork () {
+  getCurrentFork () {
     return this.fork
   }
 
