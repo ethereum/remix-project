@@ -1,5 +1,5 @@
 'use strict'
-import { Transaction } from '@ethereumjs/tx'
+import { Transaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
 import { Block } from '@ethereumjs/block'
 import { BN, bufferToHex, Address } from 'ethereumjs-util'
 import { EventManager } from '../eventManager'
@@ -71,14 +71,28 @@ export class TxRunnerVM {
           }
         }
       }
-      const tx = Transaction.fromTxData({
-        nonce: new BN(res.nonce),
-        gasPrice: '0x1',
-        gasLimit: gasLimit,
-        to: to,
-        value: value,
-        data: Buffer.from(data.slice(2), 'hex')
-      }, { common: this.commonContext }).sign(account.privateKey)
+
+      let tx
+      if (this.commonContext.hardfork === 'berlin' || this.commonContext.hardfork === 'muirglacier') {
+        tx = Transaction.fromTxData({
+          nonce: new BN(res.nonce),
+          gasPrice: '0x1',
+          gasLimit: gasLimit,
+          to: to,
+          value: value,
+          data: Buffer.from(data.slice(2), 'hex')
+        }, { common: this.commonContext }).sign(account.privateKey)
+      } else {
+        tx = FeeMarketEIP1559Transaction.fromTxData({
+          nonce: new BN(res.nonce),
+          maxPriorityFeePerGas: '0x01',
+          maxFeePerGas: '0x1',
+          gasLimit: gasLimit,
+          to: to,
+          value: value,
+          data: Buffer.from(data.slice(2), 'hex')
+        }).sign(account.privateKey)
+      }
 
       const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
       const difficulties = [new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10)]
