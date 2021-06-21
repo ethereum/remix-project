@@ -148,9 +148,14 @@ module.exports = {
       .click('.instance:nth-of-type(3) > div > button')
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
-      .journalLastChildIncludes('CustomError')
+      .journalLastChildIncludes('CustomError: error description')
       .journalLastChildIncludes('Parameters:')
-      .journalLastChildIncludes('2,3,error_string_2')
+      .journalLastChildIncludes('"value": "2",')
+      .journalLastChildIncludes('"value": "3",')
+      .journalLastChildIncludes('"value": "error_string_2",')
+      .journalLastChildIncludes('"documentation": "param1"')
+      .journalLastChildIncludes('"documentation": "param2"')
+      .journalLastChildIncludes('"documentation": "param3"')
       .journalLastChildIncludes('Debug the transaction to get more information.')
   },
 
@@ -256,6 +261,10 @@ contract C {
 
       pragma solidity ^0.8.4;
       
+      /// error description
+      /// @param a param1
+      /// @param b param2
+      /// @param c param3
       error CustomError(uint a, uint b, string c);
       contract C {
           function f() public pure {
