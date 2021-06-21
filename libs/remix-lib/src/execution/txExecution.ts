@@ -104,14 +104,14 @@ export function checkVMError (execResult, abi, contract) {
           if (!sign) continue
           if (returnDataHex === sign.replace('0x', '')) {
             customError = item.name
-            let functionDesc = fn.getFunction(item.name)
-            let decodedCustomErrorInputs = fn.decodeFunctionData(functionDesc, returnData)
+            const functionDesc = fn.getFunction(item.name)
+            const decodedCustomErrorInputs = fn.decodeFunctionData(functionDesc, returnData)
             decodedCustomErrorInputsClean = {}
             let devdoc = {}
             if (contract && fn.functions && Object.keys(fn.functions).length) {
               const functionSignature = Object.keys(fn.functions)[0]
               devdoc = contract.object.devdoc.errors[functionSignature][0] || {}
-              let userdoc = contract.object.userdoc.errors[functionSignature][0] || {}
+              const userdoc = contract.object.userdoc.errors[functionSignature][0] || {}
               if (userdoc) customError += ' : ' + (userdoc as any).notice
             }
             for (const input of functionDesc.inputs) {
