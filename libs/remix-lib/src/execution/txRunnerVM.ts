@@ -72,8 +72,9 @@ export class TxRunnerVM {
         }
       }
 
+      let EIP1559 = this.commonContext.hardfork() !== 'berlin'
       let tx
-      if (this.commonContext.hardfork === 'berlin' || this.commonContext.hardfork === 'muirglacier') {
+      if (!EIP1559) {
         tx = Transaction.fromTxData({
           nonce: new BN(res.nonce),
           gasPrice: '0x1',
@@ -103,7 +104,8 @@ export class TxRunnerVM {
           number: self.blockNumber,
           coinbase: coinbases[self.blockNumber % coinbases.length],
           difficulty: difficulties[self.blockNumber % difficulties.length],
-          gasLimit: new BN(gasLimit.replace('0x', ''), 16).imuln(2)
+          gasLimit: new BN(gasLimit.replace('0x', ''), 16).imuln(2),
+          baseFeePerGas: EIP1559 ? '0x1' : undefined
         },
         transactions: [tx]
       }, { common: this.commonContext })
