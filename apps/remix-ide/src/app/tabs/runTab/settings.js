@@ -102,10 +102,6 @@ class SettingsUI {
               title="Execution environment does not connect to any node, everything is local and in memory only."
               value="vm-berlin" name="executionContext" fork="berlin" > JavaScript VM (Berlin)
             </option>
-            <option id="vm-mode-muirglacier" data-id="settingsVMMuirGlacierMode"
-              title="Execution environment does not connect to any node, everything is local and in memory only."
-              value="vm-istanbul" name="executionContext" fork="muirglacier"> JavaScript VM (Muirglacier)
-            </option>
             <option id="vm-mode-london" data-id="settingsVMLondonMode"
               title="Execution environment does not connect to any node, everything is local and in memory only."
               value="vm-london" name="executionContext" fork="london"> JavaScript VM (London)
