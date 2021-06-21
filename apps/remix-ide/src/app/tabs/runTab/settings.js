@@ -104,7 +104,7 @@ class SettingsUI {
             </option>
             <option id="vm-mode-muirglacier"
               title="Execution environment does not connect to any node, everything is local and in memory only."
-              value="vm-istanbul" name="executionContext" fork="istanbul"> JavaScript VM (Istanbul)
+              value="vm-istanbul" name="executionContext" fork="muirglacier"> JavaScript VM (Muirglacier)
             </option>
             <option id="vm-mode-london"
               title="Execution environment does not connect to any node, everything is local and in memory only."
@@ -245,9 +245,9 @@ class SettingsUI {
 
     selectExEnv.addEventListener('change', (event) => {
       const provider = selectExEnv.options[selectExEnv.selectedIndex]
-      const fork = provider.getAttribute('fork')
+      const fork = provider.getAttribute('fork') // can be undefined if connected to an external source (web3 provider / injected)
       let context = provider.value
-      context = context.startsWith('vm') ? 'vm' : context
+      context = context.startsWith('vm') ? 'vm' : context // context has to be 'vm', 'web3' or 'injected'
       this.setExecutionContext({ context, fork })
     })
 
@@ -289,6 +289,10 @@ class SettingsUI {
     `
   }
 
+  /**
+   * generate a value used by the env dropdown list.
+   * @return {String} - can return 'vm-berlin, 'vm-london', 'injected' or 'web3'
+   */
   _getProviderDropdownValue () {
     const provider = this.blockchain.getProvider()
     const fork = this.blockchain.getFork()
