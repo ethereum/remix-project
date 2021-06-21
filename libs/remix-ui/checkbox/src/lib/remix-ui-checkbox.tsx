@@ -1,4 +1,4 @@
-import React from 'react'  //eslint-disable-line
+import React, { CSSProperties } from 'react'  //eslint-disable-line
 import './remix-ui-checkbox.css'
 
 /* eslint-disable-next-line */
@@ -28,7 +28,7 @@ export const RemixUiCheckbox = ({
   visibility
 }: RemixUiCheckboxProps) => {
   return (
-    <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: 'flex', alignItems: 'center', visibility: `${visibility}` }} onClick={onClick}>
+    <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: 'flex', alignItems: 'center', visibility: visibility } as CSSProperties } onClick={onClick}>
       <input
         id={id}
         type={inputType}
