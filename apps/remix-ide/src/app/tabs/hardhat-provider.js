@@ -39,13 +39,17 @@ export default class HardhatProvider extends Plugin {
 
   sendAsync (data) {
     return new Promise((resolve, reject) => {
+      // If provider is not set, allow to open modal only when provider is trying to connect
       if (!this.provider || data.method === 'net_listening') {
         modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
           this.provider = new Web3.providers.HttpProvider(target)
           this.sendAsyncInternal(data, resolve, reject)
         }, () => {
+          // If 'cancel' is clicked while trying to connect, handle it in custom manner
           if (data.method === 'net_listening') resolve({ jsonrpc: '2.0', result: 'canceled', id: data.id })
           else {
+            // When node is abruptly stopped, modal will appear
+            // On which clicking on 'Cancel' will set the Envrionment to VM
             this.blockchain.changeExecutionContext('vm')
             this.provider = this.blockchain.getCurrentProvider()
             reject(new Error('Connection canceled'))
