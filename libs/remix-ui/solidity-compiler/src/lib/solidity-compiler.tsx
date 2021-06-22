@@ -3,6 +3,7 @@ import { SolidityCompilerProps } from './types'
 import { CompilerContainer } from './compiler-container' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Renderer } from '@remix-ui/renderer'
 
 import './css/style.css'
 
