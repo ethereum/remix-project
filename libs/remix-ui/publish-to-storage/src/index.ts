@@ -1,1 +1,1 @@
-export * from './lib/remix-ui-publish-to-storage';
+export * from './lib/publish-to-storage'

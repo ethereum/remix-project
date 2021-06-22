@@ -6,7 +6,8 @@ export interface SolidityCompilerProps {
   fileManager: any,
   contentImport: any,
   plugin: any,
-  queryParams: any
+  queryParams: any,
+  compileTabLogic: any
 }
 
 export interface CompilerContainerProps {

@@ -5,7 +5,7 @@ import { PublishToStorage } from '@remix-ui/publish-to-storage'
 import './css/style.css'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const { contractMap, fileManager, fileProvider } = props
+  const { contractMap } = props
   const [state, setState] = useState({
     contractList: null,
     selectedContract: ''

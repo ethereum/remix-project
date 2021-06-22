@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react' // eslint-disable-line
 import { SolidityCompilerProps } from './types'
 import { CompilerContainer } from './compiler-container' // eslint-disable-line
-import CompileTabLogic from './compileTabLogic'
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { editor, config, fileProvider, fileManager, contentImport, queryParams, plugin } = props
+  const { editor, config, queryParams, plugin, compileTabLogic } = props
   const [state, setState] = useState({
     contractsDetails: {},
     eventHandlers: {},
@@ -27,17 +26,6 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       handleHide: null
     }
   })
-
-  useEffect(() => {
-    const miscApi = { clearAnnotations }
-    const compileTabLogic = new CompileTabLogic(queryParams, fileManager, editor, config, fileProvider, contentImport, miscApi)
-    const compiler = compileTabLogic.compiler
-
-    compileTabLogic.init()
-    setState(prevState => {
-      return { ...prevState, compileTabLogic, compiler }
-    })
-  }, [])
 
   const toast = (message: string) => {
     setState(prevState => {
@@ -71,11 +59,11 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       return { ...prevState, modal: { ...state.modal, hide: true, message: null } }
     })
   }
-  // this.onActivationInternal()
+
   return (
     <>
       <div id="compileTabView">
-        <CompilerContainer editor={editor} config={config} queryParams={queryParams} compileTabLogic={state.compileTabLogic} tooltip={toast} modal={modal} />
+        <CompilerContainer editor={editor} config={config} queryParams={queryParams} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} />
         {/* ${this._view.contractSelection} */}
         <div className="remixui_errorBlobs p-4" data-id="compiledErrors"></div>
       </div>

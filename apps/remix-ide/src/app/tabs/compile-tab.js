@@ -1,4 +1,7 @@
 /* global */
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
+import { SolidityCompiler } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import publishToStorage from '../../publishToStorage'
@@ -19,9 +22,7 @@ const Renderer = require('../ui/renderer')
 const globalRegistry = require('../../global/registry')
 
 var css = require('./styles/compile-tab-styles')
-
-const CompileTabLogic = require('./compileTab/compileTab.js')
-const CompilerContainer = require('./compileTab/compilerContainer.js')
+// const CompilerContainer = require('./compileTab/compilerContainer.js')
 
 const profile = {
   name: 'solidity',
@@ -73,18 +74,11 @@ class CompileTab extends ViewPlugin {
       this.fileProvider,
       this.contentImport
     )
-  }
-
-  onActivationInternal () {
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
 
-    this.compilerContainer = new CompilerContainer(
-      this.compileTabLogic,
-      this.editor,
-      this.config,
-      this.queryParams
-    )
+    this.el = document.createElement('div')
+    this.el.setAttribute('id', 'compileTabView')
   }
 
   resetResults () {
@@ -490,19 +484,23 @@ class CompileTab extends ViewPlugin {
   }
 
   render () {
-    if (this._view.el) return this._view.el
-    this.onActivationInternal()
-    this._view.errorContainer = yo`<div class="${css.errorBlobs} p-4" data-id="compiledErrors" ></div>`
-    this._view.contractSelection = this.contractSelection()
-    this._view.compilerContainer = this.compilerContainer.render()
-    this.compilerContainer.activate()
-    this._view.el = yo`
-      <div id="compileTabView">
-        ${this._view.compilerContainer}
-        ${this._view.contractSelection}
-        ${this._view.errorContainer}
-      </div>`
-    return this._view.el
+    this.renderComponent()
+    return this.el
+  }
+
+  renderComponent () {
+    ReactDOM.render(
+      <SolidityCompiler
+        editor={this.editor}
+        config={this.config}
+        fileProvider={this.fileProvider}
+        fileManager={this.fileManager}
+        contentImport={this.contentImport}
+        queryParams={this.queryParams}
+        plugin={this}
+        compileTabLogic={this.compileTabLogic}
+      />
+      , this.el)
   }
 
   onActivation () {
