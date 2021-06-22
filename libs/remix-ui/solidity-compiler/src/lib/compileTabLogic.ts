@@ -1,14 +1,25 @@
-var Compiler = require('@remix-project/remix-solidity').Compiler
+import { Plugin } from '@remixproject/engine'
 
-export default class CompileTab {
+const packageJson = require('../../../../../package.json')
+const Compiler = require('@remix-project/remix-solidity').Compiler
+const EventEmitter = require('events')
+const profile = {
+  name: 'solidity-logic',
+  displayName: 'Solidity compiler logic',
+  description: 'Compile solidity contracts - Logic',
+  version: packageJson.version
+}
+export default class CompileTab extends Plugin {
   public compiler
   public optimize
   public runs: number
   public evmVersion: string
   public compilerImport
+  public event
 
-  constructor (public queryParams, public fileManager, public editor, public config, public fileProvider, public contentImport, public miscApi) {
-    // this.event = new EventEmitter()
+  constructor (public queryParams, public fileManager, public editor, public config, public fileProvider, public contentImport) {
+    super(profile)
+    this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => this.compilerImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
   }
 
@@ -64,23 +75,50 @@ export default class CompileTab {
   compileFile (target) {
     if (!target) throw new Error('No target provided for compiliation')
     const provider = this.fileManager.fileProviderOf(target)
-
     if (!provider) throw new Error(`cannot compile ${target}. Does not belong to any explorer`)
     return new Promise((resolve, reject) => {
       provider.get(target, (error, content) => {
         if (error) return reject(error)
         const sources = { [target]: { content } }
-        // this.event.emit('startingCompilation')
+        this.event.emit('startingCompilation')
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
         setTimeout(() => { this.compiler.compile(sources, target); resolve(true) }, 100)
       })
     })
   }
 
-  runCompiler () {
+  async isHardhatProject () {
+    if (this.fileManager.mode === 'localhost') {
+      return await this.fileManager.exists('hardhat.config.js')
+    } else return false
+  }
+
+  runCompiler (hhCompilation) {
     try {
+      if (this.fileManager.mode === 'localhost' && hhCompilation) {
+        const { currentVersion, optimize, runs } = this.compiler.state
+        if (currentVersion) {
+          const fileContent = `module.exports = {
+            solidity: '${currentVersion.substring(0, currentVersion.indexOf('+commit'))}',
+            settings: {
+              optimizer: {
+                enabled: ${optimize},
+                runs: ${runs}
+              }
+            }
+          }
+          `
+          const configFilePath = 'remix-compiler.config.js'
+          this.fileManager.setFileContent(configFilePath, fileContent)
+          this.call('hardhat', 'compile', configFilePath).then((result) => {
+            this.call('terminal', 'log', { type: 'info', value: result })
+          }).catch((error) => {
+            this.call('terminal', 'log', { type: 'error', value: error })
+          })
+        }
+      }
       this.fileManager.saveCurrentFile()
-      this.miscApi.clearAnnotations()
+      this.event.emit('removeAnnotations')
       var currentFile = this.config.get('currentFile')
       return this.compileFile(currentFile)
     } catch (err) {
