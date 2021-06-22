@@ -16,7 +16,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     timeout: 300,
     allversions: [],
     selectedVersion: null,
-    defaultVersion: 'soljson-v0.7.4+commit.3f05b770.js', // this default version is defined: in makeMockCompiler (for browser test)
+    defaultVersion: 'soljson-v0.8.4+commit.c7e474f2.js', // this default version is defined: in makeMockCompiler (for browser test)
     selectedLanguage: '',
     runs: '',
     compiledFileName: '',
@@ -38,7 +38,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         setState(prevState => {
           return { ...prevState, selectedVersion }
         })
-        // if (this._view.versionSelector) this._updateVersionSelector()
+        _updateVersionSelector()
       }
     })
   }, [])
@@ -48,7 +48,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       compileTabLogic.compiler.event.register('compilerLoaded', compilerLoaded)
 
       setState(prevState => {
-        return { ...prevState, hideWarnings: config.get('hideWarnings'), autoCompile: config.get('autoCompile'), optimise: config.get('optimise') }
+        return {
+          ...prevState,
+          hideWarnings: config.get('hideWarnings') || false,
+          autoCompile: config.get('autoCompile') || false,
+          optimise: config.get('optimise') || false,
+          includeNightlies: config.get('includeNightlies') || false
+        }
       })
     }
   }, [compileTabLogic])
@@ -286,7 +292,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       if (!location.endsWith('/')) location += '/'
       url = location + 'soljson.js'
     } else {
-      console.log('selectedVersion: ', selectedVersion)
       if (selectedVersion.indexOf('soljson') !== 0 || helper.checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed')
       }
@@ -406,9 +411,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
-  const handleNightliesChange = () => {
+  const handleNightliesChange = (e) => {
+    const checked = e.target.checked
+
+    config.set('includeNightlies', checked)
     setState(prevState => {
-      return { ...prevState, includeNightlies: !prevState.includeNightlies }
+      return { ...prevState, includeNightlies: checked }
     })
   }
 
@@ -441,19 +449,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               Compiler
               <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promtCompiler} title="Add a custom compiler with URL"></button>
             </label>
-            <select onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
-              { state.allversions.length <= 0 && <option disabled selected>{ state.defaultVersion }</option> }
+            <select defaultValue={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
+              { state.allversions.length <= 0 && <option disabled>{ state.defaultVersion }</option> }
               { state.allversions.length <= 0 && <option disabled>builtin</option> }
               { state.allversions.map((build, i) => {
                 return _shouldBeAdded(build.longVersion)
-                  ? <option key={i} value={build.path} selected={build.path === state.selectedVersion}>{build.longVersion}</option>
+                  ? <option key={i} value={build.path}>{build.longVersion}</option>
                   : null
               })
               }
             </select>
           </div>
           <div className="mb-2 remixui_nightlyBuilds custom-control custom-checkbox">
-            <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} />
+            <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
             <label htmlFor="nightlies" className="form-check-label custom-control-label">Include nightly builds</label>
           </div>
           <div className="mb-2">
@@ -480,28 +488,28 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <div className="mt-3">
             <p className="mt-2 remixui_compilerLabel">Compiler Configuration</p>
             <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              <input className="remixui_autocompile custom-control-input" onChange={handleAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" type="checkbox" title="Auto compile" checked={state.autoCompile} />
+              <input className="remixui_autocompile custom-control-input" type="checkbox" onChange={handleAutoCompile} data-id="compilerContainerAutoCompile" id="autoCompile" title="Auto compile" checked={state.autoCompile} />
               <label className="form-check-label custom-control-label" htmlFor="autoCompile">Auto compile</label>
             </div>
             <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
               <div className="justify-content-between align-items-center d-flex">
-                <input onChange={handleOptimizeChange} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimise} />
+                {/* <input onChange={handleOptimizeChange} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimise} /> */}
                 <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
-                <input
+                {/* <input
                   min="1"
                   className="custom-select ml-2 remixui_runs"
                   id="runs"
                   placeholder="200"
-                  value="200"
+                  defaultValue="200"
                   type="number"
                   title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
                   onChange={onChangeRuns}
                   disabled={!state.optimise}
-                />
+                /> */}
               </div>
             </div>
             <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              <input className="remixui_autocompile custom-control-input" onChange={handleHideWarningsChange} id="hideWarningsBox" type="checkbox" title="Hide warnings" checked={state.hideWarnings} />
+              {/* <input className="remixui_autocompile custom-control-input" onChange={handleHideWarningsChange} id="hideWarningsBox" type="checkbox" title="Hide warnings" checked={state.hideWarnings} /> */}
               <label className="form-check-label custom-control-label" htmlFor="hideWarningsBox">Hide warnings</label>
             </div>
           </div>
