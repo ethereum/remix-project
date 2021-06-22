@@ -39,12 +39,17 @@ export default class HardhatProvider extends Plugin {
 
   sendAsync (data) {
     return new Promise((resolve, reject) => {
-      if (!this.provider) {
+      if (!this.provider || data.method === 'net_listening') {
         modalDialogCustom.prompt('Hardhat node request', this.hardhatProviderDialogBody(), 'http://127.0.0.1:8545', (target) => {
           this.provider = new Web3.providers.HttpProvider(target)
           this.sendAsyncInternal(data, resolve, reject)
         }, () => {
-          this.sendAsyncInternal(data, resolve, reject)
+          if (data.method === 'net_listening') resolve({ jsonrpc: '2.0', result: 'canceled', id: data.id })
+          else {
+            this.blockchain.changeExecutionContext('vm')
+            this.provider = this.blockchain.getCurrentProvider()
+            reject(new Error('Connection canceled'))
+          }
         })
       } else {
         this.sendAsyncInternal(data, resolve, reject)
@@ -62,8 +67,7 @@ export default class HardhatProvider extends Plugin {
         resolve(message)
       })
     } else {
-      const result = data.method === 'net_listening' ? 'canceled' : []
-      resolve({ jsonrpc: '2.0', result: result, id: data.id })
+      resolve({ jsonrpc: '2.0', result: [], id: data.id })
     }
   }
 }
