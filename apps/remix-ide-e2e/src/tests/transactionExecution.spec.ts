@@ -148,7 +148,7 @@ module.exports = {
       .click('.instance:nth-of-type(3) > div > button')
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
-      .journalLastChildIncludes('CustomError: error description')
+      .journalLastChildIncludes('CustomError : error description')
       .journalLastChildIncludes('Parameters:')
       .journalLastChildIncludes('"value": "2",')
       .journalLastChildIncludes('"value": "3",')
