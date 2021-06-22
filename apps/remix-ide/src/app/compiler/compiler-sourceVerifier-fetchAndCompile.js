@@ -1,7 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
 import { compile } from './compiler-helpers'
-import globalRegistry from '../../global/registry'
 
 import remixLib from '@remix-project/remix-lib'
 const ethutil = require('ethereumjs-util')
@@ -32,11 +31,10 @@ export default class FetchAndCompile extends Plugin {
    */
   async resolve (contractAddress, codeAtAddress, targetPath) {
     contractAddress = ethutil.toChecksumAddress(contractAddress)
-    const compilersartefacts = globalRegistry.get('compilersartefacts').api
 
-    const localCompilation = () => compilersartefacts.get(contractAddress) ? compilersartefacts.get(contractAddress) : compilersartefacts.get('__last') ? compilersartefacts.get('__last') : null
+    const localCompilation = () => this.call('compilerArtefacts', 'get', contractAddress) ? this.call('compilerArtefacts', 'get', contractAddress) : this.call('compilerArtefacts', 'get', '__last') ? this.call('compilerArtefacts', 'get', '__last') : null
 
-    const resolved = compilersartefacts.get(contractAddress)
+    const resolved = this.call('compilerArtefacts', 'get', contractAddress)
     if (resolved) return resolved
     if (this.unresolvedAddresses.includes(contractAddress)) return localCompilation()
 
@@ -61,7 +59,7 @@ export default class FetchAndCompile extends Plugin {
         return found
       })
       if (found) {
-        compilersartefacts.addResolvedContract(contractAddress, compilation)
+        this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilation)
         setTimeout(_ => this.emit('usingLocalCompilation', contractAddress), 0)
         return compilation
       }
@@ -119,7 +117,7 @@ export default class FetchAndCompile extends Plugin {
         compilationTargets,
         settings,
         (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
-      compilersartefacts.addResolvedContract(contractAddress, compData)
+      this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
       return compData
     } catch (e) {
       this.unresolvedAddresses.push(contractAddress)

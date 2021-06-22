@@ -3,7 +3,6 @@ import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { RemixURLResolver } from '@remix-project/remix-url-resolver'
 const remixTests = require('@remix-project/remix-tests')
-const globalRegistry = require('../../global/registry')
 const addTooltip = require('../ui/tooltip')
 const async = require('async')
 
@@ -18,11 +17,13 @@ module.exports = class CompilerImports extends Plugin {
   constructor (fileManager) {
     super(profile)
     this.fileManager = fileManager
-    // const token = await this.call('settings', 'getGithubAccessToken')
-    const token = globalRegistry.get('config').api.get('settings/gist-access-token') // TODO replace with the plugin call above https://github.com/ethereum/remix-ide/issues/2288
-    const protocol = window.location.protocol
-    this.urlResolver = new RemixURLResolver(token, protocol)
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
+  }
+
+  onActivation () {
+    const protocol = window.location.protocol
+    const token = this.call('settings', 'getGithubAccessToken')
+    this.urlResolver = new RemixURLResolver(token, protocol)
   }
 
   isRelativeImport (url) {

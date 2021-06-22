@@ -5,7 +5,7 @@ import CompilerAbstract from './compiler-abstract'
 
 const profile = {
   name: 'compilerArtefacts',
-  methods: [],
+  methods: ['get', 'addResolvedContract'],
   events: [],
   version: packageJson.version
 }
