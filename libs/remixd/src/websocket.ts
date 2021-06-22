@@ -9,7 +9,7 @@ export default class WebSocket {
 
   constructor (public port: number, public opt: WebsocketOpt, public getclient: () => ServiceClient) {} //eslint-disable-line
 
-  start (callback?: (ws: WS, client: ServiceClient) => void): void {
+  start (callback?: (ws: WS, client: ServiceClient, error?: Error) => void): void {
     this.server = http.createServer((request, response) => {
       console.log((new Date()) + ' Received request for ' + request.url)
       response.writeHead(404)
@@ -21,9 +21,15 @@ export default class WebSocket {
       65521: 'git',
       65522: 'hardhat'
     }
+
+    this.server.on('error', (error: Error) => {
+      if (callback)callback(null, null, error)
+    })
+
     this.server.listen(this.port, loopback, () => {
       console.log('\x1b[32m%s\x1b[0m', `[INFO] ${new Date()} ${listeners[this.port]} is listening on ${loopback}:${this.port}`)
     })
+
     this.wsServer = new WS.Server({
       server: this.server,
       verifyClient: (info, done) => {
