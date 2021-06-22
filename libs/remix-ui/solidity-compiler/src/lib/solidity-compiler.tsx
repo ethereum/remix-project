@@ -43,6 +43,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
         ...prevState,
         modal: {
           ...prevState.modal,
+          hide: false,
           message,
           title,
           okLabel,
@@ -74,7 +75,9 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
         message={ state.modal.message }
         hide={ state.modal.hide }
         okLabel={ state.modal.okLabel }
+        okFn={ state.modal.okFn }
         cancelLabel={ state.modal.cancelLabel }
+        cancelFn={ state.modal.cancelFn }
         handleHide={ handleHideModal }>
         { (typeof state.modal.message !== 'string') && state.modal.message }
       </ModalDialog>
