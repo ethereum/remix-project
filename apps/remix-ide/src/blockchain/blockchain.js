@@ -208,6 +208,14 @@ class Blockchain {
     return this.executionContext.getProvider()
   }
 
+  /**
+   * return the fork name applied to the current envionment
+   * @return {String} - fork name
+   */
+  getCurrentFork () {
+    return this.executionContext.getCurrentFork()
+  }
+
   isWeb3Provider () {
     const isVM = this.getProvider() === 'vm'
     const isInjected = this.getProvider() === 'injected'

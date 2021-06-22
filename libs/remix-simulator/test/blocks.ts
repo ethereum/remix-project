@@ -6,11 +6,11 @@ import * as assert from 'assert'
 
 describe('blocks', () => {
   before(async () => {
-    const provider = new Provider('vm', {
+    const provider = new Provider({
       coinbase: '0x0000000000000000000000000000000000000001'
     })
     await provider.init()
-    web3.setProvider(provider)
+    web3.setProvider(provider as any)
   })
 
   describe('eth_getBlockByNumber', () => {
