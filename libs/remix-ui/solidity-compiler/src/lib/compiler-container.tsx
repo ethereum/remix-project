@@ -15,6 +15,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileTimeout: null,
     timeout: 300,
     allversions: [],
+    customVersions: [],
     selectedVersion: null,
     defaultVersion: 'soljson-v0.8.4+commit.c7e474f2.js', // this default version is defined: in makeMockCompiler (for browser test)
     selectedLanguage: '',
@@ -278,9 +279,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (customUrl !== '') {
       selectedVersion = customUrl
       setState(prevState => {
-        return { ...prevState, selectedVersion }
+        return { ...prevState, selectedVersion, customVersions: [...state.customVersions, selectedVersion] }
       })
-      // this._view.versionSelector.appendChild(yo`<option value="${customUrl}" selected>custom</option>`)
       url = customUrl
       queryParams.update({ version: selectedVersion })
     } else if (selectedVersion === 'builtin') {
@@ -319,14 +319,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   // if (this._view.version) this._view.version.innerText = text
   // }
 
-  const promtCompiler = () => {
+  const promptCompiler = () => {
+    // custom url https://solidity-blog.s3.eu-central-1.amazonaws.com/data/08preview/soljson.js
     modal('Add a custom compiler', promptMessage('URL'), 'OK', addCustomCompiler, 'Cancel', () => {})
-    // modalDialogCustom.prompt(
-    //   'Add a custom compiler',
-    //   'URL',
-    //   '',
-    //   (url) => this.addCustomCompiler(url)
-    // )
   }
 
   const promptMessage = (message) => {
@@ -447,11 +442,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <div className="mb-2">
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
               Compiler
-              <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promtCompiler} title="Add a custom compiler with URL"></button>
+              <button className="far fa-plus-square border-0 p-0 mx-2 btn-sm" onClick={promptCompiler} title="Add a custom compiler with URL"></button>
             </label>
-            <select defaultValue={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
+            <select value={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
               { state.allversions.length <= 0 && <option disabled>{ state.defaultVersion }</option> }
               { state.allversions.length <= 0 && <option disabled>builtin</option> }
+              { state.customVersions.map((url, i) => <option key={i} value={url}>custom</option> )}
               { state.allversions.map((build, i) => {
                 return _shouldBeAdded(build.longVersion)
                   ? <option key={i} value={build.path}>{build.longVersion}</option>
@@ -493,9 +489,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </div>
             <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
               <div className="justify-content-between align-items-center d-flex">
-                {/* <input onChange={handleOptimizeChange} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimise} /> */}
+                <input onChange={handleOptimizeChange} className="custom-control-input" id="optimize" type="checkbox" checked={state.optimise} />
                 <label className="form-check-label custom-control-label" htmlFor="optimize">Enable optimization</label>
-                {/* <input
+                <input
                   min="1"
                   className="custom-select ml-2 remixui_runs"
                   id="runs"
@@ -505,11 +501,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
                   onChange={onChangeRuns}
                   disabled={!state.optimise}
-                /> */}
+                />
               </div>
             </div>
             <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-              {/* <input className="remixui_autocompile custom-control-input" onChange={handleHideWarningsChange} id="hideWarningsBox" type="checkbox" title="Hide warnings" checked={state.hideWarnings} /> */}
+              <input className="remixui_autocompile custom-control-input" onChange={handleHideWarningsChange} id="hideWarningsBox" type="checkbox" title="Hide warnings" checked={state.hideWarnings} />
               <label className="form-check-label custom-control-label" htmlFor="hideWarningsBox">Hide warnings</label>
             </div>
           </div>
