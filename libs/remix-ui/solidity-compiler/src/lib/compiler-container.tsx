@@ -7,7 +7,7 @@ import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promi
 import './css/style.css'
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const { editor, config, queryParams, compileTabLogic, tooltip, modal } = props // eslint-disable-line
+  const { editor, config, queryParams, compileTabLogic, tooltip, modal, compiledFileName } = props // eslint-disable-line
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -59,6 +59,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
     }
   }, [compileTabLogic])
+
+  useEffect(() => {
+    setState(prevState => {
+      return { ...prevState, compiledFileName }
+    })
+  }, [compiledFileName])
 
   const compilerLoaded = (version: string) => {
     setVersionText(version)

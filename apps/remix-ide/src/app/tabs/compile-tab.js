@@ -85,10 +85,11 @@ class CompileTab extends ViewPlugin {
     if (this._view.errorContainer) {
       this._view.errorContainer.innerHTML = ''
     }
-    this.compilerContainer.currentFile = ''
+    this.currentFile = ''
     this.data.contractsDetails = {}
     yo.update(this._view.contractSelection, this.contractSelection())
     this.emit('statusChanged', { key: 'none' })
+    this.renderComponent()
   }
 
   /************
@@ -137,12 +138,14 @@ class CompileTab extends ViewPlugin {
     this.compileTabLogic.event.on('removeAnnotations', this.data.eventHandlers.onRemoveAnnotations)
 
     this.data.eventHandlers.onCurrentFileChanged = (name) => {
-      this.compilerContainer.currentFile = name
+      this.currentFile = name
+      this.renderComponent()
     }
     this.fileManager.events.on('currentFileChanged', this.data.eventHandlers.onCurrentFileChanged)
 
     this.data.eventHandlers.onNoFileSelected = () => {
-      this.compilerContainer.currentFile = ''
+      this.currentFile = ''
+      this.renderComponent()
     }
     this.fileManager.events.on('noFileSelected', this.data.eventHandlers.onNoFileSelected)
 
@@ -499,6 +502,7 @@ class CompileTab extends ViewPlugin {
         queryParams={this.queryParams}
         plugin={this}
         compileTabLogic={this.compileTabLogic}
+        compiledFileName={this.currentFile}
       />
       , this.el)
   }
