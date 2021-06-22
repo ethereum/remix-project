@@ -7,6 +7,7 @@ import PanelsResize from './lib/panels-resize'
 import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
 import { FramingService } from './framingService'
+import { WalkthroughService } from './walkthroughService'
 import { MainView } from './app/panels/main-view'
 import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
@@ -20,7 +21,6 @@ import { MainPanel } from './app/components/main-panel'
 import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports } from '@remix-project/core-plugin'
 
 import migrateFileSystem from './migrateFileSystem'
-const introJs = require('intro.js')
 
 const isElectron = require('is-electron')
 const csjs = require('csjs-inject')
@@ -113,7 +113,11 @@ const css = csjs`
     fill: var(--secondary);
   }
   .centered svg polygon {
-    fill: var(--secondary);
+    fill              : var(--secondary);
+  }
+  .onboarding {
+    color             : var(--text-info);
+    background-color  : var(--info)
   }
   .matomoBtn {
     width              : 100px;
@@ -127,11 +131,11 @@ class App {
     self._components = {}
     self._view = {}
     self._view.splashScreen = yo`
-    <div class=${css.centered}>
-      ${basicLogo()}
-      <div class="info-secondary" style="text-align:center">
-        REMIX IDE
-      </div>
+      <div class=${css.centered}>
+        ${basicLogo()}
+        <div class="info-secondary" style="text-align:center">
+          REMIX IDE
+        </div>
       </div>
     `
     document.body.appendChild(self._view.splashScreen)
@@ -497,13 +501,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
-  framingService.start(params)
 
   if (params.embed) framingService.embed()
-  //if (!params) {
-    if (!localStorage.getItem('hadTour_initial')) {
-      introJs().start()
-      localStorage.setItem('hadTour_initial', true)
-    }
-  //}
+  framingService.start(params)
+
+  const walkthroughService = new WalkthroughService(localStorage)
+  if (!params.code) {
+      walkthroughService.start()
+  }
 }
