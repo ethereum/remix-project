@@ -158,7 +158,7 @@
     "form-data": "^4.0.0",
     "fs-extra": "^3.0.1",
     "http-server": "^0.11.1",
-    "intro.js": "^4.0.0",
+    "intro.js": "^4.1.0",
     "isbinaryfile": "^3.0.2",
     "isomorphic-git": "^1.8.2",
     "jquery": "^3.3.1",
