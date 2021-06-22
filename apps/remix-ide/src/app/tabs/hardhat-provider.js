@@ -59,6 +59,9 @@ export default class HardhatProvider extends Plugin {
 
   sendAsyncInternal (data, resolve, reject) {
     if (this.provider) {
+      // Check the case where current environment is VM on UI and it still sends RPC requests
+      // This will be displayed on UI tooltip as 'cannot get account list: Environment Updated !!'
+      if (this.blockchain.getProvider() !== 'Hardhat Provider' && data.method !== 'net_listening') return reject(new Error('Environment Updated !!'))
       this.provider[this.provider.sendAsync ? 'sendAsync' : 'send'](data, (error, message) => {
         if (error) {
           this.provider = null
