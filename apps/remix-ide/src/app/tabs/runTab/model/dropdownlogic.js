@@ -1,6 +1,6 @@
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 const remixLib = require('@remix-project/remix-lib')
 const txHelper = remixLib.execution.txHelper
-const CompilerAbstract = require('../../../compiler/compiler-abstract')
 const EventManager = remixLib.EventManager
 const _paq = window._paq = window._paq || []
 
