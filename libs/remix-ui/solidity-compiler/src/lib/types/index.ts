@@ -7,7 +7,8 @@ export interface SolidityCompilerProps {
   contentImport: any,
   plugin: any,
   queryParams: any,
-  compileTabLogic: any
+  compileTabLogic: any,
+  compiledFileName: string
 }
 
 export interface CompilerContainerProps {
@@ -16,7 +17,8 @@ export interface CompilerContainerProps {
   queryParams: any,
   compileTabLogic: any,
   tooltip: (message: string) => void,
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  compiledFileName: string
 }
 export interface ContractSelectionProps {
   contractMap: {
