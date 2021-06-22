@@ -806,6 +806,22 @@
           }
         }
       }
+    },
+    "remix-ui-renderer": {
+      "root": "libs/remix-ui/renderer",
+      "sourceRoot": "libs/remix-ui/renderer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/renderer/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/renderer/**/*"]
+          }
+        }
+      }
     }
   },
   "remix-ui-solidity-compiler": {

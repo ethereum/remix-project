@@ -113,6 +113,9 @@
     },
     "remix-ui-publish-to-storage": {
       "tags": []
+    },
+    "remix-ui-renderer": {
+      "tags": []
     }
   }
 }
