@@ -1,6 +1,6 @@
 'use strict'
 
-const CompilerImport = require('../compiler/compiler-imports')
+import { CompilerImports } from '@remix-core-plugin/compiler-content-imports'
 const EventManager = require('events')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
 const tooltip = require('../ui/tooltip')
@@ -44,7 +44,7 @@ class FileProvider {
 
   discardChanges (path) {
     this.remove(path)
-    const compilerImport = new CompilerImport()
+    const compilerImport = new CompilerImports()
     this.providerExternalsStorage.keys().map(value => {
       if (value.indexOf(path) === 0) {
         compilerImport.import(
