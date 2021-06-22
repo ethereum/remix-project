@@ -32,12 +32,16 @@ export default class HardhatProvider extends Plugin {
         <br>
         For more info, visit: <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">Hardhat Documentation</a>
         <br><br>
+        <b>Note:</b> Click on 'Cancel' if node is stopped.
+        <br><br>
         Hardhat JSON-RPC Endpoint
       </div>
     `
   }
 
   sendAsync (data) {
+    console.log('data in sendAsync-->', data)
+    console.log('provider in sendAsync-->', this.provider)
     return new Promise((resolve, reject) => {
       // If provider is not set, allow to open modal only when provider is trying to connect
       if (!this.provider || data.method === 'net_listening') {
