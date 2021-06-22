@@ -40,8 +40,6 @@ export default class HardhatProvider extends Plugin {
   }
 
   sendAsync (data) {
-    console.log('data in sendAsync-->', data)
-    console.log('provider in sendAsync-->', this.provider)
     return new Promise((resolve, reject) => {
       // If provider is not set, allow to open modal only when provider is trying to connect
       if (!this.provider || data.method === 'net_listening') {
