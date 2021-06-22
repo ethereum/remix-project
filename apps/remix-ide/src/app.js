@@ -16,7 +16,11 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
-import FetchAndCompile from './app/compiler/compiler-sourceVerifier-fetchAndCompile'
+
+import { CompilerArtefacts } from '@remix-core-plugin/compiler-artefacts'
+import { CompilerImports } from '@remix-core-plugin/compiler-content-imports'
+import { FetchAndCompile } from '@remix-core-plugin/compiler-fetch-and-compile'
+import { OffsetToLineColumnConverter } from '@remix-core-plugin/offset-line-to-column-converter'
 
 import migrateFileSystem from './migrateFileSystem'
 
@@ -25,7 +29,7 @@ const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
 const registry = require('./global/registry')
-const { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
+
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
@@ -39,12 +43,10 @@ const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 const toolTip = require('./app/ui/tooltip')
 const CompilerMetadata = require('./app/files/compiler-metadata')
-const CompilerImport = require('./app/compiler/compiler-imports')
 
 const Blockchain = require('./blockchain/blockchain.js')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
-const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
 
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
@@ -262,14 +264,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const dGitProvider = new DGitProvider()
 
   // ----------------- import content service ------------------------
-  const contentImport = new CompilerImport(fileManager)
+  const contentImport = new CompilerImports(fileManager)
 
   const blockchain = new Blockchain(registry.get('config').api)
 
   // ----------------- compilation metadata generation service ---------
   const compilerMetadataGenerator = new CompilerMetadata(blockchain, fileManager, registry.get('config').api)
   // ----------------- compilation result service (can keep track of compilation results) ----------------------------
-  const compilersArtefacts = new CompilersArtefacts() // store all the compilation results (key represent a compiler name)
+  const compilersArtefacts = new CompilerArtefacts() // store all the compilation results (key represent a compiler name)
   registry.put({ api: compilersArtefacts, name: 'compilersartefacts' })
 
   // service which fetch contract artifacts from sourve-verify, put artifacts in remix and compile it
@@ -458,11 +460,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     console.log('couldn\'t register iframe plugins', e.message)
   }
 
-  await appManager.activatePlugin(['contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+  await appManager.activatePlugin(['settings', 'contentImport', 'theme', 'editor', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
   await appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
   await appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
   await appManager.activatePlugin(['home'])
-  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'settings', 'contextualListener', 'terminal', 'fetchAndCompile'])
+  await appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'filePanel', 'contextualListener', 'terminal', 'fetchAndCompile'])
 
   const queryParams = new QueryParams()
   const params = queryParams.get()

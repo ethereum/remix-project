@@ -101,6 +101,19 @@
     },
     "remix-ui-checkbox": {
       "tags": []
+    },
+    "compiler-artefacts": {
+      "tags": [],
+      "implicitDependencies": ["remix-lib"]
+    },
+    "compiler-fetch-and-compile": {
+      "tags": []
+    },
+    "compiler-content-imports": {
+      "tags": []
+    },
+    "offset-line-to-column-converter": {
+      "tags": []
     }
   }
 }
