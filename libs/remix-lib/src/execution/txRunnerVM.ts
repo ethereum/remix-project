@@ -72,7 +72,7 @@ export class TxRunnerVM {
         }
       }
 
-      let EIP1559 = this.commonContext.hardfork() !== 'berlin'
+      const EIP1559 = this.commonContext.hardfork() !== 'berlin'
       let tx
       if (!EIP1559) {
         tx = Transaction.fromTxData({
