@@ -111,7 +111,8 @@ export const DebuggerApiMixin = (Base) => class extends Base {
         }
         return null
       },
-      debugWithGeneratedSources: false
+      debugWithGeneratedSources: false,
+      fork: 'berlin'
     })
     return await debug.debugger.traceManager.getTrace(hash)
   }
