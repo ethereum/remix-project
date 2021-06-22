@@ -760,6 +760,90 @@
           }
         }
       }
+    },
+    "compiler-artefacts": {
+      "root": "libs/remix-core-plugin/compiler-artefacts",
+      "sourceRoot": "libs/remix-core-plugin/compiler-artefacts/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-core-plugin/compiler-artefacts/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-core-plugin/compiler-artefacts/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "compiler-fetch-and-compile": {
+      "root": "libs/remix-core-plugin/compiler-fetch-and-compile",
+      "sourceRoot": "libs/remix-core-plugin/compiler-fetch-and-compile/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-core-plugin/compiler-fetch-and-compile/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-core-plugin/compiler-fetch-and-compile/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "compiler-content-import": {
+      "root": "libs/remix-core-plugin/compiler-content-import",
+      "sourceRoot": "libs/remix-core-plugin/compiler-content-import/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-core-plugin/compiler-content-import/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-core-plugin/compiler-content-import/**/*"
+            ]
+          }
+        }
+      }
+    },
+    "offset-line-to-column-converter": {
+      "root": "libs/remix-core-plugin/offset-line-to-column-converter",
+      "sourceRoot": "libs/remix-core-plugin/offset-line-to-column-converter/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/remix-core-plugin/offset-line-to-column-converter/tsconfig.lib.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/remix-core-plugin/offset-line-to-column-converter/**/*"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
