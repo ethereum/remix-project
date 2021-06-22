@@ -779,6 +779,15 @@
               "!libs/remix-core-plugin/compiler-artefacts/**/*"
             ]
           }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/core-plugin/compiler-artefacts",
+            "tsConfig": "libs/remix-core-plugin/compiler-artefacts/tsconfig.lib.json",
+            "packageJson": "libs/remix-core-plugin/compiler-artefacts/package.json",
+            "main": "libs/remix-core-plugin/compiler-artefacts/src/index.ts"
+          }
         }
       }
     },
@@ -803,9 +812,9 @@
         }
       }
     },
-    "compiler-content-import": {
-      "root": "libs/remix-core-plugin/compiler-content-import",
-      "sourceRoot": "libs/remix-core-plugin/compiler-content-import/src",
+    "compiler-content-imports": {
+      "root": "libs/remix-core-plugin/compiler-content-imports",
+      "sourceRoot": "libs/remix-core-plugin/compiler-content-imports/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -814,12 +823,22 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/remix-core-plugin/compiler-content-import/tsconfig.lib.json"
+              "libs/remix-core-plugin/compiler-content-imports/tsconfig.lib.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/remix-core-plugin/compiler-content-import/**/*"
+              "!libs/remix-core-plugin/compiler-content-imports/**/*"
             ]
+          }
+        },
+
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/core-plugin/compiler-content-imports",
+            "tsConfig": "libs/remix-core-plugin/compiler-content-imports/tsconfig.lib.json",
+            "packageJson": "libs/remix-core-plugin/compiler-content-imports/package.json",
+            "main": "libs/remix-core-plugin/compiler-content-imports/src/index.ts"
           }
         }
       }

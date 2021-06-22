@@ -1,3 +1,3 @@
-export function remixCorePluginCompilerFetchAndCompile(): string {
-  return 'compiler-fetch-and-compile';
+export function remixCorePluginCompilerFetchAndCompile (): string {
+  return 'compiler-fetch-and-compile'
 }

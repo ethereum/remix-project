@@ -1,7 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
-import CompilerAbstract from './compiler-abstract'
+import { compiler } from '@remix-project/remix-lib'
+const packageJson = require('../../package.json')
 
 const profile = {
   name: 'compilerArtefacts',
@@ -10,7 +10,9 @@ const profile = {
   version: packageJson.version
 }
 
-module.exports = class CompilerArtefacts extends Plugin {
+export class CompilerArtefacts extends Plugin {
+  compilersArtefactsPerFile: any
+  compilersArtefacts: any
   constructor () {
     super(profile)
     this.compilersArtefacts = {}
@@ -24,31 +26,31 @@ module.exports = class CompilerArtefacts extends Plugin {
 
   onActivation () {
     const saveCompilationPerFileResult = (file, source, languageVersion, data) => {
-      this.compilersArtefactsPerFile[file] = new CompilerAbstract(languageVersion, data, source)
+      this.compilersArtefactsPerFile[file] = new compiler.CompilerAbstract(languageVersion, data, source)
     }
 
     this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
+      this.compilersArtefacts.__last = new compiler.CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
 
     this.on('vyper', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
+      this.compilersArtefacts.__last = new compiler.CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
 
     this.on('lexon', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
+      this.compilersArtefacts.__last = new compiler.CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
 
     this.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
+      this.compilersArtefacts.__last = new compiler.CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
 
     this.on('optimism-compiler', 'compilationFinished', (file, source, languageVersion, data) => {
-      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
+      this.compilersArtefacts.__last = new compiler.CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
   }

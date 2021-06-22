@@ -103,12 +103,13 @@
       "tags": []
     },
     "compiler-artefacts": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["remix-lib"]
     },
     "compiler-fetch-and-compile": {
       "tags": []
     },
-    "compiler-content-import": {
+    "compiler-content-imports": {
       "tags": []
     },
     "offset-line-to-column-converter": {

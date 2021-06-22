@@ -1,11 +1,9 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
-import * as packageJson from '../../../../../package.json'
 import { RemixURLResolver } from '@remix-project/remix-url-resolver'
 const remixTests = require('@remix-project/remix-tests')
-const addTooltip = require('../ui/tooltip')
 const async = require('async')
-
+const packageJson = require('../../package.json')
 const profile = {
   name: 'contentImport',
   displayName: 'content import',
@@ -13,16 +11,19 @@ const profile = {
   methods: ['resolve', 'resolveAndSave', 'isExternalUrl']
 }
 
-module.exports = class CompilerImports extends Plugin {
+export class CompilerImports extends Plugin {
+  previouslyHandled: {}
+  fileManager: any
+  urlResolver: RemixURLResolver
   constructor (fileManager) {
     super(profile)
     this.fileManager = fileManager
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
-  onActivation () {
+  async onActivation () {
     const protocol = window.location.protocol
-    const token = this.call('settings', 'getGithubAccessToken')
+    const token = await this.call('settings', 'getGithubAccessToken')
     this.urlResolver = new RemixURLResolver(token, protocol)
   }
 
@@ -46,7 +47,7 @@ module.exports = class CompilerImports extends Plugin {
       this.import(url, null, (error, content, cleanUrl, type, url) => {
         if (error) return reject(error)
         resolve({ content, cleanUrl, type, url })
-      })
+      }, null)
     })
   }
 
@@ -84,8 +85,8 @@ module.exports = class CompilerImports extends Plugin {
 
   importExternal (url, targetPath, cb) {
     this.import(url,
-      // TODO: move to an event that is generated, the UI shouldn't be here
-      (loadingMsg) => { addTooltip(loadingMsg) },
+      // TODO: handle this event
+      (loadingMsg) => { this.emit('message', loadingMsg) },
       (error, content, cleanUrl, type, url) => {
         if (error) return cb(error)
         if (this.fileManager) {
@@ -94,7 +95,7 @@ module.exports = class CompilerImports extends Plugin {
           if (provider) provider.addExternal('.deps/' + path, content, url)
         }
         cb(null, content)
-      })
+      }, null)
   }
 
   /**
@@ -142,10 +143,12 @@ module.exports = class CompilerImports extends Plugin {
           if (localhostProvider.isConnected()) {
             var splitted = /([^/]+)\/(.*)$/g.exec(url)
             return async.tryEach([
-              (cb) => { this.resolveAndSave('localhost/installed_contracts/' + url).then((result) => cb(null, result)).catch((error) => cb(error.message)) },
-              (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2]).then((result) => cb(null, result)).catch((error) => cb(error.message)) } },
-              (cb) => { this.resolveAndSave('localhost/node_modules/' + url).then((result) => cb(null, result)).catch((error) => cb(error.message)) },
-              (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2]).then((result) => cb(null, result)).catch((error) => cb(error.message)) } }],
+              (cb) => { this.resolveAndSave('localhost/installed_contracts/' + url, null).then((result) => cb(null, result)).catch((error) => cb(error.message)) },
+              // eslint-disable-next-line standard/no-callback-literal
+              (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], null).then((result) => cb(null, result)).catch((error) => cb(error.message)) } },
+              (cb) => { this.resolveAndSave('localhost/node_modules/' + url, null).then((result) => cb(null, result)).catch((error) => cb(error.message)) },
+              // eslint-disable-next-line standard/no-callback-literal
+              (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { this.resolveAndSave('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], null).then((result) => cb(null, result)).catch((error) => cb(error.message)) } }],
             (error, result) => {
               if (error) {
                 return this.importExternal(url, targetPath, (error, content) => {

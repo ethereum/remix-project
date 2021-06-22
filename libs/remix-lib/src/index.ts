@@ -17,6 +17,7 @@ import * as typeConversion from './execution/typeConversion'
 import { TxRunnerVM } from './execution/txRunnerVM'
 import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
 import * as txResultHelper from './helpers/txResultHelper'
+import { CompilerAbstract } from './compiler/compiler-abstract'
 
 export = modules()
 
@@ -35,6 +36,9 @@ function modules () {
     },
     Storage: Storage,
     util: util,
+    compiler: {
+      CompilerAbstract: CompilerAbstract
+    },
     execution: {
       EventsDecoder: EventsDecoder,
       txExecution: txExecution,
