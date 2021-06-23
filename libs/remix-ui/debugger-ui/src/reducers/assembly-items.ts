@@ -14,6 +14,8 @@ export const initialState = {
   display: [],
   index: 0,
   nextIndex: -1,
+  returnInstructionIndexes: [],
+  outOfGasInstructionIndexes: [],
   top: 0,
   bottom: 0,
   isRequesting: false,
@@ -21,7 +23,7 @@ export const initialState = {
   hasError: null
 }
 
-const reducedOpcode = (opCodes) => {
+const reducedOpcode = (opCodes, payload) => {
   const length = 100
   let bottom = opCodes.index - 10
   bottom = bottom < 0 ? 0 : bottom
@@ -29,7 +31,9 @@ const reducedOpcode = (opCodes) => {
   return {
     index: opCodes.index - bottom,
     nextIndex: opCodes.nextIndex - bottom,
-    display: opCodes.code.slice(bottom, top)
+    display: opCodes.code.slice(bottom, top),
+    returnInstructionIndexes: payload.returnInstructionIndexes.map((index) => index.instructionIndex - bottom ),
+    outOfGasInstructionIndexes: payload.outOfGasInstructionIndexes.map((index) => index.instructionIndex - bottom )
   }
 }
 
@@ -48,7 +52,7 @@ export const reducer = (state = initialState, action: Action) => {
         ...state.opCodes, index: action.payload.index, nextIndex: action.payload.nextIndex
       } : deepEqual(action.payload.code, state.opCodes.code) ? state.opCodes : action.payload
 
-      const reduced = reducedOpcode(opCodes)
+      const reduced = reducedOpcode(opCodes, action.payload)
       return {
         opCodes,
         display: reduced.display,
@@ -56,7 +60,9 @@ export const reducer = (state = initialState, action: Action) => {
         nextIndex: reduced.nextIndex,
         isRequesting: false,
         isSuccessful: true,
-        hasError: null
+        hasError: null,
+        returnInstructionIndexes: reduced.returnInstructionIndexes,
+        outOfGasInstructionIndexes: reduced.outOfGasInstructionIndexes
       }
     }
     case 'FETCH_OPCODES_ERROR': {

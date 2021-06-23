@@ -145,17 +145,37 @@ export class CodeManager {
     })
   }
 
-  private retrieveIndexAndTrigger (codeMananger, address, step, code) {
+  private async retrieveIndexAndTrigger (codeMananger, address, step, code) {
     let result
     let next
+    let returnInstructionIndexes = []
+    let outOfGasInstructionIndexes = []
+
     try {
       result = codeMananger.getInstructionIndex(address, step)
       next = codeMananger.getInstructionIndex(address, step + 1)
-    } catch (error) {
-      return console.log(error)
-    }
+
+      let values = this.traceManager.getAllStopIndexes()
+      values = values.filter((value) => value.address === address)
+      if (values) {
+        for (const value of values) {
+          returnInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })
+        }
+      }
+
+      values = this.traceManager.getAllOutofGasIndexes()
+      values = values.filter((value) => value.address === address)
+      if (values) {
+        for (const value of values) {
+          outOfGasInstructionIndexes.push({ instructionIndex: this.getInstructionIndex(address, value.index), address })
+        }
+      }
+
+      } catch (error) {
+        return console.log(error)
+      }
     try {
-      codeMananger.event.trigger('changed', [code, address, result, next])
+      codeMananger.event.trigger('changed', [code, address, result, next, returnInstructionIndexes, outOfGasInstructionIndexes])
     } catch (e) {
       console.log('dispatching event failed', e)
     }
