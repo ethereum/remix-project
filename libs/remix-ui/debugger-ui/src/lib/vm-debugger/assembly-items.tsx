@@ -4,24 +4,28 @@ import './styles/assembly-items.css'
 
 export const AssemblyItems = ({ registerEvent }) => {
   const [assemblyItems, dispatch] = useReducer(reducer, initialState)
+  const [absoluteSelectedIndex, setAbsoluteSelectedIndex] = useState(0)
   const [selectedItem, setSelectedItem] = useState(0)
+  const [nextSelectedItem, setNextSelectedItem] = useState(1)
   const refs = useRef({})
   const asmItemsRef = useRef(null)
 
   useEffect(() => {
-    registerEvent && registerEvent('codeManagerChanged', (code, address, index) => {
-      dispatch({ type: 'FETCH_OPCODES_SUCCESS', payload: { code, address, index } })
+    registerEvent && registerEvent('codeManagerChanged', (code, address, index, nextIndex) => {
+      dispatch({ type: 'FETCH_OPCODES_SUCCESS', payload: { code, address, index, nextIndex } })
     })
   }, [])
 
   useEffect(() => {
-    if (selectedItem !== assemblyItems.index) {
+    console.log('useEffect', assemblyItems.index)
+    if (absoluteSelectedIndex !== assemblyItems.index) {
+      clearItems()
       indexChanged(assemblyItems.index)
+      nextIndexChanged(assemblyItems.nextIndex)
     }
-  }, [assemblyItems.index])
+  }, [assemblyItems.opCodes.index])
 
-  const indexChanged = (index: number) => {
-    if (index < 0) return
+  const clearItems = () => {
     let currentItem = refs.current[selectedItem] ? refs.current[selectedItem] : null
 
     if (currentItem) {
@@ -30,15 +34,49 @@ export const AssemblyItems = ({ registerEvent }) => {
       if (currentItem.firstChild) {
         currentItem.firstChild.removeAttribute('style')
       }
-      const codeView = asmItemsRef.current
+    }
 
-      currentItem = codeView.children[index]
+    currentItem = refs.current[nextSelectedItem] ? refs.current[nextSelectedItem] : null
+
+    if (currentItem) {
+      currentItem.removeAttribute('selected')
+      currentItem.removeAttribute('style')
+      if (currentItem.firstChild) {
+        currentItem.firstChild.removeAttribute('style')
+      }
+    }
+  }
+
+  const indexChanged = (index: number) => {
+    console.log("index " + index)
+    if (index < 0) return
+    
+    const codeView = asmItemsRef.current
+
+    const currentItem = codeView.children[index]
+    if (currentItem) {
       currentItem.style.setProperty('border-color', 'var(--primary)')
       currentItem.style.setProperty('border-style', 'solid')
       currentItem.setAttribute('selected', 'selected')
       codeView.scrollTop = currentItem.offsetTop - parseInt(codeView.offsetTop)
-      setSelectedItem(index)
     }
+    
+    setSelectedItem(index)
+    setAbsoluteSelectedIndex(assemblyItems.opCodes.index)
+  }
+
+  const nextIndexChanged = (index: number) => {
+    if (index < 0) return
+    
+    const codeView = asmItemsRef.current
+
+    const currentItem = codeView.children[index]
+    if (currentItem) {
+      currentItem.style.setProperty('border-color', 'var(--secondary)')
+      currentItem.style.setProperty('border-style', 'dotted')
+      currentItem.setAttribute('selected', 'selected')      
+    }
+    setNextSelectedItem(index)
   }
 
   return (
