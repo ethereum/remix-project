@@ -147,13 +147,15 @@ export class CodeManager {
 
   private retrieveIndexAndTrigger (codeMananger, address, step, code) {
     let result
+    let next
     try {
       result = codeMananger.getInstructionIndex(address, step)
+      next = codeMananger.getInstructionIndex(address, step + 1)
     } catch (error) {
       return console.log(error)
     }
     try {
-      codeMananger.event.trigger('changed', [code, address, result])
+      codeMananger.event.trigger('changed', [code, address, result, next])
     } catch (e) {
       console.log('dispatching event failed', e)
     }
