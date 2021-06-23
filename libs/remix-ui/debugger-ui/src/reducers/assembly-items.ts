@@ -13,6 +13,7 @@ export const initialState = {
   },
   display: [],
   index: 0,
+  nextIndex: -1,
   top: 0,
   bottom: 0,
   isRequesting: false,
@@ -21,11 +22,15 @@ export const initialState = {
 }
 
 const reducedOpcode = (opCodes) => {
-  const length = 50
+  const length = 100
   let bottom = opCodes.index - 10
   bottom = bottom < 0 ? 0 : bottom
   const top = bottom + length
-  return { top, bottom, display: opCodes.code.slice(bottom, top) }
+  return { 
+    index: opCodes.index - bottom,
+    nextIndex:opCodes.nextIndex - bottom, 
+    display: opCodes.code.slice(bottom, top) 
+  }
 }
 
 export const reducer = (state = initialState, action: Action) => {
@@ -40,14 +45,15 @@ export const reducer = (state = initialState, action: Action) => {
     }
     case 'FETCH_OPCODES_SUCCESS': {
       const opCodes = action.payload.address === state.opCodes.address ? {
-        ...state.opCodes, index: action.payload.index
+        ...state.opCodes, index: action.payload.index, nextIndex: action.payload.nextIndex
       } : deepEqual(action.payload.code, state.opCodes.code) ? state.opCodes : action.payload
 
       const reduced = reducedOpcode(opCodes)
       return {
         opCodes,
         display: reduced.display,
-        index: reduced.display.findIndex(code => code === opCodes.code[opCodes.index]),
+        index: reduced.index,
+        nextIndex: reduced.nextIndex,
         isRequesting: false,
         isSuccessful: true,
         hasError: null
