@@ -18,6 +18,7 @@ export class CompilerImports extends Plugin {
   constructor (fileManager) {
     super(profile)
     this.fileManager = fileManager
+    this.urlResolver = new RemixURLResolver()
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
