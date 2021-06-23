@@ -48,9 +48,9 @@ export const AssemblyItems = ({ registerEvent }) => {
   }
 
   const indexChanged = (index: number) => {
-    console.log("index " + index)
+    console.log('index ' + index)
     if (index < 0) return
-    
+
     const codeView = asmItemsRef.current
 
     const currentItem = codeView.children[index]
@@ -60,21 +60,21 @@ export const AssemblyItems = ({ registerEvent }) => {
       currentItem.setAttribute('selected', 'selected')
       codeView.scrollTop = currentItem.offsetTop - parseInt(codeView.offsetTop)
     }
-    
+
     setSelectedItem(index)
     setAbsoluteSelectedIndex(assemblyItems.opCodes.index)
   }
 
   const nextIndexChanged = (index: number) => {
     if (index < 0) return
-    
+
     const codeView = asmItemsRef.current
 
     const currentItem = codeView.children[index]
     if (currentItem) {
       currentItem.style.setProperty('border-color', 'var(--secondary)')
       currentItem.style.setProperty('border-style', 'dotted')
-      currentItem.setAttribute('selected', 'selected')      
+      currentItem.setAttribute('selected', 'selected')
     }
     setNextSelectedItem(index)
   }
