@@ -1,6 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import { Plugin } from '@remixproject/engine'
-import { compile } from './compiler-helpers'
+import { compile } from '@remix-project/remix-solidity'
 
 import remixLib from '@remix-project/remix-lib'
 const ethutil = require('ethereumjs-util')
