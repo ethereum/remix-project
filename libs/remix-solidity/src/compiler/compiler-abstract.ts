@@ -1,5 +1,5 @@
 'use strict'
-import { getContract, visitContracts } from '../execution/txHelper'
+import txHelper from './txHelper'
 
 export class CompilerAbstract {
   languageversion: any
@@ -16,11 +16,11 @@ export class CompilerAbstract {
     }
 
     getContract (name) {
-      return getContract(name, this.data.contracts)
+      return txHelper.getContract(name, this.data.contracts)
     }
 
     visitContracts (calllback) {
-      return visitContracts(this.data.contracts, calllback)
+      return txHelper.visitContracts(this.data.contracts, calllback)
     }
 
     getData () {

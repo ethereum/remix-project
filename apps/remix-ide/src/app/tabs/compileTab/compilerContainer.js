@@ -1,7 +1,6 @@
 
 import toaster from '../../ui/tooltip'
-import { compilation } from '@remix-project/remix-lib'
-const { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } = compilation
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
 const yo = require('yo-yo')
 const helper = require('../../../lib/helper')
 const addTooltip = require('../../ui/tooltip')

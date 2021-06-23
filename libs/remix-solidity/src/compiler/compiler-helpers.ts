@@ -1,7 +1,8 @@
 'use strict'
-import { compilation } from '@remix-project/remix-lib'
+import { canUseWorker, urlFromVersion } from './compiler-utils'
+import { CompilerAbstract } from './compiler-abstract'
 import { Compiler } from './compiler'
-const { canUseWorker, urlFromVersion, CompilerAbstract } = compilation
+
 export const compile = async (compilationTargets, settings, contentResolverCallback) => {
   const res = await (() => {
     return new Promise((resolve, reject) => {

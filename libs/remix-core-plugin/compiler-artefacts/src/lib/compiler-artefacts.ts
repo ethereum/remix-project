@@ -1,8 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
-import { compilation } from '@remix-project/remix-lib'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 const packageJson = require('../../package.json')
-const CompilerAbstract = compilation.CompilerAbstract
 
 const profile = {
   name: 'compilerArtefacts',
