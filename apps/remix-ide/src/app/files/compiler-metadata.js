@@ -2,7 +2,8 @@
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { joinPath } from '../../lib/helper'
-var CompilerAbstract = require('../compiler/compiler-abstract')
+import { compiler } from '@remix-project/remix-lib'
+var CompilerAbstract = compiler.CompilerAbstract
 
 const profile = {
   name: 'compilerMetadata',
