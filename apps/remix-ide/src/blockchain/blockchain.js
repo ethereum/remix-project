@@ -23,6 +23,7 @@ class Blockchain {
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
       },
+      isVM: () => { return this.executionContext.isVM() },
       personalMode: () => {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
@@ -322,6 +323,7 @@ class Blockchain {
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
       },
+      isVM: () => { return this.executionContext.isVM() },
       personalMode: () => {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
