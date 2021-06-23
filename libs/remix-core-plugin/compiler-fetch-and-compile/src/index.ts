@@ -1,1 +1,1 @@
-export * from './lib/compiler-fetch-and-compile';
+export * from './lib/compiler-fetch-and-compile'

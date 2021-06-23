@@ -809,6 +809,15 @@
               "!libs/remix-core-plugin/compiler-fetch-and-compile/**/*"
             ]
           }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/core-plugin/compiler-fetch-and-compile",
+            "tsConfig": "libs/remix-core-plugin/compiler-fetch-and-compile/tsconfig.lib.json",
+            "packageJson": "libs/remix-core-plugin/compiler-fetch-and-compile/package.json",
+            "main": "libs/remix-core-plugin/compiler-fetch-and-compile/src/index.ts"
+          }
         }
       }
     },

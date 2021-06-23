@@ -1,17 +1,19 @@
-import * as packageJson from '../../../../../package.json'
+
 import { Plugin } from '@remixproject/engine'
 import { compile } from '@remix-project/remix-solidity'
+import { util } from '@remix-project/remix-lib'
 
-import remixLib from '@remix-project/remix-lib'
 const ethutil = require('ethereumjs-util')
-
+const packageJson = require('../../package.json')
 const profile = {
   name: 'fetchAndCompile',
   methods: ['resolve'],
   version: packageJson.version
 }
 
-export default class FetchAndCompile extends Plugin {
+export class FetchAndCompile extends Plugin {
+  unresolvedAddresses: any[]
+  sourceVerifierNetWork: string[]
   constructor () {
     super(profile)
     this.unresolvedAddresses = []
@@ -32,7 +34,7 @@ export default class FetchAndCompile extends Plugin {
   async resolve (contractAddress, codeAtAddress, targetPath) {
     contractAddress = ethutil.toChecksumAddress(contractAddress)
 
-    const localCompilation = () => this.call('compilerArtefacts', 'get', contractAddress) ? this.call('compilerArtefacts', 'get', contractAddress) : this.call('compilerArtefacts', 'get', '__last') ? this.call('compilerArtefacts', 'get', '__last') : null
+    const localCompilation = async () => await this.call('compilerArtefacts', 'get', contractAddress) ? await this.call('compilerArtefacts', 'get', contractAddress) : await this.call('compilerArtefacts', 'get', '__last') ? await this.call('compilerArtefacts', 'get', '__last') : null
 
     const resolved = this.call('compilerArtefacts', 'get', contractAddress)
     if (resolved) return resolved
@@ -51,11 +53,11 @@ export default class FetchAndCompile extends Plugin {
     if (!this.sourceVerifierNetWork.includes(network.name)) return localCompilation()
 
     // check if the contract if part of the local compilation result
-    const compilation = localCompilation()
+    const compilation = await localCompilation()
     if (compilation) {
       let found = false
       compilation.visitContracts((contract) => {
-        found = remixLib.util.compareByteCode('0x' + contract.object.evm.deployedBytecode.object, codeAtAddress)
+        found = util.compareByteCode('0x' + contract.object.evm.deployedBytecode.object, codeAtAddress)
         return found
       })
       if (found) {

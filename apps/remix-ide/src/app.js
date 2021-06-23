@@ -16,10 +16,10 @@ import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
-import FetchAndCompile from './app/compiler/compiler-sourceVerifier-fetchAndCompile'
 
 import { CompilerArtefacts } from '@remix-core-plugin/compiler-artefacts'
 import { CompilerImports } from '@remix-core-plugin/compiler-content-imports'
+import { FetchAndCompile } from '@remix-core-plugin/compiler-fetch-and-compile'
 
 import migrateFileSystem from './migrateFileSystem'
 
