@@ -209,6 +209,14 @@ export class TraceManager {
     return this.trace[stepIndex].pc
   }
 
+  getAllStopIndexes () {
+    return this.traceCache.stopIndexes
+  }
+
+  getAllOutofGasIndexes () {
+    return this.traceCache.outofgasIndexes
+  }
+
   getReturnValue (stepIndex) {
     try {
       this.checkRequestedStep(stepIndex)
