@@ -18,6 +18,7 @@ import { TxRunnerVM } from './execution/txRunnerVM'
 import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
 import * as txResultHelper from './helpers/txResultHelper'
 import { CompilerAbstract } from './compiler/compiler-abstract'
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from './compiler/compiler-utils'
 
 export = modules()
 
@@ -36,8 +37,14 @@ function modules () {
     },
     Storage: Storage,
     util: util,
-    compiler: {
-      CompilerAbstract: CompilerAbstract
+    compilation: {
+      CompilerAbstract,
+      canUseWorker,
+      baseURLBin,
+      baseURLWasm,
+      urlFromVersion,
+      pathToURL,
+      promisedMiniXhr
     },
     execution: {
       EventsDecoder: EventsDecoder,
