@@ -870,6 +870,15 @@
               "!libs/remix-core-plugin/offset-line-to-column-converter/**/*"
             ]
           }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/core-plugin/offset-line-to-column-converter",
+            "tsConfig": "libs/remix-core-plugin/offset-line-to-column-converter/tsconfig.lib.json",
+            "packageJson": "libs/remix-core-plugin/offset-line-to-column-converter/package.json",
+            "main": "libs/remix-core-plugin/coffset-line-to-column-converter/src/index.ts"
+          }
         }
       }
     }

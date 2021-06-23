@@ -20,6 +20,7 @@ import { MainPanel } from './app/components/main-panel'
 import { CompilerArtefacts } from '@remix-core-plugin/compiler-artefacts'
 import { CompilerImports } from '@remix-core-plugin/compiler-content-imports'
 import { FetchAndCompile } from '@remix-core-plugin/compiler-fetch-and-compile'
+import { OffsetToLineColumnConverter } from '@remix-core-plugin/offset-line-to-column-converter'
 
 import migrateFileSystem from './migrateFileSystem'
 
@@ -28,7 +29,7 @@ const csjs = require('csjs-inject')
 const yo = require('yo-yo')
 const remixLib = require('@remix-project/remix-lib')
 const registry = require('./global/registry')
-const { OffsetToLineColumnConverter } = require('./lib/offsetToLineColumnConverter')
+
 const QueryParams = require('./lib/query-params')
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
