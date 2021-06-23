@@ -73,23 +73,13 @@ export class TxRunnerWeb3 {
 
     if (useCall) {
       tx['gas'] = gasLimit
-      tx['timestamp'] = timestamp
-      return this._api.detectNetwork((err, network) => {
-        if (err) {
-          console.log(err)
-          return
-        // Remove `timestamp` from tx if network is Kovan
-        // It shows: 'Error: Returned error: Invalid params: unknown field `timestamp`'
-        // See: https://github.com/ethereum/remix-project/issues/1282
-        } else if (network && network.name === 'Kovan') delete tx['timestamp']
-
+      if(this._api && this._api.isVM()) tx['timestamp'] = timestamp
         return this.getWeb3().eth.call(tx, function (error, result: any) {
           if (error) return callback(error)
           callback(null, {
             result: result
           })
         })
-      })
     }
     this.getWeb3().eth.estimateGas(tx, (err, gasEstimation) => {
       if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
