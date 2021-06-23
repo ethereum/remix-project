@@ -26,10 +26,10 @@ const reducedOpcode = (opCodes) => {
   let bottom = opCodes.index - 10
   bottom = bottom < 0 ? 0 : bottom
   const top = bottom + length
-  return { 
+  return {
     index: opCodes.index - bottom,
-    nextIndex:opCodes.nextIndex - bottom, 
-    display: opCodes.code.slice(bottom, top) 
+    nextIndex: opCodes.nextIndex - bottom,
+    display: opCodes.code.slice(bottom, top)
   }
 }
 
