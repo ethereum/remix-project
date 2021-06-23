@@ -49,6 +49,17 @@ export class TraceAnalyser {
 
       this.traceCache.pushReturnValue(index, returnParamsObj)
     }
+    if (traceHelper.isReturnInstruction(step) || traceHelper.isStopInstruction(step) || traceHelper.isRevertInstruction(step)) {
+      this.traceCache.pushStopIndex(index, this.traceCache.currentCall.call.address)
+    }
+    
+    try {
+      if (parseInt(step.gas) - parseInt(step.gasCost) <= 0 || step.error === 'OutOfGas') {
+        this.traceCache.pushOutOfGasIndex(index, this.traceCache.currentCall.call.address)
+      }
+    } catch (e) {
+      console.error(e)
+    }    
   }
 
   buildCalldata (index, step, tx, newContext) {

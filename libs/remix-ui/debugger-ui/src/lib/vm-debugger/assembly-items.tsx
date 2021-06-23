@@ -7,12 +7,14 @@ export const AssemblyItems = ({ registerEvent }) => {
   const [absoluteSelectedIndex, setAbsoluteSelectedIndex] = useState(0)
   const [selectedItem, setSelectedItem] = useState(0)
   const [nextSelectedItem, setNextSelectedItem] = useState(1)
+  const [returnInstructionIndexes, setReturnInstructionIndexes] = useState([])
+  const [outOfGasInstructionIndexes, setOutOfGasInstructionIndexes] = useState([])
   const refs = useRef({})
   const asmItemsRef = useRef(null)
 
   useEffect(() => {
-    registerEvent && registerEvent('codeManagerChanged', (code, address, index, nextIndex) => {
-      dispatch({ type: 'FETCH_OPCODES_SUCCESS', payload: { code, address, index, nextIndex } })
+    registerEvent && registerEvent('codeManagerChanged', (code, address, index, nextIndex, returnInstructionIndexes, outOfGasInstructionIndexes) => {
+      dispatch({ type: 'FETCH_OPCODES_SUCCESS', payload: { code, address, index, nextIndex, returnInstructionIndexes, outOfGasInstructionIndexes } })
     })
   }, [])
 
@@ -22,6 +24,8 @@ export const AssemblyItems = ({ registerEvent }) => {
       clearItems()
       indexChanged(assemblyItems.index)
       nextIndexChanged(assemblyItems.nextIndex)
+      returnIndexes(assemblyItems.returnInstructionIndexes)
+      outOfGasIndexes(assemblyItems.outOfGasInstructionIndexes)
     }
   }, [assemblyItems.opCodes.index])
 
@@ -45,10 +49,37 @@ export const AssemblyItems = ({ registerEvent }) => {
         currentItem.firstChild.removeAttribute('style')
       }
     }
+
+    returnInstructionIndexes.map((index) => {
+      if (index < 0) return
+
+      currentItem = refs.current[index] ? refs.current[index] : null
+
+      if (currentItem) {
+        currentItem.removeAttribute('selected')
+        currentItem.removeAttribute('style')
+        if (currentItem.firstChild) {
+          currentItem.firstChild.removeAttribute('style')
+        }
+      }
+    })
+
+    outOfGasInstructionIndexes.map((index) => {
+      if (index < 0) return
+
+      currentItem = refs.current[index] ? refs.current[index] : null
+
+      if (currentItem) {
+        currentItem.removeAttribute('selected')
+        currentItem.removeAttribute('style')
+        if (currentItem.firstChild) {
+          currentItem.firstChild.removeAttribute('style')
+        }
+      }
+    })
   }
 
   const indexChanged = (index: number) => {
-    console.log('index ' + index)
     if (index < 0) return
 
     const codeView = asmItemsRef.current
@@ -77,6 +108,38 @@ export const AssemblyItems = ({ registerEvent }) => {
       currentItem.setAttribute('selected', 'selected')
     }
     setNextSelectedItem(index)
+  }
+
+  const returnIndexes = (indexes) => {
+    indexes.map((index) => {
+      if (index < 0) return
+
+      const codeView = asmItemsRef.current
+
+      const currentItem = codeView.children[index]
+      if (currentItem) {
+        currentItem.style.setProperty('border-color', 'var(--warning)')
+        currentItem.style.setProperty('border-style', 'dotted')
+        currentItem.setAttribute('selected', 'selected')
+      }
+    })
+    setReturnInstructionIndexes(indexes)
+  }
+
+  const outOfGasIndexes = (indexes) => {
+    indexes.map((index) => {
+      if (index < 0) return
+
+      const codeView = asmItemsRef.current
+
+      const currentItem = codeView.children[index]
+      if (currentItem) {
+        currentItem.style.setProperty('border-color', 'var(--danger)')
+        currentItem.style.setProperty('border-style', 'dotted')
+        currentItem.setAttribute('selected', 'selected')
+      }
+    })
+    setOutOfGasInstructionIndexes(indexes)
   }
 
   return (
