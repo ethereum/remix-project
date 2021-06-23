@@ -2,8 +2,7 @@
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { joinPath } from '../../lib/helper'
-import { compiler } from '@remix-project/remix-lib'
-var CompilerAbstract = compiler.CompilerAbstract
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'compilerMetadata',

@@ -14,7 +14,7 @@ const profile = {
 export class CompilerImports extends Plugin {
   previouslyHandled: {}
   fileManager: any
-  urlResolver: RemixURLResolver
+  urlResolver: any
   constructor (fileManager) {
     super(profile)
     this.fileManager = fileManager
