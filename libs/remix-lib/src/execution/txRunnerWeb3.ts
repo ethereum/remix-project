@@ -73,13 +73,13 @@ export class TxRunnerWeb3 {
 
     if (useCall) {
       tx['gas'] = gasLimit
-      if(this._api && this._api.isVM()) tx['timestamp'] = timestamp
-        return this.getWeb3().eth.call(tx, function (error, result: any) {
-          if (error) return callback(error)
-          callback(null, {
-            result: result
-          })
+      if (this._api && this._api.isVM()) tx['timestamp'] = timestamp
+      return this.getWeb3().eth.call(tx, function (error, result: any) {
+        if (error) return callback(error)
+        callback(null, {
+          result: result
         })
+      })
     }
     this.getWeb3().eth.estimateGas(tx, (err, gasEstimation) => {
       if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
