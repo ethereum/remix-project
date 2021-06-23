@@ -36,7 +36,7 @@ export class FetchAndCompile extends Plugin {
 
     const localCompilation = async () => await this.call('compilerArtefacts', 'get', contractAddress) ? await this.call('compilerArtefacts', 'get', contractAddress) : await this.call('compilerArtefacts', 'get', '__last') ? await this.call('compilerArtefacts', 'get', '__last') : null
 
-    const resolved = this.call('compilerArtefacts', 'get', contractAddress)
+    const resolved = await this.call('compilerArtefacts', 'get', contractAddress)
     if (resolved) return resolved
     if (this.unresolvedAddresses.includes(contractAddress)) return localCompilation()
 
@@ -61,7 +61,7 @@ export class FetchAndCompile extends Plugin {
         return found
       })
       if (found) {
-        this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilation)
+        await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilation)
         setTimeout(_ => this.emit('usingLocalCompilation', contractAddress), 0)
         return compilation
       }
@@ -118,8 +118,8 @@ export class FetchAndCompile extends Plugin {
       const compData = await compile(
         compilationTargets,
         settings,
-        (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
-      this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
+        async (url, cb) => await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+      await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
       return compData
     } catch (e) {
       this.unresolvedAddresses.push(contractAddress)
