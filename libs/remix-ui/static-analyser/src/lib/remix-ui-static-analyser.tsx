@@ -57,6 +57,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [showSlither, setShowSlither] = useState('hidden')
+  const [showSlitherResult, setShowSlitherResult] = useState('hidden')
+  const [showSlitherResultEnabled, setShowSlitherResultEnabled] = useState(false)
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
 
   const warningContainer = React.useRef(null)
@@ -211,7 +213,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                         lastCompilationSource.sources,
                         lastCompilationResult.sources
                       )
-                      console.log('location:', location)
                       row = location.start.line
                       column = location.start.column
                       locationString = row + 1 + ':' + column + ':'
@@ -233,7 +234,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                       location: location
                     }
                     warningErrors.push(options)
-                    warningMessage.push({ msg, options, hasWarning: true, warningModuleName: item.title })
+                    warningMessage.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
                   })
                   showWarnings(warningMessage, 'warningModuleName')
                   props.event.trigger('staticAnaysisWarning', [warningCount])
@@ -282,11 +283,19 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
   }
 
-  const handleSlitherEnabled = () => {
+  const handleShowSlitherResultEnabled = () => {
     if (slitherEnabled) {
       setSlitherEnabled(false)
     } else {
       setSlitherEnabled(true)
+    }
+  }
+
+  const handleSlitherEnabled = () => {
+    if (showSlitherResultEnabled) {
+      setShowSlitherResultEnabled(false)
+    } else {
+      setShowSlitherResultEnabled(true)
     }
   }
 
@@ -419,6 +428,17 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           {state.file}
         </span>
       </div>
+      <div className="d-flex" id="onlySlitherResult">
+          <RemixUiCheckbox
+            id="showOnlySlitherResult"
+            inputType="checkbox"
+            onClick={handleShowSlitherResultEnabled}
+            checked={showSlitherResultEnabled}
+            label="Show Slither result only"
+            onChange={() => {}}
+            visibility = {showSlitherResult}
+          />
+        </div>
       {Object.entries(warningState).length > 0 &&
         <div id='staticanalysisresult' >
           <div className="mb-4">
