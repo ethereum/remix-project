@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react' // eslint-disable-line
 import { SolidityCompilerProps } from './types'
 import { CompilerContainer } from './compiler-container' // eslint-disable-line
+import { ContractSelection } from './contract-selection'
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import { Renderer } from '@remix-ui/renderer'
 
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
-  const { editor, config, queryParams, plugin, compileTabLogic, compiledFileName } = props
+  const { editor, config, queryParams, plugin, compileTabLogic, compiledFileName, fileProvider, fileManager, contractsDetails } = props
   const [state, setState] = useState({
     contractsDetails: {},
     eventHandlers: {},
@@ -66,7 +66,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     <>
       <div id="compileTabView">
         <CompilerContainer editor={editor} config={config} queryParams={queryParams} compileTabLogic={compileTabLogic} tooltip={toast} modal={modal} compiledFileName={compiledFileName} />
-        {/* ${this._view.contractSelection} */}
+        <ContractSelection contractMap={{}} fileProvider={fileProvider} fileManager={fileManager} contractsDetails={contractsDetails} />
         <div className="remixui_errorBlobs p-4" data-id="compiledErrors"></div>
       </div>
       <Toaster message={state.toasterMsg} />
