@@ -173,6 +173,9 @@ module.exports = class Filepanel extends ViewPlugin {
       }
       return
     }
+
+    const self = this
+    this.appManager.on('manager', 'pluginDeactivated', self.removePluginActions.bind(this))
     // insert example contracts if there are no files to show
     return new Promise((resolve, reject) => {
       this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
@@ -196,8 +199,6 @@ module.exports = class Filepanel extends ViewPlugin {
       })
     })
 
-    const self = this
-    this.appManager.on('manager', 'pluginDeactivated', self.removePluginActions.bind(this))
   }
 
   async createNewFile () {
