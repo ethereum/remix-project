@@ -34,7 +34,7 @@ const modalDialogCustom = require('../ui/modal-dialog-custom')
 const profile = {
   name: 'filePanel',
   displayName: 'File explorers',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'registerContextMenuItem'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem'],
   events: ['setWorkspace', 'renameWorkspace', 'deleteWorkspace', 'createWorkspace'],
   icon: 'assets/img/fileManager.webp',
   description: ' - ',
@@ -43,7 +43,6 @@ const profile = {
   documentation: 'https://remix-ide.readthedocs.io/en/latest/file_explorer.html',
   version: packageJson.version
 }
-
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
     super(profile)
@@ -124,7 +123,6 @@ module.exports = class Filepanel extends ViewPlugin {
   async getWorkspaces () {
     const result = new Promise((resolve, reject) => {
       const workspacesPath = this._deps.fileProviders.workspace.workspacesPath
-
       this._deps.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         if (error) {
           console.error(error)
@@ -176,12 +174,26 @@ module.exports = class Filepanel extends ViewPlugin {
       return
     }
     // insert example contracts if there are no files to show
-    this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
-      if (error) console.error(error)
-      if (Object.keys(filesList).length === 0) {
-        await this.createWorkspace('default_workspace')
-      }
-      this.getWorkspaces()
+    return new Promise((resolve, reject) => {
+      this._deps.fileProviders.browser.resolveDirectory('/', async (error, filesList) => {
+        if (error) return reject(error)
+        if (Object.keys(filesList).length === 0) {
+          await this.createWorkspace('default_workspace')
+          resolve('default_workspace')
+        } else {
+          this._deps.fileProviders.browser.resolveDirectory('.workspaces', async (error, filesList) => {
+            if (error) return reject(error)
+            if (Object.keys(filesList).length > 0) {
+              const workspacePath = Object.keys(filesList)[0].split('/').filter(val => val)
+              const workspaceName = workspacePath[workspacePath.length - 1]
+
+              this._deps.fileProviders.workspace.setWorkspace(workspaceName)
+              return resolve(workspaceName)
+            }
+            return reject(new Error('Can\'t find available workspace.'))
+          })
+        }
+      })
     })
 
     const self = this
@@ -226,13 +238,11 @@ module.exports = class Filepanel extends ViewPlugin {
       await this.request.setWorkspace(workspaceName) // tells the react component to switch to that workspace
       if (setDefaults) {
         for (const file in examples) {
-          setTimeout(async () => { // space creation of files to give react ui time to update.
-            try {
-              await workspaceProvider.set(examples[file].name, examples[file].content)
-            } catch (error) {
-              console.error(error)
-            }
-          }, 10)
+          try {
+            await workspaceProvider.set(examples[file].name, examples[file].content)
+          } catch (error) {
+            console.error(error)
+          }
         }
       }
     }
@@ -248,14 +258,16 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   /** these are called by the react component, action is already finished whent it's called */
-  async setWorkspace (workspace) {
-    this._deps.fileManager.closeAllFiles()
+  async setWorkspace (workspace, setEvent = true) {
     if (workspace.isLocalhost) {
       this.call('manager', 'activatePlugin', 'remixd')
     } else if (await this.call('manager', 'isActive', 'remixd')) {
       this.call('manager', 'deactivatePlugin', 'remixd')
     }
-    this.emit('setWorkspace', workspace)
+    if (setEvent) {
+      this._deps.fileManager.setMode(workspace.isLocalhost ? 'localhost' : 'browser')
+      this.emit('setWorkspace', workspace)
+    }
   }
 
   workspaceRenamed (workspace) {

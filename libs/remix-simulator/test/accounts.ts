@@ -8,7 +8,7 @@ describe('Accounts', () => {
   before(async function () {
     const provider = new Provider()
     await provider.init()
-    web3.setProvider(provider)
+    web3.setProvider(provider as any)
   })
 
   describe('eth_getAccounts', () => {
