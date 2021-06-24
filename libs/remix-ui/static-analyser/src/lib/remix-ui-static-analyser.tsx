@@ -236,14 +236,17 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     warningMessage.push({ msg, options, hasWarning: true, warningModuleName: item.title })
                   })
                   showWarnings(warningMessage, 'warningModuleName')
+                  props.event.trigger('staticAnaysisWarning', [warningCount])
                 }
               })
             })
-          } else showWarnings(warningMessage, 'warningModuleName')
-        })
-        if (categoryIndex.length > 0) {
-          props.event.trigger('staticAnaysisWarning', [warningCount])
+          } else {
+            showWarnings(warningMessage, 'warningModuleName')
+            if (categoryIndex.length > 0) {
+              props.event.trigger('staticAnaysisWarning', [warningCount])
+          }
         }
+        })
       } else {
         if (categoryIndex.length) {
           warningContainer.current.innerText = 'No compiled AST available'
