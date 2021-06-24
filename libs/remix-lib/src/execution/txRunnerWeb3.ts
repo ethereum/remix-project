@@ -72,9 +72,8 @@ export class TxRunnerWeb3 {
     const tx = { from: from, to: to, data: data, value: value }
 
     if (useCall) {
-      const tag = Date.now() // for e2e reference
       tx['gas'] = gasLimit
-      tx['timestamp'] = timestamp
+      if (this._api && this._api.isVM()) tx['timestamp'] = timestamp
       return this.getWeb3().eth.call(tx, function (error, result: any) {
         if (error) return callback(error)
         callback(null, {
